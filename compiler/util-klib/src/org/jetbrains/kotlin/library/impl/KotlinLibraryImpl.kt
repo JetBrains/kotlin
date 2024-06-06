@@ -31,21 +31,17 @@ class BaseKotlinLibraryImpl(
     override val libraryFile get() = access.klib
     override val libraryName: String by lazy { access.inPlace { it.libraryName } }
 
-    private val componentListAndHasPre14Manifest by lazy {
+    override val componentList: List<String> by lazy {
         access.inPlace { layout ->
             val listFiles = layout.libFile.listFiles
             listFiles
                 .filter { it.isDirectory }
                 .filter { it.listFiles.map { it.name }.contains(KLIB_MANIFEST_FILE_NAME) }
-                .map { it.name } to listFiles.any { it.absolutePath == layout.pre_1_4_manifest.absolutePath }
+                .map { it.name }
         }
     }
 
-    override val componentList: List<String> get() = componentListAndHasPre14Manifest.first
-
     override fun toString() = "$libraryName[default=$isDefault]"
-
-    override val has_pre_1_4_manifest: Boolean get() = componentListAndHasPre14Manifest.second
 
     override val manifestProperties: Properties by lazy {
         access.inPlace { it.manifestFile.loadProperties() }
@@ -383,10 +379,3 @@ fun isKotlinLibrary(libraryFile: File): Boolean = try {
 
 fun isKotlinLibrary(libraryFile: java.io.File): Boolean =
     isKotlinLibrary(File(libraryFile.absolutePath))
-
-val File.isPre_1_4_Library: Boolean
-    get() {
-        val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(this, null)
-        val base = BaseKotlinLibraryImpl(baseAccess, false)
-        return base.has_pre_1_4_manifest
-    }
