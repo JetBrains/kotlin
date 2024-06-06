@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.getAllArgumentsWithIr
 import org.jetbrains.kotlin.ir.util.inlineDeclaration
 import org.jetbrains.kotlin.ir.util.isFunctionInlining
+import org.jetbrains.kotlin.ir.util.isLambdaInlining
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -149,20 +150,17 @@ internal class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: Jvm
                 super.visitCall(expression)
             }
 
-            override fun visitContainerExpression(expression: IrContainerExpression) {
-                if (expression is IrInlinedFunctionBlock && expression.isFunctionInlining()) {
-                    val additionalInlinableParameters = expression.getInlinableParameters()
-                    val additionalTypeArguments = expression.getReifiedArguments()
+            override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock) {
+                if (inlinedBlock.isLambdaInlining()) return super.visitInlinedFunctionBlock(inlinedBlock)
 
-                    inlinableParameters.addAll(additionalInlinableParameters)
-                    reifiedArguments.addAll(additionalTypeArguments)
-                    super.visitContainerExpression(expression)
-                    inlinableParameters.dropLast(additionalInlinableParameters.size)
-                    reifiedArguments.dropLast(additionalTypeArguments.size)
-                    return
-                }
+                val additionalInlinableParameters = inlinedBlock.getInlinableParameters()
+                val additionalTypeArguments = inlinedBlock.getReifiedArguments()
 
-                super.visitContainerExpression(expression)
+                inlinableParameters.addAll(additionalInlinableParameters)
+                reifiedArguments.addAll(additionalTypeArguments)
+                super.visitContainerExpression(inlinedBlock)
+                inlinableParameters.dropLast(additionalInlinableParameters.size)
+                reifiedArguments.dropLast(additionalTypeArguments.size)
             }
         })
         return classesToRegenerate
