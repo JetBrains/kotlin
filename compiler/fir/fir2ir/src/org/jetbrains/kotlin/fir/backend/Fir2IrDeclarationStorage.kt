@@ -556,7 +556,7 @@ class Fir2IrDeclarationStorage(
     ): PropertySymbols {
         if (
             !parentIsExternal &&
-            property.isFakeOverride(fakeOverrideOwnerLookupTag)
+            property.isFakeOverrideOrDelegated(fakeOverrideOwnerLookupTag)
         ) {
             return createFakeOverridePropertySymbols(property, fakeOverrideOwnerLookupTag)
         }
@@ -577,7 +577,7 @@ class Fir2IrDeclarationStorage(
         property: FirProperty,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?,
     ): PropertySymbols {
-        val originalFirProperty = property.unwrapFakeOverrides()
+        val originalFirProperty = property.unwrapFakeOverridesOrDelegated()
         val originalSymbols = getIrPropertySymbols(originalFirProperty.symbol)
         require(property.isStubPropertyForPureField != true) {
             "What are we doing here?"
