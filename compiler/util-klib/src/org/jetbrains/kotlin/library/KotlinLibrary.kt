@@ -73,7 +73,6 @@ interface BaseKotlinLibrary {
     // Whether this library is default (provided by distribution)?
     val isDefault: Boolean
     val manifestProperties: Properties
-    val has_pre_1_4_manifest: Boolean
 }
 
 interface MetadataLibrary {

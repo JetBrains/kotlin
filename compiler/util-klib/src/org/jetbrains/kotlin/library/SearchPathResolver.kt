@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.SearchPathResolver.LookupResult
 import org.jetbrains.kotlin.library.SearchPathResolver.SearchRoot
 import org.jetbrains.kotlin.library.impl.createKotlinLibraryComponents
-import org.jetbrains.kotlin.library.impl.isPre_1_4_Library
 import org.jetbrains.kotlin.util.Logger
 import org.jetbrains.kotlin.util.WithLogger
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
