@@ -131,22 +131,16 @@ internal fun KaAnnotatedSymbol.hasAnnotation(
     classId: ClassId,
     useSiteTargetFilter: AnnotationUseSiteTargetFilter,
 ): Boolean {
-    if (classId in annotations) {
-        return annotations[classId].any { useSiteTargetFilter.isAllowed(it.useSiteTarget) }
-    }
-
-    return false
+    return annotations[classId]
+        .any { useSiteTargetFilter.isAllowed(it.useSiteTarget) }
 }
 
 internal fun KaAnnotatedSymbol.annotationsByClassId(
     classId: ClassId,
     useSiteTargetFilter: AnnotationUseSiteTargetFilter
 ): List<KaAnnotation> {
-    if (classId in annotations) {
-        return annotations[classId].filter { useSiteTargetFilter.isAllowed(it.useSiteTarget) }
-    }
-
-    return emptyList()
+    return annotations[classId]
+        .filter { useSiteTargetFilter.isAllowed(it.useSiteTarget) }
 }
 
 context(KaSession)
