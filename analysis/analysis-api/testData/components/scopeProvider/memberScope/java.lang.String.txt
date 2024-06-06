@@ -7,7 +7,7 @@ KaJavaFieldSymbol:
   isVal: true
   modality: FINAL
   name: value
-  origin: JAVA_SOURCE
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
     annotationsList: []
@@ -33,7 +33,7 @@ KaJavaFieldSymbol:
   isVal: false
   modality: OPEN
   name: hash
-  origin: JAVA_SOURCE
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -99,7 +99,7 @@ KaJavaFieldSymbol:
   isVal: false
   modality: OPEN
   name: hash32
-  origin: JAVA_SOURCE
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -4106,7 +4106,7 @@ KaNamedClassOrObjectSymbol:
   isInner: false
   modality: OPEN
   name: CaseInsensitiveComparator
-  origin: JAVA_SOURCE
+  origin: JAVA_LIBRARY
   superTypes: [
     KaUsualClassType:
       annotationsList: []
