@@ -8,13 +8,12 @@ package org.jetbrains.kotlin.gradle.targets.native
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.Exec
 import org.gradle.language.base.plugins.LifecycleBasePlugin
-import org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.statistics.NativeLinkTaskMetrics
 import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
@@ -23,6 +22,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 
 internal val KotlinNativeConfigureBinariesSideEffect = KotlinTargetSideEffect<KotlinNativeTarget> { target ->
@@ -71,6 +71,22 @@ internal val KotlinNativeConfigureBinariesSideEffect = KotlinTargetSideEffect<Ko
     target.binaries.test(listOf(NativeBuildType.DEBUG)) { }
 }
 
+/**
+ * Creates a resolvable configuration from non-resolvable "api" of [KotlinNativeCompilation]
+ * Kotlin Native requires that only API dependencies can be exported. So we need to resolve API-only dependencies
+ * and exported dependencies to check that.
+ */
+private fun KotlinNativeCompilation.resolvableApiConfiguration(): Configuration {
+    val apiConfiguration = compilation.internal.configurations.apiConfiguration
+    val compileConfiguration = compilation.internal.configurations.compileDependencyConfiguration
+    return project
+        .configurations.maybeCreateResolvable(lowerCamelCaseName("resolvable", apiConfiguration.name))
+        .apply {
+            extendsFrom(apiConfiguration)
+            compileConfiguration.copyAttributesTo(project, this)
+        }
+}
+
 private fun Project.createLinkTask(binary: NativeBinary) {
     // workaround for too late compilation compilerOptions creation
     // which leads to not able run project.afterEvaluate because of wrong context
@@ -78,11 +94,15 @@ private fun Project.createLinkTask(binary: NativeBinary) {
     @Suppress("DEPRECATION") val compilationCompilerOptions = binary.compilation.compilerOptions
     val konanPropertiesBuildService = KonanPropertiesBuildService.registerIfAbsent(project)
 
+    val compilation = binary.compilation
+
+    // Configuration should be created outside registerTask
+    val resolvableApiConfiguration = compilation.resolvableApiConfiguration()
+
     val linkTask = registerTask<KotlinNativeLink>(
         binary.linkTaskName, listOf(binary)
     ) { task ->
         val target = binary.target
-        val compilation = binary.compilation
         task.group = BasePlugin.BUILD_GROUP
         task.description = "Links ${binary.outputKind.description} '${binary.name}' for a target '${target.name}'."
         task.dependsOn(compilation.compileTaskProvider)
@@ -105,6 +125,8 @@ private fun Project.createLinkTask(binary: NativeBinary) {
         task.setSource(compilation.compileTaskProvider.flatMap { it.outputFile })
         task.includes.clear() // we need to include non '.kt' or '.kts' files
         task.disallowSourceChanges()
+
+        task.apiFiles.from(resolvableApiConfiguration)
     }
 
     NativeLinkTaskMetrics.collectMetrics(this)
