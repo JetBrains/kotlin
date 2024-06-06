@@ -1,0 +1,5 @@
+packages: 0
+classifiers: 0
+callables: 1
+  fun testFun_generated()
+constructors: 0
