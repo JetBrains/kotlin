@@ -5,12 +5,16 @@
 
 package org.jetbrains.kotlin.fir.backend.jvm
 
-import org.jetbrains.kotlin.backend.jvm.*
+import org.jetbrains.kotlin.backend.jvm.CachedFieldsForObjectInstances
+import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
+import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializer
+import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.overrides.IrJavaIncompatibilityRulesOverridabilityCondition
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmSerializeIrMode
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrConversionScope
@@ -18,6 +22,7 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.utils.InjectedValue
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.scopes.jvm.FirJvmDelegatedMembersFilter.Companion.PLATFORM_DEPENDENT_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
@@ -30,6 +35,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmen
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 
@@ -107,5 +113,31 @@ class JvmFir2IrExtensions(
         this.irBuiltIns = irBuiltIns
         require(this.symbolTable == null) { "SymboTable is already initialized" }
         this.symbolTable = symbolTable
+    }
+
+    // See FirJvmDelegatedMembersFilter for reference
+    override fun shouldGenerateDelegatedMember(delegateMemberCandidate: IrOverridableDeclaration<*>): Boolean {
+        val original = delegateMemberCandidate.resolveFakeOverride() ?: return true
+
+        fun IrOverridableDeclaration<*>.isNonAbstractJavaMethod(): Boolean {
+            return origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && modality != Modality.ABSTRACT
+        }
+
+        fun IrOverridableDeclaration<*>.hasJvmDefaultAnnotation(): Boolean {
+            return annotations.hasAnnotation(JvmStandardClassIds.JVM_DEFAULT_CLASS_ID)
+        }
+
+        fun IrOverridableDeclaration<*>.isBuiltInMemberMappedToJavaDefault(): Boolean {
+            return modality != Modality.ABSTRACT &&
+                    annotations.hasAnnotation(PLATFORM_DEPENDENT_ANNOTATION_CLASS_ID)
+        }
+
+        val shouldNotGenerate = original.isNonAbstractJavaMethod()
+                || original.hasJvmDefaultAnnotation()
+                || original.isBuiltInMemberMappedToJavaDefault()
+        // TODO(KT-69150): Investigate need of this check
+        //        || original.origin == FirDeclarationOrigin.Synthetic.FakeHiddenInPreparationForNewJdk
+
+        return !shouldNotGenerate
     }
 }

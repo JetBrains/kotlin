@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrOverridableDeclaration
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
 import org.jetbrains.kotlin.ir.util.SymbolTable
 
@@ -46,6 +47,8 @@ interface Fir2IrExtensions {
 
     fun initializeIrBuiltInsAndSymbolTable(irBuiltIns: IrBuiltIns, symbolTable: SymbolTable)
 
+    fun shouldGenerateDelegatedMember(delegateMemberCandidate: IrOverridableDeclaration<*>): Boolean
+
     object Default : Fir2IrExtensions {
         override val irNeedsDeserialization: Boolean
             get() = false
@@ -59,5 +62,6 @@ interface Fir2IrExtensions {
         override fun hasBackingField(property: FirProperty, session: FirSession): Boolean = property.hasBackingField
         override fun isTrueStatic(declaration: FirCallableDeclaration, session: FirSession): Boolean = false
         override fun initializeIrBuiltInsAndSymbolTable(irBuiltIns: IrBuiltIns, symbolTable: SymbolTable) {}
+        override fun shouldGenerateDelegatedMember(delegateMemberCandidate: IrOverridableDeclaration<*>): Boolean = true
     }
 }

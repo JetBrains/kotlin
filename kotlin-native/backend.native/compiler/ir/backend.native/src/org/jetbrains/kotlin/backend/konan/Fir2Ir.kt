@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
+import org.jetbrains.kotlin.ir.declarations.IrOverridableDeclaration
 import org.jetbrains.kotlin.ir.objcinterop.IrObjCOverridabilityCondition
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
@@ -60,6 +61,7 @@ internal object NativeFir2IrExtensions : Fir2IrExtensions {
 
     override fun isTrueStatic(declaration: FirCallableDeclaration, session: FirSession): Boolean = false
     override fun initializeIrBuiltInsAndSymbolTable(irBuiltIns: IrBuiltIns, symbolTable: SymbolTable) {}
+    override fun shouldGenerateDelegatedMember(delegateMemberCandidate: IrOverridableDeclaration<*>): Boolean = true
 }
 
 internal fun PhaseContext.fir2Ir(
