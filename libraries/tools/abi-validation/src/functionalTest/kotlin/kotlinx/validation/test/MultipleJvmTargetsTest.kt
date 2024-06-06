@@ -134,6 +134,34 @@ internal class MultipleJvmTargetsTest : BaseKotlinGradleTest() {
         }
     }
 
+    // Scenario from #233: if there were two targets (and two dumps, correspondingly),
+    // removal of one of the targets should trigger validation failure.
+    @Test
+    fun testValidationAfterTargetRemoval() {
+        val runner = test {
+            buildGradleKts {
+                resolve("/examples/gradle/base/withPlugin.gradle.kts")
+            }
+            kotlin("AnotherBuildConfig.kt") {
+                resolve("/examples/classes/AnotherBuildConfig.kt")
+            }
+            // let's pretend, there were multiple targets before
+            for (tgtName in listOf("jvm", "anotherJvm")) {
+                dir("$API_DIR/$tgtName/") {
+                    file("${rootProjectDir.name.lowercase()}.api") {
+                        resolve("/examples/classes/AnotherBuildConfig.dump")
+                    }
+                }
+            }
+            runner {
+                arguments.add(":apiCheck")
+            }
+        }
+        runner.buildAndFail().apply {
+            assertTaskFailure(":apiCheck")
+        }
+    }
+
     private val jvmApiDump: File get() = rootProjectDir.resolve("$API_DIR/jvm/testproject.api")
     private val anotherApiDump: File get() = rootProjectDir.resolve("$API_DIR/anotherJvm/testproject.api")
 
