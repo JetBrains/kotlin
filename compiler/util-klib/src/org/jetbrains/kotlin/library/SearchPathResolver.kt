@@ -230,15 +230,6 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
         return sequence.filterNotNull()
     }
 
-    private fun Sequence<File>.filterOutPre_1_4_libraries(): Sequence<File> = this.filter {
-        if (it.isPre_1_4_Library) {
-            logger.strongWarning("KLIB resolver: Skipping '$it'. This is a pre 1.4 library.")
-            false
-        } else {
-            true
-        }
-    }
-
     // Default libraries could be resolved several times during findLibraries and resolveDependencies.
     // Store already resolved libraries.
     private inner class ResolvedLibrary(val library: L?)
@@ -250,7 +241,6 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
             val givenPath = unresolved.path
             try {
                 resolutionSequence(givenPath)
-                    .filterOutPre_1_4_libraries()
                     .flatMap { libraryComponentBuilder(it, isDefaultLink).asSequence() }
                     .map { it.takeIf { libraryMatch(it, unresolved) } }
                     .filterNotNull()
@@ -383,7 +373,6 @@ class SingleKlibComponentResolver(
  * Resolves KLIB libraries by:
  * - expanding the given library path to the real path that may or may not contain ".klib" extension
  * - searching among user-supplied libraries by "unique_name" that matches the given library name
- * - filtering out pre-1.4 libraries (with the old style layout)
  * - filtering out library components that have different ABI version than the ABI version of the current compiler
  * - filtering out libraries with non-default ir_provider.
  *
