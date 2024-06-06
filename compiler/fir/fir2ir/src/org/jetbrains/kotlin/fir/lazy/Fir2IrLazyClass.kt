@@ -244,6 +244,48 @@ class Fir2IrLazyClass(
         return result
     }
 
+    private var computedDeclarationsNeededForSubclasses = false
+
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    fun computeDeclarationsNeededForSubclasses() {
+        if (computedDeclarationsNeededForSubclasses) return
+        computedDeclarationsNeededForSubclasses = true
+
+        val result = mutableListOf<IrDeclaration>()
+        val lookupTag = fir.symbol.toLookupTag()
+
+        listOfNotNull(
+            fir.unsubstitutedScope(c),
+            fir.staticScopeForBackend(session, scopeSession)
+        ).forEach { scope ->
+            for (name in scope.getCallableNames()) {
+                scope.processFunctionsByName(name) l@{ functionSymbol ->
+                    val function = functionSymbol.fir
+                    if (functionSymbol.isStatic || functionSymbol.isFinal)
+                        return@l
+                    if (!session.visibilityChecker.isVisibleForOverriding(fir.moduleData, fir.symbol, function))
+                        return@l
+
+                    result += declarationStorage.getIrFunctionSymbol(functionSymbol, lookupTag).owner
+                }
+
+                // todo perf: only needed for case of subclassing by delegation
+                scope.processPropertiesByName(name) l@{ propertySymbol ->
+                    if (propertySymbol !is FirPropertySymbol)
+                        return@l
+
+                    val property = propertySymbol.fir
+                    if (propertySymbol.isStatic || propertySymbol.isFinal)
+                        return@l
+                    if (!session.visibilityChecker.isVisibleForOverriding(fir.moduleData, fir.symbol, property))
+                        return@l
+
+                    result += declarationStorage.getIrPropertySymbol(propertySymbol, lookupTag).owner as IrProperty
+                }
+            }
+        }
+    }
+
     private fun shouldBuildStub(fir: FirDeclaration): Boolean {
         if (fir is FirCallableDeclaration) {
             if (fir.originalOrSelf().origin == FirDeclarationOrigin.Synthetic.FakeHiddenInPreparationForNewJdk) {
