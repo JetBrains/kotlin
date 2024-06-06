@@ -431,12 +431,6 @@ class Fir2IrDeclarationStorage(
         return this
     }
 
-    internal fun cacheDelegationFunction(function: FirSimpleFunction, irFunction: IrSimpleFunction) {
-        val symbol = irFunction.symbol
-        functionCache[function] = symbol
-        delegatedReverseCache[symbol] = function
-    }
-
     internal fun cacheGeneratedFunction(firFunction: FirSimpleFunction, irFunction: IrSimpleFunction) {
         val containingClass = firFunction.getContainingClass(session)!!
         val cache = dataClassGeneratedFunctionsCache.computeIfAbsent(containingClass) { DataClassGeneratedFunctionsStorage() }
@@ -726,12 +720,6 @@ class Fir2IrDeclarationStorage(
 
     fun findBackingFieldOfProperty(propertySymbol: IrPropertySymbol): IrFieldSymbol? {
         return backingFieldForPropertyCache[propertySymbol]
-    }
-
-    internal fun cacheDelegatedProperty(property: FirProperty, irProperty: IrProperty) {
-        val symbol = irProperty.symbol
-        propertyCache[property] = symbol
-        delegatedReverseCache[symbol] = property
     }
 
     // ------------------------------------ fields ------------------------------------
