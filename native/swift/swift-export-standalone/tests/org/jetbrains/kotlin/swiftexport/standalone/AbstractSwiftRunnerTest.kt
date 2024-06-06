@@ -26,21 +26,29 @@ abstract class AbstractKlibBasedSwiftRunnerTest : AbstractNativeSwiftExportTest(
         swiftExportOutput: SwiftExportModule,
         swiftModules: Set<TestCompilationArtifact.Swift.Module>,
     ) {
-        assertSame(1, swiftExportOutput.dependencies.count(), "should produce module without a single dependency")
-
-        val flattenModules = setOf(swiftExportOutput, swiftExportOutput.dependencies.first())
+        val flattenModules = setOfNotNull(swiftExportOutput, swiftExportOutput.dependencies.firstOrNull())
 
         flattenModules.forEach {
-            val files = it.files
+            when (it) {
+                is SwiftExportModule.BridgesToKotlin -> {
+                    val files = it.files
 
-            val expectedFiles = testPathFull.toPath() / "golden_result/"
-            val expectedSwift = expectedFiles / it.name / "${it.name}.swift"
-            val expectedCHeader = expectedFiles / it.name / "${it.name}.h"
-            val expectedKotlinBridge = expectedFiles / it.name / "${it.name}.kt"
+                    val expectedFiles = testPathFull.toPath() / "golden_result/"
+                    val expectedSwift = expectedFiles / it.name / "${it.name}.swift"
+                    val expectedCHeader = expectedFiles / it.name / "${it.name}.h"
+                    val expectedKotlinBridge = expectedFiles / it.name / "${it.name}.kt"
 
-            KotlinTestUtils.assertEqualsToFile(expectedSwift, files.swiftApi.readText())
-            KotlinTestUtils.assertEqualsToFile(expectedCHeader, files.cHeaderBridges.readText())
-            KotlinTestUtils.assertEqualsToFile(expectedKotlinBridge, files.kotlinBridges.readText())
+                    KotlinTestUtils.assertEqualsToFile(expectedSwift, files.swiftApi.readText())
+                    KotlinTestUtils.assertEqualsToFile(expectedCHeader, files.cHeaderBridges.readText())
+                    KotlinTestUtils.assertEqualsToFile(expectedKotlinBridge, files.kotlinBridges.readText())
+                }
+                is SwiftExportModule.SwiftOnly -> {
+                    val expectedFiles = testPathFull.toPath() / "golden_result/"
+                    val expectedSwift = expectedFiles / it.name / "${it.name}.swift"
+
+                    KotlinTestUtils.assertEqualsToFile(expectedSwift, it.swiftApi.readText())
+                }
+            }
         }
     }
 

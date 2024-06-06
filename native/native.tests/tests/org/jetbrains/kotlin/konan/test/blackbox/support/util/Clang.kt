@@ -137,10 +137,10 @@ internal fun AbstractNativeSimpleTest.compileWithClang(
     }
 }
 
-internal fun createModuleMap(directory: File, umbrellaHeader: File): File {
+internal fun createModuleMap(moduleName: String, directory: File, umbrellaHeader: File): File {
     return directory.resolve("module.modulemap").apply {
         writeText("""
-            module KotlinBridges_${umbrellaHeader.name.removeSuffix(".h")} {
+            module $moduleName {
                 umbrella header "${umbrellaHeader.absolutePath}"
                 export *
             }

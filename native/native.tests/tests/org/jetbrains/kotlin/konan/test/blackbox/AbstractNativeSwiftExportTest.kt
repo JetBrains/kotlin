@@ -68,7 +68,7 @@ abstract class AbstractNativeSwiftExportTest {
         val swiftExportOutput = runSwiftExport(
             originalTestCase.constructSwiftInput(),
             constructSwiftExportConfig(testPathFull)
-        ).getOrThrow().first()
+        ).getOrThrow().first() as SwiftExportModule.BridgesToKotlin
 
         // compile kotlin into binary
         val additionalKtFiles: Set<Path> = mutableSetOf<Path>()
@@ -107,12 +107,12 @@ abstract class AbstractNativeSwiftExportTest {
         )
     }
 
-    private fun List<SwiftExportModule>.collectKotlinBridgeFilesRecursively(into: MutableSet<Path>) =
+    private fun List<SwiftExportModule.BridgesToKotlin>.collectKotlinBridgeFilesRecursively(into: MutableSet<Path>) =
         forEach { module -> module.collectKotlinBridgeFilesRecursively(into) }
 
-    private fun SwiftExportModule.collectKotlinBridgeFilesRecursively(into: MutableSet<Path>) {
+    private fun SwiftExportModule.BridgesToKotlin.collectKotlinBridgeFilesRecursively(into: MutableSet<Path>) {
         into.add(files.kotlinBridges)
-        dependencies.collectKotlinBridgeFilesRecursively(into)
+        dependencies.filterIsInstance<SwiftExportModule.BridgesToKotlin>().collectKotlinBridgeFilesRecursively(into)
     }
 
     private fun SwiftExportModule.compile(
@@ -120,10 +120,44 @@ abstract class AbstractNativeSwiftExportTest {
         testPathFull: File,
     ): Set<TestCompilationArtifact.Swift.Module> {
         val deps = dependencies.flatMapToSet { it.compile(compiledKotlinLibrary, testPathFull) }
+        val compiledSwiftModule = when (this) {
+            is SwiftExportModule.BridgesToKotlin -> compile(compiledKotlinLibrary, testPathFull)
+            is SwiftExportModule.SwiftOnly -> compile(compiledKotlinLibrary, testPathFull)
+        }
+        return deps + compiledSwiftModule
+    }
+
+    private fun SwiftExportModule.SwiftOnly.compile(
+        compiledKotlinLibrary: TestCompilationArtifact.BinaryLibrary,
+        testPathFull: File,
+    ): Set<TestCompilationArtifact.Swift.Module> {
+        val deps = dependencies.flatMapToSet { it.compile(compiledKotlinLibrary, testPathFull) }
         val compiledSwiftModule = compiledSwiftCache.computeIfAbsent(this) {
             val swiftModuleDir = buildDir(testPathFull.name).resolve("SwiftModules").also { it.mkdirs() }
+            return@computeIfAbsent compileSwiftModule(
+                swiftModuleDir = swiftModuleDir,
+                swiftModuleName = name,
+                sources = listOf(swiftApi.toFile()),
+                binaryLibrary = compiledKotlinLibrary,
+                deps = deps,
+            )
+        }
+        return deps + compiledSwiftModule
+    }
+
+    private fun SwiftExportModule.BridgesToKotlin.compile(
+        compiledKotlinLibrary: TestCompilationArtifact.BinaryLibrary,
+        testPathFull: File,
+    ): Set<TestCompilationArtifact.Swift.Module> {
+        val deps = dependencies.flatMapToSet { it.compile(compiledKotlinLibrary, testPathFull) }
+        val compiledSwiftModule = compiledSwiftCache.computeIfAbsent(this) {
+            it as SwiftExportModule.BridgesToKotlin
+            val swiftModuleDir = buildDir(testPathFull.name).resolve("SwiftModules").also { it.mkdirs() }
+            val umbrellaHeader = files.cHeaderBridges.toFile()
             val bridgeModuleFile = createModuleMap(
-                files.cHeaderBridges.toFile().parentFile, files.cHeaderBridges.toFile()
+                moduleName = it.bridgeName,
+                directory = files.cHeaderBridges.toFile().parentFile,
+                umbrellaHeader = umbrellaHeader,
             )
             return@computeIfAbsent compileSwiftModule(
                 swiftModuleDir = swiftModuleDir,
@@ -141,7 +175,7 @@ abstract class AbstractNativeSwiftExportTest {
         swiftModuleDir: File,
         swiftModuleName: String,
         sources: List<File>,
-        kotlinBridgeModuleMap: File,
+        kotlinBridgeModuleMap: File? = null,
         binaryLibrary: TestCompilationArtifact.BinaryLibrary,
         deps: Collection<TestCompilationArtifact.Swift.Module>,
     ): TestCompilationArtifact.Swift.Module {
@@ -155,7 +189,7 @@ abstract class AbstractNativeSwiftExportTest {
                 modulemap = kotlinBridgeModuleMap
             ),
             swiftExtraOpts = listOf(
-                "-Xcc", "-fmodule-map-file=${kotlinBridgeModuleMap.absolutePath}",
+                *(modulemapFileToSwiftCompilerOptionsIfNeeded(kotlinBridgeModuleMap)).toTypedArray(),
                 "-Xcc", "-fmodule-map-file=${Distribution(KotlinNativePaths.homePath.absolutePath).kotlinRuntimeForSwiftModuleMap}",
                 "-L", binaryLibrary.libraryFile.parentFile.absolutePath,
                 "-l$binaryLibraryName",
@@ -227,3 +261,9 @@ abstract class AbstractNativeSwiftExportTest {
         }
     }
 }
+
+private fun modulemapFileToSwiftCompilerOptionsIfNeeded(modulemap: File?) = modulemap?.let {
+    listOf(
+        "-Xcc", "-fmodule-map-file=${it.absolutePath}",
+    )
+} ?: emptyList()

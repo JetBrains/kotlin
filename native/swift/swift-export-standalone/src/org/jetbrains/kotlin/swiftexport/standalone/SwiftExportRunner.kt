@@ -95,11 +95,24 @@ public sealed interface InputModule {
     ) : InputModule
 }
 
-public data class SwiftExportModule(
-    val name: String,
-    val files: SwiftExportFiles,
-    val dependencies: List<SwiftExportModule>,
-) : Serializable
+public sealed class SwiftExportModule(
+    public val name: String,
+    public val dependencies: List<SwiftExportModule>
+) : Serializable {
+
+    public class SwiftOnly(
+        public val swiftApi: Path,
+        name: String,
+        dependencies: List<SwiftExportModule>
+    ): SwiftExportModule(name, dependencies)
+
+    public class BridgesToKotlin(
+        public val files: SwiftExportFiles,
+        public val bridgeName: String,
+        name: String,
+        dependencies: List<SwiftExportModule>,
+    ) : SwiftExportModule(name, dependencies)
+}
 
 public data class SwiftExportFiles(
     val swiftApi: Path,
@@ -139,7 +152,7 @@ public fun runSwiftExport(
 ): Result<List<SwiftExportModule>> = runCatching {
     val stableDeclarationsOrder = config.settings.containsKey(STABLE_DECLARATIONS_ORDER)
     val renderDocComments = config.settings[RENDER_DOC_COMMENTS] != "false"
-    val bridgeModuleName = config.settings.getOrElse(BRIDGE_MODULE_NAME) {
+    val bridgeModuleNamePrefix = config.settings.getOrElse(BRIDGE_MODULE_NAME) {
         config.logger.report(
             SwiftExportLogger.Severity.Warning,
             "Bridging header is not set. Using $DEFAULT_BRIDGE_MODULE_NAME instead"
@@ -162,10 +175,11 @@ public fun runSwiftExport(
     } else {
         { emptyList() }
     }
+    val bridgesModuleName = "${bridgeModuleNamePrefix}_${buildResult.mainModule.name}"
     listOf(buildResult.mainModule, buildResult.moduleForPackageEnums).forEach {
         val bridgeRequests = buildBridgeRequests(bridgeGenerator, it)
         if (bridgeRequests.isNotEmpty()) {
-            it.updateImports(listOf(SirImport(moduleName = "${bridgeModuleName}_${it.name}")))
+            it.updateImports(listOf(SirImport(moduleName = bridgesModuleName)))
         }
         it.dumpResultToFiles(
             output = it.createOutputFiles(config.outputPath),
@@ -177,15 +191,16 @@ public fun runSwiftExport(
         )
     }
     return@runCatching listOf(
-        SwiftExportModule(
+        SwiftExportModule.BridgesToKotlin(
             name = buildResult.mainModule.name,
-            dependencies = listOf(
-                SwiftExportModule(
+            dependencies = if (config.multipleModulesHandlingStrategy == MultipleModulesHandlingStrategy.IntoSingleModule) emptyList() else listOf(
+                SwiftExportModule.SwiftOnly(
                     name = buildResult.moduleForPackageEnums.name,
                     dependencies = emptyList(),
-                    files = buildResult.moduleForPackageEnums.createOutputFiles(config.outputPath)
+                    swiftApi = buildResult.moduleForPackageEnums.createOutputFiles(config.outputPath).swiftApi,
                 )
             ),
+            bridgeName = bridgesModuleName,
             files = buildResult.mainModule.createOutputFiles(config.outputPath)
         )
     )
