@@ -60,6 +60,7 @@ class IrPrettyKotlinDumpHandler(
                 stableOrder = true,
                 // Expect declarations exist in K1 IR just before serialization, but won't be serialized. Though, dumps should be same before and after
                 printExpectDeclarations = module.languageVersionSettings.languageVersion.usesK2,
+                inferElseBranches = true,
             ),
         )
     }
