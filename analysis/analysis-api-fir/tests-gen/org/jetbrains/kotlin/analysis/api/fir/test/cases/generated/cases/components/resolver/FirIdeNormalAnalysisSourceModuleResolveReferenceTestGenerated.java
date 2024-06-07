@@ -2350,6 +2350,18 @@ public class FirIdeNormalAnalysisSourceModuleResolveReferenceTestGenerated exten
     }
 
     @Test
+    @TestMetadata("functionClash.kt")
+    public void testFunctionClash() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invoke/functionClash.kt");
+    }
+
+    @Test
+    @TestMetadata("functionClashWithParenthesis.kt")
+    public void testFunctionClashWithParenthesis() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invoke/functionClashWithParenthesis.kt");
+    }
+
+    @Test
     @TestMetadata("lambdaAndParens.kt")
     public void testLambdaAndParens() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invoke/lambdaAndParens.kt");
