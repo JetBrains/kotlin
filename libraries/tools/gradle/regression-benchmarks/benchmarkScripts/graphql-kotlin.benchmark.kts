@@ -10,7 +10,7 @@
     name = "graphql-kotlin",
     gitUrl = "https://github.com/ExpediaGroup/graphql-kotlin.git",
     gitCommitSha = "7d1e5a3114e95a4e0d63a8c515e9e8e37d5c504c",
-    stableKotlinVersion = "1.9.20",
+    stableKotlinVersion = "2.0.0",
 )
 
 import java.io.File
