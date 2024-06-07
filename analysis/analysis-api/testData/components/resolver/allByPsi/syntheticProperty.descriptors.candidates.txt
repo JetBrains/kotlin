@@ -7,37 +7,37 @@ KtPackageDirective(0,0): ''
 KtImportList(0,0): ''
   NO_CANDIDATES
 
-KtNamedFunction(0,335): '// WITH_STDLIB'
+KtNamedFunction(0,300): '// WITH_STDLIB'
   NO_CANDIDATES
 
-KtTypeReference(71,80): 'JavaClass'
+KtTypeReference(36,45): 'JavaClass'
   NO_CANDIDATES
 
-KtUserType(71,80): 'JavaClass'
+KtUserType(36,45): 'JavaClass'
   NO_CANDIDATES
 
-KtNameReferenceExpression(71,80): 'JavaClass'
+KtNameReferenceExpression(36,45): 'JavaClass'
   NO_CANDIDATES
 
-KtParameterList(84,106): '(javaClass: JavaClass)'
+KtParameterList(49,71): '(javaClass: JavaClass)'
   NO_CANDIDATES
 
-KtParameter(85,105): 'javaClass: JavaClass'
+KtParameter(50,70): 'javaClass: JavaClass'
   NO_CANDIDATES
 
-KtTypeReference(96,105): 'JavaClass'
+KtTypeReference(61,70): 'JavaClass'
   NO_CANDIDATES
 
-KtUserType(96,105): 'JavaClass'
+KtUserType(61,70): 'JavaClass'
   NO_CANDIDATES
 
-KtNameReferenceExpression(96,105): 'JavaClass'
+KtNameReferenceExpression(61,70): 'JavaClass'
   NO_CANDIDATES
 
-KtBlockExpression(107,335): '{'
+KtBlockExpression(72,300): '{'
   NO_CANDIDATES
 
-KtCallExpression(113,139): 'print(javaClass.something)'
+KtCallExpression(78,104): 'print(javaClass.something)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
@@ -346,7 +346,7 @@ KtCallExpression(113,139): 'print(javaClass.something)'
       }
     isInBestCandidates = false
 
-KtNameReferenceExpression(113,118): 'print'
+KtNameReferenceExpression(78,83): 'print'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
@@ -655,13 +655,13 @@ KtNameReferenceExpression(113,118): 'print'
       }
     isInBestCandidates = false
 
-KtValueArgumentList(118,139): '(javaClass.something)'
+KtValueArgumentList(83,104): '(javaClass.something)'
   NO_CANDIDATES
 
-KtValueArgument(119,138): 'javaClass.something'
+KtValueArgument(84,103): 'javaClass.something'
   NO_CANDIDATES
 
-KtDotQualifiedExpression(119,138): 'javaClass.something'
+KtDotQualifiedExpression(84,103): 'javaClass.something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -710,7 +710,7 @@ KtDotQualifiedExpression(119,138): 'javaClass.something'
       argumentMapping = {}
     isInBestCandidates = false
 
-KtNameReferenceExpression(119,128): 'javaClass'
+KtNameReferenceExpression(84,93): 'javaClass'
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleVariableAccessCall:
@@ -754,7 +754,7 @@ KtNameReferenceExpression(119,128): 'javaClass'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtNameReferenceExpression(129,138): 'something'
+KtNameReferenceExpression(94,103): 'something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -773,10 +773,27 @@ KtNameReferenceExpression(129,138): 'something'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtBinaryExpression(144,167): 'javaClass.something = 1'
-  NO_CANDIDATES
+KtBinaryExpression(109,132): 'javaClass.something = 1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = javaClass
+          isSafeNavigation = false
+          type = JavaClass
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = something
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var something: kotlin.Int
+          callableId = /JavaClass.something
+      simpleAccess = Write:
+        value = 1
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
 
-KtDotQualifiedExpression(144,163): 'javaClass.something'
+KtDotQualifiedExpression(109,128): 'javaClass.something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -826,7 +843,7 @@ KtDotQualifiedExpression(144,163): 'javaClass.something'
       argumentMapping = {}
     isInBestCandidates = false
 
-KtNameReferenceExpression(144,153): 'javaClass'
+KtNameReferenceExpression(109,118): 'javaClass'
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleVariableAccessCall:
@@ -870,7 +887,7 @@ KtNameReferenceExpression(144,153): 'javaClass'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtNameReferenceExpression(154,163): 'something'
+KtNameReferenceExpression(119,128): 'something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -890,13 +907,13 @@ KtNameReferenceExpression(154,163): 'something'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtOperationReferenceExpression(164,165): '='
+KtOperationReferenceExpression(129,130): '='
   NO_CANDIDATES
 
-KtConstantExpression(166,167): '1'
+KtConstantExpression(131,132): '1'
   NO_CANDIDATES
 
-KtBinaryExpression(172,196): 'javaClass.something += 1'
+KtBinaryExpression(137,161): 'javaClass.something += 1'
   KaApplicableCallCandidateInfo:
     candidate = KaCompoundVariableAccessCall:
       compoundAccess = CompoundAssign:
@@ -936,7 +953,7 @@ KtBinaryExpression(172,196): 'javaClass.something += 1'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtDotQualifiedExpression(172,191): 'javaClass.something'
+KtDotQualifiedExpression(137,156): 'javaClass.something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -985,7 +1002,7 @@ KtDotQualifiedExpression(172,191): 'javaClass.something'
       argumentMapping = {}
     isInBestCandidates = false
 
-KtNameReferenceExpression(172,181): 'javaClass'
+KtNameReferenceExpression(137,146): 'javaClass'
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleVariableAccessCall:
@@ -1029,7 +1046,7 @@ KtNameReferenceExpression(172,181): 'javaClass'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtNameReferenceExpression(182,191): 'something'
+KtNameReferenceExpression(147,156): 'something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1048,7 +1065,7 @@ KtNameReferenceExpression(182,191): 'something'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtOperationReferenceExpression(192,194): '+='
+KtOperationReferenceExpression(157,159): '+='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
@@ -1082,10 +1099,10 @@ KtOperationReferenceExpression(192,194): '+='
       }
     isInBestCandidates = true
 
-KtConstantExpression(195,196): '1'
+KtConstantExpression(160,161): '1'
   NO_CANDIDATES
 
-KtPostfixExpression(201,222): 'javaClass.something++'
+KtPostfixExpression(166,187): 'javaClass.something++'
   KaApplicableCallCandidateInfo:
     candidate = KaCompoundVariableAccessCall:
       compoundAccess = IncOrDecOperation:
@@ -1118,7 +1135,7 @@ KtPostfixExpression(201,222): 'javaClass.something++'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtDotQualifiedExpression(201,220): 'javaClass.something'
+KtDotQualifiedExpression(166,185): 'javaClass.something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1167,7 +1184,7 @@ KtDotQualifiedExpression(201,220): 'javaClass.something'
       argumentMapping = {}
     isInBestCandidates = false
 
-KtNameReferenceExpression(201,210): 'javaClass'
+KtNameReferenceExpression(166,175): 'javaClass'
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleVariableAccessCall:
@@ -1211,7 +1228,7 @@ KtNameReferenceExpression(201,210): 'javaClass'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtNameReferenceExpression(211,220): 'something'
+KtNameReferenceExpression(176,185): 'something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1230,7 +1247,7 @@ KtNameReferenceExpression(211,220): 'something'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtOperationReferenceExpression(220,222): '++'
+KtOperationReferenceExpression(185,187): '++'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
@@ -1250,7 +1267,7 @@ KtOperationReferenceExpression(220,222): '++'
       argumentMapping = {}
     isInBestCandidates = true
 
-KtPrefixExpression(227,248): '--javaClass.something'
+KtPrefixExpression(192,213): '--javaClass.something'
   KaApplicableCallCandidateInfo:
     candidate = KaCompoundVariableAccessCall:
       compoundAccess = IncOrDecOperation:
@@ -1283,7 +1300,7 @@ KtPrefixExpression(227,248): '--javaClass.something'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtOperationReferenceExpression(227,229): '--'
+KtOperationReferenceExpression(192,194): '--'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
@@ -1303,7 +1320,7 @@ KtOperationReferenceExpression(227,229): '--'
       argumentMapping = {}
     isInBestCandidates = true
 
-KtDotQualifiedExpression(229,248): 'javaClass.something'
+KtDotQualifiedExpression(194,213): 'javaClass.something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1352,7 +1369,7 @@ KtDotQualifiedExpression(229,248): 'javaClass.something'
       argumentMapping = {}
     isInBestCandidates = false
 
-KtNameReferenceExpression(229,238): 'javaClass'
+KtNameReferenceExpression(194,203): 'javaClass'
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleVariableAccessCall:
@@ -1396,7 +1413,7 @@ KtNameReferenceExpression(229,238): 'javaClass'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtNameReferenceExpression(239,248): 'something'
+KtNameReferenceExpression(204,213): 'something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1415,7 +1432,7 @@ KtNameReferenceExpression(239,248): 'something'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtPostfixExpression(254,265): 'something++'
+KtPostfixExpression(219,230): 'something++'
   KaApplicableCallCandidateInfo:
     candidate = KaCompoundVariableAccessCall:
       compoundAccess = IncOrDecOperation:
@@ -1455,7 +1472,7 @@ KtPostfixExpression(254,265): 'something++'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtNameReferenceExpression(254,263): 'something'
+KtNameReferenceExpression(219,228): 'something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1481,7 +1498,7 @@ KtNameReferenceExpression(254,263): 'something'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtOperationReferenceExpression(263,265): '++'
+KtOperationReferenceExpression(228,230): '++'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
@@ -1501,7 +1518,7 @@ KtOperationReferenceExpression(263,265): '++'
       argumentMapping = {}
     isInBestCandidates = true
 
-KtPostfixExpression(270,283): '(something)++'
+KtPostfixExpression(235,248): '(something)++'
   KaApplicableCallCandidateInfo:
     candidate = KaCompoundVariableAccessCall:
       compoundAccess = IncOrDecOperation:
@@ -1541,10 +1558,10 @@ KtPostfixExpression(270,283): '(something)++'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtParenthesizedExpression(270,281): '(something)'
+KtParenthesizedExpression(235,246): '(something)'
   NO_CANDIDATES
 
-KtNameReferenceExpression(271,280): 'something'
+KtNameReferenceExpression(236,245): 'something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1570,7 +1587,7 @@ KtNameReferenceExpression(271,280): 'something'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtOperationReferenceExpression(281,283): '++'
+KtOperationReferenceExpression(246,248): '++'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
@@ -1590,13 +1607,7 @@ KtOperationReferenceExpression(281,283): '++'
       argumentMapping = {}
     isInBestCandidates = true
 
-KtBinaryExpression(288,303): '(something) = 1'
-  NO_CANDIDATES
-
-KtParenthesizedExpression(288,299): '(something)'
-  NO_CANDIDATES
-
-KtNameReferenceExpression(289,298): 'something'
+KtBinaryExpression(253,268): '(something) = 1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1623,19 +1634,66 @@ KtNameReferenceExpression(289,298): 'something'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtOperationReferenceExpression(300,301): '='
+KtParenthesizedExpression(253,264): '(something)'
   NO_CANDIDATES
 
-KtConstantExpression(302,303): '1'
+KtNameReferenceExpression(254,263): 'something'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            location: LOCAL
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            type: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: JavaClass
+          type = JavaClass
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = something
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var something: kotlin.Int
+          callableId = /JavaClass.something
+      simpleAccess = Write:
+        value = 1
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(265,266): '='
   NO_CANDIDATES
 
-KtBinaryExpression(308,333): '(javaClass.something) = 1'
+KtConstantExpression(267,268): '1'
   NO_CANDIDATES
 
-KtParenthesizedExpression(308,329): '(javaClass.something)'
+KtBinaryExpression(273,298): '(javaClass.something) = 1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = javaClass
+          isSafeNavigation = false
+          type = JavaClass
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = something
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var something: kotlin.Int
+          callableId = /JavaClass.something
+      simpleAccess = Write:
+        value = 1
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtParenthesizedExpression(273,294): '(javaClass.something)'
   NO_CANDIDATES
 
-KtDotQualifiedExpression(309,328): 'javaClass.something'
+KtDotQualifiedExpression(274,293): 'javaClass.something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1685,7 +1743,7 @@ KtDotQualifiedExpression(309,328): 'javaClass.something'
       argumentMapping = {}
     isInBestCandidates = false
 
-KtNameReferenceExpression(309,318): 'javaClass'
+KtNameReferenceExpression(274,283): 'javaClass'
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleVariableAccessCall:
@@ -1729,7 +1787,7 @@ KtNameReferenceExpression(309,318): 'javaClass'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtNameReferenceExpression(319,328): 'something'
+KtNameReferenceExpression(284,293): 'something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1749,8 +1807,8 @@ KtNameReferenceExpression(319,328): 'something'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtOperationReferenceExpression(330,331): '='
+KtOperationReferenceExpression(295,296): '='
   NO_CANDIDATES
 
-KtConstantExpression(332,333): '1'
+KtConstantExpression(297,298): '1'
   NO_CANDIDATES

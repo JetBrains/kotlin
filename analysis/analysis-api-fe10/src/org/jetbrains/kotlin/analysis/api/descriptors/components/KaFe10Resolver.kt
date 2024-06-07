@@ -89,7 +89,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.checkWithAttachment
 
 internal class KaFe10Resolver(
-    override val analysisSessionProvider: () -> KaFe10Session
+    override val analysisSessionProvider: () -> KaFe10Session,
 ) : KaAbstractResolver<KaFe10Session>(), KaFe10SessionComponent {
     override fun KtReference.isImplicitReferenceToCompanion(): Boolean = withValidityAssertion {
         if (this !is KtSimpleNameReference) {
@@ -166,85 +166,94 @@ internal class KaFe10Resolver(
         return doCollectCallCandidates(this)
     }
 
-    private fun doCollectCallCandidates(psi: KtElement): List<KaCallCandidateInfo> =
-        with(analysisContext.analyze(psi, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)) {
-            if (!canBeResolvedAsCall(psi)) return emptyList()
-
-            val resolvedCall = doResolveCall(psi)
-            val bestCandidateDescriptors =
-                resolvedCall?.calls?.filterIsInstance<KaCallableMemberCall<*, *>>()
-                    ?.mapNotNullTo(mutableSetOf()) { it.descriptor as? CallableDescriptor }
-                    ?: emptySet()
-
-            val unwrappedPsi = KtPsiUtil.deparenthesize(psi as? KtExpression) ?: psi
-
-            // TODO: Handle ++ or -- operator for KtUnaryExpression
-
-            if (unwrappedPsi is KtBinaryExpression &&
-                (unwrappedPsi.operationToken in OperatorConventions.COMPARISON_OPERATIONS ||
-                        unwrappedPsi.operationToken in OperatorConventions.EQUALS_OPERATIONS)
-            ) {
-                // TODO: Handle compound assignment
-                handleAsFunctionCall(this, unwrappedPsi)?.toKaCallCandidateInfos()?.let { return@with it }
-            }
-
-            // The regular mechanism doesn't work, so at least the resolved call should be returned
-            when (psi) {
-                is KtWhenConditionInRange,
-                is KtCollectionLiteralExpression,
-                is KtOperationReferenceExpression,
-                is KtCallableReferenceExpression,
-                    -> return resolvedCall?.toKaCallCandidateInfos().orEmpty()
-            }
-
-            val resolutionScope = unwrappedPsi.getResolutionScope(this) ?: return emptyList()
-            val call = unwrappedPsi.getCall(this)?.let {
-                if (it is CallTransformer.CallForImplicitInvoke) it.outerCall else it
-            } ?: return emptyList()
-            val dataFlowInfo = getDataFlowInfoBefore(unwrappedPsi)
-            val bindingTrace = DelegatingBindingTrace(this, "Trace for all candidates", withParentDiagnostics = false)
-            val dataFlowValueFactory = DataFlowValueFactoryImpl(analysisContext.languageVersionSettings)
-
-            val callResolutionContext = BasicCallResolutionContext.create(
-                bindingTrace, resolutionScope, call, TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo,
-                ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                /* isAnnotationContext = */ false, analysisContext.languageVersionSettings,
-                dataFlowValueFactory
-            ).replaceCollectAllCandidates(true)
-
-            val result = analysisContext.callResolver.resolveFunctionCall(callResolutionContext)
-            val candidates = result.allCandidates?.let { analysisContext.overloadingConflictResolver.filterOutEquivalentCalls(it) }
-                ?: error("allCandidates is null even when collectAllCandidates = true")
-
-            val candidateInfos = candidates.flatMap { candidate ->
-                // The current BindingContext does not have the diagnostics for each individual candidate, only for the resolved call.
-                // If there are multiple candidates, we can get each one's diagnostics by reporting it to a new BindingTrace.
-                val candidateTrace = DelegatingBindingTrace(this, "Trace for candidate", withParentDiagnostics = false)
-                if (candidate is NewAbstractResolvedCall<*>) {
-                    analysisContext.kotlinToResolvedCallTransformer.reportDiagnostics(
-                        callResolutionContext,
-                        candidateTrace,
-                        candidate,
-                        candidate.diagnostics
-                    )
-                }
-
-                val candidateKtCallInfo = handleAsFunctionCall(
-                    candidateTrace.bindingContext,
-                    unwrappedPsi,
-                    candidate,
-                    candidateTrace.bindingContext.diagnostics
-                )
-
-                candidateKtCallInfo.toKaCallCandidateInfos(bestCandidateDescriptors)
-            }
-
-            when {
-                resolvedCall is KaSuccessCallInfo -> resolvedCall.toKaCallCandidateInfos() + candidateInfos.filterNot(KaCallCandidateInfo::isInBestCandidates)
-                candidateInfos.isEmpty() -> resolvedCall.toKaCallCandidateInfos()
-                else -> candidateInfos
-            }
+    private fun doCollectCallCandidates(psi: KtElement): List<KaCallCandidateInfo> {
+        if (!canBeResolvedAsCall(psi)) return emptyList()
+        val bindingContext = analysisContext.analyze(psi, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)
+        val resolvedCall = doResolveCall(psi)
+        return doCollectCallCandidates(psi, bindingContext, resolvedCall).ifEmpty {
+            resolvedCall.toKaCallCandidateInfos()
         }
+    }
+
+    private fun doCollectCallCandidates(
+        psi: KtElement,
+        bindingContext: BindingContext,
+        resolvedCall: KaCallInfo?,
+    ): List<KaCallCandidateInfo> {
+        val bestCandidateDescriptors =
+            resolvedCall?.calls?.filterIsInstance<KaCallableMemberCall<*, *>>()
+                ?.mapNotNullTo(mutableSetOf()) { it.descriptor as? CallableDescriptor }
+                ?: emptySet()
+
+        val unwrappedPsi = KtPsiUtil.deparenthesize(psi as? KtExpression) ?: psi
+
+        // TODO: Handle ++ or -- operator for KtUnaryExpression
+
+        if (unwrappedPsi is KtBinaryExpression &&
+            (unwrappedPsi.operationToken in OperatorConventions.COMPARISON_OPERATIONS ||
+                    unwrappedPsi.operationToken in OperatorConventions.EQUALS_OPERATIONS)
+        ) {
+            // TODO: Handle compound assignment
+            handleAsFunctionCall(bindingContext, unwrappedPsi)?.toKaCallCandidateInfos()?.let { return it }
+        }
+
+        // The regular mechanism doesn't work, so at least the resolved call should be returned
+        when (psi) {
+            is KtWhenConditionInRange,
+            is KtCollectionLiteralExpression,
+            is KtOperationReferenceExpression,
+            is KtCallableReferenceExpression,
+                -> return resolvedCall?.toKaCallCandidateInfos().orEmpty()
+        }
+
+        val resolutionScope = unwrappedPsi.getResolutionScope(bindingContext) ?: return emptyList()
+        val call = unwrappedPsi.getCall(bindingContext)?.let {
+            if (it is CallTransformer.CallForImplicitInvoke) it.outerCall else it
+        } ?: return emptyList()
+        val dataFlowInfo = bindingContext.getDataFlowInfoBefore(unwrappedPsi)
+        val bindingTrace = DelegatingBindingTrace(bindingContext, "Trace for all candidates", withParentDiagnostics = false)
+        val dataFlowValueFactory = DataFlowValueFactoryImpl(analysisContext.languageVersionSettings)
+
+        val callResolutionContext = BasicCallResolutionContext.create(
+            bindingTrace, resolutionScope, call, TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo,
+            ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
+            /* isAnnotationContext = */ false, analysisContext.languageVersionSettings,
+            dataFlowValueFactory
+        ).replaceCollectAllCandidates(true)
+
+        val result = analysisContext.callResolver.resolveFunctionCall(callResolutionContext)
+        val candidates = result.allCandidates?.let { analysisContext.overloadingConflictResolver.filterOutEquivalentCalls(it) }
+            ?: error("allCandidates is null even when collectAllCandidates = true")
+
+        val candidateInfos = candidates.flatMap { candidate ->
+            // The current BindingContext does not have the diagnostics for each individual candidate, only for the resolved call.
+            // If there are multiple candidates, we can get each one's diagnostics by reporting it to a new BindingTrace.
+            val candidateTrace = DelegatingBindingTrace(bindingContext, "Trace for candidate", withParentDiagnostics = false)
+            if (candidate is NewAbstractResolvedCall<*>) {
+                analysisContext.kotlinToResolvedCallTransformer.reportDiagnostics(
+                    callResolutionContext,
+                    candidateTrace,
+                    candidate,
+                    candidate.diagnostics
+                )
+            }
+
+            val candidateKtCallInfo = handleAsFunctionCall(
+                candidateTrace.bindingContext,
+                unwrappedPsi,
+                candidate,
+                candidateTrace.bindingContext.diagnostics
+            )
+
+            candidateKtCallInfo.toKaCallCandidateInfos(bestCandidateDescriptors)
+        }
+
+        return if (resolvedCall is KaSuccessCallInfo) {
+            resolvedCall.toKaCallCandidateInfos() + candidateInfos.filterNot(KaCallCandidateInfo::isInBestCandidates)
+        } else {
+            candidateInfos
+        }
+    }
 
     private val KaCallableMemberCall<*, *>.descriptor: DeclarationDescriptor?
         get() = when (val symbol = symbol) {

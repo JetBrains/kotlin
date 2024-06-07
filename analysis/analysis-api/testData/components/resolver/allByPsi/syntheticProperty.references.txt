@@ -1,134 +1,134 @@
-KtNameReferenceExpression(71,80): 'JavaClass'
+KtNameReferenceExpression(36,45): 'JavaClass'
   KtSimpleNameReference:
     (in ROOT) open class JavaClass
 
-KtNameReferenceExpression(96,105): 'JavaClass'
+KtNameReferenceExpression(61,70): 'JavaClass'
   KtSimpleNameReference:
     (in ROOT) open class JavaClass
 
-KtCallExpression(113,139): 'print(javaClass.something)'
+KtCallExpression(78,104): 'print(javaClass.something)'
   KtInvokeFunctionReference:
     Nothing (Unresolved reference)
 
-KtNameReferenceExpression(113,118): 'print'
+KtNameReferenceExpression(78,83): 'print'
   KtSimpleNameReference:
     (in kotlin.io) inline fun print(message: kotlin.Int)
 
-KtNameReferenceExpression(119,128): 'javaClass'
+KtNameReferenceExpression(84,93): 'javaClass'
   KtSimpleNameReference:
     javaClass: JavaClass
 
-KtNameReferenceExpression(129,138): 'something'
+KtNameReferenceExpression(94,103): 'something'
   KtSimpleNameReference:
     (in JavaClass) open var something: kotlin.Int
 
-KtNameReferenceExpression(144,153): 'javaClass'
+KtNameReferenceExpression(109,118): 'javaClass'
   KtSimpleNameReference:
     javaClass: JavaClass
 
-KtNameReferenceExpression(154,163): 'something'
+KtNameReferenceExpression(119,128): 'something'
   KtSimpleNameReference:
     (in JavaClass) open var something: kotlin.Int
 
-KtOperationReferenceExpression(164,165): '='
+KtOperationReferenceExpression(129,130): '='
   KtSimpleNameReference:
     Nothing (Unresolved reference)
 
-KtNameReferenceExpression(172,181): 'javaClass'
+KtNameReferenceExpression(137,146): 'javaClass'
   KtSimpleNameReference:
     javaClass: JavaClass
 
-KtNameReferenceExpression(182,191): 'something'
+KtNameReferenceExpression(147,156): 'something'
+  KtSimpleNameReference:
+    (in JavaClass) open var something: kotlin.Int
+  
   KtSimpleNameReference:
     (in JavaClass) open var something: kotlin.Int
 
-  KtSimpleNameReference:
-    (in JavaClass) open var something: kotlin.Int
-
-KtOperationReferenceExpression(192,194): '+='
+KtOperationReferenceExpression(157,159): '+='
   KtSimpleNameReference:
     (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
 
-KtNameReferenceExpression(201,210): 'javaClass'
+KtNameReferenceExpression(166,175): 'javaClass'
   KtSimpleNameReference:
     javaClass: JavaClass
 
-KtNameReferenceExpression(211,220): 'something'
+KtNameReferenceExpression(176,185): 'something'
+  KtSimpleNameReference:
+    (in JavaClass) open var something: kotlin.Int
+  
   KtSimpleNameReference:
     (in JavaClass) open var something: kotlin.Int
 
+KtOperationReferenceExpression(185,187): '++'
   KtSimpleNameReference:
-    (in JavaClass) open var something: kotlin.Int
-
-KtOperationReferenceExpression(220,222): '++'
+    (in kotlin.Int) operator fun inc(): kotlin.Int
+  
   KtSimpleNameReference:
     (in kotlin.Int) operator fun inc(): kotlin.Int
 
+KtOperationReferenceExpression(192,194): '--'
   KtSimpleNameReference:
-    (in kotlin.Int) operator fun inc(): kotlin.Int
-
-KtOperationReferenceExpression(227,229): '--'
+    (in kotlin.Int) operator fun dec(): kotlin.Int
+  
   KtSimpleNameReference:
     (in kotlin.Int) operator fun dec(): kotlin.Int
 
-  KtSimpleNameReference:
-    (in kotlin.Int) operator fun dec(): kotlin.Int
-
-KtNameReferenceExpression(229,238): 'javaClass'
+KtNameReferenceExpression(194,203): 'javaClass'
   KtSimpleNameReference:
     javaClass: JavaClass
 
-KtNameReferenceExpression(239,248): 'something'
+KtNameReferenceExpression(204,213): 'something'
+  KtSimpleNameReference:
+    (in JavaClass) open var something: kotlin.Int
+  
   KtSimpleNameReference:
     (in JavaClass) open var something: kotlin.Int
 
+KtNameReferenceExpression(219,228): 'something'
   KtSimpleNameReference:
     (in JavaClass) open var something: kotlin.Int
+  
+  KtSimpleNameReference:
+    (in JavaClass) open var something: kotlin.Int
+
+KtOperationReferenceExpression(228,230): '++'
+  KtSimpleNameReference:
+    (in kotlin.Int) operator fun inc(): kotlin.Int
+  
+  KtSimpleNameReference:
+    (in kotlin.Int) operator fun inc(): kotlin.Int
+
+KtNameReferenceExpression(236,245): 'something'
+  KtSimpleNameReference:
+    (in JavaClass) open var something: kotlin.Int
+  
+  KtSimpleNameReference:
+    (in JavaClass) open var something: kotlin.Int
+
+KtOperationReferenceExpression(246,248): '++'
+  KtSimpleNameReference:
+    (in kotlin.Int) operator fun inc(): kotlin.Int
+  
+  KtSimpleNameReference:
+    (in kotlin.Int) operator fun inc(): kotlin.Int
 
 KtNameReferenceExpression(254,263): 'something'
   KtSimpleNameReference:
     (in JavaClass) open var something: kotlin.Int
 
-  KtSimpleNameReference:
-    (in JavaClass) open var something: kotlin.Int
-
-KtOperationReferenceExpression(263,265): '++'
-  KtSimpleNameReference:
-    (in kotlin.Int) operator fun inc(): kotlin.Int
-
-  KtSimpleNameReference:
-    (in kotlin.Int) operator fun inc(): kotlin.Int
-
-KtNameReferenceExpression(271,280): 'something'
-  KtSimpleNameReference:
-    (in JavaClass) open var something: kotlin.Int
-
-  KtSimpleNameReference:
-    (in JavaClass) open var something: kotlin.Int
-
-KtOperationReferenceExpression(281,283): '++'
-  KtSimpleNameReference:
-    (in kotlin.Int) operator fun inc(): kotlin.Int
-
-  KtSimpleNameReference:
-    (in kotlin.Int) operator fun inc(): kotlin.Int
-
-KtNameReferenceExpression(289,298): 'something'
-  KtSimpleNameReference:
-    (in JavaClass) open var something: kotlin.Int
-
-KtOperationReferenceExpression(300,301): '='
+KtOperationReferenceExpression(265,266): '='
   KtSimpleNameReference:
     Nothing (Unresolved reference)
 
-KtNameReferenceExpression(309,318): 'javaClass'
+KtNameReferenceExpression(274,283): 'javaClass'
   KtSimpleNameReference:
     javaClass: JavaClass
 
-KtNameReferenceExpression(319,328): 'something'
+KtNameReferenceExpression(284,293): 'something'
   KtSimpleNameReference:
     (in JavaClass) open var something: kotlin.Int
 
-KtOperationReferenceExpression(330,331): '='
+KtOperationReferenceExpression(295,296): '='
   KtSimpleNameReference:
     Nothing (Unresolved reference)

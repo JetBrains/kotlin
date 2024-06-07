@@ -1,231 +1,231 @@
-KtNameReferenceExpression(40,47): 'another'
+KtNameReferenceExpression(39,46): 'another'
   KtSimpleNameReference:
     package another
 
-KtNameReferenceExpression(56,59): 'one'
+KtNameReferenceExpression(55,58): 'one'
   KtSimpleNameReference:
     package one
 
-KtNameReferenceExpression(60,63): 'two'
+KtNameReferenceExpression(59,62): 'two'
   KtSimpleNameReference:
     package one.two
 
-KtNameReferenceExpression(64,78): 'TopLevelObject'
+KtNameReferenceExpression(63,77): 'TopLevelObject'
   KtSimpleNameReference:
     (in one.two) object TopLevelObject
 
-KtNameReferenceExpression(86,89): 'one'
+KtNameReferenceExpression(85,88): 'one'
   KtSimpleNameReference:
     package one
 
-KtNameReferenceExpression(90,93): 'two'
+KtNameReferenceExpression(89,92): 'two'
   KtSimpleNameReference:
     package one.two
 
-KtNameReferenceExpression(94,108): 'TopLevelObject'
+KtNameReferenceExpression(93,107): 'TopLevelObject'
   KtSimpleNameReference:
     (in one.two) object TopLevelObject
 
-KtNameReferenceExpression(109,112): 'foo'
+KtNameReferenceExpression(108,111): 'foo'
   KtSimpleNameReference:
     (in one.two.TopLevelObject) fun foo()
 
-KtNameReferenceExpression(120,123): 'one'
+KtNameReferenceExpression(119,122): 'one'
   KtSimpleNameReference:
     package one
 
-KtNameReferenceExpression(124,127): 'two'
+KtNameReferenceExpression(123,126): 'two'
   KtSimpleNameReference:
     package one.two
 
-KtNameReferenceExpression(128,142): 'TopLevelObject'
+KtNameReferenceExpression(127,141): 'TopLevelObject'
   KtSimpleNameReference:
     (in one.two) object TopLevelObject
 
-KtNameReferenceExpression(143,146): 'bar'
+KtNameReferenceExpression(142,145): 'bar'
   KtSimpleNameReference:
     (in one.two.TopLevelObject) val bar: kotlin.Int
 
-KtNameReferenceExpression(154,157): 'one'
+KtNameReferenceExpression(153,156): 'one'
   KtSimpleNameReference:
     package one
 
-KtNameReferenceExpression(158,161): 'two'
+KtNameReferenceExpression(157,160): 'two'
   KtSimpleNameReference:
     package one.two
 
-KtNameReferenceExpression(162,176): 'TopLevelObject'
+KtNameReferenceExpression(161,175): 'TopLevelObject'
   KtSimpleNameReference:
     (in one.two) object TopLevelObject
 
-KtNameReferenceExpression(177,189): 'NestedObject'
+KtNameReferenceExpression(176,188): 'NestedObject'
   KtSimpleNameReference:
     (in one.two.TopLevelObject) object NestedObject
 
-KtNameReferenceExpression(197,200): 'one'
+KtNameReferenceExpression(196,199): 'one'
   KtSimpleNameReference:
     package one
 
-KtNameReferenceExpression(201,204): 'two'
+KtNameReferenceExpression(200,203): 'two'
   KtSimpleNameReference:
     package one.two
 
-KtNameReferenceExpression(205,219): 'TopLevelObject'
+KtNameReferenceExpression(204,218): 'TopLevelObject'
   KtSimpleNameReference:
     (in one.two) object TopLevelObject
 
-KtNameReferenceExpression(220,232): 'NestedObject'
+KtNameReferenceExpression(219,231): 'NestedObject'
   KtSimpleNameReference:
     (in one.two.TopLevelObject) object NestedObject
 
-KtNameReferenceExpression(233,236): 'baz'
+KtNameReferenceExpression(232,235): 'baz'
   KtSimpleNameReference:
     (in one.two.TopLevelObject.NestedObject) fun baz()
 
-KtNameReferenceExpression(244,247): 'one'
+KtNameReferenceExpression(243,246): 'one'
   KtSimpleNameReference:
     package one
 
-KtNameReferenceExpression(248,251): 'two'
+KtNameReferenceExpression(247,250): 'two'
   KtSimpleNameReference:
     package one.two
 
-KtNameReferenceExpression(252,266): 'TopLevelObject'
+KtNameReferenceExpression(251,265): 'TopLevelObject'
   KtSimpleNameReference:
     (in one.two) object TopLevelObject
 
-KtNameReferenceExpression(267,279): 'NestedObject'
+KtNameReferenceExpression(266,278): 'NestedObject'
   KtSimpleNameReference:
     (in one.two.TopLevelObject) object NestedObject
 
-KtNameReferenceExpression(280,283): 'doo'
+KtNameReferenceExpression(279,282): 'doo'
   KtSimpleNameReference:
     (in one.two.TopLevelObject.NestedObject) var doo: kotlin.String
 
-KtNameReferenceExpression(327,330): 'one'
+KtNameReferenceExpression(326,329): 'one'
   KtSimpleNameReference:
     package one
 
-KtNameReferenceExpression(331,334): 'two'
+KtNameReferenceExpression(330,333): 'two'
   KtSimpleNameReference:
     package one.two
 
-KtNameReferenceExpression(335,349): 'TopLevelObject'
+KtNameReferenceExpression(334,348): 'TopLevelObject'
   KtSimpleNameReference:
     (in one.two) object TopLevelObject
 
-KtNameReferenceExpression(378,392): 'TopLevelObject'
+KtNameReferenceExpression(377,391): 'TopLevelObject'
   KtSimpleNameReference:
     (in one.two) object TopLevelObject
 
-KtNameReferenceExpression(416,430): 'TopLevelObject'
+KtNameReferenceExpression(415,429): 'TopLevelObject'
   KtSimpleNameReference:
     (in one.two) object TopLevelObject
 
-KtCallExpression(431,436): 'foo()'
+KtCallExpression(430,435): 'foo()'
   KtInvokeFunctionReference:
     Nothing (Unresolved reference)
 
-KtNameReferenceExpression(431,434): 'foo'
+KtNameReferenceExpression(430,433): 'foo'
   KtSimpleNameReference:
     (in one.two.TopLevelObject) fun foo()
 
-KtCallExpression(459,464): 'foo()'
+KtCallExpression(458,463): 'foo()'
   KtInvokeFunctionReference:
     Nothing (Unresolved reference)
 
-KtNameReferenceExpression(459,462): 'foo'
+KtNameReferenceExpression(458,461): 'foo'
   KtSimpleNameReference:
     (in one.two.TopLevelObject) fun foo()
 
-KtNameReferenceExpression(488,502): 'TopLevelObject'
+KtNameReferenceExpression(487,501): 'TopLevelObject'
   KtSimpleNameReference:
     (in one.two) object TopLevelObject
 
-KtNameReferenceExpression(503,506): 'bar'
+KtNameReferenceExpression(502,505): 'bar'
   KtSimpleNameReference:
     (in one.two.TopLevelObject) val bar: kotlin.Int
 
-KtNameReferenceExpression(529,532): 'bar'
+KtNameReferenceExpression(528,531): 'bar'
   KtSimpleNameReference:
     (in one.two.TopLevelObject) val bar: kotlin.Int
 
-KtNameReferenceExpression(565,579): 'TopLevelObject'
+KtNameReferenceExpression(564,578): 'TopLevelObject'
   KtSimpleNameReference:
     (in one.two) object TopLevelObject
 
-KtNameReferenceExpression(580,592): 'NestedObject'
+KtNameReferenceExpression(579,591): 'NestedObject'
   KtSimpleNameReference:
     (in one.two.TopLevelObject) object NestedObject
 
-KtNameReferenceExpression(624,636): 'NestedObject'
+KtNameReferenceExpression(623,635): 'NestedObject'
   KtSimpleNameReference:
     (in one.two.TopLevelObject) object NestedObject
 
-KtNameReferenceExpression(660,674): 'TopLevelObject'
+KtNameReferenceExpression(659,673): 'TopLevelObject'
   KtSimpleNameReference:
     (in one.two) object TopLevelObject
 
-KtNameReferenceExpression(675,687): 'NestedObject'
+KtNameReferenceExpression(674,686): 'NestedObject'
   KtSimpleNameReference:
     (in one.two.TopLevelObject) object NestedObject
 
-KtCallExpression(688,693): 'baz()'
+KtCallExpression(687,692): 'baz()'
   KtInvokeFunctionReference:
     Nothing (Unresolved reference)
 
-KtNameReferenceExpression(688,691): 'baz'
+KtNameReferenceExpression(687,690): 'baz'
   KtSimpleNameReference:
     (in one.two.TopLevelObject.NestedObject) fun baz()
 
-KtNameReferenceExpression(722,734): 'NestedObject'
+KtNameReferenceExpression(721,733): 'NestedObject'
   KtSimpleNameReference:
     (in one.two.TopLevelObject) object NestedObject
 
-KtCallExpression(735,740): 'baz()'
+KtCallExpression(734,739): 'baz()'
   KtInvokeFunctionReference:
     Nothing (Unresolved reference)
 
-KtNameReferenceExpression(735,738): 'baz'
+KtNameReferenceExpression(734,737): 'baz'
   KtSimpleNameReference:
     (in one.two.TopLevelObject.NestedObject) fun baz()
 
-KtCallExpression(763,768): 'baz()'
+KtCallExpression(762,767): 'baz()'
   KtInvokeFunctionReference:
     Nothing (Unresolved reference)
 
-KtNameReferenceExpression(763,766): 'baz'
+KtNameReferenceExpression(762,765): 'baz'
   KtSimpleNameReference:
     (in one.two.TopLevelObject.NestedObject) fun baz()
 
-KtNameReferenceExpression(792,806): 'TopLevelObject'
+KtNameReferenceExpression(791,805): 'TopLevelObject'
   KtSimpleNameReference:
     (in one.two) object TopLevelObject
 
-KtNameReferenceExpression(807,819): 'NestedObject'
+KtNameReferenceExpression(806,818): 'NestedObject'
   KtSimpleNameReference:
     (in one.two.TopLevelObject) object NestedObject
 
-KtNameReferenceExpression(820,823): 'doo'
+KtNameReferenceExpression(819,822): 'doo'
   KtSimpleNameReference:
     (in one.two.TopLevelObject.NestedObject) var doo: kotlin.String
 
-KtNameReferenceExpression(852,864): 'NestedObject'
+KtNameReferenceExpression(851,863): 'NestedObject'
   KtSimpleNameReference:
     (in one.two.TopLevelObject) object NestedObject
 
-KtNameReferenceExpression(865,868): 'doo'
+KtNameReferenceExpression(864,867): 'doo'
   KtSimpleNameReference:
     (in one.two.TopLevelObject.NestedObject) var doo: kotlin.String
 
-KtNameReferenceExpression(891,894): 'doo'
+KtNameReferenceExpression(890,893): 'doo'
   KtSimpleNameReference:
     (in one.two.TopLevelObject.NestedObject) var doo: kotlin.String
 
-KtNameReferenceExpression(900,903): 'doo'
+KtNameReferenceExpression(899,902): 'doo'
   KtSimpleNameReference:
     (in one.two.TopLevelObject.NestedObject) var doo: kotlin.String
 
-KtOperationReferenceExpression(904,905): '='
+KtOperationReferenceExpression(903,904): '='
   KtSimpleNameReference:
     Nothing (Unresolved reference)
