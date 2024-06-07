@@ -17,6 +17,7 @@ import org.jetbrains.sir.lightclasses.SirDeclarationFromKtSymbolProvider
 
 internal class StandaloneSirSession(
     useSiteModule: KtModule,
+    moduleToTranslate: KtModule,
     override val errorTypeStrategy: SirTypeProvider.ErrorTypeStrategy,
     override val unsupportedTypeStrategy: SirTypeProvider.ErrorTypeStrategy,
     moduleForPackageEnums: SirModule,
@@ -40,7 +41,7 @@ internal class StandaloneSirSession(
         PackageFlatteningSirEnumGenerator(
             sirSession = this,
             enumGenerator = SirEnumGeneratorImpl(moduleForPackageEnums),
-            moduleForEnums = moduleForPackageEnums,
+            moduleForTrampolines = moduleToTranslate.sirModule(),
         )
     } ?: SirEnumGeneratorImpl(moduleForPackageEnums)
 

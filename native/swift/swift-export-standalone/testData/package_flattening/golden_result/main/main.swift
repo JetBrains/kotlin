@@ -4,6 +4,7 @@ import KotlinRuntime
 
 public typealias Clazz = ExportedKotlinPackages.org.kotlin.foo.Clazz
 public typealias Typealias = ExportedKotlinPackages.org.kotlin.foo.Typealias
+public typealias bar = ExportedKotlinPackages.org.kotlin.foo.bar
 public var constant: Swift.Int32 {
     get {
         ExportedKotlinPackages.org.kotlin.foo.constant

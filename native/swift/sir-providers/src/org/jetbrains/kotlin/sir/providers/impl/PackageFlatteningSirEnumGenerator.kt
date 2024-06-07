@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.sir.util.name
 public class PackageFlatteningSirEnumGenerator(
     private val sirSession: SirSession,
     private val enumGenerator: SirEnumGenerator,
-    private val moduleForEnums: SirModule
+    private val moduleForTrampolines: SirModule
 ) : SirEnumGenerator {
     private val processedDeclarations: MutableSet<SirEnum> = mutableSetOf()
 
@@ -25,7 +25,7 @@ public class PackageFlatteningSirEnumGenerator(
         .also {
             if (!processedDeclarations.contains(it)) {
                 processedDeclarations.add(it)
-                with(sirSession) { it.trampolineDeclarations().forEach { moduleForEnums.addChild { it } } }
+                with(sirSession) { it.trampolineDeclarations().forEach { moduleForTrampolines.addChild { it } } }
             }
         }
 }

@@ -56,25 +56,26 @@ internal fun buildSwiftModule(
         }
         MultipleModulesHandlingStrategy.IntoSingleModule -> with(moduleProvider) { mainModule.sirModule() }
     }
+    val sirSession = StandaloneSirSession(
+        useSiteModule = useSiteModule,
+        moduleToTranslate = mainModule,
+        errorTypeStrategy = config.errorTypeStrategy.toInternalType(),
+        unsupportedTypeStrategy = config.unsupportedTypeStrategy.toInternalType(),
+        moduleForPackageEnums = moduleForPackageEnums,
+        unsupportedDeclarationReporter = unsupportedDeclarationReporter,
+        moduleProviderBuilder = { moduleProvider },
+        targetPackageFqName = config.settings[SwiftExportConfig.ROOT_PACKAGE]?.let { packageName ->
+            packageName.takeIf { FqNameUnsafe.isValid(it) }?.let { FqName(it) }
+                ?.takeIf { it.pathSegments().all { it.toString().isValidSwiftIdentifier() } }
+                ?: null.also {
+                    config.logger.report(
+                        SwiftExportLogger.Severity.Warning,
+                        "'$packageName' is not a valid name for ${SwiftExportConfig.ROOT_PACKAGE} and will be ignored"
+                    )
+                }
+        },
+    )
     analyze(useSiteModule) {
-        val sirSession = StandaloneSirSession(
-            useSiteModule,
-            errorTypeStrategy = config.errorTypeStrategy.toInternalType(),
-            unsupportedTypeStrategy = config.unsupportedTypeStrategy.toInternalType(),
-            moduleForPackageEnums = moduleForPackageEnums,
-            unsupportedDeclarationReporter = unsupportedDeclarationReporter,
-            moduleProviderBuilder = { moduleProvider },
-            targetPackageFqName = config.settings[SwiftExportConfig.ROOT_PACKAGE]?.let { packageName ->
-                packageName.takeIf { FqNameUnsafe.isValid(it) }?.let { FqName(it) }
-                    ?.takeIf { it.pathSegments().all { it.toString().isValidSwiftIdentifier() } }
-                    ?: null.also {
-                        config.logger.report(
-                            SwiftExportLogger.Severity.Warning,
-                            "'$packageName' is not a valid name for ${SwiftExportConfig.ROOT_PACKAGE} and will be ignored"
-                        )
-                    }
-            },
-        )
         with(sirSession) {
             scopeProvider(this@analyze).flatMap { scope ->
                 scope.extractDeclarations(this@analyze)
