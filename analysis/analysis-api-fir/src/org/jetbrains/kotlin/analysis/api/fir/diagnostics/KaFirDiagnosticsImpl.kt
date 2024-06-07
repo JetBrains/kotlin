@@ -1105,6 +1105,11 @@ internal class AnnotationInWhereClauseErrorImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.AnnotationInWhereClauseError
 
+internal class AnnotationInContractErrorImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.AnnotationInContractError
+
 internal class CompilerRequiredAnnotationAmbiguityImpl(
     override val typeFromCompilerPhase: KaType,
     override val typeFromTypesPhase: KaType,

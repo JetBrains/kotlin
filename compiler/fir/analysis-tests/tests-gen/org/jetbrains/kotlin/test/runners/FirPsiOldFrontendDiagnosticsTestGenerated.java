@@ -2131,6 +2131,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("AnnotationInContract.kt")
+      public void testAnnotationInContract() {
+        runTest("compiler/testData/diagnostics/tests/annotations/AnnotationInContract.kt");
+      }
+
+      @Test
       @TestMetadata("annotationInheritance.kt")
       public void testAnnotationInheritance() {
         runTest("compiler/testData/diagnostics/tests/annotations/annotationInheritance.kt");

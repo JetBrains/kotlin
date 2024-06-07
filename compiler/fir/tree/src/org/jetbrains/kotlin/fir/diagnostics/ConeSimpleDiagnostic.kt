@@ -118,7 +118,8 @@ enum class DiagnosticKind {
     MissingStdlibClass,
     NotASupertype,
     SuperNotAvailable,
-    AnnotationNotAllowed,
+    AnnotationNotAllowed, // TODO: rename this to AnnotationInWhereClause
+    AnnotationInContract,
 
     LoopInSupertype,
     RecursiveTypealiasExpansion,
