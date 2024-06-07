@@ -150,19 +150,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun SimpleTypeMarker.typeConstructor(): TypeConstructorMarker {
-        return when (this) {
-            is ConeClassLikeType -> lookupTag
-            is ConeTypeParameterType -> lookupTag
-            is ConeCapturedType -> constructor
-            is ConeTypeVariableType -> typeConstructor
-            is ConeIntersectionType -> this
-            is ConeStubType -> constructor
-            is ConeDefinitelyNotNullType -> original.typeConstructor()
-            is ConeIntegerLiteralType -> this
-            else -> errorWithAttachment("Unknown simpleType: ${this::class.java}") {
-                withConeTypeEntry("type", this@typeConstructor as? ConeKotlinType)
-            }
-        }
+        require(this is ConeSimpleKotlinType)
+        return this.getConstructor()
     }
 
     override fun CapturedTypeMarker.typeConstructor(): CapturedTypeConstructorMarker {
