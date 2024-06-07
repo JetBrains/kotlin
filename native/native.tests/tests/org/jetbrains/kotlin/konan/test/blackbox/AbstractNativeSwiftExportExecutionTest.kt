@@ -43,10 +43,8 @@ abstract class AbstractNativeSwiftExportExecutionTest : AbstractNativeSwiftExpor
         testRunner.run()
     }
 
-    override fun constructSwiftExportConfig(
-        testPathFull: File,
-    ): SwiftExportConfig {
-        val exportResultsPath = buildDir(testPathFull.name).toPath().resolve("swift_export_results")
+    override fun constructSwiftExportConfig(module: TestModule.Exclusive): SwiftExportConfig {
+        val exportResultsPath = buildDir(module.name).toPath().resolve("swift_export_results")
         return SwiftExportConfig(
             settings = mapOf(
                 SwiftExportConfig.BRIDGE_MODULE_NAME to SwiftExportConfig.DEFAULT_BRIDGE_MODULE_NAME,

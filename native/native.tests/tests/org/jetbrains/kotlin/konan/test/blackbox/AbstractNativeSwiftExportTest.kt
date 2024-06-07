@@ -52,7 +52,7 @@ abstract class AbstractNativeSwiftExportTest {
     )
 
     protected abstract fun constructSwiftExportConfig(
-        testPathFull: File,
+        module: TestModule.Exclusive,
     ): SwiftExportConfig
 
     protected fun runTest(@TestDataFile testDir: String) {
@@ -67,7 +67,7 @@ abstract class AbstractNativeSwiftExportTest {
         // run swift export
         val swiftExportOutput = runSwiftExport(
             originalTestCase.constructSwiftInput(),
-            constructSwiftExportConfig(testPathFull)
+            constructSwiftExportConfig(originalTestCase.modules.first())
         ).getOrThrow().first() as SwiftExportModule.BridgesToKotlin
 
         // compile kotlin into binary

@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.test.services.impl.RegisteredDirectivesParser
 import org.junit.jupiter.api.Assertions
 import java.io.File
 
-internal object TestDirectives : SimpleDirectivesContainer() {
+object TestDirectives : SimpleDirectivesContainer() {
     val KIND by enumDirective<TestKind>(
         description = """
             Usage: // KIND: [REGULAR, STANDALONE, STANDALONE_NO_TR, STANDALONE_LLDB]
@@ -69,6 +69,14 @@ internal object TestDirectives : SimpleDirectivesContainer() {
             Usage: // MODULE: name[(dependencies)[(friends)]]
             Describes one module.
         """.trimIndent()
+    )
+
+    val SWIFT_EXPORT_CONFIG by valueDirective(
+        "Specify config for Swift Export in the format %KEY_1%=%VALUE_1%, %KEY_2%=%VALUE_2%",
+        applicability = DirectiveApplicability.Module,
+        parser = {
+            it.split("=").let { Pair(it.first(), it.last()) }
+        }
     )
 
     val FILE by stringDirective(

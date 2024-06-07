@@ -1,5 +1,6 @@
 // KIND: STANDALONE
 // MODULE: main
+// SWIFT_EXPORT_CONFIG: multipleModulesHandlingStrategy=IntoSingleModule, packageRoot=org.kotlin.foo
 // FILE: baz.kt
 package org.kotlin.baz
 

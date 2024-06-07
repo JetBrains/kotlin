@@ -1,5 +1,6 @@
 // KIND: STANDALONE
 // MODULE: main
+// SWIFT_EXPORT_CONFIG: unsupportedDeclarationsReporterKind=inline, multipleModulesHandlingStrategy=IntoSingleModule
 // FILE: main.kt
 class Foo {
     inner class Inner {}

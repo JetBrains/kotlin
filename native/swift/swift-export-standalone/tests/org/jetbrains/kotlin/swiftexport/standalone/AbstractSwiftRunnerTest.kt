@@ -9,10 +9,11 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSwiftExportTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
-import java.util.Properties
 import kotlin.io.path.*
 import kotlin.test.assertSame
 
@@ -52,7 +53,7 @@ abstract class AbstractKlibBasedSwiftRunnerTest : AbstractNativeSwiftExportTest(
         }
     }
 
-    override fun constructSwiftExportConfig(testPathFull: File): SwiftExportConfig {
+    override fun constructSwiftExportConfig(module: TestModule.Exclusive): SwiftExportConfig {
         val unsupportedTypeStrategy = ErrorTypeStrategy.Fail
         val errorTypeStrategy = ErrorTypeStrategy.Fail
 
@@ -64,30 +65,30 @@ abstract class AbstractKlibBasedSwiftRunnerTest : AbstractNativeSwiftExportTest(
 
         var unsupportedDeclarationReporterKind = UnsupportedDeclarationReporterKind.Silent
         var multipleModulesHandlingStrategy = MultipleModulesHandlingStrategy.OneToOneModuleMapping
-        val discoveredConfig = (testPathFull.toPath() / "config.properties").takeIf { it.exists() }?.let { configPath ->
-            Properties().apply { load(configPath.toFile().inputStream()) }.let { properties ->
-                properties.propertyNames().asSequence()
-                    .filterIsInstance<String>()
-                    .associateWith { properties.getProperty(it) }
-                    .filter { (key, value) ->
-                        when {
-                            key == "unsupportedDeclarationsReporterKind" -> {
-                                UnsupportedDeclarationReporterKind.entries
-                                    .singleOrNull { it.name.lowercase() == value.lowercase() }
-                                    ?.let { unsupportedDeclarationReporterKind = it }
-                                false
-                            }
-                            key == "multipleModulesHandlingStrategy" -> {
-                                MultipleModulesHandlingStrategy.entries
-                                    .singleOrNull { it.name.lowercase() == value.lowercase() }
-                                    ?.let { multipleModulesHandlingStrategy = it }
-                                false
-                            }
-                            else -> true
-                        }
+
+        @Suppress("UNCHECKED_CAST") val discoveredConfig: Map<String, String> = (module
+            .directives
+            .firstOrNull { it.directive.name == TestDirectives.SWIFT_EXPORT_CONFIG.name }
+            ?.values as? List<Pair<String, String>>)
+            ?.toMap()
+            ?.filter { (key, value) ->
+                when (key) {
+                    "unsupportedDeclarationsReporterKind" -> {
+                        UnsupportedDeclarationReporterKind.entries
+                            .singleOrNull { it.name.lowercase() == value.lowercase() }
+                            ?.let { unsupportedDeclarationReporterKind = it }
+                        false
                     }
+                    "multipleModulesHandlingStrategy" -> {
+                        MultipleModulesHandlingStrategy.entries
+                            .singleOrNull { it.name.lowercase() == value.lowercase() }
+                            ?.let { multipleModulesHandlingStrategy = it }
+                        false
+                    }
+                    else -> true
+                }
             }
-        } ?: emptyMap()
+            ?: emptyMap()
 
         val config = defaultConfig + discoveredConfig
 
@@ -97,7 +98,7 @@ abstract class AbstractKlibBasedSwiftRunnerTest : AbstractNativeSwiftExportTest(
             distribution = Distribution(KonanHome.konanHomePath),
             errorTypeStrategy = errorTypeStrategy,
             unsupportedTypeStrategy = unsupportedTypeStrategy,
-            outputPath = tmpdir.toPath().resolve(testPathFull.name),
+            outputPath = tmpdir.toPath().resolve(module.name),
             unsupportedDeclarationReporterKind = unsupportedDeclarationReporterKind,
             multipleModulesHandlingStrategy = multipleModulesHandlingStrategy,
         )
