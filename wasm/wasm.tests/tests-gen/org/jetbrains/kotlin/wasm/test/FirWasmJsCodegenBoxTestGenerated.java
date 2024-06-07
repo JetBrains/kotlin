@@ -21146,12 +21146,6 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     }
 
     @Test
-    @TestMetadata("result.kt")
-    public void testResult() {
-      runTest("compiler/testData/codegen/box/inlineClasses/result.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-    }
-
-    @Test
     @TestMetadata("resultGeneric.kt")
     public void testResultGeneric() {
       runTest("compiler/testData/codegen/box/inlineClasses/resultGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
