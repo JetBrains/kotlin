@@ -169,6 +169,7 @@ interface CustomKotlinLikeDumpStrategy {
 
 private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOptions) : IrElementVisitor<Unit, IrDeclaration?> {
     private val variableNameData = VariableNameData(options.normalizeNames)
+    private var currentWhenStmt: IrWhen? = null
 
     private val IrSymbol.safeName
         get() = if (!isBound) {
@@ -1382,7 +1383,10 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p.printlnWithNoIndent("when {")
         p.pushIndent()
 
+        val savedWhenStmt = currentWhenStmt
+        currentWhenStmt = expression
         expression.branches.forEach { it.accept(this, data) }
+        currentWhenStmt = savedWhenStmt
 
         p.popIndent()
         p.print("}")
@@ -1390,7 +1394,14 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     override fun visitBranch(branch: IrBranch, data: IrDeclaration?) = wrap(branch, data) {
         p.printIndent()
-        branch.condition.accept(this, data)
+        branch.condition.let {
+            // Deserialized IR contains no IrElseBranch nodes. They are represented with IrBranch(condition=true)
+            // To match Kotlin-like IR dump before serialization, the following logic tried to infer IR node which was before serialization
+            if (it is IrConst<*> && it.value == true && branch == currentWhenStmt!!.branches.last())
+                p.printWithNoIndent("else")
+            else
+                it.accept(this, data)
+        }
         p.printWithNoIndent(" -> ")
         branch.result.accept(this, data)
         p.println()
