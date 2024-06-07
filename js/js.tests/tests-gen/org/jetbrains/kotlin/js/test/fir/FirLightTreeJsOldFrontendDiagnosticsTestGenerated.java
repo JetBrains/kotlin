@@ -917,6 +917,12 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
     }
 
     @Test
+    @TestMetadata("suspendFun.kt")
+    public void testSuspendFun() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/suspendFun.kt");
+    }
+
+    @Test
     @TestMetadata("topLevelDeclarations.kt")
     public void testTopLevelDeclarations() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/topLevelDeclarations.kt");
