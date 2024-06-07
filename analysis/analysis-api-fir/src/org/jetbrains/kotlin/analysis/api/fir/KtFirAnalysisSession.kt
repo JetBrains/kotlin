@@ -68,8 +68,6 @@ private constructor(
     @Suppress("AnalysisApiMissingLifetimeCheck")
     override val useSiteModule: KtModule get() = firResolveSession.useSiteKtModule
 
-    override val smartCastProviderImpl = KaFirSmartcastProvider(this, token)
-
     override val expressionTypeProviderImpl = KaFirExpressionTypeProvider(this, token)
 
     override val diagnosticProviderImpl = KaFirDiagnosticProvider(this, token)

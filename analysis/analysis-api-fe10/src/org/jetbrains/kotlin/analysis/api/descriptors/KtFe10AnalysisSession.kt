@@ -36,7 +36,6 @@ class KaFe10Session(
     dataFlowProvider = KaFe10DataFlowProvider(analysisSessionProvider, token),
     sourceProvider = KaFe10SourceProvider(analysisSessionProvider, token)
 ) {
-    override val smartCastProviderImpl: KaSmartCastProvider = KaFe10SmartCastProvider(this)
     override val diagnosticProviderImpl: KaDiagnosticProvider = KaFe10DiagnosticProvider(this)
     override val scopeProviderImpl: KaScopeProvider = KaFe10ScopeProvider(this)
     override val containingDeclarationProviderImpl: KaSymbolContainingDeclarationProvider = KaFe10SymbolContainingDeclarationProvider(this)

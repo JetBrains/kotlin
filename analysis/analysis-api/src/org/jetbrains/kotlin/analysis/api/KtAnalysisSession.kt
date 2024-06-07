@@ -63,7 +63,6 @@ public abstract class KaSession(
     dataFlowProvider: KaDataFlowProvider,
     sourceProvider: KaSourceProvider,
 ) : KaLifetimeOwner,
-    KaSmartCastProviderMixIn,
     KaResolverMixIn,
     KaSamResolverMixIn,
     KaDiagnosticProviderMixIn,
@@ -107,9 +106,6 @@ public abstract class KaSession(
     public abstract val useSiteModule: KtModule
 
     override val analysisSession: KaSession get() = this
-
-    internal val smartCastProvider: KaSmartCastProvider get() = smartCastProviderImpl
-    protected abstract val smartCastProviderImpl: KaSmartCastProvider
 
     internal val diagnosticProvider: KaDiagnosticProvider get() = diagnosticProviderImpl
     protected abstract val diagnosticProviderImpl: KaDiagnosticProvider

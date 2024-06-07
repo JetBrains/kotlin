@@ -6,19 +6,80 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaDataFlowExitPointSnapshot
 import org.jetbrains.kotlin.analysis.api.components.KaDataFlowProvider
+import org.jetbrains.kotlin.analysis.api.components.KaImplicitReceiverSmartCast
+import org.jetbrains.kotlin.analysis.api.components.KaImplicitReceiverSmartCastKind
+import org.jetbrains.kotlin.analysis.api.components.KaSmartCastInfo
+import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.smartcasts.ExplicitSmartCasts
+import org.jetbrains.kotlin.resolve.calls.smartcasts.MultipleSmartCasts
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.checker.intersectWrappedTypes
 
 @OptIn(KaAnalysisNonPublicApi::class)
 internal class KaFe10DataFlowProvider(
-    override val analysisSessionProvider: () -> KaSession,
+    override val analysisSessionProvider: () -> KaFe10Session,
     override val token: KaLifetimeToken
-) : KaSessionComponent<KaSession>(), KaDataFlowProvider {
+) : KaSessionComponent<KaFe10Session>(), KaDataFlowProvider, KaFe10SessionComponent {
+    override val KtExpression.smartCastInfo: KaSmartCastInfo?
+        get() = withValidityAssertion {
+            val bindingContext = analysisContext.analyze(this)
+            val stableSmartCasts = bindingContext[BindingContext.SMARTCAST, this]
+            val unstableSmartCasts = bindingContext[BindingContext.UNSTABLE_SMARTCAST, this]
+
+            when {
+                stableSmartCasts != null -> {
+                    val type = stableSmartCasts.asSingleType() ?: return null
+                    KaSmartCastInfo(type, true, token)
+                }
+                unstableSmartCasts != null -> {
+                    val type = unstableSmartCasts.asSingleType() ?: return null
+                    KaSmartCastInfo(type, false, token)
+                }
+                else -> null
+            }
+        }
+
+    private fun ExplicitSmartCasts.asSingleType(): KaType? {
+        if (this is MultipleSmartCasts) {
+            return intersectWrappedTypes(map.values).toKtType(analysisContext)
+        }
+        return defaultType?.toKtType(analysisContext)
+    }
+
+    override val KtExpression.implicitReceiverSmartCasts: Collection<KaImplicitReceiverSmartCast>
+        get() = withValidityAssertion {
+            val bindingContext = analysisContext.analyze(this)
+            val smartCasts = bindingContext[BindingContext.IMPLICIT_RECEIVER_SMARTCAST, this] ?: return emptyList()
+            val call = bindingContext[BindingContext.CALL, this] ?: return emptyList()
+            val resolvedCall = bindingContext[BindingContext.RESOLVED_CALL, call] ?: return emptyList()
+
+            listOfNotNull(
+                createImplicitReceiverSmartCast(
+                    smartCasts.receiverTypes[resolvedCall.dispatchReceiver],
+                    KaImplicitReceiverSmartCastKind.DISPATCH
+                ),
+                createImplicitReceiverSmartCast(
+                    smartCasts.receiverTypes[resolvedCall.extensionReceiver],
+                    KaImplicitReceiverSmartCastKind.EXTENSION
+                )
+            )
+        }
+
+    private fun createImplicitReceiverSmartCast(type: KotlinType?, kind: KaImplicitReceiverSmartCastKind): KaImplicitReceiverSmartCast? {
+        if (type == null) return null
+        return KaImplicitReceiverSmartCast(type.toKtType(analysisContext), kind, token)
+    }
+
     override fun computeExitPointSnapshot(statements: List<KtExpression>): KaDataFlowExitPointSnapshot = withValidityAssertion {
         throw NotImplementedError("Method is not implemented for FE 1.0")
     }

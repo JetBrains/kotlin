@@ -16,13 +16,15 @@ import org.jetbrains.kotlin.analysis.api.components.KaDataFlowExitPointSnapshot
 import org.jetbrains.kotlin.analysis.api.components.KaDataFlowExitPointSnapshot.DefaultExpressionInfo
 import org.jetbrains.kotlin.analysis.api.components.KaDataFlowExitPointSnapshot.VariableReassignment
 import org.jetbrains.kotlin.analysis.api.components.KaDataFlowProvider
+import org.jetbrains.kotlin.analysis.api.components.KaImplicitReceiverSmartCast
+import org.jetbrains.kotlin.analysis.api.components.KaImplicitReceiverSmartCastKind
+import org.jetbrains.kotlin.analysis.api.components.KaSmartCastInfo
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
@@ -59,10 +61,17 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtNameReferenceExpression
+import org.jetbrains.kotlin.psi.KtOperationExpression
 import org.jetbrains.kotlin.psi.KtOperationReferenceExpression
+import org.jetbrains.kotlin.psi.KtParenthesizedExpression
+import org.jetbrains.kotlin.psi.KtQualifiedExpression
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.psi2ir.deparenthesize
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -75,9 +84,101 @@ import kotlin.math.sign
 internal class KaFirDataFlowProvider(
     override val analysisSessionProvider: () -> KaFirSession,
     override val token: KaLifetimeToken
-) : KaSessionComponent<KaFirSession>(), KaDataFlowProvider {
-    private val firResolveSession: LLFirResolveSession
-        get() = analysisSession.firResolveSession
+) : KaSessionComponent<KaFirSession>(), KaDataFlowProvider, KaFirSessionComponent {
+    override val KtExpression.smartCastInfo: KaSmartCastInfo?
+        get() = withValidityAssertion {
+            val firSmartCastExpression = getMatchingFirExpressionWithSmartCast(this) ?: return null
+            val type = firSmartCastExpression.smartcastType.coneTypeSafe<ConeKotlinType>()?.asKtType() ?: return null
+            return KaSmartCastInfo(type, firSmartCastExpression.isStable, token)
+        }
+
+    override val KtExpression.implicitReceiverSmartCasts: Collection<KaImplicitReceiverSmartCast>
+        get() = withValidityAssertion {
+            val firQualifiedExpression = getMatchingFirQualifiedAccessExpression(this) ?: return emptyList()
+
+            listOfNotNull(
+                createImplicitReceiverSmartCast(firQualifiedExpression, KaImplicitReceiverSmartCastKind.DISPATCH),
+                createImplicitReceiverSmartCast(firQualifiedExpression, KaImplicitReceiverSmartCastKind.EXTENSION),
+            )
+        }
+
+    private fun getMatchingFirExpressionWithSmartCast(expression: KtExpression): FirSmartCastExpression? {
+        if (!expression.isExplicitSmartCastInfoTarget) return null
+
+        val possibleFunctionCall = expression.getPossiblyQualifiedCallExpressionForCallee() ?: expression
+
+        return when (val firExpression = possibleFunctionCall.getOrBuildFir(analysisSession.firResolveSession)) {
+            is FirSmartCastExpression -> firExpression
+            is FirSafeCallExpression -> firExpression.selector as? FirSmartCastExpression
+            is FirImplicitInvokeCall -> firExpression.explicitReceiver as? FirSmartCastExpression
+            else -> null
+        }
+    }
+
+    private val KtExpression.isExplicitSmartCastInfoTarget: Boolean
+        get() {
+            // we want to handle only most top-level parenthesised expressions
+            if (parent is KtParenthesizedExpression) return false
+
+            // expressions like `|foo.bar()|` or `|foo?.baz()|` are ignored
+            if (this is KtQualifiedExpression && selectorExpression is KtCallExpression) return false
+
+            // expressions like `foo.|bar|` or `foo?.|baz|` are ignored
+            if (this is KtNameReferenceExpression && getQualifiedExpressionForSelector() != null) return false
+
+            // only those types of expressions are supported
+            return this is KtQualifiedExpression ||
+                    this is KtNameReferenceExpression ||
+                    this is KtParenthesizedExpression
+        }
+
+    private fun getMatchingFirQualifiedAccessExpression(expression: KtExpression): FirQualifiedAccessExpression? {
+        if (!expression.isImplicitSmartCastInfoTarget) return null
+
+        val wholeExpression = expression.getOperationExpressionForOperationReference()
+            ?: expression.getPossiblyQualifiedCallExpressionForCallee()
+            ?: expression.getQualifiedExpressionForSelector()
+            ?: expression
+
+        return when (val firExpression = wholeExpression.getOrBuildFir(analysisSession.firResolveSession)) {
+            is FirQualifiedAccessExpression -> firExpression
+            is FirSafeCallExpression -> firExpression.selector as? FirQualifiedAccessExpression
+            is FirSmartCastExpression -> firExpression.originalExpression as? FirQualifiedAccessExpression
+            else -> null
+        }
+    }
+
+    private fun KtExpression.getPossiblyQualifiedCallExpressionForCallee(): KtExpression? {
+        val expressionParent = this.parent
+
+        return if (expressionParent is KtCallExpression && expressionParent.calleeExpression == this) {
+            expressionParent.getQualifiedExpressionForSelectorOrThis()
+        } else {
+            null
+        }
+    }
+
+    private fun KtExpression.getOperationExpressionForOperationReference(): KtOperationExpression? =
+        (this as? KtOperationReferenceExpression)?.parent as? KtOperationExpression
+
+    private val KtExpression.isImplicitSmartCastInfoTarget: Boolean
+        get() = this is KtNameReferenceExpression || this is KtOperationReferenceExpression
+
+    private fun createImplicitReceiverSmartCast(
+        firExpression: FirQualifiedAccessExpression,
+        kind: KaImplicitReceiverSmartCastKind,
+    ): KaImplicitReceiverSmartCast? {
+        val receiver = when (kind) {
+            KaImplicitReceiverSmartCastKind.DISPATCH -> firExpression.dispatchReceiver
+            KaImplicitReceiverSmartCastKind.EXTENSION -> firExpression.extensionReceiver
+        }
+
+        if (receiver == null || receiver == firExpression.explicitReceiver) return null
+        if (!receiver.isStableSmartcast()) return null
+
+        val type = receiver.resolvedType.asKtType()
+        return KaImplicitReceiverSmartCast(type, kind, token)
+    }
 
     override fun computeExitPointSnapshot(statements: List<KtExpression>): KaDataFlowExitPointSnapshot = withValidityAssertion {
         val firStatements = computeStatements(statements)
