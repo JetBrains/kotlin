@@ -59,6 +59,7 @@ private constructor(
     resolver = KaFirResolver(analysisSessionProvider, token),
     diagnosticProvider = KaFirDiagnosticProvider(analysisSessionProvider, token),
     scopeProvider = KaFirScopeProvider(analysisSessionProvider, token),
+    referenceShortener = KaFirReferenceShortener(analysisSessionProvider, token),
     originalPsiProvider = KaFirOriginalPsiProvider(analysisSessionProvider, token),
     typeCreator = KaFirTypeCreator(analysisSessionProvider, token),
     analysisScopeProvider = KaAnalysisScopeProviderImpl(analysisSessionProvider, token, useSiteScope),
@@ -87,8 +88,6 @@ private constructor(
 
     override val symbolDeclarationOverridesProviderImpl =
         KaFirSymbolDeclarationOverridesProvider(this, token)
-
-    override val referenceShortenerImpl = KaFirReferenceShortener(this, token, firResolveSession)
 
     override val importOptimizerImpl: KaImportOptimizer = KaFirImportOptimizer(this, token, firResolveSession)
 

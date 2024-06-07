@@ -11,26 +11,43 @@ import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
 internal class KaFe10ReferenceShortener(
-    override val analysisSession: KaFe10Session,
-) : KaReferenceShortener(), KaFe10SessionComponent {
+    override val analysisSessionProvider: () -> KaFe10Session,
     override val token: KaLifetimeToken
-        get() = analysisSession.token
+) : KaSessionComponent<KaFe10Session>(), KaReferenceShortener, KaFe10SessionComponent {
 
-    override fun collectShortenings(
+    override fun collectPossibleReferenceShorteningsInElement(
+        element: KtElement,
+        shortenOptions: ShortenOptions,
+        classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy,
+        callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy
+    ): ShortenCommand = withValidityAssertion {
+        collectPossibleReferenceShortenings(
+            element.containingKtFile,
+            element.textRange,
+            shortenOptions,
+            classShortenStrategy,
+            callableShortenStrategy
+        )
+    }
+
+    override fun collectPossibleReferenceShortenings(
         file: KtFile,
         selection: TextRange,
         shortenOptions: ShortenOptions,
         classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy,
-        callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy,
-    ): ShortenCommand {
+        callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy
+    ): ShortenCommand = withValidityAssertion {
         // Compiler implementation does nothing.
         // Descriptor-based shortening is implemented on the IDE plugin side.
         val ktFilePointer = SmartPointerManager.createPointer(file)

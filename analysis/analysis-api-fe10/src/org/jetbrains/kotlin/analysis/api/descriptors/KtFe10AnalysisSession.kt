@@ -32,6 +32,7 @@ class KaFe10Session(
     resolver = KaFe10Resolver(analysisSessionProvider, token),
     diagnosticProvider = KaFe10DiagnosticProvider(analysisSessionProvider, token),
     scopeProvider = KaFe10ScopeProvider(analysisSessionProvider, token),
+    referenceShortener = KaFe10ReferenceShortener(analysisSessionProvider, token),
     originalPsiProvider = KaFe10OriginalPsiProvider(analysisSessionProvider, token),
     typeCreator = KaFe10TypeCreator(analysisSessionProvider, token),
     analysisScopeProvider = KaAnalysisScopeProviderImpl(analysisSessionProvider, token, resolutionScope),
@@ -45,7 +46,6 @@ class KaFe10Session(
     override val completionCandidateCheckerImpl: KaCompletionCandidateChecker = KaFe10CompletionCandidateChecker(this)
     override val symbolDeclarationOverridesProviderImpl: KaSymbolDeclarationOverridesProvider =
         KaFe10SymbolDeclarationOverridesProvider(this)
-    override val referenceShortenerImpl: KaReferenceShortener = KaFe10ReferenceShortener(this)
     override val symbolDeclarationRendererProviderImpl: KaSymbolDeclarationRendererProvider = KaRendererProviderImpl(this, token)
     override val expressionTypeProviderImpl: KaExpressionTypeProvider = KaFe10ExpressionTypeProvider(this)
     override val psiTypeProviderImpl: KaPsiTypeProvider = KaFe10PsiTypeProvider(this)

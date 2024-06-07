@@ -9,7 +9,6 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.analysis.api.components.ShortenStrategy.Companion.defaultCallableShortenStrategy
 import org.jetbrains.kotlin.analysis.api.components.ShortenStrategy.Companion.defaultClassShortenStrategy
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
@@ -114,20 +113,8 @@ public enum class ShortenStrategy {
     }
 }
 
-public abstract class KaReferenceShortener : KaSessionComponent() {
-    public abstract fun collectShortenings(
-        file: KtFile,
-        selection: TextRange,
-        shortenOptions: ShortenOptions,
-        classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy,
-        callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy
-    ): ShortenCommand
-}
 
-public typealias KtReferenceShortener = KaReferenceShortener
-
-public interface KaReferenceShortenerMixIn : KaSessionMixIn {
-
+public interface KaReferenceShortener {
     /**
      * Collects possible references to shorten. By default, it shortens a fully-qualified members to the outermost class and does not
      * shorten enum entries.  In case of KDoc shortens reference only if it is already imported.
@@ -143,16 +130,7 @@ public interface KaReferenceShortenerMixIn : KaSessionMixIn {
         shortenOptions: ShortenOptions = ShortenOptions.DEFAULT,
         classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy = defaultClassShortenStrategy,
         callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy = defaultCallableShortenStrategy
-    ): ShortenCommand =
-        withValidityAssertion {
-            analysisSession.referenceShortener.collectShortenings(
-                file,
-                selection,
-                shortenOptions,
-                classShortenStrategy,
-                callableShortenStrategy
-            )
-        }
+    ): ShortenCommand
 
     /**
      * Collects possible references to shorten in [element]s text range. By default, it shortens a fully-qualified members to the outermost
@@ -168,19 +146,8 @@ public interface KaReferenceShortenerMixIn : KaSessionMixIn {
         shortenOptions: ShortenOptions = ShortenOptions.DEFAULT,
         classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy = defaultClassShortenStrategy,
         callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy = defaultCallableShortenStrategy
-    ): ShortenCommand =
-        withValidityAssertion {
-            analysisSession.referenceShortener.collectShortenings(
-                element.containingKtFile,
-                element.textRange,
-                shortenOptions,
-                classShortenStrategy,
-                callableShortenStrategy
-            )
-        }
+    ): ShortenCommand
 }
-
-public typealias KtReferenceShortenerMixIn = KaReferenceShortenerMixIn
 
 /**
  * A class to keep a [KtUserType] to shorten and what shape the shortened result has to be. [shortenedReference] is the expected result of
