@@ -3256,25 +3256,33 @@ class ComposableFunctionBodyTransformer(
         val blockScope = intrinsicRememberScope(expression)
         return inScope(blockScope) {
             val nonNullInputValues = inputVals.filterNotNull()
-            if (useNonSkippingGroupOptimization)
-                irWithSourceInformationMarker(
+            if (useNonSkippingGroupOptimization) {
+                val body = irWithSourceInformationMarker(
                     before = nonNullInputValues,
                     expression = cacheCall,
                     scope = blockScope,
                 )
-            else
+                // Ensure that the body of intrinsic remember is always represented as a block,
+                // so that intrinsic remember propagates isStatic if needed.
+                if (body !is IrBlock) {
+                    body.wrap(type = body.type)
+                } else {
+                    body
+                }
+            } else {
                 cacheCall.wrap(
                     before = inputVals.filterNotNull() + listOf(
                         irStartReplaceGroup(expression, blockScope)
                     ),
                     after = listOf(irEndReplaceGroup(scope = blockScope))
                 )
-        }.also { block ->
+            }
+        }.also { expr ->
             if (
-                stabilityInferencer.stabilityOf(block.type).knownStable() &&
-                    inputArgMetas.all { it.isStatic }
+                stabilityInferencer.stabilityOf(expr.type).knownStable() &&
+                inputArgMetas.all { it.isStatic }
             ) {
-                context.irTrace.record(ComposeWritableSlices.IS_STATIC_EXPRESSION, block, true)
+                context.irTrace.record(ComposeWritableSlices.IS_STATIC_EXPRESSION, expr, true)
             }
         }
     }

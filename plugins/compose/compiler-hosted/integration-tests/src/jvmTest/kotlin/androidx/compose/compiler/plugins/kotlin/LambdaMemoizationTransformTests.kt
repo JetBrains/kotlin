@@ -743,4 +743,36 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
                 }
             """
         )
+
+    @Test
+    fun testMemoizingFromDelegate() = verifyGoldenComposeIrTransform(
+        extra = """
+            class ClassWithData(
+                val action: Int = 0,
+            )
+
+            fun getData(): ClassWithData = TODO()
+        """,
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun StrongSkippingIssue(
+                data: ClassWithData
+            ) {
+                val state by remember { mutableStateOf("") }
+                val action by data::action
+                val action1 by getData()::action
+                { 
+                    action
+                }
+                {
+                    action1
+                }
+                {
+                    state
+                }
+            }
+        """
+    )
 }

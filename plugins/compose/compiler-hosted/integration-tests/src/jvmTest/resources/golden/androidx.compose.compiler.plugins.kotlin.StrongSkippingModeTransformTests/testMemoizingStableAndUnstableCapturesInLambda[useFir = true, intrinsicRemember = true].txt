@@ -30,10 +30,12 @@ fun Test(%composer: Composer?, %changed: Int) {
     }
     val foo = Foo(0)
     val bar = Bar(1)
-    val lambda = %composer.cache(%composer.changedInstance(foo) or %composer.changed(bar)) {
-      {
-        foo
-        bar
+    val lambda = <block>{
+      %composer.cache(%composer.changedInstance(foo) or %composer.changed(bar)) {
+        {
+          foo
+          bar
+        }
       }
     }
     if (isTraceInProgress()) {

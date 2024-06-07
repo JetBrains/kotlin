@@ -54,28 +54,8 @@ import org.jetbrains.kotlin.ir.builders.irGetField
 import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.builders.irTemporary
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
-import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.expressions.IrBlock
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
-import org.jetbrains.kotlin.ir.expressions.IrValueAccessExpression
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
@@ -517,7 +497,7 @@ class ComposerLambdaMemoization(
 
         if (
             inlineLambdaInfo.isInlineFunctionExpression(expression) ||
-                inlineLambdaInfo.isInlineLambda(expression.symbol.owner)
+            inlineLambdaInfo.isInlineLambda(expression.symbol.owner)
         ) {
             // Do not memoize function references used in inline parameters.
             return result
@@ -953,12 +933,12 @@ class ComposerLambdaMemoization(
             // Kotlin/JS doesn't have an optimization for non-capturing lambdas
             // https://youtrack.jetbrains.com/issue/KT-49923
             context.platform.isJs() || context.platform.isWasm() ||
-                (
-                    // K2 uses invokedynamic for lambdas, which doesn't perform lambda optimization
-                    // on Android.
-                    context.platform.isJvm() &&
-                        context.languageVersionSettings.languageVersion.usesK2
-                )
+                    (
+                            // K2 uses invokedynamic for lambdas, which doesn't perform lambda optimization
+                            // on Android.
+                            context.platform.isJvm() &&
+                                    context.languageVersionSettings.languageVersion.usesK2
+                    )
 
         // If the function doesn't capture, Kotlin's default optimization is sufficient
         if (!memoizeLambdasWithoutCaptures && captures.isEmpty()) {
@@ -970,16 +950,20 @@ class ComposerLambdaMemoization(
             return expression.markAsStatic(true)
         }
 
-        // Don't memoize if the function is annotated with DontMemoize of
-        // captures any var declarations, unstable values,
-        // or inlined lambdas.
+        // Don't memoize if the function is annotated with DontMemoize or
+        // captures:
+        // - any var declarations,
+        // - unstable values (without strong skipping),
+        // - local delegates with property refs,
+        // - inlined lambdas.
         if (
             functionContext.declaration.hasAnnotation(ComposeFqNames.DontMemoize) ||
             expression.hasDontMemoizeAnnotation ||
             captures.any {
                 it.isVar() ||
-                    (!it.isStable() && !FeatureFlag.StrongSkipping.enabled) ||
-                    it.isInlinedLambda()
+                        (!it.isStable() && !FeatureFlag.StrongSkipping.enabled) ||
+                        it.isPropertyReferenceDelegate() ||
+                        it.isInlinedLambda()
             }
         ) {
             metrics.recordLambda(
@@ -1208,7 +1192,11 @@ class ComposerLambdaMemoization(
 
     private fun IrExpression?.isNullOrStable() =
         this == null ||
-            stabilityInferencer.stabilityOf(this).knownStable()
+                stabilityInferencer.stabilityOf(this).knownStable()
+
+    // TODO(b/315869143): consider hoisting property reference receivers into a variable and memoizing based on them.
+    private fun IrValueDeclaration.isPropertyReferenceDelegate() =
+        origin == IrDeclarationOrigin.PROPERTY_DELEGATE && this is IrVariable && initializer is IrPropertyReference
 }
 
 // This must match the highest value of FunctionXX which is current Function22

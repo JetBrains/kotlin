@@ -1,0 +1,91 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable
+fun StrongSkippingIssue(
+    data: ClassWithData
+) {
+    val state by remember { mutableStateOf("") }
+    val action by data::action
+    val action1 by getData()::action
+    { 
+        action
+    }
+    {
+        action1
+    }
+    {
+        state
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun StrongSkippingIssue(data: ClassWithData, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(StrongSkippingIssue)<rememb...>,<{>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b1110 == 0) {
+    %dirty = %dirty or if (%composer.changed(data)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    val state by {
+      val state%delegate = <block>{
+        sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+        val tmp0_group = %composer.cache(false) {
+          mutableStateOf(
+            value = ""
+          )
+        }
+        sourceInformationMarkerEnd(%composer)
+        tmp0_group
+      }
+      get() {
+        return state%delegate.getValue(null, ::state%delegate)
+      }
+    }
+    val action by {
+      val action%delegate = data::action
+      get() {
+        return action%delegate.getValue(null, ::action%delegate)
+      }
+    }
+    val action1 by {
+      val action1%delegate = getData()::action
+      get() {
+        return action1%delegate.getValue(null, ::action1%delegate)
+      }
+    }
+    {
+      <get-action>()
+    }
+    {
+      <get-action1>()
+    }
+    sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+    val tmp1_group = %composer.cache(false) {
+      {
+        <get-state>()
+      }
+    }
+    sourceInformationMarkerEnd(%composer)
+    tmp1_group
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    StrongSkippingIssue(data, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

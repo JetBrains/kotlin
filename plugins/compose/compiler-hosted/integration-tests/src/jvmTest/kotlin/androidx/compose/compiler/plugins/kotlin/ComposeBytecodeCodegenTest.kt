@@ -16,10 +16,10 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 import org.junit.Assume.assumeFalse
 import org.junit.Test
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 /* ktlint-disable max-line-length */
 class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) {
@@ -654,5 +654,36 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
                 "default static functions should be generated in ComposeDefaultsImpl class"
             )
         }
+    )
+
+    @Test
+    fun testMemoizingFromDelegate() = testCompile(
+        """
+            import androidx.compose.runtime.*
+
+            class ClassWithData(
+                val action: Int = 0,
+            )
+
+            fun getData(): ClassWithData = TODO()
+
+            @Composable
+            fun StrongSkippingIssue(
+                data: ClassWithData
+            ) {
+                val state by remember { mutableStateOf("") }
+                val action by data::action
+                val action1 by getData()::action
+                { 
+                    action
+                }
+                {
+                    action1
+                }
+                {
+                    state
+                }
+            }
+        """
     )
 }

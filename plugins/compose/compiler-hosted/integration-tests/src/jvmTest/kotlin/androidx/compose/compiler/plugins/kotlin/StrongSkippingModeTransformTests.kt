@@ -368,6 +368,49 @@ class StrongSkippingModeTransformTests(
         """
     )
 
+    @Test
+    fun testMemoizingFromReferenceDelegate() = verifyMemoization(
+        """
+            class ClassWithData(
+                var action: Int = 0,
+            )
+
+            fun getData(): ClassWithData = TODO()
+        """,
+        """
+            @Composable
+            fun StrongSkippingIssue(
+                data: ClassWithData
+            ) {
+                val action by data::action
+                val action1 by getData()::action
+                {
+                    action
+                }
+                {
+                    action1
+                }
+            }
+        """,
+    )
+
+    @Test
+    fun testMemoizingFromStateDelegate() = verifyMemoization(
+        """
+        """,
+        """
+            import androidx.compose.runtime.mutableStateOf
+            import androidx.compose.runtime.remember
+            import androidx.compose.runtime.getValue
+
+            @Composable
+            fun StrongSkippingState() {
+                val state by remember { mutableStateOf("") }; // <-- this is a load bearing ;
+                { state }
+            }
+        """,
+    )
+
     private fun verifyMemoization(
         @Language("kotlin")
         unchecked: String,

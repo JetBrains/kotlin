@@ -52,9 +52,11 @@ fun Test(%composer: Composer?, %changed: Int) {
     TestMemoizedFun(TestFunInterface { it: Int ->
       use(it)
     }, %composer, 0b0110)
-    TestMemoizedFun(%composer.cache(false) {
-      TestFunInterface { it: Int ->
-        use(capture)
+    TestMemoizedFun(<block>{
+      %composer.cache(false) {
+        TestFunInterface { it: Int ->
+          use(capture)
+        }
       }
     }, %composer, 0)
     if (isTraceInProgress()) {
