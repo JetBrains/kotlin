@@ -1421,7 +1421,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
 
         val values = when {
             firArgMapping.isNotEmpty() -> {
-                constantValues.map { (parameterName, argumentValue) ->
+                constantValues.mapNotNull { (parameterName, argumentValue) ->
                     val name = Name.identifier(parameterName)
                     val firArg = firArgMapping[name]
                     convertAnnotationArgumentWithNameFir(
