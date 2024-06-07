@@ -219,6 +219,12 @@ internal class KaFe10ScopeProvider(
         }
 
     @KaExperimentalApi
+    override val KaTypeScope.declarationScope: KaScope
+        get() = withValidityAssertion {
+            TODO()
+        }
+
+    @KaExperimentalApi
     override val KaType.syntheticJavaPropertiesScope: KaTypeScope?
         get() = withValidityAssertion {
             require(this is KaFe10Type)

@@ -94,7 +94,6 @@ public abstract class KaSession(
     KaTypeCreatorMixIn,
     KaAnalysisScopeProvider by analysisScopeProvider,
     KaSignatureSubstitutorMixIn,
-    KaScopeSubstitutionMixIn,
     KaSymbolProviderByJavaPsiMixIn,
     KaResolveExtensionInfoProviderMixIn,
     KaCompilerFacility by compilerFacility,
@@ -176,9 +175,6 @@ public abstract class KaSession(
 
     internal val signatureSubstitutor: KaSignatureSubstitutor get() = signatureSubstitutorImpl
     protected abstract val signatureSubstitutorImpl: KaSignatureSubstitutor
-
-    internal val scopeSubstitution: KaScopeSubstitution get() = scopeSubstitutionImpl
-    protected abstract val scopeSubstitutionImpl: KaScopeSubstitution
 
     internal val resolveExtensionInfoProvider: KaResolveExtensionInfoProvider get() = resolveExtensionInfoProviderImpl
     protected abstract val resolveExtensionInfoProviderImpl: KaResolveExtensionInfoProvider

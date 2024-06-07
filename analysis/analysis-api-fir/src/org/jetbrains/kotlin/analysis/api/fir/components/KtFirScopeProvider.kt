@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaCompositeScope
+import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaCompositeTypeScope
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaEmptyScope
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -245,6 +246,16 @@ internal class KaFirScopeProvider(
             return getFirTypeScope(this)
                 ?.withSyntheticPropertiesScopeOrSelf(coneType)
                 ?.let { convertToKtTypeScope(it) }
+        }
+
+    @KaExperimentalApi
+    override val KaTypeScope.declarationScope: KaScope
+        get() = withValidityAssertion {
+            return when (this) {
+                is KaFirDelegatingTypeScope -> KaFirDelegatingNamesAwareScope(firScope, analysisSession.firSymbolBuilder)
+                is KaCompositeTypeScope -> KaCompositeScope.create(subScopes.map { it.declarationScope }, token)
+                else -> unexpectedElementError<KaTypeScope>(this)
+            }
         }
 
     @KaExperimentalApi

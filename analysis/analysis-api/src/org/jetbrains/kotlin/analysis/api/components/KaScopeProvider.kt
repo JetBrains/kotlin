@@ -182,6 +182,9 @@ public interface KaScopeProvider {
     @KaExperimentalApi
     public val KaType.scope: KaTypeScope?
 
+    @KaExperimentalApi
+    public val KaTypeScope.declarationScope: KaScope
+
     /**
      * Returns a [KaTypeScope] with synthetic Java properties created for a given [KaType].
      */

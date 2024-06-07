@@ -122,8 +122,6 @@ private constructor(
 
     override val signatureSubstitutorImpl: KaSignatureSubstitutor = KaFirSignatureSubstitutor(this)
 
-    override val scopeSubstitutionImpl: KaScopeSubstitution = KaFirScopeSubstitution(this)
-
     override val substitutorFactoryImpl: KaSubstitutorFactory = KaFirSubstitutorFactory(this)
 
     override val symbolProviderByJavaPsiImpl = KaFirSymbolProviderByJavaPsi(this)
