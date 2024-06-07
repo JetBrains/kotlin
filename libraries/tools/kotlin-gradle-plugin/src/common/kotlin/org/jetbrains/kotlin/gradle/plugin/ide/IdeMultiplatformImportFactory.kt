@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.SourceSetConstraint
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.*
+//import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeJvmAndAndroidTestDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyTransformers.IdePlatformStdlibCommonDependencyFilter
+import org.jetbrains.kotlin.gradle.plugin.ide.dependencyTransformers.IdePlatformStdlibCommonDependencyFilter2
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizerTarget
 
 internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMultiplatformImport {
@@ -125,6 +127,13 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
             priority = IdeMultiplatformImport.Priority.normal
         )
 
+//        registerDependencyResolver(
+//            resolver = IdeJvmAndAndroidTestDependencyResolver,
+//            constraint = SourceSetConstraint.isJvmAndAndroid,
+//            phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
+//            priority = IdeMultiplatformImport.Priority.normal
+//        )
+
         registerAdditionalArtifactResolver(
             resolver = IdeSourcesVariantsResolver,
             constraint = SourceSetConstraint.unconstrained,
@@ -147,6 +156,18 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
                     or SourceSetConstraint.isJvmAndAndroid,
             phase = IdeMultiplatformImport.DependencyTransformationPhase.DependencyFilteringPhase,
         )
+
+        registerDependencyTransformer(
+            transformer = IdePlatformStdlibCommonDependencyFilter2,
+            constraint = SourceSetConstraint.isJvmAndAndroid,
+            phase = IdeMultiplatformImport.DependencyTransformationPhase.FreeDependencyTransformationPhase,
+        )
+
+//        registerDependencyTransformer(
+//            transformer = IdePlatformStdlibCommonDependencyFilter2,
+//            constraint = SourceSetConstraint.isJvmAndAndroid,
+//            phase = IdeMultiplatformImport.DependencyTransformationPhase.DependencyFilteringPhase,
+//        )
 
         registerDependencyEffect(
             effect = IdeDependencyLogger,

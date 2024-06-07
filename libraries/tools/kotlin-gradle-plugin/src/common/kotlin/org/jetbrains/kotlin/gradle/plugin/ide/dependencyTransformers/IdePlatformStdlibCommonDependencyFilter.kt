@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.ide.dependencyTransformers
 
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -20,5 +21,26 @@ internal object IdePlatformStdlibCommonDependencyFilter : IdeDependencyTransform
                     && dependency.coordinates?.group == stdlibCoordinatesGroup
                     && dependency.coordinates?.module in stdlibCoordinatesModules
         }
+    }
+}
+
+internal object IdePlatformStdlibCommonDependencyFilter2 : IdeDependencyTransformer {
+    private const val stdlibCoordinatesGroup = "org.jetbrains.kotlin"
+    private val stdlibCoordinatesModules = setOf("kotlin-stdlib-common", "kotlin-test-common", "kotlin-test-annotations-common")
+
+    override fun transform(sourceSet: KotlinSourceSet, dependencies: Set<IdeaKotlinDependency>): Set<IdeaKotlinDependency> {
+        return dependencies.flatMap { // check and add deps here
+            if(it.coordinates.toString().contains("kotlin-test")) { //TODO:
+
+                listOf(it)
+//                +
+//                        IdeaKotlinBinaryDependency()
+//                        IdeaKotlinResolvedBinaryDependency(
+//                            coordinates = IdeaKotlinBinaryCoordinates(componentId, artifact.variant.capabilities, artifact.variant.attributes),
+//                            binaryType = IdeaKotlinBinaryDependency.KOTLIN_COMPILE_BINARY_TYPE,
+//                            classpath = it.extras
+//                        )
+            } else listOf(it)
+        }.toSet()
     }
 }

@@ -18,9 +18,12 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_ANDROID_JVM_STDLIB_MODULE_NAME
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_STDLIB_COMMON_MODULE_NAME
+import org.jetbrains.kotlin.gradle.internal.KOTLIN_TEST_ROOT_MODULE_NAME
+import org.jetbrains.kotlin.gradle.internal.addKotlinTestWithCapability
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.usageByName
+import org.jetbrains.kotlin.gradle.utils.getAllDependencies
 import org.jetbrains.kotlin.gradle.utils.named
 import org.jetbrains.kotlin.gradle.utils.setAttribute
 
@@ -47,8 +50,14 @@ internal fun IdeJvmAndAndroidPlatformBinaryDependencyResolver(project: Project):
              */
             componentFilter = { identifier -> identifier !is ProjectComponentIdentifier },
             dependencySubstitution = ::substituteStdlibCommonWithAndroidJvm,
+            withDependencies = { it.addKotlinTestWithCapability() }
         )
     )
+
+
+//internal object IdeJvmAndAndroidPlatformBinaryDependencyResolver2(project: Project): IdeDependencyResolver {
+//
+//}
 
 /**
  * This is a replacement for propagation of stdlib-jvm in non-KGP-based IDE import for JVM+Android source sets.
@@ -64,4 +73,27 @@ internal fun substituteStdlibCommonWithAndroidJvm(dependencySubstitutions: Depen
             && requested.module == KOTLIN_STDLIB_COMMON_MODULE_NAME
         ) dependency.useTarget("$KOTLIN_MODULE_GROUP:$KOTLIN_ANDROID_JVM_STDLIB_MODULE_NAME:${requested.version}")
     }
+
+    //TODO: this works but it replace, and we need not replace, but add
+//    dependencySubstitutions.all { dependency ->
+//        val requested = dependency.requested
+//
+//        if (requested is ModuleComponentSelector
+//            && requested.group == KOTLIN_MODULE_GROUP
+//            && requested.module == "kotlin-test"
+//        ) {
+//
+//            KOTLIN_TEST_ROOT_MODULE_NAME
+//            dependency.useTarget("$KOTLIN_MODULE_GROUP:kotlin-test-junit:${requested.version}")
+////            dependency.useTarget("$KOTLIN_MODULE_GROUP:kotlin-test:${requested.version}")
+//        }
+//    }
 }
+
+
+
+//":/jvmAndAndroidMain"
+//":/commonMain"
+//"org.jetbrains.kotlin:kotlin-test-junit:2.0.255-SNAPSHOT"
+//"junit:junit:4.13.2"
+//"org.hamcrest:hamcrest-core:1.3"

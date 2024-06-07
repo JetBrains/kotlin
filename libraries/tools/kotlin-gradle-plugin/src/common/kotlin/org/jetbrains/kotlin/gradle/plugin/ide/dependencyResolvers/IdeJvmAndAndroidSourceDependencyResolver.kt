@@ -9,8 +9,11 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.attributes.Attribute
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinClasspath
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency.Type.Regular
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -80,6 +83,17 @@ internal object IdeJvmAndAndroidSourceDependencyResolver : IdeDependencyResolver
                 }
             }
             .toSet()
+//        + IdeaKotlinResolvedBinaryDependency(
+//            binaryType = IdeaKotlinBinaryDependency.KOTLIN_COMPILE_BINARY_TYPE,
+//            classpath = IdeaKotlinClasspath(),
+////            extras = mutableExtrasOf(),
+//            coordinates = IdeaKotlinBinaryCoordinates("org.jetbrains.kotlin", "kotlin-test-framework-junit", "2.0.255-SNAPSHOT")
+//        )+ IdeaKotlinResolvedBinaryDependency(
+//            binaryType = IdeaKotlinBinaryDependency.KOTLIN_COMPILE_BINARY_TYPE,
+//            classpath = IdeaKotlinClasspath(),
+////            extras = mutableExtrasOf(),
+//            coordinates = IdeaKotlinBinaryCoordinates("org.jetbrains.kotlin", "asd", "mudak")
+//        )
     }
 
     private fun resolveMultiplatformSourceSets(dependencyProject: Project): Iterable<IdeaKotlinDependency> {
@@ -137,3 +151,100 @@ internal object IdeJvmAndAndroidSourceDependencyResolver : IdeDependencyResolver
         return compilation is KotlinJvmAndroidCompilation && compilation.androidVariant.type == AndroidVariantType.Main
     }
 }
+//TODO: take a look here, line 166 was commented to avoid compilation errors
+//internal object IdeJvmAndAndroidTestDependencyResolver : IdeDependencyResolver {
+//    override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
+//        if (!isJvmAndAndroid(sourceSet)) return emptySet()
+//        if (sourceSet !is DefaultKotlinSourceSet) return emptySet()
+////        val dependency = sourceSet.project.dependencies.create("com.example.my:library:1.0.0")
+//
+//        val dependencyNotation = "com.example.my:library:1.0.0"
+//        val configurationName = "${sourceSet.name}Implementation"
+//        val configuration = sourceSet.project.configurations.getByName(configurationName)
+//        val dependency = sourceSet.project.dependencies.create(dependencyNotation)
+//
+////        configuration.dependencies.add(dependency)
+////
+////        return sourceSet.resolveMetadata<MetadataDependencyResolution>()
+////            /**
+////             * Only care about project dependencies as this resolver tries to provide source dependencies
+////             */
+////            .filter { metadataDependencyResolution -> metadataDependencyResolution.projectDependency(sourceSet.project) != null }
+////            /**
+////             * See [IdeVisibleMultiplatformSourceDependencyResolver] on why this could happen
+////             */
+////            .filter { metadataDependencyResolution -> metadataDependencyResolution.projectDependency(sourceSet.project) != sourceSet.project }
+////
+////
+////            .flatMap { metadataDependencyResolution ->
+////
+////                when (metadataDependencyResolution) {
+////                    /* Dependency project is multiplatform */
+////                    is MetadataDependencyResolution.ChooseVisibleSourceSets -> resolveMultiplatformSourceSets(
+////                        metadataDependencyResolution.projectDependency(sourceSet.project) ?: return@flatMap emptyList()
+////                    )
+////
+////                    /* Dependency project is not multiplatform (jvm/android only) */
+////                    is MetadataDependencyResolution.KeepOriginalDependency -> resolveJvmSourceSets(sourceSet)
+////                    else -> emptyList()
+////                }
+////            }
+////            .toSet()
+//        return emptySet()
+//    }
+//
+//    private fun resolveMultiplatformSourceSets(dependencyProject: Project): Iterable<IdeaKotlinDependency> {
+//        val kotlin = dependencyProject.multiplatformExtensionOrNull ?: return emptyList()
+//        return kotlin.sourceSets
+//            .filter { sourceSet -> isJvmAndAndroidMain(sourceSet) }
+//            .map { sourceSet -> IdeaKotlinSourceDependency(type = Regular, coordinates = IdeaKotlinSourceCoordinates(sourceSet)) }
+//    }
+//
+//    /**
+//     * Pretend that this [sourceSet] is 'jvm' and resolve binaries.
+//     * #### Setting up attributes:
+//     * In order to set up the 'platform like' / 'jvm like' dependency resolution, this algorithm
+//     * will look at all 'jvm' based compilations, uses their 'compileDependencyConfiguration' as reference and
+//     * then uses the intersection of all available attributes
+//     *
+//     * #### componentFilter:
+//     * This resolver will just care about resolving project dependencies.
+//     * Therefore, a componentFilter is added to only resolve project dependencies.
+//     * We expect to resolve project artifact dependencies which can then be matched to the corresponding
+//     * SourceSets on IDE side.
+//     */
+//    private fun resolveJvmSourceSets(sourceSet: KotlinSourceSet): Iterable<IdeaKotlinDependency> {
+//        return IdeBinaryDependencyResolver(
+//            binaryType = IdeaKotlinBinaryDependency.KOTLIN_COMPILE_BINARY_TYPE,
+//            artifactResolutionStrategy = IdeBinaryDependencyResolver.ArtifactResolutionStrategy.PlatformLikeSourceSet(
+//                setupPlatformResolutionAttributes = {
+//                    sourceSet.internal.compilations.filter { it.platformType == KotlinPlatformType.jvm }
+//                        .map { compilation -> compilation.internal.configurations.compileDependencyConfiguration.attributes }
+//                        .map { attributes -> attributes.toMap().toList().toSet() }
+//                        .reduceOrNull { acc, next -> acc intersect next }
+//                        .orEmpty()
+//                        .forEach { (key, value) ->
+//                            @Suppress("UNCHECKED_CAST")
+//                            setAttributeProvider(sourceSet.project, key as Attribute<Any>) { value as Any }
+//                        }
+//                },
+//                componentFilter = { id -> id is ProjectComponentIdentifier }
+//            )
+//        ).resolve(sourceSet)
+//    }
+//
+//    private fun isJvmAndAndroidMain(sourceSet: KotlinSourceSet): Boolean {
+//        if (!isJvmAndAndroid(sourceSet)) return false
+//        return sourceSet.internal.compilations.filter { it.platformType != KotlinPlatformType.common }.all { compilation ->
+//            isJvmMain(compilation) || isAndroidMain(compilation)
+//        }
+//    }
+//
+//    private fun isJvmMain(compilation: KotlinCompilation<*>): Boolean {
+//        return compilation.platformType == KotlinPlatformType.jvm && compilation.isMain()
+//    }
+//
+//    private fun isAndroidMain(compilation: KotlinCompilation<*>): Boolean {
+//        return compilation is KotlinJvmAndroidCompilation && compilation.androidVariant.type == AndroidVariantType.Main
+//    }
+//}

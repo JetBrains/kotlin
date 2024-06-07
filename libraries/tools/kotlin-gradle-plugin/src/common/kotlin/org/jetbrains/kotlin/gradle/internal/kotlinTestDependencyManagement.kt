@@ -11,6 +11,7 @@ import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.provider.Provider
@@ -93,6 +94,18 @@ private fun KotlinTarget.configureKotlinTestDependency(
         }
     }
 }
+internal fun DependencySet.addKotlinTestWithCapability() {
+    val testRootDependency = allNonProjectDependencies()
+        .singleOrNull { it.isKotlinTestRootDependency }
+    if(testRootDependency == null || testRootDependency !is ExternalDependency) return
+
+    val testCapability = "$KOTLIN_MODULE_GROUP:$KOTLIN_TEST_ROOT_MODULE_NAME-framework-${KotlinTestJvmFramework.junit}"
+    val newDep = testRootDependency.copy()
+    newDep.capabilities{
+        it.requireCapability(testCapability)
+    }
+    this.add(newDep)
+}
 
 private fun Configuration.maybeAddTestDependencyCapability(
     compilation: KotlinCompilation<*>,
@@ -163,7 +176,7 @@ private fun KotlinCompilation<*>.kotlinTestCapabilityForJvmSourceSet(
             }
 
             "$KOTLIN_MODULE_GROUP:$KOTLIN_TEST_ROOT_MODULE_NAME-framework-$framework"
-        }
+        }// org.jetbrains.kotlin:kotlin-test-framework-junit
 }
 
 internal const val KOTLIN_TEST_ROOT_MODULE_NAME = "kotlin-test"
@@ -191,3 +204,5 @@ private fun KotlinTargetWithTests<*, *>.findTestRunsByCompilation(
     }
     return testRuns.matching { it.executionSource.isProducedFromTheCompilation() }
 }
+
+
