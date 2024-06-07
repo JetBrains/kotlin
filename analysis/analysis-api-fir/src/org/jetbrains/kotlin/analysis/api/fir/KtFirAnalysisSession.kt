@@ -59,6 +59,7 @@ private constructor(
     resolver = KaFirResolver(analysisSessionProvider, token),
     diagnosticProvider = KaFirDiagnosticProvider(analysisSessionProvider, token),
     scopeProvider = KaFirScopeProvider(analysisSessionProvider, token),
+    completionCandidateChecker = KaFirCompletionCandidateChecker(analysisSessionProvider, token),
     referenceShortener = KaFirReferenceShortener(analysisSessionProvider, token),
     originalPsiProvider = KaFirOriginalPsiProvider(analysisSessionProvider, token),
     typeCreator = KaFirTypeCreator(analysisSessionProvider, token),
@@ -83,8 +84,6 @@ private constructor(
 
     override val symbolProviderImpl =
         KaFirSymbolProvider(this, firResolveSession.useSiteFirSession.symbolProvider)
-
-    override val completionCandidateCheckerImpl = KaFirCompletionCandidateChecker(this, token)
 
     override val symbolDeclarationOverridesProviderImpl =
         KaFirSymbolDeclarationOverridesProvider(this, token)

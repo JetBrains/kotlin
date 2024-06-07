@@ -59,6 +59,7 @@ public abstract class KaSession(
     resolver: KaResolver,
     diagnosticProvider: KaDiagnosticProvider,
     scopeProvider: KaScopeProvider,
+    completionCandidateChecker: KaCompletionCandidateChecker,
     referenceShortener: KaReferenceShortener,
     originalPsiProvider: KaOriginalPsiProvider,
     typeCreator: KaTypeCreator,
@@ -72,7 +73,7 @@ public abstract class KaSession(
     KaSamResolverMixIn,
     KaDiagnosticProvider by diagnosticProvider,
     KaScopeProvider by scopeProvider,
-    KaCompletionCandidateCheckerMixIn,
+    KaCompletionCandidateChecker by completionCandidateChecker,
     KaSymbolDeclarationOverridesProviderMixIn,
     KaExpressionTypeProviderMixIn,
     KaPsiTypeProviderMixIn,
@@ -118,9 +119,6 @@ public abstract class KaSession(
 
     internal val samResolver: KaSamResolver get() = samResolverImpl
     protected abstract val samResolverImpl: KaSamResolver
-
-    internal val completionCandidateChecker: KaCompletionCandidateChecker get() = completionCandidateCheckerImpl
-    protected abstract val completionCandidateCheckerImpl: KaCompletionCandidateChecker
 
     internal val symbolDeclarationOverridesProvider: KaSymbolDeclarationOverridesProvider get() = symbolDeclarationOverridesProviderImpl
     protected abstract val symbolDeclarationOverridesProviderImpl: KaSymbolDeclarationOverridesProvider

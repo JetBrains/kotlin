@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.components.KaCompletionExtensionCandida
 import org.jetbrains.kotlin.analysis.api.components.KaExtensionApplicabilityResult.*
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
@@ -43,9 +44,9 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class KaFirCompletionCandidateChecker(
-    override val analysisSession: KaFirSession,
-    override val token: KaLifetimeToken,
-) : KaCompletionCandidateChecker(), KaFirSessionComponent {
+    override val analysisSessionProvider: () -> KaFirSession,
+    override val token: KaLifetimeToken
+) : KaSessionComponent<KaFirSession>(), KaCompletionCandidateChecker, KaFirSessionComponent {
     override fun createExtensionCandidateChecker(
         originalFile: KtFile,
         nameExpression: KtSimpleNameExpression,
@@ -56,19 +57,6 @@ internal class KaFirCompletionCandidateChecker(
             analysisSession.withValidityAssertion {
                 KaFirCompletionExtensionCandidateChecker(analysisSession, nameExpression, explicitReceiver, originalFile)
             }
-        }
-    }
-
-    @Suppress("OVERRIDE_DEPRECATION")
-    override fun checkExtensionFitsCandidate(
-        firSymbolForCandidate: KaCallableSymbol,
-        originalFile: KtFile,
-        nameExpression: KtSimpleNameExpression,
-        possibleExplicitReceiver: KtExpression?,
-    ): KaExtensionApplicabilityResult = analysisSession.withValidityAssertion {
-        val checker = KaFirCompletionExtensionCandidateChecker(analysisSession, nameExpression, possibleExplicitReceiver, originalFile)
-        return with(analysisSession) {
-            checker.computeApplicability(firSymbolForCandidate)
         }
     }
 }
