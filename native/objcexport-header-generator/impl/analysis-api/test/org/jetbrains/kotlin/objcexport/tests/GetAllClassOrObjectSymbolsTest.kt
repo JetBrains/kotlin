@@ -52,11 +52,11 @@ class GetAllClassOrObjectSymbolsTest(
             assertEquals(
                 listOf(
                     file.getClassOrFail("A"),
-                    file.getClassOrFail("A").getMemberScope().getClassOrFail("B"),
-                    file.getClassOrFail("A").getMemberScope().getClassOrFail("B").getMemberScope().getClassOrFail("C"),
+                    file.getClassOrFail("A").memberScope.getClassOrFail("B"),
+                    file.getClassOrFail("A").memberScope.getClassOrFail("B").memberScope.getClassOrFail("C"),
 
                     file.getClassOrFail("D"),
-                    file.getClassOrFail("D").getMemberScope().getClassOrFail("E")
+                    file.getClassOrFail("D").memberScope.getClassOrFail("E")
                 ),
                 file.getFileSymbol().getAllClassOrObjectSymbols()
             )

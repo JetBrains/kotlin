@@ -33,7 +33,7 @@ class IsArrayConstructorTest(
         val file = inlineSourceCodeAnalysis.createKtFile("class Foo(val x: Int)")
         analyze(file) {
             val foo = file.getClassOrFail("Foo")
-            val constructor = foo.getMemberScope().constructors.singleOrNull() ?: fail("No single constructor found")
+            val constructor = foo.memberScope.constructors.singleOrNull() ?: fail("No single constructor found")
             assertFalse(constructor.isArrayConstructor)
         }
     }
@@ -56,7 +56,7 @@ class IsArrayConstructorTest(
             val arraySymbol = getClassOrObjectSymbolByClassId(classId)
                 ?: fail("Missing $$classId symbol")
 
-            arraySymbol.getMemberScope().constructors
+            arraySymbol.memberScope.constructors
                 .ifEmpty { fail("No constructors found on $classId") }
                 .forEach { constructor ->
                     assertTrue(

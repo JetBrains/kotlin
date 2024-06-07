@@ -61,7 +61,7 @@ internal class SirClassFromKtSymbol(
     }
 
     private fun childDeclarations(): List<SirDeclaration> = withSessions {
-        ktSymbol.getCombinedDeclaredMemberScope()
+        ktSymbol.combinedDeclaredMemberScope
             .extractDeclarations(analysisSession)
             .toList()
     }

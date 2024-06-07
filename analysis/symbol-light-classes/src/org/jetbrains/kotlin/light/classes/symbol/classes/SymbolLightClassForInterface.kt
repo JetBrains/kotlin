@@ -57,7 +57,7 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
         withClassOrObjectSymbol { classOrObjectSymbol ->
             val result = mutableListOf<KtLightMethod>()
 
-            val visibleDeclarations = classOrObjectSymbol.getDeclaredMemberScope().callables.filter { acceptCallableSymbol(it) }
+            val visibleDeclarations = classOrObjectSymbol.declaredMemberScope.callables.filter { acceptCallableSymbol(it) }
 
             createMethods(visibleDeclarations, result)
             addMethodsFromCompanionIfNeeded(result, classOrObjectSymbol)

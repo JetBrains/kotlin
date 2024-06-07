@@ -23,7 +23,7 @@ abstract class AbstractScopeContextForPositionTest : AbstractAnalysisApiBasedTes
         val element = testServices.expressionMarkerProvider.getSelectedElementOfType<KtElement>(mainFile)
 
         analyseForTest(element) { elementToAnalyze ->
-            val scopeContext = mainFile.getScopeContextForPosition(elementToAnalyze)
+            val scopeContext = mainFile.scopeContext(elementToAnalyze)
 
             val scopeContextStringRepresentation = renderForTests(elementToAnalyze, scopeContext)
             val scopeContextStringRepresentationPretty = renderForTests(elementToAnalyze, scopeContext, printPretty = true)

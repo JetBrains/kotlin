@@ -35,7 +35,7 @@ abstract class AbstractTypeScopeTest : AbstractAnalysisApiBasedTest() {
         analyseForTest(expression) {
             val type = expression.getKaType()
                 ?: error("expression $expression is not typable")
-            val typeScope = type.getTypeScope()
+            val typeScope = type.scope
             val declaredScopeByTypeScope = typeScope?.getDeclarationScope()
 
             val scopeStringRepresentation = prettyPrint {

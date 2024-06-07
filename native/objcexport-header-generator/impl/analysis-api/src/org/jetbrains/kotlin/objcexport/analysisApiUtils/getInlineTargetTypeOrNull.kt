@@ -25,7 +25,7 @@ context(KtAnalysisSession)
 internal fun KtNamedClassOrObjectSymbol.getInlineTargetTypeOrNull(): KtType? {
     if (!isInlineIncludingKotlinNativeSpecialClasses()) return null
 
-    val constructor = getDeclaredMemberScope().constructors
+    val constructor = declaredMemberScope.constructors
         .find { constructor -> constructor.isPrimary && constructor.valueParameters.size == 1 }
         ?: return null
 

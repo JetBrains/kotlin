@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
  */
 context(KtAnalysisSession)
 internal fun KtFileSymbol.getAllClassOrObjectSymbols(): List<KtClassOrObjectSymbol> {
-    return getFileScope().classifiers
+    return fileScope.classifiers
         .filterIsInstance<KtClassOrObjectSymbol>()
         .flatMap { classSymbol -> listOf(classSymbol) + classSymbol.getAllClassOrObjectSymbols() }
         .toList()
@@ -29,7 +29,7 @@ internal fun KtFileSymbol.getAllClassOrObjectSymbols(): List<KtClassOrObjectSymb
 context(KtAnalysisSession)
 private fun KtClassOrObjectSymbol.getAllClassOrObjectSymbols(): Sequence<KtClassOrObjectSymbol> {
     return sequence {
-        val nestedClasses = getMemberScope().classifiers.filterIsInstance<KtClassOrObjectSymbol>()
+        val nestedClasses = memberScope.classifiers.filterIsInstance<KtClassOrObjectSymbol>()
         yieldAll(nestedClasses)
 
         nestedClasses.forEach { nestedClass ->

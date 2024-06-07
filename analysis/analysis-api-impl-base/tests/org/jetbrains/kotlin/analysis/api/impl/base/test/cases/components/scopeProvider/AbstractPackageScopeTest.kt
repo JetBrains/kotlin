@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractPackageScopeTest : AbstractScopeTestBase() {
     override fun KaSession.getScope(mainFile: KtFile, testServices: TestServices): KaScope =
-        getSingleTestTargetSymbolOfType<KaPackageSymbol>(mainFile, testDataPath).getPackageScope()
+        getSingleTestTargetSymbolOfType<KaPackageSymbol>(mainFile, testDataPath).packageScope
 
     override fun getAllowedContainingFiles(mainFile: KtFile, testServices: TestServices): Set<KtFile> {
         // Package scope tests may collect symbols from multiple files, so we need to allow all main test files.

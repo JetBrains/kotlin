@@ -100,7 +100,7 @@ sealed class SymbolData {
         }
 
         private fun KaSession.findMatchingCallableSymbols(classSymbol: KaClassOrObjectSymbol): List<KaCallableSymbol> {
-            val declaredSymbols = classSymbol.getCombinedDeclaredMemberScope()
+            val declaredSymbols = classSymbol.combinedDeclaredMemberScope
                 .callables(callableId.callableName).toList()
 
             if (declaredSymbols.isNotEmpty()) {
@@ -108,7 +108,7 @@ sealed class SymbolData {
             }
 
             // Fake overrides are absent in the declared member scope
-            return classSymbol.getCombinedMemberScope()
+            return classSymbol.combinedMemberScope
                 .callables(callableId.callableName)
                 .filter { it.getContainingSymbol() == classSymbol }
                 .toList()

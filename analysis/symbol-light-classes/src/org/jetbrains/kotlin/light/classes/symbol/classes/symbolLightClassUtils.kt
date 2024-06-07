@@ -548,7 +548,7 @@ internal fun KaSymbolWithMembers.createInnerClasses(
 ): List<SymbolLightClassBase> {
     val result = SmartList<SymbolLightClassBase>()
 
-    getStaticDeclaredMemberScope().classifiers.filterIsInstance<KaNamedClassOrObjectSymbol>().mapNotNullTo(result) {
+    staticDeclaredMemberScope.classifiers.filterIsInstance<KaNamedClassOrObjectSymbol>().mapNotNullTo(result) {
         val classOrObjectDeclaration = it.sourcePsiSafe<KtClassOrObject>()
         if (classOrObjectDeclaration != null) {
             classOrObjectDeclaration.toLightClass() as? SymbolLightClassBase
@@ -630,7 +630,7 @@ internal fun SymbolLightClassBase.addPropertyBackingFields(
     nameGenerator: SymbolLightField.FieldNameGenerator,
     forceIsStaticTo: Boolean? = null,
 ) {
-    val propertySymbols = symbolWithMembers.getCombinedDeclaredMemberScope().callables
+    val propertySymbols = symbolWithMembers.combinedDeclaredMemberScope.callables
         .filterIsInstance<KaPropertySymbol>()
         .applyIf(symbolWithMembers is KaClassOrObjectSymbol && symbolWithMembers.classKind == KaClassKind.COMPANION_OBJECT) {
             // All fields for companion object of classes are generated to the containing class

@@ -22,7 +22,7 @@ abstract class AbstractFileImportingScopeContextTest : AbstractAnalysisApiBasedT
         val renderDefaultImportingScope = Directives.RENDER_DEFAULT_IMPORTING_SCOPE in mainModule.testModule.directives
 
         analyseForTest(mainFile) {
-            val ktScopeContext = mainFile.getImportingScopeContext()
+            val ktScopeContext = mainFile.importingScopeContext
 
             val scopeContextStringRepresentation = render(ktScopeContext, renderDefaultImportingScope)
             val scopeContextStringRepresentationPretty = render(ktScopeContext, renderDefaultImportingScope, printPretty = true)

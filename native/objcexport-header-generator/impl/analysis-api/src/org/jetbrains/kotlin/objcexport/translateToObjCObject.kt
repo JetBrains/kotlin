@@ -30,7 +30,7 @@ fun KtClassOrObjectSymbol.translateToObjCObject(): ObjCClass? {
     val objectMembers = mutableListOf<ObjCExportStub>()
     objectMembers += translateToObjCConstructors()
     objectMembers += getDefaultMembers()
-    objectMembers += getDeclaredMemberScope().callables
+    objectMembers += declaredMemberScope.callables
         .sortedWith(StableCallableOrder)
         .flatMap { it.translateToObjCExportStub() }
 

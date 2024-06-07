@@ -117,7 +117,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
                         when (symbol) {
                             is KaDeclarationSymbol -> symbol.render(prettyRenderer)
                             is KaFileSymbol -> prettyPrint {
-                                printCollection(symbol.getFileScope().declarations.asIterable(), separator = "\n\n") {
+                                printCollection(symbol.fileScope.declarations.asIterable(), separator = "\n\n") {
                                     append(it.render(prettyRenderer))
                                 }
                             }

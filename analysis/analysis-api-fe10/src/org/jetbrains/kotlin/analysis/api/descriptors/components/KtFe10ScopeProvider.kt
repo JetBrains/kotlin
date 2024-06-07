@@ -24,9 +24,11 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KaFe10PsiSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.getResolutionScope
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaCompositeScope
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaEmptyScope
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.scopes.KaTypeScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
@@ -49,57 +51,65 @@ import org.jetbrains.kotlin.util.containingNonLocalDeclaration
 import org.jetbrains.kotlin.utils.Printer
 
 internal class KaFe10ScopeProvider(
-    override val analysisSession: KaFe10Session
-) : KaScopeProvider(), KaFe10SessionComponent {
+    override val analysisSessionProvider: () -> KaFe10Session,
+    override val token: KaLifetimeToken
+) : KaSessionComponent<KaFe10Session>(), KaScopeProvider, KaFe10SessionComponent {
     private companion object {
         val LOG = Logger.getInstance(KaFe10ScopeProvider::class.java)
     }
 
-    override val token: KaLifetimeToken
-        get() = analysisSession.token
+    override val KaSymbolWithMembers.memberScope: KaScope
+        get() = withValidityAssertion {
+            val descriptor = getDescriptor<ClassDescriptor>(this)
+                ?: return createEmptyScope()
 
-    override fun getMemberScope(classSymbol: KaSymbolWithMembers): KaScope {
-        val descriptor = getDescriptor<ClassDescriptor>(classSymbol)
-            ?: return getEmptyScope()
+            return KaFe10ScopeMember(descriptor.unsubstitutedMemberScope, descriptor.constructors, analysisContext)
+        }
 
-        return KaFe10ScopeMember(descriptor.unsubstitutedMemberScope, descriptor.constructors, analysisContext)
-    }
+    override val KaSymbolWithMembers.staticMemberScope: KaScope
+        get() = withValidityAssertion {
+            val descriptor = getDescriptor<ClassDescriptor>(this) ?: return createEmptyScope()
+            return KaFe10ScopeMember(descriptor.staticScope, emptyList(), analysisContext)
+        }
 
-    override fun getStaticMemberScope(symbol: KaSymbolWithMembers): KaScope {
-        val descriptor = getDescriptor<ClassDescriptor>(symbol) ?: return getEmptyScope()
-        return KaFe10ScopeMember(descriptor.staticScope, emptyList(), analysisContext)
-    }
+    override val KaSymbolWithMembers.declaredMemberScope: KaScope
+        get() = withValidityAssertion {
+            val descriptor = getDescriptor<ClassDescriptor>(this)
+                ?: return createEmptyScope()
 
-    override fun getDeclaredMemberScope(classSymbol: KaSymbolWithMembers): KaScope {
-        val descriptor = getDescriptor<ClassDescriptor>(classSymbol)
-            ?: return getEmptyScope()
+            return KaFe10ScopeNonStaticMember(DeclaredMemberScope(descriptor), descriptor.constructors, analysisContext)
+        }
 
-        return KaFe10ScopeNonStaticMember(DeclaredMemberScope(descriptor), descriptor.constructors, analysisContext)
-    }
+    override val KaSymbolWithMembers.staticDeclaredMemberScope: KaScope
+        get() = withValidityAssertion {
+            val descriptor = getDescriptor<ClassDescriptor>(this)
+                ?: return createEmptyScope()
 
-    override fun getStaticDeclaredMemberScope(classSymbol: KaSymbolWithMembers): KaScope {
-        val descriptor = getDescriptor<ClassDescriptor>(classSymbol)
-            ?: return getEmptyScope()
+            return KaFe10ScopeMember(
+                DeclaredMemberScope(descriptor.staticScope, descriptor, forDelegatedMembersOnly = false),
+                emptyList(),
+                analysisContext,
+            )
+        }
 
-        return KaFe10ScopeMember(
-            DeclaredMemberScope(descriptor.staticScope, descriptor, forDelegatedMembersOnly = false),
-            emptyList(),
-            analysisContext,
-        )
-    }
+    override val KaSymbolWithMembers.combinedDeclaredMemberScope: KaScope
+        get() = withValidityAssertion {
+            val descriptor = getDescriptor<ClassDescriptor>(this)
+                ?: return createEmptyScope()
 
-    override fun getCombinedDeclaredMemberScope(classSymbol: KaSymbolWithMembers): KaScope {
-        val descriptor = getDescriptor<ClassDescriptor>(classSymbol)
-            ?: return getEmptyScope()
+            return KaFe10ScopeMember(DeclaredMemberScope(descriptor), descriptor.constructors, analysisContext)
+        }
 
-        return KaFe10ScopeMember(DeclaredMemberScope(descriptor), descriptor.constructors, analysisContext)
-    }
+    override val KaSymbolWithMembers.delegatedMemberScope: KaScope
+        get() = withValidityAssertion {
+            val descriptor = getDescriptor<ClassDescriptor>(this)
+                ?: return createEmptyScope()
 
-    override fun getDelegatedMemberScope(classSymbol: KaSymbolWithMembers): KaScope {
-        val descriptor = getDescriptor<ClassDescriptor>(classSymbol)
-            ?: return getEmptyScope()
+            return KaFe10ScopeMember(DeclaredMemberScope(descriptor, forDelegatedMembersOnly = true), emptyList(), analysisContext)
+        }
 
-        return KaFe10ScopeMember(DeclaredMemberScope(descriptor, forDelegatedMembersOnly = true), emptyList(), analysisContext)
+    private fun createEmptyScope(): KaScope {
+        return KaEmptyScope(token)
     }
 
     private class DeclaredMemberScope(
@@ -182,61 +192,62 @@ internal class KaFe10ScopeProvider(
         }
     }
 
-    override fun getEmptyScope(): KaScope {
-        return KaEmptyScope(token)
-    }
+    override val KaFileSymbol.fileScope: KaScope
+        get() = withValidityAssertion {
+            require(this is KaFe10FileSymbol)
+            return KaFe10FileScope(psi, analysisContext, token)
+        }
 
-    override fun getFileScope(fileSymbol: KaFileSymbol): KaScope {
-        require(fileSymbol is KaFe10FileSymbol)
-        return KaFe10FileScope(fileSymbol.psi, analysisContext, token)
-    }
+    override val KaPackageSymbol.packageScope: KaScope
+        get() = withValidityAssertion {
+            require(this is KaFe10PackageSymbol)
+            val packageFragments = analysisContext.resolveSession.packageFragmentProvider.packageFragments(fqName)
+            val scopeDescription = "Compound scope for package \"${fqName}\""
+            val chainedScope = ChainedMemberScope.create(scopeDescription, packageFragments.map { it.getMemberScope() })
+            return KaFe10PackageScope(chainedScope, this, analysisContext)
+        }
 
-    override fun getPackageScope(packageSymbol: KaPackageSymbol): KaScope {
-        require(packageSymbol is KaFe10PackageSymbol)
-        val packageFragments = analysisContext.resolveSession.packageFragmentProvider.packageFragments(packageSymbol.fqName)
-        val scopeDescription = "Compound scope for package \"${packageSymbol.fqName}\""
-        val chainedScope = ChainedMemberScope.create(scopeDescription, packageFragments.map { it.getMemberScope() })
-        return KaFe10PackageScope(chainedScope, packageSymbol, analysisContext)
-    }
-
-    override fun getCompositeScope(subScopes: List<KaScope>): KaScope {
-        return KaCompositeScope.create(subScopes, token)
-    }
-
-    @KaExperimentalApi
-    override fun getTypeScope(type: KaType): KaTypeScope {
-        require(type is KaFe10Type)
-        TODO()
+    override fun List<KaScope>.asCompositeScope(): KaScope = withValidityAssertion {
+        return KaCompositeScope.create(this, token)
     }
 
     @KaExperimentalApi
-    override fun getSyntheticJavaPropertiesScope(type: KaType): KaTypeScope {
-        require(type is KaFe10Type)
-        TODO()
-    }
+    override val KaType.scope: KaTypeScope?
+        get() = withValidityAssertion {
+            require(this is KaFe10Type)
+            TODO()
+        }
 
-    override fun getScopeContextForPosition(originalFile: KtFile, positionInFakeFile: KtElement): KaScopeContext {
-        val elementToAnalyze = positionInFakeFile.containingNonLocalDeclaration() ?: originalFile
+    @KaExperimentalApi
+    override val KaType.syntheticJavaPropertiesScope: KaTypeScope?
+        get() = withValidityAssertion {
+            require(this is KaFe10Type)
+            TODO()
+        }
+
+    override fun KtFile.scopeContext(position: KtElement): KaScopeContext = withValidityAssertion {
+        val elementToAnalyze = position.containingNonLocalDeclaration() ?: this
         val bindingContext = analysisContext.analyze(elementToAnalyze)
 
         val scopeKind = KaScopeKind.LocalScope(0) // TODO
-        val lexicalScope = positionInFakeFile.getResolutionScope(bindingContext)
+        val lexicalScope = position.getResolutionScope(bindingContext)
         if (lexicalScope != null) {
             val compositeScope = KaCompositeScope.create(listOf(KaFe10ScopeLexical(lexicalScope, analysisContext)), token)
             return KaScopeContext(listOf(KaScopeWithKind(compositeScope, scopeKind, token)), collectImplicitReceivers(lexicalScope), token)
         }
 
-        val fileScope = analysisContext.resolveSession.fileScopeProvider.getFileResolutionScope(originalFile)
+        val fileScope = analysisContext.resolveSession.fileScopeProvider.getFileResolutionScope(this)
         val compositeScope = KaCompositeScope.create(listOf(KaFe10ScopeLexical(fileScope, analysisContext)), token)
         return KaScopeContext(listOf(KaScopeWithKind(compositeScope, scopeKind, token)), collectImplicitReceivers(fileScope), token)
     }
 
-    override fun getImportingScopeContext(file: KtFile): KaScopeContext {
-        val importingScopes = getScopeContextForPosition(originalFile = file, positionInFakeFile = file)
-            .scopes
-            .filter { it.kind is KaScopeKind.ImportingScope }
-        return KaScopeContext(importingScopes, implicitReceivers = emptyList(), token)
-    }
+    override val KtFile.importingScopeContext: KaScopeContext
+        get() = withValidityAssertion {
+            val importingScopes = scopeContext(position = this)
+                .scopes
+                .filter { it.kind is KaScopeKind.ImportingScope }
+            return KaScopeContext(importingScopes, implicitReceivers = emptyList(), token)
+        }
 
     private inline fun <reified T : DeclarationDescriptor> getDescriptor(symbol: KaSymbol): T? {
         return when (symbol) {

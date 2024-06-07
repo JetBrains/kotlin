@@ -39,7 +39,7 @@ internal class KaFirSymbolProviderByJavaPsi(
         val containingClass = callable.containingClass ?: return null
         val classSymbol = getNamedClassSymbol(containingClass) ?: return null
         return with(analysisSession) {
-            classSymbol.getCombinedDeclaredMemberScope().callables(name).firstOrNull { it.psi == callable }
+            classSymbol.combinedDeclaredMemberScope.callables(name).firstOrNull { it.psi == callable }
         }
     }
 }

@@ -112,7 +112,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
             val result = mutableListOf<KtLightMethod>()
 
             // We should use the combined declared member scope here because an enum class may contain static callables.
-            val declaredMemberScope = classOrObjectSymbol.getCombinedDeclaredMemberScope()
+            val declaredMemberScope = classOrObjectSymbol.combinedDeclaredMemberScope
 
             val visibleDeclarations = declaredMemberScope.callables
                 .applyIf(classKind().isObject) {
@@ -177,7 +177,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
 
         // NB: componentN and copy are added during RAW FIR, but synthetic members from `Any` are not.
         // That's why we use declared scope for 'component*' and 'copy', and member scope for 'equals/hashCode/toString'
-        val componentAndCopyFunctions = classOrObjectSymbol.getDeclaredMemberScope()
+        val componentAndCopyFunctions = classOrObjectSymbol.declaredMemberScope
             .callables { name -> DataClassResolver.isCopy(name) || DataClassResolver.isComponentLike(name) }
             .filter { it.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED }
             .filterIsInstance<KaFunctionSymbol>()
@@ -186,7 +186,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
 
         // Compiler will generate 'equals/hashCode/toString' for data class if they are not final.
         // We want to mimic that.
-        val generatedFunctionsFromAny = classOrObjectSymbol.getMemberScope()
+        val generatedFunctionsFromAny = classOrObjectSymbol.memberScope
             .callables(EQUALS, HASHCODE_NAME, TO_STRING)
             .filterIsInstance<KaFunctionSymbol>()
             .filter { it.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED }
@@ -218,7 +218,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
             )
         }
 
-        classOrObjectSymbol.getDelegatedMemberScope().callables.forEach { functionSymbol ->
+        classOrObjectSymbol.delegatedMemberScope.callables.forEach { functionSymbol ->
             if (functionSymbol is KaFunctionSymbol) {
                 createDelegateMethod(functionSymbol)
             }
@@ -267,7 +267,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
     private fun addFieldsForEnumEntries(result: MutableList<KtLightField>, classOrObjectSymbol: KaNamedClassOrObjectSymbol) {
         if (!isEnum) return
 
-        classOrObjectSymbol.getStaticDeclaredMemberScope().callables
+        classOrObjectSymbol.staticDeclaredMemberScope.callables
             .filterIsInstance<KaEnumEntrySymbol>()
             .mapNotNullTo(result) {
                 val enumEntry = it.sourcePsiSafe<KtEnumEntry>()

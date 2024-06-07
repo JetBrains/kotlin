@@ -35,7 +35,7 @@ internal class KaFirInheritorsProvider(
     override fun getEnumEntries(classSymbol: KaNamedClassOrObjectSymbol): List<KaEnumEntrySymbol> {
         require(classSymbol.classKind == KaClassKind.ENUM_CLASS)
         return with(analysisSession) {
-            classSymbol.getStaticDeclaredMemberScope().callables.filterIsInstance<KaEnumEntrySymbol>().toList()
+            classSymbol.staticDeclaredMemberScope.callables.filterIsInstance<KaEnumEntrySymbol>().toList()
         }
     }
 

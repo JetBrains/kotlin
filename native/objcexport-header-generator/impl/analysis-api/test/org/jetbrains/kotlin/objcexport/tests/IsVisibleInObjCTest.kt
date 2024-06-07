@@ -228,8 +228,8 @@ class IsVisibleInObjCTest(
 
         analyze(file) {
             val foo = file
-                .getClassOrFail("PublicA").getMemberScope()
-                .getClassOrFail("PublicB").getMemberScope()
+                .getClassOrFail("PublicA").memberScope
+                .getClassOrFail("PublicB").memberScope
                 .getClassOrFail("PublicC")
                 .getFunctionOrFail("foo")
             assertTrue(foo.isVisibleInObjC())
@@ -252,8 +252,8 @@ class IsVisibleInObjCTest(
 
         analyze(file) {
             val foo = file
-                .getClassOrFail("PublicA").getMemberScope()
-                .getClassOrFail("PrivateB").getMemberScope()
+                .getClassOrFail("PublicA").memberScope
+                .getClassOrFail("PrivateB").memberScope
                 .getClassOrFail("PublicC")
                 .getFunctionOrFail("foo")
             assertFalse(foo.isVisibleInObjC())
@@ -304,8 +304,8 @@ class IsVisibleInObjCTest(
 
         analyze(file) {
             val publicA = file.getClassOrFail("PublicA")
-            val hiddenB = publicA.getMemberScope().getClassOrFail("HiddenB")
-            val hiddenC = hiddenB.getMemberScope().getClassOrFail("HiddenC")
+            val hiddenB = publicA.memberScope.getClassOrFail("HiddenB")
+            val hiddenC = hiddenB.memberScope.getClassOrFail("HiddenC")
 
             assertFalse(hiddenB.isVisibleInObjC())
             assertFalse(hiddenC.isVisibleInObjC())

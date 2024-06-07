@@ -32,7 +32,7 @@ abstract class AbstractCreateInheritanceTypeSubstitutorTest : AbstractAnalysisAp
             prettyPrint {
                 appendLine("Substitutor: ${stringRepresentation(substitutor)}")
                 if (substitutor != null) {
-                    val functions = superClassSymbol.getDeclaredMemberScope().declarations
+                    val functions = superClassSymbol.declaredMemberScope.declarations
                         .filterIsInstance<KaFunctionSymbol>()
                         .toList()
                     if (functions.isNotEmpty()) {

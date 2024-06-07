@@ -21,7 +21,7 @@ class IsObjCObjectTypeTest(
         val file = inlineSourceCodeAnalysis.createKtFile("class Foo")
         analyze(file) {
             val fooSymbol = file.getClassOrFail("Foo")
-            assertFalse(fooSymbol.getMemberScope().constructors.single().returnType.isObjCObjectType())
+            assertFalse(fooSymbol.memberScope.constructors.single().returnType.isObjCObjectType())
         }
     }
 
@@ -35,7 +35,7 @@ class IsObjCObjectTypeTest(
 
         analyze(file) {
             val fooSymbol = file.getClassOrFail("Foo")
-            assertTrue(fooSymbol.getMemberScope().constructors.single().returnType.isObjCObjectType())
+            assertTrue(fooSymbol.memberScope.constructors.single().returnType.isObjCObjectType())
         }
     }
 
@@ -51,7 +51,7 @@ class IsObjCObjectTypeTest(
 
         analyze(file) {
             val fooSymbol = file.getClassOrFail("Foo")
-            assertTrue(fooSymbol.getMemberScope().constructors.single().returnType.isObjCObjectType())
+            assertTrue(fooSymbol.memberScope.constructors.single().returnType.isObjCObjectType())
         }
     }
 }

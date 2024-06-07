@@ -29,6 +29,7 @@ class KaFe10Session(
     resolutionScope: KaGlobalSearchScope
 ) : KaSession(
     token,
+    scopeProvider = KaFe10ScopeProvider(analysisSessionProvider, token),
     originalPsiProvider = KaFe10OriginalPsiProvider(analysisSessionProvider, token),
     analysisScopeProvider = KaAnalysisScopeProviderImpl(analysisSessionProvider, token, resolutionScope),
     compilerFacility = KaFe10CompilerFacility(analysisSessionProvider, token),
@@ -37,7 +38,6 @@ class KaFe10Session(
     sourceProvider = KaFe10SourceProvider(analysisSessionProvider, token)
 ) {
     override val diagnosticProviderImpl: KaDiagnosticProvider = KaFe10DiagnosticProvider(this)
-    override val scopeProviderImpl: KaScopeProvider = KaFe10ScopeProvider(this)
     override val containingDeclarationProviderImpl: KaSymbolContainingDeclarationProvider = KaFe10SymbolContainingDeclarationProvider(this)
     override val symbolProviderImpl: KaSymbolProvider = KaFe10SymbolProvider(this)
     override val resolverImpl: KaResolver = KaFe10Resolver(this)

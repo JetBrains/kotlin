@@ -20,7 +20,7 @@ abstract class AbstractContainingDeclarationProviderByDelegatedMemberScopeTest :
 
         val memberToContainingClass = analyseForTest(declaration) {
             val symbol = declaration.getClassOrObjectSymbol()!!
-            renderScopeWithParentDeclarations(symbol.getDelegatedMemberScope())
+            renderScopeWithParentDeclarations(symbol.delegatedMemberScope)
         }
 
         testServices.assertions.assertEqualsToTestDataFileSibling(memberToContainingClass)

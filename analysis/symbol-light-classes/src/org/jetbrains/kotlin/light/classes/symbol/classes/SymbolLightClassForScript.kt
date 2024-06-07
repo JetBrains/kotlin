@@ -60,7 +60,7 @@ internal class SymbolLightClassForScript private constructor(
         result.addScriptDefaultMethods()
 
         symbolPointer.withSymbol(ktModule) { scriptSymbol ->
-            createMethods(scriptSymbol.getDeclaredMemberScope().callables, result)
+            createMethods(scriptSymbol.declaredMemberScope.callables, result)
         }
         result
     }

@@ -101,7 +101,7 @@ class IsCloneableTest(
             assertTrue(
                 file
                     .getPropertyOrFail("array")
-                    .getter?.returnType?.expandedSymbol?.getMemberScope()
+                    .getter?.returnType?.expandedSymbol?.memberScope
                     ?.getFunctionOrFail("clone")
                     ?.isClone ?: false
             )

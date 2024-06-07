@@ -54,7 +54,7 @@ internal open class SymbolLightClassForAnnotationClass : SymbolLightClassForInte
 
     protected open fun computeOwnMethods(): List<PsiMethod> = withClassOrObjectSymbol { classOrObjectSymbol ->
         val result = mutableListOf<KtLightMethod>()
-        val visibleDeclarations = classOrObjectSymbol.getDeclaredMemberScope().callables
+        val visibleDeclarations = classOrObjectSymbol.declaredMemberScope.callables
             .filterNot { it is KaFunctionSymbol && it.visibility.isPrivateOrPrivateToThis() }
             .filterNot { it is KaConstructorSymbol }
 

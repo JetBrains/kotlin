@@ -94,7 +94,7 @@ private class KtPsiObjCExportFile(
             fileName = fileName,
             packageFqName = packageFqName,
             classifierSymbols = symbol.getAllClassOrObjectSymbols(),
-            callableSymbols = symbol.getFileScope().callables.toList()
+            callableSymbols = symbol.fileScope.callables.toList()
         )
     }
 }
@@ -132,7 +132,7 @@ private class KtKlibObjCExportFile(
             classifierSymbols = classifierAddresses
                 .mapNotNull { classAddress -> classAddress.getClassOrObjectSymbol() }
                 .withClosure<KtClassOrObjectSymbol> { symbol ->
-                    symbol.getMemberScope().classifiers.filterIsInstance<KtClassOrObjectSymbol>().asIterable()
+                    symbol.memberScope.classifiers.filterIsInstance<KtClassOrObjectSymbol>().asIterable()
                 }.toList(),
             callableSymbols = callableAddresses.flatMap { address ->
                 address.getCallableSymbols()

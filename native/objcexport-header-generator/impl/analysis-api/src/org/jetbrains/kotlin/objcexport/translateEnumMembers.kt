@@ -20,7 +20,7 @@ internal fun KtClassOrObjectSymbol.translateEnumMembers(): List<ObjCExportStub> 
 
 context(KtAnalysisSession, KtObjCExportSession)
 private fun KtClassOrObjectSymbol.getEnumEntries(): List<ObjCProperty> {
-    val staticMembers = this.getStaticDeclaredMemberScope().callables.toList()
+    val staticMembers = this.staticDeclaredMemberScope.callables.toList()
     return staticMembers.filterIsInstance<KtEnumEntrySymbol>().map { entry ->
 
         val entryName = entry.getEnumEntryName(false)
@@ -41,7 +41,7 @@ private fun KtClassOrObjectSymbol.getEnumEntries(): List<ObjCProperty> {
  */
 context(KtAnalysisSession, KtObjCExportSession)
 private fun KtClassOrObjectSymbol.getEnumValuesMethod(): ObjCMethod {
-    val valuesFunctionSymbol = getStaticMemberScope().callables(Name.identifier("values")).firstOrNull()
+    val valuesFunctionSymbol = staticMemberScope.callables(Name.identifier("values")).firstOrNull()
     return ObjCMethod(
         comment = null,
         isInstanceMethod = false,
@@ -58,7 +58,7 @@ private fun KtClassOrObjectSymbol.getEnumValuesMethod(): ObjCMethod {
  */
 context(KtAnalysisSession, KtObjCExportSession)
 private fun KtClassOrObjectSymbol.getEnumEntriesProperty(): ObjCProperty {
-    val entriesSymbol = getStaticMemberScope().callables(Name.identifier("entries")).firstOrNull()
+    val entriesSymbol = staticMemberScope.callables(Name.identifier("entries")).firstOrNull()
 
     return ObjCProperty(
         name = "entries",

@@ -135,7 +135,7 @@ internal class SymbolLightClassForEnumEntry(
             val result = mutableListOf<KtLightMethod>()
 
             enumEntrySymbol.enumEntryInitializer?.let { initializer ->
-                val declaredMemberScope = initializer.getDeclaredMemberScope()
+                val declaredMemberScope = initializer.declaredMemberScope
                 val visibleDeclarations = declaredMemberScope.callables
 
                 createMethods(visibleDeclarations, result)

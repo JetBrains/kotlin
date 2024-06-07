@@ -56,6 +56,7 @@ private constructor(
     useSiteScope: KaGlobalSearchScope
 ) : KaSession(
     token,
+    scopeProvider = KaFirScopeProvider(analysisSessionProvider, token),
     originalPsiProvider = KaFirOriginalPsiProvider(analysisSessionProvider, token),
     analysisScopeProvider = KaAnalysisScopeProviderImpl(analysisSessionProvider, token, useSiteScope),
     compilerFacility = KaFirCompilerFacility(analysisSessionProvider, token),
@@ -63,7 +64,9 @@ private constructor(
     dataFlowProvider = KaFirDataFlowProvider(analysisSessionProvider, token),
     sourceProvider = KaFirSourceProvider(analysisSessionProvider, token)
 ) {
-    internal val firSymbolBuilder: KaSymbolByFirBuilder = KaSymbolByFirBuilder(project, this, token)
+    internal val firSymbolBuilder: KaSymbolByFirBuilder by lazy {
+        KaSymbolByFirBuilder(project, this, token)
+    }
 
     @Suppress("AnalysisApiMissingLifetimeCheck")
     override val useSiteModule: KtModule get() = firResolveSession.useSiteKtModule
@@ -77,8 +80,6 @@ private constructor(
     override val resolverImpl = KaFirResolver(this)
 
     override val samResolverImpl = KaFirSamResolver(this)
-
-    override val scopeProviderImpl = KaFirScopeProvider(this, firSymbolBuilder, firResolveSession)
 
     override val symbolProviderImpl =
         KaFirSymbolProvider(this, firResolveSession.useSiteFirSession.symbolProvider)

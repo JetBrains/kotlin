@@ -21,27 +21,27 @@ abstract class AbstractMemberScopeTestBase : AbstractScopeTestBase() {
 }
 
 abstract class AbstractMemberScopeTest : AbstractMemberScopeTestBase() {
-    override fun KaSession.getScope(symbol: KaSymbolWithMembers): KaScope = symbol.getMemberScope()
+    override fun KaSession.getScope(symbol: KaSymbolWithMembers): KaScope = symbol.memberScope
 }
 
 abstract class AbstractStaticMemberScopeTest : AbstractMemberScopeTestBase() {
-    override fun KaSession.getScope(symbol: KaSymbolWithMembers): KaScope = symbol.getStaticMemberScope()
+    override fun KaSession.getScope(symbol: KaSymbolWithMembers): KaScope = symbol.staticMemberScope
 }
 
 abstract class AbstractDeclaredMemberScopeTest : AbstractMemberScopeTestBase() {
-    override fun KaSession.getScope(symbol: KaSymbolWithMembers): KaScope = symbol.getDeclaredMemberScope()
+    override fun KaSession.getScope(symbol: KaSymbolWithMembers): KaScope = symbol.declaredMemberScope
 }
 
 abstract class AbstractStaticDeclaredMemberScopeTest : AbstractMemberScopeTestBase() {
-    override fun KaSession.getScope(symbol: KaSymbolWithMembers): KaScope = symbol.getStaticDeclaredMemberScope()
+    override fun KaSession.getScope(symbol: KaSymbolWithMembers): KaScope = symbol.staticDeclaredMemberScope
 }
 
 abstract class AbstractCombinedDeclaredMemberScopeTest : AbstractMemberScopeTestBase() {
-    override fun KaSession.getScope(symbol: KaSymbolWithMembers): KaScope = symbol.getCombinedDeclaredMemberScope()
+    override fun KaSession.getScope(symbol: KaSymbolWithMembers): KaScope = symbol.combinedDeclaredMemberScope
 }
 
 abstract class AbstractDelegateMemberScopeTest : AbstractMemberScopeTestBase() {
-    override fun KaSession.getScope(symbol: KaSymbolWithMembers): KaScope = symbol.getDelegatedMemberScope()
+    override fun KaSession.getScope(symbol: KaSymbolWithMembers): KaScope = symbol.delegatedMemberScope
 
     override fun KaSession.getSymbolsFromScope(scope: KaScope): Sequence<KaDeclarationSymbol> = scope.callables
 }

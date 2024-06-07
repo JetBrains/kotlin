@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractFileScopeTest : AbstractScopeTestBase() {
-    override fun KaSession.getScope(mainFile: KtFile, testServices: TestServices): KaScope = mainFile.getFileSymbol().getFileScope()
+    override fun KaSession.getScope(mainFile: KtFile, testServices: TestServices): KaScope = mainFile.getFileSymbol().fileScope
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         super.doTestByMainFile(mainFile, mainModule, testServices)

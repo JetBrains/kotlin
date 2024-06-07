@@ -69,11 +69,11 @@ internal fun KaSymbolWithModality.computeSimpleModality(): String? = when (modal
 
 context(KaSession)
 internal fun KaClassOrObjectSymbol.enumClassModality(): String? {
-    if (getMemberScope().callables.any { (it as? KaSymbolWithModality)?.modality == Modality.ABSTRACT }) {
+    if (memberScope.callables.any { (it as? KaSymbolWithModality)?.modality == Modality.ABSTRACT }) {
         return PsiModifier.ABSTRACT
     }
 
-    if (getStaticDeclaredMemberScope().callables.none { it is KaEnumEntrySymbol && it.requiresSubClass() }) {
+    if (staticDeclaredMemberScope.callables.none { it is KaEnumEntrySymbol && it.requiresSubClass() }) {
         return PsiModifier.FINAL
     }
 
@@ -83,7 +83,7 @@ internal fun KaClassOrObjectSymbol.enumClassModality(): String? {
 context(KaSession)
 private fun KaEnumEntrySymbol.requiresSubClass(): Boolean {
     val initializer = enumEntryInitializer ?: return false
-    return initializer.getCombinedDeclaredMemberScope().declarations.any { it !is KaConstructorSymbol }
+    return initializer.combinedDeclaredMemberScope.declarations.any { it !is KaConstructorSymbol }
 }
 
 internal fun KaSymbolWithVisibility.toPsiVisibilityForMember(): String = visibility.toPsiVisibilityForMember()

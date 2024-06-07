@@ -43,7 +43,7 @@ class IsObjCBaseCallableTest(
 
         analyze(file) {
             val fooSymbol = file.getClassOrFail("Foo")
-            val xSymbol = fooSymbol.getMemberScope().getFunctionOrFail("x")
+            val xSymbol = fooSymbol.memberScope.getFunctionOrFail("x")
             assertFalse(xSymbol.isObjCBaseCallable())
         }
     }
@@ -63,7 +63,7 @@ class IsObjCBaseCallableTest(
 
         analyze(file) {
             val fooSymbol = file.getClassOrFail("Foo")
-            val xSymbol = fooSymbol.getMemberScope().getFunctionOrFail("x")
+            val xSymbol = fooSymbol.memberScope.getFunctionOrFail("x")
             assertTrue(xSymbol.isObjCBaseCallable())
         }
     }

@@ -174,7 +174,7 @@ internal object KDocReferenceResolver {
 
     private fun KaSession.getSymbolsFromScopes(fqName: FqName, contextElement: KtElement): Collection<KaSymbol> {
         getSymbolsFromParentMemberScopes(fqName, contextElement).ifNotEmpty { return this }
-        val importScopeContext = contextElement.containingKtFile.getImportingScopeContext()
+        val importScopeContext = contextElement.containingKtFile.importingScopeContext
         getSymbolsFromImportingScope(importScopeContext, fqName, KaScopeKind.ExplicitSimpleImportingScope::class).ifNotEmpty { return this }
         getSymbolsFromPackageScope(fqName, contextElement).ifNotEmpty { return this }
         getSymbolsFromImportingScope(importScopeContext, fqName, KaScopeKind.DefaultSimpleImportingScope::class).ifNotEmpty { return this }
@@ -236,14 +236,14 @@ internal object KDocReferenceResolver {
 
     private fun KaSession.getCompositeCombinedMemberAndCompanionObjectScope(symbol: KaSymbolWithMembers): KaScope =
         listOfNotNull(
-            symbol.getCombinedMemberScope(),
+            symbol.combinedMemberScope,
             getCompanionObjectMemberScope(symbol),
         ).asCompositeScope()
 
     private fun KaSession.getCompanionObjectMemberScope(symbol: KaSymbolWithMembers): KaScope? {
         val namedClassSymbol = symbol as? KaNamedClassOrObjectSymbol ?: return null
         val companionSymbol = namedClassSymbol.companionObject ?: return null
-        return companionSymbol.getMemberScope()
+        return companionSymbol.memberScope
     }
 
     private fun KaSession.getSymbolsFromPackageScope(fqName: FqName, contextElement: KtElement): Collection<KaDeclarationSymbol> {
@@ -254,7 +254,7 @@ internal object KDocReferenceResolver {
         val containingFile = contextDeclarationOrSelf.containingKtFile
         val packageFqName = containingFile.packageFqName
         val packageSymbol = getPackageSymbolIfPackageExists(packageFqName) ?: return emptyList()
-        val packageScope = packageSymbol.getPackageScope()
+        val packageScope = packageSymbol.packageScope
         return getSymbolsFromMemberScope(fqName, packageScope)
     }
 
@@ -263,7 +263,7 @@ internal object KDocReferenceResolver {
         fqName: FqName,
         acceptScopeKind: KClass<out KaScopeKind>,
     ): Collection<KaDeclarationSymbol> {
-        val importingScope = scopeContext.getCompositeScope { acceptScopeKind.java.isAssignableFrom(it::class.java) }
+        val importingScope = scopeContext.compositeScope { acceptScopeKind.java.isAssignableFrom(it::class.java) }
         return getSymbolsFromMemberScope(fqName, importingScope)
     }
 

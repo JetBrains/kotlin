@@ -21,62 +21,25 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import java.util.Objects
 
-public abstract class KaScopeProvider : KaSessionComponent() {
-    public abstract fun getMemberScope(classSymbol: KaSymbolWithMembers): KaScope
-
-    public abstract fun getStaticMemberScope(symbol: KaSymbolWithMembers): KaScope
-
-    public open fun getCombinedMemberScope(symbol: KaSymbolWithMembers): KaScope = getCompositeScope(
-        listOf(
-            getMemberScope(symbol),
-            getStaticMemberScope(symbol),
-        )
-    )
-
-    public abstract fun getDeclaredMemberScope(classSymbol: KaSymbolWithMembers): KaScope
-
-    public abstract fun getStaticDeclaredMemberScope(classSymbol: KaSymbolWithMembers): KaScope
-
-    public abstract fun getCombinedDeclaredMemberScope(classSymbol: KaSymbolWithMembers): KaScope
-
-    public abstract fun getDelegatedMemberScope(classSymbol: KaSymbolWithMembers): KaScope
-
-    public abstract fun getEmptyScope(): KaScope
-
-    public abstract fun getFileScope(fileSymbol: KaFileSymbol): KaScope
-
-    public abstract fun getPackageScope(packageSymbol: KaPackageSymbol): KaScope
-
-    public abstract fun getCompositeScope(subScopes: List<KaScope>): KaScope
-
-    @KaExperimentalApi
-    public abstract fun getTypeScope(type: KaType): KaTypeScope?
-
-    @KaExperimentalApi
-    public abstract fun getSyntheticJavaPropertiesScope(type: KaType): KaTypeScope?
-
-    public abstract fun getImportingScopeContext(file: KtFile): KaScopeContext
-
-    public abstract fun getScopeContextForPosition(
-        originalFile: KtFile,
-        positionInFakeFile: KtElement
-    ): KaScopeContext
-}
-
-public typealias KtScopeProvider = KaScopeProvider
-
-public interface KaScopeProviderMixIn : KaSessionMixIn {
+public interface KaScopeProvider {
     /**
      * Returns a [KaScope] containing *non-static* callable members (functions, properties, and constructors) and all classifier members
      * (classes and objects) of the given [KaSymbolWithMembers]. The scope includes members inherited from the symbol's supertypes, in
      * addition to members which are declared explicitly inside the symbol's body.
      *
-     * The member scope doesn't include synthetic Java properties. To get such properties, use [getSyntheticJavaPropertiesScope].
+     * The member scope doesn't include synthetic Java properties. To get such properties, use [syntheticJavaPropertiesScope].
      *
-     * @see getStaticMemberScope
+     * @see staticMemberScope
      */
-    public fun KaSymbolWithMembers.getMemberScope(): KaScope =
-        withValidityAssertion { analysisSession.scopeProvider.getMemberScope(this) }
+    public val KaSymbolWithMembers.memberScope: KaScope
+
+    /**
+     * Returns a [KaScope] containing all members from [memberScope] and [staticMemberScope].
+     */
+    public val KaSymbolWithMembers.combinedMemberScope: KaScope
+        get() = withValidityAssertion {
+            return listOf(memberScope, staticMemberScope).asCompositeScope()
+        }
 
     /**
      * Returns a [KaScope] containing the *static* members of the given [KaSymbolWithMembers].
@@ -84,7 +47,7 @@ public interface KaScopeProviderMixIn : KaSessionMixIn {
      * The behavior of the scope differs based on whether the given [KaSymbolWithMembers] is a Kotlin or Java class:
      *
      * - **Kotlin class:** The scope contains static callables (functions and properties) and classifiers (classes and objects) declared
-     *   directly in the [KaSymbolWithMembers]. Hence, the static member scope for Kotlin classes is equivalent to [getDeclaredMemberScope].
+     *   directly in the [KaSymbolWithMembers]. Hence, the static member scope for Kotlin classes is equivalent to [declaredMemberScope].
      * - **Java class:** The scope contains static callables (functions and properties) declared in the [KaSymbolWithMembers] or any of its
      *   superclasses (excluding static callables from super-interfaces), and classes declared directly in the [KaSymbolWithMembers]. This
      *   follows Kotlin's rules about static inheritance in Java classes, where static callables are propagated from superclasses, but
@@ -152,16 +115,9 @@ public interface KaScopeProviderMixIn : KaSessionMixIn {
      * class InnerClass
      * ```
      *
-     * @see getMemberScope
+     * @see memberScope
      */
-    public fun KaSymbolWithMembers.getStaticMemberScope(): KaScope =
-        withValidityAssertion { analysisSession.scopeProvider.getStaticMemberScope(this) }
-
-    /**
-     * Returns a [KaScope] containing all members from [getMemberScope] and [getStaticMemberScope].
-     */
-    public fun KaSymbolWithMembers.getCombinedMemberScope(): KaScope =
-        withValidityAssertion { analysisSession.scopeProvider.getCombinedMemberScope(this) }
+    public val KaSymbolWithMembers.staticMemberScope: KaScope
 
     /**
      * Returns a [KaScope] containing the *non-static* callables (functions, properties, and constructors) and inner classes explicitly
@@ -169,12 +125,11 @@ public interface KaScopeProviderMixIn : KaSessionMixIn {
      *
      * The declared member scope does not contain classifiers (including the companion object) except for inner classes. To retrieve the
      * classifiers declared in this [KaSymbolWithMembers], please use the *static* declared member scope provided by
-     * [getStaticDeclaredMemberScope].
+     * [staticDeclaredMemberScope].
      *
-     * @see getStaticDeclaredMemberScope
+     * @see staticDeclaredMemberScope
      */
-    public fun KaSymbolWithMembers.getDeclaredMemberScope(): KaScope =
-        withValidityAssertion { analysisSession.scopeProvider.getDeclaredMemberScope(this) }
+    public val KaSymbolWithMembers.declaredMemberScope: KaScope
 
     /**
      * Returns a [KaScope] containing the *static* callables (functions and properties) and all classifiers (classes and objects) explicitly
@@ -184,30 +139,24 @@ public interface KaScopeProviderMixIn : KaSessionMixIn {
      * static callables. Hence, for non-enum Kotlin classes, it is not expected that the static declared member scope will contain any
      * callables.
      *
-     * @see getDeclaredMemberScope
+     * @see declaredMemberScope
      */
-    public fun KaSymbolWithMembers.getStaticDeclaredMemberScope(): KaScope =
-        withValidityAssertion { analysisSession.scopeProvider.getStaticDeclaredMemberScope(this) }
+    public val KaSymbolWithMembers.staticDeclaredMemberScope: KaScope
 
     /**
      * Returns a [KaScope] containing *all* members explicitly declared in the given [KaSymbolWithMembers].
      *
-     * In contrast to [getDeclaredMemberScope] and [getStaticDeclaredMemberScope], this scope contains both static and non-static members.
+     * In contrast to [declaredMemberScope] and [staticDeclaredMemberScope], this scope contains both static and non-static members.
      */
-    public fun KaSymbolWithMembers.getCombinedDeclaredMemberScope(): KaScope =
-        withValidityAssertion { analysisSession.scopeProvider.getCombinedDeclaredMemberScope(this) }
+    public val KaSymbolWithMembers.combinedDeclaredMemberScope: KaScope
 
-    public fun KaSymbolWithMembers.getDelegatedMemberScope(): KaScope =
-        withValidityAssertion { analysisSession.scopeProvider.getDelegatedMemberScope(this) }
+    public val KaSymbolWithMembers.delegatedMemberScope: KaScope
 
-    public fun KaFileSymbol.getFileScope(): KaScope =
-        withValidityAssertion { analysisSession.scopeProvider.getFileScope(this) }
+    public val KaFileSymbol.fileScope: KaScope
 
-    public fun KaPackageSymbol.getPackageScope(): KaScope =
-        withValidityAssertion { analysisSession.scopeProvider.getPackageScope(this) }
+    public val KaPackageSymbol.packageScope: KaScope
 
-    public fun List<KaScope>.asCompositeScope(): KaScope =
-        withValidityAssertion { analysisSession.scopeProvider.getCompositeScope(this) }
+    public fun List<KaScope>.asCompositeScope(): KaScope
 
     /**
      * Return a [KaTypeScope] for a given [KaType].
@@ -231,44 +180,49 @@ public interface KaScopeProviderMixIn : KaSessionMixIn {
      * @see KaTypeProviderMixIn.getKaType
      */
     @KaExperimentalApi
-    public fun KaType.getTypeScope(): KaTypeScope? =
-        withValidityAssertion { analysisSession.scopeProvider.getTypeScope(this) }
+    public val KaType.scope: KaTypeScope?
 
     /**
      * Returns a [KaTypeScope] with synthetic Java properties created for a given [KaType].
      */
     @KaExperimentalApi
-    public fun KaType.getSyntheticJavaPropertiesScope(): KaTypeScope? =
-        withValidityAssertion { analysisSession.scopeProvider.getSyntheticJavaPropertiesScope(this) }
+    public val KaType.syntheticJavaPropertiesScope: KaTypeScope?
 
     /**
      * For each scope in [KaScopeContext] an index is calculated. The indexes are relative to position, and they are only known for
-     * scopes obtained with [getScopeContextForPosition].
+     * scopes obtained with [scopeContext].
      *
      * Scopes with [KaScopeKind.TypeScope] include synthetic Java properties.
      */
-    public fun KtFile.getScopeContextForPosition(positionInFakeFile: KtElement): KaScopeContext =
-        withValidityAssertion { analysisSession.scopeProvider.getScopeContextForPosition(this, positionInFakeFile) }
+    public fun KtFile.scopeContext(position: KtElement): KaScopeContext
+
+
+    @Deprecated("Use 'scopeContext()' instead", replaceWith = ReplaceWith("scopeContext(positionInFakeFile)"))
+    public fun KtFile.getScopeContextForPosition(positionInFakeFile: KtElement): KaScopeContext {
+        return scopeContext(positionInFakeFile)
+    }
 
     /**
      * Returns a [KaScopeContext] formed by all imports in the [KtFile].
      *
      * By default, this will also include default importing scopes, which can be filtered by [KaScopeKind]
      */
-    public fun KtFile.getImportingScopeContext(): KaScopeContext =
-        withValidityAssertion { analysisSession.scopeProvider.getImportingScopeContext(this) }
+    public val KtFile.importingScopeContext: KaScopeContext
 
     /**
      * Returns single scope, containing declarations from all scopes that satisfy [filter]. The order of declarations corresponds to the
      * order of their containing scopes, which are sorted according to their indexes in scope tower.
      */
-    public fun KaScopeContext.getCompositeScope(filter: (KaScopeKind) -> Boolean = { true }): KaScope = withValidityAssertion {
+    public fun KaScopeContext.compositeScope(filter: (KaScopeKind) -> Boolean = { true }): KaScope = withValidityAssertion {
         val subScopes = scopes.filter { filter(it.kind) }.map { it.scope }
         subScopes.asCompositeScope()
     }
-}
 
-public typealias KtScopeProviderMixIn = KaScopeProviderMixIn
+    @Deprecated("Use 'compositeScope()' instead.", replaceWith = ReplaceWith("compositeScope(filter)"))
+    public fun KaScopeContext.getCompositeScope(filter: (KaScopeKind) -> Boolean = { true }): KaScope {
+        return compositeScope(filter)
+    }
+}
 
 public class KaScopeContext(
     scopes: List<KaScopeWithKind>,

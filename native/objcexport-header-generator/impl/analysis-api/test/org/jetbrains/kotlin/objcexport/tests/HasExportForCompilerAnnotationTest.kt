@@ -45,6 +45,6 @@ context(KtAnalysisSession)
 private fun verifyHasExportForCompilerAnnotation(property: KtPropertySymbol): Boolean {
     return property
         .returnType
-        .getTypeScope()?.getConstructors()?.toList()?.any { it.hasExportForCompilerAnnotation }
+        .scope?.getConstructors()?.toList()?.any { it.hasExportForCompilerAnnotation }
         ?: fail("Property return type has no constructors: ${property.returnType}")
 }
