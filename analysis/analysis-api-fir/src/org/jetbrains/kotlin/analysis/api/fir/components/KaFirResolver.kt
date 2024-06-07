@@ -1119,23 +1119,23 @@ internal class KaFirResolver(override val analysisSession: KaFirSession) : KaAbs
         // callee and the variable as the explicit receiver. To correctly get all candidates, we need to get the original function
         // call's explicit receiver (if there is any) and callee (i.e., the variable).
         val unwrappedExplicitReceiver = explicitReceiver?.unwrapSmartcastExpression()
-        val originalFunctionCall =
-            if (this is FirImplicitInvokeCall && unwrappedExplicitReceiver is FirPropertyAccessExpression) {
-                val originalCallee = unwrappedExplicitReceiver.calleeReference.safeAs<FirNamedReference>() ?: return emptyList()
-                buildFunctionCall {
-                    // NOTE: We only need to copy the explicit receiver and not the dispatch and extension receivers as only the explicit
-                    // receiver is needed by the resolver. The dispatch and extension receivers are only assigned after resolution when a
-                    // candidate is selected.
-                    source = this@collectCallCandidates.source
-                    annotations.addAll(this@collectCallCandidates.annotations)
-                    typeArguments.addAll(this@collectCallCandidates.typeArguments)
-                    explicitReceiver = unwrappedExplicitReceiver.explicitReceiver
-                    argumentList = this@collectCallCandidates.argumentList
-                    calleeReference = originalCallee
-                }
-            } else {
-                this
+        val isUnwrappedImplicitInvokeCall = this is FirImplicitInvokeCall && unwrappedExplicitReceiver is FirPropertyAccessExpression
+        val originalFunctionCall = if (isUnwrappedImplicitInvokeCall) {
+            val originalCallee = unwrappedExplicitReceiver.calleeReference.safeAs<FirNamedReference>() ?: return emptyList()
+            buildFunctionCall {
+                // NOTE: We only need to copy the explicit receiver and not the dispatch and extension receivers as only the explicit
+                // receiver is needed by the resolver. The dispatch and extension receivers are only assigned after resolution when a
+                // candidate is selected.
+                source = this@collectCallCandidates.source
+                annotations.addAll(this@collectCallCandidates.annotations)
+                typeArguments.addAll(this@collectCallCandidates.typeArguments)
+                explicitReceiver = unwrappedExplicitReceiver.explicitReceiver
+                argumentList = this@collectCallCandidates.argumentList
+                calleeReference = originalCallee
             }
+        } else {
+            this
+        }
 
         val calleeName = originalFunctionCall.calleeOrCandidateName ?: return emptyList()
         val candidates = AllCandidatesResolver(analysisSession.useSiteSession).getAllCandidates(
@@ -1145,13 +1145,15 @@ internal class KaFirResolver(override val analysisSession: KaFirSession) : KaAbs
             psi,
             ResolutionMode.ContextIndependent,
         )
+
         return candidates.mapNotNull {
             convertToKaCallCandidateInfo(
-                originalFunctionCall,
-                psi,
-                it.candidate,
-                it.isInBestCandidates,
-                resolveFragmentOfCall
+                resolvable = originalFunctionCall,
+                element = psi,
+                candidate = it.candidate,
+                isInBestCandidates = it.isInBestCandidates,
+                resolveFragmentOfCall = resolveFragmentOfCall,
+                isUnwrappedImplicitInvokeCall = isUnwrappedImplicitInvokeCall,
             )
         }
     }
@@ -1181,11 +1183,12 @@ internal class KaFirResolver(override val analysisSession: KaFirSession) : KaAbs
 
         return candidates.mapNotNull {
             convertToKaCallCandidateInfo(
-                this,
-                psi,
-                it.candidate,
-                it.isInBestCandidates,
-                resolveFragmentOfCall
+                resolvable = this,
+                element = psi,
+                candidate = it.candidate,
+                isInBestCandidates = it.isInBestCandidates,
+                resolveFragmentOfCall = resolveFragmentOfCall,
+                isUnwrappedImplicitInvokeCall = false,
             )
         }
     }
@@ -1202,11 +1205,20 @@ internal class KaFirResolver(override val analysisSession: KaFirSession) : KaAbs
         candidate: Candidate,
         isInBestCandidates: Boolean,
         resolveFragmentOfCall: Boolean,
+        isUnwrappedImplicitInvokeCall: Boolean,
     ): KaCallCandidateInfo? {
         val call = createKaCall(element, resolvable, candidate, resolveFragmentOfCall)
             ?: error("expect `createKtCall` to succeed for candidate")
+
         if (candidate.isSuccessful) {
-            return KaApplicableCallCandidateInfo(call, isInBestCandidates)
+            return KaApplicableCallCandidateInfo(
+                candidate = call,
+                isInBestCandidates = if (isUnwrappedImplicitInvokeCall) {
+                    (call as? KaSimpleFunctionCall)?.isImplicitInvoke == true
+                } else {
+                    isInBestCandidates
+                }
+            )
         }
 
         val diagnostic = createConeDiagnosticForCandidateWithError(candidate.lowestApplicability, candidate)
