@@ -49,7 +49,7 @@ class JvmArgumentsModificationTest : BaseDaemonSessionTest() {
         }
     }
 
-    @DisplayName("The multiple GC selected case is handled")
+    @DisplayName("The multiple GC selected case via a non-standard environment variable is handled")
     @Test
     fun testMultipleGcSelected() {
         /*
@@ -70,6 +70,20 @@ class JvmArgumentsModificationTest : BaseDaemonSessionTest() {
                 logs.count { it.message.contains("GC auto-selection logic is disabled temporary for the next daemon startup") }
             assert(numberOfGcListenerMessages == 1) {
                 "Expected to have exactly one message about disabling GC auto-selection, got $numberOfGcListenerMessages: $logs"
+            }
+        } finally {
+            CompilerSystemProperties.COMPILE_DAEMON_ENVIRONMENT_VARIABLES_FOR_TESTS.clear()
+        }
+    }
+
+    @DisplayName("The multiple GC selected case via the standard environment variable is handled")
+    @Test
+    fun testMultipleGcSelectedViaStandardEnvVariable() {
+        try {
+            CompilerSystemProperties.COMPILE_DAEMON_ENVIRONMENT_VARIABLES_FOR_TESTS.value = "JAVA_TOOL_OPTIONS=-XX:+UseG1GC"
+            val commandParts = leaseSessionAndExtractCommand()
+            assert(commandParts.none { it.startsWith("-XX:+Use") && it.endsWith("GC") }) {
+                "Expected no enabled garbage collector via CLI JVM arguments: $commandParts"
             }
         } finally {
             CompilerSystemProperties.COMPILE_DAEMON_ENVIRONMENT_VARIABLES_FOR_TESTS.clear()
