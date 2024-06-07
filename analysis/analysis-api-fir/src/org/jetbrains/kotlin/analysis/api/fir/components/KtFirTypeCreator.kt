@@ -11,7 +11,11 @@ import org.jetbrains.kotlin.analysis.api.components.KaTypeParameterTypeBuilder
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
@@ -21,13 +25,22 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.typeContext
+import org.jetbrains.kotlin.name.ClassId
 
 internal class KaFirTypeCreator(
-    override val analysisSession: KaFirSession,
+    override val analysisSessionProvider: () -> KaFirSession,
     override val token: KaLifetimeToken
-) : KaTypeCreator(), KaFirSessionComponent {
+) : KaSessionComponent<KaFirSession>(), KaTypeCreator, KaFirSessionComponent {
 
-    override fun buildClassType(builder: KaClassTypeBuilder): KaType {
+    override fun buildClassType(classId: ClassId, init: KaClassTypeBuilder.() -> Unit): KaType = withValidityAssertion {
+        return buildClassType(KaClassTypeBuilder.ByClassId(classId, token).apply(init))
+    }
+
+    override fun buildClassType(symbol: KaClassLikeSymbol, init: KaClassTypeBuilder.() -> Unit): KaType = withValidityAssertion {
+        return buildClassType(KaClassTypeBuilder.BySymbol(symbol, token).apply(init))
+    }
+
+    private fun buildClassType(builder: KaClassTypeBuilder): KaType {
         val lookupTag = when (builder) {
             is KaClassTypeBuilder.ByClassId -> {
                 val classSymbol = rootModuleSession.symbolProvider.getClassLikeSymbolByClassId(builder.classId)
@@ -51,13 +64,12 @@ internal class KaFirTypeCreator(
         return coneType.asKtType()
     }
 
-    override fun buildTypeParameterType(builder: KaTypeParameterTypeBuilder): KaTypeParameterType {
-        val coneType = when (builder) {
-            is KaTypeParameterTypeBuilder.BySymbol -> {
-                val symbol = builder.symbol
-                (symbol as KaFirTypeParameterSymbol).firSymbol.toConeType()
-            }
+    override fun buildTypeParameterType(symbol: KaTypeParameterSymbol, init: KaTypeParameterTypeBuilder.() -> Unit): KaTypeParameterType {
+        withValidityAssertion {
+            val builder = KaTypeParameterTypeBuilder.BySymbol(symbol, token).apply(init)
+            val symbol = builder.symbol
+            val coneType = (symbol as KaFirTypeParameterSymbol).firSymbol.toConeType()
+            return coneType.asKtType() as KaTypeParameterType
         }
-        return coneType.asKtType() as KaTypeParameterType
     }
 }

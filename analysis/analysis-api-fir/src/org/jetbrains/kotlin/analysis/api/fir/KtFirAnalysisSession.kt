@@ -59,6 +59,7 @@ private constructor(
     resolver = KaFirResolver(analysisSessionProvider, token),
     scopeProvider = KaFirScopeProvider(analysisSessionProvider, token),
     originalPsiProvider = KaFirOriginalPsiProvider(analysisSessionProvider, token),
+    typeCreator = KaFirTypeCreator(analysisSessionProvider, token),
     analysisScopeProvider = KaAnalysisScopeProviderImpl(analysisSessionProvider, token, useSiteScope),
     compilerFacility = KaFirCompilerFacility(analysisSessionProvider, token),
     metadataCalculator = KaFirMetadataCalculator(analysisSessionProvider, token),
@@ -117,8 +118,6 @@ private constructor(
     override val multiplatformInfoProviderImpl: KaMultiplatformInfoProvider = KaFirMultiplatformInfoProvider(this, token)
 
     override val symbolInfoProviderImpl: KaSymbolInfoProvider = KaFirSymbolInfoProvider(this, token)
-
-    override val typesCreatorImpl: KaTypeCreator = KaFirTypeCreator(this, token)
 
     override val signatureSubstitutorImpl: KaSignatureSubstitutor = KaFirSignatureSubstitutor(this)
 

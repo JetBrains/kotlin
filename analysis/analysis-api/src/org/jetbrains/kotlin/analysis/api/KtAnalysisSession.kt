@@ -59,6 +59,7 @@ public abstract class KaSession(
     resolver: KaResolver,
     scopeProvider: KaScopeProvider,
     originalPsiProvider: KaOriginalPsiProvider,
+    typeCreator: KaTypeCreator,
     analysisScopeProvider: KaAnalysisScopeProvider,
     compilerFacility: KaCompilerFacility,
     metadataCalculator: KaMetadataCalculator,
@@ -91,7 +92,7 @@ public abstract class KaSession(
     KaMultiplatformInfoProviderMixin,
     KaOriginalPsiProvider by originalPsiProvider,
     KaInheritorsProviderMixIn,
-    KaTypeCreatorMixIn,
+    KaTypeCreator by typeCreator,
     KaAnalysisScopeProvider by analysisScopeProvider,
     KaSignatureSubstitutorMixIn,
     KaSymbolProviderByJavaPsiMixIn,
@@ -187,11 +188,6 @@ public abstract class KaSession(
     public val symbolProviderByJavaPsi: KaSymbolProviderByJavaPsi get() = symbolProviderByJavaPsiImpl
     @KaAnalysisApiInternals
     protected abstract val symbolProviderByJavaPsiImpl: KaSymbolProviderByJavaPsi
-
-    @PublishedApi
-    internal val typesCreator: KaTypeCreator
-        get() = typesCreatorImpl
-    protected abstract val typesCreatorImpl: KaTypeCreator
 
     internal val substitutorProvider: KaSubstitutorProvider get() = substitutorProviderImpl
     protected abstract val substitutorProviderImpl: KaSubstitutorProvider

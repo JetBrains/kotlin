@@ -19,35 +19,13 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
 
-public abstract class KaTypeCreator : KaSessionComponent() {
-    public abstract fun buildClassType(builder: KaClassTypeBuilder): KaType
+public interface KaTypeCreator {
+    public fun buildClassType(classId: ClassId, init: KaClassTypeBuilder.() -> Unit = {}): KaType
 
-    public abstract fun buildTypeParameterType(builder: KaTypeParameterTypeBuilder): KaTypeParameterType
+    public fun buildClassType(symbol: KaClassLikeSymbol, init: KaClassTypeBuilder.() -> Unit = {}): KaType
+
+    public fun buildTypeParameterType(symbol: KaTypeParameterSymbol, init: KaTypeParameterTypeBuilder.() -> Unit = {}): KaTypeParameterType
 }
-
-public typealias KtTypeCreator = KaTypeCreator
-
-public interface KaTypeCreatorMixIn : KaSessionMixIn
-
-public typealias KtTypeCreatorMixIn = KaTypeCreatorMixIn
-
-public inline fun KaTypeCreatorMixIn.buildClassType(
-    classId: ClassId,
-    build: KaClassTypeBuilder.() -> Unit = {},
-): KaType =
-    analysisSession.typesCreator.buildClassType(KaClassTypeBuilder.ByClassId(classId, token).apply(build))
-
-public inline fun KaTypeCreatorMixIn.buildClassType(
-    symbol: KaClassLikeSymbol,
-    build: KaClassTypeBuilder.() -> Unit = {},
-): KaType =
-    analysisSession.typesCreator.buildClassType(KaClassTypeBuilder.BySymbol(symbol, token).apply(build))
-
-public inline fun KaTypeCreatorMixIn.buildTypeParameterType(
-    symbol: KaTypeParameterSymbol,
-    build: KaTypeParameterTypeBuilder.() -> Unit = {},
-): KaTypeParameterType =
-    analysisSession.typesCreator.buildTypeParameterType(KaTypeParameterTypeBuilder.BySymbol(symbol, token).apply(build))
 
 public sealed class KaTypeBuilder : KaLifetimeOwner
 
