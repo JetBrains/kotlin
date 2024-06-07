@@ -29,6 +29,7 @@ class KaFe10Session(
     resolutionScope: KaGlobalSearchScope
 ) : KaSession(
     token,
+    resolver = KaFe10Resolver(analysisSessionProvider, token),
     scopeProvider = KaFe10ScopeProvider(analysisSessionProvider, token),
     originalPsiProvider = KaFe10OriginalPsiProvider(analysisSessionProvider, token),
     analysisScopeProvider = KaAnalysisScopeProviderImpl(analysisSessionProvider, token, resolutionScope),
@@ -40,7 +41,6 @@ class KaFe10Session(
     override val diagnosticProviderImpl: KaDiagnosticProvider = KaFe10DiagnosticProvider(this)
     override val containingDeclarationProviderImpl: KaSymbolContainingDeclarationProvider = KaFe10SymbolContainingDeclarationProvider(this)
     override val symbolProviderImpl: KaSymbolProvider = KaFe10SymbolProvider(this)
-    override val resolverImpl: KaResolver = KaFe10Resolver(this)
     override val completionCandidateCheckerImpl: KaCompletionCandidateChecker = KaFe10CompletionCandidateChecker(this)
     override val symbolDeclarationOverridesProviderImpl: KaSymbolDeclarationOverridesProvider =
         KaFe10SymbolDeclarationOverridesProvider(this)
@@ -62,7 +62,6 @@ class KaFe10Session(
     override val importOptimizerImpl: KaImportOptimizer = KaFe10ImportOptimizer(this)
     override val jvmTypeMapperImpl: KaJvmTypeMapper = KaFe10JvmTypeMapper(this)
     override val symbolInfoProviderImpl: KaSymbolInfoProvider = KaFe10SymbolInfoProvider(this)
-    override val referenceResolveProviderImpl: KaReferenceResolveProvider = KaFe10ReferenceResolveProvider(this)
     override val signatureSubstitutorImpl: KaSignatureSubstitutor = KaFe10SignatureSubstitutor(this)
     override val scopeSubstitutionImpl: KaScopeSubstitution = KaFe10ScopeSubstitution(this)
     override val substitutorFactoryImpl: KaSubstitutorFactory = KaFe10SubstitutorFactory(this)

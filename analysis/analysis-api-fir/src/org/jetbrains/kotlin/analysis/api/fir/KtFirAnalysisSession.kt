@@ -56,6 +56,7 @@ private constructor(
     useSiteScope: KaGlobalSearchScope
 ) : KaSession(
     token,
+    resolver = KaFirResolver(analysisSessionProvider, token),
     scopeProvider = KaFirScopeProvider(analysisSessionProvider, token),
     originalPsiProvider = KaFirOriginalPsiProvider(analysisSessionProvider, token),
     analysisScopeProvider = KaAnalysisScopeProviderImpl(analysisSessionProvider, token, useSiteScope),
@@ -76,8 +77,6 @@ private constructor(
     override val diagnosticProviderImpl = KaFirDiagnosticProvider(this, token)
 
     override val containingDeclarationProviderImpl = KaFirSymbolContainingDeclarationProvider(this, token)
-
-    override val resolverImpl = KaFirResolver(this)
 
     override val samResolverImpl = KaFirSamResolver(this)
 
@@ -120,8 +119,6 @@ private constructor(
     override val symbolInfoProviderImpl: KaSymbolInfoProvider = KaFirSymbolInfoProvider(this, token)
 
     override val typesCreatorImpl: KaTypeCreator = KaFirTypeCreator(this, token)
-
-    override val referenceResolveProviderImpl: KaReferenceResolveProvider = KaFirReferenceResolveProvider(this)
 
     override val signatureSubstitutorImpl: KaSignatureSubstitutor = KaFirSignatureSubstitutor(this)
 

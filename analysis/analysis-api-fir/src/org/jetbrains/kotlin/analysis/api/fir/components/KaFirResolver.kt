@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.processEqualsFunctions
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAbstractResolver
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaNonBoundToPsiErrorDiagnostic
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.resolution.KaAnnotationCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaCall
@@ -45,6 +47,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfTypeSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesResolver
 import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
@@ -78,6 +81,7 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.idea.references.KtDefaultAnnotationArgumentReference
 import org.jetbrains.kotlin.idea.references.KtReference
+import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -96,8 +100,23 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
-internal class KaFirResolver(override val analysisSession: KaFirSession) : KaAbstractResolver(), KaFirSessionComponent {
-    override fun resolveToSymbols(reference: KtReference): Collection<KaSymbol> {
+internal class KaFirResolver(
+    override val analysisSessionProvider: () -> KaFirSession,
+    override val token: KaLifetimeToken
+) : KaAbstractResolver<KaFirSession>(), KaFirSessionComponent {
+    override fun KtReference.isImplicitReferenceToCompanion(): Boolean = withValidityAssertion {
+        if (this !is KtSimpleNameReference) {
+            return false
+        }
+        val qualifier = element.getOrBuildFirSafe<FirResolvedQualifier>(analysisSession.firResolveSession) ?: return false
+        return qualifier.resolvedToCompanionObject
+    }
+
+    override fun KtReference.resolveToSymbols(): Collection<KaSymbol> = withValidityAssertion {
+        return doResolveToSymbols(this)
+    }
+
+    private fun doResolveToSymbols(reference: KtReference): Collection<KaSymbol> {
         if (reference is KtDefaultAnnotationArgumentReference) {
             return resolveDefaultAnnotationArgumentReference(reference)
         }
@@ -114,7 +133,11 @@ internal class KaFirResolver(override val analysisSession: KaFirSession) : KaAbs
         }
     }
 
-    override fun resolveCall(psi: KtElement): KaCallInfo? {
+    override fun KtElement.resolveCallOld(): KaCallInfo? = withValidityAssertion {
+        return doResolveCall(this)
+    }
+
+    private fun doResolveCall(psi: KtElement): KaCallInfo? {
         return wrapError(psi) {
             val ktCallInfos = getCallInfo(
                 psi,
@@ -136,7 +159,11 @@ internal class KaFirResolver(override val analysisSession: KaFirSession) : KaAbs
         }
     }
 
-    override fun collectCallCandidates(psi: KtElement): List<KaCallCandidateInfo> = wrapError(psi) {
+    override fun KtElement.collectCallCandidatesOld(): List<KaCallCandidateInfo> = withValidityAssertion {
+        return doCollectCallCandidates(this)
+    }
+
+    private fun doCollectCallCandidates(psi: KtElement): List<KaCallCandidateInfo> = wrapError(psi) {
         getCallInfo(
             psi,
             getErrorCallInfo = { emptyList() },

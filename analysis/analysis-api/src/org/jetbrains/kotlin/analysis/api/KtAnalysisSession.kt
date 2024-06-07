@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 @Suppress("AnalysisApiMissingLifetimeCheck")
 public abstract class KaSession(
     final override val token: KaLifetimeToken,
+    resolver: KaResolver,
     scopeProvider: KaScopeProvider,
     originalPsiProvider: KaOriginalPsiProvider,
     analysisScopeProvider: KaAnalysisScopeProvider,
@@ -64,7 +65,7 @@ public abstract class KaSession(
     dataFlowProvider: KaDataFlowProvider,
     sourceProvider: KaSourceProvider,
 ) : KaLifetimeOwner,
-    KaResolverMixIn,
+    KaResolver by resolver,
     KaSamResolverMixIn,
     KaDiagnosticProviderMixIn,
     KaScopeProvider by scopeProvider,
@@ -82,7 +83,6 @@ public abstract class KaSession(
     KaExpressionInfoProviderMixIn,
     KaCompileTimeConstantProviderMixIn,
     KaSymbolsMixIn,
-    KaReferenceResolveMixIn,
     KaReferenceShortenerMixIn,
     KaImportOptimizerMixIn,
     KaSymbolDeclarationRendererMixIn,
@@ -116,12 +116,6 @@ public abstract class KaSession(
 
     internal val symbolProvider: KaSymbolProvider get() = symbolProviderImpl
     protected abstract val symbolProviderImpl: KaSymbolProvider
-
-    @KaAnalysisApiInternals
-    internal val resolver: KaResolver get() = resolverImpl
-
-    @KaAnalysisApiInternals
-    protected abstract val resolverImpl: KaResolver
 
     internal val samResolver: KaSamResolver get() = samResolverImpl
     protected abstract val samResolverImpl: KaSamResolver
@@ -179,9 +173,6 @@ public abstract class KaSession(
 
     internal val symbolInfoProvider: KaSymbolInfoProvider get() = symbolInfoProviderImpl
     protected abstract val symbolInfoProviderImpl: KaSymbolInfoProvider
-
-    internal val referenceResolveProvider: KaReferenceResolveProvider get() = referenceResolveProviderImpl
-    protected abstract val referenceResolveProviderImpl: KaReferenceResolveProvider
 
     internal val signatureSubstitutor: KaSignatureSubstitutor get() = signatureSubstitutorImpl
     protected abstract val signatureSubstitutorImpl: KaSignatureSubstitutor
