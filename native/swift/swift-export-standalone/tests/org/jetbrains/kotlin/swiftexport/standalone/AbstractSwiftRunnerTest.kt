@@ -50,6 +50,7 @@ abstract class AbstractSwiftRunnerTest(
         testCase: TestCase,
         swiftExportOutput: SwiftExportModule,
         swiftModule: TestCompilationArtifact.Swift.Module,
+        kotlinBinaryLibrary: TestCompilationArtifact.BinaryLibrary,
     ) {
         assertSame(0, swiftExportOutput.dependencies.count(), "should produce module without children")
 

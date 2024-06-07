@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import org.junit.jupiter.api.Tag
 import java.io.File
-import kotlin.io.path.div
 
 @Tag("swiftexport")
 abstract class AbstractNativeSwiftExportExecutionTest : AbstractNativeSwiftExportTest() {
@@ -31,10 +30,11 @@ abstract class AbstractNativeSwiftExportExecutionTest : AbstractNativeSwiftExpor
         testCase: TestCase,
         swiftExportOutput: SwiftExportModule,
         swiftModule: TestCompilationArtifact.Swift.Module,
+        kotlinBinaryLibrary: TestCompilationArtifact.BinaryLibrary,
     ) {
         val swiftTestFiles = testPathFull.walk().filter { it.extension == "swift" }.map { testPathFull.resolve(it) }.toList()
         val testExecutable =
-            compileTestExecutable(testPathFull.name, swiftTestFiles, swiftModule.rootDir, swiftModule.moduleName, swiftModule.modulemap)
+            compileTestExecutable(testPathFull.name, swiftTestFiles, swiftModule.rootDir, swiftModule.moduleName, swiftModule.modulemap, kotlinBinaryLibrary)
         runExecutableAndVerify(testCase, testExecutable)
     }
 
@@ -73,6 +73,7 @@ abstract class AbstractNativeSwiftExportExecutionTest : AbstractNativeSwiftExpor
         swiftModuleDir: File,
         binaryLibraryName: String,
         moduleMap: File,
+        kotlinBinaryLibrary: TestCompilationArtifact.BinaryLibrary,
     ): TestExecutable {
         val swiftExtraOpts = listOf(
             "-I", swiftModuleDir.absolutePath,
@@ -80,6 +81,8 @@ abstract class AbstractNativeSwiftExportExecutionTest : AbstractNativeSwiftExpor
             "-l$binaryLibraryName",
             "-Xcc", "-fmodule-map-file=${moduleMap.absolutePath}",
             "-Xcc", "-fmodule-map-file=${Distribution(KotlinNativePaths.homePath.absolutePath).kotlinRuntimeForSwiftModuleMap}",
+            "-L", kotlinBinaryLibrary.libraryFile.parentFile.absolutePath,
+            "-l${kotlinBinaryLibrary.libraryFile.nameWithoutExtension.substringAfter("lib")}"
         )
         val provider = createTestProvider(buildDir, testSources)
         val success = SwiftCompilation(

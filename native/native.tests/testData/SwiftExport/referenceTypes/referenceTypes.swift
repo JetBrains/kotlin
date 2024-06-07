@@ -174,7 +174,7 @@ func objectsHashProperly() throws {
     let ein: KotlinBase = getHashableObject(value: 1)
     let two: KotlinBase = getHashableObject(value: 2)
 
-    // _ = one as Any // FIXME: this invokes a linking issue
+    _ = one as Any // FIXME: this invokes a linking issue
 
     try assertFalse(one === ein)
     try assertTrue(one == ein)

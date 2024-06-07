@@ -34,6 +34,7 @@ abstract class AbstractNativeSwiftExportTest : AbstractNativeSimpleTest() {
         testCase: TestCase,
         swiftExportOutput: SwiftExportModule,
         swiftModule: TestCompilationArtifact.Swift.Module,
+        kotlinBinaryLibrary: TestCompilationArtifact.BinaryLibrary,
     )
 
     protected abstract fun constructSwiftInput(
@@ -57,7 +58,9 @@ abstract class AbstractNativeSwiftExportTest : AbstractNativeSimpleTest() {
         // compile kotlin into binary
         val additionalKtFiles = swiftExportOutput.collectKotlinBridgeFilesRecursively()
         val kotlinFiles = collectKotlinFiles(testPathFull)
-        val testCase = generateSwiftExportTestCase(testPathFull.name, kotlinFiles + additionalKtFiles.map { it.toFile() })
+        //
+        val kotlinBinaryLibraryName = testPathFull.name + "Kotlin"
+        val testCase = generateSwiftExportTestCase(kotlinBinaryLibraryName, kotlinFiles + additionalKtFiles.map { it.toFile() })
         val kotlinBinaryLibrary = testCompilationFactory.testCaseToBinaryLibrary(
             testCase, testRunSettings,
             kind = BinaryLibraryKind.DYNAMIC,
@@ -74,7 +77,8 @@ abstract class AbstractNativeSwiftExportTest : AbstractNativeSimpleTest() {
             testPathFull,
             testCase,
             swiftExportOutput,
-            swiftModule
+            swiftModule,
+            kotlinBinaryLibrary
         )
     }
 
