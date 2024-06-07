@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE_STABILITY_K1: candidates
 // FILE: main.kt
 fun JavaClass.foo(javaClass: JavaClass) {
     print(javaClass.something)

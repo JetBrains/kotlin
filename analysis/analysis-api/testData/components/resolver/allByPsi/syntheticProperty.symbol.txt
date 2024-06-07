@@ -7,176 +7,176 @@ KtPackageDirective(0,0): ''
 KtImportList(0,0): ''
   null
 
-KtNamedFunction(0,335): '// WITH_STDLIB'
+KtNamedFunction(0,300): '// WITH_STDLIB'
   null
 
-KtTypeReference(71,80): 'JavaClass'
+KtTypeReference(36,45): 'JavaClass'
   null
 
-KtUserType(71,80): 'JavaClass'
+KtUserType(36,45): 'JavaClass'
   null
 
-KtNameReferenceExpression(71,80): 'JavaClass'
+KtNameReferenceExpression(36,45): 'JavaClass'
   null
 
-KtParameterList(84,106): '(javaClass: JavaClass)'
+KtParameterList(49,71): '(javaClass: JavaClass)'
   null
 
-KtParameter(85,105): 'javaClass: JavaClass'
+KtParameter(50,70): 'javaClass: JavaClass'
   null
 
-KtTypeReference(96,105): 'JavaClass'
+KtTypeReference(61,70): 'JavaClass'
   null
 
-KtUserType(96,105): 'JavaClass'
+KtUserType(61,70): 'JavaClass'
   null
 
-KtNameReferenceExpression(96,105): 'JavaClass'
+KtNameReferenceExpression(61,70): 'JavaClass'
   null
 
-KtBlockExpression(107,335): '{'
+KtBlockExpression(72,300): '{'
   null
 
-KtCallExpression(113,139): 'print(javaClass.something)'
+KtCallExpression(78,104): 'print(javaClass.something)'
   null
 
-KtNameReferenceExpression(113,118): 'print'
+KtNameReferenceExpression(78,83): 'print'
   null
 
-KtValueArgumentList(118,139): '(javaClass.something)'
+KtValueArgumentList(83,104): '(javaClass.something)'
   null
 
-KtValueArgument(119,138): 'javaClass.something'
+KtValueArgument(84,103): 'javaClass.something'
   null
 
-KtDotQualifiedExpression(119,138): 'javaClass.something'
+KtDotQualifiedExpression(84,103): 'javaClass.something'
   null
 
-KtNameReferenceExpression(119,128): 'javaClass'
+KtNameReferenceExpression(84,93): 'javaClass'
   null
 
-KtNameReferenceExpression(129,138): 'something'
+KtNameReferenceExpression(94,103): 'something'
   null
 
-KtBinaryExpression(144,167): 'javaClass.something = 1'
+KtBinaryExpression(109,132): 'javaClass.something = 1'
   null
 
-KtDotQualifiedExpression(144,163): 'javaClass.something'
+KtDotQualifiedExpression(109,128): 'javaClass.something'
   null
 
-KtNameReferenceExpression(144,153): 'javaClass'
+KtNameReferenceExpression(109,118): 'javaClass'
   null
 
-KtNameReferenceExpression(154,163): 'something'
+KtNameReferenceExpression(119,128): 'something'
   null
 
-KtOperationReferenceExpression(164,165): '='
+KtOperationReferenceExpression(129,130): '='
   null
 
-KtConstantExpression(166,167): '1'
+KtConstantExpression(131,132): '1'
   null
 
-KtBinaryExpression(172,196): 'javaClass.something += 1'
+KtBinaryExpression(137,161): 'javaClass.something += 1'
   null
 
-KtDotQualifiedExpression(172,191): 'javaClass.something'
+KtDotQualifiedExpression(137,156): 'javaClass.something'
   null
 
-KtNameReferenceExpression(172,181): 'javaClass'
+KtNameReferenceExpression(137,146): 'javaClass'
   null
 
-KtNameReferenceExpression(182,191): 'something'
+KtNameReferenceExpression(147,156): 'something'
   null
 
-KtOperationReferenceExpression(192,194): '+='
+KtOperationReferenceExpression(157,159): '+='
   null
 
-KtConstantExpression(195,196): '1'
+KtConstantExpression(160,161): '1'
   null
 
-KtPostfixExpression(201,222): 'javaClass.something++'
+KtPostfixExpression(166,187): 'javaClass.something++'
   null
 
-KtDotQualifiedExpression(201,220): 'javaClass.something'
+KtDotQualifiedExpression(166,185): 'javaClass.something'
   null
 
-KtNameReferenceExpression(201,210): 'javaClass'
+KtNameReferenceExpression(166,175): 'javaClass'
   null
 
-KtNameReferenceExpression(211,220): 'something'
+KtNameReferenceExpression(176,185): 'something'
   null
 
-KtOperationReferenceExpression(220,222): '++'
+KtOperationReferenceExpression(185,187): '++'
   null
 
-KtPrefixExpression(227,248): '--javaClass.something'
+KtPrefixExpression(192,213): '--javaClass.something'
   null
 
-KtOperationReferenceExpression(227,229): '--'
+KtOperationReferenceExpression(192,194): '--'
   null
 
-KtDotQualifiedExpression(229,248): 'javaClass.something'
+KtDotQualifiedExpression(194,213): 'javaClass.something'
   null
 
-KtNameReferenceExpression(229,238): 'javaClass'
+KtNameReferenceExpression(194,203): 'javaClass'
   null
 
-KtNameReferenceExpression(239,248): 'something'
+KtNameReferenceExpression(204,213): 'something'
   null
 
-KtPostfixExpression(254,265): 'something++'
+KtPostfixExpression(219,230): 'something++'
+  null
+
+KtNameReferenceExpression(219,228): 'something'
+  null
+
+KtOperationReferenceExpression(228,230): '++'
+  null
+
+KtPostfixExpression(235,248): '(something)++'
+  null
+
+KtParenthesizedExpression(235,246): '(something)'
+  null
+
+KtNameReferenceExpression(236,245): 'something'
+  null
+
+KtOperationReferenceExpression(246,248): '++'
+  null
+
+KtBinaryExpression(253,268): '(something) = 1'
+  null
+
+KtParenthesizedExpression(253,264): '(something)'
   null
 
 KtNameReferenceExpression(254,263): 'something'
   null
 
-KtOperationReferenceExpression(263,265): '++'
+KtOperationReferenceExpression(265,266): '='
   null
 
-KtPostfixExpression(270,283): '(something)++'
+KtConstantExpression(267,268): '1'
   null
 
-KtParenthesizedExpression(270,281): '(something)'
+KtBinaryExpression(273,298): '(javaClass.something) = 1'
   null
 
-KtNameReferenceExpression(271,280): 'something'
+KtParenthesizedExpression(273,294): '(javaClass.something)'
   null
 
-KtOperationReferenceExpression(281,283): '++'
+KtDotQualifiedExpression(274,293): 'javaClass.something'
   null
 
-KtBinaryExpression(288,303): '(something) = 1'
+KtNameReferenceExpression(274,283): 'javaClass'
   null
 
-KtParenthesizedExpression(288,299): '(something)'
+KtNameReferenceExpression(284,293): 'something'
   null
 
-KtNameReferenceExpression(289,298): 'something'
+KtOperationReferenceExpression(295,296): '='
   null
 
-KtOperationReferenceExpression(300,301): '='
-  null
-
-KtConstantExpression(302,303): '1'
-  null
-
-KtBinaryExpression(308,333): '(javaClass.something) = 1'
-  null
-
-KtParenthesizedExpression(308,329): '(javaClass.something)'
-  null
-
-KtDotQualifiedExpression(309,328): 'javaClass.something'
-  null
-
-KtNameReferenceExpression(309,318): 'javaClass'
-  null
-
-KtNameReferenceExpression(319,328): 'something'
-  null
-
-KtOperationReferenceExpression(330,331): '='
-  null
-
-KtConstantExpression(332,333): '1'
+KtConstantExpression(297,298): '1'
   null

@@ -1,83 +1,62 @@
-KtNameReferenceExpression(71,80): 'JavaClass'
+KtNameReferenceExpression(36,45): 'JavaClass'
   KtSimpleNameReference:
     Nothing (Unresolved reference)
 
-KtNameReferenceExpression(96,105): 'JavaClass'
+KtNameReferenceExpression(61,70): 'JavaClass'
   KtSimpleNameReference:
     Nothing (Unresolved reference)
 
-KtCallExpression(113,139): 'print(javaClass.something)'
+KtCallExpression(78,104): 'print(javaClass.something)'
   KtInvokeFunctionReference:
     Nothing (Unresolved reference)
 
-KtNameReferenceExpression(113,118): 'print'
+KtNameReferenceExpression(78,83): 'print'
   KtSimpleNameReference:
     Nothing (Unresolved reference)
   
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
-KtNameReferenceExpression(119,128): 'javaClass'
+KtNameReferenceExpression(84,93): 'javaClass'
   KtSimpleNameReference:
     Nothing (Unresolved reference)
   
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
-KtNameReferenceExpression(129,138): 'something'
+KtNameReferenceExpression(94,103): 'something'
   KtSimpleNameReference:
     Nothing (Unresolved reference)
   
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
-KtNameReferenceExpression(144,153): 'javaClass'
+KtNameReferenceExpression(109,118): 'javaClass'
   KtSimpleNameReference:
     Nothing (Unresolved reference)
   
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
-KtNameReferenceExpression(154,163): 'something'
+KtNameReferenceExpression(119,128): 'something'
   KtSimpleNameReference:
     Nothing (Unresolved reference)
   
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
-KtOperationReferenceExpression(164,165): '='
+KtOperationReferenceExpression(129,130): '='
   KtSimpleNameReference:
     Nothing (Unresolved reference)
 
-KtNameReferenceExpression(172,181): 'javaClass'
-  KtSimpleNameReference:
-    Nothing (Unresolved reference)
-  
-  SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
-
-KtNameReferenceExpression(182,191): 'something'
-  KtSimpleNameReference:
-    Nothing (Unresolved reference)
-  
-  SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
-  
-  SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
-
-KtOperationReferenceExpression(192,194): '+='
-  KtSimpleNameReference:
-    Nothing (Unresolved reference)
-
-KtNameReferenceExpression(201,210): 'javaClass'
+KtNameReferenceExpression(137,146): 'javaClass'
   KtSimpleNameReference:
     Nothing (Unresolved reference)
   
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
-KtNameReferenceExpression(211,220): 'something'
+KtNameReferenceExpression(147,156): 'something'
   KtSimpleNameReference:
     Nothing (Unresolved reference)
   
@@ -87,22 +66,18 @@ KtNameReferenceExpression(211,220): 'something'
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
-KtOperationReferenceExpression(220,222): '++'
+KtOperationReferenceExpression(157,159): '+='
   KtSimpleNameReference:
     Nothing (Unresolved reference)
 
-KtOperationReferenceExpression(227,229): '--'
-  KtSimpleNameReference:
-    Nothing (Unresolved reference)
-
-KtNameReferenceExpression(229,238): 'javaClass'
+KtNameReferenceExpression(166,175): 'javaClass'
   KtSimpleNameReference:
     Nothing (Unresolved reference)
   
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
-KtNameReferenceExpression(239,248): 'something'
+KtNameReferenceExpression(176,185): 'something'
   KtSimpleNameReference:
     Nothing (Unresolved reference)
   
@@ -110,6 +85,59 @@ KtNameReferenceExpression(239,248): 'something'
     Nothing (Unresolved reference)
   
   SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(185,187): '++'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(192,194): '--'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(194,203): 'javaClass'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(204,213): 'something'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(219,228): 'something'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(228,230): '++'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(236,245): 'something'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(246,248): '++'
+  KtSimpleNameReference:
     Nothing (Unresolved reference)
 
 KtNameReferenceExpression(254,263): 'something'
@@ -118,53 +146,25 @@ KtNameReferenceExpression(254,263): 'something'
   
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
-  
-  SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
 
-KtOperationReferenceExpression(263,265): '++'
+KtOperationReferenceExpression(265,266): '='
   KtSimpleNameReference:
     Nothing (Unresolved reference)
 
-KtNameReferenceExpression(271,280): 'something'
-  KtSimpleNameReference:
-    Nothing (Unresolved reference)
-  
-  SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
-  
-  SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
-
-KtOperationReferenceExpression(281,283): '++'
-  KtSimpleNameReference:
-    Nothing (Unresolved reference)
-
-KtNameReferenceExpression(289,298): 'something'
+KtNameReferenceExpression(274,283): 'javaClass'
   KtSimpleNameReference:
     Nothing (Unresolved reference)
   
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
-KtOperationReferenceExpression(300,301): '='
-  KtSimpleNameReference:
-    Nothing (Unresolved reference)
-
-KtNameReferenceExpression(309,318): 'javaClass'
+KtNameReferenceExpression(284,293): 'something'
   KtSimpleNameReference:
     Nothing (Unresolved reference)
   
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)
 
-KtNameReferenceExpression(319,328): 'something'
-  KtSimpleNameReference:
-    Nothing (Unresolved reference)
-  
-  SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
-
-KtOperationReferenceExpression(330,331): '='
+KtOperationReferenceExpression(295,296): '='
   KtSimpleNameReference:
     Nothing (Unresolved reference)

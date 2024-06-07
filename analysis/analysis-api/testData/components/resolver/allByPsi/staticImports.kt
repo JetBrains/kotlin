@@ -1,4 +1,3 @@
-// IGNORE_STABILITY_K1: candidates
 // FILE: dependency.kt
 package one.two
 

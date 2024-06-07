@@ -7,37 +7,37 @@ KtPackageDirective(0,0): ''
 KtImportList(0,0): ''
   null
 
-KtNamedFunction(0,335): '// WITH_STDLIB'
+KtNamedFunction(0,300): '// WITH_STDLIB'
   null
 
-KtTypeReference(71,80): 'JavaClass'
+KtTypeReference(36,45): 'JavaClass'
   null
 
-KtUserType(71,80): 'JavaClass'
+KtUserType(36,45): 'JavaClass'
   null
 
-KtNameReferenceExpression(71,80): 'JavaClass'
+KtNameReferenceExpression(36,45): 'JavaClass'
   null
 
-KtParameterList(84,106): '(javaClass: JavaClass)'
+KtParameterList(49,71): '(javaClass: JavaClass)'
   null
 
-KtParameter(85,105): 'javaClass: JavaClass'
+KtParameter(50,70): 'javaClass: JavaClass'
   null
 
-KtTypeReference(96,105): 'JavaClass'
+KtTypeReference(61,70): 'JavaClass'
   null
 
-KtUserType(96,105): 'JavaClass'
+KtUserType(61,70): 'JavaClass'
   null
 
-KtNameReferenceExpression(96,105): 'JavaClass'
+KtNameReferenceExpression(61,70): 'JavaClass'
   null
 
-KtBlockExpression(107,335): '{'
+KtBlockExpression(72,300): '{'
   null
 
-KtCallExpression(113,139): 'print(javaClass.something)'
+KtCallExpression(78,104): 'print(javaClass.something)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       isImplicitInvoke = false
@@ -67,7 +67,7 @@ KtCallExpression(113,139): 'print(javaClass.something)'
           callableId = null)
       }
 
-KtNameReferenceExpression(113,118): 'print'
+KtNameReferenceExpression(78,83): 'print'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       isImplicitInvoke = false
@@ -97,13 +97,13 @@ KtNameReferenceExpression(113,118): 'print'
           callableId = null)
       }
 
-KtValueArgumentList(118,139): '(javaClass.something)'
+KtValueArgumentList(83,104): '(javaClass.something)'
   null
 
-KtValueArgument(119,138): 'javaClass.something'
+KtValueArgument(84,103): 'javaClass.something'
   null
 
-KtDotQualifiedExpression(119,138): 'javaClass.something'
+KtDotQualifiedExpression(84,103): 'javaClass.something'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -121,7 +121,7 @@ KtDotQualifiedExpression(119,138): 'javaClass.something'
       simpleAccess = Read
       typeArgumentsMapping = {}
 
-KtNameReferenceExpression(119,128): 'javaClass'
+KtNameReferenceExpression(84,93): 'javaClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -136,7 +136,7 @@ KtNameReferenceExpression(119,128): 'javaClass'
       simpleAccess = Read
       typeArgumentsMapping = {}
 
-KtNameReferenceExpression(129,138): 'something'
+KtNameReferenceExpression(94,103): 'something'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -154,7 +154,7 @@ KtNameReferenceExpression(129,138): 'something'
       simpleAccess = Read
       typeArgumentsMapping = {}
 
-KtBinaryExpression(144,167): 'javaClass.something = 1'
+KtBinaryExpression(109,132): 'javaClass.something = 1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -173,7 +173,7 @@ KtBinaryExpression(144,167): 'javaClass.something = 1'
         value = 1
       typeArgumentsMapping = {}
 
-KtDotQualifiedExpression(144,163): 'javaClass.something'
+KtDotQualifiedExpression(109,128): 'javaClass.something'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -192,7 +192,7 @@ KtDotQualifiedExpression(144,163): 'javaClass.something'
         value = 1
       typeArgumentsMapping = {}
 
-KtNameReferenceExpression(144,153): 'javaClass'
+KtNameReferenceExpression(109,118): 'javaClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -207,7 +207,7 @@ KtNameReferenceExpression(144,153): 'javaClass'
       simpleAccess = Read
       typeArgumentsMapping = {}
 
-KtNameReferenceExpression(154,163): 'something'
+KtNameReferenceExpression(119,128): 'something'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -226,13 +226,13 @@ KtNameReferenceExpression(154,163): 'something'
         value = 1
       typeArgumentsMapping = {}
 
-KtOperationReferenceExpression(164,165): '='
+KtOperationReferenceExpression(129,130): '='
   null
 
-KtConstantExpression(166,167): '1'
+KtConstantExpression(131,132): '1'
   null
 
-KtBinaryExpression(172,196): 'javaClass.something += 1'
+KtBinaryExpression(137,161): 'javaClass.something += 1'
   KaSuccessCallInfo:
     call = KaCompoundVariableAccessCall:
       compoundAccess = CompoundAssign:
@@ -271,7 +271,7 @@ KtBinaryExpression(172,196): 'javaClass.something += 1'
           callableId = /JavaClass.something
       typeArgumentsMapping = {}
 
-KtDotQualifiedExpression(172,191): 'javaClass.something'
+KtDotQualifiedExpression(137,156): 'javaClass.something'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -289,7 +289,7 @@ KtDotQualifiedExpression(172,191): 'javaClass.something'
       simpleAccess = Read
       typeArgumentsMapping = {}
 
-KtNameReferenceExpression(172,181): 'javaClass'
+KtNameReferenceExpression(137,146): 'javaClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -304,7 +304,7 @@ KtNameReferenceExpression(172,181): 'javaClass'
       simpleAccess = Read
       typeArgumentsMapping = {}
 
-KtNameReferenceExpression(182,191): 'something'
+KtNameReferenceExpression(147,156): 'something'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -322,7 +322,7 @@ KtNameReferenceExpression(182,191): 'something'
       simpleAccess = Read
       typeArgumentsMapping = {}
 
-KtOperationReferenceExpression(192,194): '+='
+KtOperationReferenceExpression(157,159): '+='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       isImplicitInvoke = false
@@ -355,10 +355,10 @@ KtOperationReferenceExpression(192,194): '+='
           callableId = null)
       }
 
-KtConstantExpression(195,196): '1'
+KtConstantExpression(160,161): '1'
   null
 
-KtPostfixExpression(201,222): 'javaClass.something++'
+KtPostfixExpression(166,187): 'javaClass.something++'
   KaSuccessCallInfo:
     call = KaCompoundVariableAccessCall:
       compoundAccess = IncOrDecOperation:
@@ -390,7 +390,7 @@ KtPostfixExpression(201,222): 'javaClass.something++'
           callableId = /JavaClass.something
       typeArgumentsMapping = {}
 
-KtDotQualifiedExpression(201,220): 'javaClass.something'
+KtDotQualifiedExpression(166,185): 'javaClass.something'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -408,7 +408,7 @@ KtDotQualifiedExpression(201,220): 'javaClass.something'
       simpleAccess = Read
       typeArgumentsMapping = {}
 
-KtNameReferenceExpression(201,210): 'javaClass'
+KtNameReferenceExpression(166,175): 'javaClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -423,7 +423,7 @@ KtNameReferenceExpression(201,210): 'javaClass'
       simpleAccess = Read
       typeArgumentsMapping = {}
 
-KtNameReferenceExpression(211,220): 'something'
+KtNameReferenceExpression(176,185): 'something'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -441,7 +441,7 @@ KtNameReferenceExpression(211,220): 'something'
       simpleAccess = Read
       typeArgumentsMapping = {}
 
-KtOperationReferenceExpression(220,222): '++'
+KtOperationReferenceExpression(185,187): '++'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       isImplicitInvoke = false
@@ -460,7 +460,7 @@ KtOperationReferenceExpression(220,222): '++'
       typeArgumentsMapping = {}
       argumentMapping = {}
 
-KtPrefixExpression(227,248): '--javaClass.something'
+KtPrefixExpression(192,213): '--javaClass.something'
   KaSuccessCallInfo:
     call = KaCompoundVariableAccessCall:
       compoundAccess = IncOrDecOperation:
@@ -492,7 +492,7 @@ KtPrefixExpression(227,248): '--javaClass.something'
           callableId = /JavaClass.something
       typeArgumentsMapping = {}
 
-KtOperationReferenceExpression(227,229): '--'
+KtOperationReferenceExpression(192,194): '--'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       isImplicitInvoke = false
@@ -511,7 +511,7 @@ KtOperationReferenceExpression(227,229): '--'
       typeArgumentsMapping = {}
       argumentMapping = {}
 
-KtDotQualifiedExpression(229,248): 'javaClass.something'
+KtDotQualifiedExpression(194,213): 'javaClass.something'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -529,7 +529,7 @@ KtDotQualifiedExpression(229,248): 'javaClass.something'
       simpleAccess = Read
       typeArgumentsMapping = {}
 
-KtNameReferenceExpression(229,238): 'javaClass'
+KtNameReferenceExpression(194,203): 'javaClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -544,7 +544,7 @@ KtNameReferenceExpression(229,238): 'javaClass'
       simpleAccess = Read
       typeArgumentsMapping = {}
 
-KtNameReferenceExpression(239,248): 'something'
+KtNameReferenceExpression(204,213): 'something'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -562,7 +562,7 @@ KtNameReferenceExpression(239,248): 'something'
       simpleAccess = Read
       typeArgumentsMapping = {}
 
-KtPostfixExpression(254,265): 'something++'
+KtPostfixExpression(219,230): 'something++'
   KaSuccessCallInfo:
     call = KaCompoundVariableAccessCall:
       compoundAccess = IncOrDecOperation:
@@ -600,7 +600,7 @@ KtPostfixExpression(254,265): 'something++'
           callableId = /JavaClass.something
       typeArgumentsMapping = {}
 
-KtNameReferenceExpression(254,263): 'something'
+KtNameReferenceExpression(219,228): 'something'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -624,7 +624,7 @@ KtNameReferenceExpression(254,263): 'something'
       simpleAccess = Read
       typeArgumentsMapping = {}
 
-KtOperationReferenceExpression(263,265): '++'
+KtOperationReferenceExpression(228,230): '++'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       isImplicitInvoke = false
@@ -643,7 +643,7 @@ KtOperationReferenceExpression(263,265): '++'
       typeArgumentsMapping = {}
       argumentMapping = {}
 
-KtPostfixExpression(270,283): '(something)++'
+KtPostfixExpression(235,248): '(something)++'
   KaSuccessCallInfo:
     call = KaCompoundVariableAccessCall:
       compoundAccess = IncOrDecOperation:
@@ -681,10 +681,10 @@ KtPostfixExpression(270,283): '(something)++'
           callableId = /JavaClass.something
       typeArgumentsMapping = {}
 
-KtParenthesizedExpression(270,281): '(something)'
+KtParenthesizedExpression(235,246): '(something)'
   null
 
-KtNameReferenceExpression(271,280): 'something'
+KtNameReferenceExpression(236,245): 'something'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -708,7 +708,7 @@ KtNameReferenceExpression(271,280): 'something'
       simpleAccess = Read
       typeArgumentsMapping = {}
 
-KtOperationReferenceExpression(281,283): '++'
+KtOperationReferenceExpression(246,248): '++'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       isImplicitInvoke = false
@@ -727,7 +727,7 @@ KtOperationReferenceExpression(281,283): '++'
       typeArgumentsMapping = {}
       argumentMapping = {}
 
-KtBinaryExpression(288,303): '(something) = 1'
+KtBinaryExpression(253,268): '(something) = 1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -752,10 +752,10 @@ KtBinaryExpression(288,303): '(something) = 1'
         value = 1
       typeArgumentsMapping = {}
 
-KtParenthesizedExpression(288,299): '(something)'
+KtParenthesizedExpression(253,264): '(something)'
   null
 
-KtNameReferenceExpression(289,298): 'something'
+KtNameReferenceExpression(254,263): 'something'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -780,13 +780,13 @@ KtNameReferenceExpression(289,298): 'something'
         value = 1
       typeArgumentsMapping = {}
 
-KtOperationReferenceExpression(300,301): '='
+KtOperationReferenceExpression(265,266): '='
   null
 
-KtConstantExpression(302,303): '1'
+KtConstantExpression(267,268): '1'
   null
 
-KtBinaryExpression(308,333): '(javaClass.something) = 1'
+KtBinaryExpression(273,298): '(javaClass.something) = 1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -805,10 +805,10 @@ KtBinaryExpression(308,333): '(javaClass.something) = 1'
         value = 1
       typeArgumentsMapping = {}
 
-KtParenthesizedExpression(308,329): '(javaClass.something)'
+KtParenthesizedExpression(273,294): '(javaClass.something)'
   null
 
-KtDotQualifiedExpression(309,328): 'javaClass.something'
+KtDotQualifiedExpression(274,293): 'javaClass.something'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -827,7 +827,7 @@ KtDotQualifiedExpression(309,328): 'javaClass.something'
         value = 1
       typeArgumentsMapping = {}
 
-KtNameReferenceExpression(309,318): 'javaClass'
+KtNameReferenceExpression(274,283): 'javaClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -842,7 +842,7 @@ KtNameReferenceExpression(309,318): 'javaClass'
       simpleAccess = Read
       typeArgumentsMapping = {}
 
-KtNameReferenceExpression(319,328): 'something'
+KtNameReferenceExpression(284,293): 'something'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -861,8 +861,8 @@ KtNameReferenceExpression(319,328): 'something'
         value = 1
       typeArgumentsMapping = {}
 
-KtOperationReferenceExpression(330,331): '='
+KtOperationReferenceExpression(295,296): '='
   null
 
-KtConstantExpression(332,333): '1'
+KtConstantExpression(297,298): '1'
   null

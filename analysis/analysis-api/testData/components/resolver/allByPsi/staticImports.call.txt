@@ -1,202 +1,202 @@
 KtFile: 'main.kt'
   null
 
-KtPackageDirective(32,47): 'package another'
+KtPackageDirective(31,46): 'package another'
   null
 
-KtNameReferenceExpression(40,47): 'another'
+KtNameReferenceExpression(39,46): 'another'
   null
 
-KtImportList(49,283): 'import one.two.TopLevelObject'
+KtImportList(48,282): 'import one.two.TopLevelObject'
   null
 
-KtImportDirective(49,78): 'import one.two.TopLevelObject'
+KtImportDirective(48,77): 'import one.two.TopLevelObject'
   null
 
-KtDotQualifiedExpression(56,78): 'one.two.TopLevelObject'
+KtDotQualifiedExpression(55,77): 'one.two.TopLevelObject'
   null
 
-KtDotQualifiedExpression(56,63): 'one.two'
+KtDotQualifiedExpression(55,62): 'one.two'
   null
 
-KtNameReferenceExpression(56,59): 'one'
+KtNameReferenceExpression(55,58): 'one'
   null
 
-KtNameReferenceExpression(60,63): 'two'
+KtNameReferenceExpression(59,62): 'two'
   null
 
-KtNameReferenceExpression(64,78): 'TopLevelObject'
+KtNameReferenceExpression(63,77): 'TopLevelObject'
   null
 
-KtImportDirective(79,112): 'import one.two.TopLevelObject.foo'
+KtImportDirective(78,111): 'import one.two.TopLevelObject.foo'
   null
 
-KtDotQualifiedExpression(86,112): 'one.two.TopLevelObject.foo'
+KtDotQualifiedExpression(85,111): 'one.two.TopLevelObject.foo'
   null
 
-KtDotQualifiedExpression(86,108): 'one.two.TopLevelObject'
+KtDotQualifiedExpression(85,107): 'one.two.TopLevelObject'
   null
 
-KtDotQualifiedExpression(86,93): 'one.two'
+KtDotQualifiedExpression(85,92): 'one.two'
   null
 
-KtNameReferenceExpression(86,89): 'one'
+KtNameReferenceExpression(85,88): 'one'
   null
 
-KtNameReferenceExpression(90,93): 'two'
+KtNameReferenceExpression(89,92): 'two'
   null
 
-KtNameReferenceExpression(94,108): 'TopLevelObject'
+KtNameReferenceExpression(93,107): 'TopLevelObject'
   null
 
-KtNameReferenceExpression(109,112): 'foo'
+KtNameReferenceExpression(108,111): 'foo'
   null
 
-KtImportDirective(113,146): 'import one.two.TopLevelObject.bar'
+KtImportDirective(112,145): 'import one.two.TopLevelObject.bar'
   null
 
-KtDotQualifiedExpression(120,146): 'one.two.TopLevelObject.bar'
+KtDotQualifiedExpression(119,145): 'one.two.TopLevelObject.bar'
   null
 
-KtDotQualifiedExpression(120,142): 'one.two.TopLevelObject'
+KtDotQualifiedExpression(119,141): 'one.two.TopLevelObject'
   null
 
-KtDotQualifiedExpression(120,127): 'one.two'
+KtDotQualifiedExpression(119,126): 'one.two'
   null
 
-KtNameReferenceExpression(120,123): 'one'
+KtNameReferenceExpression(119,122): 'one'
   null
 
-KtNameReferenceExpression(124,127): 'two'
+KtNameReferenceExpression(123,126): 'two'
   null
 
-KtNameReferenceExpression(128,142): 'TopLevelObject'
+KtNameReferenceExpression(127,141): 'TopLevelObject'
   null
 
-KtNameReferenceExpression(143,146): 'bar'
+KtNameReferenceExpression(142,145): 'bar'
   null
 
-KtImportDirective(147,189): 'import one.two.TopLevelObject.NestedObject'
+KtImportDirective(146,188): 'import one.two.TopLevelObject.NestedObject'
   null
 
-KtDotQualifiedExpression(154,189): 'one.two.TopLevelObject.NestedObject'
+KtDotQualifiedExpression(153,188): 'one.two.TopLevelObject.NestedObject'
   null
 
-KtDotQualifiedExpression(154,176): 'one.two.TopLevelObject'
+KtDotQualifiedExpression(153,175): 'one.two.TopLevelObject'
   null
 
-KtDotQualifiedExpression(154,161): 'one.two'
+KtDotQualifiedExpression(153,160): 'one.two'
   null
 
-KtNameReferenceExpression(154,157): 'one'
+KtNameReferenceExpression(153,156): 'one'
   null
 
-KtNameReferenceExpression(158,161): 'two'
+KtNameReferenceExpression(157,160): 'two'
   null
 
-KtNameReferenceExpression(162,176): 'TopLevelObject'
+KtNameReferenceExpression(161,175): 'TopLevelObject'
   null
 
-KtNameReferenceExpression(177,189): 'NestedObject'
+KtNameReferenceExpression(176,188): 'NestedObject'
   null
 
-KtImportDirective(190,236): 'import one.two.TopLevelObject.NestedObject.baz'
+KtImportDirective(189,235): 'import one.two.TopLevelObject.NestedObject.baz'
   null
 
-KtDotQualifiedExpression(197,236): 'one.two.TopLevelObject.NestedObject.baz'
+KtDotQualifiedExpression(196,235): 'one.two.TopLevelObject.NestedObject.baz'
   null
 
-KtDotQualifiedExpression(197,232): 'one.two.TopLevelObject.NestedObject'
+KtDotQualifiedExpression(196,231): 'one.two.TopLevelObject.NestedObject'
   null
 
-KtDotQualifiedExpression(197,219): 'one.two.TopLevelObject'
+KtDotQualifiedExpression(196,218): 'one.two.TopLevelObject'
   null
 
-KtDotQualifiedExpression(197,204): 'one.two'
+KtDotQualifiedExpression(196,203): 'one.two'
   null
 
-KtNameReferenceExpression(197,200): 'one'
+KtNameReferenceExpression(196,199): 'one'
   null
 
-KtNameReferenceExpression(201,204): 'two'
+KtNameReferenceExpression(200,203): 'two'
   null
 
-KtNameReferenceExpression(205,219): 'TopLevelObject'
+KtNameReferenceExpression(204,218): 'TopLevelObject'
   null
 
-KtNameReferenceExpression(220,232): 'NestedObject'
+KtNameReferenceExpression(219,231): 'NestedObject'
   null
 
-KtNameReferenceExpression(233,236): 'baz'
+KtNameReferenceExpression(232,235): 'baz'
   null
 
-KtImportDirective(237,283): 'import one.two.TopLevelObject.NestedObject.doo'
+KtImportDirective(236,282): 'import one.two.TopLevelObject.NestedObject.doo'
   null
 
-KtDotQualifiedExpression(244,283): 'one.two.TopLevelObject.NestedObject.doo'
+KtDotQualifiedExpression(243,282): 'one.two.TopLevelObject.NestedObject.doo'
   null
 
-KtDotQualifiedExpression(244,279): 'one.two.TopLevelObject.NestedObject'
+KtDotQualifiedExpression(243,278): 'one.two.TopLevelObject.NestedObject'
   null
 
-KtDotQualifiedExpression(244,266): 'one.two.TopLevelObject'
+KtDotQualifiedExpression(243,265): 'one.two.TopLevelObject'
   null
 
-KtDotQualifiedExpression(244,251): 'one.two'
+KtDotQualifiedExpression(243,250): 'one.two'
   null
 
-KtNameReferenceExpression(244,247): 'one'
+KtNameReferenceExpression(243,246): 'one'
   null
 
-KtNameReferenceExpression(248,251): 'two'
+KtNameReferenceExpression(247,250): 'two'
   null
 
-KtNameReferenceExpression(252,266): 'TopLevelObject'
+KtNameReferenceExpression(251,265): 'TopLevelObject'
   null
 
-KtNameReferenceExpression(267,279): 'NestedObject'
+KtNameReferenceExpression(266,278): 'NestedObject'
   null
 
-KtNameReferenceExpression(280,283): 'doo'
+KtNameReferenceExpression(279,282): 'doo'
   null
 
-KtNamedFunction(285,913): 'fun usage() {'
+KtNamedFunction(284,912): 'fun usage() {'
   null
 
-KtParameterList(294,296): '()'
+KtParameterList(293,295): '()'
   null
 
-KtBlockExpression(297,913): '{'
+KtBlockExpression(296,912): '{'
   null
 
-KtProperty(303,349): 'val explicitTopObject = one.two.TopLevelObject'
+KtProperty(302,348): 'val explicitTopObject = one.two.TopLevelObject'
   null
 
-KtDotQualifiedExpression(327,349): 'one.two.TopLevelObject'
+KtDotQualifiedExpression(326,348): 'one.two.TopLevelObject'
   null
 
-KtDotQualifiedExpression(327,334): 'one.two'
+KtDotQualifiedExpression(326,333): 'one.two'
   null
 
-KtNameReferenceExpression(327,330): 'one'
+KtNameReferenceExpression(326,329): 'one'
   null
 
-KtNameReferenceExpression(331,334): 'two'
+KtNameReferenceExpression(330,333): 'two'
   null
 
-KtNameReferenceExpression(335,349): 'TopLevelObject'
+KtNameReferenceExpression(334,348): 'TopLevelObject'
   null
 
-KtProperty(354,392): 'val importedTopObject = TopLevelObject'
+KtProperty(353,391): 'val importedTopObject = TopLevelObject'
   null
 
-KtNameReferenceExpression(378,392): 'TopLevelObject'
+KtNameReferenceExpression(377,391): 'TopLevelObject'
   null
 
-KtProperty(398,436): 'val explicitFoo = TopLevelObject.foo()'
+KtProperty(397,435): 'val explicitFoo = TopLevelObject.foo()'
   null
 
-KtDotQualifiedExpression(416,436): 'TopLevelObject.foo()'
+KtDotQualifiedExpression(415,435): 'TopLevelObject.foo()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       isImplicitInvoke = false
@@ -215,10 +215,10 @@ KtDotQualifiedExpression(416,436): 'TopLevelObject.foo()'
       typeArgumentsMapping = {}
       argumentMapping = {}
 
-KtNameReferenceExpression(416,430): 'TopLevelObject'
+KtNameReferenceExpression(415,429): 'TopLevelObject'
   null
 
-KtCallExpression(431,436): 'foo()'
+KtCallExpression(430,435): 'foo()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       isImplicitInvoke = false
@@ -237,7 +237,7 @@ KtCallExpression(431,436): 'foo()'
       typeArgumentsMapping = {}
       argumentMapping = {}
 
-KtNameReferenceExpression(431,434): 'foo'
+KtNameReferenceExpression(430,433): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       isImplicitInvoke = false
@@ -256,13 +256,13 @@ KtNameReferenceExpression(431,434): 'foo'
       typeArgumentsMapping = {}
       argumentMapping = {}
 
-KtValueArgumentList(434,436): '()'
+KtValueArgumentList(433,435): '()'
   null
 
-KtProperty(441,464): 'val importedFoo = foo()'
+KtProperty(440,463): 'val importedFoo = foo()'
   null
 
-KtCallExpression(459,464): 'foo()'
+KtCallExpression(458,463): 'foo()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       isImplicitInvoke = false
@@ -280,7 +280,7 @@ KtCallExpression(459,464): 'foo()'
       typeArgumentsMapping = {}
       argumentMapping = {}
 
-KtNameReferenceExpression(459,462): 'foo'
+KtNameReferenceExpression(458,461): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       isImplicitInvoke = false
@@ -298,13 +298,13 @@ KtNameReferenceExpression(459,462): 'foo'
       typeArgumentsMapping = {}
       argumentMapping = {}
 
-KtValueArgumentList(462,464): '()'
+KtValueArgumentList(461,463): '()'
   null
 
-KtProperty(470,506): 'val explicitBar = TopLevelObject.bar'
+KtProperty(469,505): 'val explicitBar = TopLevelObject.bar'
   null
 
-KtDotQualifiedExpression(488,506): 'TopLevelObject.bar'
+KtDotQualifiedExpression(487,505): 'TopLevelObject.bar'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -322,10 +322,10 @@ KtDotQualifiedExpression(488,506): 'TopLevelObject.bar'
       simpleAccess = Read
       typeArgumentsMapping = {}
 
-KtNameReferenceExpression(488,502): 'TopLevelObject'
+KtNameReferenceExpression(487,501): 'TopLevelObject'
   null
 
-KtNameReferenceExpression(503,506): 'bar'
+KtNameReferenceExpression(502,505): 'bar'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -343,10 +343,10 @@ KtNameReferenceExpression(503,506): 'bar'
       simpleAccess = Read
       typeArgumentsMapping = {}
 
-KtProperty(511,532): 'val importedBar = bar'
+KtProperty(510,531): 'val importedBar = bar'
   null
 
-KtNameReferenceExpression(529,532): 'bar'
+KtNameReferenceExpression(528,531): 'bar'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -363,28 +363,28 @@ KtNameReferenceExpression(529,532): 'bar'
       simpleAccess = Read
       typeArgumentsMapping = {}
 
-KtProperty(538,592): 'val explicitNestedObject = TopLevelObject.NestedObject'
+KtProperty(537,591): 'val explicitNestedObject = TopLevelObject.NestedObject'
   null
 
-KtDotQualifiedExpression(565,592): 'TopLevelObject.NestedObject'
+KtDotQualifiedExpression(564,591): 'TopLevelObject.NestedObject'
   null
 
-KtNameReferenceExpression(565,579): 'TopLevelObject'
+KtNameReferenceExpression(564,578): 'TopLevelObject'
   null
 
-KtNameReferenceExpression(580,592): 'NestedObject'
+KtNameReferenceExpression(579,591): 'NestedObject'
   null
 
-KtProperty(597,636): 'val importedNestedObject = NestedObject'
+KtProperty(596,635): 'val importedNestedObject = NestedObject'
   null
 
-KtNameReferenceExpression(624,636): 'NestedObject'
+KtNameReferenceExpression(623,635): 'NestedObject'
   null
 
-KtProperty(642,693): 'val explicitBaz = TopLevelObject.NestedObject.baz()'
+KtProperty(641,692): 'val explicitBaz = TopLevelObject.NestedObject.baz()'
   null
 
-KtDotQualifiedExpression(660,693): 'TopLevelObject.NestedObject.baz()'
+KtDotQualifiedExpression(659,692): 'TopLevelObject.NestedObject.baz()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       isImplicitInvoke = false
@@ -403,16 +403,16 @@ KtDotQualifiedExpression(660,693): 'TopLevelObject.NestedObject.baz()'
       typeArgumentsMapping = {}
       argumentMapping = {}
 
-KtDotQualifiedExpression(660,687): 'TopLevelObject.NestedObject'
+KtDotQualifiedExpression(659,686): 'TopLevelObject.NestedObject'
   null
 
-KtNameReferenceExpression(660,674): 'TopLevelObject'
+KtNameReferenceExpression(659,673): 'TopLevelObject'
   null
 
-KtNameReferenceExpression(675,687): 'NestedObject'
+KtNameReferenceExpression(674,686): 'NestedObject'
   null
 
-KtCallExpression(688,693): 'baz()'
+KtCallExpression(687,692): 'baz()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       isImplicitInvoke = false
@@ -431,7 +431,7 @@ KtCallExpression(688,693): 'baz()'
       typeArgumentsMapping = {}
       argumentMapping = {}
 
-KtNameReferenceExpression(688,691): 'baz'
+KtNameReferenceExpression(687,690): 'baz'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       isImplicitInvoke = false
@@ -450,13 +450,13 @@ KtNameReferenceExpression(688,691): 'baz'
       typeArgumentsMapping = {}
       argumentMapping = {}
 
-KtValueArgumentList(691,693): '()'
+KtValueArgumentList(690,692): '()'
   null
 
-KtProperty(698,740): 'val explicitNestedBaz = NestedObject.baz()'
+KtProperty(697,739): 'val explicitNestedBaz = NestedObject.baz()'
   null
 
-KtDotQualifiedExpression(722,740): 'NestedObject.baz()'
+KtDotQualifiedExpression(721,739): 'NestedObject.baz()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       isImplicitInvoke = false
@@ -475,10 +475,10 @@ KtDotQualifiedExpression(722,740): 'NestedObject.baz()'
       typeArgumentsMapping = {}
       argumentMapping = {}
 
-KtNameReferenceExpression(722,734): 'NestedObject'
+KtNameReferenceExpression(721,733): 'NestedObject'
   null
 
-KtCallExpression(735,740): 'baz()'
+KtCallExpression(734,739): 'baz()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       isImplicitInvoke = false
@@ -497,7 +497,7 @@ KtCallExpression(735,740): 'baz()'
       typeArgumentsMapping = {}
       argumentMapping = {}
 
-KtNameReferenceExpression(735,738): 'baz'
+KtNameReferenceExpression(734,737): 'baz'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       isImplicitInvoke = false
@@ -516,13 +516,13 @@ KtNameReferenceExpression(735,738): 'baz'
       typeArgumentsMapping = {}
       argumentMapping = {}
 
-KtValueArgumentList(738,740): '()'
+KtValueArgumentList(737,739): '()'
   null
 
-KtProperty(745,768): 'val importedBaz = baz()'
+KtProperty(744,767): 'val importedBaz = baz()'
   null
 
-KtCallExpression(763,768): 'baz()'
+KtCallExpression(762,767): 'baz()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       isImplicitInvoke = false
@@ -540,7 +540,7 @@ KtCallExpression(763,768): 'baz()'
       typeArgumentsMapping = {}
       argumentMapping = {}
 
-KtNameReferenceExpression(763,766): 'baz'
+KtNameReferenceExpression(762,765): 'baz'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       isImplicitInvoke = false
@@ -558,13 +558,13 @@ KtNameReferenceExpression(763,766): 'baz'
       typeArgumentsMapping = {}
       argumentMapping = {}
 
-KtValueArgumentList(766,768): '()'
+KtValueArgumentList(765,767): '()'
   null
 
-KtProperty(774,823): 'val explicitDoo = TopLevelObject.NestedObject.doo'
+KtProperty(773,822): 'val explicitDoo = TopLevelObject.NestedObject.doo'
   null
 
-KtDotQualifiedExpression(792,823): 'TopLevelObject.NestedObject.doo'
+KtDotQualifiedExpression(791,822): 'TopLevelObject.NestedObject.doo'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -582,16 +582,16 @@ KtDotQualifiedExpression(792,823): 'TopLevelObject.NestedObject.doo'
       simpleAccess = Read
       typeArgumentsMapping = {}
 
-KtDotQualifiedExpression(792,819): 'TopLevelObject.NestedObject'
+KtDotQualifiedExpression(791,818): 'TopLevelObject.NestedObject'
   null
 
-KtNameReferenceExpression(792,806): 'TopLevelObject'
+KtNameReferenceExpression(791,805): 'TopLevelObject'
   null
 
-KtNameReferenceExpression(807,819): 'NestedObject'
+KtNameReferenceExpression(806,818): 'NestedObject'
   null
 
-KtNameReferenceExpression(820,823): 'doo'
+KtNameReferenceExpression(819,822): 'doo'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -609,10 +609,10 @@ KtNameReferenceExpression(820,823): 'doo'
       simpleAccess = Read
       typeArgumentsMapping = {}
 
-KtProperty(828,868): 'val explicitNestedDoo = NestedObject.doo'
+KtProperty(827,867): 'val explicitNestedDoo = NestedObject.doo'
   null
 
-KtDotQualifiedExpression(852,868): 'NestedObject.doo'
+KtDotQualifiedExpression(851,867): 'NestedObject.doo'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -630,10 +630,10 @@ KtDotQualifiedExpression(852,868): 'NestedObject.doo'
       simpleAccess = Read
       typeArgumentsMapping = {}
 
-KtNameReferenceExpression(852,864): 'NestedObject'
+KtNameReferenceExpression(851,863): 'NestedObject'
   null
 
-KtNameReferenceExpression(865,868): 'doo'
+KtNameReferenceExpression(864,867): 'doo'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -651,10 +651,10 @@ KtNameReferenceExpression(865,868): 'doo'
       simpleAccess = Read
       typeArgumentsMapping = {}
 
-KtProperty(873,894): 'val importedDoo = doo'
+KtProperty(872,893): 'val importedDoo = doo'
   null
 
-KtNameReferenceExpression(891,894): 'doo'
+KtNameReferenceExpression(890,893): 'doo'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -671,7 +671,7 @@ KtNameReferenceExpression(891,894): 'doo'
       simpleAccess = Read
       typeArgumentsMapping = {}
 
-KtBinaryExpression(900,911): 'doo = "str"'
+KtBinaryExpression(899,910): 'doo = "str"'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -689,7 +689,7 @@ KtBinaryExpression(900,911): 'doo = "str"'
         value = "str"
       typeArgumentsMapping = {}
 
-KtNameReferenceExpression(900,903): 'doo'
+KtNameReferenceExpression(899,902): 'doo'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -707,7 +707,7 @@ KtNameReferenceExpression(900,903): 'doo'
         value = "str"
       typeArgumentsMapping = {}
 
-KtOperationReferenceExpression(904,905): '='
+KtOperationReferenceExpression(903,904): '='
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -725,8 +725,8 @@ KtOperationReferenceExpression(904,905): '='
         value = "str"
       typeArgumentsMapping = {}
 
-KtStringTemplateExpression(906,911): '"str"'
+KtStringTemplateExpression(905,910): '"str"'
   null
 
-KtLiteralStringTemplateEntry(907,910): 'str'
+KtLiteralStringTemplateEntry(906,909): 'str'
   null

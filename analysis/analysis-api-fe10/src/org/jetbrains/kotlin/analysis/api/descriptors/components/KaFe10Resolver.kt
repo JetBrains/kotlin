@@ -148,11 +148,21 @@ internal class KaFe10Resolver(
 
     override fun collectCallCandidates(
         psi: KtElement,
-    ): List<KaCallCandidateInfo> = with(analysisContext.analyze(psi, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)) {
+    ): List<KaCallCandidateInfo> {
         if (!canBeResolvedAsCall(psi)) return emptyList()
-
+        val bindingContext = analysisContext.analyze(psi, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)
         val resolvedCall = attemptResolveCall(psi)
-        val bestCandidateDescriptors = resolvedCall?.calls
+        return collectCallCandidates(psi, bindingContext, resolvedCall).ifEmpty {
+            resolvedCall.toKaCallCandidateInfos()
+        }
+    }
+
+    private fun collectCallCandidates(
+        psi: KtElement,
+        bindingContext: BindingContext,
+        callAttempt: KaCallResolutionAttempt?,
+    ): List<KaCallCandidateInfo> {
+        val bestCandidateDescriptors = callAttempt?.calls
             ?.filterIsInstance<KaCallableMemberCall<*, *>>()
             ?.mapNotNullTo(mutableSetOf()) { it.descriptor as? CallableDescriptor }
             ?: emptySet()
@@ -166,7 +176,7 @@ internal class KaFe10Resolver(
                     unwrappedPsi.operationToken in OperatorConventions.EQUALS_OPERATIONS)
         ) {
             // TODO: Handle compound assignment
-            handleAsFunctionCall(this, unwrappedPsi)?.toKaCallCandidateInfos()?.let { return@with it }
+            handleAsFunctionCall(bindingContext, unwrappedPsi)?.toKaCallCandidateInfos()?.let { return it }
         }
 
         // The regular mechanism doesn't work, so at least the resolved call should be returned
@@ -175,15 +185,15 @@ internal class KaFe10Resolver(
             is KtCollectionLiteralExpression,
             is KtOperationReferenceExpression,
             is KtCallableReferenceExpression,
-                -> return resolvedCall?.toKaCallCandidateInfos().orEmpty()
+                -> return callAttempt?.toKaCallCandidateInfos().orEmpty()
         }
 
-        val resolutionScope = unwrappedPsi.getResolutionScope(this) ?: return emptyList()
-        val call = unwrappedPsi.getCall(this)?.let {
+        val resolutionScope = unwrappedPsi.getResolutionScope(bindingContext) ?: return emptyList()
+        val call = unwrappedPsi.getCall(bindingContext)?.let {
             if (it is CallTransformer.CallForImplicitInvoke) it.outerCall else it
         } ?: return emptyList()
-        val dataFlowInfo = getDataFlowInfoBefore(unwrappedPsi)
-        val bindingTrace = DelegatingBindingTrace(this, "Trace for all candidates", withParentDiagnostics = false)
+        val dataFlowInfo = bindingContext.getDataFlowInfoBefore(unwrappedPsi)
+        val bindingTrace = DelegatingBindingTrace(bindingContext, "Trace for all candidates", withParentDiagnostics = false)
         val dataFlowValueFactory = DataFlowValueFactoryImpl(analysisContext.languageVersionSettings)
 
         val callResolutionContext = BasicCallResolutionContext.create(
@@ -200,7 +210,7 @@ internal class KaFe10Resolver(
         val candidateInfos = candidates.flatMap { candidate ->
             // The current BindingContext does not have the diagnostics for each individual candidate, only for the resolved call.
             // If there are multiple candidates, we can get each one's diagnostics by reporting it to a new BindingTrace.
-            val candidateTrace = DelegatingBindingTrace(this, "Trace for candidate", withParentDiagnostics = false)
+            val candidateTrace = DelegatingBindingTrace(bindingContext, "Trace for candidate", withParentDiagnostics = false)
             if (candidate is NewAbstractResolvedCall<*>) {
                 analysisContext.kotlinToResolvedCallTransformer.reportDiagnostics(
                     callResolutionContext,
@@ -220,10 +230,10 @@ internal class KaFe10Resolver(
             candidateKtCallInfo.toKaCallCandidateInfos(bestCandidateDescriptors)
         }
 
-        when {
-            resolvedCall is KaCall -> resolvedCall.toKaCallCandidateInfos() + candidateInfos.filterNot(KaCallCandidateInfo::isInBestCandidates)
-            candidateInfos.isEmpty() -> resolvedCall.toKaCallCandidateInfos()
-            else -> candidateInfos
+        return if (callAttempt is KaCall) {
+            callAttempt.toKaCallCandidateInfos() + candidateInfos.filterNot(KaCallCandidateInfo::isInBestCandidates)
+        } else {
+            candidateInfos
         }
     }
 
