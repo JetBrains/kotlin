@@ -12,5 +12,3 @@ val foo: MyClass = MyClass()
 fun usages() {
     <expr>(foo)()</expr>
 }
-
-// IGNORE_STABILITY_K2: candidates

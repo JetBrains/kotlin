@@ -16,8 +16,8 @@ KtCallExpression(202,209): '(foo)()'
           callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
       argumentMapping = {}
-    isInBestCandidates = false
-
+    isInBestCandidates = true
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 's'.>
     candidate = KaSimpleFunctionCall:
@@ -44,7 +44,7 @@ KtCallExpression(202,209): '(foo)()'
       typeArgumentsMapping = {}
       argumentMapping = {}
     isInBestCandidates = false
-
+  
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
@@ -59,8 +59,8 @@ KtCallExpression(202,209): '(foo)()'
           callableId = r/foo
       typeArgumentsMapping = {}
       argumentMapping = {}
-    isInBestCandidates = true
-
+    isInBestCandidates = false
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'b'.>
     candidate = KaSimpleFunctionCall:
