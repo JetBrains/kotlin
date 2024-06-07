@@ -461,6 +461,38 @@ object KotlinCompilerClient {
         val preferredGc: String = "Parallel"
     )
 
+    private fun getEnvironmentVariablesForTests(reportingTargets: DaemonReportingTargets): Map<String, String> {
+        val systemPropertyValue = CompilerSystemProperties.COMPILE_DAEMON_ENVIRONMENT_VARIABLES_FOR_TESTS.value ?: return emptyMap()
+        return runCatching {
+            reportingTargets.report(
+                DaemonReportCategory.EXCEPTION,
+                "${CompilerSystemProperties.COMPILE_DAEMON_ENVIRONMENT_VARIABLES_FOR_TESTS.property} should be used only for testing!"
+            )
+            systemPropertyValue
+                .split(";")
+                .map { it.split("=") }
+                .associate { it[0] to it[1] }
+        }.getOrNull() ?: emptyMap()
+    }
+
+    private const val JAVA_TOOL_OPTIONS_ENV_VARIABLE = "JAVA_TOOL_OPTIONS"
+
+    /**
+     * Retrieves implicitly passed JVM arguments using the [JAVA_TOOL_OPTIONS_ENV_VARIABLE] environment variable.
+     * Even though there are some other vendor-specific environment variables available, we intentionally support
+     * only the one included in the JVMTI specification: https://docs.oracle.com/javase/8/docs/platform/jvmti/jvmti.html#tooloptions
+     *
+     * The specification mentions that the environment variables may be disabled or not be supported.
+     * In that case the worst thing we may face, we won't configure the [GcAutoConfiguration.preferredGc] GC.
+     * That sounds acceptable.
+     */
+    private fun getImplicitJvmArguments(environmentVariablesForTests: Map<String, String>) : List<String> {
+        val javaToolOptions = environmentVariablesForTests[JAVA_TOOL_OPTIONS_ENV_VARIABLE]
+            ?: System.getenv(JAVA_TOOL_OPTIONS_ENV_VARIABLE)
+            ?: return emptyList()
+        return javaToolOptions.split(" ")
+    }
+
     private fun startDaemon(
         compilerId: CompilerId,
         daemonJVMOptions: DaemonJVMOptions,
@@ -482,8 +514,12 @@ object KotlinCompilerClient {
             if (javaVersion != null && javaVersion >= 16)
                 listOf("--add-exports", "java.base/sun.nio.ch=ALL-UNNAMED")
             else emptyList()
+        val environmentVariablesForTests = getEnvironmentVariablesForTests(reportingTargets)
         val jvmArguments = daemonJVMOptions.mappers.flatMap { it.toArgs("-") }
-        if (jvmArguments.any { it == "-XX:-Use${gcAutoConfiguration.preferredGc}GC" || (it.startsWith("-XX:+Use") && it.endsWith("GC")) }) {
+        if (
+            (jvmArguments + getImplicitJvmArguments(environmentVariablesForTests))
+                .any { it == "-XX:-Use${gcAutoConfiguration.preferredGc}GC" || (it.startsWith("-XX:+Use") && it.endsWith("GC")) }
+        ) {
             // enable the preferred gc only if it's not explicitly disabled and no other GC is selected
             gcAutoConfiguration.shouldAutoConfigureGc = false
         }
@@ -504,17 +540,7 @@ object KotlinCompilerClient {
         reportingTargets.report(DaemonReportCategory.INFO, "starting the daemon as: " + args.joinToString(" "))
         val processBuilder = ProcessBuilder(args)
         processBuilder.redirectErrorStream(true)
-        CompilerSystemProperties.COMPILE_DAEMON_ENVIRONMENT_VARIABLES_FOR_TESTS.value?.let {
-            runCatching {
-                reportingTargets.report(
-                    DaemonReportCategory.EXCEPTION,
-                    "${CompilerSystemProperties.COMPILE_DAEMON_ENVIRONMENT_VARIABLES_FOR_TESTS.property} should be used only for testing!"
-                )
-                for ((key, value) in it.split(";").map { it.split("=") }) {
-                    processBuilder.environment()[key] = value
-                }
-            }
-        }
+        processBuilder.environment().putAll(environmentVariablesForTests)
         val workingDir = File(daemonOptions.runFilesPath).apply { mkdirs() }
         processBuilder.directory(workingDir)
         // assuming daemon process is deaf and (mostly) silent, so do not handle streams
