@@ -254,6 +254,10 @@ open class ExecutableWasm(
         }
     }
 
+    val mainOptimizedFile: Provider<RegularFile> = optimizeTask.flatMap {
+        it.outputDirectory.file(mainFileName.get())
+    }
+
     private fun optimizeTaskName(): String =
         "${linkTaskName}Optimize"
 }

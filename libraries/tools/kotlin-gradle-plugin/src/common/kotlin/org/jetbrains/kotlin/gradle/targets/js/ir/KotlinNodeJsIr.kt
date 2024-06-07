@@ -9,6 +9,7 @@ import org.gradle.api.Action
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalMainFunctionArgumentsDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
@@ -45,9 +46,14 @@ abstract class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
         val runTaskHolder = NodeJsExec.create(compilation, name) {
             group = taskGroupName
             val inputFile = if ((compilation.target as KotlinJsIrTarget).wasmTargetType == KotlinWasmTargetType.WASI) {
-                dependsOn(binary.linkTask)
                 sourceMapStackTraces = false
-                binary.mainFile
+                if (binary is ExecutableWasm && binary.mode == KotlinJsBinaryMode.PRODUCTION) {
+                    dependsOn(binary.optimizeTask)
+                    binary.mainOptimizedFile
+                } else {
+                    dependsOn(binary.linkTask)
+                    binary.mainFile
+                }
             } else {
                 dependsOn(binary.linkSyncTask)
                 binary.mainFileSyncPath
