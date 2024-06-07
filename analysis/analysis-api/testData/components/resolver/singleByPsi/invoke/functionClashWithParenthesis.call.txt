@@ -1,0 +1,18 @@
+KtCallExpression(202,209): '(foo)()'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = (foo)
+          isSafeNavigation = false
+          type = r.MyClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = r.MyClass
+          symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+          valueParameters = []
+          callableId = r/MyClass.invoke
+      typeArgumentsMapping = {}
+      argumentMapping = {}
