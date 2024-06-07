@@ -1,15 +1,17 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.util
 
 import com.intellij.lang.LighterASTNode
-import com.intellij.openapi.diagnostic.ControlFlowException
-import com.intellij.openapi.project.IndexNotReadyException
 import com.intellij.util.diff.FlyweightCapableTreeStructure
-import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.KtRealSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.psi
+import org.jetbrains.kotlin.text
+import org.jetbrains.kotlin.utils.exceptions.shouldIjPlatformExceptionBeRethrown
 
 val Throwable.classNameAndMessage get() = "${this::class.qualifiedName}: $message"
 
@@ -18,16 +20,15 @@ class SourceCodeAnalysisException(val source: KtSourceElement, override val caus
 }
 
 
-fun Throwable.wrapIntoSourceCodeAnalysisExceptionIfNeeded(element: KtSourceElement?) = when (this) {
-    is SourceCodeAnalysisException -> this
-    is IndexNotReadyException -> this
-    is ControlFlowException -> this
-    is VirtualMachineError -> this
-    else -> when (element?.kind) {
-        is KtRealSourceElementKind -> SourceCodeAnalysisException(element, this)
-        else -> this
+fun Throwable.wrapIntoSourceCodeAnalysisExceptionIfNeeded(element: KtSourceElement?): Throwable =
+    if (this is SourceCodeAnalysisException || shouldIjPlatformExceptionBeRethrown(this) || this is VirtualMachineError) {
+        this
+    } else {
+        when (element?.kind) {
+            is KtRealSourceElementKind -> SourceCodeAnalysisException(element, this)
+            else -> this
+        }
     }
-}
 
 class FileAnalysisException(
     private val path: String,
@@ -55,9 +56,8 @@ fun Throwable.wrapIntoFileAnalysisExceptionIfNeeded(
         source.isDefinitelyNotInsideFile(fileSource) -> reportFileMismatch(source, fileSource, cause)
         else -> FileAnalysisException(filePath, cause, linesMapping(source.startOffset))
     }
-    this is IndexNotReadyException -> this
+    shouldIjPlatformExceptionBeRethrown(this) -> this
     this is FileAnalysisException -> this
-    this is ControlFlowException -> this
     this is VirtualMachineError -> this
     else -> FileAnalysisException(filePath, this)
 }

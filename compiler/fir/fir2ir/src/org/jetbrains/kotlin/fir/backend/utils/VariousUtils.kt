@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.backend.utils
 
-import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -28,16 +27,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
-import kotlin.collections.List
-import kotlin.collections.Set
-import kotlin.collections.filterIsInstance
-import kotlin.collections.getOrNull
-import kotlin.collections.mapNotNull
-import kotlin.collections.mutableMapOf
-import kotlin.collections.mutableSetOf
+import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
 import kotlin.collections.set
-import kotlin.collections.withIndex
 
 fun FirRegularClass.getIrSymbolsForSealedSubclasses(c: Fir2IrComponents): List<IrClassSymbol> {
     val symbolProvider = c.session.symbolProvider
@@ -132,10 +123,8 @@ internal fun FirQualifiedAccessExpression.buildSubstitutorByCalledCallable(c: Fi
 internal inline fun <R> convertCatching(element: FirElement, conversionScope: Fir2IrConversionScope? = null, block: () -> R): R {
     try {
         return block()
-    } catch (e: ProcessCanceledException) {
-        throw e
     } catch (e: Throwable) {
-        errorWithAttachment("Exception was thrown during transformation of ${element::class.java}", cause = e) {
+        rethrowExceptionWithDetails("Exception was thrown during transformation of ${element::class.java}", e) {
             withFirEntry("element", element)
             conversionScope?.containingFileIfAny()?.let { withEntry("file", it.path) }
         }

@@ -16,15 +16,11 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContextForProvider
 import org.jetbrains.kotlin.fir.analysis.collectors.CheckerRunningDiagnosticCollectorVisitor
 import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponents
-import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirScript
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.utils.exceptions.shouldIjPlatformExceptionBeRethrown
+import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 
 internal open class LLFirDiagnosticVisitor(
     context: CheckerContextForProvider,
@@ -140,7 +136,7 @@ private inline fun suppressAndLogExceptions(block: () -> Unit) {
     try {
         block()
     } catch (e: Throwable) {
-        if (shouldIjPlatformExceptionBeRethrown(e)) throw e
+        rethrowIntellijPlatformExceptionIfNeeded(e)
 
         logger.error(e)
     }

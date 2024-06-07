@@ -1,20 +1,20 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import com.intellij.openapi.progress.ProcessCanceledException
-import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.compile.CodeFragmentCapturedValue
+import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtCodeFragment
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 import java.io.File
 
 /**
@@ -133,9 +133,8 @@ public interface KaCompilerFacilityMixIn : KaSessionMixIn {
         return withValidityAssertion {
             try {
                 analysisSession.compilerFacility.compile(file, configuration, target, allowedErrorFilter)
-            } catch (e: ProcessCanceledException) {
-                throw e
             } catch (e: Throwable) {
+                rethrowIntellijPlatformExceptionIfNeeded(e)
                 throw KaCodeCompilationException(e)
             }
         }

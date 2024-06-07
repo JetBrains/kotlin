@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.codegen;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ArrayUtil;
@@ -85,6 +84,7 @@ import org.jetbrains.kotlin.types.expressions.DoubleColonLHS;
 import org.jetbrains.kotlin.types.model.TypeParameterMarker;
 import org.jetbrains.kotlin.types.typesApproximation.CapturedTypeApproximationKt;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
+import org.jetbrains.kotlin.utils.exceptions.PlatformExceptionUtilsKt;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
@@ -347,10 +347,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
             return genNotNullAssertions(state, stackValue, runtimeAssertionInfo);
         }
-        catch (ProcessCanceledException | CompilationException e) {
+        catch (CompilationException e) {
             throw e;
         }
         catch (Throwable e) {
+            PlatformExceptionUtilsKt.rethrowIntellijPlatformExceptionIfNeeded(e);
             throw new CompilationException("Failed to generate expression: " + selector.getClass().getSimpleName(), e, selector);
         }
     }

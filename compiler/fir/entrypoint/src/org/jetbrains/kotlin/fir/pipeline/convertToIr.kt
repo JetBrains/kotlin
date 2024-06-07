@@ -1,11 +1,10 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.pipeline
 
-import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.IrSpecialAnnotationsProvider
 import org.jetbrains.kotlin.backend.common.actualizer.*
@@ -341,8 +340,6 @@ private class Fir2IrPipeline(
             for (file in module.files) {
                 try {
                     file.acceptVoid(ClassVisitor())
-                } catch (e: ProcessCanceledException) {
-                    throw e
                 } catch (e: Throwable) {
                     CodegenUtil.reportBackendException(e, "IR fake override builder", file.fileEntry.name) { offset ->
                         file.fileEntry.takeIf { it.supportsDebugInfo }?.let {

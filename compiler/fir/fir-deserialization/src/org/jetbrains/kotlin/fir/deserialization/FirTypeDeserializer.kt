@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.utils.exceptions.shouldIjPlatformExceptionBeRethrown
+import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 
 class FirTypeDeserializer(
     private val moduleData: FirModuleData,
@@ -122,7 +122,7 @@ class FirTypeDeserializer(
             val id = nameResolver.getClassId(fqNameIndex).takeIf { !it.isLocal } ?: StandardClassIds.Any
             return id.toLookupTag()
         } catch (e: Throwable) {
-            if (shouldIjPlatformExceptionBeRethrown(e)) throw e
+            rethrowIntellijPlatformExceptionIfNeeded(e)
             throw RuntimeException("Looking up for ${nameResolver.getClassId(fqNameIndex)}", e)
         }
     }

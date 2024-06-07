@@ -1,11 +1,10 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
 
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
@@ -49,6 +48,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.error.ErrorUtils;
+import org.jetbrains.kotlin.utils.exceptions.PlatformExceptionUtilsKt;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
@@ -195,10 +195,11 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
             try {
                 functionCodegen.gen((KtNamedFunction) declaration);
             }
-            catch (ProcessCanceledException | CompilationException e) {
+            catch (CompilationException e) {
                 throw e;
             }
-            catch (Exception e) {
+            catch (Throwable e) {
+                PlatformExceptionUtilsKt.rethrowIntellijPlatformExceptionIfNeeded(e);
                 throw new CompilationException("Failed to generate function " + declaration.getName(), e, declaration);
             }
         }
@@ -206,10 +207,11 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
             try {
                 propertyCodegen.gen((KtProperty) declaration);
             }
-            catch (ProcessCanceledException | CompilationException e) {
+            catch (CompilationException e) {
                 throw e;
             }
-            catch (Exception e) {
+            catch (Throwable e) {
+                PlatformExceptionUtilsKt.rethrowIntellijPlatformExceptionIfNeeded(e);
                 throw new CompilationException("Failed to generate property " + declaration.getName(), e, declaration);
             }
         }
@@ -220,10 +222,11 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
             try {
                 propertyCodegen.genDestructuringDeclaration((KtDestructuringDeclarationEntry) declaration);
             }
-            catch (ProcessCanceledException | CompilationException e) {
+            catch (CompilationException e) {
                 throw e;
             }
-            catch (Exception e) {
+            catch (Throwable e) {
+                PlatformExceptionUtilsKt.rethrowIntellijPlatformExceptionIfNeeded(e);
                 throw new CompilationException("Failed to generate destructuring declaration entry " + declaration.getName(), e, declaration);
             }
         }

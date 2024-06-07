@@ -16,8 +16,7 @@ import org.jetbrains.kotlin.analysis.api.permissions.allowAnalysisFromWriteActio
 import org.jetbrains.kotlin.analysis.api.permissions.allowAnalysisOnEdt
 import org.jetbrains.kotlin.idea.references.AbstractKtReference
 import org.jetbrains.kotlin.idea.references.KtReference
-import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
-import org.jetbrains.kotlin.utils.exceptions.shouldIjPlatformExceptionBeRethrown
+import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal object KaFirReferenceResolver : ResolveCache.PolyVariantResolver<KtReference> {
@@ -32,9 +31,7 @@ internal object KaFirReferenceResolver : ResolveCache.PolyVariantResolver<KtRefe
                 val resolveToPsiElements = try {
                     analyze(ref.expression) { ref.getResolvedToPsi(this) }
                 } catch (e: Exception) {
-                    if (shouldIjPlatformExceptionBeRethrown(e)) throw e
-
-                    errorWithAttachment("Unable to resolve reference ${ref.element::class}", cause = e) {
+                    rethrowExceptionWithDetails("Unable to resolve reference ${ref.element::class}", e) {
                         withPsiEntry("reference", ref.element)
                     }
                 }
