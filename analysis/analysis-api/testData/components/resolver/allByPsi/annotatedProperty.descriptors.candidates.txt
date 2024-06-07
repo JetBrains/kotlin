@@ -651,8 +651,7 @@ KtSimpleNameStringTemplateEntry(366,371): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(367,371): 'prop'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -788,8 +787,7 @@ KtSimpleNameStringTemplateEntry(401,406): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(402,406): 'prop'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -922,8 +920,7 @@ KtSimpleNameStringTemplateEntry(426,431): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(427,431): 'prop'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1068,8 +1065,7 @@ KtSimpleNameStringTemplateEntry(459,464): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(460,464): 'prop'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1211,8 +1207,7 @@ KtSimpleNameStringTemplateEntry(501,506): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(502,506): 'prop'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1339,8 +1334,7 @@ KtSimpleNameStringTemplateEntry(530,535): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(531,535): 'prop'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1485,8 +1479,7 @@ KtSimpleNameStringTemplateEntry(571,576): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(572,576): 'prop'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1625,8 +1618,7 @@ KtSimpleNameStringTemplateEntry(620,625): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(621,625): 'prop'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1774,8 +1766,7 @@ KtSimpleNameStringTemplateEntry(665,670): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(666,670): 'prop'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1920,8 +1911,7 @@ KtSimpleNameStringTemplateEntry(711,716): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(712,716): 'prop'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -2060,8 +2050,7 @@ KtSimpleNameStringTemplateEntry(744,749): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(745,749): 'prop'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -2197,8 +2186,7 @@ KtSimpleNameStringTemplateEntry(787,792): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(788,792): 'prop'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -2334,8 +2322,7 @@ KtSimpleNameStringTemplateEntry(827,832): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(828,832): 'prop'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null

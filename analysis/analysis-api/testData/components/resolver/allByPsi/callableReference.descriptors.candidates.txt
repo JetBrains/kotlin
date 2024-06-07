@@ -1322,8 +1322,7 @@ KtCallableReferenceExpression(919,937): '::topLevelFunction'
     isInBestCandidates = true
 
 KtNameReferenceExpression(921,937): 'topLevelFunction'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:

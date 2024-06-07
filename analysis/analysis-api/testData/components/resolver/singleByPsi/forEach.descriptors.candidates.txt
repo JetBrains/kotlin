@@ -512,41 +512,6 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       }
     isInBestCandidates = true
   
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = listOf(1, 2, 3)
-          isSafeNavigation = false
-          type = kotlin.collections.List<kotlin.Int>
-        signature = KaFunctionSignature:
-          receiverType = kotlin.collections.Iterable<kotlin.Int>
-          returnType = kotlin.Unit
-          symbol = kotlin/collections/forEach(<extension receiver>: kotlin.collections.Iterable<T>, action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = action
-              receiverType = null
-              returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
-              symbol = action: kotlin.Function1<T, kotlin.Unit>
-              callableId = null
-          ]
-          callableId = kotlin/collections/forEach
-      typeArgumentsMapping = {
-        T -> (kotlin.Int)
-      }
-      argumentMapping = {
-        { } -> (KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
-          symbol = action: kotlin.Function1<T, kotlin.Unit>
-          callableId = null)
-      }
-    isInBestCandidates = true
-  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:

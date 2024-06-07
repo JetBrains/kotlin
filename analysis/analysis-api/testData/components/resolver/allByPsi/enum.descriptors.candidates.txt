@@ -461,6 +461,21 @@ KtNameReferenceExpression(307,311): 'with'
       }
       argumentMapping = {}
     isInBestCandidates = false
+  
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = with
+          receiverType = null
+          returnType = EnumWithConstructor
+          symbol = with: EnumWithConstructor
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
 
 KtNameReferenceExpression(312,319): 'ordinal'
   KaApplicableCallCandidateInfo:

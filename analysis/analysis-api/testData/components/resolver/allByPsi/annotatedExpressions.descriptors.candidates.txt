@@ -504,8 +504,7 @@ KtOperationReferenceExpression(180,181): '+'
     isInBestCandidates = true
 
 KtNameReferenceExpression(182,189): 'integer'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -911,8 +910,7 @@ KtValueArgument(198,205): 'integer'
   NO_CANDIDATES
 
 KtNameReferenceExpression(198,205): 'integer'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null

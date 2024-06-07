@@ -54,5 +54,3 @@ fun another() {
     myClass != another
     !myClass.equals(another)
 }
-
-// IGNORE_STABILITY_K1: candidates

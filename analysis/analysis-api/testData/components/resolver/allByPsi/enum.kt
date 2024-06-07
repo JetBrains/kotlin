@@ -28,5 +28,3 @@ fun usage(with: EnumWithConstructor) {
     EnumWithoutConstructor.Entry
     EnumWithoutConstructor.EntryWithBody
 }
-
-// IGNORE_STABILITY_K1: candidates

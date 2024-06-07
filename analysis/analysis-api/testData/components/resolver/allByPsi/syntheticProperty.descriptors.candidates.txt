@@ -662,6 +662,24 @@ KtValueArgument(119,138): 'javaClass.something'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(119,138): 'javaClass.something'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = javaClass
+          isSafeNavigation = false
+          type = JavaClass
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = something
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var something: kotlin.Int
+          callableId = /JavaClass.something
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleFunctionCall:
@@ -721,8 +739,7 @@ KtNameReferenceExpression(119,128): 'javaClass'
       }
     isInBestCandidates = false
   
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -738,8 +755,7 @@ KtNameReferenceExpression(119,128): 'javaClass'
     isInBestCandidates = true
 
 KtNameReferenceExpression(129,138): 'something'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -761,6 +777,25 @@ KtBinaryExpression(144,167): 'javaClass.something = 1'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(144,163): 'javaClass.something'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = javaClass
+          isSafeNavigation = false
+          type = JavaClass
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = something
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var something: kotlin.Int
+          callableId = /JavaClass.something
+      simpleAccess = Write:
+        value = 1
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleFunctionCall:
@@ -820,8 +855,7 @@ KtNameReferenceExpression(144,153): 'javaClass'
       }
     isInBestCandidates = false
   
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -837,8 +871,7 @@ KtNameReferenceExpression(144,153): 'javaClass'
     isInBestCandidates = true
 
 KtNameReferenceExpression(154,163): 'something'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -852,7 +885,8 @@ KtNameReferenceExpression(154,163): 'something'
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
           callableId = /JavaClass.something
-      simpleAccess = Read
+      simpleAccess = Write:
+        value = 1
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -903,6 +937,24 @@ KtBinaryExpression(172,196): 'javaClass.something += 1'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(172,191): 'javaClass.something'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = javaClass
+          isSafeNavigation = false
+          type = JavaClass
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = something
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var something: kotlin.Int
+          callableId = /JavaClass.something
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleFunctionCall:
@@ -962,8 +1014,7 @@ KtNameReferenceExpression(172,181): 'javaClass'
       }
     isInBestCandidates = false
   
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -979,8 +1030,7 @@ KtNameReferenceExpression(172,181): 'javaClass'
     isInBestCandidates = true
 
 KtNameReferenceExpression(182,191): 'something'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1069,6 +1119,24 @@ KtPostfixExpression(201,222): 'javaClass.something++'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(201,220): 'javaClass.something'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = javaClass
+          isSafeNavigation = false
+          type = JavaClass
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = something
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var something: kotlin.Int
+          callableId = /JavaClass.something
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleFunctionCall:
@@ -1128,8 +1196,7 @@ KtNameReferenceExpression(201,210): 'javaClass'
       }
     isInBestCandidates = false
   
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1145,8 +1212,7 @@ KtNameReferenceExpression(201,210): 'javaClass'
     isInBestCandidates = true
 
 KtNameReferenceExpression(211,220): 'something'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1238,6 +1304,24 @@ KtOperationReferenceExpression(227,229): '--'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(229,248): 'javaClass.something'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = javaClass
+          isSafeNavigation = false
+          type = JavaClass
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = something
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var something: kotlin.Int
+          callableId = /JavaClass.something
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleFunctionCall:
@@ -1297,8 +1381,7 @@ KtNameReferenceExpression(229,238): 'javaClass'
       }
     isInBestCandidates = false
   
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1314,8 +1397,7 @@ KtNameReferenceExpression(229,238): 'javaClass'
     isInBestCandidates = true
 
 KtNameReferenceExpression(239,248): 'something'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1374,8 +1456,7 @@ KtPostfixExpression(254,265): 'something++'
     isInBestCandidates = true
 
 KtNameReferenceExpression(254,263): 'something'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaImplicitReceiverValue:
@@ -1464,8 +1545,7 @@ KtParenthesizedExpression(270,281): '(something)'
   NO_CANDIDATES
 
 KtNameReferenceExpression(271,280): 'something'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaImplicitReceiverValue:
@@ -1517,8 +1597,7 @@ KtParenthesizedExpression(288,299): '(something)'
   NO_CANDIDATES
 
 KtNameReferenceExpression(289,298): 'something'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaImplicitReceiverValue:
@@ -1539,7 +1618,8 @@ KtNameReferenceExpression(289,298): 'something'
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
           callableId = /JavaClass.something
-      simpleAccess = Read
+      simpleAccess = Write:
+        value = 1
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1556,6 +1636,25 @@ KtParenthesizedExpression(308,329): '(javaClass.something)'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(309,328): 'javaClass.something'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = javaClass
+          isSafeNavigation = false
+          type = JavaClass
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = something
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var something: kotlin.Int
+          callableId = /JavaClass.something
+      simpleAccess = Write:
+        value = 1
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     candidate = KaSimpleFunctionCall:
@@ -1615,8 +1714,7 @@ KtNameReferenceExpression(309,318): 'javaClass'
       }
     isInBestCandidates = false
   
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1632,8 +1730,7 @@ KtNameReferenceExpression(309,318): 'javaClass'
     isInBestCandidates = true
 
 KtNameReferenceExpression(319,328): 'something'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1647,7 +1744,8 @@ KtNameReferenceExpression(319,328): 'something'
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
           callableId = /JavaClass.something
-      simpleAccess = Read
+      simpleAccess = Write:
+        value = 1
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

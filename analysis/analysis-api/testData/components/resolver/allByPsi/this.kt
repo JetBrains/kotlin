@@ -58,5 +58,3 @@ class MyClass {
 fun <T> T.myWith(body: T.(T) -> Unit) {
     body(this)
 }
-
-// IGNORE_STABILITY_K1: candidates

@@ -170,9 +170,9 @@ internal class KaFe10Resolver(
         with(analysisContext.analyze(psi, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)) {
             if (!canBeResolvedAsCall(psi)) return emptyList()
 
-            val resolvedKtCallInfo = doResolveCall(psi)
+            val resolvedCall = doResolveCall(psi)
             val bestCandidateDescriptors =
-                resolvedKtCallInfo?.calls?.filterIsInstance<KaCallableMemberCall<*, *>>()
+                resolvedCall?.calls?.filterIsInstance<KaCallableMemberCall<*, *>>()
                     ?.mapNotNullTo(mutableSetOf()) { it.descriptor as? CallableDescriptor }
                     ?: emptySet()
 
@@ -185,7 +185,7 @@ internal class KaFe10Resolver(
                         unwrappedPsi.operationToken in OperatorConventions.EQUALS_OPERATIONS)
             ) {
                 // TODO: Handle compound assignment
-                handleAsFunctionCall(this, unwrappedPsi)?.toKtCallCandidateInfos()?.let { return@with it }
+                handleAsFunctionCall(this, unwrappedPsi)?.toKaCallCandidateInfos()?.let { return@with it }
             }
 
             // The regular mechanism doesn't work, so at least the resolved call should be returned
@@ -194,7 +194,7 @@ internal class KaFe10Resolver(
                 is KtCollectionLiteralExpression,
                 is KtOperationReferenceExpression,
                 is KtCallableReferenceExpression,
-                    -> return resolvedKtCallInfo?.toKtCallCandidateInfos().orEmpty()
+                    -> return resolvedCall?.toKaCallCandidateInfos().orEmpty()
             }
 
             val resolutionScope = unwrappedPsi.getResolutionScope(this) ?: return emptyList()
@@ -216,7 +216,7 @@ internal class KaFe10Resolver(
             val candidates = result.allCandidates?.let { analysisContext.overloadingConflictResolver.filterOutEquivalentCalls(it) }
                 ?: error("allCandidates is null even when collectAllCandidates = true")
 
-            candidates.flatMap { candidate ->
+            val candidateInfos = candidates.flatMap { candidate ->
                 // The current BindingContext does not have the diagnostics for each individual candidate, only for the resolved call.
                 // If there are multiple candidates, we can get each one's diagnostics by reporting it to a new BindingTrace.
                 val candidateTrace = DelegatingBindingTrace(this, "Trace for candidate", withParentDiagnostics = false)
@@ -235,9 +235,14 @@ internal class KaFe10Resolver(
                     candidate,
                     candidateTrace.bindingContext.diagnostics
                 )
-                candidateKtCallInfo.toKtCallCandidateInfos(bestCandidateDescriptors)
-            }.ifEmpty {
-                resolvedKtCallInfo?.toKtCallCandidateInfos().orEmpty()
+
+                candidateKtCallInfo.toKaCallCandidateInfos(bestCandidateDescriptors)
+            }
+
+            when {
+                resolvedCall is KaSuccessCallInfo -> resolvedCall.toKaCallCandidateInfos() + candidateInfos.filterNot(KaCallCandidateInfo::isInBestCandidates)
+                candidateInfos.isEmpty() -> resolvedCall.toKaCallCandidateInfos()
+                else -> candidateInfos
             }
         }
 
@@ -248,7 +253,7 @@ internal class KaFe10Resolver(
             else -> null
         }
 
-    private fun KaCallInfo?.toKtCallCandidateInfos(): List<KaCallCandidateInfo> {
+    private fun KaCallInfo?.toKaCallCandidateInfos(): List<KaCallCandidateInfo> {
         return when (this) {
             is KaSuccessCallInfo -> listOf(KaApplicableCallCandidateInfo(call, isInBestCandidates = true))
             is KaErrorCallInfo -> candidateCalls.map { KaInapplicableCallCandidateInfo(it, isInBestCandidates = true, diagnostic) }
@@ -256,7 +261,7 @@ internal class KaFe10Resolver(
         }
     }
 
-    private fun KaCallInfo?.toKtCallCandidateInfos(bestCandidateDescriptors: Set<CallableDescriptor>): List<KaCallCandidateInfo> {
+    private fun KaCallInfo?.toKaCallCandidateInfos(bestCandidateDescriptors: Set<CallableDescriptor>): List<KaCallCandidateInfo> {
         // TODO: We should prefer to compare symbols instead of descriptors, but we can't do so while symbols are not cached.
         fun KaCall.isInBestCandidates(): Boolean {
             val descriptor = this.safeAs<KaCallableMemberCall<*, *>>()?.descriptor as? CallableDescriptor
