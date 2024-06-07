@@ -34,4 +34,10 @@ public class CompilerFacilityTestForComposeCompilerPluginGenerated extends Abstr
   public void testMultiModulesWithComposableFunction() {
     runTest("plugins/compose/compiler-hosted/testData/codegen/multiModulesWithComposableFunction.kt");
   }
+
+  @Test
+  @TestMetadata("propertyGetterBody.kt")
+  public void testPropertyGetterBody() {
+    runTest("plugins/compose/compiler-hosted/testData/codegen/propertyGetterBody.kt");
+  }
 }
