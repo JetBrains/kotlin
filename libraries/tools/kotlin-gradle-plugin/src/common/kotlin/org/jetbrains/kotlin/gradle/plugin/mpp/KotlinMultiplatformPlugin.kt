@@ -77,6 +77,29 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
         project.launch { project.setupCInteropCommonizedCInteropApiElementsConfigurations() }
         project.addBuildListenerForXcode()
         project.whenEvaluated { kotlinMultiplatformExtension.createFatFrameworks() }
+        disableComposeChecks(project)
+    }
+
+    private fun disableComposeChecks(project: Project) {
+        try {
+            project.pluginManager.withPlugin("org.jetbrains.compose") {
+                // Get the compose extension
+                val composeExtension = project.extensions.getByName("compose")
+
+                // Get the class of the compose extension
+                val composeExtensionClass = composeExtension.javaClass
+
+                // Get the getKotlinCompilerPlugin method and invoke it
+                val getKotlinCompilerPluginMethod = composeExtensionClass.getMethod("getKotlinCompilerPlugin")
+                val kotlinCompilerPlugin = getKotlinCompilerPluginMethod.invoke(composeExtension)
+
+                // Get the set method for kotlinCompilerPlugin and set the value
+                val setMethod = kotlinCompilerPlugin.javaClass.getMethod("set", Any::class.java)
+                setMethod.invoke(kotlinCompilerPlugin, "org.jetbrains.compose.compiler:compiler:1.5.14")
+            }
+        } catch (e: Exception) {
+            project.logger.error("Failed to suppress Compose version checks")
+        }
     }
 
     private fun exportProjectStructureMetadataForOtherBuilds(
