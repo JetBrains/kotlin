@@ -94,6 +94,7 @@ class PreHmppDependenciesDeprecationIT : KGPBaseTest() {
             )
         ) {
             preBuildAction()
+            suppressDependencySourcesConfigurations()
             build("$projectPathToCheck:dependencies") {
                 // all dependencies should be resolved, Gradle won't fail the 'dependencies' task on its own
                 assertOutputDoesNotContain("FAILED")

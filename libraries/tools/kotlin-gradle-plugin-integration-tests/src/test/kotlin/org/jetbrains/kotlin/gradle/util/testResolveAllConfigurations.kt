@@ -138,7 +138,7 @@ private fun generateResolveAllConfigurationsTaskKts(excludes: List<String>) =
     """.trimIndent()
 
 private fun computeExcludeConfigurations(excludes: List<String>): String {
-    val excludingConfigurations = listOf("compile", "runtime", "compileOnly", "runtimeOnly")
+    val excludingConfigurations = listOf("compile", "runtime", "compileOnly", "runtimeOnly", "dependencySources")
     return """
         kotlin.sourceSets.forEach { sourceSet ->
             "${excludingConfigurations.joinToString()}".split(", ").toList().forEach {
