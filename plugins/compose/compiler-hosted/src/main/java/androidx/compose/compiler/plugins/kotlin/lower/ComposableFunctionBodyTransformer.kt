@@ -2827,7 +2827,7 @@ class ComposableFunctionBodyTransformer(
                         return null
                     } else {
                         // If the capture is outside inline lambda, we don't allow meta propagation
-                        if (!inlineLambdaInfo.isInlineLambda(scope.function)) {
+                        if (!inlineLambdaInfo.isInlineLambda(scope.function) || inlineLambdaInfo.isCrossinlineLambda(scope.function)) {
                             return null
                         }
                     }

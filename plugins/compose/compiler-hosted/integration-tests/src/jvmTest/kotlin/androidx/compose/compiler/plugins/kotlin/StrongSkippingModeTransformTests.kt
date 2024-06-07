@@ -329,6 +329,45 @@ class StrongSkippingModeTransformTests(
         """
     )
 
+    @Test
+    fun unstableCrossinline() = verifyMemoization(
+        """
+            
+            // note: using var makes this class unstable (and this vm needs to be unstable for the crash to occur)
+            class MyUnstableViewModel(var text: String?) {
+                fun onClickyClicky() {}
+            }
+            
+            @Composable
+            fun Dialog(content: (@Composable () -> Unit)?) { content?.invoke() }
+
+            @Composable
+            fun Button(
+                onClick: () -> Unit
+            ) {}
+
+            inline fun <ValueT : Any> slotIfNotNull(
+                value: ValueT?,
+                crossinline slot: @Composable (ValueT) -> Unit
+            ): (@Composable () -> Unit)? {
+                return if (value != null) {
+                    @Composable { slot(value) }
+                } else null
+            }
+        """,
+        """
+            @Composable fun Scratch(vm: MyUnstableViewModel) {
+                Dialog(
+                    content = slotIfNotNull(vm.text) {
+                        Button(
+                            onClick = vm::onClickyClicky
+                        )
+                    }
+                )
+            }
+        """
+    )
+
     private fun verifyMemoization(
         @Language("kotlin")
         unchecked: String,

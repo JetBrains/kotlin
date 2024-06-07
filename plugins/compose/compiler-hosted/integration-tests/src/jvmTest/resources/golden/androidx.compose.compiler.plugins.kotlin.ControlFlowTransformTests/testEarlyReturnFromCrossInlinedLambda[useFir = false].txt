@@ -33,7 +33,7 @@ private fun Test(param: String?, %composer: Composer?, %changed: Int) {
       %composer.startReplaceGroup(<>)
       sourceInformation(%composer, "<Test(p...>")
       if (false) {
-        Test(param, %composer, 0b1110 and %dirty)
+        Test(param, %composer, 0)
       }
       %composer.endReplaceGroup()
       %composer.endReplaceGroup()
