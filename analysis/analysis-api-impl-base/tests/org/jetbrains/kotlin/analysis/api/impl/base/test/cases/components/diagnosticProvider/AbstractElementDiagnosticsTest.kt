@@ -20,7 +20,7 @@ abstract class AbstractElementDiagnosticsTest : AbstractAnalysisApiBasedTest() {
         val targetDeclaration = testServices.expressionMarkerProvider.getSelectedElementOfType<KtElement>(mainFile)
 
         analyze(mainFile) {
-            val diagnostics = targetDeclaration.getDiagnostics(KaDiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS)
+            val diagnostics = targetDeclaration.diagnostics(KaDiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS)
 
             val actualText = buildString {
                 if (diagnostics.isNotEmpty()) {

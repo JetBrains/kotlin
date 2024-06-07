@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 public abstract class KaSession(
     final override val token: KaLifetimeToken,
     resolver: KaResolver,
+    diagnosticProvider: KaDiagnosticProvider,
     scopeProvider: KaScopeProvider,
     originalPsiProvider: KaOriginalPsiProvider,
     typeCreator: KaTypeCreator,
@@ -68,7 +69,7 @@ public abstract class KaSession(
 ) : KaLifetimeOwner,
     KaResolver by resolver,
     KaSamResolverMixIn,
-    KaDiagnosticProviderMixIn,
+    KaDiagnosticProvider by diagnosticProvider,
     KaScopeProvider by scopeProvider,
     KaCompletionCandidateCheckerMixIn,
     KaSymbolDeclarationOverridesProviderMixIn,
@@ -107,9 +108,6 @@ public abstract class KaSession(
     public abstract val useSiteModule: KtModule
 
     override val analysisSession: KaSession get() = this
-
-    internal val diagnosticProvider: KaDiagnosticProvider get() = diagnosticProviderImpl
-    protected abstract val diagnosticProviderImpl: KaDiagnosticProvider
 
     internal val containingDeclarationProvider: KaSymbolContainingDeclarationProvider get() = containingDeclarationProviderImpl
     protected abstract val containingDeclarationProviderImpl: KaSymbolContainingDeclarationProvider

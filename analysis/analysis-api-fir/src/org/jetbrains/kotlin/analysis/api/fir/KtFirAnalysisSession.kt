@@ -57,6 +57,7 @@ private constructor(
 ) : KaSession(
     token,
     resolver = KaFirResolver(analysisSessionProvider, token),
+    diagnosticProvider = KaFirDiagnosticProvider(analysisSessionProvider, token),
     scopeProvider = KaFirScopeProvider(analysisSessionProvider, token),
     originalPsiProvider = KaFirOriginalPsiProvider(analysisSessionProvider, token),
     typeCreator = KaFirTypeCreator(analysisSessionProvider, token),
@@ -74,8 +75,6 @@ private constructor(
     override val useSiteModule: KtModule get() = firResolveSession.useSiteKtModule
 
     override val expressionTypeProviderImpl = KaFirExpressionTypeProvider(this, token)
-
-    override val diagnosticProviderImpl = KaFirDiagnosticProvider(this, token)
 
     override val containingDeclarationProviderImpl = KaFirSymbolContainingDeclarationProvider(this, token)
 

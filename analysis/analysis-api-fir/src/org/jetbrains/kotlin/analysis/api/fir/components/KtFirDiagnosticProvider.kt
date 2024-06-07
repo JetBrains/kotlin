@@ -9,7 +9,9 @@ import org.jetbrains.kotlin.analysis.api.components.KaDiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.api.components.KaDiagnosticProvider
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDiagnosticsForFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getDiagnostics
@@ -17,20 +19,16 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
 internal class KaFirDiagnosticProvider(
-    override val analysisSession: KaFirSession,
-    override val token: KaLifetimeToken,
-) : KaDiagnosticProvider(), KaFirSessionComponent {
-
-    override fun getDiagnosticsForElement(
-        element: KtElement,
-        filter: KaDiagnosticCheckerFilter
-    ): Collection<KaDiagnosticWithPsi<*>> {
-        return element.getDiagnostics(firResolveSession, filter.asLLFilter()).map { it.asKtDiagnostic() }
+    override val analysisSessionProvider: () -> KaFirSession,
+    override val token: KaLifetimeToken
+) : KaSessionComponent<KaFirSession>(), KaDiagnosticProvider, KaFirSessionComponent {
+    override fun KtElement.diagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>> = withValidityAssertion {
+        return getDiagnostics(firResolveSession, filter.asLLFilter()).map { it.asKtDiagnostic() }
     }
 
-    override fun collectDiagnosticsForFile(ktFile: KtFile, filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>> =
-        ktFile.collectDiagnosticsForFile(firResolveSession, filter.asLLFilter()).map { it.asKtDiagnostic() }
-
+    override fun KtFile.collectDiagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>> = withValidityAssertion {
+        return collectDiagnosticsForFile(firResolveSession, filter.asLLFilter()).map { it.asKtDiagnostic() }
+    }
 
     private fun KaDiagnosticCheckerFilter.asLLFilter() = when (this) {
         KaDiagnosticCheckerFilter.ONLY_COMMON_CHECKERS -> DiagnosticCheckerFilter.ONLY_COMMON_CHECKERS
