@@ -60,3 +60,5 @@ public fun overload_foo(arg1: Double): Int {
     val _result = overload.foo(__arg1)
     return _result
 }
+
+private inline fun <reified T, reified U> T.autoCast(): U = this as U

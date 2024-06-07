@@ -37,3 +37,4 @@ public fun org_kotlin_foo_variable_set(newValue: Int): Unit {
     org.kotlin.foo.variable = __newValue
 }
 
+private inline fun <reified T, reified U> T.autoCast(): U = this as U

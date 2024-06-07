@@ -21,6 +21,7 @@ internal fun SirModule.dumpResultToFiles(
     stableDeclarationsOrder: Boolean,
     renderDocComments: Boolean,
     additionalSwiftLinesProvider: () -> List<String>,
+    additionalKotlinLinesProvider: () -> List<String>
 ) {
     val cHeaderFile = output.cHeaderBridges.toFile()
     val ktBridgeFile = output.kotlinBridges.toFile()
@@ -34,7 +35,7 @@ internal fun SirModule.dumpResultToFiles(
             renderDocComments
         )
     ) + additionalSwiftLinesProvider()
-    dumpTextAtFile(bridges.ktSrc, ktBridgeFile)
+    dumpTextAtFile(bridges.ktSrc + additionalKotlinLinesProvider(), ktBridgeFile)
     dumpTextAtFile(bridges.cSrc, cHeaderFile)
     dumpTextAtFile(swiftSources.asSequence(), swiftFile)
 }

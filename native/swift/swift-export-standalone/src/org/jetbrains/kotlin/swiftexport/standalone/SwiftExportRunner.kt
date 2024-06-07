@@ -164,7 +164,9 @@ public fun runSwiftExport(
             require(type is SirNominalType)
 
             return when(val declaration = type.type) {
-                KotlinRuntimeModule.kotlinBase -> "Any"
+                KotlinRuntimeModule.kotlinBase -> {
+                    "kotlin.Any"
+                }
                 else -> ((declaration.origin as KotlinSource).symbol as KaClassLikeSymbol).classId!!.asFqNameString()
             }
         }
@@ -176,6 +178,13 @@ public fun runSwiftExport(
     } else {
         { emptyList() }
     }
+
+    val additionalKotlinLinesProvider: () -> List<String> = {
+        listOf(
+            "private inline fun <reified T, reified U> T.autoCast(): U = this as U"
+        )
+    }
+
     val bridgesModuleName = "${bridgeModuleNamePrefix}_${buildResult.mainModule.name}"
     listOf(buildResult.mainModule, buildResult.moduleForPackageEnums).forEach {
         val bridgeRequests = buildBridgeRequests(bridgeGenerator, it)
@@ -189,6 +198,7 @@ public fun runSwiftExport(
             stableDeclarationsOrder = stableDeclarationsOrder,
             renderDocComments = renderDocComments,
             additionalSwiftLinesProvider = additionalSwiftLinesProvider,
+            additionalKotlinLinesProvider = additionalKotlinLinesProvider
         )
     }
     return@runCatching listOf(

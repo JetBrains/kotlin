@@ -30,3 +30,5 @@ public fun typealiases_inner_Bar_init_initialize(__kt: kotlin.native.internal.Na
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
     kotlin.native.internal.initInstance(____kt, typealiases.inner.Bar())
 }
+
+private inline fun <reified T, reified U> T.autoCast(): U = this as U

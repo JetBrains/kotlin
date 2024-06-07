@@ -24,3 +24,5 @@ public fun __root___variable_get(): kotlin.native.internal.NativePtr {
     val _result = variable
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
+
+private inline fun <reified T, reified U> T.autoCast(): U = this as U

@@ -37,26 +37,26 @@ public class SirTypeProviderImpl(
     private fun buildSirNominalType(ktType: KaType, ktAnalysisSession: KaSession): SirType {
         fun buildPrimitiveType(ktType: KaType): SirType? = with(ktAnalysisSession) {
             when {
-                ktType.isUnit -> SirSwiftModule.void
+                ktType.isChar -> SirUnsupportedType()
 
-                ktType.isByte -> SirSwiftModule.int8
-                ktType.isShort -> SirSwiftModule.int16
-                ktType.isInt -> SirSwiftModule.int32
-                ktType.isLong -> SirSwiftModule.int64
+                ktType.isUnit -> SirNominalType(SirSwiftModule.void)
 
-                ktType.isUByte -> SirSwiftModule.uint8
-                ktType.isUShort -> SirSwiftModule.uint16
-                ktType.isUInt -> SirSwiftModule.uint32
-                ktType.isULong -> SirSwiftModule.uint64
+                ktType.isByte -> SirNominalType(SirSwiftModule.int8)
+                ktType.isShort -> SirNominalType(SirSwiftModule.int16)
+                ktType.isInt -> SirNominalType(SirSwiftModule.int32)
+                ktType.isLong -> SirNominalType(SirSwiftModule.int64)
 
-                ktType.isBoolean -> SirSwiftModule.bool
+                ktType.isUByte -> SirNominalType(SirSwiftModule.uint8)
+                ktType.isUShort -> SirNominalType(SirSwiftModule.uint16)
+                ktType.isUInt -> SirNominalType(SirSwiftModule.uint32)
+                ktType.isULong -> SirNominalType(SirSwiftModule.uint64)
 
-                ktType.isDouble -> SirSwiftModule.double
-                ktType.isFloat -> SirSwiftModule.float
-                ktType.isNothing -> SirSwiftModule.never
+                ktType.isBoolean -> SirNominalType(SirSwiftModule.bool)
+
+                ktType.isDouble -> SirNominalType(SirSwiftModule.double)
+                ktType.isFloat -> SirNominalType(SirSwiftModule.float)
+                ktType.isNothing -> SirNominalType(SirSwiftModule.never)
                 else -> null
-            }?.let { primitiveType ->
-                SirNominalType(primitiveType)
             }
         }
 

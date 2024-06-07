@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.sir.bridge.impl
 
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.bridge.*
+import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.util.*
 
 private const val exportAnnotationFqName = "kotlin.native.internal.ExportedBridge"
@@ -153,7 +154,10 @@ private inline fun BridgeFunctionDescriptor.createKotlinBridge(
     allParameters.forEach {
         add("${indent}val __${it.name} = ${it.bridge.inKotlinSources.swiftToKotlin(typeNamer, it.name)}")
     }
-    val callSite = buildCallSite(kotlinName, parameters.map { "__${it.name}" })
+    val callSite = buildCallSite(kotlinName, parameters.map { parameter ->
+        val isAny =  parameter.bridge.swiftType.let { it is SirNominalType && it.type == KotlinRuntimeModule.kotlinBase }
+        "__${parameter.name}" + (".autoCast()".takeIf { isAny } ?: "")
+    })
     if (returnType.swiftType.isVoid) {
         add("${indent}$callSite")
     } else {

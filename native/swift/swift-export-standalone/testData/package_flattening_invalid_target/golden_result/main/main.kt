@@ -11,3 +11,5 @@ public fun org_kotlin_Foo_init_initialize(__kt: kotlin.native.internal.NativePtr
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
     kotlin.native.internal.initInstance(____kt, org.kotlin.Foo())
 }
+
+private inline fun <reified T, reified U> T.autoCast(): U = this as U

@@ -387,3 +387,5 @@ public fun namespace_deeper_Object_with_package_get(): kotlin.native.internal.Na
     val _result = namespace.deeper.Object_with_package
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
+
+private inline fun <reified T, reified U> T.autoCast(): U = this as U
