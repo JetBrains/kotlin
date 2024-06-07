@@ -200,9 +200,6 @@ private fun Project.registerPackageGeneration(
         )
 
         task.swiftModulesFile.set(swiftExportTask.map { it.parameters.swiftModulesFile.get() })
-        task.headerBridgeModuleName.set(swiftExportTask.map {
-            "${it.parameters.bridgeModuleName.get()}_${it.parameters.swiftApiModuleName.get()}"
-        })
         task.swiftLibraryName.set(swiftApiLibraryName)
         task.swiftApiModuleName.set(swiftApiModuleName)
 
@@ -308,8 +305,7 @@ private fun Project.registerCopyTask(
         task.description = "Copy ${configuration.capitalize()} SPM intermediates"
 
         // Input
-        task.includeBridgeDirectory.set(layout.dir(packageGenerationTask.map { it.headerBridgeIncludePath }))
-        task.includeKotlinRuntimeDirectory.set(layout.dir(packageGenerationTask.map { it.kotlinRuntimeIncludePath }))
+        task.includes.from(packageGenerationTask.map { it.includesPath.get() })
         task.libraryName.set(libraryName)
         task.library.set(mergeLibrariesTask.map { it.library.get() })
     }

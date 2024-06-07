@@ -9,6 +9,7 @@ import org.gradle.workers.WorkAction
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.swiftexport.standalone.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.SerializationTools
+import java.io.File
 import java.util.logging.Level
 import java.util.logging.Logger
 
@@ -44,13 +45,48 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportParameters> {
                 logger = Companion,
                 distribution = parameters.konanDistribution.get(),
                 outputPath = parameters.outputPath.getFile().toPath(),
-                multipleModulesHandlingStrategy = MultipleModulesHandlingStrategy.IntoSingleModule,
             )
         ).apply {
-            val modules = getOrThrow()
+            val modules = getOrThrow().toPlainList()
             val path = parameters.swiftModulesFile.getFile().canonicalPath
-
-            SerializationTools.writeToJson(modules, path)
+            val json = SerializationTools.writeToJson(modules)
+            File(path).writeText(json)
         }
     }
+}
+
+internal fun List<SwiftExportModule>.toPlainList(): List<GradleSwiftExportModule> {
+    val modules = mutableListOf<GradleSwiftExportModule>()
+    val processedModules = mutableSetOf<GradleSwiftExportModule>()
+
+    fun processModule(module: SwiftExportModule) {
+        val kgpModule = module.toKGPModule()
+        if (kgpModule in processedModules) return
+
+        modules.add(kgpModule)
+        processedModules.add(kgpModule)
+
+        module.dependencies.forEach {
+            processModule(it)
+        }
+    }
+
+    this.forEach {
+        processModule(it)
+    }
+
+    return modules
+}
+
+private fun SwiftExportModule.toKGPModule(): GradleSwiftExportModule {
+    return when (this) {
+        is SwiftExportModule.BridgesToKotlin ->
+            GradleSwiftExportModule.BridgesToKotlin(files.toKGPFiles(), bridgeName, name, dependencies.map { it.name })
+        is SwiftExportModule.SwiftOnly ->
+            GradleSwiftExportModule.SwiftOnly(swiftApi.toFile(), name, dependencies.map { it.name })
+    }
+}
+
+private fun SwiftExportFiles.toKGPFiles(): GradleSwiftExportFiles {
+    return GradleSwiftExportFiles(swiftApi.toFile(), kotlinBridges.toFile(), cHeaderBridges.toFile())
 }

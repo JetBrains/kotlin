@@ -16,18 +16,6 @@ import java.io.File
 import java.io.Serializable
 import javax.inject.Inject
 
-internal data class SwiftModule(
-    val name: String,
-    val files: SwiftFiles,
-    val dependencies: List<SwiftModule>,
-) : Serializable
-
-internal data class SwiftFiles(
-    val swiftApi: File,
-    val kotlinBridges: File,
-    val cHeaderBridges: File,
-) : Serializable
-
 @DisableCachingByDefault(because = "Swift Export is experimental, so no caching for now")
 internal abstract class SwiftExportTask : DefaultTask() {
 
