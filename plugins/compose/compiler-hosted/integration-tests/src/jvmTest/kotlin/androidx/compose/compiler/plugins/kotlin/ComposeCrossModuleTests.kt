@@ -1278,6 +1278,45 @@ class ComposeCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
         )
     }
 
+    // regression test for https://issuetracker.google.com/issues/345261077
+    @Test
+    fun composableInferredReturnType() {
+        compile(
+            mapOf(
+                "Base" to mapOf(
+                    "base/Base.kt" to """
+                    package base
+
+                    import androidx.compose.runtime.Composable
+                    
+                    @Composable
+                    fun brokenMangling() = @Composable {
+                    }
+                    """
+                ),
+                "Main" to mapOf(
+                    "Main.kt" to """
+                    package main
+
+                    import androidx.compose.runtime.Composable
+                    import base.brokenMangling
+
+                    @Composable
+                    fun AppManglingPreview() {
+                        brokenMangling()()
+                    }
+                    """
+                )
+            ),
+            validate = {
+                assertTrue(
+                    "Composable lambda type should be implicitly resolved.",
+                    it.contains("INVOKESTATIC base/BaseKt.brokenMangling (Landroidx/compose/runtime/Composer;I)Lkotlin/jvm/functions/Function2;"),
+                )
+            }
+        )
+    }
+
     private fun compile(
         modules: Map<String, Map<String, String>>,
         dumpClasses: Boolean = false,
