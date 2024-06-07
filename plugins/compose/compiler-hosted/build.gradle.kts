@@ -1,8 +1,5 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 val composeVersion = "1.7.0-alpha07"
@@ -61,12 +58,7 @@ kotlin {
 
 val generationRoot = projectDir.resolve("tests-gen")
 sourceSets {
-    "main" {
-        this.java.srcDirs("src/main/java")
-        this.resources.srcDir("src/main/resources")
-    }
     "test" {
-        this.java.srcDirs("src/test/kotlin")
         this.java.srcDir(generationRoot.name)
     }
 }
