@@ -26,7 +26,7 @@ abstract class AbstractExitPointSnapshotTest : AbstractAnalysisApiBasedTest() {
 
         @OptIn(KaAnalysisNonPublicApi::class)
         val actualText = analyseForTest(mainFile) {
-            val snapshot = getExitPointSnapshot(statements)
+            val snapshot = computeExitPointSnapshot(statements)
             stringRepresentation(snapshot)
         }
 

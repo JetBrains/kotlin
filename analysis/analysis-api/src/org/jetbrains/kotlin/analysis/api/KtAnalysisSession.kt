@@ -60,6 +60,7 @@ public abstract class KaSession(
     analysisScopeProvider: KaAnalysisScopeProvider,
     compilerFacility: KaCompilerFacility,
     metadataCalculator: KaMetadataCalculator,
+    dataFlowProvider: KaDataFlowProvider,
     sourceProvider: KaSourceProvider,
 ) : KaLifetimeOwner,
     KaSmartCastProviderMixIn,
@@ -99,7 +100,7 @@ public abstract class KaSession(
     KaCompilerFacility by compilerFacility,
     KaMetadataCalculator by metadataCalculator,
     KaSubstitutorProviderMixIn,
-    KaDataFlowInfoProviderMixin,
+    KaDataFlowProvider by dataFlowProvider,
     KaSourceProvider by sourceProvider
 {
 
@@ -213,11 +214,6 @@ public abstract class KaSession(
 
     internal val substitutorProvider: KaSubstitutorProvider get() = substitutorProviderImpl
     protected abstract val substitutorProviderImpl: KaSubstitutorProvider
-
-    @KaAnalysisNonPublicApi
-    internal val dataFlowInfoProvider: KaDataFlowInfoProvider get() = dataFlowInfoProviderImpl
-    @KaAnalysisNonPublicApi
-    protected abstract val dataFlowInfoProviderImpl: KaDataFlowInfoProvider
 }
 
 public typealias KtAnalysisSession = KaSession

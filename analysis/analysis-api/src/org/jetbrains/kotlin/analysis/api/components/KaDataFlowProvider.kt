@@ -6,29 +6,22 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtReturnExpression
 
 @KaAnalysisNonPublicApi
-public abstract class KaDataFlowInfoProvider : KaSessionComponent() {
-    public abstract fun getExitPointSnapshot(statements: List<KtExpression>): KaDataFlowExitPointSnapshot
-}
+public interface KaDataFlowProvider {
+    @KaAnalysisNonPublicApi
+    public fun computeExitPointSnapshot(statements: List<KtExpression>): KaDataFlowExitPointSnapshot
 
-@KaAnalysisNonPublicApi
-public typealias KtDataFlowInfoProvider = KaDataFlowInfoProvider
-
-@KaAnalysisNonPublicApi
-public interface KaDataFlowInfoProviderMixin : KaSessionMixIn {
-    public fun getExitPointSnapshot(statements: List<KtExpression>): KaDataFlowExitPointSnapshot = withValidityAssertion {
-        return analysisSession.dataFlowInfoProvider.getExitPointSnapshot(statements)
+    @KaAnalysisNonPublicApi
+    @Deprecated("Use 'computeExitPointSnapshot()' instead.")
+    public fun getExitPointSnapshot(statements: List<KtExpression>): KaDataFlowExitPointSnapshot {
+        return computeExitPointSnapshot(statements)
     }
 }
-
-@KaAnalysisNonPublicApi
-public typealias KtDataFlowInfoProviderMixin = KaDataFlowInfoProviderMixin
 
 @KaAnalysisNonPublicApi
 public class KaDataFlowExitPointSnapshot(
