@@ -107,9 +107,7 @@ internal class KaFe10Resolver(
         }
     }
 
-    override fun attemptResolveCall(
-        psi: KtElement,
-    ): KaCallResolutionAttempt? = with(analysisContext.analyze(psi, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)) {
+    override fun attemptResolveCall(psi: KtElement): KaCallResolutionAttempt? {
         if (!canBeResolvedAsCall(psi)) return null
 
         val parentBinaryExpression = psi.parentOfType<KtBinaryExpression>()
@@ -132,23 +130,24 @@ internal class KaFe10Resolver(
             is KtConstructorDelegationReferenceExpression -> return (psi.parent as? KtElement)?.let(::attemptResolveCall)
         }
 
-        when (unwrappedPsi) {
+        val bindingContext = analysisContext.analyze(psi, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)
+        return when (unwrappedPsi) {
             is KtBinaryExpression -> {
-                handleAsCompoundAssignment(this, unwrappedPsi)?.let { return@with it }
-                handleAsFunctionCall(this, unwrappedPsi)
+                handleAsCompoundAssignment(bindingContext, unwrappedPsi)?.let { return it }
+                handleAsFunctionCall(bindingContext, unwrappedPsi)
             }
+
             is KtUnaryExpression -> {
-                handleAsIncOrDecOperator(this, unwrappedPsi)?.let { return@with it }
-                handleAsFunctionCall(this, unwrappedPsi)
+                handleAsIncOrDecOperator(bindingContext, unwrappedPsi)?.let { return it }
+                handleAsFunctionCall(bindingContext, unwrappedPsi)
             }
-            else -> handleAsFunctionCall(this, unwrappedPsi)
-                ?: handleAsPropertyRead(this, unwrappedPsi)
-        } ?: handleResolveErrors(this, psi)
+
+            else -> handleAsFunctionCall(bindingContext, unwrappedPsi)
+                ?: handleAsPropertyRead(bindingContext, unwrappedPsi)
+        } ?: handleResolveErrors(bindingContext, psi)
     }
 
-    override fun collectCallCandidates(
-        psi: KtElement,
-    ): List<KaCallCandidateInfo> {
+    override fun collectCallCandidates(psi: KtElement): List<KaCallCandidateInfo> {
         if (!canBeResolvedAsCall(psi)) return emptyList()
         val bindingContext = analysisContext.analyze(psi, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)
         val resolvedCall = attemptResolveCall(psi)
