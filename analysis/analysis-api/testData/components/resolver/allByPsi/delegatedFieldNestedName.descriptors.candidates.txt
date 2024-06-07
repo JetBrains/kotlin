@@ -413,8 +413,7 @@ KtOperationReferenceExpression(233,234): '+'
     isInBestCandidates = true
 
 KtNameReferenceExpression(235,240): 'outer'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -621,8 +620,7 @@ KtOperationReferenceExpression(255,256): '+'
     isInBestCandidates = true
 
 KtNameReferenceExpression(257,262): 'outer'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -829,8 +827,7 @@ KtOperationReferenceExpression(277,278): '+'
     isInBestCandidates = true
 
 KtNameReferenceExpression(279,284): 'outer'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1037,8 +1034,7 @@ KtOperationReferenceExpression(318,319): '+'
     isInBestCandidates = true
 
 KtNameReferenceExpression(320,325): 'outer'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1245,8 +1241,7 @@ KtOperationReferenceExpression(342,343): '+'
     isInBestCandidates = true
 
 KtNameReferenceExpression(344,349): 'outer'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1641,8 +1636,7 @@ KtOperationReferenceExpression(408,409): '+'
     isInBestCandidates = true
 
 KtNameReferenceExpression(410,415): 'inner'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -2025,8 +2019,7 @@ KtOperationReferenceExpression(430,431): '+'
     isInBestCandidates = true
 
 KtNameReferenceExpression(432,437): 'inner'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -2409,8 +2402,7 @@ KtOperationReferenceExpression(452,453): '+'
     isInBestCandidates = true
 
 KtNameReferenceExpression(454,459): 'inner'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -2641,8 +2633,7 @@ KtOperationReferenceExpression(567,568): '+'
     isInBestCandidates = true
 
 KtNameReferenceExpression(569,574): 'inner'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaImplicitReceiverValue:
@@ -2867,8 +2858,7 @@ KtOperationReferenceExpression(592,593): '+'
     isInBestCandidates = true
 
 KtNameReferenceExpression(594,599): 'inner'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaImplicitReceiverValue:

@@ -80,8 +80,7 @@ KtBinaryExpression(40,49): 'list += 1'
     isInBestCandidates = true
 
 KtNameReferenceExpression(40,44): 'list'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -244,8 +243,7 @@ KtArrayAccessExpression(74,81): 'list[0]'
     isInBestCandidates = false
 
 KtNameReferenceExpression(74,78): 'list'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -375,8 +373,7 @@ KtDotQualifiedExpression(106,129): 'list.get(implicitIndex)'
     isInBestCandidates = false
 
 KtNameReferenceExpression(106,110): 'list'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -608,8 +605,7 @@ KtValueArgument(115,128): 'implicitIndex'
   NO_CANDIDATES
 
 KtNameReferenceExpression(115,128): 'implicitIndex'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -957,8 +953,7 @@ KtArrayAccessExpression(185,192): 'list[i]'
     isInBestCandidates = false
 
 KtNameReferenceExpression(185,189): 'list'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -977,8 +972,7 @@ KtContainerNode(189,192): '[i]'
   NO_CANDIDATES
 
 KtNameReferenceExpression(190,191): 'i'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but DeepRecursiveFunction<TypeVariable(T), TypeVariable(R)> was expected>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -997,8 +991,7 @@ KtValueArgument(194,198): 'list'
   NO_CANDIDATES
 
 KtNameReferenceExpression(194,198): 'list'
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null

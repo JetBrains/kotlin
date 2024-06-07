@@ -1,4 +1,4 @@
-KtNameReferenceExpression(107,108): 'f'
+KtNameReferenceExpression(72,73): 'f'
   KtSimpleNameReference:
     (in A) val f: kotlin.String.() -> kotlin.Unit
   

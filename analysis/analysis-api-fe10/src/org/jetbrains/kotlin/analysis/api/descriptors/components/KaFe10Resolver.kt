@@ -197,7 +197,7 @@ internal class KaFe10Resolver(
         val candidates = result.allCandidates?.let { analysisContext.overloadingConflictResolver.filterOutEquivalentCalls(it) }
             ?: error("allCandidates is null even when collectAllCandidates = true")
 
-        candidates.flatMap { candidate ->
+        val candidateInfos = candidates.flatMap { candidate ->
             // The current BindingContext does not have the diagnostics for each individual candidate, only for the resolved call.
             // If there are multiple candidates, we can get each one's diagnostics by reporting it to a new BindingTrace.
             val candidateTrace = DelegatingBindingTrace(this, "Trace for candidate", withParentDiagnostics = false)
@@ -218,8 +218,12 @@ internal class KaFe10Resolver(
             )
 
             candidateKtCallInfo.toKaCallCandidateInfos(bestCandidateDescriptors)
-        }.ifEmpty {
-            resolvedCall?.toKaCallCandidateInfos().orEmpty()
+        }
+
+        when {
+            resolvedCall is KaCall -> resolvedCall.toKaCallCandidateInfos() + candidateInfos.filterNot(KaCallCandidateInfo::isInBestCandidates)
+            candidateInfos.isEmpty() -> resolvedCall.toKaCallCandidateInfos()
+            else -> candidateInfos
         }
     }
 
