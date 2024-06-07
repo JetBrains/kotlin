@@ -70,7 +70,13 @@ fun createModuleDescriptor(
             languageVersionSettings = createLanguageVersionSettings(),
             storageManager = LockBasedStorageManager.NO_LOCKS,
             packageAccessHandler = null,
-        ).also { it.setDependencies(it, stdlibModuleDescriptor) }
+        )
+    }
+
+    dependencyKlibDescriptors.forEach { dependencyDescriptor ->
+        dependencyDescriptor.setDependencies(
+            dependencyKlibDescriptors + stdlibModuleDescriptor
+        )
     }
 
     val moduleDescriptor = ModuleDescriptorImpl(

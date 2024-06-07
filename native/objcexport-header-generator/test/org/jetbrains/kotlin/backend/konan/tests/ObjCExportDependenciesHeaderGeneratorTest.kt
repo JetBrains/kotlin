@@ -105,6 +105,15 @@ class ObjCExportDependenciesHeaderGeneratorTest(
     }
 
     @Test
+    fun `test - jsonNamingStrategy`() {
+        doTest(
+            dependenciesDir.resolve("jsonNamingStrategy"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOfNotNull(testLibraryKotlinxSerializationCore, testLibraryKotlinxSerializationJson)
+            )
+        )
+    }
+
+    @Test
     fun `test - notExportedDependency`() {
         doTest(
             dependenciesDir.resolve("notExportedDependency"), configuration = HeaderGenerator.Configuration(
