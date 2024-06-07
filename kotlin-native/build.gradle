@@ -220,7 +220,6 @@ tasks.register("distCompiler", Copy) {
         rename "trove4j(.*).jar", "trove4j.jar"
 
         into("konan/lib")
-        fileMode(0644)
     }
 
     from(configurations.embeddableJar) {
@@ -228,7 +227,6 @@ tasks.register("distCompiler", Copy) {
             "kotlin-native-compiler-embeddable.jar"
         }
         into("konan/lib")
-        fileMode(0644)
     }
 
     from(project(':kotlin-native:Interop').file('Indexer/build/nativelibs')) {
@@ -256,7 +254,9 @@ tasks.register("distCompiler", Copy) {
     }
 
     from(file('cmd')) {
-        fileMode(0755)
+        filePermissions {
+            unix("755")
+        }
         into('bin')
         if (!PlatformInfo.isWindows()) {
             exclude('**/*.bat')
@@ -270,7 +270,6 @@ tasks.register("distCompiler", Copy) {
 
     from(configurations.objcExportApi) {
         into('konan/swift_export/kotlin_runtime')
-        fileMode(0644)
     }
 
     from(project.file('konan')) {
