@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.idea.tcs.*
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.sourcesClasspath
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeAdditionalArtifactResolver
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver.Companion.gradleArtifact
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinBinaryCapability
 import org.jetbrains.kotlin.gradle.plugin.mpp.configureSourcesPublicationAttributes
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
@@ -34,6 +35,8 @@ internal object IdeSourcesVariantsResolver : IdeAdditionalArtifactResolver {
         val binaryDependenciesByCoordinates = dependencies
             .filterIsInstance<IdeaKotlinResolvedBinaryDependency>()
             .filter { dependency -> dependency.isKotlinCompileBinaryType }
+            // try to resolve sources only if gradleArtifact is present, otherwise it useless and can be slow
+            .filter { dependency -> dependency.gradleArtifact != null }
             .groupBy { Coordinates(it.coordinates) }
 
         val gradleDependencies = binaryDependenciesByCoordinates
@@ -41,8 +44,11 @@ internal object IdeSourcesVariantsResolver : IdeAdditionalArtifactResolver {
             .mapNotNull { coordinates -> coordinates?.toGradleDependency(project) }
 
         val dependencySourceConfiguration = project.configurations
-            .detachedConfiguration(*gradleDependencies.toTypedArray())
-            .apply { configureSourcesPublicationAttributes(sourceSetTarget) }
+            .detachedConfiguration()
+            .apply {
+                this.dependencies.addAll(gradleDependencies)
+                configureSourcesPublicationAttributes(sourceSetTarget)
+            }
 
         dependencySourceConfiguration.incoming
             // not every dependency can be resolved into sources, and it is OK for IDE import
