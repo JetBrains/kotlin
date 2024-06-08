@@ -27,7 +27,7 @@ class InlineObjectsWithPureInitializationLowering(val context: JsCommonBackendCo
             override fun visitCall(expression: IrCall): IrExpression {
                 if (!expression.symbol.owner.isObjectInstanceGetter()) return super.visitCall(expression)
                 val objectToCreate = expression.symbol.owner.returnType.classOrNull?.owner ?: error("Expect return type of an object getter is an object type")
-                if (objectToCreate.hasPureInitialization != true) return super.visitCall(expression)
+                if (objectToCreate.hasPureInitialization != true || objectToCreate.isCompanion) return super.visitCall(expression)
                 val instanceFieldForObject = objectToCreate.instanceField ?: error("An instance field for an object should exist")
                 return JsIrBuilder.buildGetField(
                     instanceFieldForObject.symbol,
