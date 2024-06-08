@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
  */
 context(KtAnalysisSession)
 fun KtCallableSymbol.isObjCBaseCallable(): Boolean {
-    return getAllOverriddenSymbols().none { overriddenSymbol ->
+    return allOverriddenSymbols.none { overriddenSymbol ->
         overriddenSymbol.isVisibleInObjC()
     }
 }

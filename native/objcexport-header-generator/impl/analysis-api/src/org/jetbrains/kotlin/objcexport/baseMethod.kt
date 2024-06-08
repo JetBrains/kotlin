@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 context(KtAnalysisSession)
 internal val KtFunctionSymbol.baseMethod: KtFunctionSymbol
     get() {
-        val overriddenSymbols = getAllOverriddenSymbols().filter { symbol -> symbol.isVisibleInObjC() }
+        val overriddenSymbols = allOverriddenSymbols.filter { symbol -> symbol.isVisibleInObjC() }.toList()
         return if (overriddenSymbols.isEmpty()) this
         else overriddenSymbols.last() as KtFunctionSymbol
     }

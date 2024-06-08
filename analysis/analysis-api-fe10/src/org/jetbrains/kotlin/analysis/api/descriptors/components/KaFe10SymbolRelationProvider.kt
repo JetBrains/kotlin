@@ -169,6 +169,31 @@ internal class KaFe10SymbolRelationProvider(
 
             return KaFe10DescSamConstructorSymbol(constructorDescriptor, analysisContext)
         }
+
+    private val overridesProvider = KaFe10SymbolDeclarationOverridesProvider(analysisSessionProvider, token)
+
+    override val KaCallableSymbol.directlyOverriddenSymbols: Sequence<KaCallableSymbol>
+        get() = withValidityAssertion {
+            overridesProvider.getDirectlyOverriddenSymbols(this)
+        }
+
+    override val KaCallableSymbol.allOverriddenSymbols: Sequence<KaCallableSymbol>
+        get() = withValidityAssertion {
+            overridesProvider.getAllOverriddenSymbols(this)
+        }
+
+    override fun KaClassOrObjectSymbol.isSubClassOf(superClass: KaClassOrObjectSymbol): Boolean = withValidityAssertion {
+        overridesProvider.isSubClassOf(this, superClass)
+    }
+
+    override fun KaClassOrObjectSymbol.isDirectSubClassOf(superClass: KaClassOrObjectSymbol): Boolean = withValidityAssertion {
+        overridesProvider.isDirectSubClassOf(this, superClass)
+    }
+
+    override val KaCallableSymbol.intersectionOverriddenSymbols: List<KaCallableSymbol>
+        get() = withValidityAssertion {
+            throw NotImplementedError("Method is not implemented for FE 1.0")
+        }
 }
 
 internal fun computeContainingSymbolOrSelf(symbol: KaSymbol, analysisSession: KaSession): KaSymbol {

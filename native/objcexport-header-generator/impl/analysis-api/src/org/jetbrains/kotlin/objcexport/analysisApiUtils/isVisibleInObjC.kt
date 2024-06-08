@@ -35,7 +35,7 @@ internal fun KtCallableSymbol.isVisibleInObjC(): Boolean {
     if (this.isHiddenFromObjCByDeprecation()) return false
     if (this.isHiddenFromObjCByAnnotation()) return false
     if (this.isSealedClassConstructor()) return false
-    if (this.isComponentNMethod() && this.getDirectlyOverriddenSymbols().isEmpty()) return false
+    if (this.isComponentNMethod() && !this.directlyOverriddenSymbols.any()) return false
     containingSymbol?.let { if (!it.isVisibleInObjC()) return false }
     return true
 }
@@ -82,7 +82,7 @@ private fun KtSymbol.isComponentNMethod(): Boolean {
 
 context(KtAnalysisSession)
 private fun KtCallableSymbol.isHiddenFromObjCByAnnotation(): Boolean {
-    val overwrittenSymbols = getDirectlyOverriddenSymbols()
+    val overwrittenSymbols = directlyOverriddenSymbols.toList()
     if (overwrittenSymbols.isNotEmpty()) return overwrittenSymbols.first().isHiddenFromObjCByAnnotation()
     return this.containsHidesFromObjCAnnotation()
 }
@@ -129,7 +129,7 @@ private fun KtCallableSymbol.isHiddenFromObjCByDeprecation(): Boolean {
     So don't hide a "deprecated hidden" method which overrides non-hidden one:
      */
     if (deprecationStatus?.deprecationLevel == DeprecationLevelValue.HIDDEN &&
-        getDirectlyOverriddenSymbols().all { overridden -> overridden.isHiddenFromObjCByDeprecation() }
+        directlyOverriddenSymbols.all { overridden -> overridden.isHiddenFromObjCByDeprecation() }
     ) {
         return true
     }

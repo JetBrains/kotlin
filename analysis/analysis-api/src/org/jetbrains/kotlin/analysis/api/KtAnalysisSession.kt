@@ -77,7 +77,6 @@ public abstract class KaSession(
     KaDiagnosticProvider by diagnosticProvider,
     KaScopeProvider by scopeProvider,
     KaCompletionCandidateChecker by completionCandidateChecker,
-    KaSymbolDeclarationOverridesProviderMixIn,
     KaExpressionTypeProviderMixIn,
     KaPsiTypeProviderMixIn,
     KaJvmTypeMapperMixIn,
@@ -119,9 +118,6 @@ public abstract class KaSession(
 
     internal val symbolProvider: KaSymbolProvider get() = symbolProviderImpl
     protected abstract val symbolProviderImpl: KaSymbolProvider
-
-    internal val symbolDeclarationOverridesProvider: KaSymbolDeclarationOverridesProvider get() = symbolDeclarationOverridesProviderImpl
-    protected abstract val symbolDeclarationOverridesProviderImpl: KaSymbolDeclarationOverridesProvider
 
     internal val symbolDeclarationRendererProvider: KaSymbolDeclarationRendererProvider get() = symbolDeclarationRendererProviderImpl
     protected abstract val symbolDeclarationRendererProviderImpl: KaSymbolDeclarationRendererProvider

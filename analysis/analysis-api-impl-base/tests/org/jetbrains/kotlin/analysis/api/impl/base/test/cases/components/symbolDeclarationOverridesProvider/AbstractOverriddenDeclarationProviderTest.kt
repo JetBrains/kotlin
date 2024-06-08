@@ -28,8 +28,8 @@ abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBa
         val actual = executeOnPooledThreadInReadAction {
             analyseForTest(mainFile) {
                 val symbol = getCallableSymbol(mainFile, testServices)
-                val allOverriddenSymbols = symbol.getAllOverriddenSymbols().map { renderSignature(it) }
-                val directlyOverriddenSymbols = symbol.getDirectlyOverriddenSymbols().map { renderSignature(it) }
+                val allOverriddenSymbols = symbol.allOverriddenSymbols.map { renderSignature(it) }
+                val directlyOverriddenSymbols = symbol.directlyOverriddenSymbols.map { renderSignature(it) }
                 buildString {
                     appendLine("ALL:")
                     allOverriddenSymbols.forEach { appendLine("  $it") }

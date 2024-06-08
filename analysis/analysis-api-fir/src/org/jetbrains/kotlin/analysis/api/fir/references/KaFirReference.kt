@@ -72,7 +72,7 @@ internal interface KaFirReference : KtReference, KaSymbolBasedReference {
 
 internal fun KaSession.getPsiDeclarations(symbol: KaFirSymbol<*>): Collection<PsiElement> {
     val intersectionOverriddenSymbolsOrSingle = when {
-        symbol.origin == KaSymbolOrigin.INTERSECTION_OVERRIDE && symbol is KaCallableSymbol -> symbol.getIntersectionOverriddenSymbols()
+        symbol.origin == KaSymbolOrigin.INTERSECTION_OVERRIDE && symbol is KaCallableSymbol -> symbol.intersectionOverriddenSymbols
         else -> listOf(symbol)
     }
     return intersectionOverriddenSymbolsOrSingle.mapNotNull { it.findPsiForReferenceResolve() }

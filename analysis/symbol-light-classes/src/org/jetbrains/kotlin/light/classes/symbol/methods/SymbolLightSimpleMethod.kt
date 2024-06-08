@@ -199,7 +199,7 @@ internal class SymbolLightSimpleMethod(
             return true
 
         return returnType.isPrimitiveBacked &&
-                functionSymbol.getAllOverriddenSymbols().any { overriddenSymbol ->
+                functionSymbol.allOverriddenSymbols.any { overriddenSymbol ->
                     !overriddenSymbol.returnType.isPrimitiveBacked
                 }
     }

@@ -40,5 +40,5 @@ internal val KtFunctionSymbol.isClone: Boolean
         val cloneCallableId = CallableId(StandardClassIds.Cloneable, Name.identifier("clone"))
         if (this.callableId == cloneCallableId) return true
 
-        return this.getAllOverriddenSymbols().any { it.callableId == cloneCallableId }
+        return this.allOverriddenSymbols.any { it.callableId == cloneCallableId }
     }

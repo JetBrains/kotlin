@@ -248,7 +248,7 @@ internal class SymbolLightAccessorMethod private constructor(
     context(KaSession)
     private fun forceBoxedReturnType(propertySymbol: KaPropertySymbol): Boolean {
         return propertySymbol.returnType.isPrimitiveBacked &&
-                propertySymbol.getAllOverriddenSymbols().any { overriddenSymbol ->
+                propertySymbol.allOverriddenSymbols.any { overriddenSymbol ->
                     !overriddenSymbol.returnType.isPrimitiveBacked
                 }
     }

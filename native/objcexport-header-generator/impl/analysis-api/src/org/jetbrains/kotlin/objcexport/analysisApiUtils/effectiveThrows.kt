@@ -32,6 +32,6 @@ import org.jetbrains.kotlin.name.ClassId
 context(KtAnalysisSession)
 internal val KtFunctionLikeSymbol.effectiveThrows: List<ClassId>
     get() {
-        getAllOverriddenSymbols().firstOrNull()?.let { return (it as KtFunctionLikeSymbol).effectiveThrows }
+        allOverriddenSymbols.firstOrNull()?.let { return (it as KtFunctionLikeSymbol).effectiveThrows }
         return definedThrows
     }

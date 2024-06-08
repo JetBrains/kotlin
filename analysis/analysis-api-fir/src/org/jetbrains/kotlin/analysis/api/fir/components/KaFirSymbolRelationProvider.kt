@@ -293,4 +293,29 @@ internal class KaFirSymbolRelationProvider(
                 analysisSession.firSymbolBuilder.functionLikeBuilder.buildSamConstructorSymbol(it.symbol)
             }
         }
+
+    private val overridesProvider = KaFirSymbolDeclarationOverridesProvider(analysisSessionProvider, token)
+
+    override val KaCallableSymbol.allOverriddenSymbols: Sequence<KaCallableSymbol>
+        get() = withValidityAssertion {
+            overridesProvider.getAllOverriddenSymbols(this)
+        }
+
+    override val KaCallableSymbol.directlyOverriddenSymbols: Sequence<KaCallableSymbol>
+        get() = withValidityAssertion {
+            overridesProvider.getDirectlyOverriddenSymbols(this)
+        }
+
+    override fun KaClassOrObjectSymbol.isSubClassOf(superClass: KaClassOrObjectSymbol): Boolean = withValidityAssertion {
+        return overridesProvider.isSubClassOf(this, superClass)
+    }
+
+    override fun KaClassOrObjectSymbol.isDirectSubClassOf(superClass: KaClassOrObjectSymbol): Boolean = withValidityAssertion {
+        return overridesProvider.isDirectSubClassOf(this, superClass)
+    }
+
+    override val KaCallableSymbol.intersectionOverriddenSymbols: List<KaCallableSymbol>
+        get() = withValidityAssertion {
+            overridesProvider.getIntersectionOverriddenSymbols(this)
+        }
 }

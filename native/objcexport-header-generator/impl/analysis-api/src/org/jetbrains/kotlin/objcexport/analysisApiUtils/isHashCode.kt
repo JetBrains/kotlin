@@ -16,4 +16,4 @@ private val hashCodeCallableId = CallableId(StandardClassIds.Any, Name.identifie
 context(KtAnalysisSession)
 internal val KtCallableSymbol.isHashCode: Boolean
     get() = this.callableId == hashCodeCallableId ||
-        getAllOverriddenSymbols().any { overriddenSymbol -> overriddenSymbol.callableId == hashCodeCallableId }
+        allOverriddenSymbols.any { overriddenSymbol -> overriddenSymbol.callableId == hashCodeCallableId }
