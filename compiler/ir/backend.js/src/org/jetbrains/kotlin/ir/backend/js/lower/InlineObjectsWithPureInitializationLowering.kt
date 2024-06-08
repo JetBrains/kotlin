@@ -31,7 +31,7 @@ class InlineObjectsWithPureInitializationLowering(val context: JsCommonBackendCo
                     ?: irError("Expect return type of an object getter is an object type") {
                         withIrEntry("expression", expression)
                     }
-                if (objectToCreate.hasPureInitialization != true) return super.visitCall(expression)
+                if (objectToCreate.hasPureInitialization != true || objectToCreate.isCompanion) return super.visitCall(expression)
                 val instanceFieldForObject = objectToCreate.instanceField
                     ?: irError("An instance field for an object should exist") {
                         withIrEntry("objectToCreate", objectToCreate)
