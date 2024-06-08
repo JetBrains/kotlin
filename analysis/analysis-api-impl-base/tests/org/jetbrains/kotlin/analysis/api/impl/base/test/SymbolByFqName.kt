@@ -137,7 +137,7 @@ sealed class SymbolData {
                 ?: getTypeAliasByClassId(classId)
                 ?: error("Class-like symbol is not found by '$classId'")
 
-            val samConstructor = symbol.getSamConstructor() ?: error("SAM constructor is not found for symbol '$symbol'")
+            val samConstructor = symbol.samConstructor ?: error("SAM constructor is not found for symbol '$symbol'")
             return listOf(samConstructor)
         }
     }

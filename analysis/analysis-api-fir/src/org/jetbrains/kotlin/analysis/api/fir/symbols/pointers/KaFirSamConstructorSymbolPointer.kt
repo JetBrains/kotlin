@@ -23,7 +23,7 @@ internal class KaFirSamConstructorSymbolPointer(
         val owner = analysisSession.getClassLikeSymbol(ownerClassId) as? FirRegularClass ?: return null
         val classSymbol = analysisSession.firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(owner.symbol)
         with(analysisSession) {
-            return classSymbol.getSamConstructor()
+            return classSymbol.samConstructor
         }
     }
 

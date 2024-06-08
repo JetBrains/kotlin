@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirReceiverParameterSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.getClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.getContainingKtModule
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.diagnostics.ConeDestructuringDeclarationsOnTopLevel
+import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -280,4 +282,15 @@ internal class KaFirSymbolRelationProvider(
 
         return null
     }
+
+    override val KaClassLikeSymbol.samConstructor: KaSamConstructorSymbol?
+        get() = withValidityAssertion {
+            val classId = classId ?: return null
+            val owner = analysisSession.getClassLikeSymbol(classId) ?: return null
+            val firSession = analysisSession.useSiteSession
+            val resolver = FirSamResolver(firSession, analysisSession.getScopeSessionFor(firSession))
+            return resolver.getSamConstructor(owner)?.let {
+                analysisSession.firSymbolBuilder.functionLikeBuilder.buildSamConstructorSymbol(it.symbol)
+            }
+        }
 }

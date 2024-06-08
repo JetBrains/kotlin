@@ -12,8 +12,10 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescSamConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DynamicFunctionDescValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getDescriptor
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtSymbol
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
@@ -21,14 +23,20 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.project.structure.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
+import org.jetbrains.kotlin.load.java.sam.JvmSamConversionOracle
 import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.denotedClassDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.platform
+import org.jetbrains.kotlin.resolve.sam.createSamConstructorFunction
+import org.jetbrains.kotlin.resolve.sam.getSingleAbstractMethodOrNull
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -146,6 +154,21 @@ internal class KaFe10SymbolRelationProvider(
 
         }
     }
+
+    override val KaClassLikeSymbol.samConstructor: KaSamConstructorSymbol?
+        get() = withValidityAssertion {
+            val descriptor = (getSymbolDescriptor(this) as? ClassifierDescriptorWithTypeParameters)?.denotedClassDescriptor
+            if (descriptor !is ClassDescriptor || getSingleAbstractMethodOrNull(descriptor) == null) return null
+
+            val constructorDescriptor = createSamConstructorFunction(
+                descriptor.containingDeclaration,
+                descriptor,
+                analysisContext.resolveSession.samConversionResolver,
+                JvmSamConversionOracle(analysisContext.resolveSession.languageVersionSettings),
+            )
+
+            return KaFe10DescSamConstructorSymbol(constructorDescriptor, analysisContext)
+        }
 }
 
 internal fun computeContainingSymbolOrSelf(symbol: KaSymbol, analysisSession: KaSession): KaSymbol {

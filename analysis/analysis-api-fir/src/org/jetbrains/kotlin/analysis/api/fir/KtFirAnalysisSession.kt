@@ -83,8 +83,6 @@ private constructor(
 
     override val containingDeclarationProviderImpl = KaFirSymbolContainingDeclarationProvider(this, token)
 
-    override val samResolverImpl = KaFirSamResolver(this)
-
     override val symbolProviderImpl =
         KaFirSymbolProvider(this, firResolveSession.useSiteFirSession.symbolProvider)
 

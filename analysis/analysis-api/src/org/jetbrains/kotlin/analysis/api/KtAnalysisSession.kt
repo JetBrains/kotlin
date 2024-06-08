@@ -74,7 +74,6 @@ public abstract class KaSession(
 ) : KaLifetimeOwner,
     KaResolver by resolver,
     KaSymbolRelationProvider by symbolRelationProvider,
-    KaSamResolverMixIn,
     KaDiagnosticProvider by diagnosticProvider,
     KaScopeProvider by scopeProvider,
     KaCompletionCandidateChecker by completionCandidateChecker,
@@ -120,9 +119,6 @@ public abstract class KaSession(
 
     internal val symbolProvider: KaSymbolProvider get() = symbolProviderImpl
     protected abstract val symbolProviderImpl: KaSymbolProvider
-
-    internal val samResolver: KaSamResolver get() = samResolverImpl
-    protected abstract val samResolverImpl: KaSamResolver
 
     internal val symbolDeclarationOverridesProvider: KaSymbolDeclarationOverridesProvider get() = symbolDeclarationOverridesProviderImpl
     protected abstract val symbolDeclarationOverridesProviderImpl: KaSymbolDeclarationOverridesProvider

@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSamConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 
@@ -28,4 +30,9 @@ public interface KaSymbolRelationProvider {
     public val KaSymbol.containingFile: KaFileSymbol?
 
     public val KaSymbol.containingModule: KtModule
+
+    /**
+     * Returns [KaSamConstructorSymbol] if the given [KaClassLikeSymbol] is a functional interface type, a.k.a. SAM.
+     */
+    public val KaClassLikeSymbol.samConstructor: KaSamConstructorSymbol?
 }
