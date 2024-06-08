@@ -111,6 +111,10 @@ internal class KaFe10Resolver(
     }
 
     override fun attemptResolveSymbol(psi: KtElement): KaSymbolResolutionAttempt? {
+        when (psi) {
+            is KtCallableReferenceExpression -> return attemptResolveSymbol(psi.callableReference)
+        }
+
         val bindingContext = analysisContext.analyze(psi, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)
         val resolvedCall = psi.getResolvedCall(bindingContext)
         if (resolvedCall != null) {

@@ -1,2 +1,3 @@
 KtCallableReferenceExpression(45,50): '::foo'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = /foo(a: kotlin.Int): kotlin.Unit

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionError
 import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionSuccess
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtSuperTypeCallEntry
@@ -55,6 +56,7 @@ abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
             is KtSuperTypeCallEntry -> element.resolveSymbol()
             is KtConstructorDelegationCall -> element.resolveSymbol()
             is KtCallExpression -> element.resolveSymbol()
+            is KtCallableReferenceExpression -> element.resolveSymbol()
             else -> return
         }
 
