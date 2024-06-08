@@ -1,2 +1,3 @@
 KtConstructorDelegationReferenceExpression(136,136): ''
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(): kotlin.Any

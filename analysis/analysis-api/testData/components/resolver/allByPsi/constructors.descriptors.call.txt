@@ -53,20 +53,19 @@ KtConstructorDelegationCall(61,61): ''
     argumentMapping = {}
 
 KtConstructorDelegationReferenceExpression(61,61): ''
-  KaSuccessCallInfo:
-    call = KaDelegatedConstructorCall:
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Any
-          symbol = <constructor>(): kotlin.Any
-          valueParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {}
+  KaDelegatedConstructorCall:
+    kind = SUPER_CALL
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Any
+        symbol = <constructor>(): kotlin.Any
+        valueParameters = []
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {}
 
 KtSecondaryConstructor(66,88): 'constructor(s: String)'
   null
@@ -102,20 +101,19 @@ KtConstructorDelegationCall(88,88): ''
     argumentMapping = {}
 
 KtConstructorDelegationReferenceExpression(88,88): ''
-  KaSuccessCallInfo:
-    call = KaDelegatedConstructorCall:
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Any
-          symbol = <constructor>(): kotlin.Any
-          valueParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {}
+  KaDelegatedConstructorCall:
+    kind = SUPER_CALL
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Any
+        symbol = <constructor>(): kotlin.Any
+        valueParameters = []
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {}
 
 KtNamedFunction(94,113): 'fun call() {'
   null
@@ -195,34 +193,33 @@ KtConstructorDelegationCall(170,179): 'super(ci)'
     }
 
 KtConstructorDelegationReferenceExpression(170,175): 'super'
-  KaSuccessCallInfo:
-    call = KaDelegatedConstructorCall:
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = r.BaseClass
-          symbol = <constructor>(i: kotlin.Int): r.BaseClass
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: kotlin.Int
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        ci -> (KaVariableLikeSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          callableId = null)
-      }
+  KaDelegatedConstructorCall:
+    kind = SUPER_CALL
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = r.BaseClass
+        symbol = <constructor>(i: kotlin.Int): r.BaseClass
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      ci -> (KaVariableLikeSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        callableId = null)
+    }
 
 KtValueArgumentList(175,179): '(ci)'
   null
@@ -293,34 +290,33 @@ KtConstructorDelegationCall(210,219): 'super(cs)'
     }
 
 KtConstructorDelegationReferenceExpression(210,215): 'super'
-  KaSuccessCallInfo:
-    call = KaDelegatedConstructorCall:
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = r.BaseClass
-          symbol = <constructor>(s: kotlin.String): r.BaseClass
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = s
-              receiverType = null
-              returnType = kotlin.String
-              symbol = s: kotlin.String
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        cs -> (KaVariableLikeSignature:
-          name = s
-          receiverType = null
-          returnType = kotlin.String
-          symbol = s: kotlin.String
-          callableId = null)
-      }
+  KaDelegatedConstructorCall:
+    kind = SUPER_CALL
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = r.BaseClass
+        symbol = <constructor>(s: kotlin.String): r.BaseClass
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = s
+            receiverType = null
+            returnType = kotlin.String
+            symbol = s: kotlin.String
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      cs -> (KaVariableLikeSignature:
+        name = s
+        receiverType = null
+        returnType = kotlin.String
+        symbol = s: kotlin.String
+        callableId = null)
+    }
 
 KtValueArgumentList(215,219): '(cs)'
   null
@@ -570,20 +566,19 @@ KtConstructorDelegationCall(339,345): 'this()'
     argumentMapping = {}
 
 KtConstructorDelegationReferenceExpression(339,343): 'this'
-  KaSuccessCallInfo:
-    call = KaDelegatedConstructorCall:
-      kind = THIS_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = r.ChildWithPrimary
-          symbol = <constructor>(): r.ChildWithPrimary
-          valueParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {}
+  KaDelegatedConstructorCall:
+    kind = THIS_CALL
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = r.ChildWithPrimary
+        symbol = <constructor>(): r.ChildWithPrimary
+        valueParameters = []
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {}
 
 KtValueArgumentList(343,345): '()'
   null
@@ -690,34 +685,33 @@ KtConstructorDelegationCall(446,454): 'super(1)'
     }
 
 KtConstructorDelegationReferenceExpression(446,451): 'super'
-  KaSuccessCallInfo:
-    call = KaDelegatedConstructorCall:
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = r.ClassWithType<kotlin.Int>
-          symbol = <constructor>(i: kotlin.Int): r.ClassWithType<T>
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: kotlin.Int
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        1 -> (KaVariableLikeSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          callableId = null)
-      }
+  KaDelegatedConstructorCall:
+    kind = SUPER_CALL
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = r.ClassWithType<kotlin.Int>
+        symbol = <constructor>(i: kotlin.Int): r.ClassWithType<T>
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      1 -> (KaVariableLikeSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        callableId = null)
+    }
 
 KtValueArgumentList(451,454): '(1)'
   null

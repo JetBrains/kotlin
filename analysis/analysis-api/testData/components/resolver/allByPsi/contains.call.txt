@@ -53,20 +53,19 @@ KtConstructorDelegationCall(43,49): 'this()'
     argumentMapping = {}
 
 KtConstructorDelegationReferenceExpression(43,47): 'this'
-  KaSuccessCallInfo:
-    call = KaDelegatedConstructorCall:
-      kind = THIS_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = <constructor>(): MyClass
-          valueParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {}
+  KaDelegatedConstructorCall:
+    kind = THIS_CALL
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {}
 
 KtValueArgumentList(47,49): '()'
   null

@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtCollectionLiteralExpression
 import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
+import org.jetbrains.kotlin.psi.KtConstructorDelegationReferenceExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtSuperTypeCallEntry
 import org.jetbrains.kotlin.resolution.KtResolvable
@@ -65,6 +66,7 @@ public interface KaResolverMixIn : KaSessionMixIn {
     public fun KtAnnotationEntry.resolveSymbol(): KaConstructorSymbol? = resolveSymbolSafe(analysisSession)
     public fun KtSuperTypeCallEntry.resolveSymbol(): KaConstructorSymbol? = resolveSymbolSafe(analysisSession)
     public fun KtConstructorDelegationCall.resolveSymbol(): KaConstructorSymbol? = resolveSymbolSafe(analysisSession)
+    public fun KtConstructorDelegationReferenceExpression.resolveSymbol(): KaConstructorSymbol? = resolveSymbolSafe(analysisSession)
     public fun KtCallExpression.resolveSymbol(): KaCallableSymbol? = resolveSymbolSafe(analysisSession)
     public fun KtCallableReferenceExpression.resolveSymbol(): KaCallableSymbol? = resolveSymbolSafe(analysisSession)
     public fun KtArrayAccessExpression.resolveSymbol(): KaFunctionSymbol? = resolveSymbolSafe(analysisSession)
@@ -81,6 +83,7 @@ public interface KaResolverMixIn : KaSessionMixIn {
     public fun KtAnnotationEntry.resolveCall(): KaAnnotationCall? = resolveCallSafe(analysisSession)
     public fun KtSuperTypeCallEntry.resolveCall(): KaFunctionCall<KaConstructorSymbol>? = resolveCallSafe(analysisSession)
     public fun KtConstructorDelegationCall.resolveCall(): KaDelegatedConstructorCall? = resolveCallSafe(analysisSession)
+    public fun KtConstructorDelegationReferenceExpression.resolveCall(): KaDelegatedConstructorCall? = resolveCallSafe(analysisSession)
     public fun KtCallExpression.resolveCall(): KaCallableMemberCall<*, *>? = resolveCallSafe(analysisSession)
     public fun KtCallableReferenceExpression.resolveCall(): KaCallableMemberCall<*, *>? = resolveCallSafe(analysisSession)
     public fun KtArrayAccessExpression.resolveCall(): KaFunctionCall<KaFunctionSymbol>? = resolveCallSafe(analysisSession)

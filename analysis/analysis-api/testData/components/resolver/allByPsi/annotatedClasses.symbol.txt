@@ -385,7 +385,8 @@ KtConstructorDelegationCall(427,427): ''
     symbol = <constructor>(): kotlin.Any
 
 KtConstructorDelegationReferenceExpression(427,427): ''
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(): kotlin.Any
 
 KtClass(431,462): 'abstract class AbstractClass<T>'
   null

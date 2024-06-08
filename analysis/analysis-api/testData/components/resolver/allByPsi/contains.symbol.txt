@@ -42,7 +42,8 @@ KtConstructorDelegationCall(43,49): 'this()'
     symbol = <constructor>(): MyClass
 
 KtConstructorDelegationReferenceExpression(43,47): 'this'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(): MyClass
 
 KtValueArgumentList(47,49): '()'
   null

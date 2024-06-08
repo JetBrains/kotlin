@@ -59,6 +59,7 @@ abstract class AbstractResolveCallTest : AbstractResolveByElementTest() {
             is KtAnnotationEntry -> element.resolveCall()
             is KtSuperTypeCallEntry -> element.resolveCall()
             is KtConstructorDelegationCall -> element.resolveCall()
+            is KtConstructorDelegationReferenceExpression -> element.resolveCall()
             is KtCallExpression -> element.resolveCall()
             is KtCallableReferenceExpression -> element.resolveCall()
             is KtArrayAccessExpression -> element.resolveCall()
