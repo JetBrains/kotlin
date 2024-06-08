@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractAnalysisApiImportOptimizerTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val importsAnalysis = analyseForTest(mainFile) {
-            analyseImports(mainFile)
+            analyzeImportsToOptimize(mainFile)
         }
 
         val importAnalysisRendered = buildString {

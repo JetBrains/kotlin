@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KaFe10Symbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
@@ -29,23 +30,22 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 
 internal class KaFe10ImportOptimizer(
-    override val analysisSession: KaFe10Session,
-) : KaImportOptimizer(), KaFe10SessionComponent {
+    override val analysisSessionProvider: () -> KaFe10Session,
     override val token: KaLifetimeToken
-        get() = analysisSession.token
-
-    override fun analyseImports(file: KtFile): KaImportOptimizerResult = withValidityAssertion {
+) : KaSessionComponent<KaFe10Session>(), KaImportOptimizer, KaFe10SessionComponent {
+    override fun analyzeImportsToOptimize(file: KtFile): KaImportOptimizerResult = withValidityAssertion {
         error("FE10 implementation of KtImportOptimizer should not be called from anywhere")
     }
 
-    override fun getImportableName(symbol: KaSymbol): FqName? {
-        require(symbol is KaFe10Symbol)
+    override val KaSymbol.importableFqName: FqName?
+        get() = withValidityAssertion {
+            require(this is KaFe10Symbol)
 
-        val descriptor = getSymbolDescriptor(symbol)
-        if (descriptor?.canBeReferencedViaImport() != true) return null
+            val descriptor = getSymbolDescriptor(this)
+            if (descriptor?.canBeReferencedViaImport() != true) return null
 
-        return descriptor.getImportableDescriptor().fqNameSafe
-    }
+            return descriptor.getImportableDescriptor().fqNameSafe
+        }
 
     /**
      * Copy of `org.jetbrains.kotlin.idea.imports.ImportsUtils.canBeReferencedViaImport`.

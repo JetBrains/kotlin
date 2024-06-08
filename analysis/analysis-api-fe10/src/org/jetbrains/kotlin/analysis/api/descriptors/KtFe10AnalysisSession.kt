@@ -34,6 +34,7 @@ class KaFe10Session(
     scopeProvider = KaFe10ScopeProvider(analysisSessionProvider, token),
     completionCandidateChecker = KaFe10CompletionCandidateChecker(analysisSessionProvider, token),
     referenceShortener = KaFe10ReferenceShortener(analysisSessionProvider, token),
+    importOptimizer = KaFe10ImportOptimizer(analysisSessionProvider, token),
     originalPsiProvider = KaFe10OriginalPsiProvider(analysisSessionProvider, token),
     typeCreator = KaFe10TypeCreator(analysisSessionProvider, token),
     analysisScopeProvider = KaAnalysisScopeProviderImpl(analysisSessionProvider, token, resolutionScope),
@@ -59,7 +60,6 @@ class KaFe10Session(
     override val multiplatformInfoProviderImpl: KaMultiplatformInfoProvider = KaFe10MultiplatformInfoProvider(this)
     override val inheritorsProviderImpl: KaInheritorsProvider = KaFe10InheritorsProvider(this)
     override val samResolverImpl: KaSamResolver = KaFe10SamResolver(this)
-    override val importOptimizerImpl: KaImportOptimizer = KaFe10ImportOptimizer(this)
     override val jvmTypeMapperImpl: KaJvmTypeMapper = KaFe10JvmTypeMapper(this)
     override val symbolInfoProviderImpl: KaSymbolInfoProvider = KaFe10SymbolInfoProvider(this)
     override val signatureSubstitutorImpl: KaSignatureSubstitutor = KaFe10SignatureSubstitutor(this)
