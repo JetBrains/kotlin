@@ -80,7 +80,8 @@ KtNameReferenceExpression(106,110): 'list'
   null
 
 KtCallExpression(111,129): 'get(implicitIndex)'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int): E
 
 KtNameReferenceExpression(111,114): 'get'
   null
@@ -143,7 +144,8 @@ KtBlockExpression(173,201): '{'
   null
 
 KtCallExpression(179,199): 'foo(--list[i], list)'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = /foo(i: kotlin.Int, list: kotlin.collections.MutableList<kotlin.Int>): kotlin.Unit
 
 KtNameReferenceExpression(179,182): 'foo'
   null

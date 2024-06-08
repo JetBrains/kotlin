@@ -1,18 +1,17 @@
 KtCallExpression(76,88): 'javaMethod()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = javaClass
-          isSafeNavigation = false
-          type = JavaClass
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /JavaClass.javaMethod(<dispatch receiver>: JavaClass): kotlin.Unit
-          valueParameters = []
-          callableId = /JavaClass.javaMethod
-      typeArgumentsMapping = {}
-      argumentMapping = {}
+  KaSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = javaClass
+        isSafeNavigation = false
+        type = JavaClass
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /JavaClass.javaMethod(<dispatch receiver>: JavaClass): kotlin.Unit
+        valueParameters = []
+        callableId = /JavaClass.javaMethod
+    typeArgumentsMapping = {}
+    argumentMapping = {}

@@ -1,4 +1,4 @@
 KtCallExpression(33,45): 'List<String>'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<RESOLUTION_TO_CLASSIFIER: Interface List does not have constructors>

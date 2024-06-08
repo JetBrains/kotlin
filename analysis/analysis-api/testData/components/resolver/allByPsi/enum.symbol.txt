@@ -41,7 +41,8 @@ KtInitializerList(54,57): '(1)'
   null
 
 KtSuperTypeCallEntry(54,57): '(1)'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(i: kotlin.Int): EnumWithConstructor
 
 KtConstructorCalleeExpression(54,54): ''
   null
@@ -71,7 +72,8 @@ KtInitializerList(76,79): '(2)'
   null
 
 KtSuperTypeCallEntry(76,79): '(2)'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(i: kotlin.Int): EnumWithConstructor
 
 KtConstructorCalleeExpression(76,76): ''
   null
@@ -146,7 +148,8 @@ KtNameReferenceExpression(234,238): 'this'
   null
 
 KtCallExpression(239,244): 'baz()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = baz(<dispatch receiver>: <anonymous>): kotlin.Unit
 
 KtNameReferenceExpression(239,242): 'baz'
   null

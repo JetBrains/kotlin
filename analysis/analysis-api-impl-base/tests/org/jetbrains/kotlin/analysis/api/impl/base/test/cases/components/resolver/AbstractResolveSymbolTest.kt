@@ -6,13 +6,21 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaSymbolResolutionSuccessImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.assertStableResult
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
 import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionAttempt
+import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionError
+import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionSuccess
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtSuperTypeCallEntry
 import org.jetbrains.kotlin.resolution.KtResolvable
 import org.jetbrains.kotlin.resolution.KtResolvableCall
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
     override val resolveKind: String get() = "symbol"
@@ -30,7 +38,35 @@ abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
             }
         }
 
+        // This call mustn't be suppressed as this is the API contracts
+        assertSpecificResolutionApi(testServices, symbolAttempt, element)
         symbolAttempt?.let(::stringRepresentation) ?: "null"
+    }
+
+    private fun KaSession.assertSpecificResolutionApi(
+        testServices: TestServices,
+        symbolAttempt: KaSymbolResolutionAttempt?,
+        element: KtElement,
+    ) {
+        if (element !is KtResolvable) return
+
+        val specificSymbol = when (element) {
+            is KtAnnotationEntry -> element.resolveSymbol()
+            is KtSuperTypeCallEntry -> element.resolveSymbol()
+            is KtConstructorDelegationCall -> element.resolveSymbol()
+            is KtCallExpression -> element.resolveSymbol()
+            else -> return
+        }
+
+        val assertions = testServices.assertions
+        when (symbolAttempt) {
+            null, is KaSymbolResolutionError -> assertions.assertEquals(expected = null, actual = specificSymbol)
+            is KaSymbolResolutionSuccess -> assertStableResult(
+                testServices = testServices,
+                firstAttempt = symbolAttempt,
+                secondAttempt = specificSymbol?.let(::KaSymbolResolutionSuccessImpl),
+            )
+        }
     }
 
     private fun KaSession.attemptResolveSymbol(element: KtElement): KaSymbolResolutionAttempt? = if (element is KtResolvable) {

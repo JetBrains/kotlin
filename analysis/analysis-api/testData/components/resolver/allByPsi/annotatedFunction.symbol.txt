@@ -17,7 +17,8 @@ KtDeclarationModifierList(33,187): '@Target('
   null
 
 KtAnnotationEntry(33,176): '@Target('
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
 
 KtConstructorCalleeExpression(34,40): 'Target'
   null
@@ -122,7 +123,8 @@ KtDeclarationModifierList(259,282): '@Anno("function $prop")'
   null
 
 KtAnnotationEntry(259,282): '@Anno("function $prop")'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(position: kotlin.String): lowlevel.Anno
 
 KtConstructorCalleeExpression(260,264): 'Anno'
   null
@@ -164,7 +166,8 @@ KtDeclarationModifierList(288,317): '@Anno("type parameter $prop")'
   null
 
 KtAnnotationEntry(288,317): '@Anno("type parameter $prop")'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(position: kotlin.String): lowlevel.Anno
 
 KtConstructorCalleeExpression(289,293): 'Anno'
   null
@@ -203,7 +206,8 @@ KtDeclarationModifierList(322,347): '@Anno("bound type $prop")'
   null
 
 KtAnnotationEntry(322,347): '@Anno("bound type $prop")'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(position: kotlin.String): lowlevel.Anno
 
 KtConstructorCalleeExpression(323,327): 'Anno'
   null
@@ -254,7 +258,8 @@ KtDeclarationModifierList(353,385): '@Anno("nested bound type $prop")'
   null
 
 KtAnnotationEntry(353,385): '@Anno("nested bound type $prop")'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(position: kotlin.String): lowlevel.Anno
 
 KtConstructorCalleeExpression(354,358): 'Anno'
   null
@@ -299,7 +304,8 @@ KtDeclarationModifierList(395,456): '@receiver:Anno("receiver $prop") @Anno("rec
   null
 
 KtAnnotationEntry(395,427): '@receiver:Anno("receiver $prop")'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(position: kotlin.String): lowlevel.Anno
 
 KtAnnotationUseSiteTarget(396,404): 'receiver'
   null
@@ -335,7 +341,8 @@ KtNameReferenceExpression(421,425): 'prop'
   null
 
 KtAnnotationEntry(428,456): '@Anno("receiver type $prop")'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(position: kotlin.String): lowlevel.Anno
 
 KtConstructorCalleeExpression(429,433): 'Anno'
   null
@@ -386,7 +393,8 @@ KtDeclarationModifierList(462,497): '@Anno("nested receiver type $prop")'
   null
 
 KtAnnotationEntry(462,497): '@Anno("nested receiver type $prop")'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(position: kotlin.String): lowlevel.Anno
 
 KtConstructorCalleeExpression(463,467): 'Anno'
   null
@@ -437,7 +445,8 @@ KtDeclarationModifierList(503,545): '@Anno("nested nested receiver type $prop")'
   null
 
 KtAnnotationEntry(503,545): '@Anno("nested nested receiver type $prop")'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(position: kotlin.String): lowlevel.Anno
 
 KtConstructorCalleeExpression(504,508): 'Anno'
   null
@@ -485,7 +494,8 @@ KtDeclarationModifierList(561,585): '@Anno("parameter $prop")'
   null
 
 KtAnnotationEntry(561,585): '@Anno("parameter $prop")'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(position: kotlin.String): lowlevel.Anno
 
 KtConstructorCalleeExpression(562,566): 'Anno'
   null
@@ -524,7 +534,8 @@ KtDeclarationModifierList(593,622): '@Anno("parameter type $prop")'
   null
 
 KtAnnotationEntry(593,622): '@Anno("parameter type $prop")'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(position: kotlin.String): lowlevel.Anno
 
 KtConstructorCalleeExpression(594,598): 'Anno'
   null
@@ -575,7 +586,8 @@ KtDeclarationModifierList(634,670): '@Anno("nested parameter type $prop")'
   null
 
 KtAnnotationEntry(634,670): '@Anno("nested parameter type $prop")'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(position: kotlin.String): lowlevel.Anno
 
 KtConstructorCalleeExpression(635,639): 'Anno'
   null
@@ -626,7 +638,8 @@ KtDeclarationModifierList(676,719): '@Anno("nested nested parameter type $prop")
   null
 
 KtAnnotationEntry(676,719): '@Anno("nested nested parameter type $prop")'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(position: kotlin.String): lowlevel.Anno
 
 KtConstructorCalleeExpression(677,681): 'Anno'
   null
@@ -674,7 +687,8 @@ KtDeclarationModifierList(735,761): '@Anno("return type $prop")'
   null
 
 KtAnnotationEntry(735,761): '@Anno("return type $prop")'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(position: kotlin.String): lowlevel.Anno
 
 KtConstructorCalleeExpression(736,740): 'Anno'
   null
@@ -725,7 +739,8 @@ KtDeclarationModifierList(767,800): '@Anno("nested return type $prop")'
   null
 
 KtAnnotationEntry(767,800): '@Anno("nested return type $prop")'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(position: kotlin.String): lowlevel.Anno
 
 KtConstructorCalleeExpression(768,772): 'Anno'
   null
@@ -776,7 +791,8 @@ KtDeclarationModifierList(806,846): '@Anno("nested nested return type $prop")'
   null
 
 KtAnnotationEntry(806,846): '@Anno("nested nested return type $prop")'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(position: kotlin.String): lowlevel.Anno
 
 KtConstructorCalleeExpression(807,811): 'Anno'
   null
@@ -830,7 +846,8 @@ KtDeclarationModifierList(871,901): '@Anno("constraint type $prop")'
   null
 
 KtAnnotationEntry(871,901): '@Anno("constraint type $prop")'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(position: kotlin.String): lowlevel.Anno
 
 KtConstructorCalleeExpression(872,876): 'Anno'
   null
@@ -884,7 +901,8 @@ KtDeclarationModifierList(913,950): '@Anno("nested constraint type $prop")'
   null
 
 KtAnnotationEntry(913,950): '@Anno("nested constraint type $prop")'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(position: kotlin.String): lowlevel.Anno
 
 KtConstructorCalleeExpression(914,918): 'Anno'
   null

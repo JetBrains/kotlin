@@ -1,5 +1,5 @@
 KtCallExpression(64,75): 'ALE<String>'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         isImplicitInvoke = false

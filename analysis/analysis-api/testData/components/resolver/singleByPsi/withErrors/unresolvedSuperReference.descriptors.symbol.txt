@@ -1,0 +1,4 @@
+KtSuperTypeCallEntry(41,54): 'Unresolved(p)'
+  KaSymbolResolutionErrorImpl:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Unresolved>

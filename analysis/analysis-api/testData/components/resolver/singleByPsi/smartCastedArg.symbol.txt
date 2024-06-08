@@ -1,2 +1,3 @@
 KtCallExpression(108,119): 'processB(a)'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = /processB(b: B): kotlin.Int

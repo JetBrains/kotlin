@@ -1,2 +1,3 @@
 KtCallExpression(76,80): 'f(1)'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = /Foo.invoke(<dispatch receiver>: Foo, vararg a: kotlin.Any): kotlin.Unit

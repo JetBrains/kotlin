@@ -23,19 +23,18 @@ KtDeclarationModifierList(36,41): '@Anno'
   null
 
 KtAnnotationEntry(36,41): '@Anno'
-  KaSuccessCallInfo:
-    call = KaAnnotationCall:
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = one.Anno
-          symbol = <constructor>(): one.Anno
-          valueParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {}
+  KaAnnotationCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = one.Anno
+        symbol = <constructor>(): one.Anno
+        valueParameters = []
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {}
 
 KtConstructorCalleeExpression(37,41): 'Anno'
   KaSuccessCallInfo:

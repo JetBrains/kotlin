@@ -1,2 +1,3 @@
 KtCallExpression(52,57): 'foo()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = /foo(<extension receiver>: kotlin.String): kotlin.Unit

@@ -38,7 +38,8 @@ KtNameReferenceExpression(57,60): 'Int'
   null
 
 KtConstructorDelegationCall(61,61): ''
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(): kotlin.Any
 
 KtConstructorDelegationReferenceExpression(61,61): ''
   null
@@ -62,7 +63,8 @@ KtNameReferenceExpression(81,87): 'String'
   null
 
 KtConstructorDelegationCall(88,88): ''
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(): kotlin.Any
 
 KtConstructorDelegationReferenceExpression(88,88): ''
   null
@@ -116,7 +118,8 @@ KtNameReferenceExpression(163,166): 'Int'
   null
 
 KtConstructorDelegationCall(170,179): 'super(ci)'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(i: kotlin.Int): r.BaseClass
 
 KtConstructorDelegationReferenceExpression(170,175): 'super'
   null
@@ -149,7 +152,8 @@ KtNameReferenceExpression(200,206): 'String'
   null
 
 KtConstructorDelegationCall(210,219): 'super(cs)'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(s: kotlin.String): r.BaseClass
 
 KtConstructorDelegationReferenceExpression(210,215): 'super'
   null
@@ -182,7 +186,8 @@ KtNameReferenceExpression(245,250): 'super'
   null
 
 KtCallExpression(251,257): 'call()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = r/BaseClass.call(<dispatch receiver>: r.BaseClass): kotlin.Unit
 
 KtNameReferenceExpression(251,255): 'call'
   null
@@ -203,7 +208,8 @@ KtSuperTypeList(294,307): 'BaseClass(42)'
   null
 
 KtSuperTypeCallEntry(294,307): 'BaseClass(42)'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(i: kotlin.Int): r.BaseClass
 
 KtConstructorCalleeExpression(294,303): 'BaseClass'
   null
@@ -248,7 +254,8 @@ KtNameReferenceExpression(329,335): 'String'
   null
 
 KtConstructorDelegationCall(339,345): 'this()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(): r.ChildWithPrimary
 
 KtConstructorDelegationReferenceExpression(339,343): 'this'
   null
@@ -329,7 +336,8 @@ KtParameterList(441,443): '()'
   null
 
 KtConstructorDelegationCall(446,454): 'super(1)'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(i: kotlin.Int): r.ClassWithType<T>
 
 KtConstructorDelegationReferenceExpression(446,451): 'super'
   null

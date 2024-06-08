@@ -1,2 +1,3 @@
 KtAnnotationEntry(114,154): '@AnnotationInner(Annotation("v1", "v2"))'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(value: Annotation): AnnotationInner

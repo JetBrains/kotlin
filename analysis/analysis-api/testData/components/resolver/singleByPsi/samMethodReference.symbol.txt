@@ -1,2 +1,3 @@
 KtCallExpression(146,166): 'test(this::uiMethod)'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = /Test.test(<dispatch receiver>: Test, foo: Test.Foo): kotlin.Unit

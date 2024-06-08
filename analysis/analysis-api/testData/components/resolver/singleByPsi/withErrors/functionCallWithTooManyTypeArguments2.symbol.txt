@@ -1,2 +1,6 @@
 KtCallExpression(43,66): 'generic<Int, String>(5)'
-  null
+  KaSymbolResolutionErrorImpl:
+    candidateSymbols = [
+      /generic(a: A): kotlin.Unit
+    ]
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <A> generic(a: A): Unit>

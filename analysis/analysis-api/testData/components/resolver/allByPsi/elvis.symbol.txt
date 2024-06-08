@@ -62,7 +62,8 @@ KtNameReferenceExpression(79,84): 'other'
   null
 
 KtCallExpression(86,98): 'equals(this)'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
 
 KtNameReferenceExpression(86,92): 'equals'
   null

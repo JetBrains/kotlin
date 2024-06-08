@@ -1,5 +1,5 @@
 KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaDelegatedConstructorCall:
         kind = THIS_CALL

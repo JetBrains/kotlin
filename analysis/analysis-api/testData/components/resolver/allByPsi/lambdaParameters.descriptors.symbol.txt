@@ -1,0 +1,154 @@
+KtFile: 'lambdaParameters.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtNamedFunction(0,166): 'fun foo(action1: Int.() -> Unit, action2: (Int) -> Unit) {'
+  null
+
+KtParameterList(7,56): '(action1: Int.() -> Unit, action2: (Int) -> Unit)'
+  null
+
+KtParameter(8,31): 'action1: Int.() -> Unit'
+  null
+
+KtTypeReference(17,31): 'Int.() -> Unit'
+  null
+
+KtFunctionType(17,31): 'Int.() -> Unit'
+  null
+
+KtFunctionTypeReceiver(17,20): 'Int'
+  null
+
+KtTypeReference(17,20): 'Int'
+  null
+
+KtUserType(17,20): 'Int'
+  null
+
+KtNameReferenceExpression(17,20): 'Int'
+  null
+
+KtParameterList(21,23): '()'
+  null
+
+KtTypeReference(27,31): 'Unit'
+  null
+
+KtUserType(27,31): 'Unit'
+  null
+
+KtNameReferenceExpression(27,31): 'Unit'
+  null
+
+KtParameter(33,55): 'action2: (Int) -> Unit'
+  null
+
+KtTypeReference(42,55): '(Int) -> Unit'
+  null
+
+KtFunctionType(42,55): '(Int) -> Unit'
+  null
+
+KtParameterList(42,47): '(Int)'
+  null
+
+KtParameter(43,46): 'Int'
+  null
+
+KtTypeReference(43,46): 'Int'
+  null
+
+KtUserType(43,46): 'Int'
+  null
+
+KtNameReferenceExpression(43,46): 'Int'
+  null
+
+KtTypeReference(51,55): 'Unit'
+  null
+
+KtUserType(51,55): 'Unit'
+  null
+
+KtNameReferenceExpression(51,55): 'Unit'
+  null
+
+KtBlockExpression(57,166): '{'
+  null
+
+KtProperty(63,75): 'val prop = 1'
+  null
+
+KtConstantExpression(74,75): '1'
+  null
+
+KtDotQualifiedExpression(80,94): 'prop.action1()'
+  null
+
+KtNameReferenceExpression(80,84): 'prop'
+  null
+
+KtCallExpression(85,94): 'action1()'
+  KaSymbolResolutionSuccessImpl:
+    symbol = kotlin/Function1.invoke(<extension receiver>: P1<dispatch receiver>: kotlin.Function1<P1, R>): R
+
+KtNameReferenceExpression(85,92): 'action1'
+  null
+
+KtValueArgumentList(92,94): '()'
+  null
+
+KtCallExpression(99,112): 'action1(prop)'
+  KaSymbolResolutionSuccessImpl:
+    symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+
+KtNameReferenceExpression(99,106): 'action1'
+  null
+
+KtValueArgumentList(106,112): '(prop)'
+  null
+
+KtValueArgument(107,111): 'prop'
+  null
+
+KtNameReferenceExpression(107,111): 'prop'
+  null
+
+KtDotQualifiedExpression(118,132): 'prop.action2()'
+  null
+
+KtNameReferenceExpression(118,122): 'prop'
+  null
+
+KtCallExpression(123,132): 'action2()'
+  KaSymbolResolutionErrorImpl:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: action2>
+
+KtNameReferenceExpression(123,130): 'action2'
+  null
+
+KtValueArgumentList(130,132): '()'
+  null
+
+KtCallExpression(151,164): 'action2(prop)'
+  KaSymbolResolutionSuccessImpl:
+    symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+
+KtNameReferenceExpression(151,158): 'action2'
+  null
+
+KtValueArgumentList(158,164): '(prop)'
+  null
+
+KtValueArgument(159,163): 'prop'
+  null
+
+KtNameReferenceExpression(159,163): 'prop'
+  null

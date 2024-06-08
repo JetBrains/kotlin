@@ -213,20 +213,19 @@ KtDotQualifiedExpression(88,110): 'MyClass().unaryMinus()'
       argumentMapping = {}
 
 KtCallExpression(88,97): 'MyClass()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = <constructor>(): MyClass
-          valueParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {}
+  KaSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {}
 
 KtNameReferenceExpression(88,95): 'MyClass'
   KaSuccessCallInfo:
@@ -248,23 +247,22 @@ KtValueArgumentList(95,97): '()'
   null
 
 KtCallExpression(98,110): 'unaryMinus()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = MyClass()
-          isSafeNavigation = false
-          type = MyClass
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
-          valueParameters = []
-          callableId = /MyClass.unaryMinus
-      typeArgumentsMapping = {}
-      argumentMapping = {}
+  KaSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = MyClass()
+        isSafeNavigation = false
+        type = MyClass
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
+        valueParameters = []
+        callableId = /MyClass.unaryMinus
+    typeArgumentsMapping = {}
+    argumentMapping = {}
 
 KtNameReferenceExpression(98,108): 'unaryMinus'
   KaSuccessCallInfo:
@@ -289,23 +287,22 @@ KtValueArgumentList(108,110): '()'
   null
 
 KtCallExpression(111,116): 'not()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = MyClass().unaryMinus()
-          isSafeNavigation = false
-          type = MyClass
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = /MyClass.not(<dispatch receiver>: MyClass): MyClass
-          valueParameters = []
-          callableId = /MyClass.not
-      typeArgumentsMapping = {}
-      argumentMapping = {}
+  KaSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = MyClass().unaryMinus()
+        isSafeNavigation = false
+        type = MyClass
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = /MyClass.not(<dispatch receiver>: MyClass): MyClass
+        valueParameters = []
+        callableId = /MyClass.not
+    typeArgumentsMapping = {}
+    argumentMapping = {}
 
 KtNameReferenceExpression(111,114): 'not'
   KaSuccessCallInfo:

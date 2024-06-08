@@ -146,7 +146,8 @@ KtReturnExpression(239,258): 'return MyDelegate()'
   null
 
 KtCallExpression(246,258): 'MyDelegate()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(): myPack.MyDelegate<T>
 
 KtNameReferenceExpression(246,256): 'MyDelegate'
   null
@@ -293,7 +294,8 @@ KtPropertyDelegate(443,463): 'by ResourceID<Int>()'
   null
 
 KtCallExpression(446,463): 'ResourceID<Int>()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(): myPack.ResourceID<T>
 
 KtNameReferenceExpression(446,456): 'ResourceID'
   null

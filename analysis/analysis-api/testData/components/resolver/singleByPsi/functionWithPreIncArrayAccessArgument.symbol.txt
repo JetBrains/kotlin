@@ -1,2 +1,3 @@
 KtCallExpression(44,64): 'foo(++list[i], list)'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = /foo(i: kotlin.Int, list: kotlin.collections.MutableList<kotlin.Int>): kotlin.Unit

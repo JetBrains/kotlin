@@ -1,0 +1,9 @@
+KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
+  KaSymbolResolutionErrorImpl:
+    candidateSymbols = [
+      <constructor>(i: kotlin.Int, j: kotlin.Int): Sub,
+      <constructor>(p: kotlin.Int): Sub
+    ]
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
+    public constructor Sub(p: Int) defined in Sub
+    public constructor Sub(i: Int, j: Int) defined in Sub>

@@ -1,2 +1,3 @@
 KtCallExpression(72,75): 'f()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R

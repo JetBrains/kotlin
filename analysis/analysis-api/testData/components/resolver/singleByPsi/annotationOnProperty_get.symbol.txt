@@ -1,2 +1,3 @@
 KtAnnotationEntry(23,32): '@get:Anno'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(): Anno

@@ -41,34 +41,33 @@ KtInitializerList(54,57): '(1)'
   null
 
 KtSuperTypeCallEntry(54,57): '(1)'
-  KaSuccessCallInfo:
-    call = KaDelegatedConstructorCall:
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = EnumWithConstructor
-          symbol = <constructor>(i: kotlin.Int): EnumWithConstructor
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: kotlin.Int
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        1 -> (KaVariableLikeSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          callableId = null)
-      }
+  KaDelegatedConstructorCall:
+    kind = SUPER_CALL
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = EnumWithConstructor
+        symbol = <constructor>(i: kotlin.Int): EnumWithConstructor
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      1 -> (KaVariableLikeSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        callableId = null)
+    }
 
 KtConstructorCalleeExpression(54,54): ''
   KaSuccessCallInfo:
@@ -152,34 +151,33 @@ KtInitializerList(76,79): '(2)'
   null
 
 KtSuperTypeCallEntry(76,79): '(2)'
-  KaSuccessCallInfo:
-    call = KaDelegatedConstructorCall:
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = EnumWithConstructor
-          symbol = <constructor>(i: kotlin.Int): EnumWithConstructor
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: kotlin.Int
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        2 -> (KaVariableLikeSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          callableId = null)
-      }
+  KaDelegatedConstructorCall:
+    kind = SUPER_CALL
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = EnumWithConstructor
+        symbol = <constructor>(i: kotlin.Int): EnumWithConstructor
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      2 -> (KaVariableLikeSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        callableId = null)
+    }
 
 KtConstructorCalleeExpression(76,76): ''
   KaSuccessCallInfo:
@@ -338,23 +336,22 @@ KtNameReferenceExpression(234,238): 'this'
   null
 
 KtCallExpression(239,244): 'baz()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = this
-          isSafeNavigation = false
-          type = EnumWithoutConstructor.EntryWithBody
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = baz(<dispatch receiver>: EnumWithoutConstructor.EntryWithBody): kotlin.Unit
-          valueParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {}
+  KaSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = this
+        isSafeNavigation = false
+        type = EnumWithoutConstructor.EntryWithBody
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = baz(<dispatch receiver>: EnumWithoutConstructor.EntryWithBody): kotlin.Unit
+        valueParameters = []
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {}
 
 KtNameReferenceExpression(239,242): 'baz'
   KaSuccessCallInfo:

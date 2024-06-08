@@ -6,19 +6,30 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.resolution.KaAnnotationCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallResolutionAttempt
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallResolutionError
+import org.jetbrains.kotlin.analysis.api.resolution.KaCallableMemberCall
+import org.jetbrains.kotlin.analysis.api.resolution.KaDelegatedConstructorCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaErrorCallInfo
+import org.jetbrains.kotlin.analysis.api.resolution.KaFunctionCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionAttempt
 import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionSuccess
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.idea.references.KtReference
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtSuperTypeCallEntry
 import org.jetbrains.kotlin.resolution.KtResolvable
 import org.jetbrains.kotlin.resolution.KtResolvableCall
 
@@ -26,6 +37,7 @@ import org.jetbrains.kotlin.resolution.KtResolvableCall
 public abstract class KaResolver : KaSessionComponent() {
     public abstract fun resolveToSymbols(reference: KtReference): Collection<KaSymbol>
 
+    public abstract fun attemptResolveSymbol(psi: KtElement): KaSymbolResolutionAttempt?
     public abstract fun attemptResolveCall(psi: KtElement): KaCallResolutionAttempt?
     public abstract fun collectCallCandidates(psi: KtElement): List<KaCallCandidateInfo>
 }
@@ -36,7 +48,9 @@ public typealias KtCallResolver = KaResolver
 @OptIn(KaAnalysisApiInternals::class)
 public interface KaResolverMixIn : KaSessionMixIn {
     public fun KtResolvable.attemptResolveSymbol(): KaSymbolResolutionAttempt? = withValidityAssertion {
-        null
+        if (this !is KtElement) return@withValidityAssertion null
+
+        analysisSession.resolver.attemptResolveSymbol(this)
     }
 
     public fun KtResolvable.resolveSymbol(): KaSymbol? = when (val attempt = attemptResolveSymbol()) {
@@ -44,13 +58,23 @@ public interface KaResolverMixIn : KaSessionMixIn {
         else -> null
     }
 
+    public fun KtAnnotationEntry.resolveSymbol(): KaConstructorSymbol? = resolveSymbolSafe(analysisSession)
+    public fun KtSuperTypeCallEntry.resolveSymbol(): KaConstructorSymbol? = resolveSymbolSafe(analysisSession)
+    public fun KtConstructorDelegationCall.resolveSymbol(): KaConstructorSymbol? = resolveSymbolSafe(analysisSession)
+    public fun KtCallExpression.resolveSymbol(): KaCallableSymbol? = resolveSymbolSafe(analysisSession)
+
     public fun KtResolvableCall.attemptResolveCall(): KaCallResolutionAttempt? = withValidityAssertion {
         if (this !is KtElement) return@withValidityAssertion null
 
-        return analysisSession.resolver.attemptResolveCall(this)
+        analysisSession.resolver.attemptResolveCall(this)
     }
 
     public fun KtResolvableCall.resolveCall(): KaCall? = attemptResolveCall() as? KaCall
+
+    public fun KtAnnotationEntry.resolveCall(): KaAnnotationCall? = resolveCallSafe(analysisSession)
+    public fun KtSuperTypeCallEntry.resolveCall(): KaFunctionCall<KaConstructorSymbol>? = resolveCallSafe(analysisSession)
+    public fun KtConstructorDelegationCall.resolveCall(): KaDelegatedConstructorCall? = resolveCallSafe(analysisSession)
+    public fun KtCallExpression.resolveCall(): KaCallableMemberCall<*, *>? = resolveCallSafe(analysisSession)
 
     public fun KtResolvableCall.collectCallCandidates(): List<KaCallCandidateInfo> = withValidityAssertion {
         if (this !is KtElement) return@withValidityAssertion emptyList()
@@ -90,6 +114,14 @@ public interface KaResolverMixIn : KaSessionMixIn {
     public fun KtElement.collectCallCandidatesOld(): List<KaCallCandidateInfo> = withValidityAssertion {
         analysisSession.resolver.collectCallCandidates(this)
     }
+}
+
+private inline fun <reified R : KaSymbol> KtResolvable.resolveSymbolSafe(session: KaSession): R? = with(session) {
+    resolveSymbol() as? R
+}
+
+private inline fun <reified R : KaCall> KtResolvableCall.resolveCallSafe(session: KaSession): R? = with(session) {
+    resolveCall() as? R
 }
 
 public typealias KtCallResolverMixIn = KaResolverMixIn

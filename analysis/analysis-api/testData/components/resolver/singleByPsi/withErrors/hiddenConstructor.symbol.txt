@@ -1,2 +1,4 @@
 KtCallExpression(17,25): 'Obj(555)'
-  null
+  KaSymbolResolutionErrorImpl:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Obj'.>

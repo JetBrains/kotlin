@@ -95,7 +95,8 @@ KtNameReferenceExpression(80,84): 'prop'
   null
 
 KtCallExpression(85,94): 'action1()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
 
 KtNameReferenceExpression(85,92): 'action1'
   null
@@ -104,7 +105,8 @@ KtValueArgumentList(92,94): '()'
   null
 
 KtCallExpression(99,112): 'action1(prop)'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
 
 KtNameReferenceExpression(99,106): 'action1'
   null
@@ -125,7 +127,9 @@ KtNameReferenceExpression(118,122): 'prop'
   null
 
 KtCallExpression(123,132): 'action2()'
-  null
+  KaSymbolResolutionErrorImpl:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'action2'.>
 
 KtNameReferenceExpression(123,130): 'action2'
   null
@@ -134,7 +138,8 @@ KtValueArgumentList(130,132): '()'
   null
 
 KtCallExpression(151,164): 'action2(prop)'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
 
 KtNameReferenceExpression(151,158): 'action2'
   null

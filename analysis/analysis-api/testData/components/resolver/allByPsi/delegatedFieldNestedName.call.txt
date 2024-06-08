@@ -17,33 +17,32 @@ KtDeclarationModifierList(31,72): '@Target(AnnotationTarget.TYPE)'
   null
 
 KtAnnotationEntry(31,61): '@Target(AnnotationTarget.TYPE)'
-  KaSuccessCallInfo:
-    call = KaAnnotationCall:
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.annotation.Target
-          symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = allowedTargets
-              receiverType = null
-              returnType = kotlin.annotation.AnnotationTarget
-              symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        AnnotationTarget.TYPE -> (KaVariableLikeSignature:
-          name = allowedTargets
-          receiverType = null
-          returnType = kotlin.annotation.AnnotationTarget
-          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
-          callableId = null)
-      }
+  KaAnnotationCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.annotation.Target
+        symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = allowedTargets
+            receiverType = null
+            returnType = kotlin.annotation.AnnotationTarget
+            symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      AnnotationTarget.TYPE -> (KaVariableLikeSignature:
+        name = allowedTargets
+        receiverType = null
+        returnType = kotlin.annotation.AnnotationTarget
+        symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+        callableId = null)
+    }
 
 KtConstructorCalleeExpression(32,38): 'Target'
   KaSuccessCallInfo:
@@ -213,33 +212,32 @@ KtDeclarationModifierList(225,241): '@Anno(0 + outer)'
   null
 
 KtAnnotationEntry(225,241): '@Anno(0 + outer)'
-  KaSuccessCallInfo:
-    call = KaAnnotationCall:
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = second.Anno
-          symbol = <constructor>(i: kotlin.Int): second.Anno
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: kotlin.Int
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        0 + outer -> (KaVariableLikeSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          callableId = null)
-      }
+  KaAnnotationCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = second.Anno
+        symbol = <constructor>(i: kotlin.Int): second.Anno
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      0 + outer -> (KaVariableLikeSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        callableId = null)
+    }
 
 KtConstructorCalleeExpression(226,230): 'Anno'
   KaSuccessCallInfo:
@@ -388,33 +386,32 @@ KtDeclarationModifierList(247,263): '@Anno(1 + outer)'
   null
 
 KtAnnotationEntry(247,263): '@Anno(1 + outer)'
-  KaSuccessCallInfo:
-    call = KaAnnotationCall:
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = second.Anno
-          symbol = <constructor>(i: kotlin.Int): second.Anno
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: kotlin.Int
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        1 + outer -> (KaVariableLikeSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          callableId = null)
-      }
+  KaAnnotationCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = second.Anno
+        symbol = <constructor>(i: kotlin.Int): second.Anno
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      1 + outer -> (KaVariableLikeSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        callableId = null)
+    }
 
 KtConstructorCalleeExpression(248,252): 'Anno'
   KaSuccessCallInfo:
@@ -563,33 +560,32 @@ KtDeclarationModifierList(269,285): '@Anno(2 + outer)'
   null
 
 KtAnnotationEntry(269,285): '@Anno(2 + outer)'
-  KaSuccessCallInfo:
-    call = KaAnnotationCall:
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = second.Anno
-          symbol = <constructor>(i: kotlin.Int): second.Anno
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: kotlin.Int
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        2 + outer -> (KaVariableLikeSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          callableId = null)
-      }
+  KaAnnotationCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = second.Anno
+        symbol = <constructor>(i: kotlin.Int): second.Anno
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      2 + outer -> (KaVariableLikeSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        callableId = null)
+    }
 
 KtConstructorCalleeExpression(270,274): 'Anno'
   KaSuccessCallInfo:
@@ -738,33 +734,32 @@ KtDeclarationModifierList(310,326): '@Anno(4 + outer)'
   null
 
 KtAnnotationEntry(310,326): '@Anno(4 + outer)'
-  KaSuccessCallInfo:
-    call = KaAnnotationCall:
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = second.Anno
-          symbol = <constructor>(i: kotlin.Int): second.Anno
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: kotlin.Int
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        4 + outer -> (KaVariableLikeSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          callableId = null)
-      }
+  KaAnnotationCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = second.Anno
+        symbol = <constructor>(i: kotlin.Int): second.Anno
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      4 + outer -> (KaVariableLikeSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        callableId = null)
+    }
 
 KtConstructorCalleeExpression(311,315): 'Anno'
   KaSuccessCallInfo:
@@ -913,33 +908,32 @@ KtDeclarationModifierList(334,350): '@Anno(5 + outer)'
   null
 
 KtAnnotationEntry(334,350): '@Anno(5 + outer)'
-  KaSuccessCallInfo:
-    call = KaAnnotationCall:
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = second.Anno
-          symbol = <constructor>(i: kotlin.Int): second.Anno
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: kotlin.Int
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        5 + outer -> (KaVariableLikeSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          callableId = null)
-      }
+  KaAnnotationCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = second.Anno
+        symbol = <constructor>(i: kotlin.Int): second.Anno
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      5 + outer -> (KaVariableLikeSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        callableId = null)
+    }
 
 KtConstructorCalleeExpression(335,339): 'Anno'
   KaSuccessCallInfo:
@@ -1100,33 +1094,32 @@ KtDeclarationModifierList(400,416): '@Anno(6 + inner)'
   null
 
 KtAnnotationEntry(400,416): '@Anno(6 + inner)'
-  KaSuccessCallInfo:
-    call = KaAnnotationCall:
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = second.Anno
-          symbol = <constructor>(i: kotlin.Int): second.Anno
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: kotlin.Int
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        6 + inner -> (KaVariableLikeSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          callableId = null)
-      }
+  KaAnnotationCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = second.Anno
+        symbol = <constructor>(i: kotlin.Int): second.Anno
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      6 + inner -> (KaVariableLikeSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        callableId = null)
+    }
 
 KtConstructorCalleeExpression(401,405): 'Anno'
   KaSuccessCallInfo:
@@ -1277,33 +1270,32 @@ KtDeclarationModifierList(422,438): '@Anno(7 + inner)'
   null
 
 KtAnnotationEntry(422,438): '@Anno(7 + inner)'
-  KaSuccessCallInfo:
-    call = KaAnnotationCall:
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = second.Anno
-          symbol = <constructor>(i: kotlin.Int): second.Anno
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: kotlin.Int
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        7 + inner -> (KaVariableLikeSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          callableId = null)
-      }
+  KaAnnotationCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = second.Anno
+        symbol = <constructor>(i: kotlin.Int): second.Anno
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      7 + inner -> (KaVariableLikeSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        callableId = null)
+    }
 
 KtConstructorCalleeExpression(423,427): 'Anno'
   KaSuccessCallInfo:
@@ -1454,33 +1446,32 @@ KtDeclarationModifierList(444,460): '@Anno(8 + inner)'
   null
 
 KtAnnotationEntry(444,460): '@Anno(8 + inner)'
-  KaSuccessCallInfo:
-    call = KaAnnotationCall:
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = second.Anno
-          symbol = <constructor>(i: kotlin.Int): second.Anno
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: kotlin.Int
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        8 + inner -> (KaVariableLikeSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          callableId = null)
-      }
+  KaAnnotationCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = second.Anno
+        symbol = <constructor>(i: kotlin.Int): second.Anno
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      8 + inner -> (KaVariableLikeSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        callableId = null)
+    }
 
 KtConstructorCalleeExpression(445,449): 'Anno'
   KaSuccessCallInfo:
@@ -1655,33 +1646,32 @@ KtDeclarationModifierList(559,575): '@Anno(9 + inner)'
   null
 
 KtAnnotationEntry(559,575): '@Anno(9 + inner)'
-  KaSuccessCallInfo:
-    call = KaAnnotationCall:
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = second.Anno
-          symbol = <constructor>(i: kotlin.Int): second.Anno
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: kotlin.Int
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        9 + inner -> (KaVariableLikeSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          callableId = null)
-      }
+  KaAnnotationCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = second.Anno
+        symbol = <constructor>(i: kotlin.Int): second.Anno
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      9 + inner -> (KaVariableLikeSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        callableId = null)
+    }
 
 KtConstructorCalleeExpression(560,564): 'Anno'
   KaSuccessCallInfo:
@@ -1832,33 +1822,32 @@ KtDeclarationModifierList(583,600): '@Anno(10 + inner)'
   null
 
 KtAnnotationEntry(583,600): '@Anno(10 + inner)'
-  KaSuccessCallInfo:
-    call = KaAnnotationCall:
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = second.Anno
-          symbol = <constructor>(i: kotlin.Int): second.Anno
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: kotlin.Int
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        10 + inner -> (KaVariableLikeSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          callableId = null)
-      }
+  KaAnnotationCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = second.Anno
+        symbol = <constructor>(i: kotlin.Int): second.Anno
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      10 + inner -> (KaVariableLikeSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        callableId = null)
+    }
 
 KtConstructorCalleeExpression(584,588): 'Anno'
   KaSuccessCallInfo:

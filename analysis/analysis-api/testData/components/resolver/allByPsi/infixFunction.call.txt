@@ -449,37 +449,36 @@ KtNameReferenceExpression(195,207): 'newParameter'
       typeArgumentsMapping = {}
 
 KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = newParameter
-          isSafeNavigation = false
-          type = kotlin.Int
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = other: kotlin.Int
-              callableId = null
-          ]
-          callableId = kotlin/Int.plus
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        parameter.myMinus(oneMoreParameter) -> (KaVariableLikeSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          callableId = null)
-      }
+  KaSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = newParameter
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = other: kotlin.Int
+            callableId = null
+        ]
+        callableId = kotlin/Int.plus
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      parameter.myMinus(oneMoreParameter) -> (KaVariableLikeSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = other: kotlin.Int
+        callableId = null)
+    }
 
 KtNameReferenceExpression(208,212): 'plus'
   KaSuccessCallInfo:
@@ -569,37 +568,36 @@ KtNameReferenceExpression(213,222): 'parameter'
       typeArgumentsMapping = {}
 
 KtCallExpression(223,248): 'myMinus(oneMoreParameter)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = parameter
-          isSafeNavigation = false
-          type = kotlin.Int
-        signature = KaFunctionLikeSignature:
-          receiverType = kotlin.Int
-          returnType = kotlin.Int
-          symbol = /myMinus(<extension receiver>: kotlin.Int, i: kotlin.Int): kotlin.Int
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: kotlin.Int
-              callableId = null
-          ]
-          callableId = /myMinus
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        oneMoreParameter -> (KaVariableLikeSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          callableId = null)
-      }
+  KaSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = parameter
+        isSafeNavigation = false
+        type = kotlin.Int
+      signature = KaFunctionLikeSignature:
+        receiverType = kotlin.Int
+        returnType = kotlin.Int
+        symbol = /myMinus(<extension receiver>: kotlin.Int, i: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            callableId = null
+        ]
+        callableId = /myMinus
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      oneMoreParameter -> (KaVariableLikeSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        callableId = null)
+    }
 
 KtNameReferenceExpression(223,230): 'myMinus'
   KaSuccessCallInfo:

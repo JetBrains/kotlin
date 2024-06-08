@@ -203,7 +203,8 @@ KtContainerNode(297,318): 'IntProgression(1, 10)'
   null
 
 KtCallExpression(297,318): 'IntProgression(1, 10)'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(start: kotlin.Int, end: kotlin.Int): f.IntProgression
 
 KtNameReferenceExpression(297,311): 'IntProgression'
   null

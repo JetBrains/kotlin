@@ -158,37 +158,36 @@ KtConstantExpression(28,29): '1'
   null
 
 KtCallExpression(30,42): 'compareTo(2)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = 1
-          isSafeNavigation = false
-          type = kotlin.Int
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = other: kotlin.Int
-              callableId = null
-          ]
-          callableId = kotlin/Int.compareTo
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        2 -> (KaVariableLikeSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          callableId = null)
-      }
+  KaSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = 1
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = other: kotlin.Int
+            callableId = null
+        ]
+        callableId = kotlin/Int.compareTo
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      2 -> (KaVariableLikeSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = other: kotlin.Int
+        callableId = null)
+    }
 
 KtNameReferenceExpression(30,39): 'compareTo'
   KaSuccessCallInfo:
@@ -356,20 +355,19 @@ KtProperty(85,108): 'val myClass = MyClass()'
   null
 
 KtCallExpression(99,108): 'MyClass()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = <constructor>(): MyClass
-          valueParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {}
+  KaSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {}
 
 KtNameReferenceExpression(99,106): 'MyClass'
   KaSuccessCallInfo:
@@ -535,37 +533,36 @@ KtNameReferenceExpression(135,142): 'myClass'
       typeArgumentsMapping = {}
 
 KtCallExpression(143,160): 'compareTo(number)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = myClass
-          isSafeNavigation = false
-          type = MyClass
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = /MyClass.compareTo(<dispatch receiver>: MyClass, i: kotlin.Int): kotlin.Int
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: kotlin.Int
-              callableId = null
-          ]
-          callableId = /MyClass.compareTo
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        number -> (KaVariableLikeSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          callableId = null)
-      }
+  KaSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = myClass
+        isSafeNavigation = false
+        type = MyClass
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = /MyClass.compareTo(<dispatch receiver>: MyClass, i: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            callableId = null
+        ]
+        callableId = /MyClass.compareTo
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      number -> (KaVariableLikeSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        callableId = null)
+    }
 
 KtNameReferenceExpression(143,152): 'compareTo'
   KaSuccessCallInfo:

@@ -1,2 +1,3 @@
 KtCallExpression(131,143): 'Annotation()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(vararg strings: kotlin.String): Annotation

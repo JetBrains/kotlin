@@ -1,2 +1,9 @@
 KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
-  null
+  KaSymbolResolutionErrorImpl:
+    candidateSymbols = [
+      <constructor>(p: kotlin.Int): Sub,
+      <constructor>(i: kotlin.Int, j: kotlin.Int): Sub
+    ]
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
+    constructor(p: Int): Sub
+    constructor(i: Int, j: Int): Sub>

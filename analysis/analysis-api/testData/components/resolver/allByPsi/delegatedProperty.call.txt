@@ -35,20 +35,19 @@ KtPropertyDelegate(74,87): 'by Delegate()'
   null
 
 KtCallExpression(77,87): 'Delegate()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = myPack.Delegate
-          symbol = <constructor>(): myPack.Delegate
-          valueParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {}
+  KaSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = myPack.Delegate
+        symbol = <constructor>(): myPack.Delegate
+        valueParameters = []
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {}
 
 KtNameReferenceExpression(77,85): 'Delegate'
   KaSuccessCallInfo:

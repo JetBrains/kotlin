@@ -155,7 +155,8 @@ KtBlockExpression(174,763): '{'
   null
 
 KtCallExpression(180,749): 'foo1 {'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = returnPack/foo1(action: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
 
 KtNameReferenceExpression(180,184): 'foo1'
   null
@@ -173,7 +174,8 @@ KtBlockExpression(195,743): 'foo2 {'
   null
 
 KtCallExpression(195,743): 'foo2 {'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = returnPack/foo2(action: kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit
 
 KtNameReferenceExpression(195,199): 'foo2'
   null
@@ -191,7 +193,8 @@ KtBlockExpression(214,733): 'foo3 {'
   null
 
 KtCallExpression(214,733): 'foo3 {'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = returnPack/foo3(action: kotlin.Function1<kotlin.Boolean, kotlin.Unit>): kotlin.Unit
 
 KtNameReferenceExpression(214,218): 'foo3'
   null
@@ -209,7 +212,8 @@ KtBlockExpression(237,719): 'foo1('
   null
 
 KtCallExpression(237,413): 'foo1('
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = returnPack/foo1(action: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
 
 KtNameReferenceExpression(237,241): 'foo1'
   null
@@ -257,7 +261,8 @@ KtLabelReferenceExpression(367,372): '@foo1'
   null
 
 KtCallExpression(431,634): 'foo2(label@ fun(s: String) {'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = returnPack/foo2(action: kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit
 
 KtNameReferenceExpression(431,435): 'foo2'
   null

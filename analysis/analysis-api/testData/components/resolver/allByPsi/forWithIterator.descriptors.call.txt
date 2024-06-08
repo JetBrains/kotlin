@@ -395,46 +395,45 @@ KtContainerNode(297,318): 'IntProgression(1, 10)'
   null
 
 KtCallExpression(297,318): 'IntProgression(1, 10)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = f.IntProgression
-          symbol = <constructor>(start: kotlin.Int, end: kotlin.Int): f.IntProgression
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = start
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = start: kotlin.Int
-              callableId = null,
-            KaVariableLikeSignature:
-              name = end
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = end: kotlin.Int
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        1 -> (KaVariableLikeSignature:
-          name = start
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = start: kotlin.Int
-          callableId = null),
-        10 -> (KaVariableLikeSignature:
-          name = end
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = end: kotlin.Int
-          callableId = null)
-      }
+  KaSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = f.IntProgression
+        symbol = <constructor>(start: kotlin.Int, end: kotlin.Int): f.IntProgression
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = start
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = start: kotlin.Int
+            callableId = null,
+          KaVariableLikeSignature:
+            name = end
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = end: kotlin.Int
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      1 -> (KaVariableLikeSignature:
+        name = start
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = start: kotlin.Int
+        callableId = null),
+      10 -> (KaVariableLikeSignature:
+        name = end
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = end: kotlin.Int
+        callableId = null)
+    }
 
 KtNameReferenceExpression(297,311): 'IntProgression'
   KaSuccessCallInfo:

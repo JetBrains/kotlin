@@ -1,0 +1,335 @@
+KtFile: 'typeParameters.kt'
+  null
+
+KtPackageDirective(0,15): 'package one.two'
+  null
+
+KtDotQualifiedExpression(8,15): 'one.two'
+  null
+
+KtNameReferenceExpression(8,11): 'one'
+  null
+
+KtNameReferenceExpression(12,15): 'two'
+  null
+
+KtImportList(17,48): 'import one.two.Base.NestedClass'
+  null
+
+KtImportDirective(17,48): 'import one.two.Base.NestedClass'
+  null
+
+KtDotQualifiedExpression(24,48): 'one.two.Base.NestedClass'
+  null
+
+KtDotQualifiedExpression(24,36): 'one.two.Base'
+  null
+
+KtDotQualifiedExpression(24,31): 'one.two'
+  null
+
+KtNameReferenceExpression(24,27): 'one'
+  null
+
+KtNameReferenceExpression(28,31): 'two'
+  null
+
+KtNameReferenceExpression(32,36): 'Base'
+  null
+
+KtNameReferenceExpression(37,48): 'NestedClass'
+  null
+
+KtClass(50,140): 'open class Base<B : Base.NestedClass> {'
+  null
+
+KtDeclarationModifierList(50,54): 'open'
+  null
+
+KtTypeParameterList(65,87): '<B : Base.NestedClass>'
+  null
+
+KtTypeParameter(66,86): 'B : Base.NestedClass'
+  null
+
+KtTypeReference(70,86): 'Base.NestedClass'
+  null
+
+KtUserType(70,86): 'Base.NestedClass'
+  null
+
+KtUserType(70,74): 'Base'
+  null
+
+KtNameReferenceExpression(70,74): 'Base'
+  null
+
+KtNameReferenceExpression(75,86): 'NestedClass'
+  null
+
+KtClassBody(88,140): '{'
+  null
+
+KtClass(94,116): 'open class NestedClass'
+  null
+
+KtDeclarationModifierList(94,98): 'open'
+  null
+
+KtClass(121,138): 'inner class Inner'
+  null
+
+KtDeclarationModifierList(121,126): 'inner'
+  null
+
+KtClass(142,279): 'class Child<C : one.two.Base.NestedClass> : Base<C>() {'
+  null
+
+KtTypeParameterList(153,183): '<C : one.two.Base.NestedClass>'
+  null
+
+KtTypeParameter(154,182): 'C : one.two.Base.NestedClass'
+  null
+
+KtTypeReference(158,182): 'one.two.Base.NestedClass'
+  null
+
+KtUserType(158,182): 'one.two.Base.NestedClass'
+  null
+
+KtUserType(158,170): 'one.two.Base'
+  null
+
+KtUserType(158,165): 'one.two'
+  null
+
+KtUserType(158,161): 'one'
+  null
+
+KtNameReferenceExpression(158,161): 'one'
+  null
+
+KtNameReferenceExpression(162,165): 'two'
+  null
+
+KtNameReferenceExpression(166,170): 'Base'
+  null
+
+KtNameReferenceExpression(171,182): 'NestedClass'
+  null
+
+KtSuperTypeList(186,195): 'Base<C>()'
+  null
+
+KtSuperTypeCallEntry(186,195): 'Base<C>()'
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(): one.two.Base<B>
+
+KtConstructorCalleeExpression(186,193): 'Base<C>'
+  null
+
+KtTypeReference(186,193): 'Base<C>'
+  null
+
+KtUserType(186,193): 'Base<C>'
+  null
+
+KtNameReferenceExpression(186,190): 'Base'
+  null
+
+KtTypeArgumentList(190,193): '<C>'
+  null
+
+KtTypeProjection(191,192): 'C'
+  null
+
+KtTypeReference(191,192): 'C'
+  null
+
+KtUserType(191,192): 'C'
+  null
+
+KtNameReferenceExpression(191,192): 'C'
+  null
+
+KtValueArgumentList(193,195): '()'
+  null
+
+KtClassBody(196,279): '{'
+  null
+
+KtNamedFunction(202,237): 'fun function(): NestedClass? = null'
+  null
+
+KtParameterList(214,216): '()'
+  null
+
+KtTypeReference(218,230): 'NestedClass?'
+  null
+
+KtNullableType(218,230): 'NestedClass?'
+  null
+
+KtUserType(218,229): 'NestedClass'
+  null
+
+KtNameReferenceExpression(218,229): 'NestedClass'
+  null
+
+KtConstantExpression(233,237): 'null'
+  null
+
+KtNamedFunction(242,277): 'fun classTypeParameter(): C? = null'
+  null
+
+KtParameterList(264,266): '()'
+  null
+
+KtTypeReference(268,270): 'C?'
+  null
+
+KtNullableType(268,270): 'C?'
+  null
+
+KtUserType(268,269): 'C'
+  null
+
+KtNameReferenceExpression(268,269): 'C'
+  null
+
+KtConstantExpression(273,277): 'null'
+  null
+
+KtNamedFunction(281,434): 'fun local(c1: Child<NestedClass>, c2: one.two.Child<one.two.Base.NestedClass>) {'
+  null
+
+KtParameterList(290,359): '(c1: Child<NestedClass>, c2: one.two.Child<one.two.Base.NestedClass>)'
+  null
+
+KtParameter(291,313): 'c1: Child<NestedClass>'
+  null
+
+KtTypeReference(295,313): 'Child<NestedClass>'
+  null
+
+KtUserType(295,313): 'Child<NestedClass>'
+  null
+
+KtNameReferenceExpression(295,300): 'Child'
+  null
+
+KtTypeArgumentList(300,313): '<NestedClass>'
+  null
+
+KtTypeProjection(301,312): 'NestedClass'
+  null
+
+KtTypeReference(301,312): 'NestedClass'
+  null
+
+KtUserType(301,312): 'NestedClass'
+  null
+
+KtNameReferenceExpression(301,312): 'NestedClass'
+  null
+
+KtParameter(315,358): 'c2: one.two.Child<one.two.Base.NestedClass>'
+  null
+
+KtTypeReference(319,358): 'one.two.Child<one.two.Base.NestedClass>'
+  null
+
+KtUserType(319,358): 'one.two.Child<one.two.Base.NestedClass>'
+  null
+
+KtUserType(319,326): 'one.two'
+  null
+
+KtUserType(319,322): 'one'
+  null
+
+KtNameReferenceExpression(319,322): 'one'
+  null
+
+KtNameReferenceExpression(323,326): 'two'
+  null
+
+KtNameReferenceExpression(327,332): 'Child'
+  null
+
+KtTypeArgumentList(332,358): '<one.two.Base.NestedClass>'
+  null
+
+KtTypeProjection(333,357): 'one.two.Base.NestedClass'
+  null
+
+KtTypeReference(333,357): 'one.two.Base.NestedClass'
+  null
+
+KtUserType(333,357): 'one.two.Base.NestedClass'
+  null
+
+KtUserType(333,345): 'one.two.Base'
+  null
+
+KtUserType(333,340): 'one.two'
+  null
+
+KtUserType(333,336): 'one'
+  null
+
+KtNameReferenceExpression(333,336): 'one'
+  null
+
+KtNameReferenceExpression(337,340): 'two'
+  null
+
+KtNameReferenceExpression(341,345): 'Base'
+  null
+
+KtNameReferenceExpression(346,357): 'NestedClass'
+  null
+
+KtBlockExpression(360,434): '{'
+  null
+
+KtProperty(366,405): 'val nested: NestedClass = NestedClass()'
+  null
+
+KtTypeReference(378,389): 'NestedClass'
+  null
+
+KtUserType(378,389): 'NestedClass'
+  null
+
+KtNameReferenceExpression(378,389): 'NestedClass'
+  null
+
+KtCallExpression(392,405): 'NestedClass()'
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(): one.two.Base.NestedClass
+
+KtNameReferenceExpression(392,403): 'NestedClass'
+  null
+
+KtValueArgumentList(403,405): '()'
+  null
+
+KtProperty(410,432): 'val inner = c1.Inner()'
+  null
+
+KtDotQualifiedExpression(422,432): 'c1.Inner()'
+  null
+
+KtNameReferenceExpression(422,424): 'c1'
+  null
+
+KtCallExpression(425,432): 'Inner()'
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(<dispatch receiver>: one.two.Base<B>): one.two.Base<B>.one.two.Base.Inner
+
+KtNameReferenceExpression(425,430): 'Inner'
+  null
+
+KtValueArgumentList(430,432): '()'
+  null

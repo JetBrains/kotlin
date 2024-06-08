@@ -1,4 +1,4 @@
 KtSuperTypeCallEntry(41,54): 'Unresolved(p)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<null: Erroneous delegated constructor call>

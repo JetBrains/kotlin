@@ -1,0 +1,11 @@
+KtCallExpression(128,144): 'function<Int>(1)'
+  KaSymbolResolutionErrorImpl:
+    candidateSymbols = [
+      /function(t: T, a: kotlin.Char): kotlin.Unit,
+      /function(u: U, b: kotlin.Boolean): kotlin.Unit,
+      /function(v: V, c: kotlin.String): kotlin.Unit
+    ]
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
+    public fun <T> function(t: TypeVariable(T), a: Char): Unit defined in root package in file ambiguousWithExplicitTypeParameters.kt
+    public fun <U> function(u: TypeVariable(U), b: Boolean): Unit defined in root package in file ambiguousWithExplicitTypeParameters.kt
+    public fun <V> function(v: TypeVariable(V), c: String): Unit defined in root package in file ambiguousWithExplicitTypeParameters.kt>

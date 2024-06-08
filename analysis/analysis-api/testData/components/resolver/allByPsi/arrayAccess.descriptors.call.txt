@@ -240,37 +240,36 @@ KtNameReferenceExpression(106,110): 'list'
       typeArgumentsMapping = {}
 
 KtCallExpression(111,129): 'get(implicitIndex)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = list
-          isSafeNavigation = false
-          type = kotlin.collections.MutableList<kotlin.Int>
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.List<E>, index: kotlin.Int): E
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = index
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = index: kotlin.Int
-              callableId = null
-          ]
-          callableId = kotlin/collections/MutableList.get
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        implicitIndex -> (KaVariableLikeSignature:
-          name = index
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = index: kotlin.Int
-          callableId = null)
-      }
+  KaSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = list
+        isSafeNavigation = false
+        type = kotlin.collections.MutableList<kotlin.Int>
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.List<E>, index: kotlin.Int): E
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = index
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = index: kotlin.Int
+            callableId = null
+        ]
+        callableId = kotlin/collections/MutableList.get
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      implicitIndex -> (KaVariableLikeSignature:
+        name = index
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = index: kotlin.Int
+        callableId = null)
+    }
 
 KtNameReferenceExpression(111,114): 'get'
   KaSuccessCallInfo:
@@ -375,46 +374,45 @@ KtBlockExpression(173,201): '{'
   null
 
 KtCallExpression(179,199): 'foo(--list[i], list)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /foo(i: kotlin.Int, list: kotlin.collections.MutableList<kotlin.Int>): kotlin.Unit
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: kotlin.Int
-              callableId = null,
-            KaVariableLikeSignature:
-              name = list
-              receiverType = null
-              returnType = kotlin.collections.MutableList<kotlin.Int>
-              symbol = list: kotlin.collections.MutableList<kotlin.Int>
-              callableId = null
-          ]
-          callableId = /foo
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        --list[i] -> (KaVariableLikeSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          callableId = null),
-        list -> (KaVariableLikeSignature:
-          name = list
-          receiverType = null
-          returnType = kotlin.collections.MutableList<kotlin.Int>
-          symbol = list: kotlin.collections.MutableList<kotlin.Int>
-          callableId = null)
-      }
+  KaSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /foo(i: kotlin.Int, list: kotlin.collections.MutableList<kotlin.Int>): kotlin.Unit
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            callableId = null,
+          KaVariableLikeSignature:
+            name = list
+            receiverType = null
+            returnType = kotlin.collections.MutableList<kotlin.Int>
+            symbol = list: kotlin.collections.MutableList<kotlin.Int>
+            callableId = null
+        ]
+        callableId = /foo
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      --list[i] -> (KaVariableLikeSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        callableId = null),
+      list -> (KaVariableLikeSignature:
+        name = list
+        receiverType = null
+        returnType = kotlin.collections.MutableList<kotlin.Int>
+        symbol = list: kotlin.collections.MutableList<kotlin.Int>
+        callableId = null)
+    }
 
 KtNameReferenceExpression(179,182): 'foo'
   KaSuccessCallInfo:

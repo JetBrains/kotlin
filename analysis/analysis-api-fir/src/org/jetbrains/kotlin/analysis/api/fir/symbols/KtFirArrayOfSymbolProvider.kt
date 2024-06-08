@@ -1,20 +1,23 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.fir.expressions.FirArrayLiteral
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
-object KaFirArrayOfSymbolProvider {
+internal object KaFirArrayOfSymbolProvider {
     internal fun KaFirSession.arrayOfSymbol(identifier: Name): KaFirFunctionSymbol? {
         val firSymbol = useSiteSession.symbolProvider.getTopLevelCallableSymbols(kotlinPackage, identifier).firstOrNull {
             /* choose (for byte array)
@@ -33,4 +36,10 @@ object KaFirArrayOfSymbolProvider {
 
     private fun ClassId.correspondingArrayOfCallFqName(): Name =
         Name.identifier("${shortClassName.identifier.replaceFirstChar(Char::lowercaseChar)}Of")
+
+    internal fun KaFirSession.arrayOfSymbol(arrayLiteral: FirArrayLiteral): KaFirFunctionSymbol? {
+        val type = arrayLiteral.resolvedType as? ConeClassLikeType ?: return null
+        val call = arrayTypeToArrayOfCall[type.lookupTag.classId] ?: arrayOf
+        return arrayOfSymbol(call)
+    }
 }

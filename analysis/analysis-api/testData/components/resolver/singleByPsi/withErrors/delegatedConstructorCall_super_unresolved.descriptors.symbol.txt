@@ -1,0 +1,6 @@
+KtConstructorDelegationCall(108,116): 'super(s)'
+  KaSymbolResolutionErrorImpl:
+    candidateSymbols = [
+      <constructor>(p1: kotlin.Int): Base
+    ]
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is String but Int was expected>

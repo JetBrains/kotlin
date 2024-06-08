@@ -1,2 +1,3 @@
 KtCallExpression(34,37): 'A()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(): A

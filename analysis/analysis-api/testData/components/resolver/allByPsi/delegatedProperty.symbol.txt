@@ -35,7 +35,8 @@ KtPropertyDelegate(74,87): 'by Delegate()'
   null
 
 KtCallExpression(77,87): 'Delegate()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(): myPack.Delegate
 
 KtNameReferenceExpression(77,85): 'Delegate'
   null

@@ -1,0 +1,181 @@
+KtFile: 'arrayAccess.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtNamedFunction(0,131): 'fun usage(list: MutableList<Int>) {'
+  null
+
+KtParameterList(9,33): '(list: MutableList<Int>)'
+  null
+
+KtParameter(10,32): 'list: MutableList<Int>'
+  null
+
+KtTypeReference(16,32): 'MutableList<Int>'
+  null
+
+KtUserType(16,32): 'MutableList<Int>'
+  null
+
+KtNameReferenceExpression(16,27): 'MutableList'
+  null
+
+KtTypeArgumentList(27,32): '<Int>'
+  null
+
+KtTypeProjection(28,31): 'Int'
+  null
+
+KtTypeReference(28,31): 'Int'
+  null
+
+KtUserType(28,31): 'Int'
+  null
+
+KtNameReferenceExpression(28,31): 'Int'
+  null
+
+KtBlockExpression(34,131): '{'
+  null
+
+KtBinaryExpression(40,49): 'list += 1'
+  null
+
+KtNameReferenceExpression(40,44): 'list'
+  null
+
+KtOperationReferenceExpression(45,47): '+='
+  null
+
+KtConstantExpression(48,49): '1'
+  null
+
+KtProperty(54,81): 'val implicitIndex = list[0]'
+  null
+
+KtArrayAccessExpression(74,81): 'list[0]'
+  null
+
+KtNameReferenceExpression(74,78): 'list'
+  null
+
+KtContainerNode(78,81): '[0]'
+  null
+
+KtConstantExpression(79,80): '0'
+  null
+
+KtProperty(86,129): 'val explicitIndex = list.get(implicitIndex)'
+  null
+
+KtDotQualifiedExpression(106,129): 'list.get(implicitIndex)'
+  null
+
+KtNameReferenceExpression(106,110): 'list'
+  null
+
+KtCallExpression(111,129): 'get(implicitIndex)'
+  KaSymbolResolutionSuccessImpl:
+    symbol = kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.List<E>, index: kotlin.Int): E
+
+KtNameReferenceExpression(111,114): 'get'
+  null
+
+KtValueArgumentList(114,129): '(implicitIndex)'
+  null
+
+KtValueArgument(115,128): 'implicitIndex'
+  null
+
+KtNameReferenceExpression(115,128): 'implicitIndex'
+  null
+
+KtNamedFunction(133,201): 'fun foo(i: Int, list: MutableList<Int>) {'
+  null
+
+KtParameterList(140,172): '(i: Int, list: MutableList<Int>)'
+  null
+
+KtParameter(141,147): 'i: Int'
+  null
+
+KtTypeReference(144,147): 'Int'
+  null
+
+KtUserType(144,147): 'Int'
+  null
+
+KtNameReferenceExpression(144,147): 'Int'
+  null
+
+KtParameter(149,171): 'list: MutableList<Int>'
+  null
+
+KtTypeReference(155,171): 'MutableList<Int>'
+  null
+
+KtUserType(155,171): 'MutableList<Int>'
+  null
+
+KtNameReferenceExpression(155,166): 'MutableList'
+  null
+
+KtTypeArgumentList(166,171): '<Int>'
+  null
+
+KtTypeProjection(167,170): 'Int'
+  null
+
+KtTypeReference(167,170): 'Int'
+  null
+
+KtUserType(167,170): 'Int'
+  null
+
+KtNameReferenceExpression(167,170): 'Int'
+  null
+
+KtBlockExpression(173,201): '{'
+  null
+
+KtCallExpression(179,199): 'foo(--list[i], list)'
+  KaSymbolResolutionSuccessImpl:
+    symbol = /foo(i: kotlin.Int, list: kotlin.collections.MutableList<kotlin.Int>): kotlin.Unit
+
+KtNameReferenceExpression(179,182): 'foo'
+  null
+
+KtValueArgumentList(182,199): '(--list[i], list)'
+  null
+
+KtValueArgument(183,192): '--list[i]'
+  null
+
+KtPrefixExpression(183,192): '--list[i]'
+  null
+
+KtOperationReferenceExpression(183,185): '--'
+  null
+
+KtArrayAccessExpression(185,192): 'list[i]'
+  null
+
+KtNameReferenceExpression(185,189): 'list'
+  null
+
+KtContainerNode(189,192): '[i]'
+  null
+
+KtNameReferenceExpression(190,191): 'i'
+  null
+
+KtValueArgument(194,198): 'list'
+  null
+
+KtNameReferenceExpression(194,198): 'list'
+  null

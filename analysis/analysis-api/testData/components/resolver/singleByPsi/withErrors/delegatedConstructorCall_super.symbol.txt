@@ -1,2 +1,3 @@
 KtConstructorDelegationCall(118,130): 'super(i + j)'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(p1: kotlin.Int): Base

@@ -1,2 +1,3 @@
 KtCallExpression(39,55): 'uintArrayOf(42u)'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = kotlin/uintArrayOf(vararg elements: kotlin.UInt): kotlin.UIntArray

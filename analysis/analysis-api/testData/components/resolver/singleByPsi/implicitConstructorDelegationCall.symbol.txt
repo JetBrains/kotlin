@@ -1,2 +1,3 @@
 KtCallExpression(62,67): 'A(42)'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(i: kotlin.Int): A

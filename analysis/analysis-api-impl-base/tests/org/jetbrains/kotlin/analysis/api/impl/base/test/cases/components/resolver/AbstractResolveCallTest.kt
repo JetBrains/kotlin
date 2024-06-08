@@ -16,18 +16,22 @@ import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolution.KtResolvableCall
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractResolveCallTest : AbstractResolveByElementTest() {
     override val resolveKind: String get() = "call"
 
     override fun generateResolveOutput(mainElement: KtElement, testServices: TestServices): String = analyseForTest(mainElement) {
         val call = resolveCall(mainElement)
-        val secondCall = resolveCall(mainElement)
+        val callInfo = call?.asCallInfo()
 
+        val secondCall = resolveCall(mainElement)
         ignoreStabilityIfNeeded {
-            assertStableResult(testServices, call?.asCallInfo(), secondCall?.asCallInfo())
+            assertStableResult(testServices, callInfo, secondCall?.asCallInfo())
         }
 
+        // This call mustn't be suppressed as this is the API contracts
+        assertSpecificResolutionApi(testServices, callInfo, mainElement)
         call?.let(::stringRepresentation) ?: "null"
     }
 
@@ -42,5 +46,31 @@ abstract class AbstractResolveCallTest : AbstractResolveByElementTest() {
         element.attemptResolveCall()
     } else {
         element.resolveCallOld()
+    }
+
+    private fun KaSession.assertSpecificResolutionApi(
+        testServices: TestServices,
+        callInfo: KaCallInfo?,
+        element: KtElement,
+    ) {
+        if (element !is KtResolvableCall) return
+
+        val specificCall = when (element) {
+            is KtAnnotationEntry -> element.resolveCall()
+            is KtSuperTypeCallEntry -> element.resolveCall()
+            is KtConstructorDelegationCall -> element.resolveCall()
+            is KtCallExpression -> element.resolveCall()
+            else -> return
+        }
+
+        val assertions = testServices.assertions
+        when (callInfo) {
+            null, is KaErrorCallInfo -> assertions.assertEquals(expected = null, actual = specificCall)
+            is KaSuccessCallInfo -> assertStableResult(
+                testServices = testServices,
+                firstInfo = callInfo,
+                secondInfo = specificCall?.asCallInfo(),
+            )
+        }
     }
 }

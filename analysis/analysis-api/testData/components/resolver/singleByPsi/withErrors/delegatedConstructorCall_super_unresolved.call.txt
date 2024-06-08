@@ -1,5 +1,5 @@
 KtConstructorDelegationCall(108,116): 'super(s)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaDelegatedConstructorCall:
         kind = SUPER_CALL

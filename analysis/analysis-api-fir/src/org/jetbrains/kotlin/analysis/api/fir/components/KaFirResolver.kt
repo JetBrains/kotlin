@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaSymbolBasedReference
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
 import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
 import org.jetbrains.kotlin.analysis.api.fir.isInvokeFunction
 import org.jetbrains.kotlin.analysis.api.fir.scopes.getConstructors
@@ -17,9 +18,12 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayOfSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayTypeToArrayOfCall
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.fir.unwrapSafeCall
 import org.jetbrains.kotlin.analysis.api.fir.utils.processEqualsFunctions
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAbstractResolver
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaSymbolResolutionErrorImpl
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaSymbolResolutionSuccessImpl
 import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.resolution.KaAnnotationCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaCall
@@ -50,6 +54,7 @@ import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
@@ -112,6 +117,18 @@ internal class KaFirResolver(override val analysisSession: KaFirSession) : KaAbs
         }
     }
 
+    override fun attemptResolveSymbol(psi: KtElement): KaSymbolResolutionAttempt? {
+        val originalFir = psi.getOrBuildFir(firResolveSession) ?: return null
+        val unwrappedFir = originalFir.unwrapSafeCall()
+        return when (unwrappedFir) {
+            is FirResolvable -> unwrappedFir.calleeReference.toKaSymbolResolutionAttempt(psi)
+            is FirArrayLiteral -> unwrappedFir.toKaSymbolResolutionAttempt()
+            is FirVariableAssignment -> unwrappedFir.calleeReference?.toKaSymbolResolutionAttempt(psi)
+            is FirResolvedQualifier -> unwrappedFir.toKaSymbolResolutionAttempt(psi)
+            else -> null
+        }
+    }
+
     override fun attemptResolveCall(psi: KtElement): KaCallResolutionAttempt? {
         return wrapError(psi) {
             val attempts = getCallResolutionAttempts(
@@ -147,6 +164,45 @@ internal class KaFirResolver(override val analysisSession: KaFirSession) : KaAbs
                 )
             }
         )
+    }
+
+    private fun FirReference.toKaSymbolResolutionAttempt(psi: KtElement): KaSymbolResolutionAttempt? {
+        if (this is FirDiagnosticHolder) {
+            val kaDiagnostic = createKaDiagnostic(psi)
+            val candidateSymbols = diagnostic.getCandidateSymbols().map(firSymbolBuilder::buildSymbol)
+            return KaSymbolResolutionErrorImpl(
+                diagnostic = kaDiagnostic,
+                candidateSymbols = candidateSymbols,
+            )
+        }
+
+        val symbol = symbol?.buildSymbol(firSymbolBuilder) ?: return null
+        return KaSymbolResolutionSuccessImpl(symbol = symbol)
+    }
+
+    private fun FirArrayLiteral.toKaSymbolResolutionAttempt(): KaSymbolResolutionAttempt? = with(analysisSession) {
+        val resolvedSymbol = arrayOfSymbol(this@toKaSymbolResolutionAttempt)
+        if (resolvedSymbol != null) {
+            return KaSymbolResolutionSuccessImpl(resolvedSymbol)
+        }
+
+        val defaultSymbol = arrayOfSymbol(arrayOf)
+        return KaSymbolResolutionErrorImpl(
+            diagnostic = unresolvedArrayOfDiagnostic,
+            candidateSymbols = listOfNotNull(defaultSymbol),
+        )
+    }
+
+    private fun FirResolvedQualifier.toKaSymbolResolutionAttempt(psi: KtElement): KaSymbolResolutionAttempt? {
+        if (psi is KtCallExpression) {
+            val constructors = findQualifierConstructors()
+            return KaSymbolResolutionErrorImpl(
+                diagnostic = inapplicableCandidateDiagnostic(),
+                candidateSymbols = constructors,
+            )
+        }
+
+        return null
     }
 
     private val equalsSymbolInAny: FirNamedFunctionSymbol? by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -1259,6 +1315,13 @@ internal class KaFirResolver(override val analysisSession: KaFirSession) : KaAbs
             }
         }
 
+    private val unresolvedArrayOfDiagnostic: KaDiagnostic
+        get() = KaNonBoundToPsiErrorDiagnostic(
+            factoryName = FirErrors.UNRESOLVED_REFERENCE.name,
+            defaultMessage = "type of arrayOf call is not resolved",
+            token = token,
+        )
+
     private fun FirArrayLiteral.toKaCallResolutionAttempt(): KaCallResolutionAttempt? {
         val arrayOfSymbol = with(analysisSession) {
 
@@ -1273,7 +1336,7 @@ internal class KaFirResolver(override val analysisSession: KaFirSession) : KaAbs
                     )
 
                     KaCallResolutionError(
-                        KaNonBoundToPsiErrorDiagnostic(factoryName = null, "type of arrayOf call is not resolved", token),
+                        unresolvedArrayOfDiagnostic,
                         listOf(
                             KaSimpleFunctionCall(
                                 partiallyAppliedSymbol,

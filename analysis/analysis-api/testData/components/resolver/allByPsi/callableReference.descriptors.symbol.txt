@@ -1,0 +1,649 @@
+KtFile: 'callableReference.kt'
+  null
+
+KtPackageDirective(0,12): 'package pack'
+  null
+
+KtNameReferenceExpression(8,12): 'pack'
+  null
+
+KtImportList(12,12): ''
+  null
+
+KtClass(14,102): 'open class MyClass {'
+  null
+
+KtDeclarationModifierList(14,18): 'open'
+  null
+
+KtClassBody(33,102): '{'
+  null
+
+KtNamedFunction(39,68): 'fun memberFunction(): Int = 1'
+  null
+
+KtParameterList(57,59): '()'
+  null
+
+KtTypeReference(61,64): 'Int'
+  null
+
+KtUserType(61,64): 'Int'
+  null
+
+KtNameReferenceExpression(61,64): 'Int'
+  null
+
+KtConstantExpression(67,68): '1'
+  null
+
+KtProperty(73,100): 'val memberProperty: Int = 2'
+  null
+
+KtTypeReference(93,96): 'Int'
+  null
+
+KtUserType(93,96): 'Int'
+  null
+
+KtNameReferenceExpression(93,96): 'Int'
+  null
+
+KtConstantExpression(99,100): '2'
+  null
+
+KtClass(104,127): 'class Child : MyClass()'
+  null
+
+KtSuperTypeList(118,127): 'MyClass()'
+  null
+
+KtSuperTypeCallEntry(118,127): 'MyClass()'
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(): pack.MyClass
+
+KtConstructorCalleeExpression(118,125): 'MyClass'
+  null
+
+KtTypeReference(118,125): 'MyClass'
+  null
+
+KtUserType(118,125): 'MyClass'
+  null
+
+KtNameReferenceExpression(118,125): 'MyClass'
+  null
+
+KtValueArgumentList(125,127): '()'
+  null
+
+KtClass(129,234): 'open class ClassWithType<T> {'
+  null
+
+KtDeclarationModifierList(129,133): 'open'
+  null
+
+KtTypeParameterList(153,156): '<T>'
+  null
+
+KtTypeParameter(154,155): 'T'
+  null
+
+KtClassBody(157,234): '{'
+  null
+
+KtNamedFunction(163,196): 'fun functionWithType(): T? = null'
+  null
+
+KtParameterList(183,185): '()'
+  null
+
+KtTypeReference(187,189): 'T?'
+  null
+
+KtNullableType(187,189): 'T?'
+  null
+
+KtUserType(187,188): 'T'
+  null
+
+KtNameReferenceExpression(187,188): 'T'
+  null
+
+KtConstantExpression(192,196): 'null'
+  null
+
+KtProperty(201,232): 'var propertyWithType: T? = null'
+  null
+
+KtTypeReference(223,225): 'T?'
+  null
+
+KtNullableType(223,225): 'T?'
+  null
+
+KtUserType(223,224): 'T'
+  null
+
+KtNameReferenceExpression(223,224): 'T'
+  null
+
+KtConstantExpression(228,232): 'null'
+  null
+
+KtClass(236,282): 'class ChildWithType : ClassWithType<MyClass>()'
+  null
+
+KtSuperTypeList(258,282): 'ClassWithType<MyClass>()'
+  null
+
+KtSuperTypeCallEntry(258,282): 'ClassWithType<MyClass>()'
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(): pack.ClassWithType<T>
+
+KtConstructorCalleeExpression(258,280): 'ClassWithType<MyClass>'
+  null
+
+KtTypeReference(258,280): 'ClassWithType<MyClass>'
+  null
+
+KtUserType(258,280): 'ClassWithType<MyClass>'
+  null
+
+KtNameReferenceExpression(258,271): 'ClassWithType'
+  null
+
+KtTypeArgumentList(271,280): '<MyClass>'
+  null
+
+KtTypeProjection(272,279): 'MyClass'
+  null
+
+KtTypeReference(272,279): 'MyClass'
+  null
+
+KtUserType(272,279): 'MyClass'
+  null
+
+KtNameReferenceExpression(272,279): 'MyClass'
+  null
+
+KtValueArgumentList(280,282): '()'
+  null
+
+KtNamedFunction(284,315): 'fun topLevelFunction(i: Int) {}'
+  null
+
+KtParameterList(304,312): '(i: Int)'
+  null
+
+KtParameter(305,311): 'i: Int'
+  null
+
+KtTypeReference(308,311): 'Int'
+  null
+
+KtUserType(308,311): 'Int'
+  null
+
+KtNameReferenceExpression(308,311): 'Int'
+  null
+
+KtBlockExpression(313,315): '{}'
+  null
+
+KtProperty(317,341): 'var topLevelVariable = 1'
+  null
+
+KtConstantExpression(340,341): '1'
+  null
+
+KtNamedFunction(343,390): 'fun MyClass.extensionFunction(): String = "str"'
+  null
+
+KtTypeReference(347,354): 'MyClass'
+  null
+
+KtUserType(347,354): 'MyClass'
+  null
+
+KtNameReferenceExpression(347,354): 'MyClass'
+  null
+
+KtParameterList(372,374): '()'
+  null
+
+KtTypeReference(376,382): 'String'
+  null
+
+KtUserType(376,382): 'String'
+  null
+
+KtNameReferenceExpression(376,382): 'String'
+  null
+
+KtStringTemplateExpression(385,390): '"str"'
+  null
+
+KtLiteralStringTemplateEntry(386,389): 'str'
+  null
+
+KtProperty(391,442): 'val MyClass.extensionProperty: String get() = "rts"'
+  null
+
+KtTypeReference(395,402): 'MyClass'
+  null
+
+KtUserType(395,402): 'MyClass'
+  null
+
+KtNameReferenceExpression(395,402): 'MyClass'
+  null
+
+KtTypeReference(422,428): 'String'
+  null
+
+KtUserType(422,428): 'String'
+  null
+
+KtNameReferenceExpression(422,428): 'String'
+  null
+
+KtPropertyAccessor(429,442): 'get() = "rts"'
+  null
+
+KtStringTemplateExpression(437,442): '"rts"'
+  null
+
+KtLiteralStringTemplateEntry(438,441): 'rts'
+  null
+
+KtProperty(444,477): 'lateinit var lateinitVar: MyClass'
+  null
+
+KtDeclarationModifierList(444,452): 'lateinit'
+  null
+
+KtTypeReference(470,477): 'MyClass'
+  null
+
+KtUserType(470,477): 'MyClass'
+  null
+
+KtNameReferenceExpression(470,477): 'MyClass'
+  null
+
+KtNamedFunction(479,995): 'fun usage() {'
+  null
+
+KtParameterList(488,490): '()'
+  null
+
+KtBlockExpression(491,995): '{'
+  null
+
+KtDotQualifiedExpression(497,538): 'MyClass::memberFunction.invoke(MyClass())'
+  null
+
+KtCallableReferenceExpression(497,520): 'MyClass::memberFunction'
+  null
+
+KtNameReferenceExpression(497,504): 'MyClass'
+  null
+
+KtNameReferenceExpression(506,520): 'memberFunction'
+  null
+
+KtCallExpression(521,538): 'invoke(MyClass())'
+  KaSymbolResolutionSuccessImpl:
+    symbol = kotlin/reflect/KFunction1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+
+KtNameReferenceExpression(521,527): 'invoke'
+  null
+
+KtValueArgumentList(527,538): '(MyClass())'
+  null
+
+KtValueArgument(528,537): 'MyClass()'
+  null
+
+KtCallExpression(528,537): 'MyClass()'
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(): pack.MyClass
+
+KtNameReferenceExpression(528,535): 'MyClass'
+  null
+
+KtValueArgumentList(535,537): '()'
+  null
+
+KtDotQualifiedExpression(543,571): 'MyClass::memberProperty.name'
+  null
+
+KtCallableReferenceExpression(543,566): 'MyClass::memberProperty'
+  null
+
+KtNameReferenceExpression(543,550): 'MyClass'
+  null
+
+KtNameReferenceExpression(552,566): 'memberProperty'
+  null
+
+KtNameReferenceExpression(567,571): 'name'
+  null
+
+KtDotQualifiedExpression(577,614): 'Child::memberFunction.invoke(Child())'
+  null
+
+KtCallableReferenceExpression(577,598): 'Child::memberFunction'
+  null
+
+KtNameReferenceExpression(577,582): 'Child'
+  null
+
+KtNameReferenceExpression(584,598): 'memberFunction'
+  null
+
+KtCallExpression(599,614): 'invoke(Child())'
+  KaSymbolResolutionSuccessImpl:
+    symbol = kotlin/reflect/KFunction1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+
+KtNameReferenceExpression(599,605): 'invoke'
+  null
+
+KtValueArgumentList(605,614): '(Child())'
+  null
+
+KtValueArgument(606,613): 'Child()'
+  null
+
+KtCallExpression(606,613): 'Child()'
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(): pack.Child
+
+KtNameReferenceExpression(606,611): 'Child'
+  null
+
+KtValueArgumentList(611,613): '()'
+  null
+
+KtDotQualifiedExpression(619,645): 'Child::memberProperty.name'
+  null
+
+KtCallableReferenceExpression(619,640): 'Child::memberProperty'
+  null
+
+KtNameReferenceExpression(619,624): 'Child'
+  null
+
+KtNameReferenceExpression(626,640): 'memberProperty'
+  null
+
+KtNameReferenceExpression(641,645): 'name'
+  null
+
+KtProperty(651,690): 'val f = pack.MyClass::extensionFunction'
+  null
+
+KtCallableReferenceExpression(659,690): 'pack.MyClass::extensionFunction'
+  null
+
+KtDotQualifiedExpression(659,671): 'pack.MyClass'
+  null
+
+KtNameReferenceExpression(659,663): 'pack'
+  null
+
+KtNameReferenceExpression(664,671): 'MyClass'
+  null
+
+KtNameReferenceExpression(673,690): 'extensionFunction'
+  null
+
+KtProperty(695,729): 'val p = MyClass::extensionProperty'
+  null
+
+KtCallableReferenceExpression(703,729): 'MyClass::extensionProperty'
+  null
+
+KtNameReferenceExpression(703,710): 'MyClass'
+  null
+
+KtNameReferenceExpression(712,729): 'extensionProperty'
+  null
+
+KtProperty(735,768): 'val cF = Child::extensionFunction'
+  null
+
+KtCallableReferenceExpression(744,768): 'Child::extensionFunction'
+  null
+
+KtNameReferenceExpression(744,749): 'Child'
+  null
+
+KtNameReferenceExpression(751,768): 'extensionFunction'
+  null
+
+KtProperty(773,811): 'val cP = pack.Child::extensionProperty'
+  null
+
+KtCallableReferenceExpression(782,811): 'pack.Child::extensionProperty'
+  null
+
+KtDotQualifiedExpression(782,792): 'pack.Child'
+  null
+
+KtNameReferenceExpression(782,786): 'pack'
+  null
+
+KtNameReferenceExpression(787,792): 'Child'
+  null
+
+KtNameReferenceExpression(794,811): 'extensionProperty'
+  null
+
+KtDotQualifiedExpression(817,853): 'ChildWithType::functionWithType.name'
+  null
+
+KtCallableReferenceExpression(817,848): 'ChildWithType::functionWithType'
+  null
+
+KtNameReferenceExpression(817,830): 'ChildWithType'
+  null
+
+KtNameReferenceExpression(832,848): 'functionWithType'
+  null
+
+KtNameReferenceExpression(849,853): 'name'
+  null
+
+KtDotQualifiedExpression(858,913): 'ChildWithType::propertyWithType.invoke(ChildWithType())'
+  null
+
+KtCallableReferenceExpression(858,889): 'ChildWithType::propertyWithType'
+  null
+
+KtNameReferenceExpression(858,871): 'ChildWithType'
+  null
+
+KtNameReferenceExpression(873,889): 'propertyWithType'
+  null
+
+KtCallExpression(890,913): 'invoke(ChildWithType())'
+  KaSymbolResolutionSuccessImpl:
+    symbol = kotlin/reflect/KMutableProperty1.invoke(<dispatch receiver>: kotlin.Function1<T, V>, p1: T): V
+
+KtNameReferenceExpression(890,896): 'invoke'
+  null
+
+KtValueArgumentList(896,913): '(ChildWithType())'
+  null
+
+KtValueArgument(897,912): 'ChildWithType()'
+  null
+
+KtCallExpression(897,912): 'ChildWithType()'
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(): pack.ChildWithType
+
+KtNameReferenceExpression(897,910): 'ChildWithType'
+  null
+
+KtValueArgumentList(910,912): '()'
+  null
+
+KtCallableReferenceExpression(919,937): '::topLevelFunction'
+  null
+
+KtNameReferenceExpression(921,937): 'topLevelFunction'
+  null
+
+KtCallableReferenceExpression(942,960): '::topLevelVariable'
+  null
+
+KtNameReferenceExpression(944,960): 'topLevelVariable'
+  null
+
+KtDotQualifiedExpression(966,993): '::lateinitVar.isInitialized'
+  null
+
+KtCallableReferenceExpression(966,979): '::lateinitVar'
+  null
+
+KtNameReferenceExpression(968,979): 'lateinitVar'
+  null
+
+KtNameReferenceExpression(980,993): 'isInitialized'
+  null
+
+KtNamedFunction(997,1223): 'fun <T : Number> typeClass(classWithType: ClassWithType<T>) {'
+  null
+
+KtTypeParameterList(1001,1013): '<T : Number>'
+  null
+
+KtTypeParameter(1002,1012): 'T : Number'
+  null
+
+KtTypeReference(1006,1012): 'Number'
+  null
+
+KtUserType(1006,1012): 'Number'
+  null
+
+KtNameReferenceExpression(1006,1012): 'Number'
+  null
+
+KtParameterList(1023,1056): '(classWithType: ClassWithType<T>)'
+  null
+
+KtParameter(1024,1055): 'classWithType: ClassWithType<T>'
+  null
+
+KtTypeReference(1039,1055): 'ClassWithType<T>'
+  null
+
+KtUserType(1039,1055): 'ClassWithType<T>'
+  null
+
+KtNameReferenceExpression(1039,1052): 'ClassWithType'
+  null
+
+KtTypeArgumentList(1052,1055): '<T>'
+  null
+
+KtTypeProjection(1053,1054): 'T'
+  null
+
+KtTypeReference(1053,1054): 'T'
+  null
+
+KtUserType(1053,1054): 'T'
+  null
+
+KtNameReferenceExpression(1053,1054): 'T'
+  null
+
+KtBlockExpression(1057,1223): '{'
+  null
+
+KtCallableReferenceExpression(1063,1094): 'classWithType::functionWithType'
+  null
+
+KtNameReferenceExpression(1063,1076): 'classWithType'
+  null
+
+KtNameReferenceExpression(1078,1094): 'functionWithType'
+  null
+
+KtCallableReferenceExpression(1099,1130): 'classWithType::propertyWithType'
+  null
+
+KtNameReferenceExpression(1099,1112): 'classWithType'
+  null
+
+KtNameReferenceExpression(1114,1130): 'propertyWithType'
+  null
+
+KtProperty(1136,1169): 'val t: ClassWithType<Int>? = null'
+  null
+
+KtTypeReference(1143,1162): 'ClassWithType<Int>?'
+  null
+
+KtNullableType(1143,1162): 'ClassWithType<Int>?'
+  null
+
+KtUserType(1143,1161): 'ClassWithType<Int>'
+  null
+
+KtNameReferenceExpression(1143,1156): 'ClassWithType'
+  null
+
+KtTypeArgumentList(1156,1161): '<Int>'
+  null
+
+KtTypeProjection(1157,1160): 'Int'
+  null
+
+KtTypeReference(1157,1160): 'Int'
+  null
+
+KtUserType(1157,1160): 'Int'
+  null
+
+KtNameReferenceExpression(1157,1160): 'Int'
+  null
+
+KtConstantExpression(1165,1169): 'null'
+  null
+
+KtCallableReferenceExpression(1174,1195): 't!!::functionWithType'
+  null
+
+KtPostfixExpression(1174,1177): 't!!'
+  null
+
+KtNameReferenceExpression(1174,1175): 't'
+  null
+
+KtOperationReferenceExpression(1175,1177): '!!'
+  null
+
+KtNameReferenceExpression(1179,1195): 'functionWithType'
+  null
+
+KtCallableReferenceExpression(1200,1221): 't!!::propertyWithType'
+  null
+
+KtPostfixExpression(1200,1203): 't!!'
+  null
+
+KtNameReferenceExpression(1200,1201): 't'
+  null
+
+KtOperationReferenceExpression(1201,1203): '!!'
+  null
+
+KtNameReferenceExpression(1205,1221): 'propertyWithType'
+  null

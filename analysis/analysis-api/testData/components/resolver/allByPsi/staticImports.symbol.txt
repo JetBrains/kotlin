@@ -203,7 +203,8 @@ KtNameReferenceExpression(415,429): 'TopLevelObject'
   null
 
 KtCallExpression(430,435): 'foo()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit
 
 KtNameReferenceExpression(430,433): 'foo'
   null
@@ -215,7 +216,8 @@ KtProperty(440,463): 'val importedFoo = foo()'
   null
 
 KtCallExpression(458,463): 'foo()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit
 
 KtNameReferenceExpression(458,461): 'foo'
   null
@@ -275,7 +277,8 @@ KtNameReferenceExpression(674,686): 'NestedObject'
   null
 
 KtCallExpression(687,692): 'baz()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
 
 KtNameReferenceExpression(687,690): 'baz'
   null
@@ -293,7 +296,8 @@ KtNameReferenceExpression(721,733): 'NestedObject'
   null
 
 KtCallExpression(734,739): 'baz()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
 
 KtNameReferenceExpression(734,737): 'baz'
   null
@@ -305,7 +309,8 @@ KtProperty(744,767): 'val importedBaz = baz()'
   null
 
 KtCallExpression(762,767): 'baz()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
 
 KtNameReferenceExpression(762,765): 'baz'
   null

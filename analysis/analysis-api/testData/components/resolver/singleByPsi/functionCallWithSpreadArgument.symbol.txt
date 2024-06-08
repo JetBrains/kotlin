@@ -1,2 +1,3 @@
 KtCallExpression(84,99): 'function(*args)'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = /function(vararg a: kotlin.Int): kotlin.Unit

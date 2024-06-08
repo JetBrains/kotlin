@@ -38,7 +38,8 @@ KtBlockExpression(72,300): '{'
   null
 
 KtCallExpression(78,104): 'print(javaClass.something)'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = kotlin/io/print(message: kotlin.Int): kotlin.Unit
 
 KtNameReferenceExpression(78,83): 'print'
   null

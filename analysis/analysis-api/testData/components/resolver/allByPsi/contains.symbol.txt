@@ -38,7 +38,8 @@ KtNameReferenceExpression(37,40): 'Int'
   null
 
 KtConstructorDelegationCall(43,49): 'this()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(): MyClass
 
 KtConstructorDelegationReferenceExpression(43,47): 'this'
   null
@@ -113,7 +114,8 @@ KtOperationReferenceExpression(128,130): 'in'
   null
 
 KtCallExpression(131,140): 'MyClass()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(): MyClass
 
 KtNameReferenceExpression(131,138): 'MyClass'
   null
@@ -125,7 +127,8 @@ KtDotQualifiedExpression(145,166): 'MyClass().contains(2)'
   null
 
 KtCallExpression(145,154): 'MyClass()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(): MyClass
 
 KtNameReferenceExpression(145,152): 'MyClass'
   null
@@ -134,7 +137,8 @@ KtValueArgumentList(152,154): '()'
   null
 
 KtCallExpression(155,166): 'contains(2)'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
 
 KtNameReferenceExpression(155,163): 'contains'
   null
@@ -158,7 +162,8 @@ KtOperationReferenceExpression(173,176): '!in'
   null
 
 KtCallExpression(177,186): 'MyClass()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(): MyClass
 
 KtNameReferenceExpression(177,184): 'MyClass'
   null
@@ -182,7 +187,8 @@ KtOperationReferenceExpression(211,213): 'in'
   null
 
 KtCallExpression(214,223): 'MyClass()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(): MyClass
 
 KtNameReferenceExpression(214,221): 'MyClass'
   null
@@ -212,7 +218,8 @@ KtOperationReferenceExpression(270,273): '!in'
   null
 
 KtCallExpression(274,283): 'MyClass()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(): MyClass
 
 KtNameReferenceExpression(274,281): 'MyClass'
   null

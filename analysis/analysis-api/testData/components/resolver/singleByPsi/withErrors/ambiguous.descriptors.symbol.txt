@@ -1,0 +1,11 @@
+KtCallExpression(98,109): 'function(1)'
+  KaSymbolResolutionErrorImpl:
+    candidateSymbols = [
+      /function(a: kotlin.Char): kotlin.Unit,
+      /function(b: kotlin.Boolean): kotlin.Unit,
+      /function(c: kotlin.String): kotlin.Unit
+    ]
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
+    public fun function(b: Boolean): Unit defined in root package in file ambiguous.kt
+    public fun function(a: Char): Unit defined in root package in file ambiguous.kt
+    public fun function(c: String): Unit defined in root package in file ambiguous.kt>

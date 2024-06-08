@@ -131,7 +131,8 @@ KtNameReferenceExpression(195,207): 'newParameter'
   null
 
 KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
 
 KtNameReferenceExpression(208,212): 'plus'
   null
@@ -149,7 +150,8 @@ KtNameReferenceExpression(213,222): 'parameter'
   null
 
 KtCallExpression(223,248): 'myMinus(oneMoreParameter)'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = /myMinus(<extension receiver>: kotlin.Int, i: kotlin.Int): kotlin.Int
 
 KtNameReferenceExpression(223,230): 'myMinus'
   null

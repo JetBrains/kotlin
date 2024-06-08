@@ -1,2 +1,7 @@
 KtCallExpression(89,100): 'Foo<String>'
-  null
+  KaSymbolResolutionErrorImpl:
+    candidateSymbols = [
+      <constructor>(len: kotlin.Int): Foo<T>,
+      <constructor>(s: kotlin.String): Foo<T>
+    ]
+    diagnostic = ERROR<null: Inapplicable candidate>

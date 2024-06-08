@@ -38,7 +38,8 @@ KtConstantExpression(28,29): '1'
   null
 
 KtCallExpression(30,42): 'compareTo(2)'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
 
 KtNameReferenceExpression(30,39): 'compareTo'
   null
@@ -86,7 +87,8 @@ KtProperty(85,108): 'val myClass = MyClass()'
   null
 
 KtCallExpression(99,108): 'MyClass()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = <constructor>(): MyClass
 
 KtNameReferenceExpression(99,106): 'MyClass'
   null
@@ -113,7 +115,8 @@ KtNameReferenceExpression(135,142): 'myClass'
   null
 
 KtCallExpression(143,160): 'compareTo(number)'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = /MyClass.compareTo(<dispatch receiver>: MyClass, i: kotlin.Int): kotlin.Int
 
 KtNameReferenceExpression(143,152): 'compareTo'
   null

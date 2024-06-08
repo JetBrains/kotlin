@@ -1,5 +1,5 @@
 KtCallExpression(71,80): 'Test<Bar>'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         isImplicitInvoke = false

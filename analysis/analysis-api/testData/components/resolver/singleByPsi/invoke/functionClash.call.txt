@@ -1,15 +1,14 @@
 KtCallExpression(202,207): 'foo()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = r/foo(): kotlin.Int
-          valueParameters = []
-          callableId = r/foo
-      typeArgumentsMapping = {}
-      argumentMapping = {}
+  KaSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = r/foo(): kotlin.Int
+        valueParameters = []
+        callableId = r/foo
+    typeArgumentsMapping = {}
+    argumentMapping = {}

@@ -133,33 +133,32 @@ KtNameReferenceExpression(80,84): 'prop'
       typeArgumentsMapping = {}
 
 KtCallExpression(85,94): 'action1()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = action1
-          isSafeNavigation = false
-          type = @ExtensionFunctionType kotlin.Function1<kotlin.Int, kotlin.Unit>
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = prop
-          isSafeNavigation = false
-          type = kotlin.Int
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = p1
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = p1: P1
-              callableId = null
-          ]
-          callableId = kotlin/Function1.invoke
-      typeArgumentsMapping = {}
-      argumentMapping = {}
+  KaSimpleFunctionCall:
+    isImplicitInvoke = true
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = action1
+        isSafeNavigation = false
+        type = @ExtensionFunctionType kotlin.Function1<kotlin.Int, kotlin.Unit>
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = prop
+        isSafeNavigation = false
+        type = kotlin.Int
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = p1
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = p1: P1
+            callableId = null
+        ]
+        callableId = kotlin/Function1.invoke
+    typeArgumentsMapping = {}
+    argumentMapping = {}
 
 KtNameReferenceExpression(85,92): 'action1'
   KaSuccessCallInfo:
@@ -180,33 +179,32 @@ KtValueArgumentList(92,94): '()'
   null
 
 KtCallExpression(99,112): 'action1(prop)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = action1
-          isSafeNavigation = false
-          type = @ExtensionFunctionType kotlin.Function1<kotlin.Int, kotlin.Unit>
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = prop
-          isSafeNavigation = false
-          type = kotlin.Int
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = p1
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = p1: P1
-              callableId = null
-          ]
-          callableId = kotlin/Function1.invoke
-      typeArgumentsMapping = {}
-      argumentMapping = {}
+  KaSimpleFunctionCall:
+    isImplicitInvoke = true
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = action1
+        isSafeNavigation = false
+        type = @ExtensionFunctionType kotlin.Function1<kotlin.Int, kotlin.Unit>
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = prop
+        isSafeNavigation = false
+        type = kotlin.Int
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = p1
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = p1: P1
+            callableId = null
+        ]
+        callableId = kotlin/Function1.invoke
+    typeArgumentsMapping = {}
+    argumentMapping = {}
 
 KtNameReferenceExpression(99,106): 'action1'
   KaSuccessCallInfo:
@@ -265,7 +263,7 @@ KtNameReferenceExpression(118,122): 'prop'
       typeArgumentsMapping = {}
 
 KtCallExpression(123,132): 'action2()'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'action2'.>
 
@@ -278,37 +276,36 @@ KtValueArgumentList(130,132): '()'
   null
 
 KtCallExpression(151,164): 'action2(prop)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = action2
-          isSafeNavigation = false
-          type = kotlin.Function1<kotlin.Int, kotlin.Unit>
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = p1
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = p1: P1
-              callableId = null
-          ]
-          callableId = kotlin/Function1.invoke
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        prop -> (KaVariableLikeSignature:
-          name = p1
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = p1: P1
-          callableId = null)
-      }
+  KaSimpleFunctionCall:
+    isImplicitInvoke = true
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = action2
+        isSafeNavigation = false
+        type = kotlin.Function1<kotlin.Int, kotlin.Unit>
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = p1
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = p1: P1
+            callableId = null
+        ]
+        callableId = kotlin/Function1.invoke
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      prop -> (KaVariableLikeSignature:
+        name = p1
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = p1: P1
+        callableId = null)
+    }
 
 KtNameReferenceExpression(151,158): 'action2'
   KaSuccessCallInfo:

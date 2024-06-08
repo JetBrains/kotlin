@@ -17,51 +17,50 @@ KtDeclarationModifierList(33,187): '@Target('
   null
 
 KtAnnotationEntry(33,176): '@Target('
-  KaSuccessCallInfo:
-    call = KaAnnotationCall:
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.annotation.Target
-          symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = allowedTargets
-              receiverType = null
-              returnType = kotlin.annotation.AnnotationTarget
-              symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        AnnotationTarget.TYPE_PARAMETER -> (KaVariableLikeSignature:
-          name = allowedTargets
-          receiverType = null
-          returnType = kotlin.annotation.AnnotationTarget
-          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
-          callableId = null),
-        AnnotationTarget.FUNCTION -> (KaVariableLikeSignature:
-          name = allowedTargets
-          receiverType = null
-          returnType = kotlin.annotation.AnnotationTarget
-          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
-          callableId = null),
-        AnnotationTarget.VALUE_PARAMETER -> (KaVariableLikeSignature:
-          name = allowedTargets
-          receiverType = null
-          returnType = kotlin.annotation.AnnotationTarget
-          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
-          callableId = null),
-        AnnotationTarget.TYPE -> (KaVariableLikeSignature:
-          name = allowedTargets
-          receiverType = null
-          returnType = kotlin.annotation.AnnotationTarget
-          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
-          callableId = null)
-      }
+  KaAnnotationCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.annotation.Target
+        symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = allowedTargets
+            receiverType = null
+            returnType = kotlin.annotation.AnnotationTarget
+            symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      AnnotationTarget.TYPE_PARAMETER -> (KaVariableLikeSignature:
+        name = allowedTargets
+        receiverType = null
+        returnType = kotlin.annotation.AnnotationTarget
+        symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+        callableId = null),
+      AnnotationTarget.FUNCTION -> (KaVariableLikeSignature:
+        name = allowedTargets
+        receiverType = null
+        returnType = kotlin.annotation.AnnotationTarget
+        symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+        callableId = null),
+      AnnotationTarget.VALUE_PARAMETER -> (KaVariableLikeSignature:
+        name = allowedTargets
+        receiverType = null
+        returnType = kotlin.annotation.AnnotationTarget
+        symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+        callableId = null),
+      AnnotationTarget.TYPE -> (KaVariableLikeSignature:
+        name = allowedTargets
+        receiverType = null
+        returnType = kotlin.annotation.AnnotationTarget
+        symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+        callableId = null)
+    }
 
 KtConstructorCalleeExpression(34,40): 'Target'
   KaSuccessCallInfo:
@@ -330,33 +329,32 @@ KtDeclarationModifierList(259,282): '@Anno("function $prop")'
   null
 
 KtAnnotationEntry(259,282): '@Anno("function $prop")'
-  KaSuccessCallInfo:
-    call = KaAnnotationCall:
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = lowlevel.Anno
-          symbol = <constructor>(position: kotlin.String): lowlevel.Anno
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = position
-              receiverType = null
-              returnType = kotlin.String
-              symbol = position: kotlin.String
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        "function $prop" -> (KaVariableLikeSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
+  KaAnnotationCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "function $prop" -> (KaVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableId = null)
+    }
 
 KtConstructorCalleeExpression(260,264): 'Anno'
   KaSuccessCallInfo:
@@ -436,33 +434,32 @@ KtDeclarationModifierList(288,317): '@Anno("type parameter $prop")'
   null
 
 KtAnnotationEntry(288,317): '@Anno("type parameter $prop")'
-  KaSuccessCallInfo:
-    call = KaAnnotationCall:
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = lowlevel.Anno
-          symbol = <constructor>(position: kotlin.String): lowlevel.Anno
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = position
-              receiverType = null
-              returnType = kotlin.String
-              symbol = position: kotlin.String
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        "type parameter $prop" -> (KaVariableLikeSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
+  KaAnnotationCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "type parameter $prop" -> (KaVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableId = null)
+    }
 
 KtConstructorCalleeExpression(289,293): 'Anno'
   KaSuccessCallInfo:
@@ -539,33 +536,32 @@ KtDeclarationModifierList(322,347): '@Anno("bound type $prop")'
   null
 
 KtAnnotationEntry(322,347): '@Anno("bound type $prop")'
-  KaSuccessCallInfo:
-    call = KaAnnotationCall:
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = lowlevel.Anno
-          symbol = <constructor>(position: kotlin.String): lowlevel.Anno
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = position
-              receiverType = null
-              returnType = kotlin.String
-              symbol = position: kotlin.String
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        "bound type $prop" -> (KaVariableLikeSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
+  KaAnnotationCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "bound type $prop" -> (KaVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableId = null)
+    }
 
 KtConstructorCalleeExpression(323,327): 'Anno'
   KaSuccessCallInfo:
@@ -654,33 +650,32 @@ KtDeclarationModifierList(353,385): '@Anno("nested bound type $prop")'
   null
 
 KtAnnotationEntry(353,385): '@Anno("nested bound type $prop")'
-  KaSuccessCallInfo:
-    call = KaAnnotationCall:
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = lowlevel.Anno
-          symbol = <constructor>(position: kotlin.String): lowlevel.Anno
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = position
-              receiverType = null
-              returnType = kotlin.String
-              symbol = position: kotlin.String
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        "nested bound type $prop" -> (KaVariableLikeSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
+  KaAnnotationCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "nested bound type $prop" -> (KaVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableId = null)
+    }
 
 KtConstructorCalleeExpression(354,358): 'Anno'
   KaSuccessCallInfo:
@@ -763,33 +758,32 @@ KtDeclarationModifierList(395,456): '@receiver:Anno("receiver $prop") @Anno("rec
   null
 
 KtAnnotationEntry(395,427): '@receiver:Anno("receiver $prop")'
-  KaSuccessCallInfo:
-    call = KaAnnotationCall:
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = lowlevel.Anno
-          symbol = <constructor>(position: kotlin.String): lowlevel.Anno
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = position
-              receiverType = null
-              returnType = kotlin.String
-              symbol = position: kotlin.String
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        "receiver $prop" -> (KaVariableLikeSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
+  KaAnnotationCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "receiver $prop" -> (KaVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableId = null)
+    }
 
 KtAnnotationUseSiteTarget(396,404): 'receiver'
   null
@@ -863,33 +857,32 @@ KtNameReferenceExpression(421,425): 'prop'
       typeArgumentsMapping = {}
 
 KtAnnotationEntry(428,456): '@Anno("receiver type $prop")'
-  KaSuccessCallInfo:
-    call = KaAnnotationCall:
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = lowlevel.Anno
-          symbol = <constructor>(position: kotlin.String): lowlevel.Anno
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = position
-              receiverType = null
-              returnType = kotlin.String
-              symbol = position: kotlin.String
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        "receiver type $prop" -> (KaVariableLikeSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
+  KaAnnotationCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "receiver type $prop" -> (KaVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableId = null)
+    }
 
 KtConstructorCalleeExpression(429,433): 'Anno'
   KaSuccessCallInfo:
@@ -978,33 +971,32 @@ KtDeclarationModifierList(462,497): '@Anno("nested receiver type $prop")'
   null
 
 KtAnnotationEntry(462,497): '@Anno("nested receiver type $prop")'
-  KaSuccessCallInfo:
-    call = KaAnnotationCall:
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = lowlevel.Anno
-          symbol = <constructor>(position: kotlin.String): lowlevel.Anno
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = position
-              receiverType = null
-              returnType = kotlin.String
-              symbol = position: kotlin.String
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        "nested receiver type $prop" -> (KaVariableLikeSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
+  KaAnnotationCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "nested receiver type $prop" -> (KaVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableId = null)
+    }
 
 KtConstructorCalleeExpression(463,467): 'Anno'
   KaSuccessCallInfo:
@@ -1093,33 +1085,32 @@ KtDeclarationModifierList(503,545): '@Anno("nested nested receiver type $prop")'
   null
 
 KtAnnotationEntry(503,545): '@Anno("nested nested receiver type $prop")'
-  KaSuccessCallInfo:
-    call = KaAnnotationCall:
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = lowlevel.Anno
-          symbol = <constructor>(position: kotlin.String): lowlevel.Anno
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = position
-              receiverType = null
-              returnType = kotlin.String
-              symbol = position: kotlin.String
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        "nested nested receiver type $prop" -> (KaVariableLikeSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
+  KaAnnotationCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "nested nested receiver type $prop" -> (KaVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableId = null)
+    }
 
 KtConstructorCalleeExpression(504,508): 'Anno'
   KaSuccessCallInfo:
@@ -1205,33 +1196,32 @@ KtDeclarationModifierList(561,585): '@Anno("parameter $prop")'
   null
 
 KtAnnotationEntry(561,585): '@Anno("parameter $prop")'
-  KaSuccessCallInfo:
-    call = KaAnnotationCall:
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = lowlevel.Anno
-          symbol = <constructor>(position: kotlin.String): lowlevel.Anno
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = position
-              receiverType = null
-              returnType = kotlin.String
-              symbol = position: kotlin.String
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        "parameter $prop" -> (KaVariableLikeSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
+  KaAnnotationCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "parameter $prop" -> (KaVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableId = null)
+    }
 
 KtConstructorCalleeExpression(562,566): 'Anno'
   KaSuccessCallInfo:
@@ -1308,33 +1298,32 @@ KtDeclarationModifierList(593,622): '@Anno("parameter type $prop")'
   null
 
 KtAnnotationEntry(593,622): '@Anno("parameter type $prop")'
-  KaSuccessCallInfo:
-    call = KaAnnotationCall:
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = lowlevel.Anno
-          symbol = <constructor>(position: kotlin.String): lowlevel.Anno
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = position
-              receiverType = null
-              returnType = kotlin.String
-              symbol = position: kotlin.String
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        "parameter type $prop" -> (KaVariableLikeSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
+  KaAnnotationCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "parameter type $prop" -> (KaVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableId = null)
+    }
 
 KtConstructorCalleeExpression(594,598): 'Anno'
   KaSuccessCallInfo:
@@ -1423,33 +1412,32 @@ KtDeclarationModifierList(634,670): '@Anno("nested parameter type $prop")'
   null
 
 KtAnnotationEntry(634,670): '@Anno("nested parameter type $prop")'
-  KaSuccessCallInfo:
-    call = KaAnnotationCall:
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = lowlevel.Anno
-          symbol = <constructor>(position: kotlin.String): lowlevel.Anno
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = position
-              receiverType = null
-              returnType = kotlin.String
-              symbol = position: kotlin.String
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        "nested parameter type $prop" -> (KaVariableLikeSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
+  KaAnnotationCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "nested parameter type $prop" -> (KaVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableId = null)
+    }
 
 KtConstructorCalleeExpression(635,639): 'Anno'
   KaSuccessCallInfo:
@@ -1538,33 +1526,32 @@ KtDeclarationModifierList(676,719): '@Anno("nested nested parameter type $prop")
   null
 
 KtAnnotationEntry(676,719): '@Anno("nested nested parameter type $prop")'
-  KaSuccessCallInfo:
-    call = KaAnnotationCall:
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = lowlevel.Anno
-          symbol = <constructor>(position: kotlin.String): lowlevel.Anno
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = position
-              receiverType = null
-              returnType = kotlin.String
-              symbol = position: kotlin.String
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        "nested nested parameter type $prop" -> (KaVariableLikeSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
+  KaAnnotationCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "nested nested parameter type $prop" -> (KaVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableId = null)
+    }
 
 KtConstructorCalleeExpression(677,681): 'Anno'
   KaSuccessCallInfo:
@@ -1650,33 +1637,32 @@ KtDeclarationModifierList(735,761): '@Anno("return type $prop")'
   null
 
 KtAnnotationEntry(735,761): '@Anno("return type $prop")'
-  KaSuccessCallInfo:
-    call = KaAnnotationCall:
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = lowlevel.Anno
-          symbol = <constructor>(position: kotlin.String): lowlevel.Anno
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = position
-              receiverType = null
-              returnType = kotlin.String
-              symbol = position: kotlin.String
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        "return type $prop" -> (KaVariableLikeSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
+  KaAnnotationCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "return type $prop" -> (KaVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableId = null)
+    }
 
 KtConstructorCalleeExpression(736,740): 'Anno'
   KaSuccessCallInfo:
@@ -1765,33 +1751,32 @@ KtDeclarationModifierList(767,800): '@Anno("nested return type $prop")'
   null
 
 KtAnnotationEntry(767,800): '@Anno("nested return type $prop")'
-  KaSuccessCallInfo:
-    call = KaAnnotationCall:
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = lowlevel.Anno
-          symbol = <constructor>(position: kotlin.String): lowlevel.Anno
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = position
-              receiverType = null
-              returnType = kotlin.String
-              symbol = position: kotlin.String
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        "nested return type $prop" -> (KaVariableLikeSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
+  KaAnnotationCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "nested return type $prop" -> (KaVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableId = null)
+    }
 
 KtConstructorCalleeExpression(768,772): 'Anno'
   KaSuccessCallInfo:
@@ -1880,33 +1865,32 @@ KtDeclarationModifierList(806,846): '@Anno("nested nested return type $prop")'
   null
 
 KtAnnotationEntry(806,846): '@Anno("nested nested return type $prop")'
-  KaSuccessCallInfo:
-    call = KaAnnotationCall:
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = lowlevel.Anno
-          symbol = <constructor>(position: kotlin.String): lowlevel.Anno
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = position
-              receiverType = null
-              returnType = kotlin.String
-              symbol = position: kotlin.String
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        "nested nested return type $prop" -> (KaVariableLikeSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
+  KaAnnotationCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "nested nested return type $prop" -> (KaVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableId = null)
+    }
 
 KtConstructorCalleeExpression(807,811): 'Anno'
   KaSuccessCallInfo:
@@ -1998,33 +1982,32 @@ KtDeclarationModifierList(871,901): '@Anno("constraint type $prop")'
   null
 
 KtAnnotationEntry(871,901): '@Anno("constraint type $prop")'
-  KaSuccessCallInfo:
-    call = KaAnnotationCall:
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = lowlevel.Anno
-          symbol = <constructor>(position: kotlin.String): lowlevel.Anno
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = position
-              receiverType = null
-              returnType = kotlin.String
-              symbol = position: kotlin.String
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        "constraint type $prop" -> (KaVariableLikeSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
+  KaAnnotationCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "constraint type $prop" -> (KaVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableId = null)
+    }
 
 KtConstructorCalleeExpression(872,876): 'Anno'
   KaSuccessCallInfo:
@@ -2116,33 +2099,32 @@ KtDeclarationModifierList(913,950): '@Anno("nested constraint type $prop")'
   null
 
 KtAnnotationEntry(913,950): '@Anno("nested constraint type $prop")'
-  KaSuccessCallInfo:
-    call = KaAnnotationCall:
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = lowlevel.Anno
-          symbol = <constructor>(position: kotlin.String): lowlevel.Anno
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = position
-              receiverType = null
-              returnType = kotlin.String
-              symbol = position: kotlin.String
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        "nested constraint type $prop" -> (KaVariableLikeSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
+  KaAnnotationCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "nested constraint type $prop" -> (KaVariableLikeSignature:
+        name = position
+        receiverType = null
+        returnType = kotlin.String
+        symbol = position: kotlin.String
+        callableId = null)
+    }
 
 KtConstructorCalleeExpression(914,918): 'Anno'
   KaSuccessCallInfo:

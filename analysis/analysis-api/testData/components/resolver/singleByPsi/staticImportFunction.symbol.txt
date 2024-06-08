@@ -1,2 +1,3 @@
 KtCallExpression(95,100): 'foo()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit

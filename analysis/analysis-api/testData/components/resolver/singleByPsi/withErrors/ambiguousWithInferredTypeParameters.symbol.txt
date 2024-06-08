@@ -1,2 +1,11 @@
 KtCallExpression(128,139): 'function(1)'
-  null
+  KaSymbolResolutionErrorImpl:
+    candidateSymbols = [
+      /function(t: T, a: kotlin.Char): kotlin.Unit,
+      /function(u: U, b: kotlin.Boolean): kotlin.Unit,
+      /function(v: V, c: kotlin.String): kotlin.Unit
+    ]
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
+    fun <T> function(t: T, a: Char): Unit
+    fun <U> function(u: U, b: Boolean): Unit
+    fun <V> function(v: V, c: String): Unit>

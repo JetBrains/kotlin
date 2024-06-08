@@ -1,0 +1,9 @@
+KtCallExpression(89,100): 'Foo<String>'
+  KaSymbolResolutionErrorImpl:
+    candidateSymbols = [
+      <constructor>(len: kotlin.Int): Foo<T>,
+      <constructor>(s: kotlin.String): Foo<T>
+    ]
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
+    public constructor Foo<T>(len: Int) defined in Foo
+    public constructor Foo<T>(s: String) defined in Foo>

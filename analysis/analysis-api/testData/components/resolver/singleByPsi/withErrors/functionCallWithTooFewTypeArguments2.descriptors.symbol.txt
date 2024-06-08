@@ -1,0 +1,6 @@
+KtCallExpression(61,99): 'generic<String, String>("a", "b", "c")'
+  KaSymbolResolutionErrorImpl:
+    candidateSymbols = [
+      /generic(a: A, b: B, c: C): kotlin.Unit
+    ]
+    diagnostic = ERROR<null: OTHER_ERROR with generic>

@@ -32,7 +32,8 @@ KtBlockExpression(56,123): '{'
   null
 
 KtCallExpression(66,71): 'foo()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
 
 KtNameReferenceExpression(66,69): 'foo'
   null
@@ -50,7 +51,8 @@ KtNameReferenceExpression(80,84): 'this'
   null
 
 KtCallExpression(85,90): 'foo()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
 
 KtNameReferenceExpression(85,88): 'foo'
   null
@@ -74,7 +76,8 @@ KtLabelReferenceExpression(103,111): '@MyClass'
   null
 
 KtCallExpression(112,117): 'foo()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
 
 KtNameReferenceExpression(112,115): 'foo'
   null
@@ -107,7 +110,8 @@ KtBlockExpression(189,306): '{'
   null
 
 KtCallExpression(203,208): 'foo()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
 
 KtNameReferenceExpression(203,206): 'foo'
   null
@@ -125,7 +129,8 @@ KtNameReferenceExpression(221,225): 'this'
   null
 
 KtCallExpression(226,231): 'foo()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
 
 KtNameReferenceExpression(226,229): 'foo'
   null
@@ -149,7 +154,8 @@ KtLabelReferenceExpression(248,259): '@InnerOuter'
   null
 
 KtCallExpression(260,265): 'foo()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
 
 KtNameReferenceExpression(260,263): 'foo'
   null
@@ -173,7 +179,8 @@ KtLabelReferenceExpression(282,290): '@MyClass'
   null
 
 KtCallExpression(291,296): 'foo()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
 
 KtNameReferenceExpression(291,294): 'foo'
   null
@@ -206,7 +213,8 @@ KtBlockExpression(385,1208): '{'
   null
 
 KtCallExpression(403,408): 'foo()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
 
 KtNameReferenceExpression(403,406): 'foo'
   null
@@ -224,7 +232,8 @@ KtNameReferenceExpression(425,429): 'this'
   null
 
 KtCallExpression(430,435): 'foo()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
 
 KtNameReferenceExpression(430,433): 'foo'
   null
@@ -248,7 +257,8 @@ KtLabelReferenceExpression(456,468): '@InnerNested'
   null
 
 KtCallExpression(469,474): 'foo()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
 
 KtNameReferenceExpression(469,472): 'foo'
   null
@@ -272,7 +282,8 @@ KtLabelReferenceExpression(495,506): '@InnerOuter'
   null
 
 KtCallExpression(507,512): 'foo()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
 
 KtNameReferenceExpression(507,510): 'foo'
   null
@@ -296,7 +307,8 @@ KtLabelReferenceExpression(533,541): '@MyClass'
   null
 
 KtCallExpression(542,547): 'foo()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
 
 KtNameReferenceExpression(542,545): 'foo'
   null
@@ -347,7 +359,8 @@ KtBlockExpression(603,839): '{'
   null
 
 KtCallExpression(625,630): 'foo()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
 
 KtNameReferenceExpression(625,628): 'foo'
   null
@@ -365,7 +378,8 @@ KtNameReferenceExpression(651,655): 'this'
   null
 
 KtCallExpression(656,661): 'foo()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
 
 KtNameReferenceExpression(656,659): 'foo'
   null
@@ -389,7 +403,8 @@ KtLabelReferenceExpression(686,691): '@anon'
   null
 
 KtCallExpression(692,697): 'foo()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
 
 KtNameReferenceExpression(692,695): 'foo'
   null
@@ -413,7 +428,8 @@ KtLabelReferenceExpression(722,734): '@InnerNested'
   null
 
 KtCallExpression(735,740): 'foo()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
 
 KtNameReferenceExpression(735,738): 'foo'
   null
@@ -437,7 +453,8 @@ KtLabelReferenceExpression(765,776): '@InnerOuter'
   null
 
 KtCallExpression(777,782): 'foo()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
 
 KtNameReferenceExpression(777,780): 'foo'
   null
@@ -461,7 +478,8 @@ KtLabelReferenceExpression(807,815): '@MyClass'
   null
 
 KtCallExpression(816,821): 'foo()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
 
 KtNameReferenceExpression(816,819): 'foo'
   null
@@ -470,7 +488,8 @@ KtValueArgumentList(819,821): '()'
   null
 
 KtCallExpression(857,1107): 'myWith { t ->'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = one/myWith(<extension receiver>: T, body: @ExtensionFunctionType kotlin.Function2<T, T, kotlin.Unit>): kotlin.Unit
 
 KtNameReferenceExpression(857,863): 'myWith'
   null
@@ -494,7 +513,8 @@ KtBlockExpression(891,1089): 'foo()'
   null
 
 KtCallExpression(891,896): 'foo()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
 
 KtNameReferenceExpression(891,894): 'foo'
   null
@@ -512,7 +532,8 @@ KtNameReferenceExpression(917,921): 'this'
   null
 
 KtCallExpression(922,927): 'foo()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
 
 KtNameReferenceExpression(922,925): 'foo'
   null
@@ -536,7 +557,8 @@ KtLabelReferenceExpression(952,959): '@myWith'
   null
 
 KtCallExpression(960,965): 'foo()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
 
 KtNameReferenceExpression(960,963): 'foo'
   null
@@ -560,7 +582,8 @@ KtLabelReferenceExpression(990,1002): '@InnerNested'
   null
 
 KtCallExpression(1003,1008): 'foo()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
 
 KtNameReferenceExpression(1003,1006): 'foo'
   null
@@ -584,7 +607,8 @@ KtLabelReferenceExpression(1033,1044): '@InnerOuter'
   null
 
 KtCallExpression(1045,1050): 'foo()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
 
 KtNameReferenceExpression(1045,1048): 'foo'
   null
@@ -608,7 +632,8 @@ KtLabelReferenceExpression(1075,1083): '@MyClass'
   null
 
 KtCallExpression(1084,1089): 'foo()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
 
 KtNameReferenceExpression(1084,1087): 'foo'
   null
@@ -617,7 +642,8 @@ KtValueArgumentList(1087,1089): '()'
   null
 
 KtCallExpression(1125,1194): 'myWith label@{'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = one/myWith(<extension receiver>: T, body: @ExtensionFunctionType kotlin.Function2<T, T, kotlin.Unit>): kotlin.Unit
 
 KtNameReferenceExpression(1125,1131): 'myWith'
   null
@@ -659,7 +685,8 @@ KtLabelReferenceExpression(1164,1170): '@label'
   null
 
 KtCallExpression(1171,1176): 'foo()'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
 
 KtNameReferenceExpression(1171,1174): 'foo'
   null
@@ -737,7 +764,8 @@ KtBlockExpression(1266,1284): '{'
   null
 
 KtCallExpression(1272,1282): 'body(this)'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = kotlin/Function2.invoke(<dispatch receiver>: kotlin.Function2<P1, P2, R>, p1: P1, p2: P2): R
 
 KtNameReferenceExpression(1272,1276): 'body'
   null

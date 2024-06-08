@@ -1,2 +1,4 @@
 KtSuperTypeCallEntry(15,18): 'I()'
-  null
+  KaSymbolResolutionErrorImpl:
+    candidateSymbols = []
+    diagnostic = ERROR<NO_CONSTRUCTOR: This type does not have a constructor.>

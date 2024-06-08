@@ -38,23 +38,22 @@ KtBlockExpression(28,44): '{'
   null
 
 KtCallExpression(34,42): 'action()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = action
-          isSafeNavigation = false
-          type = kotlin.Function0<kotlin.Unit>
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = kotlin/Function0.invoke(<dispatch receiver>: kotlin.Function0<R>): R
-          valueParameters = []
-          callableId = kotlin/Function0.invoke
-      typeArgumentsMapping = {}
-      argumentMapping = {}
+  KaSimpleFunctionCall:
+    isImplicitInvoke = true
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = action
+        isSafeNavigation = false
+        type = kotlin.Function0<kotlin.Unit>
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function0.invoke(<dispatch receiver>: kotlin.Function0<R>): R
+        valueParameters = []
+        callableId = kotlin/Function0.invoke
+    typeArgumentsMapping = {}
+    argumentMapping = {}
 
 KtNameReferenceExpression(34,40): 'action'
   KaSuccessCallInfo:
@@ -84,36 +83,35 @@ KtBlockExpression(58,163): '{'
   null
 
 KtCallExpression(64,102): 'foo label@{'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /foo(action: kotlin.Function0<kotlin.Unit>): kotlin.Unit
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = action
-              receiverType = null
-              returnType = kotlin.Function0<kotlin.Unit>
-              symbol = action: kotlin.Function0<kotlin.Unit>
-              callableId = null
-          ]
-          callableId = /foo
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        label@{
-                return@label
-            } -> (KaVariableLikeSignature:
-          name = action
-          receiverType = null
-          returnType = kotlin.Function0<kotlin.Unit>
-          symbol = action: kotlin.Function0<kotlin.Unit>
-          callableId = null)
-      }
+  KaSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /foo(action: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = action
+            receiverType = null
+            returnType = kotlin.Function0<kotlin.Unit>
+            symbol = action: kotlin.Function0<kotlin.Unit>
+            callableId = null
+        ]
+        callableId = /foo
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      label@{
+              return@label
+          } -> (KaVariableLikeSignature:
+        name = action
+        receiverType = null
+        returnType = kotlin.Function0<kotlin.Unit>
+        symbol = action: kotlin.Function0<kotlin.Unit>
+        callableId = null)
+    }
 
 KtNameReferenceExpression(64,67): 'foo'
   KaSuccessCallInfo:

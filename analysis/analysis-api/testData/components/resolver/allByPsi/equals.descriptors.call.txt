@@ -92,37 +92,36 @@ KtNameReferenceExpression(79,84): 'super'
   null
 
 KtCallExpression(85,98): 'equals(other)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = super
-          isSafeNavigation = false
-          type = kotlin.Any
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              callableId = null
-          ]
-          callableId = kotlin/Any.equals
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        other -> (KaVariableLikeSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
+  KaSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = super
+        isSafeNavigation = false
+        type = kotlin.Any
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            callableId = null
+        ]
+        callableId = kotlin/Any.equals
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      other -> (KaVariableLikeSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = other: kotlin.Any?
+        callableId = null)
+    }
 
 KtNameReferenceExpression(85,91): 'equals'
   KaSuccessCallInfo:
@@ -191,20 +190,19 @@ KtSuperTypeList(142,151): 'Another()'
   null
 
 KtSuperTypeCallEntry(142,151): 'Another()'
-  KaSuccessCallInfo:
-    call = KaDelegatedConstructorCall:
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = Another
-          symbol = <constructor>(): Another
-          valueParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {}
+  KaDelegatedConstructorCall:
+    kind = SUPER_CALL
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = Another
+        symbol = <constructor>(): Another
+        valueParameters = []
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {}
 
 KtConstructorCalleeExpression(142,149): 'Another'
   KaSuccessCallInfo:
@@ -329,37 +327,36 @@ KtNameReferenceExpression(217,222): 'super'
   null
 
 KtCallExpression(223,236): 'equals(other)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = super
-          isSafeNavigation = false
-          type = Another
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              callableId = null
-          ]
-          callableId = kotlin/Any.equals
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        other -> (KaVariableLikeSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
+  KaSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = super
+        isSafeNavigation = false
+        type = Another
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            callableId = null
+        ]
+        callableId = kotlin/Any.equals
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      other -> (KaVariableLikeSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = other: kotlin.Any?
+        callableId = null)
+    }
 
 KtNameReferenceExpression(223,229): 'equals'
   KaSuccessCallInfo:
@@ -761,37 +758,36 @@ KtNameReferenceExpression(344,346): 'm1'
       typeArgumentsMapping = {}
 
 KtCallExpression(347,357): 'equals(m2)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = m1
-          isSafeNavigation = false
-          type = MyClass
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              callableId = null
-          ]
-          callableId = /MyClass.equals
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        m2 -> (KaVariableLikeSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
+  KaSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = m1
+        isSafeNavigation = false
+        type = MyClass
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            callableId = null
+        ]
+        callableId = /MyClass.equals
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      m2 -> (KaVariableLikeSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = other: kotlin.Any?
+        callableId = null)
+    }
 
 KtNameReferenceExpression(347,353): 'equals'
   KaSuccessCallInfo:
@@ -1160,37 +1156,36 @@ KtNameReferenceExpression(417,419): 'm2'
       typeArgumentsMapping = {}
 
 KtCallExpression(420,430): 'equals(m1)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = m2
-          isSafeNavigation = false
-          type = MyClass
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              callableId = null
-          ]
-          callableId = /MyClass.equals
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        m1 -> (KaVariableLikeSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
+  KaSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = m2
+        isSafeNavigation = false
+        type = MyClass
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            callableId = null
+        ]
+        callableId = /MyClass.equals
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      m1 -> (KaVariableLikeSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = other: kotlin.Any?
+        callableId = null)
+    }
 
 KtNameReferenceExpression(420,426): 'equals'
   KaSuccessCallInfo:
@@ -1259,20 +1254,19 @@ KtProperty(454,477): 'val another = Another()'
   null
 
 KtCallExpression(468,477): 'Another()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = Another
-          symbol = <constructor>(): Another
-          valueParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {}
+  KaSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = Another
+        symbol = <constructor>(): Another
+        valueParameters = []
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {}
 
 KtNameReferenceExpression(468,475): 'Another'
   KaSuccessCallInfo:
@@ -1447,20 +1441,19 @@ KtOperationReferenceExpression(538,540): '=='
       }
 
 KtCallExpression(541,550): 'Another()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = Another
-          symbol = <constructor>(): Another
-          valueParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {}
+  KaSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = Another
+        symbol = <constructor>(): Another
+        valueParameters = []
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {}
 
 KtNameReferenceExpression(541,548): 'Another'
   KaSuccessCallInfo:
@@ -1563,20 +1556,19 @@ KtOperationReferenceExpression(563,565): '!='
       }
 
 KtCallExpression(566,575): 'Another()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = Another
-          symbol = <constructor>(): Another
-          valueParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {}
+  KaSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = Another
+        symbol = <constructor>(): Another
+        valueParameters = []
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {}
 
 KtNameReferenceExpression(566,573): 'Another'
   KaSuccessCallInfo:
@@ -1646,37 +1638,36 @@ KtNameReferenceExpression(580,587): 'another'
       typeArgumentsMapping = {}
 
 KtCallExpression(588,605): 'equals(Another())'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = another
-          isSafeNavigation = false
-          type = Another
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              callableId = null
-          ]
-          callableId = kotlin/Any.equals
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        Another() -> (KaVariableLikeSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
+  KaSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = another
+        isSafeNavigation = false
+        type = Another
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            callableId = null
+        ]
+        callableId = kotlin/Any.equals
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      Another() -> (KaVariableLikeSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = other: kotlin.Any?
+        callableId = null)
+    }
 
 KtNameReferenceExpression(588,594): 'equals'
   KaSuccessCallInfo:
@@ -1718,20 +1709,19 @@ KtValueArgument(595,604): 'Another()'
   null
 
 KtCallExpression(595,604): 'Another()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = Another
-          symbol = <constructor>(): Another
-          valueParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {}
+  KaSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = Another
+        symbol = <constructor>(): Another
+        valueParameters = []
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {}
 
 KtNameReferenceExpression(595,602): 'Another'
   KaSuccessCallInfo:
@@ -1756,20 +1746,19 @@ KtProperty(611,630): 'val child = Child()'
   null
 
 KtCallExpression(623,630): 'Child()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = Child
-          symbol = <constructor>(): Child
-          valueParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {}
+  KaSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = Child
+        symbol = <constructor>(): Child
+        valueParameters = []
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {}
 
 KtNameReferenceExpression(623,628): 'Child'
   KaSuccessCallInfo:
@@ -1794,20 +1783,19 @@ KtProperty(635,658): 'val myClass = MyClass()'
   null
 
 KtCallExpression(649,658): 'MyClass()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = <constructor>(): MyClass
-          valueParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {}
+  KaSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {}
 
 KtNameReferenceExpression(649,656): 'MyClass'
   KaSuccessCallInfo:
@@ -2045,37 +2033,36 @@ KtNameReferenceExpression(729,734): 'child'
       typeArgumentsMapping = {}
 
 KtCallExpression(735,750): 'equals(myClass)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = child
-          isSafeNavigation = false
-          type = Child
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              callableId = null
-          ]
-          callableId = /Child.equals
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        myClass -> (KaVariableLikeSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
+  KaSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = child
+        isSafeNavigation = false
+        type = Child
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            callableId = null
+        ]
+        callableId = /Child.equals
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      myClass -> (KaVariableLikeSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = other: kotlin.Any?
+        callableId = null)
+    }
 
 KtNameReferenceExpression(735,741): 'equals'
   KaSuccessCallInfo:
@@ -2314,37 +2301,36 @@ KtNameReferenceExpression(777,784): 'myClass'
       typeArgumentsMapping = {}
 
 KtCallExpression(785,798): 'equals(child)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = myClass
-          isSafeNavigation = false
-          type = MyClass
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              callableId = null
-          ]
-          callableId = /MyClass.equals
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        child -> (KaVariableLikeSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
+  KaSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = myClass
+        isSafeNavigation = false
+        type = MyClass
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            callableId = null
+        ]
+        callableId = /MyClass.equals
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      child -> (KaVariableLikeSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = other: kotlin.Any?
+        callableId = null)
+    }
 
 KtNameReferenceExpression(785,791): 'equals'
   KaSuccessCallInfo:
@@ -2545,37 +2531,36 @@ KtNameReferenceExpression(825,832): 'another'
       typeArgumentsMapping = {}
 
 KtCallExpression(833,846): 'equals(child)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = another
-          isSafeNavigation = false
-          type = Another
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              callableId = null
-          ]
-          callableId = kotlin/Any.equals
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        child -> (KaVariableLikeSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
+  KaSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = another
+        isSafeNavigation = false
+        type = Another
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            callableId = null
+        ]
+        callableId = kotlin/Any.equals
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      child -> (KaVariableLikeSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = other: kotlin.Any?
+        callableId = null)
+    }
 
 KtNameReferenceExpression(833,839): 'equals'
   KaSuccessCallInfo:
@@ -2776,37 +2761,36 @@ KtNameReferenceExpression(872,877): 'child'
       typeArgumentsMapping = {}
 
 KtCallExpression(878,893): 'equals(another)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = child
-          isSafeNavigation = false
-          type = Child
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              callableId = null
-          ]
-          callableId = /Child.equals
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        another -> (KaVariableLikeSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
+  KaSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = child
+        isSafeNavigation = false
+        type = Child
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            callableId = null
+        ]
+        callableId = /Child.equals
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      another -> (KaVariableLikeSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = other: kotlin.Any?
+        callableId = null)
+    }
 
 KtNameReferenceExpression(878,884): 'equals'
   KaSuccessCallInfo:
@@ -3007,37 +2991,36 @@ KtNameReferenceExpression(922,929): 'another'
       typeArgumentsMapping = {}
 
 KtCallExpression(930,945): 'equals(myClass)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = another
-          isSafeNavigation = false
-          type = Another
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              callableId = null
-          ]
-          callableId = kotlin/Any.equals
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        myClass -> (KaVariableLikeSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
+  KaSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = another
+        isSafeNavigation = false
+        type = Another
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            callableId = null
+        ]
+        callableId = kotlin/Any.equals
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      myClass -> (KaVariableLikeSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = other: kotlin.Any?
+        callableId = null)
+    }
 
 KtNameReferenceExpression(930,936): 'equals'
   KaSuccessCallInfo:
@@ -3276,37 +3259,36 @@ KtNameReferenceExpression(974,981): 'myClass'
       typeArgumentsMapping = {}
 
 KtCallExpression(982,997): 'equals(another)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = myClass
-          isSafeNavigation = false
-          type = MyClass
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              callableId = null
-          ]
-          callableId = /MyClass.equals
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        another -> (KaVariableLikeSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
+  KaSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = myClass
+        isSafeNavigation = false
+        type = MyClass
+      extensionReceiver = null
+      signature = KaFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableLikeSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            callableId = null
+        ]
+        callableId = /MyClass.equals
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      another -> (KaVariableLikeSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = other: kotlin.Any?
+        callableId = null)
+    }
 
 KtNameReferenceExpression(982,988): 'equals'
   KaSuccessCallInfo:

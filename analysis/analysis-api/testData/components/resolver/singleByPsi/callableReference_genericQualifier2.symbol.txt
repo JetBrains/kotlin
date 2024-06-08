@@ -1,2 +1,6 @@
 KtCallExpression(76,85): 'Test<Bar>'
-  null
+  KaSymbolResolutionErrorImpl:
+    candidateSymbols = [
+      <constructor>(): test.Test<T>
+    ]
+    diagnostic = ERROR<null: Inapplicable candidate>

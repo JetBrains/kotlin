@@ -1,0 +1,9 @@
+KtCallExpression(134,137): 'x()'
+  KaSymbolResolutionErrorImpl:
+    candidateSymbols = [
+      invoke(<extension receiver>: kotlin.Int, a: kotlin.String): kotlin.Unit,
+      invoke(<extension receiver>: kotlin.Int, b: kotlin.Boolean): kotlin.Unit
+    ]
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
+    local final operator fun Int.invoke(b: Boolean): Unit defined in call
+    local final operator fun Int.invoke(a: String): Unit defined in call>
