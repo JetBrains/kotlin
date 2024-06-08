@@ -60,6 +60,7 @@ public abstract class KaSession(
     diagnosticProvider: KaDiagnosticProvider,
     scopeProvider: KaScopeProvider,
     completionCandidateChecker: KaCompletionCandidateChecker,
+    evaluator: KaEvaluator,
     referenceShortener: KaReferenceShortener,
     importOptimizer: KaImportOptimizer,
     originalPsiProvider: KaOriginalPsiProvider,
@@ -86,7 +87,7 @@ public abstract class KaSession(
     KaSymbolInfoProviderMixIn,
     KaSubtypingComponentMixIn,
     KaExpressionInfoProviderMixIn,
-    KaCompileTimeConstantProviderMixIn,
+    KaEvaluator by evaluator,
     KaSymbolsMixIn,
     KaReferenceShortener by referenceShortener,
     KaImportOptimizer by importOptimizer,
@@ -147,9 +148,6 @@ public abstract class KaSession(
 
     internal val expressionInfoProvider: KaExpressionInfoProvider get() = expressionInfoProviderImpl
     protected abstract val expressionInfoProviderImpl: KaExpressionInfoProvider
-
-    internal val compileTimeConstantProvider: KaCompileTimeConstantProvider get() = compileTimeConstantProviderImpl
-    protected abstract val compileTimeConstantProviderImpl: KaCompileTimeConstantProvider
 
     internal val visibilityChecker: KaVisibilityChecker get() = visibilityCheckerImpl
     protected abstract val visibilityCheckerImpl: KaVisibilityChecker
