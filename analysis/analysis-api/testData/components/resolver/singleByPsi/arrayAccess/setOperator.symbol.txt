@@ -1,2 +1,3 @@
 KtArrayAccessExpression(68,72): '1[2]'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = /set(<extension receiver>: kotlin.Int, index: kotlin.Int, value: kotlin.Int): kotlin.Int

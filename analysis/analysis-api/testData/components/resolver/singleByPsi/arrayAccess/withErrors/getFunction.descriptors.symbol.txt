@@ -3,4 +3,4 @@ KtArrayAccessExpression(44,48): '1[2]'
     candidateSymbols = [
       /get(<extension receiver>: kotlin.Int, index: kotlin.Int): kotlin.Int
     ]
-    diagnostic = ERROR<OPERATOR_MODIFIER_REQUIRED: 'operator' modifier is required on 'FirNamedFunctionSymbol /get' in 'get'.>
+    diagnostic = ERROR<null: OTHER_ERROR with get>

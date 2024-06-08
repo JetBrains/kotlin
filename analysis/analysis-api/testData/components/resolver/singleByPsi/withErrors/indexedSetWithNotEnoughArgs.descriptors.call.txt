@@ -1,5 +1,5 @@
 KtArrayAccessExpression(93,97): 'c[1]'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         isImplicitInvoke = false

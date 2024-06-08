@@ -23,9 +23,11 @@ import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionAttempt
 import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionSuccess
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
@@ -64,6 +66,7 @@ public interface KaResolverMixIn : KaSessionMixIn {
     public fun KtConstructorDelegationCall.resolveSymbol(): KaConstructorSymbol? = resolveSymbolSafe(analysisSession)
     public fun KtCallExpression.resolveSymbol(): KaCallableSymbol? = resolveSymbolSafe(analysisSession)
     public fun KtCallableReferenceExpression.resolveSymbol(): KaCallableSymbol? = resolveSymbolSafe(analysisSession)
+    public fun KtArrayAccessExpression.resolveSymbol(): KaFunctionSymbol? = resolveSymbolSafe(analysisSession)
 
     public fun KtResolvableCall.attemptResolveCall(): KaCallResolutionAttempt? = withValidityAssertion {
         if (this !is KtElement) return@withValidityAssertion null
@@ -78,6 +81,7 @@ public interface KaResolverMixIn : KaSessionMixIn {
     public fun KtConstructorDelegationCall.resolveCall(): KaDelegatedConstructorCall? = resolveCallSafe(analysisSession)
     public fun KtCallExpression.resolveCall(): KaCallableMemberCall<*, *>? = resolveCallSafe(analysisSession)
     public fun KtCallableReferenceExpression.resolveCall(): KaCallableMemberCall<*, *>? = resolveCallSafe(analysisSession)
+    public fun KtArrayAccessExpression.resolveCall(): KaFunctionCall<KaFunctionSymbol>? = resolveCallSafe(analysisSession)
 
     public fun KtResolvableCall.collectCallCandidates(): List<KaCallCandidateInfo> = withValidityAssertion {
         if (this !is KtElement) return@withValidityAssertion emptyList()

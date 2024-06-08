@@ -1,2 +1,3 @@
 KtArrayAccessExpression(93,104): 'c[1, "foo"]'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = /C.set(<dispatch receiver>: C, a: kotlin.Int, b: kotlin.String, value: kotlin.Boolean): kotlin.Unit

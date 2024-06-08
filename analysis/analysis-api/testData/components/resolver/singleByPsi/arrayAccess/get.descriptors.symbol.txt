@@ -1,0 +1,3 @@
+KtArrayAccessExpression(70,77): 'list[0]'
+  KaSymbolResolutionSuccessImpl:
+    symbol = kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.List<E>, index: kotlin.Int): E

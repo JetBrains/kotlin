@@ -3,4 +3,4 @@ KtArrayAccessExpression(93,97): 'c[1]'
     candidateSymbols = [
       /C.set(<dispatch receiver>: C, a: kotlin.Int, b: kotlin.String, value: kotlin.Boolean): kotlin.Unit
     ]
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'b'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'b'>

@@ -3,4 +3,4 @@ KtArrayAccessExpression(59,63): '1[2]'
     candidateSymbols = [
       /set(<extension receiver>: kotlin.Int, index: kotlin.Int, value: kotlin.Int): kotlin.Int
     ]
-    diagnostic = ERROR<OPERATOR_MODIFIER_REQUIRED: 'operator' modifier is required on 'FirNamedFunctionSymbol /set' in 'set'.>
+    diagnostic = ERROR<null: OTHER_ERROR with set>
