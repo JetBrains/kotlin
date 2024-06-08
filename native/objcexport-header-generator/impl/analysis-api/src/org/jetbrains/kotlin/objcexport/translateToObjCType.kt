@@ -129,7 +129,7 @@ internal fun KtType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReferenc
     }
 
     if (fullyExpandedType is KtTypeParameterType) {
-        val definingSymbol = fullyExpandedType.symbol.getContainingSymbol()
+        val definingSymbol = fullyExpandedType.symbol.containingSymbol
 
         if (definingSymbol is KtCallableSymbol) {
             return ObjCIdType

@@ -66,7 +66,7 @@ internal class KaFirOverrideInfoProvider(
 
         val unwrappedFirSymbol = unwrappedDeclaration.symbol
         val unwrappedKtSymbol = analysisSession.firSymbolBuilder.callableBuilder.buildCallableSymbol(unwrappedFirSymbol)
-        return with(analysisSession) { unwrappedKtSymbol.getContainingSymbol() as? KaClassOrObjectSymbol }
+        return with(analysisSession) { unwrappedKtSymbol.containingSymbol as? KaClassOrObjectSymbol }
     }
 
     override fun unwrapFakeOverrides(symbol: KaCallableSymbol): KaCallableSymbol {

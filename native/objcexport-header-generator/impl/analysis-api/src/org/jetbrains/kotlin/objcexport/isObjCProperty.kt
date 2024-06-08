@@ -23,5 +23,5 @@ internal val KtPropertySymbol.isObjCProperty: Boolean
 
 context(KtAnalysisSession)
 private val KtPropertySymbol.isPropertyInInnerClass: Boolean
-    get() = linearClosure<KtSymbol> { symbol -> symbol.getContainingSymbol() }
+    get() = linearClosure<KtSymbol> { symbol -> symbol.containingSymbol }
         .any { it is KtNamedClassOrObjectSymbol && it.isInner }

@@ -53,7 +53,7 @@ private fun KtClassLikeSymbol.getObjCName(
             .handleSpecialNames("get")
     }
 
-    getContainingSymbol()?.let { it as? KtClassLikeSymbol }?.let { containingClass ->
+    containingSymbol?.let { it as? KtClassLikeSymbol }?.let { containingClass ->
         return containingClass.getObjCName() + objCName.capitalizeAsciiOnly()
     }
 
@@ -74,7 +74,7 @@ private fun KtClassLikeSymbol.getSwiftName(
         return swiftName
     }
 
-    getContainingSymbol()?.let { it as? KtClassLikeSymbol }?.let { containingClass ->
+    containingSymbol?.let { it as? KtClassLikeSymbol }?.let { containingClass ->
         val containingClassSwiftName = containingClass.getSwiftName()
         return buildString {
             if (canBeInnerSwift()) {
@@ -140,7 +140,7 @@ private fun mangleSwiftNestedClassName(name: String): String = when (name) {
 
 context(KtAnalysisSession, KtObjCExportSession)
 private fun KtSymbol.getObjCModuleNamePrefix(): String? {
-    val module = getContainingModule()
+    val module = containingModule
     val moduleName = module.getObjCKotlinModuleName() ?: return null
     if (moduleName == "stdlib" || moduleName == "kotlin-stdlib-common") return "Kotlin"
     if (isExported(module)) return null

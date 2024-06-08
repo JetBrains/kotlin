@@ -127,7 +127,7 @@ internal class KaFirSymbolDeclarationOverridesProvider(
         require(callableSymbol is KaFirSymbol<*>)
 
         val containingDeclaration = with(analysisSession) {
-            callableSymbol.getContainingSymbol() as? KaClassOrObjectSymbol
+            callableSymbol.containingSymbol as? KaClassOrObjectSymbol
         } ?: return
 
         when (containingDeclaration) {

@@ -56,7 +56,7 @@ internal class SirClassFromKtSymbol(
     override val superClass: SirType? by lazyWithSessions {
         // For now, we support only `class C : Kotlin.Any()` class declarations, and
         // translate Kotlin.Any to KotlinRuntime.KotlinBase.
-        ktSymbol.getContainingModule().sirModule().updateImport(SirImport(KotlinRuntimeModule.name))
+        ktSymbol.containingModule.sirModule().updateImport(SirImport(KotlinRuntimeModule.name))
         SirNominalType(KotlinRuntimeModule.kotlinBase)
     }
 

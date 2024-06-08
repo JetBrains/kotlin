@@ -118,13 +118,13 @@ internal val KtFunctionLikeSymbol.objCReceiverType: KtType?
             getDispatchReceiverType()
         } else if (isExtension) {
             if (receiverParameter?.type?.isMappedObjCType == true) receiverParameter?.type
-            else if ((getContainingSymbol() as? KtNamedClassOrObjectSymbol)?.isInner == true) receiverParameter?.type
+            else if ((containingSymbol as? KtNamedClassOrObjectSymbol)?.isInner == true) receiverParameter?.type
             else if (receiverParameter?.type?.isObjCNothing == true) return receiverParameter?.type
             else null
         } else if (this is KtPropertyGetterSymbol || this is KtPropertySetterSymbol) {
-            val property = this.getContainingSymbol() as KtPropertySymbol
+            val property = containingSymbol as KtPropertySymbol
             val isExtension = property.isExtension
-            val isInner = (property.getContainingSymbol() as? KtNamedClassOrObjectSymbol)?.isInner == true
+            val isInner = (property.containingSymbol as? KtNamedClassOrObjectSymbol)?.isInner == true
             val receiverType = property.receiverType
             if (isExtension) {
                 if (isInner) {

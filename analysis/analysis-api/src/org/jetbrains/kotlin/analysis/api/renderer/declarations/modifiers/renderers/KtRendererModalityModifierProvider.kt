@@ -46,7 +46,7 @@ public interface KaRendererModalityModifierProvider {
                     is KaPropertySymbol -> if (symbol.isOverride && symbol.modality != Modality.FINAL) return null
                 }
                 if ((symbol as? KaClassOrObjectSymbol)?.classKind == KaClassKind.INTERFACE) return null
-                if ((symbol.getContainingSymbol() as? KaClassOrObjectSymbol)?.classKind == KaClassKind.INTERFACE) return null
+                if ((symbol.containingSymbol as? KaClassOrObjectSymbol)?.classKind == KaClassKind.INTERFACE) return null
 
                 return when (symbol.modality) {
                     Modality.FINAL -> null

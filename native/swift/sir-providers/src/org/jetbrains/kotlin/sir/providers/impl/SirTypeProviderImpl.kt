@@ -107,7 +107,7 @@ public class SirTypeProviderImpl(
             when (val origin = type.origin) {
                 is KotlinSource -> {
                     val ktModule = with(ktAnalysisSession) {
-                        origin.symbol.getContainingModule()
+                        origin.symbol.containingModule
                     }
                     val sirModule = with(sirSession) {
                         ktModule.sirModule()

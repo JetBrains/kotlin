@@ -57,6 +57,7 @@ private constructor(
 ) : KaSession(
     token,
     resolver = KaFirResolver(analysisSessionProvider, token),
+    symbolRelationProvider = KaFirSymbolRelationProvider(analysisSessionProvider, token),
     diagnosticProvider = KaFirDiagnosticProvider(analysisSessionProvider, token),
     scopeProvider = KaFirScopeProvider(analysisSessionProvider, token),
     completionCandidateChecker = KaFirCompletionCandidateChecker(analysisSessionProvider, token),

@@ -13,6 +13,6 @@ import org.jetbrains.kotlin.tooling.core.linearClosure
 
 context(KtAnalysisSession)
 internal fun KtPropertyAccessorSymbol.getPropertySymbol(): KtPropertySymbol {
-    return this.linearClosure<KtSymbol> { it.getContainingSymbol() }.filterIsInstance<KtPropertySymbol>().firstOrNull()
+    return this.linearClosure<KtSymbol> { it.containingSymbol }.filterIsInstance<KtPropertySymbol>().firstOrNull()
         ?: error("Missing '${KtPropertySymbol::class} on ${this.render()}")
 }

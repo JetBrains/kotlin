@@ -36,7 +36,7 @@ internal fun KtCallableSymbol.isVisibleInObjC(): Boolean {
     if (this.isHiddenFromObjCByAnnotation()) return false
     if (this.isSealedClassConstructor()) return false
     if (this.isComponentNMethod() && this.getDirectlyOverriddenSymbols().isEmpty()) return false
-    getContainingSymbol()?.let { if (!it.isVisibleInObjC()) return false }
+    containingSymbol?.let { if (!it.isVisibleInObjC()) return false }
     return true
 }
 
@@ -51,7 +51,7 @@ internal fun KtClassOrObjectSymbol.isVisibleInObjC(): Boolean {
     if (!this.classKind.isVisibleInObjC()) return false
     if (this.isExpect) return false
     if (this.isInlined()) return false
-    getContainingSymbol()?.let { if (!it.isVisibleInObjC()) return false }
+    containingSymbol?.let { if (!it.isVisibleInObjC()) return false }
     return true
 }
 
@@ -62,7 +62,7 @@ Private utility functions
 context(KtAnalysisSession)
 private fun KtSymbol.isSealedClassConstructor(): Boolean {
     if (this !is KtConstructorSymbol) return false
-    val containingSymbol = this.getContainingSymbol() as? KtSymbolWithModality ?: return false
+    val containingSymbol = this.containingSymbol as? KtSymbolWithModality ?: return false
     return containingSymbol.modality == Modality.SEALED
 }
 
@@ -75,7 +75,7 @@ private fun KtSymbol.isComponentNMethod(): Boolean {
 
     if (this !is KtFunctionSymbol) return false
     if (!this.isOperator) return false
-    val containingClassSymbol = this.getContainingSymbol() as? KtNamedClassOrObjectSymbol ?: return false
+    val containingClassSymbol = this.containingSymbol as? KtNamedClassOrObjectSymbol ?: return false
     if (!containingClassSymbol.isData) return false
     return DataClassResolver.isComponentLike(this.name)
 }
@@ -89,7 +89,7 @@ private fun KtCallableSymbol.isHiddenFromObjCByAnnotation(): Boolean {
 
 context(KtAnalysisSession)
 private fun KtClassOrObjectSymbol.isHiddenFromObjCByAnnotation(): Boolean {
-    val containingSymbol = getContainingSymbol()
+    val containingSymbol = containingSymbol
     if (containingSymbol is KtClassOrObjectSymbol && containingSymbol.isHiddenFromObjCByAnnotation()) return true
     return this.containsHidesFromObjCAnnotation()
 }
@@ -134,7 +134,7 @@ private fun KtCallableSymbol.isHiddenFromObjCByDeprecation(): Boolean {
         return true
     }
 
-    val containingClassSymbol = getContainingSymbol() as? KtClassOrObjectSymbol
+    val containingClassSymbol = containingSymbol as? KtClassOrObjectSymbol
     if (containingClassSymbol?.deprecationStatus?.deprecationLevel == DeprecationLevelValue.HIDDEN) {
         return true
     }
@@ -156,7 +156,7 @@ private fun KtClassOrObjectSymbol.isHiddenFromObjCByDeprecation(): Boolean {
     // Note: ObjCExport requires enclosing class of exposed class to be exposed.
     // Also in Kotlin hidden class members (including other classes) aren't directly accessible.
     // So hide a class if its enclosing class is hidden:
-    val containingSymbol = getContainingSymbol()
+    val containingSymbol = containingSymbol
     if (containingSymbol is KtClassOrObjectSymbol && containingSymbol.isHiddenFromObjCByDeprecation()) {
         return true
     }

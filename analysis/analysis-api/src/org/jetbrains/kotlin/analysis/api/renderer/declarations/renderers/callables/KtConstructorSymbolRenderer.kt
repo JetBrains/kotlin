@@ -50,7 +50,7 @@ public interface KaConstructorSymbolRenderer {
                                 .renderKeyword(analysisSession, KtTokens.CONSTRUCTOR_KEYWORD, symbol, printer)
                         },
                         {
-                            (symbol.getContainingSymbol() as? KaNamedSymbol)?.name?.let { printer.append(it.render()) }
+                            (symbol.containingSymbol as? KaNamedSymbol)?.name?.let { printer.append(it.render()) }
                             printer.printCollection(symbol.valueParameters, prefix = "(", postfix = ")") {
                                 declarationRenderer.typeRenderer.renderType(analysisSession, it.returnType, printer)
                             }

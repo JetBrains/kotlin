@@ -7,42 +7,14 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
 
 public abstract class KaSymbolContainingDeclarationProvider : KaSessionComponent() {
-    public abstract fun getContainingDeclaration(symbol: KaSymbol): KaDeclarationSymbol?
-
-    public abstract fun getContainingFileSymbol(symbol: KaSymbol): KaFileSymbol?
-
     public abstract fun getContainingJvmClassName(symbol: KaCallableSymbol): String?
-
-    public abstract fun getContainingModule(symbol: KaSymbol): KtModule
 }
 
 public typealias KtSymbolContainingDeclarationProvider = KaSymbolContainingDeclarationProvider
 
 public interface KaSymbolContainingDeclarationProviderMixIn : KaSessionMixIn {
-    /**
-     * Returns containing declaration for symbol:
-     *   for top-level declarations returns null
-     *   for class members returns containing class
-     *   for local declaration returns declaration it was declared it
-     */
-    public fun KaSymbol.getContainingSymbol(): KaDeclarationSymbol? =
-        withValidityAssertion { analysisSession.containingDeclarationProvider.getContainingDeclaration(this) }
-
-    /**
-     * Returns containing [KtFile] as [KaFileSymbol]
-     *
-     * Caveat: returns `null` if the given symbol is already [KaFileSymbol], since there is no containing file.
-     *  Similarly, no containing file for libraries and Java, hence `null`.
-     */
-    public fun KaSymbol.getContainingFileSymbol(): KaFileSymbol? =
-        withValidityAssertion { analysisSession.containingDeclarationProvider.getContainingFileSymbol(this) }
-
     /**
      * Returns containing JVM class name for [KaCallableSymbol]
      *
@@ -55,9 +27,6 @@ public interface KaSymbolContainingDeclarationProviderMixIn : KaSessionMixIn {
      */
     public fun KaCallableSymbol.getContainingJvmClassName(): String? =
         withValidityAssertion { analysisSession.containingDeclarationProvider.getContainingJvmClassName(this) }
-
-    public fun KaSymbol.getContainingModule(): KtModule =
-        withValidityAssertion { analysisSession.containingDeclarationProvider.getContainingModule(this) }
 }
 
 public typealias KtSymbolContainingDeclarationProviderMixIn = KaSymbolContainingDeclarationProviderMixIn

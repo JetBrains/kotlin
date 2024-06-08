@@ -317,7 +317,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
 
         analyze(codeFragment) {
             val fileSymbol = codeFragment.getFileSymbol()
-            assertEquals(fileSymbol.getContainingModule(), codeFragmentModule)
+            assertEquals(fileSymbol.containingModule, codeFragmentModule)
 
             val referenceExpression = codeFragment.findDescendantOfType<KtSimpleNameExpression> { it.text == "x" }!!
             val variableSymbol = referenceExpression.mainReference.resolveToSymbol()
@@ -359,7 +359,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
 
         analyze(dummyFile) {
             val fileSymbol = dummyFile.getFileSymbol()
-            assertEquals(fileSymbol.getContainingModule(), dummyModule)
+            assertEquals(fileSymbol.containingModule, dummyModule)
 
             val callExpression = dummyFile.findDescendantOfType<KtCallExpression>()!!
             val call = callExpression.resolveCallOld()?.successfulFunctionCallOrNull() ?: error("Call inside a dummy file is unresolved")

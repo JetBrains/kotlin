@@ -110,7 +110,7 @@ sealed class SymbolData {
             // Fake overrides are absent in the declared member scope
             return classSymbol.combinedMemberScope
                 .callables(callableId.callableName)
-                .filter { it.getContainingSymbol() == classSymbol }
+                .filter { it.containingSymbol == classSymbol }
                 .toList()
         }
     }

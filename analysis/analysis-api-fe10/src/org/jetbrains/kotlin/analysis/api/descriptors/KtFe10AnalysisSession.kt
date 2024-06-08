@@ -30,6 +30,7 @@ class KaFe10Session(
 ) : KaSession(
     token,
     resolver = KaFe10Resolver(analysisSessionProvider, token),
+    symbolRelationProvider = KaFe10SymbolRelationProvider(analysisSessionProvider, token),
     diagnosticProvider = KaFe10DiagnosticProvider(analysisSessionProvider, token),
     scopeProvider = KaFe10ScopeProvider(analysisSessionProvider, token),
     completionCandidateChecker = KaFe10CompletionCandidateChecker(analysisSessionProvider, token),

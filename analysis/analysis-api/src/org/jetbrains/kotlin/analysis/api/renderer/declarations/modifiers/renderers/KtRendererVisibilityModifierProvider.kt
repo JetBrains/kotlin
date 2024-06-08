@@ -36,7 +36,7 @@ public interface KaRendererVisibilityModifierProvider {
                     is KaFunctionSymbol -> if (symbol.isOverride) return null
                     is KaPropertySymbol -> if (symbol.isOverride) return null
                     is KaConstructorSymbol -> {
-                        if ((symbol.getContainingSymbol() as? KaClassOrObjectSymbol)?.classKind == KaClassKind.ENUM_CLASS) return null
+                        if ((symbol.containingSymbol as? KaClassOrObjectSymbol)?.classKind == KaClassKind.ENUM_CLASS) return null
                     }
                 }
 

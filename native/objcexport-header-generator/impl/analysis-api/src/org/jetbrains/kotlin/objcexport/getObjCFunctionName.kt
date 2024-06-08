@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.getPropertySymbol
 context(KtAnalysisSession, KtObjCExportSession)
 fun KtFunctionLikeSymbol.getObjCFunctionName(): ObjCExportFunctionName {
     val annotationName =
-        if (this is KtPropertyAccessorSymbol) this.getContainingSymbol()?.resolveObjCNameAnnotation()
+        if (this is KtPropertyAccessorSymbol) containingSymbol?.resolveObjCNameAnnotation()
         else resolveObjCNameAnnotation()
     return ObjCExportFunctionName(
         swiftName = getObjCFunctionName(annotationName?.swiftName),

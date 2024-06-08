@@ -23,7 +23,7 @@ internal fun KaSession.checkContainingFileSymbol(
     testServices: TestServices
 ) {
     if (symbol.origin != KaSymbolOrigin.SOURCE) return
-    val containingFileSymbol = symbol.getContainingFileSymbol()
+    val containingFileSymbol = symbol.containingFile
     testServices.assertions.assertEquals(ktFileSymbol, containingFileSymbol) {
         "Invalid file for $symbol, expected $ktFileSymbol but $containingFileSymbol found"
     }

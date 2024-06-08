@@ -176,7 +176,7 @@ abstract class SymbolLightClassForClassLike<SType : KaClassOrObjectSymbol> prote
             is KtClassOrObject -> parent.toLightClass()
             is KtScript -> parent.toLightClass()
             null -> withClassOrObjectSymbol { s ->
-                (s.getContainingSymbol() as? KaNamedClassOrObjectSymbol)?.let { createLightClassNoCache(it, ktModule, manager) }
+                (s.containingSymbol as? KaNamedClassOrObjectSymbol)?.let { createLightClassNoCache(it, ktModule, manager) }
             }
             else -> null
         }

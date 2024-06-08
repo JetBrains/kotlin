@@ -172,7 +172,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         for (symbol in symbols) {
             if (symbol.origin != KaSymbolOrigin.SOURCE) continue
 
-            val containingFileSymbol = symbol.getContainingFileSymbol()
+            val containingFileSymbol = symbol.containingFile
             if (containingFileSymbol !in allowedContainingFileSymbols) {
                 testServices.assertions.fail {
                     "Invalid file for `$symbol`: Found `$containingFileSymbol`, which is not an allowed file symbol."

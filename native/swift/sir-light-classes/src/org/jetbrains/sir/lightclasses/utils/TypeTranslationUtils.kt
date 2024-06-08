@@ -19,7 +19,7 @@ internal inline fun <reified T : KaCallableSymbol> SirFromKtSymbol<T>.translateR
             analysisSession,
             reportErrorType = { error("Can't translate return type in ${ktSymbol.render()}: ${it}") },
             reportUnsupportedType = { error("Can't translate return type in ${ktSymbol.render()}: type is not supported") },
-            processTypeImports = this@translateReturnType.ktSymbol.getContainingModule().sirModule()::updateImports
+            processTypeImports = this@translateReturnType.ktSymbol.containingModule.sirModule()::updateImports
         )
     }
 }
@@ -31,7 +31,7 @@ internal inline fun <reified T : KaFunctionLikeSymbol> SirFromKtSymbol<T>.transl
                 analysisSession,
                 reportErrorType = { error("Can't translate parameter ${parameter.render()} type in ${ktSymbol.render()}: $it") },
                 reportUnsupportedType = { error("Can't translate parameter ${parameter.render()} type in ${ktSymbol.render()}: type is not supported") },
-                processTypeImports = this@translateParameters.ktSymbol.getContainingModule().sirModule()::updateImports
+                processTypeImports = this@translateParameters.ktSymbol.containingModule.sirModule()::updateImports
             )
             SirParameter(argumentName = parameter.name.asString(), type = sirType, origin = KotlinParameterOrigin.ValueParameter(parameter))
         }

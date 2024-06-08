@@ -52,7 +52,7 @@ private fun KtNamedClassOrObjectSymbol.isInlineIncludingKotlinNativeSpecialClass
     val classId = classId ?: return false
 
     /* Top Level symbols can be special K/N types */
-    if (getContainingSymbol() is KtClassOrObjectSymbol) return false
+    if (containingSymbol is KtClassOrObjectSymbol) return false
 
     if (classId.packageFqName == KonanFqNames.internalPackageName && classId.shortClassName == KonanFqNames.nativePtr.shortName()) {
         return true

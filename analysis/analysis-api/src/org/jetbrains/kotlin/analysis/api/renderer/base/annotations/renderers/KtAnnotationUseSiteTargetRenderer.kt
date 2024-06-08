@@ -66,7 +66,7 @@ public interface KaAnnotationUseSiteTargetRenderer {
                 is KaBackingFieldSymbol -> annotation.useSiteTarget != AnnotationUseSiteTarget.FIELD
                 is KaEnumEntrySymbol -> true
                 is KaValueParameterSymbol -> {
-                    val containingSymbol = with(analysisSession) { owner.getContainingSymbol() }
+                    val containingSymbol = with(analysisSession) { owner.containingSymbol }
                     containingSymbol !is KaPropertySetterSymbol || annotation.useSiteTarget != AnnotationUseSiteTarget.SETTER_PARAMETER
                 }
                 is KaJavaFieldSymbol -> true

@@ -72,27 +72,13 @@ public class DebugSymbolRenderer(
                 renderType(dispatchType, printer)
             }
 
-            KaSymbolContainingDeclarationProviderMixIn::class
-                .declaredMemberExtensionFunctions
-                .filterNot {
-                    // Rendering a containing symbol is prone to stack overflow.
-                    // * function symbol will render its value parameter symbol(s)
-                    //   whose containing symbol is that function symbol.
-                    // * property symbol contains accessor symbol(s) and/or backing field symbol
-                    //   whose containing symbol is that property symbol.
-                    it.name == "getContainingSymbol"
-                }
-                .forEach {
-                    if (it.name == "getContainingJvmClassName") {
-                        if (symbol is KaCallableSymbol) {
-                            appendLine()
-                            renderFunction(it, printer, renderSymbolsFully = false, analysisSession, symbol)
-                        }
-                    } else {
-                        appendLine()
-                        renderFunction(it, printer, renderSymbolsFully = false, analysisSession, symbol)
-                    }
-                }
+            renderComputedValue("getContainingFileSymbol", printer) { symbol.containingFile }
+
+            if (symbol is KaCallableSymbol) {
+                renderComputedValue("getContainingJvmClassName", printer) { symbol.getContainingJvmClassName() }
+            }
+
+            renderComputedValue("getContainingModule", printer) { symbol.containingModule }
 
             KaSymbolInfoProviderMixIn::class.declaredMemberExtensionProperties
                 .asSequence()
@@ -121,14 +107,18 @@ public class DebugSymbolRenderer(
         }
     }
 
-    private fun KaSession.renderFunction(
-        function: KFunction<*>,
-        printer: PrettyPrinter,
-        renderSymbolsFully: Boolean,
-        vararg args: Any,
-    ) {
-        printer.append(function.name).append(": ")
-        renderFunctionCall(function, printer, renderSymbolsFully, args)
+    private fun KaSession.renderComputedValue(name: String, printer: PrettyPrinter, block: () -> Any?) {
+        printer.appendLine()
+        printer.append(name).append(": ")
+
+        val value = try {
+            block()
+        } catch (e: Throwable) {
+            printer.append("Could not render due to ").appendLine(e.toString())
+            return
+        }
+
+        renderValue(value, printer, renderSymbolsFully = false)
     }
 
     private fun KaSession.renderProperty(

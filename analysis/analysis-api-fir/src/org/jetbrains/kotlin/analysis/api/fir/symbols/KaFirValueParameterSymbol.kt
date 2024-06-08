@@ -75,7 +75,7 @@ internal class KaFirValueParameterSymbol(
     override fun createPointer(): KaSymbolPointer<KaValueParameterSymbol> = withValidityAssertion {
         KaPsiBasedSymbolPointer.createForSymbolFromSource<KaValueParameterSymbol>(this)?.let { return it }
 
-        val ownerSymbol = with(analysisSession) { getContainingSymbol() }
+        val ownerSymbol = with(analysisSession) { containingSymbol }
             ?: error("Containing function is expected for a value parameter symbol")
 
         requireIsInstance<KaFunctionLikeSymbol>(ownerSymbol)

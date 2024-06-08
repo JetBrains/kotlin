@@ -43,7 +43,7 @@ abstract class AbstractAnalysisApiSignatureContractsTest : AbstractAnalysisApiBa
             val symbol = callableDeclaration.getSymbol() as KaCallableSymbol
             val typeParameters = buildList {
                 addAll(symbol.typeParameters)
-                (symbol.getContainingSymbol() as? KaClassOrObjectSymbol)?.let { addAll(it.typeParameters) }
+                (symbol.containingSymbol as? KaClassOrObjectSymbol)?.let { addAll(it.typeParameters) }
             }
             val combinations = buildList { combinations(typesToCheckOn, persistentListOf(), typeParameters.size) }
             check(combinations.size == typesToCheckOn.size.toDouble().pow(typeParameters.size).toInt())

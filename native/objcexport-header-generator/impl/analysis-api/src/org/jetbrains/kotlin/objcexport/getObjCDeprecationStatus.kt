@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 context(KtAnalysisSession)
 internal fun KaSymbol.getObjCDeprecationStatus(): String? {
     return deprecationStatus?.toDeprecationAttribute() ?: if (this.isConstructor) {
-        this.getContainingSymbol()?.deprecationStatus?.toDeprecationAttribute()
+        this.containingSymbol?.deprecationStatus?.toDeprecationAttribute()
     } else null
 }
 

@@ -59,7 +59,7 @@ internal abstract class KaFirMemberSymbolPointer<S : KaSymbol>(
 }
 
 internal inline fun <reified T : KaSymbol> KaSession.createOwnerPointer(symbol: KaSymbol): KaSymbolPointer<T> {
-    val containingSymbol = symbol.getContainingSymbol()
+    val containingSymbol = symbol.containingSymbol
         ?: error("Non-null symbol is expected for a member declaration")
 
     requireIsInstance<T>(containingSymbol)

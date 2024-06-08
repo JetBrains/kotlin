@@ -305,7 +305,7 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
     val originalElement = declaration.sourcePsiSafe<KtDeclaration>()
 
     val generatePropertyAnnotationsMethods =
-        (declaration.getContainingModule() as? KtSourceModule)
+        (declaration.containingModule as? KtSourceModule)
             ?.languageVersionSettings
             ?.getFlag(JvmAnalysisFlags.generatePropertyAnnotationsMethods) == true
 

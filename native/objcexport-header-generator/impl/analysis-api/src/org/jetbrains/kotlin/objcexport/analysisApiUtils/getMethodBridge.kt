@@ -20,7 +20,7 @@ context(KtAnalysisSession, KtObjCExportSession)
 internal fun KtFunctionLikeSymbol.getFunctionMethodBridge(): MethodBridge {
 
     val valueParameters = mutableListOf<MethodBridgeValueParameter>()
-    val isInner = (this.getContainingSymbol() as? KtNamedClassOrObjectSymbol)?.isInner ?: false
+    val isInner = (containingSymbol as? KtNamedClassOrObjectSymbol)?.isInner ?: false
 
     this.receiverParameter?.apply {
         valueParameters += bridgeParameter(this.type)

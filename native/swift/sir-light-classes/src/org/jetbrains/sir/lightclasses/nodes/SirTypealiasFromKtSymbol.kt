@@ -35,7 +35,7 @@ internal class SirTypealiasFromKtSymbol(
             analysisSession,
             reportErrorType = { error("Can't translate ${ktSymbol.render()} type: $it") },
             reportUnsupportedType = { error("Can't translate ${ktSymbol.render()} type: it is not supported") },
-            processTypeImports = ktSymbol.getContainingModule().sirModule()::updateImports
+            processTypeImports = ktSymbol.containingModule.sirModule()::updateImports
         )
     }
 
