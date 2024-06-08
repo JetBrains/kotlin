@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
+import org.jetbrains.kotlin.psi.KtCollectionLiteralExpression
 import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtSuperTypeCallEntry
@@ -59,6 +60,7 @@ abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
             is KtCallExpression -> element.resolveSymbol()
             is KtCallableReferenceExpression -> element.resolveSymbol()
             is KtArrayAccessExpression -> element.resolveSymbol()
+            is KtCollectionLiteralExpression -> element.resolveSymbol()
             else -> return
         }
 

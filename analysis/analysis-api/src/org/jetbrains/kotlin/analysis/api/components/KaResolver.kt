@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
+import org.jetbrains.kotlin.psi.KtCollectionLiteralExpression
 import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtSuperTypeCallEntry
@@ -67,6 +68,7 @@ public interface KaResolverMixIn : KaSessionMixIn {
     public fun KtCallExpression.resolveSymbol(): KaCallableSymbol? = resolveSymbolSafe(analysisSession)
     public fun KtCallableReferenceExpression.resolveSymbol(): KaCallableSymbol? = resolveSymbolSafe(analysisSession)
     public fun KtArrayAccessExpression.resolveSymbol(): KaFunctionSymbol? = resolveSymbolSafe(analysisSession)
+    public fun KtCollectionLiteralExpression.resolveSymbol(): KaFunctionSymbol? = resolveSymbolSafe(analysisSession)
 
     public fun KtResolvableCall.attemptResolveCall(): KaCallResolutionAttempt? = withValidityAssertion {
         if (this !is KtElement) return@withValidityAssertion null
@@ -82,6 +84,7 @@ public interface KaResolverMixIn : KaSessionMixIn {
     public fun KtCallExpression.resolveCall(): KaCallableMemberCall<*, *>? = resolveCallSafe(analysisSession)
     public fun KtCallableReferenceExpression.resolveCall(): KaCallableMemberCall<*, *>? = resolveCallSafe(analysisSession)
     public fun KtArrayAccessExpression.resolveCall(): KaFunctionCall<KaFunctionSymbol>? = resolveCallSafe(analysisSession)
+    public fun KtCollectionLiteralExpression.resolveCall(): KaFunctionCall<KaFunctionSymbol>? = resolveCallSafe(analysisSession)
 
     public fun KtResolvableCall.collectCallCandidates(): List<KaCallCandidateInfo> = withValidityAssertion {
         if (this !is KtElement) return@withValidityAssertion emptyList()

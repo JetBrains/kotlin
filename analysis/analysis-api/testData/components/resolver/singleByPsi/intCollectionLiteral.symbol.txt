@@ -1,2 +1,3 @@
 KtCollectionLiteralExpression(91,100): '[1, 2, 3]'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray

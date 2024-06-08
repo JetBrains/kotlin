@@ -279,7 +279,8 @@ KtValueArgument(438,447): '[1, 2, 3]'
   null
 
 KtCollectionLiteralExpression(438,447): '[1, 2, 3]'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
 
 KtConstantExpression(439,440): '1'
   null
@@ -319,7 +320,8 @@ KtNameReferenceExpression(464,467): 'arr'
   null
 
 KtCollectionLiteralExpression(470,479): '[4, 5, 6]'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
 
 KtConstantExpression(471,472): '4'
   null
@@ -468,7 +470,8 @@ KtValueArgument(624,674): '[AnnoWithKClass::class, one.AnnoWithKClass::class]'
   null
 
 KtCollectionLiteralExpression(624,674): '[AnnoWithKClass::class, one.AnnoWithKClass::class]'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
 
 KtClassLiteralExpression(625,646): 'AnnoWithKClass::class'
   null
@@ -543,7 +546,8 @@ KtValueArgument(729,741): '[10, 11, 12]'
   null
 
 KtCollectionLiteralExpression(729,741): '[10, 11, 12]'
-  null
+  KaSymbolResolutionSuccessImpl:
+    symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
 
 KtConstantExpression(730,732): '10'
   null
