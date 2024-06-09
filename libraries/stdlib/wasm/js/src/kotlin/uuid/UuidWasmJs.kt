@@ -14,10 +14,10 @@ private external object crypto {
 }
 
 @ExperimentalStdlibApi
-internal actual fun secureRandomUuid(): UUID {
-    val jsRandomBytes = Int8Array(UUID.SIZE_BYTES)
+internal actual fun secureRandomUuid(): Uuid {
+    val jsRandomBytes = Int8Array(Uuid.SIZE_BYTES)
     crypto.getRandomValues(jsRandomBytes)
     // Copy the JS-provided Int8Array into Kotlin ByteArray
-    val randomBytes = ByteArray(UUID.SIZE_BYTES) { jsRandomBytes[it] }
+    val randomBytes = ByteArray(Uuid.SIZE_BYTES) { jsRandomBytes[it] }
     return uuidFromRandomBytes(randomBytes)
 }

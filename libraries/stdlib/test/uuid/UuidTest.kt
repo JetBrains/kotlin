@@ -7,7 +7,7 @@ package test.uuid
 
 import kotlin.random.Random
 import kotlin.test.*
-import kotlin.uuid.UUID
+import kotlin.uuid.Uuid
 
 class UuidTest {
     private val mostSignificantBits = 0x550e8400e29b41d4uL
@@ -16,7 +16,7 @@ class UuidTest {
         0x55, 0x0e, 0x84.toByte(), 0x00, 0xe2.toByte(), 0x9b.toByte(), 0x41, 0xd4.toByte(),
         0xa7.toByte(), 0x16, 0x44, 0x66, 0x55, 0x44, 0x00, 0x00
     )
-    private val uuid = UUID.fromULongs(mostSignificantBits, leastSignificantBits)
+    private val uuid = Uuid.fromULongs(mostSignificantBits, leastSignificantBits)
     private val uuidString = "550e8400-e29b-41d4-a716-446655440000"
     private val uuidHexString = "550e8400e29b41d4a716446655440000"
 
@@ -26,25 +26,25 @@ class UuidTest {
     private val uuidStringMax = "ffffffff-ffff-ffff-ffff-ffffffffffff"
     private val uuidHexStringMax = "ffffffffffffffffffffffffffffffff"
 
-    private val UUID.isIETFVariant: Boolean
+    private val Uuid.isIetfVariant: Boolean
         get() = toULongs { _, leastSignificantBits -> (leastSignificantBits shr 62) == 2uL }
 
-    private val UUID.version: Int
+    private val Uuid.version: Int
         get() = toULongs { mostSignificantBits, _ -> ((mostSignificantBits shr 12) and 0xF.toULong()).toInt() }
 
     @Test
     fun fromLongs() {
         assertEquals(
             uuidString,
-            UUID.fromLongs(mostSignificantBits.toLong(), leastSignificantBits.toLong()).toString()
+            Uuid.fromLongs(mostSignificantBits.toLong(), leastSignificantBits.toLong()).toString()
         )
         assertSame(
-            UUID.NIL,
-            UUID.fromLongs(0, 0)
+            Uuid.NIL,
+            Uuid.fromLongs(0, 0)
         )
         assertEquals(
             uuidStringMax,
-            UUID.fromLongs(-1, -1).toString()
+            Uuid.fromLongs(-1, -1).toString()
         )
     }
 
@@ -52,15 +52,15 @@ class UuidTest {
     fun fromULongs() {
         assertEquals(
             uuidString,
-            UUID.fromULongs(mostSignificantBits, leastSignificantBits).toString()
+            Uuid.fromULongs(mostSignificantBits, leastSignificantBits).toString()
         )
         assertSame(
-            UUID.NIL,
-            UUID.fromULongs(0uL, 0uL)
+            Uuid.NIL,
+            Uuid.fromULongs(0uL, 0uL)
         )
         assertEquals(
             uuidStringMax,
-            UUID.fromULongs(ULong.MAX_VALUE, ULong.MAX_VALUE).toString()
+            Uuid.fromULongs(ULong.MAX_VALUE, ULong.MAX_VALUE).toString()
         )
     }
 
@@ -68,21 +68,21 @@ class UuidTest {
     fun fromByteArray() {
         assertEquals(
             uuidString,
-            UUID.fromByteArray(uuidByteArray).toString()
+            Uuid.fromByteArray(uuidByteArray).toString()
         )
         assertSame(
-            UUID.NIL,
-            UUID.fromByteArray(ByteArray(16))
+            Uuid.NIL,
+            Uuid.fromByteArray(ByteArray(16))
         )
         assertEquals(
             uuidStringMax,
-            UUID.fromByteArray(ByteArray(16) { -1 }).toString()
+            Uuid.fromByteArray(ByteArray(16) { -1 }).toString()
         )
 
         // Illegal ByteArray size
-        assertFailsWith<IllegalArgumentException> { UUID.fromByteArray(ByteArray(0)) }
-        assertFailsWith<IllegalArgumentException> { UUID.fromByteArray(ByteArray(15)) }
-        assertFailsWith<IllegalArgumentException> { UUID.fromByteArray(ByteArray(17)) }
+        assertFailsWith<IllegalArgumentException> { Uuid.fromByteArray(ByteArray(0)) }
+        assertFailsWith<IllegalArgumentException> { Uuid.fromByteArray(ByteArray(15)) }
+        assertFailsWith<IllegalArgumentException> { Uuid.fromByteArray(ByteArray(17)) }
     }
 
     private fun String.mixedcase(): String = map {
@@ -92,35 +92,35 @@ class UuidTest {
     @Test
     fun parse() {
         // lower case
-        assertEquals(uuidString, UUID.parse(uuidString).toString())
-        assertSame(UUID.NIL, UUID.parse(uuidStringNil))
-        assertEquals(uuidStringMax, UUID.parse(uuidStringMax).toString())
+        assertEquals(uuidString, Uuid.parse(uuidString).toString())
+        assertSame(Uuid.NIL, Uuid.parse(uuidStringNil))
+        assertEquals(uuidStringMax, Uuid.parse(uuidStringMax).toString())
 
         // upper case
-        assertEquals(uuidString, UUID.parse(uuidString.uppercase()).toString())
-        assertEquals(uuidStringMax, UUID.parse(uuidStringMax.uppercase()).toString())
+        assertEquals(uuidString, Uuid.parse(uuidString.uppercase()).toString())
+        assertEquals(uuidStringMax, Uuid.parse(uuidStringMax.uppercase()).toString())
 
         // mixed case
-        assertEquals(uuidString, UUID.parse(uuidString.mixedcase()).toString())
-        assertEquals(uuidStringMax, UUID.parse(uuidStringMax.mixedcase()).toString())
+        assertEquals(uuidString, Uuid.parse(uuidString.mixedcase()).toString())
+        assertEquals(uuidStringMax, Uuid.parse(uuidStringMax.mixedcase()).toString())
 
         // Illegal String format
-        assertFailsWith<IllegalArgumentException> { UUID.parse(uuidHexString) }
-        assertFailsWith<IllegalArgumentException> { UUID.parse("$uuidString-") }
-        assertFailsWith<IllegalArgumentException> { UUID.parse("-$uuidString") }
-        assertFailsWith<IllegalArgumentException> { UUID.parse("${uuidString}0") }
-        assertFailsWith<IllegalArgumentException> { UUID.parse("0${uuidString}") }
-        assertFailsWith<IllegalArgumentException> { UUID.parse(uuidString.replace("d", "g")) }
-        assertFailsWith<IllegalArgumentException> { UUID.parse(uuidString.drop(1)) }
-        assertFailsWith<IllegalArgumentException> { UUID.parse(uuidString.dropLast(1)) }
+        assertFailsWith<IllegalArgumentException> { Uuid.parse(uuidHexString) }
+        assertFailsWith<IllegalArgumentException> { Uuid.parse("$uuidString-") }
+        assertFailsWith<IllegalArgumentException> { Uuid.parse("-$uuidString") }
+        assertFailsWith<IllegalArgumentException> { Uuid.parse("${uuidString}0") }
+        assertFailsWith<IllegalArgumentException> { Uuid.parse("0${uuidString}") }
+        assertFailsWith<IllegalArgumentException> { Uuid.parse(uuidString.replace("d", "g")) }
+        assertFailsWith<IllegalArgumentException> { Uuid.parse(uuidString.drop(1)) }
+        assertFailsWith<IllegalArgumentException> { Uuid.parse(uuidString.dropLast(1)) }
 
         for (i in uuidString.indices) {
             if (uuidString[i] == '-') {
                 assertFailsWith<IllegalArgumentException> {
-                    UUID.parse(uuidString.substring(0..<i) + "+" + uuidString.substring(i + 1))
+                    Uuid.parse(uuidString.substring(0..<i) + "+" + uuidString.substring(i + 1))
                 }
                 assertFailsWith<IllegalArgumentException> {
-                    UUID.parse(uuidString.substring(0..<i) + "0" + uuidString.substring(i + 1))
+                    Uuid.parse(uuidString.substring(0..<i) + "0" + uuidString.substring(i + 1))
                 }
             }
         }
@@ -129,35 +129,35 @@ class UuidTest {
     @Test
     fun parseHex() {
         // lower case
-        assertEquals(uuidString, UUID.parseHex(uuidHexString).toString())
-        assertSame(UUID.NIL, UUID.parseHex(uuidHexStringNil))
-        assertEquals(uuidStringMax, UUID.parseHex(uuidHexStringMax).toString())
+        assertEquals(uuidString, Uuid.parseHex(uuidHexString).toString())
+        assertSame(Uuid.NIL, Uuid.parseHex(uuidHexStringNil))
+        assertEquals(uuidStringMax, Uuid.parseHex(uuidHexStringMax).toString())
 
         // upper case
-        assertEquals(uuidString, UUID.parseHex(uuidHexString.uppercase()).toString())
-        assertEquals(uuidStringMax, UUID.parseHex(uuidHexStringMax.uppercase()).toString())
+        assertEquals(uuidString, Uuid.parseHex(uuidHexString.uppercase()).toString())
+        assertEquals(uuidStringMax, Uuid.parseHex(uuidHexStringMax.uppercase()).toString())
 
         // mixed case
-        assertEquals(uuidString, UUID.parseHex(uuidHexString.mixedcase()).toString())
-        assertEquals(uuidStringMax, UUID.parseHex(uuidHexStringMax.mixedcase()).toString())
+        assertEquals(uuidString, Uuid.parseHex(uuidHexString.mixedcase()).toString())
+        assertEquals(uuidStringMax, Uuid.parseHex(uuidHexStringMax.mixedcase()).toString())
 
         // Illegal String format
-        assertFailsWith<IllegalArgumentException> { UUID.parseHex(uuidString) }
-        assertFailsWith<IllegalArgumentException> { UUID.parseHex("$uuidHexString-") }
-        assertFailsWith<IllegalArgumentException> { UUID.parseHex("-$uuidHexString") }
-        assertFailsWith<IllegalArgumentException> { UUID.parseHex("${uuidHexString}0") }
-        assertFailsWith<IllegalArgumentException> { UUID.parseHex("0${uuidHexString}") }
-        assertFailsWith<IllegalArgumentException> { UUID.parseHex(uuidHexString.replace("d", "g")) }
-        assertFailsWith<IllegalArgumentException> { UUID.parseHex(uuidHexString.drop(1)) }
-        assertFailsWith<IllegalArgumentException> { UUID.parseHex(uuidHexString.dropLast(1)) }
+        assertFailsWith<IllegalArgumentException> { Uuid.parseHex(uuidString) }
+        assertFailsWith<IllegalArgumentException> { Uuid.parseHex("$uuidHexString-") }
+        assertFailsWith<IllegalArgumentException> { Uuid.parseHex("-$uuidHexString") }
+        assertFailsWith<IllegalArgumentException> { Uuid.parseHex("${uuidHexString}0") }
+        assertFailsWith<IllegalArgumentException> { Uuid.parseHex("0${uuidHexString}") }
+        assertFailsWith<IllegalArgumentException> { Uuid.parseHex(uuidHexString.replace("d", "g")) }
+        assertFailsWith<IllegalArgumentException> { Uuid.parseHex(uuidHexString.drop(1)) }
+        assertFailsWith<IllegalArgumentException> { Uuid.parseHex(uuidHexString.dropLast(1)) }
     }
 
     @Test
     fun random() {
-        val randomUUID = UUID.random()
-        assertTrue(randomUUID.isIETFVariant)
-        assertEquals(4, randomUUID.version)
-        println("Random UUID: $randomUUID")
+        val randomUuid = Uuid.random()
+        assertTrue(randomUuid.isIetfVariant)
+        assertEquals(4, randomUuid.version)
+        println("Random Uuid: $randomUuid")
     }
 
     @Test
@@ -172,12 +172,12 @@ class UuidTest {
         assertTrue(onceInPlace)
         assertEquals(uuid.version, version)
 
-        UUID.NIL.toLongs { mostSignificantBits, leastSignificantBits ->
+        Uuid.NIL.toLongs { mostSignificantBits, leastSignificantBits ->
             assertEquals(0, mostSignificantBits)
             assertEquals(0, leastSignificantBits)
         }
 
-        UUID.parse(uuidStringMax).toLongs { mostSignificantBits, leastSignificantBits ->
+        Uuid.parse(uuidStringMax).toLongs { mostSignificantBits, leastSignificantBits ->
             assertEquals(-1, mostSignificantBits)
             assertEquals(-1, leastSignificantBits)
         }
@@ -186,21 +186,21 @@ class UuidTest {
     @Test
     fun toULongs() {
         val onceInPlace: Boolean
-        val isIETFVariant = uuid.toULongs { mostSignificantBits, leastSignificantBits ->
+        val isIetfVariant = uuid.toULongs { mostSignificantBits, leastSignificantBits ->
             assertEquals(this.mostSignificantBits, mostSignificantBits)
             assertEquals(this.leastSignificantBits, leastSignificantBits)
             onceInPlace = true
             (leastSignificantBits shr 62) == 2uL
         }
         assertTrue(onceInPlace)
-        assertEquals(uuid.isIETFVariant, isIETFVariant)
+        assertEquals(uuid.isIetfVariant, isIetfVariant)
 
-        UUID.NIL.toULongs { mostSignificantBits, leastSignificantBits ->
+        Uuid.NIL.toULongs { mostSignificantBits, leastSignificantBits ->
             assertEquals(0uL, mostSignificantBits)
             assertEquals(0uL, leastSignificantBits)
         }
 
-        UUID.parse(uuidStringMax).toULongs { mostSignificantBits, leastSignificantBits ->
+        Uuid.parse(uuidStringMax).toULongs { mostSignificantBits, leastSignificantBits ->
             assertEquals(ULong.MAX_VALUE, mostSignificantBits)
             assertEquals(ULong.MAX_VALUE, leastSignificantBits)
         }
@@ -209,35 +209,35 @@ class UuidTest {
     @Test
     fun toStringTest() {
         assertEquals(uuidString, uuid.toString())
-        assertEquals(uuidStringNil, UUID.NIL.toString())
-        assertEquals(uuidStringMax, UUID.parse(uuidStringMax).toString())
+        assertEquals(uuidStringNil, Uuid.NIL.toString())
+        assertEquals(uuidStringMax, Uuid.parse(uuidStringMax).toString())
     }
 
     @Test
     fun toHexString() {
         assertEquals(uuidHexString, uuid.toHexString())
-        assertEquals(uuidHexStringNil, UUID.NIL.toHexString())
-        assertEquals(uuidHexStringMax, UUID.parse(uuidStringMax).toHexString())
+        assertEquals(uuidHexStringNil, Uuid.NIL.toHexString())
+        assertEquals(uuidHexStringMax, Uuid.parse(uuidStringMax).toHexString())
     }
 
     @Test
     fun toByteArray() {
         assertContentEquals(uuidByteArray, uuid.toByteArray())
-        assertContentEquals(ByteArray(16), UUID.NIL.toByteArray())
-        assertContentEquals(ByteArray(16) { -1 }, UUID.parse(uuidStringMax).toByteArray())
+        assertContentEquals(ByteArray(16), Uuid.NIL.toByteArray())
+        assertContentEquals(ByteArray(16) { -1 }, Uuid.parse(uuidStringMax).toByteArray())
     }
 
     @Test
     fun testEquals() {
-        assertEquals(uuid, UUID.parse(uuidString))
-        assertEquals(UUID.NIL, UUID.parse(uuidStringNil))
-        assertEquals(UUID.fromLongs(-1, -1), UUID.parse(uuidStringMax))
+        assertEquals(uuid, Uuid.parse(uuidString))
+        assertEquals(Uuid.NIL, Uuid.parse(uuidStringNil))
+        assertEquals(Uuid.fromLongs(-1, -1), Uuid.parse(uuidStringMax))
     }
 
     @Test
     fun testHashCode() {
-        assertEquals(uuid.hashCode(), UUID.parse(uuidString).hashCode())
-        assertEquals(UUID.NIL.hashCode(), UUID.parse(uuidStringNil).hashCode())
-        assertEquals(UUID.fromLongs(-1, -1).hashCode(), UUID.parse(uuidStringMax).hashCode())
+        assertEquals(uuid.hashCode(), Uuid.parse(uuidString).hashCode())
+        assertEquals(Uuid.NIL.hashCode(), Uuid.parse(uuidStringNil).hashCode())
+        assertEquals(Uuid.fromLongs(-1, -1).hashCode(), Uuid.parse(uuidStringMax).hashCode())
     }
 }

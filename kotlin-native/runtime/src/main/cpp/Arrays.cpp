@@ -621,13 +621,13 @@ void Kotlin_ByteArray_fillWithRandomBytes(KRef byteArray, KInt size) {
         if (ret >= 0) {
             count += ret;
         } else if (errno != EINTR) { // repeat if interrupted
-            RuntimeFail("getrandom returned a negative value: %ld, errno: %d", ret, errno);
+            ThrowIllegalStateException();
         }
     }
 #elif KONAN_WINDOWS
     NTSTATUS status = BCryptGenRandom(NULL, (PUCHAR)address, (ULONG)size, BCRYPT_USE_SYSTEM_PREFERRED_RNG);
     if (!NT_SUCCESS(status)) {
-        RuntimeFail("Unexpected failure in random bytes generation: %ld", status);
+        ThrowIllegalStateException();
     }
 #else
 #error "How to Kotlin_ByteArray_fillWithRandomBytes()?"
