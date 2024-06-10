@@ -18,14 +18,6 @@ abstract class AbstractTreeBuilder : AbstractElementConfigurator<Element, Field,
         return Element(name, propertyName, category)
     }
 
-    protected fun Field.skipInIrFactory() {
-        customUseInIrFactoryStrategy = Field.UseFieldAsParameterInIrFactoryStrategy.No
-    }
-
-    protected fun Field.useFieldInIrFactory(customType: TypeRef? = null, defaultValue: String? = null) {
-        customUseInIrFactoryStrategy = Field.UseFieldAsParameterInIrFactoryStrategy.Yes(customType, defaultValue)
-    }
-
     protected fun Element.needAcceptMethod() {
         customHasAcceptMethod = true
     }

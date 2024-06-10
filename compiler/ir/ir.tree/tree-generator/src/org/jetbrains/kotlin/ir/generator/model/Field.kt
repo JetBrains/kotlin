@@ -13,23 +13,6 @@ sealed class Field(
     override val name: String,
     override var isMutable: Boolean,
 ) : AbstractField<Field>() {
-    sealed class UseFieldAsParameterInIrFactoryStrategy {
-
-        data object No : UseFieldAsParameterInIrFactoryStrategy()
-
-        data class Yes(val customType: TypeRef?, val defaultValue: String?) : UseFieldAsParameterInIrFactoryStrategy()
-    }
-
-    var customUseInIrFactoryStrategy: UseFieldAsParameterInIrFactoryStrategy? = null
-
-    val useInIrFactoryStrategy: UseFieldAsParameterInIrFactoryStrategy
-        get() = customUseInIrFactoryStrategy
-            ?: if (isChild && containsElement) {
-                UseFieldAsParameterInIrFactoryStrategy.No
-            } else {
-                UseFieldAsParameterInIrFactoryStrategy.Yes(null, null)
-            }
-
     abstract val symbolClass: Symbol?
 
     override var defaultValueInBuilder: String?
@@ -47,7 +30,6 @@ sealed class Field(
 
     override fun updateFieldsInCopy(copy: Field) {
         super.updateFieldsInCopy(copy)
-        copy.customUseInIrFactoryStrategy = customUseInIrFactoryStrategy
         copy.customSetter = customSetter
         copy.symbolFieldRole = symbolFieldRole
     }
