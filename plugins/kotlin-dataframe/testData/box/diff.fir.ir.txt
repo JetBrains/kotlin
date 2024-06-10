@@ -91,7 +91,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                     BLOCK_BODY
                       CLASS CLASS name:With_08I modality:ABSTRACT visibility:local superTypes:[kotlin.Any]
                         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I
-                        CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I [primary]
+                        CONSTRUCTOR GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I [primary]
                           BLOCK_BODY
                             DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
                             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:With_08I modality:ABSTRACT visibility:local superTypes:[kotlin.Any]'
@@ -108,56 +108,56 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                           overridden:
                             public open fun toString (): kotlin.String declared in kotlin.Any
                           $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-                        PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:char visibility:public modality:ABSTRACT [val]
+                        PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:char visibility:public modality:ABSTRACT [val]
                           annotations:
                             Order(order = 0)
                           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-char> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I) returnType:kotlin.Int
-                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:char visibility:public modality:ABSTRACT [val]
+                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:char visibility:public modality:ABSTRACT [val]
                             $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I
-                        PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:charclass visibility:public modality:ABSTRACT [val]
+                        PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:charclass visibility:public modality:ABSTRACT [val]
                           annotations:
                             Order(order = 3)
                           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-charclass> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I) returnType:kotlin.String
-                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:charclass visibility:public modality:ABSTRACT [val]
+                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:charclass visibility:public modality:ABSTRACT [val]
                             $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I
-                        PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:guild visibility:public modality:ABSTRACT [val]
+                        PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:guild visibility:public modality:ABSTRACT [val]
                           annotations:
                             Order(order = 5)
                           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-guild> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I) returnType:kotlin.Int
-                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:guild visibility:public modality:ABSTRACT [val]
+                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:guild visibility:public modality:ABSTRACT [val]
                             $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I
-                        PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:level visibility:public modality:ABSTRACT [val]
+                        PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:level visibility:public modality:ABSTRACT [val]
                           annotations:
                             Order(order = 1)
                           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-level> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I) returnType:kotlin.Int
-                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:level visibility:public modality:ABSTRACT [val]
+                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:level visibility:public modality:ABSTRACT [val]
                             $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I
-                        PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:race visibility:public modality:ABSTRACT [val]
+                        PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:race visibility:public modality:ABSTRACT [val]
                           annotations:
                             Order(order = 2)
                           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-race> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I) returnType:kotlin.String
-                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:race visibility:public modality:ABSTRACT [val]
+                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:race visibility:public modality:ABSTRACT [val]
                             $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I
-                        PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:timestamp visibility:public modality:ABSTRACT [val]
+                        PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:timestamp visibility:public modality:ABSTRACT [val]
                           annotations:
                             Order(order = 6)
                           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-timestamp> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I) returnType:java.time.LocalDateTime
-                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:timestamp visibility:public modality:ABSTRACT [val]
+                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:timestamp visibility:public modality:ABSTRACT [val]
                             $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I
-                        PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:zone visibility:public modality:ABSTRACT [val]
+                        PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:zone visibility:public modality:ABSTRACT [val]
                           annotations:
                             Order(order = 4)
                           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-zone> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I) returnType:kotlin.String
-                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:zone visibility:public modality:ABSTRACT [val]
+                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:zone visibility:public modality:ABSTRACT [val]
                             $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I
                       CLASS CLASS name:Scope0 modality:FINAL visibility:local superTypes:[kotlin.Any]
                         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
-                        PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:timestamp visibility:public modality:FINAL [val]
+                        PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:timestamp visibility:public modality:FINAL [val]
                           FIELD PROPERTY_BACKING_FIELD name:timestamp type:java.time.LocalDateTime visibility:private [final]
-                          FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-timestamp> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>) returnType:java.time.LocalDateTime
+                          FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-timestamp> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>) returnType:java.time.LocalDateTime
                             annotations:
                               JvmName(name = "With_08I_timestamp")
-                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:timestamp visibility:public modality:FINAL [val]
+                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:timestamp visibility:public modality:FINAL [val]
                             $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                             $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>
                             BLOCK_BODY
@@ -166,12 +166,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                                   CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                                     $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-timestamp>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I> origin=null
                                     name: CONST String type=kotlin.String value="timestamp"
-                        PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:timestamp visibility:public modality:FINAL [val]
+                        PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:timestamp visibility:public modality:FINAL [val]
                           FIELD PROPERTY_BACKING_FIELD name:timestamp type:org.jetbrains.kotlinx.dataframe.DataColumn<java.time.LocalDateTime> visibility:private [final]
-                          FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-timestamp> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<java.time.LocalDateTime>
+                          FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-timestamp> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<java.time.LocalDateTime>
                             annotations:
                               JvmName(name = "With_08I_timestamp")
-                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:timestamp visibility:public modality:FINAL [val]
+                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:timestamp visibility:public modality:FINAL [val]
                             $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                             $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>
                             BLOCK_BODY
@@ -180,12 +180,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                                   CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
                                     $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-timestamp>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I> origin=null
                                     columnName: CONST String type=kotlin.String value="timestamp"
-                        PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:charclass visibility:public modality:FINAL [val]
+                        PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:charclass visibility:public modality:FINAL [val]
                           FIELD PROPERTY_BACKING_FIELD name:charclass type:kotlin.String visibility:private [final]
-                          FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-charclass> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>) returnType:kotlin.String
+                          FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-charclass> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>) returnType:kotlin.String
                             annotations:
                               JvmName(name = "With_08I_charclass")
-                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:charclass visibility:public modality:FINAL [val]
+                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:charclass visibility:public modality:FINAL [val]
                             $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                             $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>
                             BLOCK_BODY
@@ -194,12 +194,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                                   CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                                     $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-charclass>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I> origin=null
                                     name: CONST String type=kotlin.String value="charclass"
-                        PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:charclass visibility:public modality:FINAL [val]
+                        PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:charclass visibility:public modality:FINAL [val]
                           FIELD PROPERTY_BACKING_FIELD name:charclass type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> visibility:private [final]
-                          FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-charclass> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
+                          FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-charclass> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
                             annotations:
                               JvmName(name = "With_08I_charclass")
-                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:charclass visibility:public modality:FINAL [val]
+                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:charclass visibility:public modality:FINAL [val]
                             $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                             $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>
                             BLOCK_BODY
@@ -208,12 +208,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                                   CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
                                     $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-charclass>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I> origin=null
                                     columnName: CONST String type=kotlin.String value="charclass"
-                        PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:guild visibility:public modality:FINAL [val]
+                        PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:guild visibility:public modality:FINAL [val]
                           FIELD PROPERTY_BACKING_FIELD name:guild type:kotlin.Int visibility:private [final]
-                          FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-guild> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>) returnType:kotlin.Int
+                          FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-guild> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>) returnType:kotlin.Int
                             annotations:
                               JvmName(name = "With_08I_guild")
-                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:guild visibility:public modality:FINAL [val]
+                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:guild visibility:public modality:FINAL [val]
                             $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                             $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>
                             BLOCK_BODY
@@ -222,12 +222,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                                   CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                                     $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-guild>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I> origin=null
                                     name: CONST String type=kotlin.String value="guild"
-                        PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:guild visibility:public modality:FINAL [val]
+                        PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:guild visibility:public modality:FINAL [val]
                           FIELD PROPERTY_BACKING_FIELD name:guild type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> visibility:private [final]
-                          FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-guild> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                          FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-guild> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
                             annotations:
                               JvmName(name = "With_08I_guild")
-                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:guild visibility:public modality:FINAL [val]
+                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:guild visibility:public modality:FINAL [val]
                             $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                             $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>
                             BLOCK_BODY
@@ -236,12 +236,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                                   CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
                                     $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-guild>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I> origin=null
                                     columnName: CONST String type=kotlin.String value="guild"
-                        PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:char visibility:public modality:FINAL [val]
+                        PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:char visibility:public modality:FINAL [val]
                           FIELD PROPERTY_BACKING_FIELD name:char type:kotlin.Int visibility:private [final]
-                          FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-char> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>) returnType:kotlin.Int
+                          FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-char> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>) returnType:kotlin.Int
                             annotations:
                               JvmName(name = "With_08I_char")
-                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:char visibility:public modality:FINAL [val]
+                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:char visibility:public modality:FINAL [val]
                             $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                             $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>
                             BLOCK_BODY
@@ -250,12 +250,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                                   CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                                     $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-char>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I> origin=null
                                     name: CONST String type=kotlin.String value="char"
-                        PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:char visibility:public modality:FINAL [val]
+                        PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:char visibility:public modality:FINAL [val]
                           FIELD PROPERTY_BACKING_FIELD name:char type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> visibility:private [final]
-                          FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-char> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                          FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-char> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
                             annotations:
                               JvmName(name = "With_08I_char")
-                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:char visibility:public modality:FINAL [val]
+                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:char visibility:public modality:FINAL [val]
                             $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                             $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>
                             BLOCK_BODY
@@ -264,12 +264,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                                   CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
                                     $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-char>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I> origin=null
                                     columnName: CONST String type=kotlin.String value="char"
-                        PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:race visibility:public modality:FINAL [val]
+                        PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:race visibility:public modality:FINAL [val]
                           FIELD PROPERTY_BACKING_FIELD name:race type:kotlin.String visibility:private [final]
-                          FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-race> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>) returnType:kotlin.String
+                          FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-race> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>) returnType:kotlin.String
                             annotations:
                               JvmName(name = "With_08I_race")
-                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:race visibility:public modality:FINAL [val]
+                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:race visibility:public modality:FINAL [val]
                             $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                             $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>
                             BLOCK_BODY
@@ -278,12 +278,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                                   CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                                     $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-race>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I> origin=null
                                     name: CONST String type=kotlin.String value="race"
-                        PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:race visibility:public modality:FINAL [val]
+                        PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:race visibility:public modality:FINAL [val]
                           FIELD PROPERTY_BACKING_FIELD name:race type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> visibility:private [final]
-                          FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-race> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
+                          FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-race> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
                             annotations:
                               JvmName(name = "With_08I_race")
-                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:race visibility:public modality:FINAL [val]
+                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:race visibility:public modality:FINAL [val]
                             $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                             $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>
                             BLOCK_BODY
@@ -292,12 +292,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                                   CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
                                     $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-race>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I> origin=null
                                     columnName: CONST String type=kotlin.String value="race"
-                        PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:level visibility:public modality:FINAL [val]
+                        PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:level visibility:public modality:FINAL [val]
                           FIELD PROPERTY_BACKING_FIELD name:level type:kotlin.Int visibility:private [final]
-                          FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-level> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>) returnType:kotlin.Int
+                          FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-level> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>) returnType:kotlin.Int
                             annotations:
                               JvmName(name = "With_08I_level")
-                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:level visibility:public modality:FINAL [val]
+                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:level visibility:public modality:FINAL [val]
                             $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                             $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>
                             BLOCK_BODY
@@ -306,12 +306,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                                   CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                                     $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-level>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I> origin=null
                                     name: CONST String type=kotlin.String value="level"
-                        PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:level visibility:public modality:FINAL [val]
+                        PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:level visibility:public modality:FINAL [val]
                           FIELD PROPERTY_BACKING_FIELD name:level type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> visibility:private [final]
-                          FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-level> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                          FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-level> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
                             annotations:
                               JvmName(name = "With_08I_level")
-                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:level visibility:public modality:FINAL [val]
+                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:level visibility:public modality:FINAL [val]
                             $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                             $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>
                             BLOCK_BODY
@@ -320,12 +320,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                                   CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
                                     $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-level>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I> origin=null
                                     columnName: CONST String type=kotlin.String value="level"
-                        PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:zone visibility:public modality:FINAL [val]
+                        PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:zone visibility:public modality:FINAL [val]
                           FIELD PROPERTY_BACKING_FIELD name:zone type:kotlin.String visibility:private [final]
-                          FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-zone> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>) returnType:kotlin.String
+                          FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-zone> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>) returnType:kotlin.String
                             annotations:
                               JvmName(name = "With_08I_zone")
-                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:zone visibility:public modality:FINAL [val]
+                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:zone visibility:public modality:FINAL [val]
                             $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                             $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>
                             BLOCK_BODY
@@ -334,12 +334,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                                   CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                                     $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-zone>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I> origin=null
                                     name: CONST String type=kotlin.String value="zone"
-                        PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:zone visibility:public modality:FINAL [val]
+                        PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:zone visibility:public modality:FINAL [val]
                           FIELD PROPERTY_BACKING_FIELD name:zone type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> visibility:private [final]
-                          FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-zone> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
+                          FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-zone> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
                             annotations:
                               JvmName(name = "With_08I_zone")
-                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:zone visibility:public modality:FINAL [val]
+                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:zone visibility:public modality:FINAL [val]
                             $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                             $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I>
                             BLOCK_BODY
@@ -348,7 +348,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                                   CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
                                     $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-zone>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I> origin=null
                                     columnName: CONST String type=kotlin.String value="zone"
-                        CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0 [primary]
+                        CONSTRUCTOR GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0 [primary]
                           BLOCK_BODY
                             DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
                             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Scope0 modality:FINAL visibility:local superTypes:[kotlin.Any]'
@@ -367,7 +367,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                           $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                       CLASS CLASS name:With_08 modality:ABSTRACT visibility:local superTypes:[org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I]
                         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08
-                        CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08 [primary]
+                        CONSTRUCTOR GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08 [primary]
                           BLOCK_BODY
                             DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I'
                             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:With_08 modality:ABSTRACT visibility:local superTypes:[org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I]'
@@ -454,12 +454,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                             overridden:
                               public abstract fun <get-zone> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I
                             $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08I
-                        PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                        PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08) returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
-                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                             $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08
                           FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope0> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08, <set-?>:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0) returnType:kotlin.Unit
-                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                            correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                             $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08
                             VALUE_PARAMETER name:<set-?> index:0 type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                       RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: org.jetbrains.kotlinx.dataframe.api.Convert<org.jetbrains.kotlinx.dataframe.ActivePlayer, kotlin.String>): org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08> declared in org.jetbrains.kotlinx.dataframe.box'
@@ -498,7 +498,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                 BLOCK_BODY
                   CLASS CLASS name:With_78I modality:ABSTRACT visibility:local superTypes:[kotlin.Any]
                     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I
-                    CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I [primary]
+                    CONSTRUCTOR GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I [primary]
                       BLOCK_BODY
                         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
                         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:With_78I modality:ABSTRACT visibility:local superTypes:[kotlin.Any]'
@@ -515,62 +515,62 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                       overridden:
                         public open fun toString (): kotlin.String declared in kotlin.Any
                       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-                    PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:char visibility:public modality:ABSTRACT [val]
+                    PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:char visibility:public modality:ABSTRACT [val]
                       annotations:
                         Order(order = 0)
                       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-char> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I) returnType:kotlin.Int
-                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:char visibility:public modality:ABSTRACT [val]
+                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:char visibility:public modality:ABSTRACT [val]
                         $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I
-                    PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:charclass visibility:public modality:ABSTRACT [val]
+                    PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:charclass visibility:public modality:ABSTRACT [val]
                       annotations:
                         Order(order = 3)
                       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-charclass> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I) returnType:kotlin.String
-                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:charclass visibility:public modality:ABSTRACT [val]
+                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:charclass visibility:public modality:ABSTRACT [val]
                         $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I
-                    PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:guild visibility:public modality:ABSTRACT [val]
+                    PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:guild visibility:public modality:ABSTRACT [val]
                       annotations:
                         Order(order = 5)
                       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-guild> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I) returnType:kotlin.Int
-                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:guild visibility:public modality:ABSTRACT [val]
+                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:guild visibility:public modality:ABSTRACT [val]
                         $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I
-                    PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:level visibility:public modality:ABSTRACT [val]
+                    PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:level visibility:public modality:ABSTRACT [val]
                       annotations:
                         Order(order = 1)
                       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-level> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I) returnType:kotlin.Int
-                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:level visibility:public modality:ABSTRACT [val]
+                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:level visibility:public modality:ABSTRACT [val]
                         $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I
-                    PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:race visibility:public modality:ABSTRACT [val]
+                    PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:race visibility:public modality:ABSTRACT [val]
                       annotations:
                         Order(order = 2)
                       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-race> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I) returnType:kotlin.String
-                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:race visibility:public modality:ABSTRACT [val]
+                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:race visibility:public modality:ABSTRACT [val]
                         $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I
-                    PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:timestamp visibility:public modality:ABSTRACT [val]
+                    PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:timestamp visibility:public modality:ABSTRACT [val]
                       annotations:
                         Order(order = 6)
                       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-timestamp> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I) returnType:java.time.LocalDateTime
-                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:timestamp visibility:public modality:ABSTRACT [val]
+                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:timestamp visibility:public modality:ABSTRACT [val]
                         $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I
-                    PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:tsDiff visibility:public modality:ABSTRACT [val]
+                    PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:tsDiff visibility:public modality:ABSTRACT [val]
                       annotations:
                         Order(order = 7)
                       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-tsDiff> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I) returnType:kotlin.Boolean
-                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:tsDiff visibility:public modality:ABSTRACT [val]
+                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:tsDiff visibility:public modality:ABSTRACT [val]
                         $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I
-                    PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:zone visibility:public modality:ABSTRACT [val]
+                    PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:zone visibility:public modality:ABSTRACT [val]
                       annotations:
                         Order(order = 4)
                       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-zone> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I) returnType:kotlin.String
-                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:zone visibility:public modality:ABSTRACT [val]
+                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:zone visibility:public modality:ABSTRACT [val]
                         $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I
                   CLASS CLASS name:Scope0 modality:FINAL visibility:local superTypes:[kotlin.Any]
                     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
-                    PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:timestamp visibility:public modality:FINAL [val]
+                    PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:timestamp visibility:public modality:FINAL [val]
                       FIELD PROPERTY_BACKING_FIELD name:timestamp type:java.time.LocalDateTime visibility:private [final]
-                      FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-timestamp> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>) returnType:java.time.LocalDateTime
+                      FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-timestamp> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>) returnType:java.time.LocalDateTime
                         annotations:
                           JvmName(name = "With_78I_timestamp")
-                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:timestamp visibility:public modality:FINAL [val]
+                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:timestamp visibility:public modality:FINAL [val]
                         $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                         $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>
                         BLOCK_BODY
@@ -579,12 +579,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                               CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                                 $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-timestamp>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I> origin=null
                                 name: CONST String type=kotlin.String value="timestamp"
-                    PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:timestamp visibility:public modality:FINAL [val]
+                    PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:timestamp visibility:public modality:FINAL [val]
                       FIELD PROPERTY_BACKING_FIELD name:timestamp type:org.jetbrains.kotlinx.dataframe.DataColumn<java.time.LocalDateTime> visibility:private [final]
-                      FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-timestamp> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<java.time.LocalDateTime>
+                      FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-timestamp> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<java.time.LocalDateTime>
                         annotations:
                           JvmName(name = "With_78I_timestamp")
-                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:timestamp visibility:public modality:FINAL [val]
+                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:timestamp visibility:public modality:FINAL [val]
                         $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                         $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>
                         BLOCK_BODY
@@ -593,12 +593,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                               CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
                                 $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-timestamp>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I> origin=null
                                 columnName: CONST String type=kotlin.String value="timestamp"
-                    PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:tsDiff visibility:public modality:FINAL [val]
+                    PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:tsDiff visibility:public modality:FINAL [val]
                       FIELD PROPERTY_BACKING_FIELD name:tsDiff type:kotlin.Boolean visibility:private [final]
-                      FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-tsDiff> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>) returnType:kotlin.Boolean
+                      FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-tsDiff> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>) returnType:kotlin.Boolean
                         annotations:
                           JvmName(name = "With_78I_tsDiff")
-                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:tsDiff visibility:public modality:FINAL [val]
+                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:tsDiff visibility:public modality:FINAL [val]
                         $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                         $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>
                         BLOCK_BODY
@@ -607,12 +607,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                               CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                                 $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-tsDiff>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I> origin=null
                                 name: CONST String type=kotlin.String value="tsDiff"
-                    PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:tsDiff visibility:public modality:FINAL [val]
+                    PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:tsDiff visibility:public modality:FINAL [val]
                       FIELD PROPERTY_BACKING_FIELD name:tsDiff type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Boolean> visibility:private [final]
-                      FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-tsDiff> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Boolean>
+                      FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-tsDiff> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Boolean>
                         annotations:
                           JvmName(name = "With_78I_tsDiff")
-                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:tsDiff visibility:public modality:FINAL [val]
+                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:tsDiff visibility:public modality:FINAL [val]
                         $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                         $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>
                         BLOCK_BODY
@@ -621,12 +621,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                               CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
                                 $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-tsDiff>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I> origin=null
                                 columnName: CONST String type=kotlin.String value="tsDiff"
-                    PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:charclass visibility:public modality:FINAL [val]
+                    PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:charclass visibility:public modality:FINAL [val]
                       FIELD PROPERTY_BACKING_FIELD name:charclass type:kotlin.String visibility:private [final]
-                      FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-charclass> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>) returnType:kotlin.String
+                      FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-charclass> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>) returnType:kotlin.String
                         annotations:
                           JvmName(name = "With_78I_charclass")
-                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:charclass visibility:public modality:FINAL [val]
+                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:charclass visibility:public modality:FINAL [val]
                         $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                         $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>
                         BLOCK_BODY
@@ -635,12 +635,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                               CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                                 $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-charclass>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I> origin=null
                                 name: CONST String type=kotlin.String value="charclass"
-                    PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:charclass visibility:public modality:FINAL [val]
+                    PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:charclass visibility:public modality:FINAL [val]
                       FIELD PROPERTY_BACKING_FIELD name:charclass type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> visibility:private [final]
-                      FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-charclass> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
+                      FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-charclass> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
                         annotations:
                           JvmName(name = "With_78I_charclass")
-                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:charclass visibility:public modality:FINAL [val]
+                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:charclass visibility:public modality:FINAL [val]
                         $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                         $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>
                         BLOCK_BODY
@@ -649,12 +649,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                               CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
                                 $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-charclass>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I> origin=null
                                 columnName: CONST String type=kotlin.String value="charclass"
-                    PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:guild visibility:public modality:FINAL [val]
+                    PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:guild visibility:public modality:FINAL [val]
                       FIELD PROPERTY_BACKING_FIELD name:guild type:kotlin.Int visibility:private [final]
-                      FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-guild> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>) returnType:kotlin.Int
+                      FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-guild> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>) returnType:kotlin.Int
                         annotations:
                           JvmName(name = "With_78I_guild")
-                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:guild visibility:public modality:FINAL [val]
+                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:guild visibility:public modality:FINAL [val]
                         $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                         $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>
                         BLOCK_BODY
@@ -663,12 +663,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                               CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                                 $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-guild>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I> origin=null
                                 name: CONST String type=kotlin.String value="guild"
-                    PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:guild visibility:public modality:FINAL [val]
+                    PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:guild visibility:public modality:FINAL [val]
                       FIELD PROPERTY_BACKING_FIELD name:guild type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> visibility:private [final]
-                      FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-guild> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                      FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-guild> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
                         annotations:
                           JvmName(name = "With_78I_guild")
-                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:guild visibility:public modality:FINAL [val]
+                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:guild visibility:public modality:FINAL [val]
                         $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                         $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>
                         BLOCK_BODY
@@ -677,12 +677,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                               CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
                                 $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-guild>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I> origin=null
                                 columnName: CONST String type=kotlin.String value="guild"
-                    PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:char visibility:public modality:FINAL [val]
+                    PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:char visibility:public modality:FINAL [val]
                       FIELD PROPERTY_BACKING_FIELD name:char type:kotlin.Int visibility:private [final]
-                      FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-char> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>) returnType:kotlin.Int
+                      FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-char> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>) returnType:kotlin.Int
                         annotations:
                           JvmName(name = "With_78I_char")
-                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:char visibility:public modality:FINAL [val]
+                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:char visibility:public modality:FINAL [val]
                         $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                         $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>
                         BLOCK_BODY
@@ -691,12 +691,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                               CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                                 $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-char>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I> origin=null
                                 name: CONST String type=kotlin.String value="char"
-                    PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:char visibility:public modality:FINAL [val]
+                    PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:char visibility:public modality:FINAL [val]
                       FIELD PROPERTY_BACKING_FIELD name:char type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> visibility:private [final]
-                      FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-char> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                      FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-char> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
                         annotations:
                           JvmName(name = "With_78I_char")
-                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:char visibility:public modality:FINAL [val]
+                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:char visibility:public modality:FINAL [val]
                         $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                         $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>
                         BLOCK_BODY
@@ -705,12 +705,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                               CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
                                 $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-char>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I> origin=null
                                 columnName: CONST String type=kotlin.String value="char"
-                    PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:race visibility:public modality:FINAL [val]
+                    PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:race visibility:public modality:FINAL [val]
                       FIELD PROPERTY_BACKING_FIELD name:race type:kotlin.String visibility:private [final]
-                      FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-race> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>) returnType:kotlin.String
+                      FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-race> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>) returnType:kotlin.String
                         annotations:
                           JvmName(name = "With_78I_race")
-                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:race visibility:public modality:FINAL [val]
+                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:race visibility:public modality:FINAL [val]
                         $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                         $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>
                         BLOCK_BODY
@@ -719,12 +719,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                               CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                                 $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-race>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I> origin=null
                                 name: CONST String type=kotlin.String value="race"
-                    PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:race visibility:public modality:FINAL [val]
+                    PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:race visibility:public modality:FINAL [val]
                       FIELD PROPERTY_BACKING_FIELD name:race type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> visibility:private [final]
-                      FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-race> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
+                      FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-race> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
                         annotations:
                           JvmName(name = "With_78I_race")
-                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:race visibility:public modality:FINAL [val]
+                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:race visibility:public modality:FINAL [val]
                         $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                         $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>
                         BLOCK_BODY
@@ -733,12 +733,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                               CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
                                 $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-race>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I> origin=null
                                 columnName: CONST String type=kotlin.String value="race"
-                    PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:level visibility:public modality:FINAL [val]
+                    PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:level visibility:public modality:FINAL [val]
                       FIELD PROPERTY_BACKING_FIELD name:level type:kotlin.Int visibility:private [final]
-                      FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-level> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>) returnType:kotlin.Int
+                      FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-level> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>) returnType:kotlin.Int
                         annotations:
                           JvmName(name = "With_78I_level")
-                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:level visibility:public modality:FINAL [val]
+                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:level visibility:public modality:FINAL [val]
                         $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                         $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>
                         BLOCK_BODY
@@ -747,12 +747,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                               CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                                 $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-level>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I> origin=null
                                 name: CONST String type=kotlin.String value="level"
-                    PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:level visibility:public modality:FINAL [val]
+                    PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:level visibility:public modality:FINAL [val]
                       FIELD PROPERTY_BACKING_FIELD name:level type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> visibility:private [final]
-                      FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-level> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                      FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-level> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
                         annotations:
                           JvmName(name = "With_78I_level")
-                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:level visibility:public modality:FINAL [val]
+                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:level visibility:public modality:FINAL [val]
                         $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                         $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>
                         BLOCK_BODY
@@ -761,12 +761,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                               CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
                                 $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-level>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I> origin=null
                                 columnName: CONST String type=kotlin.String value="level"
-                    PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:zone visibility:public modality:FINAL [val]
+                    PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:zone visibility:public modality:FINAL [val]
                       FIELD PROPERTY_BACKING_FIELD name:zone type:kotlin.String visibility:private [final]
-                      FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-zone> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>) returnType:kotlin.String
+                      FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-zone> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>) returnType:kotlin.String
                         annotations:
                           JvmName(name = "With_78I_zone")
-                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:zone visibility:public modality:FINAL [val]
+                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:zone visibility:public modality:FINAL [val]
                         $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                         $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>
                         BLOCK_BODY
@@ -775,12 +775,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                               CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                                 $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-zone>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I> origin=null
                                 name: CONST String type=kotlin.String value="zone"
-                    PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:zone visibility:public modality:FINAL [val]
+                    PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:zone visibility:public modality:FINAL [val]
                       FIELD PROPERTY_BACKING_FIELD name:zone type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> visibility:private [final]
-                      FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-zone> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
+                      FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-zone> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
                         annotations:
                           JvmName(name = "With_78I_zone")
-                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:zone visibility:public modality:FINAL [val]
+                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:zone visibility:public modality:FINAL [val]
                         $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                         $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I>
                         BLOCK_BODY
@@ -789,7 +789,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                               CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
                                 $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-zone>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I> origin=null
                                 columnName: CONST String type=kotlin.String value="zone"
-                    CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0 [primary]
+                    CONSTRUCTOR GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0 [primary]
                       BLOCK_BODY
                         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
                         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Scope0 modality:FINAL visibility:local superTypes:[kotlin.Any]'
@@ -808,7 +808,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   CLASS CLASS name:With_78 modality:ABSTRACT visibility:local superTypes:[org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I]
                     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78
-                    CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78 [primary]
+                    CONSTRUCTOR GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78 [primary]
                       BLOCK_BODY
                         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I'
                         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:With_78 modality:ABSTRACT visibility:local superTypes:[org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I]'
@@ -905,12 +905,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                         overridden:
                           public abstract fun <get-zone> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I
                         $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78I
-                    PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                    PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78) returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
-                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                         $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78
                       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope0> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78, <set-?>:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0) returnType:kotlin.Unit
-                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                         $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78
                         VALUE_PARAMETER name:<set-?> index:0 type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_08>): org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78> declared in org.jetbrains.kotlinx.dataframe.box'
@@ -979,7 +979,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
               BLOCK_BODY
                 CLASS CLASS name:With_56I modality:ABSTRACT visibility:local superTypes:[kotlin.Any]
                   $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I
-                  CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I [primary]
+                  CONSTRUCTOR GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I [primary]
                     BLOCK_BODY
                       DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
                       INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:With_56I modality:ABSTRACT visibility:local superTypes:[kotlin.Any]'
@@ -996,68 +996,68 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                     overridden:
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:char visibility:public modality:ABSTRACT [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:char visibility:public modality:ABSTRACT [val]
                     annotations:
                       Order(order = 0)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-char> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I) returnType:kotlin.Int
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:char visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:char visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:charDiff visibility:public modality:ABSTRACT [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:charDiff visibility:public modality:ABSTRACT [val]
                     annotations:
                       Order(order = 8)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-charDiff> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I) returnType:kotlin.Boolean
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:charDiff visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:charDiff visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:charclass visibility:public modality:ABSTRACT [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:charclass visibility:public modality:ABSTRACT [val]
                     annotations:
                       Order(order = 3)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-charclass> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I) returnType:kotlin.String
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:charclass visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:charclass visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:guild visibility:public modality:ABSTRACT [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:guild visibility:public modality:ABSTRACT [val]
                     annotations:
                       Order(order = 5)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-guild> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I) returnType:kotlin.Int
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:guild visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:guild visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:level visibility:public modality:ABSTRACT [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:level visibility:public modality:ABSTRACT [val]
                     annotations:
                       Order(order = 1)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-level> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I) returnType:kotlin.Int
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:level visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:level visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:race visibility:public modality:ABSTRACT [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:race visibility:public modality:ABSTRACT [val]
                     annotations:
                       Order(order = 2)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-race> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I) returnType:kotlin.String
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:race visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:race visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:timestamp visibility:public modality:ABSTRACT [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:timestamp visibility:public modality:ABSTRACT [val]
                     annotations:
                       Order(order = 6)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-timestamp> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I) returnType:java.time.LocalDateTime
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:timestamp visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:timestamp visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:tsDiff visibility:public modality:ABSTRACT [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:tsDiff visibility:public modality:ABSTRACT [val]
                     annotations:
                       Order(order = 7)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-tsDiff> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I) returnType:kotlin.Boolean
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:tsDiff visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:tsDiff visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:zone visibility:public modality:ABSTRACT [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:zone visibility:public modality:ABSTRACT [val]
                     annotations:
                       Order(order = 4)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-zone> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I) returnType:kotlin.String
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:zone visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:zone visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I
                 CLASS CLASS name:Scope0 modality:FINAL visibility:local superTypes:[kotlin.Any]
                   $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:charDiff visibility:public modality:FINAL [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:charDiff visibility:public modality:FINAL [val]
                     FIELD PROPERTY_BACKING_FIELD name:charDiff type:kotlin.Boolean visibility:private [final]
-                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-charDiff> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:kotlin.Boolean
+                    FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-charDiff> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:kotlin.Boolean
                       annotations:
                         JvmName(name = "With_56I_charDiff")
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:charDiff visibility:public modality:FINAL [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:charDiff visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                       $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>
                       BLOCK_BODY
@@ -1066,12 +1066,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                             CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-charDiff>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> origin=null
                               name: CONST String type=kotlin.String value="charDiff"
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:charDiff visibility:public modality:FINAL [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:charDiff visibility:public modality:FINAL [val]
                     FIELD PROPERTY_BACKING_FIELD name:charDiff type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Boolean> visibility:private [final]
-                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-charDiff> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Boolean>
+                    FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-charDiff> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Boolean>
                       annotations:
                         JvmName(name = "With_56I_charDiff")
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:charDiff visibility:public modality:FINAL [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:charDiff visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                       $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>
                       BLOCK_BODY
@@ -1080,12 +1080,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                             CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-charDiff>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> origin=null
                               columnName: CONST String type=kotlin.String value="charDiff"
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:timestamp visibility:public modality:FINAL [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:timestamp visibility:public modality:FINAL [val]
                     FIELD PROPERTY_BACKING_FIELD name:timestamp type:java.time.LocalDateTime visibility:private [final]
-                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-timestamp> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:java.time.LocalDateTime
+                    FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-timestamp> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:java.time.LocalDateTime
                       annotations:
                         JvmName(name = "With_56I_timestamp")
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:timestamp visibility:public modality:FINAL [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:timestamp visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                       $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>
                       BLOCK_BODY
@@ -1094,12 +1094,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                             CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-timestamp>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> origin=null
                               name: CONST String type=kotlin.String value="timestamp"
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:timestamp visibility:public modality:FINAL [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:timestamp visibility:public modality:FINAL [val]
                     FIELD PROPERTY_BACKING_FIELD name:timestamp type:org.jetbrains.kotlinx.dataframe.DataColumn<java.time.LocalDateTime> visibility:private [final]
-                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-timestamp> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<java.time.LocalDateTime>
+                    FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-timestamp> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<java.time.LocalDateTime>
                       annotations:
                         JvmName(name = "With_56I_timestamp")
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:timestamp visibility:public modality:FINAL [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:timestamp visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                       $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>
                       BLOCK_BODY
@@ -1108,12 +1108,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                             CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-timestamp>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> origin=null
                               columnName: CONST String type=kotlin.String value="timestamp"
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:tsDiff visibility:public modality:FINAL [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:tsDiff visibility:public modality:FINAL [val]
                     FIELD PROPERTY_BACKING_FIELD name:tsDiff type:kotlin.Boolean visibility:private [final]
-                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-tsDiff> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:kotlin.Boolean
+                    FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-tsDiff> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:kotlin.Boolean
                       annotations:
                         JvmName(name = "With_56I_tsDiff")
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:tsDiff visibility:public modality:FINAL [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:tsDiff visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                       $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>
                       BLOCK_BODY
@@ -1122,12 +1122,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                             CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-tsDiff>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> origin=null
                               name: CONST String type=kotlin.String value="tsDiff"
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:tsDiff visibility:public modality:FINAL [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:tsDiff visibility:public modality:FINAL [val]
                     FIELD PROPERTY_BACKING_FIELD name:tsDiff type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Boolean> visibility:private [final]
-                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-tsDiff> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Boolean>
+                    FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-tsDiff> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Boolean>
                       annotations:
                         JvmName(name = "With_56I_tsDiff")
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:tsDiff visibility:public modality:FINAL [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:tsDiff visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                       $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>
                       BLOCK_BODY
@@ -1136,12 +1136,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                             CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-tsDiff>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> origin=null
                               columnName: CONST String type=kotlin.String value="tsDiff"
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:charclass visibility:public modality:FINAL [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:charclass visibility:public modality:FINAL [val]
                     FIELD PROPERTY_BACKING_FIELD name:charclass type:kotlin.String visibility:private [final]
-                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-charclass> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:kotlin.String
+                    FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-charclass> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:kotlin.String
                       annotations:
                         JvmName(name = "With_56I_charclass")
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:charclass visibility:public modality:FINAL [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:charclass visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                       $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>
                       BLOCK_BODY
@@ -1150,12 +1150,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                             CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-charclass>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> origin=null
                               name: CONST String type=kotlin.String value="charclass"
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:charclass visibility:public modality:FINAL [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:charclass visibility:public modality:FINAL [val]
                     FIELD PROPERTY_BACKING_FIELD name:charclass type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> visibility:private [final]
-                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-charclass> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
+                    FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-charclass> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
                       annotations:
                         JvmName(name = "With_56I_charclass")
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:charclass visibility:public modality:FINAL [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:charclass visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                       $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>
                       BLOCK_BODY
@@ -1164,12 +1164,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                             CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-charclass>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> origin=null
                               columnName: CONST String type=kotlin.String value="charclass"
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:guild visibility:public modality:FINAL [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:guild visibility:public modality:FINAL [val]
                     FIELD PROPERTY_BACKING_FIELD name:guild type:kotlin.Int visibility:private [final]
-                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-guild> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:kotlin.Int
+                    FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-guild> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:kotlin.Int
                       annotations:
                         JvmName(name = "With_56I_guild")
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:guild visibility:public modality:FINAL [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:guild visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                       $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>
                       BLOCK_BODY
@@ -1178,12 +1178,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                             CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-guild>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> origin=null
                               name: CONST String type=kotlin.String value="guild"
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:guild visibility:public modality:FINAL [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:guild visibility:public modality:FINAL [val]
                     FIELD PROPERTY_BACKING_FIELD name:guild type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> visibility:private [final]
-                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-guild> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                    FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-guild> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
                       annotations:
                         JvmName(name = "With_56I_guild")
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:guild visibility:public modality:FINAL [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:guild visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                       $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>
                       BLOCK_BODY
@@ -1192,12 +1192,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                             CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-guild>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> origin=null
                               columnName: CONST String type=kotlin.String value="guild"
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:char visibility:public modality:FINAL [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:char visibility:public modality:FINAL [val]
                     FIELD PROPERTY_BACKING_FIELD name:char type:kotlin.Int visibility:private [final]
-                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-char> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:kotlin.Int
+                    FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-char> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:kotlin.Int
                       annotations:
                         JvmName(name = "With_56I_char")
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:char visibility:public modality:FINAL [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:char visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                       $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>
                       BLOCK_BODY
@@ -1206,12 +1206,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                             CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-char>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> origin=null
                               name: CONST String type=kotlin.String value="char"
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:char visibility:public modality:FINAL [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:char visibility:public modality:FINAL [val]
                     FIELD PROPERTY_BACKING_FIELD name:char type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> visibility:private [final]
-                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-char> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                    FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-char> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
                       annotations:
                         JvmName(name = "With_56I_char")
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:char visibility:public modality:FINAL [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:char visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                       $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>
                       BLOCK_BODY
@@ -1220,12 +1220,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                             CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-char>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> origin=null
                               columnName: CONST String type=kotlin.String value="char"
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:race visibility:public modality:FINAL [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:race visibility:public modality:FINAL [val]
                     FIELD PROPERTY_BACKING_FIELD name:race type:kotlin.String visibility:private [final]
-                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-race> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:kotlin.String
+                    FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-race> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:kotlin.String
                       annotations:
                         JvmName(name = "With_56I_race")
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:race visibility:public modality:FINAL [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:race visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                       $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>
                       BLOCK_BODY
@@ -1234,12 +1234,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                             CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-race>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> origin=null
                               name: CONST String type=kotlin.String value="race"
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:race visibility:public modality:FINAL [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:race visibility:public modality:FINAL [val]
                     FIELD PROPERTY_BACKING_FIELD name:race type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> visibility:private [final]
-                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-race> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
+                    FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-race> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
                       annotations:
                         JvmName(name = "With_56I_race")
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:race visibility:public modality:FINAL [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:race visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                       $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>
                       BLOCK_BODY
@@ -1248,12 +1248,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                             CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-race>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> origin=null
                               columnName: CONST String type=kotlin.String value="race"
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:level visibility:public modality:FINAL [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:level visibility:public modality:FINAL [val]
                     FIELD PROPERTY_BACKING_FIELD name:level type:kotlin.Int visibility:private [final]
-                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-level> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:kotlin.Int
+                    FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-level> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:kotlin.Int
                       annotations:
                         JvmName(name = "With_56I_level")
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:level visibility:public modality:FINAL [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:level visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                       $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>
                       BLOCK_BODY
@@ -1262,12 +1262,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                             CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-level>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> origin=null
                               name: CONST String type=kotlin.String value="level"
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:level visibility:public modality:FINAL [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:level visibility:public modality:FINAL [val]
                     FIELD PROPERTY_BACKING_FIELD name:level type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> visibility:private [final]
-                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-level> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                    FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-level> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
                       annotations:
                         JvmName(name = "With_56I_level")
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:level visibility:public modality:FINAL [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:level visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                       $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>
                       BLOCK_BODY
@@ -1276,12 +1276,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                             CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-level>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> origin=null
                               columnName: CONST String type=kotlin.String value="level"
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:zone visibility:public modality:FINAL [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:zone visibility:public modality:FINAL [val]
                     FIELD PROPERTY_BACKING_FIELD name:zone type:kotlin.String visibility:private [final]
-                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-zone> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:kotlin.String
+                    FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-zone> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:kotlin.String
                       annotations:
                         JvmName(name = "With_56I_zone")
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:zone visibility:public modality:FINAL [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:zone visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                       $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>
                       BLOCK_BODY
@@ -1290,12 +1290,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                             CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-zone>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> origin=null
                               name: CONST String type=kotlin.String value="zone"
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:zone visibility:public modality:FINAL [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:zone visibility:public modality:FINAL [val]
                     FIELD PROPERTY_BACKING_FIELD name:zone type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> visibility:private [final]
-                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-zone> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
+                    FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-zone> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
                       annotations:
                         JvmName(name = "With_56I_zone")
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:zone visibility:public modality:FINAL [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:zone visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                       $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I>
                       BLOCK_BODY
@@ -1304,7 +1304,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                             CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-zone>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I> origin=null
                               columnName: CONST String type=kotlin.String value="zone"
-                  CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0 [primary]
+                  CONSTRUCTOR GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0 [primary]
                     BLOCK_BODY
                       DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
                       INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Scope0 modality:FINAL visibility:local superTypes:[kotlin.Any]'
@@ -1323,7 +1323,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                 CLASS CLASS name:With_56 modality:ABSTRACT visibility:local superTypes:[org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I]
                   $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56
-                  CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56 [primary]
+                  CONSTRUCTOR GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56 [primary]
                     BLOCK_BODY
                       DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I'
                       INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:With_56 modality:ABSTRACT visibility:local superTypes:[org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I]'
@@ -1430,12 +1430,12 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
                       overridden:
                         public abstract fun <get-zone> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56I
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56) returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope0> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56, <set-?>:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0) returnType:kotlin.Unit
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56
                       VALUE_PARAMETER name:<set-?> index:0 type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_78>): org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_56> declared in org.jetbrains.kotlinx.dataframe.box'

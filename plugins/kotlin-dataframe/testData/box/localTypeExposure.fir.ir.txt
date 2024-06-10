@@ -67,7 +67,7 @@ FILE fqName:<root> fileName:/localTypeExposure.kt
               BLOCK_BODY
                 CLASS CLASS name:Add_78I modality:ABSTRACT visibility:local superTypes:[kotlin.Any]
                   $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.df3.<anonymous>.Add_78I
-                  CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:<root>.df3.<anonymous>.Add_78I [primary]
+                  CONSTRUCTOR GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] visibility:public <> () returnType:<root>.df3.<anonymous>.Add_78I [primary]
                     BLOCK_BODY
                       DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
                       INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Add_78I modality:ABSTRACT visibility:local superTypes:[kotlin.Any]'
@@ -84,20 +84,20 @@ FILE fqName:<root> fileName:/localTypeExposure.kt
                     overridden:
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:b visibility:public modality:ABSTRACT [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:b visibility:public modality:ABSTRACT [val]
                     annotations:
                       Order(order = 0)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-b> visibility:public modality:ABSTRACT <> ($this:<root>.df3.<anonymous>.Add_78I) returnType:kotlin.Int
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:b visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:b visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.df3.<anonymous>.Add_78I
                 CLASS CLASS name:Scope0 modality:FINAL visibility:local superTypes:[kotlin.Any]
                   $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.df3.<anonymous>.Scope0
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:b visibility:public modality:FINAL [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:b visibility:public modality:FINAL [val]
                     FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Int visibility:private [final]
-                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-b> visibility:public modality:FINAL <> ($this:<root>.df3.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<<root>.df3.<anonymous>.Add_78I>) returnType:kotlin.Int
+                    FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-b> visibility:public modality:FINAL <> ($this:<root>.df3.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<<root>.df3.<anonymous>.Add_78I>) returnType:kotlin.Int
                       annotations:
                         JvmName(name = "Add_78I_b")
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:b visibility:public modality:FINAL [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:b visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.df3.<anonymous>.Scope0
                       $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<<root>.df3.<anonymous>.Add_78I>
                       BLOCK_BODY
@@ -106,12 +106,12 @@ FILE fqName:<root> fileName:/localTypeExposure.kt
                             CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<<root>.df3.<anonymous>.Add_78I> declared in <root>.df3.<anonymous>.Scope0.<get-b>' type=org.jetbrains.kotlinx.dataframe.DataRow<<root>.df3.<anonymous>.Add_78I> origin=null
                               name: CONST String type=kotlin.String value="b"
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:b visibility:public modality:FINAL [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:b visibility:public modality:FINAL [val]
                     FIELD PROPERTY_BACKING_FIELD name:b type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> visibility:private [final]
-                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-b> visibility:public modality:FINAL <> ($this:<root>.df3.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.df3.<anonymous>.Add_78I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                    FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-b> visibility:public modality:FINAL <> ($this:<root>.df3.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.df3.<anonymous>.Add_78I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
                       annotations:
                         JvmName(name = "Add_78I_b")
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:b visibility:public modality:FINAL [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:b visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.df3.<anonymous>.Scope0
                       $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.df3.<anonymous>.Add_78I>
                       BLOCK_BODY
@@ -120,7 +120,7 @@ FILE fqName:<root> fileName:/localTypeExposure.kt
                             CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.df3.<anonymous>.Add_78I> declared in <root>.df3.<anonymous>.Scope0.<get-b>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.df3.<anonymous>.Add_78I> origin=null
                               columnName: CONST String type=kotlin.String value="b"
-                  CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:<root>.df3.<anonymous>.Scope0 [primary]
+                  CONSTRUCTOR GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] visibility:public <> () returnType:<root>.df3.<anonymous>.Scope0 [primary]
                     BLOCK_BODY
                       DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
                       INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Scope0 modality:FINAL visibility:local superTypes:[kotlin.Any]'
@@ -139,7 +139,7 @@ FILE fqName:<root> fileName:/localTypeExposure.kt
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                 CLASS CLASS name:Add_78 modality:ABSTRACT visibility:local superTypes:[<root>.df3.<anonymous>.Add_78I]
                   $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.df3.<anonymous>.Add_78
-                  CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:<root>.df3.<anonymous>.Add_78 [primary]
+                  CONSTRUCTOR GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] visibility:public <> () returnType:<root>.df3.<anonymous>.Add_78 [primary]
                     BLOCK_BODY
                       DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.df3.<anonymous>.Add_78I'
                       INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Add_78 modality:ABSTRACT visibility:local superTypes:[<root>.df3.<anonymous>.Add_78I]'
@@ -166,12 +166,12 @@ FILE fqName:<root> fileName:/localTypeExposure.kt
                       overridden:
                         public abstract fun <get-b> (): kotlin.Int declared in <root>.df3.<anonymous>.Add_78I
                       $this: VALUE_PARAMETER name:<this> type:<root>.df3.<anonymous>.Add_78I
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.df3.<anonymous>.Add_78) returnType:<root>.df3.<anonymous>.Scope0
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                       $this: VALUE_PARAMETER name:<this> type:<root>.df3.<anonymous>.Add_78
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.df3.<anonymous>.Add_78, <set-?>:<root>.df3.<anonymous>.Scope0) returnType:kotlin.Unit
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                       $this: VALUE_PARAMETER name:<this> type:<root>.df3.<anonymous>.Add_78
                       VALUE_PARAMETER name:<set-?> index:0 type:<root>.df3.<anonymous>.Scope0
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: org.jetbrains.kotlinx.dataframe.DataFrame<*>): org.jetbrains.kotlinx.dataframe.DataFrame<<root>.df3.<anonymous>.Add_78> declared in <root>.df3'
@@ -293,7 +293,7 @@ FILE fqName:<root> fileName:/localTypeExposure.kt
                 BLOCK_BODY
                   CLASS CLASS name:Add_78I modality:ABSTRACT visibility:local superTypes:[kotlin.Any]
                     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Container.df4.<anonymous>.Add_78I
-                    CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:<root>.Container.df4.<anonymous>.Add_78I [primary]
+                    CONSTRUCTOR GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] visibility:public <> () returnType:<root>.Container.df4.<anonymous>.Add_78I [primary]
                       BLOCK_BODY
                         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
                         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Add_78I modality:ABSTRACT visibility:local superTypes:[kotlin.Any]'
@@ -310,20 +310,20 @@ FILE fqName:<root> fileName:/localTypeExposure.kt
                       overridden:
                         public open fun toString (): kotlin.String declared in kotlin.Any
                       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-                    PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:b visibility:public modality:ABSTRACT [val]
+                    PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:b visibility:public modality:ABSTRACT [val]
                       annotations:
                         Order(order = 0)
                       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-b> visibility:public modality:ABSTRACT <> ($this:<root>.Container.df4.<anonymous>.Add_78I) returnType:kotlin.Int
-                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:b visibility:public modality:ABSTRACT [val]
+                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:b visibility:public modality:ABSTRACT [val]
                         $this: VALUE_PARAMETER name:<this> type:<root>.Container.df4.<anonymous>.Add_78I
                   CLASS CLASS name:Scope0 modality:FINAL visibility:local superTypes:[kotlin.Any]
                     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Container.df4.<anonymous>.Scope0
-                    PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:b visibility:public modality:FINAL [val]
+                    PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:b visibility:public modality:FINAL [val]
                       FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Int visibility:private [final]
-                      FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-b> visibility:public modality:FINAL <> ($this:<root>.Container.df4.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<<root>.Container.df4.<anonymous>.Add_78I>) returnType:kotlin.Int
+                      FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-b> visibility:public modality:FINAL <> ($this:<root>.Container.df4.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<<root>.Container.df4.<anonymous>.Add_78I>) returnType:kotlin.Int
                         annotations:
                           JvmName(name = "Add_78I_b")
-                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:b visibility:public modality:FINAL [val]
+                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:b visibility:public modality:FINAL [val]
                         $this: VALUE_PARAMETER name:<this> type:<root>.Container.df4.<anonymous>.Scope0
                         $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<<root>.Container.df4.<anonymous>.Add_78I>
                         BLOCK_BODY
@@ -332,12 +332,12 @@ FILE fqName:<root> fileName:/localTypeExposure.kt
                               CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                                 $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<<root>.Container.df4.<anonymous>.Add_78I> declared in <root>.Container.df4.<anonymous>.Scope0.<get-b>' type=org.jetbrains.kotlinx.dataframe.DataRow<<root>.Container.df4.<anonymous>.Add_78I> origin=null
                                 name: CONST String type=kotlin.String value="b"
-                    PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:b visibility:public modality:FINAL [val]
+                    PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:b visibility:public modality:FINAL [val]
                       FIELD PROPERTY_BACKING_FIELD name:b type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> visibility:private [final]
-                      FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-b> visibility:public modality:FINAL <> ($this:<root>.Container.df4.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.Container.df4.<anonymous>.Add_78I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                      FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-b> visibility:public modality:FINAL <> ($this:<root>.Container.df4.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.Container.df4.<anonymous>.Add_78I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
                         annotations:
                           JvmName(name = "Add_78I_b")
-                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:b visibility:public modality:FINAL [val]
+                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:b visibility:public modality:FINAL [val]
                         $this: VALUE_PARAMETER name:<this> type:<root>.Container.df4.<anonymous>.Scope0
                         $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.Container.df4.<anonymous>.Add_78I>
                         BLOCK_BODY
@@ -346,7 +346,7 @@ FILE fqName:<root> fileName:/localTypeExposure.kt
                               CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
                                 $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.Container.df4.<anonymous>.Add_78I> declared in <root>.Container.df4.<anonymous>.Scope0.<get-b>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.Container.df4.<anonymous>.Add_78I> origin=null
                                 columnName: CONST String type=kotlin.String value="b"
-                    CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:<root>.Container.df4.<anonymous>.Scope0 [primary]
+                    CONSTRUCTOR GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] visibility:public <> () returnType:<root>.Container.df4.<anonymous>.Scope0 [primary]
                       BLOCK_BODY
                         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
                         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Scope0 modality:FINAL visibility:local superTypes:[kotlin.Any]'
@@ -365,7 +365,7 @@ FILE fqName:<root> fileName:/localTypeExposure.kt
                       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   CLASS CLASS name:Add_78 modality:ABSTRACT visibility:local superTypes:[<root>.Container.df4.<anonymous>.Add_78I]
                     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Container.df4.<anonymous>.Add_78
-                    CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:<root>.Container.df4.<anonymous>.Add_78 [primary]
+                    CONSTRUCTOR GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] visibility:public <> () returnType:<root>.Container.df4.<anonymous>.Add_78 [primary]
                       BLOCK_BODY
                         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Container.df4.<anonymous>.Add_78I'
                         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Add_78 modality:ABSTRACT visibility:local superTypes:[<root>.Container.df4.<anonymous>.Add_78I]'
@@ -392,12 +392,12 @@ FILE fqName:<root> fileName:/localTypeExposure.kt
                         overridden:
                           public abstract fun <get-b> (): kotlin.Int declared in <root>.Container.df4.<anonymous>.Add_78I
                         $this: VALUE_PARAMETER name:<this> type:<root>.Container.df4.<anonymous>.Add_78I
-                    PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                    PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.Container.df4.<anonymous>.Add_78) returnType:<root>.Container.df4.<anonymous>.Scope0
-                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                         $this: VALUE_PARAMETER name:<this> type:<root>.Container.df4.<anonymous>.Add_78
                       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.Container.df4.<anonymous>.Add_78, <set-?>:<root>.Container.df4.<anonymous>.Scope0) returnType:kotlin.Unit
-                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                         $this: VALUE_PARAMETER name:<this> type:<root>.Container.df4.<anonymous>.Add_78
                         VALUE_PARAMETER name:<set-?> index:0 type:<root>.Container.df4.<anonymous>.Scope0
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: org.jetbrains.kotlinx.dataframe.DataFrame<*>): org.jetbrains.kotlinx.dataframe.DataFrame<<root>.Container.df4.<anonymous>.Add_78> declared in <root>.Container.df4'

@@ -13,7 +13,7 @@ FILE fqName:<root> fileName:/injectAccessorsDsl.kt
               BLOCK_BODY
                 CLASS CLASS name:Add_71I modality:ABSTRACT visibility:local superTypes:[kotlin.Any]
                   $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Dsl is evaluated to .<anonymous>.Add_71I
-                  CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:<root>.Dsl is evaluated to .<anonymous>.Add_71I [primary]
+                  CONSTRUCTOR GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] visibility:public <> () returnType:<root>.Dsl is evaluated to .<anonymous>.Add_71I [primary]
                     BLOCK_BODY
                       DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
                       INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Add_71I modality:ABSTRACT visibility:local superTypes:[kotlin.Any]'
@@ -30,26 +30,26 @@ FILE fqName:<root> fileName:/injectAccessorsDsl.kt
                     overridden:
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:col1 visibility:public modality:ABSTRACT [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:col1 visibility:public modality:ABSTRACT [val]
                     annotations:
                       Order(order = 0)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-col1> visibility:public modality:ABSTRACT <> ($this:<root>.Dsl is evaluated to .<anonymous>.Add_71I) returnType:kotlin.Int
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:col1 visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:col1 visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.Dsl is evaluated to .<anonymous>.Add_71I
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:col2 visibility:public modality:ABSTRACT [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:col2 visibility:public modality:ABSTRACT [val]
                     annotations:
                       Order(order = 1)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-col2> visibility:public modality:ABSTRACT <> ($this:<root>.Dsl is evaluated to .<anonymous>.Add_71I) returnType:kotlin.Int
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:col2 visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:col2 visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.Dsl is evaluated to .<anonymous>.Add_71I
                 CLASS CLASS name:Scope0 modality:FINAL visibility:local superTypes:[kotlin.Any]
                   $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Dsl is evaluated to .<anonymous>.Scope0
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:col1 visibility:public modality:FINAL [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:col1 visibility:public modality:FINAL [val]
                     FIELD PROPERTY_BACKING_FIELD name:col1 type:kotlin.Int visibility:private [final]
-                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-col1> visibility:public modality:FINAL <> ($this:<root>.Dsl is evaluated to .<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<<root>.Dsl is evaluated to .<anonymous>.Add_71I>) returnType:kotlin.Int
+                    FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-col1> visibility:public modality:FINAL <> ($this:<root>.Dsl is evaluated to .<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<<root>.Dsl is evaluated to .<anonymous>.Add_71I>) returnType:kotlin.Int
                       annotations:
                         JvmName(name = "Add_71I_col1")
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:col1 visibility:public modality:FINAL [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:col1 visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.Dsl is evaluated to .<anonymous>.Scope0
                       $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<<root>.Dsl is evaluated to .<anonymous>.Add_71I>
                       BLOCK_BODY
@@ -58,12 +58,12 @@ FILE fqName:<root> fileName:/injectAccessorsDsl.kt
                             CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<<root>.Dsl is evaluated to .<anonymous>.Add_71I> declared in <root>.Dsl is evaluated to .<anonymous>.Scope0.<get-col1>' type=org.jetbrains.kotlinx.dataframe.DataRow<<root>.Dsl is evaluated to .<anonymous>.Add_71I> origin=null
                               name: CONST String type=kotlin.String value="col1"
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:col1 visibility:public modality:FINAL [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:col1 visibility:public modality:FINAL [val]
                     FIELD PROPERTY_BACKING_FIELD name:col1 type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> visibility:private [final]
-                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-col1> visibility:public modality:FINAL <> ($this:<root>.Dsl is evaluated to .<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.Dsl is evaluated to .<anonymous>.Add_71I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                    FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-col1> visibility:public modality:FINAL <> ($this:<root>.Dsl is evaluated to .<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.Dsl is evaluated to .<anonymous>.Add_71I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
                       annotations:
                         JvmName(name = "Add_71I_col1")
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:col1 visibility:public modality:FINAL [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:col1 visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.Dsl is evaluated to .<anonymous>.Scope0
                       $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.Dsl is evaluated to .<anonymous>.Add_71I>
                       BLOCK_BODY
@@ -72,12 +72,12 @@ FILE fqName:<root> fileName:/injectAccessorsDsl.kt
                             CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.Dsl is evaluated to .<anonymous>.Add_71I> declared in <root>.Dsl is evaluated to .<anonymous>.Scope0.<get-col1>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.Dsl is evaluated to .<anonymous>.Add_71I> origin=null
                               columnName: CONST String type=kotlin.String value="col1"
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:col2 visibility:public modality:FINAL [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:col2 visibility:public modality:FINAL [val]
                     FIELD PROPERTY_BACKING_FIELD name:col2 type:kotlin.Int visibility:private [final]
-                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-col2> visibility:public modality:FINAL <> ($this:<root>.Dsl is evaluated to .<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<<root>.Dsl is evaluated to .<anonymous>.Add_71I>) returnType:kotlin.Int
+                    FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-col2> visibility:public modality:FINAL <> ($this:<root>.Dsl is evaluated to .<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<<root>.Dsl is evaluated to .<anonymous>.Add_71I>) returnType:kotlin.Int
                       annotations:
                         JvmName(name = "Add_71I_col2")
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:col2 visibility:public modality:FINAL [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:col2 visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.Dsl is evaluated to .<anonymous>.Scope0
                       $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<<root>.Dsl is evaluated to .<anonymous>.Add_71I>
                       BLOCK_BODY
@@ -86,12 +86,12 @@ FILE fqName:<root> fileName:/injectAccessorsDsl.kt
                             CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<<root>.Dsl is evaluated to .<anonymous>.Add_71I> declared in <root>.Dsl is evaluated to .<anonymous>.Scope0.<get-col2>' type=org.jetbrains.kotlinx.dataframe.DataRow<<root>.Dsl is evaluated to .<anonymous>.Add_71I> origin=null
                               name: CONST String type=kotlin.String value="col2"
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:col2 visibility:public modality:FINAL [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:col2 visibility:public modality:FINAL [val]
                     FIELD PROPERTY_BACKING_FIELD name:col2 type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> visibility:private [final]
-                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-col2> visibility:public modality:FINAL <> ($this:<root>.Dsl is evaluated to .<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.Dsl is evaluated to .<anonymous>.Add_71I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                    FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-col2> visibility:public modality:FINAL <> ($this:<root>.Dsl is evaluated to .<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.Dsl is evaluated to .<anonymous>.Add_71I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
                       annotations:
                         JvmName(name = "Add_71I_col2")
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:col2 visibility:public modality:FINAL [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:col2 visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.Dsl is evaluated to .<anonymous>.Scope0
                       $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.Dsl is evaluated to .<anonymous>.Add_71I>
                       BLOCK_BODY
@@ -100,7 +100,7 @@ FILE fqName:<root> fileName:/injectAccessorsDsl.kt
                             CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.Dsl is evaluated to .<anonymous>.Add_71I> declared in <root>.Dsl is evaluated to .<anonymous>.Scope0.<get-col2>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.Dsl is evaluated to .<anonymous>.Add_71I> origin=null
                               columnName: CONST String type=kotlin.String value="col2"
-                  CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:<root>.Dsl is evaluated to .<anonymous>.Scope0 [primary]
+                  CONSTRUCTOR GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] visibility:public <> () returnType:<root>.Dsl is evaluated to .<anonymous>.Scope0 [primary]
                     BLOCK_BODY
                       DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
                       INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Scope0 modality:FINAL visibility:local superTypes:[kotlin.Any]'
@@ -119,7 +119,7 @@ FILE fqName:<root> fileName:/injectAccessorsDsl.kt
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                 CLASS CLASS name:Add_71 modality:ABSTRACT visibility:local superTypes:[<root>.Dsl is evaluated to .<anonymous>.Add_71I]
                   $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Dsl is evaluated to .<anonymous>.Add_71
-                  CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:<root>.Dsl is evaluated to .<anonymous>.Add_71 [primary]
+                  CONSTRUCTOR GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] visibility:public <> () returnType:<root>.Dsl is evaluated to .<anonymous>.Add_71 [primary]
                     BLOCK_BODY
                       DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Dsl is evaluated to .<anonymous>.Add_71I'
                       INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Add_71 modality:ABSTRACT visibility:local superTypes:[<root>.Dsl is evaluated to .<anonymous>.Add_71I]'
@@ -156,12 +156,12 @@ FILE fqName:<root> fileName:/injectAccessorsDsl.kt
                       overridden:
                         public abstract fun <get-col2> (): kotlin.Int declared in <root>.Dsl is evaluated to .<anonymous>.Add_71I
                       $this: VALUE_PARAMETER name:<this> type:<root>.Dsl is evaluated to .<anonymous>.Add_71I
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.Dsl is evaluated to .<anonymous>.Add_71) returnType:<root>.Dsl is evaluated to .<anonymous>.Scope0
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                       $this: VALUE_PARAMETER name:<this> type:<root>.Dsl is evaluated to .<anonymous>.Add_71
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.Dsl is evaluated to .<anonymous>.Add_71, <set-?>:<root>.Dsl is evaluated to .<anonymous>.Scope0) returnType:kotlin.Unit
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                       $this: VALUE_PARAMETER name:<this> type:<root>.Dsl is evaluated to .<anonymous>.Add_71
                       VALUE_PARAMETER name:<set-?> index:0 type:<root>.Dsl is evaluated to .<anonymous>.Scope0
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: org.jetbrains.kotlinx.dataframe.DataFrame<*>): org.jetbrains.kotlinx.dataframe.DataFrame<<root>.Dsl is evaluated to .<anonymous>.Add_71> declared in <root>.Dsl is evaluated to'
