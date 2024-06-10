@@ -2,6 +2,7 @@ package org.jetbrains.kotlinx.dataframe
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
+import org.jetbrains.kotlin.fir.dataframe.utils.Names
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
@@ -26,15 +27,6 @@ import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.KVariance
 
-val DF_CLASS_ID: ClassId
-    get() = ClassId.topLevel(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe", "DataFrame")))
-
-val COLUM_GROUP_CLASS_ID: ClassId
-    get() = ClassId(FqName("org.jetbrains.kotlinx.dataframe.columns"), Name.identifier("ColumnGroup"))
-
-val DATA_ROW_CLASS_ID: ClassId
-    get() = ClassId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")), Name.identifier("DataRow"))
-
 interface KotlinTypeFacade {
     val session: FirSession
     val resolutionPath: String? get() = null
@@ -44,20 +36,14 @@ interface KotlinTypeFacade {
     fun Marker.type() = type
 
     val anyDataFrame get() = ConeClassLikeTypeImpl(
-        ConeClassLikeLookupTagImpl(DF_CLASS_ID),
+        ConeClassLikeLookupTagImpl(Names.DF_CLASS_ID),
         typeArguments = arrayOf(session.builtinTypes.anyType.type),
         isNullable = false
     ).wrap()
 
     val anyRow get() = ConeClassLikeTypeImpl(
-        ConeClassLikeLookupTagImpl(DATA_ROW_CLASS_ID),
+        ConeClassLikeLookupTagImpl(Names.DATA_ROW_CLASS_ID),
         typeArguments = arrayOf(session.builtinTypes.anyType.type),
-        isNullable = false
-    ).wrap()
-
-    fun Marker.toColumnGroup() = ConeClassLikeTypeImpl(
-        ConeClassLikeLookupTagImpl(COLUM_GROUP_CLASS_ID),
-        typeArguments = arrayOf(type.typeArguments[0]),
         isNullable = false
     ).wrap()
 

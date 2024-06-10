@@ -20,17 +20,6 @@ class Add : AbstractSchemaModificationInterpreter() {
     }
 }
 
-class Add1 : AbstractSchemaModificationInterpreter() {
-
-    val Arguments.name: String by string()
-    val Arguments.expression: TypeApproximation by type()
-    val Arguments.parent: String by string()
-
-    override fun Arguments.interpret(): PluginDataFrameSchema {
-        return PluginDataFrameSchema(listOf(SimpleCol(name, expression)))
-    }
-}
-
 class From : AbstractInterpreter<Unit>() {
     val Arguments.dsl: AddDslApproximation by arg(lens = Interpreter.Value)
     val Arguments.receiver: String by string()
@@ -50,7 +39,6 @@ class Into : AbstractInterpreter<Unit>() {
         dsl.columns += SimpleCol(name, receiver)
     }
 }
-
 
 class AddDslApproximation(val columns: MutableList<SimpleCol>)
 

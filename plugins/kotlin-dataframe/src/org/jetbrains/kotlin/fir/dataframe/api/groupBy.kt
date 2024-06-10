@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.fir.dataframe.InterpretationErrorReporter
 import org.jetbrains.kotlin.fir.dataframe.interpret
 import org.jetbrains.kotlin.fir.dataframe.loadInterpreter
 import org.jetbrains.kotlin.fir.dataframe.pluginDataFrameSchema
+import org.jetbrains.kotlin.fir.dataframe.utils.Names
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -12,7 +13,6 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeNullability
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlinx.dataframe.DATA_ROW_CLASS_ID
 import org.jetbrains.kotlinx.dataframe.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.annotations.AbstractInterpreter
 import org.jetbrains.kotlinx.dataframe.annotations.AbstractSchemaModificationInterpreter
@@ -84,7 +84,7 @@ fun KotlinTypeFacade.aggregate(
         // important to create FrameColumns, nullable DataRows?
         val cols = createPluginDataFrameSchema(groupBy.keys, groupBy.moveToTop).columns() + dsl.columns.map {
             when (it.type.classId) {
-                DATA_ROW_CLASS_ID -> {
+                Names.DATA_ROW_CLASS_ID -> {
                     when (it.type.nullability) {
                         ConeNullability.NULLABLE -> SimpleCol(
                             it.name,
