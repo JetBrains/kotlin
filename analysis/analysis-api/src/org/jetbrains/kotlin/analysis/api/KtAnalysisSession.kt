@@ -82,7 +82,6 @@ public abstract class KaSession(
     KaScopeProvider by scopeProvider,
     KaCompletionCandidateChecker by completionCandidateChecker,
     KaExpressionTypeProviderMixIn,
-    KaPsiTypeProviderMixIn,
     KaJvmTypeMapperMixIn,
     KaTypeProviderMixIn,
     KaTypeInfoProviderMixIn,
@@ -123,9 +122,6 @@ public abstract class KaSession(
 
     internal val expressionTypeProvider: KaExpressionTypeProvider get() = expressionTypeProviderImpl
     protected abstract val expressionTypeProviderImpl: KaExpressionTypeProvider
-
-    internal val psiTypeProvider: KaPsiTypeProvider get() = psiTypeProviderImpl
-    protected abstract val psiTypeProviderImpl: KaPsiTypeProvider
 
     internal val jvmTypeMapper: KaJvmTypeMapper get() = jvmTypeMapperImpl
     protected abstract val jvmTypeMapperImpl: KaJvmTypeMapper

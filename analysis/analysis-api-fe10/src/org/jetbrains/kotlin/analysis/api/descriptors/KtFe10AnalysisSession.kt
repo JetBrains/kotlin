@@ -52,7 +52,6 @@ class KaFe10Session(
     override val symbolProviderImpl: KaSymbolProvider = KaFe10SymbolProvider(this)
     override val symbolDeclarationRendererProviderImpl: KaSymbolDeclarationRendererProvider = KaRendererProviderImpl(this, token)
     override val expressionTypeProviderImpl: KaExpressionTypeProvider = KaFe10ExpressionTypeProvider(this)
-    override val psiTypeProviderImpl: KaPsiTypeProvider = KaFe10PsiTypeProvider(this)
     override val typeProviderImpl: KaTypeProvider = KaFe10TypeProvider(this)
     override val typeInfoProviderImpl: KaTypeInfoProvider = KaFe10TypeInfoProvider(this)
     override val expressionInfoProviderImpl: KaExpressionInfoProvider = KaFe10ExpressionInfoProvider(this)
