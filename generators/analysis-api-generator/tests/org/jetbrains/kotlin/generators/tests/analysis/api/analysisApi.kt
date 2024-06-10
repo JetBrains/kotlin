@@ -638,11 +638,11 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
                 model(it, "packageScope")
             }
 
-            group(filter = frontendIs(FrontendKind.Fir)) {
-                test<AbstractSubstitutionOverridesUnwrappingTest> {
-                    model(it, "substitutionOverridesUnwrapping")
-                }
+            test<AbstractSubstitutionOverridesUnwrappingTest> {
+                model(it, "substitutionOverridesUnwrapping")
+            }
 
+            group(filter = frontendIs(FrontendKind.Fir)) {
                 test<AbstractMemberScopeTest> {
                     when (it.analysisApiMode) {
                         AnalysisApiMode.Ide ->

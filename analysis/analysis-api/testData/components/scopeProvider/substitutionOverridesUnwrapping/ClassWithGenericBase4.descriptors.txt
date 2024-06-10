@@ -1,64 +1,68 @@
-KtKotlinPropertySymbol:
+KaKotlinPropertySymbol:
   callableId: test/InterfaceWithVal.noGenerics_InterfaceWithVal
   name: noGenerics_InterfaceWithVal
   origin: SOURCE
 
-KtKotlinPropertySymbol:
+KaKotlinPropertySymbol:
   callableId: test/ClassWithInterfaceWithVal.withOuterGeneric_InterfaceWithVal
   name: withOuterGeneric_InterfaceWithVal
   origin: SOURCE
 
-KtKotlinPropertySymbol:
+KaKotlinPropertySymbol:
   callableId: test/InterfaceWithVal.withOwnGeneric_InterfaceWithVal
   name: withOwnGeneric_InterfaceWithVal
   origin: SOURCE
 
-KtKotlinPropertySymbol:
+KaKotlinPropertySymbol:
   callableId: test/ClassWithInterfaceWithVal.withOwnAndOuterGeneric_InterfaceWithVal
   name: withOwnAndOuterGeneric_InterfaceWithVal
   origin: SOURCE
 
-KtKotlinPropertySymbol:
+KaKotlinPropertySymbol:
   callableId: test/InterfaceWithValBase.noGenerics_InterfaceWithValBase
   name: noGenerics_InterfaceWithValBase
   origin: SOURCE
 
-KtKotlinPropertySymbol:
+KaKotlinPropertySymbol:
   callableId: test/InterfaceWithVal.withOuterGenericT1_InterfaceWithValBase
   name: withOuterGenericT1_InterfaceWithValBase
   origin: SOURCE
 
-KtKotlinPropertySymbol:
+KaKotlinPropertySymbol:
   callableId: test/ClassWithInterfaceWithVal.withOuterGenericT2_InterfaceWithValBase
   name: withOuterGenericT2_InterfaceWithValBase
   origin: SOURCE
 
-KtKotlinPropertySymbol:
+KaKotlinPropertySymbol:
   callableId: test/InterfaceWithValBase.withOwnGeneric_InterfaceWithValBase
   name: withOwnGeneric_InterfaceWithValBase
   origin: SOURCE
 
-KtKotlinPropertySymbol:
+KaKotlinPropertySymbol:
   callableId: test/InterfaceWithVal.withOwnAndOuterGenericT1_InterfaceWithValBase
   name: withOwnAndOuterGenericT1_InterfaceWithValBase
   origin: SOURCE
 
-KtKotlinPropertySymbol:
+KaKotlinPropertySymbol:
   callableId: test/ClassWithInterfaceWithVal.withOwnAndOuterGenericT2_InterfaceWithValBase
   name: withOwnAndOuterGenericT2_InterfaceWithValBase
   origin: SOURCE
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   callableId: kotlin/Any.equals
   name: equals
   origin: LIBRARY
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   callableId: kotlin/Any.hashCode
   name: hashCode
   origin: LIBRARY
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   callableId: kotlin/Any.toString
   name: toString
   origin: LIBRARY
+
+KaConstructorSymbol:
+  callableId: null
+  origin: SOURCE

@@ -1,29 +1,33 @@
-KtFunctionSymbol:
+KaFunctionSymbol:
   callableId: null
   name: noGenerics
   origin: SOURCE
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   callableId: null
   name: withOuter
   origin: SOURCE
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   callableId: null
   name: withOuterAndOwn
   origin: SOURCE
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   callableId: kotlin/Any.equals
   name: equals
   origin: LIBRARY
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   callableId: kotlin/Any.hashCode
   name: hashCode
   origin: LIBRARY
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   callableId: kotlin/Any.toString
   name: toString
   origin: LIBRARY
+
+KaConstructorSymbol:
+  callableId: null
+  origin: SOURCE

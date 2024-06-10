@@ -1,9 +1,12 @@
 abstract fun <TT1 : test.Foo, TT2 : test.OtherInterface> funWithOuterAndOwnGenericsAndBounds(tT1: TT1?, tT2: TT2?)
 
 open val <TT1 : test.Foo, TT2 : test.OtherInterface> test.TwoParams<TT1, TT2>.propWithOuterAndOwnGenericsAndBounds: test.Foo?
+  get()
 
 open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
 open fun hashCode(): kotlin.Int
 
 open fun toString(): kotlin.String
+
+constructor()
