@@ -70,27 +70,12 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
             val standaloneAnalysisAPISession =
                 buildStandaloneAnalysisAPISession(
                     projectDisposable = projectDisposable,
-                    classLoader = Kapt4AnalysisHandlerExtension::class.java.classLoader) {
+                    classLoader = Kapt4AnalysisHandlerExtension::class.java.classLoader,
+                ) {
                     @Suppress("DEPRECATION") // TODO: KT-61319 Kapt: remove usages of deprecated buildKtModuleProviderByCompilerConfiguration
                     buildKtModuleProviderByCompilerConfiguration(updatedConfiguration)
 
-                    registerProjectService(KotlinCompilerPluginsProvider::class.java, object : KotlinCompilerPluginsProvider() {
-                        private val extensionStorage = CompilerPluginRegistrar.ExtensionStorage().apply {
-                            for (registrar in updatedConfiguration.getList(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS)) {
-                                with(registrar) { registerExtensions(updatedConfiguration) }
-                            }
-                        }
-
-                        override fun <T : Any> getRegisteredExtensions(
-                            module: KtSourceModule,
-                            extensionType: ProjectExtensionDescriptor<T>,
-                        ): List<T> {
-                            @Suppress("UNCHECKED_CAST")
-                            return (extensionStorage.registeredExtensions[extensionType] as? List<T>) ?: emptyList()
-                        }
-
-                        override fun isPluginOfTypeRegistered(module: KtSourceModule, pluginType: CompilerPluginType): Boolean = false
-                    })
+                    registerCompilerPluginServices(updatedConfiguration)
                 }
 
             val (module, files) = standaloneAnalysisAPISession.modulesWithFiles.entries.single()

@@ -24,10 +24,12 @@ import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackagePartProv
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProviderFactory
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProviderMerger
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinByModulesResolutionScopeProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinResolutionScopeProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneAnnotationsResolverFactory
 import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneDeclarationProviderMerger
+import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneFirCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.modification.KotlinStandaloneGlobalModificationService
 import org.jetbrains.kotlin.analysis.api.standalone.base.modification.KotlinStandaloneModificationTrackerFactory
 import org.jetbrains.kotlin.analysis.api.standalone.base.packages.KotlinStandalonePackageProviderFactory
@@ -181,6 +183,18 @@ public class StandaloneAnalysisAPISessionBuilder(
         kotlinCoreProjectEnvironment.project.apply {
             registerService(serviceImplementation)
         }
+    }
+
+    /**
+     * Registers *optional* services for compiler plugin support.
+     *
+     * @param compilerConfiguration The [CompilerConfiguration] containing information about the registered compiler plugins.
+     */
+    public fun registerCompilerPluginServices(compilerConfiguration: CompilerConfiguration) {
+        registerProjectService(
+            KotlinCompilerPluginsProvider::class.java,
+            KotlinStandaloneFirCompilerPluginsProvider(compilerConfiguration),
+        )
     }
 
     public fun build(): StandaloneAnalysisAPISession {
