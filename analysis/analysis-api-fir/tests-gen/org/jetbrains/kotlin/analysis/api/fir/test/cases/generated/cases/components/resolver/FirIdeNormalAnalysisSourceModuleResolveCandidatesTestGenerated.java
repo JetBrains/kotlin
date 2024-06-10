@@ -305,60 +305,6 @@ public class FirIdeNormalAnalysisSourceModuleResolveCandidatesTestGenerated exte
   }
 
   @Test
-  @TestMetadata("compoundAssignOnVal.kt")
-  public void testCompoundAssignOnVal() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/compoundAssignOnVal.kt");
-  }
-
-  @Test
-  @TestMetadata("compoundAssignOnVal_lhs.kt")
-  public void testCompoundAssignOnVal_lhs() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/compoundAssignOnVal_lhs.kt");
-  }
-
-  @Test
-  @TestMetadata("compoundAssignOnVar.kt")
-  public void testCompoundAssignOnVar() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/compoundAssignOnVar.kt");
-  }
-
-  @Test
-  @TestMetadata("compoundAssignOnVar_lhs.kt")
-  public void testCompoundAssignOnVar_lhs() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/compoundAssignOnVar_lhs.kt");
-  }
-
-  @Test
-  @TestMetadata("compoundAssignWithArrayAccessConvention.kt")
-  public void testCompoundAssignWithArrayAccessConvention() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/compoundAssignWithArrayAccessConvention.kt");
-  }
-
-  @Test
-  @TestMetadata("compoundAssignWithArrayAccessConvention_complexReceivers.kt")
-  public void testCompoundAssignWithArrayAccessConvention_complexReceivers() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/compoundAssignWithArrayAccessConvention_complexReceivers.kt");
-  }
-
-  @Test
-  @TestMetadata("compoundAssignWithArrayAccessConvention_lhs.kt")
-  public void testCompoundAssignWithArrayAccessConvention_lhs() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/compoundAssignWithArrayAccessConvention_lhs.kt");
-  }
-
-  @Test
-  @TestMetadata("compoundAssignWithArrayGetConvention.kt")
-  public void testCompoundAssignWithArrayGetConvention() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/compoundAssignWithArrayGetConvention.kt");
-  }
-
-  @Test
-  @TestMetadata("compoundAssignWithArrayGetConvention_lhs.kt")
-  public void testCompoundAssignWithArrayGetConvention_lhs() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/compoundAssignWithArrayGetConvention_lhs.kt");
-  }
-
-  @Test
   @TestMetadata("consecutiveImplicitInvoke1.kt")
   public void testConsecutiveImplicitInvoke1() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/consecutiveImplicitInvoke1.kt");
@@ -1642,6 +1588,18 @@ public class FirIdeNormalAnalysisSourceModuleResolveCandidatesTestGenerated exte
     }
 
     @Test
+    @TestMetadata("boundMemberFunction_lhs.kt")
+    public void testBoundMemberFunction_lhs() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/callableReferences/boundMemberFunction_lhs.kt");
+    }
+
+    @Test
+    @TestMetadata("boundMemberFunction_rhs.kt")
+    public void testBoundMemberFunction_rhs() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/callableReferences/boundMemberFunction_rhs.kt");
+    }
+
+    @Test
     @TestMetadata("boundMemberProperty.kt")
     public void testBoundMemberProperty() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/callableReferences/boundMemberProperty.kt");
@@ -2129,6 +2087,208 @@ public class FirIdeNormalAnalysisSourceModuleResolveCandidatesTestGenerated exte
       public void testUnresolved() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors/withErrors/unresolved.kt");
       }
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Expressions {
+    @Test
+    public void testAllFilesPresentInExpressions() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("arrayAccessConvention.kt")
+    public void testArrayAccessConvention() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/arrayAccessConvention.kt");
+    }
+
+    @Test
+    @TestMetadata("arrayAccessConventionAsClass.kt")
+    public void testArrayAccessConventionAsClass() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/arrayAccessConventionAsClass.kt");
+    }
+
+    @Test
+    @TestMetadata("arrayAccessConventionAsClass_lhs.kt")
+    public void testArrayAccessConventionAsClass_lhs() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/arrayAccessConventionAsClass_lhs.kt");
+    }
+
+    @Test
+    @TestMetadata("arrayAccessConventionAsClass_op.kt")
+    public void testArrayAccessConventionAsClass_op() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/arrayAccessConventionAsClass_op.kt");
+    }
+
+    @Test
+    @TestMetadata("arrayAccessConvention_complexReceivers.kt")
+    public void testArrayAccessConvention_complexReceivers() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/arrayAccessConvention_complexReceivers.kt");
+    }
+
+    @Test
+    @TestMetadata("arrayAccessConvention_complexReceivers_lhs.kt")
+    public void testArrayAccessConvention_complexReceivers_lhs() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/arrayAccessConvention_complexReceivers_lhs.kt");
+    }
+
+    @Test
+    @TestMetadata("arrayAccessConvention_complexReceivers_op.kt")
+    public void testArrayAccessConvention_complexReceivers_op() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/arrayAccessConvention_complexReceivers_op.kt");
+    }
+
+    @Test
+    @TestMetadata("arrayAccessConvention_lhs.kt")
+    public void testArrayAccessConvention_lhs() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/arrayAccessConvention_lhs.kt");
+    }
+
+    @Test
+    @TestMetadata("arrayAccessConvention_op.kt")
+    public void testArrayAccessConvention_op() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/arrayAccessConvention_op.kt");
+    }
+
+    @Test
+    @TestMetadata("infixFunction.kt")
+    public void testInfixFunction() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/infixFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("infixFunction_op.kt")
+    public void testInfixFunction_op() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/infixFunction_op.kt");
+    }
+
+    @Test
+    @TestMetadata("plusAssignOnVal.kt")
+    public void testPlusAssignOnVal() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/plusAssignOnVal.kt");
+    }
+
+    @Test
+    @TestMetadata("plusAssignOnVal_lhs.kt")
+    public void testPlusAssignOnVal_lhs() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/plusAssignOnVal_lhs.kt");
+    }
+
+    @Test
+    @TestMetadata("plusAssignOnVal_operator.kt")
+    public void testPlusAssignOnVal_operator() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/plusAssignOnVal_operator.kt");
+    }
+
+    @Test
+    @TestMetadata("plusAssignWithArrayGetConvention.kt")
+    public void testPlusAssignWithArrayGetConvention() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/plusAssignWithArrayGetConvention.kt");
+    }
+
+    @Test
+    @TestMetadata("plusAssignWithArrayGetConvention_lhs.kt")
+    public void testPlusAssignWithArrayGetConvention_lhs() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/plusAssignWithArrayGetConvention_lhs.kt");
+    }
+
+    @Test
+    @TestMetadata("plusAssignWithArrayGetConvention_op.kt")
+    public void testPlusAssignWithArrayGetConvention_op() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/plusAssignWithArrayGetConvention_op.kt");
+    }
+
+    @Test
+    @TestMetadata("postfixInc.kt")
+    public void testPostfixInc() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/postfixInc.kt");
+    }
+
+    @Test
+    @TestMetadata("postfixInc_base.kt")
+    public void testPostfixInc_base() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/postfixInc_base.kt");
+    }
+
+    @Test
+    @TestMetadata("postfixInc_op.kt")
+    public void testPostfixInc_op() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/postfixInc_op.kt");
+    }
+
+    @Test
+    @TestMetadata("prefixDec.kt")
+    public void testPrefixDec() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/prefixDec.kt");
+    }
+
+    @Test
+    @TestMetadata("prefixDec_base.kt")
+    public void testPrefixDec_base() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/prefixDec_base.kt");
+    }
+
+    @Test
+    @TestMetadata("prefixDec_op.kt")
+    public void testPrefixDec_op() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/prefixDec_op.kt");
+    }
+
+    @Test
+    @TestMetadata("setOperator.kt")
+    public void testSetOperator() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/setOperator.kt");
+    }
+
+    @Test
+    @TestMetadata("setOperator_lhs.kt")
+    public void testSetOperator_lhs() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/setOperator_lhs.kt");
+    }
+
+    @Test
+    @TestMetadata("setOperator_op.kt")
+    public void testSetOperator_op() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/setOperator_op.kt");
+    }
+
+    @Test
+    @TestMetadata("unaryMinus.kt")
+    public void testUnaryMinus() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/unaryMinus.kt");
+    }
+
+    @Test
+    @TestMetadata("unaryMinus_base.kt")
+    public void testUnaryMinus_base() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/unaryMinus_base.kt");
+    }
+
+    @Test
+    @TestMetadata("unaryMinus_op.kt")
+    public void testUnaryMinus_op() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/unaryMinus_op.kt");
+    }
+
+    @Test
+    @TestMetadata("varConvention.kt")
+    public void testVarConvention() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/varConvention.kt");
+    }
+
+    @Test
+    @TestMetadata("varConvention_lhs.kt")
+    public void testVarConvention_lhs() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/varConvention_lhs.kt");
+    }
+
+    @Test
+    @TestMetadata("varConvention_operator.kt")
+    public void testVarConvention_operator() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/varConvention_operator.kt");
     }
   }
 

@@ -1,0 +1,36 @@
+KtOperationReferenceExpression(189,191): '+='
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = /Foo
+          type = Foo
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = m
+          isSafeNavigation = false
+          type = MyMap<kotlin.String, kotlin.Int>
+        signature = KaFunctionSignature:
+          receiverType = MyMap<kotlin.String, kotlin.Int>
+          returnType = kotlin.Unit
+          symbol = /Foo.set(<extension receiver>: MyMap<K2, V2>, <dispatch receiver>: Foo, k: K2, v: V2): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = k
+              receiverType = null
+              returnType = kotlin.String
+              symbol = k: K2
+              callableId = null,
+            KaVariableSignature:
+              name = v
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = v: V2
+              callableId = null
+          ]
+          callableId = /Foo.set
+      typeArgumentsMapping = {
+        K2 -> (kotlin.String),
+        V2 -> (kotlin.Int)
+      }
+      argumentMapping = {}

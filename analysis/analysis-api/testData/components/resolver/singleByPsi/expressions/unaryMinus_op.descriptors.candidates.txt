@@ -1,0 +1,19 @@
+KtOperationReferenceExpression(191,192): '-'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = variable
+          isSafeNavigation = false
+          type = MyClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
+          valueParameters = []
+          callableId = /MyClass.unaryMinus
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true

@@ -1,0 +1,15 @@
+KtOperationReferenceExpression(33,35): '+='
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var i: kotlin.Int
+          callableId = null
+      simpleAccess = Write:
+        value = i += 1
+      typeArgumentsMapping = {}

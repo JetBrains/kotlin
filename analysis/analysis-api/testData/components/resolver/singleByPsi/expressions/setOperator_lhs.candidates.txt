@@ -1,0 +1,45 @@
+KtArrayAccessExpression(93,104): 'variable[0]'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = variable
+          isSafeNavigation = false
+          type = MyClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /MyClass.set(<dispatch receiver>: MyClass, i: kotlin.Int, v: kotlin.Int): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableId = null,
+            KaVariableSignature:
+              name = v
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = v: kotlin.Int
+              callableId = null
+          ]
+          callableId = /MyClass.set
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        0 -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableId = null),
+        4 -> (KaVariableSignature:
+          name = v
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = v: kotlin.Int
+          callableId = null)
+      }
+    isInBestCandidates = true
