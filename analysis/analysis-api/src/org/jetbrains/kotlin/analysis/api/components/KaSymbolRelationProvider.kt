@@ -127,4 +127,11 @@ public interface KaSymbolRelationProvider {
         )
     )
     public val KaCallableSymbol.originalContainingClassForOverride: KaClassOrObjectSymbol?
+
+    /**
+     * Gives expect symbol for the actual one if it is available.
+     *
+     * @return a single expect declaration corresponds to the [KaDeclarationSymbol] on valid code or multiple expects in a case of erroneous code with multiple expects.
+     **/
+    public fun KaDeclarationSymbol.getExpectsForActual(): List<KaDeclarationSymbol>
 }

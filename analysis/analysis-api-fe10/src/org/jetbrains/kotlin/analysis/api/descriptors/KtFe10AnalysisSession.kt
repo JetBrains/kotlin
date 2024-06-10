@@ -56,7 +56,6 @@ class KaFe10Session(
     override val expressionInfoProviderImpl: KaExpressionInfoProvider = KaFe10ExpressionInfoProvider(this)
     override val visibilityCheckerImpl: KaVisibilityChecker = KaFe10VisibilityChecker(this)
     override val overrideInfoProviderImpl: KaOverrideInfoProvider = KaFe10OverrideInfoProvider(this)
-    override val multiplatformInfoProviderImpl: KaMultiplatformInfoProvider = KaFe10MultiplatformInfoProvider(this)
     override val inheritorsProviderImpl: KaInheritorsProvider = KaFe10InheritorsProvider(this)
     override val jvmTypeMapperImpl: KaJvmTypeMapper = KaFe10JvmTypeMapper(this)
     override val symbolInfoProviderImpl: KaSymbolInfoProvider = KaFe10SymbolInfoProvider(this)
