@@ -49,6 +49,11 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
                 assertTasksUpToDate(":compileKotlinWasmWasi")
                 assertTasksFailed(":wasmWasiNodeTest")
             }
+
+            build(":wasmWasiNodeProductionRun") {
+                assertTasksExecuted(":compileProductionExecutableKotlinWasmWasi")
+                assertTasksExecuted(":compileProductionExecutableKotlinWasmWasiOptimize")
+            }
         }
     }
 
