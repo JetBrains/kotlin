@@ -87,7 +87,12 @@ class IrBodyFiller(
             val file = File(dir, "schemas.json")
             val res = if (file.exists()) {
                 val json = file.readText()
-                Json.decodeFromString<List<IoSchema>>(json) + schemas
+                val res = try {
+                    Json.decodeFromString<List<IoSchema>>(json)
+                } catch (e: Exception) {
+                    emptyList()
+                }
+                res + schemas
             } else {
                 schemas
             }
