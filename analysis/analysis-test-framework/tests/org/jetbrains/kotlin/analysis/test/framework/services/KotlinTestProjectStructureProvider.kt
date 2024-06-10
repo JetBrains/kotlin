@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.test.framework.services
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileSystemItem
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.KtStaticProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.KotlinStaticProjectStructureProvider
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleStructure
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -16,17 +16,17 @@ import org.jetbrains.kotlin.psi.psiUtil.contains
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
-class KtTestProjectStructureProvider(
+class KotlinTestProjectStructureProvider(
     override val globalLanguageVersionSettings: LanguageVersionSettings,
     private val builtinsModule: KtBuiltinsModule,
     private val ktTestModuleStructure: KtTestModuleStructure,
-) : KtStaticProjectStructureProvider() {
+) : KotlinStaticProjectStructureProvider() {
     override fun getNotUnderContentRootModule(project: Project): KtNotUnderContentRootModule {
         error("Not-under content root modules most be initialized explicitly in tests")
     }
 
     @OptIn(KtModuleStructureInternals::class)
-    override fun getModule(element: PsiElement, contextualModule: KtModule?): KtModule {
+    override fun getModule(element: PsiElement, useSiteModule: KtModule?): KtModule {
         val containingFile = element.containingFile
         val virtualFile = containingFile.virtualFile
 

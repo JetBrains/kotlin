@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirResolvableS
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.codeFragment
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
 import org.jetbrains.kotlin.fir.declarations.FirProperty
@@ -266,7 +266,7 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
     }
 
     private fun outOfBlockModification(element: PsiElement) {
-        val ktModule = ProjectStructureProvider.getModule(project, element, contextualModule = null)
+        val ktModule = KotlinProjectStructureProvider.getModule(project, element, useSiteModule = null)
 
         // We should check outdated modifications before to avoid cache dropping (e.g., KtModule cache)
         dropOutdatedModifications(ktModule)
@@ -345,7 +345,7 @@ private sealed class ChangeType {
 
     class InBlock(val blockOwner: KtAnnotated, val project: Project) : ChangeType() {
         val ktModule: KtModule by lazy(LazyThreadSafetyMode.NONE) {
-            ProjectStructureProvider.getModule(project, blockOwner, contextualModule = null)
+            KotlinProjectStructureProvider.getModule(project, blockOwner, useSiteModule = null)
         }
 
         override fun equals(other: Any?): Boolean = other === this || other is InBlock && other.blockOwner == blockOwner

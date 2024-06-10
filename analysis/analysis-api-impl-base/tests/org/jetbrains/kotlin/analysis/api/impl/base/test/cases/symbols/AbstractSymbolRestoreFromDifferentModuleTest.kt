@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
-import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
@@ -31,8 +31,8 @@ abstract class AbstractSymbolRestoreFromDifferentModuleTest : AbstractAnalysisAp
             ).single().first
 
         val project = declaration.project
-        val declarationModule = ProjectStructureProvider.getModule(project, declaration, contextualModule = null)
-        val restoreAtModule = ProjectStructureProvider.getModule(project, restoreAt, contextualModule = null)
+        val declarationModule = KotlinProjectStructureProvider.getModule(project, declaration, useSiteModule = null)
+        val restoreAtModule = KotlinProjectStructureProvider.getModule(project, restoreAt, useSiteModule = null)
 
         val (debugRendered, prettyRendered, pointer) = analyseForTest(declaration) {
             val symbol = declaration.symbol

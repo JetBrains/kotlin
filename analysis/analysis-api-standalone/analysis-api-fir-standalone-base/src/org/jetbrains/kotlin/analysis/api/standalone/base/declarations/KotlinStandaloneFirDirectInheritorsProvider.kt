@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
 import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDirectInheritorsProvider
 import org.jetbrains.kotlin.fir.declarations.FirClass
@@ -60,7 +60,7 @@ internal class KotlinStandaloneFirDirectInheritorsProvider(private val project: 
         //
         // Note that this means we don't support providing inheritors based on the dangling file yet, for example if an inheritor was added
         // or removed only in the dangling file.
-        val baseKtModule = when (val ktModule = ProjectStructureProvider.getModule(project, ktClass, contextualModule = null)) {
+        val baseKtModule = when (val ktModule = KotlinProjectStructureProvider.getModule(project, ktClass, useSiteModule = null)) {
             is KtDanglingFileModule -> ktModule.contextModule
             else -> ktModule
         }
@@ -94,7 +94,7 @@ internal class KotlinStandaloneFirDirectInheritorsProvider(private val project: 
         }
 
         val candidateClassId = candidate.getClassId() ?: return false
-        val candidateKtModule = ProjectStructureProvider.getModule(project, candidate, contextualModule = null)
+        val candidateKtModule = KotlinProjectStructureProvider.getModule(project, candidate, useSiteModule = null)
         val candidateFirSymbol = candidate.toFirSymbol(candidateClassId, candidateKtModule) ?: return false
         val candidateFirClass = candidateFirSymbol.fir as? FirClass ?: return false
 

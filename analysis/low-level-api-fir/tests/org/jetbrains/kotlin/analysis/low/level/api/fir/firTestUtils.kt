@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionConfigurator
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtLibrarySourceModule
-import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
@@ -40,14 +40,14 @@ internal fun FirDeclaration.name(): String = symbol.name()
 
 internal inline fun <R> resolveWithClearCaches(context: KtElement, action: (LLFirResolveSession) -> R): R {
     val project = context.project
-    val module = ProjectStructureProvider.getModule(project, context, contextualModule = null)
+    val module = KotlinProjectStructureProvider.getModule(project, context, useSiteModule = null)
     val resolveSession = LLFirResolveSessionService.getInstance(project).getFirResolveSessionNoCaching(module)
     return action(resolveSession)
 }
 
 internal inline fun <R> resolveWithCaches(context: KtElement, action: (LLFirResolveSession) -> R): R {
     val project = context.project
-    val module = ProjectStructureProvider.getModule(project, context, contextualModule = null)
+    val module = KotlinProjectStructureProvider.getModule(project, context, useSiteModule = null)
     val resolveSession = LLFirResolveSessionService.getInstance(project).getFirResolveSession(module)
     return action(resolveSession)
 }

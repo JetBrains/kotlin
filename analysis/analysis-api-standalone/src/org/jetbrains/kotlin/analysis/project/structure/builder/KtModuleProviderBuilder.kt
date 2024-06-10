@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.project.structure.builder
 
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.KtStaticProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.KotlinStaticProjectStructureProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.impl.KtStandaloneProjectStructureProvider
+import org.jetbrains.kotlin.analysis.project.structure.impl.KotlinStandaloneProjectStructureProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.platform.TargetPlatform
 import kotlin.contracts.ExperimentalContracts
@@ -26,8 +26,8 @@ public class KtModuleProviderBuilder(
 
     public lateinit var platform: TargetPlatform
 
-    public fun build(): KtStaticProjectStructureProvider {
-        return KtStandaloneProjectStructureProvider(
+    public fun build(): KotlinStaticProjectStructureProvider {
+        return KotlinStandaloneProjectStructureProvider(
             platform,
             kotlinCoreProjectEnvironment.project,
             mainModules,
@@ -39,7 +39,7 @@ public class KtModuleProviderBuilder(
 internal inline fun buildProjectStructureProvider(
     kotlinCoreProjectEnvironment: KotlinCoreProjectEnvironment,
     init: KtModuleProviderBuilder.() -> Unit,
-): KtStaticProjectStructureProvider {
+): KotlinStaticProjectStructureProvider {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }

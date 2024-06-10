@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -33,7 +33,7 @@ fun errorWithFirSpecificEntries(
         }
 
         if (psi != null) {
-            withPsiEntry("psi", psi, ProjectStructureProvider.getModule(psi.project, psi, contextualModule = null))
+            withPsiEntry("psi", psi, KotlinProjectStructureProvider.getModule(psi.project, psi, useSiteModule = null))
         }
 
         if (coneType != null) {

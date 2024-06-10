@@ -9,10 +9,10 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModuleProvider
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 
 /**
  * [KaSession] is the entry point to all frontend-related work. It has the following contracts:
@@ -102,6 +102,5 @@ public interface KaSession : KaLifetimeOwner,
 @Deprecated("Use 'KaSession' instead.", ReplaceWith("KaSession"))
 public typealias KtAnalysisSession = KaSession
 
-public fun KaSession.getModule(element: PsiElement): KtModule {
-    return ProjectStructureProvider.getModule(useSiteModule.project, element, useSiteModule)
-}
+public fun KaSession.getModule(element: PsiElement): KtModule =
+    KaModuleProvider.getModule(useSiteModule.project, element, useSiteModule)

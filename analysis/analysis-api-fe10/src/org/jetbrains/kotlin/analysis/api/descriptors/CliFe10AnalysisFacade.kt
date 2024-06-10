@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
-import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.get
@@ -70,7 +70,7 @@ class CliFe10AnalysisFacade : Fe10AnalysisFacade {
 
     private fun getHandler(useSiteElement: KtElement): KaFe10AnalysisHandlerExtension {
         val project = useSiteElement.project
-        val ktModule = ProjectStructureProvider.getModule(project, useSiteElement, contextualModule = null)
+        val ktModule = KotlinProjectStructureProvider.getModule(project, useSiteElement, useSiteModule = null)
         return KaFe10AnalysisHandlerExtension.getInstance(project, ktModule)
     }
 

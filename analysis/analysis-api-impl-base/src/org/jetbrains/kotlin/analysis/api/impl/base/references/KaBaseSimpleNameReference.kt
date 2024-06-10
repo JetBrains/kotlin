@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider.CompilerPluginType
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
-import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
@@ -52,7 +52,7 @@ abstract class KaBaseSimpleNameReference(expression: KtSimpleNameExpression) : K
         }
 
     private fun isAssignmentResolved(project: Project, binaryExpression: KtBinaryExpression): Boolean {
-        val sourceModule = ProjectStructureProvider.getModule(project, binaryExpression, contextualModule = null)
+        val sourceModule = KotlinProjectStructureProvider.getModule(project, binaryExpression, useSiteModule = null)
         if (sourceModule !is KtSourceModule) {
             return false
         }

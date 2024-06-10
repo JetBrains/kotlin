@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.project.structure.impl
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.KtStaticProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.KotlinStaticProjectStructureProvider
 import org.jetbrains.kotlin.analysis.project.structure.builder.*
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.javaSourceRoots
@@ -127,7 +127,7 @@ internal fun buildKtModuleProviderByCompilerConfiguration(
     kotlinCoreProjectEnvironment: KotlinCoreProjectEnvironment,
     compilerConfig: CompilerConfiguration,
     ktFiles: List<KtFile>,
-): KtStaticProjectStructureProvider = buildProjectStructureProvider(kotlinCoreProjectEnvironment) {
+): KotlinStaticProjectStructureProvider = buildProjectStructureProvider(kotlinCoreProjectEnvironment) {
     val (scriptFiles, _) = ktFiles.partition { it.isScript() }
     val platform = JvmPlatforms.defaultJvmPlatform
 

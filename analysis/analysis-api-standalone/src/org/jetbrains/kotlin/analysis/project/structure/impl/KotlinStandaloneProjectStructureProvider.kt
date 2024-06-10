@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiJavaFile
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.KtStaticProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.KotlinStaticProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory.findJvmRootsForJavaFiles
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsSessionFactory
@@ -18,11 +18,11 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
-internal class KtStandaloneProjectStructureProvider(
+internal class KotlinStandaloneProjectStructureProvider(
     private val platform: TargetPlatform,
     private val project: Project,
     override val allKtModules: List<KtModule>,
-) : KtStaticProjectStructureProvider() {
+) : KotlinStaticProjectStructureProvider() {
     private val ktNotUnderContentRootModuleWithoutPsiFile by lazy {
         KtNotUnderContentRootModuleImpl(
             name = "unnamed-outside-content-root",
@@ -41,7 +41,7 @@ internal class KtStandaloneProjectStructureProvider(
     }
 
     @OptIn(KtModuleStructureInternals::class)
-    override fun getModule(element: PsiElement, contextualModule: KtModule?): KtModule {
+    override fun getModule(element: PsiElement, useSiteModule: KtModule?): KtModule {
         val containingFile = element.containingFile
             ?: return ktNotUnderContentRootModuleWithoutPsiFile
 
@@ -55,13 +55,13 @@ internal class KtStandaloneProjectStructureProvider(
         if (virtualFile == null) {
             throw KotlinExceptionWithAttachments("Cannot find a KtModule for a non-physical file")
                 .withPsiAttachment("containingFile", containingFile)
-                .withAttachment("contextualModule", contextualModule?.asDebugString())
+                .withAttachment("useSiteModule", useSiteModule?.asDebugString())
         }
 
         return allKtModules.firstOrNull { module -> virtualFile in module.contentScope }
             ?: throw KotlinExceptionWithAttachments("Cannot find a KtModule for the VirtualFile")
                 .withPsiAttachment("containingFile", containingFile)
-                .withAttachment("contextualModule", contextualModule?.asDebugString())
+                .withAttachment("useSiteModule", useSiteModule?.asDebugString())
                 .withAttachment("path", virtualFile.path)
                 .withAttachment("modules", allKtModules.joinToString(separator = System.lineSeparator()) { it.asDebugString() })
     }

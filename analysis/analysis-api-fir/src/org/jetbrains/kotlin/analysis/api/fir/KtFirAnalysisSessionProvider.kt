@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDecla
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationListener
 import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.project.structure.isStable
 import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinReadActionConfinementLifetimeToken
 import org.jetbrains.kotlin.psi.KtElement
@@ -40,7 +40,7 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
     }
 
     override fun getAnalysisSession(useSiteKtElement: KtElement): KaSession {
-        val module = ProjectStructureProvider.getModule(project, useSiteKtElement, contextualModule = null)
+        val module = KotlinProjectStructureProvider.getModule(project, useSiteKtElement, useSiteModule = null)
         return getAnalysisSessionByUseSiteKtModule(module)
     }
 

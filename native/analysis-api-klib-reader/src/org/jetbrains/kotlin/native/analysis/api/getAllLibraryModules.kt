@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.native.analysis.api
 
 import org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISession
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.KtStaticProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.KotlinStaticProjectStructureProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.project.structure.allDirectDependencies
 import org.jetbrains.kotlin.tooling.core.withClosureSequence
 
@@ -29,11 +29,9 @@ import org.jetbrains.kotlin.tooling.core.withClosureSequence
  * ```
  */
 public fun StandaloneAnalysisAPISession.getAllLibraryModules(): Sequence<KtLibraryModule> {
-    val projectStructureProvider = project.getService(ProjectStructureProvider::class.java)
-        ?: error("${ProjectStructureProvider::class.java} not found")
-
-    if (projectStructureProvider !is KtStaticProjectStructureProvider) {
-        error("Expected implementation of ${KtStaticProjectStructureProvider::class.java} but found ${projectStructureProvider.javaClass}")
+    val projectStructureProvider = KotlinProjectStructureProvider.getInstance(project)
+    if (projectStructureProvider !is KotlinStaticProjectStructureProvider) {
+        error("Expected implementation of ${KotlinStaticProjectStructureProvider::class.java} but found ${projectStructureProvider.javaClass}")
     }
 
     return projectStructureProvider.allKtModules

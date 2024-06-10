@@ -7,12 +7,11 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder
 
 import org.jetbrains.kotlin.analysis.api.impl.barebone.annotations.ThreadSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
-import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 
 /**
@@ -20,7 +19,7 @@ import org.jetbrains.kotlin.psi.KtFile
  */
 @ThreadSafe
 internal class LLFirFileBuilder(val moduleComponents: LLFirModuleResolveComponents) {
-    private val projectStructureProvider by lazy { ProjectStructureProvider.getInstance(moduleComponents.session.project) }
+    private val projectStructureProvider by lazy { KotlinProjectStructureProvider.getInstance(moduleComponents.session.project) }
 
     fun buildRawFirFileWithCaching(ktFile: KtFile): FirFile = moduleComponents.cache.fileCached(ktFile) {
         val contextualModule = moduleComponents.module

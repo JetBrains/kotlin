@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaLocalVariableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
-import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSdkModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
@@ -311,7 +311,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
         val project = contextFile.project
         val codeFragment = KtExpressionCodeFragment(project, "fragment.kt", "x - 1", imports = null, contextElement)
 
-        val codeFragmentModule = ProjectStructureProvider.getModule(project, codeFragment, contextualModule = contextModule)
+        val codeFragmentModule = KotlinProjectStructureProvider.getModule(project, codeFragment, useSiteModule = contextModule)
         requireIsInstance<KtDanglingFileModule>(codeFragmentModule)
         assertEquals(codeFragmentModule.contextModule, contextModule)
 
@@ -353,7 +353,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
 
         assert(dummyFile.virtualFile == null)
 
-        val dummyModule = ProjectStructureProvider.getModule(project, dummyFile, contextualModule = null)
+        val dummyModule = KotlinProjectStructureProvider.getModule(project, dummyFile, useSiteModule = null)
         requireIsInstance<KtDanglingFileModule>(dummyModule)
         assertEquals(dummyModule.contextModule, contextModule)
 

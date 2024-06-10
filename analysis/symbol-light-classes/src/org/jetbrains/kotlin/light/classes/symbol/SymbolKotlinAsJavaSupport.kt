@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.platform.modification.createAllLibrarie
 import org.jetbrains.kotlin.analysis.api.platform.declarations.createDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.packages.createPackageProvider
 import org.jetbrains.kotlin.analysis.api.platform.modification.createProjectWideOutOfBlockModificationTracker
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupportBase
 import org.jetbrains.kotlin.asJava.classes.KtFakeLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
@@ -37,11 +38,11 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
 
 class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KtModule>(project) {
-    private val projectStructureProvider by lazy { ProjectStructureProvider.getInstance(project) }
+    private val projectStructureProvider by lazy { KotlinProjectStructureProvider.Companion.getInstance(project) }
 
     private fun PsiElement.getModuleIfSupportEnabled(): KtModule? = projectStructureProvider.getModule(
         element = this,
-        contextualModule = null,
+        useSiteModule = null,
     ).takeIf(KtModule::isLightClassesEnabled)
 
     override fun findClassOrObjectDeclarationsInPackage(

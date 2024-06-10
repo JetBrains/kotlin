@@ -33,6 +33,7 @@ import com.intellij.util.io.URLUtil.JAR_SEPARATOR
 import com.intellij.util.messages.ListenerDescriptor
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleDependentsProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinFakeClsStubsCache
 import org.jetbrains.kotlin.analysis.api.symbols.AdditionalKDocResolutionProvider
@@ -181,7 +182,7 @@ object StandaloneProjectFactory {
 
     fun registerServicesForProjectEnvironment(
         environment: KotlinCoreProjectEnvironment,
-        projectStructureProvider: KtStaticProjectStructureProvider,
+        projectStructureProvider: KotlinStaticProjectStructureProvider,
         languageVersionSettings: LanguageVersionSettings = latestLanguageVersionSettings,
         jdkHome: Path? = null,
     ) {
@@ -193,7 +194,7 @@ object StandaloneProjectFactory {
         project.registerService(SmartPointerManager::class.java, SmartPointerManagerImpl::class.java)
 
         val modules = projectStructureProvider.allKtModules
-        project.registerService(ProjectStructureProvider::class.java, projectStructureProvider)
+        project.registerService(KotlinProjectStructureProvider::class.java, projectStructureProvider)
         project.registerService(KotlinModuleDependentsProvider::class.java, KtStaticModuleDependentsProvider(modules))
 
         initialiseVirtualFileFinderServices(

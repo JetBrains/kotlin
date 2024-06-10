@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLModuleResolutionS
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLScopeSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLSessionProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.FirElement
@@ -100,5 +100,5 @@ abstract class LLFirResolveSession(
 }
 
 fun LLFirResolveSession.getModule(element: PsiElement): KtModule {
-    return ProjectStructureProvider.getModule(project, element, useSiteKtModule)
+    return KotlinProjectStructureProvider.getModule(project, element, useSiteKtModule)
 }

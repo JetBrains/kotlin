@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirMo
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirBuiltinsAndCloneableSession
 import org.jetbrains.kotlin.analysis.project.structure.KtBuiltinsModule
-import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.utils.errors.withClassEntry
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.moduleData
@@ -38,7 +38,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
     private val project = symbolProvider.session.llFirModuleData.ktModule.project
 
     private val projectStructureProvider by lazy {
-        ProjectStructureProvider.getInstance(project)
+        KotlinProjectStructureProvider.getInstance(project)
     }
 
     private val firElementByPsiElementChooser by lazy {

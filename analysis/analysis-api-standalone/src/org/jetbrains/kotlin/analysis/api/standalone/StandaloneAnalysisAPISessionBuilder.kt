@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.packages.KotlinStandalo
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiSimpleServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.ApplicationServiceRegistration
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.FirStandaloneServiceRegistrar
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.KtStaticProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.KotlinStaticProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.LLFirStandaloneLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.api.standalone.base.services.LLStandaloneFirElementByPsiElementChooser
@@ -100,7 +100,7 @@ public class StandaloneAnalysisAPISessionBuilder(
 
     public val project: Project = kotlinCoreProjectEnvironment.project
 
-    private lateinit var projectStructureProvider: KtStaticProjectStructureProvider
+    private lateinit var projectStructureProvider: KotlinStaticProjectStructureProvider
 
     public fun buildKtModuleProvider(init: KtModuleProviderBuilder.() -> Unit) {
         projectStructureProvider = buildProjectStructureProvider(kotlinCoreProjectEnvironment, init)

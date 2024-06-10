@@ -11,8 +11,7 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analysis.api.session.KaSessionProvider
 import org.jetbrains.kotlin.analysis.project.structure.DanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.KtModuleStructureInternals
-import org.jetbrains.kotlin.analysis.project.structure.withDanglingFileResolutionMode
+import org.jetbrains.kotlin.analysis.api.projectStructure.withDanglingFileResolutionMode
 import org.jetbrains.kotlin.psi.KtElement
 
 /**
@@ -53,7 +52,6 @@ public inline fun <R> analyze(
  *
  * The project will be analyzed from the perspective of [useSiteKtElement]'s module, also called the use-site module.
  */
-@OptIn(KtModuleStructureInternals::class)
 public inline fun <R> analyzeCopy(
     useSiteKtElement: KtElement,
     resolutionMode: DanglingFileResolutionMode,

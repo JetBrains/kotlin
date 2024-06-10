@@ -62,7 +62,7 @@ class AnalysisApiEnvironmentManagerImpl(
 
         StandaloneProjectFactory.registerServicesForProjectEnvironment(
             _projectEnvironment,
-            KtTestProjectStructureProvider(globalLanguageVersionSettings, builtinsModule, ktTestModuleStructure),
+            KotlinTestProjectStructureProvider(globalLanguageVersionSettings, builtinsModule, ktTestModuleStructure),
             useSiteCompilerConfiguration.languageVersionSettings,
             useSiteCompilerConfiguration.get(JVMConfigurationKeys.JDK_HOME)?.toPath(),
         )

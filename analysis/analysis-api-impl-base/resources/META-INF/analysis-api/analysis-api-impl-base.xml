@@ -22,6 +22,11 @@
     />
 
     <projectService
+        serviceInterface="org.jetbrains.kotlin.analysis.api.projectStructure.KaModuleProvider"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaBaseModuleProvider"
+    />
+
+    <projectService
         serviceInterface="org.jetbrains.kotlin.analysis.api.platform.KotlinMessageBusProvider"
         serviceImplementation="org.jetbrains.kotlin.analysis.api.platform.KotlinProjectMessageBusProvider"
     />
