@@ -386,6 +386,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
   }
 
   @Test
+  @TestMetadata("overloadsWithPotentialRecursion.kt")
+  public void testOverloadsWithPotentialRecursion() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/overloadsWithPotentialRecursion.kt");
+  }
+
+  @Test
   @TestMetadata("packageConflictsWithClassifierInMultiplatform.kt")
   public void testPackageConflictsWithClassifierInMultiplatform() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/packageConflictsWithClassifierInMultiplatform.kt");
