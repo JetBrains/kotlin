@@ -29,8 +29,6 @@ abstract class IrSimpleFunction : IrFunction(), IrOverridableDeclaration<IrSimpl
 
     abstract var isSuspend: Boolean
 
-    abstract override var isFakeOverride: Boolean
-
     abstract var isOperator: Boolean
 
     abstract var isInfix: Boolean

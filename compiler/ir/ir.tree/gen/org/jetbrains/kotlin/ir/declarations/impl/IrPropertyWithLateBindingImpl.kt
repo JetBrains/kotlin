@@ -31,12 +31,12 @@ class IrPropertyWithLateBindingImpl @IrImplementationDetail constructor(
     override var isExternal: Boolean,
     override var visibility: DescriptorVisibility,
     override var modality: Modality,
+    override var isFakeOverride: Boolean,
     override var isVar: Boolean,
     override var isConst: Boolean,
     override var isLateinit: Boolean,
     override var isDelegated: Boolean,
     override var isExpect: Boolean,
-    override var isFakeOverride: Boolean,
 ) : IrPropertyWithLateBinding() {
     override var annotations: List<IrConstructorCall> = emptyList()
 

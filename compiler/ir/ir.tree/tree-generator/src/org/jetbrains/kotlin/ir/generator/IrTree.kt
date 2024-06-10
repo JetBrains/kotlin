@@ -194,7 +194,7 @@ object IrTree : AbstractTreeBuilder() {
         +field("endOffset", int, mutable = true)
 
         +declaredSymbol(s)
-        +isFakeOverrideField()
+        +field("isFakeOverride", boolean)
         +referencedSymbolList("overriddenSymbols", s)
     }
     val memberWithContainerSource: Element by element(Declaration) {
@@ -482,13 +482,10 @@ object IrTree : AbstractTreeBuilder() {
         +field("isLateinit", boolean)
         +field("isDelegated", boolean)
         +field("isExpect", boolean)
-        +isFakeOverrideField()
         +field("backingField", field, nullable = true)
         +field("getter", simpleFunction, nullable = true)
         +field("setter", simpleFunction, nullable = true)
     }
-
-    private fun isFakeOverrideField() = field("isFakeOverride", boolean)
 
     //TODO: make IrScript as IrPackageFragment, because script is used as a file, not as a class
     //NOTE: declarations and statements stored separately
@@ -526,7 +523,6 @@ object IrTree : AbstractTreeBuilder() {
         +listField("overriddenSymbols", simpleFunctionSymbol, mutability = Var)
         +field("isTailrec", boolean)
         +field("isSuspend", boolean)
-        +isFakeOverrideField()
         +field("isOperator", boolean)
         +field("isInfix", boolean)
         +referencedSymbol("correspondingPropertySymbol", propertySymbol, nullable = true)

@@ -30,6 +30,7 @@ class IrPropertyImpl @IrImplementationDetail constructor(
     override var isExternal: Boolean,
     override var visibility: DescriptorVisibility,
     override var modality: Modality,
+    override var isFakeOverride: Boolean,
     override val containerSource: DeserializedContainerSource?,
     override val symbol: IrPropertySymbol,
     override var isVar: Boolean,
@@ -37,7 +38,6 @@ class IrPropertyImpl @IrImplementationDetail constructor(
     override var isLateinit: Boolean,
     override var isDelegated: Boolean,
     override var isExpect: Boolean,
-    override var isFakeOverride: Boolean,
 ) : IrProperty() {
     override var annotations: List<IrConstructorCall> = emptyList()
 

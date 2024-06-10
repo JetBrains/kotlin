@@ -36,9 +36,9 @@ class IrFunctionWithLateBindingImpl @IrImplementationDetail constructor(
     override var isInline: Boolean,
     override var isExpect: Boolean,
     override var modality: Modality,
+    override var isFakeOverride: Boolean,
     override var isTailrec: Boolean,
     override var isSuspend: Boolean,
-    override var isFakeOverride: Boolean,
     override var isOperator: Boolean,
     override var isInfix: Boolean,
 ) : IrFunctionWithLateBinding() {
