@@ -34,6 +34,7 @@ import java.rmi.UnmarshalException
 import java.rmi.server.UnicastRemoteObject
 import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.concurrent.thread
 
 class CompilationServices(
@@ -518,6 +519,7 @@ object KotlinCompilerClient {
 
         val lastDaemonCliOutputs = DaemonLastOutputLinesListener()
 
+        var daemonIsAlmostDead = AtomicBoolean(false)
         val stdoutThread =
             thread {
                 try {
@@ -537,6 +539,10 @@ object KotlinCompilerClient {
                                 reportingTargets.report(DaemonReportCategory.INFO, it, "daemon")
                             }
                         }
+                    if (isEchoRead.availablePermits() == 0) {
+                        // That means the stream was fully read, but no "echo" received. The process is crashing.
+                        daemonIsAlmostDead.set(true)
+                    }
                 } catch (_: Throwable) {
                     // Ignore, assuming all exceptions as interrupt exceptions
                 } finally {
@@ -562,10 +568,19 @@ object KotlinCompilerClient {
             if (daemonOptions.runFilesPath.isNotEmpty()) {
                 val succeeded = isEchoRead.tryAcquire(daemonStartupTimeout, TimeUnit.MILLISECONDS)
                 return when {
-                    !isProcessAlive(daemon) -> {
+                    !isProcessAlive(daemon) || daemonIsAlmostDead.get() -> {
+                        /*
+                         * We know daemon crashed, but the process might be still running for a bit.
+                         * However, we do not want to wait indefinitely even in this case
+                         */
+                        val exitCode = if (daemon.waitFor(daemonStartupTimeout, TimeUnit.MILLISECONDS)) {
+                            daemon.exitValue().toString()
+                        } else {
+                            "Unknown"
+                        }
                         reportingTargets.report(
                             DaemonReportCategory.EXCEPTION,
-                            "The daemon has terminated unexpectedly on startup attempt #${startupAttempt + 1} with error code: ${daemon.exitValue()}. ${lastDaemonCliOutputs.retrieveProblems().joinToString("\n")}"
+                            "The daemon has terminated unexpectedly on startup attempt #${startupAttempt + 1} with error code: ${exitCode}. ${lastDaemonCliOutputs.retrieveProblems().joinToString("\n")}"
                         )
                         false
                     }
