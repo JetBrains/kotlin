@@ -129,3 +129,9 @@ fun ConstantValueKind.expectedConeType(session: FirSession): ConeKotlinType {
         ConstantValueKind.Error -> error("Unexpected error ConstantValueKind")
     }
 }
+
+fun FirWhenExpression.replaceReturnTypeIfNotExhaustive(session: FirSession) {
+    if (!isProperlyExhaustive && !usedAsExpression) {
+        resultType = session.builtinTypes.unitType.type
+    }
+}
