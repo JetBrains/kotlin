@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // FIR_DUMP
-// !LANGUAGE: +MultiDollarInterpolation
+// LANGUAGE: +MultiDollarInterpolation
 fun demo() {
     fun f(x: String) { }
     val abc = 1

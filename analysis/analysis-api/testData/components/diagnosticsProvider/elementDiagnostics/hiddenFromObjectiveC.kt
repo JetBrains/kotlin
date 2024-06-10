@@ -1,4 +1,4 @@
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 
 // MODULE: lib
 // TARGET_PLATFORM: Common
