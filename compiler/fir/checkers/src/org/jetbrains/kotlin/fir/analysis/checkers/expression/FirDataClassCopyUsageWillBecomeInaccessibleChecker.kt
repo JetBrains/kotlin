@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.classId
@@ -66,13 +67,14 @@ object FirDataClassCopyUsageWillBecomeInaccessibleChecker : FirQualifiedAccessEx
     }
 }
 
-private fun FirCallableSymbol<*>.isDataClassCopy(dataClass: FirRegularClassSymbol, session: FirSession): Boolean {
+internal fun FirCallableSymbol<*>.isDataClassCopy(containingClass: FirClassSymbol<*>, session: FirSession): Boolean {
     if (!DataClassResolver.isCopy(name)) return false
-    val constructor = dataClass.primaryConstructorSymbol(session)
+    val constructor = containingClass.primaryConstructorSymbol(session)
     return this is FirNamedFunctionSymbol &&
-            dataClass.isData &&
-            dataClass.classKind.isClass &&
-            resolvedReturnType.classId == dataClass.classId &&
+            containingClass.isData &&
+            containingClass.classKind.isClass &&
+            dispatchReceiverType?.classId == containingClass.classId &&
+            resolvedReturnType.classId == containingClass.classId &&
             constructor != null &&
             resolvedContextReceivers.isEmpty() &&
             typeParameterSymbols.isEmpty() &&
