@@ -1029,7 +1029,7 @@ FILE fqName:<root> fileName:/toDataFrame_dsl.kt
                       FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:org.jetbrains.kotlinx.dataframe.api.CreateDataFrameDsl<<root>.S>) returnType:kotlin.Unit
                         $receiver: VALUE_PARAMETER name:$this$toDataFrame type:org.jetbrains.kotlinx.dataframe.api.CreateDataFrameDsl<<root>.S>
                         BLOCK_BODY
-                          CALL 'public abstract fun properties (vararg roots: kotlin.reflect.KProperty<*>, maxDepth: kotlin.Int, body: @[ExtensionFunctionType] kotlin.Function1<org.jetbrains.kotlinx.dataframe.api.TraversePropertiesDsl, kotlin.Unit>?): kotlin.Unit declared in org.jetbrains.kotlinx.dataframe.api.CreateDataFrameDsl' type=kotlin.Unit origin=null
+                          CALL 'public abstract fun properties (vararg roots: kotlin.reflect.KCallable<*>, maxDepth: kotlin.Int, body: @[ExtensionFunctionType] kotlin.Function1<org.jetbrains.kotlinx.dataframe.api.TraversePropertiesDsl, kotlin.Unit>?): kotlin.Unit declared in org.jetbrains.kotlinx.dataframe.api.CreateDataFrameDsl' type=kotlin.Unit origin=null
                             $this: GET_VAR '$this$toDataFrame: org.jetbrains.kotlinx.dataframe.api.CreateDataFrameDsl<<root>.S> declared in <root>.box.<anonymous>.<anonymous>' type=org.jetbrains.kotlinx.dataframe.api.CreateDataFrameDsl<<root>.S> origin=null
                             maxDepth: CONST Int type=kotlin.Int value=4
                             body: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<org.jetbrains.kotlinx.dataframe.api.TraversePropertiesDsl, kotlin.Unit> origin=LAMBDA
@@ -1040,17 +1040,17 @@ FILE fqName:<root> fileName:/toDataFrame_dsl.kt
                                     $this: GET_VAR '$this$properties: org.jetbrains.kotlinx.dataframe.api.TraversePropertiesDsl declared in <root>.box.<anonymous>.<anonymous>.<anonymous>' type=org.jetbrains.kotlinx.dataframe.api.TraversePropertiesDsl origin=null
                                     classes: VARARG type=kotlin.Array<out kotlin.reflect.KClass<*>> varargElementType=kotlin.reflect.KClass<*>
                                       CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Int>; java.io.Serializable]' type=kotlin.reflect.KClass<kotlin.Int>
-                                  CALL 'public abstract fun exclude (vararg properties: kotlin.reflect.KProperty<*>): kotlin.Unit declared in org.jetbrains.kotlinx.dataframe.api.TraversePropertiesDsl' type=kotlin.Unit origin=null
+                                  CALL 'public abstract fun exclude (vararg properties: kotlin.reflect.KCallable<*>): kotlin.Unit declared in org.jetbrains.kotlinx.dataframe.api.TraversePropertiesDsl' type=kotlin.Unit origin=null
                                     $this: GET_VAR '$this$properties: org.jetbrains.kotlinx.dataframe.api.TraversePropertiesDsl declared in <root>.box.<anonymous>.<anonymous>.<anonymous>' type=org.jetbrains.kotlinx.dataframe.api.TraversePropertiesDsl origin=null
-                                    properties: VARARG type=kotlin.Array<out kotlin.reflect.KProperty<*>> varargElementType=kotlin.reflect.KProperty<*>
+                                    properties: VARARG type=kotlin.Array<out kotlin.reflect.KCallable<*>> varargElementType=kotlin.reflect.KCallable<*>
                                       PROPERTY_REFERENCE 'public final r: kotlin.String declared in <root>.Record' field=null getter='public final fun <get-r> (): kotlin.String declared in <root>.Record' setter=null type=kotlin.reflect.KProperty1<<root>.Record, kotlin.String> origin=null
                                   CALL 'public abstract fun preserve (vararg classes: kotlin.reflect.KClass<*>): kotlin.Unit declared in org.jetbrains.kotlinx.dataframe.api.TraversePropertiesDsl' type=kotlin.Unit origin=null
                                     $this: GET_VAR '$this$properties: org.jetbrains.kotlinx.dataframe.api.TraversePropertiesDsl declared in <root>.box.<anonymous>.<anonymous>.<anonymous>' type=org.jetbrains.kotlinx.dataframe.api.TraversePropertiesDsl origin=null
                                     classes: VARARG type=kotlin.Array<out kotlin.reflect.KClass<*>> varargElementType=kotlin.reflect.KClass<*>
                                       CLASS_REFERENCE 'CLASS CLASS name:PreservedRecord modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<<root>.PreservedRecord>
-                                  CALL 'public abstract fun preserve (vararg properties: kotlin.reflect.KProperty<*>): kotlin.Unit declared in org.jetbrains.kotlinx.dataframe.api.TraversePropertiesDsl' type=kotlin.Unit origin=null
+                                  CALL 'public abstract fun preserve (vararg properties: kotlin.reflect.KCallable<*>): kotlin.Unit declared in org.jetbrains.kotlinx.dataframe.api.TraversePropertiesDsl' type=kotlin.Unit origin=null
                                     $this: GET_VAR '$this$properties: org.jetbrains.kotlinx.dataframe.api.TraversePropertiesDsl declared in <root>.box.<anonymous>.<anonymous>.<anonymous>' type=org.jetbrains.kotlinx.dataframe.api.TraversePropertiesDsl origin=null
-                                    properties: VARARG type=kotlin.Array<out kotlin.reflect.KProperty<*>> varargElementType=kotlin.reflect.KProperty<*>
+                                    properties: VARARG type=kotlin.Array<out kotlin.reflect.KCallable<*>> varargElementType=kotlin.reflect.KCallable<*>
                                       PROPERTY_REFERENCE 'public final preservedProperty: <root>.AnotherRecord declared in <root>.Ss' field=null getter='public final fun <get-preservedProperty> (): <root>.AnotherRecord declared in <root>.Ss' setter=null type=kotlin.reflect.KProperty1<<root>.Ss, <root>.AnotherRecord> origin=null
       CALL 'public final fun print <T> (): kotlin.Unit declared in org.jetbrains.kotlinx.dataframe.api' type=kotlin.Unit origin=null
         <T>: kotlin.String
