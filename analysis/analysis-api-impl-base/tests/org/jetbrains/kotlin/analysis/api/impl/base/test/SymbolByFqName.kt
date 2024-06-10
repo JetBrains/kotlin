@@ -123,7 +123,7 @@ sealed class SymbolData {
             require(classSymbol is KaNamedClassOrObjectSymbol) { "`${enumEntryId.classId}` must be a named class." }
             require(classSymbol.classKind == KaClassKind.ENUM_CLASS) { "`${enumEntryId.classId}` must be an enum class." }
 
-            val enumEntrySymbol = classSymbol.getEnumEntries().find { it.name == enumEntryId.callableName }
+            val enumEntrySymbol = classSymbol.enumEntries.find { it.name == enumEntryId.callableName }
                 ?: error("Cannot find enum entry symbol `$enumEntryId`.")
 
             val initializerSymbol = enumEntrySymbol.enumEntryInitializer ?: error("`${enumEntryId.callableName}` must have an initializer.")

@@ -26,7 +26,7 @@ abstract class AbstractSealedInheritorsTest : AbstractAnalysisApiBasedTest() {
         analyseForTest(ktFile) {
             val classSymbol = getSingleTestTargetSymbolOfType<KaNamedClassOrObjectSymbol>(ktFile, testDataPath)
 
-            val actualText = classSymbol.getSealedClassInheritors().joinToString("\n\n") { inheritor ->
+            val actualText = classSymbol.sealedClassInheritors.joinToString("\n\n") { inheritor ->
                 "${inheritor.classId!!}\n${inheritor.render(KaDeclarationRendererForDebug.WITH_QUALIFIED_NAMES)}"
             }
 

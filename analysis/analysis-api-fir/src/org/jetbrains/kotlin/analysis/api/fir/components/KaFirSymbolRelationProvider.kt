@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.getClassLikeSymbol
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.analysis.project.structure.DanglingFileResolutionMod
 import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.getImplementationStatus
@@ -39,6 +41,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.declarations.expectForActual
+import org.jetbrains.kotlin.fir.declarations.getSealedClassInheritors
 import org.jetbrains.kotlin.fir.diagnostics.ConeDestructuringDeclarationsOnTopLevel
 import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
@@ -382,4 +385,24 @@ internal class KaFirSymbolRelationProvider(
         return firSymbol.expectForActual?.get(ExpectActualMatchingCompatibility.MatchedSuccessfully)
             ?.map { analysisSession.firSymbolBuilder.buildSymbol(it) as KaDeclarationSymbol }.orEmpty()
     }
+
+    override val KaNamedClassOrObjectSymbol.sealedClassInheritors: List<KaNamedClassOrObjectSymbol>
+        get() = withValidityAssertion {
+            require(modality == Modality.SEALED)
+            require(this is KaFirNamedClassOrObjectSymbol)
+
+            val inheritorClassIds = firSymbol.fir.getSealedClassInheritors(analysisSession.useSiteSession)
+
+            return with(analysisSession) {
+                inheritorClassIds.mapNotNull { getClassOrObjectSymbolByClassId(it) as? KaNamedClassOrObjectSymbol }
+            }
+        }
+
+    override val KaNamedClassOrObjectSymbol.enumEntries: List<KaEnumEntrySymbol>
+        get() = withValidityAssertion {
+            require(classKind == KaClassKind.ENUM_CLASS)
+            return with(analysisSession) {
+                staticDeclaredMemberScope.callables.filterIsInstance<KaEnumEntrySymbol>().toList()
+            }
+        }
 }

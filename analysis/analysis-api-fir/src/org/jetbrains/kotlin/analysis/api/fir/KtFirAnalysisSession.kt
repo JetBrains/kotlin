@@ -104,8 +104,6 @@ private constructor(
 
     override val subtypingComponentImpl = KaFirSubtypingComponent(this, token)
 
-    override val inheritorsProviderImpl: KaInheritorsProvider = KaFirInheritorsProvider(this, token)
-
     override val symbolInfoProviderImpl: KaSymbolInfoProvider = KaFirSymbolInfoProvider(this, token)
 
     override val signatureSubstitutorImpl: KaSignatureSubstitutor = KaFirSignatureSubstitutor(this)

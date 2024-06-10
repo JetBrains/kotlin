@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescSamConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DynamicFunctionDescValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getDescriptor
@@ -25,8 +26,10 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.project.structure.*
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
@@ -237,6 +240,36 @@ internal class KaFe10SymbolRelationProvider(
             .map { it.toKtSymbol(analysisContext) as KaDeclarationSymbol }
             .toList()
     }
+
+    override val KaNamedClassOrObjectSymbol.sealedClassInheritors: List<KaNamedClassOrObjectSymbol>
+        get() = withValidityAssertion {
+            val classDescriptor = getSymbolDescriptor(this) as? ClassDescriptor ?: return emptyList()
+
+            val inheritorsProvider = analysisContext.resolveSession.sealedClassInheritorsProvider
+            val allowInDifferentFiles = analysisContext.resolveSession.languageVersionSettings
+                .supportsFeature(LanguageFeature.AllowSealedInheritorsInDifferentFilesOfSamePackage)
+
+            return inheritorsProvider.computeSealedSubclasses(classDescriptor, allowInDifferentFiles)
+                .mapNotNull { it.toKtClassifierSymbol(analysisContext) as? KaNamedClassOrObjectSymbol }
+        }
+
+    override val KaNamedClassOrObjectSymbol.enumEntries: List<KaEnumEntrySymbol>
+        get() = withValidityAssertion {
+            val enumDescriptor = getSymbolDescriptor(this) as? ClassDescriptor ?: return emptyList()
+            if (enumDescriptor.kind != ClassKind.ENUM_CLASS) {
+                return emptyList()
+            }
+
+            val result = mutableListOf<KaEnumEntrySymbol>()
+
+            for (entryDescriptor in enumDescriptor.unsubstitutedMemberScope.getContributedDescriptors()) {
+                if (entryDescriptor is ClassDescriptor && entryDescriptor.kind == ClassKind.ENUM_ENTRY) {
+                    result += KaFe10DescEnumEntrySymbol(entryDescriptor, analysisContext)
+                }
+            }
+
+            return result
+        }
 }
 
 internal fun computeContainingSymbolOrSelf(symbol: KaSymbol, analysisSession: KaSession): KaSymbol {

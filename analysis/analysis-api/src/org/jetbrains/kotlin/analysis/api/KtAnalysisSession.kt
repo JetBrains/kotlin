@@ -95,7 +95,6 @@ public abstract class KaSession(
     KaVisibilityCheckerMixIn,
     KaMemberSymbolProviderMixin,
     KaOriginalPsiProvider by originalPsiProvider,
-    KaInheritorsProviderMixIn,
     KaTypeCreator by typeCreator,
     KaAnalysisScopeProvider by analysisScopeProvider,
     KaSignatureSubstitutorMixIn,
@@ -147,9 +146,6 @@ public abstract class KaSession(
 
     internal val overrideInfoProvider: KaOverrideInfoProvider get() = overrideInfoProviderImpl
     protected abstract val overrideInfoProviderImpl: KaOverrideInfoProvider
-
-    internal val inheritorsProvider: KaInheritorsProvider get() = inheritorsProviderImpl
-    protected abstract val inheritorsProviderImpl: KaInheritorsProvider
 
     internal val symbolInfoProvider: KaSymbolInfoProvider get() = symbolInfoProviderImpl
     protected abstract val symbolInfoProviderImpl: KaSymbolInfoProvider
