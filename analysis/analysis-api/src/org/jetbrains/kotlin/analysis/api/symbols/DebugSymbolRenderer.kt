@@ -9,8 +9,9 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
-import org.jetbrains.kotlin.analysis.api.components.KaSymbolContainingDeclarationProviderMixIn
+import org.jetbrains.kotlin.analysis.api.components.KaJavaInteroperabilityComponent
 import org.jetbrains.kotlin.analysis.api.components.KaSymbolInfoProviderMixIn
+import org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider
 import org.jetbrains.kotlin.analysis.api.contracts.description.Context
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.contracts.description.renderKaContractEffectDeclaration
@@ -75,7 +76,7 @@ public class DebugSymbolRenderer(
             renderComputedValue("getContainingFileSymbol", printer) { symbol.containingFile }
 
             if (symbol is KaCallableSymbol) {
-                renderComputedValue("getContainingJvmClassName", printer) { symbol.getContainingJvmClassName() }
+                renderComputedValue("getContainingJvmClassName", printer) { symbol.containingJvmClassName }
             }
 
             renderComputedValue("getContainingModule", printer) { symbol.containingModule }

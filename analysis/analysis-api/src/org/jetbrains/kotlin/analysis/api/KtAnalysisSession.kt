@@ -61,6 +61,7 @@ public abstract class KaSession(
     diagnosticProvider: KaDiagnosticProvider,
     scopeProvider: KaScopeProvider,
     completionCandidateChecker: KaCompletionCandidateChecker,
+    javaInteroperabilityComponent: KaJavaInteroperabilityComponent,
     typeRelationChecker: KaTypeRelationChecker,
     evaluator: KaEvaluator,
     referenceShortener: KaReferenceShortener,
@@ -86,7 +87,7 @@ public abstract class KaSession(
     KaTypeProviderMixIn,
     KaTypeInfoProviderMixIn,
     KaSymbolProviderMixIn,
-    KaSymbolContainingDeclarationProviderMixIn,
+    KaJavaInteroperabilityComponent by javaInteroperabilityComponent,
     KaSymbolInfoProviderMixIn,
     KaTypeRelationChecker by typeRelationChecker,
     KaExpressionInfoProviderMixIn,
@@ -113,9 +114,6 @@ public abstract class KaSession(
     public abstract val useSiteModule: KtModule
 
     override val analysisSession: KaSession get() = this
-
-    internal val containingDeclarationProvider: KaSymbolContainingDeclarationProvider get() = containingDeclarationProviderImpl
-    protected abstract val containingDeclarationProviderImpl: KaSymbolContainingDeclarationProvider
 
     internal val symbolProvider: KaSymbolProvider get() = symbolProviderImpl
     protected abstract val symbolProviderImpl: KaSymbolProvider

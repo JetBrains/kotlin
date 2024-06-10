@@ -46,7 +46,7 @@ internal fun KaSession.checkContainingJvmClassName(
             // top-level
             ktFile.javaFileFacadeFqName.asString()
     }
-    val actualClassName = symbol.getContainingJvmClassName()
+    val actualClassName = symbol.containingJvmClassName
     testServices.assertions.assertEquals(expectedClassName, actualClassName) {
         "Invalid JvmClassName for $symbol, expected $expectedClassName but $actualClassName found"
     }
