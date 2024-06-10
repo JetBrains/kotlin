@@ -40,6 +40,7 @@ class KaFe10Session(
     originalPsiProvider = KaFe10OriginalPsiProvider(analysisSessionProvider, token),
     typeCreator = KaFe10TypeCreator(analysisSessionProvider, token),
     analysisScopeProvider = KaAnalysisScopeProviderImpl(analysisSessionProvider, token, resolutionScope),
+    signatureSubstitutor = KaFe10SignatureSubstitutor(analysisSessionProvider, token),
     resolveExtensionInfoProvider = KaFe10ResolveExtensionInfoProvider(analysisSessionProvider, token),
     compilerFacility = KaFe10CompilerFacility(analysisSessionProvider, token),
     metadataCalculator = KaFe10MetadataCalculator(analysisSessionProvider, token),
@@ -59,7 +60,6 @@ class KaFe10Session(
     override val overrideInfoProviderImpl: KaOverrideInfoProvider = KaFe10OverrideInfoProvider(this)
     override val jvmTypeMapperImpl: KaJvmTypeMapper = KaFe10JvmTypeMapper(this)
     override val symbolInfoProviderImpl: KaSymbolInfoProvider = KaFe10SymbolInfoProvider(this)
-    override val signatureSubstitutorImpl: KaSignatureSubstitutor = KaFe10SignatureSubstitutor(this)
     override val substitutorFactoryImpl: KaSubstitutorFactory = KaFe10SubstitutorFactory(this)
     override val symbolProviderByJavaPsiImpl: KaSymbolProviderByJavaPsi = KaFe10SymbolProviderByJavaPsi(this)
 

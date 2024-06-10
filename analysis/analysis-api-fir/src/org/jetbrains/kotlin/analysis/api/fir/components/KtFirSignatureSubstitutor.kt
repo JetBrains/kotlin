@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.analysis.api.fir.signatures.KaFirFunctionLikeDummySi
 import org.jetbrains.kotlin.analysis.api.fir.signatures.KaFirVariableLikeDummySignature
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAbstractSignatureSubstitutor
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionLikeSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionLikeSymbol
@@ -18,15 +20,16 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 
 internal class KaFirSignatureSubstitutor(
-    override val analysisSession: KaFirSession
-) : KaAbstractSignatureSubstitutor(), KaFirSessionComponent {
-    override fun <S : KaFunctionLikeSymbol> asSignature(symbol: S): KaFunctionLikeSignature<S> {
-        val firSymbol = (symbol as KaFirSymbol<*>).firSymbol as FirFunctionSymbol<*>
+    override val analysisSessionProvider: () -> KaFirSession,
+    override val token: KaLifetimeToken
+) : KaAbstractSignatureSubstitutor<KaFirSession>(), KaFirSessionComponent {
+    override fun <S : KaFunctionLikeSymbol> S.asSignature(): KaFunctionLikeSignature<S> = withValidityAssertion {
+        val firSymbol = (this as KaFirSymbol<*>).firSymbol as FirFunctionSymbol<*>
         return KaFirFunctionLikeDummySignature<S>(analysisSession.token, firSymbol, analysisSession.firSymbolBuilder)
     }
 
-    override fun <S : KaVariableLikeSymbol> asSignature(symbol: S): KaVariableLikeSignature<S> {
-        val firSymbol = (symbol as KaFirSymbol<*>).firSymbol as FirVariableSymbol<*>
+    override fun <S : KaVariableLikeSymbol> S.asSignature(): KaVariableLikeSignature<S> = withValidityAssertion {
+        val firSymbol = (this as KaFirSymbol<*>).firSymbol as FirVariableSymbol<*>
         return KaFirVariableLikeDummySignature<S>(analysisSession.token, firSymbol, analysisSession.firSymbolBuilder)
     }
 }
