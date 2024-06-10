@@ -263,9 +263,11 @@ class CallAndReferenceGenerator(
         val calleeReference = calleeReference as? FirResolvedNamedReference ?: return null
         val fir = calleeReference.resolvedSymbol.fir
         if (this is FirFunctionCall && fir is FirSimpleFunction && fir.origin == FirDeclarationOrigin.SamConstructor) {
+            val (_, _, substitutor) = extractArgumentsMapping(this)
+            val irArgument = convertArgument(argument, fir.valueParameters.first(), substitutor)
             return convertWithOffsets { startOffset, endOffset ->
                 IrTypeOperatorCallImpl(
-                    startOffset, endOffset, type, IrTypeOperator.SAM_CONVERSION, type, visitor.convertToIrExpression(argument)
+                    startOffset, endOffset, type, IrTypeOperator.SAM_CONVERSION, type, irArgument
                 )
             }
         }
