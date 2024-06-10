@@ -23,7 +23,7 @@ namespace {
 
 } // namespace
 
-std::atomic<mm::internal::SuspensionReason> mm::internal::gSuspensionReauestReason = nullptr;
+std::atomic<mm::internal::SuspensionReason> mm::internal::gSuspensionRequestReason = nullptr;
 
 ALWAYS_INLINE mm::ThreadSuspensionData::MutatorPauseHandle::MutatorPauseHandle(const char* reason, mm::ThreadData& threadData) noexcept
     : reason_(reason), threadData_(threadData), pauseStartTimeMicros_(konan::getTimeMicros())
@@ -65,7 +65,7 @@ kotlin::ThreadState kotlin::mm::ThreadSuspensionData::setState(kotlin::ThreadSta
 
 NO_EXTERNAL_CALLS_CHECK void kotlin::mm::ThreadSuspensionData::suspendIfRequested() noexcept {
     if (IsThreadSuspensionRequested()) {
-        auto pauseHandle = pauseMutationInScope(internal::gSuspensionReauestReason.load(std::memory_order_relaxed));
+        auto pauseHandle = pauseMutationInScope(internal::gSuspensionRequestReason.load(std::memory_order_relaxed));
 
         threadData_.gc().OnSuspendForGC();
         std::unique_lock lock(gSuspensionRequestMutex);
@@ -105,11 +105,11 @@ bool kotlin::mm::TryRequestThreadsSuspension(internal::SuspensionReason reason) 
     {
         std::unique_lock lock(gSuspensionRequestMutex);
         // Someone else has already suspended threads.
-        if (internal::gSuspensionReauestReason.load(std::memory_order_relaxed) != nullptr) {
+        if (internal::gSuspensionRequestReason.load(std::memory_order_relaxed) != nullptr) {
             return false;
         }
         gSafePointActivator = mm::SafePointActivator();
-        internal::gSuspensionReauestReason.store(reason);
+        internal::gSuspensionRequestReason.store(reason);
     }
 
     return true;
@@ -134,7 +134,7 @@ void kotlin::mm::ResumeThreads() noexcept {
     // https://en.cppreference.com/w/cpp/thread/condition_variable
     {
         std::unique_lock lock(gSuspensionRequestMutex);
-        internal::gSuspensionReauestReason.store(nullptr);
+        internal::gSuspensionRequestReason.store(nullptr);
     }
     gSuspensionCondVar.notify_all();
 }

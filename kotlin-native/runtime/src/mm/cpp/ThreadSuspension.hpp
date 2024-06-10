@@ -19,14 +19,14 @@ class ThreadData;
 namespace internal {
 
 using SuspensionReason = const char*;
-extern std::atomic<SuspensionReason> gSuspensionReauestReason;
+extern std::atomic<SuspensionReason> gSuspensionRequestReason;
 
 } // namespace internal
 
 inline bool IsThreadSuspensionRequested() noexcept {
     // Must use seq_cst ordering for synchronization with GC
     // in native->runnable transition.
-    return internal::gSuspensionReauestReason.load();
+    return internal::gSuspensionRequestReason.load();
 }
 
 class ThreadSuspensionData : private Pinned {
@@ -86,14 +86,6 @@ bool TryRequestThreadsSuspension(const char* reason) noexcept;
 void RequestThreadsSuspension(const char* reason) noexcept;
 
 void WaitForThreadsSuspension() noexcept;
-
-inline bool SuspendThreads(internal::SuspensionReason reason) noexcept {
-    if (!TryRequestThreadsSuspension(reason)) {
-        return false;
-    }
-    WaitForThreadsSuspension();
-    return true;
-}
 
 /**
  * Resumes all threads registered in ThreadRegistry that were suspended by the SuspendThreads call.

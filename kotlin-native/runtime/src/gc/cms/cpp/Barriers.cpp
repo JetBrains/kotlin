@@ -112,7 +112,6 @@ void gc::barriers::enableBarriers(int64_t epoch) noexcept {
 }
 
 void gc::barriers::switchToWeakProcessingBarriers() noexcept {
-    // TODO markDispatcher().assertWeakReadForbiden();
     switchPhase(BarriersPhase::kMarkClosure, BarriersPhase::kWeakProcessing);
 }
 
@@ -156,7 +155,7 @@ namespace {
 
 /**
  * Before the mark closure is built, every weak read may resurrect a weakly-reachable object.
- * Thus, the referent must be pushed in a mark queue, in case it wold be resureceted behind the mark front.
+ * Thus, the referent must be pushed in a mark queue, in case it wold be resurrected behind the mark front.
  */
 NO_INLINE void weakRefReadInMarkSlowPath(ObjHeader* weakReferee) noexcept {
     assertPhase(BarriersPhase::kMarkClosure);
@@ -165,7 +164,7 @@ NO_INLINE void weakRefReadInMarkSlowPath(ObjHeader* weakReferee) noexcept {
     gc::mark::ConcurrentMark::MarkTraits::tryEnqueue(markQueue, weakReferee);
 }
 
-/** After the mark closure is built, but weak refs are not yet nulled out, every weak read shouuld check if the weak referent is marked. */
+/** After the mark closure is built, but weak refs are not yet nulled out, every weak read should check if the weak referent is marked. */
 NO_INLINE ObjHeader* weakRefReadInWeakSweepSlowPath(ObjHeader* weakReferee) noexcept {
     assertPhase(BarriersPhase::kWeakProcessing);
     if (!gc::isMarked(weakReferee)) {
@@ -180,18 +179,13 @@ ALWAYS_INLINE ObjHeader* gc::barriers::weakRefReadBarrier(std::atomic<ObjHeader*
     if (__builtin_expect(currentPhase() != BarriersPhase::kDisabled, false)) {
         // Mark dispatcher requires weak reads be protected by the following:
         auto weakReadProtector = markDispatcher().weakReadProtector();
+        AssertThreadState(ThreadState::kRunnable);
 
         auto weak = weakReferee.load(std::memory_order_relaxed);
         if (!weak) return nullptr;
 
         auto phase = currentPhase();
         BarriersLogDebug(phase, "Weak read %p", weak);
-
-        // The weak read protector switches the thread state to native, thus making this code able to execute during STW.
-        // However, this is only possible with the disabled barriers.
-        // Be extra cautious not to access or modify heap structure here. e.g. do not allocate objects
-        AssertThreadState(ThreadState::kNative);
-        RuntimeAssert(!mm::IsThreadSuspensionRequested() || phase == BarriersPhase::kDisabled, "Unexpected barriers phase during STW: %s", toString(phase));
 
         if (__builtin_expect(phase == BarriersPhase::kMarkClosure, false)) {
             weakRefReadInMarkSlowPath(weak);

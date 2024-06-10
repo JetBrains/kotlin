@@ -124,7 +124,11 @@ public:
      * Every read must be guarded by the object returned by this method.
      */
     auto weakReadProtector() noexcept {
-        return std::pair{ThreadStateGuard{ThreadState::kNative}, std::shared_lock{markTerminationMutex_}};
+        auto markTerminationGuard = std::shared_lock{markTerminationMutex_, std::defer_lock};
+        while (!markTerminationGuard.try_lock()) {
+            mm::safePoint();
+        }
+        return markTerminationGuard;
     }
 
 private:
