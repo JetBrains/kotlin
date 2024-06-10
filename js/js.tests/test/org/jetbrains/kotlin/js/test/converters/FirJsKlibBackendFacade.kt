@@ -42,7 +42,7 @@ class FirJsKlibBackendFacade(
     constructor(testServices: TestServices) : this(testServices, firstTimeCompilation = true)
 
     override fun shouldRunAnalysis(module: TestModule): Boolean {
-        return module.backendKind == inputKind
+        return module.backendKind.afterFrontend == inputKind
     }
 
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.KLib {

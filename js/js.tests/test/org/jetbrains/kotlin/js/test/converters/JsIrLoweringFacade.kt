@@ -44,10 +44,13 @@ class JsIrLoweringFacade(
 
     private val jsIrPathReplacer by lazy { JsIrPathReplacer(testServices) }
 
-    override fun shouldRunAnalysis(module: TestModule) =
-        super.shouldRunAnalysis(module) && JsEnvironmentConfigurator.isMainModule(module, testServices)
+    override fun shouldRunAnalysis(module: TestModule): Boolean {
+        return module.backendKind.afterDeserializer == inputKind && module.binaryKind == outputKind &&
+                JsEnvironmentConfigurator.isMainModule(module, testServices)
+    }
 
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.Js? {
+        require(JsEnvironmentConfigurator.isMainModule(module, testServices))
         require(inputArtifact is IrBackendInput.JsIrDeserializedFromKlibBackendInput) {
             "JsIrLoweringFacade expects IrBackendInput.JsIrDeserializedFromKlibBackendInput as input"
         }

@@ -87,8 +87,8 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
         override val irModuleFragment: IrModuleFragment
             get() = moduleInfo.module
 
-        override val descriptorMangler: KotlinMangler.DescriptorMangler
-            get() = moduleInfo.symbolTable.signaturer!!.mangler
+        override val descriptorMangler: KotlinMangler.DescriptorMangler?
+            get() = moduleInfo.symbolTable.signaturer?.mangler
 
         override val irMangler: KotlinMangler.IrMangler
             get() = moduleInfo.deserializer.fakeOverrideBuilder.mangler

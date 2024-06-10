@@ -42,16 +42,18 @@ class JsIrDeserializerFacade(
     private val firstTimeCompilation: Boolean,
 ) : DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>(testServices, ArtifactKinds.KLib, BackendKinds.DeserializedIrBackend) {
 
+    override fun shouldRunAnalysis(module: TestModule): Boolean {
+        return module.backendKind.afterDeserializer == outputKind && JsEnvironmentConfigurator.isMainModule(module, testServices)
+    }
+
     override fun transform(module: TestModule, inputArtifact: BinaryArtifacts.KLib): IrBackendInput? {
+        require(JsEnvironmentConfigurator.isMainModule(module, testServices))
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
         configuration.put(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.ERROR)
 
         // Enforce PL with the ERROR log level to fail any tests where PL detected any incompatibilities.
         configuration.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.ERROR))
-
-        val isMainModule = JsEnvironmentConfigurator.isMainModule(module, testServices)
-        if (!isMainModule) return null
 
         val (moduleInfo, pluginContext) = loadIrFromKlib(module, configuration)
 
