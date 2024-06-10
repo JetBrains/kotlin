@@ -67,6 +67,7 @@ private constructor(
     originalPsiProvider = KaFirOriginalPsiProvider(analysisSessionProvider, token),
     typeCreator = KaFirTypeCreator(analysisSessionProvider, token),
     analysisScopeProvider = KaAnalysisScopeProviderImpl(analysisSessionProvider, token, useSiteScope),
+    resolveExtensionInfoProvider = KaFirResolveExtensionInfoProvider(analysisSessionProvider, token),
     compilerFacility = KaFirCompilerFacility(analysisSessionProvider, token),
     metadataCalculator = KaFirMetadataCalculator(analysisSessionProvider, token),
     dataFlowProvider = KaFirDataFlowProvider(analysisSessionProvider, token),
@@ -111,8 +112,6 @@ private constructor(
     override val substitutorFactoryImpl: KaSubstitutorFactory = KaFirSubstitutorFactory(this)
 
     override val symbolProviderByJavaPsiImpl = KaFirSymbolProviderByJavaPsi(this)
-
-    override val resolveExtensionInfoProviderImpl: KaResolveExtensionInfoProvider = KaFirResolveExtensionInfoProvider(this)
 
     override val substitutorProviderImpl: KaSubstitutorProvider = KaFirSubstitutorProvider(this)
 

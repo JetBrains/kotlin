@@ -28,7 +28,7 @@ abstract class AbstractResolveExtensionInfoProviderTest : AbstractAnalysisApiBas
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         analyseForTest(mainFile) {
-            val resolveExtensionScope = getResolveExtensionScopeWithTopLevelDeclarations()
+            val resolveExtensionScope = resolveExtensionScopeWithTopLevelDeclarations
 
             val actual = renderSymbolsWithExtendedPsiInfo(resolveExtensionScope, printPretty = false)
             val actualPretty = renderSymbolsWithExtendedPsiInfo(resolveExtensionScope, printPretty = true)
@@ -60,7 +60,7 @@ abstract class AbstractResolveExtensionInfoProviderTest : AbstractAnalysisApiBas
             val isResolveExtensionFile = containingVirtualFile.isResolveExtensionFile
             appendLine("From resolve extension: $isResolveExtensionFile")
 
-            val navTargets = ktElement.getResolveExtensionNavigationElements()
+            val navTargets = ktElement.resolveExtensionNavigationElements
             appendLine("Resolve extension navigation targets: ${navTargets.size}")
             withIndent { navTargets.forEach { appendLine(it.toString()) } }
         }

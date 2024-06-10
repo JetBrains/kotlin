@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -67,6 +68,7 @@ public abstract class KaSession(
     originalPsiProvider: KaOriginalPsiProvider,
     typeCreator: KaTypeCreator,
     analysisScopeProvider: KaAnalysisScopeProvider,
+    resolveExtensionInfoProvider: KaResolveExtensionInfoProvider,
     compilerFacility: KaCompilerFacility,
     metadataCalculator: KaMetadataCalculator,
     dataFlowProvider: KaDataFlowProvider,
@@ -99,7 +101,7 @@ public abstract class KaSession(
     KaAnalysisScopeProvider by analysisScopeProvider,
     KaSignatureSubstitutorMixIn,
     KaSymbolProviderByJavaPsiMixIn,
-    KaResolveExtensionInfoProviderMixIn,
+    KaResolveExtensionInfoProvider by resolveExtensionInfoProvider,
     KaCompilerFacility by compilerFacility,
     KaMetadataCalculator by metadataCalculator,
     KaSubstitutorProviderMixIn,
@@ -152,9 +154,6 @@ public abstract class KaSession(
 
     internal val signatureSubstitutor: KaSignatureSubstitutor get() = signatureSubstitutorImpl
     protected abstract val signatureSubstitutorImpl: KaSignatureSubstitutor
-
-    internal val resolveExtensionInfoProvider: KaResolveExtensionInfoProvider get() = resolveExtensionInfoProviderImpl
-    protected abstract val resolveExtensionInfoProviderImpl: KaResolveExtensionInfoProvider
 
     @KaAnalysisApiInternals
     public val substitutorFactory: KaSubstitutorFactory get() = substitutorFactoryImpl

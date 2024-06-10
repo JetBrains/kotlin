@@ -40,6 +40,7 @@ class KaFe10Session(
     originalPsiProvider = KaFe10OriginalPsiProvider(analysisSessionProvider, token),
     typeCreator = KaFe10TypeCreator(analysisSessionProvider, token),
     analysisScopeProvider = KaAnalysisScopeProviderImpl(analysisSessionProvider, token, resolutionScope),
+    resolveExtensionInfoProvider = KaFe10ResolveExtensionInfoProvider(analysisSessionProvider, token),
     compilerFacility = KaFe10CompilerFacility(analysisSessionProvider, token),
     metadataCalculator = KaFe10MetadataCalculator(analysisSessionProvider, token),
     dataFlowProvider = KaFe10DataFlowProvider(analysisSessionProvider, token),
@@ -61,7 +62,6 @@ class KaFe10Session(
     override val signatureSubstitutorImpl: KaSignatureSubstitutor = KaFe10SignatureSubstitutor(this)
     override val substitutorFactoryImpl: KaSubstitutorFactory = KaFe10SubstitutorFactory(this)
     override val symbolProviderByJavaPsiImpl: KaSymbolProviderByJavaPsi = KaFe10SymbolProviderByJavaPsi(this)
-    override val resolveExtensionInfoProviderImpl: KaResolveExtensionInfoProvider = KaFe10ResolveExtensionInfoProvider(this)
 
     @Suppress("AnalysisApiMissingLifetimeCheck")
     override val substitutorProviderImpl: KaSubstitutorProvider
