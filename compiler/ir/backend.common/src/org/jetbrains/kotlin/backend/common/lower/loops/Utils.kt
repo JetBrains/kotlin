@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.ir.builders.createTmpVariable
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrReturnTarget
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -197,3 +198,31 @@ internal fun IrExpression.castIfNecessary(targetClass: IrClass) =
             ).apply { dispatchReceiver = this@castIfNecessary }
         }
     }
+
+// Gets type of the deepest EXPRESSION from possible recursive snippet `IrGetValue(IrVariable(initializer=EXPRESSION))`.
+// In case it cannot be unwrapped, just returns back type of `expression` parameter
+internal fun IrExpression.getMostPreciseTypeFromValInitializer(): IrType {
+    fun unwrapValInitializer(expression: IrExpression): IrExpression? {
+        val irVariable = (expression as? IrGetValue)?.symbol?.owner as? IrVariable ?: return null
+        if (irVariable.isVar)
+            return null // The actual type of the variable's value may change after reassignment, so its declared type is what matters
+        return irVariable.initializer
+    }
+
+    fun unwrapStatementContainer(expression: IrExpression): IrExpression? =
+        (expression as? IrStatementContainer)?.let {
+            when (it) {
+                is IrReturnTarget -> // KT-67695: TODO: Perform full traverse to calculate the common type for all IrReturn statements.
+                    null // Meanwhile, conservatively returning `null`, which sadly prevents iterator removal in some tests in `nested.kt`.
+                else -> it.statements.lastOrNull() as? IrExpression
+            }
+        }
+
+    var temp = this
+    do {
+        unwrapValInitializer(temp)?.let { temp = it }
+            ?: unwrapStatementContainer(temp)?.let { temp = it }
+            ?: return temp.type
+    } while (true)
+}
+
