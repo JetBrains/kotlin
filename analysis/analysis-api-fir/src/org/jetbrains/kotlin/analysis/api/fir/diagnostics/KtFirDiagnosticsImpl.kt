@@ -4127,6 +4127,16 @@ internal class NonPublicCallFromPublicInlineDeprecationImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NonPublicCallFromPublicInlineDeprecation
 
+internal class NonPublicDataCopyCallFromPublicInlineErrorImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NonPublicDataCopyCallFromPublicInlineError
+
+internal class NonPublicDataCopyCallFromPublicInlineWarningImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NonPublicDataCopyCallFromPublicInlineWarning
+
 internal class ProtectedConstructorCallFromPublicInlineImpl(
     override val inlineDeclaration: KaSymbol,
     override val referencedDeclaration: KaSymbol,

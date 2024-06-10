@@ -3425,6 +3425,14 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val referencedDeclaration: KaSymbol
     }
 
+    interface NonPublicDataCopyCallFromPublicInlineError : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = NonPublicDataCopyCallFromPublicInlineError::class
+    }
+
+    interface NonPublicDataCopyCallFromPublicInlineWarning : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = NonPublicDataCopyCallFromPublicInlineWarning::class
+    }
+
     interface ProtectedConstructorCallFromPublicInline : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = ProtectedConstructorCallFromPublicInline::class
         val inlineDeclaration: KaSymbol
