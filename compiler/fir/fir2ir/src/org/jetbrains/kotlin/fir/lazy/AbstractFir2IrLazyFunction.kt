@@ -25,18 +25,24 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isFacadeClass
 import org.jetbrains.kotlin.ir.util.isObject
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import kotlin.properties.ReadWriteProperty
 
 abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
     protected val c: Fir2IrComponents,
-    override val startOffset: Int,
-    override val endOffset: Int,
+    startOffset: Int,
+    endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val symbol: IrSimpleFunctionSymbol,
     parent: IrDeclarationParent,
     override var isFakeOverride: Boolean,
 ) : AbstractIrLazyFunction(), AbstractFir2IrLazyDeclaration<F>, Fir2IrTypeParametersContainer, IrLazyFunctionBase,
     Fir2IrComponents by c {
+
+    final override var startOffset: Int = startOffset
+        set(_) = shouldNotBeCalled()
+    final override var endOffset: Int = endOffset
+        set(_) = shouldNotBeCalled()
 
     init {
         this.parent = parent

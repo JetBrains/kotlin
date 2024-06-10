@@ -188,6 +188,11 @@ object IrTree : AbstractTreeBuilder() {
 
         parent(overridableMember)
 
+        // These fields are made mutable here to allow converting fake overrides to non-fake overrides
+        // (for example, to delegated members) and replacing their debug info without performing a full copy.
+        +field("startOffset", int, mutable = true)
+        +field("endOffset", int, mutable = true)
+
         +declaredSymbol(s)
         +isFakeOverrideField()
         +referencedSymbolList("overriddenSymbols", s)

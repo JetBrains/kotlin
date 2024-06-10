@@ -35,11 +35,12 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class Fir2IrLazyProperty(
     private val c: Fir2IrComponents,
-    override val startOffset: Int,
-    override val endOffset: Int,
+    startOffset: Int,
+    endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val fir: FirProperty,
     val containingClass: FirRegularClass?,
@@ -48,6 +49,11 @@ class Fir2IrLazyProperty(
     override var isFakeOverride: Boolean,
 ) : IrProperty(), AbstractFir2IrLazyDeclaration<FirProperty>, Fir2IrComponents by c {
     override val symbol: IrPropertySymbol = symbols.propertySymbol
+
+    override var startOffset: Int = startOffset
+        set(_) = shouldNotBeCalled()
+    override var endOffset: Int = endOffset
+        set(_) = shouldNotBeCalled()
 
     init {
         this.parent = parent

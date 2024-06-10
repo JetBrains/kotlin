@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class Fir2IrLazyPropertyForPureField(
     private val c: Fir2IrComponents,
@@ -43,11 +44,13 @@ class Fir2IrLazyPropertyForPureField(
         get() = emptyList()
         set(_) = mutationNotSupported()
 
-    override val startOffset: Int
+    override var startOffset: Int
         get() = this.field.startOffset
+        set(_) = shouldNotBeCalled()
 
-    override val endOffset: Int
+    override var endOffset: Int
         get() = this.field.endOffset
+        set(_) = shouldNotBeCalled()
 
     override var origin: IrDeclarationOrigin
         get() = this.field.origin

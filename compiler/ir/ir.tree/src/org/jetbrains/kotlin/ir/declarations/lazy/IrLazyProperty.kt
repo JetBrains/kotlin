@@ -17,10 +17,11 @@ import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class IrLazyProperty(
-    override val startOffset: Int,
-    override val endOffset: Int,
+    startOffset: Int,
+    endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val symbol: IrPropertySymbol,
     @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -38,6 +39,11 @@ class IrLazyProperty(
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
 ) : IrProperty(), IrLazyDeclarationBase {
+    override var startOffset: Int = startOffset
+        set(_) = shouldNotBeCalled()
+    override var endOffset: Int = endOffset
+        set(_) = shouldNotBeCalled()
+
     init {
         symbol.bind(this)
     }
