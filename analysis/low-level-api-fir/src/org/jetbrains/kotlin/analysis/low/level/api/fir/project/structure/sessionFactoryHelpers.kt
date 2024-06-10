@@ -68,14 +68,17 @@ internal inline fun createCompositeSymbolProvider(
 
 @SessionConfiguration
 internal fun FirSession.registerCompilerPluginExtensions(project: Project, module: KtSourceModule) {
-    val extensionProvider = project.getService<KotlinCompilerPluginsProvider>(KotlinCompilerPluginsProvider::class.java) ?: return
     FirSessionConfigurator(this).apply {
-        val registrars = FirExtensionRegistrarAdapter.getInstances(project) +
-                extensionProvider.getRegisteredExtensions(module, FirExtensionRegistrarAdapter)
-        for (extensionRegistrar in registrars) {
-            registerExtensions((extensionRegistrar as FirExtensionRegistrar).configure())
-        }
+        FirExtensionRegistrarAdapter.getInstances(project).forEach(::applyExtensionRegistrar)
+
+        KotlinCompilerPluginsProvider.getInstance(project)
+            ?.getRegisteredExtensions(module, FirExtensionRegistrarAdapter)
+            ?.forEach(::applyExtensionRegistrar)
     }.configure()
+}
+
+private fun FirSessionConfigurator.applyExtensionRegistrar(registrar: FirExtensionRegistrarAdapter) {
+    registerExtensions((registrar as FirExtensionRegistrar).configure())
 }
 
 @SessionConfiguration
@@ -89,5 +92,4 @@ internal fun LLFirSession.registerCompilerPluginServices(
     // We need FirRegisteredPluginAnnotations and FirPredicateBasedProvider during extensions' registration process
     register(FirRegisteredPluginAnnotations::class, LLFirIdeRegisteredPluginAnnotations(this, annotationsResolver))
     register(FirPredicateBasedProvider::class, LLFirIdePredicateBasedProvider(this, annotationsResolver))
-
 }

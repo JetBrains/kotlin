@@ -58,9 +58,8 @@ abstract class KaBaseSimpleNameReference(expression: KtSimpleNameExpression) : K
         }
 
         val reference = binaryExpression.operationReference.reference ?: return false
-        val pluginPresenceService = project.getService(KotlinCompilerPluginsProvider::class.java)
-            ?: error("KtAssignResolutionPresenceService is not available as a service")
-        return pluginPresenceService.isPluginOfTypeRegistered(sourceModule, CompilerPluginType.ASSIGNMENT)
+        val compilerPluginsProvider = KotlinCompilerPluginsProvider.getInstance(project) ?: return false
+        return compilerPluginsProvider.isPluginOfTypeRegistered(sourceModule, CompilerPluginType.ASSIGNMENT)
                 && (reference.resolve() as? KtNamedFunction)?.nameAsName == ASSIGN_METHOD
     }
 }

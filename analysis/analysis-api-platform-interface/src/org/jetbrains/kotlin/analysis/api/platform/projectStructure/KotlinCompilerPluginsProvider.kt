@@ -5,27 +5,39 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 
+import com.intellij.openapi.components.serviceOrNull
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.platform.KotlinOptionalPlatformComponent
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 
 /**
- * A service which can return extensions which are registered for some module
+ * [KotlinCompilerPluginsProvider] provides information about registered compiler plugins.
+ *
+ * The component is optional. If [KotlinCompilerPluginsProvider] is not implemented, the Analysis API engine will assume that no compiler
+ * plugins are registered.
  */
 public abstract class KotlinCompilerPluginsProvider : KotlinOptionalPlatformComponent {
     public enum class CompilerPluginType {
-        ASSIGNMENT
+        /**
+         * An assign expression alterer extension. See `FirAssignExpressionAltererExtension`.
+         */
+        ASSIGNMENT,
     }
 
     /**
-     * Returns a list of extensions of a base [extensionType] which are registered for [module]
+     * Returns a list of extensions of a base [extensionType] that compiler plugins have registered for [module].
      *
      * These extensions are used in addition to those provided by the extension descriptor's [ProjectExtensionDescriptor.getInstances].
      */
     public abstract fun <T : Any> getRegisteredExtensions(module: KtSourceModule, extensionType: ProjectExtensionDescriptor<T>): List<T>
 
     /**
-     * Returns `true` if at least one plugin with requested `pluginType` is registered, `false` otherwise
+     * Returns `true` if at least one plugin with the requested [pluginType] is registered, and `false` otherwise.
      */
     public abstract fun isPluginOfTypeRegistered(module: KtSourceModule, pluginType: CompilerPluginType): Boolean
+
+    public companion object {
+        public fun getInstance(project: Project): KotlinCompilerPluginsProvider? = project.serviceOrNull()
+    }
 }
