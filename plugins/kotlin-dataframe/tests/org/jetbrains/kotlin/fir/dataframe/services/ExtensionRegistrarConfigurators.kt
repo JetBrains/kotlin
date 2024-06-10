@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.fir.dataframe.services
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.fir.dataframe.FirDataFrameExtensionRegistrar
-import org.jetbrains.kotlin.fir.dataframe.PATH
-import org.jetbrains.kotlin.fir.dataframe.extensions.IrBodyFiller
+import org.jetbrains.kotlinx.dataframe.plugin.FirDataFrameExtensionRegistrar
+import org.jetbrains.kotlinx.dataframe.plugin.PATH
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.IrBodyFiller
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
@@ -26,10 +26,12 @@ class ExperimentalExtensionRegistrarConfigurator(testServices: TestServices) : E
         module: TestModule,
         configuration: CompilerConfiguration
     ) {
-        FirExtensionRegistrarAdapter.registerExtension(FirDataFrameExtensionRegistrar(
+        FirExtensionRegistrarAdapter.registerExtension(
+            FirDataFrameExtensionRegistrar(
             configuration.get(PATH)!!,
             null
-        ))
+        )
+        )
         IrGenerationExtension.registerExtension(IrBodyFiller(configuration.get(PATH), null))
     }
 }

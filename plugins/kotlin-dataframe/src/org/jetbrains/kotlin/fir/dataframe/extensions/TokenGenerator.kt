@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.fir.dataframe.extensions
+package org.jetbrains.kotlinx.dataframe.plugin.extensions
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
@@ -9,10 +9,8 @@ import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
-import org.jetbrains.kotlin.fir.dataframe.CallShapeData
-import org.jetbrains.kotlin.fir.dataframe.callShapeData
-import org.jetbrains.kotlin.fir.dataframe.utils.Names
-import org.jetbrains.kotlin.fir.dataframe.utils.generateExtensionProperty
+import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
+import org.jetbrains.kotlinx.dataframe.plugin.utils.generateExtensionProperty
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping

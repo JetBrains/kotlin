@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.dataframe.extensions
+package org.jetbrains.kotlinx.dataframe.plugin.extensions
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 import org.jetbrains.kotlin.fir.caches.FirCache
-import org.jetbrains.kotlin.fir.dataframe.api.flatten
-import org.jetbrains.kotlin.fir.dataframe.pluginDataFrameSchema
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.flatten
+import org.jetbrains.kotlinx.dataframe.plugin.pluginDataFrameSchema
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -35,9 +35,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlinx.dataframe.KotlinTypeFacade
-import org.jetbrains.kotlinx.dataframe.KotlinTypeFacadeImpl
-import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PluginDataFrameSchema
 
 class ExpressionAnalysisAdditionalChecker(
     session: FirSession,

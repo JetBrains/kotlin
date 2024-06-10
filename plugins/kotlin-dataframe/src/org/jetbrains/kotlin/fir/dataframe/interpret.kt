@@ -3,11 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.dataframe
+package org.jetbrains.kotlinx.dataframe.plugin
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
-import org.jetbrains.kotlin.fir.dataframe.utils.Names
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.Marker
+import org.jetbrains.kotlinx.dataframe.plugin.impl.Interpreter
+import org.jetbrains.kotlinx.dataframe.plugin.impl.Present
+import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
@@ -62,35 +66,15 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import org.jetbrains.kotlinx.dataframe.KotlinTypeFacade
-import org.jetbrains.kotlinx.dataframe.Marker
 import org.jetbrains.kotlinx.dataframe.annotations.*
-import org.jetbrains.kotlinx.dataframe.plugin.ColumnPathApproximation
-import org.jetbrains.kotlinx.dataframe.plugin.ColumnWithPathApproximation
-import org.jetbrains.kotlinx.dataframe.plugin.DataFrameCallableId
-import org.jetbrains.kotlinx.dataframe.plugin.KPropertyApproximation
-import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.SimpleCol
-import org.jetbrains.kotlinx.dataframe.plugin.SimpleColumnGroup
-import org.jetbrains.kotlinx.dataframe.plugin.SimpleFrameColumn
-
-interface InterpretationErrorReporter {
-    val errorReported: Boolean
-    fun reportInterpretationError(call: FirFunctionCall, message: String)
-
-    fun doNotReportInterpretationError()
-
-    companion object {
-        val DEFAULT = object : InterpretationErrorReporter {
-            override val errorReported: Boolean = false
-            override fun reportInterpretationError(call: FirFunctionCall, message: String) {
-
-            }
-
-            override fun doNotReportInterpretationError() = Unit
-        }
-    }
-}
+import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnPathApproximation
+import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnWithPathApproximation
+import org.jetbrains.kotlinx.dataframe.plugin.impl.data.DataFrameCallableId
+import org.jetbrains.kotlinx.dataframe.plugin.impl.data.KPropertyApproximation
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PluginDataFrameSchema
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SimpleCol
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SimpleColumnGroup
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SimpleFrameColumn
 
 fun <T> KotlinTypeFacade.interpret(
     functionCall: FirFunctionCall,
@@ -98,8 +82,7 @@ fun <T> KotlinTypeFacade.interpret(
     additionalArguments: Map<String, Interpreter.Success<Any?>> = emptyMap(),
     reporter: InterpretationErrorReporter,
 ): Interpreter.Success<T>? {
-
-    val refinedArguments: Arguments = functionCall.collectArgumentExpressions()
+    val refinedArguments: RefinedArguments = functionCall.collectArgumentExpressions()
 
     val defaultArguments = processor.expectedArguments.filter { it.defaultValue is Present }.map { it.name }.toSet()
     val actualArgsMap = refinedArguments.associateBy { it.name.identifier }.toSortedMap()
@@ -281,6 +264,24 @@ fun <T> KotlinTypeFacade.interpret(
     }
 }
 
+interface InterpretationErrorReporter {
+    val errorReported: Boolean
+    fun reportInterpretationError(call: FirFunctionCall, message: String)
+
+    fun doNotReportInterpretationError()
+
+    companion object {
+        val DEFAULT = object : InterpretationErrorReporter {
+            override val errorReported: Boolean = false
+            override fun reportInterpretationError(call: FirFunctionCall, message: String) {
+
+            }
+
+            override fun doNotReportInterpretationError() = Unit
+        }
+    }
+}
+
 fun KotlinTypeFacade.pluginDataFrameSchema(schemaTypeArg: ConeTypeProjection): PluginDataFrameSchema {
     val schema = if (schemaTypeArg.isStarProjection) {
         PluginDataFrameSchema(emptyList())
@@ -387,7 +388,9 @@ private fun KotlinTypeFacade.columnOf(it: FirPropertySymbol, mapping: Map<FirTyp
                 }
                 else -> type
             }
-            type?.let { type -> SimpleCol(it.name.identifier, TypeApproximation(type)) }
+            type?.let { type -> SimpleCol(it.name.identifier,
+                org.jetbrains.kotlinx.dataframe.plugin.impl.api.TypeApproximation(type)
+            ) }
         }
     }
 
@@ -449,7 +452,7 @@ private fun KotlinTypeFacade.toKPropertyApproximation(
     }
 }
 
-internal fun FirFunctionCall.collectArgumentExpressions(): Arguments {
+internal fun FirFunctionCall.collectArgumentExpressions(): RefinedArguments {
     val refinedArgument = mutableListOf<RefinedArgument>()
 
     val parameterName = Name.identifier("receiver")
@@ -463,7 +466,7 @@ internal fun FirFunctionCall.collectArgumentExpressions(): Arguments {
     (argumentList as FirResolvedArgumentList).mapping.forEach { (expression, parameter) ->
         refinedArgument += RefinedArgument(parameter.name, expression)
     }
-    return Arguments(refinedArgument)
+    return RefinedArguments(refinedArgument)
 }
 
 internal val KotlinTypeFacade.getSchema: FirExpression.() -> ObjectWithSchema? get() = { getSchema(session) }

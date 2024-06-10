@@ -3,12 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.dataframe.utils
+package org.jetbrains.kotlinx.dataframe.plugin.utils
 
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlinx.dataframe.annotations.Interpretable
 import org.jetbrains.kotlinx.dataframe.annotations.Order
 import kotlin.reflect.KClass
 
@@ -32,7 +31,7 @@ object Names {
     val DF_ANNOTATIONS_PACKAGE: Name
         get() = Name.identifier("org.jetbrains.kotlinx.dataframe.annotations")
     val INTERPRETABLE_FQNAME: FqName
-        get() = FqName(Interpretable::class.qualifiedName!!)
+        get() = FqName("org.jetbrains.kotlinx.dataframe.annotations.Interpretable")
     val ORDER_ANNOTATION = ClassId(FqName("org.jetbrains.kotlinx.dataframe.annotations"), Name.identifier(Order::class.simpleName!!))
     val ORDER_ARGUMENT = Name.identifier(Order::order.name)
 
