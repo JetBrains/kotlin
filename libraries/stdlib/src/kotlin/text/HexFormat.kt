@@ -206,41 +206,114 @@ public class HexFormat internal constructor(
     }
 
     /**
-     * Represents hexadecimal format options for formatting and parsing a numeric value.
+     * Represents hexadecimal format options for formatting and parsing numeric values.
      *
-     * The formatting result consist of [prefix] string, hexadecimal representation of the value being formatted, and [suffix] string.
-     * Hexadecimal representation of a value is calculated by mapping each four-bit chunk
+     * These options are utilized by functions like [Int.toHexString] for formatting and [String.hexToInt] for parsing.
+     * The formatting and parsing functions are available for all integer numeric types.
+     *
+     * When formatting, the result consists of a [prefix] string, the hexadecimal representation of the numeric value,
+     * and a [suffix] string. The hexadecimal representation of a value is calculated by mapping each four-bit chunk
      * of its binary representation to the corresponding hexadecimal digit, starting with the most significant bits.
-     * [upperCase] determines whether upper case `0-9`, `A-F` or lower case `0-9`, `a-f` hexadecimal digits are used.
-     * If [removeLeadingZeros] it `true`, leading zeros in the hexadecimal representation are removed.
+     * The [upperCase] option determines the case (`A-F` or `a-f`) of the hexadecimal digits.
+     * If [removeLeadingZeros] is `true` and the hexadecimal representation is longer than [minLength], leading zeros
+     * are removed until the length matches [minLength]. However, if [minLength] exceeds the length of the hexadecimal
+     * representation, [removeLeadingZeros] is ignored, and zeros are added to the start of the representation to
+     * achieve the specified [minLength].
      *
-     * For example, the binary representation of the `Byte` value `58` is the 8-bit long `00111010`,
-     * which converts to a hexadecimal representation of `3a` or `3A` depending on [upperCase].
-     * Whereas, the binary representation of the `Int` value `58` is the 32-bit long `00000000000000000000000000111010`,
-     * which converts to a hexadecimal representation of `0000003a` or `0000003A` depending on [upperCase].
-     * If [removeLeadingZeros] it `true`, leading zeros in `0000003a` are removed, resulting `3a`.
+     * For example, the binary representation of the `Int` value `58` (32-bit long `00000000000000000000000000111010`)
+     * converts to the hexadecimal representation `0000003a` or `0000003A`, depending on [upperCase].
+     * With [removeLeadingZeros] set to `true`, it shortens to `3a`. However, if [minLength] is set to `6`, the removal of
+     * leading zeros stops once the length is reduced to `00003a`. Setting [minLength] to `12` results in
+     * `00000000003a`, where the [removeLeadingZeros] option is ignored due to the minimum length requirement.
      *
-     * To convert a value to hexadecimal string of a particular length,
-     * first convert the value to a type with the corresponding bit size.
-     * For example, to convert an `Int` value to 4-digit hexadecimal string,
-     * convert the value `toShort()` before hexadecimal formatting.
-     * To convert it to hexadecimal string of at most 4 digits
-     * without leading zeros, set [removeLeadingZeros] to `true` in addition.
+     * To format a value into a hexadecimal string of a particular length, start by converting the value to a type with
+     * the suitable bit size. For instance, to format an `Int` value into a 4-digit hexadecimal string, convert the value
+     * using `toShort()` before hexadecimal formatting. To obtain a maximum of 4 digits without leading zeros,
+     * additionally set [removeLeadingZeros] to `true`.
      *
-     * Parsing requires [prefix] and [suffix] to be present in the input string,
-     * and the amount of hexadecimal digits to be at least one and at most the value bit size divided by four.
-     * Parsing is performed in case-insensitive manner, and [removeLeadingZeros] is ignored as well.
+     * When parsing, the input string must start with the [prefix] and end with the [suffix]. The number of hexadecimal
+     * digits in the input string must either exactly match [minLength] or not exceed the value's bit size divided
+     * by four. Parsing of [prefix], [suffix], and the hexadecimal digits is performed in a case-insensitive manner.
+     * Also, the [removeLeadingZeros] option is ignored when parsing.
      *
-     * See [NumberHexFormat.Builder] to find out how the options are configured,
-     * and what is the default value of each option.
+     * This class is immutable and cannot be created or configured directly. To create a new format, use the
+     * `HexFormat { }` function and configure the options of the `number` property inside the braces. For example,
+     * use `val format = HexFormat { number.prefix = "0x" }` to set the [prefix]. The `number` property is of type
+     * [NumberHexFormat.Builder], whose options are configurable and correspond to the options of this class.
      */
     public class NumberHexFormat internal constructor(
-        /** The string that immediately precedes hexadecimal representation of a numeric value. */
+        /**
+         * The string that immediately precedes the hexadecimal representation of a numeric value,
+         * empty string by default.
+         *
+         * When formatting, this string is placed before the hexadecimal representation.
+         * When parsing, the string being parsed must start with this string, ignoring character case.
+         * Otherwise, the parsing function will fail.
+         *
+         * @sample samples.text.HexFormats.Numbers.Formatting.prefix
+         * @sample samples.text.HexFormats.Numbers.Parsing.prefix
+         */
         public val prefix: String,
-        /** The string that immediately succeeds hexadecimal representation of a numeric value. */
+
+        /**
+         * The string that immediately succeeds the hexadecimal representation of a numeric value,
+         * empty string by default.
+         *
+         * When formatting, this string is placed after the hexadecimal representation.
+         * When parsing, the string being parsed must end with this string, ignoring character case.
+         * Otherwise, the parsing function will fail.
+         *
+         * @sample samples.text.HexFormats.Numbers.Formatting.suffix
+         * @sample samples.text.HexFormats.Numbers.Parsing.suffix
+         */
         public val suffix: String,
-        /** Specifies whether to remove leading zeros in the hexadecimal representation of a numeric value. */
-        public val removeLeadingZeros: Boolean
+
+        /**
+         * Specifies whether to remove leading zeros in the hexadecimal representation of a numeric value,
+         * `false` by default.
+         *
+         * The hexadecimal representation of a value is calculated by mapping each four-bit chunk of its binary
+         * representation to the corresponding hexadecimal digit, starting with the most significant bits.
+         *
+         * When formatting, if this option is `true` and the length of the hexadecimal representation exceeds
+         * [minLength], leading zeros are removed until the length matches [minLength]. If the length
+         * does not exceed [minLength], this option has no effect on the formatting result.
+         *
+         * When parsing, this option is ignored.
+         *
+         * @sample samples.text.HexFormats.Numbers.Formatting.removeLeadingZeros
+         * @sample samples.text.HexFormats.Numbers.Parsing.removeLeadingZeros
+         */
+        public val removeLeadingZeros: Boolean,
+
+        /**
+         * Specifies the minimum number of hexadecimal digits to be used in the representation of a numeric value,
+         * `1` by default.
+         *
+         * The hexadecimal representation of a value is calculated by mapping each four-bit chunk of its binary
+         * representation to the corresponding hexadecimal digit, starting with the most significant bits.
+         *
+         * When formatting:
+         *   - If this option is less than the length of the hexadecimal representation:
+         *       - If [removeLeadingZeros] is `true`, leading zeros are removed until the length matches [minLength].
+         *       - If [removeLeadingZeros] is `false`, the representation remains unchanged, as no leading zeros are removed.
+         *   - If this option is greater than the length of the hexadecimal representation, the
+         *     representation is padded with zeros at the start to reach the specified [minLength].
+         *   - If this option matches the length of the hexadecimal representation, the representation remains unchanged.
+         *
+         * When parsing:
+         *   - If this option is less than the length of the hexadecimal representation, the number of hexadecimal
+         *     digits in the input string must be at least [minLength] and not exceed the representation's length.
+         *   - If this option is greater than or equal to the length of the hexadecimal representation,
+         *     the number of hexadecimal digits in the input string must exactly match [minLength].
+         *
+         * The parsing function fails if these conditions are not met.
+         *
+         * @sample samples.text.HexFormats.Numbers.Formatting.minLength
+         * @sample samples.text.HexFormats.Numbers.Parsing.minLength
+         */
+        @SinceKotlin("2.0")
+        public val minLength: Int
     ) {
 
         internal val isDigitsOnly: Boolean = prefix.isEmpty() && suffix.isEmpty()
@@ -265,15 +338,28 @@ public class HexFormat internal constructor(
         }
 
         /**
-         * A context for building a [NumberHexFormat]. Provides API for configuring format options.
+         * Provides an API for building a [NumberHexFormat].
+         *
+         * This class is a [builder](https://en.wikipedia.org/wiki/Builder_pattern) for [NumberHexFormat], and
+         * serves as the type of the `number` property when creating a new format using the `HexFormat { }` function.
+         * Each option in this class corresponds to an option in [NumberHexFormat] and defines it in the resulting
+         * format. For example, use `val format = HexFormat { number.removeLeadingZeros = true }` to set
+         * [NumberHexFormat.removeLeadingZeros]. Refer to [NumberHexFormat] for details about how the configured
+         * format options affect formatting and parsing results.
          */
         public class Builder internal constructor() {
             /**
              * Defines [NumberHexFormat.prefix] of the format being built, empty string by default.
              *
-             * The string must not contain LF and CR characters.
+             * The string must not contain line feed (LF) and carriage return (CR) characters.
+             *
+             * Refer to [NumberHexFormat.prefix] for details about how this format option affects
+             * the formatting and parsing results.
              *
              * @throws IllegalArgumentException if a string containing LF or CR character is assigned to this property.
+             *
+             * @sample samples.text.HexFormats.Numbers.Formatting.prefix
+             * @sample samples.text.HexFormats.Numbers.Parsing.prefix
              */
             public var prefix: String = Default.prefix
                 set(value) {
@@ -285,9 +371,15 @@ public class HexFormat internal constructor(
             /**
              * Defines [NumberHexFormat.suffix] of the format being built, empty string by default.
              *
-             * The string must not contain LF and CR characters.
+             * The string must not contain line feed (LF) and carriage return (CR) characters.
+             *
+             * Refer to [NumberHexFormat.suffix] for details about how the format option affects
+             * the formatting and parsing results.
              *
              * @throws IllegalArgumentException if a string containing LF or CR character is assigned to this property.
+             *
+             * @sample samples.text.HexFormats.Numbers.Formatting.suffix
+             * @sample samples.text.HexFormats.Numbers.Parsing.suffix
              */
             public var suffix: String = Default.suffix
                 set(value) {
@@ -296,11 +388,39 @@ public class HexFormat internal constructor(
                     field = value
                 }
 
-            /** Defines [NumberHexFormat.removeLeadingZeros] of the format being built, `false` by default. */
+            /**
+             * Defines [NumberHexFormat.removeLeadingZeros] of the format being built, `false` by default.
+             *
+             * Refer to [NumberHexFormat.removeLeadingZeros] for details about how the format option affects
+             * the formatting and parsing results.
+             *
+             * @sample samples.text.HexFormats.Numbers.Formatting.removeLeadingZeros
+             * @sample samples.text.HexFormats.Numbers.Parsing.removeLeadingZeros
+             */
             public var removeLeadingZeros: Boolean = Default.removeLeadingZeros
 
+            /**
+             * Defines [NumberHexFormat.minLength] of the format being built, `1` by default.
+             *
+             * The value must be positive.
+             *
+             * Refer to [NumberHexFormat.minLength] for details about how the format option affects
+             * the formatting and parsing results.
+             *
+             * @throws IllegalArgumentException if a non-positive value is assigned to this property.
+             *
+             * @sample samples.text.HexFormats.Numbers.Formatting.minLength
+             * @sample samples.text.HexFormats.Numbers.Parsing.minLength
+             */
+            @SinceKotlin("2.0")
+            public var minLength: Int = Default.minLength
+                set(value) {
+                    require(value > 0) { "Non-positive values are prohibited for minLength, but was $value" }
+                    field = value
+                }
+
             internal fun build(): NumberHexFormat {
-                return NumberHexFormat(prefix, suffix, removeLeadingZeros)
+                return NumberHexFormat(prefix, suffix, removeLeadingZeros, minLength)
             }
         }
 
@@ -308,7 +428,8 @@ public class HexFormat internal constructor(
             internal val Default = NumberHexFormat(
                 prefix = "",
                 suffix = "",
-                removeLeadingZeros = false
+                removeLeadingZeros = false,
+                minLength = 1
             )
         }
     }
