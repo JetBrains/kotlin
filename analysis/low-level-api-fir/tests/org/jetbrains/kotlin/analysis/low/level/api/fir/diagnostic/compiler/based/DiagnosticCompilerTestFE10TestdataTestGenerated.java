@@ -47097,6 +47097,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("overrideErrorOnPrimaryConstructorProperty.kt")
+      public void testOverrideErrorOnPrimaryConstructorProperty() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/overrideErrorOnPrimaryConstructorProperty.kt");
+      }
+
+      @Test
       @TestMetadata("overrideInAnonymousObject.kt")
       public void testOverrideInAnonymousObject() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/overrideInAnonymousObject.kt");
