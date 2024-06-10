@@ -44513,6 +44513,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("delegatedConstructorCall.kt")
+      public void testDelegatedConstructorCall() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/delegatedConstructorCall.kt");
+      }
+
+      @Test
       @TestMetadata("diffrentModules.kt")
       public void testDiffrentModules() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/diffrentModules.kt");
