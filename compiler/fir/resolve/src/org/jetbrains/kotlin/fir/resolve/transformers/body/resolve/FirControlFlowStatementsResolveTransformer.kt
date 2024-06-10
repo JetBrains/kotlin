@@ -114,17 +114,10 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
                     whenExpression = completionResult
                 }
                 dataFlowAnalyzer.exitWhenExpression(whenExpression, data.forceFullCompletion)
-                whenExpression = whenExpression.replaceReturnTypeIfNotExhaustive()
+                whenExpression.replaceReturnTypeIfNotExhaustive(session)
                 whenExpression
             }
         }
-    }
-
-    private fun FirWhenExpression.replaceReturnTypeIfNotExhaustive(): FirWhenExpression {
-        if (!isProperlyExhaustive && !usedAsExpression) {
-            resultType = session.builtinTypes.unitType.type
-        }
-        return this
     }
 
     private fun FirWhenExpression.isOneBranch(): Boolean {
