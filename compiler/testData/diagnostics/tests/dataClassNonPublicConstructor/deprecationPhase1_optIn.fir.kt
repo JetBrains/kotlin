@@ -10,6 +10,6 @@ fun usage(data: Data) {
 @ConsistentCopyVisibility
 data class DontFallbackToPrivateToThis<out T> private constructor(val t: T) {
     private fun private(other: DontFallbackToPrivateToThis<T>) {
-        other.<!INVISIBLE_REFERENCE!>copy<!>()
+        other.copy()
     }
 }
