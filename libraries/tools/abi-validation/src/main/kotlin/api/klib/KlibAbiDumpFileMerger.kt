@@ -145,7 +145,9 @@ internal class KlibAbiDumpMerger {
 
         while (lines.hasNext()) {
             val line = lines.peek()!!
-            if (line.isEmpty()) { lines.next(); continue }
+            if (line.isEmpty()) {
+                lines.next(); continue
+            }
             // TODO: wrap the line and cache the depth inside that wrapper?
             val lineDepth = line.depth()
             when {
@@ -487,6 +489,7 @@ internal class KlibAbiDumpMerger {
  * declarations.
  */
 internal class DeclarationContainer(val text: String, val parent: DeclarationContainer? = null) {
+    val type: DeclarationType? = if (text.isNotBlank()) DeclarationType.parseFromDeclaration(text) else null
     val targets: MutableSet<KlibTarget> = mutableSetOf()
     val children: MutableMap<String, DeclarationContainer> = mutableMapOf()
     var delimiter: String? = null
@@ -557,7 +560,9 @@ internal class DeclarationContainer(val text: String, val parent: DeclarationCon
         targets.addAll(other.targets)
         other.children.forEach { otherChild ->
             when (val child = children[otherChild.key]) {
-                null -> children[otherChild.key] = otherChild.value
+                null -> {
+                    children[otherChild.key] = otherChild.value.deepCopy(this)
+                }
                 else -> child.mergeTargetSpecific(otherChild.value)
             }
         }
@@ -627,9 +632,33 @@ private object DeclarationsComparator : Comparator<DeclarationContainer> {
         return this.mapTo(mutableListOf()) { it.toString() }.apply { sort() }
     }
 
+    private fun compareStructurally(lhs: DeclarationContainer, rhs: DeclarationContainer): Int {
+        require(lhs.parent === rhs.parent)
+
+        val isTopLevel = lhs.parent?.parent == null
+
+        fun extractOrderMod(c: DeclarationContainer): Int {
+            val ord = if (isTopLevel) {
+                c.type?.topLevelOrder
+            } else {
+                c.type?.nestedOrder
+            }
+            return ord ?: DeclarationType.last
+        }
+
+        val lhsOrderMod = extractOrderMod(lhs)
+        val rhsOrderMod = extractOrderMod(rhs)
+
+        return if (lhsOrderMod == rhsOrderMod) {
+            lhs.text.compareTo(rhs.text)
+        } else {
+            lhsOrderMod.compareTo(rhsOrderMod)
+        }
+    }
+
     override fun compare(c0: DeclarationContainer, c1: DeclarationContainer): Int {
         return if (c0.targets == c1.targets) {
-            c0.text.compareTo(c1.text)
+            compareStructurally(c0, c1)
         } else {
             if (c0.targets.size == c1.targets.size) {
                 val c0targets = c0.targets.serializeAndSort().iterator()
@@ -764,5 +793,86 @@ internal class KlibsTargetsFormatter(klibDump: KlibAbiDumpMerger) {
             postfix = TARGETS_LIST_SUFFIX,
             separator = TARGETS_DELIMITER
         )
+    }
+}
+
+internal enum class DeclarationType(val topLevelOrder: Int, val nestedOrder: Int) {
+    Class(3, 9),
+    Object(4, 10),
+    Interface(2, 8),
+    EnumClass(1, 7),
+    AnnotationClass(0, 6),
+    Function(8, 5),
+    Constructor(100000, 0),
+    ConstVal(5, 2),
+    Val(6, 3),
+    Var(7, 4),
+    EnumEntry(100000, 1),
+    Unknown(100000, 100000);
+
+    companion object {
+        const val last: Int = 100000
+
+        fun parseFromDeclaration(decl: String): DeclarationType {
+            val scanner = Scanner(decl.trim())
+            while (scanner.hasNext()) {
+                when (val part = scanner.next()) {
+                    "final", "open", "abstract", "sealed", "suspend", "inline", "inner", "value" -> {
+                        /* do nothing; we only need declaration type info (i.e., class, function, property, etc.) */
+                        continue
+                    }
+
+                    "enum" -> {
+                        when (val next = scanner.next()) {
+                            "entry" -> return EnumEntry
+                            "class" -> return EnumClass
+                            else -> throw IllegalStateException("Unexpected token '$next' after '$part'")
+                        }
+                    }
+
+                    "constructor" -> return Constructor
+                    "val" -> return Val
+                    "const" -> {
+                        val type = ConstVal
+                        check(scanner.next() == "val") { "expected 'val'" }
+                        return type
+                    }
+
+                    "var" -> return Var
+                    "interface" -> return Interface
+                    "annotation" -> {
+                        val type = AnnotationClass
+                        check(scanner.next() == "class") { "expected 'class'" }
+                        return type
+                    }
+
+                    "class" -> return Class
+                    "object" -> return Object
+                    "fun" -> {
+                        val next = scanner.next()
+                        when (next) {
+                            "class" -> return Class
+                            "interface" -> return Interface
+                            "object" -> return Object
+
+                            "enum" -> {
+                                val type = EnumClass
+                                check(scanner.next() == "class") { "expected 'class'" }
+                                return type
+                            }
+
+                            "annotation" -> {
+                                val type = AnnotationClass
+                                check(scanner.next() == "class") { "expected 'class'" }
+                                return type
+                            }
+
+                            else -> return Function
+                        }
+                    }
+                }
+            }
+            return Unknown
+        }
     }
 }
