@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.standalone.base.project.structure
 import com.intellij.util.containers.ContainerUtil.createConcurrentSoftMap
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.allDirectDependencies
-import org.jetbrains.kotlin.analysis.project.structure.impl.KotlinModuleDependentsProviderBase
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleDependentsProviderBase
 
 class KtStaticModuleDependentsProvider(private val modules: List<KtModule>) : KotlinModuleDependentsProviderBase() {
     private val directDependentsByKtModule: Map<KtModule, Set<KtModule>> by lazy {

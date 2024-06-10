@@ -1,11 +1,13 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.project.structure
+package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
+import org.jetbrains.kotlin.analysis.project.structure.*
 
 /**
  * [KotlinModuleDependentsProvider] provides dependents for a [KtModule], which are modules that depend on the [KtModule].
@@ -21,7 +23,7 @@ import com.intellij.openapi.project.Project
  * Implementations of this provider should ensure that results are provided in reasonable time, for example by caching results, as its
  * functions may be called frequently.
  */
-public abstract class KotlinModuleDependentsProvider {
+public abstract class KotlinModuleDependentsProvider : KotlinPlatformComponent {
     /**
      * Returns all direct dependents of [module], excluding [module] if it depends on itself.
      */

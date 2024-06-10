@@ -9,7 +9,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
-import org.jetbrains.kotlin.analysis.project.structure.KtCompilerPluginsProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -74,7 +74,7 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
                     @Suppress("DEPRECATION") // TODO: KT-61319 Kapt: remove usages of deprecated buildKtModuleProviderByCompilerConfiguration
                     buildKtModuleProviderByCompilerConfiguration(updatedConfiguration)
 
-                    registerProjectService(KtCompilerPluginsProvider::class.java, object : KtCompilerPluginsProvider() {
+                    registerProjectService(KotlinCompilerPluginsProvider::class.java, object : KotlinCompilerPluginsProvider() {
                         private val extensionStorage = CompilerPluginRegistrar.ExtensionStorage().apply {
                             for (registrar in updatedConfiguration.getList(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS)) {
                                 with(registrar) { registerExtensions(updatedConfiguration) }

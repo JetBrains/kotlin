@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.references
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.project.structure.KtCompilerPluginsProvider
-import org.jetbrains.kotlin.analysis.project.structure.KtCompilerPluginsProvider.CompilerPluginType
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider.CompilerPluginType
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
@@ -58,7 +58,7 @@ abstract class KaBaseSimpleNameReference(expression: KtSimpleNameExpression) : K
         }
 
         val reference = binaryExpression.operationReference.reference ?: return false
-        val pluginPresenceService = project.getService(KtCompilerPluginsProvider::class.java)
+        val pluginPresenceService = project.getService(KotlinCompilerPluginsProvider::class.java)
             ?: error("KtAssignResolutionPresenceService is not available as a service")
         return pluginPresenceService.isPluginOfTypeRegistered(sourceModule, CompilerPluginType.ASSIGNMENT)
                 && (reference.resolve() as? KtNamedFunction)?.nameAsName == ASSIGN_METHOD
