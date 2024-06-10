@@ -18121,6 +18121,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/fir/kt61856.kt");
     }
 
+    @TestMetadata("kt68806.kt")
+    public void testKt68806() {
+      runTest("compiler/testData/codegen/box/fir/kt68806.kt");
+    }
+
     @TestMetadata("linkViaSignatures.kt")
     public void testLinkViaSignatures() {
       runTest("compiler/testData/codegen/box/fir/linkViaSignatures.kt");
