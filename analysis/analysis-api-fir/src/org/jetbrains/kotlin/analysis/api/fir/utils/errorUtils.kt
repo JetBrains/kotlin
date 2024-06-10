@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
-import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
+import org.jetbrains.kotlin.analysis.api.utils.errors.withPsiEntry
 
 fun ExceptionAttachmentBuilder.withSymbolAttachment(name: String, analysisSession: KaSession, symbol: KaSymbol) {
     withEntry(name, symbol) { DebugSymbolRenderer(renderExtra = true).render(analysisSession, it) }

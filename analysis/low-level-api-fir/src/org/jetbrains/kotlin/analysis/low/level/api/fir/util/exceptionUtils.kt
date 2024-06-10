@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
-import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
+import org.jetbrains.kotlin.analysis.api.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry

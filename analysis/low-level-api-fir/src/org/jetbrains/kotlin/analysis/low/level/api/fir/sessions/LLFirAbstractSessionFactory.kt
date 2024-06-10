@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.analysis.api.platform.declarations.createAnnotationR
 import org.jetbrains.kotlin.analysis.api.platform.declarations.createDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinFileBasedDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.utils.mergeInto
-import org.jetbrains.kotlin.analysis.utils.errors.withKtModuleEntry
+import org.jetbrains.kotlin.analysis.api.utils.errors.withKtModuleEntry
 import org.jetbrains.kotlin.assignment.plugin.AssignmentCommandLineProcessor
 import org.jetbrains.kotlin.assignment.plugin.AssignmentConfigurationKeys
 import org.jetbrains.kotlin.assignment.plugin.k2.FirAssignmentPluginExtensionRegistrar

@@ -8,8 +8,9 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiTypeParameter
 import com.intellij.psi.impl.compiled.ClsElementImpl
+import org.jetbrains.kotlin.analysis.api.utils.errors.withClassEntry
+import org.jetbrains.kotlin.analysis.api.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
-import org.jetbrains.kotlin.analysis.utils.errors.*
 import org.jetbrains.kotlin.asJava.KtLightClassMarker
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
