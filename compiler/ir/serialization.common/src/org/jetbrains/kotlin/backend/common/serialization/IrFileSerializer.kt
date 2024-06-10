@@ -259,6 +259,10 @@ open class IrFileSerializer(
         val symbolKind = protoSymbolKind(symbol)
 
         val signatureId = when {
+            !symbol.isBound -> {
+                val signature = symbol.signature ?: error("Unbound symbol without a signature: $symbol")
+                idSignatureSerializer.protoIdSignature(signature)
+            }
             symbol is IrFileSymbol -> idSignatureSerializer.protoIdSignature(IdSignature.FileSignature(symbol)) // TODO: special signature for files?
             else -> {
                 val declaration = symbol.owner as? IrDeclaration ?: error("Expected IrDeclaration: ${symbol.owner.render()}")
