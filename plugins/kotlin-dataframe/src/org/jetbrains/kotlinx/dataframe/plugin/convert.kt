@@ -9,7 +9,6 @@ import org.jetbrains.kotlinx.dataframe.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.annotations.AbstractInterpreter
 import org.jetbrains.kotlinx.dataframe.annotations.AbstractSchemaModificationInterpreter
 import org.jetbrains.kotlinx.dataframe.annotations.Arguments
-import org.jetbrains.kotlinx.dataframe.annotations.ConvertApproximation
 import org.jetbrains.kotlinx.dataframe.annotations.Present
 import org.jetbrains.kotlinx.dataframe.annotations.TypeApproximation
 import org.jetbrains.kotlinx.dataframe.api.Infer
@@ -32,6 +31,8 @@ class Convert2 : AbstractInterpreter<ConvertApproximation>() {
         return ConvertApproximation(receiver, columns.map { listOf(it) })
     }
 }
+
+class ConvertApproximation(val schema: PluginDataFrameSchema, val columns: List<List<String>>)
 
 internal class Convert6 : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.firstCol: String by string()
