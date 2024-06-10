@@ -147,27 +147,60 @@ abstract class FirAbstractSessionFactory {
     }
 
     private fun FirSession.computeDependencyProviderList(moduleData: FirModuleData): List<FirSymbolProvider> {
+        val newLibrarySession by lazy(LazyThreadSafetyMode.NONE) {
+            FirCliSession(sessionProvider as FirProjectSessionProvider, FirSession.Kind.Library).apply {
+                registerCliCompilerOnlyComponents()
+                registerCommonComponents(this@computeDependencyProviderList.languageVersionSettings)
+//                FirSessionConfigurator(this).apply {
+//                    for (extensionRegistrar in extensionRegistrars) {
+//                        registerExtensions(extensionRegistrar.configure())
+//                    }
+//                }.configure()
+                registerCommonComponentsAfterExtensionsAreConfigured()
+            }
+        }
+        val newLibrarySessionProviders = mutableListOf<FirSymbolProvider>()
+        (moduleData as? FirModuleDataImpl)?.let { moduleDataImpl ->
+            moduleDataImpl.dependsOnDependencies = moduleDataImpl.dependsOnDependencies.map {
+                val session = sessionProvider?.getSession(it) ?: return@map it
+                if (session.moduleData.isCommon) {
+                    FirModuleDataImpl(
+                        Name.special("<common-from-${it.name.asStringStripSpecialMarkers()}>"),
+                        it.dependencies, it.dependsOnDependencies, it.friendDependencies, it.platform, it.capabilities, it.isCommon,
+                    ).also { newModuleData ->
+                        (sessionProvider as FirProjectSessionProvider).registerSession(newModuleData, newLibrarySession)
+                        newModuleData.bindSession(newLibrarySession)
+                        newLibrarySessionProviders +=
+                            LazySerializedMetadataSymbolProvider(
+                                newLibrarySession,
+                                SingleModuleDataProvider(newModuleData),
+                                kotlinScopeProvider,
+                                { session.serializedMetadata?.serializedMetadata }
+                            )
+                    }
+                } else it
+            }
+        }
+        if (newLibrarySessionProviders.isNotEmpty()) {
+            val symbolProvider = FirCachingCompositeSymbolProvider(newLibrarySession, newLibrarySessionProviders)
+            newLibrarySession.register(FirSymbolProvider::class, symbolProvider)
+            newLibrarySession.register(FirProvider::class, FirLibrarySessionProvider(symbolProvider))
+        }
         // dependsOnDependencies can actualize declarations from their dependencies. Because actual declarations can be more specific
         // (e.g. have additional supertypes), the modules must be ordered from most specific (i.e. actual) to most generic (i.e. expect)
         // to prevent false positive resolution errors (see KT-57369 for an example).
-        val directsAndFriends = (moduleData.dependencies + moduleData.friendDependencies)
+        val firModuleData = moduleData.dependencies + moduleData.friendDependencies + moduleData.allDependsOnDependencies
+        val firSessions = firModuleData
             .mapNotNull { sessionProvider?.getSession(it) }
-            .flatMap { it.symbolProvider.flatten() }
-        val dependsOns = moduleData.allDependsOnDependencies
-            .mapNotNull { sessionProvider?.getSession(it) }
+        val firSymbolProviders = firSessions
             .flatMap {
-                if (it.moduleData.isCommon) {
-                    listOf(
-                        LazySerializedMetadataSymbolProvider(
-                            it,
-                            SingleModuleDataProvider(it.moduleData),
-                            kotlinScopeProvider,
-                            { it.serializedMetadata?.serializedMetadata }
-                        )
-                    )
-                } else it.symbolProvider.flatten()
+                if (it == newLibrarySession) {
+                    newLibrarySessionProviders
+                } else {
+                    it.symbolProvider.flatten()
+                }
             }
-        return (directsAndFriends + dependsOns)
+        return firSymbolProviders
             .distinct()
             .sortedBy { it.session.kind }
     }
