@@ -932,7 +932,9 @@ class FirCallCompletionResultsWriterTransformer(
         whenExpression: FirWhenExpression,
         data: ExpectedArgumentType?,
     ): FirStatement {
-        return transformSyntheticCall(whenExpression, data)
+        return transformSyntheticCall(whenExpression, data).apply {
+            replaceReturnTypeIfNotExhaustive(session)
+        }
     }
 
     override fun transformTryExpression(
@@ -959,7 +961,7 @@ class FirCallCompletionResultsWriterTransformer(
     private inline fun <reified D> transformSyntheticCall(
         syntheticCall: D,
         data: ExpectedArgumentType?,
-    ): FirStatement where D : FirResolvable, D : FirExpression {
+    ): D where D : FirResolvable, D : FirExpression {
         val calleeReference = syntheticCall.calleeReference as? FirNamedReferenceWithCandidate
         val declaration = calleeReference?.candidate?.symbol?.fir as? FirSimpleFunction
 
