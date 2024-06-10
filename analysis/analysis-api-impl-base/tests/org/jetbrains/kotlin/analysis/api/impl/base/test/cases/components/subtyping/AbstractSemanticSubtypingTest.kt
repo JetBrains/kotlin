@@ -89,7 +89,7 @@ abstract class AbstractTypeEqualityTest : AbstractSemanticSubtypingTest() {
     override fun KaSession.checkTypes(expectedResult: Boolean, type1: KaType, type2: KaType, testServices: TestServices) {
         testServices.assertions.assertEquals(
             expectedResult,
-            type1.isEqualTo(type2),
+            type1.semanticallyEquals(type2),
         ) {
             "Expected `$type1` and `$type2` to be ${if (!expectedResult) "un" else ""}equal (`$resultDirective`)."
         }
@@ -102,7 +102,7 @@ abstract class AbstractLenientTypeEqualityTest : AbstractSemanticSubtypingTest()
     override fun KaSession.checkTypes(expectedResult: Boolean, type1: KaType, type2: KaType, testServices: TestServices) {
         testServices.assertions.assertEquals(
             expectedResult,
-            type1.isEqualTo(type2, KaSubtypingErrorTypePolicy.LENIENT),
+            type1.semanticallyEquals(type2, KaSubtypingErrorTypePolicy.LENIENT),
         ) {
             "Expected `$type1` and `$type2` to be ${if (!expectedResult) "un" else ""}equal with error type leniency (`$resultDirective`)."
         }

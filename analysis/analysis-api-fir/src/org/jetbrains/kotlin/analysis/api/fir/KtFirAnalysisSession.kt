@@ -61,6 +61,7 @@ private constructor(
     diagnosticProvider = KaFirDiagnosticProvider(analysisSessionProvider, token),
     scopeProvider = KaFirScopeProvider(analysisSessionProvider, token),
     completionCandidateChecker = KaFirCompletionCandidateChecker(analysisSessionProvider, token),
+    typeRelationChecker = KaFirTypeRelationChecker(analysisSessionProvider, token),
     evaluator = KaFirEvaluator(analysisSessionProvider, token),
     referenceShortener = KaFirReferenceShortener(analysisSessionProvider, token),
     importOptimizer = KaFirImportOptimizer(analysisSessionProvider, token),
@@ -103,8 +104,6 @@ private constructor(
     override val typeProviderImpl = KaFirTypeProvider(this, token)
 
     override val typeInfoProviderImpl = KaFirTypeInfoProvider(this, token)
-
-    override val subtypingComponentImpl = KaFirSubtypingComponent(this, token)
 
     override val symbolInfoProviderImpl: KaSymbolInfoProvider = KaFirSymbolInfoProvider(this, token)
 
