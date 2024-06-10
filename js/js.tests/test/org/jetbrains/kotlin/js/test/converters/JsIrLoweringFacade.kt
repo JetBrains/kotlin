@@ -45,7 +45,7 @@ class JsIrLoweringFacade(
     private val jsIrPathReplacer by lazy { JsIrPathReplacer(testServices) }
 
     override fun shouldRunAnalysis(module: TestModule): Boolean {
-        return module.backendKind.afterDeserializer == inputKind && module.binaryKind == outputKind &&
+        return module.backendKind.beforeBackend == inputKind && module.binaryKind == outputKind &&
                 JsEnvironmentConfigurator.isMainModule(module, testServices)
     }
 

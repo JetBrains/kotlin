@@ -43,7 +43,7 @@ class JsIrDeserializerFacade(
 ) : DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>(testServices, ArtifactKinds.KLib, BackendKinds.DeserializedIrBackend) {
 
     override fun shouldRunAnalysis(module: TestModule): Boolean {
-        return module.backendKind.afterDeserializer == outputKind && JsEnvironmentConfigurator.isMainModule(module, testServices)
+        return module.backendKind.beforeBackend == outputKind && JsEnvironmentConfigurator.isMainModule(module, testServices)
     }
 
     override fun transform(module: TestModule, inputArtifact: BinaryArtifacts.KLib): IrBackendInput? {
