@@ -11,6 +11,18 @@ Kotlin and Swift applications.
 > ❗️ (Yep, again) Swift export is far even from Alpha state at the moment.
 > We are working hard to make it feature-complete and stable.
 
+### Sample project
+
+[swift-export-sample](https://github.com/Kotlin/swift-export-sample) provides an example of using Swift export in a typical KMP project.
+
+### Kotlin Playground
+
+You can [play](https://pl.kotl.in/mT89eWpvD) with Swift export at the Kotlin playground to get familiar with the Swift API it generates.
+
+A few notes:
+* Playground implementation inserts `stub()` in functions instead of compiler bridges to make the generated API a bit cleaner.
+* It takes a bit of time to include the latest changes from Swift export on Playground. 
+
 ### Separate artifacts
 
 You can play with Swift export without KGP. Note that it might be a bit tricky at the moment:
@@ -23,7 +35,6 @@ You can play with Swift export without KGP. Note that it might be a bit tricky a
 1. Add Maven repositories:
 
 ```kotlin
-maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-ide-plugin-dependencies")
 maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
 maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/swift-export-experimental")
 ```
@@ -32,33 +43,11 @@ maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/swift-export-experiment
 
 ```kotlin
 // Make sure to use the latest versions of artifacts.
-val swiftExportVersion = "2.0.20-dev-3855"
-val kotlinVersion = "2.0.20-dev-3805"
+val kotlinVersion = "2.0.20-dev-+"
 
-implementation("org.jetbrains.kotlin:kotlin-native-utils:2.0.0")
-
-implementation("org.jetbrains.kotlin:kotlin-compiler:$kotlinVersion")
-// Analysis API components which are required for the Swift export
-implementation("org.jetbrains.kotlin:analysis-api-standalone-for-ide:$kotlinVersion") { isTransitive = false }
-implementation("org.jetbrains.kotlin:analysis-api-platform-interface-for-ide:$kotlinVersion") { isTransitive = false }
-implementation("org.jetbrains.kotlin:high-level-api-for-ide:$kotlinVersion") { isTransitive = false }
-implementation("org.jetbrains.kotlin:high-level-api-fir-for-ide:$kotlinVersion") { isTransitive = false }
-implementation("org.jetbrains.kotlin:high-level-api-impl-base-for-ide:$kotlinVersion") { isTransitive = false }
-implementation("org.jetbrains.kotlin:low-level-api-fir-for-ide:$kotlinVersion") { isTransitive = false }
-implementation("org.jetbrains.kotlin:symbol-light-classes-for-ide:$kotlinVersion") { isTransitive = false }
-
-// Swift IR declarations
-implementation("org.jetbrains.kotlin:sir:$swiftExportVersion") { isTransitive = false }
-// Analysis API -> Swift IR translation machinery
-implementation("org.jetbrains.kotlin:sir-providers:$swiftExportVersion") { isTransitive = false }
-// Swift IR -> Kotlin bridges generator
-implementation("org.jetbrains.kotlin:sir-compiler-bridge:$swiftExportVersion") { isTransitive = false }
-// Lazy implementation of Swift IR wrappers over Analysis API KtSymbols
-implementation("org.jetbrains.kotlin:sir-light-classes:$swiftExportVersion") { isTransitive = false }
-// Swift IR -> Swift sources translator
-implementation("org.jetbrains.kotlin:sir-printer:$swiftExportVersion") { isTransitive = false }
-// High-level API for Swift export
-implementation("org.jetbrains.kotlin:swift-export-standalone:$swiftExportVersion") { isTransitive = false }
+implementation("org.jetbrains.kotlin:kotlin-native-utils:$kotlinVersion")
+implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion")
+implementation("org.jetbrains.kotlin:swift-export-embeddable:$kotlinVersion")
 ```
 
 3. Call Swift export APIs:
