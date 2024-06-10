@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaLocalVariableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
-import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSdkModule
@@ -43,7 +43,7 @@ import kotlin.test.assertEquals
 class StandaloneSessionBuilderTest : TestWithDisposable() {
     @Test
     fun testJdkSessionBuilder() {
-        lateinit var sourceModule: KtSourceModule
+        lateinit var sourceModule: KaSourceModule
         val session = buildStandaloneAnalysisAPISession(disposable) {
             buildKtModuleProvider {
                 platform = JvmPlatforms.defaultJvmPlatform
@@ -80,7 +80,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
     fun testJvmInlineOnCommon() {
         // Example from https://youtrack.jetbrains.com/issue/KT-55085
         val root = "jvmInlineOnCommon"
-        lateinit var sourceModule: KtSourceModule
+        lateinit var sourceModule: KaSourceModule
         val session = buildStandaloneAnalysisAPISession(disposable) {
             buildKtModuleProvider {
                 platform = CommonPlatforms.defaultCommonPlatform
@@ -142,7 +142,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
     @Test
     fun testResolveAgainstCommonKlib() {
         val root = "resolveAgainstCommonKLib"
-        lateinit var sourceModule: KtSourceModule
+        lateinit var sourceModule: KaSourceModule
         val session = buildStandaloneAnalysisAPISession(disposable) {
             buildKtModuleProvider {
                 platform = CommonPlatforms.defaultCommonPlatform
@@ -173,8 +173,8 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
     @Test
     fun testResolveAgainstCommonKlibFromOtherModule() {
         val root = "resolveAgainstCommonKLibFromOtherModule"
-        lateinit var commonModule: KtSourceModule
-        lateinit var sourceModule: KtSourceModule
+        lateinit var commonModule: KaSourceModule
+        lateinit var sourceModule: KaSourceModule
         val session = buildStandaloneAnalysisAPISession(disposable) {
             buildKtModuleProvider {
                 platform = CommonPlatforms.defaultCommonPlatform
@@ -218,7 +218,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
     @Test
     fun testKotlinSourceModuleSessionBuilder() {
         val root = "otherModuleUsage"
-        lateinit var sourceModule: KtSourceModule
+        lateinit var sourceModule: KaSourceModule
         val session = buildStandaloneAnalysisAPISession(disposable) {
             buildKtModuleProvider {
                 platform = JvmPlatforms.defaultJvmPlatform
@@ -250,7 +250,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
     @Test
     fun testKotlinSourceModuleSessionWithVirtualFile() {
         val root = "otherModuleUsage"
-        lateinit var sourceModule: KtSourceModule
+        lateinit var sourceModule: KaSourceModule
         val session = buildStandaloneAnalysisAPISession(disposable) {
             buildKtModuleProvider {
                 platform = JvmPlatforms.defaultJvmPlatform
@@ -291,7 +291,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
     fun testCodeFragment() {
         val root = "codeFragment"
 
-        lateinit var contextModule: KtSourceModule
+        lateinit var contextModule: KaSourceModule
         val session = buildStandaloneAnalysisAPISession(disposable) {
             buildKtModuleProvider {
                 platform = JvmPlatforms.defaultJvmPlatform
@@ -312,7 +312,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
         val codeFragment = KtExpressionCodeFragment(project, "fragment.kt", "x - 1", imports = null, contextElement)
 
         val codeFragmentModule = KotlinProjectStructureProvider.getModule(project, codeFragment, useSiteModule = contextModule)
-        requireIsInstance<KtDanglingFileModule>(codeFragmentModule)
+        requireIsInstance<KaDanglingFileModule>(codeFragmentModule)
         assertEquals(codeFragmentModule.contextModule, contextModule)
 
         analyze(codeFragment) {
@@ -329,7 +329,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
     fun testNonPhysicalFile() {
         val root = "nonPhysicalFile"
 
-        lateinit var contextModule: KtSourceModule
+        lateinit var contextModule: KaSourceModule
         val session = buildStandaloneAnalysisAPISession(disposable) {
             buildKtModuleProvider {
                 platform = JvmPlatforms.defaultJvmPlatform
@@ -354,7 +354,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
         assert(dummyFile.virtualFile == null)
 
         val dummyModule = KotlinProjectStructureProvider.getModule(project, dummyFile, useSiteModule = null)
-        requireIsInstance<KtDanglingFileModule>(dummyModule)
+        requireIsInstance<KaDanglingFileModule>(dummyModule)
         assertEquals(dummyModule.contextModule, contextModule)
 
         analyze(dummyFile) {

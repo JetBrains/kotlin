@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.KtEnumEntry
 internal class SymbolLightClassForEnumEntry(
     private val enumConstant: SymbolLightFieldForEnumEntry,
     private val enumClass: SymbolLightClassBase,
-    ktModule: KtModule,
+    ktModule: KaModule,
 ) : SymbolLightClassBase(ktModule, enumConstant.manager), PsiEnumConstantInitializer {
     override fun getBaseClassType(): PsiClassType = enumConstant.type as PsiClassType //???TODO
 

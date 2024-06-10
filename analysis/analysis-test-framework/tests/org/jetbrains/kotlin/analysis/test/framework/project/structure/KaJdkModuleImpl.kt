@@ -7,20 +7,21 @@ package org.jetbrains.kotlin.analysis.test.framework.project.structure
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.project.structure.*
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSdkModule
 import org.jetbrains.kotlin.platform.TargetPlatform
 import java.nio.file.Path
 
-class KtJdkModuleImpl(
+class KaJdkModuleImpl(
     override val sdkName: String,
     override val platform: TargetPlatform,
     override val contentScope: GlobalSearchScope,
     override val project: Project,
     private val binaryRoots: Collection<Path>,
-) : KtModuleWithModifiableDependencies(), KtSdkModule {
+) : KtModuleWithModifiableDependencies(), KaSdkModule {
     override fun getBinaryRoots(): Collection<Path> = binaryRoots
 
-    override val directRegularDependencies: MutableList<KtModule> = mutableListOf()
-    override val directDependsOnDependencies: MutableList<KtModule> = mutableListOf()
-    override val directFriendDependencies: MutableList<KtModule> = mutableListOf()
+    override val directRegularDependencies: MutableList<KaModule> = mutableListOf()
+    override val directDependsOnDependencies: MutableList<KaModule> = mutableListOf()
+    override val directFriendDependencies: MutableList<KaModule> = mutableListOf()
 }

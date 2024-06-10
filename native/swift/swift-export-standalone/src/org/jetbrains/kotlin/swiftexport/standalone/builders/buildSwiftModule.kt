@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
-import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -99,8 +99,8 @@ internal fun buildSwiftModule(
  * [scopeProvider] provides declarations that should be worked with.
  */
 private data class ModuleWithScopeProvider(
-    val useSiteModule: KtModule,
-    val mainModule: KtModule,
+    val useSiteModule: KaModule,
+    val mainModule: KaModule,
     val scopeProvider: (KaSession) -> List<KaScope>,
 )
 
@@ -108,8 +108,8 @@ private fun createModuleWithScopeProviderFromBinary(
     kotlinDistribution: Distribution,
     input: InputModule.Binary,
 ): ModuleWithScopeProvider {
-    lateinit var binaryModule: KtLibraryModule
-    lateinit var fakeSourceModule: KtSourceModule
+    lateinit var binaryModule: KaLibraryModule
+    lateinit var fakeSourceModule: KaSourceModule
     buildStandaloneAnalysisAPISession {
         buildKtModuleProvider {
             platform = NativePlatforms.unspecifiedNativePlatform

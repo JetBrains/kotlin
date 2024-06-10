@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfType
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.backend.jvm.JvmBackendExtension
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.generateLanguageVersionSettingsBasedMetadataFlags
@@ -143,7 +143,7 @@ internal class KaFirMetadataCalculator(
             scopeSession,
             JvmSerializationBindings(),
             useTypeTable = true,
-            moduleName = (analysisSession.useSiteModule as KtSourceModule).run { stableModuleName ?: moduleName },
+            moduleName = (analysisSession.useSiteModule as KaSourceModule).run { stableModuleName ?: moduleName },
             classBuilderMode = ClassBuilderMode.KAPT3,
             isParamAssertionsDisabled = false,
             unifiedNullChecks = true,

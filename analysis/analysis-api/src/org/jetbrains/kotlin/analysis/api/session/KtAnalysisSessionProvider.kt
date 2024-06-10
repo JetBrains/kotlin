@@ -11,11 +11,11 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeTokenFactory
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.psi.KtElement
 
 /**
- * Provides [KaSession]s by use-site [KtElement]s or [KtModule]s.
+ * Provides [KaSession]s by use-site [KtElement]s or [KaModule]s.
  *
  * This provider should not be used directly.
  * Please use [analyze][org.jetbrains.kotlin.analysis.api.analyze] or [analyzeCopy][org.jetbrains.kotlin.analysis.api.analyzeCopy] instead.
@@ -26,7 +26,7 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
 
     public abstract fun getAnalysisSession(useSiteKtElement: KtElement): KaSession
 
-    public abstract fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KtModule): KaSession
+    public abstract fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KaModule): KaSession
 
     // The `analyse` functions affect binary compatibility as they are inlined with every `analyze` call. To avoid breaking binary
     // compatibility, their implementations should not be changed unless absolutely necessary. It should be possible to put most
@@ -47,7 +47,7 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
     }
 
     public inline fun <R> analyze(
-        useSiteKtModule: KtModule,
+        useSiteKtModule: KaModule,
         action: KaSession.() -> R,
     ): R {
         val analysisSession = getAnalysisSessionByUseSiteKtModule(useSiteKtModule)
@@ -74,7 +74,7 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
      * The signature of [beforeEnteringAnalysis] should be kept stable to avoid breaking binary compatibility, since [analyze] is inlined.
      */
     @KaAnalysisApiInternals
-    public abstract fun beforeEnteringAnalysis(session: KaSession, useSiteModule: KtModule)
+    public abstract fun beforeEnteringAnalysis(session: KaSession, useSiteModule: KaModule)
 
     /**
      * [afterLeavingAnalysis] hooks into analysis *after* [analyze]'s action has been executed.
@@ -90,7 +90,7 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
      * The signature of [afterLeavingAnalysis] should be kept stable to avoid breaking binary compatibility, since [analyze] is inlined.
      */
     @KaAnalysisApiInternals
-    public abstract fun afterLeavingAnalysis(session: KaSession, useSiteModule: KtModule)
+    public abstract fun afterLeavingAnalysis(session: KaSession, useSiteModule: KaModule)
 
     @TestOnly
     public abstract fun clearCaches()

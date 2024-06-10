@@ -11,7 +11,7 @@ import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.analyzeCopy
-import org.jetbrains.kotlin.analysis.project.structure.DanglingFileResolutionMode
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.TestWithDisposable
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
@@ -380,7 +380,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
             val originalContainingFile = contextElement.containingKtFile
             val fileCopy = originalContainingFile.copy() as KtFile
 
-            analyzeCopy(fileCopy, DanglingFileResolutionMode.IGNORE_SELF) {
+            analyzeCopy(fileCopy, KaDanglingFileResolutionMode.IGNORE_SELF) {
                 action(PsiTreeUtil.findSameElementInCopy<KtElement>(contextElement, fileCopy))
             }
         } else {

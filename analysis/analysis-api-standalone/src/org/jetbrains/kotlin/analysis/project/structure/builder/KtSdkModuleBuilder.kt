@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.analysis.project.structure.builder
 
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
-import org.jetbrains.kotlin.analysis.project.structure.KtSdkModule
-import org.jetbrains.kotlin.analysis.project.structure.impl.KtSdkModuleImpl
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSdkModule
+import org.jetbrains.kotlin.analysis.project.structure.impl.KaSdkModuleImpl
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import java.nio.file.Path
 import kotlin.contracts.ExperimentalContracts
@@ -26,11 +26,11 @@ public class KtSdkModuleBuilder(
         addBinaryRoots(jdkRoots)
     }
 
-    override fun build(): KtSdkModule {
+    override fun build(): KaSdkModule {
         val binaryRoots = getBinaryRoots()
         val contentScope = StandaloneProjectFactory.createSearchScopeByLibraryRoots(binaryRoots, kotlinCoreProjectEnvironment)
 
-        return KtSdkModuleImpl(
+        return KaSdkModuleImpl(
             directRegularDependencies,
             directDependsOnDependencies,
             directFriendDependencies,
@@ -44,7 +44,7 @@ public class KtSdkModuleBuilder(
 }
 
 @OptIn(ExperimentalContracts::class)
-public inline fun KtModuleProviderBuilder.buildKtSdkModule(init: KtSdkModuleBuilder.() -> Unit): KtSdkModule {
+public inline fun KtModuleProviderBuilder.buildKtSdkModule(init: KtSdkModuleBuilder.() -> Unit): KaSdkModule {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }

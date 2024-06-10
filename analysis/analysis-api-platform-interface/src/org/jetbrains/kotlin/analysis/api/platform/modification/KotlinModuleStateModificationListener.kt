@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.modification
 
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
 public fun interface KotlinModuleStateModificationListener {
     /**
@@ -13,12 +13,12 @@ public fun interface KotlinModuleStateModificationListener {
      *
      * @see KotlinModificationTopics
      */
-    public fun onModification(module: KtModule, modificationKind: KotlinModuleStateModificationKind)
+    public fun onModification(module: KaModule, modificationKind: KotlinModuleStateModificationKind)
 }
 
 public enum class KotlinModuleStateModificationKind {
     /**
-     * The [KtModule]'s properties or references to other modules are being changed.
+     * The [KaModule]'s properties or references to other modules are being changed.
      *
      * #### Examples
      *
@@ -30,7 +30,7 @@ public enum class KotlinModuleStateModificationKind {
     UPDATE,
 
     /**
-     * The [KtModule] is being removed. Because this event is published before the removal, the [KtModule] can still be accessed to clear
+     * The [KaModule] is being removed. Because this event is published before the removal, the [KaModule] can still be accessed to clear
      * caches. It should be removed from any caches managed by the subscriber to avoid stale or broken keys/values.
      */
     REMOVAL,

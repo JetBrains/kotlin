@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.analysis.api.fir
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
-import org.jetbrains.kotlin.analysis.project.structure.KtBuiltinsModule
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.platform.declarations.createDeclarationProvider
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
@@ -39,10 +39,10 @@ internal object FirSyntheticFunctionInterfaceSourceProvider {
         return classByClassId(klass.symbol.classId, klass.llFirSession.ktModule)
     }
 
-    private fun classByClassId(classId: ClassId, ktModule: KtModule): KtClassOrObject? {
+    private fun classByClassId(classId: ClassId, ktModule: KaModule): KtClassOrObject? {
         val project = ktModule.project
         val correctedClassId = classIdMapping[classId] ?: return null
-        require(ktModule is KtBuiltinsModule) {
+        require(ktModule is KaBuiltinsModule) {
             "Expected builtin module but found $ktModule"
         }
         return project.createDeclarationProvider(ProjectScope.getLibrariesScope(project), ktModule)

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.isLocal
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.asJava.classes.getParentForLocalDeclaration
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<KaNamedClassOrObjectSymbol> {
     constructor(
         ktAnalysisSession: KaSession,
-        ktModule: KtModule,
+        ktModule: KaModule,
         classOrObjectSymbol: KaNamedClassOrObjectSymbol,
         manager: PsiManager
     ) : super(
@@ -45,7 +45,7 @@ abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<
     protected constructor(
         classOrObjectDeclaration: KtClassOrObject?,
         classOrObjectSymbolPointer: KaSymbolPointer<KaNamedClassOrObjectSymbol>,
-        ktModule: KtModule,
+        ktModule: KaModule,
         manager: PsiManager,
     ) : super(
         classOrObjectDeclaration = classOrObjectDeclaration,

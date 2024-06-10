@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.analysis.api.types.KaClassErrorType
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.platform.modification.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
@@ -56,13 +56,13 @@ import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import java.util.*
 
-internal fun createSymbolLightClassNoCache(classOrObject: KtClassOrObject, ktModule: KtModule): KtLightClass? = when {
+internal fun createSymbolLightClassNoCache(classOrObject: KtClassOrObject, ktModule: KaModule): KtLightClass? = when {
     classOrObject.isObjectLiteral() -> SymbolLightClassForAnonymousObject(classOrObject, ktModule)
     classOrObject is KtEnumEntry -> lightClassForEnumEntry(classOrObject)
     else -> createLightClassNoCache(classOrObject, ktModule)
 }
 
-internal fun createLightClassNoCache(ktClassOrObject: KtClassOrObject, ktModule: KtModule): SymbolLightClassBase = when {
+internal fun createLightClassNoCache(ktClassOrObject: KtClassOrObject, ktModule: KaModule): SymbolLightClassBase = when {
     ktClassOrObject.hasModifier(INLINE_KEYWORD) -> SymbolLightClassForInlineClass(ktClassOrObject, ktModule)
     ktClassOrObject is KtClass && ktClassOrObject.isAnnotation() -> SymbolLightClassForAnnotationClass(ktClassOrObject, ktModule)
     ktClassOrObject is KtClass && ktClassOrObject.isInterface() -> SymbolLightClassForInterface(ktClassOrObject, ktModule)
@@ -82,7 +82,7 @@ internal fun KtClassOrObject.modificationTrackerForClassInnerStuff(): List<Modif
 context(KaSession)
 internal fun createLightClassNoCache(
     ktClassOrObjectSymbol: KaNamedClassOrObjectSymbol,
-    ktModule: KtModule,
+    ktModule: KaModule,
     manager: PsiManager,
 ): SymbolLightClassBase = when (ktClassOrObjectSymbol.classKind) {
     KaClassKind.INTERFACE -> SymbolLightClassForInterface(
@@ -305,7 +305,7 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
     val originalElement = declaration.sourcePsiSafe<KtDeclaration>()
 
     val generatePropertyAnnotationsMethods =
-        (declaration.containingModule as? KtSourceModule)
+        (declaration.containingModule as? KaSourceModule)
             ?.languageVersionSettings
             ?.getFlag(JvmAnalysisFlags.generatePropertyAnnotationsMethods) == true
 
@@ -558,7 +558,7 @@ internal fun KaSymbolWithMembers.createInnerClasses(
     }
 
     val jvmDefaultMode = classOrObject
-        ?.let { getModule(it) as? KtSourceModule }
+        ?.let { getModule(it) as? KaSourceModule }
         ?.languageVersionSettings
         ?.getFlag(JvmAnalysisFlags.jvmDefaultMode)
         ?: JvmDefaultMode.DISABLE

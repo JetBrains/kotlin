@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.asJava.classes.getParentForLocalDeclaration
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike<KaAnonymousObjectSymbol>, PsiAnonymousClass {
     constructor(
         anonymousObjectDeclaration: KtClassOrObject,
-        ktModule: KtModule,
+        ktModule: KaModule,
     ) : this(
         classOrObjectDeclaration = anonymousObjectDeclaration,
         classOrObjectSymbolPointer = anonymousObjectDeclaration.symbolPointerOfType(),
@@ -35,7 +35,7 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
     private constructor(
         classOrObjectDeclaration: KtClassOrObject?,
         classOrObjectSymbolPointer: KaSymbolPointer<KaAnonymousObjectSymbol>,
-        ktModule: KtModule,
+        ktModule: KaModule,
         manager: PsiManager,
     ) : super(classOrObjectDeclaration, classOrObjectSymbolPointer, ktModule, manager)
 

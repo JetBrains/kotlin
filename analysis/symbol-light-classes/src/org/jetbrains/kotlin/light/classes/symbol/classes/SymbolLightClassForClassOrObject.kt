@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_NON_ORIGIN_METHOD
@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassLike {
     constructor(
         ktAnalysisSession: KaSession,
-        ktModule: KtModule,
+        ktModule: KaModule,
         classOrObjectSymbol: KaNamedClassOrObjectSymbol,
         manager: PsiManager,
     ) : super(
@@ -59,7 +59,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
 
     constructor(
         classOrObject: KtClassOrObject,
-        ktModule: KtModule,
+        ktModule: KaModule,
     ) : this(
         classOrObjectDeclaration = classOrObject,
         classOrObjectSymbolPointer = classOrObject.symbolPointerOfType(),
@@ -72,7 +72,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
     protected constructor(
         classOrObjectDeclaration: KtClassOrObject?,
         classOrObjectSymbolPointer: KaSymbolPointer<KaNamedClassOrObjectSymbol>,
-        ktModule: KtModule,
+        ktModule: KaModule,
         manager: PsiManager,
     ) : super(
         classOrObjectDeclaration = classOrObjectDeclaration,
@@ -150,7 +150,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
     }
 
     private fun isEnumEntriesDisabled(): Boolean {
-        return (ktModule as? KtSourceModule)
+        return (ktModule as? KaSourceModule)
             ?.languageVersionSettings
             ?.supportsFeature(LanguageFeature.EnumEntries) != true
     }

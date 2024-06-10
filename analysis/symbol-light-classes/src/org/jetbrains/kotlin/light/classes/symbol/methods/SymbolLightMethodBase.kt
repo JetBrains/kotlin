@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.checkIsMangled
 import org.jetbrains.kotlin.asJava.classes.KotlinLightReferenceListBuilder
@@ -129,7 +129,7 @@ internal abstract class SymbolLightMethodBase(
         if (containingClass is KtLightClassForFacade) return defaultName
         if (hasPublishedApiAnnotation(annotationUseSiteTarget.toFilter())) return defaultName
 
-        val sourceModule = ktModule as? KtSourceModule ?: return defaultName
+        val sourceModule = ktModule as? KaSourceModule ?: return defaultName
         return mangleInternalName(defaultName, sourceModule.stableModuleName ?: sourceModule.moduleName)
     }
 

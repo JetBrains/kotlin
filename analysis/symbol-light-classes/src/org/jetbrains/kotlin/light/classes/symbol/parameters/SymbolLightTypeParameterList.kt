@@ -10,7 +10,7 @@ import com.intellij.psi.impl.light.LightElement
 import com.intellij.psi.scope.PsiScopeProcessor
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithTypeParameters
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.light.classes.symbol.*
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
 internal class SymbolLightTypeParameterList(
     internal val owner: PsiTypeParameterListOwner,
     private val symbolWithTypeParameterPointer: KaSymbolPointer<KaSymbolWithTypeParameters>,
-    internal val ktModule: KtModule,
+    internal val ktModule: KaModule,
     private val ktDeclaration: KtTypeParameterListOwner?,
 ) : LightElement(owner.manager, KotlinLanguage.INSTANCE), PsiTypeParameterList {
     override fun accept(visitor: PsiElementVisitor) {

@@ -7,7 +7,7 @@ package org.jetbrains.sir.lightclasses.nodes
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
@@ -19,7 +19,7 @@ import org.jetbrains.sir.lightclasses.extensions.withSessions
 
 internal class SirTypealiasFromKtSymbol(
     override val ktSymbol: KaTypeAliasSymbol,
-    override val ktModule: KtModule,
+    override val ktModule: KaModule,
     override val sirSession: SirSession,
 ) : SirTypealias(), SirFromKtSymbol<KaTypeAliasSymbol> {
 

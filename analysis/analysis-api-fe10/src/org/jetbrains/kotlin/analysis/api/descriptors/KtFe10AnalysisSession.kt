@@ -12,12 +12,12 @@ import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAnalysisScopePro
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaRendererImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaGlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
 @OptIn(KaIdeApi::class, KaExperimentalApi::class, KaNonPublicApi::class)
 class KaFe10Session(
     val analysisContext: Fe10AnalysisContext,
-    override val useSiteModule: KtModule,
+    override val useSiteModule: KaModule,
     token: KaLifetimeToken,
     analysisSessionProvider: () -> KaFe10Session,
     resolutionScope: KaGlobalSearchScope

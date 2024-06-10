@@ -34,6 +34,11 @@ import com.intellij.util.messages.ListenerDescriptor
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleDependentsProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaBinaryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependencies
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinFakeClsStubsCache
 import org.jetbrains.kotlin.analysis.api.symbols.AdditionalKDocResolutionProvider
@@ -42,7 +47,6 @@ import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltInsVirtualFileProviderC
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.DummyFileAttributeService
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.FileAttributeService
-import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
@@ -208,7 +212,7 @@ object StandaloneProjectFactory {
 
     private fun initialiseVirtualFileFinderServices(
         environment: KotlinCoreProjectEnvironment,
-        modules: List<KtModule>,
+        modules: List<KaModule>,
         sourceFiles: List<PsiFileSystemItem>,
         languageVersionSettings: LanguageVersionSettings,
         jdkHome: Path?,
@@ -330,10 +334,10 @@ object StandaloneProjectFactory {
     }
 
     fun getAllBinaryRoots(
-        modules: List<KtModule>,
+        modules: List<KaModule>,
         environment: KotlinCoreProjectEnvironment,
     ): List<JavaRoot> = withAllTransitiveDependencies(modules)
-        .filterIsInstance<KtBinaryModule>()
+        .filterIsInstance<KaBinaryModule>()
         .flatMap { it.getJavaRoots(environment) }
 
     fun createSearchScopeByLibraryRoots(
@@ -386,8 +390,8 @@ object StandaloneProjectFactory {
         }.distinct()
     }
 
-    private fun withAllTransitiveDependencies(ktModules: List<KtModule>): List<KtModule> {
-        val visited = hashSetOf<KtModule>()
+    private fun withAllTransitiveDependencies(ktModules: List<KaModule>): List<KaModule> {
+        val visited = hashSetOf<KaModule>()
         val stack = ktModules.toMutableList()
         while (stack.isNotEmpty()) {
             val module = stack.popLast()
@@ -402,19 +406,19 @@ object StandaloneProjectFactory {
         return visited.toList()
     }
 
-    private fun KtModule.allDependencies(): List<KtModule> = buildList {
+    private fun KaModule.allDependencies(): List<KaModule> = buildList {
         addAll(allDirectDependencies())
         when (this) {
-            is KtLibrarySourceModule -> {
+            is KaLibrarySourceModule -> {
                 add(binaryLibrary)
             }
-            is KtLibraryModule -> {
+            is KaLibraryModule -> {
                 addIfNotNull(librarySources)
             }
         }
     }
 
-    private fun KtBinaryModule.getJavaRoots(
+    private fun KaBinaryModule.getJavaRoots(
         environment: KotlinCoreProjectEnvironment,
     ): List<JavaRoot> {
         return getVirtualFilesForLibraryRoots(getBinaryRoots(), environment).map { root ->

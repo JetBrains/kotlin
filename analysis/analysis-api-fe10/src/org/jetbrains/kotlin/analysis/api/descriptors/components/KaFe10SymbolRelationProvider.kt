@@ -23,8 +23,10 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -96,7 +98,7 @@ internal class KaFe10SymbolRelationProvider(
             }
         }
 
-    override val KaSymbol.containingModule: KtModule
+    override val KaSymbol.containingModule: KaModule
         get() = withValidityAssertion {
             val descriptor = when (this) {
                 is KaValueParameterSymbol -> {
@@ -130,7 +132,7 @@ internal class KaFe10SymbolRelationProvider(
             TODO(this::class.java.name)
         }
 
-    private fun getFakeContainingKtModule(descriptor: DescriptorWithContainerSource): KtModule {
+    private fun getFakeContainingKtModule(descriptor: DescriptorWithContainerSource): KaModule {
         val library = when (val containerSource = descriptor.containerSource) {
             is JvmPackagePartSource -> containerSource.knownJvmBinaryClass?.containingLibrary
             is KotlinJvmBinarySourceElement -> containerSource.binaryClass.containingLibrary
@@ -149,14 +151,14 @@ internal class KaFe10SymbolRelationProvider(
             }
         } ?: TODO(descriptor::class.java.name)
         val libraryPath = Paths.get(library)
-        return object : KtLibraryModule {
+        return object : KaLibraryModule {
             override val libraryName: String = libraryPath.fileName.toString().substringBeforeLast(".")
-            override val librarySources: KtLibrarySourceModule? = null
+            override val librarySources: KaLibrarySourceModule? = null
             override fun getBinaryRoots(): Collection<Path> = listOf(libraryPath)
-            override val directRegularDependencies: List<KtModule> = emptyList()
-            override val directDependsOnDependencies: List<KtModule> = emptyList()
-            override val transitiveDependsOnDependencies: List<KtModule> = emptyList()
-            override val directFriendDependencies: List<KtModule> = emptyList()
+            override val directRegularDependencies: List<KaModule> = emptyList()
+            override val directDependsOnDependencies: List<KaModule> = emptyList()
+            override val transitiveDependsOnDependencies: List<KaModule> = emptyList()
+            override val directFriendDependencies: List<KaModule> = emptyList()
             override val contentScope: GlobalSearchScope = ProjectScope.getLibrariesScope(project)
             override val platform: TargetPlatform
                 get() = descriptor.platform!!

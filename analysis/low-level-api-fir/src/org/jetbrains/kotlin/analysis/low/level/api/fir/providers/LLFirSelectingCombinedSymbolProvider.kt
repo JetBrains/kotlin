@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
 import org.jetbrains.kotlin.fir.FirSession
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.utils.mapToIndex
 
 /**
- * A combined symbol provider which *selects* a subset of its [providers] to delegate to by an element's [KtModule]. For example, a
+ * A combined symbol provider which *selects* a subset of its [providers] to delegate to by an element's [KaModule]. For example, a
  * selecting symbol provider might perform an index access, get a number of candidate PSI elements, and delegate to the appropriate provider
  * for the element directly.
  *
@@ -27,26 +27,26 @@ abstract class LLFirSelectingCombinedSymbolProvider<PROVIDER : FirSymbolProvider
     project: Project,
     protected val providers: List<PROVIDER>,
 ) : FirSymbolProvider(session) {
-    protected val providersByKtModule: Map<KtModule, PROVIDER> =
+    protected val providersByKtModule: Map<KaModule, PROVIDER> =
         providers
             .groupingBy { it.session.llFirModuleData.ktModule }
             // `reduce` invokes the `error` operation if it encounters a second element.
             .reduce { module, _, _ -> error("$module must have a unique symbol provider.") }
 
     /**
-     * [KtModule] precedence must be checked in case of multiple candidates to preserve classpath order.
+     * [KaModule] precedence must be checked in case of multiple candidates to preserve classpath order.
      */
-    private val modulePrecedenceMap: Map<KtModule, Int> = providers.map { it.session.llFirModuleData.ktModule }.mapToIndex()
+    private val modulePrecedenceMap: Map<KaModule, Int> = providers.map { it.session.llFirModuleData.ktModule }.mapToIndex()
 
     /**
-     * Cache [KotlinProjectStructureProvider] to avoid service access when getting [KtModule]s.
+     * Cache [KotlinProjectStructureProvider] to avoid service access when getting [KaModule]s.
      */
     @KaCachedService
     private val projectStructureProvider: KotlinProjectStructureProvider = KotlinProjectStructureProvider.getInstance(project)
 
     private val contextualModule = session.llFirModuleData.ktModule
 
-    protected fun getModule(element: PsiElement): KtModule {
+    protected fun getModule(element: PsiElement): KaModule {
         return projectStructureProvider.getModule(element, contextualModule)
     }
 
@@ -64,7 +64,7 @@ abstract class LLFirSelectingCombinedSymbolProvider<PROVIDER : FirSymbolProvider
         // We're using a custom implementation instead of `minBy` so that `ktModule` doesn't need to be fetched twice.
         var currentCandidate: CANDIDATE? = null
         var currentPrecedence: Int = Int.MAX_VALUE
-        var currentKtModule: KtModule? = null
+        var currentKtModule: KaModule? = null
 
         for (candidate in candidates) {
             val element = getElement(candidate) ?: continue

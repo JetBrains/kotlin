@@ -33,7 +33,7 @@ abstract class KtLibraryBinaryTestModuleFactoryBase : KtTestModuleFactory {
         return KtTestModule(
             testModuleKind,
             testModule,
-            KtLibraryModuleImpl(
+            KaLibraryModuleImpl(
                 testModule.name,
                 testModule.targetPlatform,
                 StandaloneProjectFactory.createSearchScopeByLibraryRoots(

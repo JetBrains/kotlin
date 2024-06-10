@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.analysis.project.structure.builder
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
-import org.jetbrains.kotlin.analysis.project.structure.impl.KtSourceModuleImpl
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
+import org.jetbrains.kotlin.analysis.project.structure.impl.KaSourceModuleImpl
 import org.jetbrains.kotlin.analysis.project.structure.impl.collectSourceFilePaths
 import org.jetbrains.kotlin.analysis.project.structure.impl.hasSuitableExtensionToAnalyse
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
@@ -50,12 +50,12 @@ public class KtSourceModuleBuilder(
         sourceVirtualFiles.addAll(virtualFiles)
     }
 
-    override fun build(): KtSourceModule {
+    override fun build(): KaSourceModule {
         val virtualFiles = collectVirtualFilesByRoots()
         val psiManager = PsiManager.getInstance(kotlinCoreProjectEnvironment.project)
         val psiFiles = virtualFiles.mapNotNull { psiManager.findFile(it) }
         val contentScope = GlobalSearchScope.filesScope(kotlinCoreProjectEnvironment.project, virtualFiles)
-        return KtSourceModuleImpl(
+        return KaSourceModuleImpl(
             directRegularDependencies,
             directDependsOnDependencies,
             directFriendDependencies,
@@ -88,7 +88,7 @@ public class KtSourceModuleBuilder(
 }
 
 @OptIn(ExperimentalContracts::class)
-public inline fun KtModuleProviderBuilder.buildKtSourceModule(init: KtSourceModuleBuilder.() -> Unit): KtSourceModule {
+public inline fun KtModuleProviderBuilder.buildKtSourceModule(init: KtSourceModuleBuilder.() -> Unit): KaSourceModule {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }

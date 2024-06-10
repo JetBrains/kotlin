@@ -52,7 +52,7 @@ fun createKtLibrarySourceModule(
     project: Project,
     testServices: TestServices,
 ): KtTestModule {
-    val libraryKtModule = KtLibraryModuleImpl(
+    val libraryKtModule = KaLibraryModuleImpl(
         testModule.name,
         testModule.targetPlatform,
         StandaloneProjectFactory.createSearchScopeByLibraryRoots(
@@ -65,7 +65,7 @@ fun createKtLibrarySourceModule(
     )
 
     val decompiledPsiFilesFromSourceJar = LibraryUtils.getAllPsiFilesFromJar(librarySourcesJar, project)
-    val librarySourceKtModule = KtLibrarySourceModuleImpl(
+    val librarySourceKtModule = KaLibrarySourceModuleImpl(
         testModule.name,
         testModule.targetPlatform,
         GlobalSearchScope.filesScope(project, decompiledPsiFilesFromSourceJar.map { it.virtualFile }),

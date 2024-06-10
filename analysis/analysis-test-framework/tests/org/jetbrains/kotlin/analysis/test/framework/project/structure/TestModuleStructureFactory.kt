@@ -10,11 +10,11 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
-import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
-import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
-import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.KtNotUnderContentRootModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaBinaryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaNotUnderContentRootModule
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -37,7 +37,7 @@ import kotlin.io.path.exists
 import kotlin.io.path.extension
 import kotlin.io.path.nameWithoutExtension
 
-private typealias LibraryCache = MutableMap<Set<Path>, KtBinaryModule>
+private typealias LibraryCache = MutableMap<Set<Path>, KaBinaryModule>
 
 private typealias ModulesByName = Map<String, KtTestModule>
 
@@ -81,7 +81,7 @@ object TestModuleStructureFactory {
             val contextModule = contextModuleName?.let(existingModules::getValue)
 
             val dependencyBinaryRoots = testModule.regularDependencies.flatMap { dependency ->
-                val libraryModule = existingModules.getValue(dependency.moduleName).ktModule as? KtLibraryModule
+                val libraryModule = existingModules.getValue(dependency.moduleName).ktModule as? KaLibraryModule
                 libraryModule?.getBinaryRoots().orEmpty()
             }
 
@@ -102,8 +102,8 @@ object TestModuleStructureFactory {
      * [addLibraryDependencies] will create a *duplicate* binary library module with the same roots and name as the already existing binary
      * library module.
      */
-    private fun KtModule.addToLibraryCacheIfNeeded(libraryCache: LibraryCache) {
-        if (this is KtBinaryModule) {
+    private fun KaModule.addToLibraryCacheIfNeeded(libraryCache: LibraryCache) {
+        if (this is KaBinaryModule) {
             libraryCache.put(getBinaryRoots().toSet(), this)
         }
     }
@@ -113,10 +113,10 @@ object TestModuleStructureFactory {
         modulesByName: ModulesByName,
         libraryCache: LibraryCache,
     ) = when (ktModule) {
-        is KtNotUnderContentRootModule -> {
+        is KaNotUnderContentRootModule -> {
             // Not-under-content-root modules have no external dependencies on purpose
         }
-        is KtDanglingFileModule -> {
+        is KaDanglingFileModule -> {
             // Dangling file modules get dependencies from their context
         }
         is KtModuleWithModifiableDependencies -> {
@@ -145,7 +145,7 @@ object TestModuleStructureFactory {
         testModule: TestModule,
         testServices: TestServices,
         ktModule: KtModuleWithModifiableDependencies,
-        libraryCache: (paths: Set<Path>, factory: () -> KtBinaryModule) -> KtBinaryModule
+        libraryCache: (paths: Set<Path>, factory: () -> KaBinaryModule) -> KaBinaryModule
     ) {
         val project = ktModule.project
 
@@ -165,7 +165,7 @@ object TestModuleStructureFactory {
             if (testModule.targetPlatform.isJvm() && jdkRoots.isNotEmpty()) {
                 val jdkModule = libraryCache(jdkRoots.toSet()) {
                     val jdkScope = getScopeForLibraryByRoots(jdkRoots, testServices)
-                    KtJdkModuleImpl("jdk", JvmPlatforms.defaultJvmPlatform, jdkScope, project, jdkRoots)
+                    KaJdkModuleImpl("jdk", JvmPlatforms.defaultJvmPlatform, jdkScope, project, jdkRoots)
                 }
                 ktModule.directRegularDependencies.add(jdkModule)
             }
@@ -200,12 +200,12 @@ object TestModuleStructureFactory {
         libraryFile: Path,
         platform: TargetPlatform,
         testServices: TestServices,
-    ): KtLibraryModuleImpl {
+    ): KaLibraryModuleImpl {
         check(libraryFile.exists()) { "Library $libraryFile does not exist" }
 
         val libraryName = libraryFile.nameWithoutExtension
         val libraryScope = getScopeForLibraryByRoots(listOf(libraryFile), testServices)
-        return KtLibraryModuleImpl(libraryName, platform, libraryScope, project, listOf(libraryFile), librarySources = null)
+        return KaLibraryModuleImpl(libraryName, platform, libraryScope, project, listOf(libraryFile), librarySources = null)
     }
 
     fun getScopeForLibraryByRoots(roots: Collection<Path>, testServices: TestServices): GlobalSearchScope {

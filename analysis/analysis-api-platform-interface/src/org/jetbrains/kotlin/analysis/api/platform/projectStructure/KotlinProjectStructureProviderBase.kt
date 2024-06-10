@@ -7,22 +7,21 @@ package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.projectStructure.danglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.api.projectStructure.isDangling
-import org.jetbrains.kotlin.analysis.project.structure.DanglingFileResolutionMode
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.KtModuleStructureInternals
-import org.jetbrains.kotlin.analysis.project.structure.KtNotUnderContentRootModule
-import org.jetbrains.kotlin.analysis.project.structure.analysisExtensionFileContextModule
-import org.jetbrains.kotlin.analysis.project.structure.impl.KtDanglingFileModuleImpl
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaNotUnderContentRootModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.analysisExtensionFileContextModule
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.analysisContext
 
 public abstract class KotlinProjectStructureProviderBase : KotlinProjectStructureProvider {
-    protected abstract fun getNotUnderContentRootModule(project: Project): KtNotUnderContentRootModule
+    protected abstract fun getNotUnderContentRootModule(project: Project): KaNotUnderContentRootModule
 
-    @OptIn(KtModuleStructureInternals::class)
-    protected fun computeSpecialModule(file: PsiFile): KtModule? {
+    @OptIn(KaAnalysisApiInternals::class)
+    protected fun computeSpecialModule(file: PsiFile): KaModule? {
         val virtualFile = file.virtualFile
         if (virtualFile != null) {
             val contextModule = virtualFile.analysisExtensionFileContextModule
@@ -34,22 +33,21 @@ public abstract class KotlinProjectStructureProviderBase : KotlinProjectStructur
         if (file is KtFile && file.isDangling) {
             val contextModule = computeContextModule(file)
             val resolutionMode = file.danglingFileResolutionMode ?: computeDefaultDanglingFileResolutionMode(file)
-            return KtDanglingFileModuleImpl(file, contextModule, resolutionMode)
+            return KaDanglingFileModuleImpl(file, contextModule, resolutionMode)
         }
 
         return null
     }
 
-    private fun computeDefaultDanglingFileResolutionMode(file: KtFile): DanglingFileResolutionMode {
+    private fun computeDefaultDanglingFileResolutionMode(file: KtFile): KaDanglingFileResolutionMode {
         if (!file.isPhysical && !file.viewProvider.isEventSystemEnabled && file.originalFile != file) {
-            return DanglingFileResolutionMode.IGNORE_SELF
+            return KaDanglingFileResolutionMode.IGNORE_SELF
         }
 
-        return DanglingFileResolutionMode.PREFER_SELF
+        return KaDanglingFileResolutionMode.PREFER_SELF
     }
 
-    @OptIn(KtModuleStructureInternals::class)
-    private fun computeContextModule(file: KtFile): KtModule {
+    private fun computeContextModule(file: KtFile): KaModule {
         val contextElement = file.context
             ?: file.analysisContext
             ?: file.originalFile.takeIf { it !== file }

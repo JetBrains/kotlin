@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.native.analysis.api
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 
 /**
  * Note: A single [KlibDeclarationAddress] can be shared by multiple symbols.
@@ -86,7 +86,7 @@ context(KaSession)
 @OptIn(KaNonPublicApi::class)
 private operator fun KlibDeclarationAddress.contains(symbol: KaDeclarationSymbol): Boolean {
     val symbolKlibSourceFileName = symbol.klibSourceFileName
-    val symbolLibraryModule = symbol.containingModule as? KtLibraryModule ?: return false
+    val symbolLibraryModule = symbol.containingModule as? KaLibraryModule ?: return false
 
     /* check if symbol comes from the same klib library: symbolKlibSourceFile not known -> checking library module */
     if (libraryPath !in symbolLibraryModule.getBinaryRoots()) {

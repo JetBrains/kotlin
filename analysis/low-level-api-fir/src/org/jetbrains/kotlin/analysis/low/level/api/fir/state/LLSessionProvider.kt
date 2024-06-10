@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.state
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
 class LLSessionProvider(
-    val useSiteModule: KtModule,
-    private val useSiteSessionFactory: (KtModule) -> LLFirSession
+    val useSiteModule: KaModule,
+    private val useSiteSessionFactory: (KaModule) -> LLFirSession
 ) {
     /**
      * The [LLFirSession] must be strongly reachable from the resolvable session and ultimately the `KaFirSession` so that soft
@@ -25,7 +25,7 @@ class LLSessionProvider(
      * Returns an [LLFirSession] for the [module].
      * For a binary module, the resulting session will be a binary (non-resolvable) one.
      */
-    fun getSession(module: KtModule): LLFirSession {
+    fun getSession(module: KaModule): LLFirSession {
         return getSession(module, preferBinary = true)
     }
 
@@ -36,11 +36,11 @@ class LLSessionProvider(
      * Note: prefer using [getSession] unless you need to perform resolution actively.
      * Resolvable sessions for libraries are much less performant.
      */
-    fun getResolvableSession(module: KtModule): LLFirResolvableModuleSession {
+    fun getResolvableSession(module: KaModule): LLFirResolvableModuleSession {
         return getSession(module, preferBinary = false) as LLFirResolvableModuleSession
     }
 
-    private fun getSession(module: KtModule, preferBinary: Boolean): LLFirSession {
+    private fun getSession(module: KaModule, preferBinary: Boolean): LLFirSession {
         if (module == useSiteModule) {
             return useSiteSession
         }

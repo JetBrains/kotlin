@@ -8,18 +8,18 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.lifetime.isValid
 import org.jetbrains.kotlin.analysis.api.session.KaSessionProvider
-import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
-import org.jetbrains.kotlin.analysis.project.structure.KtLibrarySourceModule
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaBinaryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEventKind
 
 abstract class AbstractAnalysisSessionInvalidationTest : AbstractSessionInvalidationTest<KaSession>() {
     override val resultFileSuffix: String get() = "analysis_session"
 
-    override fun getSession(ktModule: KtModule) =
+    override fun getSession(ktModule: KaModule) =
         KaSessionProvider.getInstance(ktModule.project).getAnalysisSessionByUseSiteKtModule(ktModule)
 
-    override fun getSessionKtModule(session: KaSession): KtModule = session.useSiteModule
+    override fun getSessionKtModule(session: KaSession): KaModule = session.useSiteModule
     override fun isSessionValid(session: KaSession): Boolean = session.isValid()
 
     /**
@@ -31,7 +31,7 @@ abstract class AbstractAnalysisSessionInvalidationTest : AbstractSessionInvalida
             KotlinModificationEventKind.GLOBAL_SOURCE_MODULE_STATE_MODIFICATION,
             KotlinModificationEventKind.GLOBAL_SOURCE_OUT_OF_BLOCK_MODIFICATION
             -> {
-                session.useSiteModule is KtBinaryModule || session.useSiteModule is KtLibrarySourceModule
+                session.useSiteModule is KaBinaryModule || session.useSiteModule is KaLibrarySourceModule
             }
             else -> false
         }

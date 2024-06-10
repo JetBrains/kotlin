@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.project.structure
+package org.jetbrains.kotlin.analysis.api.projectStructure
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
@@ -16,18 +16,18 @@ import java.nio.file.Path
 /**
  * Represents a module inside a project.
  *
- * [KtModule] is a Source Set (or considering a new project model naming a Fragment).
+ * [KaModule] is a Source Set (or considering a new project model naming a Fragment).
  * Some examples of a module: main source set, test source set, library, JDK.
  *
  */
-public sealed interface KtModule {
+public sealed interface KaModule {
     /**
      * A list of Regular dependencies. Regular dependency allows the current module to see symbols from the dependent module. In the case
      * of a source set, it can be either the source set it depends on, a library, or an SDK.
      *
      * The dependencies list is non-transitive and does not include the current module.
      */
-    public val directRegularDependencies: List<KtModule>
+    public val directRegularDependencies: List<KaModule>
 
     /**
      * A list of `dependsOn` dependencies. (Kotlin MPP projects only.)
@@ -37,22 +37,20 @@ public sealed interface KtModule {
      *
      * `dependsOn` dependencies are transitive, but the list is not a transitive closure. The list does not include the current module.
      */
-    public val directDependsOnDependencies: List<KtModule>
+    public val directDependsOnDependencies: List<KaModule>
 
     /**
      * A list of [directDependsOnDependencies] and all of their parents (directly and indirectly), sorted topologically with the nearest
      * dependencies first in the list. The list does not include the current module.
-     *
-     * @see computeTransitiveDependsOnDependencies
      */
-    public val transitiveDependsOnDependencies: List<KtModule>
+    public val transitiveDependsOnDependencies: List<KaModule>
 
     /**
      * A list of Friend dependencies. Friend dependencies express that the current module may see internal symbols of the dependent module.
      *
      * The dependencies list is non-transitive and does not include the current module.
      */
-    public val directFriendDependencies: List<KtModule>
+    public val directFriendDependencies: List<KaModule>
 
     /**
      * A [GlobalSearchScope] which belongs to a module content.
@@ -86,7 +84,7 @@ public sealed interface KtModule {
  *
  * Generally, a main or test Source Set.
  */
-public interface KtSourceModule : KtModule {
+public interface KaSourceModule : KaModule {
     public val moduleName: String
 
     /**
@@ -108,7 +106,7 @@ public interface KtSourceModule : KtModule {
 /**
  * A module which consists of binary declarations.
  */
-public sealed interface KtBinaryModule : KtModule {
+public sealed interface KaBinaryModule : KaModule {
     /**
      * A list of binary files which forms a binary module. It can be a list of JARs, KLIBs, folders with .class files.
      *
@@ -123,13 +121,13 @@ public sealed interface KtBinaryModule : KtModule {
 /**
  * A module which represents a binary library, e.g. JAR or KLIB.
  */
-public interface KtLibraryModule : KtBinaryModule {
+public interface KaLibraryModule : KaBinaryModule {
     public val libraryName: String
 
     /**
      * A library source, if any. If current module is a binary JAR, then [librarySources] corresponds to the sources JAR.
      */
-    public val librarySources: KtLibrarySourceModule?
+    public val librarySources: KaLibrarySourceModule?
 
     override val moduleDescription: String
         get() = "Library $libraryName"
@@ -138,7 +136,7 @@ public interface KtLibraryModule : KtBinaryModule {
 /**
  * A module which represent some SDK, e.g. Java JDK.
  */
-public interface KtSdkModule : KtBinaryModule {
+public interface KaSdkModule : KaBinaryModule {
     public val sdkName: String
 
     override val moduleDescription: String
@@ -146,16 +144,16 @@ public interface KtSdkModule : KtBinaryModule {
 }
 
 /**
- * Sources for some [KtLibraryModule].
+ * Sources for some [KaLibraryModule].
  */
-public interface KtLibrarySourceModule : KtModule {
+public interface KaLibrarySourceModule : KaModule {
     public val libraryName: String
 
     /**
      * A library binary corresponding to the current library source.
      * If the current module is a source JAR, then [binaryLibrary] corresponds to the binaries JAR.
      */
-    public val binaryLibrary: KtLibraryModule
+    public val binaryLibrary: KaLibraryModule
 
     override val moduleDescription: String
         get() = "Library sources of $libraryName"
@@ -165,26 +163,26 @@ public interface KtLibrarySourceModule : KtModule {
  * A module which contains kotlin [builtins](https://kotlinlang.org/spec/built-in-types-and-their-semantics.html) for a specific platform.
  * Kotlin builtins usually reside in the compiler, so [contentScope] and [getBinaryRoots] are empty.
  */
-public class KtBuiltinsModule(
+public class KaBuiltinsModule(
     override val platform: TargetPlatform,
     override val project: Project
-) : KtBinaryModule {
-    override val directRegularDependencies: List<KtModule> get() = emptyList()
-    override val directDependsOnDependencies: List<KtModule> get() = emptyList()
-    override val transitiveDependsOnDependencies: List<KtModule> get() = emptyList()
-    override val directFriendDependencies: List<KtModule> get() = emptyList()
+) : KaBinaryModule {
+    override val directRegularDependencies: List<KaModule> get() = emptyList()
+    override val directDependsOnDependencies: List<KaModule> get() = emptyList()
+    override val transitiveDependsOnDependencies: List<KaModule> get() = emptyList()
+    override val directFriendDependencies: List<KaModule> get() = emptyList()
     override val contentScope: GlobalSearchScope get() = GlobalSearchScope.EMPTY_SCOPE
     override fun getBinaryRoots(): Collection<Path> = emptyList()
     override val moduleDescription: String get() = "Builtins for $platform"
 
-    override fun equals(other: Any?): Boolean = other is KtBuiltinsModule && this.platform == other.platform
+    override fun equals(other: Any?): Boolean = other is KaBuiltinsModule && this.platform == other.platform
     override fun hashCode(): Int = platform.hashCode()
 }
 
 /**
  * A module for a Kotlin script file.
  */
-public interface KtScriptModule : KtModule {
+public interface KaScriptModule : KaModule {
     /**
      * A script PSI.
      */
@@ -201,9 +199,9 @@ public interface KtScriptModule : KtModule {
 
 /**
  * A module for Kotlin script dependencies.
- * Must be either a [KtLibraryModule] or [KtLibrarySourceModule].
+ * Must be either a [KaLibraryModule] or [KaLibrarySourceModule].
  */
-public interface KtScriptDependencyModule : KtModule {
+public interface KaScriptDependencyModule : KaModule {
     /**
      * A `VirtualFile` that backs the dependent script PSI, or `null` if the module is for project-level dependencies.
      */
@@ -215,7 +213,7 @@ public interface KtScriptDependencyModule : KtModule {
  * Dangling files may be created for various purposes, such as: a code fragment for the evaluator, a sandbox for testing code modification
  * applicability, etc.
  */
-public interface KtDanglingFileModule : KtModule {
+public interface KaDanglingFileModule : KaModule {
     /**
      * A temporary file PSI.
      */
@@ -224,12 +222,12 @@ public interface KtDanglingFileModule : KtModule {
     /**
      * The module against which the [file] is analyzed.
      */
-    public val contextModule: KtModule
+    public val contextModule: KaModule
 
     /**
      * A way of resolving references to non-local declarations in the dangling file.
      */
-    public val resolutionMode: DanglingFileResolutionMode
+    public val resolutionMode: KaDanglingFileResolutionMode
 
     /**
      * True if the [file] is a code fragment.
@@ -245,13 +243,13 @@ public interface KtDanglingFileModule : KtModule {
  * True if the dangling file module supports partial invalidation on PSI modifications.
  * Sessions for such modules can be cached for longer time.
  */
-public val KtDanglingFileModule.isStable: Boolean
+public val KaDanglingFileModule.isStable: Boolean
     get() = file.isPhysical && file.viewProvider.isEventSystemEnabled
 
 /**
  * A set of sources which live outside the project content root. E.g, testdata files or source files of some other project.
  */
-public interface KtNotUnderContentRootModule : KtModule {
+public interface KaNotUnderContentRootModule : KaModule {
     /**
      * Human-readable module name.
      */

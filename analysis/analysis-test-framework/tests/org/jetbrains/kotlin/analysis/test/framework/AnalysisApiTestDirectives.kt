@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
 object AnalysisApiTestDirectives : SimpleDirectivesContainer() {
     val MODULE_KIND by enumDirective<TestModuleKind>(
-        "Overrides the kind of `KtModule` that is built from the associated test module",
+        "Overrides the kind of `KaModule` that is built from the associated test module",
         applicability = DirectiveApplicability.Module,
     )
 

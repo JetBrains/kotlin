@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingClassIdOrN
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isLocalForLazyResolutionPurposes
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.unwrapCopy
-import org.jetbrains.kotlin.analysis.project.structure.DanglingFileResolutionMode
-import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -379,7 +379,7 @@ internal fun patchDesignationPathIfNeeded(target: FirElementWithResolveState, ta
 private fun patchDesignationPathForCopy(target: FirElementWithResolveState, targetPath: List<FirDeclaration>): List<FirDeclaration>? {
     val targetModule = target.llFirModuleData.ktModule
 
-    if (targetModule is KtDanglingFileModule && targetModule.resolutionMode == DanglingFileResolutionMode.IGNORE_SELF) {
+    if (targetModule is KaDanglingFileModule && targetModule.resolutionMode == KaDanglingFileResolutionMode.IGNORE_SELF) {
         val targetPsiFile = targetModule.file
 
         val contextModule = targetModule.contextModule

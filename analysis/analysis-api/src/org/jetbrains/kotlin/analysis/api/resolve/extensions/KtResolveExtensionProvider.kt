@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.resolve.extensions
 
 import com.intellij.openapi.extensions.ExtensionPointName
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
 /**
  * Allows extending Kotlin resolution by generating additional declarations.
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModule
  */
 public abstract class KaResolveExtensionProvider {
     /**
-     * Provides a list of [KaResolveExtension]s for a given [KtModule].
+     * Provides a list of [KaResolveExtension]s for a given [KaModule].
      *
      * Should not perform any heavy analysis and the generation of the actual files. All file generation should be performed only in [KaResolveExtensionFile.buildFileText].
      *
@@ -25,13 +25,13 @@ public abstract class KaResolveExtensionProvider {
      *
      * Implementation cannot use the Kotlin resolve inside, as this function is called during session initialization, so Analysis API access is forbidden.
      */
-    public abstract fun provideExtensionsFor(module: KtModule): List<KaResolveExtension>
+    public abstract fun provideExtensionsFor(module: KaModule): List<KaResolveExtension>
 
     public companion object {
         public val EP_NAME: ExtensionPointName<KaResolveExtensionProvider> =
             ExtensionPointName<KaResolveExtensionProvider>("org.jetbrains.kotlin.kaResolveExtensionProvider")
 
-        public fun provideExtensionsFor(module: KtModule): List<KaResolveExtension> {
+        public fun provideExtensionsFor(module: KaModule): List<KaResolveExtension> {
             return EP_NAME.getExtensionList(module.project).flatMap { it.provideExtensionsFor(module) }
         }
     }

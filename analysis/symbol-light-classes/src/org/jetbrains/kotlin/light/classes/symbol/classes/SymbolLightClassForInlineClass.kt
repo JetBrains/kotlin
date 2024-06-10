@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 internal class SymbolLightClassForInlineClass : SymbolLightClassForClassOrObject {
     constructor(
         classOrObject: KtClassOrObject,
-        ktModule: KtModule,
+        ktModule: KaModule,
     ) : this(
         classOrObjectDeclaration = classOrObject,
         classOrObjectSymbolPointer = classOrObject.symbolPointerOfType(),
@@ -37,7 +37,7 @@ internal class SymbolLightClassForInlineClass : SymbolLightClassForClassOrObject
     private constructor(
         classOrObjectDeclaration: KtClassOrObject?,
         classOrObjectSymbolPointer: KaSymbolPointer<KaNamedClassOrObjectSymbol>,
-        ktModule: KtModule,
+        ktModule: KaModule,
         manager: PsiManager,
     ) : super(
         classOrObjectDeclaration = classOrObjectDeclaration,

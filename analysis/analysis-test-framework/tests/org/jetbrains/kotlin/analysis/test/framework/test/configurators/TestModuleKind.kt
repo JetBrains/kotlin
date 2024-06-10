@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 
 /**
  * In an Analysis API test configuration, the [TestModuleKind] determines the kind of the default
- * [KtModule][org.jetbrains.kotlin.analysis.project.structure.KtModule]s used in the test. This essentially defines the context in which a
+ * [KaModule][org.jetbrains.kotlin.analysis.api.projectStructure.KaModule]s used in the test. This essentially defines the context in which a
  * test file is analyzed.
  *
  * The test module kind can also be overridden for a specific test module in multi-module tests using the

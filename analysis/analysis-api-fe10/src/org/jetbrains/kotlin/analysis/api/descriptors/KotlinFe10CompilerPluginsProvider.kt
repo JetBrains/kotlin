@@ -6,19 +6,19 @@
 package org.jetbrains.kotlin.analysis.api.descriptors
 
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.extensions.internal.InternalNonStableExtensionPoints
 import org.jetbrains.kotlin.resolve.extensions.AssignResolutionAltererExtension
 
 @Suppress("unused")
 class KotlinFe10CompilerPluginsProvider : KotlinCompilerPluginsProvider() {
-    override fun <T : Any> getRegisteredExtensions(module: KtSourceModule, extensionType: ProjectExtensionDescriptor<T>): List<T> {
+    override fun <T : Any> getRegisteredExtensions(module: KaSourceModule, extensionType: ProjectExtensionDescriptor<T>): List<T> {
         return extensionType.getInstances(module.project)
     }
 
     @OptIn(InternalNonStableExtensionPoints::class)
-    override fun isPluginOfTypeRegistered(module: KtSourceModule, pluginType: CompilerPluginType): Boolean {
+    override fun isPluginOfTypeRegistered(module: KaSourceModule, pluginType: CompilerPluginType): Boolean {
         val extension = when (pluginType) {
             CompilerPluginType.ASSIGNMENT -> AssignResolutionAltererExtension
             else -> return false

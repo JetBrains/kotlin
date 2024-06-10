@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.analysis.test.framework.project.structure
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.project.structure.DanglingFileResolutionMode
-import org.jetbrains.kotlin.analysis.project.structure.impl.KtDanglingFileModuleImpl
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaDanglingFileModuleImpl
 import org.jetbrains.kotlin.analysis.test.framework.services.TestForeignValue
 import org.jetbrains.kotlin.analysis.test.framework.services.TestForeignValueProviderService
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -73,10 +73,10 @@ object KtCodeFragmentTestModuleFactory : KtTestModuleFactory {
         val foreignValues = testFile.directives[AnalysisApiTestCodeFragmentDirectives.CODE_FRAGMENT_FOREIGN_VALUE]
         TestForeignValueProviderService.submitForeignValues(codeFragment, foreignValues)
 
-        val module = KtDanglingFileModuleImpl(
+        val module = KaDanglingFileModuleImpl(
             codeFragment,
             contextModule.ktModule,
-            DanglingFileResolutionMode.PREFER_SELF
+            KaDanglingFileResolutionMode.PREFER_SELF
         )
 
         return KtTestModule(TestModuleKind.CodeFragment, testModule, module, listOf(codeFragment))

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.AbstractSessionInvalidationTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEventKind
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 
@@ -20,10 +20,10 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisA
 abstract class AbstractLLFirSessionInvalidationTest : AbstractSessionInvalidationTest<LLFirSession>() {
     override val resultFileSuffix: String? get() = null
 
-    override fun getSession(ktModule: KtModule): LLFirSession =
+    override fun getSession(ktModule: KaModule): LLFirSession =
         LLFirSessionCache.getInstance(ktModule.project).getSession(ktModule, preferBinary = true)
 
-    override fun getSessionKtModule(session: LLFirSession): KtModule = session.ktModule
+    override fun getSessionKtModule(session: LLFirSession): KaModule = session.ktModule
     override fun isSessionValid(session: LLFirSession): Boolean = session.isValid
 
     override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)

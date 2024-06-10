@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableM
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirResolvableSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.codeFragment
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
@@ -88,10 +88,10 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
     }
 
     /**
-     * We can avoid processing of in-block modification with the same [KtModule] because they
+     * We can avoid processing of in-block modification with the same [KaModule] because they
      * will be invalidated anyway by OOBM
      */
-    private fun dropOutdatedModifications(ktModuleWithOutOfBlockModification: KtModule) {
+    private fun dropOutdatedModifications(ktModuleWithOutOfBlockModification: KaModule) {
         processQueue { value, iterator ->
             if (value.ktModule == ktModuleWithOutOfBlockModification) iterator.remove()
         }
@@ -233,7 +233,7 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
     private fun ModificationType.isContractRemoval(): Boolean =
         this is ModificationType.ElementRemoved && (removedElement as? KtExpression)?.isContractDescriptionCallPsiCheck() == true
 
-    private fun inBlockModification(declaration: KtAnnotated, ktModule: KtModule) {
+    private fun inBlockModification(declaration: KtAnnotated, ktModule: KaModule) {
         val resolveSession = ktModule.getFirResolveSession(project)
         val firDeclaration = when (declaration) {
             is KtCodeFragment -> declaration.getOrBuildFirFile(resolveSession).codeFragment
@@ -268,7 +268,7 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
     private fun outOfBlockModification(element: PsiElement) {
         val ktModule = KotlinProjectStructureProvider.getModule(project, element, useSiteModule = null)
 
-        // We should check outdated modifications before to avoid cache dropping (e.g., KtModule cache)
+        // We should check outdated modifications before to avoid cache dropping (e.g., KaModule cache)
         dropOutdatedModifications(ktModule)
         project.analysisMessageBus.syncPublisher(KotlinModificationTopics.MODULE_OUT_OF_BLOCK_MODIFICATION).onModification(ktModule)
     }
@@ -344,7 +344,7 @@ private sealed class ChangeType {
     object Invisible : ChangeType()
 
     class InBlock(val blockOwner: KtAnnotated, val project: Project) : ChangeType() {
-        val ktModule: KtModule by lazy(LazyThreadSafetyMode.NONE) {
+        val ktModule: KaModule by lazy(LazyThreadSafetyMode.NONE) {
             KotlinProjectStructureProvider.getModule(project, blockOwner, useSiteModule = null)
         }
 

@@ -43,10 +43,10 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.Standa
 import org.jetbrains.kotlin.analysis.api.standalone.base.services.LLStandaloneFirElementByPsiElementChooser
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLFirElementByPsiElementChooser
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySymbolProviderFactory
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleProviderBuilder
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildProjectStructureProvider
-import org.jetbrains.kotlin.analysis.project.structure.impl.KtSourceModuleImpl
+import org.jetbrains.kotlin.analysis.project.structure.impl.KaSourceModuleImpl
 import org.jetbrains.kotlin.analysis.project.structure.impl.buildKtModuleProviderByCompilerConfiguration
 import org.jetbrains.kotlin.analysis.project.structure.impl.getPsiFilesFromPaths
 import org.jetbrains.kotlin.analysis.project.structure.impl.getSourceFilePaths
@@ -214,8 +214,8 @@ public class StandaloneAnalysisAPISessionBuilder(
 
         return StandaloneAnalysisAPISession(kotlinCoreProjectEnvironment) {
             projectStructureProvider.allKtModules.mapNotNull { ktModule ->
-                if (ktModule !is KtSourceModule) return@mapNotNull null
-                check(ktModule is KtSourceModuleImpl)
+                if (ktModule !is KaSourceModule) return@mapNotNull null
+                check(ktModule is KaSourceModuleImpl)
                 ktModule to ktModule.sourceRoots.filterIsInstance<PsiFile>()
             }.toMap()
         }

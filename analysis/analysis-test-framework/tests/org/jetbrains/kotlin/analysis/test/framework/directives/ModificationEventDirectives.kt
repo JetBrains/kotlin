@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificatio
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleStateModificationKind
 import org.jetbrains.kotlin.analysis.api.platform.modification.isGlobalLevel
 import org.jetbrains.kotlin.analysis.api.platform.modification.isModuleLevel
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleStructure
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
@@ -42,7 +42,7 @@ object ModificationEventDirectives : SimpleDirectivesContainer() {
  * Publishes a modification event as defined in [KotlinModificationTopics] based on the [ModificationEventDirectives.MODIFICATION_EVENT] directive
  * present in the test module in a write action.
  *
- * Module-level modification events will be published for the [KtTestModule]'s [KtModule].
+ * Module-level modification events will be published for the [KtTestModule]'s [KaModule].
  *
  * The function expects exactly one `MODIFICATION_EVENT` directive to be present, unless [isOptional] is `true`.
  */
@@ -63,7 +63,7 @@ fun KtTestModule.publishModificationEventByDirective(isOptional: Boolean = false
  * If the given test module contains a [ModificationEventDirectives.WILDCARD_MODIFICATION_EVENT] directive, publishes a modification event
  * as defined in [KotlinModificationTopics] based on the given [modificationEventKind] in a write action.
  *
- * Module-level modification events will be published for the [KtTestModule]'s [KtModule].
+ * Module-level modification events will be published for the [KtTestModule]'s [KaModule].
  */
 fun KtTestModule.publishWildcardModificationEventByDirectiveIfPresent(modificationEventKind: KotlinModificationEventKind) {
     if (ModificationEventDirectives.WILDCARD_MODIFICATION_EVENT !in testModule.directives) {
@@ -93,7 +93,7 @@ fun KtTestModuleStructure.publishWildcardModificationEventsByDirective(modificat
     }
 }
 
-fun publishModificationEvent(modificationEventKind: KotlinModificationEventKind, ktModule: KtModule) {
+fun publishModificationEvent(modificationEventKind: KotlinModificationEventKind, ktModule: KaModule) {
     publishModificationEventByKind(modificationEventKind, ktModule.project, ktModule)
 }
 
@@ -103,7 +103,7 @@ fun publishGlobalModificationEvent(modificationEventKind: KotlinModificationEven
     publishModificationEventByKind(modificationEventKind, project, ktModule = null)
 }
 
-private fun publishModificationEventByKind(modificationEventKind: KotlinModificationEventKind, project: Project, ktModule: KtModule?) {
+private fun publishModificationEventByKind(modificationEventKind: KotlinModificationEventKind, project: Project, ktModule: KaModule?) {
     runWriteAction {
         when (modificationEventKind) {
             KotlinModificationEventKind.MODULE_STATE_MODIFICATION -> {

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaBaseSessionProvide
 import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaGlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.impl.base.util.createSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.platform.modification.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.psi.KtElement
@@ -26,14 +26,14 @@ internal class KaFe10SessionProvider(project: Project) : KaBaseSessionProvider(p
         return createSession(context, useSiteModule, token)
     }
 
-    override fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KtModule): KaSession {
+    override fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KaModule): KaSession {
         val facade = Fe10AnalysisFacade.getInstance(project)
         val token = tokenFactory.create(project, project.createProjectWideOutOfBlockModificationTracker())
         val context = facade.getAnalysisContext(useSiteKtModule, token)
         return createSession(context, useSiteKtModule, token)
     }
 
-    private fun createSession(context: Fe10AnalysisContext, useSiteModule: KtModule, token: KaLifetimeToken): KaFe10Session {
+    private fun createSession(context: Fe10AnalysisContext, useSiteModule: KaModule, token: KaLifetimeToken): KaFe10Session {
         return createSession {
             val resolutionScope = KaGlobalSearchScope(shadowedScope = GlobalSearchScope.EMPTY_SCOPE, useSiteModule)
             KaFe10Session(context, useSiteModule, token, analysisSessionProvider, resolutionScope)

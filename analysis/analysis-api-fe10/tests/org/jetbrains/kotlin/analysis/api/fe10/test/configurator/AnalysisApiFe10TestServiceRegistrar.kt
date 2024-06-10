@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.CliFe10AnalysisFacade
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10AnalysisHandlerExtension
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.PluginStructureProvider
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.cli.common.CliModuleVisibilityManagerImpl
@@ -53,7 +53,7 @@ object AnalysisApiFe10TestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
         }
 
         testServices.ktTestModuleStructure.mainModules.forEach { ktTestModule ->
-            val sourceModule = ktTestModule.ktModule as? KtSourceModule ?: return@forEach
+            val sourceModule = ktTestModule.ktModule as? KaSourceModule ?: return@forEach
             AnalysisHandlerExtension.registerExtension(project, KaFe10AnalysisHandlerExtension(sourceModule))
         }
 

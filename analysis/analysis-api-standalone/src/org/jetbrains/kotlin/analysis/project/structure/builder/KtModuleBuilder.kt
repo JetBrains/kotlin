@@ -5,28 +5,28 @@
 
 package org.jetbrains.kotlin.analysis.project.structure.builder
 
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.platform.TargetPlatform
 
 @KtModuleBuilderDsl
 public abstract class KtModuleBuilder {
-    protected val directRegularDependencies: MutableList<KtModule> = mutableListOf()
-    protected val directDependsOnDependencies: MutableList<KtModule> = mutableListOf()
-    protected val directFriendDependencies: MutableList<KtModule> = mutableListOf()
+    protected val directRegularDependencies: MutableList<KaModule> = mutableListOf()
+    protected val directDependsOnDependencies: MutableList<KaModule> = mutableListOf()
+    protected val directFriendDependencies: MutableList<KaModule> = mutableListOf()
 
-    public fun addRegularDependency(module: KtModule) {
+    public fun addRegularDependency(module: KaModule) {
         directRegularDependencies.add(module)
     }
 
-    public fun addDependsOnDependency(module: KtModule) {
+    public fun addDependsOnDependency(module: KaModule) {
         directDependsOnDependencies.add(module)
     }
 
-    public fun addFriendDependency(module: KtModule) {
+    public fun addFriendDependency(module: KaModule) {
         directFriendDependencies.add(module)
     }
 
     public lateinit var platform: TargetPlatform
 
-    public abstract fun build(): KtModule
+    public abstract fun build(): KaModule
 }

@@ -9,8 +9,8 @@ package org.jetbrains.kotlin.analysis.api
 
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analysis.api.session.KaSessionProvider
-import org.jetbrains.kotlin.analysis.project.structure.DanglingFileResolutionMode
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.withDanglingFileResolutionMode
 import org.jetbrains.kotlin.psi.KtElement
 
@@ -36,7 +36,7 @@ public inline fun <R> analyze(
  * @see KaSession
  */
 public inline fun <R> analyze(
-    useSiteKtModule: KtModule,
+    useSiteKtModule: KaModule,
     crossinline action: KaSession.() -> R
 ): R {
     val sessionProvider = KaSessionProvider.getInstance(useSiteKtModule.project)
@@ -54,7 +54,7 @@ public inline fun <R> analyze(
  */
 public inline fun <R> analyzeCopy(
     useSiteKtElement: KtElement,
-    resolutionMode: DanglingFileResolutionMode,
+    resolutionMode: KaDanglingFileResolutionMode,
     crossinline action: KaSession.() -> R,
 ): R {
     val containingFile = useSiteKtElement.containingKtFile

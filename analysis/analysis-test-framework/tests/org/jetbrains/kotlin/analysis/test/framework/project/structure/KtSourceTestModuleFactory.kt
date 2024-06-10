@@ -25,7 +25,7 @@ object KtSourceTestModuleFactory : KtTestModuleFactory {
     ): KtTestModule {
         val psiFiles = TestModuleStructureFactory.createSourcePsiFiles(testModule, testServices, project)
 
-        val module = KtSourceModuleImpl(
+        val module = KaSourceModuleImpl(
             testModule.name,
             testModule.targetPlatform,
             testModule.languageVersionSettings,

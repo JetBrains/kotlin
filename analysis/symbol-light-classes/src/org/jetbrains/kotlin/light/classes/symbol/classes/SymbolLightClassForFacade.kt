@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaPossibleMultiplatformSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
@@ -40,14 +40,14 @@ import org.jetbrains.kotlin.psi.KtFile
 internal class SymbolLightClassForFacade(
     override val facadeClassFqName: FqName,
     override val files: Collection<KtFile>,
-    ktModule: KtModule,
+    ktModule: KaModule,
 ) : SymbolLightClassBase(ktModule, files.first().manager), KtLightClassForFacade {
 
     init {
         require(files.isNotEmpty())
         /*
         Actually, here should be the following check
-        require(files.all { it.getKtModule() is KtSourceModule })
+        require(files.all { it.getKtModule() is KaSourceModule })
         but it is quite expensive
          */
         require(files.none { it.isCompiled })

@@ -21,14 +21,14 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.getContainingKtModule
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.isForeignValue
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
-import org.jetbrains.kotlin.analysis.project.structure.DanglingFileResolutionMode
-import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
@@ -78,7 +78,7 @@ internal class KaFirSymbolRelationProvider(
                 return null
             }
 
-            if (symbolModule is KtDanglingFileModule && symbolModule.resolutionMode == DanglingFileResolutionMode.IGNORE_SELF) {
+            if (symbolModule is KaDanglingFileModule && symbolModule.resolutionMode == KaDanglingFileResolutionMode.IGNORE_SELF) {
                 if (hasParentPsi(this)) {
                     // getSymbol(ClassId) returns a symbol from the original file, so here we avoid using it
                     return getContainingDeclarationByPsi(this)
@@ -207,7 +207,7 @@ internal class KaFirSymbolRelationProvider(
             return firSymbolBuilder.buildFileSymbol(firFileSymbol)
         }
 
-    override val KaSymbol.containingModule: KtModule
+    override val KaSymbol.containingModule: KaModule
         get() = withValidityAssertion {
             getContainingKtModule(analysisSession.firResolveSession)
         }

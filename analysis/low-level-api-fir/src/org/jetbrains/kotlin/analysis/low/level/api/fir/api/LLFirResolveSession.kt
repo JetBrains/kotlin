@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLModuleProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLModuleResolutionStrategyProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLScopeSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLSessionProvider
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
 /**
- * An entry point for a FIR Low Level API resolution. Represents a project view from a use-site [KtModule].
+ * An entry point for a FIR Low Level API resolution. Represents a project view from a use-site [KaModule].
  */
 abstract class LLFirResolveSession(
     val moduleProvider: LLModuleProvider,
@@ -38,7 +38,7 @@ abstract class LLFirResolveSession(
     val scopeSessionProvider: LLScopeSessionProvider,
     val diagnosticProvider: LLDiagnosticProvider
 ) {
-    val useSiteKtModule: KtModule
+    val useSiteKtModule: KaModule
         get() = moduleProvider.useSiteModule
 
     val project: Project
@@ -47,7 +47,7 @@ abstract class LLFirResolveSession(
     val useSiteFirSession: LLFirSession
         get() = sessionProvider.useSiteSession
 
-    fun getSessionFor(module: KtModule): LLFirSession {
+    fun getSessionFor(module: KaModule): LLFirSession {
         return sessionProvider.getSession(module)
     }
 
@@ -99,6 +99,6 @@ abstract class LLFirResolveSession(
     internal abstract fun resolveFirToPhase(declaration: FirDeclaration, toPhase: FirResolvePhase)
 }
 
-fun LLFirResolveSession.getModule(element: PsiElement): KtModule {
+fun LLFirResolveSession.getModule(element: PsiElement): KaModule {
     return KotlinProjectStructureProvider.getModule(project, element, useSiteKtModule)
 }

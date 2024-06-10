@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session
 
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEventKind
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.directives.publishWildcardModificationEventsByDirective
@@ -33,9 +33,9 @@ abstract class AbstractSessionInvalidationTest<SESSION> : AbstractAnalysisApiBas
      */
     protected abstract val resultFileSuffix: String?
 
-    protected abstract fun getSession(ktModule: KtModule): SESSION
+    protected abstract fun getSession(ktModule: KaModule): SESSION
 
-    protected abstract fun getSessionKtModule(session: SESSION): KtModule
+    protected abstract fun getSessionKtModule(session: SESSION): KaModule
 
     protected abstract fun isSessionValid(session: SESSION): Boolean
 
@@ -66,7 +66,7 @@ abstract class AbstractSessionInvalidationTest<SESSION> : AbstractAnalysisApiBas
         checkUntouchedSessionValidity(untouchedSessions, testServices)
     }
 
-    private fun getSessions(modules: List<KtModule>): List<SESSION> = modules.map(::getSession)
+    private fun getSessions(modules: List<KaModule>): List<SESSION> = modules.map(::getSession)
 
     private fun checkInvalidatedModules(
         invalidatedSessions: Set<SESSION>,

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.light.classes.symbol.annotations.AbstractClassAdditionalAnnotationsProvider
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLightClassForNamedClassLike {
     constructor(
         ktAnalysisSession: KaSession,
-        ktModule: KtModule,
+        ktModule: KaModule,
         classOrObjectSymbol: KaNamedClassOrObjectSymbol,
         manager: PsiManager
     ) : super(
@@ -46,7 +46,7 @@ internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLi
 
     constructor(
         classOrObject: KtClassOrObject,
-        ktModule: KtModule,
+        ktModule: KaModule,
     ) : this(
         classOrObjectDeclaration = classOrObject,
         classOrObjectSymbolPointer = classOrObject.symbolPointerOfType(),
@@ -59,7 +59,7 @@ internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLi
     protected constructor(
         classOrObjectDeclaration: KtClassOrObject?,
         classOrObjectSymbolPointer: KaSymbolPointer<KaNamedClassOrObjectSymbol>,
-        ktModule: KtModule,
+        ktModule: KaModule,
         manager: PsiManager,
     ) : super(
         classOrObjectDeclaration = classOrObjectDeclaration,

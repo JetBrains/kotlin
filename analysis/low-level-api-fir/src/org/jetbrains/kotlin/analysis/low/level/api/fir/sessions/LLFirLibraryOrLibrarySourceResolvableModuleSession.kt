@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
-import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
-import org.jetbrains.kotlin.analysis.project.structure.KtLibrarySourceModule
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.fir.BuiltinTypes
 
 internal class LLFirLibraryOrLibrarySourceResolvableModuleSession(
-    ktModule: KtModule,
+    ktModule: KaModule,
     override val moduleComponents: LLFirModuleResolveComponents,
     builtinTypes: BuiltinTypes,
 ) : LLFirResolvableModuleSession(ktModule, builtinTypes) {
@@ -21,9 +21,9 @@ internal class LLFirLibraryOrLibrarySourceResolvableModuleSession(
     }
 
     companion object {
-        fun checkIsValidKtModule(module: KtModule) {
-            require(module is KtLibraryModule || module is KtLibrarySourceModule) {
-                "Expected ${KtLibraryModule::class.simpleName} or ${KtLibrarySourceModule::class.simpleName}, but ${module::class.simpleName} found"
+        fun checkIsValidKtModule(module: KaModule) {
+            require(module is KaLibraryModule || module is KaLibrarySourceModule) {
+                "Expected ${KaLibraryModule::class.simpleName} or ${KaLibrarySourceModule::class.simpleName}, but ${module::class.simpleName} found"
             }
         }
     }

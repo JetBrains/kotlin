@@ -7,25 +7,25 @@ package org.jetbrains.kotlin.analysis.project.structure.impl
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
-import org.jetbrains.kotlin.analysis.project.structure.KtLibrarySourceModule
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.computeTransitiveDependsOnDependencies
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.computeTransitiveDependsOnDependencies
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.platform.TargetPlatform
 import java.nio.file.Path
 
-internal class KtLibraryModuleImpl(
-    override val directRegularDependencies: List<KtModule>,
-    override val directDependsOnDependencies: List<KtModule>,
-    override val directFriendDependencies: List<KtModule>,
+internal class KaLibraryModuleImpl(
+    override val directRegularDependencies: List<KaModule>,
+    override val directDependsOnDependencies: List<KaModule>,
+    override val directFriendDependencies: List<KaModule>,
     override val contentScope: GlobalSearchScope,
     override val platform: TargetPlatform,
     override val project: Project,
     private val binaryRoots: Collection<Path>,
     override val libraryName: String,
-    override val librarySources: KtLibrarySourceModule?,
-) : KtLibraryModule, KtModuleWithPlatform {
-    override val transitiveDependsOnDependencies: List<KtModule> by lazy {
+    override val librarySources: KaLibrarySourceModule?,
+) : KaLibraryModule, KtModuleWithPlatform {
+    override val transitiveDependsOnDependencies: List<KaModule> by lazy {
         computeTransitiveDependsOnDependencies(directDependsOnDependencies)
     }
 

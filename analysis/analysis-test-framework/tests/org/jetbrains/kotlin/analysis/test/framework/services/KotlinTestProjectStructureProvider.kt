@@ -8,8 +8,11 @@ package org.jetbrains.kotlin.analysis.test.framework.services
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileSystemItem
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.asDebugString
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaNotUnderContentRootModule
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.KotlinStaticProjectStructureProvider
-import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleStructure
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.psi.psiUtil.contains
@@ -18,15 +21,14 @@ import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
 class KotlinTestProjectStructureProvider(
     override val globalLanguageVersionSettings: LanguageVersionSettings,
-    private val builtinsModule: KtBuiltinsModule,
+    private val builtinsModule: KaBuiltinsModule,
     private val ktTestModuleStructure: KtTestModuleStructure,
 ) : KotlinStaticProjectStructureProvider() {
-    override fun getNotUnderContentRootModule(project: Project): KtNotUnderContentRootModule {
+    override fun getNotUnderContentRootModule(project: Project): KaNotUnderContentRootModule {
         error("Not-under content root modules most be initialized explicitly in tests")
     }
 
-    @OptIn(KtModuleStructureInternals::class)
-    override fun getModule(element: PsiElement, useSiteModule: KtModule?): KtModule {
+    override fun getModule(element: PsiElement, useSiteModule: KaModule?): KaModule {
         val containingFile = element.containingFile
         val virtualFile = containingFile.virtualFile
 
@@ -45,14 +47,14 @@ class KotlinTestProjectStructureProvider(
         return ktTestModuleStructure.mainModules.firstOrNull { module ->
             element in module.ktModule.contentScope
         }?.ktModule
-            ?: throw KotlinExceptionWithAttachments("Cannot find KtModule; see the attachment for more details.")
+            ?: throw KotlinExceptionWithAttachments("Cannot find KaModule; see the attachment for more details.")
                 .withAttachment(
                     virtualFile?.path ?: containingFile.name,
                     allKtModules.joinToString(separator = System.lineSeparator()) { it.asDebugString() }
                 )
     }
 
-    override val allKtModules: List<KtModule> = ktTestModuleStructure.mainAndBinaryKtModules
+    override val allKtModules: List<KaModule> = ktTestModuleStructure.mainAndBinaryKtModules
 
     override val allSourceFiles: List<PsiFileSystemItem> = ktTestModuleStructure.allSourceFiles
 }

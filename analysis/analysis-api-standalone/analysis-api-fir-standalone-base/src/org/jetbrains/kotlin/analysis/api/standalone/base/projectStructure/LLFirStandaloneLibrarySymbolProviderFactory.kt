@@ -10,7 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirModuleData
-import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.fir.BinaryModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
@@ -134,7 +134,7 @@ class LLFirStandaloneLibrarySymbolProviderFactory(private val project: Project) 
 
 
     private fun LLFirModuleData.getLibraryKLibs(): List<KotlinLibrary> {
-        val ktLibraryModule = ktModule as? KtLibraryModule ?: return emptyList()
+        val ktLibraryModule = ktModule as? KaLibraryModule ?: return emptyList()
 
         return ktLibraryModule.getBinaryRoots()
             .filter { it.isDirectory() || it.extension == KLIB_FILE_EXTENSION }

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.util.PsiModificationTracker
-import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinAnchorModuleProvider
 import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinCodeFragmentContextModificationListener
@@ -19,21 +18,26 @@ import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleOutOf
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleStateModificationKind
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleStateModificationListener
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleDependentsProvider
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptDependencyModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
 
 /**
- * [LLFirSessionInvalidationService] listens to [modification events][org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTopics] and invalidates [LLFirSession]s which depend on the
- * modified [KtModule]. Its invalidation functions should always be invoked in a **write action** because invalidation affects multiple
- * sessions in [LLFirSessionCache] and the cache has to be kept consistent.
+ * [LLFirSessionInvalidationService] listens to [modification events][org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTopics]
+ * and invalidates [LLFirSession]s which depend on the modified [KaModule]. Its invalidation functions should always be invoked in a **write
+ * action** because invalidation affects multiple sessions in [LLFirSessionCache] and the cache has to be kept consistent.
  */
 internal class LLFirSessionInvalidationService(private val project: Project) {
     internal class LLKotlinModuleStateModificationListener(val project: Project) : KotlinModuleStateModificationListener {
-        override fun onModification(module: KtModule, modificationKind: KotlinModuleStateModificationKind) {
+        override fun onModification(module: KaModule, modificationKind: KotlinModuleStateModificationKind) {
             getInstance(project).invalidate(module)
         }
     }
 
     internal class LLKotlinModuleOutOfBlockModificationListener(val project: Project) : KotlinModuleOutOfBlockModificationListener {
-        override fun onModification(module: KtModule) {
+        override fun onModification(module: KaModule) {
             getInstance(project).invalidate(module)
         }
     }
@@ -59,7 +63,7 @@ internal class LLFirSessionInvalidationService(private val project: Project) {
     }
 
     internal class LLKotlinCodeFragmentContextModificationListener(val project: Project) : KotlinCodeFragmentContextModificationListener {
-        override fun onModification(module: KtModule) {
+        override fun onModification(module: KaModule) {
             getInstance(project).invalidateContextualDanglingFileSessions(module)
         }
     }
@@ -82,7 +86,7 @@ internal class LLFirSessionInvalidationService(private val project: Project) {
      *
      * Per the contract of [LLFirSessionInvalidationService], [invalidate] may only be called from a write action.
      */
-    private fun invalidate(module: KtModule) {
+    private fun invalidate(module: KaModule) {
         ApplicationManager.getApplication().assertWriteAccessAllowed()
 
         sessionInvalidationEventPublisher.collectSessionsAndPublishInvalidationEvent {
@@ -101,11 +105,11 @@ internal class LLFirSessionInvalidationService(private val project: Project) {
             //  - Script dependencies are also not linked via dependents yet, so any script dependency modification may affect any script.
             //  - Scripts may depend on libraries, and the IDE module dependents provider doesn't provide script dependents for libraries
             //    yet.
-            if (module is KtScriptModule || module is KtScriptDependencyModule || module is KtLibraryModule) {
+            if (module is KaScriptModule || module is KaScriptDependencyModule || module is KaLibraryModule) {
                 sessionCache.removeAllScriptSessions()
             }
 
-            if (module is KtDanglingFileModule) {
+            if (module is KaDanglingFileModule) {
                 sessionCache.removeContextualDanglingFileSessions(module)
             } else {
                 sessionCache.removeAllDanglingFileSessions()
@@ -134,7 +138,7 @@ internal class LLFirSessionInvalidationService(private val project: Project) {
         project.analysisMessageBus.syncPublisher(LLFirSessionInvalidationTopics.SESSION_INVALIDATION).afterGlobalInvalidation()
     }
 
-    private fun invalidateContextualDanglingFileSessions(contextModule: KtModule) {
+    private fun invalidateContextualDanglingFileSessions(contextModule: KaModule) {
         ApplicationManager.getApplication().assertWriteAccessAllowed()
 
         sessionInvalidationEventPublisher.collectSessionsAndPublishInvalidationEvent {

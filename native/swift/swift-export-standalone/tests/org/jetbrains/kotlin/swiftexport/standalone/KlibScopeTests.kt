@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
-import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
@@ -115,7 +115,7 @@ class KlibScopeTests : AbstractNativeSimpleTest() {
 
     private fun <T> withKlibScope(sources: Path, block: KlibScope.() -> T): T {
         val klib = compileToNativeKLib(sources)
-        lateinit var module: KtLibraryModule
+        lateinit var module: KaLibraryModule
         val session = buildStandaloneAnalysisAPISession {
             val nativePlatform = NativePlatforms.unspecifiedNativePlatform
             buildKtModuleProvider {

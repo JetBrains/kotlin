@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
 public abstract class KotlinModuleDependentsProviderBase : KotlinModuleDependentsProvider() {
-    override fun getTransitiveDependents(module: KtModule): Set<KtModule> = computeTransitiveDependents(module)
+    override fun getTransitiveDependents(module: KaModule): Set<KaModule> = computeTransitiveDependents(module)
 
-    protected fun computeTransitiveDependents(module: KtModule): Set<KtModule> = buildSet {
+    protected fun computeTransitiveDependents(module: KaModule): Set<KaModule> = buildSet {
         // We could use `DFS` from utils, but this implementation has no handler overhead and is simple enough.
-        fun visit(module: KtModule) {
+        fun visit(module: KaModule) {
             if (module in this) return
             add(module)
             getDirectDependents(module).forEach(::visit)

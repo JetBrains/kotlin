@@ -14,18 +14,18 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
-import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.native.analysis.api.*
 
 /**
- * Top-level scope of the given [KtLibraryModule] (if it is based upon a klib).
+ * Top-level scope of the given [KaLibraryModule] (if it is based upon a klib).
  *
  * Mostly acts as a convenient wrapper around [readKlibDeclarationAddresses] for APIs built around [KaScope].
  * Some methods are not implemented, and it is OK for now.
  */
 public class KlibScope(
-    private val libraryModule: KtLibraryModule,
+    private val libraryModule: KaLibraryModule,
     private val analysisSession: KaSession,
 ) : KaScope {
 

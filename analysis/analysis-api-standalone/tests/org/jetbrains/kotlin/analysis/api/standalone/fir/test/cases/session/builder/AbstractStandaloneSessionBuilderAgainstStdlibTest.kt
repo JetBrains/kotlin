@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.session.buil
 import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
 import org.jetbrains.kotlin.analysis.test.framework.TestWithDisposable
@@ -32,7 +32,7 @@ abstract class AbstractStandaloneSessionBuilderAgainstStdlibTest : TestWithDispo
         targetPlatform: TargetPlatform, platformStdlibPath: Path,
         additionalStdlibRoots: List<Path> = emptyList(),
     ) {
-        lateinit var sourceModule: KtSourceModule
+        lateinit var sourceModule: KaSourceModule
         val session = buildStandaloneAnalysisAPISession(disposable) {
             buildKtModuleProvider {
                 platform = targetPlatform

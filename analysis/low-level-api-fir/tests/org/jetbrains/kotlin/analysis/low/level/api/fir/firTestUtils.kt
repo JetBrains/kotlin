@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionConfigurator
-import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
-import org.jetbrains.kotlin.analysis.project.structure.KtLibrarySourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.fir.FirElement
@@ -54,7 +54,7 @@ internal inline fun <R> resolveWithCaches(context: KtElement, action: (LLFirReso
 
 internal val LLFirResolveSession.isSourceSession: Boolean
     get() = when (useSiteKtModule) {
-        is KtLibraryModule, is KtLibrarySourceModule -> false
+        is KaLibraryModule, is KaLibrarySourceModule -> false
         else -> true
     }
 

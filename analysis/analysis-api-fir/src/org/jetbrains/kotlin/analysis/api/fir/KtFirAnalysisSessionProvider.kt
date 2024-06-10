@@ -17,10 +17,10 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationListener
-import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
-import org.jetbrains.kotlin.analysis.project.structure.isStable
+import org.jetbrains.kotlin.analysis.api.projectStructure.isStable
 import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinReadActionConfinementLifetimeToken
 import org.jetbrains.kotlin.psi.KtElement
 import java.util.concurrent.ConcurrentMap
@@ -33,7 +33,7 @@ import kotlin.reflect.KClass
 internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(project) {
     // `KaFirSession`s must be soft-referenced to allow simultaneous garbage collection of an unused `KaFirSession` together
     // with its `LLFirSession`.
-    private val cache: ConcurrentMap<KtModule, KaSession> = ContainerUtil.createConcurrentSoftValueMap()
+    private val cache: ConcurrentMap<KaModule, KaSession> = ContainerUtil.createConcurrentSoftValueMap()
 
     init {
         LowMemoryWatcher.register(::clearCaches, project)
@@ -44,8 +44,8 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
         return getAnalysisSessionByUseSiteKtModule(module)
     }
 
-    override fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KtModule): KaSession {
-        if (useSiteKtModule is KtDanglingFileModule && !useSiteKtModule.isStable) {
+    override fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KaModule): KaSession {
+        if (useSiteKtModule is KaDanglingFileModule && !useSiteKtModule.isStable) {
             return createAnalysisSession(useSiteKtModule)
         }
 
@@ -55,7 +55,7 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
         return cache.computeIfAbsent(useSiteKtModule, ::createAnalysisSession)
     }
 
-    private fun createAnalysisSession(useSiteKtModule: KtModule): KaFirSession {
+    private fun createAnalysisSession(useSiteKtModule: KaModule): KaFirSession {
         val firResolveSession = useSiteKtModule.getFirResolveSession(project)
         val validityToken = tokenFactory.create(project, firResolveSession.useSiteFirSession.createValidityTracker())
         return KaFirSession.createAnalysisSessionByFirResolveSession(firResolveSession, validityToken)
@@ -73,7 +73,7 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
             get() = getInstance(project) as? KaFirSessionProvider
                 ?: error("Expected the analysis session provider to be a `${KaFirSessionProvider::class.simpleName}`.")
 
-        override fun afterInvalidation(modules: Set<KtModule>) {
+        override fun afterInvalidation(modules: Set<KaModule>) {
             modules.forEach { analysisSessionProvider.cache.remove(it) }
         }
 

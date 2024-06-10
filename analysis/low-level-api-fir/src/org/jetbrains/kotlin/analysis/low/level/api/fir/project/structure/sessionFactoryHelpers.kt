@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirN
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirExceptionHandler
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinResolutionScopeProvider
 import org.jetbrains.kotlin.analysis.api.platform.declarations.createAnnotationResolver
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
@@ -67,7 +67,7 @@ internal inline fun createCompositeSymbolProvider(
     FirCompositeSymbolProvider(session, buildList(createSubProviders))
 
 @SessionConfiguration
-internal fun FirSession.registerCompilerPluginExtensions(project: Project, module: KtSourceModule) {
+internal fun FirSession.registerCompilerPluginExtensions(project: Project, module: KaSourceModule) {
     FirSessionConfigurator(this).apply {
         FirExtensionRegistrarAdapter.getInstances(project).forEach(::applyExtensionRegistrar)
 
@@ -84,7 +84,7 @@ private fun FirSessionConfigurator.applyExtensionRegistrar(registrar: FirExtensi
 @SessionConfiguration
 internal fun LLFirSession.registerCompilerPluginServices(
     project: Project,
-    module: KtSourceModule
+    module: KaSourceModule
 ) {
     val projectWithDependenciesScope = KotlinResolutionScopeProvider.getInstance(project).getResolutionScope(module)
     val annotationsResolver = project.createAnnotationResolver(projectWithDependenciesScope)

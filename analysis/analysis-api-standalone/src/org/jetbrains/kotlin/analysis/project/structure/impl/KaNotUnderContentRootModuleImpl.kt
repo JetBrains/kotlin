@@ -8,23 +8,25 @@ package org.jetbrains.kotlin.analysis.project.structure.impl
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.KtNotUnderContentRootModule
-import org.jetbrains.kotlin.analysis.project.structure.computeTransitiveDependsOnDependencies
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.computeTransitiveDependsOnDependencies
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaNotUnderContentRootModule
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 
-internal class KtNotUnderContentRootModuleImpl(
+internal class KaNotUnderContentRootModuleImpl(
     override val name: String,
-    override val directRegularDependencies: List<KtModule> = emptyList(),
-    override val directDependsOnDependencies: List<KtModule> = emptyList(),
-    override val directFriendDependencies: List<KtModule> = emptyList(),
+    override val directRegularDependencies: List<KaModule> = emptyList(),
+    override val directDependsOnDependencies: List<KaModule> = emptyList(),
+    override val directFriendDependencies: List<KaModule> = emptyList(),
     override val platform: TargetPlatform = JvmPlatforms.defaultJvmPlatform,
     override val file: PsiFile? = null,
     override val moduleDescription: String,
     override val project: Project,
-) : KtNotUnderContentRootModule, KtModuleWithPlatform {
-    override val transitiveDependsOnDependencies: List<KtModule> by lazy { computeTransitiveDependsOnDependencies(directDependsOnDependencies) }
+) : KaNotUnderContentRootModule, KtModuleWithPlatform {
+    override val transitiveDependsOnDependencies: List<KaModule> by lazy {
+        computeTransitiveDependsOnDependencies(directDependsOnDependencies)
+    }
 
     override val contentScope: GlobalSearchScope =
         if (file != null) GlobalSearchScope.fileScope(file) else GlobalSearchScope.EMPTY_SCOPE

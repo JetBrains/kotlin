@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.api.contracts.description.renderKaContractE
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaPossiblyNamedSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -306,7 +306,7 @@ public class DebugSymbolRenderer(
             is KaContextReceiver -> renderContextReceiver(value, printer)
             is KaAnnotation -> renderAnnotationApplication(value, printer)
             is KaAnnotationList -> renderAnnotationsList(value, printer)
-            is KtModule -> renderKtModule(value, printer)
+            is KaModule -> renderKtModule(value, printer)
             // Other custom values
             is Name -> printer.append(value.asString())
             is FqName -> printer.append(value.asString())
@@ -360,7 +360,7 @@ public class DebugSymbolRenderer(
         }
     }
 
-    private fun renderKtModule(ktModule: KtModule, printer: PrettyPrinter) {
+    private fun renderKtModule(ktModule: KaModule, printer: PrettyPrinter) {
         val ktModuleClass = ktModule::class.allSuperclasses.first { it in ktModuleSubclasses }
         printer.append(ktModuleClass.simpleName + " \"" + ktModule.moduleDescription + "\"")
     }
@@ -370,7 +370,7 @@ public class DebugSymbolRenderer(
         sealedSubclasses.flatMapTo(this) { it.allSealedSubClasses() }
     }
 
-    private val ktModuleSubclasses = KtModule::class.allSealedSubClasses().distinct().sortedWith { a, b ->
+    private val ktModuleSubclasses = KaModule::class.allSealedSubClasses().distinct().sortedWith { a, b ->
         when {
             a == b -> 0
             a.isSubclassOf(b) -> -1

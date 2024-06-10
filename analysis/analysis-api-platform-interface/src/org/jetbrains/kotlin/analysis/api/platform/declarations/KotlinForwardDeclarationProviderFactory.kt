@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.platform.declarations
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.platform.KotlinOptionalPlatformComponent
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
 /**
  * Declaration provider factory for Kotlin/Native forward declarations.
@@ -25,11 +25,11 @@ public abstract class KotlinForwardDeclarationProviderFactory : KotlinOptionalPl
      * Create a Kotlin/Native declaration provider for [ktModule].
      *
      * Generally, only Kotlin/Native KLIB libraries can declare forward declarations.
-     * For other types of [KtModule]s the provider normally shouldn't be created.
+     * For other types of [KaModule]s the provider normally shouldn't be created.
      *
      * @return a declaration provider for [ktModule] or `null` if the module cannot contain forward declarations
      */
-    public abstract fun createDeclarationProvider(ktModule: KtModule): KotlinDeclarationProvider?
+    public abstract fun createDeclarationProvider(ktModule: KaModule): KotlinDeclarationProvider?
 
     public companion object {
         public fun getInstance(project: Project): KotlinForwardDeclarationProviderFactory? =
@@ -42,5 +42,5 @@ public abstract class KotlinForwardDeclarationProviderFactory : KotlinOptionalPl
  *
  * @see [KotlinForwardDeclarationProviderFactory]
  */
-public fun Project.createForwardDeclarationProvider(ktModule: KtModule): KotlinDeclarationProvider? =
+public fun Project.createForwardDeclarationProvider(ktModule: KaModule): KotlinDeclarationProvider? =
     KotlinForwardDeclarationProviderFactory.getInstance(this)?.createDeclarationProvider(ktModule)

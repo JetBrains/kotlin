@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
 public abstract class KotlinResolutionScopeProvider : KotlinPlatformComponent {
-    public abstract fun getResolutionScope(module: KtModule): GlobalSearchScope
+    public abstract fun getResolutionScope(module: KaModule): GlobalSearchScope
 
     public companion object {
         public fun getInstance(project: Project): KotlinResolutionScopeProvider =

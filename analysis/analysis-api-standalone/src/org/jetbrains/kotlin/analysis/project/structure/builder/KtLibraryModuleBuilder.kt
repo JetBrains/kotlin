@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.analysis.project.structure.builder
 
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
-import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
-import org.jetbrains.kotlin.analysis.project.structure.KtLibrarySourceModule
-import org.jetbrains.kotlin.analysis.project.structure.impl.KtLibraryModuleImpl
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
+import org.jetbrains.kotlin.analysis.project.structure.impl.KaLibraryModuleImpl
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
@@ -19,12 +19,12 @@ public class KtLibraryModuleBuilder(
     private val kotlinCoreProjectEnvironment: KotlinCoreProjectEnvironment
 ) : KtBinaryModuleBuilder() {
     public lateinit var libraryName: String
-    public var librarySources: KtLibrarySourceModule? = null
+    public var librarySources: KaLibrarySourceModule? = null
 
-    override fun build(): KtLibraryModule {
+    override fun build(): KaLibraryModule {
         val binaryRoots = getBinaryRoots()
         val contentScope = StandaloneProjectFactory.createSearchScopeByLibraryRoots(binaryRoots, kotlinCoreProjectEnvironment)
-        return KtLibraryModuleImpl(
+        return KaLibraryModuleImpl(
             directRegularDependencies,
             directDependsOnDependencies,
             directFriendDependencies,
@@ -39,7 +39,7 @@ public class KtLibraryModuleBuilder(
 }
 
 @OptIn(ExperimentalContracts::class)
-public inline fun KtModuleProviderBuilder.buildKtLibraryModule(init: KtLibraryModuleBuilder.() -> Unit): KtLibraryModule {
+public inline fun KtModuleProviderBuilder.buildKtLibraryModule(init: KtLibraryModuleBuilder.() -> Unit): KaLibraryModule {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }

@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.psi.KtElement
@@ -31,7 +31,7 @@ interface Fe10AnalysisFacade {
 
     fun getAnalysisContext(element: KtElement, token: KaLifetimeToken): Fe10AnalysisContext
 
-    fun getAnalysisContext(ktModule: KtModule, token: KaLifetimeToken): Fe10AnalysisContext
+    fun getAnalysisContext(ktModule: KaModule, token: KaLifetimeToken): Fe10AnalysisContext
 
     fun analyze(elements: List<KtElement>, mode: AnalysisMode = AnalysisMode.FULL): BindingContext
 

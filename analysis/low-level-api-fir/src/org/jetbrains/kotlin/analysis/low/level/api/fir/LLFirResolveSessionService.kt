@@ -7,6 +7,14 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaNotUnderContentRootModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirLibraryOrLibrarySourceResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
@@ -21,27 +29,26 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLSimpleResolutionStrategyProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLSourceDiagnosticProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
-import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 
 @LLFirInternals
 class LLFirResolveSessionService(project: Project) {
     private val cache = LLFirSessionCache.getInstance(project)
 
-    fun getFirResolveSession(module: KtModule): LLFirResolveSession {
+    fun getFirResolveSession(module: KaModule): LLFirResolveSession {
         return create(module, cache::getSession)
     }
 
     @TestOnly
-    fun getFirResolveSessionForBinaryModule(module: KtModule): LLFirResolveSession {
+    fun getFirResolveSessionForBinaryModule(module: KaModule): LLFirResolveSession {
         return create(module) { cache.getSession(it, true) }
     }
 
-    fun getFirResolveSessionNoCaching(module: KtModule): LLFirResolveSession {
+    fun getFirResolveSessionNoCaching(module: KaModule): LLFirResolveSession {
         return create(module, cache::getSessionNoCaching)
     }
 
-    private fun create(module: KtModule, factory: (KtModule) -> LLFirSession): LLFirResolvableResolveSession {
+    private fun create(module: KaModule, factory: (KaModule) -> LLFirSession): LLFirResolvableResolveSession {
         val moduleProvider = LLModuleProvider(module)
         val sessionProvider = LLSessionProvider(module, factory)
         val resolutionStrategyProvider = createResolutionStrategyProvider(module, moduleProvider)
@@ -50,17 +57,17 @@ class LLFirResolveSessionService(project: Project) {
         return LLFirResolvableResolveSession(moduleProvider, resolutionStrategyProvider, sessionProvider, diagnosticProvider)
     }
 
-    private fun createResolutionStrategyProvider(module: KtModule, moduleProvider: LLModuleProvider): LLModuleResolutionStrategyProvider {
+    private fun createResolutionStrategyProvider(module: KaModule, moduleProvider: LLModuleProvider): LLModuleResolutionStrategyProvider {
         return when (module) {
-            is KtSourceModule -> LLSourceModuleResolutionStrategyProvider
-            is KtLibraryModule, is KtLibrarySourceModule -> LLLibraryModuleResolutionStrategyProvider(module)
-            is KtScriptModule -> LLScriptModuleResolutionStrategyProvider(module)
-            is KtDanglingFileModule -> {
+            is KaSourceModule -> LLSourceModuleResolutionStrategyProvider
+            is KaLibraryModule, is KaLibrarySourceModule -> LLLibraryModuleResolutionStrategyProvider(module)
+            is KaScriptModule -> LLScriptModuleResolutionStrategyProvider(module)
+            is KaDanglingFileModule -> {
                 val contextModule = module.contextModule
                 val contextResolutionStrategyProvider = createResolutionStrategyProvider(contextModule, moduleProvider)
                 LLDanglingFileResolutionStrategyProvider(contextResolutionStrategyProvider)
             }
-            is KtNotUnderContentRootModule -> LLSimpleResolutionStrategyProvider(module)
+            is KaNotUnderContentRootModule -> LLSimpleResolutionStrategyProvider(module)
             else -> {
                 errorWithFirSpecificEntries("Unexpected ${module::class.java}") {
                     withEntry("module", module) { it.moduleDescription }
@@ -71,9 +78,10 @@ class LLFirResolveSessionService(project: Project) {
 
     private fun createDiagnosticProvider(moduleProvider: LLModuleProvider, sessionProvider: LLSessionProvider): LLDiagnosticProvider {
         return when (moduleProvider.useSiteModule) {
-            is KtSourceModule,
-            is KtScriptModule,
-            is KtDanglingFileModule -> LLSourceDiagnosticProvider(moduleProvider, sessionProvider)
+            is KaSourceModule,
+            is KaScriptModule,
+            is KaDanglingFileModule
+                -> LLSourceDiagnosticProvider(moduleProvider, sessionProvider)
             else -> LLEmptyDiagnosticProvider
         }
     }
@@ -85,36 +93,36 @@ class LLFirResolveSessionService(project: Project) {
 }
 
 private object LLSourceModuleResolutionStrategyProvider : LLModuleResolutionStrategyProvider {
-    override fun getKind(module: KtModule): LLModuleResolutionStrategy {
+    override fun getKind(module: KaModule): LLModuleResolutionStrategy {
         return when (module) {
-            is KtSourceModule -> LLModuleResolutionStrategy.LAZY
-            is KtBuiltinsModule, is KtLibraryModule -> LLModuleResolutionStrategy.STATIC
+            is KaSourceModule -> LLModuleResolutionStrategy.LAZY
+            is KaBuiltinsModule, is KaLibraryModule -> LLModuleResolutionStrategy.STATIC
             else -> unexpectedElementError("module", module)
         }
     }
 }
 
-private class LLLibraryModuleResolutionStrategyProvider(private val useSiteModule: KtModule) : LLModuleResolutionStrategyProvider {
-    override fun getKind(module: KtModule): LLModuleResolutionStrategy {
+private class LLLibraryModuleResolutionStrategyProvider(private val useSiteModule: KaModule) : LLModuleResolutionStrategyProvider {
+    override fun getKind(module: KaModule): LLModuleResolutionStrategy {
         LLFirLibraryOrLibrarySourceResolvableModuleSession.checkIsValidKtModule(module)
         return if (module == useSiteModule) LLModuleResolutionStrategy.LAZY else LLModuleResolutionStrategy.STATIC
     }
 }
 
-private class LLScriptModuleResolutionStrategyProvider(private val useSiteModule: KtModule) : LLModuleResolutionStrategyProvider {
-    override fun getKind(module: KtModule): LLModuleResolutionStrategy {
+private class LLScriptModuleResolutionStrategyProvider(private val useSiteModule: KaModule) : LLModuleResolutionStrategyProvider {
+    override fun getKind(module: KaModule): LLModuleResolutionStrategy {
         return when (module) {
-            useSiteModule, is KtSourceModule -> LLModuleResolutionStrategy.LAZY
-            is KtBuiltinsModule, is KtLibraryModule -> LLModuleResolutionStrategy.STATIC
+            useSiteModule, is KaSourceModule -> LLModuleResolutionStrategy.LAZY
+            is KaBuiltinsModule, is KaLibraryModule -> LLModuleResolutionStrategy.STATIC
             else -> unexpectedElementError("module", module)
         }
     }
 }
 
 private class LLDanglingFileResolutionStrategyProvider(private val delegate: LLModuleResolutionStrategyProvider) : LLModuleResolutionStrategyProvider {
-    override fun getKind(module: KtModule): LLModuleResolutionStrategy {
+    override fun getKind(module: KaModule): LLModuleResolutionStrategy {
         return when (module) {
-            is KtDanglingFileModule -> LLModuleResolutionStrategy.LAZY
+            is KaDanglingFileModule -> LLModuleResolutionStrategy.LAZY
             else -> delegate.getKind(module)
         }
     }

@@ -9,7 +9,7 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaScriptSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightField
@@ -26,12 +26,12 @@ import org.jetbrains.kotlin.psi.KtScript
 internal class SymbolLightClassForScript private constructor(
     override val script: KtScript,
     private val symbolPointer: KaSymbolPointer<KaScriptSymbol>,
-    ktModule: KtModule,
+    ktModule: KaModule,
 ) : KtLightClassForScript, SymbolLightClassBase(ktModule, script.manager) {
 
     internal constructor(
         script: KtScript,
-        ktModule: KtModule,
+        ktModule: KaModule,
     ) : this(
         script,
         script.symbolPointerOfType(),

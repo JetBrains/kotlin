@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionService
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.psi.KtFile
 /**
  * Returns [LLFirResolveSession] which corresponds to containing module
  */
-fun KtModule.getFirResolveSession(project: Project): LLFirResolveSession =
+fun KaModule.getFirResolveSession(project: Project): LLFirResolveSession =
     LLFirResolveSessionService.getInstance(project).getFirResolveSession(this)
 
 

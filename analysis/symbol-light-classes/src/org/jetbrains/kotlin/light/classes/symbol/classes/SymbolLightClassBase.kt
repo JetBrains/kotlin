@@ -20,7 +20,7 @@ import com.intellij.psi.javadoc.PsiDocComment
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.PsiUtil
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.platform.modification.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.toLightClass
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
 import javax.swing.Icon
 
 
-abstract class SymbolLightClassBase protected constructor(val ktModule: KtModule, manager: PsiManager) :
+abstract class SymbolLightClassBase protected constructor(val ktModule: KaModule, manager: PsiManager) :
     LightElement(manager, KotlinLanguage.INSTANCE), PsiClass, KtExtensibleLightClass {
 
     private val myInnersCache by lazyPub {

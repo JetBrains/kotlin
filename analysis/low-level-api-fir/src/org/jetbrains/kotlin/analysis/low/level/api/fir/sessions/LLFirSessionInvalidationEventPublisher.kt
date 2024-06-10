@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.isStable
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.isStable
 import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
 
 /**
@@ -21,7 +21,7 @@ internal class LLFirSessionInvalidationEventPublisher(private val project: Proje
      * [invalidatedModules] can only exist during write actions while executing [collectSessionsAndPublishInvalidationEvent], so we don't
      * have to use a thread-safe collection.
      */
-    private var invalidatedModules: MutableSet<KtModule>? = null
+    private var invalidatedModules: MutableSet<KaModule>? = null
 
     /**
      * Invokes [action] and collects all sessions which were invalidated during its execution. At the end, publishes a session invalidation
@@ -57,7 +57,7 @@ internal class LLFirSessionInvalidationEventPublisher(private val project: Proje
 
         // Session invalidation events don't need to be published for unstable dangling file modules.
         val ktModule = session.ktModule
-        if (ktModule is KtDanglingFileModule && !ktModule.isStable) {
+        if (ktModule is KaDanglingFileModule && !ktModule.isStable) {
             return
         }
 

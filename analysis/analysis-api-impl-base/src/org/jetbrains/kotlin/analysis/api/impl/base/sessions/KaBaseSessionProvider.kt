@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.lifetime.KaBaseLifetimeTracke
 import org.jetbrains.kotlin.analysis.api.impl.base.permissions.KaBaseWriteActionStartedChecker
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.api.session.KaSessionProvider
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
 import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinLifetimeTokenProvider
 import org.jetbrains.kotlin.psi.KtElement
@@ -48,7 +48,7 @@ abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(proje
         beforeEnteringAnalysis(session)
     }
 
-    override fun beforeEnteringAnalysis(session: KaSession, useSiteModule: KtModule) {
+    override fun beforeEnteringAnalysis(session: KaSession, useSiteModule: KaModule) {
         beforeEnteringAnalysis(session)
     }
 
@@ -65,7 +65,7 @@ abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(proje
         afterLeavingAnalysis(session)
     }
 
-    override fun afterLeavingAnalysis(session: KaSession, useSiteModule: KtModule) {
+    override fun afterLeavingAnalysis(session: KaSession, useSiteModule: KaModule) {
         afterLeavingAnalysis(session)
     }
 

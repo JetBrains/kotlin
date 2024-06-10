@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.utils.topologicalSort
 
 /**
@@ -22,15 +22,15 @@ import org.jetbrains.kotlin.utils.topologicalSort
  * For KMP dependencies, the IDE gives false positive errors when a project is correctly configured (expect-actual), which is worse.
  * - Dependencies from a single KMP project/library normally imported as a single sequential block anyway
  */
-class KmpModuleSorter private constructor(private val modules: List<KtModule>) {
-    private val groupsByModules = mutableMapOf<KtModule, KmpGroup>()
-    private val originalPositions = mutableMapOf<KtModule, Int>()
+class KmpModuleSorter private constructor(private val modules: List<KaModule>) {
+    private val groupsByModules = mutableMapOf<KaModule, KmpGroup>()
+    private val originalPositions = mutableMapOf<KaModule, Int>()
 
     // Signals corrupted state. When set, original positions will be used for recovery
     var hasErrors = false
         private set
 
-    private fun sort(): List<KtModule> {
+    private fun sort(): List<KaModule> {
         groupModules()
         val sorted = sortModules()
         return if (hasErrors) modules else sorted
@@ -45,8 +45,8 @@ class KmpModuleSorter private constructor(private val modules: List<KtModule>) {
         }
     }
 
-    private fun sortModules(): List<KtModule> {
-        val sortedModules = arrayOfNulls<KtModule>(modules.size)
+    private fun sortModules(): List<KaModule> {
+        val sortedModules = arrayOfNulls<KaModule>(modules.size)
         modules.forEachIndexed { index, module ->
             val group = groupsByModules[module]
             if (group == null) {
@@ -61,7 +61,7 @@ class KmpModuleSorter private constructor(private val modules: List<KtModule>) {
 
     // The group of the root source set, e.g., commonMain
     private fun findOrCreateRootKmpGroup(
-        module: KtModule,
+        module: KaModule,
     ): KmpGroup {
         groupsByModules[module]?.let { return it }
 
@@ -76,7 +76,7 @@ class KmpModuleSorter private constructor(private val modules: List<KtModule>) {
         return groupsByModules.getOrPut(root) { KmpGroup() }
     }
 
-    private fun getOriginalPositionOrSetCorrupted(module: KtModule): Int {
+    private fun getOriginalPositionOrSetCorrupted(module: KaModule): Int {
         val originalPosition = originalPositions[module]
         if (originalPosition == null) hasErrors = true
         return originalPosition ?: 0
@@ -86,7 +86,7 @@ class KmpModuleSorter private constructor(private val modules: List<KtModule>) {
      * Modules, corresponding to source sets of the same KMP project.
      */
     private inner class KmpGroup() {
-        private val modules = mutableListOf<KtModule>()
+        private val modules = mutableListOf<KaModule>()
         private val sortedModules by lazy {
             topologicalSort(modules) { directDependsOnDependencies }.also {
                 if (it.size != modules.size) hasErrors = true
@@ -95,11 +95,11 @@ class KmpModuleSorter private constructor(private val modules: List<KtModule>) {
 
         private val oldReplacedModulesBySortedModules by lazy { sortedModules.zip(modules).toMap() }
 
-        fun addModule(module: KtModule) {
+        fun addModule(module: KaModule) {
             modules.add(module)
         }
 
-        fun getUpdatedIndexOf(module: KtModule): Int {
+        fun getUpdatedIndexOf(module: KaModule): Int {
             check(module in modules)
             if (modules.size == 1) return getOriginalPositionOrSetCorrupted(module)
 
@@ -118,7 +118,7 @@ class KmpModuleSorter private constructor(private val modules: List<KtModule>) {
     }
 
     companion object {
-        fun order(modules: List<KtModule>): List<KtModule> {
+        fun order(modules: List<KaModule>): List<KaModule> {
             if (modules.size < 2) return modules
             return KmpModuleSorter(modules).sort()
         }

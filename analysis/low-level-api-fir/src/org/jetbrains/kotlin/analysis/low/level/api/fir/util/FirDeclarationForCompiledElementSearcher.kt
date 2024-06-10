@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
+import org.jetbrains.kotlin.analysis.api.utils.errors.withClassEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLFirElementByPsiElementChooser
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.containingDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirBuiltinsAndCloneableSession
-import org.jetbrains.kotlin.analysis.project.structure.KtBuiltinsModule
-import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
-import org.jetbrains.kotlin.analysis.api.utils.errors.withClassEntry
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.providers.*
@@ -209,7 +209,7 @@ private val LLFirModuleWithDependenciesSymbolProvider.friendBuiltinsProvider: Fi
     get() {
         val moduleData = this.session.moduleData
         if (getPackageWithoutDependencies(StandardClassIds.BASE_KOTLIN_PACKAGE) != null
-            || moduleData is LLFirModuleData && moduleData.ktModule is KtBuiltinsModule
+            || moduleData is LLFirModuleData && moduleData.ktModule is KaBuiltinsModule
         ) {
             return dependencyProvider.providers.find { it.session is LLFirBuiltinsAndCloneableSession }
         }

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.analyzeCopy
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.analysis.project.structure.DanglingFileResolutionMode
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.idea.references.KtReference
@@ -29,13 +29,13 @@ abstract class AbstractResolveDanglingFileReferenceTest : AbstractResolveReferen
             useDirectives(Directives)
             forTestsMatching("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/*") {
                 defaultDirectives {
-                    Directives.COPY_RESOLUTION_MODE.with(DanglingFileResolutionMode.IGNORE_SELF)
+                    Directives.COPY_RESOLUTION_MODE.with(KaDanglingFileResolutionMode.IGNORE_SELF)
                 }
             }
 
             forTestsMatching("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/*") {
                 defaultDirectives {
-                    Directives.COPY_RESOLUTION_MODE.with(DanglingFileResolutionMode.PREFER_SELF)
+                    Directives.COPY_RESOLUTION_MODE.with(KaDanglingFileResolutionMode.PREFER_SELF)
                 }
             }
         }
@@ -75,7 +75,7 @@ abstract class AbstractResolveDanglingFileReferenceTest : AbstractResolveReferen
 
     private object Directives : SimpleDirectivesContainer() {
         val COPY_RESOLUTION_MODE by enumDirective(description = "Dangling file resolution mode for a copy") {
-            DanglingFileResolutionMode.valueOf(it)
+            KaDanglingFileResolutionMode.valueOf(it)
         }
     }
 }

@@ -9,8 +9,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.*
-import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.api.platform.packages.createPackagePartProvider
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaBinaryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
@@ -27,7 +30,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 
 @OptIn(SessionConfiguration::class)
 internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFactory(project) {
-    override fun createSourcesSession(module: KtSourceModule): LLFirSourcesSession {
+    override fun createSourcesSession(module: KaSourceModule): LLFirSourcesSession {
         return doCreateSourcesSession(module, FirKotlinScopeProvider(::wrapScopeWithJvmMapped)) { context ->
             registerJavaComponents(JavaModuleResolver.getInstance(project))
             val javaSymbolProvider = LLFirJavaSymbolProvider(this, context.moduleData, project, context.contentScope)
@@ -51,7 +54,7 @@ internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFa
         }
     }
 
-    override fun createLibrarySession(module: KtModule): LLFirLibraryOrLibrarySourceResolvableModuleSession {
+    override fun createLibrarySession(module: KaModule): LLFirLibraryOrLibrarySourceResolvableModuleSession {
         return doCreateLibrarySession(module) { context ->
             registerJavaComponents(JavaModuleResolver.getInstance(project))
             val javaSymbolProvider = LLFirJavaSymbolProvider(this, context.moduleData, project, context.contentScope)
@@ -71,14 +74,14 @@ internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFa
         }
     }
 
-    override fun createBinaryLibrarySession(module: KtBinaryModule): LLFirLibrarySession {
+    override fun createBinaryLibrarySession(module: KaBinaryModule): LLFirLibrarySession {
         return doCreateBinaryLibrarySession(module) {
             registerJavaComponents(JavaModuleResolver.getInstance(project))
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
         }
     }
 
-    override fun createDanglingFileSession(module: KtDanglingFileModule, contextSession: LLFirSession): LLFirSession {
+    override fun createDanglingFileSession(module: KaDanglingFileModule, contextSession: LLFirSession): LLFirSession {
         return doCreateDanglingFileSession(module, contextSession) {
             registerJavaComponents(JavaModuleResolver.getInstance(project))
 

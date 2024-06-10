@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.isTopLevel
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
@@ -39,13 +39,13 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 abstract class SymbolLightClassForClassLike<SType : KaClassOrObjectSymbol> protected constructor(
     internal val classOrObjectDeclaration: KtClassOrObject?,
     internal val classOrObjectSymbolPointer: KaSymbolPointer<SType>,
-    ktModule: KtModule,
+    ktModule: KaModule,
     manager: PsiManager,
 ) : SymbolLightClassBase(ktModule, manager),
     StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
     constructor(
         ktAnalysisSession: KaSession,
-        ktModule: KtModule,
+        ktModule: KaModule,
         classOrObjectSymbol: SType,
         manager: PsiManager,
     ) : this(

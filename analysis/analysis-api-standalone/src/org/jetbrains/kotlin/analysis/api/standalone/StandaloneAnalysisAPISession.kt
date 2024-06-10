@@ -12,13 +12,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.packages.createPackagePartProvider
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 
 public class StandaloneAnalysisAPISession internal constructor(
     kotlinCoreProjectEnvironment: KotlinCoreProjectEnvironment,
-    modulesWithFilesProvider: () -> Map<KtSourceModule, List<PsiFile>>
+    modulesWithFilesProvider: () -> Map<KaSourceModule, List<PsiFile>>
 ) {
     // TODO: better to limit exposure? Current usages are: addExtension, jarFileSystem
     public val coreApplicationEnvironment: CoreApplicationEnvironment = kotlinCoreProjectEnvironment.environment
@@ -43,5 +43,5 @@ public class StandaloneAnalysisAPISession internal constructor(
     public val createPackagePartProvider: (GlobalSearchScope) -> PackagePartProvider
         get() = project::createPackagePartProvider
 
-    public val modulesWithFiles: Map<KtSourceModule, List<PsiFile>> by lazy(modulesWithFilesProvider)
+    public val modulesWithFiles: Map<KaSourceModule, List<PsiFile>> by lazy(modulesWithFilesProvider)
 }

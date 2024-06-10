@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.klibSo
 
 import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructure
 import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
@@ -34,8 +34,8 @@ abstract class AbstractGetKlibSourceFileNameTest : AbstractAnalysisApiBasedTest(
         val mainModule = testServices.ktTestModuleStructure.mainModules
             .let { modules -> if (modules.size == 1) modules.first() else fail("Expected single main module. Found $modules") }
 
-        val libraryModule = mainModule.ktModule as? KtLibraryModule
-            ?: fail("Expected main module '${mainModule.ktModule}' to be '${KtLibraryModule::class.simpleName}'")
+        val libraryModule = mainModule.ktModule as? KaLibraryModule
+            ?: fail("Expected main module '${mainModule.ktModule}' to be '${KaLibraryModule::class.simpleName}'")
 
         val actual = StringBuilder()
         actual.appendLine("klib declarations:")

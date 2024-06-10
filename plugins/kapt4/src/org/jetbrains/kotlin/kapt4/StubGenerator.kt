@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.*
@@ -54,7 +54,7 @@ import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 
 internal fun generateStubs(
-    module: KtSourceModule,
+    module: KaSourceModule,
     files: List<PsiFile>,
     options: KaptOptions,
     logger: KaptLogger,

@@ -9,7 +9,7 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionFile
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -104,7 +104,7 @@ object KtResolveExtensionTestSupport {
                 resolveExtensionTestFiles.map { it.toKtResolveExtensionFile(singleModulePackageName) }
 
             val provider = KaResolveExtensionProviderForTest(ktResolveExtensionFiles, packageNames, shadowedScope) {
-                it is KtSourceModule && it.moduleName == name
+                it is KaSourceModule && it.moduleName == name
             }
             provider.register(testServices)
 

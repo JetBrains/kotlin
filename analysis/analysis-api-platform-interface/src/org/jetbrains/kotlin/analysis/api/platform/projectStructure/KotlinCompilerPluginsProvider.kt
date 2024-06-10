@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 import com.intellij.openapi.components.serviceOrNull
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.platform.KotlinOptionalPlatformComponent
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 
 /**
@@ -30,12 +30,12 @@ public abstract class KotlinCompilerPluginsProvider : KotlinOptionalPlatformComp
      *
      * These extensions are used in addition to those provided by the extension descriptor's [ProjectExtensionDescriptor.getInstances].
      */
-    public abstract fun <T : Any> getRegisteredExtensions(module: KtSourceModule, extensionType: ProjectExtensionDescriptor<T>): List<T>
+    public abstract fun <T : Any> getRegisteredExtensions(module: KaSourceModule, extensionType: ProjectExtensionDescriptor<T>): List<T>
 
     /**
      * Returns `true` if at least one plugin with the requested [pluginType] is registered, and `false` otherwise.
      */
-    public abstract fun isPluginOfTypeRegistered(module: KtSourceModule, pluginType: CompilerPluginType): Boolean
+    public abstract fun isPluginOfTypeRegistered(module: KaSourceModule, pluginType: CompilerPluginType): Boolean
 
     public companion object {
         public fun getInstance(project: Project): KotlinCompilerPluginsProvider? = project.serviceOrNull()

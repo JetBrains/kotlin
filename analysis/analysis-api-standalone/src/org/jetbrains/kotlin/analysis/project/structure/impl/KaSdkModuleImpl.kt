@@ -7,23 +7,23 @@ package org.jetbrains.kotlin.analysis.project.structure.impl
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.KtSdkModule
-import org.jetbrains.kotlin.analysis.project.structure.computeTransitiveDependsOnDependencies
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.computeTransitiveDependsOnDependencies
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSdkModule
 import org.jetbrains.kotlin.platform.TargetPlatform
 import java.nio.file.Path
 
-internal class KtSdkModuleImpl(
-    override val directRegularDependencies: List<KtModule>,
-    override val directDependsOnDependencies: List<KtModule>,
-    override val directFriendDependencies: List<KtModule>,
+internal class KaSdkModuleImpl(
+    override val directRegularDependencies: List<KaModule>,
+    override val directDependsOnDependencies: List<KaModule>,
+    override val directFriendDependencies: List<KaModule>,
     override val contentScope: GlobalSearchScope,
     override val platform: TargetPlatform,
     override val project: Project,
     private val binaryRoots: Collection<Path>,
     override val sdkName: String,
-) : KtSdkModule, KtModuleWithPlatform {
-    override val transitiveDependsOnDependencies: List<KtModule> by lazy {
+) : KaSdkModule, KtModuleWithPlatform {
+    override val transitiveDependsOnDependencies: List<KaModule> by lazy {
         computeTransitiveDependsOnDependencies(directDependsOnDependencies)
     }
 

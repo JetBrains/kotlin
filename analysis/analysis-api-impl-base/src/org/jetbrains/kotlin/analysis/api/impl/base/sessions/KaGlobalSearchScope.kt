@@ -10,14 +10,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinResolutionScopeProvider
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.KtModuleStructureInternals
-import org.jetbrains.kotlin.analysis.project.structure.allDirectDependencies
-import org.jetbrains.kotlin.analysis.project.structure.analysisExtensionFileContextModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependencies
+import org.jetbrains.kotlin.analysis.api.projectStructure.analysisExtensionFileContextModule
 
 class KaGlobalSearchScope(
     val shadowedScope: GlobalSearchScope,
-    private val useSiteModule: KtModule,
+    private val useSiteModule: KaModule,
 ) : GlobalSearchScope() {
     val baseScope: GlobalSearchScope =
         KotlinResolutionScopeProvider.getInstance(useSiteModule.project).getResolutionScope(useSiteModule)
@@ -42,8 +41,7 @@ class KaGlobalSearchScope(
         return "Analysis scope for $useSiteModule (base: $baseScope, shadowed: $shadowedScope)"
     }
 
-    @OptIn(KtModuleStructureInternals::class)
-    fun isFromGeneratedModule(file: VirtualFile, useSiteModule: KtModule): Boolean {
+    fun isFromGeneratedModule(file: VirtualFile, useSiteModule: KaModule): Boolean {
         val analysisContextModule = file.analysisExtensionFileContextModule ?: return false
         if (analysisContextModule == useSiteModule) return true
         return analysisContextModule in useSiteModule.allDirectDependencies()

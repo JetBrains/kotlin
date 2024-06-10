@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.modification
 
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
 public fun interface KotlinModuleOutOfBlockModificationListener {
     /**
@@ -19,5 +19,5 @@ public fun interface KotlinModuleOutOfBlockModificationListener {
      *
      * @see KotlinModificationTopics
      */
-    public fun onModification(module: KtModule)
+    public fun onModification(module: KaModule)
 }

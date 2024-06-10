@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.llResolveExtensionTool
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.allDirectDependencies
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependencies
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
 import org.jetbrains.kotlin.analysis.api.platform.declarations.createDeclarationProvider
@@ -85,7 +85,7 @@ private constructor(
     }
 
     @Suppress("AnalysisApiMissingLifetimeCheck")
-    override val useSiteModule: KtModule get() = firResolveSession.useSiteKtModule
+    override val useSiteModule: KaModule get() = firResolveSession.useSiteKtModule
 
     internal val firSession: FirSession get() = firResolveSession.useSiteFirSession
     internal val targetPlatform: TargetPlatform get() = firSession.moduleData.platform

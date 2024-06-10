@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
 fun interface KtObjCExportModuleClassifier {
     /**
@@ -17,7 +17,7 @@ fun interface KtObjCExportModuleClassifier {
      * Exported modules will get their full API surface includced in the final framework.
      * Non-exported modules will get an additional module 'string' attached to exported classifiers.
      */
-    fun isExported(module: KtModule): Boolean
+    fun isExported(module: KaModule): Boolean
 
     companion object {
         val default: KtObjCExportModuleClassifier = KtObjCExportDefaultModuleClassifier
@@ -29,14 +29,14 @@ fun interface KtObjCExportModuleClassifier {
  * See [KtObjCExportDefaultModuleClassifier.isExported]:
  * Note: This method will be cached.
  */
-internal fun KtObjCExportSession.isExported(module: KtModule): Boolean = cached(IsExportedCacheKey(module)) {
+internal fun KtObjCExportSession.isExported(module: KaModule): Boolean = cached(IsExportedCacheKey(module)) {
     internal.moduleClassifier.isExported(module)
 }
 
-data class IsExportedCacheKey(val module: KtModule)
+data class IsExportedCacheKey(val module: KaModule)
 
 private object KtObjCExportDefaultModuleClassifier : KtObjCExportModuleClassifier {
-    override fun isExported(module: KtModule): Boolean {
+    override fun isExported(module: KaModule): Boolean {
         return true
     }
 }

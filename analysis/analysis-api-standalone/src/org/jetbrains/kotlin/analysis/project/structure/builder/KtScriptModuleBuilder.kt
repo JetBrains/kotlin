@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.project.structure.builder
 
-import org.jetbrains.kotlin.analysis.project.structure.KtScriptModule
-import org.jetbrains.kotlin.analysis.project.structure.impl.KtScriptModuleImpl
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
+import org.jetbrains.kotlin.analysis.project.structure.impl.KaScriptModuleImpl
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -26,8 +26,8 @@ public class KtScriptModuleBuilder(
     public var languageVersionSettings: LanguageVersionSettings =
         LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST)
 
-    override fun build(): KtScriptModule {
-        return KtScriptModuleImpl(
+    override fun build(): KaScriptModule {
+        return KaScriptModuleImpl(
             directRegularDependencies,
             directDependsOnDependencies,
             directFriendDependencies,
@@ -40,7 +40,7 @@ public class KtScriptModuleBuilder(
 }
 
 @OptIn(ExperimentalContracts::class)
-public inline fun KtModuleProviderBuilder.buildKtScriptModule(init: KtScriptModuleBuilder.() -> Unit): KtScriptModule {
+public inline fun KtModuleProviderBuilder.buildKtScriptModule(init: KtScriptModuleBuilder.() -> Unit): KaScriptModule {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }

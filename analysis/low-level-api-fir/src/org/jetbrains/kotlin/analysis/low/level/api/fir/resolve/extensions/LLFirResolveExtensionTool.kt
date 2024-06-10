@@ -15,9 +15,8 @@ import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionNa
 import org.jetbrains.kotlin.analysis.api.permissions.forbidAnalysis
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinFileBasedDeclarationProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.KtModuleStructureInternals
-import org.jetbrains.kotlin.analysis.project.structure.analysisExtensionFileContextModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.analysisExtensionFileContextModule
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
 import org.jetbrains.kotlin.fir.FirSession
@@ -153,7 +152,7 @@ class LLFirResolveExtensionToolPackageFilter(
 
 class LLFirResolveExtensionToolDeclarationProvider internal constructor(
     private val extensionProvider: LLFirResolveExtensionsFileProvider,
-    private val ktModule: KtModule,
+    private val ktModule: KaModule,
 ) : KotlinDeclarationProvider() {
 
     private val extensionFileToDeclarationProvider: ConcurrentHashMap<KaResolveExtensionFile, KotlinFileBasedDeclarationProvider> =
@@ -290,7 +289,6 @@ class LLFirResolveExtensionToolDeclarationProvider internal constructor(
     }
 
 
-    @OptIn(KtModuleStructureInternals::class)
     private fun createKtFile(
         factory: KtPsiFactory,
         fileName: String,
@@ -372,8 +370,7 @@ private fun KaResolveExtensionFile.mayHaveTopLevelCallable(name: Name): Boolean 
     return name in getTopLevelCallableNames()
 }
 
-@KtModuleStructureInternals
-public var VirtualFile.navigationTargetsProvider: KaResolveExtensionNavigationTargetsProvider?
+var VirtualFile.navigationTargetsProvider: KaResolveExtensionNavigationTargetsProvider?
         by UserDataProperty(Key.create("KT_RESOLVE_EXTENSION_NAVIGATION_TARGETS_PROVIDER"))
 
 private inline fun <R> forbidAnalysis(action: () -> R): R {

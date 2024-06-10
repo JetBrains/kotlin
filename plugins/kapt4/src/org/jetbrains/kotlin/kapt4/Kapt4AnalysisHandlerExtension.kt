@@ -9,7 +9,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -128,7 +128,7 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
     }
 
     private fun generateAndSaveStubs(
-        module: KtSourceModule,
+        module: KaSourceModule,
         files: List<PsiFile>,
         options: KaptOptions,
         logger: MessageCollectorBackedKaptLogger,

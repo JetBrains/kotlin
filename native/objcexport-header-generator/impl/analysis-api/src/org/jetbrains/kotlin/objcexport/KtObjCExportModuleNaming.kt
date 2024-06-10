@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.shortName
 import org.jetbrains.kotlin.library.uniqueName
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.konan.file.File as KonanFile
 
 interface KtObjCExportModuleNaming {
     context(KaSession)
-    fun getModuleName(module: KtModule): String?
+    fun getModuleName(module: KaModule): String?
 
     companion object {
         val default = KtObjCExportModuleNaming(listOf(KtKlibObjCExportModuleNaming, KtSimpleObjCExportModuleNaming))
@@ -27,13 +27,13 @@ interface KtObjCExportModuleNaming {
 }
 
 context(KaSession, KtObjCExportSession)
-internal fun KtModule.getObjCKotlinModuleName(): String? {
+internal fun KaModule.getObjCKotlinModuleName(): String? {
     return cached(GetObjCKotlinModuleNameCacheKey(this)) {
         internal.moduleNaming.getModuleName(this)
     }
 }
 
-private data class GetObjCKotlinModuleNameCacheKey(private val module: KtModule)
+private data class GetObjCKotlinModuleNameCacheKey(private val module: KaModule)
 
 /**
  * Combines several [implementations] to a single [KtObjCExportModuleNaming].
@@ -45,14 +45,14 @@ fun KtObjCExportModuleNaming(implementations: List<KtObjCExportModuleNaming>): K
 
 internal object KtKlibObjCExportModuleNaming : KtObjCExportModuleNaming {
     context(KaSession)
-    override fun getModuleName(module: KtModule): String? {
+    override fun getModuleName(module: KaModule): String? {
         /*
         In this implementation, we're actually looking into the klib file, trying to resolve
         the contained manifest to get the 'shortName' or 'uniqueName'.
 
         This information is theoretically available already (as also used by the Analysis Api), but not yet accessible.
          */
-        if (module !is KtLibraryModule) return null
+        if (module !is KaLibraryModule) return null
         val binaryRoot = module.getBinaryRoots().singleOrNull() ?: return null
         if (!binaryRoot.isDirectory() && binaryRoot.extension != "klib") return null
         val library = runCatching { ToolingSingleFileKlibResolveStrategy.tryResolve(KonanFile(binaryRoot), DummyLogger) }
@@ -63,17 +63,17 @@ internal object KtKlibObjCExportModuleNaming : KtObjCExportModuleNaming {
 
 internal object KtSimpleObjCExportModuleNaming : KtObjCExportModuleNaming {
     context(KaSession)
-    override fun getModuleName(module: KtModule): String? {
+    override fun getModuleName(module: KaModule): String? {
         return when (module) {
-            is KtSourceModule -> module.stableModuleName ?: module.moduleName
-            is KtLibraryModule -> module.libraryName
+            is KaSourceModule -> module.stableModuleName ?: module.moduleName
+            is KaLibraryModule -> module.libraryName
             else -> null
         }
     }
 }
 
 internal class KtCompositeObjCExportModuleNaming(private val implementations: List<KtObjCExportModuleNaming>) : KtObjCExportModuleNaming {
-    context(KaSession) override fun getModuleName(module: KtModule): String? {
+    context(KaSession) override fun getModuleName(module: KaModule): String? {
         return implementations.firstNotNullOfOrNull { implementation -> implementation.getModuleName(module) }
     }
 }

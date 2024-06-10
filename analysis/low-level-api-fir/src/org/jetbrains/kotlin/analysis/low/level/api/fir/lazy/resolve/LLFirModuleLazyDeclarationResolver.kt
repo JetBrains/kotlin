@@ -161,12 +161,12 @@ private fun handleExceptionFromResolve(
             appendLine("origin: ${(firDeclarationToResolve as? FirDeclaration)?.origin}")
             appendLine("session: ${session::class}")
             appendLine("module data: ${moduleData::class}")
-            appendLine("KtModule: ${module::class}")
+            appendLine("KaModule: ${module::class}")
             appendLine("platform: ${module.platform}")
         },
         exception = exception,
     ) {
-        withEntry("KtModule", module) { it.moduleDescription }
+        withEntry("KaModule", module) { it.moduleDescription }
         withEntry("session", session) { it.toString() }
         withEntry("moduleData", firDeclarationToResolve.moduleData) { it.toString() }
         withFirEntry("firDeclarationToResolve", firDeclarationToResolve)
@@ -187,12 +187,12 @@ private fun handleExceptionFromResolve(
             appendLine("Error while resolving ${designation::class.java.name} ")
             appendLine("to $toPhase")
             appendLine("module data: ${moduleData::class}")
-            appendLine("KtModule: ${module::class}")
+            appendLine("KaModule: ${module::class}")
             appendLine("platform: ${module.platform}")
         },
         exception = exception,
     ) {
-        withEntry("KtModule", module) { it.moduleDescription }
+        withEntry("KaModule", module) { it.moduleDescription }
         withEntry("session", session) { it.toString() }
         withEntry("moduleData", moduleData) { it.toString() }
         withEntry("firDesignationToResolve", designation) { it.toString() }

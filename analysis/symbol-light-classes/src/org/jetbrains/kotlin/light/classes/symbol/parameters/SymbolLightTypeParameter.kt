@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaErrorType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -55,7 +55,7 @@ internal class SymbolLightTypeParameter private constructor(
         kotlinOrigin = typeParameterSymbol.sourcePsiSafe(),
     )
 
-    private val ktModule: KtModule get() = parent.ktModule
+    private val ktModule: KaModule get() = parent.ktModule
 
     private inline fun <T> withTypeParameterSymbol(crossinline action: KaSession.(KaTypeParameterSymbol) -> T): T =
         typeParameterSymbolPointer.withSymbol(ktModule, action)

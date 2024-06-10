@@ -7,19 +7,21 @@ package org.jetbrains.kotlin.analysis.test.framework.project.structure
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.project.structure.*
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.platform.TargetPlatform
 
-class KtLibrarySourceModuleImpl(
+class KaLibrarySourceModuleImpl(
     override val libraryName: String,
     override val platform: TargetPlatform,
     override val contentScope: GlobalSearchScope,
     override val project: Project,
-    override val binaryLibrary: KtLibraryModule,
-) : KtModuleWithModifiableDependencies(), KtLibrarySourceModule {
-    override val directRegularDependencies: MutableList<KtModule> = mutableListOf()
-    override val directDependsOnDependencies: MutableList<KtModule> = mutableListOf()
-    override val directFriendDependencies: MutableList<KtModule> = mutableListOf()
+    override val binaryLibrary: KaLibraryModule,
+) : KtModuleWithModifiableDependencies(), KaLibrarySourceModule {
+    override val directRegularDependencies: MutableList<KaModule> = mutableListOf()
+    override val directDependsOnDependencies: MutableList<KaModule> = mutableListOf()
+    override val directFriendDependencies: MutableList<KaModule> = mutableListOf()
 
     override fun toString(): String = libraryName
 }

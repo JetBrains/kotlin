@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.platform.KotlinOptionalPlatformComponent
-import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 
 /**
  * [KotlinAnchorModuleProvider] provides modules which contain dependencies of libraries.
@@ -18,12 +18,12 @@ import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
  * source modules, which are made visible to the Kotlin compiler library sources as dependencies via an anchor module.
  */
 public interface KotlinAnchorModuleProvider : KotlinOptionalPlatformComponent {
-    public fun getAnchorModule(libraryModule: KtLibraryModule): KtSourceModule?
+    public fun getAnchorModule(libraryModule: KaLibraryModule): KaSourceModule?
 
     /**
      * Returns all anchor modules configured in the project.
      */
-    public fun getAllAnchorModules(): Collection<KtSourceModule>
+    public fun getAllAnchorModules(): Collection<KaSourceModule>
 
     public companion object {
         public fun getInstance(project: Project): KotlinAnchorModuleProvider? =

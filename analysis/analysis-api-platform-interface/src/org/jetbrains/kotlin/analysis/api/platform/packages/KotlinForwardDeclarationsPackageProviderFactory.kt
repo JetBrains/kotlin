@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.platform.packages
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.platform.KotlinOptionalPlatformComponent
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
 /**
  * Package provider factory for the Kotlin/Native forward declarations symbol provider.
@@ -21,7 +21,7 @@ public abstract class KotlinForwardDeclarationsPackageProviderFactory : KotlinOp
      *
      * @return a package provider for [ktModule] or `null` if the module cannot contain forward declarations
      */
-    public abstract fun createPackageProvider(ktModule: KtModule): KotlinPackageProvider?
+    public abstract fun createPackageProvider(ktModule: KaModule): KotlinPackageProvider?
 
     public companion object {
         public fun getInstance(project: Project): KotlinForwardDeclarationsPackageProviderFactory? =
@@ -34,5 +34,5 @@ public abstract class KotlinForwardDeclarationsPackageProviderFactory : KotlinOp
  *
  * @see [KotlinForwardDeclarationsPackageProviderFactory]
  */
-public fun Project.createForwardDeclarationsPackageProvider(ktModule: KtModule): KotlinPackageProvider? =
+public fun Project.createForwardDeclarationsPackageProvider(ktModule: KaModule): KotlinPackageProvider? =
     KotlinForwardDeclarationsPackageProviderFactory.getInstance(this)?.createPackageProvider(ktModule)

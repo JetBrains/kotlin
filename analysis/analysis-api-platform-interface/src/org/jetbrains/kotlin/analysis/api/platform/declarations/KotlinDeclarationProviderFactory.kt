@@ -9,13 +9,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.KotlinComposableProviderMerger
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
 /**
  * @see KotlinDeclarationProvider
  */
 public abstract class KotlinDeclarationProviderFactory : KotlinPlatformComponent {
-    public abstract fun createDeclarationProvider(scope: GlobalSearchScope, contextualModule: KtModule?): KotlinDeclarationProvider
+    public abstract fun createDeclarationProvider(scope: GlobalSearchScope, contextualModule: KaModule?): KotlinDeclarationProvider
 
     public companion object {
         public fun getInstance(project: Project): KotlinDeclarationProviderFactory =
@@ -48,7 +48,7 @@ public abstract class KotlinDeclarationProviderMerger : KotlinComposableProvider
  * functionality such as package set computation may also depend on the contextual module, as the declaration provider may require
  * additional information not available in the [scope].
  */
-public fun Project.createDeclarationProvider(scope: GlobalSearchScope, contextualModule: KtModule?): KotlinDeclarationProvider =
+public fun Project.createDeclarationProvider(scope: GlobalSearchScope, contextualModule: KaModule?): KotlinDeclarationProvider =
     KotlinDeclarationProviderFactory.getInstance(this).createDeclarationProvider(scope, contextualModule)
 
 public fun Project.mergeDeclarationProviders(declarationProviders: List<KotlinDeclarationProvider>): KotlinDeclarationProvider =

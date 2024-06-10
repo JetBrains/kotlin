@@ -30,8 +30,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirMo
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.codeFragment
-import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.*
@@ -275,9 +275,9 @@ internal class KaFirCompilerFacility(
         }
     }
 
-    private fun computeTargetModules(module: KtModule): List<KtModule> {
+    private fun computeTargetModules(module: KaModule): List<KaModule> {
         return when (module) {
-            is KtDanglingFileModule -> listOf(module.contextModule, module)
+            is KaDanglingFileModule -> listOf(module.contextModule, module)
             else -> listOf(module)
         }
     }

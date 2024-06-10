@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.objcexport.testUtils
 
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.allDirectDependencies
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependencies
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCHeader
 import org.jetbrains.kotlin.backend.konan.testUtils.HeaderGenerator
 import org.jetbrains.kotlin.objcexport.*
@@ -39,8 +39,8 @@ object AnalysisApiHeaderGenerator : HeaderGenerator {
 
         val (module, files) = session.modulesWithFiles.entries.single()
         return analyze(module) {
-            val exportedLibraries = module.withClosure<KtModule> { currentModule -> currentModule.allDirectDependencies().toList() }
-                .filterIsInstance<KtLibraryModule>()
+            val exportedLibraries = module.withClosure<KaModule> { currentModule -> currentModule.allDirectDependencies().toList() }
+                .filterIsInstance<KaLibraryModule>()
                 .filter { libraryModule -> libraryModule.getBinaryRoots().first() in configuration.exportedDependencies }
                 .toSet()
 
@@ -52,7 +52,7 @@ object AnalysisApiHeaderGenerator : HeaderGenerator {
                     frameworkName = configuration.frameworkName,
                 ),
                 moduleClassifier = { module ->
-                    module == useSiteModule || module is KtLibraryModule && module in exportedLibraries
+                    module == useSiteModule || module is KaLibraryModule && module in exportedLibraries
                 }
             ) {
                 translateToObjCHeader(

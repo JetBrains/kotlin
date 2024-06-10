@@ -13,7 +13,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirBuiltinsAndCloneableSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirBuiltinsAndCloneableSession
-import org.jetbrains.kotlin.analysis.project.structure.KtBuiltinsModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
@@ -40,17 +40,17 @@ import java.util.concurrent.ConcurrentHashMap
 class LLFirBuiltinsSessionFactory(private val project: Project) {
     private val builtInTypes = BuiltinTypes() // TODO should be platform-specific
 
-    private val builtinsModules = ConcurrentHashMap<TargetPlatform, KtBuiltinsModule>()
+    private val builtinsModules = ConcurrentHashMap<TargetPlatform, KaBuiltinsModule>()
 
     private val builtinsAndCloneableSessions = ConcurrentHashMap<TargetPlatform, CachedValue<LLFirBuiltinsAndCloneableSession>>()
 
     /**
-     * Returns the [platform]'s [KtBuiltinsModule]. [getBuiltinsModule] should be used instead of [getBuiltinsSession] when a
-     * [KtBuiltinsModule] is needed as a dependency for other [KtModule]s. This is because during project structure creation, we have to
+     * Returns the [platform]'s [KaBuiltinsModule]. [getBuiltinsModule] should be used instead of [getBuiltinsSession] when a
+     * [KaBuiltinsModule] is needed as a dependency for other [KtModule]s. This is because during project structure creation, we have to
      * avoid the creation of the builtins *session*, as not all services might have been registered at that point.
      */
-    fun getBuiltinsModule(platform: TargetPlatform): KtBuiltinsModule =
-        builtinsModules.getOrPut(platform) { KtBuiltinsModule(platform, project) }
+    fun getBuiltinsModule(platform: TargetPlatform): KaBuiltinsModule =
+        builtinsModules.getOrPut(platform) { KaBuiltinsModule(platform, project) }
 
     fun getBuiltinsSession(platform: TargetPlatform): LLFirBuiltinsAndCloneableSession =
         builtinsAndCloneableSessions.getOrPut(platform) {

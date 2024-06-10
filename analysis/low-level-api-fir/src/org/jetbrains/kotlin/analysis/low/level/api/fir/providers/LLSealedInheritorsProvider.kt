@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
-import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleDependentsProvider
-import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDirectInheritorsProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleDependentsProvider
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
@@ -59,7 +59,7 @@ internal class LLSealedInheritorsProvider(private val project: Project) : Sealed
      *  - A Java class cannot legally extend a sealed Kotlin class (even in the same package), so we don't need to search for Java class
      *    inheritors.
      *  - Technically, we could use a package scope to narrow the search, but the search is already sufficiently narrow because it uses
-     *    supertype indices and is confined to the current `KtModule` in most cases (except for 'expect' classes). Finding a `PsiPackage`
+     *    supertype indices and is confined to the current `KaModule` in most cases (except for 'expect' classes). Finding a `PsiPackage`
      *    for a `PackageScope` is not cheap, hence the decision to avoid it. If a `PackageScope` is needed in the future, it'd be best to
      *    extract a `PackageNameScope` which operates just with the qualified package name, to avoid `PsiPackage`. (At the time of writing,
      *    this is possible with the implementation of `PackageScope`.)
@@ -75,7 +75,7 @@ internal class LLSealedInheritorsProvider(private val project: Project) : Sealed
         val ktClass = firClass.psi as? KtClass ?: return emptyList()
 
         val ktModule = when (val classKtModule = firClass.llFirModuleData.ktModule) {
-            is KtDanglingFileModule -> classKtModule.contextModule
+            is KaDanglingFileModule -> classKtModule.contextModule
             else -> classKtModule
         }
 

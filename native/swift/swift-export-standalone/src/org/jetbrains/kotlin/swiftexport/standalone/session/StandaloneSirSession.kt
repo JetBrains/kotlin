@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone.session
 
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.providers.SirModuleProvider
@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.sir.providers.utils.UnsupportedDeclarationReporter
 import org.jetbrains.sir.lightclasses.SirDeclarationFromKtSymbolProvider
 
 internal class StandaloneSirSession(
-    useSiteModule: KtModule,
-    moduleToTranslate: KtModule,
+    useSiteModule: KaModule,
+    moduleToTranslate: KaModule,
     override val errorTypeStrategy: SirTypeProvider.ErrorTypeStrategy,
     override val unsupportedTypeStrategy: SirTypeProvider.ErrorTypeStrategy,
     moduleForPackageEnums: SirModule,

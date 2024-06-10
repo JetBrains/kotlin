@@ -6,17 +6,25 @@
 package org.jetbrains.kotlin.analysis.api.projectStructure
 
 import com.intellij.openapi.util.Key
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.project.structure.DanglingFileResolutionMode
-import org.jetbrains.kotlin.analysis.project.structure.KtModuleStructureInternals
-import org.jetbrains.kotlin.analysis.project.structure.analysisExtensionFileContextModule
+import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.kotlin.psi.analysisContext
 import org.jetbrains.kotlin.psi.doNotAnalyze
 
-@OptIn(KtModuleStructureInternals::class)
+/**
+ * Specifies how references to non-local declarations in the dangling files should be resolved.
+ */
+public enum class KaDanglingFileResolutionMode {
+    /** Resolve first to declarations in the dangling file, and delegate to the original file or module only when needed. */
+    PREFER_SELF,
+
+    /** * Resolve only to declarations in the original file or module. Ignore all non-local declarations in the dangling file copy. */
+    IGNORE_SELF
+}
+
+@OptIn(KaAnalysisApiInternals::class)
 public val KtFile.isDangling: Boolean
     get() = when {
         this is KtCodeFragment -> true
@@ -34,11 +42,10 @@ public val KtFile.isDangling: Boolean
  * Use the `analyzeCopy {}` method for specifying the analysis mode. Note that the effect is thread-local; this is made on purpose, as
  * the file might potentially be resolved in parallel in different threads.
  *
- * Note that the resolution mode affects equality of [KtDanglingFileModule]. It means that for each resolution mode, a separate
+ * Note that the resolution mode affects equality of [KaDanglingFileModule]. It means that for each resolution mode, a separate
  * resolution session will be created.
  */
-@OptIn(KtModuleStructureInternals::class)
-public val KtFile.danglingFileResolutionMode: DanglingFileResolutionMode?
+public val KtFile.danglingFileResolutionMode: KaDanglingFileResolutionMode?
     get() = danglingFileResolutionModeState?.get()
 
 /**
@@ -46,8 +53,8 @@ public val KtFile.danglingFileResolutionMode: DanglingFileResolutionMode?
  *
  * Avoid using this function in client-side code. Use `analyzeCopy {}` from Analysis API instead.
  */
-@KtAnalysisApiInternals
-public fun <R> withDanglingFileResolutionMode(file: KtFile, mode: DanglingFileResolutionMode, action: () -> R): R {
+@KaAnalysisApiInternals
+public fun <R> withDanglingFileResolutionMode(file: KtFile, mode: KaDanglingFileResolutionMode, action: () -> R): R {
     require(file.isDangling) { "'withDanglingFileResolutionMode()' is only available to dangling files" }
     require(file.originalFile != file) { "'withDanglingFileResolutionMode()' is only available to file copies" }
 
@@ -62,18 +69,18 @@ public fun <R> withDanglingFileResolutionMode(file: KtFile, mode: DanglingFileRe
     }
 }
 
-private fun getOrCreateDanglingFileResolutionModeState(file: KtFile): ThreadLocal<DanglingFileResolutionMode?> {
+private fun getOrCreateDanglingFileResolutionModeState(file: KtFile): ThreadLocal<KaDanglingFileResolutionMode?> {
     synchronized(file) {
         val existingState = file.danglingFileResolutionModeState
         if (existingState != null) {
             return existingState
         }
 
-        val newState = ThreadLocal<DanglingFileResolutionMode?>()
+        val newState = ThreadLocal<KaDanglingFileResolutionMode?>()
         file.danglingFileResolutionModeState = newState
         return newState
     }
 }
 
-private var KtFile.danglingFileResolutionModeState: ThreadLocal<DanglingFileResolutionMode?>?
+private var KtFile.danglingFileResolutionModeState: ThreadLocal<KaDanglingFileResolutionMode?>?
         by UserDataProperty(Key.create("DANGLING_FILE_RESOLUTION_MODE"))

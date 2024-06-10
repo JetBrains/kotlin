@@ -19,13 +19,11 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirResolveExtensionToolDeclarationProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.navigationTargetsProvider
-import org.jetbrains.kotlin.analysis.project.structure.KtModuleStructureInternals
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
-@OptIn(KtModuleStructureInternals::class)
 internal class KaFirResolveExtensionInfoProvider(
     override val analysisSessionProvider: () -> KaFirSession
 ) : KaSessionComponent<KaFirSession>(), KaResolveExtensionInfoProvider, KaFirSessionComponent {
@@ -36,7 +34,6 @@ internal class KaFirResolveExtensionInfoProvider(
             return KaFirResolveExtensionScope(analysisSession, tools)
         }
 
-    @OptIn(KtModuleStructureInternals::class)
     override val VirtualFile.isResolveExtensionFile: Boolean
         get() = withValidityAssertion {
             navigationTargetsProvider != null

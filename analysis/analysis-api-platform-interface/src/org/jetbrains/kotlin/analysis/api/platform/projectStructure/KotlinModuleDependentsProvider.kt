@@ -7,15 +7,16 @@ package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
-import org.jetbrains.kotlin.analysis.project.structure.*
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
 /**
- * [KotlinModuleDependentsProvider] provides dependents for a [KtModule], which are modules that depend on the [KtModule].
+ * [KotlinModuleDependentsProvider] provides dependents for a [KaModule], which are modules that depend on the [KaModule].
  *
- * [getDirectDependents] and [getTransitiveDependents] may return an empty set for [KtBuiltinsModule]s and [KtSdkModule]s even though most
- * modules depend on builtins/SDKs, because it is often not feasible to compute that set. Instead, users of [KotlinModuleDependentsProvider]
- * should keep this limitation in mind and handle it separately. For example, a global modification event should be published for builtins
- * and SDK changes.
+ * [getDirectDependents] and [getTransitiveDependents] may return an empty set for
+ * [KaBuiltinsModule][org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule]s and
+ * [KaSdkModule][org.jetbrains.kotlin.analysis.api.projectStructure.KaSdkModule]s even though most modules depend on builtins/SDKs, because
+ * it is often not feasible to compute that set. Instead, users of [KotlinModuleDependentsProvider] should keep this limitation in mind and
+ * handle it separately. For example, a global modification event should be published for builtins and SDK changes.
  *
  * An empty set is also returned for [KtCodeFragmentModule]s, as no other module can depend on a code fragment.
  * Additionally, [KtCodeFragmentModule] are not returned from [getDirectDependents] for their context modules.
@@ -27,18 +28,18 @@ public abstract class KotlinModuleDependentsProvider : KotlinPlatformComponent {
     /**
      * Returns all direct dependents of [module], excluding [module] if it depends on itself.
      */
-    public abstract fun getDirectDependents(module: KtModule): Set<KtModule>
+    public abstract fun getDirectDependents(module: KaModule): Set<KaModule>
 
     /**
      * Returns all direct and indirect dependents of [module], excluding [module] if it depends on itself.
      */
-    public abstract fun getTransitiveDependents(module: KtModule): Set<KtModule>
+    public abstract fun getTransitiveDependents(module: KaModule): Set<KaModule>
 
     /**
      * Returns all refinement/depends-on dependents of [module], excluding [module] itself. The result is transitive because refinement
      * dependencies are implicitly transitive.
      */
-    public abstract fun getRefinementDependents(module: KtModule): Set<KtModule>
+    public abstract fun getRefinementDependents(module: KaModule): Set<KaModule>
 
     public companion object {
         public fun getInstance(project: Project): KotlinModuleDependentsProvider =

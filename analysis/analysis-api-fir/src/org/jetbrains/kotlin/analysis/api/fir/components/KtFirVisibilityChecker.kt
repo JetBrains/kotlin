@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.collectUseSiteContainers
-import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.analysis.checkers.isVisibleInClass
@@ -63,9 +63,9 @@ internal class KaFirVisibilityChecker(
         val positionModule = firResolveSession.moduleProvider.getModule(position)
         val candidateModule = candidateDeclaration.llFirModuleData.ktModule
 
-        val effectiveSession = if (positionModule is KtDanglingFileModule && candidateModule != positionModule) {
+        val effectiveSession = if (positionModule is KaDanglingFileModule && candidateModule != positionModule) {
             @Suppress("USELESS_CAST") // Smart cast is only available in K2
-            val contextModule = (positionModule as KtDanglingFileModule).contextModule
+            val contextModule = (positionModule as KaDanglingFileModule).contextModule
             firResolveSession.getSessionFor(contextModule)
         } else {
             firResolveSession.getSessionFor(positionModule)

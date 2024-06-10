@@ -6,16 +6,16 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.state
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 
-class LLModuleProvider(val useSiteModule: KtModule) {
+class LLModuleProvider(val useSiteModule: KaModule) {
     /**
-     * Returns a [KtModule] for a given [element] in context of the current session.
+     * Returns a [KaModule] for a given [element] in context of the current session.
      *
      * See [KotlinProjectStructureProvider] for more information on contextual modules.
      */
-    fun getModule(element: PsiElement): KtModule {
+    fun getModule(element: PsiElement): KaModule {
         return KotlinProjectStructureProvider.getModule(useSiteModule.project, element, useSiteModule)
     }
 }

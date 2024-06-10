@@ -10,12 +10,12 @@ import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.name.ClassId
 
 internal class SymbolAnnotationsProvider<T : KaAnnotatedSymbol>(
-    private val ktModule: KtModule,
+    private val ktModule: KaModule,
     private val annotatedSymbolPointer: KaSymbolPointer<T>,
     private val annotationUseSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
 ) : AnnotationsProvider {

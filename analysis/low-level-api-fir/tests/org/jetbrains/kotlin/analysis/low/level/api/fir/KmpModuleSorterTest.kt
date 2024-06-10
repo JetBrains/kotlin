@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.KmpModuleSorter
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.test.framework.TestWithMockProject
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtSourceModuleImpl
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KaSourceModuleImpl
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.junit.jupiter.api.Test
@@ -105,7 +105,7 @@ class KmpModuleSorterTest : TestWithMockProject() {
     }
 
     // See [org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirAbstractSessionFactory#collectDependencySymbolProviders]
-    private fun buildDependenciesToTest(module: KtModule): List<KtModule> {
+    private fun buildDependenciesToTest(module: KaModule): List<KaModule> {
         val dependenciesToSort = buildSet {
             addAll(module.directRegularDependencies)
             addAll(module.directFriendDependencies)
@@ -116,11 +116,11 @@ class KmpModuleSorterTest : TestWithMockProject() {
 
     private fun createKtModule(
         name: String,
-        directRegularDependencies: List<KtModule> = emptyList(),
-        directDependsOnDependencies: List<KtModule> = emptyList(),
-        directFriendDependencies: List<KtModule> = emptyList(),
-    ): KtModule {
-        return KtSourceModuleImpl(
+        directRegularDependencies: List<KaModule> = emptyList(),
+        directDependsOnDependencies: List<KaModule> = emptyList(),
+        directFriendDependencies: List<KaModule> = emptyList(),
+    ): KaModule {
+        return KaSourceModuleImpl(
             name, CommonPlatforms.defaultCommonPlatform, LanguageVersionSettingsImpl.DEFAULT, project, GlobalSearchScope.EMPTY_SCOPE
         ).apply {
             this.directRegularDependencies.addAll(directRegularDependencies)

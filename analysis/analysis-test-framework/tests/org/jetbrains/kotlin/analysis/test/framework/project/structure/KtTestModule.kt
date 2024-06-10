@@ -10,8 +10,8 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory.findJvmRootsForJavaFiles
-import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaBinaryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
@@ -22,20 +22,20 @@ import kotlin.collections.flatMap
 import kotlin.collections.mapTo
 
 /**
- * [KtTestModule] describes a [KtModule] originating from a [TestModule] with any number of associated [PsiFile]s. It is used to describe
+ * [KtTestModule] describes a [KaModule] originating from a [TestModule] with any number of associated [PsiFile]s. It is used to describe
  * the module structure configured by Analysis API tests.
  */
 class KtTestModule(
     val moduleKind: TestModuleKind,
     val testModule: TestModule,
-    val ktModule: KtModule,
+    val ktModule: KaModule,
     val files: List<PsiFile>,
 ) {
     val ktFiles: List<KtFile> get() = files.filterIsInstance<KtFile>()
 }
 
 /**
- * A module structure of [KtTestModule]s, and additional [KtBinaryModule]s not originating from test modules. This module structure
+ * A module structure of [KtTestModule]s, and additional [KaBinaryModule]s not originating from test modules. This module structure
  * is created by [AnalysisApiTestConfigurator.createModules][org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator.createModules].
  *
  * [mainModules] are created from the configured [TestModule]s and must be in the same order as [testModuleStructure]'s
@@ -44,7 +44,7 @@ class KtTestModule(
 class KtTestModuleStructure(
     val testModuleStructure: TestModuleStructure,
     val mainModules: List<KtTestModule>,
-    val binaryModules: Iterable<KtBinaryModule>,
+    val binaryModules: Iterable<KaBinaryModule>,
 ) {
     private val mainModulesByName: Map<String, KtTestModule> = mainModules.associateBy { it.testModule.name }
 
@@ -52,7 +52,7 @@ class KtTestModuleStructure(
 
     val allMainKtFiles: List<KtFile> get() = mainModules.flatMap { it.ktFiles }
 
-    val mainAndBinaryKtModules: List<KtModule>
+    val mainAndBinaryKtModules: List<KaModule>
         get() = buildList {
             mainModules.mapTo(this) { it.ktModule }
             addAll(binaryModules)

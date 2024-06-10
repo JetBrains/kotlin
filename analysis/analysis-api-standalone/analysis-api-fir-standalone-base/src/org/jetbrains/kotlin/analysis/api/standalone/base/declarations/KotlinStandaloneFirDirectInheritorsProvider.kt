@@ -10,8 +10,8 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.fir.utils.isSubClassOf
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
-import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDirectInheritorsProvider
@@ -61,7 +61,7 @@ internal class KotlinStandaloneFirDirectInheritorsProvider(private val project: 
         // Note that this means we don't support providing inheritors based on the dangling file yet, for example if an inheritor was added
         // or removed only in the dangling file.
         val baseKtModule = when (val ktModule = KotlinProjectStructureProvider.getModule(project, ktClass, useSiteModule = null)) {
-            is KtDanglingFileModule -> ktModule.contextModule
+            is KaDanglingFileModule -> ktModule.contextModule
             else -> ktModule
         }
 
@@ -103,7 +103,7 @@ internal class KotlinStandaloneFirDirectInheritorsProvider(private val project: 
         return isSubClassOf(candidateFirClass, baseFirClass, candidateFirClass.moduleData.session, allowIndirectSubtyping = false)
     }
 
-    private fun KtClassOrObject.toFirSymbol(classId: ClassId, ktModule: KtModule): FirClassLikeSymbol<*>? {
+    private fun KtClassOrObject.toFirSymbol(classId: ClassId, ktModule: KaModule): FirClassLikeSymbol<*>? {
         // Using a resolve session/source-preferred session will cause class stubs from binary libraries to be AST-loaded in IDE mode tests,
         // which results in an exception since we don't have a decompiler for them. See KT-64898, KT-64899, and KT-64900. If not for these
         // issues, we would be able to use `analyze` instead of custom session logic.

@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.modification
 
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
 public fun interface KotlinGlobalSourceModuleStateModificationListener {
     /**
      * [onModification] is invoked in a write action before or after global source module state modification.
      *
-     * The module structure and source code of all source [KtModule]s in the project should be considered modified when this event is
+     * The module structure and source code of all source [KaModule]s in the project should be considered modified when this event is
      * received. This includes source files being moved or removed, and source modules possibly being removed. Thus, all caches related to
      * source module structure and source code should be invalidated.
      *

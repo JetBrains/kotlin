@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithTypeParamet
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.*
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.platform.modification.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightMember
@@ -291,7 +291,7 @@ internal fun <T : KaSymbol> KaSymbolPointer<T>.restoreSymbolOrThrowIfDisposed():
         }
 
 internal fun hasTypeParameters(
-    ktModule: KtModule,
+    ktModule: KaModule,
     declaration: KtTypeParameterListOwner?,
     declarationPointer: KaSymbolPointer<KaSymbolWithTypeParameters>,
 ): Boolean = declaration?.typeParameters?.isNotEmpty() ?: declarationPointer.withSymbol(ktModule) {
@@ -304,7 +304,7 @@ internal val SymbolLightClassBase.interfaceIfDefaultImpls: SymbolLightClassForIn
 internal val SymbolLightClassBase.isDefaultImplsForInterfaceWithTypeParameters: Boolean
     get() = interfaceIfDefaultImpls?.hasTypeParameters() ?: false
 
-internal fun KaSymbolPointer<*>.isValid(ktModule: KtModule): Boolean = analyzeForLightClasses(ktModule) {
+internal fun KaSymbolPointer<*>.isValid(ktModule: KaModule): Boolean = analyzeForLightClasses(ktModule) {
     restoreSymbol() != null
 }
 
@@ -315,7 +315,7 @@ internal inline fun <T : KaSymbol> compareSymbolPointers(
 ): Boolean = left === right || left.pointsToTheSameSymbolAs(right)
 
 internal inline fun <T : KaSymbol, R> KaSymbolPointer<T>.withSymbol(
-    ktModule: KtModule,
+    ktModule: KaModule,
     crossinline action: KaSession.(T) -> R,
 ): R = analyzeForLightClasses(ktModule) { action(this, restoreSymbolOrThrowIfDisposed()) }
 
