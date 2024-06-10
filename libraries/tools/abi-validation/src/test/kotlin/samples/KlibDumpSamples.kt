@@ -87,9 +87,9 @@ class KlibDumpSamples {
             // Library unique name: <org.example:bcv-klib-test>
             final class org.example/ShardedClass { // org.example/ShardedClass|null[0]
                 constructor <init>(kotlin/Int) // org.example/ShardedClass.<init>|<init>(kotlin.Int){}[0]
-                final fun add(kotlin/Int): kotlin/Int // org.example/ShardedClass.add|add(kotlin.Int){}[0]
                 final val value // org.example/ShardedClass.value|{}value[0]
                     final fun <get-value>(): kotlin/Int // org.example/ShardedClass.value.<get-value>|<get-value>(){}[0]
+                final fun add(kotlin/Int): kotlin/Int // org.example/ShardedClass.add|add(kotlin.Int){}[0]
             }
             // Targets: [linuxX64]
             final fun org.example/ShardedClass(kotlin/Int, kotlin/Float, kotlin/Long): org.example/ShardedClass // org.example/ShardedClass|ShardedClass(kotlin.Int;kotlin.Float;kotlin.Long){}[0]
@@ -155,9 +155,9 @@ class KlibDumpSamples {
             // Library unique name: <org.example:bcv-klib-test>
             final class org.example/ShardedClass { // org.example/ShardedClass|null[0]
                 constructor <init>(kotlin/Int) // org.example/ShardedClass.<init>|<init>(kotlin.Int){}[0]
-                final fun add(kotlin/Int): kotlin/Int // org.example/ShardedClass.add|add(kotlin.Int){}[0]
                 final val value // org.example/ShardedClass.value|{}value[0]
                     final fun <get-value>(): kotlin/Int // org.example/ShardedClass.value.<get-value>|<get-value>(){}[0]
+                final fun add(kotlin/Int): kotlin/Int // org.example/ShardedClass.add|add(kotlin.Int){}[0]
             }
             // Targets: [linuxX64.linuxX86_64]
             final fun org.example/ShardedClass(kotlin/Int, kotlin/Float, kotlin/Long): org.example/ShardedClass // org.example/ShardedClass|ShardedClass(kotlin.Int;kotlin.Float;kotlin.Long){}[0]
@@ -177,9 +177,9 @@ class KlibDumpSamples {
             // Library unique name: <org.example:bcv-klib-test>
             final class org.example/ShardedClass { // org.example/ShardedClass|null[0]
                 constructor <init>(kotlin/Int) // org.example/ShardedClass.<init>|<init>(kotlin.Int){}[0]
-                final fun add(kotlin/Int): kotlin/Int // org.example/ShardedClass.add|add(kotlin.Int){}[0]
                 final val value // org.example/ShardedClass.value|{}value[0]
                     final fun <get-value>(): kotlin/Int // org.example/ShardedClass.value.<get-value>|<get-value>(){}[0]
+                final fun add(kotlin/Int): kotlin/Int // org.example/ShardedClass.add|add(kotlin.Int){}[0]
             }
             
             """.trimIndent(), filteredDumpContent)
@@ -281,8 +281,8 @@ class KlibDumpSamples {
             // - Show declarations: true
 
             // Library unique name: <testproject>
-            abstract class examples.classes/NewKlass // examples.classes/NewKlass|null[0]
             abstract interface examples.classes/Iface // examples.classes/Iface|null[0]
+            abstract class examples.classes/NewKlass // examples.classes/NewKlass|null[0]
 
         """.trimIndent(),
             inferredDumpContent)

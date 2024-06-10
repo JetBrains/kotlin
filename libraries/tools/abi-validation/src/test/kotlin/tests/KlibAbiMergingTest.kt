@@ -5,6 +5,7 @@
 
 package tests
 
+import kotlinx.validation.api.klib.DeclarationType
 import kotlinx.validation.api.klib.KlibAbiDumpMerger
 import kotlinx.validation.api.klib.KlibTarget
 import org.junit.Rule
@@ -359,5 +360,45 @@ class KlibAbiMergingTest {
             lines("/merge/non-overlapping/merged.klib.abi"),
             Files.readAllLines(dump.toPath()).asSequence()
         )
+    }
+
+    @Test
+    fun parseDeclarationType() {
+        val declarations = mapOf(
+            "abstract class examples.classes/AC { // examples.classes/AC|null[0]" to DeclarationType.Class,
+            "final class examples.classes/C { // examples.classes/C|null[0]" to DeclarationType.Class,
+            "final inner class Inner { // examples.classes/Outer.Nested.Inner|null[0]" to DeclarationType.Class,
+            "open annotation class examples.classes/A : kotlin/Annotation { // examples.classes/A|null[0]" to DeclarationType.AnnotationClass,
+            "final object examples.classes/O // examples.classes/O|null[0]" to DeclarationType.Object,
+            "abstract interface examples.classes/I // examples.classes/I|null[0]" to DeclarationType.Interface,
+            "final value class classifiers.test/ValueClass { // classifiers.test/ValueClass|null[0]" to DeclarationType.Class,
+            "abstract fun interface classifiers.test/FunctionInterface { // classifiers.test/FunctionInterface|null[0]" to DeclarationType.Interface,
+            "final enum class examples.classes/E : kotlin/Enum<examples.classes/E> { // examples.classes/E|null[0]" to DeclarationType.EnumClass,
+
+            "constructor <init>(kotlin/Int) // examples.classes/D.<init>|<init>(kotlin.Int){}[0]" to DeclarationType.Constructor,
+
+            "final fun <get-entries>(): kotlin.enums/EnumEntries<examples.classes/E> // examples.classes/E.entries.<get-entries>|<get-entries>#static(){}[0]" to DeclarationType.Function,
+            "final fun values(): kotlin/Array<examples.classes/E> // examples.classes/E.values|values#static(){}[0]" to DeclarationType.Function,
+            "open fun o(): kotlin/Int // examples.classes/OC.o|o(){}[0]" to DeclarationType.Function,
+            "final inline fun examples.classes/testInlineFun() // examples.classes/testInlineFun|testInlineFun(){}[0]" to DeclarationType.Function,
+            "final fun <#A: kotlin/Any?> examples.classes/consume(#A) // examples.classes/consume|consume(0:0){0§<kotlin.Any?>}[0]" to DeclarationType.Function,
+            "abstract fun a() // examples.classes/AC.a|a(){}[0]" to DeclarationType.Function,
+            "final fun (kotlin/Int).callables.test/regularFun(): kotlin/String // callables.test/regularFun|regularFun@kotlin.Int(){}[0]" to DeclarationType.Function,
+            "final fun context(kotlin/Number) (kotlin/Number).callables.test/regularFun(): kotlin/String // callables.test/regularFun|regularFun!kotlin.Int@kotlin.Number(){}[0]" to DeclarationType.Function,
+
+            "final val entries // examples.classes/E.entries|#static{}entries[0]" to DeclarationType.Val,
+            "final const val examples.classes/con // examples.classes/con|{}con[0]" to DeclarationType.ConstVal,
+            "final var examples.classes/r // examples.classes/r|{}r[0]" to DeclarationType.Var,
+
+            "enum entry A // examples.classes/E.A|null[0]" to DeclarationType.EnumEntry,
+
+            "" to DeclarationType.Unknown,
+            " " to DeclarationType.Unknown,
+            "\t" to DeclarationType.Unknown
+        )
+
+        declarations.forEach { (line, expectedType) ->
+            assertEquals(expectedType, DeclarationType.parseFromDeclaration(line), "Mismatch for line: '$line'")
+        }
     }
 }
