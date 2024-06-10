@@ -8,10 +8,10 @@ import org.jetbrains.kotlinx.dataframe.annotations.*
 import org.jetbrains.kotlinx.dataframe.api.Infer
 import org.jetbrains.kotlinx.dataframe.api.pathOf
 import org.jetbrains.kotlinx.dataframe.api.toPath
-import org.jetbrains.kotlinx.dataframe.impl.api.Col
-import org.jetbrains.kotlinx.dataframe.impl.api.ColumnToInsert1
+import org.jetbrains.kotlinx.dataframe.impl.api.GenericColumn
+import org.jetbrains.kotlinx.dataframe.impl.api.GenericColumnsToInsert
 import org.jetbrains.kotlinx.dataframe.impl.api.DataFrameLikeContainer
-import org.jetbrains.kotlinx.dataframe.impl.api.MyColumnGroup
+import org.jetbrains.kotlinx.dataframe.impl.api.GenericColumnGroup
 import org.jetbrains.kotlinx.dataframe.impl.api.insertImplGenericContainer
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnAccessorApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnPathApproximation
@@ -79,7 +79,7 @@ internal class Under0 : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.receiver: InsertClauseApproximation by insertClause()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return receiver.df.insertImpl(listOf(ColumnToInsert1(column.path.path.toPath(), receiver.column)), anyDataFrame)
+        return receiver.df.insertImpl(listOf(GenericColumnsToInsert(column.path.path.toPath(), receiver.column)), anyDataFrame)
     }
 }
 
@@ -88,7 +88,7 @@ internal class Under1 : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.receiver: InsertClauseApproximation by insertClause()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return receiver.df.insertImpl(listOf(ColumnToInsert1(columnPath.path.toPath(), receiver.column)), anyRow)
+        return receiver.df.insertImpl(listOf(GenericColumnsToInsert(columnPath.path.toPath(), receiver.column)), anyRow)
     }
 }
 
@@ -97,7 +97,7 @@ internal class Under2 : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.receiver: InsertClauseApproximation by insertClause()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return receiver.df.insertImpl(listOf(ColumnToInsert1(pathOf(column.name), receiver.column)), anyRow)
+        return receiver.df.insertImpl(listOf(GenericColumnsToInsert(pathOf(column.name), receiver.column)), anyRow)
     }
 }
 
@@ -106,7 +106,7 @@ internal class Under3 : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.receiver: InsertClauseApproximation by insertClause()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return receiver.df.insertImpl(listOf(ColumnToInsert1(pathOf(column.name), receiver.column)), anyRow)
+        return receiver.df.insertImpl(listOf(GenericColumnsToInsert(pathOf(column.name), receiver.column)), anyRow)
     }
 }
 
@@ -115,7 +115,7 @@ internal class Under4 : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.receiver: InsertClauseApproximation by insertClause()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return receiver.df.insertImpl(listOf(ColumnToInsert1(pathOf(column), receiver.column)), anyRow)
+        return receiver.df.insertImpl(listOf(GenericColumnsToInsert(pathOf(column), receiver.column)), anyRow)
     }
 }
 
@@ -156,7 +156,7 @@ private fun List<SimpleCol>.asString(indent: String = ""): String {
 open class SimpleCol(
     val name: String,
     open val type: TypeApproximation
-) : Col {
+) : GenericColumn {
 
     override fun name(): String {
         return name
@@ -208,7 +208,7 @@ data class SimpleFrameColumn(
     // exists only because SimpleCol has it
     // but in fact it's for `materialize` to decide what should be the type of the property / accessors
     val anyFrameType: TypeApproximation,
-) : MyColumnGroup<SimpleCol>, SimpleCol(name1, anyFrameType) {
+) : GenericColumnGroup<SimpleCol>, SimpleCol(name1, anyFrameType) {
     override fun columns(): List<SimpleCol> {
         return columns
     }
@@ -226,7 +226,7 @@ class SimpleColumnGroup(
     name: String,
     private val columns: List<SimpleCol>,
     columnGroupType: TypeApproximation
-) : MyColumnGroup<SimpleCol>, SimpleCol(name, columnGroupType) {
+) : GenericColumnGroup<SimpleCol>, SimpleCol(name, columnGroupType) {
 
     override fun columns(): List<SimpleCol> {
         return columns
@@ -267,10 +267,10 @@ class SimpleColumnGroup(
 
 @PublishedApi
 internal fun PluginDataFrameSchema.insertImpl(
-    columns: List<ColumnToInsert1<SimpleCol>>,
+    columns: List<GenericColumnsToInsert<SimpleCol>>,
     columnGroupType: TypeApproximation
 ): PluginDataFrameSchema {
-    return insertImplGenericContainer<PluginDataFrameSchema, SimpleCol, MyColumnGroup<SimpleCol>>(
+    return insertImplGenericContainer<PluginDataFrameSchema, SimpleCol, GenericColumnGroup<SimpleCol>>(
         this,
         columns,
         columns.firstOrNull()?.referenceNode?.getRoot(),
