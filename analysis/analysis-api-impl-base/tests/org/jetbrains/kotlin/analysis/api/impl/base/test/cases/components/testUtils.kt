@@ -324,7 +324,7 @@ internal fun KaSession.renderScopeWithParentDeclarations(scope: KaScope): String
 
 internal fun renderFrontendIndependentKClassNameOf(instanceOfClassToRender: Any): String {
     var classToRender: Class<*> = instanceOfClassToRender::class.java
-    while (classToRender.simpleName.let { it.contains("Fir") || it.contains("Fe10") } == true) {
+    while (classToRender.simpleName.let { it.contains("Fir") || it.contains("Fe10") || it.contains("Base") } == true) {
         classToRender = classToRender.superclass
     }
 
