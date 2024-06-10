@@ -44075,6 +44075,18 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("expectedSetForLambdaParameter.kt")
+      public void testExpectedSetForLambdaParameter() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/inference/expectedSetForLambdaParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("expectedSetForLambdaParameter2.kt")
+      public void testExpectedSetForLambdaParameter2() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/inference/expectedSetForLambdaParameter2.kt");
+      }
+
+      @Test
       @TestMetadata("integerLiterals.kt")
       public void testIntegerLiterals() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/inference/integerLiterals.kt");

@@ -105,7 +105,16 @@ class FirCallCompleter(
                 runCompletionForCall(candidate, completionMode, call, initialType, analyzer)
 
                 val readOnlyConstraintStorage = candidate.system.asReadOnlyStorage()
-                checkStorageConstraintsAfterFullCompletion(readOnlyConstraintStorage)
+                if (inferenceSession !is FirPCLAInferenceSession) {
+                    // With FirPCLAInferenceSession we either have here a situation when the candidate system uses
+                    // an outer system, and completionMode is PCLA_POSTPONED_CALL (see customCompletionModeInsteadOfFull);
+                    // or, the candidate system does not use an outer system; then the PCLA common system is somewhere on top,
+                    // and after fixing type variables of this candidate we still may have some unfixed variables from the common system
+                    // TODO: KT-69040. We think some better decision is possible here, e.g. in a situation when the candidate system
+                    // does not use an outer system either the completionMode should not be FULL,
+                    // or it should not be added as a "base" system.
+                    checkStorageConstraintsAfterFullCompletion(readOnlyConstraintStorage)
+                }
 
                 val finalSubstitutor = readOnlyConstraintStorage
                     .buildAbstractResultingSubstitutor(session.typeContext) as ConeSubstitutor
