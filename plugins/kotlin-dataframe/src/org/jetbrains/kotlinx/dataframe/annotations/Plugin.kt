@@ -8,8 +8,6 @@ import org.jetbrains.kotlinx.dataframe.plugin.type
 
 typealias TypeApproximation = org.jetbrains.kotlinx.dataframe.Marker
 
-class ConvertApproximation(val schema: PluginDataFrameSchema, val columns: List<List<String>>)
-
 class Add : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
     val Arguments.name: String by string()
