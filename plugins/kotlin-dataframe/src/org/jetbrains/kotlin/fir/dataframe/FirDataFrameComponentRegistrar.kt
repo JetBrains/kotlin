@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.dataframe
+package org.jetbrains.kotlinx.dataframe.plugin
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
@@ -17,22 +17,22 @@ import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
-import org.jetbrains.kotlin.fir.dataframe.extensions.DataRowSchemaSupertype
-import org.jetbrains.kotlin.fir.dataframe.extensions.ExpressionAnalysisAdditionalChecker
-import org.jetbrains.kotlin.fir.dataframe.extensions.ExtensionsGenerator
-import org.jetbrains.kotlin.fir.dataframe.extensions.FunctionCallTransformer
-import org.jetbrains.kotlin.fir.dataframe.extensions.IrBodyFiller
-import org.jetbrains.kotlin.fir.dataframe.extensions.ReturnTypeBasedReceiverInjector
-import org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.DataRowSchemaSupertype
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.ExpressionAnalysisAdditionalChecker
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.ExtensionsGenerator
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.FunctionCallTransformer
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.IrBodyFiller
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.ReturnTypeBasedReceiverInjector
 import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlinx.dataframe.DataFrame
-import org.jetbrains.kotlinx.dataframe.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.api.schema
 import org.jetbrains.kotlinx.dataframe.io.readJson
-import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.toPluginDataFrameSchema
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PluginDataFrameSchema
+import org.jetbrains.kotlinx.dataframe.plugin.impl.data.toPluginDataFrameSchema
 
 val PATH: CompilerConfigurationKey<String> = CompilerConfigurationKey.create("annotation qualified name")
 val SCHEMAS: CompilerConfigurationKey<String> = CompilerConfigurationKey.create("directory to store IO schemas")

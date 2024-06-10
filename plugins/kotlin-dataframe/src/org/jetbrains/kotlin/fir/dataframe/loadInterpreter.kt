@@ -3,11 +3,57 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.dataframe
+package org.jetbrains.kotlinx.dataframe.plugin
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.dataframe.utils.Names.INTERPRETABLE_FQNAME
-import org.jetbrains.kotlin.fir.dataframe.api.*
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
+import org.jetbrains.kotlinx.dataframe.plugin.impl.Interpreter
+import org.jetbrains.kotlinx.dataframe.plugin.utils.Names.INTERPRETABLE_FQNAME
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Add
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddWithDsl
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.And0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.And10
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Convert0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Convert2
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Convert6
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameGroupBy
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DropNulls0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Exclude0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Exclude1
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Explode0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Expr0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.From
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Group0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByInto
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByToDataFrame
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Insert0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Insert1
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Insert2
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Insert3
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Into
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Into0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Join0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Match0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Preserve0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Preserve1
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Properties0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Read0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ReadCSV0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ReadDelimStr
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ReadJson0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ReadJsonStr
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Remove0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Rename
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.RenameInto
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Select0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.To0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Under0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Under1
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Under2
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Under3
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Under4
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Ungroup0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.With0
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.expressions.FirClassReferenceExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -21,9 +67,6 @@ import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlinx.dataframe.KotlinTypeFacade
-import org.jetbrains.kotlinx.dataframe.annotations.*
-import org.jetbrains.kotlinx.dataframe.plugin.*
 
 internal fun FirFunctionCall.loadInterpreter(session: FirSession): Interpreter<*>? {
     val symbol =

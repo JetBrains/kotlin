@@ -1,10 +1,10 @@
-package org.jetbrains.kotlin.fir.dataframe.extensions
+package org.jetbrains.kotlinx.dataframe.plugin.extensions
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
-import org.jetbrains.kotlin.fir.dataframe.utils.Names
-import org.jetbrains.kotlin.fir.dataframe.utils.generateExtensionProperty
-import org.jetbrains.kotlin.fir.dataframe.utils.projectOverDataColumnType
+import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
+import org.jetbrains.kotlinx.dataframe.plugin.utils.generateExtensionProperty
+import org.jetbrains.kotlinx.dataframe.plugin.utils.projectOverDataColumnType
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.extensions.ExperimentalTopLevelDeclarationsGenerationApi

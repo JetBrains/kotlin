@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.fir.dataframe.extensions
+package org.jetbrains.kotlinx.dataframe.plugin.extensions
 
 import org.jetbrains.kotlin.cli.common.repl.replEscapeLineBreaks
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
@@ -11,13 +11,11 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirFunctionTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
-import org.jetbrains.kotlin.fir.dataframe.CallShapeData
-import org.jetbrains.kotlin.fir.dataframe.InterpretationErrorReporter
-import org.jetbrains.kotlin.fir.dataframe.SchemaProperty
-import org.jetbrains.kotlin.fir.dataframe.analyzeRefinedCallShape
-import org.jetbrains.kotlin.fir.dataframe.callShapeData
-import org.jetbrains.kotlin.fir.dataframe.utils.Names
-import org.jetbrains.kotlin.fir.dataframe.utils.projectOverDataColumnType
+import org.jetbrains.kotlinx.dataframe.plugin.InterpretationErrorReporter
+import org.jetbrains.kotlinx.dataframe.plugin.SchemaProperty
+import org.jetbrains.kotlinx.dataframe.plugin.analyzeRefinedCallShape
+import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
+import org.jetbrains.kotlinx.dataframe.plugin.utils.projectOverDataColumnType
 import org.jetbrains.kotlin.fir.declarations.EmptyDeprecationsProvider
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -72,11 +70,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlinx.dataframe.KotlinTypeFacade
-import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.SimpleCol
-import org.jetbrains.kotlinx.dataframe.plugin.SimpleColumnGroup
-import org.jetbrains.kotlinx.dataframe.plugin.SimpleFrameColumn
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PluginDataFrameSchema
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SimpleCol
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SimpleColumnGroup
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SimpleFrameColumn
 import kotlin.math.abs
 
 @OptIn(FirExtensionApiInternals::class)

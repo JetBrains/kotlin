@@ -1,9 +1,8 @@
-package org.jetbrains.kotlin.fir.dataframe.utils
+package org.jetbrains.kotlinx.dataframe.plugin.utils
 
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -23,6 +22,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.toFirResolvedTypeRef
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin
 
 internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
     callableId: CallableId,

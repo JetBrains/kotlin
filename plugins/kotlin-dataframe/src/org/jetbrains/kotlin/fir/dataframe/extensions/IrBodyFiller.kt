@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.dataframe.extensions
+package org.jetbrains.kotlinx.dataframe.plugin.extensions
 
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -11,6 +11,7 @@ import kotlinx.serialization.json.Json
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.readJson
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
@@ -57,8 +58,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlinx.dataframe.DataColumn
 import org.jetbrains.kotlinx.dataframe.api.schema
 import org.jetbrains.kotlinx.dataframe.columns.ColumnGroup
-import org.jetbrains.kotlinx.dataframe.plugin.IoSchema
-import org.jetbrains.kotlinx.dataframe.plugin.serialize
+import org.jetbrains.kotlinx.dataframe.plugin.impl.data.IoSchema
+import org.jetbrains.kotlinx.dataframe.plugin.impl.data.serialize
 import java.io.File
 
 class IrBodyFiller(
@@ -103,7 +104,7 @@ class IrBodyFiller(
         if (element.symbol.owner.name == Name.identifier("readJson")) {
             val path = (element.valueArguments.firstOrNull() as? IrConst<*>)?.value as? String ?: return
             try {
-                val df = org.jetbrains.kotlinx.dataframe.plugin.readJson(resolutionPath, path)
+                val df = readJson(resolutionPath, path)
                 val json = df.schema().serialize()
                 schemas.add(IoSchema(path, json))
             } catch (_: Exception) {

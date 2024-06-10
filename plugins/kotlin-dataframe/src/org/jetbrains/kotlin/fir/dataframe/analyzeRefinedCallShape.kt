@@ -3,13 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.dataframe
+package org.jetbrains.kotlinx.dataframe.plugin
 
-import org.jetbrains.kotlin.fir.dataframe.api.CreateDataFrameConfiguration
-import org.jetbrains.kotlin.fir.dataframe.api.TraverseConfiguration
-import org.jetbrains.kotlin.fir.dataframe.api.aggregate
-import org.jetbrains.kotlin.fir.dataframe.api.toDataFrame
-import org.jetbrains.kotlin.fir.dataframe.utils.Names.DF_CLASS_ID
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
+import org.jetbrains.kotlinx.dataframe.plugin.impl.Interpreter
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.CreateDataFrameConfiguration
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TraverseConfiguration
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.aggregate
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.toDataFrame
+import org.jetbrains.kotlinx.dataframe.plugin.utils.Names.DF_CLASS_ID
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -21,9 +23,7 @@ import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlinx.dataframe.KotlinTypeFacade
-import org.jetbrains.kotlinx.dataframe.annotations.Interpreter
-import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PluginDataFrameSchema
 
 fun KotlinTypeFacade.analyzeRefinedCallShape(call: FirFunctionCall, reporter: InterpretationErrorReporter): CallResult? {
     val callReturnType = call.resolvedType
@@ -107,7 +107,7 @@ fun KotlinTypeFacade.analyzeRefinedCallShape(call: FirFunctionCall, reporter: In
 
 data class CallResult(val rootMarker: ConeClassLikeType, val newSchema: PluginDataFrameSchema)
 
-class Arguments(val refinedArguments: List<RefinedArgument>) : List<RefinedArgument> by refinedArguments
+class RefinedArguments(val refinedArguments: List<RefinedArgument>) : List<RefinedArgument> by refinedArguments
 
 data class RefinedArgument(val name: Name, val expression: FirExpression) {
 
