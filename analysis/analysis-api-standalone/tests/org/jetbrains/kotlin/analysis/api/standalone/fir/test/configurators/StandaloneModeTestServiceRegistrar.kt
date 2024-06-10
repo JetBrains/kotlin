@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 
 /**
  * Registers services specific to Standalone mode *tests*, in addition to the Standalone production services registered by
- * [FirStandaloneServiceRegistrar][org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.FirStandaloneServiceRegistrar].
+ * [FirStandaloneServiceRegistrar][org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.FirStandaloneServiceRegistrar].
  */
 object StandaloneModeTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
     override fun registerProjectModelServices(project: MockProject, disposable: Disposable, testServices: TestServices) {

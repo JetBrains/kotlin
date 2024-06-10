@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.analysis.api.standalone.base.project.structure
+package org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure
 
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject

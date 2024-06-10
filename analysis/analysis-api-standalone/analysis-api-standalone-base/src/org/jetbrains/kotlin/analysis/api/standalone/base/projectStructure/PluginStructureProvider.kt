@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.standalone.base.project.structure
+package org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure
 
 import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.ide.plugins.ContainerDescriptor

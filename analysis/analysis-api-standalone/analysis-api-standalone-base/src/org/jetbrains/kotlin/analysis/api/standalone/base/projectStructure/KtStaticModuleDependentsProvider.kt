@@ -1,14 +1,14 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.standalone.base.project.structure
+package org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure
 
 import com.intellij.util.containers.ContainerUtil.createConcurrentSoftMap
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleDependentsProviderBase
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.allDirectDependencies
-import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleDependentsProviderBase
 
 class KtStaticModuleDependentsProvider(private val modules: List<KtModule>) : KotlinModuleDependentsProviderBase() {
     private val directDependentsByKtModule: Map<KtModule, Set<KtModule>> by lazy {
