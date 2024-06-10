@@ -34631,6 +34631,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("kt68970.kt")
+      public void testKt68970() {
+        runTest("compiler/testData/diagnostics/tests/smartCasts/kt68970.kt");
+      }
+
+      @Test
       @TestMetadata("kt7561.kt")
       public void testKt7561() {
         runTest("compiler/testData/diagnostics/tests/smartCasts/kt7561.kt");
