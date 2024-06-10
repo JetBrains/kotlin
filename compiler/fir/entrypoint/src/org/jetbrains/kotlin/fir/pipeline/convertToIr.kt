@@ -20,11 +20,14 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.generators.Fir2IrDataClassGeneratedMemberBodyGenerator
 import org.jetbrains.kotlin.fir.backend.utils.generatedBuiltinsDeclarationsFileName
+import org.jetbrains.kotlin.fir.backend.utils.unsubstitutedScope
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.scopes.staticScopeForBackend
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
@@ -35,12 +38,14 @@ import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
+import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -400,21 +405,35 @@ private class Fir2IrPipeline(
         }
     }
 
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    @OptIn(UnsafeDuringIrConstructionAPI::class, SymbolInternals::class)
     private fun buildFakeOverridesForLazyClass(
         clazz: Fir2IrLazyClass,
         resolver: SpecialFakeOverrideSymbolsResolver,
     ) {
+        val c: Fir2IrComponents = clazz
         val declarationStorage = clazz.declarationStorage
-        val mainScope = clazz.fir.unsubstitutedScope(clazz)
         val lookupTag = clazz.fir.symbol.toLookupTag()
 
         val allFromSuper = clazz.superTypes.flatMap { superType ->
             superType.classOrFail.owner.declarations
+        }.groupBy {
+            when (it) {
+                is Fir2IrLazySimpleFunction -> it.name
+                is Fir2IrLazyProperty -> it.name
+                else -> Unit
+            }
+        }.filterKeys { it != Unit }
+            .mapValues { it.value.first() }.values
+        if (allFromSuper.isEmpty()) return
+
+        val mainScope = clazz.fir.scopeProvider.getUseSiteMemberScope(clazz.fir, c.session, c.scopeSession, memberRequiredPhase = null)
+        val signatureEnhancement = FirSignatureEnhancement(clazz.fir, c.session) {
+            mainScope.getDirectOverriddenMembers(this.symbol).map { it.fir }
         }
+        val typeCalculator = CallableCopyTypeCalculator.Forced
 
 
-        listOfNotNull(mainScope, clazz.fir.staticScopeForBackend(clazz.session, clazz.scopeSession)).forEach { scope ->
+        /*listOfNotNull(clazz.fir.unsubstitutedScope(clazz), clazz.fir.staticScopeForBackend(c.session, c.scopeSession)).forEach { scope ->
             val functionNames = mutableSetOf<Name>()
             val propertyNames = mutableSetOf<Name>()
             for (decl in allFromSuper) {
@@ -436,27 +455,31 @@ private class Fir2IrPipeline(
                     }
                 }
             }
-        }
+        }*/
 
-        /*for (decl in allFromSuper) {
+        for (decl in allFromSuper) {
             when (decl) {
                 is IrSimpleFunction -> {
                     decl as Fir2IrLazySimpleFunction
+                    decl.fir.computeJvmSignature()
 
-                    scope.processOverriddenFunctionsAndSelf(decl.fir.symbol) { func ->
-                        fakeOverrides += declarationStorage.getIrFunctionSymbol(func, lookupTag).owner as IrSimpleFunction
-                        ProcessorAction.NEXT
+                    val enhanced = signatureEnhancement.enhancedFunction(decl.fir.symbol, decl.name)
+                    if (enhanced.fir.canHaveDeferredReturnTypeCalculation) {
+                        typeCalculator.computeReturnType(enhanced.fir)
                     }
+                    declarationStorage.getIrFunctionSymbol(enhanced, lookupTag)
                 }
                 is IrProperty -> {
                     decl as Fir2IrLazyProperty
-                    scope.processOverriddenProperties(decl.fir.symbol) { property ->
-                        fakeOverrides += declarationStorage.getIrPropertySymbol(property, lookupTag).owner as IrProperty
-                        ProcessorAction.NEXT
+
+                    val enhanced = signatureEnhancement.enhancedProperty(decl.fir.symbol, decl.name) as FirPropertySymbol
+                    if (enhanced.fir.canHaveDeferredReturnTypeCalculation) {
+                        typeCalculator.computeReturnType(enhanced.fir)
                     }
+                    declarationStorage.getIrPropertySymbol(enhanced, lookupTag)
                 }
             }
-        }*/
+        }
     }
 
 
