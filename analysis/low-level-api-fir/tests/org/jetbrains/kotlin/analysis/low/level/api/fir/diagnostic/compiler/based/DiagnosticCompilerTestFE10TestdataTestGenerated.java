@@ -13734,6 +13734,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("contextAndNoContextOverloads.kt")
+        public void testContextAndNoContextOverloads() {
+          runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/contextAndNoContextOverloads.kt");
+        }
+
+        @Test
         @TestMetadata("contextKeywordWithElvis.kt")
         public void testContextKeywordWithElvis() {
           runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/contextKeywordWithElvis.kt");
