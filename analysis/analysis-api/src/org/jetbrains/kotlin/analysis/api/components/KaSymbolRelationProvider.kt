@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSamConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.util.ImplementationStatus
 
 public interface KaSymbolRelationProvider {
     /**
@@ -81,4 +82,49 @@ public interface KaSymbolRelationProvider {
     public fun KaClassOrObjectSymbol.isDirectSubClassOf(superClass: KaClassOrObjectSymbol): Boolean
 
     public val KaCallableSymbol.intersectionOverriddenSymbols: List<KaCallableSymbol>
+
+    /**
+     * Gets the [ImplementationStatus] of the [this] member symbol in the given [parentClassSymbol]. Or null if this symbol is not a
+     * member.
+     */
+    public fun KaCallableSymbol.getImplementationStatus(parentClassSymbol: KaClassOrObjectSymbol): ImplementationStatus?
+
+    /**
+     * Unwraps fake override [KaCallableSymbol]s until an original declared symbol is uncovered.
+     *
+     * In a class scope, a symbol may be derived from symbols declared in super classes. For example, consider
+     *
+     * ```
+     * public interface  A<T> {
+     *   public fun foo(t:T)
+     * }
+     *
+     * public interface  B: A<String> {
+     * }
+     * ```
+     *
+     * In the class scope of `B`, there is a callable symbol `foo` that takes a `String`. This symbol is derived from the original symbol
+     * in `A` that takes the type parameter `T` (fake override). Given such a fake override symbol, [fakeOverrideOriginal] recovers the
+     * original declared symbol.
+     *
+     * Such situation can also happen for intersection symbols (in case of multiple super types containing symbols with identical signature
+     * after specialization) and delegation.
+     */
+    public val KaCallableSymbol.fakeOverrideOriginal: KaCallableSymbol
+
+    @Deprecated("Use 'fakeOverrideOriginal' instead.", replaceWith = ReplaceWith("fakeOverrideOriginal"))
+    public val KaCallableSymbol.unwrapFakeOverrides: KaCallableSymbol
+        get() = fakeOverrideOriginal
+
+    /**
+     * Gets the class symbol where the given callable symbol is declared. See [fakeOverrideOriginal] for more details.
+     */
+    @Deprecated(
+        "Use 'fakeOverrideOriginal.containingSymbol as? KaClassOrObjectSymbol' instead.",
+        replaceWith = ReplaceWith(
+            "fakeOverrideOriginal.containingSymbol as? KaClassOrObjectSymbol",
+            imports = ["org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol"]
+        )
+    )
+    public val KaCallableSymbol.originalContainingClassForOverride: KaClassOrObjectSymbol?
 }

@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirReceiverParameterSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.getClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.getContainingKtModule
@@ -30,16 +32,24 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.analysis.checkers.getImplementationStatus
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.diagnostics.ConeDestructuringDeclarationsOnTopLevel
 import org.jetbrains.kotlin.fir.resolve.FirSamResolver
+import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.unwrapFakeOverridesOrDelegated
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.util.ImplementationStatus
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal class KaFirSymbolRelationProvider(
@@ -317,5 +327,43 @@ internal class KaFirSymbolRelationProvider(
     override val KaCallableSymbol.intersectionOverriddenSymbols: List<KaCallableSymbol>
         get() = withValidityAssertion {
             overridesProvider.getIntersectionOverriddenSymbols(this)
+        }
+
+    override fun KaCallableSymbol.getImplementationStatus(parentClassSymbol: KaClassOrObjectSymbol): ImplementationStatus? {
+        withValidityAssertion {
+            require(this is KaFirSymbol<*>)
+            require(parentClassSymbol is KaFirSymbol<*>)
+
+            // Inspecting implementation status requires resolving to status
+            val memberFir = firSymbol.fir as? FirCallableDeclaration ?: return null
+            val parentClassFir = parentClassSymbol.firSymbol.fir as? FirClass ?: return null
+            memberFir.lazyResolveToPhase(FirResolvePhase.STATUS)
+
+            val scopeSession = analysisSession.getScopeSessionFor(analysisSession.useSiteSession)
+            return memberFir.symbol.getImplementationStatus(SessionHolderImpl(rootModuleSession, scopeSession), parentClassFir.symbol)
+        }
+    }
+
+    override val KaCallableSymbol.fakeOverrideOriginal: KaCallableSymbol
+        get() = withValidityAssertion {
+            require(this is KaFirSymbol<*>)
+
+            val originalDeclaration = firSymbol.fir as FirCallableDeclaration
+            val unwrappedDeclaration = originalDeclaration.unwrapFakeOverridesOrDelegated()
+
+            return unwrappedDeclaration.buildSymbol(analysisSession.firSymbolBuilder) as KaCallableSymbol
+        }
+
+    @Suppress("OVERRIDE_DEPRECATION")
+    override val KaCallableSymbol.originalContainingClassForOverride: KaClassOrObjectSymbol?
+        get() = withValidityAssertion {
+            require(this is KaFirSymbol<*>)
+
+            val targetDeclaration = firSymbol.fir as FirCallableDeclaration
+            val unwrappedDeclaration = targetDeclaration.unwrapFakeOverridesOrDelegated()
+
+            val unwrappedFirSymbol = unwrappedDeclaration.symbol
+            val unwrappedKtSymbol = analysisSession.firSymbolBuilder.callableBuilder.buildCallableSymbol(unwrappedFirSymbol)
+            return with(analysisSession) { unwrappedKtSymbol.containingSymbol as? KaClassOrObjectSymbol }
         }
 }

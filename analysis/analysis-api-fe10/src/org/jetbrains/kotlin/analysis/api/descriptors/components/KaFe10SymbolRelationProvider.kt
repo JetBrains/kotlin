@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaF
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DynamicFunctionDescValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getDescriptor
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtCallableSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtSymbol
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
@@ -23,6 +25,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.project.structure.*
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
@@ -35,9 +38,11 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.denotedClassDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.platform
+import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
 import org.jetbrains.kotlin.resolve.sam.createSamConstructorFunction
 import org.jetbrains.kotlin.resolve.sam.getSingleAbstractMethodOrNull
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
+import org.jetbrains.kotlin.util.ImplementationStatus
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -193,6 +198,28 @@ internal class KaFe10SymbolRelationProvider(
     override val KaCallableSymbol.intersectionOverriddenSymbols: List<KaCallableSymbol>
         get() = withValidityAssertion {
             throw NotImplementedError("Method is not implemented for FE 1.0")
+        }
+
+    override fun KaCallableSymbol.getImplementationStatus(parentClassSymbol: KaClassOrObjectSymbol): ImplementationStatus? {
+        withValidityAssertion {
+            throw NotImplementedError("Method is not implemented for FE 1.0")
+        }
+    }
+
+    override val KaCallableSymbol.fakeOverrideOriginal: KaCallableSymbol
+        get() = withValidityAssertion {
+            val callableDescriptor = getSymbolDescriptor(this) as? CallableMemberDescriptor ?: return this
+            val originalCallableDescriptor = callableDescriptor.findOriginalTopMostOverriddenDescriptors().firstOrNull() ?: return this
+            return originalCallableDescriptor.toKtCallableSymbol(analysisContext) ?: this
+        }
+
+    @Suppress("OVERRIDE_DEPRECATION")
+    override val KaCallableSymbol.originalContainingClassForOverride: KaClassOrObjectSymbol?
+        get() = withValidityAssertion {
+            val callableDescriptor = getSymbolDescriptor(this) as? CallableMemberDescriptor ?: return null
+            val originalCallableDescriptor = callableDescriptor.findOriginalTopMostOverriddenDescriptors().firstOrNull() ?: return null
+            val containingClassDescriptor = originalCallableDescriptor.containingDeclaration as? ClassDescriptor ?: return null
+            return containingClassDescriptor.toKtClassifierSymbol(analysisContext) as? KaClassOrObjectSymbol
         }
 }
 
