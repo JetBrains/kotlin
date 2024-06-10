@@ -9663,6 +9663,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("deprecationPhase1_inlineFun.kt")
+      public void testDeprecationPhase1_inlineFun() {
+        runTest("compiler/testData/diagnostics/tests/dataClassNonPublicConstructor/deprecationPhase1_inlineFun.kt");
+      }
+
+      @Test
       @TestMetadata("deprecationPhase1_optIn.kt")
       public void testDeprecationPhase1_optIn() {
         runTest("compiler/testData/diagnostics/tests/dataClassNonPublicConstructor/deprecationPhase1_optIn.kt");
@@ -9693,6 +9699,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("deprecationPhase2_inlineFun.kt")
+      public void testDeprecationPhase2_inlineFun() {
+        runTest("compiler/testData/diagnostics/tests/dataClassNonPublicConstructor/deprecationPhase2_inlineFun.kt");
+      }
+
+      @Test
       @TestMetadata("deprecationPhase2_internalConstructor.kt")
       public void testDeprecationPhase2_internalConstructor() {
         runTest("compiler/testData/diagnostics/tests/dataClassNonPublicConstructor/deprecationPhase2_internalConstructor.kt");
@@ -9720,6 +9732,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("deprecationPhase2_protectedConstructor.kt")
       public void testDeprecationPhase2_protectedConstructor() {
         runTest("compiler/testData/diagnostics/tests/dataClassNonPublicConstructor/deprecationPhase2_protectedConstructor.kt");
+      }
+
+      @Test
+      @TestMetadata("deprecationPhase3_inlineFun.kt")
+      public void testDeprecationPhase3_inlineFun() {
+        runTest("compiler/testData/diagnostics/tests/dataClassNonPublicConstructor/deprecationPhase3_inlineFun.kt");
       }
 
       @Test
