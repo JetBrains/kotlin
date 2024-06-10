@@ -67,10 +67,11 @@ object FirDataClassCopyUsageWillBecomeInaccessibleChecker : FirQualifiedAccessEx
     }
 }
 
-internal fun FirCallableSymbol<*>.isDataClassCopy(containingClass: FirClassSymbol<*>, session: FirSession): Boolean {
-    if (!DataClassResolver.isCopy(name)) return false
-    val constructor = containingClass.primaryConstructorSymbol(session)
+internal fun FirCallableSymbol<*>.isDataClassCopy(containingClass: FirClassSymbol<*>?, session: FirSession): Boolean {
+    val constructor = containingClass?.primaryConstructorSymbol(session)
     return this is FirNamedFunctionSymbol &&
+            DataClassResolver.isCopy(name) &&
+            containingClass != null &&
             containingClass.isData &&
             containingClass.classKind.isClass &&
             dispatchReceiverType?.classId == containingClass.classId &&
