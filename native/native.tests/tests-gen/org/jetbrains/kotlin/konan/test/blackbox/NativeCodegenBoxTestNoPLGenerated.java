@@ -17755,6 +17755,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
       }
 
       @Test
+      @TestMetadata("kt68806.kt")
+      public void testKt68806() {
+        runTest("compiler/testData/codegen/box/fir/kt68806.kt");
+      }
+
+      @Test
       @TestMetadata("listAssignmentInWhen.kt")
       public void testListAssignmentInWhen() {
         runTest("compiler/testData/codegen/box/fir/listAssignmentInWhen.kt");

@@ -21886,6 +21886,12 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
     }
 
     @Test
+    @TestMetadata("kt68806.kt")
+    public void testKt68806() {
+      runTest("compiler/testData/codegen/box/fir/kt68806.kt");
+    }
+
+    @Test
     @TestMetadata("linkViaSignatures.kt")
     public void testLinkViaSignatures() {
       runTest("compiler/testData/codegen/box/fir/linkViaSignatures.kt");
