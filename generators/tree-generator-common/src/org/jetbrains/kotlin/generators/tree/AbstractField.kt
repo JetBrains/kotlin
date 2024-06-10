@@ -92,6 +92,7 @@ abstract class AbstractField<Field : AbstractField<Field>> {
 
     open fun updatePropertiesFromOverriddenFields(parentFields: List<Field>) {
         overriddenFields += parentFields
+        isMutable = isMutable || parentFields.any { it.isMutable }
     }
 
     override fun toString(): String {

@@ -49,7 +49,6 @@ sealed class Field : AbstractField<Field>() {
 
     override fun updatePropertiesFromOverriddenFields(parentFields: List<Field>) {
         super.updatePropertiesFromOverriddenFields(parentFields)
-        isMutable = isMutable || parentFields.any { it.isMutable }
         needsSeparateTransform = needsSeparateTransform || parentFields.any { it.needsSeparateTransform }
         needTransformInOtherChildren = needTransformInOtherChildren || parentFields.any { it.needTransformInOtherChildren }
         withReplace = withReplace || parentFields.any { it.withReplace }
