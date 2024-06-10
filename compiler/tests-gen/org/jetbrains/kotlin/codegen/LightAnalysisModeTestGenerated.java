@@ -18696,6 +18696,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/funInterface/funInterfaceWithReceiver.kt");
     }
 
+    @TestMetadata("funInterfaceWithSuspendMethod.kt")
+    public void testFunInterfaceWithSuspendMethod() {
+      runTest("compiler/testData/codegen/box/funInterface/funInterfaceWithSuspendMethod.kt");
+    }
+
     @TestMetadata("implIsNotFunction.kt")
     public void testImplIsNotFunction() {
       runTest("compiler/testData/codegen/box/funInterface/implIsNotFunction.kt");

@@ -17573,6 +17573,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
       }
 
       @Test
+      @TestMetadata("funInterfaceWithSuspendMethod.kt")
+      public void testFunInterfaceWithSuspendMethod() {
+        runTest("compiler/testData/codegen/box/funInterface/funInterfaceWithSuspendMethod.kt");
+      }
+
+      @Test
       @TestMetadata("implIsNotFunction.kt")
       public void testImplIsNotFunction() {
         runTest("compiler/testData/codegen/box/funInterface/implIsNotFunction.kt");
