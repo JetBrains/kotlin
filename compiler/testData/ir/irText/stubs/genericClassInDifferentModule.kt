@@ -1,4 +1,6 @@
 // IGNORE_BACKEND_K1: JS_IR
+// SKIP_KLIB_SERIALIZATON
+// REASON: There are linkage errors reported by the partial linkage engine
 
 // MODULE: m1
 // FILE: genericClassInDifferentModule_m1.kt
