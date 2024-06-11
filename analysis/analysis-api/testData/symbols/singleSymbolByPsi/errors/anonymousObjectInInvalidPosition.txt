@@ -20,6 +20,6 @@ KaAnonymousObjectSymbol:
   ]
   typeParameters: []
   getContainingFileSymbol: KaFileSymbol(anonymousObjectInInvalidPosition.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

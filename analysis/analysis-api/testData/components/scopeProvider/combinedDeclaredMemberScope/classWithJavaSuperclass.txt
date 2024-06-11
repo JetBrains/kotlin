@@ -34,7 +34,7 @@ KaFunctionSymbol:
     type: test/KotlinClass
   getContainingFileSymbol: KaFileSymbol(KotlinClass.kt)
   getContainingJvmClassName: test.KotlinClass
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
 KaKotlinPropertySymbol:
@@ -56,7 +56,7 @@ KaKotlinPropertySymbol:
     typeParameters: []
     getContainingFileSymbol: KaFileSymbol(KotlinClass.kt)
     getContainingJvmClassName: test.KotlinClass
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   callableId: test/KotlinClass.bar
   contextReceivers: []
@@ -87,7 +87,7 @@ KaKotlinPropertySymbol:
       type: test/KotlinClass
     getContainingFileSymbol: KaFileSymbol(KotlinClass.kt)
     getContainingJvmClassName: test.KotlinClass
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -121,7 +121,7 @@ KaKotlinPropertySymbol:
     type: test/KotlinClass
   getContainingFileSymbol: KaFileSymbol(KotlinClass.kt)
   getContainingJvmClassName: test.KotlinClass
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getBar
@@ -154,7 +154,7 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(KotlinClass.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
@@ -184,7 +184,7 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(KotlinClass.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
@@ -214,7 +214,7 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(KotlinClass.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
@@ -240,5 +240,5 @@ KaConstructorSymbol:
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(KotlinClass.kt)
   getContainingJvmClassName: test.KotlinClass
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

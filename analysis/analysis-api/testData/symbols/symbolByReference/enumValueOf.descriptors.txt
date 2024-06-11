@@ -49,11 +49,11 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(enumValueOf.kt)
       getContainingJvmClassName: MyKotlinEnum
-      getContainingModule: KtSourceModule "Sources of main"
+      getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(enumValueOf.kt)
   getContainingJvmClassName: MyKotlinEnum
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

@@ -15,6 +15,6 @@ KaAnonymousObjectSymbol:
   ]
   typeParameters: []
   getContainingFileSymbol: KaFileSymbol(objectWithTypeArgsAsExpression.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

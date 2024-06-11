@@ -17,7 +17,7 @@ KaKotlinPropertySymbol:
     typeParameters: []
     getContainingFileSymbol: KaFileSymbol(memberProperties.kt)
     getContainingJvmClassName: A
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   callableId: /A.x
   contextReceivers: []
@@ -48,7 +48,7 @@ KaKotlinPropertySymbol:
       type: A
     getContainingFileSymbol: KaFileSymbol(memberProperties.kt)
     getContainingJvmClassName: A
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -82,7 +82,7 @@ KaKotlinPropertySymbol:
     type: A
   getContainingFileSymbol: KaFileSymbol(memberProperties.kt)
   getContainingJvmClassName: A
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getX
@@ -108,7 +108,7 @@ KaKotlinPropertySymbol:
     typeParameters: []
     getContainingFileSymbol: KaFileSymbol(memberProperties.kt)
     getContainingJvmClassName: A
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   callableId: /A.y
   contextReceivers: []
@@ -135,7 +135,7 @@ KaKotlinPropertySymbol:
         typeArguments: []
         type: kotlin/Int
       getContainingFileSymbol: KaFileSymbol(memberProperties.kt)
-      getContainingModule: KtSourceModule "Sources of main"
+      getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
     returnType: KaUsualClassType:
       annotations: []
@@ -150,7 +150,7 @@ KaKotlinPropertySymbol:
       type: A
     getContainingFileSymbol: KaFileSymbol(memberProperties.kt)
     getContainingJvmClassName: A
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: false
   hasGetter: true
@@ -180,7 +180,7 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     getContainingFileSymbol: KaFileSymbol(memberProperties.kt)
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
     annotations: []
@@ -195,7 +195,7 @@ KaKotlinPropertySymbol:
     type: A
   getContainingFileSymbol: KaFileSymbol(memberProperties.kt)
   getContainingJvmClassName: A
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getY
@@ -228,6 +228,6 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(memberProperties.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

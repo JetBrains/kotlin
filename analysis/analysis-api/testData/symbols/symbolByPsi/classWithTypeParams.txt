@@ -11,7 +11,7 @@ KaTypeParameterSymbol:
   upperBounds: []
   variance: INVARIANT
   getContainingFileSymbol: KaFileSymbol(classWithTypeParams.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
 KaTypeParameterSymbol:
@@ -24,7 +24,7 @@ KaTypeParameterSymbol:
   upperBounds: []
   variance: INVARIANT
   getContainingFileSymbol: KaFileSymbol(classWithTypeParams.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
@@ -56,6 +56,6 @@ KaNamedClassOrObjectSymbol:
   ]
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(classWithTypeParams.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

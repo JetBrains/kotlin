@@ -24,7 +24,7 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(similarGenericSignature.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
@@ -43,7 +43,7 @@ KaTypeParameterSymbol:
   ]
   variance: INVARIANT
   getContainingFileSymbol: KaFileSymbol(similarGenericSignature.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -97,13 +97,13 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(similarGenericSignature.kt)
       getContainingJvmClassName: SimilarGenericSignatureKt
-      getContainingModule: KtSourceModule "Sources of main"
+      getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(similarGenericSignature.kt)
   getContainingJvmClassName: SimilarGenericSignatureKt
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
 KaTypeParameterSymbol:
@@ -116,7 +116,7 @@ KaTypeParameterSymbol:
   upperBounds: []
   variance: INVARIANT
   getContainingFileSymbol: KaFileSymbol(similarGenericSignature.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -170,11 +170,11 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(similarGenericSignature.kt)
       getContainingJvmClassName: SimilarGenericSignatureKt
-      getContainingModule: KtSourceModule "Sources of main"
+      getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(similarGenericSignature.kt)
   getContainingJvmClassName: SimilarGenericSignatureKt
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

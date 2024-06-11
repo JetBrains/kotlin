@@ -30,7 +30,7 @@ KaSyntheticJavaPropertySymbol:
       type: Derived
     getContainingFileSymbol: null
     getContainingJvmClassName: Derived
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -88,7 +88,7 @@ KaSyntheticJavaPropertySymbol:
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(Derived.kt)
       getContainingJvmClassName: Derived
-      getContainingModule: KtSourceModule "Sources of main"
+      getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -119,7 +119,7 @@ KaSyntheticJavaPropertySymbol:
         typeParameters: []
         getContainingFileSymbol: KaFileSymbol(Derived.kt)
         getContainingJvmClassName: Derived
-        getContainingModule: KtSourceModule "Sources of main"
+        getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
     ]
     visibility: Public
@@ -129,7 +129,7 @@ KaSyntheticJavaPropertySymbol:
       type: Derived
     getContainingFileSymbol: null
     getContainingJvmClassName: Derived
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   typeParameters: []
   visibility: Public
@@ -139,7 +139,7 @@ KaSyntheticJavaPropertySymbol:
     type: Derived
   getContainingFileSymbol: null
   getContainingJvmClassName: Derived
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getSomething

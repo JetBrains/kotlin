@@ -18,5 +18,5 @@ KaJavaFieldSymbol:
   visibility: Public
   getContainingFileSymbol: null
   getContainingJvmClassName: Dependency
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

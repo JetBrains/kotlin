@@ -39,13 +39,13 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(contextReceiversOnClass.kt)
       getContainingJvmClassName: A
-      getContainingModule: KtSourceModule "Sources of main"
+      getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(contextReceiversOnClass.kt)
   getContainingJvmClassName: A
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
@@ -87,6 +87,6 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(contextReceiversOnClass.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

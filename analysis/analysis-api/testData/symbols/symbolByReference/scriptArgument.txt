@@ -22,7 +22,7 @@ KaKotlinPropertySymbol:
     typeParameters: []
     getContainingFileSymbol: null
     getContainingJvmClassName: kotlin.script.templates.standard.ScriptTemplateWithArgs
-    getContainingModule: KtLibraryModule "Library kotlin-script-runtime"
+    getContainingModule: KaLibraryModule "Library kotlin-script-runtime"
     deprecationStatus: null
   callableId: kotlin/script/templates/standard/ScriptTemplateWithArgs.args
   contextReceivers: []
@@ -58,7 +58,7 @@ KaKotlinPropertySymbol:
       type: kotlin/script/templates/standard/ScriptTemplateWithArgs
     getContainingFileSymbol: null
     getContainingJvmClassName: kotlin.script.templates.standard.ScriptTemplateWithArgs
-    getContainingModule: KtLibraryModule "Library kotlin-script-runtime"
+    getContainingModule: KaLibraryModule "Library kotlin-script-runtime"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -97,7 +97,7 @@ KaKotlinPropertySymbol:
     type: kotlin/script/templates/standard/ScriptTemplateWithArgs
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.script.templates.standard.ScriptTemplateWithArgs
-  getContainingModule: KtLibraryModule "Library kotlin-script-runtime"
+  getContainingModule: KaLibraryModule "Library kotlin-script-runtime"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getArgs

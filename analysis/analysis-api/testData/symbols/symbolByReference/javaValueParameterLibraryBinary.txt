@@ -20,5 +20,5 @@ KaValueParameterSymbol:
   typeParameters: []
   getContainingFileSymbol: null
   getContainingJvmClassName: JavaAnnotation
-  getContainingModule: KtLibraryModule "Library dependency"
+  getContainingModule: KaLibraryModule "Library dependency"
   deprecationStatus: null

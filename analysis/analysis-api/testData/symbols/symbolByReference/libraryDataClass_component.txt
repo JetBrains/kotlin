@@ -34,5 +34,5 @@ KaFunctionSymbol:
     type: one/DataClass
   getContainingFileSymbol: null
   getContainingJvmClassName: one.DataClass
-  getContainingModule: KtLibraryModule "Library lib"
+  getContainingModule: KaLibraryModule "Library lib"
   deprecationStatus: null

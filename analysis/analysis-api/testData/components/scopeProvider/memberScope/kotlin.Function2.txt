@@ -47,7 +47,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Function2
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -70,7 +70,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Function2
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -90,7 +90,7 @@ KaFunctionSymbol:
     type: kotlin/Function2<P1, P2, R>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Function2
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -144,7 +144,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Any
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -154,7 +154,7 @@ KaFunctionSymbol:
     type: kotlin/Any
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Any
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -193,7 +193,7 @@ KaFunctionSymbol:
     type: kotlin/Any
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Any
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -232,5 +232,5 @@ KaFunctionSymbol:
     type: kotlin/Any
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Any
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null

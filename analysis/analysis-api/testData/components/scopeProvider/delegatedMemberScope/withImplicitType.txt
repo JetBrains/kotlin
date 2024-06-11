@@ -34,7 +34,7 @@ KaFunctionSymbol:
     type: A
   getContainingFileSymbol: KaFileSymbol(withImplicitType.kt)
   getContainingJvmClassName: A
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -73,5 +73,5 @@ KaFunctionSymbol:
     type: A
   getContainingFileSymbol: KaFileSymbol(withImplicitType.kt)
   getContainingJvmClassName: A
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

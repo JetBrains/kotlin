@@ -48,5 +48,5 @@ KaSamConstructorSymbol:
   ]
   getContainingFileSymbol: null
   getContainingJvmClassName: null
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null

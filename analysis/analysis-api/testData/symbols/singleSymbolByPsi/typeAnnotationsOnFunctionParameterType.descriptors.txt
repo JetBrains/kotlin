@@ -56,11 +56,11 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnFunctionParameterType.kt)
       getContainingJvmClassName: TypeAnnotationsOnFunctionParameterTypeKt
-      getContainingModule: KtSourceModule "Sources of main"
+      getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnFunctionParameterType.kt)
   getContainingJvmClassName: TypeAnnotationsOnFunctionParameterTypeKt
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

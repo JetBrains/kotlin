@@ -33,5 +33,5 @@ KaFunctionSymbol:
     type: <local>/Base<Outer>
   getContainingFileSymbol: KaFileSymbol(genericFromFunctionInLocalClass.kt)
   getContainingJvmClassName: null
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

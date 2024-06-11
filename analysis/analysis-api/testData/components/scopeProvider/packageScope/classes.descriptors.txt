@@ -28,7 +28,7 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(A.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
@@ -62,7 +62,7 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Internal
   getContainingFileSymbol: KaFileSymbol(A.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
@@ -96,7 +96,7 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Private
   getContainingFileSymbol: KaFileSymbol(A.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
@@ -126,7 +126,7 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(B.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
@@ -156,7 +156,7 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Internal
   getContainingFileSymbol: KaFileSymbol(B.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
@@ -186,6 +186,6 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Private
   getContainingFileSymbol: KaFileSymbol(B.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

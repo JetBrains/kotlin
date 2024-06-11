@@ -20,7 +20,7 @@ KaKotlinPropertySymbol:
     typeParameters: []
     getContainingFileSymbol: null
     getContainingJvmClassName: one.SimpleClass
-    getContainingModule: KtLibraryModule "Library lib"
+    getContainingModule: KaLibraryModule "Library lib"
     deprecationStatus: null
   callableId: one/SimpleClass.memberVariableWithAnnotations
   contextReceivers: []
@@ -54,7 +54,7 @@ KaKotlinPropertySymbol:
       type: one/SimpleClass
     getContainingFileSymbol: null
     getContainingJvmClassName: one.SimpleClass
-    getContainingModule: KtLibraryModule "Library lib"
+    getContainingModule: KaLibraryModule "Library lib"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -120,7 +120,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: null
-      getContainingModule: KtLibraryModule "Library lib"
+      getContainingModule: KaLibraryModule "Library lib"
       deprecationStatus: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -154,7 +154,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         getContainingFileSymbol: null
         getContainingJvmClassName: null
-        getContainingModule: KtLibraryModule "Library lib"
+        getContainingModule: KaLibraryModule "Library lib"
         deprecationStatus: null
     ]
     visibility: Public
@@ -164,7 +164,7 @@ KaKotlinPropertySymbol:
       type: one/SimpleClass
     getContainingFileSymbol: null
     getContainingJvmClassName: one.SimpleClass
-    getContainingModule: KtLibraryModule "Library lib"
+    getContainingModule: KaLibraryModule "Library lib"
     deprecationStatus: null
   typeParameters: []
   visibility: Public
@@ -174,7 +174,7 @@ KaKotlinPropertySymbol:
     type: one/SimpleClass
   getContainingFileSymbol: null
   getContainingJvmClassName: one.SimpleClass
-  getContainingModule: KtLibraryModule "Library lib"
+  getContainingModule: KaLibraryModule "Library lib"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getMemberVariableWithAnnotations

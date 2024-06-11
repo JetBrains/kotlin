@@ -17,7 +17,7 @@ KaKotlinPropertySymbol:
     typeParameters: []
     getContainingFileSymbol: KaFileSymbol(classInitializer.kt)
     getContainingJvmClassName: A
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   callableId: /A.i
   contextReceivers: []
@@ -48,7 +48,7 @@ KaKotlinPropertySymbol:
       type: A
     getContainingFileSymbol: KaFileSymbol(classInitializer.kt)
     getContainingJvmClassName: A
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -82,7 +82,7 @@ KaKotlinPropertySymbol:
     type: A
   getContainingFileSymbol: KaFileSymbol(classInitializer.kt)
   getContainingJvmClassName: A
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getI
@@ -95,7 +95,7 @@ KaClassInitializerSymbol:
   origin: SOURCE
   typeParameters: []
   getContainingFileSymbol: KaFileSymbol(classInitializer.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
@@ -124,6 +124,6 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(classInitializer.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

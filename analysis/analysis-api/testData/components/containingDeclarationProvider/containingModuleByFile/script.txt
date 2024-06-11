@@ -1,2 +1,2 @@
 File: script.kts
-Module: Script script.kts (KtScriptModuleImpl)
+Module: Script script.kts (KaScriptModuleImpl)

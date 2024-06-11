@@ -37,7 +37,7 @@ KaFunctionSymbol:
               typeParameters: []
               getContainingFileSymbol: KaFileSymbol(callsInPlaceUnknownContract.kt)
               getContainingJvmClassName: CallsInPlaceUnknownContractKt
-              getContainingModule: KtSourceModule "Sources of main"
+              getContainingModule: KaSourceModule "Sources of main"
               deprecationStatus: null
       occurrencesRange: UNKNOWN
   ]
@@ -92,11 +92,11 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(callsInPlaceUnknownContract.kt)
       getContainingJvmClassName: CallsInPlaceUnknownContractKt
-      getContainingModule: KtSourceModule "Sources of main"
+      getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(callsInPlaceUnknownContract.kt)
   getContainingJvmClassName: CallsInPlaceUnknownContractKt
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

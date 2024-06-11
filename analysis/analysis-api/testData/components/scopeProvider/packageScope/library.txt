@@ -30,7 +30,7 @@ KaFunctionSymbol:
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingJvmClassName: library.api.ExtensionKt
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -65,7 +65,7 @@ KaFunctionSymbol:
   visibility: Internal
   getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingJvmClassName: library.api.ExtensionKt
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -100,7 +100,7 @@ KaFunctionSymbol:
   visibility: Private
   getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingJvmClassName: library.api.ExtensionKt
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -135,7 +135,7 @@ KaFunctionSymbol:
       typeArguments: []
       type: library/api/FakeI
     getContainingFileSymbol: KaFileSymbol(extension.kt)
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
     annotations: []
@@ -146,7 +146,7 @@ KaFunctionSymbol:
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingJvmClassName: library.api.ExtensionKt
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -181,7 +181,7 @@ KaFunctionSymbol:
       typeArguments: []
       type: library/api/InternalFakeI
     getContainingFileSymbol: KaFileSymbol(extension.kt)
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
     annotations: []
@@ -192,7 +192,7 @@ KaFunctionSymbol:
   visibility: Internal
   getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingJvmClassName: library.api.ExtensionKt
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -227,7 +227,7 @@ KaFunctionSymbol:
       typeArguments: []
       type: library/api/PrivateFakeI
     getContainingFileSymbol: KaFileSymbol(extension.kt)
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
     annotations: []
@@ -238,7 +238,7 @@ KaFunctionSymbol:
   visibility: Private
   getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingJvmClassName: library.api.ExtensionKt
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -273,7 +273,7 @@ KaFunctionSymbol:
   visibility: Public
   getContainingFileSymbol: null
   getContainingJvmClassName: library.api.C1Kt
-  getContainingModule: KtLibraryModule "Library library"
+  getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -308,7 +308,7 @@ KaFunctionSymbol:
   visibility: Internal
   getContainingFileSymbol: null
   getContainingJvmClassName: library.api.C1Kt
-  getContainingModule: KtLibraryModule "Library library"
+  getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -343,7 +343,7 @@ KaFunctionSymbol:
   visibility: Private
   getContainingFileSymbol: null
   getContainingJvmClassName: library.api.C1Kt
-  getContainingModule: KtLibraryModule "Library library"
+  getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -378,7 +378,7 @@ KaFunctionSymbol:
       typeArguments: []
       type: library/api/C1
     getContainingFileSymbol: null
-    getContainingModule: KtLibraryModule "Library library"
+    getContainingModule: KaLibraryModule "Library library"
     deprecationStatus: null
   returnType: KaUsualClassType:
     annotations: []
@@ -389,7 +389,7 @@ KaFunctionSymbol:
   visibility: Public
   getContainingFileSymbol: null
   getContainingJvmClassName: library.api.C1Kt
-  getContainingModule: KtLibraryModule "Library library"
+  getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -424,7 +424,7 @@ KaFunctionSymbol:
       typeArguments: []
       type: library/api/InternalC1
     getContainingFileSymbol: null
-    getContainingModule: KtLibraryModule "Library library"
+    getContainingModule: KaLibraryModule "Library library"
     deprecationStatus: null
   returnType: KaUsualClassType:
     annotations: []
@@ -435,7 +435,7 @@ KaFunctionSymbol:
   visibility: Internal
   getContainingFileSymbol: null
   getContainingJvmClassName: library.api.C1Kt
-  getContainingModule: KtLibraryModule "Library library"
+  getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -470,7 +470,7 @@ KaFunctionSymbol:
       typeArguments: []
       type: library/api/PrivateC1
     getContainingFileSymbol: null
-    getContainingModule: KtLibraryModule "Library library"
+    getContainingModule: KaLibraryModule "Library library"
     deprecationStatus: null
   returnType: KaUsualClassType:
     annotations: []
@@ -481,7 +481,7 @@ KaFunctionSymbol:
   visibility: Private
   getContainingFileSymbol: null
   getContainingJvmClassName: library.api.C1Kt
-  getContainingModule: KtLibraryModule "Library library"
+  getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -516,7 +516,7 @@ KaFunctionSymbol:
   visibility: Public
   getContainingFileSymbol: null
   getContainingJvmClassName: library.api.IKt
-  getContainingModule: KtLibraryModule "Library library"
+  getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -551,7 +551,7 @@ KaFunctionSymbol:
   visibility: Internal
   getContainingFileSymbol: null
   getContainingJvmClassName: library.api.IKt
-  getContainingModule: KtLibraryModule "Library library"
+  getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -586,7 +586,7 @@ KaFunctionSymbol:
   visibility: Private
   getContainingFileSymbol: null
   getContainingJvmClassName: library.api.IKt
-  getContainingModule: KtLibraryModule "Library library"
+  getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -621,7 +621,7 @@ KaFunctionSymbol:
       typeArguments: []
       type: library/api/I
     getContainingFileSymbol: null
-    getContainingModule: KtLibraryModule "Library library"
+    getContainingModule: KaLibraryModule "Library library"
     deprecationStatus: null
   returnType: KaUsualClassType:
     annotations: []
@@ -632,7 +632,7 @@ KaFunctionSymbol:
   visibility: Public
   getContainingFileSymbol: null
   getContainingJvmClassName: library.api.IKt
-  getContainingModule: KtLibraryModule "Library library"
+  getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -667,7 +667,7 @@ KaFunctionSymbol:
       typeArguments: []
       type: library/api/InternalI
     getContainingFileSymbol: null
-    getContainingModule: KtLibraryModule "Library library"
+    getContainingModule: KaLibraryModule "Library library"
     deprecationStatus: null
   returnType: KaUsualClassType:
     annotations: []
@@ -678,7 +678,7 @@ KaFunctionSymbol:
   visibility: Internal
   getContainingFileSymbol: null
   getContainingJvmClassName: library.api.IKt
-  getContainingModule: KtLibraryModule "Library library"
+  getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -713,7 +713,7 @@ KaFunctionSymbol:
       typeArguments: []
       type: library/api/PrivateI
     getContainingFileSymbol: null
-    getContainingModule: KtLibraryModule "Library library"
+    getContainingModule: KaLibraryModule "Library library"
     deprecationStatus: null
   returnType: KaUsualClassType:
     annotations: []
@@ -724,7 +724,7 @@ KaFunctionSymbol:
   visibility: Private
   getContainingFileSymbol: null
   getContainingJvmClassName: library.api.IKt
-  getContainingModule: KtLibraryModule "Library library"
+  getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
@@ -753,7 +753,7 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: null
-  getContainingModule: KtLibraryModule "Library library"
+  getContainingModule: KaLibraryModule "Library library"
   annotationApplicableTargets: null
   deprecationStatus: null
 
@@ -783,7 +783,7 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: null
-  getContainingModule: KtLibraryModule "Library library"
+  getContainingModule: KaLibraryModule "Library library"
   annotationApplicableTargets: null
   deprecationStatus: null
 
@@ -813,7 +813,7 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Private
   getContainingFileSymbol: null
-  getContainingModule: KtLibraryModule "Library library"
+  getContainingModule: KaLibraryModule "Library library"
   annotationApplicableTargets: null
   deprecationStatus: null
 
@@ -843,7 +843,7 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Internal
   getContainingFileSymbol: null
-  getContainingModule: KtLibraryModule "Library library"
+  getContainingModule: KaLibraryModule "Library library"
   annotationApplicableTargets: null
   deprecationStatus: null
 
@@ -873,7 +873,7 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Internal
   getContainingFileSymbol: null
-  getContainingModule: KtLibraryModule "Library library"
+  getContainingModule: KaLibraryModule "Library library"
   annotationApplicableTargets: null
   deprecationStatus: null
 
@@ -903,7 +903,7 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Private
   getContainingFileSymbol: null
-  getContainingModule: KtLibraryModule "Library library"
+  getContainingModule: KaLibraryModule "Library library"
   annotationApplicableTargets: null
   deprecationStatus: null
 
@@ -933,7 +933,7 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(extension.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
@@ -963,7 +963,7 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Internal
   getContainingFileSymbol: KaFileSymbol(extension.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
@@ -993,6 +993,6 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Private
   getContainingFileSymbol: KaFileSymbol(extension.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

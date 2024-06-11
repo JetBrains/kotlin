@@ -44,11 +44,11 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.util.ArrayList
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaSdkModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
   getContainingFileSymbol: null
   getContainingJvmClassName: java.util.ArrayList
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null

@@ -52,7 +52,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -62,7 +62,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -119,7 +119,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -129,7 +129,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -186,7 +186,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -196,7 +196,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -253,7 +253,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -263,7 +263,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -320,7 +320,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -330,7 +330,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -387,7 +387,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -397,7 +397,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -454,7 +454,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -464,7 +464,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -503,7 +503,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -560,7 +560,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -570,7 +570,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -627,7 +627,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -637,7 +637,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -694,7 +694,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -704,7 +704,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -761,7 +761,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -771,7 +771,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -828,7 +828,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -838,7 +838,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -895,7 +895,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -905,7 +905,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -962,7 +962,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -972,7 +972,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -1011,7 +1011,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -1053,7 +1053,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -1110,7 +1110,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -1120,7 +1120,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -1177,7 +1177,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -1187,7 +1187,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -1244,7 +1244,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -1254,7 +1254,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -1311,7 +1311,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -1321,7 +1321,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -1378,7 +1378,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -1388,7 +1388,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -1445,7 +1445,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -1455,7 +1455,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -1512,7 +1512,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -1522,7 +1522,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -1579,7 +1579,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -1589,7 +1589,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -1646,7 +1646,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -1656,7 +1656,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -1713,7 +1713,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -1723,7 +1723,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -1780,7 +1780,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -1790,7 +1790,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -1847,7 +1847,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -1857,7 +1857,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -1914,7 +1914,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -1924,7 +1924,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -1978,7 +1978,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -1988,7 +1988,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -2042,7 +2042,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -2052,7 +2052,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -2106,7 +2106,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -2116,7 +2116,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -2170,7 +2170,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -2180,7 +2180,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -2239,7 +2239,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -2249,7 +2249,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -2308,7 +2308,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -2318,7 +2318,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -2377,7 +2377,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -2387,7 +2387,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -2446,7 +2446,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -2456,7 +2456,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -2515,7 +2515,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -2525,7 +2525,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -2584,7 +2584,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -2594,7 +2594,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -2653,7 +2653,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -2663,7 +2663,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -2722,7 +2722,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -2732,7 +2732,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -2791,7 +2791,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -2801,7 +2801,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -2860,7 +2860,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -2870,7 +2870,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -2927,7 +2927,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -2937,7 +2937,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -2994,7 +2994,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -3004,7 +3004,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -3061,7 +3061,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -3071,7 +3071,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -3128,7 +3128,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -3138,7 +3138,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -3195,7 +3195,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -3205,7 +3205,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -3262,7 +3262,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -3272,7 +3272,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -3329,7 +3329,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -3339,7 +3339,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -3396,7 +3396,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -3406,7 +3406,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -3448,7 +3448,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -3490,7 +3490,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -3532,7 +3532,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -3574,7 +3574,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -3616,7 +3616,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -3658,7 +3658,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -3700,7 +3700,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -3742,7 +3742,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -3784,7 +3784,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -3826,7 +3826,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -3883,7 +3883,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -3893,7 +3893,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -3950,7 +3950,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -3960,7 +3960,7 @@ KaFunctionSymbol:
     type: kotlin/Int
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -3999,7 +3999,7 @@ KaFunctionSymbol:
     type: kotlin/Any
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Any
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
@@ -4028,7 +4028,7 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: null
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   annotationApplicableTargets: null
   deprecationStatus: null
 
@@ -4054,5 +4054,5 @@ KaConstructorSymbol:
   visibility: Private
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null

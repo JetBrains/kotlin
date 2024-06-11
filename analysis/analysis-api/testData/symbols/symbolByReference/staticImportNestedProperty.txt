@@ -17,7 +17,7 @@ KaKotlinPropertySymbol:
     typeParameters: []
     getContainingFileSymbol: KaFileSymbol(dependency.kt)
     getContainingJvmClassName: one.two.TopLevelObject.Nested
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   callableId: one/two/TopLevelObject.Nested.bar
   contextReceivers: []
@@ -48,7 +48,7 @@ KaKotlinPropertySymbol:
       type: one/two/TopLevelObject.Nested
     getContainingFileSymbol: KaFileSymbol(dependency.kt)
     getContainingJvmClassName: one.two.TopLevelObject.Nested
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -82,7 +82,7 @@ KaKotlinPropertySymbol:
     type: one/two/TopLevelObject.Nested
   getContainingFileSymbol: KaFileSymbol(dependency.kt)
   getContainingJvmClassName: one.two.TopLevelObject.Nested
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getBar

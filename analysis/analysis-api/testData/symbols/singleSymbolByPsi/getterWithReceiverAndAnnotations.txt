@@ -32,7 +32,7 @@ KaPropertyGetterSymbol:
       typeArguments: []
       type: @R|ReceiverTypeAnnotation|()  kotlin/Long
     getContainingFileSymbol: KaFileSymbol(getterWithReceiverAndAnnotations.kt)
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
     annotations: []
@@ -43,5 +43,5 @@ KaPropertyGetterSymbol:
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(getterWithReceiverAndAnnotations.kt)
   getContainingJvmClassName: GetterWithReceiverAndAnnotationsKt
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

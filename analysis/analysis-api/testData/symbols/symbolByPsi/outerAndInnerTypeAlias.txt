@@ -8,7 +8,7 @@ KaTypeParameterSymbol:
   upperBounds: []
   variance: INVARIANT
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
@@ -39,7 +39,7 @@ KaNamedClassOrObjectSymbol:
   ]
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
@@ -63,7 +63,7 @@ KaTypeAliasSymbol:
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
 KaTypeAliasSymbol:
@@ -86,7 +86,7 @@ KaTypeAliasSymbol:
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
 KaTypeAliasSymbol:
@@ -109,7 +109,7 @@ KaTypeAliasSymbol:
   typeParameters: []
   visibility: Local
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
 KaTypeAliasSymbol:
@@ -132,7 +132,7 @@ KaTypeAliasSymbol:
   typeParameters: []
   visibility: Local
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
 KaTypeAliasSymbol:
@@ -155,7 +155,7 @@ KaTypeAliasSymbol:
   typeParameters: []
   visibility: Local
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
 KaTypeAliasSymbol:
@@ -178,7 +178,7 @@ KaTypeAliasSymbol:
   typeParameters: []
   visibility: Local
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -217,7 +217,7 @@ KaFunctionSymbol:
     type: <local>/LocalClass
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
   getContainingJvmClassName: null
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
@@ -246,7 +246,7 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Local
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
@@ -286,7 +286,7 @@ KaFunctionSymbol:
     type: <local>/LocalClass
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
   getContainingJvmClassName: null
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
@@ -315,7 +315,7 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Local
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
@@ -355,7 +355,7 @@ KaFunctionSymbol:
     type: A
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
   getContainingJvmClassName: A
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
@@ -384,6 +384,6 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

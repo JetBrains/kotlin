@@ -41,7 +41,7 @@ KaFunctionSymbol:
                       typeParameters: []
                       getContainingFileSymbol: KaFileSymbol(booleanExprContract.kt)
                       getContainingJvmClassName: BooleanExprContractKt
-                      getContainingModule: KtSourceModule "Sources of main"
+                      getContainingModule: KaSourceModule "Sources of main"
                       deprecationStatus: null
               isNegated: false
           right:
@@ -71,7 +71,7 @@ KaFunctionSymbol:
                       typeParameters: []
                       getContainingFileSymbol: KaFileSymbol(booleanExprContract.kt)
                       getContainingJvmClassName: BooleanExprContractKt
-                      getContainingModule: KtSourceModule "Sources of main"
+                      getContainingModule: KaSourceModule "Sources of main"
                       deprecationStatus: null
               isNegated: true
           operation: AND
@@ -122,7 +122,7 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(booleanExprContract.kt)
       getContainingJvmClassName: BooleanExprContractKt
-      getContainingModule: KtSourceModule "Sources of main"
+      getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -146,11 +146,11 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(booleanExprContract.kt)
       getContainingJvmClassName: BooleanExprContractKt
-      getContainingModule: KtSourceModule "Sources of main"
+      getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(booleanExprContract.kt)
   getContainingJvmClassName: BooleanExprContractKt
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

@@ -34,7 +34,7 @@ KaFunctionSymbol:
     type: test/C
   getContainingFileSymbol: KaFileSymbol(class.kt)
   getContainingJvmClassName: test.C
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
 KaKotlinPropertySymbol:
@@ -56,7 +56,7 @@ KaKotlinPropertySymbol:
     typeParameters: []
     getContainingFileSymbol: KaFileSymbol(class.kt)
     getContainingJvmClassName: test.C
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   callableId: test/C.bar
   contextReceivers: []
@@ -87,7 +87,7 @@ KaKotlinPropertySymbol:
       type: test/C
     getContainingFileSymbol: KaFileSymbol(class.kt)
     getContainingJvmClassName: test.C
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -121,7 +121,7 @@ KaKotlinPropertySymbol:
     type: test/C
   getContainingFileSymbol: KaFileSymbol(class.kt)
   getContainingJvmClassName: test.C
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getBar
@@ -150,5 +150,5 @@ KaConstructorSymbol:
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(class.kt)
   getContainingJvmClassName: test.C
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

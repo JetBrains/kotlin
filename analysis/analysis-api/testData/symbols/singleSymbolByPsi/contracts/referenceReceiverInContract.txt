@@ -25,7 +25,7 @@ KaFunctionSymbol:
                 ]
                 type: kotlin/Function0<kotlin/Unit>
               getContainingFileSymbol: KaFileSymbol(referenceReceiverInContract.kt)
-              getContainingModule: KtSourceModule "Sources of main"
+              getContainingModule: KaSourceModule "Sources of main"
               deprecationStatus: null
       occurrencesRange: EXACTLY_ONCE
   ]
@@ -61,7 +61,7 @@ KaFunctionSymbol:
       ]
       type: kotlin/Function0<kotlin/Unit>
     getContainingFileSymbol: KaFileSymbol(referenceReceiverInContract.kt)
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
     annotations: []
@@ -72,5 +72,5 @@ KaFunctionSymbol:
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(referenceReceiverInContract.kt)
   getContainingJvmClassName: ReferenceReceiverInContractKt
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

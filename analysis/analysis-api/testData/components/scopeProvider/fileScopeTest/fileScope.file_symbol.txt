@@ -3,5 +3,5 @@ KaFileSymbol:
   location: TOP_LEVEL
   origin: SOURCE
   getContainingFileSymbol: null
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

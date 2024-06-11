@@ -38,7 +38,7 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: JavaClass.InnerClass
-      getContainingModule: KtSourceModule "Sources of main"
+      getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: PackageVisibility
@@ -48,5 +48,5 @@ KaConstructorSymbol:
     type: JavaClass
   getContainingFileSymbol: null
   getContainingJvmClassName: JavaClass.InnerClass
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

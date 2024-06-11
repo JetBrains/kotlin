@@ -47,5 +47,5 @@ KaFunctionSymbol:
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(nestedTypeAnnotationWithTypeAlias.kt)
   getContainingJvmClassName: NestedTypeAnnotationWithTypeAliasKt
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

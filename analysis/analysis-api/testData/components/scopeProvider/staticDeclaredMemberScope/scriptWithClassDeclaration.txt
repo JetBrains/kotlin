@@ -24,6 +24,6 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(scriptWithClassDeclaration.kts)
-  getContainingModule: KtScriptModule "Script scriptWithClassDeclaration.kts"
+  getContainingModule: KaScriptModule "Script scriptWithClassDeclaration.kts"
   annotationApplicableTargets: null
   deprecationStatus: null

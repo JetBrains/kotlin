@@ -20,5 +20,5 @@ KaValueParameterSymbol:
   typeParameters: []
   getContainingFileSymbol: KaFileSymbol(valueParameter.kt)
   getContainingJvmClassName: ValueParameterKt
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

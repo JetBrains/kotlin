@@ -24,7 +24,7 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(simpleScript.kts)
-  getContainingModule: KtScriptModule "Script simpleScript.kts"
+  getContainingModule: KaScriptModule "Script simpleScript.kts"
   annotationApplicableTargets: null
   deprecationStatus: null
 
@@ -54,7 +54,7 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(simpleScript.kts)
-  getContainingModule: KtScriptModule "Script simpleScript.kts"
+  getContainingModule: KaScriptModule "Script simpleScript.kts"
   annotationApplicableTargets: null
   deprecationStatus: null
 
@@ -84,6 +84,6 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(simpleScript.kts)
-  getContainingModule: KtScriptModule "Script simpleScript.kts"
+  getContainingModule: KaScriptModule "Script simpleScript.kts"
   annotationApplicableTargets: null
   deprecationStatus: null

@@ -39,7 +39,7 @@ KaFunctionSymbol:
                   typeParameters: []
                   getContainingFileSymbol: KaFileSymbol(returnsTrueContract.kt)
                   getContainingJvmClassName: ReturnsTrueContractKt
-                  getContainingModule: KtSourceModule "Sources of main"
+                  getContainingModule: KaSourceModule "Sources of main"
                   deprecationStatus: null
           isNegated: false
   ]
@@ -89,11 +89,11 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(returnsTrueContract.kt)
       getContainingJvmClassName: ReturnsTrueContractKt
-      getContainingModule: KtSourceModule "Sources of main"
+      getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(returnsTrueContract.kt)
   getContainingJvmClassName: ReturnsTrueContractKt
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

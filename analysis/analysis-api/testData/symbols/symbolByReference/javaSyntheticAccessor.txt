@@ -30,7 +30,7 @@ KaSyntheticJavaPropertySymbol:
       type: JavaClass
     getContainingFileSymbol: null
     getContainingJvmClassName: JavaClass
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -62,7 +62,7 @@ KaSyntheticJavaPropertySymbol:
     type: JavaClass
   getContainingFileSymbol: null
   getContainingJvmClassName: JavaClass
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getFoo

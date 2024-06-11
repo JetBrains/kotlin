@@ -24,6 +24,6 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(main.kt)
-  getContainingModule: KtSourceModule "Sources of common"
+  getContainingModule: KaSourceModule "Sources of common"
   annotationApplicableTargets: null
   deprecationStatus: null

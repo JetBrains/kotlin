@@ -17,7 +17,7 @@ KaKotlinPropertySymbol:
     typeParameters: []
     getContainingFileSymbol: KaFileSymbol(propertyWithGetter.kt)
     getContainingJvmClassName: I
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   callableId: /I.foo
   contextReceivers: []
@@ -48,7 +48,7 @@ KaKotlinPropertySymbol:
       type: A
     getContainingFileSymbol: KaFileSymbol(propertyWithGetter.kt)
     getContainingJvmClassName: I
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: false
   hasGetter: true
@@ -82,7 +82,7 @@ KaKotlinPropertySymbol:
     type: A
   getContainingFileSymbol: KaFileSymbol(propertyWithGetter.kt)
   getContainingJvmClassName: I
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getFoo

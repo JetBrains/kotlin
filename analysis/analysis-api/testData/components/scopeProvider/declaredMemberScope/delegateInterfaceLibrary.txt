@@ -17,7 +17,7 @@ KaKotlinPropertySymbol:
     typeParameters: []
     getContainingFileSymbol: KaFileSymbol(I.class)
     getContainingJvmClassName: I
-    getContainingModule: KtLibraryModule "Library main"
+    getContainingModule: KaLibraryModule "Library main"
     deprecationStatus: null
   callableId: /I.p
   contextReceivers: []
@@ -48,7 +48,7 @@ KaKotlinPropertySymbol:
       type: I
     getContainingFileSymbol: KaFileSymbol(I.class)
     getContainingJvmClassName: I
-    getContainingModule: KtLibraryModule "Library main"
+    getContainingModule: KaLibraryModule "Library main"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -82,7 +82,7 @@ KaKotlinPropertySymbol:
     type: I
   getContainingFileSymbol: KaFileSymbol(I.class)
   getContainingJvmClassName: I
-  getContainingModule: KtLibraryModule "Library main"
+  getContainingModule: KaLibraryModule "Library main"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getP
@@ -108,7 +108,7 @@ KaKotlinPropertySymbol:
     typeParameters: []
     getContainingFileSymbol: KaFileSymbol(I.class)
     getContainingJvmClassName: I
-    getContainingModule: KtLibraryModule "Library main"
+    getContainingModule: KaLibraryModule "Library main"
     deprecationStatus: null
   callableId: /I.bar
   contextReceivers: []
@@ -139,7 +139,7 @@ KaKotlinPropertySymbol:
       type: I
     getContainingFileSymbol: KaFileSymbol(I.class)
     getContainingJvmClassName: I
-    getContainingModule: KtLibraryModule "Library main"
+    getContainingModule: KaLibraryModule "Library main"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -199,7 +199,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(I.class)
       getContainingJvmClassName: null
-      getContainingModule: KtLibraryModule "Library main"
+      getContainingModule: KaLibraryModule "Library main"
       deprecationStatus: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -230,7 +230,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         getContainingFileSymbol: KaFileSymbol(I.class)
         getContainingJvmClassName: null
-        getContainingModule: KtLibraryModule "Library main"
+        getContainingModule: KaLibraryModule "Library main"
         deprecationStatus: null
     ]
     visibility: Public
@@ -240,7 +240,7 @@ KaKotlinPropertySymbol:
       type: I
     getContainingFileSymbol: KaFileSymbol(I.class)
     getContainingJvmClassName: I
-    getContainingModule: KtLibraryModule "Library main"
+    getContainingModule: KaLibraryModule "Library main"
     deprecationStatus: null
   typeParameters: []
   visibility: Public
@@ -250,7 +250,7 @@ KaKotlinPropertySymbol:
     type: I
   getContainingFileSymbol: KaFileSymbol(I.class)
   getContainingJvmClassName: I
-  getContainingModule: KtLibraryModule "Library main"
+  getContainingModule: KaLibraryModule "Library main"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getBar
@@ -276,7 +276,7 @@ KaKotlinPropertySymbol:
     typeParameters: []
     getContainingFileSymbol: KaFileSymbol(I.class)
     getContainingJvmClassName: I
-    getContainingModule: KtLibraryModule "Library main"
+    getContainingModule: KaLibraryModule "Library main"
     deprecationStatus: null
   callableId: /I.doo
   contextReceivers: []
@@ -303,7 +303,7 @@ KaKotlinPropertySymbol:
         typeArguments: []
         type: kotlin/Int
       getContainingFileSymbol: KaFileSymbol(I.class)
-      getContainingModule: KtLibraryModule "Library main"
+      getContainingModule: KaLibraryModule "Library main"
       deprecationStatus: null
     returnType: KaUsualClassType:
       annotations: []
@@ -318,7 +318,7 @@ KaKotlinPropertySymbol:
       type: I
     getContainingFileSymbol: KaFileSymbol(I.class)
     getContainingJvmClassName: I
-    getContainingModule: KtLibraryModule "Library main"
+    getContainingModule: KaLibraryModule "Library main"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -348,7 +348,7 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     getContainingFileSymbol: KaFileSymbol(I.class)
-    getContainingModule: KtLibraryModule "Library main"
+    getContainingModule: KaLibraryModule "Library main"
     deprecationStatus: null
   returnType: KaUsualClassType:
     annotations: []
@@ -363,7 +363,7 @@ KaKotlinPropertySymbol:
     type: I
   getContainingFileSymbol: KaFileSymbol(I.class)
   getContainingJvmClassName: I
-  getContainingModule: KtLibraryModule "Library main"
+  getContainingModule: KaLibraryModule "Library main"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getDoo
@@ -406,7 +406,7 @@ KaFunctionSymbol:
     type: I
   getContainingFileSymbol: KaFileSymbol(I.class)
   getContainingJvmClassName: I
-  getContainingModule: KtLibraryModule "Library main"
+  getContainingModule: KaLibraryModule "Library main"
   deprecationStatus: null
 
 KaKotlinPropertySymbol:
@@ -428,7 +428,7 @@ KaKotlinPropertySymbol:
     typeParameters: []
     getContainingFileSymbol: KaFileSymbol(I.class)
     getContainingJvmClassName: I
-    getContainingModule: KtLibraryModule "Library main"
+    getContainingModule: KaLibraryModule "Library main"
     deprecationStatus: null
   callableId: /I.foo
   contextReceivers: []
@@ -459,7 +459,7 @@ KaKotlinPropertySymbol:
       type: I
     getContainingFileSymbol: KaFileSymbol(I.class)
     getContainingJvmClassName: I
-    getContainingModule: KtLibraryModule "Library main"
+    getContainingModule: KaLibraryModule "Library main"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -493,7 +493,7 @@ KaKotlinPropertySymbol:
     type: I
   getContainingFileSymbol: KaFileSymbol(I.class)
   getContainingJvmClassName: I
-  getContainingModule: KtLibraryModule "Library main"
+  getContainingModule: KaLibraryModule "Library main"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getFoo
@@ -519,7 +519,7 @@ KaKotlinPropertySymbol:
     typeParameters: []
     getContainingFileSymbol: KaFileSymbol(I.class)
     getContainingJvmClassName: I
-    getContainingModule: KtLibraryModule "Library main"
+    getContainingModule: KaLibraryModule "Library main"
     deprecationStatus: null
   callableId: /I.zoo
   contextReceivers: []
@@ -546,7 +546,7 @@ KaKotlinPropertySymbol:
         typeArguments: []
         type: kotlin/Int
       getContainingFileSymbol: KaFileSymbol(I.class)
-      getContainingModule: KtLibraryModule "Library main"
+      getContainingModule: KaLibraryModule "Library main"
       deprecationStatus: null
     returnType: KaUsualClassType:
       annotations: []
@@ -561,7 +561,7 @@ KaKotlinPropertySymbol:
       type: I
     getContainingFileSymbol: KaFileSymbol(I.class)
     getContainingJvmClassName: I
-    getContainingModule: KtLibraryModule "Library main"
+    getContainingModule: KaLibraryModule "Library main"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -591,7 +591,7 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     getContainingFileSymbol: KaFileSymbol(I.class)
-    getContainingModule: KtLibraryModule "Library main"
+    getContainingModule: KaLibraryModule "Library main"
     deprecationStatus: null
   returnType: KaUsualClassType:
     annotations: []
@@ -632,7 +632,7 @@ KaKotlinPropertySymbol:
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(I.class)
       getContainingJvmClassName: null
-      getContainingModule: KtLibraryModule "Library main"
+      getContainingModule: KaLibraryModule "Library main"
       deprecationStatus: null
     receiverParameter: KaReceiverParameterSymbol:
       annotations: []
@@ -644,7 +644,7 @@ KaKotlinPropertySymbol:
         typeArguments: []
         type: kotlin/Int
       getContainingFileSymbol: KaFileSymbol(I.class)
-      getContainingModule: KtLibraryModule "Library main"
+      getContainingModule: KaLibraryModule "Library main"
       deprecationStatus: null
     returnType: KaUsualClassType:
       annotations: []
@@ -674,7 +674,7 @@ KaKotlinPropertySymbol:
         typeParameters: []
         getContainingFileSymbol: KaFileSymbol(I.class)
         getContainingJvmClassName: null
-        getContainingModule: KtLibraryModule "Library main"
+        getContainingModule: KaLibraryModule "Library main"
         deprecationStatus: null
     ]
     visibility: Public
@@ -684,7 +684,7 @@ KaKotlinPropertySymbol:
       type: I
     getContainingFileSymbol: KaFileSymbol(I.class)
     getContainingJvmClassName: I
-    getContainingModule: KtLibraryModule "Library main"
+    getContainingModule: KaLibraryModule "Library main"
     deprecationStatus: null
   typeParameters: []
   visibility: Public
@@ -694,7 +694,7 @@ KaKotlinPropertySymbol:
     type: I
   getContainingFileSymbol: KaFileSymbol(I.class)
   getContainingJvmClassName: I
-  getContainingModule: KtLibraryModule "Library main"
+  getContainingModule: KaLibraryModule "Library main"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getZoo
@@ -733,7 +733,7 @@ KaFunctionSymbol:
       typeArguments: []
       type: kotlin/Int
     getContainingFileSymbol: KaFileSymbol(I.class)
-    getContainingModule: KtLibraryModule "Library main"
+    getContainingModule: KaLibraryModule "Library main"
     deprecationStatus: null
   returnType: KaUsualClassType:
     annotations: []
@@ -748,7 +748,7 @@ KaFunctionSymbol:
     type: I
   getContainingFileSymbol: KaFileSymbol(I.class)
   getContainingJvmClassName: I
-  getContainingModule: KtLibraryModule "Library main"
+  getContainingModule: KaLibraryModule "Library main"
   deprecationStatus: null
 
 KaConstructorSymbol:
@@ -792,11 +792,11 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(I.class)
       getContainingJvmClassName: I
-      getContainingModule: KtLibraryModule "Library main"
+      getContainingModule: KaLibraryModule "Library main"
       deprecationStatus: null
   ]
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(I.class)
   getContainingJvmClassName: I
-  getContainingModule: KtLibraryModule "Library main"
+  getContainingModule: KaLibraryModule "Library main"
   deprecationStatus: null

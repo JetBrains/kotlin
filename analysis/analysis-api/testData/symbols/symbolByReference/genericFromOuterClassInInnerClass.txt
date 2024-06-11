@@ -37,5 +37,5 @@ KaFunctionSymbol:
     type: test/TopLevel.Base<T, Outer>
   getContainingFileSymbol: KaFileSymbol(genericFromOuterClassInInnerClass.kt)
   getContainingJvmClassName: test.TopLevel.Base
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

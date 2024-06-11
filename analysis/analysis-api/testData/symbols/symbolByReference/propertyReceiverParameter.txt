@@ -14,5 +14,5 @@ KaReceiverParameterSymbol:
     typeArguments: []
     type: @R|ReceiverTypeAnnotation|()  kotlin/Long
   getContainingFileSymbol: KaFileSymbol(propertyReceiverParameter.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

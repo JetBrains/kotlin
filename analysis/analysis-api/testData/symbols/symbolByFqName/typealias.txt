@@ -29,5 +29,5 @@ KaTypeAliasSymbol:
   typeParameters: []
   visibility: Private
   getContainingFileSymbol: null
-  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null

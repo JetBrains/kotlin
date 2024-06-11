@@ -8,5 +8,5 @@ KaDestructuringDeclarationSymbol:
   origin: SOURCE
   typeParameters: []
   getContainingFileSymbol: KaFileSymbol(destructuringDeclarationInLambda.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

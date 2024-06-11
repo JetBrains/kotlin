@@ -36,7 +36,7 @@ KaFunctionSymbol:
                   typeParameters: []
                   getContainingFileSymbol: KaFileSymbol(isInstancePredicateContract.kt)
                   getContainingJvmClassName: IsInstancePredicateContractKt
-                  getContainingModule: KtSourceModule "Sources of main"
+                  getContainingModule: KaSourceModule "Sources of main"
                   deprecationStatus: null
           type:
             KaUsualClassType:
@@ -91,11 +91,11 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(isInstancePredicateContract.kt)
       getContainingJvmClassName: IsInstancePredicateContractKt
-      getContainingModule: KtSourceModule "Sources of main"
+      getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(isInstancePredicateContract.kt)
   getContainingJvmClassName: IsInstancePredicateContractKt
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

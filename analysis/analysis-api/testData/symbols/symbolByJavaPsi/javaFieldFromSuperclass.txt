@@ -21,5 +21,5 @@ KaJavaFieldSymbol:
     type: SuperClass
   getContainingFileSymbol: null
   getContainingJvmClassName: SuperClass
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

@@ -36,7 +36,7 @@ KaFunctionSymbol:
       typeArguments: []
       type: @R|ReceiverTypeAnnotation|()  kotlin/Int
     getContainingFileSymbol: KaFileSymbol(functionReceiverParameter.kt)
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
     annotations: []
@@ -47,5 +47,5 @@ KaFunctionSymbol:
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(functionReceiverParameter.kt)
   getContainingJvmClassName: FunctionReceiverParameterKt
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

@@ -54,13 +54,13 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(simpleScriptWithResultDeclaration.kts)
       getContainingJvmClassName: null
-      getContainingModule: KtScriptModule "Script simpleScriptWithResultDeclaration.kts"
+      getContainingModule: KaScriptModule "Script simpleScriptWithResultDeclaration.kts"
       deprecationStatus: null
   ]
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(simpleScriptWithResultDeclaration.kts)
   getContainingJvmClassName: null
-  getContainingModule: KtScriptModule "Script simpleScriptWithResultDeclaration.kts"
+  getContainingModule: KaScriptModule "Script simpleScriptWithResultDeclaration.kts"
   deprecationStatus: null
 
 KaKotlinPropertySymbol:
@@ -91,7 +91,7 @@ KaKotlinPropertySymbol:
     visibility: Public
     getContainingFileSymbol: KaFileSymbol(simpleScriptWithResultDeclaration.kts)
     getContainingJvmClassName: null
-    getContainingModule: KtScriptModule "Script simpleScriptWithResultDeclaration.kts"
+    getContainingModule: KaScriptModule "Script simpleScriptWithResultDeclaration.kts"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -121,7 +121,7 @@ KaKotlinPropertySymbol:
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(simpleScriptWithResultDeclaration.kts)
   getContainingJvmClassName: null
-  getContainingModule: KtScriptModule "Script simpleScriptWithResultDeclaration.kts"
+  getContainingModule: KaScriptModule "Script simpleScriptWithResultDeclaration.kts"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: get$$result

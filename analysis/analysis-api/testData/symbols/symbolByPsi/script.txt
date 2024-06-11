@@ -30,7 +30,7 @@ KaFunctionSymbol:
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(script.kts)
   getContainingJvmClassName: null
-  getContainingModule: KtScriptModule "Script script.kts"
+  getContainingModule: KaScriptModule "Script script.kts"
   deprecationStatus: null
 
 KaKotlinPropertySymbol:
@@ -52,7 +52,7 @@ KaKotlinPropertySymbol:
     typeParameters: []
     getContainingFileSymbol: KaFileSymbol(script.kts)
     getContainingJvmClassName: null
-    getContainingModule: KtScriptModule "Script script.kts"
+    getContainingModule: KaScriptModule "Script script.kts"
     deprecationStatus: null
   callableId: /b
   contextReceivers: []
@@ -79,7 +79,7 @@ KaKotlinPropertySymbol:
     visibility: Public
     getContainingFileSymbol: KaFileSymbol(script.kts)
     getContainingJvmClassName: null
-    getContainingModule: KtScriptModule "Script script.kts"
+    getContainingModule: KaScriptModule "Script script.kts"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -109,7 +109,7 @@ KaKotlinPropertySymbol:
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(script.kts)
   getContainingJvmClassName: null
-  getContainingModule: KtScriptModule "Script script.kts"
+  getContainingModule: KaScriptModule "Script script.kts"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getB
@@ -152,7 +152,7 @@ KaFunctionSymbol:
     type: C
   getContainingFileSymbol: KaFileSymbol(script.kts)
   getContainingJvmClassName: C
-  getContainingModule: KtScriptModule "Script script.kts"
+  getContainingModule: KaScriptModule "Script script.kts"
   deprecationStatus: null
 
 KaKotlinPropertySymbol:
@@ -174,7 +174,7 @@ KaKotlinPropertySymbol:
     typeParameters: []
     getContainingFileSymbol: KaFileSymbol(script.kts)
     getContainingJvmClassName: C
-    getContainingModule: KtScriptModule "Script script.kts"
+    getContainingModule: KaScriptModule "Script script.kts"
     deprecationStatus: null
   callableId: /C.prop
   contextReceivers: []
@@ -205,7 +205,7 @@ KaKotlinPropertySymbol:
       type: C
     getContainingFileSymbol: KaFileSymbol(script.kts)
     getContainingJvmClassName: C
-    getContainingModule: KtScriptModule "Script script.kts"
+    getContainingModule: KaScriptModule "Script script.kts"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -239,7 +239,7 @@ KaKotlinPropertySymbol:
     type: C
   getContainingFileSymbol: KaFileSymbol(script.kts)
   getContainingJvmClassName: C
-  getContainingModule: KtScriptModule "Script script.kts"
+  getContainingModule: KaScriptModule "Script script.kts"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getProp
@@ -272,7 +272,7 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(script.kts)
-  getContainingModule: KtScriptModule "Script script.kts"
+  getContainingModule: KaScriptModule "Script script.kts"
   annotationApplicableTargets: null
   deprecationStatus: null
 
@@ -283,5 +283,5 @@ KaScriptSymbol:
   origin: SOURCE
   typeParameters: []
   getContainingFileSymbol: KaFileSymbol(script.kts)
-  getContainingModule: KtScriptModule "Script script.kts"
+  getContainingModule: KaScriptModule "Script script.kts"
   deprecationStatus: null

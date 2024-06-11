@@ -54,13 +54,13 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.CollectionsKt
-      getContainingModule: KtLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
       deprecationStatus: null
   ]
   visibility: Public
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.collections.CollectionsKt
-  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -104,7 +104,7 @@ KaFunctionSymbol:
   visibility: Public
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.collections.CollectionsKt
-  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
 KaFunctionSymbol:
@@ -163,11 +163,11 @@ KaFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.CollectionsKt
-      getContainingModule: KtLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
       deprecationStatus: null
   ]
   visibility: Public
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.collections.CollectionsKt
-  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null

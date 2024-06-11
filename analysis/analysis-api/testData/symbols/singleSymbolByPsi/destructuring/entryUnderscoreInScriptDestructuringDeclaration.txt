@@ -26,7 +26,7 @@ KaKotlinPropertySymbol:
     visibility: Public
     getContainingFileSymbol: KaFileSymbol(entryUnderscoreInScriptDestructuringDeclaration.kts)
     getContainingJvmClassName: null
-    getContainingModule: KtScriptModule "Script entryUnderscoreInScriptDestructuringDeclaration.kts"
+    getContainingModule: KaScriptModule "Script entryUnderscoreInScriptDestructuringDeclaration.kts"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -56,7 +56,7 @@ KaKotlinPropertySymbol:
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(entryUnderscoreInScriptDestructuringDeclaration.kts)
   getContainingJvmClassName: null
-  getContainingModule: KtScriptModule "Script entryUnderscoreInScriptDestructuringDeclaration.kts"
+  getContainingModule: KaScriptModule "Script entryUnderscoreInScriptDestructuringDeclaration.kts"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: Could not render due to java.lang.IllegalStateException: not identifier: <unused var>

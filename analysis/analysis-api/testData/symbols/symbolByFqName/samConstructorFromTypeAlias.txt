@@ -41,10 +41,10 @@ KaSamConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(samConstructorFromTypeAlias.kt)
       getContainingJvmClassName: one.SamConstructorFromTypeAliasKt
-      getContainingModule: KtSourceModule "Sources of main"
+      getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
   getContainingFileSymbol: KaFileSymbol(samConstructorFromTypeAlias.kt)
   getContainingJvmClassName: one.SamConstructorFromTypeAliasKt
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
