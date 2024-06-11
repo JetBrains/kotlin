@@ -25,7 +25,10 @@ abstract class AbstractFieldConfigurator<T : AbstractFirTreeBuilder>(private val
 
         fun generateBooleanFields(vararg names: String) {
             names.forEach {
-                +booleanField(if (it.startsWith("is") || it.startsWith("has")) it else "is${it.replaceFirstChar(Char::uppercaseChar)}")
+                +field(
+                    if (it.startsWith("is") || it.startsWith("has")) it else "is${it.replaceFirstChar(Char::uppercaseChar)}",
+                    StandardTypes.boolean
+                )
             }
         }
 
@@ -68,5 +71,11 @@ abstract class AbstractFieldConfigurator<T : AbstractFirTreeBuilder>(private val
     fun configure(init: T.() -> Unit) {
         builder.init()
         builder.applyConfigurations()
+    }
+
+    companion object {
+        val int = StandardTypes.int
+        val string = StandardTypes.string
+        val boolean = StandardTypes.boolean
     }
 }

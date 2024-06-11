@@ -34,18 +34,6 @@ fun field(
     return field(name, type, nullable, withReplace, isChild)
 }
 
-fun booleanField(name: String, withReplace: Boolean = false): Field {
-    return field(name, StandardTypes.boolean, withReplace = withReplace)
-}
-
-fun stringField(name: String, nullable: Boolean = false): Field {
-    return field(name, StandardTypes.string, nullable = nullable)
-}
-
-fun intField(name: String, withReplace: Boolean = false): Field {
-    return field(name, StandardTypes.int, withReplace = withReplace)
-}
-
 // ----------- Field list -----------
 
 fun fieldList(
