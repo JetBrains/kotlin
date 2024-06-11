@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.CreateDataFrameDslImplApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PluginDataFrameSchema
 
 fun KotlinTypeFacade.analyzeRefinedCallShape(call: FirFunctionCall, reporter: InterpretationErrorReporter): CallResult? {
@@ -43,17 +44,17 @@ fun KotlinTypeFacade.analyzeRefinedCallShape(call: FirFunctionCall, reporter: In
                 val lambda = (list.arguments.singleOrNull() as? FirAnonymousFunctionExpression)?.anonymousFunction
                 val statements = lambda?.body?.statements
                 if (statements != null) {
-                    val receiver = CreateDataFrameConfiguration()
-                    statements.filterIsInstance<FirFunctionCall>().forEach { call ->
-                        val schemaProcessor = call.loadInterpreter() ?: return@forEach
+                    val receiver = CreateDataFrameDslImplApproximation()
+                    statements.filterIsInstance<FirFunctionCall>().forEach {
+                        val schemaProcessor = it.loadInterpreter() ?: return@forEach
                         interpret(
-                            call,
+                            it,
                             schemaProcessor,
-                            mapOf("dsl" to Interpreter.Success(receiver)),
+                            mapOf("dsl" to Interpreter.Success(receiver), "call" to Interpreter.Success(call)),
                             reporter
                         )
                     }
-                    toDataFrame(receiver.maxDepth, call, receiver.traverseConfiguration)
+                    PluginDataFrameSchema(receiver.columns)
                 } else {
                     PluginDataFrameSchema(emptyList())
                 }

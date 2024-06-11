@@ -67,6 +67,7 @@ import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameFrom
 
 internal fun FirFunctionCall.loadInterpreter(session: FirSession): Interpreter<*>? {
     val symbol =
@@ -159,6 +160,7 @@ internal inline fun <reified T> String.load(): T {
         "ReadJsonStr" -> ReadJsonStr()
         "ReadDelimStr" -> ReadDelimStr()
         "GroupByToDataFrame" -> GroupByToDataFrame()
+        "ToDataFrameFrom0" -> ToDataFrameFrom()
         else -> error("$this")
     } as T
 }

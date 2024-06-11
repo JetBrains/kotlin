@@ -1,0 +1,233 @@
+FILE fqName:<root> fileName:/toDataFrame_from.kt
+  CLASS CLASS name:S modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.S
+    PROPERTY name:str visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'str: kotlin.String declared in <root>.S.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-str> visibility:public modality:FINAL <> ($this:<root>.S) returnType:kotlin.String
+        correspondingProperty: PROPERTY name:str visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.S
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-str> (): kotlin.String declared in <root>.S'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.S declared in <root>.S.<get-str>' type=<root>.S origin=null
+    CONSTRUCTOR visibility:public <> (str:kotlin.String) returnType:<root>.S [primary]
+      VALUE_PARAMETER name:str index:0 type:kotlin.String
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:S modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:res type:org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.S_94> [val]
+        CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.S_94> origin=null
+          <T>: kotlin.collections.List<<root>.S>
+          <R>: org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.S_94>
+          $receiver: CALL 'public final fun listOf <T> (element: T of kotlin.collections.listOf): kotlin.collections.List<T of kotlin.collections.listOf> declared in kotlin.collections' type=kotlin.collections.List<<root>.S> origin=null
+            <T>: <root>.S
+            element: CONSTRUCTOR_CALL 'public constructor <init> (str: kotlin.String) declared in <root>.S' type=<root>.S origin=null
+              str: CONST String type=kotlin.String value="123"
+          block: FUN_EXPR type=kotlin.Function1<kotlin.collections.List<<root>.S>, org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.S_94>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.collections.List<<root>.S>) returnType:org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.S_94>
+              VALUE_PARAMETER name:it index:0 type:kotlin.collections.List<<root>.S>
+              BLOCK_BODY
+                CLASS CLASS name:S_94I modality:ABSTRACT visibility:local superTypes:[kotlin.Any]
+                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.<anonymous>.S_94I
+                  CONSTRUCTOR GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] visibility:public <> () returnType:<root>.box.<anonymous>.S_94I [primary]
+                    BLOCK_BODY
+                      DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:S_94I modality:ABSTRACT visibility:local superTypes:[kotlin.Any]'
+                  FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+                    overridden:
+                      public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+                    $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+                    VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+                  FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+                    overridden:
+                      public open fun hashCode (): kotlin.Int declared in kotlin.Any
+                    $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+                  FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+                    overridden:
+                      public open fun toString (): kotlin.String declared in kotlin.Any
+                    $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:col visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 1)
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-col> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.S_94I) returnType:kotlin.String
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:col visibility:public modality:ABSTRACT [val]
+                      $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.S_94I
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:str visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 0)
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-str> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.S_94I) returnType:kotlin.String
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:str visibility:public modality:ABSTRACT [val]
+                      $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.S_94I
+                CLASS CLASS name:Scope0 modality:FINAL visibility:local superTypes:[kotlin.Any]
+                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.<anonymous>.Scope0
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:str visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:str type:kotlin.String visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-str> visibility:public modality:FINAL <> ($this:<root>.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<<root>.box.<anonymous>.S_94I>) returnType:kotlin.String
+                      annotations:
+                        JvmName(name = "S_94I_str")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:str visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.Scope0
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<<root>.box.<anonymous>.S_94I>
+                      BLOCK_BODY
+                        RETURN type=kotlin.String from='public final fun <get-str> (): kotlin.String declared in <root>.box.<anonymous>.Scope0'
+                          TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
+                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<<root>.box.<anonymous>.S_94I> declared in <root>.box.<anonymous>.Scope0.<get-str>' type=org.jetbrains.kotlinx.dataframe.DataRow<<root>.box.<anonymous>.S_94I> origin=null
+                              name: CONST String type=kotlin.String value="str"
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:str visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:str type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-str> visibility:public modality:FINAL <> ($this:<root>.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.box.<anonymous>.S_94I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
+                      annotations:
+                        JvmName(name = "S_94I_str")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:str visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.Scope0
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.box.<anonymous>.S_94I>
+                      BLOCK_BODY
+                        RETURN type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> from='public final fun <get-str> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> declared in <root>.box.<anonymous>.Scope0'
+                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.box.<anonymous>.S_94I> declared in <root>.box.<anonymous>.Scope0.<get-str>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.box.<anonymous>.S_94I> origin=null
+                              columnName: CONST String type=kotlin.String value="str"
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:col visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:col type:kotlin.String visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-col> visibility:public modality:FINAL <> ($this:<root>.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<<root>.box.<anonymous>.S_94I>) returnType:kotlin.String
+                      annotations:
+                        JvmName(name = "S_94I_col")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:col visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.Scope0
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<<root>.box.<anonymous>.S_94I>
+                      BLOCK_BODY
+                        RETURN type=kotlin.String from='public final fun <get-col> (): kotlin.String declared in <root>.box.<anonymous>.Scope0'
+                          TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
+                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<<root>.box.<anonymous>.S_94I> declared in <root>.box.<anonymous>.Scope0.<get-col>' type=org.jetbrains.kotlinx.dataframe.DataRow<<root>.box.<anonymous>.S_94I> origin=null
+                              name: CONST String type=kotlin.String value="col"
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:col visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:col type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:<get-col> visibility:public modality:FINAL <> ($this:<root>.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.box.<anonymous>.S_94I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
+                      annotations:
+                        JvmName(name = "S_94I_col")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] name:col visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.Scope0
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.box.<anonymous>.S_94I>
+                      BLOCK_BODY
+                        RETURN type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> from='public final fun <get-col> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> declared in <root>.box.<anonymous>.Scope0'
+                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.box.<anonymous>.S_94I> declared in <root>.box.<anonymous>.Scope0.<get-col>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.box.<anonymous>.S_94I> origin=null
+                              columnName: CONST String type=kotlin.String value="col"
+                  CONSTRUCTOR GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] visibility:public <> () returnType:<root>.box.<anonymous>.Scope0 [primary]
+                    BLOCK_BODY
+                      DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Scope0 modality:FINAL visibility:local superTypes:[kotlin.Any]'
+                  FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+                    overridden:
+                      public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+                    $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+                    VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+                  FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+                    overridden:
+                      public open fun hashCode (): kotlin.Int declared in kotlin.Any
+                    $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+                  FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+                    overridden:
+                      public open fun toString (): kotlin.String declared in kotlin.Any
+                    $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+                CLASS CLASS name:S_94 modality:ABSTRACT visibility:local superTypes:[<root>.box.<anonymous>.S_94I]
+                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.box.<anonymous>.S_94
+                  CONSTRUCTOR GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.DataFramePlugin] visibility:public <> () returnType:<root>.box.<anonymous>.S_94 [primary]
+                    BLOCK_BODY
+                      DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.box.<anonymous>.S_94I'
+                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:S_94 modality:ABSTRACT visibility:local superTypes:[<root>.box.<anonymous>.S_94I]'
+                  FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+                    overridden:
+                      public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.box.<anonymous>.S_94I
+                    $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+                    VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+                  FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+                    overridden:
+                      public open fun hashCode (): kotlin.Int declared in <root>.box.<anonymous>.S_94I
+                    $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+                  FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+                    overridden:
+                      public open fun toString (): kotlin.String declared in <root>.box.<anonymous>.S_94I
+                    $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+                  PROPERTY FAKE_OVERRIDE name:col visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 1)
+                    overridden:
+                      public abstract col: kotlin.String declared in <root>.box.<anonymous>.S_94I
+                    FUN FAKE_OVERRIDE name:<get-col> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.S_94I) returnType:kotlin.String [fake_override]
+                      correspondingProperty: PROPERTY FAKE_OVERRIDE name:col visibility:public modality:ABSTRACT [fake_override,val]
+                      overridden:
+                        public abstract fun <get-col> (): kotlin.String declared in <root>.box.<anonymous>.S_94I
+                      $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.S_94I
+                  PROPERTY FAKE_OVERRIDE name:str visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 0)
+                    overridden:
+                      public abstract str: kotlin.String declared in <root>.box.<anonymous>.S_94I
+                    FUN FAKE_OVERRIDE name:<get-str> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.S_94I) returnType:kotlin.String [fake_override]
+                      correspondingProperty: PROPERTY FAKE_OVERRIDE name:str visibility:public modality:ABSTRACT [fake_override,val]
+                      overridden:
+                        public abstract fun <get-str> (): kotlin.String declared in <root>.box.<anonymous>.S_94I
+                      $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.S_94I
+                  PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.S_94) returnType:<root>.box.<anonymous>.Scope0
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                      $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.S_94
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.S_94, <set-?>:<root>.box.<anonymous>.Scope0) returnType:kotlin.Unit
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                      $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.S_94
+                      VALUE_PARAMETER name:<set-?> index:0 type:<root>.box.<anonymous>.Scope0
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.collections.List<<root>.S>): org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.S_94> declared in <root>.box'
+                  CALL 'public final fun toDataFrame <T> (body: @[ExtensionFunctionType] kotlin.Function1<org.jetbrains.kotlinx.dataframe.api.CreateDataFrameDsl<T of org.jetbrains.kotlinx.dataframe.api.toDataFrame>, kotlin.Unit>): org.jetbrains.kotlinx.dataframe.DataFrame<T of org.jetbrains.kotlinx.dataframe.api.toDataFrame> declared in org.jetbrains.kotlinx.dataframe.api' type=org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.S_94> origin=null
+                    <T>: <root>.S
+                    $receiver: GET_VAR 'it: kotlin.collections.List<<root>.S> declared in <root>.box.<anonymous>' type=kotlin.collections.List<<root>.S> origin=null
+                    body: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<org.jetbrains.kotlinx.dataframe.api.CreateDataFrameDsl<<root>.S>, kotlin.Unit> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:org.jetbrains.kotlinx.dataframe.api.CreateDataFrameDsl<<root>.S>) returnType:kotlin.Unit
+                        $receiver: VALUE_PARAMETER name:$this$toDataFrame type:org.jetbrains.kotlinx.dataframe.api.CreateDataFrameDsl<<root>.S>
+                        BLOCK_BODY
+                          CALL 'public abstract fun properties (vararg roots: kotlin.reflect.KCallable<*>, maxDepth: kotlin.Int, body: @[ExtensionFunctionType] kotlin.Function1<org.jetbrains.kotlinx.dataframe.api.TraversePropertiesDsl, kotlin.Unit>?): kotlin.Unit declared in org.jetbrains.kotlinx.dataframe.api.CreateDataFrameDsl' type=kotlin.Unit origin=null
+                            $this: GET_VAR '$this$toDataFrame: org.jetbrains.kotlinx.dataframe.api.CreateDataFrameDsl<<root>.S> declared in <root>.box.<anonymous>.<anonymous>' type=org.jetbrains.kotlinx.dataframe.api.CreateDataFrameDsl<<root>.S> origin=null
+                            maxDepth: CONST Int type=kotlin.Int value=1
+                          CALL 'public final fun from <R> (expression: kotlin.Function1<T of org.jetbrains.kotlinx.dataframe.api.CreateDataFrameDsl, R of org.jetbrains.kotlinx.dataframe.api.CreateDataFrameDsl.from>): kotlin.Unit declared in org.jetbrains.kotlinx.dataframe.api.CreateDataFrameDsl' type=kotlin.Unit origin=null
+                            <R>: kotlin.String
+                            $this: GET_VAR '$this$toDataFrame: org.jetbrains.kotlinx.dataframe.api.CreateDataFrameDsl<<root>.S> declared in <root>.box.<anonymous>.<anonymous>' type=org.jetbrains.kotlinx.dataframe.api.CreateDataFrameDsl<<root>.S> origin=null
+                            $receiver: CONST String type=kotlin.String value="col"
+                            expression: FUN_EXPR type=kotlin.Function1<<root>.S, kotlin.String> origin=LAMBDA
+                              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<root>.S) returnType:kotlin.String
+                                VALUE_PARAMETER name:it index:0 type:<root>.S
+                                BLOCK_BODY
+                                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: <root>.S): kotlin.String declared in <root>.box.<anonymous>.<anonymous>'
+                                    CALL 'public final fun <get-str> (): kotlin.String declared in <root>.S' type=kotlin.String origin=GET_PROPERTY
+                                      $this: GET_VAR 'it: <root>.S declared in <root>.box.<anonymous>.<anonymous>.<anonymous>' type=<root>.S origin=null
+      CALL 'public final fun print <T> (): kotlin.Unit declared in org.jetbrains.kotlinx.dataframe.api' type=kotlin.Unit origin=null
+        <T>: kotlin.String
+        $receiver: CALL 'public final fun <get-col> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> declared in <root>.box.<anonymous>.Scope0' type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> origin=GET_PROPERTY
+          $this: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.box.<anonymous>.Scope0' type=<root>.box.<anonymous>.Scope0 origin=null
+          $receiver: GET_VAR 'val res: org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.S_94> declared in <root>.box' type=org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.S_94> origin=null
+      CALL 'public final fun print <T> (): kotlin.Unit declared in org.jetbrains.kotlinx.dataframe.api' type=kotlin.Unit origin=null
+        <T>: kotlin.String
+        $receiver: CALL 'public final fun <get-str> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> declared in <root>.box.<anonymous>.Scope0' type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> origin=GET_PROPERTY
+          $this: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.box.<anonymous>.Scope0' type=<root>.box.<anonymous>.Scope0 origin=null
+          $receiver: GET_VAR 'val res: org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.S_94> declared in <root>.box' type=org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.S_94> origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"

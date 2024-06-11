@@ -86,6 +86,10 @@ fun <T> KotlinTypeFacade.interpret(
 
     val defaultArguments = processor.expectedArguments.filter { it.defaultValue is Present }.map { it.name }.toSet()
     val actualArgsMap = refinedArguments.associateBy { it.name.identifier }.toSortedMap()
+    val conflictingKeys = additionalArguments.keys intersect actualArgsMap.keys
+    if (conflictingKeys.isNotEmpty()) {
+        error("Conflicting keys: $conflictingKeys")
+    }
     val expectedArgsMap = processor.expectedArguments
         .filterNot { it.name.startsWith("typeArg") }
         .associateBy { it.name }.toSortedMap().minus(additionalArguments.keys)

@@ -48,16 +48,21 @@ import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractInterpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
 import org.jetbrains.kotlinx.dataframe.plugin.impl.Interpreter
+import org.jetbrains.kotlinx.dataframe.plugin.impl.Present
+import org.jetbrains.kotlinx.dataframe.plugin.impl.type
 import java.util.*
 
 class Properties0 : AbstractInterpreter<Unit>() {
-    val Arguments.dsl: CreateDataFrameConfiguration by arg()
+    val Arguments.dsl: CreateDataFrameDslImplApproximation by arg()
+    val Arguments.call: FirFunctionCall by arg()
     val Arguments.maxDepth: Int by arg()
-    val Arguments.body: (Any) -> Unit by arg(lens = Interpreter.Dsl)
+    val Arguments.body: (Any) -> Unit by arg(lens = Interpreter.Dsl, defaultValue = Present(value = {}))
 
     override fun Arguments.interpret() {
-        dsl.maxDepth = maxDepth
-        body(dsl.traverseConfiguration)
+        dsl.configuration.maxDepth = maxDepth
+        body(dsl.configuration.traverseConfiguration)
+        val schema = toDataFrame(dsl.configuration.maxDepth, call, dsl.configuration.traverseConfiguration)
+        dsl.columns.addAll(schema.columns())
     }
 }
 
@@ -236,5 +241,19 @@ internal fun KotlinTypeFacade.toDataFrame(
             val columns = convert(classLike, 0)
             PluginDataFrameSchema(columns)
         }
+    }
+}
+
+class CreateDataFrameDslImplApproximation {
+    val configuration: CreateDataFrameConfiguration = CreateDataFrameConfiguration()
+    val columns: MutableList<SimpleCol> = mutableListOf()
+}
+
+class ToDataFrameFrom : AbstractInterpreter<Unit>() {
+    val Arguments.dsl: CreateDataFrameDslImplApproximation by arg()
+    val Arguments.receiver: String by arg()
+    val Arguments.expression: TypeApproximation by type()
+    override fun Arguments.interpret() {
+        dsl.columns += simpleColumnOf(receiver, expression.type)
     }
 }
