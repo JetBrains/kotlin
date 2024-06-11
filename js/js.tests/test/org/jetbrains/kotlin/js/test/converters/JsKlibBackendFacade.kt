@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SKIP_KLIB_SERIALIZATON
 import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -34,7 +35,7 @@ class JsKlibBackendFacade(
     constructor(testServices: TestServices) : this(testServices, firstTimeCompilation = true)
 
     override fun shouldRunAnalysis(module: TestModule): Boolean {
-        return module.backendKind.afterFrontend == inputKind
+        return module.backendKind.afterFrontend == inputKind && SKIP_KLIB_SERIALIZATON !in module.directives
     }
 
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.KLib {
