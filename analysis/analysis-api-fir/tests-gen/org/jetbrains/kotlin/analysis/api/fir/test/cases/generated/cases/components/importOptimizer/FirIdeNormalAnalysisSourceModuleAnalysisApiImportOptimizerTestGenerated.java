@@ -131,6 +131,12 @@ public class FirIdeNormalAnalysisSourceModuleAnalysisApiImportOptimizerTestGener
   }
 
   @Test
+  @TestMetadata("unusedTypeAliasAsConstructor.kt")
+  public void testUnusedTypeAliasAsConstructor() {
+    runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedTypeAliasAsConstructor.kt");
+  }
+
+  @Test
   @TestMetadata("unusedTypeAliasAsTypeArgument.kt")
   public void testUnusedTypeAliasAsTypeArgument() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedTypeAliasAsTypeArgument.kt");
@@ -272,6 +278,24 @@ public class FirIdeNormalAnalysisSourceModuleAnalysisApiImportOptimizerTestGener
   @TestMetadata("usedStaticFunctionImportFromJavaChildClass.kt")
   public void testUsedStaticFunctionImportFromJavaChildClass() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedStaticFunctionImportFromJavaChildClass.kt");
+  }
+
+  @Test
+  @TestMetadata("usedTypeAliasAsConstructor.kt")
+  public void testUsedTypeAliasAsConstructor() {
+    runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedTypeAliasAsConstructor.kt");
+  }
+
+  @Test
+  @TestMetadata("usedTypeAliasAsConstructor_nested.kt")
+  public void testUsedTypeAliasAsConstructor_nested() {
+    runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedTypeAliasAsConstructor_nested.kt");
+  }
+
+  @Test
+  @TestMetadata("usedTypeAliasAsSamConstructor.kt")
+  public void testUsedTypeAliasAsSamConstructor() {
+    runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedTypeAliasAsSamConstructor.kt");
   }
 
   @Test

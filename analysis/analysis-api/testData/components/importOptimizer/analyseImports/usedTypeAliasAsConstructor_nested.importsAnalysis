@@ -1,0 +1,9 @@
+USED DECLARATIONS:
+
+Declaration: dependency.Foo
+By names: [FooAliasOne, FooAliasTwo]
+
+Declaration: kotlin.Any
+By names: [Any]
+
+UNRESOLVED NAMES:
