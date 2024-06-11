@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import kotlin.reflect.KProperty1
 import kotlin.reflect.KVisibility
+import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
 
 @OptIn(KaAnalysisApiInternals::class)
@@ -114,20 +115,24 @@ internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
             val clazz = this@with::class
             val className = clazz.simpleName
             append(className)
-            clazz.memberProperties.filter { it.name != "token" && it.visibility == KVisibility.PUBLIC }.ifNotEmpty {
-                joinTo(this@buildString, separator = "\n  ", prefix = ":\n  ") { property ->
-                    val name = property.name
+            clazz.memberProperties
+                .filter {
+                    it.name != "token" && it.visibility == KVisibility.PUBLIC && !it.hasAnnotation<Deprecated>()
+                }.ifNotEmpty {
+                    joinTo(this@buildString, separator = "\n  ", prefix = ":\n  ") { property ->
+                        val name = property.name
 
-                    @Suppress("UNCHECKED_CAST")
-                    val value = (property as KProperty1<Any, *>).get(this@with)?.let {
-                        if (className == "KaErrorCallInfo" && name == "candidateCalls") {
-                            sortedCalls(it as Collection<KaCall>)
-                        } else it
+                        @Suppress("UNCHECKED_CAST")
+                        val value = (property as KProperty1<Any, *>).get(this@with)?.let {
+                            if (className == "KaErrorCallInfo" && name == "candidateCalls") {
+                                sortedCalls(it as Collection<KaCall>)
+                            } else it
+                        }
+
+                        val valueAsString = value?.let { stringRepresentation(it).indented() }
+                        "$name = $valueAsString"
                     }
-                    val valueAsString = value?.let { stringRepresentation(it).indented() }
-                    "$name = $valueAsString"
                 }
-            }
         }
     }
 }
@@ -188,7 +193,11 @@ internal fun KaSession.sortedCalls(collection: Collection<KaCall>): Collection<K
 }
 
 internal fun KaCall.symbols(): List<KaSymbol> = when (this) {
-    is KaCompoundVariableAccessCall -> listOfNotNull(symbol, compoundAccess.operationPartiallyAppliedSymbol.symbol)
+    is KaCompoundVariableAccessCall -> listOfNotNull(
+        variablePartiallyAppliedSymbol.symbol,
+        compoundAccess.operationPartiallyAppliedSymbol.symbol,
+    )
+
     is KaCompoundArrayAccessCall -> listOfNotNull(
         getPartiallyAppliedSymbol.symbol,
         setPartiallyAppliedSymbol.symbol,

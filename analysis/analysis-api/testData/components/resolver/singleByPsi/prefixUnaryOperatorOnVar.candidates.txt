@@ -1,6 +1,6 @@
 KtPrefixExpression(31,34): '++i'
   KaApplicableCallCandidateInfo:
-    candidate = KaCompoundVariableAccessCall:
+    candidate = KaCompoundVariableAccessCallImpl:
       compoundAccess = IncOrDecOperation:
         kind = INC
         precedence = PREFIX
@@ -16,7 +16,7 @@ KtPrefixExpression(31,34): '++i'
             symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
             callableId = kotlin/Int.inc
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -25,5 +25,4 @@ KtPrefixExpression(31,34): '++i'
           returnType = kotlin.Int
           symbol = var i: kotlin.Int
           callableId = null
-      typeArgumentsMapping = {}
     isInBestCandidates = true

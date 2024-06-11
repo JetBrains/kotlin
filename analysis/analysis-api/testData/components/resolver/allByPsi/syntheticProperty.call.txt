@@ -250,7 +250,7 @@ KtConstantExpression(131,132): '1'
 
 KtBinaryExpression(137,161): 'javaClass.something += 1'
   KaSuccessCallInfo:
-    call = KaCompoundVariableAccessCall:
+    call = KaCompoundVariableAccessCallImpl:
       compoundAccess = CompoundAssign:
         kind = PLUS_ASSIGN
         operand = 1
@@ -273,7 +273,7 @@ KtBinaryExpression(137,161): 'javaClass.something += 1'
                 callableId = null
             ]
             callableId = kotlin/Int.plus
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
           expression = javaClass
           isSafeNavigation = false
@@ -285,7 +285,6 @@ KtBinaryExpression(137,161): 'javaClass.something += 1'
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
           callableId = /JavaClass.something
-      typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(137,156): 'javaClass.something'
   KaSuccessCallInfo:
@@ -362,7 +361,7 @@ KtConstantExpression(160,161): '1'
 
 KtPostfixExpression(166,187): 'javaClass.something++'
   KaSuccessCallInfo:
-    call = KaCompoundVariableAccessCall:
+    call = KaCompoundVariableAccessCallImpl:
       compoundAccess = IncOrDecOperation:
         kind = INC
         precedence = POSTFIX
@@ -378,7 +377,7 @@ KtPostfixExpression(166,187): 'javaClass.something++'
             symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
             callableId = kotlin/Int.inc
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
           expression = javaClass
           isSafeNavigation = false
@@ -390,7 +389,6 @@ KtPostfixExpression(166,187): 'javaClass.something++'
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
           callableId = /JavaClass.something
-      typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(166,185): 'javaClass.something'
   KaSuccessCallInfo:
@@ -464,7 +462,7 @@ KtOperationReferenceExpression(185,187): '++'
 
 KtPrefixExpression(192,213): '--javaClass.something'
   KaSuccessCallInfo:
-    call = KaCompoundVariableAccessCall:
+    call = KaCompoundVariableAccessCallImpl:
       compoundAccess = IncOrDecOperation:
         kind = DEC
         precedence = PREFIX
@@ -480,7 +478,7 @@ KtPrefixExpression(192,213): '--javaClass.something'
             symbol = kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
             callableId = kotlin/Int.dec
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
           expression = javaClass
           isSafeNavigation = false
@@ -492,7 +490,6 @@ KtPrefixExpression(192,213): '--javaClass.something'
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
           callableId = /JavaClass.something
-      typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(192,194): '--'
   KaSuccessCallInfo:
@@ -567,7 +564,7 @@ KtNameReferenceExpression(204,213): 'something'
 
 KtPostfixExpression(219,230): 'something++'
   KaSuccessCallInfo:
-    call = KaCompoundVariableAccessCall:
+    call = KaCompoundVariableAccessCallImpl:
       compoundAccess = IncOrDecOperation:
         kind = INC
         precedence = POSTFIX
@@ -583,7 +580,7 @@ KtPostfixExpression(219,230): 'something++'
             symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
             callableId = kotlin/Int.inc
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
@@ -602,7 +599,6 @@ KtPostfixExpression(219,230): 'something++'
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
           callableId = /JavaClass.something
-      typeArgumentsMapping = {}
 
 KtNameReferenceExpression(219,228): 'something'
   KaSuccessCallInfo:
@@ -650,7 +646,7 @@ KtOperationReferenceExpression(228,230): '++'
 
 KtPostfixExpression(235,248): '(something)++'
   KaSuccessCallInfo:
-    call = KaCompoundVariableAccessCall:
+    call = KaCompoundVariableAccessCallImpl:
       compoundAccess = IncOrDecOperation:
         kind = INC
         precedence = POSTFIX
@@ -666,7 +662,7 @@ KtPostfixExpression(235,248): '(something)++'
             symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
             callableId = kotlin/Int.inc
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
@@ -685,7 +681,6 @@ KtPostfixExpression(235,248): '(something)++'
           returnType = kotlin.Int
           symbol = var something: kotlin.Int
           callableId = /JavaClass.something
-      typeArgumentsMapping = {}
 
 KtParenthesizedExpression(235,246): '(something)'
   null

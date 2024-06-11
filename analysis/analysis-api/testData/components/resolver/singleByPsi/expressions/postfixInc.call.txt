@@ -1,6 +1,6 @@
 KtPostfixExpression(138,148): 'variable++'
   KaSuccessCallInfo:
-    call = KaCompoundVariableAccessCall:
+    call = KaCompoundVariableAccessCallImpl:
       compoundAccess = IncOrDecOperation:
         kind = INC
         precedence = POSTFIX
@@ -16,7 +16,7 @@ KtPostfixExpression(138,148): 'variable++'
             symbol = /MyClass.inc(<dispatch receiver>: MyClass): MyClass
             valueParameters = []
             callableId = /MyClass.inc
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -25,4 +25,3 @@ KtPostfixExpression(138,148): 'variable++'
           returnType = MyClass
           symbol = var variable: MyClass
           callableId = /variable
-      typeArgumentsMapping = {}

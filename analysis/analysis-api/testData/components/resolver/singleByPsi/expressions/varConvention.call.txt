@@ -1,6 +1,6 @@
 KtBinaryExpression(31,37): 'i += 1'
   KaSuccessCallInfo:
-    call = KaCompoundVariableAccessCall:
+    call = KaCompoundVariableAccessCallImpl:
       compoundAccess = CompoundAssign:
         kind = PLUS_ASSIGN
         operand = 1
@@ -23,7 +23,7 @@ KtBinaryExpression(31,37): 'i += 1'
                 callableId = null
             ]
             callableId = kotlin/Int.plus
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -32,4 +32,3 @@ KtBinaryExpression(31,37): 'i += 1'
           returnType = kotlin.Int
           symbol = var i: kotlin.Int
           callableId = null
-      typeArgumentsMapping = {}

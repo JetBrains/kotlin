@@ -1,6 +1,6 @@
 KtPrefixExpression(138,148): '--variable'
   KaApplicableCallCandidateInfo:
-    candidate = KaCompoundVariableAccessCall:
+    candidate = KaCompoundVariableAccessCallImpl:
       compoundAccess = IncOrDecOperation:
         kind = DEC
         precedence = PREFIX
@@ -16,7 +16,7 @@ KtPrefixExpression(138,148): '--variable'
             symbol = /MyClass.dec(<dispatch receiver>: MyClass): MyClass
             valueParameters = []
             callableId = /MyClass.dec
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -25,5 +25,4 @@ KtPrefixExpression(138,148): '--variable'
           returnType = MyClass
           symbol = var variable: MyClass
           callableId = /variable
-      typeArgumentsMapping = {}
     isInBestCandidates = true
