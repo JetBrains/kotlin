@@ -9705,6 +9705,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("deprecationPhase1_inlineFun_privateToThis.kt")
+      public void testDeprecationPhase1_inlineFun_privateToThis() {
+        runTest("compiler/testData/diagnostics/tests/dataClassNonPublicConstructor/deprecationPhase1_inlineFun_privateToThis.kt");
+      }
+
+      @Test
       @TestMetadata("deprecationPhase1_optIn.kt")
       public void testDeprecationPhase1_optIn() {
         runTest("compiler/testData/diagnostics/tests/dataClassNonPublicConstructor/deprecationPhase1_optIn.kt");
