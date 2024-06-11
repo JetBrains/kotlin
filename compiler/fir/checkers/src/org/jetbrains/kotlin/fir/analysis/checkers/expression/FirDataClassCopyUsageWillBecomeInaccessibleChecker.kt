@@ -69,18 +69,20 @@ object FirDataClassCopyUsageWillBecomeInaccessibleChecker : FirQualifiedAccessEx
 }
 
 internal fun FirCallableSymbol<*>.isDataClassCopy(containingClass: FirClassSymbol<*>?, session: FirSession): Boolean {
-    unwrapSubstitutionOverrides().let { if (it !== this) return it.isDataClassCopy(containingClass, session) }
-    val constructor = containingClass?.primaryConstructorSymbol(session)
-    return this is FirNamedFunctionSymbol &&
-            DataClassResolver.isCopy(name) &&
-            containingClass != null &&
-            containingClass.isData &&
-            containingClass.classKind.isClass &&
-            dispatchReceiverType?.classId == containingClass.classId &&
-            resolvedReturnType.classId == containingClass.classId &&
-            constructor != null &&
-            resolvedContextReceivers.isEmpty() &&
-            typeParameterSymbols.isEmpty() &&
-            receiverParameter == null &&
-            valueParameterSymbols.map { it.isVararg to it.resolvedReturnType } == constructor.valueParameterSymbols.map { it.isVararg to it.resolvedReturnType }
+    val unwrapped = unwrapSubstitutionOverrides()
+    with(unwrapped) { // Shadow "non-normalized" this
+        val constructor = containingClass?.primaryConstructorSymbol(session)
+        return this is FirNamedFunctionSymbol &&
+                DataClassResolver.isCopy(name) &&
+                containingClass != null &&
+                containingClass.isData &&
+                containingClass.classKind.isClass &&
+                dispatchReceiverType?.classId == containingClass.classId &&
+                resolvedReturnType.classId == containingClass.classId &&
+                constructor != null &&
+                resolvedContextReceivers.isEmpty() &&
+                typeParameterSymbols.isEmpty() &&
+                receiverParameter == null &&
+                valueParameterSymbols.map { it.isVararg to it.resolvedReturnType } == constructor.valueParameterSymbols.map { it.isVararg to it.resolvedReturnType }
+    }
 }
