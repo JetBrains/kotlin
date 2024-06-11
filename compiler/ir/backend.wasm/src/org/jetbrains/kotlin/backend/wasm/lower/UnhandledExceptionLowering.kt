@@ -84,7 +84,11 @@ internal class UnhandledExceptionLowering(val context: WasmBackendContext) : Fil
                 irGet(irBooleanType, null, isNotFirstWasmExportCallGetter)
 
             val tryBody = irComposite {
-                +irSet(irBooleanType, null, isNotFirstWasmExportCallSetter, true.toIrConst(irBooleanType))
+                +irSet(
+                    isNotFirstWasmExportCallSetter.owner.returnType,
+                    null, isNotFirstWasmExportCallSetter,
+                    true.toIrConst(irBooleanType)
+                )
                 when (body) {
                     is IrBlockBody -> body.statements.forEach { +it }
                     is IrExpressionBody -> +body.expression
@@ -104,7 +108,7 @@ internal class UnhandledExceptionLowering(val context: WasmBackendContext) : Fil
 
 
             val finally = irSet(
-                type = irBooleanType,
+                type = isNotFirstWasmExportCallSetter.owner.returnType,
                 receiver = null,
                 setterSymbol = isNotFirstWasmExportCallSetter,
                 value = irGet(currentIsNotFirstWasmExportCall, irBooleanType)
