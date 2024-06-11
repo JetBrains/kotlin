@@ -33,6 +33,6 @@ class Into0 : AbstractSchemaModificationInterpreter() {
 
 fun KotlinTypeFacade.groupImpl(schema: List<SimpleCol>, paths: Set<List<String>>, into: String): PluginDataFrameSchema {
     val removeResult = removeImpl(schema, paths)
-    val grouped = removeResult.updatedColumns + SimpleColumnGroup(into, removeResult.removedColumns, anyRow)
+    val grouped = removeResult.updatedColumns + SimpleColumnGroup(into, removeResult.removedColumns)
     return PluginDataFrameSchema(grouped)
 }

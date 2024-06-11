@@ -5,6 +5,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractSchemaModificationInt
 import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
+import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnWithPathApproximation
@@ -58,7 +59,7 @@ internal fun f(columns: List<SimpleCol>, nextName: () -> String, selected: Colum
                 }
                 frame.map(selected, fullPath, nextName)
             }
-            else -> if (fullPath in selected) {
+            is SimpleDataColumn -> if (fullPath in selected) {
                 it.rename(nextName())
             } else {
                 it
@@ -70,15 +71,13 @@ internal fun f(columns: List<SimpleCol>, nextName: () -> String, selected: Colum
 internal fun SimpleColumnGroup.map(selected: ColumnsSet, path: List<String>, nextName: () -> String): SimpleColumnGroup {
     return SimpleColumnGroup(
         name,
-        f(columns(), nextName, selected, path),
-        type
+        f(columns(), nextName, selected, path)
     )
 }
 
 internal fun SimpleFrameColumn.map(selected: ColumnsSet, path: List<String>, nextName: () -> String): SimpleFrameColumn {
     return SimpleFrameColumn(
         name,
-        f(columns(), nextName, selected, path),
-        anyFrameType
+        f(columns(), nextName, selected, path)
     )
 }

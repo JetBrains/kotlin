@@ -11,7 +11,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnKind
+import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnWithPathApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
 
@@ -31,7 +31,7 @@ fun KotlinTypeFacade.fillNullsImpl(
 ): List<SimpleCol> {
     return columns.map {
         // else report?
-        if (p + it.name() in paths && it.kind() == SimpleColumnKind.VALUE) {
+        if (p + it.name() in paths && it is SimpleDataColumn) {
             val coneType = it.type.type as? ConeSimpleKotlinType
             if (coneType != null) {
                 val type = coneType.withNullability(ConeNullability.NOT_NULL, session.typeContext)
@@ -43,7 +43,7 @@ fun KotlinTypeFacade.fillNullsImpl(
         } else {
             if (it is SimpleColumnGroup) {
                 val updatedColumns = fillNullsImpl(it.columns(), paths, p + it.name())
-                SimpleColumnGroup(it.name(), updatedColumns, anyRow)
+                SimpleColumnGroup(it.name(), updatedColumns)
             } else {
                 it
             }

@@ -27,7 +27,7 @@ fun KotlinTypeFacade.ungroupImpl(schema: List<SimpleCol>, path: Set<List<String>
             if (p + it.name in path) {
                 it.columns()
             } else {
-                listOf(SimpleColumnGroup(it.name, ungroupImpl(it.columns(), path, p + it.name), anyRow))
+                listOf(SimpleColumnGroup(it.name, ungroupImpl(it.columns(), path, p + it.name)))
             }
         }
     }

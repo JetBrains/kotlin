@@ -36,6 +36,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
+import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
+import org.jetbrains.kotlinx.dataframe.plugin.impl.type
 
 class ExpressionAnalysisAdditionalChecker(
     session: FirSession,
@@ -96,6 +98,7 @@ private class Checker(val cache: FirCache<String, PluginDataFrameSchema, KotlinT
             for (target in targetColumns) {
                 val source = sourceMap[target.path.path]
                 val present = if (source != null) {
+                    if (source !is SimpleDataColumn || target.column !is SimpleDataColumn) { continue }
                     if (source.type.type().isSubtypeOf(target.column.type.type(), session)) {
                         true
                     } else {

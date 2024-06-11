@@ -6,6 +6,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.Present
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
+import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnPathApproximation
@@ -32,9 +33,9 @@ val KotlinTypeFacade.explodeImpl: PluginDataFrameSchema.(dropEmpty: Boolean, sel
 
     fun makeNullable(column: SimpleCol): SimpleCol {
         return when (column) {
-            is SimpleColumnGroup -> SimpleColumnGroup(column.name, column.columns().map { makeNullable(it) }, column.type)
+            is SimpleColumnGroup -> SimpleColumnGroup(column.name, column.columns().map { makeNullable(it) })
             is SimpleFrameColumn -> column
-            else -> {
+            is SimpleDataColumn -> {
 //                val nullable = if (dropEmpty) (column.type as TypeApproximationImpl).nullable else true
 
                 column.changeType(type = column.type.changeNullability { nullable -> if (dropEmpty) nullable else true })
@@ -46,21 +47,21 @@ val KotlinTypeFacade.explodeImpl: PluginDataFrameSchema.(dropEmpty: Boolean, sel
         val fullPath = path + listOf(column.name)
         return when (column) {
             is SimpleColumnGroup -> {
-                SimpleColumnGroup(column.name, column.columns().map { explode(it, fullPath) }, column.type)
+                SimpleColumnGroup(column.name, column.columns().map { explode(it, fullPath) })
             }
             is SimpleFrameColumn -> {
                 if (fullPath in selected) {
-                    SimpleColumnGroup(column.name, column.columns().map { makeNullable(it) }, anyDataFrame)
+                    SimpleColumnGroup(column.name, column.columns().map { makeNullable(it) })
                 } else {
                     column
                 }
             }
-            else -> if (fullPath in selected) {
+            is SimpleDataColumn -> if (fullPath in selected) {
                 val newType = when {
                     column.type.isList() -> column.type.typeArgument()
                     else -> column.type
                 }
-                SimpleCol(column.name, newType)
+                SimpleDataColumn(column.name, newType)
             } else {
                 column
             }

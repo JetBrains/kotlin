@@ -2,7 +2,6 @@ package org.jetbrains.kotlinx.dataframe.plugin.impl.data
 
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -21,6 +20,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.data.SerializableColumn.Frame
 import org.jetbrains.kotlinx.dataframe.schema.ColumnSchema
 import org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.wrap
+import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
@@ -33,17 +33,19 @@ val KotlinTypeFacade.toPluginDataFrameSchema: DataFrameSchema.() -> PluginDataFr
             when (columnSchema) {
                 is ColumnSchema.Value -> {
                     val type = from(columnSchema.type)
-                    SimpleCol(name, type)
+                    SimpleDataColumn(name, type)
                     // class Data(val i: Int) // local class
                     // val df = dataFrameOf("col")(Data(1))
                     // val schema = df.schema()
                     // generateInterface(schema)
                 }
-                is ColumnSchema.Group -> SimpleColumnGroup(name, columnSchema.schema.toPluginDataFrameSchema().columns(), anyRow)
+                is ColumnSchema.Group -> SimpleColumnGroup(
+                    name,
+                    columnSchema.schema.toPluginDataFrameSchema().columns()
+                )
                 is ColumnSchema.Frame -> SimpleFrameColumn(
                     name,
-                    columnSchema.schema.toPluginDataFrameSchema().columns(),
-                    anyDataFrame
+                    columnSchema.schema.toPluginDataFrameSchema().columns()
                 )
                 else -> TODO()
             }
@@ -61,19 +63,20 @@ val KotlinTypeFacade.deserializeToPluginDataFrameSchema: SerializableSchema.() -
                 is Column -> {
                     val type = type(it.kType)
 
-                    SimpleCol(it.name, type.wrap())
+                    SimpleDataColumn(it.name, type.wrap())
                     // class Data(val i: Int) // local class
                     // val df = dataFrameOf("col")(Data(1))
                     // val schema = df.schema()
                     // generateInterface(schema)
                 }
-                is ColumnGroup -> SimpleColumnGroup(it.name, SerializableSchema(it.columns).deserializeToPluginDataFrameSchema().columns(), anyRow)
+                is ColumnGroup -> SimpleColumnGroup(
+                    it.name,
+                    SerializableSchema(it.columns).deserializeToPluginDataFrameSchema().columns()
+                )
                 is FrameColumn -> SimpleFrameColumn(
                     it.name,
-                    SerializableSchema(it.columns).deserializeToPluginDataFrameSchema().columns(),
-                    anyDataFrame
+                    SerializableSchema(it.columns).deserializeToPluginDataFrameSchema().columns()
                 )
-                else -> TODO()
             }
         }
     )

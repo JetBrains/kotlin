@@ -13,8 +13,8 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.Present
 import org.jetbrains.kotlinx.dataframe.api.Infer
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
+import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnKind
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnWithPathApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
@@ -73,14 +73,14 @@ internal fun KotlinTypeFacade.convertImpl(
     type: TypeApproximation
 ): PluginDataFrameSchema {
     return pluginDataFrameSchema.map(columns.toSet()) { path, column ->
-        require(column.kind() == SimpleColumnKind.VALUE) {
-            "$path must be ${SimpleColumnKind.VALUE}, but was ${column.kind()}"
+        require(column is SimpleDataColumn) {
+            "$path must be ${SimpleDataColumn::class}, but was ${column::class}"
         }
         val unwrappedType = type.type
         // TODO: AnyRow
         if (unwrappedType is ConeClassLikeType && unwrappedType.classId == Names.DF_CLASS_ID && !unwrappedType.isNullable) {
             val f = unwrappedType.typeArguments.single()
-            SimpleFrameColumn(column.name, pluginDataFrameSchema(f).columns(), anyDataFrame)
+            SimpleFrameColumn(column.name, pluginDataFrameSchema(f).columns())
         } else {
             column.changeType(type)
         }
@@ -111,7 +111,7 @@ internal fun f(columns: List<SimpleCol>, transform: ColumnMapper, selected: Colu
             } else {
                 it.map(transform, selected, fullPath)
             }
-            else -> if (fullPath in selected) {
+            is SimpleDataColumn -> if (fullPath in selected) {
                 transform(path, it)
             } else {
                 it
@@ -123,16 +123,14 @@ internal fun f(columns: List<SimpleCol>, transform: ColumnMapper, selected: Colu
 internal fun SimpleColumnGroup.map(transform: ColumnMapper, selected: ColumnsSet, path: List<String>): SimpleColumnGroup {
     return SimpleColumnGroup(
         name,
-        f(columns(), transform, selected, path),
-        type
+        f(columns(), transform, selected, path)
     )
 }
 
 internal fun SimpleFrameColumn.map(transform: ColumnMapper, selected: ColumnsSet, path: List<String>): SimpleFrameColumn {
     return SimpleFrameColumn(
         name,
-        f(columns(), transform, selected, path),
-        anyFrameType
+        f(columns(), transform, selected, path)
     )
 }
 

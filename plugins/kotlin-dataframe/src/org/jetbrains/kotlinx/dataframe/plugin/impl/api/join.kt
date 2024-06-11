@@ -29,7 +29,7 @@ internal class Join0 : AbstractInterpreter<PluginDataFrameSchema>() {
                         val uniqueName = merge.addUnique(column.name)
                         column.rename(uniqueName)
                     }
-                    put(leftGroup.name, SimpleColumnGroup(leftGroup.name, columns, anyRow))
+                    put(leftGroup.name, SimpleColumnGroup(leftGroup.name, columns))
                 }
             }
         }

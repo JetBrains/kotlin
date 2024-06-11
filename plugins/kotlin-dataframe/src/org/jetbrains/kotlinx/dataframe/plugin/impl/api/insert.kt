@@ -13,6 +13,7 @@ import org.jetbrains.kotlinx.dataframe.impl.api.GenericColumnGroup
 import org.jetbrains.kotlinx.dataframe.impl.api.insertImplGenericContainer
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
+import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnAccessorApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnPathApproximation
@@ -49,7 +50,7 @@ internal class Insert1 : AbstractInterpreter<InsertClauseApproximation>() {
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
 
     override fun Arguments.interpret(): InsertClauseApproximation {
-        return InsertClauseApproximation(receiver, SimpleCol(name, expression))
+        return InsertClauseApproximation(receiver, SimpleDataColumn(name, expression))
     }
 }
 
@@ -60,7 +61,7 @@ internal class Insert2 : AbstractInterpreter<InsertClauseApproximation>() {
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
 
     override fun Arguments.interpret(): InsertClauseApproximation {
-        return InsertClauseApproximation(receiver, SimpleCol(column.name, expression))
+        return InsertClauseApproximation(receiver, SimpleDataColumn(column.name, expression))
     }
 }
 
@@ -71,7 +72,7 @@ internal class Insert3 : AbstractInterpreter<InsertClauseApproximation>() {
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
 
     override fun Arguments.interpret(): InsertClauseApproximation {
-        return InsertClauseApproximation(receiver, SimpleCol(column.name, expression))
+        return InsertClauseApproximation(receiver, SimpleDataColumn(column.name, expression))
     }
 }
 
@@ -134,7 +135,7 @@ internal fun PluginDataFrameSchema.insertImpl(
         empty = PluginDataFrameSchema(emptyList()),
         rename = { rename(it) },
         createColumnGroup = { name, columns ->
-            SimpleColumnGroup(name, columns, columnGroupType)
+            SimpleColumnGroup(name, columns)
         }
     )
 }
