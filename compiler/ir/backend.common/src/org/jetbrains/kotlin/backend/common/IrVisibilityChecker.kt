@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.toEffectiveVisibilityOrNull
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.moduleDescriptor
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrDeclarationReference
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -102,10 +99,14 @@ internal class IrVisibilityChecker(
         val classOfReferenced = referencedDeclaration.parentClassOrNull
         val visibility = referencedDeclaration.visibility.delegate
 
+        fun IrAnnotationContainer.isPublishedApi() = hasAnnotation(StandardClassIds.Annotations.PublishedApi)
+
         val effectiveVisibility = visibility.toEffectiveVisibilityOrNull(
             container = classOfReferenced?.symbol,
             forClass = true,
-            ownerIsPublishedApi = referencedDeclaration.hasAnnotation(StandardClassIds.Annotations.PublishedApi),
+            ownerIsPublishedApi = referencedDeclaration.run {
+                isPublishedApi() || this is IrSimpleFunction && correspondingPropertySymbol?.owner?.isPublishedApi() == true
+            }
         )
 
         val isVisible = when (effectiveVisibility) {
