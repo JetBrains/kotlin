@@ -35,6 +35,7 @@ class KaFe10Session(
     symbolProvider = KaFe10SymbolProvider(analysisSessionProvider, token),
     javaInteroperabilityComponent = KaFe10JavaInteroperabilityComponent(analysisSessionProvider, token),
     typeRelationChecker = KaFe10TypeRelationChecker(analysisSessionProvider, token),
+    expressionInformationProvider = KaFe10ExpressionInformationProvider(analysisSessionProvider, token),
     evaluator = KaFe10Evaluator(analysisSessionProvider, token),
     referenceShortener = KaFe10ReferenceShortener(analysisSessionProvider, token),
     importOptimizer = KaFe10ImportOptimizer(analysisSessionProvider, token),
@@ -53,6 +54,5 @@ class KaFe10Session(
 ) {
     override val typeProviderImpl: KaTypeProvider = KaFe10TypeProvider(this)
     override val typeInfoProviderImpl: KaTypeInfoProvider = KaFe10TypeInfoProvider(this)
-    override val expressionInfoProviderImpl: KaExpressionInfoProvider = KaFe10ExpressionInfoProvider(this)
     override val symbolInfoProviderImpl: KaSymbolInfoProvider = KaFe10SymbolInfoProvider(this)
 }

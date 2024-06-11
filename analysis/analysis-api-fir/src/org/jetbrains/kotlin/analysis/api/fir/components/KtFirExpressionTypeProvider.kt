@@ -300,7 +300,7 @@ internal class KaFirExpressionTypeProvider(
 
     private fun getExpectedTypeByReturnExpression(expression: PsiElement): KaType? {
         val returnParent = expression.getReturnExpressionWithThisType() ?: return null
-        val targetSymbol = with(analysisSession) { returnParent.getReturnTargetSymbol() } ?: return null
+        val targetSymbol = with(analysisSession) { returnParent.targetSymbol } ?: return null
         return targetSymbol.returnType
     }
 

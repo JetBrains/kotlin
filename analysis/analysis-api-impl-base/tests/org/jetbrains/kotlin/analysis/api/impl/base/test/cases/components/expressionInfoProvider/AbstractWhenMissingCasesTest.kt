@@ -21,7 +21,7 @@ abstract class AbstractWhenMissingCasesTest : AbstractAnalysisApiBasedTest() {
         val actual = executeOnPooledThreadInReadAction {
             analyseForTest(whenExpression) {
                 buildString {
-                    for (missingCase in whenExpression.getMissingCases()) {
+                    for (missingCase in whenExpression.computeMissingCases()) {
                         appendLine(missingCase::class.simpleName + " - " + missingCase.branchConditionText)
                     }
                 }

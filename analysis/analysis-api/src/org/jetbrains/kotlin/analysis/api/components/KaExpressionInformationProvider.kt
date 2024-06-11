@@ -5,24 +5,17 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtReturnExpression
 import org.jetbrains.kotlin.psi.KtWhenExpression
 
-public abstract class KaExpressionInfoProvider : KaSessionComponent() {
-    public abstract fun getReturnExpressionTargetSymbol(returnExpression: KtReturnExpression): KaCallableSymbol?
-    public abstract fun getWhenMissingCases(whenExpression: KtWhenExpression): List<WhenMissingCase>
-    public abstract fun isUsedAsExpression(expression: KtExpression): Boolean
-}
+public interface KaExpressionInformationProvider {
+    public val KtReturnExpression.targetSymbol: KaCallableSymbol?
 
-public typealias KtExpressionInfoProvider = KaExpressionInfoProvider
-
-public interface KaExpressionInfoProviderMixIn : KaSessionMixIn {
-    public fun KtReturnExpression.getReturnTargetSymbol(): KaCallableSymbol? =
-        withValidityAssertion { analysisSession.expressionInfoProvider.getReturnExpressionTargetSymbol(this) }
+    @Deprecated("Use 'targetSymbol' instead.", replaceWith = ReplaceWith("targetSymbol"))
+    public fun KtReturnExpression.getReturnTargetSymbol(): KaCallableSymbol? = targetSymbol
 
     /**
      * Returns cases missing from the branches of [KtWhenExpression].
@@ -51,21 +44,23 @@ public interface KaExpressionInfoProviderMixIn : KaSessionMixIn {
      * If you have to assume that it does not have the missing cases when it has an else branch,
      * you need a separate check whether it has an else branch or not.
      */
-    public fun KtWhenExpression.getMissingCases(): List<WhenMissingCase> =
-        withValidityAssertion { analysisSession.expressionInfoProvider.getWhenMissingCases(this) }
+    public fun KtWhenExpression.computeMissingCases(): List<WhenMissingCase>
+
+    @Deprecated("Use 'computeMissingCases()' instead.", ReplaceWith("computeMissingCases()"))
+    public fun KtWhenExpression.getMissingCases(): List<WhenMissingCase> = computeMissingCases()
 
     /**
      * Compute if the value of a given expression is possibly used. Or,
      * conversely, compute whether the value of an expression is *not* safe to
      * discard.
      *
-     * E.g. `x` in the following examples *are* used (`x.isUsedAsExpression() == true`)
+     * E.g. `x` in the following examples *are* used (`x.isUsedAsExpression == true`)
      *   - `if (x) { ... } else { ... }`
      *   - `val a = x`
      *   - `x + 8`
      *   - `when (x) { 1 -> ...; else -> ... }
      *
-     * E.g. `x` in the following example is definitely *not* used (`x.isUsedAsExpression() == false`)
+     * E.g. `x` in the following example is definitely *not* used (`x.isUsedAsExpression == false`)
      *   - `run { x; println(50) }`
      *   - `when (x) { else -> ... }`
      *
@@ -75,8 +70,5 @@ public interface KaExpressionInfoProviderMixIn : KaSessionMixIn {
      *   - `x + try { throw Exception() } finally { return }`
      *
      */
-    public fun KtExpression.isUsedAsExpression(): Boolean =
-        withValidityAssertion { analysisSession.expressionInfoProvider.isUsedAsExpression(this) }
+    public val KtExpression.isUsedAsExpression: Boolean
 }
-
-public typealias KtExpressionInfoProviderMixIn = KaExpressionInfoProviderMixIn

@@ -35,7 +35,7 @@ abstract class AbstractReturnTargetSymbolTest : AbstractAnalysisApiBasedTest() {
                     expression.returnKeyword.accept(this)
                     expression.labeledExpression?.accept(this)
                     analyseForTest(expression) {
-                        val target = expression.getReturnTargetSymbol()
+                        val target = expression.targetSymbol
                         append("/* " + target?.getNameWithPositionString() + " */")
                     }
                     expression.returnedExpression?.accept(this)

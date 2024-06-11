@@ -66,6 +66,7 @@ public abstract class KaSession(
     symbolProvider: KaSymbolProvider,
     javaInteroperabilityComponent: KaJavaInteroperabilityComponent,
     typeRelationChecker: KaTypeRelationChecker,
+    expressionInformationProvider: KaExpressionInformationProvider,
     evaluator: KaEvaluator,
     referenceShortener: KaReferenceShortener,
     importOptimizer: KaImportOptimizer,
@@ -94,7 +95,7 @@ public abstract class KaSession(
     KaJavaInteroperabilityComponent by javaInteroperabilityComponent,
     KaSymbolInfoProviderMixIn,
     KaTypeRelationChecker by typeRelationChecker,
-    KaExpressionInfoProviderMixIn,
+    KaExpressionInformationProvider by expressionInformationProvider,
     KaEvaluator by evaluator,
     KaReferenceShortener by referenceShortener,
     KaImportOptimizer by importOptimizer,
@@ -121,9 +122,6 @@ public abstract class KaSession(
 
     internal val typeInfoProvider: KaTypeInfoProvider get() = typeInfoProviderImpl
     protected abstract val typeInfoProviderImpl: KaTypeInfoProvider
-
-    internal val expressionInfoProvider: KaExpressionInfoProvider get() = expressionInfoProviderImpl
-    protected abstract val expressionInfoProviderImpl: KaExpressionInfoProvider
 
     internal val symbolInfoProvider: KaSymbolInfoProvider get() = symbolInfoProviderImpl
     protected abstract val symbolInfoProviderImpl: KaSymbolInfoProvider

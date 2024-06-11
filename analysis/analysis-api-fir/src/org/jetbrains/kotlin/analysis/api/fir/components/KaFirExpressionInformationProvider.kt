@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.components.KaExpressionInfoProvider
+import org.jetbrains.kotlin.analysis.api.components.KaExpressionInformationProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
@@ -26,24 +28,25 @@ import org.jetbrains.kotlin.psi.psiUtil.unwrapParenthesesLabelsAndAnnotations
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
-internal class KaFirExpressionInfoProvider(
-    override val analysisSession: KaFirSession,
-    override val token: KaLifetimeToken,
-) : KaExpressionInfoProvider(), KaFirSessionComponent {
-    override fun getReturnExpressionTargetSymbol(returnExpression: KtReturnExpression): KaCallableSymbol? {
-        val fir = returnExpression.getOrBuildFirSafe<FirReturnExpression>(firResolveSession) ?: return null
-        val firTargetSymbol = fir.target.labeledElement
-        if (firTargetSymbol is FirErrorFunction) return null
-        return firSymbolBuilder.callableBuilder.buildCallableSymbol(firTargetSymbol.symbol)
-    }
+internal class KaFirExpressionInformationProvider(
+    override val analysisSessionProvider: () -> KaFirSession,
+    override val token: KaLifetimeToken
+) : KaSessionComponent<KaFirSession>(), KaExpressionInformationProvider, KaFirSessionComponent {
+    override val KtReturnExpression.targetSymbol: KaCallableSymbol?
+        get() = withValidityAssertion {
+            val fir = getOrBuildFirSafe<FirReturnExpression>(firResolveSession) ?: return null
+            val firTargetSymbol = fir.target.labeledElement
+            if (firTargetSymbol is FirErrorFunction) return null
+            return firSymbolBuilder.callableBuilder.buildCallableSymbol(firTargetSymbol.symbol)
+        }
 
-    override fun getWhenMissingCases(whenExpression: KtWhenExpression): List<WhenMissingCase> {
-        val firWhenExpression = whenExpression.getOrBuildFirSafe<FirWhenExpression>(analysisSession.firResolveSession) ?: return emptyList()
+    override fun KtWhenExpression.computeMissingCases(): List<WhenMissingCase> = withValidityAssertion {
+        val firWhenExpression = getOrBuildFirSafe<FirWhenExpression>(analysisSession.firResolveSession) ?: return emptyList()
         return FirWhenExhaustivenessTransformer.computeAllMissingCases(analysisSession.firResolveSession.useSiteFirSession, firWhenExpression)
     }
 
-    override fun isUsedAsExpression(expression: KtExpression): Boolean =
-        isUsed(expression)
+    override val KtExpression.isUsedAsExpression: Boolean
+        get() = withValidityAssertion { isUsed(this) }
 
     /**
      * [isUsed] and [doesParentUseChild] are defined in mutual recursion,
