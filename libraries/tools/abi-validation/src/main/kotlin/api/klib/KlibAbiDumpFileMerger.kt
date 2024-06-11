@@ -371,9 +371,7 @@ internal class KlibAbiDumpMerger {
         headerContent.forEach {
             appendable.append(it).append('\n')
         }
-        topLevelDeclaration.children.values.sortedWith(DeclarationsComparator).forEach {
-            it.dump(appendable, _targets, formatter)
-        }
+        topLevelDeclaration.dump(appendable, _targets, formatter)
     }
 
     private fun createFormatter(): KlibsTargetsFormatter {
@@ -504,18 +502,45 @@ internal class DeclarationContainer(val text: String, val parent: DeclarationCon
     }
 
     fun dump(appendable: Appendable, allTargets: Set<KlibTarget>, formatter: KlibsTargetsFormatter) {
-        if (targets != allTargets/* && !dumpFormat.singleTargetDump*/) {
+        if (targets != allTargets) {
             // Use the same indentation for target list as for the declaration itself
             appendable.append(" ".repeat(text.depth() * INDENT_WIDTH))
                 .append(formatter.formatDeclarationTargets(targets))
                 .append('\n')
         }
-        appendable.append(text).append('\n')
-        children.values.sortedWith(DeclarationsComparator).forEach {
-            it.dump(appendable, this.targets, formatter)
+        appendable.append(text)
+        // The text is empty for the fake top-level declaration
+        if (text.isNotEmpty()) {
+            appendable.append('\n')
+        }
+        var previousDeclaration: DeclarationContainer? = null
+        children.values.sortedWith(DeclarationsComparator).forEach { currentDeclaration ->
+            if (previousDeclaration != null) {
+                val pd = previousDeclaration!!
+                // Precede a group of declarations sharing the same kind (properties, classes, functions),
+                // and declarations that'll have a "// Targets" header with a newline to improve readability.
+                if (pd.type != currentDeclaration.type || currentDeclaration.targets != this.targets
+                    || currentDeclaration.isTypeDeclaration()
+                ) {
+                    appendable.append('\n')
+                }
+            }
+            currentDeclaration.dump(appendable, this.targets, formatter)
+            previousDeclaration = currentDeclaration
         }
         if (delimiter != null) {
             appendable.append(delimiter).append('\n')
+        }
+    }
+
+    private fun isTypeDeclaration(): Boolean {
+        return when (type) {
+            DeclarationType.Object -> true
+            DeclarationType.Class -> true
+            DeclarationType.Interface -> true
+            DeclarationType.AnnotationClass -> true
+            DeclarationType.EnumClass -> true
+            else -> false
         }
     }
 
@@ -563,6 +588,7 @@ internal class DeclarationContainer(val text: String, val parent: DeclarationCon
                 null -> {
                     children[otherChild.key] = otherChild.value.deepCopy(this)
                 }
+
                 else -> child.mergeTargetSpecific(otherChild.value)
             }
         }

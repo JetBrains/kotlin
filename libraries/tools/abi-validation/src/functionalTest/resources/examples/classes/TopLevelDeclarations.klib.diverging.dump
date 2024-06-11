@@ -1,5 +1,7 @@
 // Klib ABI Dump
-// Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, linuxX64, mingwX64]
+// Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, linuxArm64, linuxX64, mingwX64]
+// Alias: androidNative => [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86]
+// Alias: linux => [linuxArm64, linuxX64]
 // Rendering settings:
 // - Signature version: 2
 // - Show manifest properties: true
@@ -77,6 +79,53 @@ final class examples.classes/D { // examples.classes/D|null[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // examples.classes/D.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // examples.classes/D.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // examples.classes/D.toString|toString(){}[0]
+}
+
+final class examples.classes/Exp { // examples.classes/Exp|null[0]
+    constructor <init>(kotlin/Int, kotlin/Int) // examples.classes/Exp.<init>|<init>(kotlin.Int;kotlin.Int){}[0]
+
+    final val vi1 // examples.classes/Exp.vi1|{}vi1[0]
+        final fun <get-vi1>(): kotlin/Int // examples.classes/Exp.vi1.<get-vi1>|<get-vi1>(){}[0]
+    final val vi2 // examples.classes/Exp.vi2|{}vi2[0]
+        final fun <get-vi2>(): kotlin/Int // examples.classes/Exp.vi2.<get-vi2>|<get-vi2>(){}[0]
+    final val vi3 // examples.classes/Exp.vi3|{}vi3[0]
+        final fun <get-vi3>(): kotlin/Int // examples.classes/Exp.vi3.<get-vi3>|<get-vi3>(){}[0]
+
+    final var v1 // examples.classes/Exp.v1|{}v1[0]
+        final fun <get-v1>(): kotlin/Int // examples.classes/Exp.v1.<get-v1>|<get-v1>(){}[0]
+        final fun <set-v1>(kotlin/Int) // examples.classes/Exp.v1.<set-v1>|<set-v1>(kotlin.Int){}[0]
+    final var v2 // examples.classes/Exp.v2|{}v2[0]
+        final fun <get-v2>(): kotlin/Int // examples.classes/Exp.v2.<get-v2>|<get-v2>(){}[0]
+        final fun <set-v2>(kotlin/Int) // examples.classes/Exp.v2.<set-v2>|<set-v2>(kotlin.Int){}[0]
+    final var v3 // examples.classes/Exp.v3|{}v3[0]
+        final fun <get-v3>(): kotlin/Int // examples.classes/Exp.v3.<get-v3>|<get-v3>(){}[0]
+        final fun <set-v3>(kotlin/Int) // examples.classes/Exp.v3.<set-v3>|<set-v3>(kotlin.Int){}[0]
+
+    final fun a(): kotlin/Int // examples.classes/Exp.a|a(){}[0]
+    final fun b(): kotlin/Int // examples.classes/Exp.b|b(){}[0]
+    final fun c(): kotlin/Int // examples.classes/Exp.c|c(){}[0]
+
+    // Targets: [linux, mingwX64]
+    final fun e(): kotlin/Int // examples.classes/Exp.e|e(){}[0]
+
+    // Targets: [linux]
+    final val vi4 // examples.classes/Exp.vi4|{}vi4[0]
+        final fun <get-vi4>(): kotlin/Int // examples.classes/Exp.vi4.<get-vi4>|<get-vi4>(){}[0]
+
+    // Targets: [linux]
+    final var v4 // examples.classes/Exp.v4|{}v4[0]
+        final fun <get-v4>(): kotlin/Int // examples.classes/Exp.v4.<get-v4>|<get-v4>(){}[0]
+        final fun <set-v4>(kotlin/Int) // examples.classes/Exp.v4.<set-v4>|<set-v4>(kotlin.Int){}[0]
+
+    // Targets: [linux]
+    final fun d(): kotlin/Int // examples.classes/Exp.d|d(){}[0]
+
+    // Targets: [mingwX64]
+    final val vi5 // examples.classes/Exp.vi5|{}vi5[0]
+        final fun <get-vi5>(): kotlin/Int // examples.classes/Exp.vi5.<get-vi5>|<get-vi5>(){}[0]
+
+    // Targets: [mingwX64]
+    final fun f(): kotlin/Int // examples.classes/Exp.f|f(){}[0]
 }
 
 final class examples.classes/IC : examples.classes/II { // examples.classes/IC|null[0]
@@ -163,3 +212,27 @@ final var examples.classes/r // examples.classes/r|{}r[0]
 final fun <#A: kotlin/Any?> examples.classes/consume(#A) // examples.classes/consume|consume(0:0){0§<kotlin.Any?>}[0]
 final fun examples.classes/testFun(): kotlin/Int // examples.classes/testFun|testFun(){}[0]
 final inline fun examples.classes/testInlineFun() // examples.classes/testInlineFun|testInlineFun(){}[0]
+
+// Targets: [androidNative, linux]
+final class examples.classes/AndroidAndLinuxClass { // examples.classes/AndroidAndLinuxClass|null[0]
+    constructor <init>() // examples.classes/AndroidAndLinuxClass.<init>|<init>(){}[0]
+}
+
+// Targets: [androidNative, linux]
+final val examples.classes/androidAndLinuxVal // examples.classes/androidAndLinuxVal|{}androidAndLinuxVal[0]
+    final fun <get-androidAndLinuxVal>(): kotlin/Int // examples.classes/androidAndLinuxVal.<get-androidAndLinuxVal>|<get-androidAndLinuxVal>(){}[0]
+
+// Targets: [linux]
+final class examples.classes/LinuxClass { // examples.classes/LinuxClass|null[0]
+    constructor <init>() // examples.classes/LinuxClass.<init>|<init>(){}[0]
+}
+
+// Targets: [linux]
+final val examples.classes/linuxVal // examples.classes/linuxVal|{}linuxVal[0]
+    final fun <get-linuxVal>(): kotlin/Int // examples.classes/linuxVal.<get-linuxVal>|<get-linuxVal>(){}[0]
+
+// Targets: [linux]
+final fun examples.classes/anotherLinuxFun(): kotlin/Int // examples.classes/anotherLinuxFun|anotherLinuxFun(){}[0]
+
+// Targets: [linux]
+final fun examples.classes/linuxFun(): kotlin/String // examples.classes/linuxFun|linuxFun(){}[0]

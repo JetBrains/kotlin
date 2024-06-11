@@ -9,5 +9,6 @@
 final class org.example/ShardedClass { // org.example/ShardedClass|null[0]
     final fun addNarrow(kotlin/Int): kotlin/Int // org.example/ShardedClass.addNarrow|addNarrow(kotlin.Int){}[0]
 }
+
 final fun (org.example/X).org.example/add(org.example/X): org.example/X // org.example/add|add@org.example.X(org.example.X){}[0]
 final fun org.example/add(org.example/X, org.example/X): org.example/X // org.example/add|add(org.example.X;org.example.X){}[0]

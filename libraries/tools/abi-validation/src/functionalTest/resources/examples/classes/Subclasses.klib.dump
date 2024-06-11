@@ -8,6 +8,7 @@
 // Library unique name: <testproject>
 final class subclasses/A { // subclasses/A|null[0]
     constructor <init>() // subclasses/A.<init>|<init>(){}[0]
+
     final class D { // subclasses/A.D|null[0]
         constructor <init>() // subclasses/A.D.<init>|<init>(){}[0]
     }

@@ -9,90 +9,120 @@
 open annotation class examples.classes/A : kotlin/Annotation { // examples.classes/A|null[0]
     constructor <init>() // examples.classes/A.<init>|-5645683436151566731[0]
 }
+
 open annotation class examples.classes/AA : kotlin/Annotation { // examples.classes/AA|null[0]
     constructor <init>() // examples.classes/AA.<init>|-5645683436151566731[0]
 }
+
 open annotation class examples.classes/AAA : kotlin/Annotation { // examples.classes/AAA|null[0]
     constructor <init>() // examples.classes/AAA.<init>|-5645683436151566731[0]
 }
+
 final enum class examples.classes/E : kotlin/Enum<examples.classes/E> { // examples.classes/E|null[0]
     enum entry A // examples.classes/E.A|null[0]
     enum entry B // examples.classes/E.B|null[0]
     enum entry C // examples.classes/E.C|null[0]
+
     final val entries // examples.classes/E.entries|-5134227801081826149[0]
         final fun <get-entries>(): kotlin.enums/EnumEntries<examples.classes/E> // examples.classes/E.entries.<get-entries>|-6068527377476727729[0]
+
     final fun valueOf(kotlin/String): examples.classes/E // examples.classes/E.valueOf|-4683474617854611729[0]
     final fun values(): kotlin/Array<examples.classes/E> // examples.classes/E.values|-8715569000920726747[0]
 }
+
 final enum class examples.classes/EE : kotlin/Enum<examples.classes/EE> { // examples.classes/EE|null[0]
     enum entry AA // examples.classes/EE.AA|null[0]
     enum entry BB // examples.classes/EE.BB|null[0]
     enum entry CC // examples.classes/EE.CC|null[0]
+
     final val entries // examples.classes/EE.entries|-5134227801081826149[0]
         final fun <get-entries>(): kotlin.enums/EnumEntries<examples.classes/EE> // examples.classes/EE.entries.<get-entries>|-6068527377476727729[0]
+
     final fun valueOf(kotlin/String): examples.classes/EE // examples.classes/EE.valueOf|-4683474617854611729[0]
     final fun values(): kotlin/Array<examples.classes/EE> // examples.classes/EE.values|-8715569000920726747[0]
 }
+
 abstract fun interface examples.classes/FI { // examples.classes/FI|null[0]
     abstract fun a() // examples.classes/FI.a|-4432112437378250461[0]
 }
+
 abstract interface examples.classes/I // examples.classes/I|null[0]
+
 abstract interface examples.classes/II // examples.classes/II|null[0]
+
 abstract class examples.classes/AC { // examples.classes/AC|null[0]
     constructor <init>() // examples.classes/AC.<init>|-5645683436151566731[0]
+
     abstract fun a() // examples.classes/AC.a|-4432112437378250461[0]
     final fun b() // examples.classes/AC.b|4789657038926421504[0]
 }
+
 final class examples.classes/C { // examples.classes/C|null[0]
     constructor <init>(kotlin/Any) // examples.classes/C.<init>|4518179880532599055[0]
+
     final val v // examples.classes/C.v|138869847852828796[0]
         final fun <get-v>(): kotlin/Any // examples.classes/C.v.<get-v>|4964732996156868941[0]
+
     final fun m() // examples.classes/C.m|-1029306787563722981[0]
 }
+
 final class examples.classes/D { // examples.classes/D|null[0]
     constructor <init>(kotlin/Int) // examples.classes/D.<init>|-5182794243525578284[0]
+
     final val x // examples.classes/D.x|-8060530855978347579[0]
         final fun <get-x>(): kotlin/Int // examples.classes/D.x.<get-x>|1482705010654679335[0]
+
     final fun component1(): kotlin/Int // examples.classes/D.component1|162597135895221648[0]
     final fun copy(kotlin/Int =...): examples.classes/D // examples.classes/D.copy|-6971662324481626298[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // examples.classes/D.equals|4638265728071529943[0]
     final fun hashCode(): kotlin/Int // examples.classes/D.hashCode|3409210261493131192[0]
     final fun toString(): kotlin/String // examples.classes/D.toString|-1522858123163872138[0]
 }
+
 final class examples.classes/IC : examples.classes/II { // examples.classes/IC|null[0]
     constructor <init>() // examples.classes/IC.<init>|-5645683436151566731[0]
 }
+
 final class examples.classes/Outer { // examples.classes/Outer|null[0]
     constructor <init>() // examples.classes/Outer.<init>|-5645683436151566731[0]
+
     final class Nested { // examples.classes/Outer.Nested|null[0]
         constructor <init>() // examples.classes/Outer.Nested.<init>|-5645683436151566731[0]
+
         final enum class NE : kotlin/Enum<examples.classes/Outer.Nested.NE> { // examples.classes/Outer.Nested.NE|null[0]
             enum entry A // examples.classes/Outer.Nested.NE.A|null[0]
             enum entry B // examples.classes/Outer.Nested.NE.B|null[0]
             enum entry C // examples.classes/Outer.Nested.NE.C|null[0]
+
             final val entries // examples.classes/Outer.Nested.NE.entries|-5134227801081826149[0]
                 final fun <get-entries>(): kotlin.enums/EnumEntries<examples.classes/Outer.Nested.NE> // examples.classes/Outer.Nested.NE.entries.<get-entries>|-6068527377476727729[0]
+
             final fun valueOf(kotlin/String): examples.classes/Outer.Nested.NE // examples.classes/Outer.Nested.NE.valueOf|-4683474617854611729[0]
             final fun values(): kotlin/Array<examples.classes/Outer.Nested.NE> // examples.classes/Outer.Nested.NE.values|-8715569000920726747[0]
         }
+
         final inner class Inner { // examples.classes/Outer.Nested.Inner|null[0]
             constructor <init>() // examples.classes/Outer.Nested.Inner.<init>|-5645683436151566731[0]
         }
+
         final inner class YetAnotherInner { // examples.classes/Outer.Nested.YetAnotherInner|null[0]
             constructor <init>() // examples.classes/Outer.Nested.YetAnotherInner.<init>|-5645683436151566731[0]
         }
     }
 }
+
 open class examples.classes/OC { // examples.classes/OC|null[0]
     constructor <init>(kotlin/Int) // examples.classes/OC.<init>|-5182794243525578284[0]
     constructor <init>(kotlin/Long) // examples.classes/OC.<init>|5217973964116651322[0]
     constructor <init>(kotlin/String) // examples.classes/OC.<init>|1280618353163213788[0]
+
     final val ix // examples.classes/OC.ix|5586787718776183610[0]
         final fun <get-ix>(): kotlin/Int // examples.classes/OC.ix.<get-ix>|6412451035637198934[0]
     final val iy // examples.classes/OC.iy|-4863546984470764583[0]
         final fun <get-iy>(): kotlin/Long // examples.classes/OC.iy.<get-iy>|-4932930205028660775[0]
     final val iz // examples.classes/OC.iz|-6916102702480625188[0]
         final fun <get-iz>(): kotlin/String // examples.classes/OC.iz.<get-iz>|8935463596906645831[0]
+
     final var x // examples.classes/OC.x|-8060530855978347579[0]
         final fun <get-x>(): kotlin/Int // examples.classes/OC.x.<get-x>|1482705010654679335[0]
         final fun <set-x>(kotlin/Int) // examples.classes/OC.x.<set-x>|-740209739415615559[0]
@@ -102,27 +132,34 @@ open class examples.classes/OC { // examples.classes/OC|null[0]
     final var z // examples.classes/OC.z|7549650372729116193[0]
         final fun <get-z>(): kotlin/Int // examples.classes/OC.z.<get-z>|4925813204745917177[0]
         final fun <set-z>(kotlin/Int) // examples.classes/OC.z.<set-z>|8486465404430625584[0]
+
     final fun c() // examples.classes/OC.c|-2724918380551733646[0]
     open fun o(): kotlin/Int // examples.classes/OC.o|-3264635847192431671[0]
 }
+
 final object examples.classes/O // examples.classes/O|null[0]
+
 final object examples.classes/OO // examples.classes/OO|null[0]
+
 final const val examples.classes/con // examples.classes/con|-2899158152154217071[0]
     final fun <get-con>(): kotlin/String // examples.classes/con.<get-con>|-2604863570302238407[0]
 final const val examples.classes/intCon // examples.classes/intCon|-4533540985615038728[0]
     final fun <get-intCon>(): kotlin/Int // examples.classes/intCon.<get-intCon>|-7661624206875263703[0]
+
 final val examples.classes/a // examples.classes/a|-1200697420457237799[0]
     final fun <get-a>(): kotlin/Any // examples.classes/a.<get-a>|6785176174175479410[0]
 final val examples.classes/i // examples.classes/i|5014384761142332495[0]
     final fun <get-i>(): kotlin/Int // examples.classes/i.<get-i>|6945482638966853621[0]
 final val examples.classes/l // examples.classes/l|3307215303229595169[0]
     final fun <get-l>(): kotlin/Long // examples.classes/l.<get-l>|3795442967620585[0]
+
 final var examples.classes/d // examples.classes/d|5174763769109925331[0]
     final fun <get-d>(): kotlin/Double // examples.classes/d.<get-d>|-6701718004621354461[0]
     final fun <set-d>(kotlin/Double) // examples.classes/d.<set-d>|-6916287485929380915[0]
 final var examples.classes/r // examples.classes/r|-8117627916896159533[0]
     final fun <get-r>(): kotlin/Float // examples.classes/r.<get-r>|-7424184448774736572[0]
     final fun <set-r>(kotlin/Float) // examples.classes/r.<set-r>|9171637170963327464[0]
+
 final fun <#A: kotlin/Any?> examples.classes/consume(#A) // examples.classes/consume|8042761629495509481[0]
 final fun examples.classes/testFun(): kotlin/Int // examples.classes/testFun|6322333980269160703[0]
 final inline fun examples.classes/testInlineFun() // examples.classes/testInlineFun|-9193388292326484960[0]
