@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.*
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import java.io.File
-import java.util.zip.ZipFile
 
 abstract class AbstractCompilerFacilityTestForComposeCompilerPlugin : AbstractCompilerFacilityTest() {
     override val configurator: AnalysisApiTestConfigurator
@@ -43,40 +42,16 @@ fun TestConfigurationBuilder.composeCompilerPluginConfiguration() {
     )
 }
 
-// TODO(KT-68111): Integrate this hard-coded path into compiler-tests-convention.
-private const val COMPOSE_COMPILER_JAR_DIR = "plugins/compose/compiler-hosted/build/libs/"
+private const val COMPOSE_COMPILER_PATH = "compose.compiler.hosted.jar.path"
 
-private fun flagToEnableComposeCompilerPlugin(): String {
-    val libDir = File(COMPOSE_COMPILER_JAR_DIR)
-    if (!libDir.exists() || !libDir.isDirectory) {
-        error("No directory \"$COMPOSE_COMPILER_JAR_DIR\" is found")
-    }
-
-    return libDir.listFiles { _, name ->
-        // We had a case that this directory contains multiple jar files with "compiler-hosted" name:
-        //  - plugins/compose/compiler-hosted/build/libs/compiler-hosted-2.0.20-dev-5638-javadoc.jar
-        //  - plugins/compose/compiler-hosted/build/libs/compiler-hosted-2.0.20-dev-5638-sources.jar
-        //  - plugins/compose/compiler-hosted/build/libs/compiler-hosted-2.0.20-dev-5642.jar
-        //  - plugins/compose/compiler-hosted/build/libs/compiler-hosted-2.0.20-dev-5638.jar
-        // The following allow/disallow-list of names is ad-hoc solution, but it helps us to avoid the above jar files.
-        // In particular, the above jar files contain compose-compiler-plugin registrar file, so checking registrar does not work.
-        name.startsWith("compiler-hosted") && name.endsWith(".jar") && !name.contains("doc") && !name.contains("source")
-    }.let { files ->
-        when {
-            files == null -> error("Can't read the directory $libDir")
-            files.isEmpty() -> error("Missing jar file started with \"compiler\" under $COMPOSE_COMPILER_JAR_DIR")
-            else -> {
-                files.first { it.containsPluginRegistrarFile() }
-            }
-        }
-    }.let { "-Xplugin=${it.absolutePath}" }
+private val composeCompilerPath by lazy {
+    System.getProperty(COMPOSE_COMPILER_PATH) ?: error("System property \"$COMPOSE_COMPILER_PATH\" is not found")
 }
 
-// Compose compiler plugin uses the old registrar location.
-private const val COMPOSE_COMPILER_PLUGIN_REGISTRAR_FILE = "META-INF/services/org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar"
-
-private fun File.containsPluginRegistrarFile(): Boolean = ZipFile(this).use { zipFile ->
-    val entry = zipFile.getEntry(COMPOSE_COMPILER_PLUGIN_REGISTRAR_FILE) ?: return false
-    val contents = zipFile.getInputStream(entry).bufferedReader().use { it.readText() }
-    return ComposePluginRegistrar::class.qualifiedName?.let { contents.contains(it) } ?: false
+private fun flagToEnableComposeCompilerPlugin(): String {
+    val libFile = File(composeCompilerPath)
+    if (!libFile.exists()) {
+        error("No file \"$composeCompilerPath\" is found")
+    }
+    return "-Xplugin=${libFile.absolutePath}"
 }
