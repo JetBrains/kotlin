@@ -35,7 +35,8 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
  *   once instead of for each subordinate symbol provider. Because Kotlin symbol providers are ordered first in
  *   [LLFirDependenciesSymbolProvider], this check is especially fruitful.
  * - For a given class or callable ID, indices can be accessed once to get relevant PSI elements. Then the correct symbol provider(s) to
- *   call can be found out via the PSI element's [KtModule]s. This avoids the need to call every single subordinate symbol provider.
+ *   call can be found out via the PSI element's [KaModule][org.jetbrains.kotlin.analysis.api.projectStructure.KaModule]s. This avoids the
+ *   need to call every single subordinate symbol provider.
  * - A small Caffeine cache can avoid most index accesses for classes, because many names are requested multiple times, with a minor memory
  *   footprint.
  *

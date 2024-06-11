@@ -18,8 +18,9 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
  * it is often not feasible to compute that set. Instead, users of [KotlinModuleDependentsProvider] should keep this limitation in mind and
  * handle it separately. For example, a global modification event should be published for builtins and SDK changes.
  *
- * An empty set is also returned for [KtCodeFragmentModule]s, as no other module can depend on a code fragment.
- * Additionally, [KtCodeFragmentModule] are not returned from [getDirectDependents] for their context modules.
+ * An empty set is also returned for [KaDanglingFileModule][org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule]s.
+ * Additionally, dangling file modules are never included in the dependents of their context modules. This is because dangling files are
+ * created ad-hoc, and it's not economical to keep track of them.
  *
  * Implementations of this provider should ensure that results are provided in reasonable time, for example by caching results, as its
  * functions may be called frequently.

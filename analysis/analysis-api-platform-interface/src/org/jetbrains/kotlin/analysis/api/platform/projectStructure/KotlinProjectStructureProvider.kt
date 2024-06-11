@@ -29,7 +29,8 @@ public interface KotlinProjectStructureProvider {
         get() = LanguageVersionSettingsImpl.DEFAULT
 
     /**
-     * Project-global [LanguageVersionSettings] for [KtLibraryModule]s and [KtLibrarySourceModule]s.
+     * Project-global [LanguageVersionSettings] for [KaLibraryModule][org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule]s
+     * and [KaLibrarySourceModule][org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule]s.
      */
     public val libraryLanguageVersionSettings: LanguageVersionSettings
         get() = globalLanguageVersionSettings

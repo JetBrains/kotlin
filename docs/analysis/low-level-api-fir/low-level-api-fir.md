@@ -11,7 +11,7 @@ Low-level API FIR is responsible but not limited for:
 You can read about how FIR compiler works [here](../../fir/fir-basics.md).
 
 The entry point for LL API is [LLFirResolveSession](../../../analysis/low-level-api-fir/src/org/jetbrains/kotlin/analysis/low/level/api/fir/api/LLFirResolveSession.kt).
-`LLFirResolveSession` represents a project view from a use-site [KtModule](../../../analysis/project-structure/src/org/jetbrains/kotlin/analysis/project/structure/KtModule.kt).
+`LLFirResolveSession` represents a project view from a use-site [KtModule](../../../analysis/analysis-api/src/org/jetbrains/kotlin/analysis/api/projectStructure/KaModule.kt).
 The lifetime of `LLFirResolveSession` is limited by modification events.
 
 [LowLevelFirApiFacade](../../../analysis/low-level-api-fir/src/org/jetbrains/kotlin/analysis/low/level/api/fir/api/LowLevelFirApiFacade.kt)

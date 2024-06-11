@@ -12,11 +12,10 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.psi.KtFile
-import java.util.*
 import java.util.concurrent.ConcurrentMap
 
 /**
- * Caches mapping [KtFile] -> [FirFile] of module [KtModule]
+ * Caches the [KtFile] to [FirFile] mapping of a [KaModule][org.jetbrains.kotlin.analysis.api.projectStructure.KaModule].
  */
 @ThreadSafe
 internal abstract class ModuleFileCache {

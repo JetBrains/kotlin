@@ -46,8 +46,9 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
 
     /**
      * Returns the [platform]'s [KaBuiltinsModule]. [getBuiltinsModule] should be used instead of [getBuiltinsSession] when a
-     * [KaBuiltinsModule] is needed as a dependency for other [KtModule]s. This is because during project structure creation, we have to
-     * avoid the creation of the builtins *session*, as not all services might have been registered at that point.
+     * [KaBuiltinsModule] is needed as a dependency for other [KaModule][org.jetbrains.kotlin.analysis.api.projectStructure.KaModule]s. This
+     * is because during project structure creation, we have to avoid the creation of the builtins *session*, as not all services might have
+     * been registered at that point.
      */
     fun getBuiltinsModule(platform: TargetPlatform): KaBuiltinsModule =
         builtinsModules.getOrPut(platform) { KaBuiltinsModule(platform, project) }
