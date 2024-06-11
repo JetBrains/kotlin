@@ -1,0 +1,63 @@
+FILE: toDataFrame_from.kt
+    public final class S : R|kotlin/Any| {
+        public constructor(str: R|kotlin/String|): R|S| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val str: R|kotlin/String| = R|<local>/str|
+            public get(): R|kotlin/String|
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval res: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/S_94>| = R|kotlin/collections/listOf|<R|S|>(R|/S.S|(String(123))).R|kotlin/let|<R|kotlin/collections/List<S>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/S_94>|>(<L> = fun <anonymous>(it: R|kotlin/collections/List<S>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/S_94>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class S_94I : R|kotlin/Any| {
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val str: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val col: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public constructor(): R|<local>/S_94I|
+
+            }
+
+            local final class Scope0 : R|kotlin/Any| {
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/S_94I>|.str: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/S_94I>|.str: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/S_94I>|.col: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/S_94I>|.col: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+
+                public constructor(): R|<local>/Scope0|
+
+            }
+
+            local abstract class S_94 : R|<local>/S_94I| {
+                public abstract var scope0: R|<local>/Scope0|
+                    public get(): R|<local>/Scope0|
+                    public set(value: R|<local>/Scope0|): R|kotlin/Unit|
+
+                public constructor(): R|<local>/S_94|
+
+            }
+
+            ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/toDataFrame|<R|S|>(<L> = toDataFrame@fun R|org/jetbrains/kotlinx/dataframe/api/CreateDataFrameDsl<S>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                this@R|special/anonymous|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/api/CreateDataFrameDsl.properties: R|kotlin/Unit|>|(Int(1))
+                (this@R|special/anonymous|, String(col)).R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/api/CreateDataFrameDsl.from: R|kotlin/Unit|>|<R|kotlin/String|>(from@fun <anonymous>(it: R|S|): R|kotlin/String| <inline=NoInline>  {
+                    ^ R|<local>/it|.R|/S.str|
+                }
+                )
+            }
+            )
+        }
+        )
+        (this@R|/box|, R|<local>/res|).R|<local>/Scope0.col|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|kotlin/String|>()
+        (this@R|/box|, R|<local>/res|).R|<local>/Scope0.str|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|kotlin/String|>()
+        ^box String(OK)
+    }

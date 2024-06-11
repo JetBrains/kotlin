@@ -1,5 +1,9 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeNullability
+import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.isNullable
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractInterpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
 import org.jetbrains.kotlinx.dataframe.plugin.impl.Present
@@ -13,6 +17,8 @@ import org.jetbrains.kotlinx.dataframe.impl.api.GenericColumnsToInsert
 import org.jetbrains.kotlinx.dataframe.impl.api.DataFrameLikeContainer
 import org.jetbrains.kotlinx.dataframe.impl.api.GenericColumnGroup
 import org.jetbrains.kotlinx.dataframe.impl.api.insertImplGenericContainer
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.wrap
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnAccessorApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnPathApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnWithPathApproximation
@@ -28,6 +34,8 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.insertClause
 import org.jetbrains.kotlinx.dataframe.plugin.impl.kproperty
 import org.jetbrains.kotlinx.dataframe.plugin.impl.string
 import org.jetbrains.kotlinx.dataframe.plugin.impl.type
+import org.jetbrains.kotlinx.dataframe.plugin.pluginDataFrameSchema
+import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
 /**
  * @see DataFrame.insert
@@ -262,6 +270,34 @@ class SimpleColumnGroup(
 
     override fun kind(): SimpleColumnKind {
         return SimpleColumnKind.GROUP
+    }
+}
+
+fun KotlinTypeFacade.simpleColumnOf(name: String, type: ConeKotlinType): SimpleCol {
+    return if (type.classId == Names.DATA_ROW_CLASS_ID) {
+        val schema = pluginDataFrameSchema(type)
+        val group = SimpleColumnGroup(name, schema.columns(), anyRow)
+        val column = if (type.isNullable) {
+            makeNullable(group)
+        } else {
+            group
+        }
+        column
+    } else if (type.classId == Names.DF_CLASS_ID && type.nullability == ConeNullability.NOT_NULL) {
+        val schema = pluginDataFrameSchema(type)
+        SimpleFrameColumn(name, schema.columns(), anyDataFrame)
+    } else {
+        SimpleCol(name, type.wrap())
+    }
+}
+
+private fun KotlinTypeFacade.makeNullable(column: SimpleCol): SimpleCol {
+    return when (column) {
+        is SimpleColumnGroup -> {
+            SimpleColumnGroup(column.name, column.columns().map { makeNullable(column) }, anyRow)
+        }
+        is SimpleFrameColumn -> column
+        else -> SimpleCol(column.name, column.type.changeNullability { true })
     }
 }
 
