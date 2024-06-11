@@ -33,7 +33,8 @@ abstract class IrSymbolBase<out Descriptor : DeclarationDescriptor, Owner : IrSy
 
     private var _owner: Owner? = null
     final override val owner: Owner
-        get() = _owner ?: error("${javaClass.simpleName} is unbound. Signature: $signature")
+        get() = _owner
+            ?: error("${javaClass.simpleName} is unbound. Signature: $signature")
 
     override val signature: IdSignature?
         get() = null
