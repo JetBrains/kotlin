@@ -1,7 +1,10 @@
 USED DECLARATIONS:
 
-Declaration: dependency.Foo
-By names: [FooAliasOne, FooAliasTwo]
+Declaration: dependency.FooAliasOne
+By names: [FooAliasOne]
+
+Declaration: dependency.FooAliasTwo
+By names: [FooAliasTwo]
 
 Declaration: kotlin.Any
 By names: [Any]

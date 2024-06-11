@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.impl.isTypeAliasedConstructor
+import org.jetbrains.kotlin.fir.scopes.impl.typeAliasForConstructor
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -69,6 +71,7 @@ internal fun FirCallableSymbol<*>.computeImportableName(useSiteSession: FirSessi
     if (callableId.isLocal) return null
 
     // SAM constructors are synthetic, but can be imported
+    // TODO handle typealiased SAM constructors properly when KT-68984 is fixed
     if (origin is FirDeclarationOrigin.SamConstructor) return callableId.asSingleFqName()
 
     // if classId == null, callable is topLevel
@@ -77,7 +80,17 @@ internal fun FirCallableSymbol<*>.computeImportableName(useSiteSession: FirSessi
 
     val containingClass = getContainingClassSymbol(useSiteSession) ?: return null
 
-    if (this is FirConstructorSymbol) return if (!containingClass.isInner) containingClassId.asSingleFqName() else null
+    if (this is FirConstructorSymbol) {
+        return when {
+            // for a typealiased constructor, we want to import the typealias, and not the original class
+            isTypeAliasedConstructor -> typeAliasForConstructor?.classId?.asSingleFqName()
+
+            // for a constructor (!) of inner class, it's impossible to use it independently of the outer class' instance
+            containingClass.isInner -> null
+
+            else -> containingClassId.asSingleFqName()
+        }
+    }
 
     // Java static members, enums, and object members can be imported
     val canBeImported = containingClass.origin is FirDeclarationOrigin.Java && isStatic ||
