@@ -21,18 +21,22 @@ import org.jetbrains.kotlin.generators.tree.AbstractField
 import org.jetbrains.kotlin.generators.tree.ClassRef
 
 object FieldSets {
-    val typeArguments by lazy { listField("typeArguments", typeProjection, useMutableOrEmpty = true, withReplace = true) }
+    val typeArguments = fieldSet(listField("typeArguments", typeProjection, useMutableOrEmpty = true, withReplace = true))
 
-    val declarations by lazy { listField(declaration).apply { useInBaseTransformerDetection = false } }
+    val declarations = fieldSet(listField(declaration).apply { useInBaseTransformerDetection = false })
 
-    val annotations by lazy {
+    val annotations = fieldSet(
         listField(
             "annotations",
             annotation,
             withReplace = true,
             useMutableOrEmpty = true
         ).withTransform(needTransformInOtherChildren = true)
-    }
+    )
+
+    val typeParameters = fieldSet(listField("typeParameters", typeParameter))
+
+    val name = fieldSet(field(nameType))
 
     fun declaredSymbol(name: String, symbolType: ClassRef<*>): Field =
         field(name, symbolType)
@@ -49,8 +53,4 @@ object FieldSets {
 
     fun referencedSymbol(symbolType: ClassRef<*>, nullable: Boolean = false, withReplace: Boolean = false): Field =
         referencedSymbol("symbol", symbolType, nullable, withReplace)
-
-    val typeParameters by lazy { listField("typeParameters", typeParameter) }
-
-    val name by lazy { field(nameType) }
 }

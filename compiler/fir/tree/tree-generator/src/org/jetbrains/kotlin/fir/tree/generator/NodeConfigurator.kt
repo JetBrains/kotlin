@@ -36,7 +36,9 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         typeParametersOwner.configure {
-            +typeParameters.withTransform()
+            +typeParameters {
+                withTransform()
+            }
         }
 
         typeParameterRefsOwner.configure {
@@ -195,7 +197,9 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         qualifiedAccessExpression.configure {
-            +typeArguments.withTransform()
+            +typeArguments {
+                withTransform()
+            }
             +field("explicitReceiver", expression, nullable = true, withReplace = true).withTransform()
             +field("dispatchReceiver", expression, nullable = true, withReplace = true)
             +field("extensionReceiver", expression, nullable = true, withReplace = true)
@@ -277,7 +281,9 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +declaredSymbol(classSymbolType.withArgs(klass))
             +field(classKindType)
             +listField("superTypeRefs", typeRef, withReplace = true).withTransform()
-            +declarations.withTransform()
+            +declarations {
+                withTransform()
+            }
             +annotations
             +field("scopeProvider", firScopeProviderType)
         }
@@ -493,7 +499,9 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         file.configure {
             +field("packageDirective", packageDirective)
             +listField(import).withTransform()
-            +declarations.withTransform()
+            +declarations {
+                withTransform()
+            }
             +field("name", string)
             +field("sourceFile", sourceFileType, nullable = true)
             +field("sourceFileLinesMapping", sourceFileLinesMappingType, nullable = true)
@@ -502,7 +510,10 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         script.configure {
             +name
-            +declarations.withTransform().withReplace()
+            +declarations {
+                withTransform()
+                withReplace()
+            }
             +declaredSymbol(scriptSymbolType)
             +listField("parameters", property).withTransform()
             +listField("receivers", scriptReceiverParameter, useMutableOrEmpty = true).withTransform()
@@ -542,7 +553,9 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("useSiteTarget", annotationUseSiteTargetType, nullable = true, withReplace = true)
             +field("annotationTypeRef", typeRef, withReplace = true).withTransform()
             +field("argumentMapping", annotationArgumentMapping, withReplace = true)
-            +typeArguments.withTransform()
+            +typeArguments {
+                withTransform()
+            }
         }
 
         annotationCall.configure {
@@ -700,7 +713,9 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("canBeValue", boolean, withReplace = true)
             +field("isFullyQualified", boolean)
             +listField("nonFatalDiagnostics", coneDiagnosticType, useMutableOrEmpty = true)
-            +typeArguments.withTransform()
+            +typeArguments {
+                withTransform()
+            }
         }
 
         resolvedReifiedParameterReference.configure {

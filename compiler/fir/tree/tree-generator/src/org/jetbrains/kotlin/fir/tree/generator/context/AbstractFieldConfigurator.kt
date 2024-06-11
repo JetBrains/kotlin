@@ -13,11 +13,12 @@ import org.jetbrains.kotlin.types.Variance
 abstract class AbstractFieldConfigurator<T : AbstractFirTreeBuilder>(private val builder: T) {
     inner class ConfigureContext(val element: Element) : ImportCollecting by element {
         operator fun FieldSet.unaryPlus() {
-            element.fields.addAll(this.map { it.copy() })
+            val fields = fieldDefinitions.map { it.copy() }
+            element.fields.addAll(fields)
         }
 
         operator fun Field.unaryPlus() {
-            val doesNotContains = element.fields.add(this.copy())
+            val doesNotContains = element.fields.add(this)
             require(doesNotContains) {
                 "$element already contains field $this}"
             }

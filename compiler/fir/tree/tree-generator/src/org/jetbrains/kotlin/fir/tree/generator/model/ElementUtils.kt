@@ -58,26 +58,22 @@ fun listField(
 
 // ----------- Field set -----------
 
-typealias FieldSet = List<Field>
+data class FieldSet(val fieldDefinitions: List<Field>) {
+    operator fun invoke(config: Field.() -> Unit): FieldSet {
+        val configured = fieldDefinitions.map { it.copy().apply(config) }
+        return FieldSet(configured)
+    }
+}
 
 fun fieldSet(vararg fields: Field): FieldSet {
-    return fields.toList()
+    return FieldSet(fields.toList())
 }
 
-@JvmName("foo")
-infix fun FieldSet.with(sets: List<FieldSet>): FieldSet {
-    return sets.flatten()
-}
-
-infix fun FieldSet.with(set: FieldSet): FieldSet {
-    return this + set
-}
-
-fun Field.withTransform(needTransformInOtherChildren: Boolean = false): Field = copy().apply {
+fun Field.withTransform(needTransformInOtherChildren: Boolean = false): Field = apply {
     needsSeparateTransform = true
     this.needTransformInOtherChildren = needTransformInOtherChildren
 }
 
-fun Field.withReplace(): Field = copy().apply {
+fun Field.withReplace(): Field = apply {
     withReplace = true
 }
