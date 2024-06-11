@@ -130,7 +130,10 @@ open class ConeTypeRenderer(
             is ConeStubTypeConstructor -> builder.append("Stub (subtyping): ${constructor.variable}")
             is ConeIntegerLiteralType -> render(constructor)
 
-            is ConeIntersectionType -> error("Can't render constructor of intersection type")
+            is ConeIntersectionType -> error(
+                "`renderConstructor` mustn't be called with an intersection type argument. " +
+                        "Call `render` to simply render the type or filter out intersection types on the call-site."
+            )
         }
     }
 

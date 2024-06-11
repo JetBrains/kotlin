@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.ConeIntersectionType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.forEachType
 import org.jetbrains.kotlin.fir.types.getConstructor
@@ -168,7 +169,9 @@ object FirDiagnosticRenderers {
                 val constructors = buildSet {
                     coneTypes.forEach {
                         it.forEachType {
-                            add(it.lowerBoundIfFlexible().getConstructor())
+                            if (it !is ConeIntersectionType) {
+                                add(it.lowerBoundIfFlexible().getConstructor())
+                            }
                         }
                     }
                 }
