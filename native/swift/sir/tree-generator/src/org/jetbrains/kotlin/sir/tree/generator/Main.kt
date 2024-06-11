@@ -25,7 +25,7 @@ fun main(args: Array<String>) {
             ::ElementPrinter,
             emptyList(),
             ImplementationConfigurator,
-            BuilderConfigurator(model.elements),
+            BuilderConfigurator(model),
             ::ImplementationPrinter,
             ::BuilderPrinter,
         )

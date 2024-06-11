@@ -19,9 +19,8 @@ typealias Model = org.jetbrains.kotlin.generators.tree.Model<Element>
 fun main(args: Array<String>) {
     val generationPath = args.firstOrNull()?.let { File(it) }
         ?: File("../../tree/gen").canonicalFile
-    NodeConfigurator.configureFields()
-    val model = Model(FirTreeBuilder.elements, FirTreeBuilder.baseFirElement)
 
+    val model = NodeConfigurator.build()
     TreeGenerator(generationPath, "compiler/fir/tree/tree-generator/Readme.md").run {
         generateTree(
             model,
@@ -35,7 +34,7 @@ fun main(args: Array<String>) {
                 firTransformerType to ::TransformerPrinter.bind(model.rootElement),
             ),
             ImplementationConfigurator,
-            BuilderConfigurator,
+            BuilderConfigurator(model),
             ::ImplementationPrinter,
             ::BuilderPrinter,
         )

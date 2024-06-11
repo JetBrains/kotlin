@@ -59,6 +59,11 @@ class Element(name: String, override val propertyName: String, kind: Kind) : Abs
 
     val needTransformOtherChildren: Boolean get() = _needTransformOtherChildren || elementParents.any { it.element.needTransformOtherChildren }
 
+    operator fun FieldSet.unaryPlus() {
+        val fields = fieldDefinitions.map { it.copy() }
+        this@Element.fields.addAll(fields)
+    }
+
     enum class Kind(val packageName: String) {
         Expression("expressions"),
         Declaration("declarations"),

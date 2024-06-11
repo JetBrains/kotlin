@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.printer.*
 
 private val elementsWithReplaceSource = setOf(
-    FirTreeBuilder.qualifiedAccessExpression,
-    FirTreeBuilder.delegatedConstructorCall,
+    NodeConfigurator.qualifiedAccessExpression,
+    NodeConfigurator.delegatedConstructorCall,
 )
 
 internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElementPrinter<Element, Field>(printer) {
@@ -30,7 +30,7 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
                 element = element,
                 transformerClass = firTransformerType,
                 implementation = "transformer.transform${element.name}(this, data)",
-                returnType = TypeVariable("E", listOf(FirTreeBuilder.baseFirElement)),
+                returnType = TypeVariable("E", listOf(NodeConfigurator.rootElement)),
                 treeName = treeName,
             )
 
@@ -94,7 +94,7 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
                 printTransformChildrenMethod(
                     element = element,
                     transformerClass = firTransformerType,
-                    returnType = FirTreeBuilder.baseFirElement,
+                    returnType = NodeConfigurator.rootElement,
                 )
                 println()
             }

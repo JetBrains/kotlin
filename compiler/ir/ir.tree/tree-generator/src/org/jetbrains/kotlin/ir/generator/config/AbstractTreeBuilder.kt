@@ -118,10 +118,4 @@ abstract class AbstractTreeBuilder : AbstractElementConfigurator<Element, Field,
         symbolFieldRole = AbstractField.SymbolFieldRole.REFERENCED
         initializer()
     }
-
-    companion object {
-        val int = type<Int>()
-        val string = type<String>()
-        val boolean = type<Boolean>()
-    }
 }

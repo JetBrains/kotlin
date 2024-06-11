@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.fir.tree.generator.context.generatedType
-import org.jetbrains.kotlin.fir.tree.generator.context.type
+import org.jetbrains.kotlin.fir.tree.generator.util.generatedType
+import org.jetbrains.kotlin.fir.tree.generator.util.type
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -57,11 +57,11 @@ val coneClassLikeTypeType = type<ConeClassLikeType>()
 val standardClassIdsType = type<StandardClassIds>()
 
 val whenRefType = generatedType("", "FirExpressionRef")
-    .withArgs(FirTreeBuilder.whenExpression)
+    .withArgs(NodeConfigurator.whenExpression)
 val referenceToSimpleExpressionType = generatedType("", "FirExpressionRef")
-    .withArgs(FirTreeBuilder.expression)
+    .withArgs(NodeConfigurator.expression)
 val safeCallCheckedSubjectReferenceType = generatedType("", "FirExpressionRef")
-    .withArgs(FirTreeBuilder.checkedSafeCallSubject)
+    .withArgs(NodeConfigurator.checkedSafeCallSubject)
 
 val firModuleDataType = type("fir", "FirModuleData")
 val firImplicitTypeWithoutSourceType = generatedType("types.impl", "FirImplicitTypeRefImplWithoutSource")

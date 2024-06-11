@@ -16,7 +16,7 @@ import kotlin.reflect.KProperty
  * for properties in the generated builders.
  */
 abstract class AbstractBuilderConfigurator<Element, Implementation, BuilderField, ElementField>(
-    val elements: List<Element>,
+    val model: Model<Element>
 ) where Element : AbstractElement<Element, ElementField, Implementation>,
         Implementation : AbstractImplementation<Implementation, Element, BuilderField>,
         BuilderField : AbstractField<*>,
@@ -116,7 +116,7 @@ abstract class AbstractBuilderConfigurator<Element, Implementation, BuilderField
         element: Element,
         implementationPredicate: (Implementation) -> Boolean = { true }
     ): Collection<Implementation> {
-        return elements
+        return model.elements
             .flatMap { it.implementations }
             .mapNotNullTo(mutableSetOf()) { implementation ->
                 if (!implementationPredicate(implementation)) return@mapNotNullTo null
@@ -127,7 +127,7 @@ abstract class AbstractBuilderConfigurator<Element, Implementation, BuilderField
     }
 
     private val allLeafBuilders: List<LeafBuilder<BuilderField, Element, Implementation>>
-        get() = elements.flatMap { it.implementations }.mapNotNull { it.builder }
+        get() = model.elements.flatMap { it.implementations }.mapNotNull { it.builder }
 
     /**
      * Allows to batch-apply [config] to certain fields in _all_ the builders that satisfy the given

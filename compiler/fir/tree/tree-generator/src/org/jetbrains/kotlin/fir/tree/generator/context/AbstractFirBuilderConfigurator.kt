@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.context
 
+import org.jetbrains.kotlin.fir.tree.generator.Model
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
 import org.jetbrains.kotlin.fir.tree.generator.model.FieldWithDefault
 import org.jetbrains.kotlin.fir.tree.generator.model.Implementation
 import org.jetbrains.kotlin.generators.tree.config.AbstractBuilderConfigurator
 
-abstract class AbstractFirBuilderConfigurator<T : AbstractFirTreeBuilder>(
-    elements: List<Element>
-) : AbstractBuilderConfigurator<Element, Implementation, FieldWithDefault, Field>(elements) {
+abstract class AbstractFirBuilderConfigurator<T : AbstractFirTreeBuilder>(model: Model) :
+    AbstractBuilderConfigurator<Element, Implementation, FieldWithDefault, Field>(model) {
 
     final override val namePrefix: String
         get() = "Fir"

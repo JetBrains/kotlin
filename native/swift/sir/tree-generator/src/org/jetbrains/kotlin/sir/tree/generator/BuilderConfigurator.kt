@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.sir.tree.generator
 import org.jetbrains.kotlin.sir.tree.generator.config.AbstractSwiftIrTreeBuilderConfigurator
 import org.jetbrains.kotlin.sir.tree.generator.model.Element
 
-class BuilderConfigurator(elements: List<Element>) : AbstractSwiftIrTreeBuilderConfigurator(elements) {
+class BuilderConfigurator(model: Model) : AbstractSwiftIrTreeBuilderConfigurator(model) {
 
     override fun configureBuilders() = with(SwiftIrTree) {
         configureAllLeafBuilders {

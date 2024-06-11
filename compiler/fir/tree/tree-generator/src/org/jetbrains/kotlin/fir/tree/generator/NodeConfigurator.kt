@@ -15,630 +15,881 @@ import org.jetbrains.kotlin.fir.tree.generator.FieldSets.typeParameters
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFieldConfigurator
 import org.jetbrains.kotlin.fir.tree.generator.context.type
 import org.jetbrains.kotlin.fir.tree.generator.model.*
+import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.Expression
 import org.jetbrains.kotlin.generators.tree.AbstractField
 import org.jetbrains.kotlin.generators.tree.StandardTypes
 import org.jetbrains.kotlin.generators.tree.TypeRef
 import org.jetbrains.kotlin.generators.tree.withArgs
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
-object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuilder) {
-    fun configureFields() = configure {
-        baseFirElement.configure {
-            +field("source", sourceElementType, nullable = true)
+object NodeConfigurator : AbstractFirTreeBuilder() {
+    override val rootElement: Element by element(Other, name = "Element") {
+        +field("source", sourceElementType, nullable = true)
+    }
+
+    val annotationContainer: Element by element(Other) {
+        +annotations
+    }
+
+    val typeParameterRef: Element by element(Declaration) {
+        +referencedSymbol(typeParameterSymbolType)
+    }
+
+    val typeParametersOwner: Element by sealedElement(Declaration) {
+        parent(typeParameterRefsOwner)
+
+        +typeParameters {
+            withTransform = true
         }
+    }
 
-        annotationContainer.configure {
-            +annotations
+    val typeParameterRefsOwner: Element by sealedElement(Declaration) {
+        +listField("typeParameters", typeParameterRef, withTransform = true)
+    }
+
+    val resolvable: Element by sealedElement(Expression) {
+        +field("calleeReference", reference, withReplace = true, withTransform = true)
+    }
+
+    val diagnosticHolder: Element by element(Diagnostics) {
+        +field("diagnostic", coneDiagnosticType)
+    }
+
+    val controlFlowGraphOwner: Element by element(Declaration) {
+        +field("controlFlowGraphReference", controlFlowGraphReference, withReplace = true, nullable = true)
+    }
+
+    val contextReceiver: Element by element(Declaration) {
+        +field(typeRef, withReplace = true, withTransform = true)
+        +field("customLabelName", nameType, nullable = true)
+        +field("labelNameFromTypeRef", nameType, nullable = true)
+    }
+
+    val elementWithResolveState: Element by element(Other) {
+        +field("resolvePhase", resolvePhaseType) { isParameter = true; }
+        +field("resolveState", resolveStateType) {
+            isMutable = true; isVolatile = true; isFinal = true;
+            implementationDefaultStrategy = AbstractField.ImplementationDefaultStrategy.Lateinit
+            customInitializationCall = "resolvePhase.asResolveState()"
+            arbitraryImportables += phaseAsResolveStateExtentionImport
+            optInAnnotation = resolveStateAccessAnnotation
         }
+        +field("moduleData", firModuleDataType)
+        shouldBeAbstractClass()
+    }
 
-        typeParameterRef.configure {
-            +referencedSymbol(typeParameterSymbolType)
+    val declaration: Element by sealedElement(Declaration) {
+        parent(elementWithResolveState)
+        parent(annotationContainer)
+
+        +declaredSymbol(firBasedSymbolType.withArgs(declaration))
+        +field("moduleData", firModuleDataType)
+        +field("origin", declarationOriginType)
+        +field("attributes", declarationAttributesType)
+        shouldBeAbstractClass()
+    }
+
+    val callableDeclaration: Element by sealedElement(Declaration) {
+        parent(memberDeclaration)
+
+        +field("returnTypeRef", typeRef, withReplace = true, withTransform = true)
+        +field("receiverParameter", receiverParameter, nullable = true, withReplace = true, withTransform = true)
+        +field("deprecationsProvider", deprecationsProviderType, withReplace = true) {
+            isMutable = true
         }
+        +referencedSymbol(callableSymbolType.withArgs(callableDeclaration))
 
-        typeParametersOwner.configure {
-            +typeParameters {
-                withTransform = true
-            }
+        +field("containerSource", type<DeserializedContainerSource>(), nullable = true)
+        +field("dispatchReceiverType", coneSimpleKotlinTypeType, nullable = true)
+
+        +listField(contextReceiver, useMutableOrEmpty = true, withReplace = true)
+    }
+
+    val function: Element by sealedElement(Declaration) {
+        parent(callableDeclaration)
+        parent(targetElement)
+        parent(controlFlowGraphOwner)
+        parent(statement)
+
+        +declaredSymbol(functionSymbolType.withArgs(function))
+        +listField(valueParameter, withReplace = true, withTransform = true)
+        +field("body", block, nullable = true, withReplace = true, withTransform = true)
+    }
+
+    val errorExpression: Element by element(Expression) {
+        parent(expression)
+        parent(diagnosticHolder)
+
+        +field("expression", expression, nullable = true)
+        +field("nonExpressionElement", rootElement, nullable = true)
+    }
+
+    val errorFunction: Element by element(Declaration) {
+        parent(function)
+        parent(diagnosticHolder)
+
+        +declaredSymbol(errorFunctionSymbolType)
+    }
+
+    val memberDeclaration: Element by sealedElement(Declaration) {
+        parent(declaration)
+        parent(typeParameterRefsOwner)
+
+        +field("status", declarationStatus, withReplace = true, withTransform = true)
+    }
+
+    val statement: Element by element(Expression) {
+        parent(annotationContainer)
+    }
+
+    val expression: Element by element(Expression) {
+        parent(statement)
+
+        +field("coneTypeOrNull", coneKotlinTypeType, nullable = true, withReplace = true) {
+            optInAnnotation = unresolvedExpressionTypeAccessAnnotation
         }
+        +annotations
+    }
 
-        typeParameterRefsOwner.configure {
-            +listField("typeParameters", typeParameterRef, withTransform = true)
+    val lazyExpression: Element by element(Expression) {
+        parent(expression)
+    }
+
+    val argumentList: Element by element(Expression) {
+        +listField("arguments", expression, withTransform = true)
+    }
+
+    // TODO: may smth like `CallWithArguments` or `ElementWithArguments`?
+    val call: Element by sealedElement(Expression) {
+        parent(statement)
+
+        +field(argumentList, withReplace = true)
+    }
+
+    val block: Element by element(Expression) {
+        parent(expression)
+
+        +listField(statement, withTransform = true)
+        needTransformOtherChildren()
+    }
+
+    val lazyBlock: Element by element(Expression) {
+        parent(block)
+    }
+
+    val binaryLogicExpression: Element by element(Expression) {
+        parent(expression)
+
+        +field("leftOperand", expression, withTransform = true)
+        +field("rightOperand", expression, withTransform = true)
+        +field("kind", operationKindType)
+        needTransformOtherChildren()
+    }
+
+    val targetElement: Element by element(Other)
+
+    val jump: Element by sealedElement(Expression) {
+        parent(expression)
+
+        val e = +param("E", targetElement)
+        +field("target", jumpTargetType.withArgs(e))
+    }
+
+    val loopJump: Element by element(Expression) {
+        parent(jump.withArgs("E" to loop))
+    }
+
+    val breakExpression: Element by element(Expression) {
+        parent(loopJump)
+    }
+
+    val continueExpression: Element by element(Expression) {
+        parent(loopJump)
+    }
+
+    val returnExpression: Element by element(Expression) {
+        parent(jump.withArgs("E" to function))
+
+        +field("result", expression, withTransform = true)
+        needTransformOtherChildren()
+    }
+
+    val label: Element by element(Other) {
+        +field("name", string)
+    }
+
+    val loop: Element by sealedElement(Expression) {
+        parent(statement)
+        parent(targetElement)
+
+        +field(block, withTransform = true)
+        +field("condition", expression, withTransform = true)
+        +field(label, nullable = true)
+        needTransformOtherChildren()
+    }
+
+    val whileLoop: Element by element(Expression) {
+        parent(loop)
+
+        +field("condition", expression, withTransform = true)
+        +field(block, withTransform = true)
+    }
+
+    val doWhileLoop: Element by element(Expression) {
+        parent(loop)
+    }
+
+    val errorLoop: Element by element(Expression) {
+        parent(loop)
+        parent(diagnosticHolder)
+    }
+
+    val catchClause: Element by element(Expression, name = "Catch") {
+        +field("parameter", property, withTransform = true)
+        +field(block, withTransform = true)
+        needTransformOtherChildren()
+    }
+
+    val tryExpression: Element by element(Expression) {
+        parent(expression)
+        parent(resolvable)
+
+        +field("tryBlock", block, withTransform = true)
+        +listField("catches", catchClause, withTransform = true)
+        +field("finallyBlock", block, nullable = true, withTransform = true)
+        needTransformOtherChildren()
+    }
+
+    val elvisExpression: Element by element(Expression) {
+        parent(expression)
+        parent(resolvable)
+
+        +field("lhs", expression, withTransform = true)
+        +field("rhs", expression, withTransform = true)
+    }
+
+    val contextReceiverArgumentListOwner: Element by element(Expression) {
+        +listField("contextReceiverArguments", expression, useMutableOrEmpty = true, withReplace = true)
+    }
+
+    val qualifiedAccessExpression: Element by element(Expression) {
+        parent(expression)
+        parent(resolvable)
+        parent(contextReceiverArgumentListOwner)
+
+        +typeArguments {
+            withTransform = true
         }
+        +field("explicitReceiver", expression, nullable = true, withReplace = true, withTransform = true)
+        +field("dispatchReceiver", expression, nullable = true, withReplace = true)
+        +field("extensionReceiver", expression, nullable = true, withReplace = true)
+        +field("source", sourceElementType, nullable = true, withReplace = true)
+        +listField("nonFatalDiagnostics", coneDiagnosticType, useMutableOrEmpty = true, withReplace = true)
+    }
 
-        resolvable.configure {
-            +field("calleeReference", reference, withReplace = true, withTransform = true)
-        }
+    val qualifiedErrorAccessExpression: Element by element(Expression) {
+        parent(expression)
+        parent(diagnosticHolder)
 
-        diagnosticHolder.configure {
-            +field("diagnostic", coneDiagnosticType)
-        }
+        +field("selector", errorExpression)
+        +field("receiver", expression)
+    }
 
-        controlFlowGraphOwner.configure {
-            +field("controlFlowGraphReference", controlFlowGraphReference, withReplace = true, nullable = true)
-        }
+    val literalExpression: Element by element(Expression) {
+        parent(expression)
 
-        contextReceiver.configure {
-            +field(typeRef, withReplace = true, withTransform = true)
-            +field("customLabelName", nameType, nullable = true)
-            +field("labelNameFromTypeRef", nameType, nullable = true)
-        }
+        +field("kind", constKindType, withReplace = true)
+        +field("value", anyType, nullable = true)
+        +field("prefix", string, nullable = true)
+    }
 
-        elementWithResolveState.configure {
-            +field("resolvePhase", resolvePhaseType) { isParameter = true; }
-            +field("resolveState", resolveStateType) {
-                isMutable = true; isVolatile = true; isFinal = true;
-                implementationDefaultStrategy = AbstractField.ImplementationDefaultStrategy.Lateinit
-                customInitializationCall = "resolvePhase.asResolveState()"
-                arbitraryImportables += phaseAsResolveStateExtentionImport
-                optInAnnotation = resolveStateAccessAnnotation
-            }
+    val functionCall: Element by element(Expression) {
+        parent(qualifiedAccessExpression)
+        parent(call)
 
-            +field("moduleData", firModuleDataType)
-            shouldBeAbstractClass()
-        }
+        +field("calleeReference", namedReference)
+        +field("origin", functionCallOrigin)
+    }
 
-        declaration.configure {
-            +declaredSymbol(firBasedSymbolType.withArgs(declaration))
-            +field("moduleData", firModuleDataType)
-            +field("origin", declarationOriginType)
-            +field("attributes", declarationAttributesType)
-            shouldBeAbstractClass()
-        }
+    val integerLiteralOperatorCall: Element by element(Expression) {
+        parent(functionCall)
 
-        callableDeclaration.configure {
-            +field("returnTypeRef", typeRef, withReplace = true, withTransform = true)
-            +field("receiverParameter", receiverParameter, nullable = true, withReplace = true, withTransform = true)
-            +field("deprecationsProvider", deprecationsProviderType, withReplace = true) {
-                isMutable = true
-            }
-            +referencedSymbol(callableSymbolType.withArgs(callableDeclaration))
+        // we need methods for transformation of receivers
+        +field("dispatchReceiver", expression, nullable = true, withReplace = true, withTransform = true)
+        +field("extensionReceiver", expression, nullable = true, withReplace = true, withTransform = true)
+    }
 
-            +field("containerSource", type<DeserializedContainerSource>(), nullable = true)
-            +field("dispatchReceiverType", coneSimpleKotlinTypeType, nullable = true)
+    val arrayLiteral: Element by element(Expression) {
+        parent(expression)
+        parent(call)
+    }
 
-            +listField(contextReceiver, useMutableOrEmpty = true, withReplace = true)
-        }
+    val checkNotNullCall: Element by element(Expression) {
+        parent(expression)
+        parent(call)
+        parent(resolvable)
+    }
 
-        function.configure {
-            +declaredSymbol(functionSymbolType.withArgs(function))
-            +listField(valueParameter, withReplace = true, withTransform = true)
-            +field("body", block, nullable = true, withReplace = true, withTransform = true)
-        }
+    val comparisonExpression: Element by element(Expression) {
+        parent(expression)
 
-        errorExpression.configure {
-            +field("expression", expression, nullable = true)
-            +field("nonExpressionElement", baseFirElement, nullable = true)
-        }
+        +field("operation", operationType)
+        +field("compareToCall", functionCall)
+    }
 
-        errorFunction.configure {
-            +declaredSymbol(errorFunctionSymbolType)
-        }
+    val typeOperatorCall: Element by element(Expression) {
+        parent(expression)
+        parent(call)
 
-        memberDeclaration.configure {
-            +field("status", declarationStatus, withReplace = true, withTransform = true)
-        }
+        +field("operation", operationType)
+        +field("conversionTypeRef", typeRef, withTransform = true)
+        +field("argFromStubType", boolean, withReplace = true)
+        needTransformOtherChildren()
+    }
 
-        expression.configure {
-            +field("coneTypeOrNull", coneKotlinTypeType, nullable = true, withReplace = true) {
-                optInAnnotation = unresolvedExpressionTypeAccessAnnotation
-            }
-            +annotations
-        }
+    val augmentedAssignment: Element by element(Expression) {
+        parent(statement)
 
-        argumentList.configure {
-            +listField("arguments", expression, withTransform = true)
-        }
+        +field("operation", operationType)
+        +field("leftArgument", expression, withTransform = true)
+        +field("rightArgument", expression, withTransform = true)
 
-        call.configure {
-            +field(argumentList, withReplace = true)
-        }
-
-        block.configure {
-            +listField(statement, withTransform = true)
-            needTransformOtherChildren()
-        }
-
-        binaryLogicExpression.configure {
-            +field("leftOperand", expression, withTransform = true)
-            +field("rightOperand", expression, withTransform = true)
-            +field("kind", operationKindType)
-            needTransformOtherChildren()
-        }
-
-        jump.configure {
-            val e = withArg("E", targetElement)
-            +field("target", jumpTargetType.withArgs(e))
-        }
-
-        loopJump.configure {
-            parentArgs(jump, "E" to loop)
-        }
-
-        returnExpression.configure {
-            parentArgs(jump, "E" to function)
-            +field("result", expression, withTransform = true)
-            needTransformOtherChildren()
-        }
-
-        label.configure {
-            +field("name", string)
-        }
-
-        loop.configure {
-            +field(block, withTransform = true)
-            +field("condition", expression, withTransform = true)
-            +field(label, nullable = true)
-            needTransformOtherChildren()
-        }
-
-        whileLoop.configure {
-            +field("condition", expression, withTransform = true)
-            +field(block, withTransform = true)
-        }
-
-        catchClause.configure {
-            +field("parameter", property, withTransform = true)
-            +field(block, withTransform = true)
-            needTransformOtherChildren()
-        }
-
-        tryExpression.configure {
-            +field("tryBlock", block, withTransform = true)
-            +listField("catches", catchClause, withTransform = true)
-            +field("finallyBlock", block, nullable = true, withTransform = true)
-            needTransformOtherChildren()
-        }
-
-        elvisExpression.configure {
-            +field("lhs", expression, withTransform = true)
-            +field("rhs", expression, withTransform = true)
-        }
-
-        contextReceiverArgumentListOwner.configure {
-            +listField("contextReceiverArguments", expression, useMutableOrEmpty = true, withReplace = true)
-        }
-
-        qualifiedAccessExpression.configure {
-            +typeArguments {
-                withTransform = true
-            }
-            +field("explicitReceiver", expression, nullable = true, withReplace = true, withTransform = true)
-            +field("dispatchReceiver", expression, nullable = true, withReplace = true)
-            +field("extensionReceiver", expression, nullable = true, withReplace = true)
-            +field("source", sourceElementType, nullable = true, withReplace = true)
-            +listField("nonFatalDiagnostics", coneDiagnosticType, useMutableOrEmpty = true, withReplace = true)
-        }
-
-        qualifiedErrorAccessExpression.configure {
-            +field("selector", errorExpression)
-            +field("receiver", expression)
-        }
-
-        literalExpression.configure {
-            +field("kind", constKindType, withReplace = true)
-            +field("value", anyType, nullable = true)
-            +field("prefix", stringType, nullable = true)
-        }
-
-        functionCall.configure {
-            +field("calleeReference", namedReference)
-            +field("origin", functionCallOrigin)
-        }
-
-        integerLiteralOperatorCall.configure {
-            // we need methods for transformation of receivers
-            +field("dispatchReceiver", expression, nullable = true, withReplace = true, withTransform = true)
-            +field("extensionReceiver", expression, nullable = true, withReplace = true, withTransform = true)
-        }
-
-        comparisonExpression.configure {
-            +field("operation", operationType)
-            +field("compareToCall", functionCall)
-        }
-
-        typeOperatorCall.configure {
-            +field("operation", operationType)
-            +field("conversionTypeRef", typeRef, withTransform = true)
-            +field("argFromStubType", boolean, withReplace = true)
-            needTransformOtherChildren()
-        }
-
-        augmentedAssignment.configure {
-            +field("operation", operationType)
-            +field("leftArgument", expression, withTransform = true)
-            +field("rightArgument", expression, withTransform = true)
-
-            element.kDoc = """
+        kDoc = """
                 Represents an augmented assignment statement (e.g. `x += y`) **before** it gets resolved.
                 After resolution, it will be either represented as an assignment (`x = x.plus(y)`) or a call (`x.plusAssign(y)`). 
                 
                 Augmented assignments with an indexed access as receiver are represented as [${indexedAccessAugmentedAssignment.render()}]. 
             """.trimIndent()
+    }
+
+    val incrementDecrementExpression: Element by element(Expression) {
+        parent(expression)
+
+        +field("isPrefix", boolean)
+        +field("operationName", nameType)
+        +field("expression", expression)
+        +field("operationSource", sourceElementType, nullable = true)
+    }
+
+    val equalityOperatorCall: Element by element(Expression) {
+        parent(expression)
+        parent(call)
+
+        +field("operation", operationType)
+    }
+
+    val whenBranch: Element by element(Expression) {
+        +field("condition", expression, withTransform = true)
+        +field("result", block, withTransform = true)
+        +field("hasGuard", boolean)
+        needTransformOtherChildren()
+    }
+
+    val classLikeDeclaration: Element by sealedElement(Declaration) {
+        parent(memberDeclaration)
+        parent(statement)
+
+        +declaredSymbol(classLikeSymbolType.withArgs(classLikeDeclaration))
+        +field("deprecationsProvider", deprecationsProviderType, withReplace = true) {
+            isMutable = true
         }
+    }
 
-        incrementDecrementExpression.configure {
-            +field("isPrefix", boolean)
-            +field("operationName", nameType)
-            +field("expression", expression)
-            +field("operationSource", sourceElementType, nullable = true)
+    val klass: Element by sealedElement(Declaration, name = "Class") {
+        parent(classLikeDeclaration)
+        parent(statement)
+        parent(typeParameterRefsOwner)
+        parent(controlFlowGraphOwner)
+
+        +declaredSymbol(classSymbolType.withArgs(klass))
+        +field(classKindType)
+        +listField("superTypeRefs", typeRef, withReplace = true, withTransform = true)
+        +declarations {
+            withTransform = true
         }
+        +annotations
+        +field("scopeProvider", firScopeProviderType)
+    }
 
-        equalityOperatorCall.configure {
-            +field("operation", operationType)
+    val regularClass: Element by element(Declaration) {
+        parent(klass)
+
+        +FieldSets.name
+        +declaredSymbol(regularClassSymbolType)
+        +field("hasLazyNestedClassifiers", boolean)
+        +referencedSymbol("companionObjectSymbol", regularClassSymbolType, nullable = true, withReplace = true)
+        +listField("superTypeRefs", typeRef, withReplace = true)
+        +listField(contextReceiver, useMutableOrEmpty = true)
+    }
+
+    val anonymousObject: Element by element(Declaration) {
+        parent(klass)
+
+        +declaredSymbol(anonymousObjectSymbolType)
+    }
+
+    val anonymousObjectExpression: Element by element(Expression) {
+        parent(expression)
+
+        +field(anonymousObject, withTransform = true)
+    }
+
+    val typeAlias: Element by element(Declaration) {
+        parent(classLikeDeclaration)
+        parent(typeParametersOwner)
+
+        +typeParameters
+        +FieldSets.name
+        +declaredSymbol(typeAliasSymbolType)
+        +field("expandedTypeRef", typeRef, withReplace = true, withTransform = true)
+        +annotations
+    }
+
+    val anonymousFunction: Element by element(Declaration) {
+        parent(function)
+        parent(typeParametersOwner)
+        parent(contractDescriptionOwner)
+
+        +declaredSymbol(anonymousFunctionSymbolType)
+        +field(label, nullable = true)
+        +field("invocationKind", eventOccurrencesRangeType, nullable = true, withReplace = true) {
+            isMutable = true
         }
-
-        whenBranch.configure {
-            +field("condition", expression, withTransform = true)
-            +field("result", block, withTransform = true)
-            +field("hasGuard", boolean)
-            needTransformOtherChildren()
+        +field("inlineStatus", inlineStatusType, withReplace = true) {
+            isMutable = true
         }
+        +field("isLambda", boolean)
+        +field("hasExplicitParameterList", boolean)
+        +typeParameters
+        +field(typeRef, withReplace = true)
+    }
 
-        classLikeDeclaration.configure {
-            +declaredSymbol(classLikeSymbolType.withArgs(classLikeDeclaration))
-            +field("deprecationsProvider", deprecationsProviderType, withReplace = true) {
-                isMutable = true }
+    val anonymousFunctionExpression: Element by element(Expression) {
+        parent(expression)
+
+        +field(anonymousFunction, withTransform = true)
+        +field("isTrailingLambda", boolean, withReplace = true) {
+            replaceOptInAnnotation = rawFirApi
         }
+    }
 
-        klass.configure {
-            +declaredSymbol(classSymbolType.withArgs(klass))
-            +field(classKindType)
-            +listField("superTypeRefs", typeRef, withReplace = true, withTransform = true)
-            +declarations {
-                withTransform = true
-            }
-            +annotations
-            +field("scopeProvider", firScopeProviderType)
+    val typeParameter: Element by element(Declaration) {
+        parent(typeParameterRef)
+        parent(declaration)
+
+        +FieldSets.name
+        +declaredSymbol(typeParameterSymbolType)
+        +referencedSymbol("containingDeclarationSymbol", firBasedSymbolType.withArgs(TypeRef.Star)) {
+            withBindThis = false
         }
+        +field(varianceType)
+        +field("isReified", boolean)
+        // TODO: `useMutableOrEmpty = true` is a workaround for KT-60324 until KT-60445 has been fixed.
+        +listField("bounds", typeRef, withReplace = true, useMutableOrEmpty = true)
+        +annotations
+    }
 
-        regularClass.configure {
-            +name
-            +declaredSymbol(regularClassSymbolType)
-            +field("hasLazyNestedClassifiers", boolean)
-            +referencedSymbol("companionObjectSymbol", regularClassSymbolType, nullable = true, withReplace = true)
-            +listField("superTypeRefs", typeRef, withReplace = true)
-            +listField(contextReceiver, useMutableOrEmpty = true)
+    val constructedClassTypeParameterRef: Element by element(Declaration) {
+        parent(typeParameterRef)
+    }
+
+    val outerClassTypeParameterRef: Element by element(Declaration) {
+        parent(typeParameterRef)
+    }
+
+    val simpleFunction: Element by element(Declaration) {
+        parent(function)
+        parent(contractDescriptionOwner)
+        parent(typeParametersOwner)
+
+        +FieldSets.name
+        +declaredSymbol(namedFunctionSymbolType)
+        +annotations
+        +typeParameters
+    }
+
+    val contractDescriptionOwner: Element by sealedElement(Declaration) {
+        +field(contractDescription, withReplace = true, nullable = true, withTransform = true)
+    }
+
+    val property: Element by element(Declaration) {
+        parent(variable)
+        parent(typeParametersOwner)
+        parent(controlFlowGraphOwner)
+
+        +listField(contextReceiver, useMutableOrEmpty = true, withReplace = true, withTransform = true)
+        +declaredSymbol(propertySymbolType)
+        +referencedSymbol("delegateFieldSymbol", delegateFieldSymbolType, nullable = true)
+        +field("isLocal", boolean)
+        +field("bodyResolveState", propertyBodyResolveStateType, withReplace = true)
+        +typeParameters
+    }
+
+    val propertyAccessor: Element by element(Declaration) {
+        parent(function)
+        parent(contractDescriptionOwner)
+        parent(typeParametersOwner)
+
+        +declaredSymbol(propertyAccessorSymbolType)
+        +referencedSymbol("propertySymbol", firPropertySymbolType) {
+            withBindThis = false
         }
+        +field("isGetter", boolean)
+        +field("isSetter", boolean)
+        +annotations
+        +typeParameters
+    }
 
-        anonymousObject.configure {
-            +declaredSymbol(anonymousObjectSymbolType)
+    val backingField: Element by element(Declaration) {
+        parent(variable)
+        parent(typeParametersOwner)
+        parent(statement)
+
+        +declaredSymbol(backingFieldSymbolType)
+        +referencedSymbol("propertySymbol", firPropertySymbolType) {
+            withBindThis = false
         }
+        +field("initializer", expression, nullable = true, withReplace = true, withTransform = true)
+        +annotations
+        +typeParameters
+        +field("status", declarationStatus, withReplace = true, withTransform = true)
+    }
 
-        anonymousObjectExpression.configure {
-            +field(anonymousObject, withTransform = true)
+    val declarationStatus: Element by element(Declaration) {
+        +field(visibilityType)
+        +field(modalityType, nullable = true)
+        generateBooleanFields(
+            "expect", "actual", "override", "operator", "infix", "inline", "tailRec",
+            "external", "const", "lateInit", "inner", "companion", "data", "suspend", "static",
+            "fromSealedClass", "fromEnumClass", "fun", "hasStableParameterNames",
+        )
+        +field("defaultVisibility", visibilityType, nullable = false)
+        +field("defaultModality", modalityType, nullable = false)
+    }
+
+    val resolvedDeclarationStatus: Element by element(Declaration) {
+        parent(declarationStatus)
+
+        +field(modalityType, nullable = false)
+        +field("effectiveVisibility", effectiveVisibilityType)
+        shouldBeAnInterface()
+    }
+
+    val implicitInvokeCall: Element by element(Expression) {
+        parent(functionCall)
+
+        +field("isCallWithExplicitReceiver", boolean)
+    }
+
+    val constructor: Element by element(Declaration) {
+        parent(function)
+        parent(typeParameterRefsOwner)
+        parent(contractDescriptionOwner)
+
+        +annotations
+        +declaredSymbol(constructorSymbolType)
+        +field("delegatedConstructor", delegatedConstructorCall, nullable = true, withReplace = true, withTransform = true)
+        +field("body", block, nullable = true)
+        +field("isPrimary", boolean)
+    }
+
+    val errorPrimaryConstructor: Element by element(Declaration) {
+        parent(constructor)
+        parent(diagnosticHolder)
+    }
+
+    val delegatedConstructorCall: Element by element(Expression) {
+        parent(resolvable)
+        parent(call)
+        parent(contextReceiverArgumentListOwner)
+
+        +field("constructedTypeRef", typeRef, withReplace = true)
+        +field("dispatchReceiver", expression, nullable = true, withReplace = true, withTransform = true)
+        +field("calleeReference", reference, withReplace = true)
+        +field("source", sourceElementType, nullable = true, withReplace = true)
+        generateBooleanFields("this", "super")
+    }
+
+    val multiDelegatedConstructorCall: Element by element(Expression) {
+        parent(delegatedConstructorCall)
+
+        +listField("delegatedConstructorCalls", delegatedConstructorCall, withReplace = true, withTransform = true)
+    }
+
+    val valueParameter: Element by element(Declaration) {
+        parent(variable)
+        parent(controlFlowGraphOwner)
+
+        +declaredSymbol(valueParameterSymbolType)
+        +field("defaultValue", expression, nullable = true, withReplace = true)
+        +referencedSymbol("containingFunctionSymbol", functionSymbolType.withArgs(TypeRef.Star)) {
+            withBindThis = false
         }
+        generateBooleanFields("crossinline", "noinline", "vararg")
+    }
 
-        typeAlias.configure {
-            +typeParameters
-            +name
-            +declaredSymbol(typeAliasSymbolType)
-            +field("expandedTypeRef", typeRef, withReplace = true, withTransform = true)
-            +annotations
+    val receiverParameter: Element by element(Declaration) {
+        parent(annotationContainer)
+
+        +field(typeRef, withReplace = true, withTransform = true)
+        +annotations
+    }
+
+    val scriptReceiverParameter: Element by element(Declaration) {
+        parent(receiverParameter)
+
+        +field(typeRef, withReplace = true, withTransform = true)
+        // means coming from ScriptCompilationConfigurationKeys.baseClass (could be deprecated soon, see KT-68540)
+        +field("isBaseClassReceiver", boolean)
+    }
+
+    val variable: Element by sealedElement(Declaration) {
+        parent(callableDeclaration)
+        parent(statement)
+
+        +FieldSets.name
+        +declaredSymbol(variableSymbolType.withArgs(variable))
+        +field("initializer", expression, nullable = true, withReplace = true, withTransform = true)
+        +field("delegate", expression, nullable = true, withReplace = true, withTransform = true)
+        generateBooleanFields("var", "val")
+        +field("getter", propertyAccessor, nullable = true, withReplace = true, withTransform = true)
+        +field("setter", propertyAccessor, nullable = true, withReplace = true, withTransform = true)
+        +field("backingField", backingField, nullable = true, withTransform = true)
+        +annotations
+        needTransformOtherChildren()
+    }
+
+    val functionTypeParameter: Element by element(Other) {
+        parent(rootElement)
+
+        +field("name", nameType, nullable = true)
+        +field("returnTypeRef", typeRef)
+    }
+
+    val errorProperty: Element by element(Declaration) {
+        parent(variable)
+        parent(diagnosticHolder)
+
+        +declaredSymbol(errorPropertySymbolType)
+    }
+
+    val enumEntry: Element by element(Declaration) {
+        parent(variable)
+
+        +declaredSymbol(enumEntrySymbolType)
+    }
+
+    val field: Element by element(Declaration) {
+        parent(variable)
+        parent(controlFlowGraphOwner)
+
+        +declaredSymbol(fieldSymbolType)
+        generateBooleanFields("hasConstantInitializer")
+    }
+
+    val anonymousInitializer: Element by element(Declaration) {
+        parent(declaration)
+        parent(controlFlowGraphOwner)
+
+        +field("body", block, nullable = true, withReplace = true)
+        +declaredSymbol(anonymousInitializerSymbolType)
+        // the containing declaration is nullable, because it is not immediately clear how to obtain it in all places in the fir builder
+        // TODO: review and consider making not-nullable (KT-64195)
+        +referencedSymbol("containingDeclarationSymbol", firBasedSymbolType.withArgs(TypeRef.Star), nullable = true) {
+            withBindThis = false
         }
+    }
 
-        anonymousFunction.configure {
-            +declaredSymbol(anonymousFunctionSymbolType)
-            +field(label, nullable = true)
-            +field("invocationKind", eventOccurrencesRangeType, nullable = true, withReplace = true) {
-                isMutable = true
-            }
-            +field("inlineStatus", inlineStatusType, withReplace = true) {
-                isMutable = true
-            }
-            +field("isLambda", boolean)
-            +field("hasExplicitParameterList", boolean)
-            +typeParameters
-            +field(typeRef, withReplace = true)
+    val danglingModifierList: Element by element(Declaration) {
+        parent(declaration)
+        parent(diagnosticHolder)
+
+        +declaredSymbol(danglingModifierSymbolType)
+    }
+
+    val file: Element by element(Declaration) {
+        parent(declaration)
+        parent(controlFlowGraphOwner)
+
+        +field("packageDirective", packageDirective)
+        +listField(import, withTransform = true)
+        +declarations {
+            withTransform = true
         }
+        +field("name", string)
+        +field("sourceFile", sourceFileType, nullable = true)
+        +field("sourceFileLinesMapping", sourceFileLinesMappingType, nullable = true)
+        +declaredSymbol(fileSymbolType)
+    }
 
-        anonymousFunctionExpression.configure {
-            +field(anonymousFunction, withTransform = true)
-            +field("isTrailingLambda", boolean, withReplace = true) {
-                replaceOptInAnnotation = rawFirApi
-            }
+    val script: Element by element(Declaration) {
+        parent(declaration)
+        parent(controlFlowGraphOwner)
+
+        +FieldSets.name
+        +declarations {
+            withTransform = true
+            withReplace = true
         }
+        +declaredSymbol(scriptSymbolType)
+        +listField("parameters", property, withTransform = true)
+        +listField("receivers", scriptReceiverParameter, useMutableOrEmpty = true, withTransform = true)
+        +field("resultPropertyName", nameType, nullable = true)
+    }
 
-        typeParameter.configure {
-            +name
-            +declaredSymbol(typeParameterSymbolType)
-            +referencedSymbol("containingDeclarationSymbol", firBasedSymbolType.withArgs(TypeRef.Star)) {
-                withBindThis = false
-            }
-            +field(varianceType)
-            +field("isReified", boolean)
-            // TODO: `useMutableOrEmpty = true` is a workaround for KT-60324 until KT-60445 has been fixed.
-            +listField("bounds", typeRef, withReplace = true, useMutableOrEmpty = true)
-            +annotations
+    val codeFragment: Element by element(Declaration) {
+        parent(declaration)
+
+        +declaredSymbol(codeFragmentSymbolType)
+        +field(block, withReplace = true, withTransform = true)
+    }
+
+    val packageDirective: Element by element(Other) {
+        +field("packageFqName", fqNameType)
+    }
+
+    val import: Element by element(Declaration) {
+        +field("importedFqName", fqNameType, nullable = true)
+        +field("isAllUnder", boolean)
+        +field("aliasName", nameType, nullable = true)
+        +field("aliasSource", sourceElementType, nullable = true)
+        shouldBeAbstractClass()
+    }
+
+    val resolvedImport: Element by element(Declaration) {
+        parent(import)
+
+        +field("delegate", import, isChild = false)
+        +field("packageFqName", fqNameType)
+        +field("relativeParentClassName", fqNameType, nullable = true)
+        +field("resolvedParentClassId", classIdType, nullable = true)
+        +field("importedName", nameType, nullable = true)
+    }
+
+    val annotation: Element by element(Expression) {
+        parent(expression)
+
+        +field("useSiteTarget", annotationUseSiteTargetType, nullable = true, withReplace = true)
+        +field("annotationTypeRef", typeRef, withReplace = true, withTransform = true)
+        +field("argumentMapping", annotationArgumentMapping, withReplace = true)
+        +typeArguments {
+            withTransform = true
         }
+    }
 
-        simpleFunction.configure {
-            +name
-            +declaredSymbol(namedFunctionSymbolType)
-            +annotations
-            +typeParameters
+    val annotationCall: Element by element(Expression) {
+        parent(annotation)
+        parent(call)
+        parent(resolvable)
+
+        +field("argumentMapping", annotationArgumentMapping, withReplace = true, isChild = false)
+        +field("annotationResolvePhase", annotationResolvePhaseType, withReplace = true)
+        +referencedSymbol("containingDeclarationSymbol", firBasedSymbolType.withArgs(TypeRef.Star)) {
+            withBindThis = false
         }
+    }
 
-        contractDescriptionOwner.configure {
-            +field(contractDescription, withReplace = true, nullable = true, withTransform = true)
-        }
+    val errorAnnotationCall: Element by element(Expression) {
+        parent(annotationCall)
+        parent(diagnosticHolder)
 
-        property.configure {
-            +listField(contextReceiver, useMutableOrEmpty = true, withReplace = true, withTransform = true)
-            +declaredSymbol(propertySymbolType)
-            +referencedSymbol("delegateFieldSymbol", delegateFieldSymbolType, nullable = true)
-            +field("isLocal", boolean)
-            +field("bodyResolveState", propertyBodyResolveStateType, withReplace = true)
-            +typeParameters
-        }
+        +field("argumentMapping", annotationArgumentMapping, withReplace = true, isChild = false)
+    }
 
-        propertyAccessor.configure {
-            +declaredSymbol(propertyAccessorSymbolType)
-            +referencedSymbol("propertySymbol", firPropertySymbolType) {
-                withBindThis = false
-            }
-            +field("isGetter", boolean)
-            +field("isSetter", boolean)
-            +annotations
-            +typeParameters
-        }
+    val annotationArgumentMapping: Element by element(Expression) {
+        +field("mapping", StandardTypes.map.withArgs(nameType, expression))
+    }
 
-        backingField.configure {
-            +declaredSymbol(backingFieldSymbolType)
-            +referencedSymbol("propertySymbol", firPropertySymbolType) {
-                withBindThis = false
-            }
-            +field("initializer", expression, nullable = true, withReplace = true, withTransform = true)
-            +annotations
-            +typeParameters
-            +field("status", declarationStatus, withReplace = true, withTransform = true)
-        }
+    val indexedAccessAugmentedAssignment: Element by element(Expression) {
+        parent(statement)
 
-        declarationStatus.configure {
-            +field(visibilityType)
-            +field(modalityType, nullable = true)
-            generateBooleanFields(
-                "expect", "actual", "override", "operator", "infix", "inline", "tailRec",
-                "external", "const", "lateInit", "inner", "companion", "data", "suspend", "static",
-                "fromSealedClass", "fromEnumClass", "fun", "hasStableParameterNames",
-            )
-            +field("defaultVisibility", visibilityType, nullable = false)
-            +field("defaultModality", modalityType, nullable = false)
-        }
+        +field("lhsGetCall", functionCall)
+        +field("rhs", expression)
+        +field("operation", operationType)
+        // Used for resolution errors reporting in case
+        +field("calleeReference", reference, withReplace = true)
+        +field("arrayAccessSource", sourceElementType, nullable = true)
 
-        resolvedDeclarationStatus.configure {
-            +field(modalityType, nullable = false)
-            +field("effectiveVisibility", effectiveVisibilityType)
-            shouldBeAnInterface()
-        }
-
-        implicitInvokeCall.configure {
-            +field("isCallWithExplicitReceiver", boolean)
-        }
-
-        constructor.configure {
-            +annotations
-            +declaredSymbol(constructorSymbolType)
-            +field("delegatedConstructor", delegatedConstructorCall, nullable = true, withReplace = true, withTransform = true)
-            +field("body", block, nullable = true)
-            +field("isPrimary", boolean)
-        }
-
-        delegatedConstructorCall.configure {
-            +field("constructedTypeRef", typeRef, withReplace = true)
-            +field("dispatchReceiver", expression, nullable = true, withReplace = true, withTransform = true)
-            +field("calleeReference", reference, withReplace = true)
-            +field("source", sourceElementType, nullable = true, withReplace = true)
-            generateBooleanFields("this", "super")
-        }
-
-        multiDelegatedConstructorCall.configure {
-            +listField("delegatedConstructorCalls", delegatedConstructorCall, withReplace = true, withTransform = true)
-        }
-
-        valueParameter.configure {
-            +declaredSymbol(valueParameterSymbolType)
-            +field("defaultValue", expression, nullable = true, withReplace = true)
-            +referencedSymbol("containingFunctionSymbol", functionSymbolType.withArgs(TypeRef.Star)) {
-                withBindThis = false
-            }
-            generateBooleanFields("crossinline", "noinline", "vararg")
-        }
-
-        receiverParameter.configure {
-            +field(typeRef, withReplace = true, withTransform = true)
-            +annotations
-        }
-
-        scriptReceiverParameter.configure {
-            +field(typeRef, withReplace = true, withTransform = true)
-            // means coming from ScriptCompilationConfigurationKeys.baseClass (could be deprecated soon, see KT-68540)
-            +field("isBaseClassReceiver", boolean)
-        }
-
-        variable.configure {
-            +name
-            +declaredSymbol(variableSymbolType.withArgs(variable))
-            +field("initializer", expression, nullable = true, withReplace = true, withTransform = true)
-            +field("delegate", expression, nullable = true, withReplace = true, withTransform = true)
-            generateBooleanFields("var", "val")
-            +field("getter", propertyAccessor, nullable = true, withReplace = true, withTransform = true)
-            +field("setter", propertyAccessor, nullable = true, withReplace = true, withTransform = true)
-            +field("backingField", backingField, nullable = true, withTransform = true)
-            +annotations
-            needTransformOtherChildren()
-        }
-
-        functionTypeParameter.configure {
-            +field("name", nameType, nullable = true)
-            +field("returnTypeRef", typeRef)
-        }
-
-        errorProperty.configure {
-            +declaredSymbol(errorPropertySymbolType)
-        }
-
-        enumEntry.configure {
-            +declaredSymbol(enumEntrySymbolType)
-        }
-
-        field.configure {
-            +declaredSymbol(fieldSymbolType)
-            generateBooleanFields("hasConstantInitializer")
-        }
-
-        anonymousInitializer.configure {
-            +field("body", block, nullable = true, withReplace = true)
-            +declaredSymbol(anonymousInitializerSymbolType)
-            // the containing declaration is nullable, because it is not immediately clear how to obtain it in all places in the fir builder
-            // TODO: review and consider making not-nullable (KT-64195)
-            +referencedSymbol("containingDeclarationSymbol", firBasedSymbolType.withArgs(TypeRef.Star), nullable = true) {
-                withBindThis = false
-            }
-        }
-
-        danglingModifierList.configure {
-            +declaredSymbol(danglingModifierSymbolType)
-        }
-
-        file.configure {
-            +field("packageDirective", packageDirective)
-            +listField(import, withTransform = true)
-            +declarations {
-                withTransform = true
-            }
-            +field("name", string)
-            +field("sourceFile", sourceFileType, nullable = true)
-            +field("sourceFileLinesMapping", sourceFileLinesMappingType, nullable = true)
-            +declaredSymbol(fileSymbolType)
-        }
-
-        script.configure {
-            +name
-            +declarations {
-                withTransform = true
-                withReplace = true
-            }
-            +declaredSymbol(scriptSymbolType)
-            +listField("parameters", property, withTransform = true)
-            +listField("receivers", scriptReceiverParameter, useMutableOrEmpty = true, withTransform = true)
-            +field("resultPropertyName", nameType, nullable = true)
-        }
-
-        codeFragment.configure {
-            +declaredSymbol(codeFragmentSymbolType)
-            +field(block, withReplace = true, withTransform = true)
-        }
-
-        packageDirective.configure {
-            +field("packageFqName", fqNameType)
-        }
-
-        import.configure {
-            +field("importedFqName", fqNameType, nullable = true)
-            +field("isAllUnder", boolean)
-            +field("aliasName", nameType, nullable = true)
-            +field("aliasSource", sourceElementType, nullable = true)
-            shouldBeAbstractClass()
-        }
-
-        resolvedImport.configure {
-            +field("delegate", import, isChild = false)
-            +field("packageFqName", fqNameType)
-            +field("relativeParentClassName", fqNameType, nullable = true)
-            +field("resolvedParentClassId", classIdType, nullable = true)
-            +field("importedName", nameType, nullable = true)
-        }
-
-        annotation.configure {
-            +field("useSiteTarget", annotationUseSiteTargetType, nullable = true, withReplace = true)
-            +field("annotationTypeRef", typeRef, withReplace = true, withTransform = true)
-            +field("argumentMapping", annotationArgumentMapping, withReplace = true)
-            +typeArguments {
-                withTransform = true
-            }
-        }
-
-        annotationCall.configure {
-            +field("argumentMapping", annotationArgumentMapping, withReplace = true, isChild = false)
-            +field("annotationResolvePhase", annotationResolvePhaseType, withReplace = true)
-            +referencedSymbol("containingDeclarationSymbol", firBasedSymbolType.withArgs(TypeRef.Star)) {
-                withBindThis = false
-            }
-        }
-
-        errorAnnotationCall.configure {
-            +field("argumentMapping", annotationArgumentMapping, withReplace = true, isChild = false)
-        }
-
-        annotationArgumentMapping.configure {
-            +field("mapping", StandardTypes.map.withArgs(nameType, expression))
-        }
-
-        indexedAccessAugmentedAssignment.configure {
-            +field("lhsGetCall", functionCall)
-            +field("rhs", expression)
-            +field("operation", operationType)
-            // Used for resolution errors reporting in case
-            +field("calleeReference", reference, withReplace = true)
-            +field("arrayAccessSource", sourceElementType, nullable = true)
-
-            element.kDoc = """
+        kDoc = """
                     Represents an augmented assignment with an indexed access as the receiver (e.g., `arr[i] += 1`)
                     **before** it gets resolved.
                     
                     After resolution, the call will be desugared into regular function calls,
                     either of the form `arr.set(i, arr.get(i).plus(1))` or `arr.get(i).plusAssign(1)`.
                 """.trimIndent()
-        }
+    }
 
-        classReferenceExpression.configure {
-            +field("classTypeRef", typeRef)
-        }
+    val classReferenceExpression: Element by element(Expression) {
+        parent(expression)
 
-        componentCall.configure {
-            +field("explicitReceiver", expression)
-            +field("componentIndex", int)
-        }
+        +field("classTypeRef", typeRef)
+    }
 
-        smartCastExpression.configure {
-            +field("originalExpression", expression, withReplace = true, withTransform = true)
-            +field("typesFromSmartCast", StandardTypes.collection.withArgs(coneKotlinTypeType))
-            +field("smartcastType", typeRef)
-            +field("smartcastTypeWithoutNullableNothing", typeRef, nullable = true)
-            +field("isStable", boolean)
-            +field(smartcastStabilityType)
-        }
+    val componentCall: Element by element(Expression) {
+        parent(functionCall)
 
-        safeCallExpression.configure {
-            +field("receiver", expression, withTransform = true)
-            // Special node that might be used as a reference to receiver of a safe call after null check
-            +field("checkedSubjectRef", safeCallCheckedSubjectReferenceType)
-            // One that uses checkedReceiver as a receiver
-            +field("selector", statement, withReplace = true, withTransform = true)
-        }
+        +field("explicitReceiver", expression)
+        +field("componentIndex", int)
+    }
 
-        checkedSafeCallSubject.configure {
-            +field("originalReceiverRef", referenceToSimpleExpressionType)
-        }
+    val smartCastExpression: Element by element(Expression) {
+        parent(expression)
 
-        callableReferenceAccess.configure {
-            +field("calleeReference", namedReference, withReplace = true, withTransform = true)
-            +field("hasQuestionMarkAtLHS", boolean, withReplace = true)
-        }
+        +field("originalExpression", expression, withReplace = true, withTransform = true)
+        +field("typesFromSmartCast", StandardTypes.collection.withArgs(coneKotlinTypeType))
+        +field("smartcastType", typeRef)
+        +field("smartcastTypeWithoutNullableNothing", typeRef, nullable = true)
+        +field("isStable", boolean)
+        +field(smartcastStabilityType)
+    }
 
-        getClassCall.configure {
-            +field("argument", expression)
-        }
+    val safeCallExpression: Element by element(Expression) {
+        parent(expression)
 
-        wrappedArgumentExpression.configure {
-            +field("isSpread", boolean)
-        }
+        +field("receiver", expression, withTransform = true)
+        // Special node that might be used as a reference to receiver of a safe call after null check
+        +field("checkedSubjectRef", safeCallCheckedSubjectReferenceType)
+        // One that uses checkedReceiver as a receiver
+        +field("selector", statement, withReplace = true, withTransform = true)
+    }
 
-        spreadArgumentExpression.configure {
-            +field("isNamed", boolean)
-            +field("isFakeSpread", boolean)
+    val checkedSafeCallSubject: Element by element(Expression) {
+        parent(expression)
 
-            element.kDoc = """
+        +field("originalReceiverRef", referenceToSimpleExpressionType)
+    }
+
+    val callableReferenceAccess: Element by element(Expression) {
+        parent(qualifiedAccessExpression)
+
+        +field("calleeReference", namedReference, withReplace = true, withTransform = true)
+        +field("hasQuestionMarkAtLHS", boolean, withReplace = true)
+    }
+
+    val propertyAccessExpression: Element by element(Expression) {
+        parent(qualifiedAccessExpression)
+    }
+
+    val getClassCall: Element by element(Expression) {
+        parent(expression)
+        parent(call)
+
+        +field("argument", expression)
+    }
+
+    val wrappedArgumentExpression: Element by element(Expression) {
+        parent(wrappedExpression)
+
+        +field("isSpread", boolean)
+    }
+
+    val spreadArgumentExpression: Element by element(Expression) {
+        parent(wrappedArgumentExpression)
+
+        +field("isNamed", boolean)
+        +field("isFakeSpread", boolean)
+
+        kDoc = """
                 |### Up to and including body resolution phase
                 |
                 |Represents a spread expression `*foo`. If a spread expression is passed as named argument `foo = *bar`, it will be
@@ -658,12 +909,14 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
                 |[FirSpreadArgumentExpression]s should be treated uniformly since they always represent an array that was passed to a
                 |`vararg` parameter and don't influence the resulting platform code.
             """.trimMargin()
-        }
+    }
 
-        namedArgumentExpression.configure {
-            +name
+    val namedArgumentExpression: Element by element(Expression) {
+        parent(wrappedArgumentExpression)
 
-            element.kDoc = """
+        +FieldSets.name
+
+        kDoc = """
                 |Represents a named argument `foo = bar` before and during body resolution phase.
                 |
                 |After body resolution, all [${namedArgumentExpression.render()}]s are removed from the FIR tree and the argument mapping must be
@@ -677,13 +930,15 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
                 |
                 |See [${varargArgumentsExpression.render()}] for the general structure of arguments of `vararg` parameters after resolution.
             """.trimMargin()
-        }
+    }
 
-        varargArgumentsExpression.configure {
-            +listField("arguments", expression)
-            +field("coneElementTypeOrNull", coneKotlinTypeType, nullable = true)
+    val varargArgumentsExpression: Element by element(Expression) {
+        parent(expression)
 
-            element.kDoc = """
+        +listField("arguments", expression)
+        +field("coneElementTypeOrNull", coneKotlinTypeType, nullable = true)
+
+        kDoc = """
                 |[${varargArgumentsExpression.render()}]s are created during body resolution phase for arguments of `vararg` parameters.
                 |
                 |If one or multiple elements are passed to a `vararg` parameter, the will be wrapped with a [${varargArgumentsExpression.render()}]
@@ -697,188 +952,316 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
                 |If no element is passed to a `vararg` parameter, no [${varargArgumentsExpression.render()}] is created regardless of whether the
                 |parameter has a default value.
             """.trimMargin()
-        }
+    }
 
-        samConversionExpression.configure {
-            +field("expression", expression)
-        }
+    val samConversionExpression: Element by element(Expression) {
+        parent(expression)
 
-        resolvedQualifier.configure {
-            +field("packageFqName", fqNameType)
-            +field("relativeClassFqName", fqNameType, nullable = true)
-            +field("classId", classIdType, nullable = true)
-            +referencedSymbol("symbol", classLikeSymbolType, nullable = true)
-            +field("isNullableLHSForCallableReference", boolean, withReplace = true)
-            +field("resolvedToCompanionObject", boolean, withReplace = true)
-            +field("canBeValue", boolean, withReplace = true)
-            +field("isFullyQualified", boolean)
-            +listField("nonFatalDiagnostics", coneDiagnosticType, useMutableOrEmpty = true)
-            +typeArguments {
-                withTransform = true
+        +field("expression", expression)
+    }
+
+    val resolvedQualifier: Element by element(Expression) {
+        parent(expression)
+
+        +field("packageFqName", fqNameType)
+        +field("relativeClassFqName", fqNameType, nullable = true)
+        +field("classId", classIdType, nullable = true)
+        +referencedSymbol("symbol", classLikeSymbolType, nullable = true)
+        +field("isNullableLHSForCallableReference", boolean, withReplace = true)
+        +field("resolvedToCompanionObject", boolean, withReplace = true)
+        +field("canBeValue", boolean, withReplace = true)
+        +field("isFullyQualified", boolean)
+        +listField("nonFatalDiagnostics", coneDiagnosticType, useMutableOrEmpty = true)
+        +typeArguments {
+            withTransform = true
+        }
+    }
+
+    val errorResolvedQualifier: Element by element(Expression) {
+        parent(resolvedQualifier)
+        parent(diagnosticHolder)
+    }
+
+    val resolvedReifiedParameterReference: Element by element(Expression) {
+        parent(expression)
+
+        +referencedSymbol(typeParameterSymbolType)
+    }
+
+    val stringConcatenationCall: Element by element(Expression) {
+        parent(call)
+        parent(expression)
+
+        +field("interpolationPrefix", string)
+    }
+
+    val throwExpression: Element by element(Expression) {
+        parent(expression)
+
+        +field("exception", expression, withTransform = true)
+    }
+
+    val variableAssignment: Element by element(Expression) {
+        parent(statement)
+
+        +field("lValue", expression, withReplace = true, withTransform = true)
+        +field("rValue", expression, withTransform = true)
+    }
+
+    val whenSubjectExpression: Element by element(Expression) {
+        parent(expression)
+
+        +field("whenRef", whenRefType)
+    }
+
+    val desugaredAssignmentValueReferenceExpression: Element by element(Expression) {
+        parent(expression)
+
+        +field("expressionRef", referenceToSimpleExpressionType)
+    }
+
+    val wrappedExpression: Element by element(Expression) {
+        parent(expression)
+
+        +field(expression)
+    }
+
+    val wrappedDelegateExpression: Element by element(Expression) {
+        parent(wrappedExpression)
+
+        +field("provideDelegateCall", functionCall)
+    }
+
+    val enumEntryDeserializedAccessExpression: Element by element(Expression) {
+        parent(expression)
+
+        +field("enumClassId", classIdType)
+        +field("enumEntryName", nameType)
+    }
+
+    val reference: Element by element(Reference) {
+        shouldBeAbstractClass()
+    }
+
+    val namedReference: Element by element(Reference) {
+        parent(reference)
+
+        +FieldSets.name
+    }
+
+    val namedReferenceWithCandidateBase: Element by element(Reference) {
+        parent(namedReference)
+
+        +referencedSymbol("candidateSymbol", firBasedSymbolType.withArgs(TypeRef.Star))
+    }
+
+    val resolvedNamedReference: Element by element(Reference) {
+        parent(namedReference)
+
+        +referencedSymbol("resolvedSymbol", firBasedSymbolType.withArgs(TypeRef.Star))
+    }
+
+    val resolvedCallableReference: Element by element(Reference) {
+        parent(resolvedNamedReference)
+
+        +listField("inferredTypeArguments", coneKotlinTypeType)
+        +field("mappedArguments", callableReferenceMappedArgumentsType)
+    }
+
+    val delegateFieldReference: Element by element(Reference) {
+        parent(resolvedNamedReference)
+
+        +referencedSymbol("resolvedSymbol", delegateFieldSymbolType)
+    }
+
+    val backingFieldReference: Element by element(Reference) {
+        parent(resolvedNamedReference)
+
+        +referencedSymbol("resolvedSymbol", backingFieldSymbolType)
+    }
+
+    val superReference: Element by element(Reference) {
+        parent(reference)
+
+        +field("labelName", string, nullable = true)
+        +field("superTypeRef", typeRef, withReplace = true)
+    }
+
+    val thisReference: Element by element(Reference) {
+        parent(reference)
+
+        +field("labelName", string, nullable = true)
+        +referencedSymbol("boundSymbol", firBasedSymbolType.withArgs(TypeRef.Star), nullable = true, withReplace = true)
+        +field("contextReceiverNumber", int, withReplace = true)
+        +field("isImplicit", boolean)
+        +field("diagnostic", coneDiagnosticType, nullable = true, withReplace = true)
+    }
+
+    val controlFlowGraphReference: Element by element(Reference) {
+        parent(reference)
+    }
+
+    val typeRef: Element by sealedElement(TypeRefElement) {
+        parent(annotationContainer)
+
+        +annotations
+    }
+
+    val resolvedTypeRef: Element by element(TypeRefElement) {
+        parent(typeRef)
+
+        +field("type", coneKotlinTypeType)
+        +field("delegatedTypeRef", typeRef, nullable = true, isChild = false)
+        otherParents.add(typeRefMarkerType)
+    }
+
+    val typeRefWithNullability: Element by element(TypeRefElement) {
+        parent(typeRef)
+
+        +field("isMarkedNullable", boolean)
+    }
+
+    val userTypeRef: Element by element(TypeRefElement) {
+        parent(typeRefWithNullability)
+
+        +listField("qualifier", firQualifierPartType)
+        +field("customRenderer", boolean)
+    }
+
+    val functionTypeRef: Element by element(TypeRefElement) {
+        parent(typeRefWithNullability)
+
+        +field("receiverTypeRef", typeRef, nullable = true)
+        +listField("parameters", functionTypeParameter)
+        +field("returnTypeRef", typeRef)
+        +field("isSuspend", boolean)
+
+        +listField("contextReceiverTypeRefs", typeRef)
+    }
+
+    val dynamicTypeRef: Element by element(TypeRefElement) {
+        parent(typeRefWithNullability)
+    }
+
+    val implicitTypeRef: Element by element(TypeRefElement) {
+        parent(typeRef)
+    }
+
+    val errorTypeRef: Element by element(TypeRefElement) {
+        parent(resolvedTypeRef)
+        parent(diagnosticHolder)
+
+        +field("partiallyResolvedTypeRef", typeRef, nullable = true, withTransform = true)
+    }
+
+    val resolvedErrorReference: Element by element(Reference) {
+        parent(resolvedNamedReference)
+        parent(diagnosticHolder)
+
+        customParentInVisitor = resolvedNamedReference
+    }
+
+    val errorNamedReference: Element by element(Reference) {
+        parent(namedReference)
+        parent(diagnosticHolder)
+    }
+
+    val intersectionTypeRef: Element by element(TypeRefElement) {
+        parent(typeRefWithNullability)
+
+        +field("leftType", typeRef)
+        +field("rightType", typeRef)
+    }
+
+    val thisReceiverExpression: Element by element(Expression) {
+        parent(qualifiedAccessExpression)
+
+        +field("calleeReference", thisReference)
+        +field("isImplicit", boolean)
+    }
+
+    val inaccessibleReceiverExpression: Element by element(Expression) {
+        parent(expression)
+        parent(resolvable)
+
+        +field("calleeReference", thisReference)
+    }
+
+    val whenExpression: Element by element(Expression) {
+        parent(expression)
+        parent(resolvable)
+
+        +field("subject", expression, nullable = true, withTransform = true)
+        +field("subjectVariable", variable, nullable = true)
+        +listField("branches", whenBranch, withTransform = true)
+        +field("exhaustivenessStatus", exhaustivenessStatusType, nullable = true, withReplace = true)
+        +field("usedAsExpression", boolean)
+        needTransformOtherChildren()
+    }
+
+    val typeProjection: Element by element(TypeRefElement)
+
+    val typeProjectionWithVariance: Element by element(TypeRefElement) {
+        parent(typeProjection)
+
+        +field(typeRef)
+        +field(varianceType)
+    }
+
+    val starProjection: Element by element(TypeRefElement) {
+        parent(typeProjection)
+    }
+
+    val placeholderProjection: Element by element(TypeRefElement) {
+        parent(typeProjection)
+    }
+
+    val contractElementDeclaration: Element by element(Contracts) {
+        +field("effect", coneContractElementType)
+    }
+
+    val effectDeclaration: Element by element(Contracts) {
+        parent(contractElementDeclaration)
+
+        +field("effect", coneEffectDeclarationType)
+    }
+
+    val contractDescription: Element by element(Contracts)
+
+    val rawContractDescription: Element by element(Contracts) {
+        parent(contractDescription)
+
+        +listField("rawEffects", expression)
+    }
+
+    val resolvedContractDescription: Element by element(Contracts) {
+        parent(contractDescription)
+
+        +listField("effects", effectDeclaration)
+        +listField("unresolvedEffects", contractElementDeclaration)
+        +field("diagnostic", coneDiagnosticType, nullable = true)
+    }
+
+    val legacyRawContractDescription: Element by element(Contracts) {
+        parent(contractDescription)
+
+        +field("contractCall", functionCall)
+        +field("diagnostic", coneDiagnosticType, nullable = true)
+    }
+
+    private object FieldSets {
+        val typeArguments = fieldSet(listField("typeArguments", typeProjection, useMutableOrEmpty = true, withReplace = true))
+
+        val declarations = fieldSet(listField(declaration).apply { useInBaseTransformerDetection = false })
+
+        val annotations = fieldSet(
+            listField("annotations", annotation, withReplace = true, useMutableOrEmpty = true, withTransform = true) {
+                needTransformInOtherChildren = true
             }
-        }
+        )
 
-        resolvedReifiedParameterReference.configure {
-            +referencedSymbol(typeParameterSymbolType)
-        }
+        val typeParameters = fieldSet(listField("typeParameters", typeParameter))
 
-        stringConcatenationCall.configure {
-            +field("interpolationPrefix", string)
-        }
-
-        throwExpression.configure {
-            +field("exception", expression, withTransform = true)
-        }
-
-        variableAssignment.configure {
-            +field("lValue", expression, withReplace = true, withTransform = true)
-            +field("rValue", expression, withTransform = true)
-        }
-
-        whenSubjectExpression.configure {
-            +field("whenRef", whenRefType)
-        }
-
-        desugaredAssignmentValueReferenceExpression.configure {
-            +field("expressionRef", referenceToSimpleExpressionType)
-        }
-
-        wrappedExpression.configure {
-            +field(expression)
-        }
-
-        wrappedDelegateExpression.configure {
-            +field("provideDelegateCall", functionCall)
-        }
-
-        enumEntryDeserializedAccessExpression.configure {
-            +field("enumClassId", classIdType)
-            +field("enumEntryName", nameType)
-        }
-
-        namedReference.configure {
-            +name
-        }
-
-        namedReferenceWithCandidateBase.configure {
-            +referencedSymbol("candidateSymbol", firBasedSymbolType.withArgs(TypeRef.Star))
-        }
-
-        resolvedNamedReference.configure {
-            +referencedSymbol("resolvedSymbol", firBasedSymbolType.withArgs(TypeRef.Star))
-        }
-
-        resolvedCallableReference.configure {
-            +listField("inferredTypeArguments", coneKotlinTypeType)
-            +field("mappedArguments", callableReferenceMappedArgumentsType)
-        }
-
-        delegateFieldReference.configure {
-            +referencedSymbol("resolvedSymbol", delegateFieldSymbolType)
-        }
-
-        backingFieldReference.configure {
-            +referencedSymbol("resolvedSymbol", backingFieldSymbolType)
-        }
-
-        superReference.configure {
-            +field("labelName", string, nullable = true)
-            +field("superTypeRef", typeRef, withReplace = true)
-        }
-
-        thisReference.configure {
-            +field("labelName", string, nullable = true)
-            +referencedSymbol("boundSymbol", firBasedSymbolType.withArgs(TypeRef.Star), nullable = true, withReplace = true)
-            +field("contextReceiverNumber", int, withReplace = true)
-            +field("isImplicit", boolean)
-            +field("diagnostic", coneDiagnosticType, nullable = true, withReplace = true)
-        }
-
-        typeRef.configure {
-            +annotations
-        }
-
-        resolvedTypeRef.configure {
-            +field("type", coneKotlinTypeType)
-            +field("delegatedTypeRef", typeRef, nullable = true, isChild = false)
-            element.otherParents.add(typeRefMarkerType)
-        }
-
-        typeRefWithNullability.configure {
-            +field("isMarkedNullable", boolean)
-        }
-
-        userTypeRef.configure {
-            +listField("qualifier", firQualifierPartType)
-            +field("customRenderer", boolean)
-        }
-
-        functionTypeRef.configure {
-            +field("receiverTypeRef", typeRef, nullable = true)
-            +listField("parameters", functionTypeParameter)
-            +field("returnTypeRef", typeRef)
-            +field("isSuspend", boolean)
-
-            +listField("contextReceiverTypeRefs", typeRef)
-        }
-
-        errorTypeRef.configure {
-            +field("partiallyResolvedTypeRef", typeRef, nullable = true, withTransform = true)
-        }
-
-        resolvedErrorReference.configure {
-            element.customParentInVisitor = resolvedNamedReference
-        }
-
-        intersectionTypeRef.configure {
-            +field("leftType", typeRef)
-            +field("rightType", typeRef)
-        }
-
-        thisReceiverExpression.configure {
-            +field("calleeReference", thisReference)
-            +field("isImplicit", boolean)
-        }
-
-        inaccessibleReceiverExpression.configure {
-            +field("calleeReference", thisReference)
-        }
-
-        whenExpression.configure {
-            +field("subject", expression, nullable = true, withTransform = true)
-            +field("subjectVariable", variable, nullable = true)
-            +listField("branches", whenBranch, withTransform = true)
-            +field("exhaustivenessStatus", exhaustivenessStatusType, nullable = true, withReplace = true)
-            +field("usedAsExpression", boolean)
-            needTransformOtherChildren()
-        }
-
-        typeProjectionWithVariance.configure {
-            +field(typeRef)
-            +field(varianceType)
-        }
-
-        contractElementDeclaration.configure {
-            +field("effect", coneContractElementType)
-        }
-
-        effectDeclaration.configure {
-            +field("effect", coneEffectDeclarationType)
-        }
-
-        rawContractDescription.configure {
-            +listField("rawEffects", expression)
-        }
-
-        resolvedContractDescription.configure {
-            +listField("effects", effectDeclaration)
-            +listField("unresolvedEffects", contractElementDeclaration)
-            +field("diagnostic", coneDiagnosticType, nullable = true)
-        }
-
-        legacyRawContractDescription.configure {
-            +field("contractCall", functionCall)
-            +field("diagnostic", coneDiagnosticType, nullable = true)
-        }
+        val name = fieldSet(field(nameType))
     }
 }

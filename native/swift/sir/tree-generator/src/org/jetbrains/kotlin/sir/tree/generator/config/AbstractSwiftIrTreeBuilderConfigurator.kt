@@ -7,13 +7,14 @@ package org.jetbrains.kotlin.sir.tree.generator.config
 
 import org.jetbrains.kotlin.generators.tree.config.AbstractBuilderConfigurator
 import org.jetbrains.kotlin.sir.tree.generator.BASE_PACKAGE
+import org.jetbrains.kotlin.sir.tree.generator.Model
 import org.jetbrains.kotlin.sir.tree.generator.model.Element
 import org.jetbrains.kotlin.sir.tree.generator.model.Field
 import org.jetbrains.kotlin.sir.tree.generator.model.Implementation
 
 abstract class AbstractSwiftIrTreeBuilderConfigurator(
-    elements: List<Element>
-) : AbstractBuilderConfigurator<Element, Implementation, Field, Field>(elements) {
+    model: Model
+) : AbstractBuilderConfigurator<Element, Implementation, Field, Field>(model) {
 
     override val namePrefix: String
         get() = "Sir"
