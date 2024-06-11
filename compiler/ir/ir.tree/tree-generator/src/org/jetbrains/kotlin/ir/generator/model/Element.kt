@@ -42,17 +42,6 @@ class Element(
                 ?: IrTree.rootElement.takeIf { elementBaseType in otherParents }
         }
 
-
-    var typeKind: TypeKind? = null
-        set(value) {
-            kind = when (value) {
-                TypeKind.Class -> ImplementationKind.AbstractClass
-                TypeKind.Interface -> ImplementationKind.Interface
-                null -> null
-            }
-            field = value
-        }
-
     override val namePrefix: String
         get() = "Ir"
 

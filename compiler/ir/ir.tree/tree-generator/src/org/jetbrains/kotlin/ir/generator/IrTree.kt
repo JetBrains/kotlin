@@ -128,7 +128,7 @@ object IrTree : AbstractTreeBuilder() {
         // This class is defined manually, but the entry here needs to be kept actual as well,
         // to correctly generate related code.
         doPrint = false
-        typeKind = TypeKind.Class
+        kind = ImplementationKind.AbstractClass
         transformByChildren = true
         transformerReturnType = statement
         nameInVisitorMethod = "Declaration"
@@ -615,7 +615,7 @@ object IrTree : AbstractTreeBuilder() {
         needTransformMethod()
         visitorParameterName = "body"
         transformByChildren = true
-        typeKind = TypeKind.Class
+        kind = ImplementationKind.AbstractClass
     }
     val expressionBody: Element by element(Expression) {
         needTransformMethod()

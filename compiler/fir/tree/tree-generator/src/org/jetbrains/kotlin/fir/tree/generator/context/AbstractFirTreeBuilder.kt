@@ -127,12 +127,4 @@ abstract class AbstractFirTreeBuilder() : AbstractElementConfigurator<Element, F
     protected fun Element.needTransformOtherChildren() {
         _needTransformOtherChildren = true
     }
-
-    protected fun Element.shouldBeAnInterface() {
-        kind = ImplementationKind.Interface
-    }
-
-    protected fun Element.shouldBeAbstractClass() {
-        kind = ImplementationKind.AbstractClass
-    }
 }

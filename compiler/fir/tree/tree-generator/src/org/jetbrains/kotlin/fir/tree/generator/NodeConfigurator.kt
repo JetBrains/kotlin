@@ -5,21 +5,24 @@
 
 package org.jetbrains.kotlin.fir.tree.generator
 
-import org.jetbrains.kotlin.fir.tree.generator.FieldSets.annotations
-import org.jetbrains.kotlin.fir.tree.generator.FieldSets.declarations
-import org.jetbrains.kotlin.fir.tree.generator.FieldSets.declaredSymbol
-import org.jetbrains.kotlin.fir.tree.generator.FieldSets.name
-import org.jetbrains.kotlin.fir.tree.generator.FieldSets.referencedSymbol
-import org.jetbrains.kotlin.fir.tree.generator.FieldSets.typeArguments
-import org.jetbrains.kotlin.fir.tree.generator.FieldSets.typeParameters
-import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFieldConfigurator
-import org.jetbrains.kotlin.fir.tree.generator.context.type
-import org.jetbrains.kotlin.fir.tree.generator.model.*
+import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
+import org.jetbrains.kotlin.fir.tree.generator.NodeConfigurator.FieldSets.annotations
+import org.jetbrains.kotlin.fir.tree.generator.NodeConfigurator.FieldSets.declarations
+import org.jetbrains.kotlin.fir.tree.generator.NodeConfigurator.FieldSets.name
+import org.jetbrains.kotlin.fir.tree.generator.NodeConfigurator.FieldSets.typeArguments
+import org.jetbrains.kotlin.fir.tree.generator.NodeConfigurator.FieldSets.typeParameters
+import org.jetbrains.kotlin.fir.tree.generator.model.Element
+import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.Other
 import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.Expression
-import org.jetbrains.kotlin.generators.tree.AbstractField
-import org.jetbrains.kotlin.generators.tree.StandardTypes
-import org.jetbrains.kotlin.generators.tree.TypeRef
-import org.jetbrains.kotlin.generators.tree.withArgs
+import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.Declaration
+import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.Reference
+import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.Contracts
+import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.Diagnostics
+import org.jetbrains.kotlin.fir.tree.generator.model.field
+import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.TypeRef as TypeRefElement
+import org.jetbrains.kotlin.fir.tree.generator.model.fieldSet
+import org.jetbrains.kotlin.fir.tree.generator.util.type
+import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 object NodeConfigurator : AbstractFirTreeBuilder() {
@@ -75,7 +78,7 @@ object NodeConfigurator : AbstractFirTreeBuilder() {
             optInAnnotation = resolveStateAccessAnnotation
         }
         +field("moduleData", firModuleDataType)
-        shouldBeAbstractClass()
+        kind = ImplementationKind.AbstractClass
     }
 
     val declaration: Element by sealedElement(Declaration) {
@@ -86,7 +89,7 @@ object NodeConfigurator : AbstractFirTreeBuilder() {
         +field("moduleData", firModuleDataType)
         +field("origin", declarationOriginType)
         +field("attributes", declarationAttributesType)
-        shouldBeAbstractClass()
+        kind = ImplementationKind.AbstractClass
     }
 
     val callableDeclaration: Element by sealedElement(Declaration) {
@@ -572,7 +575,7 @@ object NodeConfigurator : AbstractFirTreeBuilder() {
 
         +field(modalityType, nullable = false)
         +field("effectiveVisibility", effectiveVisibilityType)
-        shouldBeAnInterface()
+        kind = ImplementationKind.Interface
     }
 
     val implicitInvokeCall: Element by element(Expression) {
@@ -753,7 +756,7 @@ object NodeConfigurator : AbstractFirTreeBuilder() {
         +field("isAllUnder", boolean)
         +field("aliasName", nameType, nullable = true)
         +field("aliasSource", sourceElementType, nullable = true)
-        shouldBeAbstractClass()
+        kind = ImplementationKind.AbstractClass
     }
 
     val resolvedImport: Element by element(Declaration) {
@@ -1040,7 +1043,7 @@ object NodeConfigurator : AbstractFirTreeBuilder() {
     }
 
     val reference: Element by element(Reference) {
-        shouldBeAbstractClass()
+        kind = ImplementationKind.AbstractClass
     }
 
     val namedReference: Element by element(Reference) {
