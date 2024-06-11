@@ -26,13 +26,7 @@ object FieldSets {
     val declarations = fieldSet(listField(declaration).apply { useInBaseTransformerDetection = false })
 
     val annotations = fieldSet(
-        listField(
-            "annotations",
-            annotation,
-            withReplace = true,
-            useMutableOrEmpty = true,
-            withTransform = true,
-        ).apply {
+        listField("annotations", annotation, withReplace = true, useMutableOrEmpty = true, withTransform = true) {
             needTransformInOtherChildren = true
         }
     )
@@ -50,10 +44,11 @@ object FieldSets {
 
     fun declaredSymbol(symbolType: ClassRef<*>): Field = declaredSymbol("symbol", symbolType)
 
-    fun referencedSymbol(name: String, symbolType: ClassRef<*>, nullable: Boolean = false, withReplace: Boolean = false): Field =
+    fun referencedSymbol(name: String, symbolType: ClassRef<*>, nullable: Boolean = false, withReplace: Boolean = false, initializer: SingleField.() -> Unit = {}): Field =
         field(name, symbolType, nullable, withReplace)
             .apply { symbolFieldRole = AbstractField.SymbolFieldRole.REFERENCED }
+            .apply(initializer)
 
-    fun referencedSymbol(symbolType: ClassRef<*>, nullable: Boolean = false, withReplace: Boolean = false): Field =
-        referencedSymbol("symbol", symbolType, nullable, withReplace)
+    fun referencedSymbol(symbolType: ClassRef<*>, nullable: Boolean = false, withReplace: Boolean = false, initializer: SingleField.() -> Unit = {}): Field =
+        referencedSymbol("symbol", symbolType, nullable, withReplace, initializer)
 }
