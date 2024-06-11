@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
-import org.jetbrains.kotlin.analysis.api.components.KaSymbolInfoProvider
+import org.jetbrains.kotlin.analysis.api.components.KaSymbolInformationProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertyAccessorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
@@ -24,39 +26,37 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 
-internal class KaFe10SymbolInfoProvider(
-    override val analysisSession: KaFe10Session
-) : KaSymbolInfoProvider(), KaFe10SessionComponent {
+internal class KaFe10SymbolInformationProvider(
+    override val analysisSessionProvider: () -> KaFe10Session,
     override val token: KaLifetimeToken
-        get() = analysisSession.token
+) : KaSessionComponent<KaFe10Session>(), KaSymbolInformationProvider, KaFe10SessionComponent {
+    override val KaSymbol.deprecationStatus: DeprecationInfo?
+        get() = withValidityAssertion {
+            val descriptor = getSymbolDescriptor(this) ?: return null
+            ForceResolveUtil.forceResolveAllContents(descriptor)
+            return getDeprecation(descriptor)
+        }
 
-    override fun getDeprecation(symbol: KaSymbol): DeprecationInfo? {
-        val descriptor = getSymbolDescriptor(symbol) ?: return null
-        ForceResolveUtil.forceResolveAllContents(descriptor)
-        return getDeprecation(descriptor)
-    }
-
-    override fun getDeprecation(symbol: KaSymbol, annotationUseSiteTarget: AnnotationUseSiteTarget?): DeprecationInfo? {
+    override fun KaSymbol.deprecationStatus(annotationUseSiteTarget: AnnotationUseSiteTarget?): DeprecationInfo? = withValidityAssertion {
         when (annotationUseSiteTarget) {
             AnnotationUseSiteTarget.PROPERTY_GETTER -> {
-                if (symbol is KaPropertySymbol) {
-                    return getDeprecation(symbol.getter ?: symbol)
+                if (this is KaPropertySymbol) {
+                    return (getter ?: this).deprecationStatus
                 }
             }
             AnnotationUseSiteTarget.PROPERTY_SETTER -> {
-                if (symbol is KaPropertySymbol) {
-                    return getDeprecation(symbol.setter ?: symbol)
+                if (this is KaPropertySymbol) {
+                    return (setter ?: this).deprecationStatus
                 }
             }
             AnnotationUseSiteTarget.SETTER_PARAMETER -> {
-                if (symbol is KaPropertySymbol) {
-                    return getDeprecation(symbol.setter?.parameter ?: symbol)
+                if (this is KaPropertySymbol) {
+                    return (setter?.parameter ?: this).deprecationStatus
                 }
             }
-            else -> {
-            }
+            else -> {}
         }
-        return getDeprecation(symbol) // TODO
+        return deprecationStatus // TODO
     }
 
     private fun getDeprecation(descriptor: DeclarationDescriptor): DeprecationInfo? {
@@ -100,18 +100,17 @@ internal class KaFe10SymbolInfoProvider(
         return getDeprecation(propertyDescriptor)
     }
 
-    override fun getGetterDeprecation(symbol: KaPropertySymbol): DeprecationInfo? {
-        return getAccessorDeprecation(symbol, symbol.getter) { it.getter }
-    }
+    override val KaPropertySymbol.getterDeprecationStatus: DeprecationInfo?
+        get() = withValidityAssertion { getAccessorDeprecation(this, getter) { it.getter } }
 
-    override fun getSetterDeprecation(symbol: KaPropertySymbol): DeprecationInfo? {
-        return getAccessorDeprecation(symbol, symbol.setter) { it.setter }
-    }
+    override val KaPropertySymbol.setterDeprecationStatus: DeprecationInfo?
+        get() = withValidityAssertion { getAccessorDeprecation(this, setter) { it.setter } }
 
-    override fun getAnnotationApplicableTargets(symbol: KaClassOrObjectSymbol): Set<KotlinTarget>? {
-        val descriptor = getSymbolDescriptor(symbol) as? ClassDescriptor ?: return null
-        if (descriptor.kind != ClassKind.ANNOTATION_CLASS) return null
+    override val KaClassOrObjectSymbol.annotationApplicableTargets: Set<KotlinTarget>?
+        get() = withValidityAssertion {
+            val descriptor = getSymbolDescriptor(this) as? ClassDescriptor ?: return null
+            if (descriptor.kind != ClassKind.ANNOTATION_CLASS) return null
 
-        return AnnotationChecker.applicableTargetSet(descriptor)
-    }
+            return AnnotationChecker.applicableTargetSet(descriptor)
+        }
 }

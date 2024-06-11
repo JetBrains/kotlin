@@ -68,7 +68,7 @@ context(KaSession)
 internal fun isHiddenByDeprecation(
     symbol: KaAnnotatedSymbol,
     annotationUseSiteTarget: AnnotationUseSiteTarget? = null,
-): Boolean = symbol.getDeprecationStatus(annotationUseSiteTarget)?.deprecationLevel == DeprecationLevelValue.HIDDEN
+): Boolean = symbol.deprecationStatus(annotationUseSiteTarget)?.deprecationLevel == DeprecationLevelValue.HIDDEN
 
 context(KaSession)
 internal fun KaAnnotatedSymbol.isHiddenOrSynthetic(
