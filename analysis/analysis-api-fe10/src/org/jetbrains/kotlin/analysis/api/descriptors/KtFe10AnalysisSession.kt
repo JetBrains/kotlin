@@ -38,6 +38,7 @@ class KaFe10Session(
     evaluator = KaFe10Evaluator(analysisSessionProvider, token),
     referenceShortener = KaFe10ReferenceShortener(analysisSessionProvider, token),
     importOptimizer = KaFe10ImportOptimizer(analysisSessionProvider, token),
+    visibilityChecker = KaFe10VisibilityChecker(analysisSessionProvider, token),
     originalPsiProvider = KaFe10OriginalPsiProvider(analysisSessionProvider, token),
     typeCreator = KaFe10TypeCreator(analysisSessionProvider, token),
     analysisScopeProvider = KaAnalysisScopeProviderImpl(analysisSessionProvider, token, resolutionScope),
@@ -54,7 +55,6 @@ class KaFe10Session(
     override val typeProviderImpl: KaTypeProvider = KaFe10TypeProvider(this)
     override val typeInfoProviderImpl: KaTypeInfoProvider = KaFe10TypeInfoProvider(this)
     override val expressionInfoProviderImpl: KaExpressionInfoProvider = KaFe10ExpressionInfoProvider(this)
-    override val visibilityCheckerImpl: KaVisibilityChecker = KaFe10VisibilityChecker(this)
     override val overrideInfoProviderImpl: KaOverrideInfoProvider = KaFe10OverrideInfoProvider(this)
     override val symbolInfoProviderImpl: KaSymbolInfoProvider = KaFe10SymbolInfoProvider(this)
     override val substitutorFactoryImpl: KaSubstitutorFactory = KaFe10SubstitutorFactory(this)

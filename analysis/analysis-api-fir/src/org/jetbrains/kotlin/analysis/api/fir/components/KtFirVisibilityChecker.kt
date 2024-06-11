@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirFileSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaClassSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
@@ -33,16 +35,15 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 internal class KaFirVisibilityChecker(
-    override val analysisSession: KaFirSession,
+    override val analysisSessionProvider: () -> KaFirSession,
     override val token: KaLifetimeToken
-) : KaVisibilityChecker(), KaFirSessionComponent {
-
+) : KaSessionComponent<KaFirSession>(), KaVisibilityChecker, KaFirSessionComponent {
     override fun isVisible(
         candidateSymbol: KaSymbolWithVisibility,
         useSiteFile: KaFileSymbol,
-        position: PsiElement,
-        receiverExpression: KtExpression?
-    ): Boolean {
+        receiverExpression: KtExpression?,
+        position: PsiElement
+    ): Boolean = withValidityAssertion {
         require(candidateSymbol is KaFirSymbol<*>)
         require(useSiteFile is KaFirFileSymbol)
 
@@ -113,7 +114,7 @@ internal class KaFirVisibilityChecker(
         return null
     }
 
-    override fun isPublicApi(symbol: KaSymbolWithVisibility): Boolean {
+    override fun isPublicApi(symbol: KaSymbolWithVisibility): Boolean = withValidityAssertion {
         require(symbol is KaFirSymbol<*>)
         val declaration = symbol.firSymbol.fir as? FirMemberDeclaration ?: return false
 

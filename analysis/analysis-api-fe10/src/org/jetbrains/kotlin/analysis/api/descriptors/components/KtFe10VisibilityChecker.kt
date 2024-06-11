@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.getResolutionScope
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
@@ -30,17 +32,15 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 
 internal class KaFe10VisibilityChecker(
-    override val analysisSession: KaFe10Session
-) : KaVisibilityChecker(), KaFe10SessionComponent {
+    override val analysisSessionProvider: () -> KaFe10Session,
     override val token: KaLifetimeToken
-        get() = analysisSession.token
-
+) : KaSessionComponent<KaFe10Session>(), KaVisibilityChecker, KaFe10SessionComponent {
     override fun isVisible(
         candidateSymbol: KaSymbolWithVisibility,
         useSiteFile: KaFileSymbol,
-        position: PsiElement,
-        receiverExpression: KtExpression?
-    ): Boolean {
+        receiverExpression: KtExpression?,
+        position: PsiElement
+    ): Boolean = withValidityAssertion {
         if (candidateSymbol.visibility == Visibilities.Public) {
             return true
         }
@@ -75,7 +75,7 @@ internal class KaFe10VisibilityChecker(
         return false
     }
 
-    override fun isPublicApi(symbol: KaSymbolWithVisibility): Boolean {
+    override fun isPublicApi(symbol: KaSymbolWithVisibility): Boolean = withValidityAssertion {
         val descriptor = getSymbolDescriptor(symbol) as? DeclarationDescriptorWithVisibility ?: return false
         return descriptor.isEffectivelyPublicApi || descriptor.isPublishedApi()
     }

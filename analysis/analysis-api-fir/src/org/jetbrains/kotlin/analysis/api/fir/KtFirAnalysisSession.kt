@@ -66,6 +66,7 @@ private constructor(
     evaluator = KaFirEvaluator(analysisSessionProvider, token),
     referenceShortener = KaFirReferenceShortener(analysisSessionProvider, token),
     importOptimizer = KaFirImportOptimizer(analysisSessionProvider, token),
+    visibilityChecker = KaFirVisibilityChecker(analysisSessionProvider, token),
     originalPsiProvider = KaFirOriginalPsiProvider(analysisSessionProvider, token),
     typeCreator = KaFirTypeCreator(analysisSessionProvider, token),
     analysisScopeProvider = KaAnalysisScopeProviderImpl(analysisSessionProvider, token, useSiteScope),
@@ -93,8 +94,6 @@ private constructor(
     override val expressionInfoProviderImpl = KaFirExpressionInfoProvider(this, token)
 
     override val overrideInfoProviderImpl = KaFirOverrideInfoProvider(this, token)
-
-    override val visibilityCheckerImpl: KaVisibilityChecker = KaFirVisibilityChecker(this, token)
 
     override val typeProviderImpl = KaFirTypeProvider(this, token)
 
