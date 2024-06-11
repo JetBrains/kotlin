@@ -23,7 +23,7 @@ abstract class AbstractAnalysisApiSubstitutorsTest : AbstractAnalysisApiBasedTes
         val declaration = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtCallableDeclaration>(mainFile)
         val actual = analyseForTest(declaration) {
             val substitutor = SubstitutionParser.parseSubstitutor(analysisSession, mainFile, declaration)
-            val symbol = declaration.getSymbol() as KaCallableSymbol
+            val symbol = declaration.symbol as KaCallableSymbol
             val type = symbol.returnType
             val substituted = substitutor.substitute(type)
             val substitutedOrNull = substitutor.substituteOrNull(type)

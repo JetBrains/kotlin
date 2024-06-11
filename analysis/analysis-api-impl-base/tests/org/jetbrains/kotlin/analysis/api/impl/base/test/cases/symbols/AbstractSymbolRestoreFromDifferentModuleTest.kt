@@ -35,7 +35,7 @@ abstract class AbstractSymbolRestoreFromDifferentModuleTest : AbstractAnalysisAp
         val restoreAtModule = ProjectStructureProvider.getModule(project, restoreAt, contextualModule = null)
 
         val (debugRendered, prettyRendered, pointer) = analyseForTest(declaration) {
-            val symbol = declaration.getSymbol()
+            val symbol = declaration.symbol
             val pointer = symbol.createPointer()
             Triple(DebugSymbolRenderer().render(analysisSession, symbol), symbol.render(defaultRenderer), pointer)
         }

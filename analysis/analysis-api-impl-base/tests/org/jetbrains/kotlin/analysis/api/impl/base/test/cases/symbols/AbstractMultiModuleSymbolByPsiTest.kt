@@ -31,9 +31,9 @@ abstract class AbstractMultiModuleSymbolByPsiTest : AbstractAnalysisApiBasedTest
             prettyPrinter.appendLine(fileDirective)
 
             analyseForTest(file) {
-                val fileSymbol = file.getFileSymbol()
+                val fileSymbol = file.symbol
                 file.forEachDescendantOfType<KtDeclaration>(predicate = { it.isValidForSymbolCreation }) { declaration ->
-                    val symbol = declaration.getSymbol()
+                    val symbol = declaration.symbol
 
                     checkContainingFileSymbol(fileSymbol, symbol, testServices)
 

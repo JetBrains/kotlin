@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 
 inline fun <reified S : KaSymbol> KaSession.getSymbolByNameSafe(scope: KtElement, name: String): S? {
     return scope.collectDescendantsOfType<KtDeclaration> { it.name == name }
-        .map { it.getSymbol() }
+        .map { it.symbol }
         .filterIsInstance<S>()
         .singleOrNull()
 }

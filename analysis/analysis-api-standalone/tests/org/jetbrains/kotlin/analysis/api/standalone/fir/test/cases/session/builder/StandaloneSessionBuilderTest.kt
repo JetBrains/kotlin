@@ -115,7 +115,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
         val testFunction = ktFile.findDescendantOfType<KtFunction>()!!
         val localVariable = testFunction.findDescendantOfType<KtProperty>()!!
         analyze(localVariable) {
-            val localVariableSymbol = localVariable.getVariableSymbol()
+            val localVariableSymbol = localVariable.symbol
             val type = localVariableSymbol.returnType as KaNonErrorClassType
             Assertions.assertEquals(
                 ClassId(FqName("test.pkg"), FqName("NativePointerKeyboardModifiers"), isLocal = false),
@@ -130,7 +130,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
         val actualClass = ktFile.findDescendantOfType<KtClassOrObject>()!!
         val actualProperty = actualClass.findDescendantOfType<KtProperty>()!!
         analyze(actualProperty) {
-            val symbol = actualProperty.getVariableSymbol()
+            val symbol = actualProperty.symbol
             val type = symbol.returnType as KaNonErrorClassType
             Assertions.assertEquals(
                 ClassId.fromString("kotlin/jvm/JvmInline"),
@@ -316,7 +316,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
         assertEquals(codeFragmentModule.contextModule, contextModule)
 
         analyze(codeFragment) {
-            val fileSymbol = codeFragment.getFileSymbol()
+            val fileSymbol = codeFragment.symbol
             assertEquals(fileSymbol.containingModule, codeFragmentModule)
 
             val referenceExpression = codeFragment.findDescendantOfType<KtSimpleNameExpression> { it.text == "x" }!!
@@ -358,7 +358,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
         assertEquals(dummyModule.contextModule, contextModule)
 
         analyze(dummyFile) {
-            val fileSymbol = dummyFile.getFileSymbol()
+            val fileSymbol = dummyFile.symbol
             assertEquals(fileSymbol.containingModule, dummyModule)
 
             val callExpression = dummyFile.findDescendantOfType<KtCallExpression>()!!

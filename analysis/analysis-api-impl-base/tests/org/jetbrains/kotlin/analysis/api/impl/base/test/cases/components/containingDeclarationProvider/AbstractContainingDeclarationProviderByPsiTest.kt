@@ -21,7 +21,7 @@ abstract class AbstractContainingDeclarationProviderByPsiTest : AbstractAnalysis
         val currentPath = mutableListOf<KtDeclaration>()
         val ktClasses = mutableListOf<KtClassOrObject>()
         analyseForTest(mainFile) {
-            val expectedFileSymbol = mainFile.getFileSymbol()
+            val expectedFileSymbol = mainFile.symbol
             mainFile.accept(object : KtVisitorVoid() {
                 override fun visitElement(element: PsiElement) {
                     element.acceptChildren(this)
@@ -29,8 +29,8 @@ abstract class AbstractContainingDeclarationProviderByPsiTest : AbstractAnalysis
 
                 override fun visitDeclaration(dcl: KtDeclaration) {
                     val parentDeclaration = currentPath.lastOrNull()
-                    val currentDeclarationSymbol = dcl.getSymbol()
-                    val expectedParentDeclarationSymbol = parentDeclaration?.getSymbol()
+                    val currentDeclarationSymbol = dcl.symbol
+                    val expectedParentDeclarationSymbol = parentDeclaration?.symbol
                     val actualParentDeclarationSymbol = currentDeclarationSymbol.containingSymbol
 
                     if (dcl is KtScriptInitializer) {

@@ -95,7 +95,7 @@ internal fun KtType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReferenc
     }
 
     /* Check if inline type represents 'regular' inline class */
-    val classSymbol: KtClassOrObjectSymbol? = if (classId != null) getClassOrObjectSymbolByClassId(classId) else null
+    val classSymbol: KtClassOrObjectSymbol? = if (classId != null) findClass(classId) else null
     run check@{
         if (classId == null) return@check
         if (classSymbol !is KtNamedClassOrObjectSymbol) return@check
@@ -151,7 +151,7 @@ internal fun KtType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReferenc
 context(KtAnalysisSession, KtObjCExportSession)
 private val KtNonErrorClassType.objCTypeName: String
     get() {
-        return getClassOrObjectSymbolByClassId(classId)?.getObjCClassOrProtocolName()?.objCName
+        return findClass(classId)?.getObjCClassOrProtocolName()?.objCName
             ?: classId.shortClassName.asString().getObjCKotlinStdlibClassOrProtocolName().objCName
     }
 

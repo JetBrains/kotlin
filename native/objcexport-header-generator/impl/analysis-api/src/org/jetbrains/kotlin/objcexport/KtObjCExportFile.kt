@@ -89,7 +89,7 @@ private class KtPsiObjCExportFile(
      */
     context(KtAnalysisSession)
     override fun resolve(): KtResolvedObjCExportFile {
-        val symbol = file.getFileSymbol()
+        val symbol = file.symbol
         return KtResolvedObjCExportFile(
             fileName = fileName,
             packageFqName = packageFqName,

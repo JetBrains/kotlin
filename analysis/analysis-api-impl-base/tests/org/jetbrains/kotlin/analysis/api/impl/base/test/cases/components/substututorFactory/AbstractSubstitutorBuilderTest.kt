@@ -24,7 +24,7 @@ abstract class AbstractSubstitutorBuilderTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val declaration = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtDeclaration>(mainFile)
         val actual = analyseForTest(declaration) {
-            val symbol = declaration.getSymbol() as KaCallableSymbol
+            val symbol = declaration.symbol as KaCallableSymbol
 
             val substitutor = buildSubstitutor {
                 substitution(getSymbolByName(mainFile, "A"), builtinTypes.int)

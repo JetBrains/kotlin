@@ -174,7 +174,7 @@ internal class KaFirSymbolRelationProvider(
 
     fun getContainingDeclarationByPsi(symbol: KaSymbol): KaDeclarationSymbol? {
         val containingDeclaration = getContainingPsi(symbol) ?: return null
-        return with(analysisSession) { containingDeclaration.getSymbol() }
+        return with(analysisSession) { containingDeclaration.symbol }
     }
 
     private fun getContainingDeclarationForDependentDeclaration(symbol: KaSymbol): KaDeclarationSymbol? {
@@ -394,7 +394,7 @@ internal class KaFirSymbolRelationProvider(
             val inheritorClassIds = firSymbol.fir.getSealedClassInheritors(analysisSession.useSiteSession)
 
             return with(analysisSession) {
-                inheritorClassIds.mapNotNull { getClassOrObjectSymbolByClassId(it) as? KaNamedClassOrObjectSymbol }
+                inheritorClassIds.mapNotNull { findClass(it) as? KaNamedClassOrObjectSymbol }
             }
         }
 

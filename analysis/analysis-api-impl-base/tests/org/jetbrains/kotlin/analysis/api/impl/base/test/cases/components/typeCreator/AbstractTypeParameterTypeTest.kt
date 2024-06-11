@@ -20,7 +20,7 @@ abstract class AbstractTypeParameterTypeTest : AbstractAnalysisApiBasedTest() {
         val expressionAtCaret = testServices.expressionMarkerProvider.getElementOfTypeAtCaret(mainFile) as KtTypeParameter
 
         val actual = analyseForTest(expressionAtCaret) {
-            val symbol = expressionAtCaret.getTypeParameterSymbol()
+            val symbol = expressionAtCaret.symbol
             val ktType = buildTypeParameterType(symbol)
             buildString {
                 appendLine("${KtTypeParameter::class.simpleName}: ${expressionAtCaret.text}")

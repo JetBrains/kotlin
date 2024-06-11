@@ -22,7 +22,7 @@ class KtObjCExportNamerTest(
     fun `test - simple class`() {
         val foo = inlineSourceCodeAnalysis.createKtFile("class Foo")
         analyzeWithObjCExport(foo) {
-            val fooSymbol = foo.getFileSymbol().fileScope
+            val fooSymbol = foo.symbol.fileScope
                 .classifiers(Name.identifier("Foo"))
                 .single() as KtNamedClassOrObjectSymbol
 

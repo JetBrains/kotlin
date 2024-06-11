@@ -18,7 +18,7 @@ abstract class AbstractSingleSymbolByPsiTest : AbstractSymbolTest() {
             ktFile, testServices.moduleStructure.modules.first(),
             KtDeclaration::class
         ) as KtDeclaration
-        val symbol = declaration.getSymbol()
+        val symbol = declaration.symbol
         return SymbolsData(listOf(symbol))
     }
 }

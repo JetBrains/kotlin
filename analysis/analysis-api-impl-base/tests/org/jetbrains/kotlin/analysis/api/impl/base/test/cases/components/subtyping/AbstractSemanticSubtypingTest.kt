@@ -56,7 +56,7 @@ abstract class AbstractSemanticSubtypingTest : AbstractAnalysisApiBasedTest() {
     private fun KaSession.getTypeAtCaret(caretTag: String, mainFile: KtFile, testServices: TestServices): KaType {
         val element = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtElement>(mainFile, caretTag)
         return when (element) {
-            is KtProperty -> element.getVariableSymbol().returnType
+            is KtProperty -> element.symbol.returnType
             is KtExpression -> element.getKaType() ?: error("Expected the selected expression to have a type.")
             else -> error("Expected a property or an expression.")
         }

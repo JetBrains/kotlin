@@ -16,12 +16,12 @@ abstract class AbstractSymbolByPsiTest : AbstractSymbolTest() {
 
     override fun KaSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData {
         val allDeclarationSymbols = ktFile.collectDescendantsOfType<KtDeclaration> { it.isValidForSymbolCreation }.map { declaration ->
-            declaration.getSymbol()
+            declaration.symbol
         }
 
         return SymbolsData(
             allDeclarationSymbols,
-            listOf(ktFile.getFileSymbol()),
+            listOf(ktFile.symbol),
         )
     }
 }

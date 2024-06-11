@@ -120,7 +120,7 @@ abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<
     context(KaSession)
     protected fun addCompanionObjectFieldIfNeeded(result: MutableList<KtLightField>, classOrObjectSymbol: KaNamedClassOrObjectSymbol) {
         val companionObjectSymbols: List<KaNamedClassOrObjectSymbol>? = classOrObjectDeclaration?.companionObjects?.mapNotNull {
-            it.getNamedClassOrObjectSymbol()
+            it.namedClassSymbol
         } ?: classOrObjectSymbol.companionObject?.let(::listOf)
 
         companionObjectSymbols?.forEach {

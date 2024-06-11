@@ -94,7 +94,7 @@ private class KaFirResolveExtensionScope(
                 val declarationName = declaration.nameAsName ?: continue
                 if (!nameFilter(declarationName)) continue
                 with(analysisSession) {
-                    yield(declaration.getSymbol() as S)
+                    yield(declaration.symbol as S)
                 }
             }
         }

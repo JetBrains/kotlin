@@ -41,7 +41,7 @@ abstract class AbstractRendererTest : AbstractAnalysisApiBasedTest() {
             buildString {
                 mainFile.declarations.forEach { declaration ->
                     analyseForTest(declaration) {
-                        append(declaration.getSymbol().render(renderer))
+                        append(declaration.symbol.render(renderer))
                         appendLine()
                         appendLine()
                     }

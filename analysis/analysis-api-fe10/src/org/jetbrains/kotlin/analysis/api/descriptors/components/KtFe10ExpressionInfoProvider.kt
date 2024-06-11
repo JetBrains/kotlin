@@ -28,9 +28,9 @@ internal class KaFe10ExpressionInfoProvider(
         val bindingContext = analysisContext.analyze(returnExpression, AnalysisMode.PARTIAL)
         val targetLabel = returnExpression.getTargetLabel()
             ?: return returnExpression.parentOfType<KtNamedFunction>()
-                ?.let { with(analysisSession) { it.getSymbol() as? KaCallableSymbol } }
+                ?.let { with(analysisSession) { it.symbol as? KaCallableSymbol } }
         val labelTarget = bindingContext[BindingContext.LABEL_TARGET, targetLabel] as? KtDeclaration ?: return null
-        return with(analysisSession) { labelTarget.getSymbol() as? KaCallableSymbol }
+        return with(analysisSession) { labelTarget.symbol as? KaCallableSymbol }
     }
 
     override fun getWhenMissingCases(whenExpression: KtWhenExpression): List<WhenMissingCase>  {

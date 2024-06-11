@@ -33,7 +33,7 @@ internal fun KtAnnotationsList.getObjCDocumentedAnnotations(): List<KtAnnotation
         .filter { annotation ->
             val annotationClassId = annotation.classId ?: return@filter false
             if (annotationClassId.asSingleFqName() in mustBeDocumentedAnnotationsStopList) return@filter false
-            val annotationClassSymbol = getClassOrObjectSymbolByClassId(annotationClassId) ?: return@filter false
+            val annotationClassSymbol = findClass(annotationClassId) ?: return@filter false
             StandardClassIds.Annotations.MustBeDocumented in annotationClassSymbol.annotations.classIds
         }
 }

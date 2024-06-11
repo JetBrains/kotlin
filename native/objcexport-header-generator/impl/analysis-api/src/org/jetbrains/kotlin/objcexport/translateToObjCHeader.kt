@@ -97,7 +97,7 @@ private class KtObjCExportHeaderGenerator(
 
     context(KtAnalysisSession, KtObjCExportSession)
     private fun translateClass(classId: ClassId) {
-        val classOrObjectSymbol = getClassOrObjectSymbolByClassId(classId) ?: return
+        val classOrObjectSymbol = findClass(classId) ?: return
         translateClassOrObjectSymbol(classOrObjectSymbol)
     }
 

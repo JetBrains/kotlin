@@ -61,6 +61,7 @@ private constructor(
     diagnosticProvider = KaFirDiagnosticProvider(analysisSessionProvider, token),
     scopeProvider = KaFirScopeProvider(analysisSessionProvider, token),
     completionCandidateChecker = KaFirCompletionCandidateChecker(analysisSessionProvider, token),
+    symbolProvider = KaFirSymbolProvider(analysisSessionProvider, token, firResolveSession.useSiteFirSession.symbolProvider),
     javaInteroperabilityComponent = KaFirJavaInteroperabilityComponent(analysisSessionProvider, token),
     typeRelationChecker = KaFirTypeRelationChecker(analysisSessionProvider, token),
     evaluator = KaFirEvaluator(analysisSessionProvider, token),
@@ -86,9 +87,6 @@ private constructor(
     override val useSiteModule: KtModule get() = firResolveSession.useSiteKtModule
 
     override val expressionTypeProviderImpl = KaFirExpressionTypeProvider(this, token)
-
-    override val symbolProviderImpl =
-        KaFirSymbolProvider(this, firResolveSession.useSiteFirSession.symbolProvider)
 
     override val expressionInfoProviderImpl = KaFirExpressionInfoProvider(this, token)
 

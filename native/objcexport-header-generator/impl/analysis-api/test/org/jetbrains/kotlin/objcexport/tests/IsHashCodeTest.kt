@@ -24,7 +24,7 @@ class IsHashCodeTest(
     fun `test - Any - hashCode`() {
         val file = inlineSourceCodeAnalysis.createKtFile("")
         analyze(file) {
-            val anySymbol = getClassOrObjectSymbolByClassId(StandardClassIds.Any) ?: error("Missing kotlin.Any")
+            val anySymbol = findClass(StandardClassIds.Any) ?: error("Missing kotlin.Any")
             val hashCodeSymbol = anySymbol.getFunctionOrFail("hashCode")
             assertTrue(hashCodeSymbol.isHashCode)
         }
@@ -60,7 +60,7 @@ class IsHashCodeTest(
     fun `test - Any equals method is returning false for isHashCode`() {
         val file = inlineSourceCodeAnalysis.createKtFile("")
         analyze(file) {
-            val anySymbol = getClassOrObjectSymbolByClassId(StandardClassIds.Any) ?: error("Missing kotlin.Any")
+            val anySymbol = findClass(StandardClassIds.Any) ?: error("Missing kotlin.Any")
             val equalsSymbol = anySymbol.getFunctionOrFail("equals")
             assertFalse(equalsSymbol.isHashCode)
         }

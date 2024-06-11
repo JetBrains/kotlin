@@ -55,7 +55,7 @@ internal class SymbolLightClassForFacade(
 
     private fun <T> withFileSymbols(action: KaSession.(List<KaFileSymbol>) -> T): T =
         analyzeForLightClasses(ktModule) {
-            action(files.map { it.getFileSymbol() })
+            action(files.map { it.symbol })
         }
 
     private val firstFileInFacade: KtFile get() = files.first()

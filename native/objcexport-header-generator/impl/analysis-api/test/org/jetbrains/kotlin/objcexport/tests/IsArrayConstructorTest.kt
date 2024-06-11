@@ -53,7 +53,7 @@ class IsArrayConstructorTest(
     private fun doTestForArray(classId: ClassId) {
         val file = inlineSourceCodeAnalysis.createKtFile("")
         analyze(file) {
-            val arraySymbol = getClassOrObjectSymbolByClassId(classId)
+            val arraySymbol = findClass(classId)
                 ?: fail("Missing $$classId symbol")
 
             arraySymbol.memberScope.constructors

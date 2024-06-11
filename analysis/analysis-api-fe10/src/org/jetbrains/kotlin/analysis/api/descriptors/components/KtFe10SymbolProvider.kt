@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.*
+import org.jetbrains.kotlin.analysis.api.impl.base.components.AbstractKaSymbolProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.descriptors.findTypeAliasAcrossModuleDependencies
@@ -25,115 +27,120 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
 internal class KaFe10SymbolProvider(
-    override val analysisSession: KaFe10Session
-) : KaSymbolProvider(), KaFe10SessionComponent {
+    override val analysisSessionProvider: () -> KaFe10Session,
     override val token: KaLifetimeToken
-        get() = analysisSession.token
-
-    override val ROOT_PACKAGE_SYMBOL: KaPackageSymbol
-        get() = KaFe10PackageSymbol(FqName.ROOT, analysisContext)
-
-    override fun getFileSymbol(psi: KtFile): KaFileSymbol {
-        return KaFe10FileSymbol(psi, analysisContext)
-    }
-
-    override fun getScriptSymbol(psi: KtScript): KaScriptSymbol {
-        return KaFe10PsiScriptSymbol(psi, analysisContext)
-    }
-
-    override fun getParameterSymbol(psi: KtParameter): KaVariableLikeSymbol {
-        return when {
-            psi.isFunctionTypeParameter -> error("Function type parameters are not supported in getParameterSymbol()")
-            psi.isLoopParameter -> KaFe10PsiLoopParameterLocalVariableSymbol(psi, analysisContext)
-            else -> KaFe10PsiValueParameterSymbol(psi, analysisContext)
-        }
-    }
-
-    override fun getFunctionLikeSymbol(psi: KtNamedFunction): KaFunctionLikeSymbol {
-        return if (psi.hasBody() && (psi.funKeyword == null || psi.nameIdentifier == null)) {
-            getAnonymousFunctionSymbol(psi)
-        } else {
-            KaFe10PsiFunctionSymbol(psi, analysisContext)
-        }
-    }
-
-    override fun getConstructorSymbol(psi: KtConstructor<*>): KaConstructorSymbol {
-        return KaFe10PsiConstructorSymbol(psi, analysisContext)
-    }
-
-    override fun getTypeParameterSymbol(psi: KtTypeParameter): KaTypeParameterSymbol {
-        return KaFe10PsiTypeParameterSymbol(psi, analysisContext)
-    }
-
-    override fun getTypeAliasSymbol(psi: KtTypeAlias): KaTypeAliasSymbol {
-        return KaFe10PsiTypeAliasSymbol(psi, analysisContext)
-    }
-
-    override fun getEnumEntrySymbol(psi: KtEnumEntry): KaEnumEntrySymbol {
-        return KaFe10PsiEnumEntrySymbol(psi, analysisContext)
-    }
-
-    override fun getAnonymousFunctionSymbol(psi: KtNamedFunction): KaAnonymousFunctionSymbol {
-        return KaFe10PsiAnonymousFunctionSymbol(psi, analysisContext)
-    }
-
-    override fun getAnonymousFunctionSymbol(psi: KtFunctionLiteral): KaAnonymousFunctionSymbol {
-        return KaFe10PsiLiteralAnonymousFunctionSymbol(psi, analysisContext)
-    }
-
-    override fun getVariableSymbol(psi: KtProperty): KaVariableSymbol {
-        return if (psi.isLocal) {
-            KaFe10PsiLocalVariableSymbol(psi, analysisContext)
-        } else {
-            KaFe10PsiKotlinPropertySymbol(psi, analysisContext)
-        }
-    }
-
-    override fun getAnonymousObjectSymbol(psi: KtObjectLiteralExpression): KaAnonymousObjectSymbol {
-        return KaFe10PsiAnonymousObjectSymbol(psi.objectDeclaration, analysisContext)
-    }
-
-    override fun getClassOrObjectSymbol(psi: KtClassOrObject): KaClassOrObjectSymbol? {
-        return if (psi is KtEnumEntry) {
-            null
-        } else if (psi is KtObjectDeclaration && psi.isObjectLiteral()) {
-            KaFe10PsiAnonymousObjectSymbol(psi, analysisContext)
-        } else {
-            KaFe10PsiNamedClassOrObjectSymbol(psi, analysisContext)
-        }
-    }
-
-    override fun getNamedClassOrObjectSymbol(psi: KtClassOrObject): KaNamedClassOrObjectSymbol? {
-        if (psi is KtEnumEntry || psi.nameIdentifier == null) {
-            return null
+) : AbstractKaSymbolProvider<KaFe10Session>(), KaFe10SessionComponent {
+    override val rootPackageSymbol: KaPackageSymbol
+        get() = withValidityAssertion {
+            KaFe10PackageSymbol(FqName.ROOT, analysisContext)
         }
 
-        return KaFe10PsiNamedClassOrObjectSymbol(psi, analysisContext)
-    }
+    override val KtFile.symbol: KaFileSymbol
+        get() = withValidityAssertion { KaFe10FileSymbol(this, this@KaFe10SymbolProvider.analysisContext) }
 
-    override fun getPropertyAccessorSymbol(psi: KtPropertyAccessor): KaPropertyAccessorSymbol {
-        return if (psi.isGetter) {
-            KaFe10PsiPropertyGetterSymbol(psi, analysisContext)
-        } else {
-            KaFe10PsiPropertySetterSymbol(psi, analysisContext)
+    override val KtScript.symbol: KaScriptSymbol
+        get() = withValidityAssertion { KaFe10PsiScriptSymbol(this, analysisContext) }
+
+    override val KtParameter.symbol: KaVariableLikeSymbol
+        get() = withValidityAssertion {
+            when {
+                isFunctionTypeParameter -> error("Function type parameters are not supported in getParameterSymbol()")
+                isLoopParameter -> KaFe10PsiLoopParameterLocalVariableSymbol(this, analysisContext)
+                else -> KaFe10PsiValueParameterSymbol(this, analysisContext)
+            }
         }
-    }
 
-    override fun getClassInitializerSymbol(psi: KtClassInitializer): KaClassInitializerSymbol {
-        return KaFe10PsiClassInitializerSymbol(psi, analysisContext)
-    }
+    override val KtNamedFunction.symbol: KaFunctionLikeSymbol
+        get() = withValidityAssertion {
+            return if (hasBody() && (funKeyword == null || nameIdentifier == null)) {
+                anonymousSymbol
+            } else {
+                KaFe10PsiFunctionSymbol(this, analysisContext)
+            }
+        }
 
-    override fun getClassOrObjectSymbolByClassId(classId: ClassId): KaClassOrObjectSymbol? {
+    override val KtConstructor<*>.symbol: KaConstructorSymbol
+        get() = withValidityAssertion { KaFe10PsiConstructorSymbol(this, analysisContext) }
+
+    override val KtTypeParameter.symbol: KaTypeParameterSymbol
+        get() = withValidityAssertion { KaFe10PsiTypeParameterSymbol(this, analysisContext) }
+
+    override val KtTypeAlias.symbol: KaTypeAliasSymbol
+        get() = withValidityAssertion { KaFe10PsiTypeAliasSymbol(this, analysisContext) }
+
+    override val KtEnumEntry.symbol: KaEnumEntrySymbol
+        get() = withValidityAssertion { KaFe10PsiEnumEntrySymbol(this, analysisContext) }
+
+    override val KtNamedFunction.anonymousSymbol: KaAnonymousFunctionSymbol
+        get() = withValidityAssertion { KaFe10PsiAnonymousFunctionSymbol(this, analysisContext) }
+
+    override val KtFunctionLiteral.symbol: KaAnonymousFunctionSymbol
+        get() = withValidityAssertion { KaFe10PsiLiteralAnonymousFunctionSymbol(this, analysisContext) }
+
+    override val KtProperty.symbol: KaVariableSymbol
+        get() = withValidityAssertion {
+            return if (isLocal) {
+                KaFe10PsiLocalVariableSymbol(this, analysisContext)
+            } else {
+                KaFe10PsiKotlinPropertySymbol(this, analysisContext)
+            }
+        }
+
+    override val KtObjectLiteralExpression.symbol: KaAnonymousObjectSymbol
+        get() = withValidityAssertion { KaFe10PsiAnonymousObjectSymbol(objectDeclaration, analysisContext) }
+
+    override val KtObjectDeclaration.symbol: KaClassOrObjectSymbol
+        get() = withValidityAssertion { KaFe10PsiNamedClassOrObjectSymbol(this, analysisContext) }
+
+    override val KtClassOrObject.classSymbol: KaClassOrObjectSymbol?
+        get() = withValidityAssertion {
+            return if (this is KtEnumEntry) {
+                null
+            } else if (this is KtObjectDeclaration && isObjectLiteral()) {
+                KaFe10PsiAnonymousObjectSymbol(this, analysisContext)
+            } else {
+                KaFe10PsiNamedClassOrObjectSymbol(this, analysisContext)
+            }
+        }
+
+    override val KtClassOrObject.namedClassSymbol: KaNamedClassOrObjectSymbol?
+        get() = withValidityAssertion {
+            if (this is KtEnumEntry || nameIdentifier == null) {
+                return null
+            }
+
+            return KaFe10PsiNamedClassOrObjectSymbol(this, analysisContext)
+        }
+
+    override val KtPropertyAccessor.symbol: KaPropertyAccessorSymbol
+        get() = withValidityAssertion {
+            return if (isGetter) {
+                KaFe10PsiPropertyGetterSymbol(this, analysisContext)
+            } else {
+                KaFe10PsiPropertySetterSymbol(this, analysisContext)
+            }
+        }
+
+    override val KtClassInitializer.symbol: KaClassInitializerSymbol
+        get() = withValidityAssertion { KaFe10PsiClassInitializerSymbol(this, analysisContext) }
+
+    override val KtDestructuringDeclarationEntry.symbol: KaVariableSymbol
+        get() = withValidityAssertion { KaFe10PsiLocalVariableSymbol(this, analysisContext) }
+
+    override val KtDestructuringDeclaration.symbol: KaDestructuringDeclarationSymbol
+        get() = withValidityAssertion { KaFe10PsiDestructuringDeclarationSymbol(this, analysisSession) }
+
+    override fun findClass(classId: ClassId): KaClassOrObjectSymbol? = withValidityAssertion {
         val descriptor = analysisContext.resolveSession.moduleDescriptor.findClassAcrossModuleDependencies(classId) ?: return null
         return descriptor.toKaClassSymbol(analysisContext)
     }
 
-    override fun getTypeAliasByClassId(classId: ClassId): KaTypeAliasSymbol? {
+    override fun findTypeAlias(classId: ClassId): KaTypeAliasSymbol? = withValidityAssertion {
         val descriptor = analysisContext.resolveSession.moduleDescriptor.findTypeAliasAcrossModuleDependencies(classId) ?: return null
         return descriptor.toKtClassifierSymbol(analysisContext) as? KaTypeAliasSymbol
     }
 
-    override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): Sequence<KaCallableSymbol> {
+    override fun findTopLevelCallables(packageFqName: FqName, name: Name): Sequence<KaCallableSymbol> = withValidityAssertion {
         val packageViewDescriptor = analysisContext.resolveSession.moduleDescriptor.getPackage(packageFqName)
         return packageViewDescriptor.memberScope.getContributedDescriptors(DescriptorKindFilter.ALL, nameFilter = { it == name })
             .asSequence()
@@ -141,16 +148,8 @@ internal class KaFe10SymbolProvider(
             .mapNotNull { it.toKtSymbol(analysisContext) as? KaCallableSymbol }
     }
 
-    override fun getPackageSymbolIfPackageExists(packageFqName: FqName): KaPackageSymbol? {
-        if (analysisContext.resolveSession.packageFragmentProvider.isEmpty(packageFqName)) return null
-        return KaFe10PackageSymbol(packageFqName, analysisContext)
-    }
-
-    override fun getDestructuringDeclarationEntrySymbol(psi: KtDestructuringDeclarationEntry): KaVariableSymbol {
-        return KaFe10PsiLocalVariableSymbol(psi, analysisContext)
-    }
-
-    override fun getDestructuringDeclarationSymbol(psi: KtDestructuringDeclaration): KaDestructuringDeclarationSymbol {
-        return KaFe10PsiDestructuringDeclarationSymbol(psi, analysisSession)
+    override fun findPackage(fqName: FqName): KaPackageSymbol? = withValidityAssertion {
+        if (analysisContext.resolveSession.packageFragmentProvider.isEmpty(fqName)) return null
+        return KaFe10PackageSymbol(fqName, analysisContext)
     }
 }

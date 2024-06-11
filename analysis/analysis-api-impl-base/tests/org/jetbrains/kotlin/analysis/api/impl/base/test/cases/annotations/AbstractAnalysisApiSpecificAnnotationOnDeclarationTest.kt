@@ -31,7 +31,7 @@ abstract class AbstractAnalysisApiSpecificAnnotationOnDeclarationTest : Abstract
         val classIdString = mainModule.testModule.directives.singleValue(Directives.CLASS_ID)
 
         val actual = analyseForTest(ktDeclaration) {
-            val declarationSymbol = ktDeclaration.getSymbol() as KaAnnotatedSymbol
+            val declarationSymbol = ktDeclaration.symbol as KaAnnotatedSymbol
             val annotationList = declarationSymbol.annotations
             val classId = ClassId.fromString(classIdString)
             val renderer = DebugSymbolRenderer()

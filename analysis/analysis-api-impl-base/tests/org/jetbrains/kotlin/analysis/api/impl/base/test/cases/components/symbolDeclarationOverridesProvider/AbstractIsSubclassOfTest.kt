@@ -21,8 +21,8 @@ abstract class AbstractIsSubclassOfTest : AbstractAnalysisApiBasedTest() {
 
         val actual = executeOnPooledThreadInReadAction {
             analyseForTest(subClass) {
-                val subClassSymbol = subClass.getClassOrObjectSymbol()!!
-                val superClassSymbol = superClass.getClassOrObjectSymbol()!!
+                val subClassSymbol = subClass.classSymbol!!
+                val superClassSymbol = superClass.classSymbol!!
 
                 val isSubClass = subClassSymbol.isSubClassOf(superClassSymbol)
                 val isDirectSubClass = subClassSymbol.isDirectSubClassOf(superClassSymbol)

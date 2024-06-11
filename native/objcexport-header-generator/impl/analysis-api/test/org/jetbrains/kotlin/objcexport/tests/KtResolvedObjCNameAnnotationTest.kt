@@ -25,7 +25,7 @@ class KtResolvedObjCNameAnnotationTest(
     fun `test - class - no ObjCName annotation`() {
         val ktFile = inlineSourceCodeAnalysis.createKtFile("class Foo")
         analyze(ktFile) {
-            val fooSymbol = ktFile.getFileSymbol().fileScope.classifiers(Name.identifier("Foo")).single() as KtClassLikeSymbol
+            val fooSymbol = ktFile.symbol.fileScope.classifiers(Name.identifier("Foo")).single() as KtClassLikeSymbol
             assertNull(fooSymbol.resolveObjCNameAnnotation())
         }
     }
@@ -39,7 +39,7 @@ class KtResolvedObjCNameAnnotationTest(
             """.trimIndent()
         )
         analyze(ktFile) {
-            val fooSymbol = ktFile.getFileSymbol().fileScope.classifiers(Name.identifier("Foo")).single() as KtClassLikeSymbol
+            val fooSymbol = ktFile.symbol.fileScope.classifiers(Name.identifier("Foo")).single() as KtClassLikeSymbol
             val resolvedObjCAnnotation = assertNotNull(fooSymbol.resolveObjCNameAnnotation())
             assertEquals("FooObjC", resolvedObjCAnnotation.objCName)
             assertEquals("FooSwift", resolvedObjCAnnotation.swiftName)
@@ -56,7 +56,7 @@ class KtResolvedObjCNameAnnotationTest(
             """.trimIndent()
         )
         analyze(ktFile) {
-            val fooSymbol = ktFile.getFileSymbol().fileScope.callables(Name.identifier("foo")).single() as KtFunctionSymbol
+            val fooSymbol = ktFile.symbol.fileScope.callables(Name.identifier("foo")).single() as KtFunctionSymbol
             val resolvedObjCAnnotation = assertNotNull(fooSymbol.resolveObjCNameAnnotation())
             assertEquals("fooObjC", resolvedObjCAnnotation.objCName)
             assertEquals("fooSwift", resolvedObjCAnnotation.swiftName)

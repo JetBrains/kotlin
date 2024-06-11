@@ -44,7 +44,7 @@ abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBa
     private fun KaSession.getCallableSymbol(mainFile: KtFile, testServices: TestServices): KaCallableSymbol {
         val declaration = testServices.expressionMarkerProvider.getElementOfTypeAtCaretOrNull<KtDeclaration>(mainFile)
         if (declaration != null) {
-            return declaration.getSymbol() as KaCallableSymbol
+            return declaration.symbol as KaCallableSymbol
         }
         return getSingleTestTargetSymbolOfType<KaCallableSymbol>(mainFile, testDataPath)
     }

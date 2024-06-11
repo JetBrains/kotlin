@@ -41,13 +41,13 @@ public fun KlibDeclarationAddress.getSymbols(): Sequence<KtSymbol> {
  */
 context(KtAnalysisSession)
 public fun KlibClassAddress.getClassOrObjectSymbol(): KtClassOrObjectSymbol? {
-    return getClassOrObjectSymbolByClassId(classId)
+    return findClass(classId)
         ?.takeIf { symbol -> symbol in this }
 }
 
 context(KtAnalysisSession)
 public fun KlibTypeAliasAddress.getTypeAliasSymbol(): KtTypeAliasSymbol? {
-    return getTypeAliasByClassId(classId)
+    return findTypeAlias(classId)
         ?.takeIf { symbol -> symbol in this }
 }
 
@@ -67,7 +67,7 @@ public fun KlibCallableAddress.getCallableSymbols(): Sequence<KtCallableSymbol> 
  */
 context(KtAnalysisSession)
 public fun KlibFunctionAddress.getFunctionSymbols(): Sequence<KtFunctionSymbol> {
-    return getTopLevelCallableSymbols(packageFqName, callableName)
+    return findTopLevelCallables(packageFqName, callableName)
         .filterIsInstance<KtFunctionSymbol>()
         .filter { symbol -> symbol in this }
 }
@@ -77,7 +77,7 @@ public fun KlibFunctionAddress.getFunctionSymbols(): Sequence<KtFunctionSymbol> 
  */
 context(KtAnalysisSession)
 public fun KlibPropertyAddress.getPropertySymbols(): Sequence<KtPropertySymbol> {
-    return getTopLevelCallableSymbols(packageFqName, callableName)
+    return findTopLevelCallables(packageFqName, callableName)
         .filterIsInstance<KtPropertySymbol>()
         .filter { symbol -> symbol in this }
 }

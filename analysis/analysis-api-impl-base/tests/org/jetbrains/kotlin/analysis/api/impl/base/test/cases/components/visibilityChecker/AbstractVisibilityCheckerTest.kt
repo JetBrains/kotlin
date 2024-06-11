@@ -40,7 +40,7 @@ abstract class AbstractVisibilityCheckerTest : AbstractAnalysisApiBasedTest() {
                 ?: findFirstUseSiteElement(mainFile)
                 ?: error("Cannot find use-site element to check visibility at.")
 
-            val useSiteFileSymbol = mainFile.getFileSymbol()
+            val useSiteFileSymbol = mainFile.symbol
 
             val visible = isVisible(declarationSymbol, useSiteFileSymbol, null, useSiteElement)
             """

@@ -62,7 +62,7 @@ abstract class AbstractGetKlibSourceFileNameTest : AbstractAnalysisApiBasedTest(
 
                 packageFragmentProto.class_List.forEach { classProto ->
                     val classId = ClassId.fromString(nameResolver.getQualifiedClassName(classProto.fqName))
-                    val classSymbol = getClassOrObjectSymbolByClassId(classId) ?: fail("Failed to find symbol '$classId'")
+                    val classSymbol = findClass(classId) ?: fail("Failed to find symbol '$classId'")
                     actual.appendLine("Classifier: ${classSymbol.classId}; klibSourceFile: ${classSymbol.klibSourceFileName}")
                 }
 
@@ -74,7 +74,7 @@ abstract class AbstractGetKlibSourceFileNameTest : AbstractAnalysisApiBasedTest(
 
                 val callableNames = (propertyNames + functionNames).distinct()
                 callableNames.forEach { callableName ->
-                    getTopLevelCallableSymbols(packageFqName, callableName).forEach { symbol ->
+                    findTopLevelCallables(packageFqName, callableName).forEach { symbol ->
                         actual.appendLine("Callable: ${symbol.callableId}; klibSourceFile: ${symbol.klibSourceFileName}")
                     }
                 }

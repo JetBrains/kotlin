@@ -17,7 +17,7 @@ import kotlin.test.fail
 
 context(KtAnalysisSession)
 fun KtFile.getClassOrFail(name: String): KtNamedClassOrObjectSymbol {
-    return getFileSymbol().fileScope.getClassOrFail(name)
+    return symbol.fileScope.getClassOrFail(name)
 }
 
 context(KtAnalysisSession)
@@ -32,12 +32,12 @@ fun KtScope.getClassOrFail(name: String): KtNamedClassOrObjectSymbol {
 
 context(KtAnalysisSession)
 fun KtFile.getFunctionOrFail(name: String): KtFunctionSymbol {
-    return getFileSymbol().fileScope.getFunctionOrFail(name)
+    return symbol.fileScope.getFunctionOrFail(name)
 }
 
 context(KtAnalysisSession)
 fun KtFile.getPropertyOrFail(name: String): KtPropertySymbol {
-    return getFileSymbol().fileScope.getPropertyOrFail(name)
+    return symbol.fileScope.getPropertyOrFail(name)
 }
 
 context(KtAnalysisSession)

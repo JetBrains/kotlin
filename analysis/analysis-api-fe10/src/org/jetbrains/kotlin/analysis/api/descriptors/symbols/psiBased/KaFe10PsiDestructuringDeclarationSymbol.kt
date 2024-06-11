@@ -42,7 +42,7 @@ internal class KaFe10PsiDestructuringDeclarationSymbol(
     override val entries: List<KaVariableSymbol>
         get() = withValidityAssertion {
             psi.entries.map { entry ->
-                with(analysisSession) { entry.getDestructuringDeclarationEntrySymbol() }
+                with(analysisSession) { entry.symbol }
             }
         }
 

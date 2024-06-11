@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractAnalysisApiAnnotationsOnFilesTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actual = analyseForTest(mainFile) {
-            val fileSymbol = mainFile.getFileSymbol()
+            val fileSymbol = mainFile.symbol
             TestAnnotationRenderer.renderAnnotations(analysisSession, fileSymbol.annotations)
         }
 

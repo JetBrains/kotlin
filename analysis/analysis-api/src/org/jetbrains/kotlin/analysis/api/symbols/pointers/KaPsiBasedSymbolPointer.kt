@@ -25,8 +25,8 @@ public class KaPsiBasedSymbolPointer<S : KaSymbol> private constructor(
         val symbol: KaSymbol = with(analysisSession) {
             if (!psi.canBeAnalysed()) return null
             when (psi) {
-                is KtDeclaration -> psi.getSymbol()
-                is KtFile -> psi.getFileSymbol()
+                is KtDeclaration -> psi.symbol
+                is KtFile -> psi.symbol
                 else -> {
                     error("Unexpected declaration to restore: ${psi::class}, text:\n ${psi.text}")
                 }

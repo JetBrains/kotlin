@@ -19,7 +19,7 @@ abstract class AbstractContainingDeclarationProviderForSetterParameterTest : Abs
         val context = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtProperty>(mainFile)
 
         analyseForTest(context) { declaration ->
-            val propertySymbol = (declaration as KtProperty).getVariableSymbol() as KaPropertySymbol
+            val propertySymbol = (declaration as KtProperty).symbol as KaPropertySymbol
             val setterSymbol = propertySymbol.setter!!
             val setterParameterSymbol = setterSymbol.valueParameters.single()
             testServices.assertions.assertEquals(propertySymbol, setterSymbol.containingSymbol)

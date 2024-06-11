@@ -86,7 +86,7 @@ internal class KaFe10SymbolRelationProvider(
             // psiBased
             (psi?.containingFile as? KtFile)?.let { ktFile ->
                 with(analysisSession) {
-                    return ktFile.getFileSymbol()
+                    return ktFile.symbol
                 }
             }
 
@@ -94,7 +94,7 @@ internal class KaFe10SymbolRelationProvider(
             val descriptor = computeContainingSymbolOrSelf(this, analysisSession).getDescriptor()
             val ktFile = descriptor?.let(DescriptorToSourceUtils::getContainingFile) ?: return null
             with(analysisSession) {
-                return ktFile.getFileSymbol()
+                return ktFile.symbol
             }
         }
 
