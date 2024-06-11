@@ -1,0 +1,183 @@
+Assertion failed
+assert(if (a < b) a == b else if (b < a) b == a else false)
+           | | |                  | | |  | |  |
+           | | |                  | | |  | |  2
+           | | |                  | | |  | false
+           | | |                  | | |  1
+           | | |                  | | 2
+           | | |                  | true
+           | | |                  1
+           | | 1
+           | false
+           2
+
+Assertion failed
+assert(if (a < b) a == b else if (b < a) b == a else false)
+           | | |  | |  |
+           | | |  | |  2
+           | | |  | false
+           | | |  1
+           | | 2
+           | true
+           1
+
+Assertion failed
+assert(if (a < b) a == b else if (b < a) b == a else false)
+           | | |                  | | |
+           | | |                  | | 1
+           | | |                  | false
+           | | |                  1
+           | | 1
+           | false
+           1
+
+Assertion failed
+assert(a + (if (a < b) a else b) + b == a)
+       | |      | | |  |         | | |  |
+       | |      | | |  |         | | |  1
+       | |      | | |  |         | | false
+       | |      | | |  |         | 2
+       | |      | | |  |         4
+       | |      | | |  1
+       | |      | | 2
+       | |      | true
+       | |      1
+       | 2
+       1
+
+Assertion failed
+assert(a + (if (a < b) a else b) + b == a)
+       | |      | | |         |  | | |  |
+       | |      | | |         |  | | |  2
+       | |      | | |         |  | | false
+       | |      | | |         |  | 1
+       | |      | | |         |  4
+       | |      | | |         1
+       | |      | | 1
+       | |      | false
+       | |      2
+       | 3
+       2
+
+Assertion failed
+assert(
+    when {
+        a < b -> a == b
+        | | |
+        | | 1
+        | false
+        2
+        b < a -> b == a
+        | | |    | |  |
+        | | |    | |  2
+        | | |    | false
+        | | |    1
+        | | 2
+        | true
+        1
+        else -> false
+    }
+)
+
+Assertion failed
+assert(
+    when {
+        a < b -> a == b
+        | | |    | |  |
+        | | |    | |  2
+        | | |    | false
+        | | |    1
+        | | 2
+        | true
+        1
+        b < a -> b == a
+        else -> false
+    }
+)
+
+Assertion failed
+assert(
+    when {
+        a < b -> a == b
+        | | |
+        | | 1
+        | false
+        1
+        b < a -> b == a
+        | | |
+        | | 1
+        | false
+        1
+        else -> false
+    }
+)
+
+Assertion failed
+assert(
+    initial && when {
+    |
+    true
+        a < b -> a == b
+        | | |
+        | | 1
+        | false
+        2
+        b < a -> b == a
+        | | |    | |  |
+        | | |    | |  2
+        | | |    | false
+        | | |    1
+        | | 2
+        | true
+        1
+        else -> false
+    }
+)
+
+Assertion failed
+assert(
+    initial && when {
+    |
+    true
+        a < b -> a == b
+        | | |    | |  |
+        | | |    | |  2
+        | | |    | false
+        | | |    1
+        | | 2
+        | true
+        1
+        b < a -> b == a
+        else -> false
+    }
+)
+
+Assertion failed
+assert(
+    initial && when {
+    |
+    true
+        a < b -> a == b
+        | | |
+        | | 1
+        | false
+        1
+        b < a -> b == a
+        | | |
+        | | 1
+        | false
+        1
+        else -> false
+    }
+)
+
+Assertion failed
+assert(
+    initial && when {
+    |
+    false
+        a < b -> a == b
+        b < a -> b == a
+        else -> false
+    }
+)

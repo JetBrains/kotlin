@@ -258,6 +258,28 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
   }
 
   @Nested
+  @TestMetadata("plugins/power-assert/testData/codegen/expressions")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Expressions {
+    @Test
+    public void testAllFilesPresentInExpressions() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
+    }
+
+    @Test
+    @TestMetadata("ElvisOperator.kt")
+    public void testElvisOperator() {
+      runTest("plugins/power-assert/testData/codegen/expressions/ElvisOperator.kt");
+    }
+
+    @Test
+    @TestMetadata("IfExpression.kt")
+    public void testIfExpression() {
+      runTest("plugins/power-assert/testData/codegen/expressions/IfExpression.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("plugins/power-assert/testData/codegen/infix")
   @TestDataPath("$PROJECT_ROOT")
   public class Infix {
