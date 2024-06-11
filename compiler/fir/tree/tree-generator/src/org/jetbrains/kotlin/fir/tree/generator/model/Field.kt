@@ -122,7 +122,7 @@ class FieldWithDefault(override val origin: Field) : Field() {
     override fun substituteType(map: TypeParameterSubstitutionMap) {}
 }
 
-class SimpleField(
+class SingleField(
     override val name: String,
     override var typeRef: TypeRefWithNullability,
     override val isChild: Boolean,
@@ -134,7 +134,7 @@ class SimpleField(
 ) : Field() {
 
     override fun internalCopy(): Field {
-        return SimpleField(
+        return SingleField(
             name = name,
             typeRef = typeRef,
             isChild = isChild,
@@ -144,7 +144,7 @@ class SimpleField(
             isFinal = isFinal,
             isParameter = isParameter,
         ).apply {
-            withBindThis = this@SimpleField.withBindThis
+            withBindThis = this@SingleField.withBindThis
         }
     }
 

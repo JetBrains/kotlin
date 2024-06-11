@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.generators.tree.config.AbstractElementConfigurator
 import org.jetbrains.kotlin.sir.tree.generator.model.Element
 import org.jetbrains.kotlin.sir.tree.generator.model.Field
 import org.jetbrains.kotlin.sir.tree.generator.model.ListField
-import org.jetbrains.kotlin.sir.tree.generator.model.SimpleField
+import org.jetbrains.kotlin.sir.tree.generator.model.SingleField
 
 abstract class AbstractSwiftIrTreeBuilder : AbstractElementConfigurator<Element, Field, Nothing?>() {
 
@@ -24,9 +24,9 @@ abstract class AbstractSwiftIrTreeBuilder : AbstractElementConfigurator<Element,
         nullable: Boolean = false,
         mutable: Boolean = false,
         isChild: Boolean = true,
-        initializer: SimpleField.() -> Unit = {}
-    ): SimpleField {
-        return SimpleField(name, type.copy(nullable), mutable, isChild).apply {
+        initializer: SingleField.() -> Unit = {}
+    ): SingleField {
+        return SingleField(name, type.copy(nullable), mutable, isChild).apply {
             initializer()
         }
     }

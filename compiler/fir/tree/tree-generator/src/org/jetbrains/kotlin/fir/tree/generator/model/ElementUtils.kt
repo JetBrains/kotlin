@@ -18,7 +18,7 @@ fun field(
     isChild: Boolean = true,
 ): Field {
     val isMutable = type is GenericElementOrRef<*> || withReplace
-    return SimpleField(name, type.copy(nullable), isChild = isChild, isMutable = isMutable, withReplace = withReplace)
+    return SingleField(name, type.copy(nullable), isChild = isChild, isMutable = isMutable, withReplace = withReplace)
 }
 
 fun field(
