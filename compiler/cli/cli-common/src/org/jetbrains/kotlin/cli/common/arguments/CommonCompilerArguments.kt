@@ -454,6 +454,19 @@ They should be a subset of sources passed as free arguments."""
         }
 
     @Argument(
+        value = "-Xverify-ir-visibility-after-inlining",
+        description = """Check for visibility violations in IR when validating it after the function inlining phase.
+Only has effect if '-Xverify-ir' is not 'none'.
+This flag is deprecated and will soon be removed in favor of '-Xverify-ir-visibility'.
+""",
+    )
+    var verifyIrVisibilityAfterInlining: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xprofile-phases",
         description = "Profile backend phases."
     )
