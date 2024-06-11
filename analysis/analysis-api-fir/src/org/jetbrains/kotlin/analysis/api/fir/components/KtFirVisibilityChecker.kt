@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
@@ -23,6 +24,9 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.collectUseSiteContai
 import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
+import org.jetbrains.kotlin.fir.analysis.checkers.isVisibleInClass
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
@@ -112,6 +116,19 @@ internal class KaFirVisibilityChecker(
         }
 
         return null
+    }
+
+    override fun KaCallableSymbol.isVisibleInClass(classSymbol: KaClassOrObjectSymbol): Boolean = withValidityAssertion {
+        require(this is KaFirSymbol<*>)
+        require(classSymbol is KaFirSymbol<*>)
+
+        val memberFir = firSymbol.fir as? FirCallableDeclaration ?: return false
+        val parentClassFir = classSymbol.firSymbol.fir as? FirClass ?: return false
+
+        // Inspecting visibility requires resolving to status
+        classSymbol.firSymbol.lazyResolveToPhase(FirResolvePhase.STATUS)
+
+        return memberFir.symbol.isVisibleInClass(parentClassFir.symbol, memberFir.symbol.resolvedStatus)
     }
 
     override fun isPublicApi(symbol: KaSymbolWithVisibility): Boolean = withValidityAssertion {

@@ -96,7 +96,6 @@ public abstract class KaSession(
     KaImportOptimizer by importOptimizer,
     KaSymbolDeclarationRendererMixIn,
     KaVisibilityChecker by visibilityChecker,
-    KaMemberSymbolProviderMixin,
     KaOriginalPsiProvider by originalPsiProvider,
     KaTypeCreator by typeCreator,
     KaAnalysisScopeProvider by analysisScopeProvider,
@@ -130,9 +129,6 @@ public abstract class KaSession(
 
     internal val expressionInfoProvider: KaExpressionInfoProvider get() = expressionInfoProviderImpl
     protected abstract val expressionInfoProviderImpl: KaExpressionInfoProvider
-
-    internal val overrideInfoProvider: KaOverrideInfoProvider get() = overrideInfoProviderImpl
-    protected abstract val overrideInfoProviderImpl: KaOverrideInfoProvider
 
     internal val symbolInfoProvider: KaSymbolInfoProvider get() = symbolInfoProviderImpl
     protected abstract val symbolInfoProviderImpl: KaSymbolInfoProvider

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.fir.components.*
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirOverrideInfoProvider
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbolProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAnalysisScopeProviderImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaGlobalSearchScope
@@ -92,8 +91,6 @@ private constructor(
     override val symbolDeclarationRendererProviderImpl: KaSymbolDeclarationRendererProvider = KaFirRendererProvider(this, token)
 
     override val expressionInfoProviderImpl = KaFirExpressionInfoProvider(this, token)
-
-    override val overrideInfoProviderImpl = KaFirOverrideInfoProvider(this, token)
 
     override val typeProviderImpl = KaFirTypeProvider(this, token)
 
