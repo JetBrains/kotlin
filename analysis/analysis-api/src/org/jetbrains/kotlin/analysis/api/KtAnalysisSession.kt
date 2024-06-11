@@ -129,10 +129,6 @@ public abstract class KaSession(
 
     internal val symbolInfoProvider: KaSymbolInfoProvider get() = symbolInfoProviderImpl
     protected abstract val symbolInfoProviderImpl: KaSymbolInfoProvider
-
-    @KaAnalysisApiInternals
-    public val substitutorFactory: KaSubstitutorFactory get() = substitutorFactoryImpl
-    protected abstract val substitutorFactoryImpl: KaSubstitutorFactory
 }
 
 public typealias KtAnalysisSession = KaSession

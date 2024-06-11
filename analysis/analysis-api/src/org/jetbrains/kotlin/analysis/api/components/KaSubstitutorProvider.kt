@@ -5,8 +5,18 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
+import org.jetbrains.kotlin.analysis.api.types.KaType
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 public interface KaSubstitutorProvider {
     /**
@@ -33,4 +43,45 @@ public interface KaSubstitutorProvider {
      * @return [KaSubstitutor] if [subClass] inherits [superClass] and there are no error types in the inheritance path. Returns `null` otherwise.
      */
     public fun createInheritanceTypeSubstitutor(subClass: KaClassOrObjectSymbol, superClass: KaClassOrObjectSymbol): KaSubstitutor?
+
+    public fun createSubstitutor(mappings: Map<KaTypeParameterSymbol, KaType>): KaSubstitutor
 }
+
+/**
+ * Creates new [KaSubstitutor] using substitutions specified inside [build] lambda
+ */
+@OptIn(ExperimentalContracts::class, KaAnalysisApiInternals::class)
+public inline fun KaSession.buildSubstitutor(
+    build: KaSubstitutorBuilder.() -> Unit,
+): KaSubstitutor {
+    contract {
+        callsInPlace(build, InvocationKind.EXACTLY_ONCE)
+    }
+    return createSubstitutor(KaSubstitutorBuilder(token).apply(build).mappings)
+}
+
+public class KaSubstitutorBuilder
+@KaAnalysisApiInternals constructor(override val token: KaLifetimeToken) : KaLifetimeOwner {
+    private val backingMapping = mutableMapOf<KaTypeParameterSymbol, KaType>()
+
+    public val mappings: Map<KaTypeParameterSymbol, KaType> get() = withValidityAssertion { backingMapping }
+
+    /**
+     * Adds a new [typeParameter] -> [type] substitution to the substitutor which is being built.
+     * If there already was a substitution with a [typeParameter], replaces corresponding substitution with a new one.
+     */
+    public fun substitution(typeParameter: KaTypeParameterSymbol, type: KaType): Unit = withValidityAssertion {
+        backingMapping[typeParameter] = type
+    }
+
+    /**
+     * Adds a new substitutions to the substitutor which is being built.
+     * If there already was a substitution with a [KaTypeParameterSymbol] which is present in a [substitutions],
+     * replaces corresponding substitution with a new one.
+     */
+    public fun substitutions(substitutions: Map<KaTypeParameterSymbol, KaType>): Unit = withValidityAssertion {
+        backingMapping += substitutions
+    }
+}
+
+public typealias KtSubstitutorBuilder = KaSubstitutorBuilder

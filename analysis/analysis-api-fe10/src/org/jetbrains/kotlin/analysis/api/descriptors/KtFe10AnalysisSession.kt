@@ -55,5 +55,4 @@ class KaFe10Session(
     override val typeInfoProviderImpl: KaTypeInfoProvider = KaFe10TypeInfoProvider(this)
     override val expressionInfoProviderImpl: KaExpressionInfoProvider = KaFe10ExpressionInfoProvider(this)
     override val symbolInfoProviderImpl: KaSymbolInfoProvider = KaFe10SymbolInfoProvider(this)
-    override val substitutorFactoryImpl: KaSubstitutorFactory = KaFe10SubstitutorFactory(this)
 }

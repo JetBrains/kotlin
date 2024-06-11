@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
+import org.jetbrains.kotlin.analysis.api.types.KaType
 
 internal class KaFe10SubstitutorProvider(
     override val analysisSessionProvider: () -> KaSession,
@@ -22,5 +24,10 @@ internal class KaFe10SubstitutorProvider(
         withValidityAssertion {
             throw NotSupportedForK1Exception()
         }
+    }
+
+    override fun createSubstitutor(mappings: Map<KaTypeParameterSymbol, KaType>): KaSubstitutor = withValidityAssertion {
+        if (mappings.isEmpty()) return KaSubstitutor.Empty(token)
+        TODO()
     }
 }

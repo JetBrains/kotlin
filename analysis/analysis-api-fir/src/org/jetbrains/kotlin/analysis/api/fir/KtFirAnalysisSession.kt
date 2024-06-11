@@ -97,8 +97,6 @@ private constructor(
 
     override val symbolInfoProviderImpl: KaSymbolInfoProvider = KaFirSymbolInfoProvider(this, token)
 
-    override val substitutorFactoryImpl: KaSubstitutorFactory = KaFirSubstitutorFactory(this)
-
     internal val useSiteSession: FirSession get() = firResolveSession.useSiteFirSession
     internal val firSymbolProvider: FirSymbolProvider get() = useSiteSession.symbolProvider
     internal val targetPlatform: TargetPlatform get() = useSiteSession.moduleData.platform
