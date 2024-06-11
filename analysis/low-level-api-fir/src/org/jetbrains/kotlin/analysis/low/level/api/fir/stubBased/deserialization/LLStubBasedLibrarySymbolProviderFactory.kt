@@ -146,7 +146,7 @@ private class StubBasedBuiltInsSymbolProvider(
     createBuiltInsScope(project),
     isFallbackDependenciesProvider = false,
 ) {
-    private val syntheticFunctionInterfaceProvider = FirBuiltinSyntheticFunctionInterfaceProvider(
+    private val syntheticFunctionInterfaceProvider = FirBuiltinSyntheticFunctionInterfaceProvider.initialize(
         session,
         moduleData,
         kotlinScopeProvider

@@ -72,12 +72,6 @@ open class FirBuiltinSymbolProvider(
 
     }
 
-    private val syntheticFunctionInterfaceProvider = FirBuiltinSyntheticFunctionInterfaceProvider(
-        session,
-        moduleData,
-        kotlinScopeProvider
-    )
-
     private val allPackageFragments = builtInsPackageFragments.mapValues { (fqName, foo) ->
         BuiltInsPackageFragmentWrapper(foo, fqName, moduleData, kotlinScopeProvider)
     }
@@ -89,7 +83,6 @@ open class FirBuiltinSymbolProvider(
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? {
         return allPackageFragments[classId.packageFqName]?.getClassLikeSymbolByClassId(classId)
-            ?: syntheticFunctionInterfaceProvider.getClassLikeSymbolByClassId(classId)
     }
 
     override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProvider() {
@@ -106,9 +99,6 @@ open class FirBuiltinSymbolProvider(
 
         // This symbol provider delegates to `FirBuiltinSyntheticFunctionInterfaceProvider`, so synthetic function types can be provided.
         override val mayHaveSyntheticFunctionTypes: Boolean get() = true
-
-        override fun mayHaveSyntheticFunctionType(classId: ClassId): Boolean =
-            syntheticFunctionInterfaceProvider.symbolNamesProvider.mayHaveSyntheticFunctionType(classId)
     }
 
     @FirSymbolProviderInternals

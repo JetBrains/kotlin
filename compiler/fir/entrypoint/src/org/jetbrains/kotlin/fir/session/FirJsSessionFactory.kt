@@ -76,7 +76,6 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
                             it,
                         )
                     },
-                    FirStdlibBuiltinSyntheticFunctionInterfaceProvider.initializeIfNeeded(session, moduleData, kotlinScopeProvider),
                     *dependencies.toTypedArray(),
                 )
             }
@@ -106,9 +105,7 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
         createProviders = { session, builtinsModuleData, kotlinScopeProvider, syntheticFunctionInterfaceProvider ->
             listOfNotNull(
                 KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, resolvedLibraries),
-                runUnless(session.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)) {
-                    FirBuiltinSyntheticFunctionInterfaceProvider(session, builtinsModuleData, kotlinScopeProvider)
-                },
+                FirBuiltinSyntheticFunctionInterfaceProvider.initialize(session, builtinsModuleData, kotlinScopeProvider),
                 syntheticFunctionInterfaceProvider
             )
         }
