@@ -5541,6 +5541,7 @@ public final class kotlin/text/HexFormat$Companion {
 }
 
 public final class kotlin/text/HexFormat$NumberHexFormat {
+	public final fun getMinLength ()I
 	public final fun getPrefix ()Ljava/lang/String;
 	public final fun getRemoveLeadingZeros ()Z
 	public final fun getSuffix ()Ljava/lang/String;
@@ -5548,9 +5549,11 @@ public final class kotlin/text/HexFormat$NumberHexFormat {
 }
 
 public final class kotlin/text/HexFormat$NumberHexFormat$Builder {
+	public final fun getMinLength ()I
 	public final fun getPrefix ()Ljava/lang/String;
 	public final fun getRemoveLeadingZeros ()Z
 	public final fun getSuffix ()Ljava/lang/String;
+	public final fun setMinLength (I)V
 	public final fun setPrefix (Ljava/lang/String;)V
 	public final fun setRemoveLeadingZeros (Z)V
 	public final fun setSuffix (Ljava/lang/String;)V

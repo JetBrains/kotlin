@@ -11,148 +11,115 @@ import kotlin.test.*
 @RunWith(Enclosed::class)
 class HexFormats {
 
-    @RunWith(Enclosed::class)
     class Numbers {
+        @Sample
+        fun prefix() {
+            // By default, `prefix` is an empty string.
+            assertPrints(0x3a.toHexString(), "0000003a")
+            assertPrints("0000003a".hexToInt(), "58")
 
-        class Formatting {
+            val prefixFormat = HexFormat { number.prefix = "0x" }
 
-            @Sample
-            fun prefix() {
-                // Numeric values of different types
-                val byteValue: Byte = 0x3a
-                val intValue: Int = 0x3a
+            // `prefix` is placed before the hex representation.
+            assertPrints(0x3a.toHexString(prefixFormat), "0x0000003a")
+            assertPrints("0x0000003a".hexToInt(prefixFormat), "58")
 
-                // By default, `prefix` is an empty string
-                assertPrints(byteValue.toHexString(), "3a")
-                assertPrints(intValue.toHexString(), "0000003a")
+            // Parsing `prefix` is conducted in a case-insensitive manner.
+            assertPrints("0X0000003a".hexToInt(prefixFormat), "58")
 
-                // `prefix` is placed before the hex representation
-                assertPrints(byteValue.toHexString(HexFormat { number.prefix = "0x" }), "0x3a")
-                assertPrints(intValue.toHexString(HexFormat { number.prefix = "#" }), "#0000003a")
-            }
-
-            @Sample
-            fun suffix() {
-                // Numeric values of different types
-                val byteValue: Byte = 0x3a
-                val intValue: Int = 0x3a
-
-                // By default, `suffix` is an empty string
-                assertPrints(byteValue.toHexString(), "3a")
-                assertPrints(intValue.toHexString(), "0000003a")
-
-                // `suffix` is placed after the hex representation
-                assertPrints(byteValue.toHexString(HexFormat { number.suffix = "h" }), "3ah")
-                assertPrints(intValue.toHexString(HexFormat { number.suffix = "-HEX" }), "0000003a-HEX")
-            }
-
-            @Sample
-            fun removeLeadingZeros() {
-                // Numeric values of different types
-                val byteValue: Byte = 0x3a
-                val intValue: Int = 0x3a
-
-                // By default, removeLeadingZeroes is `false`
-                assertPrints(intValue.toHexString(), "0000003a")
-
-                // If there are no leading zeros, removeLeadingZeroes has no effect
-                assertPrints(byteValue.toHexString(HexFormat { number.removeLeadingZeros = false }), "3a")
-                assertPrints(byteValue.toHexString(HexFormat { number.removeLeadingZeros = true }), "3a")
-
-                // The leading zeros in the hex representation are removed until minLength is reached.
-                // By default, minLength is 1.
-                assertPrints(intValue.toHexString(HexFormat { number.removeLeadingZeros = true }), "3a")
-                assertPrints(0.toHexString(HexFormat { number.removeLeadingZeros = true }), "0")
-
-                // Here minLength is set to 6.
-                val smallerLengthFormat = HexFormat {
-                    number.removeLeadingZeros = true
-                    number.minLength = 6
-                }
-                assertPrints(intValue.toHexString(smallerLengthFormat), "00003a")
-
-                // When minLength is greater than the hex representation, the hex representation is padded with zeros.
-                // removeLeadingZeros is ignored in this case.
-                val greaterLengthFormat = HexFormat {
-                    number.removeLeadingZeros = true
-                    number.minLength = 12
-                }
-                assertPrints(intValue.toHexString(greaterLengthFormat), "00000000003a")
-            }
-
-            @Sample
-            fun minLength() {
-                // minLength is less than the hex representation and removeLeadingZeros is false.
-                // By default, minLength is 1 and removeLeadingZeros is false.
-                assertPrints(0x3a.toHexString(), "0000003a")
-                assertPrints(0x3a.toHexString(HexFormat { number.minLength = 4 }), "0000003a")
-
-                // minLength is less than the hex representation and removeLeadingZeros is true.
-                val smallerLengthFormat = HexFormat {
-                    number.removeLeadingZeros = true
-                    number.minLength = 4
-                }
-                assertPrints(0x3a.toHexString(smallerLengthFormat), "003a")
-                assertPrints(0xff80ed.toHexString(smallerLengthFormat), "ff80ed")
-
-                // When minLength is greater than the hex representation, the hex representation is padded with zeros.
-                // removeLeadingZeros is ignored in this case.
-                val greaterLengthFormat = HexFormat {
-                    number.removeLeadingZeros = true
-                    number.minLength = 12
-                }
-                assertPrints(0x3a.toHexString(greaterLengthFormat), "00000000003a")
+            // Parsing fails if the input string does not start with the specified prefix.
+            assertFailsWith<IllegalArgumentException> {
+                "0000003a".hexToInt(prefixFormat)
             }
         }
 
-        class Parsing {
+        @Sample
+        fun suffix() {
+            // By default, `suffix` is an empty string
+            assertPrints(0x3a.toHexString(), "0000003a")
+            assertPrints("0000003a".hexToInt(), "58")
 
-            @Sample
-            fun prefix() {
-                // By default, `prefix` is an empty string
-                assertPrints("3a".hexToByte(), "58")
-                assertPrints("0000003a".hexToInt(), "58")
+            val suffixFormat = HexFormat { number.suffix = "h" }
 
-                // The string must start with the specified `prefix`
-                assertPrints("0x3a".hexToByte(HexFormat { number.prefix = "0x" }), "58")
-                // Parsing `prefix` is conducted in a case-insensitive manner
-                assertPrints("0x0000003a".hexToInt(HexFormat { number.prefix = "0X" }), "58")
+            // `suffix` is placed after the hex representation
+            assertPrints(0x3a.toHexString(suffixFormat), "0000003ah")
+            assertPrints("0000003ah".hexToByte(suffixFormat), "58")
+
+            // Parsing `suffix` is conducted in a case-insensitive manner
+            assertPrints("0000003aH".hexToInt(suffixFormat), "58")
+
+            // Parsing fails if the input string does not end with the specified suffix.
+            assertFailsWith<IllegalArgumentException> {
+                "0000003a".hexToInt(suffixFormat)
             }
+        }
 
-            @Sample
-            fun suffix() {
-                // By default, `suffix` is an empty string
-                assertPrints("3a".hexToByte(), "58")
-                assertPrints("0000003a".hexToInt(), "58")
+        @Sample
+        fun removeLeadingZeros() {
+            // By default, removeLeadingZeroes is `false`
+            assertPrints(0x3a.toHexString(), "0000003a")
 
-                // The string must end with the specified `suffix`
-                assertPrints("3ah".hexToByte(HexFormat { number.suffix = "h" }), "58")
-                // Parsing `suffix` is conducted in a case-insensitive manner
-                assertPrints("0000003a-HEX".hexToInt(HexFormat { number.suffix = "-hex" }), "58")
+            val removeLeadingZerosFormat = HexFormat { number.removeLeadingZeros = true }
+
+            // If there are no leading zeros, removeLeadingZeroes has no effect
+            assertPrints(0x3a.toByte().toHexString(removeLeadingZerosFormat), "3a")
+
+            // The leading zeros in the hex representation are removed until minLength is reached.
+            // By default, minLength is 1.
+            assertPrints(0x3a.toHexString(removeLeadingZerosFormat), "3a")
+            assertPrints(0.toHexString(removeLeadingZerosFormat), "0")
+
+            // Here minLength is set to 6.
+            val shorterLengthFormat = HexFormat {
+                number.removeLeadingZeros = true
+                number.minLength = 6
             }
+            assertPrints(0x3a.toHexString(shorterLengthFormat), "00003a")
 
-            @Sample
-            fun removeLeadingZeros() {
-                // When parsing, removeLeadingZeros is ignored
-                assertPrints("0000003a".hexToInt(HexFormat { number.removeLeadingZeros = true }), "58")
+            // When minLength is longer than the hex representation, the hex representation is padded with zeros.
+            // removeLeadingZeros is ignored in this case.
+            val longerLengthFormat = HexFormat {
+                number.removeLeadingZeros = true
+                number.minLength = 12
             }
+            assertPrints(0x3a.toHexString(longerLengthFormat), "00000000003a")
 
-            @Sample
-            fun minLength() {
-                // When parsing, at least `minLength` hex digits are required.
-                // By default, minLength is 1.
-                assertPrints("3a".hexToInt(), "58")
-                assertFailsWith<IllegalArgumentException> { "3a".hexToInt(HexFormat { number.minLength = 4 }) }
+            // When parsing, removeLeadingZeros is ignored
+            assertPrints("0000003a".hexToInt(removeLeadingZerosFormat), "58")
+        }
 
-                // Number of hex digits can be greater than `minLength`,
-                // but can't be greater than the width of the type being parsed at the same time.
-                assertPrints("0000003a".hexToInt(HexFormat { number.minLength = 4 }), "58")
-                assertFailsWith<IllegalArgumentException> { "00000000003a".hexToInt(HexFormat { number.minLength = 4 }) }
+        @Sample
+        fun minLength() {
+            // By default, minLength is 1 and removeLeadingZeros is false.
+            assertPrints(0x3a.toHexString(), "0000003a")
 
-                // `minLength` can be greater than the width of the type being parsed.
-                // The number of hex digits must be equal to `minLength` in this case.
-                assertPrints("00000000003a".hexToInt(HexFormat { number.minLength = 12 }), "58")
+            // Specifying a minLength shorter than the hex representation with removeLeadingZeros set to false.
+            assertPrints(0x3a.toHexString(HexFormat { number.minLength = 4 }), "0000003a")
+
+            // Specifying a minLength shorter than the hex representation with removeLeadingZeros set to true.
+            val shorterLengthFormat = HexFormat {
+                number.removeLeadingZeros = true
+                number.minLength = 4
             }
+            assertPrints(0x3a.toHexString(shorterLengthFormat), "003a")
+            assertPrints(0xff80ed.toHexString(shorterLengthFormat), "ff80ed")
+
+            // Specifying a minLength longer than the hex representation.
+            // removeLeadingZeros is ignored in this case.
+            val longerLengthFormat = HexFormat {
+                number.removeLeadingZeros = true
+                number.minLength = 12
+            }
+            assertPrints(0x3a.toHexString(longerLengthFormat), "00000000003a")
+
+            // When parsing, minLength is ignored.
+            assertPrints("3a".hexToInt(longerLengthFormat), "58")
+
+            // The number of hex digits can be greater than what can fit into the type.
+            assertPrints("00000000003a".hexToInt(), "58")
+            assertPrints("0000ffffffff".hexToInt(), "-1")
+            // But excess leading digits must be zeros.
+            assertFailsWith<IllegalArgumentException> { "000100000000".hexToInt() }
         }
     }
 }

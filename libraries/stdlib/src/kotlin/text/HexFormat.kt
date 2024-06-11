@@ -231,15 +231,16 @@ public class HexFormat internal constructor(
      * using `toShort()` before hexadecimal formatting. To obtain a maximum of 4 digits without leading zeros,
      * additionally set [removeLeadingZeros] to `true`.
      *
-     * When parsing, the input string must start with the [prefix] and end with the [suffix]. The number of hexadecimal
-     * digits in the input string must either exactly match [minLength] or not exceed the value's bit size divided
-     * by four. Parsing of [prefix], [suffix], and the hexadecimal digits is performed in a case-insensitive manner.
-     * Also, the [removeLeadingZeros] option is ignored when parsing.
+     * When parsing, the input string must start with the [prefix] and end with the [suffix]. It must contain at least
+     * one hexadecimal digit between them. If the number of hexadecimal digits exceeds the capacity of the type being
+     * parsed, based on its bit size, the excess leading digits must be zeros. Parsing of the [prefix], [suffix], and
+     * hexadecimal digits is performed in a case-insensitive manner. The [removeLeadingZeros] and [minLength] options
+     * are ignored during parsing.
      *
      * This class is immutable and cannot be created or configured directly. To create a new format, use the
-     * `HexFormat { }` function and configure the options of the `number` property inside the braces. For example,
-     * use `val format = HexFormat { number.prefix = "0x" }` to set the [prefix]. The `number` property is of type
-     * [NumberHexFormat.Builder], whose options are configurable and correspond to the options of this class.
+     * `HexFormat { }` builder function and configure the options of the `number` property inside the braces. For
+     * example, use `val format = HexFormat { number.prefix = "0x" }` to set the [prefix]. The `number` property is of
+     * type [NumberHexFormat.Builder], whose options are configurable and correspond to the options of this class.
      */
     public class NumberHexFormat internal constructor(
         /**
@@ -247,11 +248,10 @@ public class HexFormat internal constructor(
          * empty string by default.
          *
          * When formatting, this string is placed before the hexadecimal representation.
-         * When parsing, the string being parsed must start with this string, ignoring character case.
-         * Otherwise, the parsing function will fail.
+         * When parsing, the string being parsed must start with this string.
+         * The parsing of this prefix is performed in a case-insensitive manner.
          *
-         * @sample samples.text.HexFormats.Numbers.Formatting.prefix
-         * @sample samples.text.HexFormats.Numbers.Parsing.prefix
+         * @sample samples.text.HexFormats.Numbers.prefix
          */
         public val prefix: String,
 
@@ -260,11 +260,10 @@ public class HexFormat internal constructor(
          * empty string by default.
          *
          * When formatting, this string is placed after the hexadecimal representation.
-         * When parsing, the string being parsed must end with this string, ignoring character case.
-         * Otherwise, the parsing function will fail.
+         * When parsing, the string being parsed must end with this string.
+         * The parsing of this suffix is performed in a case-insensitive manner.
          *
-         * @sample samples.text.HexFormats.Numbers.Formatting.suffix
-         * @sample samples.text.HexFormats.Numbers.Parsing.suffix
+         * @sample samples.text.HexFormats.Numbers.suffix
          */
         public val suffix: String,
 
@@ -281,8 +280,7 @@ public class HexFormat internal constructor(
          *
          * When parsing, this option is ignored.
          *
-         * @sample samples.text.HexFormats.Numbers.Formatting.removeLeadingZeros
-         * @sample samples.text.HexFormats.Numbers.Parsing.removeLeadingZeros
+         * @sample samples.text.HexFormats.Numbers.removeLeadingZeros
          */
         public val removeLeadingZeros: Boolean,
 
@@ -301,22 +299,19 @@ public class HexFormat internal constructor(
          *     representation is padded with zeros at the start to reach the specified [minLength].
          *   - If this option matches the length of the hexadecimal representation, the representation remains unchanged.
          *
-         * When parsing:
-         *   - If this option is less than the length of the hexadecimal representation, the number of hexadecimal
-         *     digits in the input string must be at least [minLength] and not exceed the representation's length.
-         *   - If this option is greater than or equal to the length of the hexadecimal representation,
-         *     the number of hexadecimal digits in the input string must exactly match [minLength].
+         * When parsing, this option is ignored. However, there must be at least one hexadecimal digit in the input
+         * string. If the number of hexadecimal digits exceeds the capacity of the type being parsed, based on its bit
+         * size, the excess leading digits must be zeros.
          *
-         * The parsing function fails if these conditions are not met.
-         *
-         * @sample samples.text.HexFormats.Numbers.Formatting.minLength
-         * @sample samples.text.HexFormats.Numbers.Parsing.minLength
+         * @sample samples.text.HexFormats.Numbers.minLength
          */
         @SinceKotlin("2.0")
         public val minLength: Int
     ) {
 
         internal val isDigitsOnly: Boolean = prefix.isEmpty() && suffix.isEmpty()
+
+        internal val isDigitsOnlyAndNoPadding: Boolean = isDigitsOnly && minLength == 1
 
         /**
          * Whether to ignore case when parsing format strings.
@@ -333,7 +328,8 @@ public class HexFormat internal constructor(
         internal fun appendOptionsTo(sb: StringBuilder, indent: String): StringBuilder {
             sb.append(indent).append("prefix = \"").append(prefix).appendLine("\",")
             sb.append(indent).append("suffix = \"").append(suffix).appendLine("\",")
-            sb.append(indent).append("removeLeadingZeros = ").append(removeLeadingZeros)
+            sb.append(indent).append("removeLeadingZeros = ").append(removeLeadingZeros).appendLine(',')
+            sb.append(indent).append("minLength = ").append(minLength)
             return sb
         }
 
@@ -341,9 +337,9 @@ public class HexFormat internal constructor(
          * Provides an API for building a [NumberHexFormat].
          *
          * This class is a [builder](https://en.wikipedia.org/wiki/Builder_pattern) for [NumberHexFormat], and
-         * serves as the type of the `number` property when creating a new format using the `HexFormat { }` function.
-         * Each option in this class corresponds to an option in [NumberHexFormat] and defines it in the resulting
-         * format. For example, use `val format = HexFormat { number.removeLeadingZeros = true }` to set
+         * serves as the type of the `number` property when creating a new format using the `HexFormat { }` builder
+         * function. Each option in this class corresponds to an option in [NumberHexFormat] and defines it in the
+         * resulting format. For example, use `val format = HexFormat { number.removeLeadingZeros = true }` to set
          * [NumberHexFormat.removeLeadingZeros]. Refer to [NumberHexFormat] for details about how the configured
          * format options affect formatting and parsing results.
          */
@@ -358,8 +354,7 @@ public class HexFormat internal constructor(
              *
              * @throws IllegalArgumentException if a string containing LF or CR character is assigned to this property.
              *
-             * @sample samples.text.HexFormats.Numbers.Formatting.prefix
-             * @sample samples.text.HexFormats.Numbers.Parsing.prefix
+             * @sample samples.text.HexFormats.Numbers.prefix
              */
             public var prefix: String = Default.prefix
                 set(value) {
@@ -378,8 +373,7 @@ public class HexFormat internal constructor(
              *
              * @throws IllegalArgumentException if a string containing LF or CR character is assigned to this property.
              *
-             * @sample samples.text.HexFormats.Numbers.Formatting.suffix
-             * @sample samples.text.HexFormats.Numbers.Parsing.suffix
+             * @sample samples.text.HexFormats.Numbers.suffix
              */
             public var suffix: String = Default.suffix
                 set(value) {
@@ -394,8 +388,7 @@ public class HexFormat internal constructor(
              * Refer to [NumberHexFormat.removeLeadingZeros] for details about how the format option affects
              * the formatting and parsing results.
              *
-             * @sample samples.text.HexFormats.Numbers.Formatting.removeLeadingZeros
-             * @sample samples.text.HexFormats.Numbers.Parsing.removeLeadingZeros
+             * @sample samples.text.HexFormats.Numbers.removeLeadingZeros
              */
             public var removeLeadingZeros: Boolean = Default.removeLeadingZeros
 
@@ -409,8 +402,7 @@ public class HexFormat internal constructor(
              *
              * @throws IllegalArgumentException if a non-positive value is assigned to this property.
              *
-             * @sample samples.text.HexFormats.Numbers.Formatting.minLength
-             * @sample samples.text.HexFormats.Numbers.Parsing.minLength
+             * @sample samples.text.HexFormats.Numbers.minLength
              */
             @SinceKotlin("2.0")
             public var minLength: Int = Default.minLength

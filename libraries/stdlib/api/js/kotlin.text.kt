@@ -1510,6 +1510,9 @@ public final class HexFormat {
     }
 
     public final class NumberHexFormat {
+        @kotlin.SinceKotlin(version = "2.0")
+        public final val minLength: kotlin.Int { get; }
+
         public final val prefix: kotlin.String { get; }
 
         public final val removeLeadingZeros: kotlin.Boolean { get; }
@@ -1519,6 +1522,9 @@ public final class HexFormat {
         public open override fun toString(): kotlin.String
 
         public final class Builder {
+            @kotlin.SinceKotlin(version = "2.0")
+            public final var minLength: kotlin.Int { get; set; }
+
             public final var prefix: kotlin.String { get; set; }
 
             public final var removeLeadingZeros: kotlin.Boolean { get; set; }

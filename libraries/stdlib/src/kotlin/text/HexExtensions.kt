@@ -506,7 +506,7 @@ private fun String.hexToByteArraySlowPath(
 
         charIndex = checkContainsAt(charIndex, endIndex, bytePrefix, ignoreCase, "byte prefix")
         if (endIndex - 2 < charIndex) {
-            throwInvalidNumberOfDigits(charIndex, endIndex, maxDigits = 2, requireMaxLength = true)
+            throwInvalidNumberOfDigits(charIndex, endIndex, "exactly", 2)
         }
         byteArray[byteIndex++] = parseByteAt(charIndex)
         charIndex = checkContainsAt(charIndex + 2, endIndex, byteSuffix, ignoreCase, "byte suffix")
@@ -615,7 +615,7 @@ public fun Byte.toHexString(format: HexFormat = HexFormat.Default): String {
     val numberFormat = format.number
 
     // Optimize for digits-only formats
-    if (numberFormat.isDigitsOnly) {
+    if (numberFormat.isDigitsOnlyAndNoPadding) {
         val charArray = CharArray(2)
         val value = this.toInt()
         charArray[0] = digits[(value shr 4) and 0xF]
@@ -660,7 +660,7 @@ public fun String.hexToByte(format: HexFormat = HexFormat.Default): Byte = hexTo
 @ExperimentalStdlibApi
 //@SinceKotlin("1.9")
 private fun String.hexToByte(startIndex: Int = 0, endIndex: Int = length, format: HexFormat = HexFormat.Default): Byte =
-    hexToIntImpl(startIndex, endIndex, format, maxDigits = 2).toByte()
+    hexToIntImpl(startIndex, endIndex, format, typeHexLength = 2).toByte()
 
 // -------------------------- format and parse Short --------------------------
 
@@ -678,7 +678,7 @@ public fun Short.toHexString(format: HexFormat = HexFormat.Default): String {
     val numberFormat = format.number
 
     // Optimize for digits-only formats
-    if (numberFormat.isDigitsOnly) {
+    if (numberFormat.isDigitsOnlyAndNoPadding) {
         val charArray = CharArray(4)
         val value = this.toInt()
         charArray[0] = digits[(value shr 12) and 0xF]
@@ -725,7 +725,7 @@ public fun String.hexToShort(format: HexFormat = HexFormat.Default): Short = hex
 @ExperimentalStdlibApi
 //@SinceKotlin("1.9")
 private fun String.hexToShort(startIndex: Int = 0, endIndex: Int = length, format: HexFormat = HexFormat.Default): Short =
-    hexToIntImpl(startIndex, endIndex, format, maxDigits = 4).toShort()
+    hexToIntImpl(startIndex, endIndex, format, typeHexLength = 4).toShort()
 
 // -------------------------- format and parse Int --------------------------
 
@@ -743,7 +743,7 @@ public fun Int.toHexString(format: HexFormat = HexFormat.Default): String {
     val numberFormat = format.number
 
     // Optimize for digits-only formats
-    if (numberFormat.isDigitsOnly) {
+    if (numberFormat.isDigitsOnlyAndNoPadding) {
         val charArray = CharArray(8)
         val value = this
         charArray[0] = digits[(value shr 28) and 0xF]
@@ -794,7 +794,7 @@ public fun String.hexToInt(format: HexFormat = HexFormat.Default): Int = hexToIn
 @ExperimentalStdlibApi
 //@SinceKotlin("1.9")
 private fun String.hexToInt(startIndex: Int = 0, endIndex: Int = length, format: HexFormat = HexFormat.Default): Int =
-    hexToIntImpl(startIndex, endIndex, format, maxDigits = 8)
+    hexToIntImpl(startIndex, endIndex, format, typeHexLength = 8)
 
 // -------------------------- format and parse Long --------------------------
 
@@ -812,7 +812,7 @@ public fun Long.toHexString(format: HexFormat = HexFormat.Default): String {
     val numberFormat = format.number
 
     // Optimize for digits-only formats
-    if (numberFormat.isDigitsOnly) {
+    if (numberFormat.isDigitsOnlyAndNoPadding) {
         val charArray = CharArray(16)
         val value = this
         charArray[0] = digits[((value shr 60) and 0xF).toInt()]
@@ -871,7 +871,7 @@ public fun String.hexToLong(format: HexFormat = HexFormat.Default): Long = hexTo
 @ExperimentalStdlibApi
 //@SinceKotlin("1.9")
 private fun String.hexToLong(startIndex: Int = 0, endIndex: Int = length, format: HexFormat = HexFormat.Default): Long =
-    hexToLongImpl(startIndex, endIndex, format, maxDigits = 16)
+    hexToLongImpl(startIndex, endIndex, format, typeHexLength = 16)
 
 // -------------------------- private format and parse functions --------------------------
 
@@ -880,22 +880,29 @@ private fun Long.toHexStringImpl(numberFormat: HexFormat.NumberHexFormat, digits
     require(bits and 0x3 == 0)
 
     val value = this
-    val numberOfHexDigits = bits shr 2
+    val typeHexLength = bits shr 2
+    val minLength = numberFormat.minLength
+    val pads = (minLength - typeHexLength).coerceAtLeast(0)
 
     val prefix = numberFormat.prefix
     val suffix = numberFormat.suffix
     var removeZeros = numberFormat.removeLeadingZeros
 
-    val formatLength = prefix.length.toLong() + numberOfHexDigits + suffix.length
+    val formatLength = prefix.length.toLong() + pads + typeHexLength + suffix.length
     val charArray = CharArray(checkFormatLength(formatLength))
 
     var charIndex = prefix.toCharArrayIfNotEmpty(charArray, 0)
 
+    if (pads > 0) {
+        charArray.fill(digits[0], charIndex, charIndex + pads)
+        charIndex += pads
+    }
+
     var shift = bits
-    repeat(numberOfHexDigits) {
+    repeat(typeHexLength) {
         shift -= 4
         val decimal = ((value shr shift) and 0xF).toInt()
-        removeZeros = removeZeros && decimal == 0 && shift > 0
+        removeZeros = removeZeros && decimal == 0 && (shift shr 2) >= minLength
         if (!removeZeros) {
             charArray[charIndex++] = digits[decimal]
         }
@@ -917,48 +924,48 @@ private fun String.toCharArrayIfNotEmpty(destination: CharArray, destinationOffs
 }
 
 @ExperimentalStdlibApi
-private fun String.hexToIntImpl(startIndex: Int, endIndex: Int, format: HexFormat, maxDigits: Int): Int {
+private fun String.hexToIntImpl(startIndex: Int, endIndex: Int, format: HexFormat, typeHexLength: Int): Int {
     AbstractList.checkBoundsIndexes(startIndex, endIndex, length)
 
     val numberFormat = format.number
 
     // Optimize for digits-only formats
     if (numberFormat.isDigitsOnly) {
-        checkMaxDigits(startIndex, endIndex, maxDigits)
+        checkNumberOfDigits(startIndex, endIndex, typeHexLength)
         return parseInt(startIndex, endIndex)
     }
 
     val prefix = numberFormat.prefix
     val suffix = numberFormat.suffix
-    checkPrefixSuffixMaxDigits(startIndex, endIndex, prefix, suffix, numberFormat.ignoreCase, maxDigits)
+    checkPrefixSuffixNumberOfDigits(startIndex, endIndex, prefix, suffix, numberFormat.ignoreCase, typeHexLength)
     return parseInt(startIndex + prefix.length, endIndex - suffix.length)
 }
 
 @ExperimentalStdlibApi
-private fun String.hexToLongImpl(startIndex: Int, endIndex: Int, format: HexFormat, maxDigits: Int): Long {
+private fun String.hexToLongImpl(startIndex: Int, endIndex: Int, format: HexFormat, typeHexLength: Int): Long {
     AbstractList.checkBoundsIndexes(startIndex, endIndex, length)
 
     val numberFormat = format.number
 
     // Optimize for digits-only formats
     if (numberFormat.isDigitsOnly) {
-        checkMaxDigits(startIndex, endIndex, maxDigits)
+        checkNumberOfDigits(startIndex, endIndex, typeHexLength)
         return parseLong(startIndex, endIndex)
     }
 
     val prefix = numberFormat.prefix
     val suffix = numberFormat.suffix
-    checkPrefixSuffixMaxDigits(startIndex, endIndex, prefix, suffix, numberFormat.ignoreCase, maxDigits)
+    checkPrefixSuffixNumberOfDigits(startIndex, endIndex, prefix, suffix, numberFormat.ignoreCase, typeHexLength)
     return parseLong(startIndex + prefix.length, endIndex - suffix.length)
 }
 
-private fun String.checkPrefixSuffixMaxDigits(
+private fun String.checkPrefixSuffixNumberOfDigits(
     startIndex: Int,
     endIndex: Int,
     prefix: String,
     suffix: String,
     ignoreCase: Boolean,
-    maxDigits: Int
+    typeHexLength: Int
 ) {
     if (endIndex - startIndex - prefix.length <= suffix.length) {
         throwInvalidPrefixSuffix(startIndex, endIndex, prefix, suffix)
@@ -968,12 +975,26 @@ private fun String.checkPrefixSuffixMaxDigits(
     val digitsEndIndex = endIndex - suffix.length
     checkContainsAt(digitsEndIndex, endIndex, suffix, ignoreCase, "suffix")
 
-    checkMaxDigits(digitsStartIndex, digitsEndIndex, maxDigits)
+    checkNumberOfDigits(digitsStartIndex, digitsEndIndex, typeHexLength)
 }
 
-private fun String.checkMaxDigits(startIndex: Int, endIndex: Int, maxDigits: Int) {
-    if (startIndex >= endIndex || endIndex - startIndex > maxDigits) {
-        throwInvalidNumberOfDigits(startIndex, endIndex, maxDigits, requireMaxLength = false)
+private fun String.checkNumberOfDigits(startIndex: Int, endIndex: Int, typeHexLength: Int) {
+    val digits = endIndex - startIndex
+    if (digits < 1) {
+        throwInvalidNumberOfDigits(startIndex, endIndex, "at least", 1)
+    } else if (digits > typeHexLength) {
+        checkZeroDigits(startIndex, startIndex + digits - typeHexLength)
+    }
+}
+
+private fun String.checkZeroDigits(startIndex: Int, endIndex: Int) {
+    for (index in startIndex until endIndex) {
+        if (this[index] != '0') {
+            throw NumberFormatException(
+                "Expected the hexadecimal digit '0' at index $index, but was '${this[index]}'.\n" +
+                        "The result won't fit the type being parsed."
+            )
+        }
     }
 }
 
@@ -1022,11 +1043,10 @@ private inline fun String.longDecimalFromHexDigitAt(index: Int): Long {
     throwInvalidDigitAt(index)
 }
 
-private fun String.throwInvalidNumberOfDigits(startIndex: Int, endIndex: Int, maxDigits: Int, requireMaxLength: Boolean) {
-    val specifier = if (requireMaxLength) "exactly" else "at most"
+private fun String.throwInvalidNumberOfDigits(startIndex: Int, endIndex: Int, specifier: String, expected: Int) {
     val substring = substring(startIndex, endIndex)
     throw NumberFormatException(
-        "Expected $specifier $maxDigits hexadecimal digits at index $startIndex, but was $substring of length ${endIndex - startIndex}"
+        "Expected $specifier $expected hexadecimal digits at index $startIndex, but was \"$substring\" of length ${endIndex - startIndex}"
     )
 }
 
