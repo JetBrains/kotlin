@@ -67,5 +67,10 @@
         class="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService$LLPsiModificationTrackerListener"
         topic="com.intellij.psi.util.PsiModificationTracker$Listener"
     />
+
+    <listener
+        class="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService$LLKotlinScriptsStateModificationListener"
+        topic="org.jetbrains.kotlin.analysis.api.platform.modification.KotlinScriptsStateModificationListener"
+    />
   </projectListeners>
 </idea-plugin>

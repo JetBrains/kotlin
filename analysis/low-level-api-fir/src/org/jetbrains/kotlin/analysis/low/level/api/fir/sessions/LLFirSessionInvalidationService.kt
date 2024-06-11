@@ -11,13 +11,7 @@ import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinAnchorModuleProvider
 import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
-import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinCodeFragmentContextModificationListener
-import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalModuleStateModificationListener
-import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalSourceModuleStateModificationListener
-import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalSourceOutOfBlockModificationListener
-import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleOutOfBlockModificationListener
-import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleStateModificationKind
-import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleStateModificationListener
+import org.jetbrains.kotlin.analysis.api.platform.modification.*
 
 /**
  * [LLFirSessionInvalidationService] listens to [modification events][org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTopics] and invalidates [LLFirSession]s which depend on the
@@ -69,6 +63,12 @@ internal class LLFirSessionInvalidationService(private val project: Project) {
         }
     }
 
+    internal class LLKotlinScriptsStateModificationListener(val project: Project) : KotlinScriptsStateModificationListener {
+        override fun onModification() {
+            getInstance(project).invalidateScriptsSessions()
+        }
+    }
+
     private val sessionCache: LLFirSessionCache by lazy {
         LLFirSessionCache.getInstance(project)
     }
@@ -111,6 +111,8 @@ internal class LLFirSessionInvalidationService(private val project: Project) {
             }
         }
     }
+
+    private fun invalidateScriptsSessions() = sessionCache.removeAllScriptSessions()
 
     private fun invalidateAll(includeLibraryModules: Boolean) {
         ApplicationManager.getApplication().assertWriteAccessAllowed()
