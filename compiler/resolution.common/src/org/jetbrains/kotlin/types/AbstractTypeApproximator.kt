@@ -763,7 +763,9 @@ abstract class AbstractTypeApproximator(
 
     private fun KotlinTypeMarker.isFlexibleOrCapturedWithFlexibleSuperTypes(): Boolean {
         return hasFlexibleNullability() ||
-                (asSimpleType()?.asCapturedType()?.typeConstructor()?.supertypes()?.all { it.hasFlexibleNullability() } == true)
+                (asSimpleType()?.originalIfDefinitelyNotNullable()?.asCapturedType()?.typeConstructor()?.supertypes()?.all {
+                    it.hasFlexibleNullability()
+                } == true)
     }
 
     private fun shouldUseSubTypeForCapturedArgument(
