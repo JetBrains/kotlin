@@ -6,29 +6,12 @@
 package org.jetbrains.kotlin.fir.tree.generator
 
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.annotations
-import org.jetbrains.kotlin.fir.tree.generator.FieldSets.arguments
-import org.jetbrains.kotlin.fir.tree.generator.FieldSets.body
-import org.jetbrains.kotlin.fir.tree.generator.FieldSets.calleeReference
-import org.jetbrains.kotlin.fir.tree.generator.FieldSets.classKind
-import org.jetbrains.kotlin.fir.tree.generator.FieldSets.controlFlowGraphReferenceField
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.declarations
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.declaredSymbol
-import org.jetbrains.kotlin.fir.tree.generator.FieldSets.effectiveVisibility
-import org.jetbrains.kotlin.fir.tree.generator.FieldSets.initializer
-import org.jetbrains.kotlin.fir.tree.generator.FieldSets.modality
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.name
-import org.jetbrains.kotlin.fir.tree.generator.FieldSets.receivers
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.referencedSymbol
-import org.jetbrains.kotlin.fir.tree.generator.FieldSets.returnTypeRef
-import org.jetbrains.kotlin.fir.tree.generator.FieldSets.scopeProvider
-import org.jetbrains.kotlin.fir.tree.generator.FieldSets.smartcastStability
-import org.jetbrains.kotlin.fir.tree.generator.FieldSets.status
-import org.jetbrains.kotlin.fir.tree.generator.FieldSets.superTypeRefs
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.typeArguments
-import org.jetbrains.kotlin.fir.tree.generator.FieldSets.typeParameterRefs
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.typeParameters
-import org.jetbrains.kotlin.fir.tree.generator.FieldSets.typeRefField
-import org.jetbrains.kotlin.fir.tree.generator.FieldSets.visibility
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFieldConfigurator
 import org.jetbrains.kotlin.fir.tree.generator.context.type
 import org.jetbrains.kotlin.fir.tree.generator.model.*
@@ -57,11 +40,11 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         typeParameterRefsOwner.configure {
-            +typeParameterRefs.withTransform()
+            +listField("typeParameters", typeParameterRef).withTransform()
         }
 
         resolvable.configure {
-            +calleeReference.withTransform()
+            +field("calleeReference", reference, withReplace = true).withTransform()
         }
 
         diagnosticHolder.configure {
@@ -69,7 +52,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         controlFlowGraphOwner.configure {
-            +controlFlowGraphReferenceField
+            +field("controlFlowGraphReference", controlFlowGraphReference, withReplace = true, nullable = true)
         }
 
         contextReceiver.configure {
@@ -115,7 +98,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         function.configure {
             +declaredSymbol(functionSymbolType.withArgs(function))
             +listField(valueParameter, withReplace = true).withTransform()
-            +body(nullable = true, withReplace = true).withTransform()
+            +field("body", block, nullable = true, withReplace = true).withTransform()
         }
 
         errorExpression.configure {
@@ -128,7 +111,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         memberDeclaration.configure {
-            +status.withTransform().withReplace()
+            +field("status", declarationStatus, withReplace = true).withTransform().withReplace()
         }
 
         expression.configure {
@@ -139,7 +122,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         argumentList.configure {
-            +arguments.withTransform()
+            +listField("arguments", expression).withTransform()
         }
 
         call.configure {
@@ -213,7 +196,9 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         qualifiedAccessExpression.configure {
             +typeArguments.withTransform()
-            +receivers
+            +field("explicitReceiver", expression, nullable = true, withReplace = true).withTransform()
+            +field("dispatchReceiver", expression, nullable = true, withReplace = true)
+            +field("extensionReceiver", expression, nullable = true, withReplace = true)
             +field("source", sourceElementType, nullable = true, withReplace = true)
             +listField("nonFatalDiagnostics", coneDiagnosticType, useMutableOrEmpty = true, withReplace = true)
         }
@@ -290,11 +275,11 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         klass.configure {
             +declaredSymbol(classSymbolType.withArgs(klass))
-            +classKind
-            +superTypeRefs(withReplace = true).withTransform()
+            +field(classKindType)
+            +listField("superTypeRefs", typeRef, withReplace = true).withTransform()
             +declarations.withTransform()
             +annotations
-            +scopeProvider
+            +field("scopeProvider", firScopeProviderType)
         }
 
         regularClass.configure {
@@ -302,7 +287,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +declaredSymbol(regularClassSymbolType)
             +field("hasLazyNestedClassifiers", boolean)
             +referencedSymbol("companionObjectSymbol", regularClassSymbolType, nullable = true, withReplace = true)
-            +superTypeRefs(withReplace = true)
+            +listField("superTypeRefs", typeRef, withReplace = true)
             +listField(contextReceiver, useMutableOrEmpty = true)
         }
 
@@ -393,15 +378,15 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +referencedSymbol("propertySymbol", firPropertySymbolType).apply {
                 withBindThis = false
             }
-            +initializer.withTransform().withReplace()
+            +field("initializer", expression, nullable = true).withTransform().withReplace()
             +annotations
             +typeParameters
-            +status.withTransform()
+            +field("status", declarationStatus, withReplace = true).withTransform()
         }
 
         declarationStatus.configure {
-            +visibility
-            +modality(nullable = true)
+            +field(visibilityType)
+            +field(modalityType, nullable = true)
             generateBooleanFields(
                 "expect", "actual", "override", "operator", "infix", "inline", "tailRec",
                 "external", "const", "lateInit", "inner", "companion", "data", "suspend", "static",
@@ -412,8 +397,8 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         resolvedDeclarationStatus.configure {
-            +modality(nullable = false)
-            +effectiveVisibility
+            +field(modalityType, nullable = false)
+            +field("effectiveVisibility", effectiveVisibilityType)
             shouldBeAnInterface()
         }
 
@@ -425,7 +410,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +annotations
             +declaredSymbol(constructorSymbolType)
             +field("delegatedConstructor", delegatedConstructorCall, nullable = true, withReplace = true).withTransform()
-            +body(nullable = true)
+            +field("body", block, nullable = true)
             +field("isPrimary", boolean)
         }
 
@@ -451,19 +436,19 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         receiverParameter.configure {
-            +typeRefField.withTransform()
+            +field(typeRef, withReplace = true).withTransform()
             +annotations
         }
 
         scriptReceiverParameter.configure {
-            +typeRefField.withTransform()
+            +field(typeRef, withReplace = true).withTransform()
             +field("isBaseClassReceiver", boolean) // means coming from ScriptCompilationConfigurationKeys.baseClass (could be deprecated soon, see KT-68540)
         }
 
         variable.configure {
             +name
             +declaredSymbol(variableSymbolType.withArgs(variable))
-            +initializer.withTransform().withReplace()
+            +field("initializer", expression, nullable = true).withTransform().withReplace()
             +field("delegate", expression, nullable = true, withReplace = true).withTransform()
             generateBooleanFields("var", "val")
             +field("getter", propertyAccessor, nullable = true, withReplace = true).withTransform()
@@ -492,7 +477,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         anonymousInitializer.configure {
-            +body(nullable = true, withReplace = true)
+            +field("body", block, nullable = true, withReplace = true)
             +declaredSymbol(anonymousInitializerSymbolType)
             // the containing declaration is nullable, because it is not immediately clear how to obtain it in all places in the fir builder
             // TODO: review and consider making not-nullable (KT-64195)
@@ -608,7 +593,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("smartcastType", typeRef)
             +field("smartcastTypeWithoutNullableNothing", typeRef, nullable = true)
             +field("isStable", boolean)
-            +smartcastStability
+            +field(smartcastStabilityType)
         }
 
         safeCallExpression.configure {
@@ -816,7 +801,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         functionTypeRef.configure {
             +field("receiverTypeRef", typeRef, nullable = true)
             +listField("parameters", functionTypeParameter)
-            +returnTypeRef
+            +field("returnTypeRef", typeRef)
             +field("isSuspend", boolean)
 
             +listField("contextReceiverTypeRefs", typeRef)

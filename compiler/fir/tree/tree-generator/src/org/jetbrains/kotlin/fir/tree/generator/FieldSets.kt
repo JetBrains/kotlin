@@ -21,19 +21,7 @@ import org.jetbrains.kotlin.generators.tree.AbstractField
 import org.jetbrains.kotlin.generators.tree.ClassRef
 
 object FieldSets {
-    val calleeReference by lazy { field("calleeReference", reference, withReplace = true) }
-
-    val receivers by lazy {
-        fieldSet(
-            field("explicitReceiver", expression, nullable = true, withReplace = true).withTransform(),
-            field("dispatchReceiver", expression, nullable = true, withReplace = true),
-            field("extensionReceiver", expression, nullable = true, withReplace = true)
-        )
-    }
-
     val typeArguments by lazy { listField("typeArguments", typeProjection, useMutableOrEmpty = true, withReplace = true) }
-
-    val arguments by lazy { listField("arguments", expression) }
 
     val declarations by lazy { listField(declaration).apply { useInBaseTransformerDetection = false } }
 
@@ -62,38 +50,7 @@ object FieldSets {
     fun referencedSymbol(symbolType: ClassRef<*>, nullable: Boolean = false, withReplace: Boolean = false): Field =
         referencedSymbol("symbol", symbolType, nullable, withReplace)
 
-    fun body(nullable: Boolean = false, withReplace: Boolean = false) =
-        field("body", block, nullable, withReplace = withReplace)
-
-    val returnTypeRef =field("returnTypeRef", typeRef)
-
-    val typeRefField = field(typeRef, withReplace = true)
-
     val typeParameters by lazy { listField("typeParameters", typeParameter) }
 
-    val typeParameterRefs by lazy { listField("typeParameters", typeParameterRef) }
-
     val name by lazy { field(nameType) }
-
-    val initializer by lazy { field("initializer", expression, nullable = true) }
-
-    fun superTypeRefs(withReplace: Boolean = false) = listField("superTypeRefs", typeRef, withReplace)
-
-    val classKind by lazy { field(classKindType) }
-
-    val status by lazy { field("status", declarationStatus, withReplace = true) }
-
-    val controlFlowGraphReferenceField by lazy { field("controlFlowGraphReference", controlFlowGraphReference, withReplace = true, nullable = true) }
-
-    val visibility by lazy { field(visibilityType) }
-
-    val effectiveVisibility by lazy { field("effectiveVisibility", effectiveVisibilityType) }
-
-    fun modality(nullable: Boolean): Field {
-        return field(modalityType, nullable = nullable)
-    }
-
-    val scopeProvider by lazy { field("scopeProvider", firScopeProviderType) }
-
-    val smartcastStability by lazy { field(smartcastStabilityType) }
 }
