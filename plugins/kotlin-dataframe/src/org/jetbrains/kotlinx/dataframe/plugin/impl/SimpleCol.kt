@@ -34,135 +34,74 @@ private fun List<SimpleCol>.asString(indent: String = ""): String {
             is SimpleColumnGroup -> {
                 "${it.name}\n" + it.columns().asString("$indent   ")
             }
-            is SimpleCol -> {
-//                val type = (it.type as TypeApproximationImpl).let {
-//                    val nullability = if (it.nullable) "?" else ""
-//                    "${it.fqName}$nullability"
-//                }
+            is SimpleDataColumn -> {
                 "${it.name}: ${it.type}"
             }
-            else -> TODO()
         }
         "$indent$col"
     }
 }
 
-open class SimpleCol(
-    val name: String,
-    open val type: TypeApproximation
-) : GenericColumn {
+sealed interface SimpleCol : GenericColumn {
+    val name: String
 
     override fun name(): String {
         return name
     }
 
-    open fun rename(s: String): SimpleCol {
-        return SimpleCol(s, type)
-    }
-
-    open fun changeType(type: TypeApproximation): SimpleCol {
-        return SimpleCol(name, type)
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as SimpleCol
-
-        if (name != other.name) return false
-        if (type != other.type) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = name.hashCode()
-        result = 31 * result + type.hashCode()
-        return result
-    }
-
-    override fun toString(): String {
-        return "SimpleCol(name='$name', type=$type)"
-    }
-
-    open fun kind(): SimpleColumnKind {
-        return SimpleColumnKind.VALUE
-    }
+    fun rename(s: String): SimpleCol
 }
 
-enum class SimpleColumnKind {
-    VALUE, GROUP, FRAME
+data class SimpleDataColumn(
+    override val name: String,
+    val type: TypeApproximation
+) : GenericColumn, SimpleCol {
+
+    override fun name(): String {
+        return name
+    }
+
+    override fun rename(s: String): SimpleDataColumn {
+        return SimpleDataColumn(s, type)
+    }
+
+    fun changeType(type: TypeApproximation): SimpleDataColumn {
+        return SimpleDataColumn(name, type)
+    }
+
 }
 
 data class SimpleFrameColumn(
-    private val name1: String,
-    private val columns: List<SimpleCol>,
-    // probably shouldn't be called at all?
-    // exists only because SimpleCol has it
-    // but in fact it's for `materialize` to decide what should be the type of the property / accessors
-    val anyFrameType: TypeApproximation,
-) : GenericColumnGroup<SimpleCol>, SimpleCol(name1, anyFrameType) {
+    override val name: String,
+    private val columns: List<SimpleCol>
+) : GenericColumnGroup<SimpleCol>, SimpleCol {
     override fun columns(): List<SimpleCol> {
         return columns
     }
 
     override fun rename(s: String): SimpleFrameColumn {
-        return SimpleFrameColumn(name1, columns, anyFrameType)
-    }
-
-    override fun kind(): SimpleColumnKind {
-        return SimpleColumnKind.FRAME
+        return SimpleFrameColumn(s, columns)
     }
 }
 
-class SimpleColumnGroup(
-    name: String,
-    private val columns: List<SimpleCol>,
-    columnGroupType: TypeApproximation
-) : GenericColumnGroup<SimpleCol>, SimpleCol(name, columnGroupType) {
+data class SimpleColumnGroup(
+    override val name: String,
+    private val columns: List<SimpleCol>
+) : GenericColumnGroup<SimpleCol>, SimpleCol {
 
     override fun columns(): List<SimpleCol> {
         return columns
     }
 
     override fun rename(s: String): SimpleColumnGroup {
-        return SimpleColumnGroup(s, columns, type)
-    }
-
-    override fun changeType(type: TypeApproximation): SimpleCol {
-        return TODO()
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-        if (!super.equals(other)) return false
-
-        other as SimpleColumnGroup
-
-        if (name != other.name) return false
-        if (columns != other.columns) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = super.hashCode()
-        result = 31 * result + name.hashCode()
-        result = 31 * result + columns.hashCode()
-        return result
-    }
-
-    override fun kind(): SimpleColumnKind {
-        return SimpleColumnKind.GROUP
+        return SimpleColumnGroup(s, columns)
     }
 }
 
 fun KotlinTypeFacade.simpleColumnOf(name: String, type: ConeKotlinType): SimpleCol {
     return if (type.classId == Names.DATA_ROW_CLASS_ID) {
         val schema = pluginDataFrameSchema(type)
-        val group = SimpleColumnGroup(name, schema.columns(), anyRow)
+        val group = SimpleColumnGroup(name, schema.columns())
         val column = if (type.isNullable) {
             makeNullable(group)
         } else {
@@ -171,18 +110,18 @@ fun KotlinTypeFacade.simpleColumnOf(name: String, type: ConeKotlinType): SimpleC
         column
     } else if (type.classId == Names.DF_CLASS_ID && type.nullability == ConeNullability.NOT_NULL) {
         val schema = pluginDataFrameSchema(type)
-        SimpleFrameColumn(name, schema.columns(), anyDataFrame)
+        SimpleFrameColumn(name, schema.columns())
     } else {
-        SimpleCol(name, type.wrap())
+        SimpleDataColumn(name, type.wrap())
     }
 }
 
 private fun KotlinTypeFacade.makeNullable(column: SimpleCol): SimpleCol {
     return when (column) {
         is SimpleColumnGroup -> {
-            SimpleColumnGroup(column.name, column.columns().map { makeNullable(column) }, anyRow)
+            SimpleColumnGroup(column.name, column.columns().map { makeNullable(column) })
         }
         is SimpleFrameColumn -> column
-        else -> SimpleCol(column.name, column.type.changeNullability { true })
+        is SimpleDataColumn -> SimpleDataColumn(column.name, column.type.changeNullability { true })
     }
 }

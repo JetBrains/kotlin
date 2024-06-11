@@ -72,6 +72,7 @@ import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
+import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
 import kotlin.math.abs
@@ -278,14 +279,12 @@ class FunctionCallTransformer(
                         )
                     }
 
-                    is SimpleCol -> SchemaProperty(
+                    is SimpleDataColumn -> SchemaProperty(
                         marker = schema.defaultType(),
                         name = it.name,
                         dataRowReturnType = it.type.type(),
                         columnContainerReturnType = it.type.type().toFirResolvedTypeRef().projectOverDataColumnType()
                     )
-
-                    else -> TODO("shouldn't happen")
                 }
             }
             schema.callShapeData = CallShapeData.Schema(properties)

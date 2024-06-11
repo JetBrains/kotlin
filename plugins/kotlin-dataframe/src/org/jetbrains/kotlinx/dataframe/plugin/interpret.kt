@@ -73,6 +73,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.data.DataFrameCallableId
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.KPropertyApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
+import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
 
@@ -338,12 +339,12 @@ private fun KotlinTypeFacade.columnWithPathApproximations(result: FirPropertyAcc
                     is ConeStarProjection -> session.builtinTypes.nullableAnyType.type
                     else -> arg as ConeClassLikeType
                 }
-                SimpleCol(f(result), Marker(type))
+                SimpleDataColumn(f(result), Marker(type))
             }
             Names.COLUM_GROUP_CLASS_ID -> {
                 val arg = it.typeArguments.single()
                 val path = f(result)
-                SimpleColumnGroup(path, pluginDataFrameSchema(arg).columns(), anyRow)
+                SimpleColumnGroup(path, pluginDataFrameSchema(arg).columns())
             }
             else -> return emptyList()
         }
@@ -367,7 +368,7 @@ private fun KotlinTypeFacade.columnOf(it: FirPropertySymbol, mapping: Map<FirTyp
                     ?.mapNotNull { columnOf(it, mapping) }
                     ?: emptyList()
 
-                SimpleFrameColumn(it.name.identifier, nestedColumns, anyDataFrame)
+                SimpleFrameColumn(it.name.identifier, nestedColumns)
             }
         shouldBeConvertedToColumnGroup(it) -> {
             val type = if (isDataRow(it)) it.resolvedReturnType.typeArguments[0].type!! else it.resolvedReturnType
@@ -378,7 +379,7 @@ private fun KotlinTypeFacade.columnOf(it: FirPropertySymbol, mapping: Map<FirTyp
                 ?.filterIsInstance<FirPropertySymbol>()
                 ?.mapNotNull { columnOf(it, mapping) }
                 ?: emptyList()
-            SimpleColumnGroup(it.name.identifier, nestedColumns, anyRow)
+            SimpleColumnGroup(it.name.identifier, nestedColumns)
         }
         else -> {
             val type = when (val type = it.resolvedReturnType) {
@@ -392,7 +393,7 @@ private fun KotlinTypeFacade.columnOf(it: FirPropertySymbol, mapping: Map<FirTyp
                 }
                 else -> type
             }
-            type?.let { type -> SimpleCol(it.name.identifier,
+            type?.let { type -> SimpleDataColumn(it.name.identifier,
                 org.jetbrains.kotlinx.dataframe.plugin.impl.api.TypeApproximation(type)
             ) }
         }

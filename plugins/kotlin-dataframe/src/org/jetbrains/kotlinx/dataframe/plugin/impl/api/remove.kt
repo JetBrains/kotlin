@@ -31,7 +31,7 @@ fun KotlinTypeFacade.removeImpl(schema: List<SimpleCol>, paths: Set<List<String>
             } else {
                 if (it is SimpleColumnGroup) {
                     val columns = remove(it.columns(), p + it.name())
-                    if (columns.isEmpty()) emptyList() else listOf(SimpleColumnGroup(it.name(), columns, anyRow))
+                    if (columns.isEmpty()) emptyList() else listOf(SimpleColumnGroup(it.name(), columns))
                 } else {
                     listOf(it)
                 }

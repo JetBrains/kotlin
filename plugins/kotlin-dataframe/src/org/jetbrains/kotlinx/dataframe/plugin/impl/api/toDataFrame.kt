@@ -51,6 +51,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.Interpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.Present
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
+import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.simpleColumnOf
@@ -207,7 +208,7 @@ internal fun KotlinTypeFacade.toDataFrame(
                 }
 
                 if (depth >= maxDepth || resolvedReturnType.isValueType() || resolvedReturnType.classId in preserveClasses || it in preserveProperties ) {
-                    SimpleCol(name,
+                    SimpleDataColumn(name,
                         TypeApproximation(resolvedReturnType)
                     )
                 } else if (
@@ -220,7 +221,7 @@ internal fun KotlinTypeFacade.toDataFrame(
                         else -> session.builtinTypes.nullableAnyType.type
                     }
                     if (type.isValueType()) {
-                        SimpleCol(name,
+                        SimpleDataColumn(name,
                             TypeApproximation(
                                 StandardClassIds.List.constructClassLikeType(
                                     arrayOf(type),
@@ -229,10 +230,10 @@ internal fun KotlinTypeFacade.toDataFrame(
                             )
                         )
                     } else {
-                        SimpleFrameColumn(name, convert(type, depth + 1), anyDataFrame)
+                        SimpleFrameColumn(name, convert(type, depth + 1))
                     }
                 } else {
-                    SimpleColumnGroup(name, convert(resolvedReturnType, depth + 1), anyRow)
+                    SimpleColumnGroup(name, convert(resolvedReturnType, depth + 1))
                 }
             }
     }

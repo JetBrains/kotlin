@@ -21,6 +21,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.Interpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.Present
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
+import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnWithPathApproximation
@@ -86,21 +87,21 @@ fun KotlinTypeFacade.aggregate(
             when (it.type.classId) {
                 Names.DATA_ROW_CLASS_ID -> {
                     when (it.type.nullability) {
-                        ConeNullability.NULLABLE -> SimpleCol(
+                        ConeNullability.NULLABLE -> SimpleDataColumn(
                             it.name,
                             TypeApproximation(it.type)
                         )
-                        ConeNullability.UNKNOWN -> SimpleCol(
+                        ConeNullability.UNKNOWN -> SimpleDataColumn(
                             it.name,
                             TypeApproximation(it.type)
                         )
                         ConeNullability.NOT_NULL -> {
                             val typeProjection = it.type.typeArguments[0]
-                            SimpleColumnGroup(it.name, pluginDataFrameSchema(typeProjection).columns(), anyRow)
+                            SimpleColumnGroup(it.name, pluginDataFrameSchema(typeProjection).columns())
                         }
                     }
                 }
-                else -> SimpleCol(it.name, TypeApproximation(it.type))
+                else -> SimpleDataColumn(it.name, TypeApproximation(it.type))
             }
         }
         PluginDataFrameSchema(cols)
@@ -122,7 +123,7 @@ fun KotlinTypeFacade.createPluginDataFrameSchema(keys: List<ColumnWithPathApprox
 
         val updatedColumns = columns.map {
             if (it is SimpleColumnGroup && it.name == groupName) {
-                SimpleColumnGroup(it.name, columns = addToHierarchy(remainingPath, column, it.columns()), anyRow)
+                SimpleColumnGroup(it.name, columns = addToHierarchy(remainingPath, column, it.columns()))
             } else {
                 it
             }
@@ -134,7 +135,7 @@ fun KotlinTypeFacade.createPluginDataFrameSchema(keys: List<ColumnWithPathApprox
             val newGroup = if (remainingPath.isEmpty()) {
                 column
             } else {
-                SimpleColumnGroup(groupName, addToHierarchy(remainingPath, column, emptyList()), anyRow)
+                SimpleColumnGroup(groupName, addToHierarchy(remainingPath, column, emptyList()))
             }
             updatedColumns + newGroup
         }
@@ -161,7 +162,7 @@ class GroupByToDataFrame : AbstractSchemaModificationInterpreter() {
     val Arguments.groupedColumnName: String? by arg(defaultValue = Present(null))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        val grouped = listOf(SimpleFrameColumn(groupedColumnName ?: "group", receiver.df.columns(), anyDataFrame))
+        val grouped = listOf(SimpleFrameColumn(groupedColumnName ?: "group", receiver.df.columns()))
         return PluginDataFrameSchema(
             createPluginDataFrameSchema(receiver.keys, receiver.moveToTop).columns() + grouped
         )
