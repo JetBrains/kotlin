@@ -124,7 +124,7 @@ class WasmBoxRunner(
                         debugMode = debugMode,
                         useNewExceptionHandling = useNewExceptionProposal,
                         failsIn = failsIn,
-                        entryMjs = collectedJsArtifacts.entryPath,
+                        entryFile = collectedJsArtifacts.entryPath,
                         jsFilePaths = jsFilePaths,
                         workingDirectory = dir,
                     )
@@ -148,7 +148,7 @@ internal fun WasmVM.runWithCaughtExceptions(
     debugMode: DebugMode,
     useNewExceptionHandling: Boolean,
     failsIn: List<String>,
-    entryMjs: String?,
+    entryFile: String?,
     jsFilePaths: List<String>,
     workingDirectory: File,
 ): Throwable? {
@@ -157,7 +157,7 @@ internal fun WasmVM.runWithCaughtExceptions(
             println(" ------ Run in ${name}" + if (shortName in failsIn) " (expected to fail)" else "")
         }
         run(
-            "./${entryMjs}",
+            "./${entryFile}",
             jsFilePaths,
             workingDirectory = workingDirectory,
             useNewExceptionHandling = useNewExceptionHandling,

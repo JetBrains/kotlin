@@ -24,6 +24,14 @@ repositories {
         metadataSources { artifact() }
         content { includeModule("org.mozilla", "jsshell") }
     }
+    ivy {
+        url = URI("https://github.com/WasmEdge/WasmEdge/releases/download/")
+        patternLayout {
+            artifact("[revision]/WasmEdge-[revision]-[classifier].[ext]")
+        }
+        metadataSources { artifact() }
+        content { includeModule("org.wasmedge", "wasmedge") }
+    }
 }
 
 enum class OsName { WINDOWS, MAC, LINUX, UNKNOWN }
@@ -68,6 +76,27 @@ val jsShell by configurations.creating {
     isCanBeConsumed = false
 }
 
+val wasmEdgeVersion = "0.14.0"
+val wasmEdgeSuffix = when (currentOsType) {
+    OsType(OsName.LINUX, OsArch.X86_64) -> "manylinux_2_28_x86_64"
+    OsType(OsName.MAC, OsArch.X86_64) -> "darwin_x86_64"
+    OsType(OsName.MAC, OsArch.ARM64) -> "darwin_arm64"
+    OsType(OsName.WINDOWS, OsArch.X86_32),
+    OsType(OsName.WINDOWS, OsArch.X86_64) -> "windows"
+    else -> error("unsupported os type $currentOsType")
+}
+val wasmEdgeInnerSuffix = when (currentOsType.name) {
+    OsName.LINUX -> "Linux"
+    OsName.MAC -> "Darwin"
+    OsName.WINDOWS -> "Windows"
+    else -> error("unsupported os type $currentOsType")
+}
+
+val wasmEdge by configurations.creating {
+    isCanBeResolved = true
+    isCanBeConsumed = false
+}
+
 dependencies {
     testApi(projectTests(":compiler:tests-common"))
     testApi(projectTests(":compiler:tests-common-new"))
@@ -81,6 +110,12 @@ dependencies {
     implicitDependencies("org.mozilla:jsshell:$jsShellVersion:win64@zip")
     implicitDependencies("org.mozilla:jsshell:$jsShellVersion:linux-x86_64@zip")
     implicitDependencies("org.mozilla:jsshell:$jsShellVersion:mac@zip")
+
+    wasmEdge("org.wasmedge:wasmedge:$wasmEdgeVersion:$wasmEdgeSuffix@tar.gz")
+
+    implicitDependencies("org.wasmedge:wasmedge:$wasmEdgeVersion:windows@zip")
+    implicitDependencies("org.wasmedge:wasmedge:$wasmEdgeVersion:manylinux_2_28_x86_64@tar.gz")
+    implicitDependencies("org.wasmedge:wasmedge:$wasmEdgeVersion:darwin_arm64@tar.gz")
 }
 
 val generationRoot = projectDir.resolve("tests-gen")
@@ -168,10 +203,29 @@ val unzipJsShell by task<Copy> {
     into(layout.buildDirectory.dir("tools/jsshell-$jsShellSuffix-$jsShellVersion"))
 }
 
+val unzipWasmEdge by task<Copy> {
+    dependsOn(wasmEdge)
+    from {
+        if (wasmEdge.singleFile.extension == "zip") {
+            zipTree(wasmEdge.singleFile)
+        } else {
+            tarTree(wasmEdge.singleFile)
+        }
+    }
+    into(layout.buildDirectory.dir("tools"))
+}
+
 fun Test.setupSpiderMonkey() {
     dependsOn(unzipJsShell)
     val jsShellExecutablePath = File(unzipJsShell.get().destinationDir, "js").absolutePath
     systemProperty("javascript.engine.path.SpiderMonkey", jsShellExecutablePath)
+}
+
+fun Test.setupWasmEdge() {
+    dependsOn(unzipWasmEdge)
+    val wasmEdgeExecutable =
+        File(unzipWasmEdge.get().destinationDir, "WasmEdge-$wasmEdgeVersion-$wasmEdgeInnerSuffix/bin/wasmedge")
+    systemProperty("wasm.engine.path.WasmEdge", wasmEdgeExecutable.absolutePath)
 }
 
 testsJar {}
@@ -194,6 +248,7 @@ fun Project.wasmProjectTest(
         setupNodeJs()
         setupBinaryen()
         setupSpiderMonkey()
+        setupWasmEdge()
         useJUnitPlatform()
         setupWasmStdlib("js")
         setupWasmStdlib("wasi")

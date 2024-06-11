@@ -18,7 +18,7 @@ import java.io.File
 class WasiBoxRunner(
     testServices: TestServices
 ) : AbstractWasmArtifactsCollector(testServices) {
-    private val vmsToCheck: List<WasmVM> = listOf(WasmVM.NodeJs)
+    private val vmsToCheck: List<WasmVM> = listOf(WasmVM.NodeJs, WasmVM.WasmEdge)
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (!someAssertionWasFailed) {
@@ -85,7 +85,7 @@ class WasiBoxRunner(
                     debugMode = debugMode,
                     useNewExceptionHandling = false,
                     failsIn = failsIn,
-                    entryMjs = collectedJsArtifacts.entryPath ?: "test.mjs",
+                    entryFile = if (!vm.hasJsSupport) "$baseFileName.wasm" else collectedJsArtifacts.entryPath ?: "test.mjs",
                     jsFilePaths = jsFilePaths,
                     workingDirectory = dir
                 )

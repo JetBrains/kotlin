@@ -1,5 +1,6 @@
 // MODULE: main
 // FILE: main.kt
+// WASM_FAILS_IN: WE
 
 import kotlin.wasm.WasmExport
 
