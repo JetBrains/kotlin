@@ -88,7 +88,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         callableDeclaration.configure {
             +field("returnTypeRef", typeRef, withReplace = true).withTransform()
             +field("receiverParameter", receiverParameter, nullable = true, withReplace = true).withTransform()
-            +field("deprecationsProvider", deprecationsProviderType).withReplace().apply { isMutable = true }
+            +field("deprecationsProvider", deprecationsProviderType, withReplace = true).apply { isMutable = true }
             +referencedSymbol(callableSymbolType.withArgs(callableDeclaration))
 
             +field("containerSource", type<DeserializedContainerSource>(), nullable = true)
@@ -113,7 +113,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         memberDeclaration.configure {
-            +field("status", declarationStatus, withReplace = true).withTransform().withReplace()
+            +field("status", declarationStatus, withReplace = true).withTransform()
         }
 
         expression.configure {
@@ -274,7 +274,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         classLikeDeclaration.configure {
             +declaredSymbol(classLikeSymbolType.withArgs(classLikeDeclaration))
-            +field("deprecationsProvider", deprecationsProviderType).withReplace().apply { isMutable = true }
+            +field("deprecationsProvider", deprecationsProviderType, withReplace = true).apply { isMutable = true }
         }
 
         klass.configure {
@@ -384,7 +384,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +referencedSymbol("propertySymbol", firPropertySymbolType).apply {
                 withBindThis = false
             }
-            +field("initializer", expression, nullable = true).withTransform().withReplace()
+            +field("initializer", expression, nullable = true, withReplace = true).withTransform()
             +annotations
             +typeParameters
             +field("status", declarationStatus, withReplace = true).withTransform()
@@ -454,7 +454,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         variable.configure {
             +name
             +declaredSymbol(variableSymbolType.withArgs(variable))
-            +field("initializer", expression, nullable = true).withTransform().withReplace()
+            +field("initializer", expression, nullable = true, withReplace = true).withTransform()
             +field("delegate", expression, nullable = true, withReplace = true).withTransform()
             generateBooleanFields("var", "val")
             +field("getter", propertyAccessor, nullable = true, withReplace = true).withTransform()
@@ -512,7 +512,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +name
             +declarations {
                 withTransform()
-                withReplace()
+                withReplace = true
             }
             +declaredSymbol(scriptSymbolType)
             +listField("parameters", property).withTransform()
@@ -731,7 +731,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         variableAssignment.configure {
-            +field("lValue", expression).withTransform().withReplace()
+            +field("lValue", expression, withReplace = true).withTransform()
             +field("rValue", expression).withTransform()
         }
 

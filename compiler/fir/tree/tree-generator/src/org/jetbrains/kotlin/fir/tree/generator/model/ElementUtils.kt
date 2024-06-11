@@ -73,7 +73,3 @@ fun Field.withTransform(needTransformInOtherChildren: Boolean = false): Field = 
     needsSeparateTransform = true
     this.needTransformInOtherChildren = needTransformInOtherChildren
 }
-
-fun Field.withReplace(): Field = apply {
-    withReplace = true
-}
