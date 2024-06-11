@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -95,7 +96,6 @@ public abstract class KaSession(
     KaTypeRelationChecker by typeRelationChecker,
     KaExpressionInfoProviderMixIn,
     KaEvaluator by evaluator,
-    KaSymbolsMixIn,
     KaReferenceShortener by referenceShortener,
     KaImportOptimizer by importOptimizer,
     KaRenderer by renderer,
@@ -127,6 +127,11 @@ public abstract class KaSession(
 
     internal val symbolInfoProvider: KaSymbolInfoProvider get() = symbolInfoProviderImpl
     protected abstract val symbolInfoProviderImpl: KaSymbolInfoProvider
+
+    public fun <S : KaSymbol> KaSymbolPointer<S>.restoreSymbol(): S? = withValidityAssertion {
+        @OptIn(KaImplementationDetail::class)
+        restoreSymbol(analysisSession)
+    }
 }
 
 public typealias KtAnalysisSession = KaSession
