@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.field]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.field]
  */
 abstract class FirField : FirVariable(), FirControlFlowGraphOwner {
     abstract override val source: KtSourceElement?

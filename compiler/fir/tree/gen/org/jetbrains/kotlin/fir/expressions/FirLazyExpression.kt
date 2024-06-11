@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.lazyExpression]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.lazyExpression]
  */
 abstract class FirLazyExpression : FirExpression() {
     abstract override val source: KtSourceElement?

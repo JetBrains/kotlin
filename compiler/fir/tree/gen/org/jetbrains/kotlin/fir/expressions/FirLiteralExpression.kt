@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.types.ConstantValueKind
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.literalExpression]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.literalExpression]
  */
 abstract class FirLiteralExpression : FirExpression() {
     abstract override val source: KtSourceElement?

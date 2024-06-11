@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.controlFlowGraphReference]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.controlFlowGraphReference]
  */
 abstract class FirControlFlowGraphReference : FirReference() {
     abstract override val source: KtSourceElement?

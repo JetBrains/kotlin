@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.desugaredAssignmentValueReferenceExpression]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.desugaredAssignmentValueReferenceExpression]
  */
 abstract class FirDesugaredAssignmentValueReferenceExpression : FirExpression() {
     abstract override val source: KtSourceElement?

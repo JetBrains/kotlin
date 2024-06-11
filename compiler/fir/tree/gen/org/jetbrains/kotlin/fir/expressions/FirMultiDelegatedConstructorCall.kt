@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.multiDelegatedConstructorCall]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.multiDelegatedConstructorCall]
  */
 abstract class FirMultiDelegatedConstructorCall : FirDelegatedConstructorCall() {
     abstract override val annotations: List<FirAnnotation>

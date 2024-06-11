@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.generators.tree.config.AbstractElementConfigurator
 
 abstract class AbstractFirTreeBuilder() : AbstractElementConfigurator<Element, Field, Element.Kind>() {
     override fun createElement(name: String, propertyName: String, category: Element.Kind): Element {
-        return Element(name, propertyName.replace(".NodeConfigurator", ".FirTreeBuilder"), category)
+        return Element(name, propertyName, category)
     }
 
     protected fun field(

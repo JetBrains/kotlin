@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.rootElement]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.rootElement]
  */
 interface FirElement {
     val source: KtSourceElement?

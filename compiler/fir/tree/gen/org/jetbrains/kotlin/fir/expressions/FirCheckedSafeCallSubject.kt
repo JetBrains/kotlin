@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.checkedSafeCallSubject]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.checkedSafeCallSubject]
  */
 abstract class FirCheckedSafeCallSubject : FirExpression() {
     abstract override val source: KtSourceElement?

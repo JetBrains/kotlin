@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
  *
  * Augmented assignments with an indexed access as receiver are represented as [FirIndexedAccessAugmentedAssignment]. 
  *
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.augmentedAssignment]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.augmentedAssignment]
  */
 abstract class FirAugmentedAssignment : FirPureAbstractElement(), FirStatement {
     abstract override val source: KtSourceElement?

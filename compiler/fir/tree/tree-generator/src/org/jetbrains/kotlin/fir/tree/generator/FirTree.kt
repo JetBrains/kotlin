@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.fir.tree.generator
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
-import org.jetbrains.kotlin.fir.tree.generator.NodeConfigurator.FieldSets.annotations
-import org.jetbrains.kotlin.fir.tree.generator.NodeConfigurator.FieldSets.declarations
-import org.jetbrains.kotlin.fir.tree.generator.NodeConfigurator.FieldSets.typeArguments
-import org.jetbrains.kotlin.fir.tree.generator.NodeConfigurator.FieldSets.typeParameters
+import org.jetbrains.kotlin.fir.tree.generator.FirTree.FieldSets.annotations
+import org.jetbrains.kotlin.fir.tree.generator.FirTree.FieldSets.declarations
+import org.jetbrains.kotlin.fir.tree.generator.FirTree.FieldSets.typeArguments
+import org.jetbrains.kotlin.fir.tree.generator.FirTree.FieldSets.typeParameters
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.Other
 import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.Expression
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.tree.generator.util.type
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
-object NodeConfigurator : AbstractFirTreeBuilder() {
+object FirTree : AbstractFirTreeBuilder() {
     override val rootElement: Element by element(Other, name = "Element") {
         +field("source", sourceElementType, nullable = true)
     }

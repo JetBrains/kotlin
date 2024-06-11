@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
  * After resolution, the call will be desugared into regular function calls,
  * either of the form `arr.set(i, arr.get(i).plus(1))` or `arr.get(i).plusAssign(1)`.
  *
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.indexedAccessAugmentedAssignment]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.indexedAccessAugmentedAssignment]
  */
 abstract class FirIndexedAccessAugmentedAssignment : FirPureAbstractElement(), FirStatement {
     abstract override val source: KtSourceElement?

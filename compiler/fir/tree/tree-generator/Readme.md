@@ -24,7 +24,7 @@
 
 # Content of elements
 
-- Fields of elements are described in [`NodeConfigurator.kt`](src/org/jetbrains/kotlin/fir/tree/generator/NodeConfigurator.kt).
+- Fields of elements are described in [`FirTree.kt`](src/org/jetbrains/kotlin/fir/tree/generator/FirTree.kt).
 - Syntax: 
 ```
 elementName.configure {
@@ -95,5 +95,5 @@ elementName.configure {
 
 - There is an algorithm that automatically makes as most abstract classes instead of interfaces as possible.
   If you want to some `Element` or `Implementation` should be always an interface you should:
-    - call `shouldBeAnInterface()` when configuring a `Element` in `NodeConfigurator.kt`
+    - call `shouldBeAnInterface()` when configuring a `Element` in `FirTree.kt`
     - specify `kind = Interface` when configuring an `Implementation` in `ImplementationConfigurator.kt`

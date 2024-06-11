@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.constructor]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.constructor]
  */
 abstract class FirConstructor : FirFunction(), FirTypeParameterRefsOwner, FirContractDescriptionOwner {
     abstract override val source: KtSourceElement?

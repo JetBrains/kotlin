@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.regularClass]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.regularClass]
  */
 abstract class FirRegularClass : FirClass() {
     abstract override val source: KtSourceElement?

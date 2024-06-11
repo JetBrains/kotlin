@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.whenBranch]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.whenBranch]
  */
 abstract class FirWhenBranch : FirPureAbstractElement(), FirElement {
     abstract override val source: KtSourceElement?

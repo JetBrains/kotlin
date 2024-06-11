@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.namedReferenceWithCandidateBase]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.namedReferenceWithCandidateBase]
  */
 abstract class FirNamedReferenceWithCandidateBase : FirNamedReference() {
     abstract override val source: KtSourceElement?

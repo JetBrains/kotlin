@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.componentCall]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.componentCall]
  */
 abstract class FirComponentCall : FirFunctionCall() {
     @UnresolvedExpressionTypeAccess

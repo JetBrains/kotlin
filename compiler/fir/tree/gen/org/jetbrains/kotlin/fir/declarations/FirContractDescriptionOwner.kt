@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.contractDescriptionOwner]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.contractDescriptionOwner]
  */
 sealed interface FirContractDescriptionOwner : FirElement {
     override val source: KtSourceElement?

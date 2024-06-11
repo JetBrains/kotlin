@@ -20,7 +20,7 @@ fun main(args: Array<String>) {
     val generationPath = args.firstOrNull()?.let { File(it) }
         ?: File("../../tree/gen").canonicalFile
 
-    val model = NodeConfigurator.build()
+    val model = FirTree.build()
     TreeGenerator(generationPath, "compiler/fir/tree/tree-generator/Readme.md").run {
         generateTree(
             model,

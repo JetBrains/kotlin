@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.FqName
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.packageDirective]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.packageDirective]
  */
 abstract class FirPackageDirective : FirPureAbstractElement(), FirElement {
     abstract override val source: KtSourceElement?

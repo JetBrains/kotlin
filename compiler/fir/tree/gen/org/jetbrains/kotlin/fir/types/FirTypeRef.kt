@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.typeRef]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.typeRef]
  */
 sealed class FirTypeRef : FirPureAbstractElement(), FirAnnotationContainer {
     abstract override val source: KtSourceElement?

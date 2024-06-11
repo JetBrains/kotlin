@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.types.SmartcastStability
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.smartCastExpression]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.smartCastExpression]
  */
 abstract class FirSmartCastExpression : FirExpression() {
     abstract override val source: KtSourceElement?

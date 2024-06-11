@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.name.Name
  *
  * See [FirVarargArgumentsExpression] for the general structure of arguments of `vararg` parameters after resolution.
  *
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.namedArgumentExpression]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.namedArgumentExpression]
  */
 abstract class FirNamedArgumentExpression : FirWrappedArgumentExpression() {
     abstract override val source: KtSourceElement?
