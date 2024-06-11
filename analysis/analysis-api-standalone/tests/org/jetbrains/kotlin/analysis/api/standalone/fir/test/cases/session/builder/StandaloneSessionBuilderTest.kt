@@ -123,7 +123,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
             )
             // expanded to `actual` `typealias`
             val expandedType = type.fullyExpandedType
-            Assertions.assertTrue(expandedType.isInt)
+            Assertions.assertTrue(expandedType.isIntType)
         }
 
         // Test stdlib-common: @JvmInline in the common module

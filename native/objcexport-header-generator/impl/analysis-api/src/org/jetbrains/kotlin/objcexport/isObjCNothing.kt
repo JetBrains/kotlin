@@ -9,4 +9,4 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
  */
 context(KtAnalysisSession)
 val KaType.isObjCNothing: Boolean
-    get() = isNothing && !canBeNull
+    get() = isNothingType && !canBeNull

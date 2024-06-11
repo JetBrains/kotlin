@@ -211,7 +211,7 @@ internal class SymbolLightSimpleMethod(
 
     private fun KaSession.isVoidType(type: KaType): Boolean {
         val expandedType = type.fullyExpandedType
-        return expandedType.isUnit && expandedType.nullability != KaTypeNullability.NULLABLE
+        return expandedType.isUnitType && expandedType.nullability != KaTypeNullability.NULLABLE
     }
 
     private val _returnedType: PsiType by lazyPub {

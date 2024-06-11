@@ -24,7 +24,7 @@ public interface KaCallableReturnTypeFilter {
         override fun shouldRenderReturnType(analysisSession: KaSession, type: KaType, symbol: KaCallableSymbol): Boolean {
             with(analysisSession) {
                 return when (symbol) {
-                    is KaFunctionSymbol -> !type.isUnit
+                    is KaFunctionSymbol -> !type.isUnitType
                     else -> true
                 }
             }

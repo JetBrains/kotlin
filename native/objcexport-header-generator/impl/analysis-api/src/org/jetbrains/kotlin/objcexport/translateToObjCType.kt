@@ -71,7 +71,7 @@ internal fun KtType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReferenc
         return objCErrorType
     }
 
-    if (isAny) {
+    if (isAnyType) {
         return ObjCIdType
     }
 

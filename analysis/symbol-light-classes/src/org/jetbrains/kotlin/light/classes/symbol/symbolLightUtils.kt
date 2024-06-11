@@ -139,7 +139,7 @@ internal fun KaSession.getTypeNullability(type: KaType): KaTypeNullability {
     val ktType = type.fullyExpandedType
     if (ktType.nullability != KaTypeNullability.NON_NULLABLE) return ktType.nullability
 
-    if (ktType.isUnit) return KaTypeNullability.NON_NULLABLE
+    if (ktType.isUnitType) return KaTypeNullability.NON_NULLABLE
 
     if (ktType.isPrimitiveBacked) return KaTypeNullability.UNKNOWN
 

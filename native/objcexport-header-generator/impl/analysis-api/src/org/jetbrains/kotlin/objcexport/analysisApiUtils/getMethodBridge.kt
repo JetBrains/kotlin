@@ -79,21 +79,21 @@ private fun bridgeType(
     type: KtType,
 ): TypeBridge {
     val primitiveObjCValueType = when {
-        type.isBoolean -> ObjCValueType.BOOL
-        type.isChar -> ObjCValueType.UNICHAR
-        type.isByte -> ObjCValueType.CHAR
-        type.isShort -> ObjCValueType.SHORT
-        type.isInt -> ObjCValueType.INT
-        type.isLong -> ObjCValueType.LONG_LONG
-        type.isFloat -> ObjCValueType.FLOAT
-        type.isDouble -> ObjCValueType.DOUBLE
-        type.isUByte -> ObjCValueType.UNSIGNED_CHAR
-        type.isUShort -> ObjCValueType.UNSIGNED_SHORT
-        type.isUInt -> ObjCValueType.UNSIGNED_INT
-        type.isULong -> ObjCValueType.UNSIGNED_LONG_LONG
-        type.isClassTypeWithClassId(KonanPrimitiveType.VECTOR128.classId) && !type.isMarkedNullable ->
+        type.isBooleanType -> ObjCValueType.BOOL
+        type.isCharType -> ObjCValueType.UNICHAR
+        type.isByteType -> ObjCValueType.CHAR
+        type.isShortType -> ObjCValueType.SHORT
+        type.isIntType -> ObjCValueType.INT
+        type.isLongType -> ObjCValueType.LONG_LONG
+        type.isFloatType -> ObjCValueType.FLOAT
+        type.isDoubleType -> ObjCValueType.DOUBLE
+        type.isUByteType -> ObjCValueType.UNSIGNED_CHAR
+        type.isUShortType -> ObjCValueType.UNSIGNED_SHORT
+        type.isUIntType -> ObjCValueType.UNSIGNED_INT
+        type.isULongType -> ObjCValueType.UNSIGNED_LONG_LONG
+        type.isClassType(KonanPrimitiveType.VECTOR128.classId) && !type.isMarkedNullable ->
             ObjCValueType.VECTOR_FLOAT_128
-        type.isClassTypeWithClassId(KonanPrimitiveType.NON_NULL_NATIVE_PTR.classId) -> ObjCValueType.POINTER
+        type.isClassType(KonanPrimitiveType.NON_NULL_NATIVE_PTR.classId) -> ObjCValueType.POINTER
         else -> null
     }
 
@@ -130,7 +130,7 @@ private fun bridgeFunctionType(type: KtType): TypeBridge {
         returnType = type
     }
 
-    val returnsVoid = returnType.isUnit || returnType.isNothing
+    val returnsVoid = returnType.isUnitType || returnType.isNothingType
     return BlockPointerBridge(numberOfParameters, returnsVoid)
 }
 
@@ -157,7 +157,7 @@ private fun KtCallableSymbol.bridgeReturnType(): MethodBridge.ReturnValue {
         return MethodBridge.ReturnValue.HashCode
     }
 
-    if (returnType.isUnit) {
+    if (returnType.isUnitType) {
         return successOrVoidReturnValue
     }
 

@@ -36,7 +36,7 @@ public class SirVisibilityCheckerImpl(
             is KaTypeAliasSymbol -> ktSymbol.expandedType.fullyExpandedType
                 .takeIf { !it.isMarkedNullable }
                 ?.let {
-                    it.isPrimitive || it.isNothing || it.isVisible(ktAnalysisSession)
+                    it.isPrimitive || it.isNothingType || it.isVisible(ktAnalysisSession)
                 } ?: false
             else -> false
         }
@@ -82,7 +82,7 @@ public class SirVisibilityCheckerImpl(
                 unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "inner classes are not supported yet.")
                 return@with false
             }
-            if (!(superTypes.count() == 1 && superTypes.first().isAny)) {
+            if (!(superTypes.count() == 1 && superTypes.first().isAnyType)) {
                 unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "inheritance is not supported yet.")
                 return@with false
             }

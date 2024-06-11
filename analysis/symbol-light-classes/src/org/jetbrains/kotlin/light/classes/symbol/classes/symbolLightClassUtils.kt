@@ -485,7 +485,7 @@ internal fun SymbolLightClassForClassLike<*>.createInheritanceList(
 
     fun KaType.needToAddTypeIntoList(): Boolean {
         // Do not add redundant "extends java.lang.Object" anywhere
-        if (this.isAny) return false
+        if (this.isAnyType) return false
         // Interfaces have only extends lists
         if (isInterface) return forExtendsList
 

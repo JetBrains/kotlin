@@ -45,7 +45,7 @@ internal fun KtClassOrObjectSymbol.getSuperClassSymbolNotAny(): KtClassOrObjectS
 context(KtAnalysisSession)
 internal fun KtClassOrObjectSymbol.getSuperClassTypeNotAny(): KtNonErrorClassType? {
     return superTypes.firstNotNullOfOrNull find@{ superType ->
-        if (superType.isAny || superType.isError) return@find null
+        if (superType.isAnyType || superType.isError) return@find null
         if (superType is KtNonErrorClassType) {
             val classSymbol = superType.expandedSymbol ?: return@find null
             if (classSymbol.classKind.isClass) {

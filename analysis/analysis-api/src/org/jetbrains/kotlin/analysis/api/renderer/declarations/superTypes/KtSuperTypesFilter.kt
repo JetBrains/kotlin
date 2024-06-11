@@ -17,15 +17,15 @@ public fun interface KaSuperTypesFilter {
     public object NO_DEFAULT_TYPES : KaSuperTypesFilter {
         override fun filter(analysisSession: KaSession, superType: KaType, symbol: KaClassOrObjectSymbol): Boolean {
             with(analysisSession) {
-                if (superType.isAny) {
+                if (superType.isAnyType) {
                     return false
                 }
 
-                if (symbol.classKind == KaClassKind.ANNOTATION_CLASS && superType.isClassTypeWithClassId(StandardClassIds.Annotation)) {
+                if (symbol.classKind == KaClassKind.ANNOTATION_CLASS && superType.isClassType(StandardClassIds.Annotation)) {
                     return false
                 }
 
-                if (symbol.classKind == KaClassKind.ENUM_CLASS && superType.isClassTypeWithClassId(StandardClassIds.Enum)) {
+                if (symbol.classKind == KaClassKind.ENUM_CLASS && superType.isClassType(StandardClassIds.Enum)) {
                     return false
                 }
 
@@ -38,7 +38,7 @@ public fun interface KaSuperTypesFilter {
         override fun filter(analysisSession: KaSession, superType: KaType, symbol: KaClassOrObjectSymbol): Boolean {
             with(analysisSession) {
                 return when (symbol.classKind) {
-                    KaClassKind.INTERFACE -> !superType.isAny
+                    KaClassKind.INTERFACE -> !superType.isAnyType
                     else -> true
                 }
             }
