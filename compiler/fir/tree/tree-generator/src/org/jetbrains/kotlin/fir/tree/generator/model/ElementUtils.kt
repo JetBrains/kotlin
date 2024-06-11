@@ -36,17 +36,17 @@ fun field(
 
 // ----------- Field list -----------
 
-fun fieldList(
+fun listField(
     name: String,
-    type: TypeRef,
+    baseType: TypeRef,
     withReplace: Boolean = false,
     useMutableOrEmpty: Boolean = false,
     isChild: Boolean = true,
 ): Field {
-    return FieldList(name, type, withReplace = withReplace, isChild = isChild, useMutableOrEmpty = useMutableOrEmpty)
+    return FieldList(name, baseType, withReplace = withReplace, isChild = isChild, useMutableOrEmpty = useMutableOrEmpty)
 }
 
-fun fieldList(
+fun listField(
     elementOrRef: ElementOrRef,
     withReplace: Boolean = false,
     useMutableOrEmpty: Boolean = false,

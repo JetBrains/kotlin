@@ -34,8 +34,8 @@ abstract class AbstractSwiftIrTreeBuilder : AbstractElementConfigurator<Element,
     protected fun listField(
         name: String,
         baseType: TypeRef,
-        isChild: Boolean = true,
         isMutableList: Boolean = false,
+        isChild: Boolean = true,
         initializer: ListField.() -> Unit = {}
     ): ListField {
         return ListField(

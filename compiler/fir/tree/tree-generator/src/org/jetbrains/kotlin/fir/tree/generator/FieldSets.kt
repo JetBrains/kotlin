@@ -31,14 +31,14 @@ object FieldSets {
         )
     }
 
-    val typeArguments by lazy { fieldList("typeArguments", typeProjection, useMutableOrEmpty = true, withReplace = true) }
+    val typeArguments by lazy { listField("typeArguments", typeProjection, useMutableOrEmpty = true, withReplace = true) }
 
-    val arguments by lazy { fieldList("arguments", expression) }
+    val arguments by lazy { listField("arguments", expression) }
 
-    val declarations by lazy { fieldList(declaration).apply { useInBaseTransformerDetection = false } }
+    val declarations by lazy { listField(declaration).apply { useInBaseTransformerDetection = false } }
 
     val annotations by lazy {
-        fieldList(
+        listField(
             "annotations",
             annotation,
             withReplace = true,
@@ -69,15 +69,15 @@ object FieldSets {
 
     val typeRefField = field(typeRef, withReplace = true)
 
-    val typeParameters by lazy { fieldList("typeParameters", typeParameter) }
+    val typeParameters by lazy { listField("typeParameters", typeParameter) }
 
-    val typeParameterRefs by lazy { fieldList("typeParameters", typeParameterRef) }
+    val typeParameterRefs by lazy { listField("typeParameters", typeParameterRef) }
 
     val name by lazy { field(nameType) }
 
     val initializer by lazy { field("initializer", expression, nullable = true) }
 
-    fun superTypeRefs(withReplace: Boolean = false) = fieldList("superTypeRefs", typeRef, withReplace)
+    fun superTypeRefs(withReplace: Boolean = false) = listField("superTypeRefs", typeRef, withReplace)
 
     val classKind by lazy { field(classKindType) }
 
