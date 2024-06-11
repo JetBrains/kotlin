@@ -9,13 +9,13 @@ import kotlin.concurrent.Volatile
 import kotlin.properties.Delegates
 
 class ConcurrentVolatile {
-    <!VOLATILE_ON_VALUE!>@Volatile<!> val x = 0
+    <!VOLATILE_ON_VALUE, VOLATILE_ON_VALUE{METADATA}!>@Volatile<!> val x = 0
     // ok
     @Volatile var y = 1
 
-    <!VOLATILE_ON_DELEGATE!>@delegate:Volatile<!> var z: String by Delegates.observable("?") { prop, old, new -> old.hashCode() }
+    <!VOLATILE_ON_DELEGATE, VOLATILE_ON_DELEGATE{METADATA}!>@delegate:Volatile<!> var z: String by Delegates.observable("?") { prop, old, new -> old.hashCode() }
 
-    <!VOLATILE_ON_VALUE!>@field:Volatile<!> val w = 2
+    <!VOLATILE_ON_VALUE, VOLATILE_ON_VALUE{METADATA}!>@field:Volatile<!> val w = 2
 
     <!WRONG_ANNOTATION_TARGET!>@Volatile<!>
     var noBacking: String
@@ -23,7 +23,7 @@ class ConcurrentVolatile {
         set(value) {}
 }
 
-// MODULE: jvm
+// MODULE: jvm()()(common)
 // FILE: jvm.kt
 // TARGET_PLATFORM: JVM
 import kotlin.jvm.Volatile as JvmVolatile

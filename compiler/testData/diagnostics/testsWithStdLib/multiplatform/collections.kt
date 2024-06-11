@@ -11,7 +11,7 @@ fun common() {
     listOf("foo", "bar").map { it }
 }
 
-// MODULE: jvm
+// MODULE: jvm()()(common)
 // FILE: jvm.kt
 // TARGET_PLATFORM: JVM
 
