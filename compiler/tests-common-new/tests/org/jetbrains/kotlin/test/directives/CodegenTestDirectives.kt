@@ -258,6 +258,18 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
     val DISABLE_IR_VISIBILITY_CHECKS by enumDirective<TargetBackend>(
         description = "Don't check for visibility violations when validating IR on the target backend"
     )
+
+    val ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING by directive(
+        description = """
+        Check for visibility violation when validating IR after inlining.
+        Equivalent to passing the '-Xverify-ir-visibility-after-inlining' CLI flag.
+        
+        This directive is opt-in rather than opt-out (like $DISABLE_IR_VISIBILITY_CHECKS) because right now most test pass with
+        visibility checks enabled before lowering, but enabling these checks after inlining by default will cause most tests to fail,
+        because some lowerings that are run before inlining generate calls to internal intrinsics (KT-67304), and inlining in general may
+        cause visibility violations until we start generating synthetic accessors (KT-64865).
+        """.trimIndent()
+    )
 }
 
 fun extractIgnoredDirectiveForTargetBackend(
