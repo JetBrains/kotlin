@@ -75,7 +75,7 @@ internal class FirMetadataSerializer(
         val klibFiles = configuration.get(CLIConfigurationKeys.CONTENT_ROOTS).orEmpty()
             .filterIsInstance<JvmClasspathRoot>()
             .filter { it.file.isDirectory || it.file.extension == "klib" }
-            .map { it.file.absolutePath }
+            .map { it.file.normalize().absolutePath }
 
         val logger = messageCollector.toLogger()
 
