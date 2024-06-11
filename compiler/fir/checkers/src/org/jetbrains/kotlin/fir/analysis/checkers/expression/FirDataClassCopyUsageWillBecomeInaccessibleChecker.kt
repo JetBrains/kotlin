@@ -68,22 +68,19 @@ object FirDataClassCopyUsageWillBecomeInaccessibleChecker : FirQualifiedAccessEx
     }
 }
 
-internal fun FirCallableSymbol<*>.isDataClassCopy(containingClass: FirClassSymbol<*>?, session: FirSession): Boolean =
-    _isDataClassCopy(this, containingClass, session)
-@Suppress("FunctionName")
-private fun _isDataClassCopy(potentialCopy: FirCallableSymbol<*>, containingClass: FirClassSymbol<*>?, session: FirSession): Boolean {
-    val unwrapped = potentialCopy.unwrapSubstitutionOverrides()
+internal fun FirCallableSymbol<*>.isDataClassCopy(containingClass: FirClassSymbol<*>?, session: FirSession): Boolean {
+    unwrapSubstitutionOverrides().let { if (it !== this) return it.isDataClassCopy(containingClass, session) }
     val constructor = containingClass?.primaryConstructorSymbol(session)
-    return unwrapped is FirNamedFunctionSymbol &&
-            DataClassResolver.isCopy(unwrapped.name) &&
+    return this is FirNamedFunctionSymbol &&
+            DataClassResolver.isCopy(name) &&
             containingClass != null &&
             containingClass.isData &&
             containingClass.classKind.isClass &&
-            unwrapped.dispatchReceiverType?.classId == containingClass.classId &&
-            unwrapped.resolvedReturnType.classId == containingClass.classId &&
+            dispatchReceiverType?.classId == containingClass.classId &&
+            resolvedReturnType.classId == containingClass.classId &&
             constructor != null &&
-            unwrapped.resolvedContextReceivers.isEmpty() &&
-            unwrapped.typeParameterSymbols.isEmpty() &&
-            unwrapped.receiverParameter == null &&
-            unwrapped.valueParameterSymbols.map { it.isVararg to it.resolvedReturnType } == constructor.valueParameterSymbols.map { it.isVararg to it.resolvedReturnType }
+            resolvedContextReceivers.isEmpty() &&
+            typeParameterSymbols.isEmpty() &&
+            receiverParameter == null &&
+            valueParameterSymbols.map { it.isVararg to it.resolvedReturnType } == constructor.valueParameterSymbols.map { it.isVararg to it.resolvedReturnType }
 }
