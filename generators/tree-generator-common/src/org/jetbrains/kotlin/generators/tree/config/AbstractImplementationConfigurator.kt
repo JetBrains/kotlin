@@ -263,7 +263,7 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Eleme
          */
         fun defaultEmptyList(vararg fields: String, withGetter: Boolean = false) {
             for (field in fields) {
-                require(fieldContainer[field].origin is ListField) {
+                require(fieldContainer[field] is ListField) {
                     "$field is list field"
                 }
                 default(field) {

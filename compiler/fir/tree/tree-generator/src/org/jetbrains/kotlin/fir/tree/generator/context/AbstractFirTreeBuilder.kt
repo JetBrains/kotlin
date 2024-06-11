@@ -73,7 +73,7 @@ abstract class AbstractFirTreeBuilder() : AbstractElementConfigurator<Element, F
             baseType,
             withReplace = withReplace,
             isChild = isChild,
-            useMutableOrEmpty = useMutableOrEmpty,
+            isMutableOrEmptyList = useMutableOrEmpty,
             withTransform = withTransform,
         ).apply(initializer)
     }

@@ -21,9 +21,6 @@ sealed class Field(
 
     override var customSetter: String? = null
 
-    override val origin: Field
-        get() = this
-
     override fun toString() = "$name: $typeRef"
 
     override var isFinal: Boolean = false

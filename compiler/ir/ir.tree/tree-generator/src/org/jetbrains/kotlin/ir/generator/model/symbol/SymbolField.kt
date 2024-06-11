@@ -17,10 +17,6 @@ class SymbolField(
     override var typeRef: TypeRefWithNullability,
     override var isMutable: Boolean,
 ) : AbstractField<SymbolField>() {
-
-    override val origin: SymbolField
-        get() = this
-
     override val isFinal: Boolean
         get() = false
 

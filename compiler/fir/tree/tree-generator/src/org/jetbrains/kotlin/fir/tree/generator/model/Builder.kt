@@ -5,6 +5,6 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.model
 
-typealias Builder = org.jetbrains.kotlin.generators.tree.Builder<FieldWithDefault, Element>
+typealias Builder = org.jetbrains.kotlin.generators.tree.Builder<Field, Element>
 
-typealias LeafBuilder = org.jetbrains.kotlin.generators.tree.LeafBuilder<FieldWithDefault, Element, Implementation>
+typealias LeafBuilder = org.jetbrains.kotlin.generators.tree.LeafBuilder<Field, Element, Implementation>

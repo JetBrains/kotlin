@@ -10,16 +10,17 @@ import org.jetbrains.kotlin.fir.tree.generator.firBuilderDslAnnotation
 import org.jetbrains.kotlin.fir.tree.generator.firImplementationDetailType
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
-import org.jetbrains.kotlin.fir.tree.generator.model.FieldWithDefault
+import org.jetbrains.kotlin.fir.tree.generator.model.FieldList
 import org.jetbrains.kotlin.fir.tree.generator.model.Implementation
 import org.jetbrains.kotlin.fir.tree.generator.toMutableOrEmptyImport
 import org.jetbrains.kotlin.generators.tree.AbstractBuilderPrinter
 import org.jetbrains.kotlin.generators.tree.ClassRef
+import org.jetbrains.kotlin.generators.tree.ListField
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 
 internal class BuilderPrinter(
     printer: ImportCollectingPrinter
-) : AbstractBuilderPrinter<Element, Implementation, FieldWithDefault, Field>(printer) {
+) : AbstractBuilderPrinter<Element, Implementation, Field, Field>(printer) {
 
     override val implementationDetailAnnotation: ClassRef<*>
         get() = firImplementationDetailType
@@ -29,16 +30,16 @@ internal class BuilderPrinter(
 
     override fun actualTypeOfField(field: Field) = field.getMutableType(forBuilder = true)
 
-    override fun ImportCollectingPrinter.printFieldReferenceInImplementationConstructorCall(field: FieldWithDefault) {
+    override fun ImportCollectingPrinter.printFieldReferenceInImplementationConstructorCall(field: Field) {
         print(field.name)
-        if (field.isMutableOrEmptyList) {
+        if (field is FieldList && field.isMutableOrEmptyList) {
             addImport(toMutableOrEmptyImport)
             print(".toMutableOrEmpty()")
         }
     }
 
     override fun copyField(
-        field: FieldWithDefault,
+        field: Field,
         originalParameterName: String,
         copyBuilderVariableName: String
     ) {

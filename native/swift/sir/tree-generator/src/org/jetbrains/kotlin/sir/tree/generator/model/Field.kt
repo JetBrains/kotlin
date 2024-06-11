@@ -12,10 +12,6 @@ abstract class Field(
     override val name: String,
     override var isMutable: Boolean,
 ) : AbstractField<Field>() {
-
-    override val origin: Field
-        get() = this
-
     override var customSetter: String? = null
 
     override var defaultValueInBuilder: String? = null

@@ -37,7 +37,7 @@ abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, Ele
     protected open fun copyField(field: BuilderField, originalParameterName: String, copyBuilderVariableName: String) {
         printer.run {
             when {
-                field.origin is ListField -> println(
+                field is ListField -> println(
                     copyBuilderVariableName,
                     ".",
                     field.name,
@@ -196,7 +196,7 @@ abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, Ele
     }
 
     private fun BuilderField.needBackingField(fieldIsUseless: Boolean) =
-        !nullable && origin !is ListField && if (fieldIsUseless) {
+        !nullable && this !is ListField && if (fieldIsUseless) {
             implementationDefaultStrategy?.defaultValue == null
         } else {
             defaultValueInBuilder == null
@@ -214,9 +214,9 @@ abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, Ele
             field.implementationDefaultStrategy?.withGetter == true
             && !fieldIsUseless || field.invisibleField
         ) return false to false
-        if (field.origin is ListField) {
+        if (field is ListField) {
             @Suppress("UNCHECKED_CAST")
-            printFieldListInBuilder(field.origin as ElementField, builder, fieldIsUseless)
+            printFieldListInBuilder(field as ElementField, builder, fieldIsUseless)
             return true to false
         }
         val defaultValue = if (fieldIsUseless)

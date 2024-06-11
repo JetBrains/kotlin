@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.tree.generator.model
 
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.generators.tree.imports.Importable
 
 sealed class Field : AbstractField<Field>() {
     abstract var withReplace: Boolean
@@ -14,13 +13,7 @@ sealed class Field : AbstractField<Field>() {
     abstract var withTransform: Boolean
     open var needTransformInOtherChildren: Boolean = false
 
-    open val isMutableOrEmptyList: Boolean
-        get() = false
-
     var withBindThis = true
-
-    override val origin: Field
-        get() = this
 
     override var defaultValueInBuilder: String? = null
 
@@ -39,12 +32,10 @@ sealed class Field : AbstractField<Field>() {
 
     override fun updateFieldsInCopy(copy: Field) {
         super.updateFieldsInCopy(copy)
-        if (copy !is FieldWithDefault) {
-            copy.withTransform = withTransform
-            copy.needTransformInOtherChildren = needTransformInOtherChildren
-            copy.customInitializationCall = customInitializationCall
-            copy.skippedInCopy = skippedInCopy
-        }
+        copy.withTransform = withTransform
+        copy.needTransformInOtherChildren = needTransformInOtherChildren
+        copy.customInitializationCall = customInitializationCall
+        copy.skippedInCopy = skippedInCopy
     }
 
     override fun updatePropertiesFromOverriddenFields(parentFields: List<Field>) {
@@ -53,73 +44,6 @@ sealed class Field : AbstractField<Field>() {
         needTransformInOtherChildren = needTransformInOtherChildren || parentFields.any { it.needTransformInOtherChildren }
         withReplace = withReplace || parentFields.any { it.withReplace }
     }
-}
-
-// ----------- Field with default -----------
-
-class FieldWithDefault(override val origin: Field) : Field() {
-    override val name: String get() = origin.name
-    override val typeRef: TypeRefWithNullability get() = origin.typeRef
-    override var isVolatile: Boolean = origin.isVolatile
-    override var withReplace: Boolean
-        get() = origin.withReplace
-        set(_) {}
-    override val isChild: Boolean
-        get() = origin.isChild
-    override val containsElement: Boolean
-        get() = origin.containsElement
-    override var withTransform: Boolean
-        get() = origin.withTransform
-        set(_) {}
-
-    override var needTransformInOtherChildren: Boolean
-        get() = origin.needTransformInOtherChildren
-        set(_) {}
-
-    override var isFinal: Boolean
-        get() = origin.isFinal
-        set(_) {}
-
-    override var isParameter: Boolean
-        get() = origin.isParameter
-        set(_) {}
-
-    override var customInitializationCall: String?
-        get() = origin.customInitializationCall
-        set(_) {}
-
-    override var optInAnnotation: ClassRef<*>?
-        get() = origin.optInAnnotation
-        set(_) {}
-
-    override var replaceOptInAnnotation: ClassRef<*>?
-        get() = origin.replaceOptInAnnotation
-        set(_) {}
-
-    override var implementationDefaultStrategy: ImplementationDefaultStrategy? = origin.implementationDefaultStrategy
-    override var defaultValueInBuilder: String? = null
-    override var isMutable: Boolean = origin.isMutable
-    override val isMutableOrEmptyList: Boolean
-        get() = origin.isMutableOrEmptyList
-
-    override var customSetter: String? = null
-    override val overriddenFields: MutableSet<Field>
-        get() = origin.overriddenFields
-
-    override val arbitraryImportables: MutableList<Importable>
-        get() = origin.arbitraryImportables
-
-    override var skippedInCopy: Boolean
-        get() = origin.skippedInCopy
-        set(_) {}
-
-    override fun internalCopy(): Field {
-        return FieldWithDefault(origin).also {
-            it.isMutable = isMutable
-        }
-    }
-
-    override fun substituteType(map: TypeParameterSubstitutionMap) {}
 }
 
 class SingleField(
@@ -162,7 +86,7 @@ class FieldList(
     override var withReplace: Boolean,
     override var withTransform: Boolean,
     override val isChild: Boolean,
-    useMutableOrEmpty: Boolean = false,
+    val isMutableOrEmptyList: Boolean = false,
 ) : Field(), ListField {
     override val typeRef: ClassRef<PositionTypeParameterRef>
         get() = super.typeRef
@@ -173,7 +97,6 @@ class FieldList(
     override var isVolatile: Boolean = false
     override var isFinal: Boolean = false
     override var isMutable: Boolean = true
-    override val isMutableOrEmptyList: Boolean = useMutableOrEmpty
     override var isParameter: Boolean = false
 
     override fun internalCopy(): Field {
