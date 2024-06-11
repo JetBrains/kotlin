@@ -388,13 +388,12 @@ private class Fir2IrPipeline(
         }
     }
 
-    /** If `stdlibCompilation` mode is enabled, there are files with synthetic declarations.
+    /** If `stdlibCompilation` mode is enabled, there could be files with synthetic declarations.
      *  All of them should be generated before FIR2IR conversion and removed after the actualizaiton.
      */
     private fun Fir2IrConversionResult.removeGeneratedBuiltinsDeclarationsIfNeeded() {
         if (fir2IrConfiguration.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)) {
-            val isAnyFileRemoved = mainIrFragment.files.removeAll { it.name == generatedBuiltinsDeclarationsFileName }
-            require(isAnyFileRemoved)
+            mainIrFragment.files.removeAll { it.name == generatedBuiltinsDeclarationsFileName }
         }
     }
 }

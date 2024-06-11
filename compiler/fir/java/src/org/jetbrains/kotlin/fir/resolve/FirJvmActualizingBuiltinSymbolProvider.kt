@@ -5,25 +5,26 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
-import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.hasAnnotationOrInsideAnnotatedClass
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 /**
  * It's initialized on the top of module-based providers for platform source sets.
+ * It shouldn't be used if platform source-set is single (for jdk7, jdk8 modules)
  *
  * If compiler encounters an actual declaration with a corresponding expect one
  * marked with `ActualizeByJvmBuiltinProvider` annotation, then
@@ -35,24 +36,11 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  *
  * Those actuals can be treated as declarations in a virtual file
  */
-class FirJvmActualizingBuiltinSymbolProvider private constructor(
+class FirJvmActualizingBuiltinSymbolProvider(
     session: FirSession,
     kotlinScopeProvider: FirKotlinScopeProvider,
     private val refinedSourceSymbolProviders: List<FirSymbolProvider>,
 ) : FirSymbolProvider(session) {
-    companion object {
-        fun initializeIfNeeded(
-            session: FirSession,
-            kotlinScopeProvider: FirKotlinScopeProvider,
-            dependencies: List<FirSymbolProvider>,
-        ): FirJvmActualizingBuiltinSymbolProvider? {
-            return runIf(session.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation) && !session.moduleData.isCommon) {
-                val refinedSourceSymbolProviders = dependencies.filter { it.session.kind == FirSession.Kind.Source }
-                FirJvmActualizingBuiltinSymbolProvider(session, kotlinScopeProvider, refinedSourceSymbolProviders)
-            }
-        }
-    }
-
     val builtinSymbolProvider: FirBuiltinSymbolProvider = FirBuiltinSymbolProvider(session, session.moduleData, kotlinScopeProvider)
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? {
