@@ -35,8 +35,8 @@ lincheck="2.28.1"
 xerces = "2.12.2"
 # Compose versions used for Compose compiler plugin tests
 compose-stable = "1.7.0-alpha08"
-compose-snapshot-id = "11811585"
-compose-snapshot-version = "1.7.0-SNAPSHOT"
+compose-snapshot-id = "11953424"
+compose-snapshot-version = "1.8.0-SNAPSHOT"
 
 [libraries]
 dexMemberList = { module = "com.jakewharton.dex:dex-member-list", version.ref = "dexMemberList" }
