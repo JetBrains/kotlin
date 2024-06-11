@@ -109,13 +109,11 @@ internal class IrVisibilityChecker(
         )
 
         val isVisible = when (effectiveVisibility) {
-            is EffectiveVisibility.PackagePrivate ->
-                file.packageFqName == referencedDeclaration.getPackageFragment().packageFqName
             is EffectiveVisibility.Internal, is EffectiveVisibility.InternalProtected, is EffectiveVisibility.InternalProtectedBound ->
                 referencedDeclaration.isVisibleAsInternal()
             is EffectiveVisibility.Local, is EffectiveVisibility.PrivateInClass, is EffectiveVisibility.PrivateInFile ->
                 referencedDeclaration.isVisibleAsPrivate()
-            is EffectiveVisibility.Protected, is EffectiveVisibility.ProtectedBound, is EffectiveVisibility.Public -> true
+            is EffectiveVisibility.PackagePrivate, is EffectiveVisibility.Protected, is EffectiveVisibility.ProtectedBound, is EffectiveVisibility.Public -> true
             is EffectiveVisibility.Unknown, null -> false // We shouldn't encounter unknown visibilities at this point
         }
 
