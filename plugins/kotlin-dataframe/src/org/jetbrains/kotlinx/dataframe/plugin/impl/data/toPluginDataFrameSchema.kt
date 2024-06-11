@@ -1,10 +1,10 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.data
 
 import kotlinx.serialization.Serializable
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SimpleCol
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SimpleColumnGroup
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SimpleFrameColumn
+import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
+import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
+import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
+import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjectionIn
 import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjectionOut

@@ -70,10 +70,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SimpleCol
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SimpleColumnGroup
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SimpleFrameColumn
+import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
+import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
+import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
+import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
 import kotlin.math.abs
 
 @OptIn(FirExtensionApiInternals::class)

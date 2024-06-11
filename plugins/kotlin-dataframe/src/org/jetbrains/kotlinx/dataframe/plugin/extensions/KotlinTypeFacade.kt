@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PluginDataFrameSchema
+import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection

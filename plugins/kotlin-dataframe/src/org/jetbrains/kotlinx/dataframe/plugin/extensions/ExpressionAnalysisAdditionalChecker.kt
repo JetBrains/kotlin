@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PluginDataFrameSchema
+import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
 
 class ExpressionAnalysisAdditionalChecker(
     session: FirSession,
