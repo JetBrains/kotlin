@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
@@ -33,7 +32,7 @@ import org.jetbrains.kotlin.resolve.DataClassResolver
 object FirDataClassCopyUsageWillBecomeInaccessibleChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         if (expression !is FirFunctionCall && expression !is FirCallableReferenceAccess) return
-        val copyFunction = (expression.calleeReference.symbol as? FirCallableSymbol)?.unwrapSubstitutionOverrides() ?: return
+        val copyFunction = expression.calleeReference.symbol as? FirCallableSymbol ?: return
         val dataClass = copyFunction.dispatchReceiverType?.toRegularClassSymbol(context.session) ?: return
         if (copyFunction.isDataClassCopy(dataClass, context.session)) {
             val dataClassConstructor = dataClass.primaryConstructorSymbol(context.session) ?: return
@@ -67,18 +66,22 @@ object FirDataClassCopyUsageWillBecomeInaccessibleChecker : FirQualifiedAccessEx
     }
 }
 
-internal fun FirCallableSymbol<*>.isDataClassCopy(containingClass: FirClassSymbol<*>?, session: FirSession): Boolean {
+internal fun FirCallableSymbol<*>.isDataClassCopy(containingClass: FirClassSymbol<*>?, session: FirSession): Boolean =
+    _isDataClassCopy(this, containingClass, session)
+@Suppress("FunctionName")
+private fun _isDataClassCopy(potentialCopy: FirCallableSymbol<*>, containingClass: FirClassSymbol<*>?, session: FirSession): Boolean {
+    val unwrapped = potentialCopy.unwrapSubstitutionOverrides()
     val constructor = containingClass?.primaryConstructorSymbol(session)
-    return this is FirNamedFunctionSymbol &&
-            DataClassResolver.isCopy(name) &&
+    return unwrapped is FirNamedFunctionSymbol &&
+            DataClassResolver.isCopy(unwrapped.name) &&
             containingClass != null &&
             containingClass.isData &&
             containingClass.classKind.isClass &&
-            dispatchReceiverType?.classId == containingClass.classId &&
-            resolvedReturnType.classId == containingClass.classId &&
+            unwrapped.dispatchReceiverType?.classId == containingClass.classId &&
+            unwrapped.resolvedReturnType.classId == containingClass.classId &&
             constructor != null &&
-            resolvedContextReceivers.isEmpty() &&
-            typeParameterSymbols.isEmpty() &&
-            receiverParameter == null &&
-            valueParameterSymbols.map { it.isVararg to it.resolvedReturnType } == constructor.valueParameterSymbols.map { it.isVararg to it.resolvedReturnType }
+            unwrapped.resolvedContextReceivers.isEmpty() &&
+            unwrapped.typeParameterSymbols.isEmpty() &&
+            unwrapped.receiverParameter == null &&
+            unwrapped.valueParameterSymbols.map { it.isVararg to it.resolvedReturnType } == constructor.valueParameterSymbols.map { it.isVararg to it.resolvedReturnType }
 }
