@@ -69,8 +69,7 @@ object FirDataClassCopyUsageWillBecomeInaccessibleChecker : FirQualifiedAccessEx
 }
 
 internal fun FirCallableSymbol<*>.isDataClassCopy(containingClass: FirClassSymbol<*>?, session: FirSession): Boolean {
-    val unwrapped = unwrapSubstitutionOverrides()
-    with(unwrapped) { // Shadow "non-normalized" this
+    with(unwrapSubstitutionOverrides()) { // Shadow "non-normalized" this
         val constructor = containingClass?.primaryConstructorSymbol(session)
         return this is FirNamedFunctionSymbol &&
                 DataClassResolver.isCopy(name) &&
