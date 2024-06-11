@@ -123,7 +123,7 @@ class Fir2IrDeclarationStorage(
             return if (fir.origin == FirDeclarationOrigin.CommonArtefact) {
                 when (fir) {
                     is FirSyntheticProperty -> synthetic.getCachedIrSymbolByCommonFunction(fir.cacheKey)
-                    else -> normal.getCachedIrSymbolByCommonProperty(fir)
+                    else -> normal.getCachedIrSymbolByCommonCallable(fir)
                 }
             } else null
         }
@@ -1417,8 +1417,8 @@ private fun FirCallableDeclaration.isFakeOverrideImpl(fakeOverrideOwnerLookupTag
     return fakeOverrideOwnerLookupTag != containingClassLookupTag()
 }
 
-private inline fun <reified FC : FirCallableDeclaration, reified IS : IrSymbol> Map<FC, IS>.getCachedIrSymbolByCommonDeclaration(
-    isSame: (FC) -> Boolean
+internal inline fun <reified FD : FirDeclaration, reified IS : IrSymbol> Map<FD, IS>.getCachedIrSymbolByCommonDeclaration(
+    isSame: (FD) -> Boolean
 ): IS? {
     return asIterable().find {
         isSame(it.key)
@@ -1435,17 +1435,19 @@ private inline fun <reified FF : FirFunction, reified IS : IrSymbol> Map<FF, IS>
     val argTypes = firFunction.valueParameters.map { it.returnTypeRef.coneType }
     return getCachedIrSymbolByCommonDeclaration {
         it.symbol.callableId == callableId && it.receiverParameter?.typeRef?.coneType == receiver &&
-                it.valueParameters.map { it.returnTypeRef.coneType } == argTypes
+                it.valueParameters.map { it.returnTypeRef.coneType } == argTypes &&
+                it.symbol.isExpect == firFunction.symbol.isExpect
     }
 }
 
-private inline fun <reified FP : FirProperty, reified IS : IrSymbol> Map<FP, IS>.getCachedIrSymbolByCommonProperty(
-    firProperty: FP,
+internal inline fun <reified FC : FirCallableDeclaration, reified IS : IrSymbol> Map<FC, IS>.getCachedIrSymbolByCommonCallable(
+    firCallable: FC,
 ): IS? {
-    val callableId = firProperty.symbol.callableId
-    val receiver = firProperty.receiverParameter?.typeRef?.coneType
+    val callableId = firCallable.symbol.callableId
+    val receiver = firCallable.receiverParameter?.typeRef?.coneType
     return getCachedIrSymbolByCommonDeclaration {
-        it.symbol.callableId == callableId && it.receiverParameter?.typeRef?.coneType == receiver
+        it.symbol.callableId == callableId && it.receiverParameter?.typeRef?.coneType == receiver &&
+                it.symbol.isExpect == firCallable.symbol.isExpect
     }
 }
 

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.backend.generators.isExternalParent
 import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -33,7 +34,7 @@ class Fir2IrClassifierStorage(
     commonMemberStorage: Fir2IrCommonMemberStorage,
     private val conversionScope: Fir2IrConversionScope,
 ) : Fir2IrComponents by c {
-    private val classCache: MutableMap<FirRegularClass, IrClassSymbol> = commonMemberStorage.classCache
+    private val classCache: MutableMap<FirClass, IrClassSymbol> = commonMemberStorage.classCache
     private val notFoundClassCache: ConcurrentHashMap<ConeClassLikeLookupTag, IrClass> = commonMemberStorage.notFoundClassCache
 
     private val typeAliasCache: MutableMap<FirTypeAlias, IrTypeAliasSymbol> = mutableMapOf()
@@ -235,7 +236,7 @@ class Fir2IrClassifierStorage(
 
     private fun getCachedIrClass(klass: FirClass): IrClass? {
         @OptIn(UnsafeDuringIrConstructionAPI::class)
-        return getCachedIrLocalClass(klass) ?: classCache[klass]?.owner
+        return getCachedIrLocalClass(klass) ?: classCache.getCachedIrSymbolByCommonClassLike(klass)?.owner
     }
 
     fun getIrClassSymbol(firClassSymbol: FirClassSymbol<*>): IrClassSymbol {
@@ -331,7 +332,7 @@ class Fir2IrClassifierStorage(
     }
 
     fun getIrEnumEntrySymbol(enumEntry: FirEnumEntry): IrEnumEntrySymbol {
-        enumEntryCache[enumEntry]?.let { return it }
+        enumEntryCache.getCachedIrSymbolByCommonCallable(enumEntry)?.let { return it }
 
         val symbol = IrEnumEntrySymbolImpl()
         enumEntryCache[enumEntry] = symbol
@@ -386,7 +387,7 @@ class Fir2IrClassifierStorage(
     internal fun getCachedTypeAlias(firTypeAlias: FirTypeAlias): IrTypeAlias? {
         // Type alias should be created at this point
         @OptIn(UnsafeDuringIrConstructionAPI::class)
-        return typeAliasCache[firTypeAlias]?.owner
+        return typeAliasCache.getCachedIrSymbolByCommonClassLike(firTypeAlias)?.owner
     }
 
     fun getIrTypeAliasSymbol(firTypeAliasSymbol: FirTypeAliasSymbol): IrTypeAliasSymbol {
@@ -422,5 +423,14 @@ class Fir2IrClassifierStorage(
         return classifiersGenerator.createCodeFragmentClass(codeFragment, containingFile, symbol).also {
             codeFragmentCache[codeFragment] = it
         }
+    }
+}
+
+private inline fun <reified FP : FirClassLikeDeclaration, reified IS : IrSymbol> Map<FP, IS>.getCachedIrSymbolByCommonClassLike(
+    firclassLike: FP,
+): IS? {
+    val classId = firclassLike.symbol.classId
+    return getCachedIrSymbolByCommonDeclaration {
+        it.symbol.classId == classId && it.symbol.isExpect == firclassLike.symbol.isExpect
     }
 }

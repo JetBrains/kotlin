@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap
 class Fir2IrCommonMemberStorage {
     val lock: IrLock = IrLock()
 
-    val classCache: MutableMap<FirRegularClass, IrClassSymbol> = mutableMapOf()
+    val classCache: MutableMap<FirClass, IrClassSymbol> = mutableMapOf()
     val notFoundClassCache: ConcurrentHashMap<ConeClassLikeLookupTag, IrClass> = ConcurrentHashMap()
 
     val typeParameterCache: MutableMap<FirTypeParameter, IrTypeParameter> = mutableMapOf()
