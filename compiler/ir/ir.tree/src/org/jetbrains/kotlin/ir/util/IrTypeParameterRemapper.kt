@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.util
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrTypeAbbreviationImpl
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
  * This remapper restores validity by redirecting those references to new type parameters.
  */
 class IrTypeParameterRemapper(
-    private val typeParameterMap: Map<IrTypeParameter, IrTypeParameter>
+    private val typeParameterMap: Map<IrTypeParameterSymbol, IrTypeParameterSymbol>
 ) : TypeRemapper {
     override fun enterScope(irTypeParametersContainer: IrTypeParametersContainer) {}
     override fun leaveScope() {}
@@ -39,8 +40,7 @@ class IrTypeParameterRemapper(
             }
 
     private fun IrClassifierSymbol.remap() =
-        (owner as? IrTypeParameter)?.let { typeParameterMap[it]?.symbol }
-            ?: this
+        typeParameterMap[this] ?: this
 
     private fun IrTypeArgument.remap() =
         when (this) {
@@ -58,3 +58,6 @@ class IrTypeParameterRemapper(
             annotations.forEach { it.remapTypes(this@IrTypeParameterRemapper) }
         }
 }
+
+fun IrTypeParameterRemapper(typeParameterMap: Map<IrTypeParameter, IrTypeParameter>) =
+    IrTypeParameterRemapper(typeParameterMap.entries.associate { it.value.symbol to it.key.symbol })
