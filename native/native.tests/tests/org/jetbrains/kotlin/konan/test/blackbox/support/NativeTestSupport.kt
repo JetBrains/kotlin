@@ -246,7 +246,6 @@ object NativeTestSupport {
         output += computeTestKind(enforcedProperties)
         output += computeForcedNoopTestRunner(enforcedProperties)
         output += computeSharedExecutionTestRunner(enforcedProperties)
-        output += computeTimeouts(enforcedProperties)
         // Parse annotations of current class, since there's no way to put annotations to upper-level enclosing class
         output += computePipelineType(enforcedProperties, testClass.get())
         output += computeUsedPartialLinkageConfig(enclosingTestClass)
@@ -254,6 +253,9 @@ object NativeTestSupport {
         output += computeBinaryLibraryKind(enforcedProperties)
         output += computeCInterfaceMode(enforcedProperties)
         output += computeXCTestRunner(enforcedProperties, nativeTargets)
+
+        // Compute tests timeouts with regard to already calculated properties that may affect execution time
+        output += computeTimeouts(enforcedProperties, output)
 
         return nativeTargets
     }
@@ -384,12 +386,19 @@ object NativeTestSupport {
             )
         )
 
-    private fun computeTimeouts(enforcedProperties: EnforcedProperties): Timeouts {
-        val executionTimeout = ClassLevelProperty.EXECUTION_TIMEOUT.readValue(
+    private fun computeTimeouts(enforcedProperties: EnforcedProperties, output: MutableCollection<Any>): Timeouts {
+        var executionTimeout = ClassLevelProperty.EXECUTION_TIMEOUT.readValue(
             enforcedProperties,
             { Duration.parseOrNull(it) },
             default = Timeouts.DEFAULT_EXECUTION_TIMEOUT
         )
+
+        // Aggressively adjust timeout in case of an aggressive scheduler
+        val scheduler = output.filterIsInstance<GCScheduler>().firstOrNull()
+        if (scheduler == GCScheduler.AGGRESSIVE) {
+            executionTimeout *= 2
+        }
+
         return Timeouts(executionTimeout)
     }
 
