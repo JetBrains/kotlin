@@ -87,8 +87,13 @@ class FirModuleDataImpl(
         get() = boundSession
             ?: error("module data ${this::class.simpleName}:${name} not bound to session")
 
-    override val allDependsOnDependencies: List<FirModuleData>
-        get() = topologicalSort(dependsOnDependencies) { it.dependsOnDependencies }
+    override var allDependsOnDependencies: List<FirModuleData> = topologicalSort(dependsOnDependencies) { it.dependsOnDependencies }
+        private set
+
+    fun updateDependsOn(dependencies: List<FirModuleData>) {
+        dependsOnDependencies = dependencies
+        allDependsOnDependencies = topologicalSort(dependsOnDependencies) { it.dependsOnDependencies }
+    }
 }
 
 val FirSession.nullableModuleData: FirModuleData? by FirSession.nullableSessionComponentAccessor()

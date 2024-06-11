@@ -161,25 +161,27 @@ abstract class FirAbstractSessionFactory {
         }
         val newLibrarySessionProviders = mutableListOf<FirSymbolProvider>()
         (moduleData as? FirModuleDataImpl)?.let { moduleDataImpl ->
-            moduleDataImpl.dependsOnDependencies = moduleDataImpl.dependsOnDependencies.map {
-                val session = sessionProvider?.getSession(it) ?: return@map it
-                if (session.moduleData.isCommon) {
-                    FirModuleDataImpl(
-                        Name.special("<common-from-${it.name.asStringStripSpecialMarkers()}>"),
-                        it.dependencies, it.dependsOnDependencies, it.friendDependencies, it.platform, it.capabilities, it.isCommon,
-                    ).also { newModuleData ->
-                        (sessionProvider as FirProjectSessionProvider).registerSession(newModuleData, newLibrarySession)
-                        newModuleData.bindSession(newLibrarySession)
-                        newLibrarySessionProviders +=
-                            LazySerializedMetadataSymbolProvider(
-                                newLibrarySession,
-                                SingleModuleDataProvider(newModuleData),
-                                kotlinScopeProvider,
-                                { session.serializedMetadata?.serializedMetadata }
-                            )
-                    }
-                } else it
-            }
+            moduleDataImpl.updateDependsOn(
+                moduleDataImpl.dependsOnDependencies.map {
+                    val session = sessionProvider?.getSession(it) ?: return@map it
+                    if (session.moduleData.isCommon) {
+                        FirModuleDataImpl(
+                            Name.special("<common-from-${it.name.asStringStripSpecialMarkers()}>"),
+                            it.dependencies, it.dependsOnDependencies, it.friendDependencies, it.platform, it.capabilities, it.isCommon,
+                        ).also { newModuleData ->
+                            (sessionProvider as FirProjectSessionProvider).registerSession(newModuleData, newLibrarySession)
+                            newModuleData.bindSession(newLibrarySession)
+                            newLibrarySessionProviders +=
+                                LazySerializedMetadataSymbolProvider(
+                                    newLibrarySession,
+                                    SingleModuleDataProvider(newModuleData),
+                                    kotlinScopeProvider,
+                                    { session.serializedMetadata?.serializedMetadata }
+                                )
+                        }
+                    } else it
+                }
+            )
         }
         if (newLibrarySessionProviders.isNotEmpty()) {
             val symbolProvider = FirCachingCompositeSymbolProvider(newLibrarySession, newLibrarySessionProviders)

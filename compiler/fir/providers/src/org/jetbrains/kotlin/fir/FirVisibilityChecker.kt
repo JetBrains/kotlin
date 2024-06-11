@@ -34,13 +34,13 @@ abstract class FirModuleVisibilityChecker : FirSessionComponent {
 
     class Standard(val session: FirSession) : FirModuleVisibilityChecker() {
         private val useSiteModuleData = session.moduleData
-        private val allDependsOnDependencies = useSiteModuleData.allDependsOnDependencies
 
         override fun isInFriendModule(declaration: FirMemberDeclaration): Boolean {
             return when (declaration.moduleData) {
                 useSiteModuleData,
                 in useSiteModuleData.friendDependencies,
-                in allDependsOnDependencies -> true
+                in useSiteModuleData.allDependsOnDependencies
+                -> true
 
                 else -> false
             }
