@@ -5,20 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 
-public abstract class KaSubstitutorProvider : KaSessionComponent() {
-    public abstract fun createSubstitutor(
-        subClass: KaClassOrObjectSymbol,
-        superClass: KaClassOrObjectSymbol,
-    ): KaSubstitutor?
-}
-
-public typealias KtSubstitutorProvider = KaSubstitutorProvider
-
-public interface KaSubstitutorProviderMixIn : KaSessionMixIn {
+public interface KaSubstitutorProvider {
     /**
      * Creates a [KaSubstitutor] based on the inheritance relationship between [subClass] and [superClass].
      *
@@ -42,12 +32,5 @@ public interface KaSubstitutorProviderMixIn : KaSessionMixIn {
      * @param superClass the super class symbol.
      * @return [KaSubstitutor] if [subClass] inherits [superClass] and there are no error types in the inheritance path. Returns `null` otherwise.
      */
-    public fun createInheritanceTypeSubstitutor(
-        subClass: KaClassOrObjectSymbol,
-        superClass: KaClassOrObjectSymbol,
-    ): KaSubstitutor? = withValidityAssertion {
-        analysisSession.substitutorProvider.createSubstitutor(subClass, superClass)
-    }
+    public fun createInheritanceTypeSubstitutor(subClass: KaClassOrObjectSymbol, superClass: KaClassOrObjectSymbol): KaSubstitutor?
 }
-
-public typealias KtSubstitutorProviderMixIn = KaSubstitutorProviderMixIn

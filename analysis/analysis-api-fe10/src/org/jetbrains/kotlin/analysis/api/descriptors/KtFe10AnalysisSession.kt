@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.descriptors
 import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.NotSupportedForK1Exception
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.descriptors.components.*
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAnalysisScopeProviderImpl
@@ -47,6 +46,7 @@ class KaFe10Session(
     resolveExtensionInfoProvider = KaFe10ResolveExtensionInfoProvider(analysisSessionProvider, token),
     compilerFacility = KaFe10CompilerFacility(analysisSessionProvider, token),
     metadataCalculator = KaFe10MetadataCalculator(analysisSessionProvider, token),
+    substitutorProvider = KaFe10SubstitutorProvider(analysisSessionProvider, token),
     dataFlowProvider = KaFe10DataFlowProvider(analysisSessionProvider, token),
     sourceProvider = KaFe10SourceProvider(analysisSessionProvider, token)
 ) {
@@ -56,8 +56,4 @@ class KaFe10Session(
     override val expressionInfoProviderImpl: KaExpressionInfoProvider = KaFe10ExpressionInfoProvider(this)
     override val symbolInfoProviderImpl: KaSymbolInfoProvider = KaFe10SymbolInfoProvider(this)
     override val substitutorFactoryImpl: KaSubstitutorFactory = KaFe10SubstitutorFactory(this)
-
-    @Suppress("AnalysisApiMissingLifetimeCheck")
-    override val substitutorProviderImpl: KaSubstitutorProvider
-        get() = throw NotSupportedForK1Exception()
 }

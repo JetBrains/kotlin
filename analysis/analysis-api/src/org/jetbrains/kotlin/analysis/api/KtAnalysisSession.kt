@@ -76,6 +76,7 @@ public abstract class KaSession(
     resolveExtensionInfoProvider: KaResolveExtensionInfoProvider,
     compilerFacility: KaCompilerFacility,
     metadataCalculator: KaMetadataCalculator,
+    substitutorProvider: KaSubstitutorProvider,
     dataFlowProvider: KaDataFlowProvider,
     sourceProvider: KaSourceProvider,
 ) : KaLifetimeOwner,
@@ -105,7 +106,7 @@ public abstract class KaSession(
     KaResolveExtensionInfoProvider by resolveExtensionInfoProvider,
     KaCompilerFacility by compilerFacility,
     KaMetadataCalculator by metadataCalculator,
-    KaSubstitutorProviderMixIn,
+    KaSubstitutorProvider by substitutorProvider,
     KaDataFlowProvider by dataFlowProvider,
     KaSourceProvider by sourceProvider
 {
@@ -132,9 +133,6 @@ public abstract class KaSession(
     @KaAnalysisApiInternals
     public val substitutorFactory: KaSubstitutorFactory get() = substitutorFactoryImpl
     protected abstract val substitutorFactoryImpl: KaSubstitutorFactory
-
-    internal val substitutorProvider: KaSubstitutorProvider get() = substitutorProviderImpl
-    protected abstract val substitutorProviderImpl: KaSubstitutorProvider
 }
 
 public typealias KtAnalysisSession = KaSession
