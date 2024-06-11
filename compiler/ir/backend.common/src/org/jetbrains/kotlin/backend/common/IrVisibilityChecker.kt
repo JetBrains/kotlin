@@ -69,6 +69,12 @@ internal class IrVisibilityChecker(
     }
 
     override fun visitElement(element: IrElement) {
+
+        // Don't validate the standard library.
+        // Since we're always lowering the whole world on non-JVM backends, including the standard library, visibility violations there
+        // cause most compiler tests to fail, which we don't want.
+        if (module.name.asString() in setOf("<kotlin>", "<kotlin-test>")) return
+
         parentChain.push(element)
         element.acceptChildrenVoid(this)
         parentChain.pop()
