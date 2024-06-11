@@ -96,8 +96,6 @@ private constructor(
 
     override val visibilityCheckerImpl: KaVisibilityChecker = KaFirVisibilityChecker(this, token)
 
-    override val jvmTypeMapperImpl = KaFirJvmTypeMapper(this, token)
-
     override val typeProviderImpl = KaFirTypeProvider(this, token)
 
     override val typeInfoProviderImpl = KaFirTypeInfoProvider(this, token)

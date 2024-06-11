@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.org.objectweb.asm.Type
 
 public interface KaJavaInteroperabilityComponent {
     /**
@@ -62,6 +64,21 @@ public interface KaJavaInteroperabilityComponent {
 
     @Deprecated("Use 'asKaType()' instead.", replaceWith = ReplaceWith("asKaType(useSitePosition)"))
     public fun PsiType.asKtType(useSitePosition: PsiElement): KaType? = asKaType(useSitePosition)
+
+    /**
+     * Create ASM JVM type by corresponding KaType
+     *
+     * @see TypeMappingMode
+     */
+    public fun KaType.mapToJvmType(mode: TypeMappingMode = TypeMappingMode.DEFAULT): Type
+
+    @Deprecated("Use 'mapToJvmType()' instead.", replaceWith = ReplaceWith("mapToJvmType(mode)"))
+    public fun KaType.mapTypeToJvmType(mode: TypeMappingMode = TypeMappingMode.DEFAULT): Type = mapToJvmType(mode)
+
+    /**
+     * Returns true if the type is backed by a single JVM primitive type
+     */
+    public val KaType.isPrimitiveBacked: Boolean
 
     public val PsiClass.namedClassSymbol: KaNamedClassOrObjectSymbol?
 

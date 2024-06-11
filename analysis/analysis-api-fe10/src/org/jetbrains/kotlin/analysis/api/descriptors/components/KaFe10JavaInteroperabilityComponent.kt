@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.updateArgumentModeFromAnnotations
+import org.jetbrains.org.objectweb.asm.Type
 
 class KaFe10JavaInteroperabilityComponent(
     override val analysisSessionProvider: () -> KaFe10Session,
@@ -161,6 +162,17 @@ class KaFe10JavaInteroperabilityComponent(
     override fun PsiType.asKaType(useSitePosition: PsiElement): KaType? = withValidityAssertion {
         throw UnsupportedOperationException("Conversion to KtType is not supported in K1 implementation")
     }
+
+    override fun KaType.mapToJvmType(mode: TypeMappingMode): Type = withValidityAssertion {
+        val kotlinType = (this as KaFe10Type).fe10Type
+        return typeMapper.mapType(kotlinType, mode)
+    }
+
+    override val KaType.isPrimitiveBacked: Boolean
+        get() = withValidityAssertion {
+            val kotlinType = (this as KaFe10Type).fe10Type
+            return typeMapper.isPrimitiveBacked(kotlinType)
+        }
 
     override val PsiClass.namedClassSymbol: KaNamedClassOrObjectSymbol?
         get() = withValidityAssertion {

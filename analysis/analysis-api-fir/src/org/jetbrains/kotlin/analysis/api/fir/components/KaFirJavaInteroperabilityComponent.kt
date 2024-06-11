@@ -93,6 +93,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.updateArgumentModeFromAnnotations
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.org.objectweb.asm.Type
 
 internal class KaFirJavaInteroperabilityComponent(
     override val analysisSessionProvider: () -> KaFirSession,
@@ -227,6 +228,15 @@ internal class KaFirJavaInteroperabilityComponent(
         val coneKotlinType = (firTypeRef as? FirResolvedTypeRef)?.type ?: return null
         return coneKotlinType.asKtType()
     }
+
+    override fun KaType.mapToJvmType(mode: TypeMappingMode): Type = withValidityAssertion {
+        return analysisSession.useSiteSession.jvmTypeMapper.mapType(coneType, mode, sw = null, unresolvedQualifierRemapper = null)
+    }
+
+    override val KaType.isPrimitiveBacked: Boolean
+        get() = withValidityAssertion {
+            return analysisSession.useSiteSession.jvmTypeMapper.isPrimitiveBacked(coneType)
+        }
 
     override val PsiClass.namedClassSymbol: KaNamedClassOrObjectSymbol?
         get() = withValidityAssertion {
