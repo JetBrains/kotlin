@@ -21,13 +21,11 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.ArtifactCollection
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
-import org.gradle.api.internal.tasks.testing.TestDescriptorInternal
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
 import org.gradle.api.specs.Spec
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
-import org.gradle.api.tasks.testing.TestDescriptor
 import org.gradle.util.GradleVersion
 import java.io.File
 
@@ -48,18 +46,6 @@ internal fun checkGradleCompatibility(
 
 internal val AbstractArchiveTask.archivePathCompatible: File
     get() = archiveFile.get().asFile
-
-// Gradle dropped out getOwnerBuildOperationId. Workaround to build correct plugin for Gradle < 6.8
-// See https://github.com/gradle/gradle/commit/0296f4441ae69ad608cfef6a90fef3fdf314fa2c
-internal interface LegacyTestDescriptorInternal : TestDescriptor {
-    override fun getParent(): TestDescriptorInternal?
-
-    fun getId(): Any?
-
-    fun getOwnerBuildOperationId(): Any?
-
-    fun getClassDisplayName(): String?
-}
 
 /**
  * According to [Gradle 7.3 release notes](https://docs.gradle.org/7.3/release-notes.html#allow-plugin-authors-to-declare-tasks-as-untracked)

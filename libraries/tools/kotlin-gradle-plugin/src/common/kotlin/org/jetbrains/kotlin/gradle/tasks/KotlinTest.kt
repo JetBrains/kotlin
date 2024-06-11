@@ -73,7 +73,6 @@ abstract class KotlinTest : AbstractTestTask(), UsesVariantImplementationFactori
 
     override fun createTestExecuter() = TCServiceMessagesTestExecutor(
         execHandleFactory,
-        buildOperationExecutor,
         runListeners,
         ignoreTcsmOverflow,
         ignoreRunFailures,
