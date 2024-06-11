@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.imports.Importable
 
 sealed class Field : AbstractField<Field>() {
-    open var withReplace: Boolean = false
+    abstract var withReplace: Boolean
 
-    open var needsSeparateTransform: Boolean = false
+    abstract var withTransform: Boolean
     open var needTransformInOtherChildren: Boolean = false
 
     open val isMutableOrEmptyList: Boolean
@@ -40,7 +40,7 @@ sealed class Field : AbstractField<Field>() {
     override fun updateFieldsInCopy(copy: Field) {
         super.updateFieldsInCopy(copy)
         if (copy !is FieldWithDefault) {
-            copy.needsSeparateTransform = needsSeparateTransform
+            copy.withTransform = withTransform
             copy.needTransformInOtherChildren = needTransformInOtherChildren
             copy.customInitializationCall = customInitializationCall
             copy.skippedInCopy = skippedInCopy
@@ -49,7 +49,7 @@ sealed class Field : AbstractField<Field>() {
 
     override fun updatePropertiesFromOverriddenFields(parentFields: List<Field>) {
         super.updatePropertiesFromOverriddenFields(parentFields)
-        needsSeparateTransform = needsSeparateTransform || parentFields.any { it.needsSeparateTransform }
+        withTransform = withTransform || parentFields.any { it.withTransform }
         needTransformInOtherChildren = needTransformInOtherChildren || parentFields.any { it.needTransformInOtherChildren }
         withReplace = withReplace || parentFields.any { it.withReplace }
     }
@@ -68,8 +68,8 @@ class FieldWithDefault(override val origin: Field) : Field() {
         get() = origin.isChild
     override val containsElement: Boolean
         get() = origin.containsElement
-    override var needsSeparateTransform: Boolean
-        get() = origin.needsSeparateTransform
+    override var withTransform: Boolean
+        get() = origin.withTransform
         set(_) {}
 
     override var needTransformInOtherChildren: Boolean
@@ -128,6 +128,7 @@ class SingleField(
     override val isChild: Boolean,
     override var isMutable: Boolean,
     override var withReplace: Boolean,
+    override var withTransform: Boolean,
     override var isVolatile: Boolean = false,
     override var isFinal: Boolean = false,
     override var isParameter: Boolean = false,
@@ -140,6 +141,7 @@ class SingleField(
             isChild = isChild,
             isMutable = isMutable,
             withReplace = withReplace,
+            withTransform = withTransform,
             isVolatile = isVolatile,
             isFinal = isFinal,
             isParameter = isParameter,
@@ -158,6 +160,7 @@ class FieldList(
     override val name: String,
     override var baseType: TypeRef,
     override var withReplace: Boolean,
+    override var withTransform: Boolean,
     override val isChild: Boolean,
     useMutableOrEmpty: Boolean = false,
 ) : Field(), ListField {
@@ -178,6 +181,7 @@ class FieldList(
             name,
             baseType,
             withReplace,
+            withTransform,
             isChild,
             isMutableOrEmptyList
         )

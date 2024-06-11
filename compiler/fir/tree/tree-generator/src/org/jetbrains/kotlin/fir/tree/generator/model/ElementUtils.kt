@@ -15,23 +15,25 @@ fun field(
     type: TypeRefWithNullability,
     nullable: Boolean = false,
     withReplace: Boolean = false,
+    withTransform: Boolean = false,
     isChild: Boolean = true,
 ): Field {
     val isMutable = type is GenericElementOrRef<*> || withReplace
-    return SingleField(name, type.copy(nullable), isChild = isChild, isMutable = isMutable, withReplace = withReplace)
+    return SingleField(name, type.copy(nullable), isChild = isChild, isMutable = isMutable, withReplace = withReplace, withTransform = withTransform)
 }
 
 fun field(
     type: ClassOrElementRef,
     nullable: Boolean = false,
     withReplace: Boolean = false,
+    withTransform: Boolean = false,
     isChild: Boolean = true,
 ): Field {
     val name = when (type) {
         is ClassRef<*> -> type.simpleName
         is GenericElementOrRef<*> -> type.element.name
     }.replaceFirstChar(Char::lowercaseChar)
-    return field(name, type, nullable, withReplace, isChild)
+    return field(name, type = type, nullable = nullable, withReplace = withReplace, withTransform = withTransform, isChild = isChild)
 }
 
 // ----------- Field list -----------
@@ -40,20 +42,22 @@ fun listField(
     name: String,
     baseType: TypeRef,
     withReplace: Boolean = false,
+    withTransform: Boolean = false,
     useMutableOrEmpty: Boolean = false,
     isChild: Boolean = true,
 ): Field {
-    return FieldList(name, baseType, withReplace = withReplace, isChild = isChild, useMutableOrEmpty = useMutableOrEmpty)
+    return FieldList(name, baseType, withReplace = withReplace, isChild = isChild, useMutableOrEmpty = useMutableOrEmpty, withTransform = withTransform)
 }
 
 fun listField(
     elementOrRef: ElementOrRef,
     withReplace: Boolean = false,
+    withTransform: Boolean = false,
     useMutableOrEmpty: Boolean = false,
     isChild: Boolean = true,
 ): Field {
     val name = elementOrRef.element.name.replaceFirstChar(Char::lowercaseChar) + "s"
-    return FieldList(name, elementOrRef, withReplace = withReplace, isChild = isChild, useMutableOrEmpty = useMutableOrEmpty)
+    return listField(name, elementOrRef, withReplace = withReplace, isChild = isChild, useMutableOrEmpty = useMutableOrEmpty, withTransform = withTransform)
 }
 
 // ----------- Field set -----------
@@ -67,9 +71,4 @@ data class FieldSet(val fieldDefinitions: List<Field>) {
 
 fun fieldSet(vararg fields: Field): FieldSet {
     return FieldSet(fields.toList())
-}
-
-fun Field.withTransform(needTransformInOtherChildren: Boolean = false): Field = apply {
-    needsSeparateTransform = true
-    this.needTransformInOtherChildren = needTransformInOtherChildren
 }

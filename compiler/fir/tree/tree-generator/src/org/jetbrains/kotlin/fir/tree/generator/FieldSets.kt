@@ -30,8 +30,11 @@ object FieldSets {
             "annotations",
             annotation,
             withReplace = true,
-            useMutableOrEmpty = true
-        ).withTransform(needTransformInOtherChildren = true)
+            useMutableOrEmpty = true,
+            withTransform = true,
+        ).apply {
+            needTransformInOtherChildren = true
+        }
     )
 
     val typeParameters = fieldSet(listField("typeParameters", typeParameter))

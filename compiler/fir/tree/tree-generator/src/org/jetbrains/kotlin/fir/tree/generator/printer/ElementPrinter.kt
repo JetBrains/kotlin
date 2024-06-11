@@ -60,12 +60,12 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
             }
 
             for (field in allFields) {
-                if (!field.needsSeparateTransform) continue
+                if (!field.withTransform) continue
                 println()
                 transformFunctionDeclaration(
                     field = field,
                     returnType = element.withSelfArgs(),
-                    override = field.overriddenFields.any { it.needsSeparateTransform },
+                    override = field.overriddenFields.any { it.withTransform },
                     implementationKind = kind
                 )
                 println()

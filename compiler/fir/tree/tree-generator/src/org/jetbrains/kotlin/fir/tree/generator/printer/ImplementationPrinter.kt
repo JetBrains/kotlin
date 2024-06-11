@@ -191,7 +191,7 @@ internal class ImplementationPrinter(
 
                                 field.name in setOf("dispatchReceiver", "extensionReceiver") -> {}
 
-                                field.needsSeparateTransform -> {
+                                field.withTransform -> {
                                     if (!(element.needTransformOtherChildren && field.needTransformInOtherChildren)) {
                                         println("transform${field.name.replaceFirstChar(Char::uppercaseChar)}(transformer, data)")
                                     }
@@ -213,7 +213,7 @@ internal class ImplementationPrinter(
             }
 
             for (field in allFields) {
-                if (!field.needsSeparateTransform) continue
+                if (!field.withTransform) continue
                 println()
                 transformFunctionDeclaration(field, implementation, override = true, kind!!)
                 if (isInterface || isAbstract) {
@@ -251,7 +251,7 @@ internal class ImplementationPrinter(
                     printBlock {
                         for (field in allFields) {
                             if (!field.isMutable || !field.containsElement || field.name == "subjectVariable") continue
-                            if (!field.needsSeparateTransform) {
+                            if (!field.withTransform) {
                                 field.transform()
                             }
                             if (field.needTransformInOtherChildren) {
