@@ -179,7 +179,11 @@ object TestModuleStructureFactory {
             }
 
             for (libraryRoot in libraryRoots) {
-                check(libraryRoot.extension == "jar")
+                // Question from Anton Lakotka: Why this check is necessary? Is it used to ensure that classpath is not contaminated?
+                // For example for test: FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated$CodeFragments.testCommonContext
+                // the testModule can be common, and thus can receive non-jars
+                // but even for JVM we can pass unpacked classfiles. So I'll disable it for now.
+                //check(libraryRoot.extension == "jar")
 
                 val libraryModule = libraryCache(setOf(libraryRoot)) {
                     createLibraryModule(project, libraryRoot, JvmPlatforms.defaultJvmPlatform, testServices)

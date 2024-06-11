@@ -433,9 +433,7 @@ val distCommon = distTask<Sync>("distCommon") {
     destinationDir = File("$distDir/common")
     from(distCommonContents) {
         rename { name ->
-            name
-                .replace("-metadata.jar", "-common.jar")
-                .replace("-metadata-sources.jar", "-common-sources.jar")
+            name.replace("-metadata-sources.jar", "-common-sources.jar")
         }
     }
 }

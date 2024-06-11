@@ -2,5 +2,5 @@ $TESTDATA_DIR$/unsignedDeclarationsFromStdlib.kt
 -d
 $TEMP_DIR$
 -cp
-$TESTDATA_DIR$/../../../../dist/common/kotlin-stdlib-common.jar
+$TESTDATA_DIR$/../../../../dist/common/kotlin-stdlib-common.klib
 -Xallow-kotlin-package

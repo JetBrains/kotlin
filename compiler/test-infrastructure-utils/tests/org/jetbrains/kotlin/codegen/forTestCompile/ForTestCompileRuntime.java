@@ -16,7 +16,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.lang.System.*;
+import static java.lang.System.getProperty;
 import static org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.*;
 
 public class ForTestCompileRuntime {
@@ -60,7 +60,7 @@ public class ForTestCompileRuntime {
 
     @NotNull
     public static File stdlibCommonForTests() {
-        return propertyOrDist(KOTLIN_COMMON_STDLIB_PATH, "dist/common/kotlin-stdlib-common.jar");
+        return propertyOrDist(KOTLIN_COMMON_STDLIB_PATH, "dist/common/kotlin-stdlib-common.klib");
     }
 
     private static File propertyOrDist(String property, String distPath) {
