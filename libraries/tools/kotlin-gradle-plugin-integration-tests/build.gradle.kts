@@ -467,6 +467,8 @@ tasks.withType<Test> {
 
     systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
     systemProperty("runnerGradleVersion", gradle.gradleVersion)
+    systemProperty("composeSnapshotVersion", libs.versions.compose.snapshot.version.get())
+    systemProperty("composeSnapshotId", libs.versions.compose.snapshot.id.get())
 
     val installCocoapods = project.findProperty("installCocoapods") as String?
     if (installCocoapods != null) {

@@ -13,6 +13,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import kotlin.io.path.appendText
+import kotlin.io.path.createFile
 import kotlin.io.path.writeText
 
 @DisplayName("Compose compiler Gradle plugin")
@@ -213,6 +214,109 @@ class ComposeIT : KGPBaseTest() {
             )
 
             enableLocalBuildCache(localCacheDir)
+        }
+    }
+
+    @DisplayName("Run Compose compiler with runtime v1.0")
+    @GradleAndroidTest
+    @OtherGradlePluginTests
+    @TestMetadata("AndroidSimpleApp")
+    fun testComposePluginWithRuntimeV1_0(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        providedJdk: JdkVersions.ProvidedJdk
+    ) {
+        project(
+            projectName = "AndroidSimpleApp",
+            gradleVersion = gradleVersion,
+            buildJdk = providedJdk.location,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion)
+        ) {
+            buildGradle.modify { originalBuildScript ->
+                """
+                |plugins {
+                |    id "org.jetbrains.kotlin.plugin.compose"
+                |${originalBuildScript.substringAfter("plugins {")}
+                |
+                |dependencies {
+                |    implementation "androidx.compose.runtime:runtime:1.0.0"
+                |}
+                """.trimMargin()
+            }
+
+            gradleProperties.appendText(
+                """
+                android.useAndroidX=true
+                """.trimIndent()
+            )
+
+            val composableFile = projectPath.resolve("src/main/kotlin/com/example/Compose.kt").createFile()
+            composableFile.appendText(
+                """
+                |package com.example
+                |
+                |import androidx.compose.runtime.Composable
+                |
+                |@Composable fun Test() { Test() }
+            """.trimMargin())
+
+            build("assembleDebug") {
+                assertTasksExecuted(":compileDebugKotlin")
+            }
+        }
+    }
+
+    @DisplayName("Run Compose compiler with the latest runtime")
+    @GradleAndroidTest
+    @OtherGradlePluginTests
+    @TestMetadata("AndroidSimpleApp")
+    fun testComposePluginWithRuntimeLatest(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        providedJdk: JdkVersions.ProvidedJdk
+    ) {
+        val composeSnapshotId = System.getProperty("composeSnapshotId")
+        val composeSnapshotVersion = System.getProperty("composeSnapshotVersion")
+        project(
+            projectName = "AndroidSimpleApp",
+            gradleVersion = gradleVersion,
+            buildJdk = providedJdk.location,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            dependencyManagement = DependencyManagement.DefaultDependencyManagement(
+                additionalRepos = setOf("https://androidx.dev/snapshots/builds/${composeSnapshotId}/artifacts/repository")
+            )
+        ) {
+            buildGradle.modify { originalBuildScript ->
+                """
+                |plugins {
+                |    id "org.jetbrains.kotlin.plugin.compose"
+                |${originalBuildScript.substringAfter("plugins {")}
+                |
+                |dependencies {
+                |    implementation "androidx.compose.runtime:runtime:$composeSnapshotVersion"
+                |}
+                """.trimMargin()
+            }
+
+            gradleProperties.appendText(
+                """
+                android.useAndroidX=true
+                """.trimIndent()
+            )
+
+            val composableFile = projectPath.resolve("src/main/kotlin/com/example/Compose.kt").createFile()
+            composableFile.appendText(
+                """
+                |package com.example
+                |
+                |import androidx.compose.runtime.Composable
+                |
+                |@Composable fun Test() { Test() }
+            """.trimMargin())
+
+            build("assembleDebug") {
+                assertTasksExecuted(":compileDebugKotlin")
+            }
         }
     }
 
