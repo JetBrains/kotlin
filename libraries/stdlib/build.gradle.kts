@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinTargetWithNodeJsDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 import org.jetbrains.kotlin.gradle.tasks.UsesKotlinJavaToolchain
 import org.jetbrains.kotlin.library.KOTLIN_JS_STDLIB_NAME
 import org.jetbrains.kotlin.library.KOTLIN_WASM_STDLIB_NAME
@@ -648,10 +649,34 @@ dependencies {
     }
 }
 
-tasks {
-    val metadataJar by existing(Jar::class) {
-        archiveAppendix.set("metadata")
+//region Configure kotlin-stdlib-common.klib artifact and outgoing configuration
+val commonMainMetadataKlib by tasks.registering(Zip::class) {
+    val commonMainCompilationOutput = kotlin
+        .metadata()
+        .compilations
+        .getByName("commonMain")
+        .compileTaskProvider.map { task ->
+            task as KotlinCompileCommon
+            task.destinationDirectory
+        }
+    from(commonMainCompilationOutput)
+    archiveBaseName = "kotlin-stdlib-common"
+    archiveExtension = "klib"
+}
+
+val commonMainMetadataElements by configurations.creating {
+    isCanBeResolved = false
+    isCanBeConsumed = true
+
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
     }
+}
+
+artifacts.add(commonMainMetadataElements.name, commonMainMetadataKlib)
+//endregion
+
+tasks {
     val sourcesJar by existing(Jar::class) {
         archiveAppendix.set("metadata")
     }
@@ -865,17 +890,12 @@ publishing {
             variant("jvmRuntimeElements")
             variant("jvmSourcesElements")
 
-            variant("metadataApiElements")
-            variant("commonMainMetadataElementsWithClassifier") {
-                name = "commonMainMetadataElements"
-                configuration {
-                    isCanBeConsumed = false
-                }
-                attributes {
-                    copyAttributes(from = project.configurations["commonMainMetadataElements"].attributes, to = this)
-                }
-                artifact(tasks["metadataJar"]) {
-                    classifier = "common"
+            variant("metadataApiElements") {
+                configureVariantDetails {
+                    configurationVariant.artifacts.configureEach {
+                        this as ConfigurablePublishArtifact
+                        classifier = "all"
+                    }
                 }
             }
             variant("metadataSourcesElementsFromJvm") {

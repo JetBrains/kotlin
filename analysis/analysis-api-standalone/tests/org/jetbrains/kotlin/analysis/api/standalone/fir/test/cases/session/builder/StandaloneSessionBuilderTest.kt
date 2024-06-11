@@ -85,7 +85,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
                 platform = CommonPlatforms.defaultCommonPlatform
                 val stdlib = addModule(
                     buildKtLibraryModule {
-                        addBinaryRoot(Paths.get("dist/common/kotlin-stdlib-common.jar"))
+                        addBinaryRoot(Paths.get("dist/common/kotlin-stdlib-common.klib"))
                         platform = CommonPlatforms.defaultCommonPlatform
                         libraryName = "stdlib"
                     }
