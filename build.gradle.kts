@@ -279,7 +279,6 @@ val projectsUsedInIntelliJKotlinPlugin =
                 ":analysis:kt-references",
                 ":analysis:light-classes-base",
                 ":analysis:low-level-api-fir",
-                ":analysis:project-structure",
                 ":analysis:symbol-light-classes",
             ) +
             arrayOf(
@@ -436,7 +435,6 @@ extra["compilerArtifactsForIde"] = listOfNotNull(
     ":prepare:ide-plugin-dependencies:analysis-api-fe10-for-ide",
     ":prepare:ide-plugin-dependencies:analysis-api-fe10-tests-for-ide",
     ":prepare:ide-plugin-dependencies:analysis-api-platform-interface-for-ide",
-    ":prepare:ide-plugin-dependencies:analysis-project-structure-for-ide",
     ":prepare:ide-plugin-dependencies:symbol-light-classes-for-ide",
     ":prepare:ide-plugin-dependencies:analysis-api-standalone-for-ide",
     ":prepare:ide-plugin-dependencies:kotlin-compiler-ir-for-ide",

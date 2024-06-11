@@ -9,7 +9,6 @@ val scriptingTestDefinition by configurations.creating
 
 dependencies {
     api(project(":compiler:psi"))
-    implementation(project(":analysis:project-structure"))
     api(project(":compiler:fir:fir2ir"))
     api(project(":compiler:fir:fir2ir:jvm-backend"))
     api(project(":compiler:ir.serialization.common"))

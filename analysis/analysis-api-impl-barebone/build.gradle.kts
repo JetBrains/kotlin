@@ -6,7 +6,6 @@ plugins {
 dependencies {
     api(project(":compiler:psi"))
     api(project(":analysis:analysis-api-platform-interface"))
-    api(project(":analysis:project-structure"))
     api(intellijCore())
 
     testApi(platform(libs.junit.bom))

@@ -15,7 +15,6 @@ dependencies {
     api(project(":analysis:analysis-api"))
     api(project(":analysis:analysis-api-impl-base"))
     api(project(":analysis:analysis-api-platform-interface"))
-    api(project(":analysis:project-structure"))
 }
 
 
