@@ -9954,7 +9954,7 @@ public fun CharArray.toMutableList(): MutableList<Char> {
 public fun <T> Array<out T>.toSet(): Set<T> {
     return when (size) {
         0 -> emptySet()
-        1 -> setOf(this[0])
+//        1 -> setOf(this[0]) // KT-69069
         else -> toCollection(LinkedHashSet<T>(mapCapacity(size)))
     }
 }
