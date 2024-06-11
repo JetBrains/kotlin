@@ -7,7 +7,6 @@ package org.jetbrains.kotlinx.dataframe.plugin
 
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.plugin.impl.Interpreter
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.CreateDataFrameConfiguration
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TraverseConfiguration
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.aggregate
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.toDataFrame
@@ -24,7 +23,7 @@ import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.CreateDataFrameDslImplApproximation
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PluginDataFrameSchema
+import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
 
 fun KotlinTypeFacade.analyzeRefinedCallShape(call: FirFunctionCall, reporter: InterpretationErrorReporter): CallResult? {
     val callReturnType = call.resolvedType

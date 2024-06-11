@@ -18,7 +18,11 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractInterpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractSchemaModificationInterpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
 import org.jetbrains.kotlinx.dataframe.plugin.impl.Interpreter
+import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.Present
+import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
+import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
+import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnWithPathApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
 

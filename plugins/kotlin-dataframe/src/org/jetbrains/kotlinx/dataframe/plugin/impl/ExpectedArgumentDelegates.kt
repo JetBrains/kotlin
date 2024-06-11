@@ -1,8 +1,6 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl
 
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.RenameClauseApproximation
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SimpleCol
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractInterpreter.*
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TypeApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnAccessorApproximation

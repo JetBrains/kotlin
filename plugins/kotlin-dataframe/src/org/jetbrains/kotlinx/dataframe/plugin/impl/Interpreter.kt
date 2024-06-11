@@ -1,7 +1,6 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl
 
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PluginDataFrameSchema
 import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KType

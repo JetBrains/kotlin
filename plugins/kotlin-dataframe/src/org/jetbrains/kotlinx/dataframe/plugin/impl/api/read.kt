@@ -12,6 +12,7 @@ import org.jetbrains.kotlinx.dataframe.io.readCSV
 import org.jetbrains.kotlinx.dataframe.io.readDelimStr
 import org.jetbrains.kotlinx.dataframe.io.readJson
 import org.jetbrains.kotlinx.dataframe.io.readJsonStr
+import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.IoSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.deserializeToPluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.string
