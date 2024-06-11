@@ -1,8 +1,51 @@
 KtOperationReferenceExpression(135,137): '+='
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    candidate = KaCompoundArrayAccessCall:
+      compoundAccess = CompoundAssign:
+        kind = PLUS_ASSIGN
+        operand = 1
+        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = m["a"]
+            isSafeNavigation = false
+            type = kotlin.Int
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+            valueParameters = [
+              KaVariableSignature:
+                name = other
+                receiverType = null
+                returnType = kotlin.Int
+                symbol = other: kotlin.Int
+                callableId = null
+            ]
+            callableId = kotlin/Int.plus
+      getPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = m
+          isSafeNavigation = false
+          type = MyMap<kotlin.String, kotlin.Int>
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = /MyMap.get(<dispatch receiver>: MyMap<K, V>, k: K): V
+          valueParameters = [
+            KaVariableSignature:
+              name = k
+              receiverType = null
+              returnType = kotlin.String
+              symbol = k: K
+              callableId = null
+          ]
+          callableId = /MyMap.get
+      indexArguments = [
+        "a"
+      ]
+      setPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
           expression = m
           isSafeNavigation = false
@@ -27,6 +70,4 @@ KtOperationReferenceExpression(135,137): '+='
               callableId = null
           ]
           callableId = /MyMap.set
-      typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true

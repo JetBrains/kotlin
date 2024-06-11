@@ -358,22 +358,33 @@ KtNameReferenceExpression(256,263): 'current'
 
 KtOperationReferenceExpression(263,265): '++'
   KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = current++
-          isSafeNavigation = false
-          type = kotlin.Int
+    call = KaCompoundVariableAccessCallImpl:
+      compoundAccess = IncOrDecOperation:
+        kind = INC
+        precedence = POSTFIX
+        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = current
+            isSafeNavigation = false
+            type = kotlin.Int
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+            valueParameters = []
+            callableId = kotlin/Int.inc
+      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = <anonymous>
+          type = f.<anonymous>
         extensionReceiver = null
-        signature = KaFunctionSignature:
+        signature = KaVariableSignature:
+          name = current
           receiverType = null
           returnType = kotlin.Int
-          symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
-          valueParameters = []
-          callableId = kotlin/Int.inc
-      typeArgumentsMapping = {}
-      argumentMapping = {}
+          symbol = var current: kotlin.Int
+          callableId = null
 
 KtNamedFunction(269,330): 'fun usage() {'
   null

@@ -121,16 +121,15 @@ internal class KaFe10Resolver(
         }
     }
 
-    override fun KtElement.resolveToCall(): KaCallInfo? = withValidityAssertion {
-        return doResolveCall(this)
-    }
-
-    private fun doResolveCall(psi: KtElement): KaCallInfo? {
+    override fun doResolveCall(psi: KtElement): KaCallInfo? {
         if (!canBeResolvedAsCall(psi)) return null
 
         val parentBinaryExpression = psi.parentOfType<KtBinaryExpression>()
         val lhs = KtPsiUtil.deparenthesize(parentBinaryExpression?.left)
-        val unwrappedPsi = KtPsiUtil.deparenthesize(psi as? KtExpression) ?: psi
+        val unwrappedPsi = when (val unwrapped = KtPsiUtil.deparenthesize(psi as? KtExpression) ?: psi) {
+            is KtWhenConditionInRange -> unwrapped.operationReference
+            else -> unwrapped
+        }
 
         if (parentBinaryExpression != null &&
             parentBinaryExpression.operationToken == KtTokens.EQ &&
@@ -144,7 +143,6 @@ internal class KaFe10Resolver(
 
         when (psi) {
             is KtCallableReferenceExpression -> return doResolveCall(psi.callableReference)
-            is KtWhenConditionInRange -> return psi.operationReference.let(::doResolveCall)
             is KtConstructorDelegationReferenceExpression -> return (psi.parent as? KtElement)?.let(::doResolveCall)
         }
 
@@ -165,12 +163,7 @@ internal class KaFe10Resolver(
         } ?: handleResolveErrors(bindingContext, psi)
     }
 
-    override fun KtElement.resolveToCallCandidates(): List<KaCallCandidateInfo> = withValidityAssertion {
-        return doCollectCallCandidates(this)
-    }
-
-    private fun doCollectCallCandidates(psi: KtElement): List<KaCallCandidateInfo> {
-        if (!canBeResolvedAsCall(psi)) return emptyList()
+    override fun doCollectCallCandidates(psi: KtElement): List<KaCallCandidateInfo> {
         val bindingContext = analysisContext.analyze(psi, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)
         val resolvedCall = doResolveCall(psi)
         return doCollectCallCandidates(psi, bindingContext, resolvedCall).ifEmpty {
@@ -204,7 +197,6 @@ internal class KaFe10Resolver(
         when (psi) {
             is KtWhenConditionInRange,
             is KtCollectionLiteralExpression,
-            is KtOperationReferenceExpression,
             is KtCallableReferenceExpression,
                 -> return resolvedCall?.toKaCallCandidateInfos().orEmpty()
         }

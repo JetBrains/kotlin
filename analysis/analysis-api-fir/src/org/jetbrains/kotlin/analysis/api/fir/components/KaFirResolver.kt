@@ -133,11 +133,7 @@ internal class KaFirResolver(
         }
     }
 
-    override fun KtElement.resolveToCall(): KaCallInfo? = withValidityAssertion {
-        return doResolveCall(this)
-    }
-
-    private fun doResolveCall(psi: KtElement): KaCallInfo? {
+    override fun doResolveCall(psi: KtElement): KaCallInfo? {
         return wrapError(psi) {
             val ktCallInfos = getCallInfo(
                 psi,
@@ -159,11 +155,7 @@ internal class KaFirResolver(
         }
     }
 
-    override fun KtElement.resolveToCallCandidates(): List<KaCallCandidateInfo> = withValidityAssertion {
-        return doCollectCallCandidates(this)
-    }
-
-    private fun doCollectCallCandidates(psi: KtElement): List<KaCallCandidateInfo> = wrapError(psi) {
+    override fun doCollectCallCandidates(psi: KtElement): List<KaCallCandidateInfo> = wrapError(psi) {
         getCallInfo(
             psi,
             getErrorCallInfo = { emptyList() },
@@ -201,8 +193,6 @@ internal class KaFirResolver(
             resolveFragmentOfCall: Boolean,
         ) -> List<T>,
     ): List<T> {
-        if (!canBeResolvedAsCall(psi)) return emptyList()
-
         val containingCallExpressionForCalleeExpression = psi.getContainingCallExpressionForCalleeExpression()
         val containingBinaryExpressionForLhs = psi.getContainingBinaryExpressionForIncompleteLhs()
         val containingUnaryExpressionForIncOrDec = psi.getContainingUnaryIncOrDecExpression()
@@ -211,7 +201,6 @@ internal class KaFirResolver(
             ?: containingUnaryExpressionForIncOrDec
             ?: psi.getContainingDotQualifiedExpressionForSelectorExpression()
             ?: psi.getConstructorDelegationCallForDelegationReferenceExpression()
-            ?: psi.getExpressionForOperationReferenceExpression()
             ?: psi
         val fir = psiToResolve.getOrBuildFir(analysisSession.firResolveSession) ?: return emptyList()
         if (fir is FirDiagnosticHolder) {
@@ -222,20 +211,6 @@ internal class KaFirResolver(
             psiToResolve == containingCallExpressionForCalleeExpression,
             psiToResolve == containingBinaryExpressionForLhs || psiToResolve == containingUnaryExpressionForIncOrDec
         )
-    }
-
-    /**
-     * When resolving [KtOperationReferenceExpression], we instead resolve the containing [KtWhenConditionInRange] or [KtBinaryExpression].
-     * This way, the corresponding FIR element is a call instead of a reference.
-     */
-    private fun KtElement.getExpressionForOperationReferenceExpression(): KtElement? {
-        if (this !is KtOperationReferenceExpression) return null
-        return when (val parent = parent) {
-            // Augment assignment resolves into KtCompoundVariableAccessCall, but we should resolve into a specific function
-            is KtBinaryExpression -> parent.takeUnless { operationSignTokenType in KtTokens.AUGMENTED_ASSIGNMENTS }
-            is KtWhenConditionInRange -> parent
-            else -> null
-        }
     }
 
     private fun FirElement.toKtCallInfo(

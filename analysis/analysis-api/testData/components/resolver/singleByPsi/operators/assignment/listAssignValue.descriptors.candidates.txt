@@ -1,33 +1,73 @@
 KtOperationReferenceExpression(57,59): '+='
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    candidate = KaCompoundArrayAccessCall:
+      compoundAccess = CompoundAssign:
+        kind = PLUS_ASSIGN
+        operand = 1
+        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = l[0]
+            isSafeNavigation = false
+            type = kotlin.Int
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+            valueParameters = [
+              KaVariableSignature:
+                name = other
+                receiverType = null
+                returnType = kotlin.Int
+                symbol = other: kotlin.Int
+                callableId = null
+            ]
+            callableId = kotlin/Int.plus
+      getPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
-          expression = l[0]
+          expression = l
           isSafeNavigation = false
-          type = kotlin.Int
+          type = kotlin.collections.MutableList<kotlin.Int>
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Int
-          symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+          symbol = kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.List<E>, index: kotlin.Int): E
           valueParameters = [
             KaVariableSignature:
-              name = other
+              name = index
               receiverType = null
               returnType = kotlin.Int
-              symbol = other: kotlin.Int
+              symbol = index: kotlin.Int
               callableId = null
           ]
-          callableId = kotlin/Int.plus
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = other
+          callableId = kotlin/collections/MutableList.get
+      indexArguments = [
+        0
+      ]
+      setPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = l
+          isSafeNavigation = false
+          type = kotlin.collections.MutableList<kotlin.Int>
+        extensionReceiver = null
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          callableId = null)
-      }
+          symbol = kotlin/collections/MutableList.set(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int, element: E): E
+          valueParameters = [
+            KaVariableSignature:
+              name = index
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = index: kotlin.Int
+              callableId = null,
+            KaVariableSignature:
+              name = element
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = element: E
+              callableId = null
+          ]
+          callableId = kotlin/collections/MutableList.set
     isInBestCandidates = true

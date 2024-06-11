@@ -46,7 +46,24 @@ KtPrefixExpression(49,53): '-one'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(49,50): '-'
-  NO_CANDIDATES
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = one
+          isSafeNavigation = false
+          type = kotlin.Int
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+          valueParameters = []
+          callableId = kotlin/Int.unaryMinus
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
 
 KtNameReferenceExpression(50,53): 'one'
   KaApplicableCallCandidateInfo:
@@ -88,7 +105,24 @@ KtPrefixExpression(73,77): '+one'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(73,74): '+'
-  NO_CANDIDATES
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = one
+          isSafeNavigation = false
+          type = kotlin.Int
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = kotlin/Int.unaryPlus(<dispatch receiver>: kotlin.Int): kotlin.Int
+          valueParameters = []
+          callableId = kotlin/Int.unaryPlus
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
 
 KtNameReferenceExpression(74,77): 'one'
   KaApplicableCallCandidateInfo:
@@ -127,7 +161,24 @@ KtPrefixExpression(83,118): '!(+(-MyClass().unaryMinus().not()))'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(83,84): '!'
-  NO_CANDIDATES
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = +(-MyClass().unaryMinus().not())
+          isSafeNavigation = false
+          type = MyClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = /MyClass.not(<dispatch receiver>: MyClass): MyClass
+          valueParameters = []
+          callableId = /MyClass.not
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
 
 KtParenthesizedExpression(84,118): '(+(-MyClass().unaryMinus().not()))'
   NO_CANDIDATES
@@ -153,7 +204,24 @@ KtPrefixExpression(85,117): '+(-MyClass().unaryMinus().not())'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(85,86): '+'
-  NO_CANDIDATES
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = -MyClass().unaryMinus().not()
+          isSafeNavigation = false
+          type = MyClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = /MyClass.unaryPlus(<dispatch receiver>: MyClass): MyClass
+          valueParameters = []
+          callableId = /MyClass.unaryPlus
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
 
 KtParenthesizedExpression(86,117): '(-MyClass().unaryMinus().not())'
   NO_CANDIDATES
@@ -179,7 +247,24 @@ KtPrefixExpression(87,116): '-MyClass().unaryMinus().not()'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(87,88): '-'
-  NO_CANDIDATES
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = MyClass().unaryMinus().not()
+          isSafeNavigation = false
+          type = MyClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
+          valueParameters = []
+          callableId = /MyClass.unaryMinus
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
 
 KtDotQualifiedExpression(88,116): 'MyClass().unaryMinus().not()'
   KaApplicableCallCandidateInfo:

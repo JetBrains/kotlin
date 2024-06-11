@@ -367,22 +367,33 @@ KtNameReferenceExpression(256,263): 'current'
 
 KtOperationReferenceExpression(263,265): '++'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = current++
-          isSafeNavigation = false
-          type = kotlin.Int
+    candidate = KaCompoundVariableAccessCallImpl:
+      compoundAccess = IncOrDecOperation:
+        kind = INC
+        precedence = POSTFIX
+        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = current
+            isSafeNavigation = false
+            type = kotlin.Int
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+            valueParameters = []
+            callableId = kotlin/Int.inc
+      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = <anonymous>
+          type = f.<anonymous>
         extensionReceiver = null
-        signature = KaFunctionSignature:
+        signature = KaVariableSignature:
+          name = current
           receiverType = null
           returnType = kotlin.Int
-          symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
-          valueParameters = []
-          callableId = kotlin/Int.inc
-      typeArgumentsMapping = {}
-      argumentMapping = {}
+          symbol = var current: kotlin.Int
+          callableId = null
     isInBestCandidates = true
 
 KtNamedFunction(269,330): 'fun usage() {'
@@ -445,7 +456,7 @@ KtCallExpression(297,318): 'IntProgression(1, 10)'
           callableId = null)
       }
     isInBestCandidates = true
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<INVISIBLE_REFERENCE: Cannot access 'constructor(start: Int, endInclusive: Int, step: Int): IntProgression': it is internal in 'kotlin/ranges/IntProgression'.>
     candidate = KaSimpleFunctionCall:
@@ -524,7 +535,7 @@ KtNameReferenceExpression(297,311): 'IntProgression'
           callableId = null)
       }
     isInBestCandidates = true
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<INVISIBLE_REFERENCE: Cannot access 'constructor(start: Int, endInclusive: Int, step: Int): IntProgression': it is internal in 'kotlin/ranges/IntProgression'.>
     candidate = KaSimpleFunctionCall:

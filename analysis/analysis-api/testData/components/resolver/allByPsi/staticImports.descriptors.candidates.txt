@@ -731,7 +731,23 @@ KtNameReferenceExpression(899,902): 'doo'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(903,904): '='
-  NO_CANDIDATES
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = one/two/TopLevelObject.NestedObject
+          type = one.two.TopLevelObject.NestedObject
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = doo
+          receiverType = null
+          returnType = kotlin.String
+          symbol = var doo: kotlin.String
+          callableId = one/two/TopLevelObject.NestedObject.doo
+      simpleAccess = Write:
+        value = "str"
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
 
 KtStringTemplateExpression(905,910): '"str"'
   NO_CANDIDATES

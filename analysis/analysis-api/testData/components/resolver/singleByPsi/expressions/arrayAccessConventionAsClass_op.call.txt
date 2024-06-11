@@ -1,8 +1,51 @@
 KtOperationReferenceExpression(250,252): '+='
   KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    call = KaCompoundArrayAccessCall:
+      compoundAccess = CompoundAssign:
+        kind = PLUS_ASSIGN
+        operand = MyClass()
+        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = variable[0]
+            isSafeNavigation = false
+            type = MyClass
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = MyClass
+            symbol = /MyClass.plus(<dispatch receiver>: MyClass, v: MyClass): MyClass
+            valueParameters = [
+              KaVariableSignature:
+                name = v
+                receiverType = null
+                returnType = MyClass
+                symbol = v: MyClass
+                callableId = null
+            ]
+            callableId = /MyClass.plus
+      getPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = variable
+          isSafeNavigation = false
+          type = MyClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = /MyClass.get(<dispatch receiver>: MyClass, i: kotlin.Int): MyClass
+          valueParameters = [
+            KaVariableSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableId = null
+          ]
+          callableId = /MyClass.get
+      indexArguments = [
+        0
+      ]
+      setPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
           expression = variable
           isSafeNavigation = false
@@ -27,5 +70,3 @@ KtOperationReferenceExpression(250,252): '+='
               callableId = null
           ]
           callableId = /MyClass.set
-      typeArgumentsMapping = {}
-      argumentMapping = {}

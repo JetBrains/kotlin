@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaResolver
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.resolution.KaCallCandidateInfo
+import org.jetbrains.kotlin.analysis.api.resolution.KaCallInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundAccess
 import org.jetbrains.kotlin.analysis.api.resolution.KaExplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
@@ -27,6 +29,20 @@ abstract class KaAbstractResolver<T : KaSession> : KaSessionComponent<T>(), KaRe
     override fun KtReference.resolveToSymbol(): KaSymbol? = withValidityAssertion {
         return resolveToSymbols().singleOrNull()
     }
+
+    final override fun KtElement.resolveToCall(): KaCallInfo? = withValidityAssertion {
+        val unwrappedElement = unwrapResolvableCall()
+        return unwrappedElement?.let(::doResolveCall)
+    }
+
+    protected abstract fun doResolveCall(psi: KtElement): KaCallInfo?
+
+    final override fun KtElement.resolveToCallCandidates(): List<KaCallCandidateInfo> = withValidityAssertion {
+        val unwrappedElement = unwrapResolvableCall()
+        unwrappedElement?.let(::doCollectCallCandidates).orEmpty()
+    }
+
+    protected abstract fun doCollectCallCandidates(psi: KtElement): List<KaCallCandidateInfo>
 
     // TODO: remove this workaround after KT-68499
     protected fun resolveDefaultAnnotationArgumentReference(
@@ -73,7 +89,6 @@ abstract class KaAbstractResolver<T : KaSession> : KaSessionComponent<T>(), KaRe
 
     protected fun canBeResolvedAsCall(ktElement: KtElement): Boolean = when (ktElement) {
         is KtBinaryExpression -> ktElement.operationToken !in nonCallBinaryOperator
-        is KtOperationReferenceExpression -> ktElement.operationSignTokenType !in nonCallBinaryOperator
         is KtCallElement -> true
         is KtConstructorCalleeExpression -> true
         is KtDotQualifiedExpression -> true
@@ -87,6 +102,13 @@ abstract class KaAbstractResolver<T : KaSession> : KaSessionComponent<T>(), KaRe
         is KtEnumEntrySuperclassReferenceExpression -> true
         else -> false
     }
+
+    private fun KtElement.unwrapResolvableCall(): KtElement? = when (this) {
+        // Most likely we will drop call resolution for operators, and only resolveSymbol will be available for them.
+        // Call resolution API is available on a parent expression (like binary or unary operator)
+        is KtOperationReferenceExpression -> parent as? KtElement
+        else -> this
+    }?.takeIf(::canBeResolvedAsCall)
 
     protected companion object {
         private val nonCallBinaryOperator: Set<KtSingleValueToken> = setOf(KtTokens.ELVIS, KtTokens.EQEQEQ, KtTokens.EXCLEQEQEQ)

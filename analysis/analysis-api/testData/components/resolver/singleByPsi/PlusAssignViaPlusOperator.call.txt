@@ -1,7 +1,29 @@
 KtOperationReferenceExpression(195,197): '+='
   KaSuccessCallInfo:
-    call = KaSimpleVariableAccessCall:
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    call = KaCompoundVariableAccessCallImpl:
+      compoundAccess = CompoundAssign:
+        kind = PLUS_ASSIGN
+        operand = foo
+        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = variable
+            isSafeNavigation = false
+            type = test.WithOperator
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = test.WithOperator
+            symbol = test/WithOperator.plus(<dispatch receiver>: test.WithOperator, f: test.Foo): test.WithOperator
+            valueParameters = [
+              KaVariableSignature:
+                name = f
+                receiverType = null
+                returnType = test.Foo
+                symbol = f: test.Foo
+                callableId = null
+            ]
+            callableId = test/WithOperator.plus
+      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
@@ -10,6 +32,3 @@ KtOperationReferenceExpression(195,197): '+='
           returnType = test.WithOperator
           symbol = var variable: test.WithOperator
           callableId = null
-      simpleAccess = Write:
-        value = variable += foo
-      typeArgumentsMapping = {}

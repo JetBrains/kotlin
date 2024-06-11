@@ -2234,7 +2234,23 @@ KtPrefixExpression(776,798): '!myClass.equals(child)'
       argumentMapping = {}
 
 KtOperationReferenceExpression(776,777): '!'
-  null
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = myClass.equals(child)
+          isSafeNavigation = false
+          type = kotlin.Boolean
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Boolean.not(<dispatch receiver>: kotlin.Boolean): kotlin.Boolean
+          valueParameters = []
+          callableId = kotlin/Boolean.not
+      typeArgumentsMapping = {}
+      argumentMapping = {}
 
 KtDotQualifiedExpression(777,798): 'myClass.equals(child)'
   KaSuccessCallInfo:
@@ -3180,7 +3196,23 @@ KtPrefixExpression(973,997): '!myClass.equals(another)'
       argumentMapping = {}
 
 KtOperationReferenceExpression(973,974): '!'
-  null
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = myClass.equals(another)
+          isSafeNavigation = false
+          type = kotlin.Boolean
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Boolean.not(<dispatch receiver>: kotlin.Boolean): kotlin.Boolean
+          valueParameters = []
+          callableId = kotlin/Boolean.not
+      typeArgumentsMapping = {}
+      argumentMapping = {}
 
 KtDotQualifiedExpression(974,997): 'myClass.equals(another)'
   KaSuccessCallInfo:

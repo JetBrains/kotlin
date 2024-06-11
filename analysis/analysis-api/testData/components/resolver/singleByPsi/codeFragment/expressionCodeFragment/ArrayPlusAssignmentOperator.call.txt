@@ -1,8 +1,51 @@
 KtOperationReferenceExpression(151,153): '+='
   KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    call = KaCompoundArrayAccessCall:
+      compoundAccess = CompoundAssign:
+        kind = PLUS_ASSIGN
+        operand = "value"
+        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = list[10]
+            isSafeNavigation = false
+            type = kotlin.String
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = kotlin.String
+            symbol = kotlin/String.plus(<dispatch receiver>: kotlin.String, other: kotlin.Any?): kotlin.String
+            valueParameters = [
+              KaVariableSignature:
+                name = other
+                receiverType = null
+                returnType = kotlin.Any?
+                symbol = other: kotlin.Any?
+                callableId = null
+            ]
+            callableId = kotlin/String.plus
+      getPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = list
+          isSafeNavigation = false
+          type = MyList
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.String
+          symbol = /MyList.get(<dispatch receiver>: MyList, index: kotlin.Int): kotlin.String
+          valueParameters = [
+            KaVariableSignature:
+              name = index
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = index: kotlin.Int
+              callableId = null
+          ]
+          callableId = /MyList.get
+      indexArguments = [
+        10
+      ]
+      setPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
           expression = list
           isSafeNavigation = false
@@ -27,5 +70,3 @@ KtOperationReferenceExpression(151,153): '+='
               callableId = null
           ]
           callableId = /MyList.set
-      typeArgumentsMapping = {}
-      argumentMapping = {}

@@ -78,7 +78,7 @@ KtBinaryExpression(40,49): 'list += 1'
           callableId = null)
       }
     isInBestCandidates = true
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Array<T>' was expected.>
     candidate = KaSimpleFunctionCall:
@@ -114,7 +114,7 @@ KtBinaryExpression(40,49): 'list += 1'
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.collections.Iterable<T>' was expected.>
     candidate = KaSimpleFunctionCall:
@@ -150,7 +150,7 @@ KtBinaryExpression(40,49): 'list += 1'
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.sequences.Sequence<T>' was expected.>
     candidate = KaSimpleFunctionCall:
@@ -238,7 +238,7 @@ KtOperationReferenceExpression(45,47): '+='
           callableId = null)
       }
     isInBestCandidates = true
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Array<T>' was expected.>
     candidate = KaSimpleFunctionCall:
@@ -274,7 +274,7 @@ KtOperationReferenceExpression(45,47): '+='
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.collections.Iterable<T>' was expected.>
     candidate = KaSimpleFunctionCall:
@@ -310,7 +310,7 @@ KtOperationReferenceExpression(45,47): '+='
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.sequences.Sequence<T>' was expected.>
     candidate = KaSimpleFunctionCall:
@@ -761,9 +761,45 @@ KtPrefixExpression(183,192): '--list[i]'
 
 KtOperationReferenceExpression(183,185): '--'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    candidate = KaCompoundArrayAccessCall:
+      compoundAccess = IncOrDecOperation:
+        kind = DEC
+        precedence = PREFIX
+        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = list[i]
+            isSafeNavigation = false
+            type = kotlin.Int
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
+            valueParameters = []
+            callableId = kotlin/Int.dec
+      getPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = list
+          isSafeNavigation = false
+          type = kotlin.collections.MutableList<kotlin.Int>
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int): E
+          valueParameters = [
+            KaVariableSignature:
+              name = index
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = index: kotlin.Int
+              callableId = null
+          ]
+          callableId = kotlin/collections/MutableList.get
+      indexArguments = [
+        i
+      ]
+      setPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
           expression = list
           isSafeNavigation = false
@@ -788,8 +824,6 @@ KtOperationReferenceExpression(183,185): '--'
               callableId = null
           ]
           callableId = kotlin/collections/MutableList.set
-      typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtArrayAccessExpression(185,192): 'list[i]'
