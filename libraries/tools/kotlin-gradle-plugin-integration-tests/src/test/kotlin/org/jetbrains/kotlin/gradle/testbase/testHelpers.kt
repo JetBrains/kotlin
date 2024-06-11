@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
+import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import java.nio.file.Paths
@@ -208,6 +209,20 @@ internal fun TestProject.chooseCompilerVersion(
         """
         kotlin {
             compilerVersion.set("$version")
+        }
+        """.trimIndent()
+    )
+}
+
+internal fun TestProject.enablePassedTestLogging(level: LogLevel = DEFAULT_LOG_LEVEL) {
+    buildGradle.append(
+        //language=Gradle
+        """
+
+        tasks.withType(AbstractTestTask).configureEach {
+            testLogging {
+                get(LogLevel.$level).events("passed")
+            }
         }
         """.trimIndent()
     )

@@ -62,14 +62,12 @@ open class KaptIncrementalIT : KGPBaseTest() {
     @DisplayName("On rebuild without changes tasks should be UP-TO-DATE")
     @GradleTest
     fun testBasic(gradleVersion: GradleVersion) {
-        kaptProject(
-            gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
-        ) {
+        kaptProject(gradleVersion) {
+            enablePassedTestLogging()
             build("build") {
                 checkGenerated(kaptGeneratedToPath, *annotatedElements)
                 checkNotGenerated(kaptGeneratedToPath, "notAnnotatedFun")
-                assertOutputContains("foo.ATest PASSED")
+                assertOutputContains("ATest > testValA")
             }
 
             build("build") {
@@ -113,10 +111,11 @@ open class KaptIncrementalIT : KGPBaseTest() {
     @GradleTest
     fun testChangeFunctionBodyWithoutChangingSignature(gradleVersion: GradleVersion) {
         kaptProject(gradleVersion) {
-            build("build", buildOptions = buildOptions.copy(logLevel = LogLevel.DEBUG)) {
+            enablePassedTestLogging()
+            build("build") {
                 checkGenerated(kaptGeneratedToPath, *annotatedElements)
                 checkNotGenerated(kaptGeneratedToPath, "notAnnotatedFun")
-                assertOutputContains("foo.ATest PASSED")
+                assertOutputContains("ATest > testValA")
             }
 
             val utilKt = javaSourcesDir().resolve("baz/util.kt")

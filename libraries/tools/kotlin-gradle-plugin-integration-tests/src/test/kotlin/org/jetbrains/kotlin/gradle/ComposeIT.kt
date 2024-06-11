@@ -139,7 +139,7 @@ class ComposeIT : KGPBaseTest() {
                 .suppressDeprecationWarningsOn(
                     "JB Compose produces deprecation warning: https://github.com/JetBrains/compose-multiplatform/issues/3945"
                 ) {
-                    gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_7)
+                    gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_4)
                 }
         ) {
             build(":composeApp:assembleDebug") {

@@ -19,8 +19,10 @@ import java.nio.file.Path
 import java.util.*
 import kotlin.io.path.absolutePathString
 
+val DEFAULT_LOG_LEVEL = LogLevel.INFO
+
 data class BuildOptions(
-    val logLevel: LogLevel = LogLevel.INFO,
+    val logLevel: LogLevel = DEFAULT_LOG_LEVEL,
     val stacktraceMode: String? = StacktraceOption.FULL_STACKTRACE_LONG_OPTION,
     val kotlinVersion: String = TestVersions.Kotlin.CURRENT,
     val warningMode: WarningMode = WarningMode.Fail,

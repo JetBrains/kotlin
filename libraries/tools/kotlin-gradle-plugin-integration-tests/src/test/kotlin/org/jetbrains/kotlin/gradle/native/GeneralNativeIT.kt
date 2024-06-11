@@ -566,6 +566,8 @@ class GeneralNativeIT : KGPBaseTest() {
             }
             val testsToSkip = testTasks.map { ":$it" } - testsToExecute
 
+            enablePassedTestLogging()
+
             val suffix = HostManager.host.family.exeSuffix
             val defaultOutputFile = "build/bin/host/debugTest/test.$suffix"
             val anotherOutputFile = "build/bin/host/anotherDebugTest/another.$suffix"
@@ -588,17 +590,17 @@ class GeneralNativeIT : KGPBaseTest() {
             val bootedSimulatorsBefore = getBootedSimulators()
 
             // Check the case when all tests pass.
-            build("check", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+            build("check") {
 
                 assertTasksExecuted(*testsToExecute.toTypedArray())
                 assertTasksSkipped(*testsToSkip.toTypedArray())
 
                 if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_0)) {
-                    assertOutputContains("org\\.foo\\.test\\.TestKt\\.fooTest\\s+PASSED".toRegex())
-                    assertOutputContains("org\\.foo\\.test\\.TestKt\\.barTest\\s+PASSED".toRegex())
+                    assertOutputContains("org.foo.test.TestKt.fooTest PASSED")
+                    assertOutputContains("org.foo.test.TestKt.barTest PASSED")
                 } else {
-                    assertOutputContains("org\\.foo\\.test\\.TestKt\\.fooTest\\[host]\\s+PASSED".toRegex())
-                    assertOutputContains("org\\.foo\\.test\\.TestKt\\.barTest\\[host]\\s+PASSED".toRegex())
+                    assertOutputContains("org.foo.test.TestKt.fooTest[host] PASSED")
+                    assertOutputContains("org.foo.test.TestKt.barTest[host] PASSED")
                 }
 
                 assertFileInProjectExists(defaultOutputFile)
@@ -685,9 +687,9 @@ class GeneralNativeIT : KGPBaseTest() {
             assertTasksSkipped(*testsToSkip.toTypedArray())
 
             if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_0)) {
-                assertOutputContains("org\\.foo\\.test\\.TestKt\\.fail\\s+FAILED".toRegex())
+                assertOutputContains("org.foo.test.TestKt.fail FAILED")
             } else {
-                assertOutputContains("org\\.foo\\.test\\.TestKt\\.fail\\[host]\\s+FAILED".toRegex())
+                assertOutputContains("org.foo.test.TestKt.fail[host] FAILED")
             }
         }
 
