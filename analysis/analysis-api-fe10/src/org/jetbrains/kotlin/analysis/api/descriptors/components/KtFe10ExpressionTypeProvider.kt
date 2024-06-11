@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.Analysis
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaErrorType
 import org.jetbrains.kotlin.analysis.api.types.KaFunctionalType
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -39,8 +41,9 @@ import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 class KaFe10ExpressionTypeProvider(
-    override val analysisSession: KaFe10Session
-) : KaExpressionTypeProvider(), KaFe10SessionComponent {
+    override val analysisSessionProvider: () -> KaFe10Session,
+    override val token: KaLifetimeToken
+) : KaSessionComponent<KaFe10Session>(), KaExpressionTypeProvider, KaFe10SessionComponent {
     private companion object {
         val NON_EXPRESSION_CONTAINERS = arrayOf(
             KtImportDirective::class.java,
@@ -50,27 +53,28 @@ class KaFe10ExpressionTypeProvider(
         )
     }
 
-    override val token: KaLifetimeToken
-        get() = analysisSession.token
+    override val KtExpression.expressionType: KaType?
+        get() = withValidityAssertion {
+            // Not sure if it's safe enough. In theory, some annotations on expressions might change its type
+            val unwrapped = unwrapParenthesesLabelsAndAnnotations() as? KtExpression ?: return null
+            if (unwrapped.getParentOfTypes(false, *NON_EXPRESSION_CONTAINERS) != null) {
+                return null
+            }
 
-    override fun getKtExpressionType(expression: KtExpression): KaType? {
-        // Not sure if it's safe enough. In theory, some annotations on expressions might change its type
-        val unwrapped = expression.unwrapParenthesesLabelsAndAnnotations() as? KtExpression ?: return null
-        if (unwrapped.getParentOfTypes(false, *NON_EXPRESSION_CONTAINERS) != null) {
-            return null
+            val bindingContext = analysisContext.analyze(unwrapped, AnalysisMode.PARTIAL)
+            val smartCastType = when (val smartCastType = bindingContext[BindingContext.SMARTCAST, this]) {
+                is SingleSmartCast -> smartCastType.type
+                is MultipleSmartCasts -> intersectWrappedTypes(smartCastType.map.values)
+                else -> null
+            }
+            val kotlinType = smartCastType ?: getType(bindingContext) ?: analysisContext.builtIns.unitType
+            return kotlinType.toKtType(analysisContext)
         }
 
-        val bindingContext = analysisContext.analyze(unwrapped, AnalysisMode.PARTIAL)
-        val smartCastType = when (val smartCastType = bindingContext[BindingContext.SMARTCAST, expression]) {
-            is SingleSmartCast -> smartCastType.type
-            is MultipleSmartCasts -> intersectWrappedTypes(smartCastType.map.values)
-            else -> null
-        }
-        val kotlinType = smartCastType ?: expression.getType(bindingContext) ?: analysisContext.builtIns.unitType
-        return kotlinType.toKtType(analysisContext)
-    }
+    override val KtDeclaration.returnType: KaType
+        get() = withValidityAssertion { getReturnTypeForKtDeclaration(this) }
 
-    override fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KaType {
+    private fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KaType {
         // Handle callable declarations with explicit return type first
         if (declaration is KtCallableDeclaration) {
             val typeReference = declaration.typeReference
@@ -143,28 +147,32 @@ class KaFe10ExpressionTypeProvider(
         return analysisContext.builtIns.unitType.toKtType(analysisContext)
     }
 
-    override fun getFunctionalTypeForKtFunction(declaration: KtFunction): KaType {
-        val analysisMode = if (declaration.hasDeclaredReturnType()) AnalysisMode.PARTIAL else AnalysisMode.FULL
-        val bindingContext = analysisContext.analyze(declaration, analysisMode)
-        val functionDescriptor = bindingContext[BindingContext.FUNCTION, declaration]
+    override val KtFunction.functionType: KaType
+        get() = withValidityAssertion {
+            val analysisMode = if (hasDeclaredReturnType()) AnalysisMode.PARTIAL else AnalysisMode.FULL
+            val bindingContext = analysisContext.analyze(this, analysisMode)
+            val functionDescriptor = bindingContext[BindingContext.FUNCTION, this]
 
-        if (functionDescriptor != null) {
-            return getFunctionTypeForAbstractMethod(functionDescriptor, false).toKtType(analysisContext)
+            if (functionDescriptor != null) {
+                return getFunctionTypeForAbstractMethod(functionDescriptor, false).toKtType(analysisContext)
+            }
+
+            val parameterCount = valueParameters.size + (if (isExtensionDeclaration()) 1 else 0)
+
+            val function = when {
+                hasModifier(KtTokens.SUSPEND_KEYWORD) -> analysisContext.builtIns.getSuspendFunction(parameterCount)
+                else -> analysisContext.builtIns.getFunction(parameterCount)
+            }
+
+            val errorMessage = "Descriptor not found for function \"${name}\""
+            return ErrorUtils.createErrorType(ErrorTypeKind.NOT_FOUND_DESCRIPTOR_FOR_FUNCTION, function.typeConstructor, errorMessage)
+                .toKtType(analysisContext)
         }
 
-        val parameterCount = declaration.valueParameters.size + (if (declaration.isExtensionDeclaration()) 1 else 0)
+    override val PsiElement.expectedType: KaType?
+        get() = withValidityAssertion { computeExpectedType(this) }
 
-        val function = when {
-            declaration.hasModifier(KtTokens.SUSPEND_KEYWORD) -> analysisContext.builtIns.getSuspendFunction(parameterCount)
-            else -> analysisContext.builtIns.getFunction(parameterCount)
-        }
-
-        val errorMessage = "Descriptor not found for function \"${declaration.name}\""
-        return ErrorUtils.createErrorType(ErrorTypeKind.NOT_FOUND_DESCRIPTOR_FOR_FUNCTION, function.typeConstructor, errorMessage)
-            .toKtType(analysisContext)
-    }
-
-    override fun getExpectedType(expression: PsiElement): KaType? {
+    private fun computeExpectedType(expression: PsiElement): KaType? {
         val ktExpression = expression.getParentOfType<KtExpression>(false) ?: return null
         val parentExpression = if (ktExpression.parent is KtLabeledExpression) {
             // lambda -> labeled expression -> lambda argument (value argument)
@@ -177,11 +185,11 @@ class KaFe10ExpressionTypeProvider(
         when (ktExpression) {
             is KtNameReferenceExpression -> {
                 if (parentExpression is KtDotQualifiedExpression && parentExpression.selectorExpression == ktExpression) {
-                    return getExpectedType(parentExpression)
+                    return computeExpectedType(parentExpression)
                 }
             }
             is KtFunctionLiteral -> {
-                return getExpectedType(ktExpression.parent)
+                return computeExpectedType(ktExpression.parent)
             }
         }
 
@@ -248,7 +256,7 @@ class KaFe10ExpressionTypeProvider(
                 if (expression == parentExpression.statements.lastOrNull()) {
                     val functionLiteral = parentExpression.parent as? KtFunctionLiteral
                     if (functionLiteral != null) {
-                        val functionalType = getExpectedType(functionLiteral) as? KaFunctionalType
+                        val functionalType = computeExpectedType(functionLiteral) as? KaFunctionalType
                         functionalType?.returnType?.let { return it }
                     }
                 }
@@ -258,7 +266,7 @@ class KaFe10ExpressionTypeProvider(
                 if (expression == parentExpression.expression) {
                     val whenExpression = parentExpression.parent as? KtWhenExpression
                     if (whenExpression != null) {
-                        getExpectedType(whenExpression)?.let { return it }
+                        computeExpectedType(whenExpression)?.let { return it }
 
                         val entries = whenExpression.entries
                         val entryExpressions = entries.mapNotNull { entry -> entry.expression?.takeUnless { expression == it } }
@@ -282,42 +290,44 @@ class KaFe10ExpressionTypeProvider(
         }
     }
 
-    override fun isDefinitelyNull(expression: KtExpression): Boolean {
-        val unwrapped = expression.unwrapParenthesesLabelsAndAnnotations() as? KtElement ?: return false
-        val bindingContext = analysisContext.analyze(expression, AnalysisMode.PARTIAL)
+    override val KtExpression.isDefinitelyNull: Boolean
+        get() = withValidityAssertion {
+            val unwrapped = unwrapParenthesesLabelsAndAnnotations() as? KtElement ?: return false
+            val bindingContext = analysisContext.analyze(this, AnalysisMode.PARTIAL)
 
-        if (bindingContext[BindingContext.SMARTCAST_NULL, expression] == true) {
-            return true
-        }
-
-        for (diagnostic in bindingContext.diagnostics.forElement(unwrapped)) {
-            if (diagnostic.factory == Errors.ALWAYS_NULL) {
+            if (bindingContext[BindingContext.SMARTCAST_NULL, this] == true) {
                 return true
             }
+
+            for (diagnostic in bindingContext.diagnostics.forElement(unwrapped)) {
+                if (diagnostic.factory == Errors.ALWAYS_NULL) {
+                    return true
+                }
+            }
+
+            return false
         }
 
-        return false
-    }
+    override val KtExpression.isDefinitelyNotNull: Boolean
+        get() = withValidityAssertion {
+            val bindingContext = analysisContext.analyze(this)
 
-    override fun isDefinitelyNotNull(expression: KtExpression): Boolean {
-        val bindingContext = analysisContext.analyze(expression)
+            val smartCasts = bindingContext[BindingContext.SMARTCAST, this]
 
-        val smartCasts = bindingContext[BindingContext.SMARTCAST, expression]
+            if (smartCasts is MultipleSmartCasts) {
+                if (smartCasts.map.values.all { !it.isMarkedNullable }) {
+                    return true
+                }
+            }
 
-        if (smartCasts is MultipleSmartCasts) {
-            if (smartCasts.map.values.all { !it.isMarkedNullable }) {
+            val smartCastType = smartCasts?.defaultType
+            if (smartCastType != null && !smartCastType.isMarkedNullable) {
                 return true
             }
-        }
 
-        val smartCastType = smartCasts?.defaultType
-        if (smartCastType != null && !smartCastType.isMarkedNullable) {
-            return true
+            val expressionType = getType(bindingContext) ?: return false
+            return !TypeUtils.isNullableType(expressionType)
         }
-
-        val expressionType = expression.getType(bindingContext) ?: return false
-        return !TypeUtils.isNullableType(expressionType)
-    }
 
     private fun KotlinType.toKtNonErrorType(analysisContext: Fe10AnalysisContext): KaType? =
         this.toKtType(analysisContext).takeUnless { it is KaErrorType }

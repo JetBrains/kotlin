@@ -426,7 +426,7 @@ private fun doesNamedFunctionUseBody(namedFunction: KtNamedFunction, body: PsiEl
         true
     namedFunction.bodyExpression == body ->
         analyze(namedFunction) {
-            (body as KtExpression).getKaType()?.isUnit == true
+            (body as KtExpression).expressionType?.isUnit == true
         }
     else ->
         false
@@ -443,6 +443,6 @@ private fun KaSession.isSimpleVariableAccessCall(reference: KtReferenceExpressio
 
 private fun returnsUnit(declaration: KtDeclaration): Boolean {
     return analyze(declaration) {
-        declaration.getReturnKaType().isUnit
+        declaration.returnType.isUnit
     }
 }

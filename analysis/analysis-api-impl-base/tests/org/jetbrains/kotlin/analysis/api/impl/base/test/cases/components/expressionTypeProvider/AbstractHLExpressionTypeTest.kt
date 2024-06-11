@@ -36,7 +36,7 @@ abstract class AbstractHLExpressionTypeTest : AbstractAnalysisApiBasedTest() {
         } ?: error("expect an expression but got ${selected.text}, ${selected::class}")
         val type = executeOnPooledThreadInReadAction {
             analyseForTest(expression) {
-                var ktType = expression.getKaType()
+                var ktType = expression.expressionType
                 if (Directives.APPROXIMATE_TYPE in mainModule.testModule.directives) {
                     ktType = ktType?.approximateToSuperPublicDenotableOrSelf(true)
                 }

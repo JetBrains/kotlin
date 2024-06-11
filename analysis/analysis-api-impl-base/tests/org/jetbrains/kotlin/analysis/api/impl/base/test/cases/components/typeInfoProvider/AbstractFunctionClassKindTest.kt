@@ -21,7 +21,7 @@ abstract class AbstractFunctionClassKindTest : AbstractAnalysisApiBasedTest() {
 
         val (type, functionClassKind) = executeOnPooledThreadInReadAction {
             analyseForTest(expressionAtCaret) {
-                val functionType = expressionAtCaret.getExpectedType()
+                val functionType = expressionAtCaret.expectedType
                 functionType?.render(position = Variance.INVARIANT) to functionType?.functionTypeKind
             }
         }

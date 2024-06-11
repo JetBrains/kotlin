@@ -63,9 +63,9 @@ abstract class AbstractIsDenotableTest : AbstractAnalysisApiBasedTest() {
                         // ```
                         // smart cast is available for `(@Denotable("...") a)` and not for `a` or `@Denotable("...") a`.
                         val ktType = if (parent != null && deparenthesize(parent.receiverExpression) == deparenthesize(base)) {
-                            parent.receiverExpression.getKaType()
+                            parent.receiverExpression.expressionType
                         } else {
-                            expression.getKaType()
+                            expression.expressionType
                         }
                         val actualHasDenotableType = ktType?.isDenotable ?: error("${base.text} does not have a type.")
                         when (actualHasDenotableType) {

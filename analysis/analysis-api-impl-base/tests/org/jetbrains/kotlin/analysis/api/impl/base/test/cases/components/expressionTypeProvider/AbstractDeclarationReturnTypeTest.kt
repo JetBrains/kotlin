@@ -24,7 +24,7 @@ abstract class AbstractDeclarationReturnTypeTest : AbstractAnalysisApiBasedTest(
                         appendLine(declaration.getNameWithPositionString())
                     } else {
                         analyseForTest(declaration) {
-                            val returnType = declaration.getReturnKaType()
+                            val returnType = declaration.returnType
                             append(declaration.getNameWithPositionString())
                             append(" : ")
                             appendLine(returnType.render(position = Variance.INVARIANT))

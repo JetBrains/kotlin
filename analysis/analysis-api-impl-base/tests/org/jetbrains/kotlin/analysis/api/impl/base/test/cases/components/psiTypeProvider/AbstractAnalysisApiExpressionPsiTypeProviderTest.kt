@@ -38,7 +38,7 @@ abstract class AbstractAnalysisApiExpressionPsiTypeProviderTest : AbstractAnalys
             ?: error("Can't find psi context for $containingDeclaration")
 
         val actual = analyze(mainFile) {
-            val returnType = declarationAtCaret.getKaType()
+            val returnType = declarationAtCaret.expressionType
             if (returnType != null) {
                 prettyPrint {
                     appendLine("${KaType::class.simpleName}: ${AnalysisApiPsiTypeProviderTestUtils.render(analysisSession, returnType)}")

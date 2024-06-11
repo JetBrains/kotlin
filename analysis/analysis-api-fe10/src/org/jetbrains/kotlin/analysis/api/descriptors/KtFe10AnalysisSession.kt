@@ -31,6 +31,7 @@ class KaFe10Session(
     diagnosticProvider = KaFe10DiagnosticProvider(analysisSessionProvider, token),
     scopeProvider = KaFe10ScopeProvider(analysisSessionProvider, token),
     completionCandidateChecker = KaFe10CompletionCandidateChecker(analysisSessionProvider, token),
+    expressionTypeProvider = KaFe10ExpressionTypeProvider(analysisSessionProvider, token),
     symbolProvider = KaFe10SymbolProvider(analysisSessionProvider, token),
     javaInteroperabilityComponent = KaFe10JavaInteroperabilityComponent(analysisSessionProvider, token),
     typeRelationChecker = KaFe10TypeRelationChecker(analysisSessionProvider, token),
@@ -50,7 +51,6 @@ class KaFe10Session(
     dataFlowProvider = KaFe10DataFlowProvider(analysisSessionProvider, token),
     sourceProvider = KaFe10SourceProvider(analysisSessionProvider, token)
 ) {
-    override val expressionTypeProviderImpl: KaExpressionTypeProvider = KaFe10ExpressionTypeProvider(this)
     override val typeProviderImpl: KaTypeProvider = KaFe10TypeProvider(this)
     override val typeInfoProviderImpl: KaTypeInfoProvider = KaFe10TypeInfoProvider(this)
     override val expressionInfoProviderImpl: KaExpressionInfoProvider = KaFe10ExpressionInfoProvider(this)

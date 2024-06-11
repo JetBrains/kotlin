@@ -17,7 +17,7 @@ abstract class AbstractTypeByDeclarationReturnTypeTest : AbstractTypeTest() {
     override fun getType(analysisSession: KaSession, ktFile: KtFile, module: KtTestModule, testServices: TestServices): KaType {
         with(analysisSession) {
             val declarationAtCaret = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtDeclaration>(ktFile)
-            return declarationAtCaret.getReturnKaType()
+            return declarationAtCaret.returnType
         }
     }
 }

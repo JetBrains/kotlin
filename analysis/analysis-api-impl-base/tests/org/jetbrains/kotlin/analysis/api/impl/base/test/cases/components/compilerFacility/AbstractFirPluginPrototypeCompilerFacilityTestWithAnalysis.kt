@@ -27,7 +27,6 @@ abstract class AbstractFirPluginPrototypeCompilerFacilityTestWithAnalysis : Abst
                 override fun visitDestructuringDeclaration(declaration: KtDestructuringDeclaration) {
                     analyze(declaration) {
                         val initializer = declaration.initializer ?: return@analyze
-                        initializer.getKaType()
                     }
                 }
             })

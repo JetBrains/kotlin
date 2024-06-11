@@ -61,6 +61,7 @@ private constructor(
     diagnosticProvider = KaFirDiagnosticProvider(analysisSessionProvider, token),
     scopeProvider = KaFirScopeProvider(analysisSessionProvider, token),
     completionCandidateChecker = KaFirCompletionCandidateChecker(analysisSessionProvider, token),
+    expressionTypeProvider = KaFirExpressionTypeProvider(analysisSessionProvider, token),
     symbolProvider = KaFirSymbolProvider(analysisSessionProvider, token, firResolveSession.useSiteFirSession.symbolProvider),
     javaInteroperabilityComponent = KaFirJavaInteroperabilityComponent(analysisSessionProvider, token),
     typeRelationChecker = KaFirTypeRelationChecker(analysisSessionProvider, token),
@@ -86,8 +87,6 @@ private constructor(
 
     @Suppress("AnalysisApiMissingLifetimeCheck")
     override val useSiteModule: KtModule get() = firResolveSession.useSiteKtModule
-
-    override val expressionTypeProviderImpl = KaFirExpressionTypeProvider(this, token)
 
     override val expressionInfoProviderImpl = KaFirExpressionInfoProvider(this, token)
 

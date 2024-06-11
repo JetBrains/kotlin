@@ -69,7 +69,7 @@ internal class SymbolLightFieldForProperty private constructor(
         withPropertySymbol { propertySymbol ->
             val isDelegated = (propertySymbol as? KaKotlinPropertySymbol)?.isDelegatedProperty == true
             val ktType = if (isDelegated)
-                (kotlinOrigin as? KtProperty)?.delegateExpression?.getKaType()
+                (kotlinOrigin as? KtProperty)?.delegateExpression?.expressionType
             else
                 propertySymbol.returnType
             // See [KotlinTypeMapper#writeFieldSignature]
