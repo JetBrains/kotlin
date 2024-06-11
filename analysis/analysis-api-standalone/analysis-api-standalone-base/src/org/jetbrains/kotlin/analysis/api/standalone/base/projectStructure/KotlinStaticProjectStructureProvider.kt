@@ -21,9 +21,9 @@ public abstract class KotlinStaticProjectStructureProvider : KotlinProjectStruct
     /**
      * All [KaModule]s registered with the project structure provider, excluding [KaNotUnderContentRootModule]s and the built-ins module.
      *
-     * [allKtModules] may be used by other services to pre-build caches based on the full module structure.
+     * [allModules] may be used by other services to pre-build caches based on the full module structure.
      */
-    public abstract val allKtModules: List<KaModule>
+    public abstract val allModules: List<KaModule>
 
     public abstract val allSourceFiles: List<PsiFileSystemItem>
 }

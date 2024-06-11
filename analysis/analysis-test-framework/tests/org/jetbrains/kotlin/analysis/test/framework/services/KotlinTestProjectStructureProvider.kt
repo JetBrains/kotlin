@@ -50,11 +50,11 @@ class KotlinTestProjectStructureProvider(
             ?: throw KotlinExceptionWithAttachments("Cannot find KaModule; see the attachment for more details.")
                 .withAttachment(
                     virtualFile?.path ?: containingFile.name,
-                    allKtModules.joinToString(separator = System.lineSeparator()) { it.asDebugString() }
+                    allModules.joinToString(separator = System.lineSeparator()) { it.asDebugString() }
                 )
     }
 
-    override val allKtModules: List<KaModule> = ktTestModuleStructure.mainAndBinaryKtModules
+    override val allModules: List<KaModule> = ktTestModuleStructure.mainAndBinaryKtModules
 
     override val allSourceFiles: List<PsiFileSystemItem> = ktTestModuleStructure.allSourceFiles
 }

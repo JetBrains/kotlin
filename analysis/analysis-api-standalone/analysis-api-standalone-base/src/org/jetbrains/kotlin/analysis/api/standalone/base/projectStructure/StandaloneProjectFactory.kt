@@ -197,7 +197,7 @@ object StandaloneProjectFactory {
         project.registerService(SmartTypePointerManager::class.java, SmartTypePointerManagerImpl::class.java)
         project.registerService(SmartPointerManager::class.java, SmartPointerManagerImpl::class.java)
 
-        val modules = projectStructureProvider.allKtModules
+        val modules = projectStructureProvider.allModules
         project.registerService(KotlinProjectStructureProvider::class.java, projectStructureProvider)
         project.registerService(KotlinModuleDependentsProvider::class.java, KtStaticModuleDependentsProvider(modules))
 

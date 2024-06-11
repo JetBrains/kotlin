@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptDependencyModu
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.isStable
-import org.jetbrains.kotlin.analysis.api.utils.errors.withKtModuleEntry
+import org.jetbrains.kotlin.analysis.api.utils.errors.withKaModuleEntry
 import org.jetbrains.kotlin.assignment.plugin.AssignmentCommandLineProcessor
 import org.jetbrains.kotlin.assignment.plugin.AssignmentConfigurationKeys
 import org.jetbrains.kotlin.assignment.plugin.k2.FirAssignmentPluginExtensionRegistrar
@@ -368,7 +368,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             is KaLibraryModule -> module
             is KaLibrarySourceModule -> module.binaryLibrary
             else -> errorWithAttachment("Unexpected module ${module::class.simpleName}") {
-                withKtModuleEntry("module", module)
+                withKaModuleEntry("module", module)
             }
         }
 
@@ -623,8 +623,8 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
             is KaDanglingFileModule -> {
                 requireWithAttachment(dependency.isStable, message = { "Unstable dangling modules cannot be used as a dependency" }) {
-                    withKtModuleEntry("module", module)
-                    withKtModuleEntry("dependency", dependency)
+                    withKaModuleEntry("module", module)
+                    withKaModuleEntry("dependency", dependency)
                     withPsiEntry("dependencyFile", dependency.file)
                 }
                 llFirSessionCache.getSession(dependency)
@@ -636,8 +636,8 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             is KaLibrarySourceModule,
             -> {
                 errorWithAttachment("Module ${module::class} cannot depend on ${dependency::class}") {
-                    withKtModuleEntry("module", module)
-                    withKtModuleEntry("dependency", dependency)
+                    withKaModuleEntry("module", module)
+                    withKaModuleEntry("dependency", dependency)
                 }
             }
         }

@@ -17,7 +17,7 @@ abstract class AbstractAnalysisSessionInvalidationTest : AbstractSessionInvalida
     override val resultFileSuffix: String get() = "analysis_session"
 
     override fun getSession(ktModule: KaModule) =
-        KaSessionProvider.getInstance(ktModule.project).getAnalysisSessionByUseSiteKtModule(ktModule)
+        KaSessionProvider.getInstance(ktModule.project).getAnalysisSession(ktModule)
 
     override fun getSessionKtModule(session: KaSession): KaModule = session.useSiteModule
     override fun isSessionValid(session: KaSession): Boolean = session.isValid()

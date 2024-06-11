@@ -17,47 +17,47 @@ import org.jetbrains.kotlin.psi.KtElement
 /**
  * Executes the given [action] in a [KaSession] context.
  *
- * The project will be analyzed from the perspective of [useSiteKtElement]'s module, also called the use-site module.
+ * The project will be analyzed from the perspective of [useSiteElement]'s module, also called the use-site module.
  *
  * @see KaSession
  */
 public inline fun <R> analyze(
-    useSiteKtElement: KtElement,
+    useSiteElement: KtElement,
     action: KaSession.() -> R
 ): R =
-    KaSessionProvider.getInstance(useSiteKtElement.project)
-        .analyze(useSiteKtElement, action)
+    KaSessionProvider.getInstance(useSiteElement.project)
+        .analyze(useSiteElement, action)
 
 /**
  * Executes the given [action] in a [KaSession] context.
  *
- * The project will be analyzed from the perspective of the given [useSiteKtModule].
+ * The project will be analyzed from the perspective of the given [useSiteModule].
  *
  * @see KaSession
  */
 public inline fun <R> analyze(
-    useSiteKtModule: KaModule,
+    useSiteModule: KaModule,
     crossinline action: KaSession.() -> R
 ): R {
-    val sessionProvider = KaSessionProvider.getInstance(useSiteKtModule.project)
-    return sessionProvider.analyze(useSiteKtModule, action)
+    val sessionProvider = KaSessionProvider.getInstance(useSiteModule.project)
+    return sessionProvider.analyze(useSiteModule, action)
 }
 
 /**
  * Executes the given [action] in a [KaSession] context.
  * Depending on the passed [resolutionMode], declarations inside a file copy will be treated in a specific way.
  *
- * Note that the [useSiteKtElement] must be inside a dangling file copy.
+ * Note that the [useSiteElement] must be inside a dangling file copy.
  * Specifically, [PsiFile.getOriginalFile] must point to the copy source.
  *
- * The project will be analyzed from the perspective of [useSiteKtElement]'s module, also called the use-site module.
+ * The project will be analyzed from the perspective of [useSiteElement]'s module, also called the use-site module.
  */
 public inline fun <R> analyzeCopy(
-    useSiteKtElement: KtElement,
+    useSiteElement: KtElement,
     resolutionMode: KaDanglingFileResolutionMode,
     crossinline action: KaSession.() -> R,
 ): R {
-    val containingFile = useSiteKtElement.containingKtFile
+    val containingFile = useSiteElement.containingKtFile
     return withDanglingFileResolutionMode(containingFile, resolutionMode) {
         analyze(containingFile, action)
     }

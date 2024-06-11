@@ -24,39 +24,39 @@ import org.jetbrains.kotlin.psi.KtElement
 public abstract class KaSessionProvider(public val project: Project) : Disposable {
     public abstract val tokenFactory: KaLifetimeTokenFactory
 
-    public abstract fun getAnalysisSession(useSiteKtElement: KtElement): KaSession
+    public abstract fun getAnalysisSession(useSiteElement: KtElement): KaSession
 
-    public abstract fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KaModule): KaSession
+    public abstract fun getAnalysisSession(useSiteModule: KaModule): KaSession
 
     // The `analyse` functions affect binary compatibility as they are inlined with every `analyze` call. To avoid breaking binary
     // compatibility, their implementations should not be changed unless absolutely necessary. It should be possible to put most
     // functionality into `beforeEnteringAnalysis` and/or `afterLeavingAnalysis`.
 
     public inline fun <R> analyze(
-        useSiteKtElement: KtElement,
+        useSiteElement: KtElement,
         action: KaSession.() -> R,
     ): R {
-        val analysisSession = getAnalysisSession(useSiteKtElement)
+        val analysisSession = getAnalysisSession(useSiteElement)
 
-        beforeEnteringAnalysis(analysisSession, useSiteKtElement)
+        beforeEnteringAnalysis(analysisSession, useSiteElement)
         return try {
             analysisSession.action()
         } finally {
-            afterLeavingAnalysis(analysisSession, useSiteKtElement)
+            afterLeavingAnalysis(analysisSession, useSiteElement)
         }
     }
 
     public inline fun <R> analyze(
-        useSiteKtModule: KaModule,
+        useSiteModule: KaModule,
         action: KaSession.() -> R,
     ): R {
-        val analysisSession = getAnalysisSessionByUseSiteKtModule(useSiteKtModule)
+        val analysisSession = getAnalysisSession(useSiteModule)
 
-        beforeEnteringAnalysis(analysisSession, useSiteKtModule)
+        beforeEnteringAnalysis(analysisSession, useSiteModule)
         return try {
             analysisSession.action()
         } finally {
-            afterLeavingAnalysis(analysisSession, useSiteKtModule)
+            afterLeavingAnalysis(analysisSession, useSiteModule)
         }
     }
 

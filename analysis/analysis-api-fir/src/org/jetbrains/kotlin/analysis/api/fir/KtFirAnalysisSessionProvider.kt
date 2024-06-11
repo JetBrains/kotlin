@@ -39,20 +39,20 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
         LowMemoryWatcher.register(::clearCaches, project)
     }
 
-    override fun getAnalysisSession(useSiteKtElement: KtElement): KaSession {
-        val module = KotlinProjectStructureProvider.getModule(project, useSiteKtElement, useSiteModule = null)
-        return getAnalysisSessionByUseSiteKtModule(module)
+    override fun getAnalysisSession(useSiteElement: KtElement): KaSession {
+        val module = KotlinProjectStructureProvider.getModule(project, useSiteElement, useSiteModule = null)
+        return getAnalysisSession(module)
     }
 
-    override fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KaModule): KaSession {
-        if (useSiteKtModule is KaDanglingFileModule && !useSiteKtModule.isStable) {
-            return createAnalysisSession(useSiteKtModule)
+    override fun getAnalysisSession(useSiteModule: KaModule): KaSession {
+        if (useSiteModule is KaDanglingFileModule && !useSiteModule.isStable) {
+            return createAnalysisSession(useSiteModule)
         }
 
         val identifier = tokenFactory.identifier
         identifier.flushPendingChanges(project)
 
-        return cache.computeIfAbsent(useSiteKtModule, ::createAnalysisSession)
+        return cache.computeIfAbsent(useSiteModule, ::createAnalysisSession)
     }
 
     private fun createAnalysisSession(useSiteKtModule: KaModule): KaFirSession {

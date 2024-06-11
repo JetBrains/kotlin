@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
-import org.jetbrains.kotlin.utils.exceptions.withPsiEntry as withPsiEntryWithoutKtModule
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry as withPsiEntryWithoutKaModule
 
 @KaAnalysisApiInternals
 public fun ExceptionAttachmentBuilder.withPsiEntry(name: String, psi: PsiElement?, moduleFactory: (PsiElement) -> KaModule) {
@@ -18,13 +18,13 @@ public fun ExceptionAttachmentBuilder.withPsiEntry(name: String, psi: PsiElement
 
 @KaAnalysisApiInternals
 public fun ExceptionAttachmentBuilder.withPsiEntry(name: String, psi: PsiElement?, module: KaModule?) {
-    withPsiEntryWithoutKtModule(name, psi)
-    withKtModuleEntry("${name}Module", module)
+    withPsiEntryWithoutKaModule(name, psi)
+    withKaModuleEntry("${name}Module", module)
 }
 
 @KaAnalysisApiInternals
-public fun ExceptionAttachmentBuilder.withKtModuleEntry(name: String, module: KaModule?) {
-    withEntry(name, module) { ktModule -> ktModule.moduleDescription }
+public fun ExceptionAttachmentBuilder.withKaModuleEntry(name: String, module: KaModule?) {
+    withEntry(name, module) { module -> module.moduleDescription }
 }
 
 @KaAnalysisApiInternals

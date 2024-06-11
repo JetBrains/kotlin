@@ -306,7 +306,7 @@ public class DebugSymbolRenderer(
             is KaContextReceiver -> renderContextReceiver(value, printer)
             is KaAnnotation -> renderAnnotationApplication(value, printer)
             is KaAnnotationList -> renderAnnotationsList(value, printer)
-            is KaModule -> renderKtModule(value, printer)
+            is KaModule -> renderModule(value, printer)
             // Other custom values
             is Name -> printer.append(value.asString())
             is FqName -> printer.append(value.asString())
@@ -360,9 +360,9 @@ public class DebugSymbolRenderer(
         }
     }
 
-    private fun renderKtModule(ktModule: KaModule, printer: PrettyPrinter) {
-        val ktModuleClass = ktModule::class.allSuperclasses.first { it in ktModuleSubclasses }
-        printer.append(ktModuleClass.simpleName + " \"" + ktModule.moduleDescription + "\"")
+    private fun renderModule(module: KaModule, printer: PrettyPrinter) {
+        val ktModuleClass = module::class.allSuperclasses.first { it in kaModuleSubclasses }
+        printer.append(ktModuleClass.simpleName + " \"" + module.moduleDescription + "\"")
     }
 
     private fun KClass<*>.allSealedSubClasses(): List<KClass<*>> = buildList {
@@ -370,7 +370,7 @@ public class DebugSymbolRenderer(
         sealedSubclasses.flatMapTo(this) { it.allSealedSubClasses() }
     }
 
-    private val ktModuleSubclasses = KaModule::class.allSealedSubClasses().distinct().sortedWith { a, b ->
+    private val kaModuleSubclasses = KaModule::class.allSealedSubClasses().distinct().sortedWith { a, b ->
         when {
             a == b -> 0
             a.isSubclassOf(b) -> -1

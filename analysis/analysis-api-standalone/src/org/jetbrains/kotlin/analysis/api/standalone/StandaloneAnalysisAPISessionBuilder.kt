@@ -205,7 +205,7 @@ public class StandaloneAnalysisAPISessionBuilder(
 
         val sourceKtFiles = projectStructureProvider.allSourceFiles.filterIsInstance<KtFile>()
         val libraryRoots = StandaloneProjectFactory.getAllBinaryRoots(
-            projectStructureProvider.allKtModules,
+            projectStructureProvider.allModules,
             kotlinCoreProjectEnvironment,
         )
 
@@ -213,7 +213,7 @@ public class StandaloneAnalysisAPISessionBuilder(
         registerProjectServices(sourceKtFiles, createPackagePartProvider)
 
         return StandaloneAnalysisAPISession(kotlinCoreProjectEnvironment) {
-            projectStructureProvider.allKtModules.mapNotNull { ktModule ->
+            projectStructureProvider.allModules.mapNotNull { ktModule ->
                 if (ktModule !is KaSourceModule) return@mapNotNull null
                 check(ktModule is KaSourceModuleImpl)
                 ktModule to ktModule.sourceRoots.filterIsInstance<PsiFile>()

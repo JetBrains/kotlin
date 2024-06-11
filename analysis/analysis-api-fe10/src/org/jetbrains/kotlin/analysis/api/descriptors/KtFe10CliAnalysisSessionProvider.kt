@@ -18,19 +18,19 @@ import org.jetbrains.kotlin.analysis.api.platform.modification.createProjectWide
 import org.jetbrains.kotlin.psi.KtElement
 
 internal class KaFe10SessionProvider(project: Project) : KaBaseSessionProvider(project) {
-    override fun getAnalysisSession(useSiteKtElement: KtElement): KaSession {
+    override fun getAnalysisSession(useSiteElement: KtElement): KaSession {
         val facade = Fe10AnalysisFacade.getInstance(project)
         val token = tokenFactory.create(project, project.createProjectWideOutOfBlockModificationTracker())
-        val context = facade.getAnalysisContext(useSiteKtElement, token)
-        val useSiteModule = KotlinProjectStructureProvider.getModule(project, useSiteKtElement, useSiteModule = null)
+        val context = facade.getAnalysisContext(useSiteElement, token)
+        val useSiteModule = KotlinProjectStructureProvider.getModule(project, useSiteElement, useSiteModule = null)
         return createSession(context, useSiteModule, token)
     }
 
-    override fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KaModule): KaSession {
+    override fun getAnalysisSession(useSiteModule: KaModule): KaSession {
         val facade = Fe10AnalysisFacade.getInstance(project)
         val token = tokenFactory.create(project, project.createProjectWideOutOfBlockModificationTracker())
-        val context = facade.getAnalysisContext(useSiteKtModule, token)
-        return createSession(context, useSiteKtModule, token)
+        val context = facade.getAnalysisContext(useSiteModule, token)
+        return createSession(context, useSiteModule, token)
     }
 
     private fun createSession(context: Fe10AnalysisContext, useSiteModule: KaModule, token: KaLifetimeToken): KaFe10Session {

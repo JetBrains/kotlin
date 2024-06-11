@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 internal class KotlinStandaloneProjectStructureProvider(
     private val platform: TargetPlatform,
     private val project: Project,
-    override val allKtModules: List<KaModule>,
+    override val allModules: List<KaModule>,
 ) : KotlinStaticProjectStructureProvider() {
     private val ktNotUnderContentRootModuleWithoutPsiFile by lazy {
         KaNotUnderContentRootModuleImpl(
@@ -62,23 +62,23 @@ internal class KotlinStandaloneProjectStructureProvider(
                 .withAttachment("useSiteModule", useSiteModule?.asDebugString())
         }
 
-        return allKtModules.firstOrNull { module -> virtualFile in module.contentScope }
+        return allModules.firstOrNull { module -> virtualFile in module.contentScope }
             ?: throw KotlinExceptionWithAttachments("Cannot find a KaModule for the VirtualFile")
                 .withPsiAttachment("containingFile", containingFile)
                 .withAttachment("useSiteModule", useSiteModule?.asDebugString())
                 .withAttachment("path", virtualFile.path)
-                .withAttachment("modules", allKtModules.joinToString(separator = System.lineSeparator()) { it.asDebugString() })
+                .withAttachment("modules", allModules.joinToString(separator = System.lineSeparator()) { it.asDebugString() })
     }
 
     internal val binaryModules: List<KaBinaryModule> by lazy {
-        allKtModules
+        allModules
             .flatMap { it.allDirectDependencies() }
             .filterIsInstance<KaBinaryModule>()
     }
 
     override val allSourceFiles: List<PsiFileSystemItem> by lazy {
         buildList {
-            val files = allKtModules.mapNotNull { (it as? KaSourceModuleImpl)?.sourceRoots }.flatten()
+            val files = allModules.mapNotNull { (it as? KaSourceModuleImpl)?.sourceRoots }.flatten()
             addAll(files)
             addAll(findJvmRootsForJavaFiles(files.filterIsInstance<PsiJavaFile>()))
         }

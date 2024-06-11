@@ -34,7 +34,7 @@ public fun StandaloneAnalysisAPISession.getAllLibraryModules(): Sequence<KaLibra
         error("Expected implementation of ${KotlinStaticProjectStructureProvider::class.java} but found ${projectStructureProvider.javaClass}")
     }
 
-    return projectStructureProvider.allKtModules
+    return projectStructureProvider.allModules
         .withClosureSequence<KaModule> { module -> module.allDirectDependencies().asIterable() }
         .filterIsInstance<KaLibraryModule>()
 }

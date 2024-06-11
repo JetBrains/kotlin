@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.collectUseSiteContainers
-import org.jetbrains.kotlin.analysis.api.utils.errors.withKtModuleEntry
+import org.jetbrains.kotlin.analysis.api.utils.errors.withKaModuleEntry
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
@@ -366,7 +366,7 @@ internal class KaFirDataFlowProvider(
     private fun getControlFlowGraph(anchor: KtElement, firStatements: List<FirElement>): ControlFlowGraph {
         return findControlFlowGraph(anchor, firStatements)
             ?: errorWithAttachment("Cannot find a control flow graph for element") {
-                withKtModuleEntry("module", analysisSession.useSiteModule)
+                withKaModuleEntry("module", analysisSession.useSiteModule)
                 withPsiEntry("anchor", anchor)
                 withFirEntry("firAnchor", firStatements.last())
             }
