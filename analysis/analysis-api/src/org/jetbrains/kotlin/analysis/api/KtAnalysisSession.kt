@@ -66,6 +66,7 @@ public abstract class KaSession(
     evaluator: KaEvaluator,
     referenceShortener: KaReferenceShortener,
     importOptimizer: KaImportOptimizer,
+    renderer: KaRenderer,
     visibilityChecker: KaVisibilityChecker,
     originalPsiProvider: KaOriginalPsiProvider,
     typeCreator: KaTypeCreator,
@@ -94,7 +95,7 @@ public abstract class KaSession(
     KaSymbolsMixIn,
     KaReferenceShortener by referenceShortener,
     KaImportOptimizer by importOptimizer,
-    KaSymbolDeclarationRendererMixIn,
+    KaRenderer by renderer,
     KaVisibilityChecker by visibilityChecker,
     KaOriginalPsiProvider by originalPsiProvider,
     KaTypeCreator by typeCreator,
@@ -114,9 +115,6 @@ public abstract class KaSession(
 
     internal val symbolProvider: KaSymbolProvider get() = symbolProviderImpl
     protected abstract val symbolProviderImpl: KaSymbolProvider
-
-    internal val symbolDeclarationRendererProvider: KaSymbolDeclarationRendererProvider get() = symbolDeclarationRendererProviderImpl
-    protected abstract val symbolDeclarationRendererProviderImpl: KaSymbolDeclarationRendererProvider
 
     internal val expressionTypeProvider: KaExpressionTypeProvider get() = expressionTypeProviderImpl
     protected abstract val expressionTypeProviderImpl: KaExpressionTypeProvider

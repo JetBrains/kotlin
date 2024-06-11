@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.fir.components.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbolProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAnalysisScopeProviderImpl
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaRendererImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaGlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.impl.base.util.createSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
@@ -65,6 +66,7 @@ private constructor(
     evaluator = KaFirEvaluator(analysisSessionProvider, token),
     referenceShortener = KaFirReferenceShortener(analysisSessionProvider, token),
     importOptimizer = KaFirImportOptimizer(analysisSessionProvider, token),
+    renderer = KaRendererImpl(analysisSessionProvider, token),
     visibilityChecker = KaFirVisibilityChecker(analysisSessionProvider, token),
     originalPsiProvider = KaFirOriginalPsiProvider(analysisSessionProvider, token),
     typeCreator = KaFirTypeCreator(analysisSessionProvider, token),
@@ -87,8 +89,6 @@ private constructor(
 
     override val symbolProviderImpl =
         KaFirSymbolProvider(this, firResolveSession.useSiteFirSession.symbolProvider)
-
-    override val symbolDeclarationRendererProviderImpl: KaSymbolDeclarationRendererProvider = KaFirRendererProvider(this, token)
 
     override val expressionInfoProviderImpl = KaFirExpressionInfoProvider(this, token)
 

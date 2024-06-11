@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.NotSupportedForK1Exception
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.descriptors.components.*
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAnalysisScopeProviderImpl
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaRendererProviderImpl
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaRendererImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaGlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolProvider
@@ -38,6 +38,7 @@ class KaFe10Session(
     evaluator = KaFe10Evaluator(analysisSessionProvider, token),
     referenceShortener = KaFe10ReferenceShortener(analysisSessionProvider, token),
     importOptimizer = KaFe10ImportOptimizer(analysisSessionProvider, token),
+    renderer = KaRendererImpl(analysisSessionProvider, token),
     visibilityChecker = KaFe10VisibilityChecker(analysisSessionProvider, token),
     originalPsiProvider = KaFe10OriginalPsiProvider(analysisSessionProvider, token),
     typeCreator = KaFe10TypeCreator(analysisSessionProvider, token),
@@ -50,7 +51,6 @@ class KaFe10Session(
     sourceProvider = KaFe10SourceProvider(analysisSessionProvider, token)
 ) {
     override val symbolProviderImpl: KaSymbolProvider = KaFe10SymbolProvider(this)
-    override val symbolDeclarationRendererProviderImpl: KaSymbolDeclarationRendererProvider = KaRendererProviderImpl(this, token)
     override val expressionTypeProviderImpl: KaExpressionTypeProvider = KaFe10ExpressionTypeProvider(this)
     override val typeProviderImpl: KaTypeProvider = KaFe10TypeProvider(this)
     override val typeInfoProviderImpl: KaTypeInfoProvider = KaFe10TypeInfoProvider(this)
