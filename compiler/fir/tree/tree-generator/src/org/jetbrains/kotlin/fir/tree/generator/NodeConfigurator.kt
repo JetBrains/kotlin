@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.tree.generator
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.NodeConfigurator.FieldSets.annotations
 import org.jetbrains.kotlin.fir.tree.generator.NodeConfigurator.FieldSets.declarations
-import org.jetbrains.kotlin.fir.tree.generator.NodeConfigurator.FieldSets.name
 import org.jetbrains.kotlin.fir.tree.generator.NodeConfigurator.FieldSets.typeArguments
 import org.jetbrains.kotlin.fir.tree.generator.NodeConfigurator.FieldSets.typeParameters
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.Declaration
 import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.Reference
 import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.Contracts
 import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.Diagnostics
-import org.jetbrains.kotlin.fir.tree.generator.model.field
 import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.TypeRef as TypeRefElement
 import org.jetbrains.kotlin.fir.tree.generator.model.fieldSet
 import org.jetbrains.kotlin.fir.tree.generator.util.type

@@ -10,12 +10,11 @@ import org.jetbrains.kotlin.fir.tree.generator.firBuilderDslAnnotation
 import org.jetbrains.kotlin.fir.tree.generator.firImplementationDetailType
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
-import org.jetbrains.kotlin.fir.tree.generator.model.FieldList
 import org.jetbrains.kotlin.fir.tree.generator.model.Implementation
+import org.jetbrains.kotlin.fir.tree.generator.model.ListField
 import org.jetbrains.kotlin.fir.tree.generator.toMutableOrEmptyImport
 import org.jetbrains.kotlin.generators.tree.AbstractBuilderPrinter
 import org.jetbrains.kotlin.generators.tree.ClassRef
-import org.jetbrains.kotlin.generators.tree.ListField
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 
 internal class BuilderPrinter(
@@ -32,7 +31,7 @@ internal class BuilderPrinter(
 
     override fun ImportCollectingPrinter.printFieldReferenceInImplementationConstructorCall(field: Field) {
         print(field.name)
-        if (field is FieldList && field.isMutableOrEmptyList) {
+        if (field is ListField && field.isMutableOrEmptyList) {
             addImport(toMutableOrEmptyImport)
             print(".toMutableOrEmpty()")
         }

@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.context
 
-import org.jetbrains.kotlin.fir.tree.generator.BASE_PACKAGE
 import org.jetbrains.kotlin.fir.tree.generator.model.*
+import org.jetbrains.kotlin.fir.tree.generator.model.ListField
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.ElementOrRef
 import org.jetbrains.kotlin.generators.tree.config.AbstractElementConfigurator
@@ -66,9 +66,9 @@ abstract class AbstractFirTreeBuilder() : AbstractElementConfigurator<Element, F
         withTransform: Boolean = false,
         useMutableOrEmpty: Boolean = false,
         isChild: Boolean = true,
-        initializer: FieldList.() -> Unit = {},
+        initializer: ListField.() -> Unit = {},
     ): Field {
-        return FieldList(
+        return ListField(
             name,
             baseType,
             withReplace = withReplace,
@@ -84,7 +84,7 @@ abstract class AbstractFirTreeBuilder() : AbstractElementConfigurator<Element, F
         withTransform: Boolean = false,
         useMutableOrEmpty: Boolean = false,
         isChild: Boolean = true,
-        initializer: FieldList.() -> Unit = {},
+        initializer: ListField.() -> Unit = {},
     ): Field {
         val name = elementOrRef.element.name.replaceFirstChar(Char::lowercaseChar) + "s"
         return listField(

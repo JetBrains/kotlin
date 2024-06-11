@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.tree.generator.model
 
 import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.generators.tree.ListField as AbstractListField
 
 sealed class Field : AbstractField<Field>() {
     abstract var withReplace: Boolean
@@ -80,14 +81,14 @@ class SingleField(
 }
 // ----------- Field list -----------
 
-class FieldList(
+class ListField(
     override val name: String,
     override var baseType: TypeRef,
     override var withReplace: Boolean,
     override var withTransform: Boolean,
     override val isChild: Boolean,
     val isMutableOrEmptyList: Boolean = false,
-) : Field(), ListField {
+) : Field(), AbstractListField {
     override val typeRef: ClassRef<PositionTypeParameterRef>
         get() = super.typeRef
 
@@ -100,7 +101,7 @@ class FieldList(
     override var isParameter: Boolean = false
 
     override fun internalCopy(): Field {
-        return FieldList(
+        return ListField(
             name,
             baseType,
             withReplace,

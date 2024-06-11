@@ -41,7 +41,7 @@ internal class ImplementationPrinter(
                 is SingleField ->
                     println("$name = ${name}${call()}transform(transformer, data)")
 
-                is FieldList -> {
+                is ListField -> {
                     addImport(transformInPlaceImport)
                     println("${name}.transformInplace(transformer, data)")
                 }
@@ -51,7 +51,7 @@ internal class ImplementationPrinter(
             val isInterface = kind == ImplementationKind.Interface || kind == ImplementationKind.SealedInterface
             val isAbstract = kind == ImplementationKind.AbstractClass || kind == ImplementationKind.SealedClass
             val bindingCalls = element.allFields.filter {
-                it.withBindThis && it.hasSymbolType && it !is FieldList && it.name != "companionObjectSymbol"
+                it.withBindThis && it.hasSymbolType && it !is ListField && it.name != "companionObjectSymbol"
             }.takeIf {
                 it.isNotEmpty() && !isInterface && !isAbstract &&
                         !element.typeName.contains("Reference")
@@ -126,7 +126,7 @@ internal class ImplementationPrinter(
                                                 println(field.acceptString())
                                             }
 
-                                            is FieldList -> {
+                                            is ListField -> {
                                                 println(field.name, field.call(), "forEach { it.accept(visitor, data) }")
                                             }
 
@@ -289,7 +289,7 @@ internal class ImplementationPrinter(
                     when {
                         field.implementationDefaultStrategy!!.withGetter -> {}
 
-                        field is FieldList && !field.isMutableOrEmptyList -> {
+                        field is ListField && !field.isMutableOrEmptyList -> {
                             println("if (${field.name} === $newValue) return")
                             println("${field.name}.clear()")
                             println("${field.name}.addAll($newValue)")
@@ -300,7 +300,7 @@ internal class ImplementationPrinter(
                                 println("require($newValue != null)")
                             }
                             print("${field.name} = $newValue")
-                            if (field is FieldList && field.isMutableOrEmptyList) {
+                            if (field is ListField && field.isMutableOrEmptyList) {
                                 addImport(toMutableOrEmptyImport)
                                 print(".toMutableOrEmpty()")
                             }
