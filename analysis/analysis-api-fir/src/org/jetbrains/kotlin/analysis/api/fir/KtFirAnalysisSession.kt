@@ -106,8 +106,6 @@ private constructor(
 
     override val substitutorFactoryImpl: KaSubstitutorFactory = KaFirSubstitutorFactory(this)
 
-    override val symbolProviderByJavaPsiImpl = KaFirSymbolProviderByJavaPsi(this)
-
     override val substitutorProviderImpl: KaSubstitutorProvider = KaFirSubstitutorProvider(this)
 
     internal val useSiteSession: FirSession get() = firResolveSession.useSiteFirSession

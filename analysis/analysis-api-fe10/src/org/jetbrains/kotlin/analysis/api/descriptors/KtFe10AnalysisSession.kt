@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analysis.api.impl.base.components.KaRendererProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaGlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolProvider
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolProviderByJavaPsi
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 
 @OptIn(KaAnalysisApiInternals::class, KaAnalysisNonPublicApi::class)
@@ -60,7 +59,6 @@ class KaFe10Session(
     override val jvmTypeMapperImpl: KaJvmTypeMapper = KaFe10JvmTypeMapper(this)
     override val symbolInfoProviderImpl: KaSymbolInfoProvider = KaFe10SymbolInfoProvider(this)
     override val substitutorFactoryImpl: KaSubstitutorFactory = KaFe10SubstitutorFactory(this)
-    override val symbolProviderByJavaPsiImpl: KaSymbolProviderByJavaPsi = KaFe10SymbolProviderByJavaPsi(this)
 
     @Suppress("AnalysisApiMissingLifetimeCheck")
     override val substitutorProviderImpl: KaSubstitutorProvider

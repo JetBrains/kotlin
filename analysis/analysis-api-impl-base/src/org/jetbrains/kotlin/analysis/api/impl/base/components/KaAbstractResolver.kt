@@ -34,8 +34,8 @@ abstract class KaAbstractResolver<T : KaSession> : KaSessionComponent<T>(), KaRe
     ): Collection<KaSymbol> = with(analysisSession) {
         val symbol = when (val psi = reference.resolve()) {
             is KtDeclaration -> psi.getSymbol()
-            is PsiClass -> psi.getNamedClassSymbol()
-            is PsiMember -> psi.getCallableSymbol()
+            is PsiClass -> psi.namedClassSymbol
+            is PsiMember -> psi.callableSymbol
             else -> null
         }
 

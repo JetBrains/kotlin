@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiType
 import com.intellij.psi.PsiTypeElement
 import com.intellij.psi.SyntheticElement
@@ -23,6 +25,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.isTopLevel
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
@@ -149,6 +152,16 @@ class KaFe10JavaInteroperabilityComponent(
     override fun PsiType.asKaType(useSitePosition: PsiElement): KaType? = withValidityAssertion {
         throw UnsupportedOperationException("Conversion to KtType is not supported in K1 implementation")
     }
+
+    override val PsiClass.namedClassSymbol: KaNamedClassOrObjectSymbol?
+        get() = withValidityAssertion {
+            return null /*TODO*/
+        }
+
+    override val PsiMember.callableSymbol: KaCallableSymbol?
+        get() = withValidityAssertion {
+            return null /*TODO*/
+        }
 
     override val KaCallableSymbol.containingJvmClassName: String?
         get() = withValidityAssertion {

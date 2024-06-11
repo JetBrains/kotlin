@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
 
@@ -57,6 +60,10 @@ public interface KaJavaInteroperabilityComponent {
 
     @Deprecated("Use 'asKaType()' instead.", replaceWith = ReplaceWith("asKaType(useSitePosition)"))
     public fun PsiType.asKtType(useSitePosition: PsiElement): KaType? = asKaType(useSitePosition)
+
+    public val PsiClass.namedClassSymbol: KaNamedClassOrObjectSymbol?
+
+    public val PsiMember.callableSymbol: KaCallableSymbol?
 
     /**
      * Returns containing JVM class name for [KaCallableSymbol]
