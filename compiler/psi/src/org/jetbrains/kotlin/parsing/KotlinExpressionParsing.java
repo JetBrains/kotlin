@@ -789,7 +789,9 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     private void parseStringTemplateElement() {
         if (at(REGULAR_STRING_PART)) {
             PsiBuilder.Marker mark = mark();
-            advance(); // REGULAR_STRING_PART
+            while (at(REGULAR_STRING_PART)) {
+                advance(); // REGULAR_STRING_PART
+            }
             mark.done(LITERAL_STRING_TEMPLATE_ENTRY);
         }
         else if (at(ESCAPE_SEQUENCE)) {
