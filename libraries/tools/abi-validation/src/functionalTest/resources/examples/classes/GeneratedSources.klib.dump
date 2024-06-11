@@ -8,5 +8,6 @@
 // Library unique name: <testproject>
 final class /Generated { // /Generated|null[0]
     constructor <init>() // /Generated.<init>|<init>(){}[0]
+
     final fun helloCreator(): kotlin/Int // /Generated.helloCreator|helloCreator(){}[0]
 }

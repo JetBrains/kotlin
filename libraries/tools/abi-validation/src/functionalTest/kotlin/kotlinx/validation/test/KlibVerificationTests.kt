@@ -36,7 +36,7 @@ private fun KlibVerificationTests.checkKlibDump(
 
     val expected = readFileList(expectedDumpFileName)
 
-    Assertions.assertThat(generatedDump.readText()).isEqualToIgnoringNewLines(expected)
+    Assertions.assertThat(generatedDump.readText()).isEqualTo(expected)
 }
 
 internal class KlibVerificationTests : BaseKotlinGradleTest() {
@@ -155,7 +155,7 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
             assertTrue(jvmApiDump.exists(), "No API dump for JVM")
 
             val jvmExpected = readFileList("/examples/classes/AnotherBuildConfig.dump")
-            Assertions.assertThat(jvmApiDump.readText()).isEqualToIgnoringNewLines(jvmExpected)
+            Assertions.assertThat(jvmApiDump.readText()).isEqualTo(jvmExpected)
         }
     }
 
@@ -353,6 +353,28 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
 
         checkKlibDump(
             runner.build(), "/examples/classes/TopLevelDeclarations.klib.with.linux.dump",
+            dumpTask = ":klibApiDump"
+        )
+    }
+
+    @Test
+    fun `check sorting for target-specific declarations`() {
+        val runner = test {
+            baseProjectSetting()
+            addToSrcSet("/examples/classes/TopLevelDeclarations.kt")
+            addToSrcSet("/examples/classes/TopLevelDeclarationsExp.kt")
+            addToSrcSet("/examples/classes/TopLevelDeclarationsLinuxOnly.kt", "linuxMain")
+            addToSrcSet("/examples/classes/TopLevelDeclarationsMingwOnly.kt", "mingwMain")
+            addToSrcSet("/examples/classes/TopLevelDeclarationsAndroidOnly.kt", "androidNativeMain")
+
+
+            runner {
+                arguments.add(":klibApiDump")
+            }
+        }
+
+        checkKlibDump(
+            runner.build(), "/examples/classes/TopLevelDeclarations.klib.diverging.dump",
             dumpTask = ":klibApiDump"
         )
     }

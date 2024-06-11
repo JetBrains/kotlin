@@ -8,5 +8,6 @@
 // Library unique name: <org.example:bcv-klib-test>
 // Targets: [linuxArm64]
 final fun org.example/add(kotlin/Long, kotlin/Long): kotlin/Long // org.example/add|add(kotlin.Long;kotlin.Long){}[0]
+
 // Targets: [linuxX64]
 final fun org.example/sub(kotlin/Long, kotlin/Long): kotlin/Long // org.example/sub|sub(kotlin.Long;kotlin.Long){}[0]

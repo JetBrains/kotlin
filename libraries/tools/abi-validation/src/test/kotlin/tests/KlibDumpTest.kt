@@ -48,10 +48,13 @@ private val mergedLinuxDump = """
     // Library unique name: <org.example:bcv-klib-test>
     final class org.example/ShardedClass { // org.example/ShardedClass|null[0]
         constructor <init>(kotlin/Int) // org.example/ShardedClass.<init>|<init>(kotlin.Int){}[0]
+
         final val value // org.example/ShardedClass.value|{}value[0]
             final fun <get-value>(): kotlin/Int // org.example/ShardedClass.value.<get-value>|<get-value>(){}[0]
+
         final fun add(kotlin/Int): kotlin/Int // org.example/ShardedClass.add|add(kotlin.Int){}[0]
     }
+
     final fun org.example/ShardedClass(kotlin/Int, kotlin/Float, kotlin/Long): org.example/ShardedClass // org.example/ShardedClass|ShardedClass(kotlin.Int;kotlin.Float;kotlin.Long){}[0]
 
 """.trimIndent()
@@ -68,15 +71,20 @@ private val mergedLinuxDumpWithTargetSpecificDeclaration = """
     // Library unique name: <org.example:bcv-klib-test>
     final class org.example/ShardedClass { // org.example/ShardedClass|null[0]
         constructor <init>(kotlin/Int) // org.example/ShardedClass.<init>|<init>(kotlin.Int){}[0]
+
         final val value // org.example/ShardedClass.value|{}value[0]
             final fun <get-value>(): kotlin/Int // org.example/ShardedClass.value.<get-value>|<get-value>(){}[0]
+
         // Targets: [linuxArm64]
         final fun add2(kotlin/Int): kotlin/Int // org.example/ShardedClass.add|add(kotlin.Int){}[0]
+
         // Targets: [linuxX64]
         final fun add(kotlin/Int): kotlin/Int // org.example/ShardedClass.add|add(kotlin.Int){}[0]
     }
+
     // Targets: [linuxArm64]
     final fun org.example/ShardedClass2(kotlin/Int, kotlin/Float, kotlin/Long): org.example/ShardedClass // org.example/ShardedClass|ShardedClass(kotlin.Int;kotlin.Float;kotlin.Long){}[0]
+
     // Targets: [linuxX64]
     final fun org.example/ShardedClass(kotlin/Int, kotlin/Float, kotlin/Long): org.example/ShardedClass // org.example/ShardedClass|ShardedClass(kotlin.Int;kotlin.Float;kotlin.Long){}[0]
 
@@ -93,10 +101,13 @@ private val mergedLinuxArm64Dump = """
     // Library unique name: <org.example:bcv-klib-test>
     final class org.example/ShardedClass { // org.example/ShardedClass|null[0]
         constructor <init>(kotlin/Int) // org.example/ShardedClass.<init>|<init>(kotlin.Int){}[0]
+
         final val value // org.example/ShardedClass.value|{}value[0]
             final fun <get-value>(): kotlin/Int // org.example/ShardedClass.value.<get-value>|<get-value>(){}[0]
+
         final fun add2(kotlin/Int): kotlin/Int // org.example/ShardedClass.add|add(kotlin.Int){}[0]
     }
+
     final fun org.example/ShardedClass2(kotlin/Int, kotlin/Float, kotlin/Long): org.example/ShardedClass // org.example/ShardedClass|ShardedClass(kotlin.Int;kotlin.Float;kotlin.Long){}[0]
 
 """.trimIndent()
@@ -112,10 +123,13 @@ private val mergedLinuxDumpWithCustomName = """
     // Library unique name: <org.example:bcv-klib-test>
     final class org.example/ShardedClass { // org.example/ShardedClass|null[0]
         constructor <init>(kotlin/Int) // org.example/ShardedClass.<init>|<init>(kotlin.Int){}[0]
+
         final val value // org.example/ShardedClass.value|{}value[0]
             final fun <get-value>(): kotlin/Int // org.example/ShardedClass.value.<get-value>|<get-value>(){}[0]
+
         final fun add(kotlin/Int): kotlin/Int // org.example/ShardedClass.add|add(kotlin.Int){}[0]
     }
+
     final fun org.example/ShardedClass(kotlin/Int, kotlin/Float, kotlin/Long): org.example/ShardedClass // org.example/ShardedClass|ShardedClass(kotlin.Int;kotlin.Float;kotlin.Long){}[0]
 
 """.trimIndent()
@@ -590,14 +604,19 @@ class KlibDumpTest {
             // Library unique name: <testproject>
             final class org.different.pack/BuildConfig { // org.different.pack/BuildConfig|null[0]
                 constructor <init>() // org.different.pack/BuildConfig.<init>|<init>(){}[0]
+
                 final val p1 // org.different.pack/BuildConfig.p1|{}p1[0]
                     final fun <get-p1>(): kotlin/Int // org.different.pack/BuildConfig.p1.<get-p1>|<get-p1>(){}[0]
+
                 final fun f1(): kotlin/Int // org.different.pack/BuildConfig.f1|f1(){}[0]
             }
+
             // Targets: [androidNative, linux]
             final fun (org.different.pack/BuildConfig).org.different.pack/linuxArm64Specific3(): kotlin/Int // org.different.pack/linuxArm64Specific3|linuxArm64Specific@org.different.pack.BuildConfig(){}[0]
+
             // Targets: [linux]
             final fun (org.different.pack/BuildConfig).org.different.pack/linuxArm64Specific2(): kotlin/Int // org.different.pack/linuxArm64Specific2|linuxArm64Specific@org.different.pack.BuildConfig(){}[0]
+
             // Targets: [androidNativeArm64]
             final fun (org.different.pack/BuildConfig).org.different.pack/linuxArm64Specific(): kotlin/Int // org.different.pack/linuxArm64Specific|linuxArm64Specific@org.different.pack.BuildConfig(){}[0]
 
@@ -638,6 +657,7 @@ class KlibDumpTest {
             
             // Library unique name: <testproject>
             final fun org.example/common(): kotlin/Int // com.example/common|common(){}[0]
+
             // Targets: [ios]
             final fun org.example/native(): kotlin/Int // com.example/native|native(){}[0]
             
@@ -738,56 +758,77 @@ class KlibDumpTest {
             open annotation class ann/A : kotlin/Annotation { // ann/A|null[0]
                 constructor <init>() // ann/A.<init>|<init>(){}[0]
             }
+            
             open annotation class ann/B : kotlin/Annotation { // ann/B|null[0]
                 constructor <init>() // ann/B.<init>|<init>(){}[0]
             }
+            
             final enum class a/E : kotlin/Enum<a/E> { // a/eE|null[0]
                 enum entry A // a/E.A|null[0]            
                 enum entry B // a/E.B|null[0]
                 enum entry C // a/E.C|null[0]
             }
+            
             abstract interface an.iface/I // an.iface/I|null[0]
+            
             abstract interface iface/I // iface/I|null[0]
+            
             abstract class cls/C // cls/C|null[0]
+            
             final class cls/A // cls/A|null[0]
+            
             final class cls/B { // cls/B|null[0]
                 constructor <init>() // cls/B.<init>|<init>(){}[0]
                 constructor <init>(kotlin/Int) // cls/B.<init>|<init>(kotlin.Int){}[0]
+            
                 final val x // cls/B.x|{}x[0]
                     final fun <get-x>(): kotlin/Int // cls/B.x.<get-x>|<get-x>(){}[0]
                 final val y // cls/B.y|{}y[0]
                     final fun <get-y>(): kotlin/Int // cls/B.y.<get-y>|<get-y>(){}[0]
+            
                 final var aaa // cls/B.aaa|{}aaa[0]
                     final fun <get-aaa>(): kotlin/Int // cls/B.aaa.<get-aaa>|<get-aaa>(){}[0]
                     final fun <set-aaa>(kotlin/Int) // cls/B.aaa.<set-aaa>|<set-aaa>(kotlin.Int){}[0]
                 final var yy // cls/B.yy|{}yy[0]
                     final fun <get-yy>(): kotlin/Int // cls/B.yy.<get-yy>|<get-yy>(){}[0]
                     final fun <set-yy>(kotlin/Int) // cls/B.yy.<set-yy>|<set-yy>(kotlin.Int){}[0]
+            
                 final fun a(): kotlin/Int // cls/B.a|a(){}[0]
                 final fun b(): kotlin/Int // cls/B.b|b(){}[0]
                 final fun c(): kotlin/Int // cls/B.c|c(){}[0]
+            
                 final class A // cls/B.A|null[0]
+            
                 final class N // cls/B.N|null[0]
+            
                 final inner class I1 // cls/B.I1|null[0]
+            
                 final inner class I2 // cls/B.I2|null[0]
             }
+            
             final class cls/D // cls/D|null[0]
+            
             final object a/O // a/O|null[0]
+            
             final object a/OO // a/OO|null[0]
+            
             final const val c/acon // c/acon|{}acon[0]
                 final fun <get-acon>(): kotlin/String // c/acon.<get-acon>|<get-acon>(){}[0]
             final const val c/con // c/con|{}con[0]
                 final fun <get-con>(): kotlin/String // c/con.<get-con>|<get-con>(){}[0]
+            
             final val v/a // v/a|{}a[0]
                 final fun <get-a>(): kotlin/Long // v/a.<get-a>|<get-a>(){}[0]
             final val v/l // v/l|{}l[0]
                 final fun <get-l>(): kotlin/Long // v/l.<get-l>|<get-l>(){}[0]
+            
             final var v/d // v/d|{}d[0]
                 final fun <get-d>(): kotlin/Double // v/d.<get-d>|<get-d>(){}[0]
                 final fun <set-d>(kotlin/Double) // v/d.<set-d>|<set-d>(kotlin.Double){}[0]
             final var v/e // v/e|{}d[0]
                 final fun <get-e>(): kotlin/Double // v/d.<get-e>|<get-e>(){}[0]
                 final fun <set-e>(kotlin/Double) // v/e.<set-e>|<set-e>(kotlin.Double){}[0]
+            
             final fun f/a: kotlin/Int // f/a|a(){}[0]
             final fun f/b: kotlin/Int // f/b|b(){}[0]
             

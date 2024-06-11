@@ -9,9 +9,11 @@
 final class foo/ClassWithProperties { // foo/ClassWithProperties|null[0]
     constructor <init>() // foo/ClassWithProperties.<init>|<init>(){}[0]
 }
+
 open annotation class foo/HiddenField : kotlin/Annotation { // foo/HiddenField|null[0]
     constructor <init>() // foo/HiddenField.<init>|<init>(){}[0]
 }
+
 open annotation class foo/HiddenProperty : kotlin/Annotation { // foo/HiddenProperty|null[0]
     constructor <init>() // foo/HiddenProperty.<init>|<init>(){}[0]
 }
