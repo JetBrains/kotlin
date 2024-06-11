@@ -16,43 +16,8 @@ import org.jetbrains.kotlin.psi.KtDoubleColonExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtTypeReference
 
-public abstract class KaTypeProvider : KaSessionComponent() {
-    public abstract val builtinTypes: KaBuiltinTypes
-
-    public abstract fun approximateToSuperPublicDenotableType(type: KaType, approximateLocalTypes: Boolean): KaType?
-
-    public abstract fun approximateToSubPublicDenotableType(type: KaType, approximateLocalTypes: Boolean): KaType?
-
-    public abstract fun getEnhancedType(type: KaType): KaType?
-
-    public abstract fun buildSelfClassType(symbol: KaNamedClassOrObjectSymbol): KaType
-
-    public abstract fun commonSuperType(types: Collection<KaType>): KaType?
-
-    public abstract fun getKtType(ktTypeReference: KtTypeReference): KaType
-
-    public abstract fun getReceiverTypeForDoubleColonExpression(expression: KtDoubleColonExpression): KaType?
-
-    public abstract fun withNullability(type: KaType, newNullability: KaTypeNullability): KaType
-
-    public abstract fun haveCommonSubtype(a: KaType, b: KaType): Boolean
-
-    public abstract fun getImplicitReceiverTypesAtPosition(position: KtElement): List<KaType>
-
-    public abstract fun getDirectSuperTypes(type: KaType, shouldApproximate: Boolean): List<KaType>
-
-    public abstract fun getAllSuperTypes(type: KaType, shouldApproximate: Boolean): List<KaType>
-
-    public abstract fun getDispatchReceiverType(symbol: KaCallableSymbol): KaType?
-
-    public abstract fun getArrayElementType(type: KaType): KaType?
-}
-
-public typealias KtTypeProvider = KaTypeProvider
-
-public interface KaTypeProviderMixIn : KaSessionMixIn {
+public interface KaTypeProvider {
     public val builtinTypes: KaBuiltinTypes
-        get() = withValidityAssertion { analysisSession.typeProvider.builtinTypes }
 
     /**
      * Approximates [KaType] with a supertype which can be rendered in a source code
@@ -60,8 +25,7 @@ public interface KaTypeProviderMixIn : KaSessionMixIn {
      * Return `null` if the type do not need approximation and can be rendered as is
      * Otherwise, for type `T` return type `S` such `T <: S` and `T` and every type argument is denotable
      */
-    public fun KaType.approximateToSuperPublicDenotable(approximateLocalTypes: Boolean): KaType? =
-        withValidityAssertion { analysisSession.typeProvider.approximateToSuperPublicDenotableType(this, approximateLocalTypes) }
+    public fun KaType.approximateToSuperPublicDenotable(approximateLocalTypes: Boolean): KaType?
 
     /**
      * Approximates [KaType] with a subtype which can be rendered in a source code
@@ -69,67 +33,91 @@ public interface KaTypeProviderMixIn : KaSessionMixIn {
      * Return `null` if the type do not need approximation and can be rendered as is
      * Otherwise, for type `T` return type `S` such `S <: T` and `T` and every type argument is denotable
      */
-    public fun KaType.approximateToSubPublicDenotable(approximateLocalTypes: Boolean): KaType? =
-        withValidityAssertion { analysisSession.typeProvider.approximateToSubPublicDenotableType(this, approximateLocalTypes) }
+    public fun KaType.approximateToSubPublicDenotable(approximateLocalTypes: Boolean): KaType?
 
-    public fun KaType.approximateToSubPublicDenotableOrSelf(approximateLocalTypes: Boolean): KaType =
-        withValidityAssertion { approximateToSubPublicDenotable(approximateLocalTypes) ?: this }
+    public fun KaType.approximateToSubPublicDenotableOrSelf(approximateLocalTypes: Boolean): KaType = withValidityAssertion {
+        return approximateToSubPublicDenotable(approximateLocalTypes) ?: this
+    }
 
-    public fun KaType.approximateToSuperPublicDenotableOrSelf(approximateLocalTypes: Boolean): KaType =
-        withValidityAssertion { approximateToSuperPublicDenotable(approximateLocalTypes) ?: this }
+    public fun KaType.approximateToSuperPublicDenotableOrSelf(approximateLocalTypes: Boolean): KaType = withValidityAssertion {
+        return approximateToSuperPublicDenotable(approximateLocalTypes) ?: this
+    }
 
     /**
      * Returns a warning-level enhanced type for [KaType] if it is present. Otherwise, returns `null`.
      */
-    public fun KaType.getEnhancedType(): KaType? = withValidityAssertion { analysisSession.typeProvider.getEnhancedType(this) }
+    public val KaType.enhancedType: KaType?
 
-    public fun KaType.getEnhancedTypeOrSelf(): KaType? = withValidityAssertion { getEnhancedType() ?: this }
+    public val KaType.enhancedTypeOrSelf: KaType?
+        get() = withValidityAssertion { enhancedType ?: this }
 
-    public fun KaNamedClassOrObjectSymbol.buildSelfClassType(): KaType =
-        withValidityAssertion { analysisSession.typeProvider.buildSelfClassType(this) }
+    public val KaNamedClassOrObjectSymbol.defaultType: KaType
+
+    @Deprecated("Use 'defaultType' instead.", replaceWith = ReplaceWith("defaultType"))
+    public fun KaNamedClassOrObjectSymbol.buildSelfClassType(): KaType = defaultType
 
     /**
      * Computes the common super type of the given collection of [KaType].
      *
      * If the collection is empty, it returns `null`.
      */
-    public fun commonSuperType(types: Collection<KaType>): KaType? =
-        withValidityAssertion { analysisSession.typeProvider.commonSuperType(types) }
+    public val Iterable<KaType>.commonSupertype: KaType
+
+    public val Array<KaType>.commonSupertype: KaType
+        get() = asList().commonSupertype
+
+    @Deprecated("Use 'commonSupertype' instead.", replaceWith = ReplaceWith("types.commonSupertype"))
+    public fun commonSuperType(types: Collection<KaType>): KaType? {
+        return if (types.isEmpty()) null else types.commonSupertype
+    }
 
     /**
      * Resolve [KtTypeReference] and return corresponding [KaType] if resolved.
      *
      * This may raise an exception if the resolution ends up with an unexpected kind.
      */
-    public fun KtTypeReference.getKaType(): KaType =
-        withValidityAssertion { analysisSession.typeProvider.getKtType(this) }
+    public val KtTypeReference.type: KaType
 
-    public fun KtTypeReference.getKtType(): KaType = getKaType()
+    @Deprecated("Use 'type' instead.", replaceWith = ReplaceWith("type"))
+    public fun KtTypeReference.getKaType(): KaType = type
+
+    @Deprecated("Use 'type' instead.", replaceWith = ReplaceWith("type"))
+    public fun KtTypeReference.getKtType(): KaType = type
 
     /**
      * Resolve [KtDoubleColonExpression] and return [KaType] of its receiver.
      *
      * Return `null` if the resolution fails or the resolved callable reference is not a reflection type.
      */
-    public fun KtDoubleColonExpression.getReceiverKtType(): KaType? =
-        withValidityAssertion { analysisSession.typeProvider.getReceiverTypeForDoubleColonExpression(this) }
+    public val KtDoubleColonExpression.receiverType: KaType?
 
-    public fun KaType.withNullability(newNullability: KaTypeNullability): KaType =
-        withValidityAssertion { analysisSession.typeProvider.withNullability(this, newNullability) }
+    @Deprecated("Use 'receiverType' instead.", replaceWith = ReplaceWith("receiverType"))
+    public fun KtDoubleColonExpression.getReceiverKtType(): KaType? = receiverType
 
-    public fun KaType.upperBoundIfFlexible(): KaType = withValidityAssertion { (this as? KaFlexibleType)?.upperBound ?: this }
-    public fun KaType.lowerBoundIfFlexible(): KaType = withValidityAssertion { (this as? KaFlexibleType)?.lowerBound ?: this }
+    public fun KaType.withNullability(newNullability: KaTypeNullability): KaType
+
+    public fun KaType.upperBoundIfFlexible(): KaType = withValidityAssertion {
+        (this as? KaFlexibleType)?.upperBound ?: this
+    }
+
+    public fun KaType.lowerBoundIfFlexible(): KaType = withValidityAssertion {
+        (this as? KaFlexibleType)?.lowerBound ?: this
+    }
 
     /** Check whether this type is compatible with that type. If they are compatible, it means they can have a common subtype. */
-    public fun KaType.hasCommonSubTypeWith(that: KaType): Boolean =
-        withValidityAssertion { analysisSession.typeProvider.haveCommonSubtype(this, that) }
+    public fun KaType.hasCommonSubTypeWith(that: KaType): Boolean
 
     /**
      * Gets all the implicit receiver types available at the given position. The type of the outermost receiver appears at the beginning
      * of the returned list.
      */
-    public fun getImplicitReceiverTypesAtPosition(position: KtElement): List<KaType> =
-        withValidityAssertion { analysisSession.typeProvider.getImplicitReceiverTypesAtPosition(position) }
+    public fun collectImplicitReceiverTypes(position: KtElement): List<KaType>
+
+    @Deprecated(
+        "Use 'collectImplicitReceiverTypes()' instead.",
+        replaceWith = ReplaceWith("collectImplicitReceiverTypes(position)")
+    )
+    public fun getImplicitReceiverTypesAtPosition(position: KtElement): List<KaType> = collectImplicitReceiverTypes(position)
 
     /**
      * Gets the direct super types of the given type. For example, given `MutableList<String>`, this returns `List<String>` and
@@ -141,8 +129,20 @@ public interface KaTypeProviderMixIn : KaSessionMixIn {
      * @param shouldApproximate whether to approximate non-denotable types. For example, super type of `List<out String>` is
      * `Collection<CAPTURED out String>`. With approximation set to true, `Collection<out String>` is returned instead.
      */
-    public fun KaType.getDirectSuperTypes(shouldApproximate: Boolean = false): List<KaType> =
-        withValidityAssertion { analysisSession.typeProvider.getDirectSuperTypes(this, shouldApproximate) }
+    public fun KaType.directSuperTypes(shouldApproximate: Boolean): Sequence<KaType>
+
+    /**
+     * Gets the direct super types of the given type. For example, given `MutableList<String>`, this returns `List<String>` and
+     * `MutableCollection<String>`.
+     *
+     * Note that for flexible types, both direct super types of the upper and lower bounds are returned. If that's not desirable, please
+     * first call [KaFlexibleType.upperBound] or [KaFlexibleType.lowerBound] and then call this method.
+     */
+    public val KaType.directSuperTypes: Sequence<KaType>
+        get() = directSuperTypes(shouldApproximate = false)
+
+    @Deprecated("Use 'directSuperTypes()' instead.", replaceWith = ReplaceWith("directSuperTypes(shouldApproximate)"))
+    public fun KaType.getDirectSuperTypes(shouldApproximate: Boolean = false): List<KaType> = directSuperTypes(shouldApproximate).toList()
 
     /**
      * Gets all the super types of the given type. The returned result is ordered by a BFS traversal of the class hierarchy, without any
@@ -150,8 +150,17 @@ public interface KaTypeProviderMixIn : KaSessionMixIn {
      *
      * @param shouldApproximate see [getDirectSuperTypes]
      */
-    public fun KaType.getAllSuperTypes(shouldApproximate: Boolean = false): List<KaType> =
-        withValidityAssertion { analysisSession.typeProvider.getAllSuperTypes(this, shouldApproximate) }
+    public fun KaType.allSuperTypes(shouldApproximate: Boolean): Sequence<KaType>
+
+    /**
+     * Gets all the super types of the given type. The returned result is ordered by a BFS traversal of the class hierarchy, without any
+     * duplicates.
+     */
+    public val KaType.allSuperTypes: Sequence<KaType>
+        get() = allSuperTypes(shouldApproximate = false)
+
+    @Deprecated("Use 'allSuperTypes()' instead.", replaceWith = ReplaceWith("allSuperTypes(shouldApproximate)"))
+    public fun KaType.getAllSuperTypes(shouldApproximate: Boolean = false): List<KaType> = allSuperTypes(shouldApproximate).toList()
 
     /**
      * This function is provided for a few use-cases where it's hard to go without it.
@@ -165,17 +174,13 @@ public interface KaTypeProviderMixIn : KaSessionMixIn {
      */
     @Suppress("DeprecatedCallableAddReplaceWith")
     @Deprecated("Avoid using this function")
-    public fun KaCallableSymbol.getDispatchReceiverType(): KaType? =
-        withValidityAssertion { analysisSession.typeProvider.getDispatchReceiverType(this) }
+    public val KaCallableSymbol.dispatchReceiverType: KaType?
 
     /**
      * If provided [KaType] is a primitive type array or [Array], returns the type of the array's elements. Otherwise, returns null.
      */
-    public fun KaType.getArrayElementType(): KaType? =
-        withValidityAssertion { analysisSession.typeProvider.getArrayElementType(this) }
+    public val KaType.arrayElementType: KaType?
 }
-
-public typealias KtTypeProviderMixIn = KaTypeProviderMixIn
 
 @Suppress("PropertyName")
 public abstract class KaBuiltinTypes : KaLifetimeOwner {

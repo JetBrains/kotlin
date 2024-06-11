@@ -20,7 +20,7 @@ abstract class AbstractTypeReferenceTest : AbstractAnalysisApiBasedTest() {
         val expressionAtCaret = testServices.expressionMarkerProvider.getElementOfTypeAtCaret(mainFile) as KtTypeReference
 
         val actual = analyseForTest(expressionAtCaret) {
-            val ktType = expressionAtCaret.getKtType()
+            val ktType = expressionAtCaret.type
             buildString {
                 appendLine("${KtTypeReference::class.simpleName}: ${expressionAtCaret.text}")
                 appendLine("${KaType::class.simpleName}: ${ktType.render(position = Variance.INVARIANT)}")

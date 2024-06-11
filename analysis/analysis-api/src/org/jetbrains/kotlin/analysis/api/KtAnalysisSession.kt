@@ -63,6 +63,7 @@ public abstract class KaSession(
     scopeProvider: KaScopeProvider,
     completionCandidateChecker: KaCompletionCandidateChecker,
     expressionTypeProvider: KaExpressionTypeProvider,
+    typeProvider: KaTypeProvider,
     typeInformationProvider: KaTypeInformationProvider,
     symbolProvider: KaSymbolProvider,
     javaInteroperabilityComponent: KaJavaInteroperabilityComponent,
@@ -91,7 +92,7 @@ public abstract class KaSession(
     KaScopeProvider by scopeProvider,
     KaCompletionCandidateChecker by completionCandidateChecker,
     KaExpressionTypeProvider by expressionTypeProvider,
-    KaTypeProviderMixIn,
+    KaTypeProvider by typeProvider,
     KaTypeInformationProvider by typeInformationProvider,
     KaSymbolProvider by symbolProvider,
     KaJavaInteroperabilityComponent by javaInteroperabilityComponent,
@@ -118,9 +119,6 @@ public abstract class KaSession(
     public abstract val useSiteModule: KtModule
 
     override val analysisSession: KaSession get() = this
-
-    internal val typeProvider: KaTypeProvider get() = typeProviderImpl
-    protected abstract val typeProviderImpl: KaTypeProvider
 
     public fun <S : KaSymbol> KaSymbolPointer<S>.restoreSymbol(): S? = withValidityAssertion {
         @OptIn(KaImplementationDetail::class)

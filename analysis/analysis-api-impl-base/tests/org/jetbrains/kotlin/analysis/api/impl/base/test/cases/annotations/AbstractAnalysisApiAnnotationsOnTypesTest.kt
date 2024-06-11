@@ -20,7 +20,7 @@ abstract class AbstractAnalysisApiAnnotationsOnTypesTest : AbstractAnalysisApiBa
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val ktTypeReference = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtTypeReference>(mainFile)
         val actual = analyseForTest(ktTypeReference) {
-            val ktType = ktTypeReference.getKtType()
+            val ktType = ktTypeReference.type
             val annotations = ktType.annotations
             buildString {
                 appendLine("${KtTypeReference::class.simpleName}: ${ktTypeReference.text}")

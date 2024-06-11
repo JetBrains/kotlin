@@ -115,7 +115,7 @@ internal val KtFunctionLikeSymbol.objCReceiverType: KtType?
              * See details at KT-66339
              */
             @Suppress("DEPRECATION")
-            getDispatchReceiverType()
+            dispatchReceiverType
         } else if (isExtension) {
             if (receiverParameter?.type?.isMappedObjCType == true) receiverParameter?.type
             else if ((containingSymbol as? KtNamedClassOrObjectSymbol)?.isInner == true) receiverParameter?.type

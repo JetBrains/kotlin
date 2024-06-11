@@ -15,7 +15,7 @@ public interface KaRendererTypeApproximator {
     public object TO_DENOTABLE : KaRendererTypeApproximator {
         override fun approximateType(analysisSession: KaSession, type: KaType, position: Variance): KaType {
             with(analysisSession) {
-                val effectiveType = type.getEnhancedType() ?: type
+                val effectiveType = type.enhancedType ?: type
 
                 return when (position) {
                     Variance.INVARIANT -> effectiveType

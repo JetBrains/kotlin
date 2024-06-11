@@ -18,7 +18,7 @@ abstract class AbstractAnnotationApplicableTargetsTest : AbstractAnalysisApiBase
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val annotationEntry = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtAnnotationEntry>(mainFile)
         val actual = analyseForTest(annotationEntry) {
-            val annotationClassSymbol = annotationEntry.typeReference?.getKtType()?.expandedSymbol!!
+            val annotationClassSymbol = annotationEntry.typeReference?.type?.expandedSymbol!!
             val applicableTargetsInOrder =
                 annotationClassSymbol.annotationApplicableTargets
                     ?.map { it.name }

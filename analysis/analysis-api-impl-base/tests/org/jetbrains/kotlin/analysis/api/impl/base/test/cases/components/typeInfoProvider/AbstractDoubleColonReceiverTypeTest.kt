@@ -21,7 +21,7 @@ abstract class AbstractDoubleColonReceiverTypeTest : AbstractAnalysisApiBasedTes
 
         val type = executeOnPooledThreadInReadAction {
             analyseForTest(expressionAtCaret) {
-                expressionAtCaret.getReceiverKtType()?.render(position = Variance.INVARIANT)
+                expressionAtCaret.receiverType?.render(position = Variance.INVARIANT)
             }
         }
 

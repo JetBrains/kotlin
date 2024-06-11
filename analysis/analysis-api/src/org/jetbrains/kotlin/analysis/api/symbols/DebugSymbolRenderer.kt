@@ -65,7 +65,7 @@ public class DebugSymbolRenderer(
         if (!renderExtra) return
         printer.withIndent {
             @Suppress("DEPRECATION")
-            (symbol as? KaCallableSymbol)?.getDispatchReceiverType()?.let { dispatchType ->
+            (symbol as? KaCallableSymbol)?.dispatchReceiverType?.let { dispatchType ->
                 appendLine().append("getDispatchReceiver()").append(": ")
                 renderType(dispatchType, printer)
             }

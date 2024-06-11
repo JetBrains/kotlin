@@ -67,7 +67,7 @@ internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
             }
 
             @Suppress("DEPRECATION")
-            (this@with as? KaCallableSymbol)?.getDispatchReceiverType()?.let { dispatchReceiverType ->
+            (this@with as? KaCallableSymbol)?.dispatchReceiverType?.let { dispatchReceiverType ->
                 append("<dispatch receiver>: ${dispatchReceiverType.render()}")
                 if (valueParameters.isNotEmpty()) append(", ")
             }
