@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.components.KaJavaInteroperabilityCompon
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getDescriptor
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.KaFe10JvmTypeMapperContext
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
@@ -26,23 +27,31 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.isTopLevel
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
 import org.jetbrains.kotlin.asJava.classes.annotateByKotlinType
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.load.kotlin.getOptimalModeForReturnType
 import org.jetbrains.kotlin.load.kotlin.getOptimalModeForValueParameter
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.platform.has
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
+import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.DefinitelyNotNullType
 import org.jetbrains.kotlin.types.FlexibleType
 import org.jetbrains.kotlin.types.KotlinType
@@ -192,6 +201,46 @@ class KaFe10JavaInteroperabilityComponent(
                     }
                 }
             }
+        }
+
+    override val KaPropertySymbol.javaGetterName: Name
+        get() = withValidityAssertion {
+            val descriptor = getSymbolDescriptor(this) as? PropertyDescriptor
+            if (descriptor is SyntheticJavaPropertyDescriptor) {
+                return descriptor.getMethod.name
+            }
+
+            if (descriptor != null) {
+                if (descriptor.hasJvmFieldAnnotation()) return descriptor.name
+
+                val getter = descriptor.getter ?: return SpecialNames.NO_NAME_PROVIDED
+                return Name.identifier(DescriptorUtils.getJvmName(getter) ?: JvmAbi.getterName(descriptor.name.asString()))
+            }
+
+            val ktPropertyName = (psi as? KtProperty)?.name ?: return SpecialNames.NO_NAME_PROVIDED
+            return Name.identifier(JvmAbi.getterName(ktPropertyName))
+        }
+
+    override val KaPropertySymbol.javaSetterName: Name?
+        get() = withValidityAssertion {
+            val descriptor = getSymbolDescriptor(this) as? PropertyDescriptor
+            if (descriptor is SyntheticJavaPropertyDescriptor) {
+                return descriptor.setMethod?.name
+            }
+
+            if (descriptor != null) {
+                if (!descriptor.isVar) {
+                    return null
+                }
+
+                if (descriptor.hasJvmFieldAnnotation()) return descriptor.name
+
+                val setter = descriptor.setter ?: return SpecialNames.NO_NAME_PROVIDED
+                return Name.identifier(DescriptorUtils.getJvmName(setter) ?: JvmAbi.setterName(descriptor.name.asString()))
+            }
+
+            val ktPropertyName = (psi as? KtProperty)?.takeIf { it.isVar }?.name ?: return SpecialNames.NO_NAME_PROVIDED
+            return Name.identifier(JvmAbi.setterName(ktPropertyName))
         }
 }
 

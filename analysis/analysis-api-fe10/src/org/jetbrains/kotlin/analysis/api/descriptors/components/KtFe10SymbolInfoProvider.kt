@@ -9,27 +9,20 @@ import org.jetbrains.kotlin.analysis.api.components.KaSymbolInfoProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertyAccessorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
-import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.AnnotationChecker
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
-import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
-import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 
 internal class KaFe10SymbolInfoProvider(
     override val analysisSession: KaFe10Session
@@ -113,44 +106,6 @@ internal class KaFe10SymbolInfoProvider(
 
     override fun getSetterDeprecation(symbol: KaPropertySymbol): DeprecationInfo? {
         return getAccessorDeprecation(symbol, symbol.setter) { it.setter }
-    }
-
-    override fun getJavaGetterName(symbol: KaPropertySymbol): Name {
-        val descriptor = getSymbolDescriptor(symbol) as? PropertyDescriptor
-        if (descriptor is SyntheticJavaPropertyDescriptor) {
-            return descriptor.getMethod.name
-        }
-
-        if (descriptor != null) {
-            if (descriptor.hasJvmFieldAnnotation()) return descriptor.name
-
-            val getter = descriptor.getter ?: return SpecialNames.NO_NAME_PROVIDED
-            return Name.identifier(DescriptorUtils.getJvmName(getter) ?: JvmAbi.getterName(descriptor.name.asString()))
-        }
-
-        val ktPropertyName = (symbol.psi as? KtProperty)?.name ?: return SpecialNames.NO_NAME_PROVIDED
-        return Name.identifier(JvmAbi.getterName(ktPropertyName))
-    }
-
-    override fun getJavaSetterName(symbol: KaPropertySymbol): Name? {
-        val descriptor = getSymbolDescriptor(symbol) as? PropertyDescriptor
-        if (descriptor is SyntheticJavaPropertyDescriptor) {
-            return descriptor.setMethod?.name
-        }
-
-        if (descriptor != null) {
-            if (!descriptor.isVar) {
-                return null
-            }
-
-            if (descriptor.hasJvmFieldAnnotation()) return descriptor.name
-
-            val setter = descriptor.setter ?: return SpecialNames.NO_NAME_PROVIDED
-            return Name.identifier(DescriptorUtils.getJvmName(setter) ?: JvmAbi.setterName(descriptor.name.asString()))
-        }
-
-        val ktPropertyName = (symbol.psi as? KtProperty)?.takeIf { it.isVar }?.name ?: return SpecialNames.NO_NAME_PROVIDED
-        return Name.identifier(JvmAbi.setterName(ktPropertyName))
     }
 
     override fun getAnnotationApplicableTargets(symbol: KaClassOrObjectSymbol): Set<KotlinTarget>? {

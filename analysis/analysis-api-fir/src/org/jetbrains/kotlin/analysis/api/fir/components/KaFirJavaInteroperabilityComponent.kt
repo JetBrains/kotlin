@@ -17,7 +17,10 @@ import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.components.KaJavaInteroperabilityComponent
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
+import org.jetbrains.kotlin.analysis.api.fir.getJvmNameFromAnnotation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaClassSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSyntheticJavaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.analysis.api.fir.types.PublicTypeApproximator
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
@@ -37,6 +40,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.jvmClassNameIfDeserialized
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
+import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.asJava.KtLightClassMarker
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
@@ -44,11 +48,14 @@ import org.jetbrains.kotlin.asJava.elements.KtLightParameter
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.jvm.jvmTypeMapper
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.javaSymbolProvider
 import org.jetbrains.kotlin.fir.java.resolveIfJavaType
@@ -63,6 +70,7 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.jvm.buildJavaTypeRef
 import org.jetbrains.kotlin.light.classes.symbol.annotations.annotateByKtType
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.load.java.structure.impl.JavaTypeImpl
@@ -73,6 +81,7 @@ import org.jetbrains.kotlin.load.kotlin.getOptimalModeForReturnType
 import org.jetbrains.kotlin.load.kotlin.getOptimalModeForValueParameter
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.platform.has
@@ -280,6 +289,58 @@ internal class KaFirJavaInteroperabilityComponent(
                 }
             }
         }
+
+    override val KaPropertySymbol.javaGetterName: Name
+        get() = withValidityAssertion {
+            require(this is KaFirSymbol<*>)
+            if (this is KaFirSyntheticJavaPropertySymbol) {
+                return javaGetterSymbol.name
+            }
+
+            val firProperty = firSymbol.fir
+            requireIsInstance<FirProperty>(firProperty)
+
+            return getJvmName(firProperty, isSetter = false)
+        }
+
+    override val KaPropertySymbol.javaSetterName: Name?
+        get() = withValidityAssertion {
+            require(this is KaFirSymbol<*>)
+            if (this is KaFirSyntheticJavaPropertySymbol) {
+                return javaSetterSymbol?.name
+            }
+
+            val firProperty = firSymbol.fir
+            requireIsInstance<FirProperty>(firProperty)
+
+            if (firProperty.isVal) return null
+
+            return getJvmName(firProperty, isSetter = true)
+        }
+
+    private fun getJvmName(property: FirProperty, isSetter: Boolean): Name {
+        if (property.backingField?.symbol?.hasAnnotation(JvmStandardClassIds.Annotations.JvmField, analysisSession.useSiteSession) == true) {
+            return property.name
+        }
+        return Name.identifier(getJvmNameAsString(property, isSetter))
+    }
+
+    private fun getJvmNameAsString(property: FirProperty, isSetter: Boolean): String {
+        val useSiteTarget = if (isSetter) AnnotationUseSiteTarget.PROPERTY_SETTER else AnnotationUseSiteTarget.PROPERTY_GETTER
+        val jvmNameFromProperty = property.getJvmNameFromAnnotation(analysisSession.useSiteSession, useSiteTarget)
+        if (jvmNameFromProperty != null) {
+            return jvmNameFromProperty
+        }
+
+        val accessor = if (isSetter) property.setter else property.getter
+        val jvmNameFromAccessor = accessor?.getJvmNameFromAnnotation(analysisSession.useSiteSession)
+        if (jvmNameFromAccessor != null) {
+            return jvmNameFromAccessor
+        }
+
+        val identifier = property.name.identifier
+        return if (isSetter) JvmAbi.setterName(identifier) else JvmAbi.getterName(identifier)
+    }
 }
 
 private fun ConeKotlinType.simplifyType(

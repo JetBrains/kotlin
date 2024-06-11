@@ -11,8 +11,10 @@ import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
+import org.jetbrains.kotlin.name.Name
 
 public interface KaJavaInteroperabilityComponent {
     /**
@@ -76,4 +78,8 @@ public interface KaJavaInteroperabilityComponent {
      * Note that this API is applicable for common or JVM modules only, and returns `null` for non-JVM modules.
      */
     public val KaCallableSymbol.containingJvmClassName: String?
+
+    public val KaPropertySymbol.javaGetterName: Name
+
+    public val KaPropertySymbol.javaSetterName: Name?
 }

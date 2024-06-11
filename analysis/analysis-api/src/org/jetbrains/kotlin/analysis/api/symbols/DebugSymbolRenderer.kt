@@ -81,13 +81,18 @@ public class DebugSymbolRenderer(
 
             renderComputedValue("getContainingModule", printer) { symbol.containingModule }
 
-            KaSymbolInfoProviderMixIn::class.declaredMemberExtensionProperties
-                .asSequence()
-                .filter { (it.extensionReceiverParameter?.type?.classifier as? KClass<*>)?.isInstance(symbol) == true }
-                .forEach {
-                    appendLine()
-                    renderProperty(it, printer, renderSymbolsFully = false, analysisSession, symbol)
-                }
+            if (symbol is KaClassOrObjectSymbol) {
+                renderComputedValue("annotationApplicableTargets", printer) { symbol.annotationApplicableTargets }
+            }
+
+            renderComputedValue("deprecationStatus", printer) { symbol.deprecationStatus }
+
+            if (symbol is KaPropertySymbol) {
+                renderComputedValue("getterDeprecationStatus", printer) { symbol.getterDeprecationStatus }
+                renderComputedValue("javaGetterName", printer) { symbol.javaGetterName }
+                renderComputedValue("javaSetterName", printer) { symbol.javaSetterName }
+                renderComputedValue("setterDeprecationStatus", printer) { symbol.setterDeprecationStatus }
+            }
         }
     }
 

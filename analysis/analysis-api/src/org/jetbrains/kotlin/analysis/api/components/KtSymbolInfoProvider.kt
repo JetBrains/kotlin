@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 
 public abstract class KaSymbolInfoProvider : KaSessionComponent() {
@@ -19,9 +18,6 @@ public abstract class KaSymbolInfoProvider : KaSessionComponent() {
     public abstract fun getDeprecation(symbol: KaSymbol, annotationUseSiteTarget: AnnotationUseSiteTarget?): DeprecationInfo?
     public abstract fun getGetterDeprecation(symbol: KaPropertySymbol): DeprecationInfo?
     public abstract fun getSetterDeprecation(symbol: KaPropertySymbol): DeprecationInfo?
-
-    public abstract fun getJavaGetterName(symbol: KaPropertySymbol): Name
-    public abstract fun getJavaSetterName(symbol: KaPropertySymbol): Name?
 
     public abstract fun getAnnotationApplicableTargets(symbol: KaClassOrObjectSymbol): Set<KotlinTarget>?
 }
@@ -55,16 +51,6 @@ public interface KaSymbolInfoProviderMixIn : KaSessionMixIn {
      */
     public val KaPropertySymbol.setterDeprecationStatus: DeprecationInfo?
         get() = withValidityAssertion { analysisSession.symbolInfoProvider.getSetterDeprecation(this) }
-
-    public val KaPropertySymbol.javaGetterName: Name
-        get() = withValidityAssertion {
-            analysisSession.symbolInfoProvider.getJavaGetterName(this)
-        }
-
-    public val KaPropertySymbol.javaSetterName: Name?
-        get() = withValidityAssertion {
-            analysisSession.symbolInfoProvider.getJavaSetterName(this)
-        }
 
     /** Gets the set of applicable targets for an annotation class symbol. Returns `null` if the symbol is not an annotation class. */
     public val KaClassOrObjectSymbol.annotationApplicableTargets: Set<KotlinTarget>?

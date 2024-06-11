@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.components.KaSymbolInfoProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.getJvmNameFromAnnotation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.*
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
@@ -23,9 +22,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.name.JvmStandardClassIds
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
 
@@ -102,32 +98,6 @@ internal class KaFirSymbolInfoProvider(
         return SimpleDeprecationInfo(deprecationLevel, propagatesToOverrides, null)
     }
 
-    override fun getJavaGetterName(symbol: KaPropertySymbol): Name {
-        require(symbol is KaFirSymbol<*>)
-        if (symbol is KaFirSyntheticJavaPropertySymbol) {
-            return symbol.javaGetterSymbol.name
-        }
-
-        val firProperty = symbol.firSymbol.fir
-        requireIsInstance<FirProperty>(firProperty)
-
-        return getJvmName(firProperty, isSetter = false)
-    }
-
-    override fun getJavaSetterName(symbol: KaPropertySymbol): Name? {
-        require(symbol is KaFirSymbol<*>)
-        if (symbol is KaFirSyntheticJavaPropertySymbol) {
-            return symbol.javaSetterSymbol?.name
-        }
-
-        val firProperty = symbol.firSymbol.fir
-        requireIsInstance<FirProperty>(firProperty)
-
-        if (firProperty.isVal) return null
-
-        return getJvmName(firProperty, isSetter = true)
-    }
-
     override fun getAnnotationApplicableTargets(symbol: KaClassOrObjectSymbol): Set<KotlinTarget>? {
         requireIsInstance<KaFirSymbol<*>>(symbol)
         if (symbol !is KaFirNamedClassOrObjectSymbolBase) return null
@@ -135,27 +105,5 @@ internal class KaFirSymbolInfoProvider(
         return symbol.firSymbol.getAllowedAnnotationTargets(analysisSession.useSiteSession)
     }
 
-    private fun getJvmName(property: FirProperty, isSetter: Boolean): Name {
-        if (property.backingField?.symbol?.hasAnnotation(JvmStandardClassIds.Annotations.JvmField, analysisSession.useSiteSession) == true) {
-            return property.name
-        }
-        return Name.identifier(getJvmNameAsString(property, isSetter))
-    }
 
-    private fun getJvmNameAsString(property: FirProperty, isSetter: Boolean): String {
-        val useSiteTarget = if (isSetter) AnnotationUseSiteTarget.PROPERTY_SETTER else AnnotationUseSiteTarget.PROPERTY_GETTER
-        val jvmNameFromProperty = property.getJvmNameFromAnnotation(analysisSession.useSiteSession, useSiteTarget)
-        if (jvmNameFromProperty != null) {
-            return jvmNameFromProperty
-        }
-
-        val accessor = if (isSetter) property.setter else property.getter
-        val jvmNameFromAccessor = accessor?.getJvmNameFromAnnotation(analysisSession.useSiteSession)
-        if (jvmNameFromAccessor != null) {
-            return jvmNameFromAccessor
-        }
-
-        val identifier = property.name.identifier
-        return if (isSetter) JvmAbi.setterName(identifier) else JvmAbi.getterName(identifier)
-    }
 }
