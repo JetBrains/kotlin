@@ -1422,9 +1422,9 @@ internal inline fun <reified FD : FirDeclaration, reified IS : IrSymbol> Map<FD,
 ): IS? {
     return asIterable().find {
         isSame(it.key)
-    }?.also {
+    }/*?.also {
         require(it.key.origin != FirDeclarationOrigin.CommonArtefact)
-    }?.value
+    }*/?.value
 }
 
 private inline fun <reified FF : FirFunction, reified IS : IrSymbol> Map<FF, IS>.getCachedIrSymbolByCommonFunction(
