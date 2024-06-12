@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
+import org.jetbrains.kotlin.konan.KonanPendingCompilationError
 import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.psi.KtFile
@@ -66,6 +67,11 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         } catch (e: Throwable) {
             if (e is KonanCompilationException || e is CompilationErrorException || e is IrValidationError)
                 return ExitCode.COMPILATION_ERROR
+
+            if (e is KonanPendingCompilationError) {
+                configuration.report(ERROR, e.message)
+                return ExitCode.COMPILATION_ERROR
+            }
 
             configuration.report(ERROR, """
                 |Compilation failed: ${e.message}
