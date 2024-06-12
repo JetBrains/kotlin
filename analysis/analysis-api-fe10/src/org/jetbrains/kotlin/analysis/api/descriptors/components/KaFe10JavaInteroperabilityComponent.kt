@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.KaFe10JvmTypeMapperContext
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
@@ -61,8 +60,7 @@ import org.jetbrains.kotlin.types.updateArgumentModeFromAnnotations
 import org.jetbrains.org.objectweb.asm.Type
 
 class KaFe10JavaInteroperabilityComponent(
-    override val analysisSessionProvider: () -> KaFe10Session,
-    override val token: KaLifetimeToken
+    override val analysisSessionProvider: () -> KaFe10Session
 ) : KaSessionComponent<KaFe10Session>(), KaJavaInteroperabilityComponent, KaFe10SessionComponent {
     private val typeMapper by lazy { KaFe10JvmTypeMapperContext(analysisContext.resolveSession) }
 

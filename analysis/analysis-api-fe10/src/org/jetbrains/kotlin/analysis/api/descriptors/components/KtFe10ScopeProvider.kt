@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaCompositeScope
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaEmptyScope
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.scopes.KaTypeScope
@@ -51,8 +50,7 @@ import org.jetbrains.kotlin.util.containingNonLocalDeclaration
 import org.jetbrains.kotlin.utils.Printer
 
 internal class KaFe10ScopeProvider(
-    override val analysisSessionProvider: () -> KaFe10Session,
-    override val token: KaLifetimeToken
+    override val analysisSessionProvider: () -> KaFe10Session
 ) : KaSessionComponent<KaFe10Session>(), KaScopeProvider, KaFe10SessionComponent {
     private companion object {
         val LOG = Logger.getInstance(KaFe10ScopeProvider::class.java)

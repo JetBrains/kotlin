@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaCompiledFileForOutputFile
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.*
@@ -99,8 +98,7 @@ import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfN
 import java.util.*
 
 internal class KaFirCompilerFacility(
-    override val analysisSessionProvider: () -> KaFirSession,
-    override val token: KaLifetimeToken
+    override val analysisSessionProvider: () -> KaFirSession
 ) : KaSessionComponent<KaFirSession>(), KaCompilerFacility, KaFirSessionComponent {
 
     override fun compile(

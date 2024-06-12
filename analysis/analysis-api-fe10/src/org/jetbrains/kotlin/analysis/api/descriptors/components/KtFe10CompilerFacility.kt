@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.analysis.api.descriptors.utils.collectReachableInlin
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaCompiledFileForOutputFile
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.FacadeClassSourceShimForFragmentCompilation
@@ -44,8 +43,7 @@ import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfN
 val STUB_UNBOUND_IR_SYMBOLS: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey<Boolean>("stub unbound IR symbols")
 
 internal class KaFe10CompilerFacility(
-    override val analysisSessionProvider: () -> KaFe10Session,
-    override val token: KaLifetimeToken
+    override val analysisSessionProvider: () -> KaFe10Session
 ) : KaSessionComponent<KaFe10Session>(), KaCompilerFacility, KaFe10SessionComponent {
     override fun compile(
         file: KtFile,

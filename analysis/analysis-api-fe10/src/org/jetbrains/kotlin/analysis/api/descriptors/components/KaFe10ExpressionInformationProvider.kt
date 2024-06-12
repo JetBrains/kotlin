@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.cfg.WhenChecker
@@ -21,8 +20,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 
 internal class KaFe10ExpressionInformationProvider(
-    override val analysisSessionProvider: () -> KaFe10Session,
-    override val token: KaLifetimeToken
+    override val analysisSessionProvider: () -> KaFe10Session
 ) : KaSessionComponent<KaFe10Session>(), KaExpressionInformationProvider, KaFe10SessionComponent {
     override val KtReturnExpression.targetSymbol: KaCallableSymbol?
         get() = withValidityAssertion {

@@ -8,14 +8,12 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaOriginalPsiProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 
 internal class KaFe10OriginalPsiProvider(
-    override val analysisSessionProvider: () -> KaSession,
-    override val token: KaLifetimeToken
+    override val analysisSessionProvider: () -> KaSession
 ) : KaSessionComponent<KaSession>(), KaOriginalPsiProvider {
     override fun KtFile.recordOriginalKtFile(file: KtFile) = withValidityAssertion {
         // Do nothing

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirAnonymousObjectSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
@@ -27,8 +26,7 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.isSubClassOf
 import org.jetbrains.kotlin.analysis.api.impl.base.components.AbstractKaSymbolDeclarationOverridesProvider
 
 internal class KaFirSymbolDeclarationOverridesProvider(
-    override val analysisSessionProvider: () -> KaFirSession,
-    override val token: KaLifetimeToken
+    override val analysisSessionProvider: () -> KaFirSession
 ) : AbstractKaSymbolDeclarationOverridesProvider<KaFirSession>(), KaFirSessionComponent {
     fun <T : KaSymbol> getAllOverriddenSymbols(
         callableSymbol: T,

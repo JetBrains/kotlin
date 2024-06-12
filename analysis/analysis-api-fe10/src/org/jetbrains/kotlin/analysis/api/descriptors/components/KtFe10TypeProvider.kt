@@ -54,8 +54,7 @@ import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.util.containingNonLocalDeclaration
 
 internal class KaFe10TypeProvider(
-    override val analysisSessionProvider: () -> KaFe10Session,
-    override val token: KaLifetimeToken
+    override val analysisSessionProvider: () -> KaFe10Session
 ) : KaSessionComponent<KaFe10Session>(), KaTypeProvider, KaFe10SessionComponent {
     @Suppress("SpellCheckingInspection")
     private val typeApproximator by lazy {

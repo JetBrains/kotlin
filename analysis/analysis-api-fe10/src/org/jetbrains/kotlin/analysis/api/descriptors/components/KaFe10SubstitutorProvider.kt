@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.NotSupportedForK1Exception
 import org.jetbrains.kotlin.analysis.api.components.KaSubstitutorProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
@@ -17,8 +16,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KaType
 
 internal class KaFe10SubstitutorProvider(
-    override val analysisSessionProvider: () -> KaSession,
-    override val token: KaLifetimeToken
+    override val analysisSessionProvider: () -> KaSession
 ) : KaSessionComponent<KaSession>(), KaSubstitutorProvider {
     override fun createInheritanceTypeSubstitutor(subClass: KaClassOrObjectSymbol, superClass: KaClassOrObjectSymbol): KaSubstitutor? {
         withValidityAssertion {

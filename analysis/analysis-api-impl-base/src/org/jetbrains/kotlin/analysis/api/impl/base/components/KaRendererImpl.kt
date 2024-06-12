@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.impl.base.components
 import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaRenderer
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaRendererTypeApproximator
@@ -20,8 +19,7 @@ import org.jetbrains.kotlin.types.Variance
 
 @KaAnalysisApiInternals
 class KaRendererImpl(
-    override val analysisSessionProvider: () -> KaSession,
-    override val token: KaLifetimeToken,
+    override val analysisSessionProvider: () -> KaSession
 ) : KaRenderer, KaSessionComponent<KaSession>() {
     override fun KaDeclarationSymbol.render(renderer: KaDeclarationRenderer): String = withValidityAssertion {
         return with(analysisSession) {

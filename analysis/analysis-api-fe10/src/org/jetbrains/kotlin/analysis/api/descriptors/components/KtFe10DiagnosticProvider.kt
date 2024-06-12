@@ -27,8 +27,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import kotlin.reflect.KClass
 
 internal class KaFe10DiagnosticProvider(
-    override val analysisSessionProvider: () -> KaFe10Session,
-    override val token: KaLifetimeToken
+    override val analysisSessionProvider: () -> KaFe10Session
 ) : KaSessionComponent<KaFe10Session>(), KaDiagnosticProvider, KaFe10SessionComponent {
     override fun KtElement.diagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>> = withValidityAssertion {
         val bindingContext = analysisContext.analyze(this, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)

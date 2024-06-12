@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.components.KaExtensionApplicabilityResu
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
@@ -44,8 +43,7 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class KaFirCompletionCandidateChecker(
-    override val analysisSessionProvider: () -> KaFirSession,
-    override val token: KaLifetimeToken
+    override val analysisSessionProvider: () -> KaFirSession
 ) : KaSessionComponent<KaFirSession>(), KaCompletionCandidateChecker, KaFirSessionComponent {
     override fun createExtensionCandidateChecker(
         originalFile: KtFile,

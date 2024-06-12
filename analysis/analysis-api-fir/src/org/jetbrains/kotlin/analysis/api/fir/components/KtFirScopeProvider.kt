@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaCompositeScope
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaCompositeTypeScope
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaEmptyScope
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.scopes.KaTypeScope
@@ -53,8 +52,7 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class KaFirScopeProvider(
-    override val analysisSessionProvider: () -> KaFirSession,
-    override val token: KaLifetimeToken
+    override val analysisSessionProvider: () -> KaFirSession
 ) : KaSessionComponent<KaFirSession>(), KaScopeProvider, KaFirSessionComponent {
     private fun getScopeSession(): ScopeSession {
         return analysisSession.getScopeSessionFor(analysisSession.firSession)

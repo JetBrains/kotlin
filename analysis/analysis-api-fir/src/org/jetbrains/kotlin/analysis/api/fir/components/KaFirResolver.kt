@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.processEqualsFunctions
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAbstractResolver
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaNonBoundToPsiErrorDiagnostic
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.resolution.KaAnnotationCall
@@ -101,8 +100,7 @@ import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class KaFirResolver(
-    override val analysisSessionProvider: () -> KaFirSession,
-    override val token: KaLifetimeToken
+    override val analysisSessionProvider: () -> KaFirSession
 ) : KaAbstractResolver<KaFirSession>(), KaFirSessionComponent {
     override fun KtReference.isImplicitReferenceToCompanion(): Boolean = withValidityAssertion {
         if (this !is KtSimpleNameReference) {

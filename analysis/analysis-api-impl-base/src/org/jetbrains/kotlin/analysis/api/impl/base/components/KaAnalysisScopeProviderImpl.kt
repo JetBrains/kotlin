@@ -10,14 +10,12 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaAnalysisScopeProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaGlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.contains
 
 class KaAnalysisScopeProviderImpl(
     override val analysisSessionProvider: () -> KaSession,
-    override val token: KaLifetimeToken,
     private val useSiteScope: KaGlobalSearchScope
 ) : KaSessionComponent<KaSession>(), KaAnalysisScopeProvider {
     override val analysisScope: GlobalSearchScope

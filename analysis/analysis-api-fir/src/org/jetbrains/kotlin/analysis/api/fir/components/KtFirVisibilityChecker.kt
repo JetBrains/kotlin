@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirFileSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaClassSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
@@ -39,8 +38,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 internal class KaFirVisibilityChecker(
-    override val analysisSessionProvider: () -> KaFirSession,
-    override val token: KaLifetimeToken
+    override val analysisSessionProvider: () -> KaFirSession
 ) : KaSessionComponent<KaFirSession>(), KaVisibilityChecker, KaFirSessionComponent {
     override fun isVisible(
         candidateSymbol: KaSymbolWithVisibility,

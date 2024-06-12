@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirAnnotationValueConverter
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirCompileTimeConstantEvaluator
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.fir.FirElement
@@ -22,8 +21,7 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.psi.KtExpression
 
 internal class KaFirEvaluator(
-    override val analysisSessionProvider: () -> KaFirSession,
-    override val token: KaLifetimeToken
+    override val analysisSessionProvider: () -> KaFirSession
 ) : KaSessionComponent<KaFirSession>(), KaEvaluator, KaFirSessionComponent {
     override fun KtExpression.evaluate(): KaConstantValue? = withValidityAssertion {
         return evaluateFir(getOrBuildFir(firResolveSession), this)

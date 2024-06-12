@@ -27,8 +27,7 @@ import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
 @OptIn(KtModuleStructureInternals::class)
 internal class KaFirResolveExtensionInfoProvider(
-    override val analysisSessionProvider: () -> KaFirSession,
-    override val token: KaLifetimeToken
+    override val analysisSessionProvider: () -> KaFirSession
 ) : KaSessionComponent<KaFirSession>(), KaResolveExtensionInfoProvider, KaFirSessionComponent {
     override val resolveExtensionScopeWithTopLevelDeclarations: KaScope
         get() = withValidityAssertion {

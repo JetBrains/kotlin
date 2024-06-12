@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.analysis.api.fir.types.PublicTypeApproximator
 import org.jetbrains.kotlin.analysis.api.fir.utils.toConeNullability
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
@@ -57,8 +56,7 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class KaFirTypeProvider(
-    override val analysisSessionProvider: () -> KaFirSession,
-    override val token: KaLifetimeToken
+    override val analysisSessionProvider: () -> KaFirSession
 ) : KaSessionComponent<KaFirSession>(), KaTypeProvider, KaFirSessionComponent {
     override val builtinTypes: KaBuiltinTypes by lazy {
         KaFirBuiltInTypes(rootModuleSession.builtinTypes, firSymbolBuilder, token)

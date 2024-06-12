@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.api.components.KaSymbolInformationProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.*
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
@@ -27,8 +26,7 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
 
 internal class KaFirSymbolInformationProvider(
-    override val analysisSessionProvider: () -> KaFirSession,
-    override val token: KaLifetimeToken
+    override val analysisSessionProvider: () -> KaFirSession
 ) : KaSessionComponent<KaFirSession>(), KaSymbolInformationProvider, KaFirSessionComponent {
     override val KaSymbol.deprecationStatus: DeprecationInfo?
         get() = withValidityAssertion {

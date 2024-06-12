@@ -13,15 +13,13 @@ import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
 import org.jetbrains.kotlin.analysis.api.components.KaEvaluator
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.types.TypeUtils
 
 internal class KaFe10Evaluator(
-    override val analysisSessionProvider: () -> KaFe10Session,
-    override val token: KaLifetimeToken
+    override val analysisSessionProvider: () -> KaFe10Session
 ) : KaSessionComponent<KaFe10Session>(), KaEvaluator, KaFe10SessionComponent {
     override fun KtExpression.evaluate(): KaConstantValue? = withValidityAssertion {
         val bindingContext = analysisContext.analyze(this)

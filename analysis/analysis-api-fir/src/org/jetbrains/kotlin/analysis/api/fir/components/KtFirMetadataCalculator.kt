@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.components.KaMetadataCalculator
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfType
@@ -60,8 +59,7 @@ import org.jetbrains.org.objectweb.asm.commons.Method
 
 @OptIn(KaAnalysisNonPublicApi::class)
 internal class KaFirMetadataCalculator(
-    override val analysisSessionProvider: () -> KaFirSession,
-    override val token: KaLifetimeToken
+    override val analysisSessionProvider: () -> KaFirSession
 ) : KaSessionComponent<KaFirSession>(), KaMetadataCalculator, KaFirSessionComponent {
     private val firSession: FirSession
         get() = rootModuleSession

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertyAccessorSymbol
@@ -27,8 +26,7 @@ import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 
 internal class KaFe10SymbolInformationProvider(
-    override val analysisSessionProvider: () -> KaFe10Session,
-    override val token: KaLifetimeToken
+    override val analysisSessionProvider: () -> KaFe10Session
 ) : KaSessionComponent<KaFe10Session>(), KaSymbolInformationProvider, KaFe10SessionComponent {
     override val KaSymbol.deprecationStatus: DeprecationInfo?
         get() = withValidityAssertion {

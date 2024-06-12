@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtSymbol
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.project.structure.*
@@ -55,8 +54,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 internal class KaFe10SymbolRelationProvider(
-    override val analysisSessionProvider: () -> KaFe10Session,
-    override val token: KaLifetimeToken
+    override val analysisSessionProvider: () -> KaFe10Session
 ) : KaSessionComponent<KaFe10Session>(), KaSymbolRelationProvider, KaFe10SessionComponent {
     override val KaSymbol.containingSymbol: KaDeclarationSymbol?
         get() = withValidityAssertion {
@@ -183,7 +181,7 @@ internal class KaFe10SymbolRelationProvider(
             return KaFe10DescSamConstructorSymbol(constructorDescriptor, analysisContext)
         }
 
-    private val overridesProvider = KaFe10SymbolDeclarationOverridesProvider(analysisSessionProvider, token)
+    private val overridesProvider = KaFe10SymbolDeclarationOverridesProvider(analysisSessionProvider)
 
     override val KaCallableSymbol.directlyOverriddenSymbols: Sequence<KaCallableSymbol>
         get() = withValidityAssertion {

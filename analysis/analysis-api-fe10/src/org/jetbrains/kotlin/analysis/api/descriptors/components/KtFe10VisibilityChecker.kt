@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10Sessi
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.getResolutionScope
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
@@ -35,8 +34,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 
 internal class KaFe10VisibilityChecker(
-    override val analysisSessionProvider: () -> KaFe10Session,
-    override val token: KaLifetimeToken
+    override val analysisSessionProvider: () -> KaFe10Session
 ) : KaSessionComponent<KaFe10Session>(), KaVisibilityChecker, KaFe10SessionComponent {
     override fun isVisible(
         candidateSymbol: KaSymbolWithVisibility,

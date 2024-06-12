@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.analysis.api.components.KaSmartCastInfo
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
@@ -82,8 +81,7 @@ import kotlin.math.sign
 
 @OptIn(KaAnalysisNonPublicApi::class)
 internal class KaFirDataFlowProvider(
-    override val analysisSessionProvider: () -> KaFirSession,
-    override val token: KaLifetimeToken
+    override val analysisSessionProvider: () -> KaFirSession
 ) : KaSessionComponent<KaFirSession>(), KaDataFlowProvider, KaFirSessionComponent {
     override val KtExpression.smartCastInfo: KaSmartCastInfo?
         get() = withValidityAssertion {

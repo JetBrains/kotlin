@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.analysis.api.fir.types.PublicTypeApproximator
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
@@ -96,8 +95,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.org.objectweb.asm.Type
 
 internal class KaFirJavaInteroperabilityComponent(
-    override val analysisSessionProvider: () -> KaFirSession,
-    override val token: KaLifetimeToken
+    override val analysisSessionProvider: () -> KaFirSession
 ) : KaSessionComponent<KaFirSession>(), KaJavaInteroperabilityComponent, KaFirSessionComponent {
     override fun KaType.asPsiType(
         useSitePosition: PsiElement,

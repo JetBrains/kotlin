@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.unwrapSafeCall
 import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaErrorType
 import org.jetbrains.kotlin.analysis.api.types.KaFunctionalType
@@ -41,8 +40,7 @@ import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class KaFirExpressionTypeProvider(
-    override val analysisSessionProvider: () -> KaFirSession,
-    override val token: KaLifetimeToken
+    override val analysisSessionProvider: () -> KaFirSession
 ) : KaSessionComponent<KaFirSession>(), KaExpressionTypeProvider, KaFirSessionComponent {
 
     override val KtExpression.expressionType: KaType?

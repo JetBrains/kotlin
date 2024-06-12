@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KaFe1
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.getResolutionScope
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAbstractResolver
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaNonBoundToPsiErrorDiagnostic
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.resolution.KaAnnotationCall
@@ -90,8 +89,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.checkWithAttachment
 
 internal class KaFe10Resolver(
-    override val analysisSessionProvider: () -> KaFe10Session,
-    override val token: KaLifetimeToken
+    override val analysisSessionProvider: () -> KaFe10Session
 ) : KaAbstractResolver<KaFe10Session>(), KaFe10SessionComponent {
     override fun KtReference.isImplicitReferenceToCompanion(): Boolean = withValidityAssertion {
         if (this !is KtSimpleNameReference) {

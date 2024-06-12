@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10Sessi
 import org.jetbrains.kotlin.analysis.api.descriptors.signatures.KaFe10FunctionLikeSignature
 import org.jetbrains.kotlin.analysis.api.descriptors.signatures.KaFe10VariableLikeSignature
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAbstractSignatureSubstitutor
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionLikeSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
@@ -19,8 +18,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaVariableLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.receiverType
 
 internal class KaFe10SignatureSubstitutor(
-    override val analysisSessionProvider: () -> KaFe10Session,
-    override val token: KaLifetimeToken
+    override val analysisSessionProvider: () -> KaFe10Session
 ) : KaAbstractSignatureSubstitutor<KaFe10Session>(), KaFe10SessionComponent {
     override fun <S : KaFunctionLikeSymbol> S.asSignature(): KaFunctionLikeSignature<S> = withValidityAssertion {
         return KaFe10FunctionLikeSignature(this, returnType, receiverType, valueParameters.map { it.asSignature() })

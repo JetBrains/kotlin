@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.getContainingKtModule
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.isForeignValue
@@ -61,8 +60,7 @@ import org.jetbrains.kotlin.util.ImplementationStatus
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal class KaFirSymbolRelationProvider(
-    override val analysisSessionProvider: () -> KaFirSession,
-    override val token: KaLifetimeToken
+    override val analysisSessionProvider: () -> KaFirSession
 ) : KaSessionComponent<KaFirSession>(), KaSymbolRelationProvider, KaFirSessionComponent {
     override val KaSymbol.containingSymbol: KaDeclarationSymbol?
         get() = withValidityAssertion {
@@ -312,7 +310,7 @@ internal class KaFirSymbolRelationProvider(
             }
         }
 
-    private val overridesProvider = KaFirSymbolDeclarationOverridesProvider(analysisSessionProvider, token)
+    private val overridesProvider = KaFirSymbolDeclarationOverridesProvider(analysisSessionProvider)
 
     override val KaCallableSymbol.allOverriddenSymbols: Sequence<KaCallableSymbol>
         get() = withValidityAssertion {

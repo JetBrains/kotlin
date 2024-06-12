@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.*
 import org.jetbrains.kotlin.analysis.api.impl.base.components.AbstractKaSymbolProvider
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
@@ -27,8 +26,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
 internal class KaFe10SymbolProvider(
-    override val analysisSessionProvider: () -> KaFe10Session,
-    override val token: KaLifetimeToken
+    override val analysisSessionProvider: () -> KaFe10Session
 ) : AbstractKaSymbolProvider<KaFe10Session>(), KaFe10SessionComponent {
     override val rootPackageSymbol: KaPackageSymbol
         get() = withValidityAssertion {
