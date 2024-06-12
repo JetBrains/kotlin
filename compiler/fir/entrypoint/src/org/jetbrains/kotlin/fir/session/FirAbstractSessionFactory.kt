@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ImportTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.TargetPlatform
+import java.nio.file.Path
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
 abstract class FirAbstractSessionFactory {
@@ -122,7 +124,7 @@ abstract class FirAbstractSessionFactory {
             }.configure()
             registerCommonComponentsAfterExtensionsAreConfigured()
 
-            val dependencyProviders = computeDependencyProviderList(moduleData)
+            val dependencyProviders = computeDependencyProviderList(moduleData, registerExtraComponents, createKotlinScopeProvider)
             val generatedSymbolsProvider = FirSwitchableExtensionDeclarationsSymbolProvider.createIfNeeded(this)
 
             val providers = createProviders(
@@ -146,17 +148,26 @@ abstract class FirAbstractSessionFactory {
         }
     }
 
-    private fun FirSession.computeDependencyProviderList(moduleData: FirModuleData): List<FirSymbolProvider> {
+    private fun FirSession.computeDependencyProviderList(
+        moduleData: FirModuleData,
+        registerExtraComponents: (FirSession) -> Unit,
+        createKotlinScopeProvider: () -> FirKotlinScopeProvider,
+    ): List<FirSymbolProvider> {
         val newLibrarySession by lazy(LazyThreadSafetyMode.NONE) {
             FirCliSession(sessionProvider as FirProjectSessionProvider, FirSession.Kind.Library).apply {
                 registerCliCompilerOnlyComponents()
                 registerCommonComponents(this@computeDependencyProviderList.languageVersionSettings)
-//                FirSessionConfigurator(this).apply {
-//                    for (extensionRegistrar in extensionRegistrars) {
-//                        registerExtensions(extensionRegistrar.configure())
-//                    }
-//                }.configure()
+                registerExtraComponents(this)
+                val kotlinScopeProvider = createKotlinScopeProvider.invoke()
+                register(FirKotlinScopeProvider::class, kotlinScopeProvider)
                 registerCommonComponentsAfterExtensionsAreConfigured()
+            }
+        }
+        val newModuleDataProvider by lazy(LazyThreadSafetyMode.NONE) {
+            object : ModuleDataProvider() {
+                override val platform: TargetPlatform = this@computeDependencyProviderList.moduleData.platform
+                override val allModuleData = ArrayList<FirModuleData>()
+                override fun getModuleData(path: Path?): FirModuleData? = null
             }
         }
         val newLibrarySessionProviders = mutableListOf<FirSymbolProvider>()
@@ -169,8 +180,7 @@ abstract class FirAbstractSessionFactory {
                             Name.special("<common-from-${it.name.asStringStripSpecialMarkers()}>"),
                             it.dependencies, it.dependsOnDependencies, it.friendDependencies, it.platform, it.capabilities, it.isCommon,
                         ).also { newModuleData ->
-                            (sessionProvider as FirProjectSessionProvider).registerSession(newModuleData, newLibrarySession)
-                            newModuleData.bindSession(newLibrarySession)
+                            newModuleDataProvider.allModuleData.add(newModuleData)
                             newLibrarySessionProviders +=
                                 LazySerializedMetadataSymbolProvider(
                                     newLibrarySession,
@@ -184,6 +194,10 @@ abstract class FirAbstractSessionFactory {
             )
         }
         if (newLibrarySessionProviders.isNotEmpty()) {
+            newModuleDataProvider.allModuleData.forEach {
+                (newLibrarySession.sessionProvider as FirProjectSessionProvider).registerSession(it, newLibrarySession)
+                it.bindSession(newLibrarySession)
+            }
             val symbolProvider = FirCachingCompositeSymbolProvider(newLibrarySession, newLibrarySessionProviders)
             newLibrarySession.register(FirSymbolProvider::class, symbolProvider)
             newLibrarySession.register(FirProvider::class, FirLibrarySessionProvider(symbolProvider))
