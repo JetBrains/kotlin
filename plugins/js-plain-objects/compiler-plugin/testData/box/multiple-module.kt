@@ -1,6 +1,3 @@
-// DISABLE_IR_VISIBILITY_CHECKS: ANY
-// ^ KT-68839
-
 // MODULE: lib
 // FILE: lib.kt
 package foo
