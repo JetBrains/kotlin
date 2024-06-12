@@ -1,3 +1,4 @@
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
 // ISSUE: KT-63068
 fun List<Int>.f() {
     this<!UNRESOLVED_LABEL!>@List<!>.size
