@@ -122,7 +122,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
                                 }
                             }
 
-                            is KaReceiverParameterSymbol -> DebugSymbolRenderer().render(analysisSession, symbol)
+                            is KaReceiverParameterSymbol -> DebugSymbolRenderer().render(useSiteSession, symbol)
                             else -> error(symbol::class.toString())
                         },
                     )
@@ -310,7 +310,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
 
     protected open fun KaSession.renderSymbolForComparison(symbol: KaSymbol, directives: RegisteredDirectives): String {
         val renderExpandedTypes = directives[PRETTY_RENDERER_OPTION].any { it == PrettyRendererOption.FULLY_EXPANDED_TYPES }
-        return with(DebugSymbolRenderer(renderExtra = true, renderExpandedTypes = renderExpandedTypes)) { render(analysisSession, symbol) }
+        return with(DebugSymbolRenderer(renderExtra = true, renderExpandedTypes = renderExpandedTypes)) { render(useSiteSession, symbol) }
     }
 }
 

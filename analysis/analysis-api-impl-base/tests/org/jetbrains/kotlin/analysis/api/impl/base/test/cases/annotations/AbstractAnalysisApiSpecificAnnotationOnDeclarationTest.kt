@@ -37,7 +37,7 @@ abstract class AbstractAnalysisApiSpecificAnnotationOnDeclarationTest : Abstract
             val renderer = DebugSymbolRenderer()
             fun renderAnnotation(application: KaAnnotation): String = buildString {
                 appendLine("${KtDeclaration::class.simpleName}: ${ktDeclaration::class.simpleName} ${ktDeclaration.name}")
-                append(renderer.renderAnnotationApplication(analysisSession, application))
+                append(renderer.renderAnnotationApplication(useSiteSession, application))
             }
 
             val rawList = renderAnnotation(annotationList[classId].single())

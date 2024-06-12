@@ -23,6 +23,6 @@ internal inline fun <reified S : KaDeclarationSymbol, reified R> SirFromKtSymbol
     crossinline block: context(SirSession, KaSession) () -> R,
 ): R {
     return analyze(ktModule) {
-        block(sirSession, analysisSession)
+        block(sirSession, useSiteSession)
     }
 }

@@ -81,7 +81,7 @@ internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
         is KaClassLikeSymbol -> classId?.toString() ?: nameOrAnonymous.asString()
         is KaPackageSymbol -> fqName.toString()
         is KaEnumEntrySymbol -> callableId?.toString() ?: name.asString()
-        is KaSymbol -> DebugSymbolRenderer().render(analysisSession, this)
+        is KaSymbol -> DebugSymbolRenderer().render(useSiteSession, this)
         is Boolean -> toString()
         is Map<*, *> -> if (isEmpty()) "{}" else entries.joinToString(
             separator = ",\n  ",

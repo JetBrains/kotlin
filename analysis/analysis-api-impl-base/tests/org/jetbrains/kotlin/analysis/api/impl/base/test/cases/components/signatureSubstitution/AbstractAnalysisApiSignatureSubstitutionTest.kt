@@ -25,7 +25,7 @@ abstract class AbstractAnalysisApiSignatureSubstitutionTest : AbstractAnalysisAp
         val actual = analyseForTest(declaration) {
             val symbol = declaration.symbol as KaCallableSymbol
 
-            val substitutor = SubstitutionParser.parseSubstitutor(analysisSession, mainFile, declaration)
+            val substitutor = SubstitutionParser.parseSubstitutor(useSiteSession, mainFile, declaration)
 
             val signatureBeforeSubstitution = symbol.asSignature()
             val signatureAfterSubstitution = signatureBeforeSubstitution.substitute(substitutor)

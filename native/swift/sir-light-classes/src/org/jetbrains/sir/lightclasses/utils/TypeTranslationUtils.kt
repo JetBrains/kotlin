@@ -16,7 +16,7 @@ import org.jetbrains.sir.lightclasses.extensions.withSessions
 internal inline fun <reified T : KaCallableSymbol> SirFromKtSymbol<T>.translateReturnType(): SirType {
     return withSessions {
         this@translateReturnType.ktSymbol.returnType.translateType(
-            analysisSession,
+            useSiteSession,
             reportErrorType = { error("Can't translate return type in ${ktSymbol.render()}: ${it}") },
             reportUnsupportedType = { error("Can't translate return type in ${ktSymbol.render()}: type is not supported") },
             processTypeImports = this@translateReturnType.ktSymbol.containingModule.sirModule()::updateImports
@@ -28,7 +28,7 @@ internal inline fun <reified T : KaFunctionLikeSymbol> SirFromKtSymbol<T>.transl
     return withSessions {
         this@translateParameters.ktSymbol.valueParameters.map { parameter ->
             val sirType = parameter.returnType.translateType(
-                analysisSession,
+                useSiteSession,
                 reportErrorType = { error("Can't translate parameter ${parameter.render()} type in ${ktSymbol.render()}: $it") },
                 reportUnsupportedType = { error("Can't translate parameter ${parameter.render()} type in ${ktSymbol.render()}: type is not supported") },
                 processTypeImports = this@translateParameters.ktSymbol.containingModule.sirModule()::updateImports

@@ -18,10 +18,10 @@ import org.jetbrains.kotlin.types.Variance
 abstract class AbstractTypeTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actual = analyseForTest(mainFile) {
-            val type = getType(analysisSession, mainFile, mainModule, testServices)
+            val type = getType(useSiteSession, mainFile, mainModule, testServices)
 
             buildString {
-                appendLine(DebugSymbolRenderer(renderTypeByProperties = true).renderType(analysisSession, type))
+                appendLine(DebugSymbolRenderer(renderTypeByProperties = true).renderType(useSiteSession, type))
 
                 appendLine()
                 appendLine("Rendered type:")

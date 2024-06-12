@@ -32,7 +32,7 @@ internal class SirTypealiasFromKtSymbol(
     }
     override val type: SirType by lazyWithSessions {
         ktSymbol.expandedType.translateType(
-            analysisSession,
+            useSiteSession,
             reportErrorType = { error("Can't translate ${ktSymbol.render()} type: $it") },
             reportUnsupportedType = { error("Can't translate ${ktSymbol.render()} type: it is not supported") },
             processTypeImports = ktSymbol.containingModule.sirModule()::updateImports
@@ -41,7 +41,7 @@ internal class SirTypealiasFromKtSymbol(
 
     override var parent: SirDeclarationParent
         get() = withSessions {
-            ktSymbol.getSirParent(analysisSession)
+            ktSymbol.getSirParent(useSiteSession)
         }
         set(_) = Unit
 }

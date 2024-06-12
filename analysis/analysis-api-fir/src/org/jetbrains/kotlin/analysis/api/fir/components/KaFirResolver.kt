@@ -1258,7 +1258,7 @@ internal class KaFirResolver(
                     val defaultArrayOfSymbol = arrayOfSymbol(arrayOf) ?: return null
                     val substitutor = createSubstitutorFromTypeArguments(defaultArrayOfSymbol)
                     val partiallyAppliedSymbol = KaPartiallyAppliedSymbol(
-                        with(analysisSession) { defaultArrayOfSymbol.substitute(substitutor) },
+                        with(useSiteSession) { defaultArrayOfSymbol.substitute(substitutor) },
                         null,
                         null,
                     )

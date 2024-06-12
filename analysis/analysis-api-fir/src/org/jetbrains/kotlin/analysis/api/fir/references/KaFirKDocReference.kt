@@ -18,7 +18,7 @@ internal class KaFirKDocReference(element: KDocName) : KDocReference(element), K
     override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
         val fullFqName = generateSequence(element) { it.parent as? KDocName }.last().getQualifiedNameAsFqName()
         val selectedFqName = element.getQualifiedNameAsFqName()
-        return KDocReferenceResolver.resolveKdocFqName(analysisSession, selectedFqName, fullFqName, element)
+        return KDocReferenceResolver.resolveKdocFqName(useSiteSession, selectedFqName, fullFqName, element)
     }
 
     override fun getResolvedToPsi(

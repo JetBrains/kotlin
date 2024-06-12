@@ -37,7 +37,7 @@ abstract class AbstractFileImportingScopeContextTest : AbstractAnalysisApiBasedT
         renderDefaultImportingScope: Boolean,
         printPretty: Boolean = false,
     ): String = prettyPrint {
-        renderForTests(analysisSession, importingScope, this@prettyPrint, printPretty) { ktScopeKind ->
+        renderForTests(useSiteSession, importingScope, this@prettyPrint, printPretty) { ktScopeKind ->
             when (ktScopeKind) {
                 is KaScopeKind.PackageMemberScope -> false
                 is KaScopeKind.DefaultSimpleImportingScope -> renderDefaultImportingScope

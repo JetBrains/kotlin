@@ -25,14 +25,14 @@ class KaRendererImpl(
 ) : KaRenderer, KaSessionComponent<KaSession>() {
     override fun KaDeclarationSymbol.render(renderer: KaDeclarationRenderer): String = withValidityAssertion {
         return with(analysisSession) {
-            prettyPrint { renderer.renderDeclaration(analysisSession, this@render, this) }
+            prettyPrint { renderer.renderDeclaration(useSiteSession, this@render, this) }
         }
     }
 
     override fun KaType.render(renderer: KaTypeRenderer, position: Variance): String = withValidityAssertion {
         return with(analysisSession) {
-            val approximatedType = KaRendererTypeApproximator.TO_DENOTABLE.approximateType(analysisSession, this@render, position)
-            prettyPrint { renderer.renderType(analysisSession, approximatedType, this) }
+            val approximatedType = KaRendererTypeApproximator.TO_DENOTABLE.approximateType(useSiteSession, this@render, position)
+            prettyPrint { renderer.renderType(useSiteSession, approximatedType, this) }
         }
     }
 }

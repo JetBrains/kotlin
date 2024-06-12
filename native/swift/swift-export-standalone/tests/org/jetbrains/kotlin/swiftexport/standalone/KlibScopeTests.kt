@@ -129,7 +129,7 @@ class KlibScopeTests : AbstractNativeSimpleTest() {
         }
 
         return analyze(session.getAllLibraryModules().single()) {
-            KlibScope(module, this.analysisSession).block()
+            KlibScope(module, useSiteSession).block()
         }
     }
 }

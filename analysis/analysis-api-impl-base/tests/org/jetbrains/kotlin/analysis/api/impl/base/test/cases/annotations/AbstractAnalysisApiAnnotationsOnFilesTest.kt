@@ -15,7 +15,7 @@ abstract class AbstractAnalysisApiAnnotationsOnFilesTest : AbstractAnalysisApiBa
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actual = analyseForTest(mainFile) {
             val fileSymbol = mainFile.symbol
-            TestAnnotationRenderer.renderAnnotations(analysisSession, fileSymbol.annotations)
+            TestAnnotationRenderer.renderAnnotations(useSiteSession, fileSymbol.annotations)
         }
 
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)

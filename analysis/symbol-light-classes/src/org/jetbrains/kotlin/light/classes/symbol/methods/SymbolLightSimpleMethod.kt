@@ -217,7 +217,7 @@ internal class SymbolLightSimpleMethod(
     private val _returnedType: PsiType by lazyPub {
         withFunctionSymbol { functionSymbol ->
             val ktType = if (functionSymbol.isSuspend) {
-                analysisSession.builtinTypes.nullableAny // Any?
+                useSiteSession.builtinTypes.nullableAny // Any?
             } else {
                 functionSymbol.returnType.takeUnless { isVoidType(it) } ?: return@withFunctionSymbol PsiTypes.voidType()
             }

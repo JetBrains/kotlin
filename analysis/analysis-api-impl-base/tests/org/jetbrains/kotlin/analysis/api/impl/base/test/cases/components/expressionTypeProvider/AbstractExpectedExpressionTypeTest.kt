@@ -22,7 +22,7 @@ abstract class AbstractExpectedExpressionTypeTest : AbstractAnalysisApiBasedTest
         val actualExpectedTypeText: String? = executeOnPooledThreadInReadAction {
             analyseForTest(expressionAtCaret) {
                 val expectedType = expressionAtCaret.expectedType ?: return@analyseForTest null
-                DebugSymbolRenderer().renderType(analysisSession, expectedType)
+                DebugSymbolRenderer().renderType(useSiteSession, expectedType)
             }
         }
 

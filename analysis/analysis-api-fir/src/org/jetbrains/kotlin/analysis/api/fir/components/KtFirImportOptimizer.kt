@@ -282,7 +282,7 @@ internal class KaFirImportOptimizer(
                 val qualifiedNameAsFqName = docName.getQualifiedNameAsFqName()
                 val importableNames = with(analysisSession) {
                     val resolvedSymbols = KDocReferenceResolver
-                        .resolveKdocFqName(analysisSession, qualifiedNameAsFqName, qualifiedNameAsFqName, docLink)
+                        .resolveKdocFqName(useSiteSession, qualifiedNameAsFqName, qualifiedNameAsFqName, docLink)
                     if (resolvedSymbols.isEmpty()) {
                         unresolvedNames += qualifiedNameAsFqName.shortName()
                         emptyList()

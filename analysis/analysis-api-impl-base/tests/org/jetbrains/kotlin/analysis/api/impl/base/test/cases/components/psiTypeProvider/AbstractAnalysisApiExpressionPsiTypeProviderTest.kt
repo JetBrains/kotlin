@@ -41,7 +41,7 @@ abstract class AbstractAnalysisApiExpressionPsiTypeProviderTest : AbstractAnalys
             val returnType = declarationAtCaret.expressionType
             if (returnType != null) {
                 prettyPrint {
-                    appendLine("${KaType::class.simpleName}: ${AnalysisApiPsiTypeProviderTestUtils.render(analysisSession, returnType)}")
+                    appendLine("${KaType::class.simpleName}: ${AnalysisApiPsiTypeProviderTestUtils.render(useSiteSession, returnType)}")
                     for (allowErrorTypes in listOf(false, true)) {
                         for (typeMappingMode in KaTypeMappingMode.entries) {
                             for (isAnnotationMethod in listOf(false, true)) {

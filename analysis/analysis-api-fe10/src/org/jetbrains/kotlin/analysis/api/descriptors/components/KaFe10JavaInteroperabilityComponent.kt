@@ -190,7 +190,7 @@ class KaFe10JavaInteroperabilityComponent(
                 val platform = containingModule.platform
                 if (!platform.has<JvmPlatform>()) return null
 
-                val containingSymbolOrSelf = computeContainingSymbolOrSelf(this@containingJvmClassName, analysisSession)
+                val containingSymbolOrSelf = computeContainingSymbolOrSelf(this@containingJvmClassName, useSiteSession)
                 return when (val descriptor = containingSymbolOrSelf.getDescriptor()) {
                     is DescriptorWithContainerSource -> {
                         when (val containerSource = descriptor.containerSource) {

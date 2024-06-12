@@ -1545,7 +1545,7 @@ private class KDocQualifiersToShortenCollector(
             val owner = kDocName.getContainingDoc().owner
 
             val contextElement = owner ?: kDocName.containingKtFile
-            KDocReferenceResolver.resolveKdocFqName(analysisSession, shortFqName, shortFqName, contextElement)
+            KDocReferenceResolver.resolveKdocFqName(useSiteSession, shortFqName, shortFqName, contextElement)
         }
 
         resolvedSymbols.firstIsInstanceOrNull<KaCallableSymbol>()?.firSymbol?.let { availableCallable ->

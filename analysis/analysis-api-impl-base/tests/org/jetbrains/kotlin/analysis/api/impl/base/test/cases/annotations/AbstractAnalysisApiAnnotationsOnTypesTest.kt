@@ -26,7 +26,7 @@ abstract class AbstractAnalysisApiAnnotationsOnTypesTest : AbstractAnalysisApiBa
                 appendLine("${KtTypeReference::class.simpleName}: ${ktTypeReference.text}")
                 appendLine("annotations: [")
                 for (annotation in annotations) {
-                    appendLine(DebugSymbolRenderer().renderAnnotationApplication(analysisSession, annotation).indented(indent = 2))
+                    appendLine(DebugSymbolRenderer().renderAnnotationApplication(useSiteSession, annotation).indented(indent = 2))
                 }
                 appendLine("]")
             }

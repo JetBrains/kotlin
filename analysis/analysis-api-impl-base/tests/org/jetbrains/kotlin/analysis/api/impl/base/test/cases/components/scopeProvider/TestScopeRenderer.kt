@@ -70,9 +70,9 @@ internal object TestScopeRenderer {
         printPretty: Boolean
     ): String = prettyPrint {
         if (printPretty) {
-            prettyPrintTypeRenderer.renderType(analysisSession, type, this)
+            prettyPrintTypeRenderer.renderType(useSiteSession, type, this)
         } else {
-            append(debugRenderer.renderType(analysisSession, type))
+            append(debugRenderer.renderType(useSiteSession, type))
         }
     }
 
@@ -125,7 +125,7 @@ internal object TestScopeRenderer {
                         if (printPretty) {
                             this@KaSession.renderPrettySymbol(it)
                         } else {
-                            debugRenderer.render(analysisSession, it)
+                            debugRenderer.render(useSiteSession, it)
                         }
                     )
                     this@KaSession.additionalSymbolInfo(it)?.let {

@@ -139,7 +139,7 @@ internal object KDocReferenceResolver {
 
         getNonImportedSymbolsByFullyQualifiedName(fqName).map { it.toResolveResult() }.ifNotEmpty { return this }
 
-        AdditionalKDocResolutionProvider.resolveKdocFqName(analysisSession, fqName, contextElement)
+        AdditionalKDocResolutionProvider.resolveKdocFqName(useSiteSession, fqName, contextElement)
             .map { it.toResolveResult() }
             .ifNotEmpty { return this }
 

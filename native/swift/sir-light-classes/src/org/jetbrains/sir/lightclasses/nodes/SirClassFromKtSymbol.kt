@@ -45,7 +45,7 @@ internal class SirClassFromKtSymbol(
 
     override var parent: SirDeclarationParent
         get() = withSessions {
-            ktSymbol.getSirParent(analysisSession)
+            ktSymbol.getSirParent(useSiteSession)
         }
         set(_) = Unit
 
@@ -62,7 +62,7 @@ internal class SirClassFromKtSymbol(
 
     private fun childDeclarations(): List<SirDeclaration> = withSessions {
         ktSymbol.combinedDeclaredMemberScope
-            .extractDeclarations(analysisSession)
+            .extractDeclarations(useSiteSession)
             .toList()
     }
 

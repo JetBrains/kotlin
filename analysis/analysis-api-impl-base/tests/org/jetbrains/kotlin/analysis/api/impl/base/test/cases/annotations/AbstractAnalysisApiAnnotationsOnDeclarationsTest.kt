@@ -27,7 +27,7 @@ abstract class AbstractAnalysisApiAnnotationsOnDeclarationsTest : AbstractAnalys
             val declarationSymbol = ktDeclaration.symbol as KaAnnotatedSymbol
             buildString {
                 appendLine("${KtDeclaration::class.simpleName}: ${ktDeclaration::class.simpleName} ${ktDeclaration.name}")
-                append(renderAnnotations(analysisSession, declarationSymbol.annotations))
+                append(renderAnnotations(useSiteSession, declarationSymbol.annotations))
             }
         }
 
