@@ -250,6 +250,17 @@ object LightTreePositioningStrategies {
         }
     }
 
+    val CONTEXT_KEYWORD: LightTreePositioningStrategy = object : BaseDeclarationNameStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> = tree.findDescendantByType(node, KtNodeTypes.CONTEXT_RECEIVER_LIST)?.getChildren(tree)?.firstOrNull()
+            ?.let { markElement(it, startOffset, endOffset, tree, node) }
+            ?: super.mark(node, startOffset, endOffset, tree)
+    }
+
     val DECLARATION_NAME_ONLY: LightTreePositioningStrategy = BaseDeclarationNameStrategy()
 
     val ACTUAL_DECLARATION_NAME: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
