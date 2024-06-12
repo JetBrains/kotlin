@@ -13890,6 +13890,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("deprecated.kt")
+        public void testDeprecated() {
+          runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/deprecated.kt");
+        }
+
+        @Test
         @TestMetadata("functionalType.kt")
         public void testFunctionalType() {
           runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/functionalType.kt");
