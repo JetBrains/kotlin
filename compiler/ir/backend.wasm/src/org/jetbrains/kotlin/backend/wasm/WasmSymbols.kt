@@ -248,7 +248,6 @@ class WasmSymbols(
 
     val testFun = maybeGetFunction("test", kotlinTestPackage)
     val suiteFun = maybeGetFunction("suite", kotlinTestPackage)
-    val startUnitTests = maybeGetFunction("startUnitTests", kotlinTestPackage)
 
     val wasmTypeId = getInternalFunction("wasmTypeId")
 
