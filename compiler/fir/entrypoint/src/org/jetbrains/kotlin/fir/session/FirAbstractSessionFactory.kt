@@ -29,8 +29,6 @@ import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ImportTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.TargetPlatform
-import java.nio.file.Path
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
 abstract class FirAbstractSessionFactory {
@@ -153,72 +151,61 @@ abstract class FirAbstractSessionFactory {
         registerExtraComponents: (FirSession) -> Unit,
         createKotlinScopeProvider: () -> FirKotlinScopeProvider,
     ): List<FirSymbolProvider> {
-        val newLibrarySession by lazy(LazyThreadSafetyMode.NONE) {
-            FirCliSession(sessionProvider as FirProjectSessionProvider, FirSession.Kind.Library).apply {
+        (moduleData as? FirModuleDataImpl)?.let { moduleDataImpl ->
+            moduleDataImpl.updateDependsOn(
+                moduleDataImpl.dependsOnDependencies.map {
+                    val session = sessionProvider?.getSession(it) ?: return@map it
+                    if (it.isCommon && session.kind == FirSession.Kind.Source) {
+                        createNewCommonArtefactModuleDataWithSession(it, session, registerExtraComponents, createKotlinScopeProvider)
+                    } else it
+                }
+            )
+        }
+        // dependsOnDependencies can actualize declarations from their dependencies. Because actual declarations can be more specific
+        // (e.g. have additional supertypes), the modules must be ordered from most specific (i.e. actual) to most generic (i.e. expect)
+        // to prevent false positive resolution errors (see KT-57369 for an example).
+        val firModuleData = moduleData.dependencies + moduleData.friendDependencies + moduleData.allDependsOnDependencies
+        val firSessions = firModuleData.mapNotNull { sessionProvider?.getSession(it) }
+        val firSymbolProviders = firSessions.flatMap { it.symbolProvider.flatten() }
+        return firSymbolProviders
+            .distinct()
+            .sortedBy { it.session.kind }
+    }
+
+    private fun createNewCommonArtefactModuleDataWithSession(
+        sourceModuleData: FirModuleData,
+        sourceSession: FirSession,
+        registerExtraComponents: (FirSession) -> Unit,
+        createKotlinScopeProvider: () -> FirKotlinScopeProvider,
+    ): FirModuleData {
+        val commonArtefactSession by lazy(LazyThreadSafetyMode.NONE) {
+            FirCliSession(sourceSession.sessionProvider as FirProjectSessionProvider, FirSession.Kind.Library).apply {
                 registerCliCompilerOnlyComponents()
-                registerCommonComponents(this@computeDependencyProviderList.languageVersionSettings)
+                registerCommonComponents(sourceSession.languageVersionSettings)
                 registerExtraComponents(this)
                 val kotlinScopeProvider = createKotlinScopeProvider.invoke()
                 register(FirKotlinScopeProvider::class, kotlinScopeProvider)
                 registerCommonComponentsAfterExtensionsAreConfigured()
             }
         }
-        val newModuleDataProvider by lazy(LazyThreadSafetyMode.NONE) {
-            object : ModuleDataProvider() {
-                override val platform: TargetPlatform = this@computeDependencyProviderList.moduleData.platform
-                override val allModuleData = ArrayList<FirModuleData>()
-                override fun getModuleData(path: Path?): FirModuleData? = null
-            }
-        }
-        val newLibrarySessionProviders = mutableListOf<FirSymbolProvider>()
-        (moduleData as? FirModuleDataImpl)?.let { moduleDataImpl ->
-            moduleDataImpl.updateDependsOn(
-                moduleDataImpl.dependsOnDependencies.map {
-                    val session = sessionProvider?.getSession(it) ?: return@map it
-                    if (it.isCommon) {
-                        FirModuleDataImpl(
-                            Name.special("<common-from-${it.name.asStringStripSpecialMarkers()}>"),
-                            it.dependencies, it.dependsOnDependencies, it.friendDependencies, it.platform, it.capabilities, it.isCommon,
-                        ).also { newModuleData ->
-                            newModuleDataProvider.allModuleData.add(newModuleData)
-                            newLibrarySessionProviders +=
-                                LazySerializedMetadataSymbolProvider(
-                                    newLibrarySession,
-                                    SingleModuleDataProvider(newModuleData),
-                                    kotlinScopeProvider,
-                                    { session.serializedMetadata?.serializedMetadata }
-                                )
-                        }
-                    } else it
-                }
-            )
-        }
-        if (newLibrarySessionProviders.isNotEmpty()) {
-            newModuleDataProvider.allModuleData.forEach {
-                (newLibrarySession.sessionProvider as FirProjectSessionProvider).registerSession(it, newLibrarySession)
-                it.bindSession(newLibrarySession)
-            }
-            val symbolProvider = FirCachingCompositeSymbolProvider(newLibrarySession, newLibrarySessionProviders)
-            newLibrarySession.register(FirSymbolProvider::class, symbolProvider)
-            newLibrarySession.register(FirProvider::class, FirLibrarySessionProvider(symbolProvider))
-        }
-        // dependsOnDependencies can actualize declarations from their dependencies. Because actual declarations can be more specific
-        // (e.g. have additional supertypes), the modules must be ordered from most specific (i.e. actual) to most generic (i.e. expect)
-        // to prevent false positive resolution errors (see KT-57369 for an example).
-        val firModuleData = moduleData.dependencies + moduleData.friendDependencies + moduleData.allDependsOnDependencies
-        val firSessions = firModuleData
-            .mapNotNull { sessionProvider?.getSession(it) }
-        val firSymbolProviders = firSessions
-            .flatMap {
-                if (it == newLibrarySession) {
-                    newLibrarySessionProviders
-                } else {
-                    it.symbolProvider.flatten()
-                }
-            }
-        return firSymbolProviders
-            .distinct()
-            .sortedBy { it.session.kind }
+        val commonArtefactModuleData = FirModuleDataImpl(
+            Name.special("<common-from-${sourceModuleData.name.asStringStripSpecialMarkers()}>"),
+            sourceModuleData.dependencies, sourceModuleData.dependsOnDependencies, sourceModuleData.friendDependencies, sourceModuleData.platform, sourceModuleData.capabilities, sourceModuleData.isCommon,
+        )
+        (sourceSession.sessionProvider as FirProjectSessionProvider).registerSession(commonArtefactModuleData, commonArtefactSession)
+        commonArtefactModuleData.bindSession(commonArtefactSession)
+        val providers = sourceSession.computeDependencyProviderList(sourceModuleData, registerExtraComponents, createKotlinScopeProvider) +
+                LazySerializedMetadataSymbolProvider(
+                    commonArtefactSession,
+                    SingleModuleDataProvider(commonArtefactModuleData),
+                    sourceSession.kotlinScopeProvider,
+                    { sourceSession.serializedMetadata?.serializedMetadata }
+                )
+        val symbolProvider = FirCachingCompositeSymbolProvider(commonArtefactSession, providers)
+        commonArtefactSession.register(FirSymbolProvider::class, symbolProvider)
+        commonArtefactSession.register(FirProvider::class, FirLibrarySessionProvider(symbolProvider))
+        commonArtefactSession.registerModuleData(commonArtefactModuleData)
+        return commonArtefactModuleData
     }
 
     /* It eliminates dependency and composite providers since the current dependency provider is composite in fact.
