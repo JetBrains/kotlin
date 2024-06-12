@@ -257,7 +257,7 @@ KInt Kotlin_String_compareTo(KString thiz, KString other) {
     return threeWayCompare(thiz->count_, other->count_);
 }
 
-KChar Kotlin_String_get(KString thiz, KInt index) {
+ALWAYS_INLINE KChar Kotlin_String_get(KString thiz, KInt index) {
   // We couldn't have created a string bigger than max KInt value.
   // So if index is < 0, conversion to an unsigned value would make it bigger
   // than the array size.
@@ -267,7 +267,7 @@ KChar Kotlin_String_get(KString thiz, KInt index) {
   return *CharArrayAddressOfElementAt(thiz, index);
 }
 
-KInt Kotlin_String_getStringLength(KString thiz) {
+ALWAYS_INLINE KInt Kotlin_String_getStringLength(KString thiz) {
   return thiz->count_;
 }
 
@@ -354,15 +354,15 @@ KBoolean Kotlin_String_unsafeRangeEquals(KString thiz, KInt thizOffset, KString 
   ) == 0;
 }
 
-KBoolean Kotlin_Char_isISOControl(KChar ch) {
+ALWAYS_INLINE KBoolean Kotlin_Char_isISOControl(KChar ch) {
   return (ch <= 0x1F) || (ch >= 0x7F && ch <= 0x9F);
 }
 
-KBoolean Kotlin_Char_isHighSurrogate(KChar ch) {
+ALWAYS_INLINE KBoolean Kotlin_Char_isHighSurrogate(KChar ch) {
   return ((ch & 0xfc00) == 0xd800);
 }
 
-KBoolean Kotlin_Char_isLowSurrogate(KChar ch) {
+ALWAYS_INLINE KBoolean Kotlin_Char_isLowSurrogate(KChar ch) {
   return ((ch & 0xfc00) == 0xdc00);
 }
 
@@ -466,13 +466,13 @@ KInt Kotlin_String_hashCode(KString thiz) {
   return polyHash(thiz->count_, CharArrayAddressOfElementAt(thiz, 0));
 }
 
-const KChar* Kotlin_String_utf16pointer(KString message) {
+ALWAYS_INLINE const KChar* Kotlin_String_utf16pointer(KString message) {
   RuntimeAssert(message->type_info() == theStringTypeInfo, "Must use a string");
   const KChar* utf16 = CharArrayAddressOfElementAt(message, 0);
   return utf16;
 }
 
-KInt Kotlin_String_utf16length(KString message) {
+ALWAYS_INLINE KInt Kotlin_String_utf16length(KString message) {
   RuntimeAssert(message->type_info() == theStringTypeInfo, "Must use a string");
   return message->count_ * sizeof(KChar);
 }
