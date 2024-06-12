@@ -76,9 +76,18 @@ abstract class KonanCompileTask @Inject constructor(
             add(konanTarget.get().visibleName)
 
             addAll(extraOpts.get())
+            add(sourceSets.joinToString(",", prefix = "-Xfragments=") { it.name })
+
+            val fragmentSources = sequence {
+                for (s in sourceSets) {
+                    for (f in s.files) {
+                        yield("${s.name}:${f.absolutePath}")
+                    }
+                }
+            }
+            add(fragmentSources.joinToString(",", prefix="-Xfragment-sources="))
 
             sourceSets.flatMap { it.files }.mapTo(this) { it.absolutePath }
-            sourceSets.asMap.filterKeys { it != "nativeMain" }.flatMap { it.value.files }.mapTo(this) { "-Xcommon-sources=${it.absolutePath}" }
         }
         toolRunner.run(args)
     }

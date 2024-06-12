@@ -573,6 +573,7 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
             "-no-endorsed-libs",
             "-nostdlib",
             "-Werror",
+            "-Xallow-kotlin-package",
             "-Xexplicit-api=strict",
             "-Xexpect-actual-classes",
             "-module-name", KOTLIN_NATIVE_STDLIB_NAME,
@@ -581,10 +582,12 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
             "-opt-in=kotlin.ExperimentalMultiplatform",
             "-opt-in=kotlin.native.internal.InternalForKotlinNative",
             "-language-version",
-            "1.9",
+            "2.0",
             "-api-version",
             "2.0",
-            "-Xsuppress-api-version-greater-than-language-version-error",
+            "-Xdont-warn-on-error-suppression",
+            "-Xstdlib-compilation",
+            "-Xfragment-refines=nativeMain:nativeWasm,nativeMain:common,nativeWasm:common",
     )
 
     val common by sourceSets.creating {
@@ -592,13 +595,16 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
         srcDir(project(":kotlin-stdlib").file("common/src/generated"))
         srcDir(project(":kotlin-stdlib").file("unsigned/src"))
         srcDir(project(":kotlin-stdlib").file("src"))
-        srcDir(project(":kotlin-stdlib").file("native-wasm/src/"))
         srcDir(project(":kotlin-test").files("annotations-common/src/main/kotlin"))
         srcDir(project(":kotlin-test").files("common/src/main/kotlin"))
-        srcDir(project(":kotlin-native:Interop:Runtime").file("src/main/kotlin"))
+    }
+
+    val nativeWasm by sourceSets.creating {
+        srcDir(project(":kotlin-stdlib").file("native-wasm/src/"))
     }
 
     val nativeMain by sourceSets.creating {
+        srcDir(project(":kotlin-native:Interop:Runtime").file("src/main/kotlin"))
         srcDir(project(":kotlin-native:Interop:Runtime").file("src/native/kotlin"))
         srcDir(project(":kotlin-native:Interop:JsRuntime").file("src/main/kotlin"))
         srcDir(project.file("src/main/kotlin"))
