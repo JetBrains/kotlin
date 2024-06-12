@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaType
 
 class FirJavaTypeRef(
     val type: JavaType,
+    override val source: KtSourceElement?,
     annotationBuilder: () -> List<FirAnnotation>
 ) : FirUserTypeRef() {
     override val customRenderer: Boolean
@@ -28,9 +29,6 @@ class FirJavaTypeRef(
 
     override val isMarkedNullable: Boolean
         get() = false
-
-    override val source: KtSourceElement?
-        get() = null
 
     override val annotations: List<FirAnnotation> by lazy { annotationBuilder() }
 
@@ -68,9 +66,10 @@ class FirJavaTypeRef(
 class FirJavaTypeRefBuilder {
     lateinit var annotationBuilder: () -> List<FirAnnotation>
     lateinit var type: JavaType
+    var source: KtSourceElement? = null
 
     fun build(): FirJavaTypeRef {
-        return FirJavaTypeRef(type, annotationBuilder)
+        return FirJavaTypeRef(type, source, annotationBuilder)
     }
 }
 

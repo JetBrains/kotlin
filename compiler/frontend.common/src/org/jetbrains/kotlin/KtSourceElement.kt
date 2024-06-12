@@ -248,6 +248,9 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     // with a fake source which refers to containing class
     object ImplicitJavaAnnotationConstructor : KtFakeSourceElementKind()
 
+    // for FIR elements from Java enhancement
+    object Enhancement : KtFakeSourceElementKind()
+
     // for java annotations constructor implicit parameters are generated
     // with a fake source which refers to declared annotation methods
     object ImplicitAnnotationAnnotationConstructorParameter : KtFakeSourceElementKind()
@@ -267,6 +270,9 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     // for java records implicit component fields are generated
     // with a fake source which refers to corresponding component
     object JavaRecordComponentField : KtFakeSourceElementKind()
+
+    // for Java annotations that have been replaced by an equivalent Kotlin version
+    object JavaAnnotationMappedToKotlin : KtFakeSourceElementKind()
 
     // for the implicit field storing the delegated object for class delegation
     // with a fake source that refers to the KtExpression that creates the delegate

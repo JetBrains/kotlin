@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.java.enhancement
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -58,10 +60,11 @@ class FirAnnotationTypeQualifierResolver(
             (session.symbolProvider.getClassLikeSymbolByClassId(outerClassId)?.fir as? FirRegularClass)
                 ?.let { extractDefaultQualifiers(it) }
         } else {
+            val fakeSource = firClass.source?.fakeElement(KtFakeSourceElementKind.Enhancement)
             val forModule = javaModuleAnnotationsProvider.getAnnotationsForModuleOwnerOfClass(classId)
-                ?.let { extractAndMergeDefaultQualifiers(null, it.convertAnnotationsToFir(session)) }
+                ?.let { extractAndMergeDefaultQualifiers(null, it.convertAnnotationsToFir(session, fakeSource)) }
             val forPackage = (firClass as? FirJavaClass)?.javaPackage
-                ?.let { extractAndMergeDefaultQualifiers(forModule, it.convertAnnotationsToFir(session)) }
+                ?.let { extractAndMergeDefaultQualifiers(forModule, it.convertAnnotationsToFir(session, fakeSource)) }
             forPackage ?: forModule
         }
         return extractAndMergeDefaultQualifiers(parentQualifiers, firClass.annotations)

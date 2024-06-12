@@ -2,6 +2,7 @@
 import java.util.List;
 
 public class Some {
+    // Note that this source is incorrect Java code
     public static List<@SomeAnn(1) @SomeAnn(2) String> foo() {
         return null;
     }
