@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinCompositePackag
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -91,9 +90,8 @@ private constructor(
     @Suppress("AnalysisApiMissingLifetimeCheck")
     override val useSiteModule: KtModule get() = firResolveSession.useSiteKtModule
 
-    internal val useSiteSession: FirSession get() = firResolveSession.useSiteFirSession
-    internal val firSymbolProvider: FirSymbolProvider get() = useSiteSession.symbolProvider
-    internal val targetPlatform: TargetPlatform get() = useSiteSession.moduleData.platform
+    internal val firSession: FirSession get() = firResolveSession.useSiteFirSession
+    internal val targetPlatform: TargetPlatform get() = firSession.moduleData.platform
 
     val useSiteScopeDeclarationProvider: KotlinDeclarationProvider
     val useSitePackageProvider: KotlinPackageProvider

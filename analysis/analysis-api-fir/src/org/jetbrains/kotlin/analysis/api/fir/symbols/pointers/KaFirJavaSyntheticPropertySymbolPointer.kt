@@ -41,7 +41,7 @@ internal class KaFirJavaSyntheticPropertySymbolPointer(
         val baseScope = super.getSearchScope(analysisSession, owner) as? FirTypeScope ?: return null
         return if (isSynthetic) {
             FirSyntheticPropertiesScope.createIfSyntheticNamesProviderIsDefined(
-                session = analysisSession.useSiteSession,
+                session = analysisSession.firSession,
                 dispatchReceiverType = owner.defaultType(),
                 baseScope = baseScope,
             )

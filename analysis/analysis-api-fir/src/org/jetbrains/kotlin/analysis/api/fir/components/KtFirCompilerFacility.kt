@@ -127,7 +127,7 @@ internal class KaFirCompilerFacility(
             is KaCompilerTarget.Jvm -> target.classBuilderFactory
         }
 
-        val syntaxErrors = SyntaxErrorReportingVisitor(analysisSession.useSiteSession) { it.asKtDiagnostic() }
+        val syntaxErrors = SyntaxErrorReportingVisitor(analysisSession.firSession) { it.asKtDiagnostic() }
             .also(file::accept).diagnostics
 
         if (syntaxErrors.isNotEmpty()) {

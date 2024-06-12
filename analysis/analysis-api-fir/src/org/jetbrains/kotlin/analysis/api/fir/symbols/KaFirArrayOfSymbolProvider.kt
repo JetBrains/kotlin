@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 
 object KaFirArrayOfSymbolProvider {
     internal fun KaFirSession.arrayOfSymbol(identifier: Name): KaFirFunctionSymbol? {
-        val firSymbol = useSiteSession.symbolProvider.getTopLevelCallableSymbols(kotlinPackage, identifier).firstOrNull {
+        val firSymbol = firSession.symbolProvider.getTopLevelCallableSymbols(kotlinPackage, identifier).firstOrNull {
             /* choose (for byte array)
              * public fun byteArrayOf(vararg elements: kotlin.Byte): kotlin.ByteArray
              */

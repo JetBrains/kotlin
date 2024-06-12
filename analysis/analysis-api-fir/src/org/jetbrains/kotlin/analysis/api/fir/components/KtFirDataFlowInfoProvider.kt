@@ -341,7 +341,7 @@ internal class KaFirDataFlowProvider(
             coneTypes.add(coneType)
         }
 
-        return analysisSession.useSiteSession.typeContext.commonSuperTypeOrNull(coneTypes)?.toKtType()
+        return analysisSession.firSession.typeContext.commonSuperTypeOrNull(coneTypes)?.toKtType()
     }
 
     private fun ControlFlowGraphIndex.computeHasEscapingJumps(firDefaultStatement: FirElement, collector: FirElementCollector): Boolean {
@@ -596,7 +596,7 @@ internal class KaFirDataFlowProvider(
         }
 
         override fun visitVariableAssignment(variableAssignment: FirVariableAssignment) {
-            val firVariableSymbol = variableAssignment.lValue.toResolvedCallableSymbol(analysisSession.useSiteSession)
+            val firVariableSymbol = variableAssignment.lValue.toResolvedCallableSymbol(analysisSession.firSession)
             val expression = variableAssignment.psi as? KtExpression
 
             if (firVariableSymbol is FirVariableSymbol<*> && firVariableSymbol.fir.isLocalMember && expression != null) {

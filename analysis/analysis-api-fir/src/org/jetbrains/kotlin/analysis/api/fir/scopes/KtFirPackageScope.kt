@@ -27,7 +27,7 @@ internal class KaFirPackageScope(
     override val token: KaLifetimeToken get() = analysisSession.token
 
     private val firScope: FirPackageMemberScope by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        FirPackageMemberScope(fqName, analysisSession.useSiteSession)
+        FirPackageMemberScope(fqName, analysisSession.firSession)
     }
 
     @KaExperimentalApi

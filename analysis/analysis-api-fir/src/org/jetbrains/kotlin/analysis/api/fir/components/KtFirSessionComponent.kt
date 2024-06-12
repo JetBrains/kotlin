@@ -48,7 +48,7 @@ internal interface KaFirSessionComponent {
         source: KtSourceElement,
         callOrAssignmentSource: KtSourceElement?,
     ): KaDiagnosticWithPsi<*>? {
-        val firDiagnostic = toFirDiagnostics(analysisSession.useSiteSession, source, callOrAssignmentSource).firstOrNull() ?: return null
+        val firDiagnostic = toFirDiagnostics(analysisSession.firSession, source, callOrAssignmentSource).firstOrNull() ?: return null
         check(firDiagnostic is KtPsiDiagnostic)
         return firDiagnostic.asKtDiagnostic()
     }

@@ -57,7 +57,7 @@ internal class KaFirScopeProvider(
     override val token: KaLifetimeToken
 ) : KaSessionComponent<KaFirSession>(), KaScopeProvider, KaFirSessionComponent {
     private fun getScopeSession(): ScopeSession {
-        return analysisSession.getScopeSessionFor(analysisSession.useSiteSession)
+        return analysisSession.getScopeSessionFor(analysisSession.firSession)
     }
 
     private fun KaSymbolWithMembers.getFirForScope(): FirClass = when (this) {
@@ -73,7 +73,7 @@ internal class KaFirScopeProvider(
     override val KaSymbolWithMembers.memberScope: KaScope
         get() = withValidityAssertion {
             val firScope = getFirForScope().unsubstitutedScope(
-                analysisSession.useSiteSession,
+                analysisSession.firSession,
                 getScopeSession(),
                 withForcedTypeCalculator = false,
                 memberRequiredPhase = FirResolvePhase.STATUS,
@@ -84,7 +84,7 @@ internal class KaFirScopeProvider(
     override val KaSymbolWithMembers.staticMemberScope: KaScope
         get() = withValidityAssertion {
             val fir = getFirForScope()
-            val firScope = fir.scopeProvider.getStaticScope(fir, analysisSession.useSiteSession, getScopeSession())
+            val firScope = fir.scopeProvider.getStaticScope(fir, analysisSession.firSession, getScopeSession())
                 ?: return createEmptyScope()
 
             return KaFirDelegatingNamesAwareScope(firScope, analysisSession.firSymbolBuilder)
@@ -146,7 +146,7 @@ internal class KaFirScopeProvider(
      * be handled specially, because [declaredMemberScope] doesn't handle Java enhancement properly.
      */
     private fun getCombinedFirKotlinDeclaredMemberScope(symbolWithMembers: KaSymbolWithMembers): FirContainingNamesAwareScope {
-        val useSiteSession = analysisSession.useSiteSession
+        val useSiteSession = analysisSession.firSession
         return when (symbolWithMembers) {
             is KaFirScriptSymbol -> FirScriptDeclarationsScope(useSiteSession, symbolWithMembers.firSymbol.fir)
             else -> useSiteSession.declaredMemberScope(symbolWithMembers.getFirForScope(), memberRequiredPhase = null)
@@ -157,7 +157,7 @@ internal class KaFirScopeProvider(
         firJavaClass: FirJavaClass,
         kind: DeclaredMemberScopeKind,
     ): FirContainingNamesAwareScope? {
-        val useSiteSession = analysisSession.useSiteSession
+        val useSiteSession = analysisSession.firSession
         val scopeSession = getScopeSession()
 
         fun getBaseUseSiteScope() = JavaScopeProvider.getUseSiteMemberScope(
@@ -211,7 +211,7 @@ internal class KaFirScopeProvider(
             fir.lazyResolveToPhaseWithCallableMembers(FirResolvePhase.STATUS)
 
             val firScope = FirDelegatedMemberScope(
-                analysisSession.useSiteSession,
+                analysisSession.firSession,
                 getScopeSession(),
                 fir,
                 declaredScope,
@@ -291,7 +291,7 @@ internal class KaFirScopeProvider(
 
         val context = ContextCollector.process(
             fakeFile.getOrBuildFirFile(firResolveSession),
-            SessionHolderImpl(analysisSession.useSiteSession, getScopeSession()),
+            SessionHolderImpl(analysisSession.firSession, getScopeSession()),
             correctedPosition,
         )
 

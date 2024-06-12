@@ -56,4 +56,4 @@ internal inline fun <reified D : FirCallableDeclaration> Collection<FirCallableS
 }
 
 internal fun KaFirSession.getClassLikeSymbol(classId: ClassId) =
-    useSiteSession.symbolProvider.getClassLikeSymbolByClassId(classId)?.fir
+    firSession.symbolProvider.getClassLikeSymbolByClassId(classId)?.fir

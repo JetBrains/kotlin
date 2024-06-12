@@ -224,18 +224,18 @@ internal class KaFirJavaInteroperabilityComponent(
                 }
             }
         }
-        val firTypeRef = javaTypeRef.resolveIfJavaType(analysisSession.useSiteSession, javaTypeParameterStack, source = null)
+        val firTypeRef = javaTypeRef.resolveIfJavaType(analysisSession.firSession, javaTypeParameterStack, source = null)
         val coneKotlinType = (firTypeRef as? FirResolvedTypeRef)?.type ?: return null
         return coneKotlinType.asKtType()
     }
 
     override fun KaType.mapToJvmType(mode: TypeMappingMode): Type = withValidityAssertion {
-        return analysisSession.useSiteSession.jvmTypeMapper.mapType(coneType, mode, sw = null, unresolvedQualifierRemapper = null)
+        return analysisSession.firSession.jvmTypeMapper.mapType(coneType, mode, sw = null, unresolvedQualifierRemapper = null)
     }
 
     override val KaType.isPrimitiveBacked: Boolean
         get() = withValidityAssertion {
-            return analysisSession.useSiteSession.jvmTypeMapper.isPrimitiveBacked(coneType)
+            return analysisSession.firSession.jvmTypeMapper.isPrimitiveBacked(coneType)
         }
 
     override val PsiClass.namedClassSymbol: KaNamedClassOrObjectSymbol?
@@ -329,7 +329,7 @@ internal class KaFirJavaInteroperabilityComponent(
         }
 
     private fun getJvmName(property: FirProperty, isSetter: Boolean): Name {
-        if (property.backingField?.symbol?.hasAnnotation(JvmStandardClassIds.Annotations.JvmField, analysisSession.useSiteSession) == true) {
+        if (property.backingField?.symbol?.hasAnnotation(JvmStandardClassIds.Annotations.JvmField, analysisSession.firSession) == true) {
             return property.name
         }
         return Name.identifier(getJvmNameAsString(property, isSetter))
@@ -337,13 +337,13 @@ internal class KaFirJavaInteroperabilityComponent(
 
     private fun getJvmNameAsString(property: FirProperty, isSetter: Boolean): String {
         val useSiteTarget = if (isSetter) AnnotationUseSiteTarget.PROPERTY_SETTER else AnnotationUseSiteTarget.PROPERTY_GETTER
-        val jvmNameFromProperty = property.getJvmNameFromAnnotation(analysisSession.useSiteSession, useSiteTarget)
+        val jvmNameFromProperty = property.getJvmNameFromAnnotation(analysisSession.firSession, useSiteTarget)
         if (jvmNameFromProperty != null) {
             return jvmNameFromProperty
         }
 
         val accessor = if (isSetter) property.setter else property.getter
-        val jvmNameFromAccessor = accessor?.getJvmNameFromAnnotation(analysisSession.useSiteSession)
+        val jvmNameFromAccessor = accessor?.getJvmNameFromAnnotation(analysisSession.firSession)
         if (jvmNameFromAccessor != null) {
             return jvmNameFromAccessor
         }

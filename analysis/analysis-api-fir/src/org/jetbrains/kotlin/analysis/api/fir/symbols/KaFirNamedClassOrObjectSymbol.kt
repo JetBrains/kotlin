@@ -105,5 +105,5 @@ internal class KaFirNamedClassOrObjectSymbol(
         }
 
     private val statusTransformersPresent: Boolean
-        get() = analysisSession.useSiteSession.extensionService.statusTransformerExtensions.isNotEmpty()
+        get() = analysisSession.firSession.extensionService.statusTransformerExtensions.isNotEmpty()
 }

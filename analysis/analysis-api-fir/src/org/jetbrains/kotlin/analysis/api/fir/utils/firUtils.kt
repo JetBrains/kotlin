@@ -114,7 +114,7 @@ internal fun FirEqualityOperatorCall.processEqualsFunctions(
     val lhs = arguments.firstOrNull() ?: return
     val scope = lhs.resolvedType.scope(
         useSiteSession = session,
-        scopeSession = analysisSession.getScopeSessionFor(analysisSession.useSiteSession),
+        scopeSession = analysisSession.getScopeSessionFor(analysisSession.firSession),
         callableCopyTypeCalculator = CallableCopyTypeCalculator.DoNothing,
         requiredMembersPhase = FirResolvePhase.STATUS,
     ) ?: return

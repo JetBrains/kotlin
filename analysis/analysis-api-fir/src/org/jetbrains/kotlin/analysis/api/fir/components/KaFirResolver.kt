@@ -178,7 +178,7 @@ internal class KaFirResolver(
     }
 
     private val equalsSymbolInAny: FirNamedFunctionSymbol? by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        val session = analysisSession.useSiteSession
+        val session = analysisSession.firSession
         val anyFirClass = session.builtinTypes.anyType.toRegularClassSymbol(session) ?: return@lazy null
         val scope = session.declaredMemberScope(
             anyFirClass,
@@ -303,7 +303,7 @@ internal class KaFirResolver(
 
         return when (this) {
             is FirResolvable, is FirVariableAssignment -> {
-                when (val calleeReference = toReference(analysisSession.useSiteSession)) {
+                when (val calleeReference = toReference(analysisSession.firSession)) {
                     is FirResolvedErrorReference -> transformErrorReference(this, calleeReference)
                     is FirResolvedNamedReference -> when (calleeReference.resolvedSymbol) {
                         // `calleeReference.resolvedSymbol` isn't guaranteed to be callable. For example, function type parameters used in
@@ -1092,10 +1092,10 @@ internal class KaFirResolver(
     }
 
     private fun FirResolvedQualifier.findQualifierConstructors(): List<KaConstructorSymbol> {
-        val classSymbol = this.symbol?.fullyExpandedClass(analysisSession.useSiteSession) ?: return emptyList()
+        val classSymbol = this.symbol?.fullyExpandedClass(analysisSession.firSession) ?: return emptyList()
         return classSymbol.unsubstitutedScope(
-            analysisSession.useSiteSession,
-            analysisSession.getScopeSessionFor(analysisSession.useSiteSession),
+            analysisSession.firSession,
+            analysisSession.getScopeSessionFor(analysisSession.firSession),
             withForcedTypeCalculator = true,
             memberRequiredPhase = null,
         )
@@ -1139,7 +1139,7 @@ internal class KaFirResolver(
             }
 
         val calleeName = originalFunctionCall.calleeOrCandidateName ?: return emptyList()
-        val candidates = AllCandidatesResolver(analysisSession.useSiteSession).getAllCandidates(
+        val candidates = AllCandidatesResolver(analysisSession.firSession).getAllCandidates(
             analysisSession.firResolveSession,
             originalFunctionCall,
             calleeName,
@@ -1177,7 +1177,7 @@ internal class KaFirResolver(
 
         val derivedClass = findDerivedClass(psi)?.resolveToFirSymbolOfTypeSafe<FirClassSymbol<*>>(firResolveSession) ?: return emptyList()
 
-        val candidates = AllCandidatesResolver(analysisSession.useSiteSession)
+        val candidates = AllCandidatesResolver(analysisSession.firSession)
             .getAllCandidatesForDelegatedConstructor(analysisSession.firResolveSession, this, derivedClass.toLookupTag(), psi)
 
         return candidates.mapNotNull {
@@ -1339,7 +1339,7 @@ internal class KaFirResolver(
 
     private fun FirEqualityOperatorCall.getEqualsSymbol(): FirNamedFunctionSymbol? {
         var equalsSymbol: FirNamedFunctionSymbol? = null
-        processEqualsFunctions(analysisSession.useSiteSession, analysisSession) {
+        processEqualsFunctions(analysisSession.firSession, analysisSession) {
             if (equalsSymbol != null) return@processEqualsFunctions
             equalsSymbol = it
         }

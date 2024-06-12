@@ -32,13 +32,13 @@ internal abstract class KaFirMemberSymbolPointer<S : KaSymbol>(
             getSearchScope(analysisSession, owner)
         } ?: return null
 
-        return analysisSession.chooseCandidateAndCreateSymbol(scope, analysisSession.useSiteSession)
+        return analysisSession.chooseCandidateAndCreateSymbol(scope, analysisSession.firSession)
     }
 
     protected abstract fun KaFirSession.chooseCandidateAndCreateSymbol(candidates: FirScope, firSession: FirSession): S?
 
     protected open fun getSearchScope(analysisSession: KaFirSession, owner: FirClassSymbol<*>): FirScope? {
-        val firSession = analysisSession.useSiteSession
+        val firSession = analysisSession.firSession
         val scopeSession = analysisSession.getScopeSessionFor(firSession)
         return if (isStatic) {
             val firClass = owner.fir

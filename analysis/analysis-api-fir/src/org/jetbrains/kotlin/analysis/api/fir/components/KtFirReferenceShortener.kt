@@ -1051,7 +1051,7 @@ private class ElementsToShortenCollector(
                 calleeReference = fakeCalleeReference
             }
         }
-        val candidates = AllCandidatesResolver(shorteningContext.analysisSession.useSiteSession).getAllCandidates(
+        val candidates = AllCandidatesResolver(shorteningContext.analysisSession.firSession).getAllCandidates(
             firResolveSession, fakeFirQualifiedAccess, name, expressionInScope, ResolutionMode.ContextIndependent,
         )
         return candidates.filter { overloadCandidate ->
@@ -1075,7 +1075,7 @@ private class ElementsToShortenCollector(
             this.typeArguments.addAll(typeArguments)
             calleeReference = fakeCalleeReference
         }
-        val candidates = AllCandidatesResolver(shorteningContext.analysisSession.useSiteSession).getAllCandidates(
+        val candidates = AllCandidatesResolver(shorteningContext.analysisSession.firSession).getAllCandidates(
             firResolveSession, fakeFirQualifiedAccess, name, elementInScope, ResolutionMode.ContextIndependent,
         )
         return candidates.filter { overloadCandidate ->

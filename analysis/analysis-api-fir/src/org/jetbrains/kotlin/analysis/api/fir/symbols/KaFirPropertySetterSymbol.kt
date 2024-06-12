@@ -50,7 +50,7 @@ internal class KaFirPropertySetterSymbol(
             if (firSymbol.isOverride) return true
             val propertySymbol = firSymbol.fir.propertySymbol
             if (!propertySymbol.isOverride) return false
-            val session = analysisSession.useSiteSession
+            val session = analysisSession.firSession
             val containingClassScope = firSymbol.dispatchReceiverType?.scope(
                 session,
                 analysisSession.getScopeSessionFor(session),

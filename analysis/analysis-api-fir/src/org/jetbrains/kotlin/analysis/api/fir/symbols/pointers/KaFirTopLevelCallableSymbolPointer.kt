@@ -38,5 +38,5 @@ internal abstract class KaTopLevelCallableSymbolPointer<S : KaCallableSymbol>(
 }
 
 private fun KaFirSession.getCallableSymbols(callableId: CallableId) =
-    useSiteSession.symbolProvider.getTopLevelCallableSymbols(callableId.packageName, callableId.callableName)
+    firSession.symbolProvider.getTopLevelCallableSymbols(callableId.packageName, callableId.callableName)
 

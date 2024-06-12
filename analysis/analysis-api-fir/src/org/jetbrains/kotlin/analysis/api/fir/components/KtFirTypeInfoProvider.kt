@@ -25,7 +25,7 @@ internal class KaFirTypeInformationProvider(
     override val KaType.isFunctionalInterface: Boolean
         get() = withValidityAssertion {
             val coneType = (this as KaFirType).coneType
-            val firSession = analysisSession.useSiteSession
+            val firSession = analysisSession.firSession
             val samResolver = FirSamResolver(
                 firSession,
                 analysisSession.getScopeSessionFor(firSession),
@@ -35,18 +35,18 @@ internal class KaFirTypeInformationProvider(
 
     override val KaType.functionTypeKind: FunctionTypeKind?
         get() = withValidityAssertion {
-            (this as KaFirType).coneType.functionTypeKind(analysisSession.useSiteSession)
+            (this as KaFirType).coneType.functionTypeKind(analysisSession.firSession)
         }
 
     override val KaType.canBeNull: Boolean
         get() = withValidityAssertion {
-            (this as KaFirType).coneType.canBeNull(analysisSession.useSiteSession)
+            (this as KaFirType).coneType.canBeNull(analysisSession.firSession)
         }
 
     override val KaType.isDenotable: Boolean
         get() = withValidityAssertion {
             val coneType = (this as KaFirType).coneType
-            return analysisSession.useSiteSession.typeApproximator.approximateToSuperType(
+            return analysisSession.firSession.typeApproximator.approximateToSuperType(
                 coneType,
                 PublicTypeApproximator.PublicApproximatorConfiguration(false)
             ) == null
@@ -67,6 +67,6 @@ internal class KaFirTypeInformationProvider(
 
     override val KaType.fullyExpandedType: KaType
         get() = withValidityAssertion {
-            coneType.fullyExpandedType(analysisSession.useSiteSession).asKtType()
+            coneType.fullyExpandedType(analysisSession.firSession).asKtType()
         }
 }

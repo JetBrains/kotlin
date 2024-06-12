@@ -49,7 +49,7 @@ internal class KaFirSymbolDeclarationOverridesProvider(
             firTypeScope.processAllOverriddenDeclarations(firCallableDeclaration) { overriddenDeclaration ->
                 overriddenDeclaration.symbol.collectIntersectionOverridesSymbolsTo(
                     overriddenElement,
-                    callableSymbol.analysisSession.useSiteSession
+                    callableSymbol.analysisSession.firSession
                 )
             }
         }
@@ -74,7 +74,7 @@ internal class KaFirSymbolDeclarationOverridesProvider(
             firTypeScope.processDirectOverriddenDeclarations(firCallableDeclaration) { overriddenDeclaration ->
                 overriddenDeclaration.symbol.collectIntersectionOverridesSymbolsTo(
                     overriddenElement,
-                    callableSymbol.analysisSession.useSiteSession
+                    callableSymbol.analysisSession.firSession
                 )
             }
         }
@@ -150,7 +150,7 @@ internal class KaFirSymbolDeclarationOverridesProvider(
         val firContainer = containingDeclaration.firSymbol.fir
         val firCallableDeclaration = callableSymbol.firSymbol.fir
 
-        val firSession = callableSymbol.analysisSession.useSiteSession
+        val firSession = callableSymbol.analysisSession.firSession
         val firTypeScope = firContainer.unsubstitutedScope(
             firSession,
             analysisSession.getScopeSessionFor(firSession),
@@ -201,7 +201,7 @@ internal class KaFirSymbolDeclarationOverridesProvider(
         require(symbol is KaFirSymbol<*>)
         if (symbol.origin != KaSymbolOrigin.INTERSECTION_OVERRIDE) return emptyList()
         return symbol.firSymbol
-            .getIntersectionOverriddenSymbols(symbol.analysisSession.useSiteSession)
+            .getIntersectionOverriddenSymbols(symbol.analysisSession.firSession)
             .map { analysisSession.firSymbolBuilder.callableBuilder.buildCallableSymbol(it) }
     }
 

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.components.KaSubstitutorBuilder
 import org.jetbrains.kotlin.analysis.api.components.KaSubstitutorProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirTypeParameterSymbol
@@ -92,7 +91,7 @@ internal class KaFirSubstitutorProvider(
             }
         }
 
-        return when (val coneSubstitutor = ConeSubstitutorByMap.create(firSubstitution, analysisSession.useSiteSession)) {
+        return when (val coneSubstitutor = ConeSubstitutorByMap.create(firSubstitution, analysisSession.firSession)) {
             is ConeSubstitutorByMap -> KaFirMapBackedSubstitutor(coneSubstitutor, analysisSession.firSymbolBuilder)
             else -> KaFirGenericSubstitutor(coneSubstitutor, analysisSession.firSymbolBuilder)
         }

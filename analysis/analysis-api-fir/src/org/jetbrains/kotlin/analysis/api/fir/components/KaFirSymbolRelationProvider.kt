@@ -305,7 +305,7 @@ internal class KaFirSymbolRelationProvider(
         get() = withValidityAssertion {
             val classId = classId ?: return null
             val owner = analysisSession.getClassLikeSymbol(classId) ?: return null
-            val firSession = analysisSession.useSiteSession
+            val firSession = analysisSession.firSession
             val resolver = FirSamResolver(firSession, analysisSession.getScopeSessionFor(firSession))
             return resolver.getSamConstructor(owner)?.let {
                 analysisSession.firSymbolBuilder.functionLikeBuilder.buildSamConstructorSymbol(it.symbol)
@@ -347,7 +347,7 @@ internal class KaFirSymbolRelationProvider(
             val parentClassFir = parentClassSymbol.firSymbol.fir as? FirClass ?: return null
             memberFir.lazyResolveToPhase(FirResolvePhase.STATUS)
 
-            val scopeSession = analysisSession.getScopeSessionFor(analysisSession.useSiteSession)
+            val scopeSession = analysisSession.getScopeSessionFor(analysisSession.firSession)
             return memberFir.symbol.getImplementationStatus(SessionHolderImpl(rootModuleSession, scopeSession), parentClassFir.symbol)
         }
     }
@@ -391,7 +391,7 @@ internal class KaFirSymbolRelationProvider(
             require(modality == Modality.SEALED)
             require(this is KaFirNamedClassOrObjectSymbol)
 
-            val inheritorClassIds = firSymbol.fir.getSealedClassInheritors(analysisSession.useSiteSession)
+            val inheritorClassIds = firSymbol.fir.getSealedClassInheritors(analysisSession.firSession)
 
             return with(analysisSession) {
                 inheritorClassIds.mapNotNull { findClass(it) as? KaNamedClassOrObjectSymbol }

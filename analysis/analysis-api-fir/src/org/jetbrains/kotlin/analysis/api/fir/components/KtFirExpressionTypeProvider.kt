@@ -380,7 +380,7 @@ internal class KaFirExpressionTypeProvider(
             .mapNotNull { it.expression }
             .filter { entryExpression -> entryExpression != expression }
         val types = entryExpressions.mapNotNull { getKtExpressionNonErrorType(it) }
-        return analysisSession.useSiteSession.typeContext.intersectTypesOrNull(types.map { it.coneType })?.asKtType()
+        return analysisSession.firSession.typeContext.intersectTypesOrNull(types.map { it.coneType })?.asKtType()
     }
 
     private fun getExpectedTypeByTryExpression(expression: PsiElement): KaType? {
@@ -411,7 +411,7 @@ internal class KaFirExpressionTypeProvider(
     }
 
     private fun KaType.withNullability(nullability: ConeNullability): KaType =
-        coneType.withNullability(nullability, analysisSession.useSiteSession.typeContext).asKtType()
+        coneType.withNullability(nullability, analysisSession.firSession.typeContext).asKtType()
 
     private fun getExpectedTypeByWhenEntryValue(expression: PsiElement): KaType? {
         val condition = expression.parent as? KtWhenConditionWithExpression ?: return null
@@ -438,7 +438,7 @@ internal class KaFirExpressionTypeProvider(
         get() = withValidityAssertion { getDefiniteNullability(this) == DefiniteNullability.DEFINITELY_NOT_NULL }
 
     private fun getDefiniteNullability(expression: KtExpression): DefiniteNullability {
-        fun FirExpression.isNotNullable() = with(analysisSession.useSiteSession.typeContext) {
+        fun FirExpression.isNotNullable() = with(analysisSession.firSession.typeContext) {
             !resolvedType.isNullableType()
         }
 

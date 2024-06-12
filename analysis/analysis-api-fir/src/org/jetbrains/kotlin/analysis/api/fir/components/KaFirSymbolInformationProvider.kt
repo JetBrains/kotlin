@@ -42,13 +42,13 @@ internal class KaFirSymbolInformationProvider(
 
             return when (firSymbol) {
                 is FirPropertySymbol -> {
-                    firSymbol.getDeprecationForCallSite(analysisSession.useSiteSession, AnnotationUseSiteTarget.PROPERTY)
+                    firSymbol.getDeprecationForCallSite(analysisSession.firSession, AnnotationUseSiteTarget.PROPERTY)
                 }
                 is FirBackingFieldSymbol -> {
-                    firSymbol.getDeprecationForCallSite(analysisSession.useSiteSession, AnnotationUseSiteTarget.FIELD)
+                    firSymbol.getDeprecationForCallSite(analysisSession.firSession, AnnotationUseSiteTarget.FIELD)
                 }
                 else -> {
-                    firSymbol.getDeprecationForCallSite(analysisSession.useSiteSession)
+                    firSymbol.getDeprecationForCallSite(analysisSession.firSession)
                 }
             }?.toDeprecationInfo()
         }
@@ -59,16 +59,16 @@ internal class KaFirSymbolInformationProvider(
         // Check the simple names of the Java annotations. While presence of such an annotation name does not prove deprecation, it is a
         // necessary condition for it. Type aliases are not a problem here: Java code cannot access Kotlin type aliases. (Currently,
         // deprecation annotation type aliases do not work in Kotlin, either, but this might change in the future.)
-        val deprecationAnnotationSimpleNames = analysisSession.useSiteSession.annotationPlatformSupport.deprecationAnnotationsSimpleNames
+        val deprecationAnnotationSimpleNames = analysisSession.firSession.annotationPlatformSupport.deprecationAnnotationsSimpleNames
         return annotationSimpleNames.any { it != null && it in deprecationAnnotationSimpleNames }
     }
 
     override fun KaSymbol.deprecationStatus(annotationUseSiteTarget: AnnotationUseSiteTarget?): DeprecationInfo? = withValidityAssertion {
         require(this is KaFirSymbol<*>)
         return if (annotationUseSiteTarget != null) {
-            firSymbol.getDeprecationForCallSite(analysisSession.useSiteSession, annotationUseSiteTarget)
+            firSymbol.getDeprecationForCallSite(analysisSession.firSession, annotationUseSiteTarget)
         } else {
-            firSymbol.getDeprecationForCallSite(analysisSession.useSiteSession)
+            firSymbol.getDeprecationForCallSite(analysisSession.firSession)
         }?.toDeprecationInfo()
     }
 
@@ -76,7 +76,7 @@ internal class KaFirSymbolInformationProvider(
         get() = withValidityAssertion {
             require(this is KaFirSymbol<*>)
             return firSymbol.getDeprecationForCallSite(
-                analysisSession.useSiteSession,
+                analysisSession.firSession,
                 AnnotationUseSiteTarget.PROPERTY_GETTER,
                 AnnotationUseSiteTarget.PROPERTY,
             )?.toDeprecationInfo()
@@ -86,7 +86,7 @@ internal class KaFirSymbolInformationProvider(
         get() = withValidityAssertion {
             require(this is KaFirSymbol<*>)
             return firSymbol.getDeprecationForCallSite(
-                analysisSession.useSiteSession,
+                analysisSession.firSession,
                 AnnotationUseSiteTarget.PROPERTY_SETTER,
                 AnnotationUseSiteTarget.PROPERTY,
             )?.toDeprecationInfo()
@@ -104,6 +104,6 @@ internal class KaFirSymbolInformationProvider(
             requireIsInstance<KaFirSymbol<*>>(this)
             if (this !is KaFirNamedClassOrObjectSymbolBase) return null
             if (firSymbol.classKind != ClassKind.ANNOTATION_CLASS) return null
-            return firSymbol.getAllowedAnnotationTargets(analysisSession.useSiteSession)
+            return firSymbol.getAllowedAnnotationTargets(analysisSession.firSession)
         }
 }

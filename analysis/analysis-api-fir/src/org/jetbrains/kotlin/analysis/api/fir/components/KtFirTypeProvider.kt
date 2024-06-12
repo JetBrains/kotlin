@@ -118,7 +118,7 @@ internal class KaFirTypeProvider(
                 throw IllegalArgumentException("Got no types")
             }
 
-            return analysisSession.useSiteSession.typeContext.commonSuperTypeOrNull(coneTypes)!!.asKtType()
+            return analysisSession.firSession.typeContext.commonSuperTypeOrNull(coneTypes)!!.asKtType()
         }
 
     override val KtTypeReference.type: KaType
@@ -243,7 +243,7 @@ internal class KaFirTypeProvider(
     }
 
     override fun KaType.hasCommonSubTypeWith(that: KaType): Boolean = withValidityAssertion {
-        return analysisSession.useSiteSession.typeContext.isCompatible(
+        return analysisSession.firSession.typeContext.isCompatible(
             this.coneType,
             that.coneType
         ) == ConeTypeCompatibilityChecker.Compatibility.COMPATIBLE
@@ -274,7 +274,7 @@ internal class KaFirTypeProvider(
             // We also need to collect those on `upperBound` due to nullability.
             is ConeFlexibleType -> lowerBound.getDirectSuperTypes(shouldApproximate) + upperBound.getDirectSuperTypes(shouldApproximate)
             is ConeDefinitelyNotNullType -> original.getDirectSuperTypes(shouldApproximate).map {
-                ConeDefinitelyNotNullType.create(it, analysisSession.useSiteSession.typeContext) ?: it
+                ConeDefinitelyNotNullType.create(it, analysisSession.firSession.typeContext) ?: it
             }
             is ConeIntersectionType -> intersectedTypes.asSequence().flatMap { it.getDirectSuperTypes(shouldApproximate) }
             is ConeErrorType -> emptySequence()
