@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.name.Name
 
 public interface KaScope : KaScopeLike {
     /**
-     * Return a sequence of all [KaDeclarationSymbol] which current scope contain
+     * A sequence of all [KaDeclarationSymbol]s contained in this scope.
      */
     public val declarations: Sequence<KaDeclarationSymbol>
         get() = withValidityAssertion {
@@ -35,7 +35,7 @@ public interface KaScope : KaScopeLike {
         get() = callables { true }
 
     /**
-     * Returns a sequence of [KaCallableSymbol]s contained in this scope with declaration names matching [nameFilter].
+     * Returns a sequence of [KaCallableSymbol]s contained in this scope with callable names matching [nameFilter].
      *
      * This function needs to retrieve a set of all possible names before processing the scope.
      * The overload with `names: Collection<Name>` should be used when the candidate name set is known.
@@ -46,9 +46,9 @@ public interface KaScope : KaScopeLike {
     public fun getCallableSymbols(nameFilter: KaScopeNameFilter = { true }): Sequence<KaCallableSymbol> = callables(nameFilter)
 
     /**
-     * Return a sequence of [KaCallableSymbol] which current scope contain, if declaration name present in [names]
+     * Returns a sequence of [KaCallableSymbol]s contained in this scope, limited to callables whose name is contained in [names].
      *
-     * This implementation is more optimal than the one with `nameFilter` and  should be used when the candidate name set is known.
+     * This implementation is more optimal than the one with `nameFilter` and should be used when the candidate name set is known.
      */
     public fun callables(names: Collection<Name>): Sequence<KaCallableSymbol>
 
@@ -56,9 +56,9 @@ public interface KaScope : KaScopeLike {
     public fun getCallableSymbols(names: Collection<Name>): Sequence<KaCallableSymbol> = callables(names)
 
     /**
-     * Return a sequence of [KaCallableSymbol] which current scope contain, if declaration name present in [names]
+     * Returns a sequence of [KaCallableSymbol]s contained in this scope, limited to callables whose name is contained in [names].
      *
-     * @see getCallableSymbols
+     * This implementation is more optimal than the one with `nameFilter` and should be used when the candidate name set is known.
      */
     public fun callables(vararg names: Name): Sequence<KaCallableSymbol> =
         callables(names.toList())
@@ -93,12 +93,12 @@ public interface KaScope : KaScopeLike {
     public fun getClassifierSymbols(nameFilter: KaScopeNameFilter = { true }): Sequence<KaClassifierSymbol> = classifiers(nameFilter)
 
     /**
-     * Return a sequence of [KaClassifierSymbol] which current scope contains, if classifier name present in [names].
+     * Returns a sequence of [KaClassifierSymbol]s contained in this scope, limited to classifiers whose name is contained in [names].
      *
-     * The sequence includes: nested classes, inner classes, nested type aliases for the class scope,
-     * and top-level classes and top-level type aliases for file scope.
+     * The sequence includes: nested classes, inner classes, nested type aliases for the class scope, as well as top-level classes and
+     * top-level type aliases for file scopes.
      *
-     * This implementation is more optimal than the one with `nameFilter` and  should be used when the candidate name set is known.
+     * This implementation is more optimal than the one with `nameFilter` and should be used when the candidate name set is known.
      */
     public fun classifiers(names: Collection<Name>): Sequence<KaClassifierSymbol>
 
@@ -106,9 +106,12 @@ public interface KaScope : KaScopeLike {
     public fun getClassifierSymbols(names: Collection<Name>): Sequence<KaClassifierSymbol> = classifiers(names)
 
     /**
-     * Return a sequence of [KaClassifierSymbol] which current scope contains, if classifier name present in [names].
+     * Returns a sequence of [KaClassifierSymbol]s contained in this scope, limited to classifiers whose name is contained in [names].
      *
-     * @see getClassifierSymbols
+     * The sequence includes: nested classes, inner classes, nested type aliases for the class scope, as well as top-level classes and
+     * top-level type aliases for file scopes.
+     *
+     * This implementation is more optimal than the one with `nameFilter` and should be used when the candidate name set is known.
      */
     public fun classifiers(vararg names: Name): Sequence<KaClassifierSymbol> =
         classifiers(names.toList())
@@ -117,7 +120,7 @@ public interface KaScope : KaScopeLike {
     public fun getClassifierSymbols(vararg names: Name): Sequence<KaClassifierSymbol> = classifiers(names.asList())
 
     /**
-     * Return a sequence of [KaConstructorSymbol] which current scope contain
+     * A sequence of [KaConstructorSymbol] contained in this scope.
      */
     public val constructors: Sequence<KaConstructorSymbol>
 
