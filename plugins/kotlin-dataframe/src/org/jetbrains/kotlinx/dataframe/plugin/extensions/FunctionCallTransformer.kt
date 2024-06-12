@@ -300,6 +300,7 @@ class FunctionCallTransformer(
         call.transformCalleeReference(object : FirTransformer<Nothing?>() {
             override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
                 return if (element is FirResolvedNamedReference) {
+                    @Suppress("UNCHECKED_CAST")
                     buildResolvedNamedReference {
                         this.name = element.name
                         resolvedSymbol = originalSymbol

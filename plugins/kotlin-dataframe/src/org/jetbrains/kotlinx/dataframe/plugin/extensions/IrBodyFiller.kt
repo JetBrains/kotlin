@@ -102,6 +102,7 @@ class IrBodyFiller(
         }
     }
 
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun process(
         element: IrCall,
         schemas: MutableList<IoSchema>
