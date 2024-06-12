@@ -236,7 +236,7 @@ class FirTypeDeserializer(
         val abbreviatedType = proto.abbreviatedType(typeTable)?.let { simpleType(it, attributes) }
             ?: return simpleType
 
-        return simpleType.withAttributes(simpleType.attributes.plus(AbbreviatedTypeAttribute(abbreviatedType)))
+        return simpleType.withAttributes(simpleType.attributes.add(AbbreviatedTypeAttribute(abbreviatedType)))
     }
 
     private fun createSuspendFunctionTypeForBasicCase(

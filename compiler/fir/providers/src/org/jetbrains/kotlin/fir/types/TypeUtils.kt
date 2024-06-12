@@ -190,7 +190,7 @@ fun <T : ConeKotlinType> T.withAttributes(attributes: ConeAttributes): T {
  */
 fun ConeKotlinType.withAbbreviation(attribute: AbbreviatedTypeAttribute): ConeKotlinType {
     val clearedAttributes = attributes.abbreviatedType?.let(attributes::remove) ?: attributes
-    return withAttributes(clearedAttributes + attribute)
+    return withAttributes(clearedAttributes.add(attribute))
 }
 
 fun <T : ConeKotlinType> T.withNullability(

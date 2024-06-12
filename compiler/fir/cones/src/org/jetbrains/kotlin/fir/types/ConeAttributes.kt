@@ -135,17 +135,6 @@ class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : A
         return arrayMap[index] as T?
     }
 
-    operator fun plus(attribute: ConeAttribute<*>): ConeAttributes {
-        if (attribute in this) return this
-        if (isEmpty()) return predefinedAttributes[attribute] ?: ConeAttributes(attribute)
-        val newAttributes = buildList {
-            addAll(arrayMap)
-            add(attribute)
-        }
-
-        return ConeAttributes(newAttributes)
-    }
-
     fun remove(attribute: ConeAttribute<*>): ConeAttributes {
         if (isEmpty()) return this
         val attributes = arrayMap.filter { it != attribute }

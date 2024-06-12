@@ -64,7 +64,7 @@ private fun ConeKotlinType.enhanceConeKotlinType(
                 this is ConeRawType -> ConeRawType.create(lowerResult ?: lowerBound, upperResult ?: upperBound)
                 else -> coneFlexibleOrSimpleType(session.typeContext, lowerResult ?: lowerBound, upperResult ?: upperBound).let {
                     it.applyIf(it !is ConeFlexibleType) {
-                        it.withAttributes(it.attributes + CompilerConeAttributes.EnhancedNullability)
+                        it.withAttributes(it.attributes.add(CompilerConeAttributes.EnhancedNullability))
                     }
                 }
             }
@@ -123,7 +123,7 @@ private fun ConeSimpleKotlinType.enhanceInflexibleType(
     )
 
     return if (enhanced != null && (effectiveQualifiers.isNullabilityQualifierForWarning || convertErrorToWarning)) {
-        val newAttributes = attributes.plus(EnhancedTypeForWarningAttribute(enhanced, isDeprecation = convertErrorToWarning && effectiveQualifiers.enhancesSomethingForError()))
+        val newAttributes = attributes.add(EnhancedTypeForWarningAttribute(enhanced, isDeprecation = convertErrorToWarning && effectiveQualifiers.enhancesSomethingForError()))
 
         if (enhancedTag != lookupTag) {
             // Handle case when mutability was enhanced and nullability was enhanced for warning.
@@ -202,7 +202,7 @@ private fun ConeLookupTagBasedType.enhanceInflexibleType(
     }
 
     val mergedArguments = Array(typeArguments.size) { enhancedArguments[it] ?: typeArguments[it] }
-    val mergedAttributes = if (shouldAddAttribute) attributes + CompilerConeAttributes.EnhancedNullability else attributes
+    val mergedAttributes = if (shouldAddAttribute) attributes.add(CompilerConeAttributes.EnhancedNullability) else attributes
     val enhancedType = enhancedTag.constructType(mergedArguments, enhancedIsNullable, mergedAttributes)
     return if (isDefinitelyNotNull || (isFromDefinitelyNotNullType && nullabilityFromQualifiers == null))
         ConeDefinitelyNotNullType.create(enhancedType, session.typeContext) ?: enhancedType

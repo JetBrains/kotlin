@@ -205,7 +205,7 @@ class ConeRawType private constructor(
             val lowerBoundToUse = if (!lowerBound.attributes.contains(CompilerConeAttributes.RawType)) {
                 ConeClassLikeTypeImpl(
                     lowerBound.lookupTag, lowerBound.typeArguments, lowerBound.isNullable,
-                    lowerBound.attributes + CompilerConeAttributes.RawType
+                    lowerBound.attributes.add(CompilerConeAttributes.RawType)
                 )
             } else {
                 lowerBound

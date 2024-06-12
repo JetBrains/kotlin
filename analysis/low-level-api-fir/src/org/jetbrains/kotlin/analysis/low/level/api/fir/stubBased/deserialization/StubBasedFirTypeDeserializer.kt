@@ -199,7 +199,7 @@ internal class StubBasedFirTypeDeserializer(
         val abbreviatedType = userTypeStub?.abbreviatedType?.let { deserializeClassType(it) }
 
         val attributesWithAbbreviatedType = if (abbreviatedType != null) {
-            attributes + AbbreviatedTypeAttribute(abbreviatedType)
+            attributes.add(AbbreviatedTypeAttribute(abbreviatedType))
         } else {
             attributes
         }

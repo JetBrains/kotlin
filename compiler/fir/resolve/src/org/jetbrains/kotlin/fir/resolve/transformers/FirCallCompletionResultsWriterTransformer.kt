@@ -859,7 +859,7 @@ class FirCallCompletionResultsWriterTransformer(
         if (argument !is FirTypeProjectionWithVariance) return this
 
         return withAttributes(
-            attributes.plus(
+            attributes.add(
                 ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(
                     argument.typeRef.coneType.fullyExpandedType(
                         session
