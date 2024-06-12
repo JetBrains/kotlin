@@ -307,17 +307,15 @@ internal class AetherResolveSession(
         val mirrorSelector = getMirrorSelector()
         val authenticationSelector = getAuthenticationSelector()
 
-        val mirror = mirrorSelector.getMirror(remote)
-
-        return if (mirror != null) {
-            RemoteRepository.Builder(mirror)
-                .setAuthentication(authenticationSelector.getAuthentication(mirror))
+        val finalServer = mirrorSelector.getMirror(remote) ?: remote
+        return if (finalServer.authentication == null) {
+            RemoteRepository.Builder(finalServer)
+                .setAuthentication(authenticationSelector.getAuthentication(finalServer))
                 .build()
         } else {
-            remote
+            finalServer
         }
     }
-
 
     private val settings: Settings by lazy {
         settingsFactory()
