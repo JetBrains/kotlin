@@ -28,9 +28,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedTestCase
             ENABLE_MPP, STDLIB_IS_A_FRIEND, ENABLE_X_STDLIB_API, ENABLE_X_ENCODING_API, ENABLE_RANGE_UNTIL,
             ENABLE_X_FOREIGN_API, ENABLE_X_NATIVE_API, ENABLE_OBSOLETE_NATIVE_API, ENABLE_NATIVE_RUNTIME_API,
             ENABLE_OBSOLETE_WORKERS_API, ENABLE_INTERNAL_FOR_KOTLIN_NATIVE,
-            "-language-version", "1.9",
+            "-language-version", "2.0",
             "-api-version", "2.0",
-            "-Xsuppress-api-version-greater-than-language-version-error"
         ],
         sourceLocations = [
             "libraries/stdlib/test/**.kt",

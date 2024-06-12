@@ -581,10 +581,12 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
             "-opt-in=kotlin.ExperimentalMultiplatform",
             "-opt-in=kotlin.native.internal.InternalForKotlinNative",
             "-language-version",
-            "1.9",
+            "2.0",
             "-api-version",
             "2.0",
-            "-Xsuppress-api-version-greater-than-language-version-error",
+            "-Xdont-warn-on-error-suppression",
+            "-Xstdlib-compilation",
+            "-Xfragment-refines=nativeMain:common",
     )
 
     val common by sourceSets.creating {
