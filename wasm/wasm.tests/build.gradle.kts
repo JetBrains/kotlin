@@ -1,6 +1,7 @@
 import org.gradle.internal.os.OperatingSystem
 import java.net.URI
 import com.github.gradle.node.npm.task.NpmTask
+import java.nio.file.Files
 import java.util.*
 
 plugins {
@@ -205,6 +206,7 @@ val unzipJsShell by task<Copy> {
 
 val unzipWasmEdge by task<Copy> {
     dependsOn(wasmEdge)
+
     from {
         if (wasmEdge.singleFile.extension == "zip") {
             zipTree(wasmEdge.singleFile)
@@ -212,7 +214,27 @@ val unzipWasmEdge by task<Copy> {
             tarTree(wasmEdge.singleFile)
         }
     }
-    into(layout.buildDirectory.dir("tools"))
+
+    val distDir = layout.buildDirectory.dir("tools")
+    val resultDir = "WasmEdge-$wasmEdgeVersion-$wasmEdgeInnerSuffix"
+
+    into(distDir)
+
+    doLast {
+        val wasmEdgeDirectory = distDir.get().dir(resultDir).asFile
+
+        val libDirectory = wasmEdgeDirectory.toPath().resolve("lib")
+        val mainDylib = libDirectory.resolve("libwasmedge.0.1.0.dylib")
+        val mainTbd = libDirectory.resolve("libwasmedge.0.1.0.tbd")
+
+        val symbolicLinks = listOf("libwasmedge.0.dylib", "libwasmedge.dylib", "libwasmedge.0.tbd", "libwasmedge.tbd")
+
+        symbolicLinks.forEach { path ->
+            val target = if (path.endsWith("dylib")) mainDylib else mainTbd
+            val link = libDirectory.resolve(path).also(Files::deleteIfExists)
+            Files.createSymbolicLink(link, target)
+        }
+    }
 }
 
 fun Test.setupSpiderMonkey() {
@@ -223,9 +245,13 @@ fun Test.setupSpiderMonkey() {
 
 fun Test.setupWasmEdge() {
     dependsOn(unzipWasmEdge)
-    val wasmEdgeExecutable =
-        File(unzipWasmEdge.get().destinationDir, "WasmEdge-$wasmEdgeVersion-$wasmEdgeInnerSuffix/bin/wasmedge")
-    systemProperty("wasm.engine.path.WasmEdge", wasmEdgeExecutable.absolutePath)
+
+    val wasmEdgeDirectory = File(
+        unzipWasmEdge.get().destinationDir,
+        "WasmEdge-$wasmEdgeVersion-$wasmEdgeInnerSuffix"
+    )
+
+    systemProperty("wasm.engine.path.WasmEdge", wasmEdgeDirectory.resolve("bin/wasmedge").absolutePath)
 }
 
 testsJar {}

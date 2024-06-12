@@ -18,14 +18,14 @@ private external fun wasiProcExit(code: Int)
 
 @kotlin.wasm.WasmExport("__start")
 fun start() {
-    var code: Int = 0
-
     try {
         if (!runBoxTest()) {
-            code = 1
+            wasiProcExit(1)
         }
     } catch (e: Throwable) {
-        code = 1
+        println("Failed with exception!")
+        println(e.message)
+        println(e.printStackTrace())
+        wasiProcExit(1)
     }
-    wasiProcExit(code)
 }
