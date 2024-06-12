@@ -1,3 +1,4 @@
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
 // LANGUAGE: +ContextReceivers
 // MODULE: m1-common
 // FILE: common.kt

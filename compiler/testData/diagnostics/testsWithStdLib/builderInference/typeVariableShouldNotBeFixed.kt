@@ -1,3 +1,4 @@
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
 // FILE: spr/Exec.java
 package spr;
 
