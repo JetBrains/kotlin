@@ -1319,8 +1319,8 @@ class ExpressionCodegen(
             mv.areturn(Type.VOID_TYPE)
         } else {
             mv.fixStackAndJump(if (jump is IrBreak) stackElement.breakLabel else stackElement.continueLabel)
-            mv.mark(endLabel)
         }
+        mv.mark(endLabel)
         return unitValue
     }
 
