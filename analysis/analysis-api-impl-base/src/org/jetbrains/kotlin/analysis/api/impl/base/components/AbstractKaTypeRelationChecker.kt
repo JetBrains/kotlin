@@ -20,10 +20,12 @@ abstract class AbstractKaTypeRelationChecker<T : KaSession> : KaSessionComponent
         return isSubTypeOf(superType, KaSubtypingErrorTypePolicy.STRICT)
     }
 
+    @Suppress("OVERRIDE_DEPRECATION")
     override fun KaType.isNotSubTypeOf(superType: KaType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean = withValidityAssertion {
         return !isSubTypeOf(superType, errorTypePolicy)
     }
 
+    @Suppress("OVERRIDE_DEPRECATION")
     override fun KaType.isNotSubTypeOf(superType: KaType): Boolean = withValidityAssertion {
         return !isSubTypeOf(superType)
     }

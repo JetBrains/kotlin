@@ -23,8 +23,13 @@ public interface KaTypeRelationChecker {
 
     public fun KaType.isSubTypeOf(superType: KaType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean
 
+    @Deprecated("Use negated 'isSubtypeOf()' instead.", replaceWith = ReplaceWith("!isSubtypeOf(other)"))
     public fun KaType.isNotSubTypeOf(superType: KaType): Boolean
 
+    @Deprecated(
+        "Use negated 'isSubtypeOf()' instead.",
+        replaceWith = ReplaceWith("!isSubtypeOf(other, errorTypePolicy)")
+    )
     public fun KaType.isNotSubTypeOf(superType: KaType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean
 }
 
