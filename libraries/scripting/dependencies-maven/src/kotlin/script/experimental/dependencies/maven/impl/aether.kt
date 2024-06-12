@@ -25,7 +25,9 @@ import org.eclipse.aether.internal.transport.wagon.PlexusWagonProvider
 import org.eclipse.aether.repository.LocalRepository
 import org.eclipse.aether.repository.Proxy
 import org.eclipse.aether.repository.RemoteRepository
-import org.eclipse.aether.resolution.*
+import org.eclipse.aether.resolution.ArtifactRequest
+import org.eclipse.aether.resolution.ArtifactResolutionException
+import org.eclipse.aether.resolution.ArtifactResult
 import org.eclipse.aether.spi.connector.RepositoryConnectorFactory
 import org.eclipse.aether.spi.connector.transport.TransporterFactory
 import org.eclipse.aether.transport.file.FileTransporterFactory
@@ -36,6 +38,7 @@ import org.eclipse.aether.util.filter.DependencyFilterUtils
 import org.eclipse.aether.util.graph.visitor.FilteringDependencyVisitor
 import org.eclipse.aether.util.graph.visitor.TreeDependencyVisitor
 import org.eclipse.aether.util.repository.AuthenticationBuilder
+import org.eclipse.aether.util.repository.DefaultAuthenticationSelector
 import org.eclipse.aether.util.repository.DefaultMirrorSelector
 import org.eclipse.aether.util.repository.DefaultProxySelector
 import java.io.File
@@ -60,7 +63,8 @@ internal enum class ResolutionKind {
 
 internal class AetherResolveSession(
     localRepoDirectory: File? = null,
-    remoteRepos: List<RemoteRepository> = listOf(mavenCentral)
+    remoteRepos: List<RemoteRepository> = listOf(mavenCentral),
+    settingsFactory: () -> Settings = ::createMavenSettings,
 ) {
 
     private val localRepoPath by lazy {
@@ -85,9 +89,9 @@ internal class AetherResolveSession(
             )
             selector
         }
-        val mirrorSelector = getMirrorSelector()
-        remoteRepos.mapNotNull {
-            val builder = RemoteRepository.Builder(it)
+
+        remoteRepos.mapNotNull { originalRepo ->
+            val builder = RemoteRepository.Builder(originalRepo)
             if (proxySelector != null) {
                 builder.setProxy(proxySelector.getProxy(builder.build()))
             }
@@ -100,7 +104,7 @@ internal class AetherResolveSession(
                 //);
                 null
             } else {
-                mirrorSelector.getMirror(built) ?: built
+                resolveRemote(built)
             }
         }
     }
@@ -253,7 +257,7 @@ internal class AetherResolveSession(
     private fun <RequestT, ResultT> fetch(
         request: RequestT,
         fetchBody: (RequestT) -> ResultT,
-        wrapException: (RequestT, Exception) -> Exception
+        wrapException: (RequestT, Exception) -> Exception,
     ): ResultT {
         return try {
             synchronized(this) {
@@ -279,7 +283,43 @@ internal class AetherResolveSession(
         return selector
     }
 
+    private fun getAuthenticationSelector(): DefaultAuthenticationSelector {
+        val selector = DefaultAuthenticationSelector()
+        val servers = settings.servers
+        if (servers != null) {
+            val validServers = servers.filter { it.id != null }
+            for (server in validServers) {
+                selector.add(
+                    server.id, AuthenticationBuilder()
+                        .addUsername(server.username)
+                        .addPassword(server.password)
+                        .addPrivateKey(server.privateKey, server.passphrase)
+                        .build()
+                )
+            }
+        }
+        return selector
+    }
+
+    internal fun resolveRemote(
+        remote: RemoteRepository,
+    ): RemoteRepository {
+        val mirrorSelector = getMirrorSelector()
+        val authenticationSelector = getAuthenticationSelector()
+
+        val mirror = mirrorSelector.getMirror(remote)
+
+        return if (mirror != null) {
+            RemoteRepository.Builder(mirror)
+                .setAuthentication(authenticationSelector.getAuthentication(mirror))
+                .build()
+        } else {
+            remote
+        }
+    }
+
+
     private val settings: Settings by lazy {
-        createMavenSettings()
+        settingsFactory()
     }
 }
