@@ -27,6 +27,13 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 
 internal val KotlinNativeConfigureBinariesSideEffect = KotlinTargetSideEffect<KotlinNativeTarget> { target ->
     val project = target.project
+
+    target.compilations.all {
+        // Create configurations eagerly to prevent issues when a configuration created during task materialization
+        // this can cause warnings during IDE import, because IDE "collects" configurations before task execution.
+        it.resolvableApiConfiguration()
+    }
+
     // Create link and run tasks.
     target.binaries.all {
         project.createLinkTask(it)
@@ -78,11 +85,10 @@ internal val KotlinNativeConfigureBinariesSideEffect = KotlinTargetSideEffect<Ko
  */
 private fun KotlinNativeCompilation.resolvableApiConfiguration(): Configuration {
     val apiConfiguration = compilation.internal.configurations.apiConfiguration
-    val compileConfiguration = compilation.internal.configurations.compileDependencyConfiguration
     return project
-        .configurations.maybeCreateResolvable(lowerCamelCaseName("resolvable", apiConfiguration.name))
-        .apply {
+        .configurations.maybeCreateResolvable(lowerCamelCaseName("resolvable", apiConfiguration.name)) {
             extendsFrom(apiConfiguration)
+            val compileConfiguration = compilation.internal.configurations.compileDependencyConfiguration
             compileConfiguration.copyAttributesTo(project, this)
         }
 }
@@ -94,15 +100,12 @@ private fun Project.createLinkTask(binary: NativeBinary) {
     @Suppress("DEPRECATION") val compilationCompilerOptions = binary.compilation.compilerOptions
     val konanPropertiesBuildService = KonanPropertiesBuildService.registerIfAbsent(project)
 
-    val compilation = binary.compilation
-
-    // Configuration should be created outside registerTask
-    val resolvableApiConfiguration = compilation.resolvableApiConfiguration()
-
     val linkTask = registerTask<KotlinNativeLink>(
         binary.linkTaskName, listOf(binary)
     ) { task ->
         val target = binary.target
+        val compilation = binary.compilation
+
         task.group = BasePlugin.BUILD_GROUP
         task.description = "Links ${binary.outputKind.description} '${binary.name}' for a target '${target.name}'."
         task.dependsOn(compilation.compileTaskProvider)
@@ -126,7 +129,7 @@ private fun Project.createLinkTask(binary: NativeBinary) {
         task.includes.clear() // we need to include non '.kt' or '.kts' files
         task.disallowSourceChanges()
 
-        task.apiFiles.from(resolvableApiConfiguration)
+        task.apiFiles.from({ compilation.resolvableApiConfiguration().incoming.files })
     }
 
     NativeLinkTaskMetrics.collectMetrics(this)
