@@ -9,17 +9,14 @@ import org.gradle.api.Action
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8Exec
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmD8Dsl
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinWasmD8
-import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateTask
-import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.domainObjectSet
 import javax.inject.Inject
 
 abstract class KotlinD8Ir @Inject constructor(target: KotlinJsIrTarget) :
-    KotlinJsIrSubTargetBase(target, "d8"),
+    KotlinJsIrSubTargetJsEnvWithRunTask(target, "d8"),
     KotlinWasmD8Dsl {
 
     private val d8 = D8RootPlugin.apply(project.rootProject)

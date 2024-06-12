@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.utils.domainObjectSet
 import javax.inject.Inject
 
 abstract class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
-    KotlinJsIrSubTargetBase(target, "node"),
+    KotlinJsIrSubTargetJsEnvWithRunTask(target, "node"),
     KotlinJsNodeDsl {
 
     private val nodeJs = project.rootProject.kotlinNodeJsExtension

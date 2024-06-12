@@ -194,7 +194,7 @@ open class Executable(
         )
 }
 
-open class ExecutableWasm(
+class ExecutableWasm(
     compilation: KotlinJsIrCompilation,
     name: String,
     mode: KotlinJsBinaryMode,
@@ -212,7 +212,7 @@ open class ExecutableWasm(
         }
     }
 
-    final override val optimizeTaskName: String = optimizeTaskName()
+    override val optimizeTaskName: String = optimizeTaskName()
 
     override val optimizeTask: TaskProvider<BinaryenExec> = BinaryenExec.create(compilation, optimizeTaskName) {
         val compileWasmDestDir = linkTask.map {
@@ -292,7 +292,7 @@ class LibraryWasm(
         }
     }
 
-    final override val optimizeTaskName: String = optimizeTaskName()
+    override val optimizeTaskName: String = optimizeTaskName()
 
     override val optimizeTask: TaskProvider<BinaryenExec> = BinaryenExec.create(compilation, optimizeTaskName) {
         val compileWasmDestDir = linkTask.map {

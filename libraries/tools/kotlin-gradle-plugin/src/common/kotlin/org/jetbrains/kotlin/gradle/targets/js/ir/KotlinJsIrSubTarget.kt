@@ -46,7 +46,7 @@ abstract class KotlinJsIrSubTarget(
 
     internal val taskGroupName = "Kotlin $disambiguationClassifier"
 
-    protected val subTargetConfigurators: DomainObjectSet<SubTargetConfigurator<*, *>> =
+    val subTargetConfigurators: DomainObjectSet<SubTargetConfigurator<*, *>> =
         project.objects.domainObjectSet<SubTargetConfigurator<*, *>>()
 
     @ExperimentalDistributionDsl
@@ -67,7 +67,7 @@ abstract class KotlinJsIrSubTarget(
     }
 
     private val produceExecutable: Unit by lazy {
-        configureMain()
+        configureMainExecutable()
     }
 
     internal fun produceExecutable() {
@@ -75,7 +75,7 @@ abstract class KotlinJsIrSubTarget(
     }
 
     private val produceLibrary: Unit by lazy {
-        configureLibrary()
+        configureMainLibrary()
     }
 
     internal fun produceLibrary() {
@@ -171,24 +171,32 @@ abstract class KotlinJsIrSubTarget(
     protected abstract fun configureDefaultTestFramework(test: KotlinJsTest)
     protected abstract fun configureTestDependencies(test: KotlinJsTest)
 
-    private fun configureMain() {
+    private fun configureMainExecutable() {
         target.compilations.all { compilation ->
             if (compilation.isMain()) {
-                configureMain(compilation)
+                configureExecutable(compilation)
             }
         }
     }
 
-    private fun configureMain(compilation: KotlinJsIrCompilation) {
+    private fun configureExecutable(compilation: KotlinJsIrCompilation) {
         setupRun(compilation)
         setupBuild(compilation)
     }
 
-    abstract fun setupRun(compilation: KotlinJsIrCompilation)
+    fun setupRun(compilation: KotlinJsIrCompilation) {
+        subTargetConfigurators.configureEach {
+            it.setupRun(compilation)
+        }
+    }
 
-    abstract fun setupBuild(compilation: KotlinJsIrCompilation)
+    fun setupBuild(compilation: KotlinJsIrCompilation) {
+        subTargetConfigurators.configureEach {
+            it.setupBuild(compilation)
+        }
+    }
 
-    private fun configureLibrary() {
+    private fun configureMainLibrary() {
         target.compilations.all { compilation ->
             if (compilation.isMain()) {
                 configureLibrary(compilation)
@@ -197,40 +205,8 @@ abstract class KotlinJsIrSubTarget(
     }
 
     protected open fun configureLibrary(compilation: KotlinJsIrCompilation) {
-        val project = compilation.target.project
-
-        val assembleTaskProvider = project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
-
-        val npmProject = compilation.npmProject
-
-        compilation.binaries
-            .matching { it is Library }
-            .all { binary ->
-                binary as Library
-
-                val mode = binary.mode
-
-                val distributionTask = registerSubTargetTask<Copy>(
-                    disambiguateCamelCased(
-                        binary.name,
-                        DISTRIBUTION_TASK_NAME
-                    )
-                ) {
-                    if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
-                        it.from(project.tasks.named(npmProject.publicPackageJsonTaskName))
-                        it.from(binary.linkSyncTask)
-                    } else {
-                        it.from(binary.linkTask)
-                        it.from(project.tasks.named(compilation.processResourcesTaskName))
-                    }
-
-                    it.into(binary.distribution.outputDirectory)
-                }
-
-                if (mode == KotlinJsBinaryMode.PRODUCTION) {
-                    assembleTaskProvider.dependsOn(distributionTask)
-                }
-            }
+        setupRun(compilation)
+        setupBuild(compilation)
     }
 
     companion object {

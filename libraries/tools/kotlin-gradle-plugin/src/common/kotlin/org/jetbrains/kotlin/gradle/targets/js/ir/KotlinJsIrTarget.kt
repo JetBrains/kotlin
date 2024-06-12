@@ -205,6 +205,8 @@ constructor(
         commonLazy
         project.objects.newInstance(KotlinBrowserJsIr::class.java, this).also {
             it.configureSubTarget()
+            it.subTargetConfigurators.add(LibraryConfigurator(it))
+            it.subTargetConfigurators.add(WebpackConfigurator(it))
             browserConfiguredHandlers.forEach { handler ->
                 handler(it)
             }
@@ -231,6 +233,8 @@ constructor(
 
         project.objects.newInstance(KotlinNodeJsIr::class.java, this).also {
             it.configureSubTarget()
+            it.subTargetConfigurators.add(LibraryConfigurator(it))
+            it.subTargetConfigurators.add(JsEnvironmentConfigurator(it))
             nodejsConfiguredHandlers.forEach { handler ->
                 handler(it)
             }
@@ -255,6 +259,8 @@ constructor(
         commonLazy
         project.objects.newInstance(KotlinD8Ir::class.java, this).also {
             it.configureSubTarget()
+            it.subTargetConfigurators.add(LibraryConfigurator(it))
+            it.subTargetConfigurators.add(JsEnvironmentConfigurator(it))
             d8ConfiguredHandlers.forEach { handler ->
                 handler(it)
             }

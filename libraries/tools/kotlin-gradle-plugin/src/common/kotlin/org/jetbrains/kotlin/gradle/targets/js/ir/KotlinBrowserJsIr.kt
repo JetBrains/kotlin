@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
-import org.jetbrains.kotlin.gradle.utils.domainObjectSet
 import javax.inject.Inject
 
 abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
@@ -85,22 +84,6 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
     override fun useWebpack() {
         subTargetConfigurators.add(WebpackConfigurator(this))
-    }
-
-    override fun setupRun(
-        compilation: KotlinJsIrCompilation,
-    ) {
-        subTargetConfigurators.configureEach {
-            it.setupRun(compilation)
-        }
-    }
-
-    override fun setupBuild(
-        compilation: KotlinJsIrCompilation,
-    ) {
-        subTargetConfigurators.configureEach {
-            it.setupBuild(compilation)
-        }
     }
 
     companion object {
