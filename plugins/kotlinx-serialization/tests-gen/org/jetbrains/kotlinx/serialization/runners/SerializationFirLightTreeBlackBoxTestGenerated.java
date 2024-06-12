@@ -112,6 +112,12 @@ public class SerializationFirLightTreeBlackBoxTestGenerated extends AbstractSeri
     }
 
     @Test
+    @TestMetadata("expectActualTypealiasedSerializable.kt")
+    public void testExpectActualTypealiasedSerializable() {
+      runTest("plugins/kotlinx-serialization/testData/boxIr/expectActualTypealiasedSerializable.kt");
+    }
+
+    @Test
     @TestMetadata("externalSerialierJava.kt")
     public void testExternalSerialierJava() {
       runTest("plugins/kotlinx-serialization/testData/boxIr/externalSerialierJava.kt");
