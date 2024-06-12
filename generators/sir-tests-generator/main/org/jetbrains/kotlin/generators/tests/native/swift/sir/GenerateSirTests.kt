@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.generators.tests.provider
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCaseGroupProvider
 import org.jetbrains.kotlin.sir.bridge.AbstractKotlinSirBridgeTest
 import org.jetbrains.kotlin.swiftexport.standalone.AbstractKlibBasedSwiftRunnerTest
-
+import org.jetbrains.kotlin.swiftexport.playground.AbstractPlaygroundTranslatorTest
 
 fun main() {
     System.setProperty("java.awt.headless", "true")
@@ -38,6 +38,16 @@ fun main() {
                 ),
             ) {
                 model("", extension = null, recursive = false)
+            }
+        }
+        testGroup(
+            "native/swift/swift-export-playground/tests-gen/",
+            "native/swift/swift-export-playground/testData"
+        ) {
+            testClass<AbstractPlaygroundTranslatorTest>(
+                suiteTestClassName = "SwiftExportPlaygroundTestGenerated",
+            ) {
+                model("")
             }
         }
     }

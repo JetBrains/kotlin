@@ -10,6 +10,7 @@ sourceSets {
 dependencies {
     implementation(projectTests(":native:swift:sir-compiler-bridge"))
     implementation(projectTests(":native:swift:swift-export-standalone"))
+    implementation(projectTests(":native:swift:swift-export-playground"))
     implementation(projectTests(":generators:test-generator"))
     runtimeOnly(projectTests(":analysis:analysis-test-framework"))
     runtimeOnly(libs.junit.jupiter.api)
