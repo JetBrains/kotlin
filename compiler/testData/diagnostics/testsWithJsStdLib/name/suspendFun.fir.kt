@@ -3,7 +3,7 @@
 // MODULE: ZSocket
 interface ZSocket {
     suspend fun funWithArg(arg: String)
-    @Suppress(<!ERROR_SUPPRESSION!>"JS_NAME_CLASH"<!>)
+    @Suppress("JS_NAME_CLASH")
     suspend fun funWithoutArgs()
 }
 // MODULE: ZAsyncSocket(ZSocket)
@@ -22,6 +22,6 @@ interface ZAsyncSocket {
 
 internal class ZAsyncSocketImpl(private val delegate: ZSocket) : ZSocket by delegate, ZAsyncSocket {
     override fun funWithArgAsync(arg: String) {}
-    @Suppress(<!ERROR_SUPPRESSION!>"JS_NAME_CLASH"<!>)
+    @Suppress("JS_NAME_CLASH")
     override fun funWithoutArgsAsync() {}
 }
