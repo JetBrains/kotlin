@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IdSignatureValues
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.isMarkedNullable
@@ -64,8 +65,10 @@ fun buildSimpleAnnotation(irBuiltIns: IrBuiltIns, startOffset: Int, endOffset: I
     }
 }
 
+internal fun IrFunctionSymbol.isBoxOrUnboxFun() = owner.origin == DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
+
 internal fun IrExpression.isBoxOrUnboxCall() =
-        (this is IrCall && symbol.owner.origin == DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION)
+        (this is IrCall && symbol.isBoxOrUnboxFun())
 
 internal val IrFunctionAccessExpression.actualCallee: IrFunction
     get() {
