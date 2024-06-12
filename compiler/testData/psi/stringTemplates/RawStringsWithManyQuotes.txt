@@ -46,7 +46,6 @@ KtFile: RawStringsWithManyQuotes.kt
         PsiElement(OPEN_QUOTE)('"""')
         LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)('"')
-        LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)(' ')
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
@@ -54,9 +53,7 @@ KtFile: RawStringsWithManyQuotes.kt
         PsiElement(OPEN_QUOTE)('"""')
         LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)('"')
-        LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)('"')
-        LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)(' ')
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n\n    ')
@@ -64,7 +61,6 @@ KtFile: RawStringsWithManyQuotes.kt
         PsiElement(OPEN_QUOTE)('"""')
         LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)(' ')
-        LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)('"')
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
@@ -72,7 +68,6 @@ KtFile: RawStringsWithManyQuotes.kt
         PsiElement(OPEN_QUOTE)('"""')
         LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)(' ')
-        LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)('""')
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
@@ -80,7 +75,6 @@ KtFile: RawStringsWithManyQuotes.kt
         PsiElement(OPEN_QUOTE)('"""')
         LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)(' ')
-        LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)('"""')
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
@@ -88,7 +82,6 @@ KtFile: RawStringsWithManyQuotes.kt
         PsiElement(OPEN_QUOTE)('"""')
         LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)(' ')
-        LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)('""""')
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
@@ -96,7 +89,6 @@ KtFile: RawStringsWithManyQuotes.kt
         PsiElement(OPEN_QUOTE)('"""')
         LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)(' ')
-        LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)('"""""')
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n\n    ')
@@ -104,9 +96,7 @@ KtFile: RawStringsWithManyQuotes.kt
         PsiElement(OPEN_QUOTE)('"""')
         LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)('"')
-        LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)(' ')
-        LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)('"')
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n    ')
@@ -114,11 +104,8 @@ KtFile: RawStringsWithManyQuotes.kt
         PsiElement(OPEN_QUOTE)('"""')
         LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)('"')
-        LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)('"')
-        LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)(' ')
-        LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)('""')
         PsiElement(CLOSING_QUOTE)('"""')
       PsiWhiteSpace('\n')

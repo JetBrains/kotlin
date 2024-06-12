@@ -42,7 +42,6 @@ KtFile: lambdaExpressionInString_1.kt
                             PsiElement(IDENTIFIER)('a')
                         LITERAL_STRING_TEMPLATE_ENTRY
                           PsiElement(REGULAR_STRING_PART)(' -> ')
-                        LITERAL_STRING_TEMPLATE_ENTRY
                           PsiElement(REGULAR_STRING_PART)('$')
                         PsiElement(CLOSING_QUOTE)('"')
                     PsiWhiteSpace('  ')
@@ -50,9 +49,7 @@ KtFile: lambdaExpressionInString_1.kt
                 PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
               LITERAL_STRING_TEMPLATE_ENTRY
                 PsiElement(REGULAR_STRING_PART)('\n')
-              LITERAL_STRING_TEMPLATE_ENTRY
                 PsiElement(REGULAR_STRING_PART)('\n')
-              LITERAL_STRING_TEMPLATE_ENTRY
                 PsiElement(REGULAR_STRING_PART)('           ')
               PsiElement(CLOSING_QUOTE)('"""')
           PsiElement(RBRACE)('}')

@@ -202,13 +202,9 @@ KtFile: StringTemplates.kt
         PsiElement(OPEN_QUOTE)('"')
         LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)('$')
-        LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)('.')
-        LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)('$')
-        LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)('.asdf')
-        LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)('$')
         ESCAPE_STRING_TEMPLATE_ENTRY
           PsiElement(ESCAPE_SEQUENCE)('\t')
