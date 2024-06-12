@@ -313,6 +313,12 @@ public class SymbolLightClassesEqualityByPsiForSourceTestGenerated extends Abstr
   }
 
   @Test
+  @TestMetadata("overriddenReturnTypeNullability.kt")
+  public void testOverriddenReturnTypeNullability() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/overriddenReturnTypeNullability.kt");
+  }
+
+  @Test
   @TestMetadata("properties.kt")
   public void testProperties() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/properties.kt");

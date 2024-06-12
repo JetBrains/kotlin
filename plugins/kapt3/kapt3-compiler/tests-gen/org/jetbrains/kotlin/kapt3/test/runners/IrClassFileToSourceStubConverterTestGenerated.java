@@ -642,6 +642,12 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
   }
 
   @Test
+  @TestMetadata("overriddenReturnTypeNullability.kt")
+  public void testOverriddenReturnTypeNullability() {
+    runTest("plugins/kapt3/kapt3-compiler/testData/converter/overriddenReturnTypeNullability.kt");
+  }
+
+  @Test
   @TestMetadata("primitiveTypes.kt")
   public void testPrimitiveTypes() {
     runTest("plugins/kapt3/kapt3-compiler/testData/converter/primitiveTypes.kt");
