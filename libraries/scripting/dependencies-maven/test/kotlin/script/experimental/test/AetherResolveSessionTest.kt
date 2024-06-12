@@ -45,6 +45,29 @@ class AetherResolveSessionTest : TestCase() {
         assertEquals("http://myMirror.org", result.url)
     }
 
+    fun testAuthenticateBasedOnId() {
+        val aether = sessionFrom(Settings().apply {
+            servers = listOf(Server().apply {
+                id = "myServer"
+                username = "myUsername"
+                password = "myPasswword"
+            })
+        })
+
+        val remote = RemoteRepository.Builder("myServer", "default", "http://example.org")
+            .build()
+        val result = aether.resolveRemote(remote)
+        assertEquals("myServer", result.id)
+        assertEquals("http://example.org", result.url)
+        assertEquals(
+            AuthenticationBuilder()
+                .addUsername("myUsername")
+                .addPassword("myPasswword")
+                .build(),
+            result.authentication
+        )
+    }
+
     fun testAuthenticateBasedOnIdWithMirror() {
         val aether = sessionFrom(Settings().apply {
             servers = listOf(
