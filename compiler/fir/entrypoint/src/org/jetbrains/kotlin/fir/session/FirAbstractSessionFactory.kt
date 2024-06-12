@@ -175,7 +175,7 @@ abstract class FirAbstractSessionFactory {
             moduleDataImpl.updateDependsOn(
                 moduleDataImpl.dependsOnDependencies.map {
                     val session = sessionProvider?.getSession(it) ?: return@map it
-                    if (session.moduleData.isCommon) {
+                    if (it.isCommon) {
                         FirModuleDataImpl(
                             Name.special("<common-from-${it.name.asStringStripSpecialMarkers()}>"),
                             it.dependencies, it.dependsOnDependencies, it.friendDependencies, it.platform, it.capabilities, it.isCommon,
