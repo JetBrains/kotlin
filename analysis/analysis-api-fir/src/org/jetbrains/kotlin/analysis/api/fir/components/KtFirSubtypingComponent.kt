@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.components.KaSubtypingErrorTypePolicy
+import org.jetbrains.kotlin.analysis.api.components.KaTypeRelationChecker
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
-import org.jetbrains.kotlin.analysis.api.impl.base.components.AbstractKaTypeRelationChecker
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.assertIsValidAndAccessible
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -16,7 +17,7 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 internal class KaFirTypeRelationChecker(
     override val analysisSessionProvider: () -> KaFirSession
-) : AbstractKaTypeRelationChecker<KaFirSession>(), KaFirSessionComponent {
+) : KaSessionComponent<KaFirSession>(), KaTypeRelationChecker, KaFirSessionComponent {
     override fun KaType.semanticallyEquals(other: KaType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean = withValidityAssertion {
         other.assertIsValidAndAccessible()
         check(this is KaFirType)

@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import org.jetbrains.kotlin.analysis.api.components.KaSubtypingErrorTypePolicy
+import org.jetbrains.kotlin.analysis.api.components.KaTypeRelationChecker
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
-import org.jetbrains.kotlin.analysis.api.impl.base.components.AbstractKaTypeRelationChecker
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.types.checker.IsErrorTypeEqualToAnythingTypeChecker
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.types.checker.NewKotlinTypeCheckerImpl
 
 internal class KaFe10TypeRelationChecker(
     override val analysisSessionProvider: () -> KaFe10Session
-) : AbstractKaTypeRelationChecker<KaFe10Session>(), KaFe10SessionComponent {
+) : KaSessionComponent<KaFe10Session>(), KaTypeRelationChecker, KaFe10SessionComponent {
     override fun KaType.semanticallyEquals(other: KaType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean = withValidityAssertion {
         require(this is KaFe10Type)
         require(other is KaFe10Type)

@@ -5,32 +5,37 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaType
 
 public interface KaTypeRelationChecker {
-    public fun KaType.semanticallyEquals(other: KaType): Boolean
-
     @Deprecated("Use 'semanticallyEquals()' instead", replaceWith = ReplaceWith("semanticallyEquals(other)"))
     public fun KaType.isEqualTo(other: KaType): Boolean = semanticallyEquals(other)
 
-    public fun KaType.semanticallyEquals(other: KaType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean
+    public fun KaType.semanticallyEquals(
+        other: KaType,
+        errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT
+    ): Boolean
 
     @Deprecated("Use 'semanticallyEquals()' instead.", replaceWith = ReplaceWith("semanticallyEquals(other, errorTypePolicy)"))
     public fun KaType.isEqualTo(other: KaType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean =
         semanticallyEquals(other, errorTypePolicy)
 
-    public fun KaType.isSubTypeOf(superType: KaType): Boolean
-
-    public fun KaType.isSubTypeOf(superType: KaType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean
-
-    @Deprecated("Use negated 'isSubtypeOf()' instead.", replaceWith = ReplaceWith("!isSubtypeOf(other)"))
-    public fun KaType.isNotSubTypeOf(superType: KaType): Boolean
+    public fun KaType.isSubTypeOf(
+        superType: KaType,
+        errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT
+    ): Boolean
 
     @Deprecated(
         "Use negated 'isSubtypeOf()' instead.",
         replaceWith = ReplaceWith("!isSubtypeOf(other, errorTypePolicy)")
     )
-    public fun KaType.isNotSubTypeOf(superType: KaType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean
+    public fun KaType.isNotSubTypeOf(
+        superType: KaType,
+        errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT
+    ): Boolean = withValidityAssertion {
+        return !isSubTypeOf(superType, errorTypePolicy)
+    }
 }
 
 /**
