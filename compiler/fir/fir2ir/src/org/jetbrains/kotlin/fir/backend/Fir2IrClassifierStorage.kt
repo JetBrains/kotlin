@@ -17,13 +17,13 @@ import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -123,9 +123,9 @@ class Fir2IrClassifierStorage(
         typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT
     ): IrTypeParameter? {
         return if (typeOrigin.forSetter)
-            typeParameterCacheForSetter[typeParameter]
+            typeParameterCacheForSetter.getCachedIrParameterByFirTypeParameter(typeParameter)
         else
-            typeParameterCache[typeParameter]
+            typeParameterCache.getCachedIrParameterByFirTypeParameter(typeParameter)
     }
 
     fun getIrTypeParameterSymbol(
@@ -135,7 +135,7 @@ class Fir2IrClassifierStorage(
         val firTypeParameter = firTypeParameterSymbol.fir
 
         val cachedSymbol = getCachedIrTypeParameter(firTypeParameter, typeOrigin)?.symbol
-            ?: typeParameterCache[firTypeParameter]?.symbol // We can try to use default cache because setter can use parent type parameters
+            ?: typeParameterCache.getCachedIrParameterByFirTypeParameter(firTypeParameter)?.symbol // We can try to use default cache because setter can use parent type parameters
 
         if (cachedSymbol != null) {
             return cachedSymbol
@@ -236,7 +236,7 @@ class Fir2IrClassifierStorage(
 
     private fun getCachedIrClass(klass: FirClass): IrClass? {
         @OptIn(UnsafeDuringIrConstructionAPI::class)
-        return getCachedIrLocalClass(klass) ?: classCache.getCachedIrSymbolByCommonClassLike(klass)?.owner
+        return getCachedIrLocalClass(klass) ?: classCache.getCachedIrSymbolByFirClassLike(klass)?.owner
     }
 
     fun getIrClassSymbol(firClassSymbol: FirClassSymbol<*>): IrClassSymbol {
@@ -387,7 +387,7 @@ class Fir2IrClassifierStorage(
     internal fun getCachedTypeAlias(firTypeAlias: FirTypeAlias): IrTypeAlias? {
         // Type alias should be created at this point
         @OptIn(UnsafeDuringIrConstructionAPI::class)
-        return typeAliasCache.getCachedIrSymbolByCommonClassLike(firTypeAlias)?.owner
+        return typeAliasCache.getCachedIrSymbolByFirClassLike(firTypeAlias)?.owner
     }
 
     fun getIrTypeAliasSymbol(firTypeAliasSymbol: FirTypeAliasSymbol): IrTypeAliasSymbol {
@@ -426,11 +426,35 @@ class Fir2IrClassifierStorage(
     }
 }
 
-private inline fun <reified FP : FirClassLikeDeclaration, reified IS : IrSymbol> Map<FP, IS>.getCachedIrSymbolByCommonClassLike(
+private inline fun <reified FP : FirClassLikeDeclaration, reified IS : IrSymbol> Map<FP, IS>.getCachedIrSymbolByFirClassLike(
     firclassLike: FP,
 ): IS? {
-    val classId = firclassLike.symbol.classId
-    return getCachedIrSymbolByCommonDeclaration {
-        it.symbol.classId == classId && it.symbol.isExpect == firclassLike.symbol.isExpect
+    return if (firclassLike.origin == FirDeclarationOrigin.CommonArtefact) {
+        val classId = firclassLike.symbol.classId
+        return getCachedIrSymbolByCommonDeclaration {
+            it.symbol.classId == classId && it.symbol.isExpect == firclassLike.symbol.isExpect
+        }
+    } else {
+        get(firclassLike)
+    }
+}
+
+private fun FirTypeParameter.getContaininingId(): Pair<ClassId?, CallableId?> = when (val container = symbol.containingDeclarationSymbol) {
+    is FirClassLikeSymbol<*> -> container.classId to null
+    is FirCallableSymbol<*> -> null to container.callableId
+    else -> null to null
+}
+
+private inline fun <reified FTP : FirTypeParameter> Map<FTP, IrTypeParameter>.getCachedIrParameterByFirTypeParameter(
+    firTypeParameter: FTP,
+): IrTypeParameter? {
+    return if (firTypeParameter.origin == FirDeclarationOrigin.CommonArtefact) {
+        val name = firTypeParameter.name
+        val containingId = firTypeParameter.getContaininingId()
+        return asIterable().find {
+            it.key.name == name && it.key.getContaininingId() == containingId
+        }?.value
+    } else {
+        get(firTypeParameter)
     }
 }
