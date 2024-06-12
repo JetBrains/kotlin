@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // LANGUAGE: +ContextReceivers
 
 class A
