@@ -70,7 +70,7 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
             val result = mutableListOf<KtLightMethod>()
             val declaredMemberScope = it.getDeclaredMemberScope()
 
-            createMethods(declaredMemberScope.callables(), result)
+            createMethods(declaredMemberScope.callables, result)
             createConstructors(declaredMemberScope.constructors, result)
             result
         }
@@ -81,7 +81,7 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
         val nameGenerator = SymbolLightField.FieldNameGenerator()
 
         withClassOrObjectSymbol {
-            it.getDeclaredMemberScope().callables()
+            it.getDeclaredMemberScope().callables
                 .filterIsInstance<KaPropertySymbol>()
                 .forEach { propertySymbol ->
                     createField(

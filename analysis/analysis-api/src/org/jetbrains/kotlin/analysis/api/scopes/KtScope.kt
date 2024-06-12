@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.name.Name
 
-
 public interface KaScope : KaScopeLike {
     /**
      * Return a sequence of all [KaDeclarationSymbol] which current scope contain
@@ -17,8 +16,8 @@ public interface KaScope : KaScopeLike {
     public val declarations: Sequence<KaDeclarationSymbol>
         get() = withValidityAssertion {
             sequence {
-                yieldAll(callables())
-                yieldAll(classifiers())
+                yieldAll(callables)
+                yieldAll(classifiers)
                 yieldAll(constructors)
             }
         }
@@ -27,12 +26,21 @@ public interface KaScope : KaScopeLike {
     public fun getAllSymbols(): Sequence<KaDeclarationSymbol> = declarations
 
     /**
-     * Return a sequence of [KaCallableSymbol] which current scope contain if declaration name matches [nameFilter].
+     * A sequence of [KaCallableSymbol]s contained in this scope.
+     *
+     * This property needs to retrieve a set of all possible names before processing the scope.
+     * The overload with `names: Collection<Name>` should be used when the candidate name set is known.
+     */
+    public val callables: Sequence<KaCallableSymbol>
+        get() = callables { true }
+
+    /**
+     * Returns a sequence of [KaCallableSymbol]s contained in this scope with declaration names matching [nameFilter].
      *
      * This function needs to retrieve a set of all possible names before processing the scope.
      * The overload with `names: Collection<Name>` should be used when the candidate name set is known.
      */
-    public fun callables(nameFilter: KaScopeNameFilter = { true }): Sequence<KaCallableSymbol>
+    public fun callables(nameFilter: KaScopeNameFilter): Sequence<KaCallableSymbol>
 
     @Deprecated("Use 'callables' instead.", replaceWith = ReplaceWith("callables(nameFilter)"))
     public fun getCallableSymbols(nameFilter: KaScopeNameFilter = { true }): Sequence<KaCallableSymbol> = callables(nameFilter)
@@ -59,13 +67,27 @@ public interface KaScope : KaScopeLike {
     public fun getCallableSymbols(vararg names: Name): Sequence<KaCallableSymbol> = callables(names.toList())
 
     /**
-     * Return a sequence of [KaClassifierSymbol] which current scope contain if classifier name matches [nameFilter]. The sequence includes:
-     * nested classes, inner classes, nested type aliases for the class scope, and top-level classes and top-level type aliases for file scope.
+     * A sequence of [KaClassifierSymbol]s contained in this scope.
+     *
+     * The sequence includes: nested classes, inner classes, nested type aliases for the class scope, as well as top-level classes and
+     * top-level type aliases for file scopes.
+     *
+     * This property needs to retrieve a set of all possible names before processing the scope.
+     * The overload with `names: Collection<Name>` should be used when the candidate name set is known.
+     */
+    public val classifiers: Sequence<KaClassifierSymbol>
+        get() = classifiers { true }
+
+    /**
+     * Returns a sequence of [KaClassifierSymbol]s contained in this scope with classifier names matching [nameFilter].
+     *
+     * The sequence includes: nested classes, inner classes, nested type aliases for the class scope, as well as top-level classes and
+     * top-level type aliases for file scopes.
      *
      * This function needs to retrieve a set of all possible names before processing the scope.
      * The overload with `names: Collection<Name>` should be used when the candidate name set is known.
      */
-    public fun classifiers(nameFilter: KaScopeNameFilter = { true }): Sequence<KaClassifierSymbol>
+    public fun classifiers(nameFilter: KaScopeNameFilter): Sequence<KaClassifierSymbol>
 
     @Deprecated("Use 'classifiers' instead.", replaceWith = ReplaceWith("classifiers(nameFilter)"))
     public fun getClassifierSymbols(nameFilter: KaScopeNameFilter = { true }): Sequence<KaClassifierSymbol> = classifiers(nameFilter)

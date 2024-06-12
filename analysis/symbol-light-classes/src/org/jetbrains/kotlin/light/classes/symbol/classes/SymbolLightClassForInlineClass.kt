@@ -51,7 +51,7 @@ internal class SymbolLightClassForInlineClass : SymbolLightClassForClassOrObject
             val result = mutableListOf<KtLightMethod>()
 
             val declaredMemberScope = classOrObjectSymbol.getDeclaredMemberScope()
-            val applicableDeclarations = declaredMemberScope.callables()
+            val applicableDeclarations = declaredMemberScope.callables
                 .filter {
                     (it as? KaPropertySymbol)?.isOverride == true || (it as? KaFunctionSymbol)?.isOverride == true
                 }

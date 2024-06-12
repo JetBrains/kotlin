@@ -69,11 +69,11 @@ internal fun KaSymbolWithModality.computeSimpleModality(): String? = when (modal
 
 context(KaSession)
 internal fun KaClassOrObjectSymbol.enumClassModality(): String? {
-    if (getMemberScope().callables().any { (it as? KaSymbolWithModality)?.modality == Modality.ABSTRACT }) {
+    if (getMemberScope().callables.any { (it as? KaSymbolWithModality)?.modality == Modality.ABSTRACT }) {
         return PsiModifier.ABSTRACT
     }
 
-    if (getStaticDeclaredMemberScope().callables().none { it is KaEnumEntrySymbol && it.requiresSubClass() }) {
+    if (getStaticDeclaredMemberScope().callables.none { it is KaEnumEntrySymbol && it.requiresSubClass() }) {
         return PsiModifier.FINAL
     }
 

@@ -126,11 +126,11 @@ internal class KaFe10ScopeImporting(
     override val analysisContext: Fe10AnalysisContext
 ) : KaFe10ScopeResolution() {
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
-        return callables().mapNotNullTo(mutableSetOf()) { (it as? KaPossiblyNamedSymbol)?.name }
+        return callables.mapNotNullTo(mutableSetOf()) { (it as? KaPossiblyNamedSymbol)?.name }
     }
 
     override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
-        return classifiers().mapNotNullTo(mutableSetOf()) { (it as? KaPossiblyNamedSymbol)?.name }
+        return classifiers.mapNotNullTo(mutableSetOf()) { (it as? KaPossiblyNamedSymbol)?.name }
     }
 
     override val constructors: Sequence<KaConstructorSymbol>

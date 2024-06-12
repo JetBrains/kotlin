@@ -136,7 +136,7 @@ internal class SymbolLightClassForEnumEntry(
 
             enumEntrySymbol.enumEntryInitializer?.let { initializer ->
                 val declaredMemberScope = initializer.getDeclaredMemberScope()
-                val visibleDeclarations = declaredMemberScope.callables()
+                val visibleDeclarations = declaredMemberScope.callables
 
                 createMethods(visibleDeclarations, result)
                 createConstructors(declaredMemberScope.constructors, result)

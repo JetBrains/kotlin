@@ -93,7 +93,7 @@ abstract class AbstractTypeScopeTest : AbstractAnalysisApiBasedTest() {
 
     @Suppress("unused")
     private fun KaSession.renderForTests(scope: KaScope): String {
-        val callables = scope.callables().toList()
+        val callables = scope.callables.toList()
         return prettyPrint {
             callables.forEach {
                 appendLine(DebugSymbolRenderer().render(analysisSession, it))
@@ -102,7 +102,7 @@ abstract class AbstractTypeScopeTest : AbstractAnalysisApiBasedTest() {
     }
 
     private fun KaSession.prettyPrintForTests(scope: KaScope): String {
-        val callables = scope.callables().toList()
+        val callables = scope.callables.toList()
         return prettyPrint {
             callables.forEach {
                 appendLine(it.render(renderer))

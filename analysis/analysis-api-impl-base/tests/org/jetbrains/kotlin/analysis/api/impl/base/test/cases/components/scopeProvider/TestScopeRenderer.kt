@@ -136,8 +136,8 @@ internal object TestScopeRenderer {
             .toMutableList()
             .apply { sortBy { it.fqName.asString() } }
             .renderAll("packages") { prettyRenderPackage(it) }
-        scope.classifiers().toList().renderAll("classifiers") { prettyRenderDeclaration(it) }
-        scope.callables().toList().renderAll("callables") { prettyRenderDeclaration(it) }
+        scope.classifiers.toList().renderAll("classifiers") { prettyRenderDeclaration(it) }
+        scope.callables.toList().renderAll("callables") { prettyRenderDeclaration(it) }
         scope.constructors.toList().renderAll("constructors") { prettyRenderDeclaration(it) }
     }
 

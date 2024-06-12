@@ -20,7 +20,7 @@ internal fun KtClassOrObjectSymbol.translateEnumMembers(): List<ObjCExportStub> 
 
 context(KtAnalysisSession, KtObjCExportSession)
 private fun KtClassOrObjectSymbol.getEnumEntries(): List<ObjCProperty> {
-    val staticMembers = this.getStaticDeclaredMemberScope().callables().toList()
+    val staticMembers = this.getStaticDeclaredMemberScope().callables.toList()
     return staticMembers.filterIsInstance<KtEnumEntrySymbol>().map { entry ->
 
         val entryName = entry.getEnumEntryName(false)

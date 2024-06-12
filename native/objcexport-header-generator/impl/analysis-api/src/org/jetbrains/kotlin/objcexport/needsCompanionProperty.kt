@@ -10,6 +10,6 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.isCompanion
 context(KtAnalysisSession)
 internal val KtClassOrObjectSymbol.needsCompanionProperty: Boolean
     get() {
-        return this.getStaticMemberScope().classifiers()
+        return this.getStaticMemberScope().classifiers
             .any { (it as? KtClassOrObjectSymbol)?.isCompanion == true }
     }

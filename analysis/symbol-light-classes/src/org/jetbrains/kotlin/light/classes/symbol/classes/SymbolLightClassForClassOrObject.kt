@@ -114,7 +114,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
             // We should use the combined declared member scope here because an enum class may contain static callables.
             val declaredMemberScope = classOrObjectSymbol.getCombinedDeclaredMemberScope()
 
-            val visibleDeclarations = declaredMemberScope.callables()
+            val visibleDeclarations = declaredMemberScope.callables
                 .applyIf(classKind().isObject) {
                     filterNot {
                         it is KaKotlinPropertySymbol && it.isConst
@@ -218,7 +218,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
             )
         }
 
-        classOrObjectSymbol.getDelegatedMemberScope().callables().forEach { functionSymbol ->
+        classOrObjectSymbol.getDelegatedMemberScope().callables.forEach { functionSymbol ->
             if (functionSymbol is KaFunctionSymbol) {
                 createDelegateMethod(functionSymbol)
             }
@@ -267,7 +267,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
     private fun addFieldsForEnumEntries(result: MutableList<KtLightField>, classOrObjectSymbol: KaNamedClassOrObjectSymbol) {
         if (!isEnum) return
 
-        classOrObjectSymbol.getStaticDeclaredMemberScope().callables()
+        classOrObjectSymbol.getStaticDeclaredMemberScope().callables
             .filterIsInstance<KaEnumEntrySymbol>()
             .mapNotNullTo(result) {
                 val enumEntry = it.sourcePsiSafe<KtEnumEntry>()

@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.objcexport.extras.requiresForwardDeclaration
  */
 context(KtAnalysisSession, KtObjCExportSession)
 internal fun KtClassOrObjectSymbol.buildCompanionProperty(): ObjCProperty {
-    val companion = this.getStaticMemberScope().classifiers().toList()
+    val companion = this.getStaticMemberScope().classifiers.toList()
         .firstOrNull { (it as? KtClassOrObjectSymbol)?.isCompanion == true }
 
     val typeName = (companion as KtClassOrObjectSymbol).getObjCClassOrProtocolName()
