@@ -123,7 +123,7 @@ internal class KaFe10Resolver(
         }
     }
 
-    override fun KtElement.resolveCallOld(): KaCallInfo? = withValidityAssertion {
+    override fun KtElement.resolveToCall(): KaCallInfo? = withValidityAssertion {
         return doResolveCall(this)
     }
 
@@ -164,7 +164,7 @@ internal class KaFe10Resolver(
         } ?: handleResolveErrors(this, psi)
     }
 
-    override fun KtElement.collectCallCandidatesOld(): List<KaCallCandidateInfo> = withValidityAssertion {
+    override fun KtElement.resolveToCallCandidates(): List<KaCallCandidateInfo> = withValidityAssertion {
         return doCollectCallCandidates(this)
     }
 

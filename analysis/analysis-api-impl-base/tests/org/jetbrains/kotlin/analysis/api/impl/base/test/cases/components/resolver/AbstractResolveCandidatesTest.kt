@@ -41,7 +41,7 @@ abstract class AbstractResolveCandidatesTest : AbstractResolveByElementTest() {
         candidates: List<KaCallCandidateInfo>,
         testServices: TestServices,
     ) {
-        val resolvedCall = mainElement.resolveCallOld()?.successfulCallOrNull<KaCallableMemberCall<*, *>>()
+        val resolvedCall = mainElement.resolveToCall()?.successfulCallOrNull<KaCallableMemberCall<*, *>>()
         if (candidates.isEmpty()) {
             testServices.assertions.assertEquals(null, resolvedCall) {
                 "Inconsistency between candidates and resolved call. " +
@@ -66,7 +66,7 @@ abstract class AbstractResolveCandidatesTest : AbstractResolveByElementTest() {
     }
 
     private fun KaSession.collectCallCandidates(element: KtElement): List<KaCallCandidateInfo> {
-        val candidates = element.collectCallCandidatesOld()
+        val candidates = element.resolveToCallCandidates()
         return candidates.sortedWith { candidate1, candidate2 ->
             compareCalls(candidate1.candidate, candidate2.candidate)
         }

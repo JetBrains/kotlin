@@ -437,7 +437,7 @@ private fun doesNamedFunctionUseBody(namedFunction: KtNamedFunction, body: PsiEl
 
 
 private fun KaSession.isSimpleVariableAccessCall(reference: KtReferenceExpression): Boolean =
-    when (val resolution = reference.resolveCallOld()) {
+    when (val resolution = reference.resolveToCall()) {
         is KaSuccessCallInfo ->
             resolution.call is KaSimpleVariableAccessCall
         else ->

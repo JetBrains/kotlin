@@ -37,7 +37,7 @@ internal fun testDataPath(path: String): Path {
 
 fun KtCallExpression.assertIsCallOf(callableId: CallableId) {
     analyze(this) {
-        val ktCallInfo = resolveCallOld()
+        val ktCallInfo = resolveToCall()
         Assertions.assertInstanceOf(KaSuccessCallInfo::class.java, ktCallInfo); ktCallInfo as KaSuccessCallInfo
         val symbol = ktCallInfo.successfulFunctionCallOrNull()?.symbol
         Assertions.assertInstanceOf(KaFunctionSymbol::class.java, symbol); symbol as KaFunctionSymbol

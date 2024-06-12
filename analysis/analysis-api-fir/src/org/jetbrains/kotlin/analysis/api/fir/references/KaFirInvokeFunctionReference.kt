@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.psi.KtImportAlias
 
 internal class KaFirInvokeFunctionReference(expression: KtCallExpression) : KtInvokeFunctionReference(expression), KaFirReference {
     override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
-        return expression.resolveCallOld()?.calls.orEmpty().mapNotNull { call ->
+        return expression.resolveToCall()?.calls.orEmpty().mapNotNull { call ->
             (call as? KaSimpleFunctionCall)
                 ?.takeIf { it.isImplicitInvoke }
                 ?.partiallyAppliedSymbol
