@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.impl.base.scopes
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
-import org.jetbrains.kotlin.analysis.api.scopes.KaScopeNameFilter
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.name.Name
 
@@ -28,7 +27,7 @@ class KaEmptyScope(override val token: KaLifetimeToken) : KaScope {
     override val declarations: Sequence<KaDeclarationSymbol>
         get() = withValidityAssertion { emptySequence() }
 
-    override fun callables(nameFilter: KaScopeNameFilter): Sequence<KaCallableSymbol> = withValidityAssertion {
+    override fun callables(nameFilter: (Name) -> Boolean): Sequence<KaCallableSymbol> = withValidityAssertion {
         return emptySequence()
     }
 
@@ -36,7 +35,7 @@ class KaEmptyScope(override val token: KaLifetimeToken) : KaScope {
         return emptySequence()
     }
 
-    override fun classifiers(nameFilter: KaScopeNameFilter): Sequence<KaClassifierSymbol> = withValidityAssertion {
+    override fun classifiers(nameFilter: (Name) -> Boolean): Sequence<KaClassifierSymbol> = withValidityAssertion {
         return emptySequence()
     }
 
@@ -47,7 +46,7 @@ class KaEmptyScope(override val token: KaLifetimeToken) : KaScope {
     override val constructors: Sequence<KaConstructorSymbol>
         get() = withValidityAssertion { emptySequence() }
 
-    override fun getPackageSymbols(nameFilter: KaScopeNameFilter): Sequence<KaPackageSymbol> = withValidityAssertion {
+    override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = withValidityAssertion {
         emptySequence()
     }
 

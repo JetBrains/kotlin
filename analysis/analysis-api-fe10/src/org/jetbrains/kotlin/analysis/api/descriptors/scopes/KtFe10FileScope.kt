@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
-import org.jetbrains.kotlin.analysis.api.scopes.KaScopeNameFilter
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
@@ -37,7 +36,7 @@ internal class KaFe10FileScope(
         ktFile.declarations.mapNotNullTo(mutableSetOf()) { (it as? KtClassLikeDeclaration)?.nameAsName }
     }
 
-    override fun callables(nameFilter: KaScopeNameFilter): Sequence<KaCallableSymbol> = withValidityAssertion {
+    override fun callables(nameFilter: (Name) -> Boolean): Sequence<KaCallableSymbol> = withValidityAssertion {
         val context = analysisContext.analyze(ktFile)
 
         sequence {
@@ -57,7 +56,7 @@ internal class KaFe10FileScope(
         return callables { it in namesSet }
     }
 
-    override fun classifiers(nameFilter: KaScopeNameFilter): Sequence<KaClassifierSymbol> = withValidityAssertion {
+    override fun classifiers(nameFilter: (Name) -> Boolean): Sequence<KaClassifierSymbol> = withValidityAssertion {
         val context = analysisContext.analyze(ktFile)
 
         sequence {
@@ -80,7 +79,7 @@ internal class KaFe10FileScope(
     override val constructors: Sequence<KaConstructorSymbol>
         get() = withValidityAssertion { emptySequence() }
 
-    override fun getPackageSymbols(nameFilter: KaScopeNameFilter): Sequence<KaPackageSymbol> = withValidityAssertion {
+    override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = withValidityAssertion {
         emptySequence()
     }
 }

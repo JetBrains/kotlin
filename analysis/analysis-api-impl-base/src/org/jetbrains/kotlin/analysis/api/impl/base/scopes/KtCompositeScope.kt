@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
-import org.jetbrains.kotlin.analysis.api.scopes.KaScopeNameFilter
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.name.Name
 
@@ -50,7 +49,7 @@ class KaCompositeScope private constructor(
             }
         }
 
-    override fun callables(nameFilter: KaScopeNameFilter): Sequence<KaCallableSymbol> = withValidityAssertion {
+    override fun callables(nameFilter: (Name) -> Boolean): Sequence<KaCallableSymbol> = withValidityAssertion {
         sequence {
             subScopes.forEach { yieldAll(it.callables(nameFilter)) }
         }
@@ -63,7 +62,7 @@ class KaCompositeScope private constructor(
         }
     }
 
-    override fun classifiers(nameFilter: KaScopeNameFilter): Sequence<KaClassifierSymbol> = withValidityAssertion {
+    override fun classifiers(nameFilter: (Name) -> Boolean): Sequence<KaClassifierSymbol> = withValidityAssertion {
         sequence {
             subScopes.forEach { yieldAll(it.classifiers(nameFilter)) }
         }
@@ -83,7 +82,7 @@ class KaCompositeScope private constructor(
             }
         }
 
-    override fun getPackageSymbols(nameFilter: KaScopeNameFilter): Sequence<KaPackageSymbol> = withValidityAssertion {
+    override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = withValidityAssertion {
         sequence {
             subScopes.forEach { yieldAll(it.getPackageSymbols(nameFilter)) }
         }

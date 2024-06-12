@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir.scopes
 
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.scopes.KaScopeNameFilter
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
@@ -21,7 +20,7 @@ internal class KaFirDefaultStarImportingScope(
     private val firstWrappedScope = KaFirStarImportingScope(firScope.first, analysisSession)
     private val secondWrappedScope = KaFirStarImportingScope(firScope.second, analysisSession)
 
-    override fun getPackageSymbols(nameFilter: KaScopeNameFilter): Sequence<KaPackageSymbol> = withValidityAssertion {
+    override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = withValidityAssertion {
         emptySequence()
     }
 

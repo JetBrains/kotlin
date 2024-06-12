@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.swiftexport.standalone.klib
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
-import org.jetbrains.kotlin.analysis.api.scopes.KaScopeNameFilter
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
@@ -36,7 +35,7 @@ public class KlibScope(
         libraryModule.readKlibDeclarationAddresses() ?: emptySet()
     }
 
-    override fun callables(nameFilter: KaScopeNameFilter): Sequence<KaCallableSymbol> = with(analysisSession) {
+    override fun callables(nameFilter: (Name) -> Boolean): Sequence<KaCallableSymbol> = with(analysisSession) {
         addresses.asSequence()
             .filterIsInstance<KlibCallableAddress>()
             .filter { nameFilter(it.callableName) }
@@ -46,7 +45,7 @@ public class KlibScope(
     override fun callables(names: Collection<Name>): Sequence<KaCallableSymbol> =
         callables { it in names }
 
-    override fun classifiers(nameFilter: KaScopeNameFilter): Sequence<KaClassifierSymbol> = with(analysisSession) {
+    override fun classifiers(nameFilter: (Name) -> Boolean): Sequence<KaClassifierSymbol> = with(analysisSession) {
         addresses.asSequence()
             .filterIsInstance<KlibClassifierAddress>()
             .mapNotNull {
@@ -65,7 +64,7 @@ public class KlibScope(
     // There are no constructors at the top-level scope.
     override val constructors: Sequence<KaConstructorSymbol> get() = emptySequence()
 
-    override fun getPackageSymbols(nameFilter: KaScopeNameFilter): Sequence<KaPackageSymbol> =
+    override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> =
         throw NotImplementedError("Reading package symbols from ${libraryModule.libraryName} is unsupported. Please report an issue: https://kotl.in/issue")
 
     override fun getPossibleCallableNames(): Set<Name> =

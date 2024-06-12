@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.impl.base.scopes
 import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.scopes.KaScopeNameFilter
 import org.jetbrains.kotlin.analysis.api.scopes.KaTypeScope
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
@@ -39,7 +38,7 @@ class KaCompositeTypeScope(
     }
 
 
-    override fun getCallableSignatures(nameFilter: KaScopeNameFilter): Sequence<KaCallableSignature<*>> = withValidityAssertion {
+    override fun getCallableSignatures(nameFilter: (Name) -> Boolean): Sequence<KaCallableSignature<*>> = withValidityAssertion {
         sequence {
             subScopes.forEach { yieldAll(it.getCallableSignatures(nameFilter)) }
         }
@@ -51,7 +50,7 @@ class KaCompositeTypeScope(
         }
     }
 
-    override fun getClassifierSymbols(nameFilter: KaScopeNameFilter): Sequence<KaClassifierSymbol> = withValidityAssertion {
+    override fun getClassifierSymbols(nameFilter: (Name) -> Boolean): Sequence<KaClassifierSymbol> = withValidityAssertion {
         sequence {
             subScopes.forEach { yieldAll(it.getClassifierSymbols(nameFilter)) }
         }

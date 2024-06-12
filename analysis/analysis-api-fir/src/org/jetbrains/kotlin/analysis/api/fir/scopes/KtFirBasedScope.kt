@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
-import org.jetbrains.kotlin.analysis.api.scopes.KaScopeNameFilter
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
@@ -23,7 +22,7 @@ internal abstract class KaFirBasedScope<S : FirScope>(
 ) : KaScope {
     final override val token: KaLifetimeToken get() = builder.token
 
-    override fun callables(nameFilter: KaScopeNameFilter): Sequence<KaCallableSymbol> = withValidityAssertion {
+    override fun callables(nameFilter: (Name) -> Boolean): Sequence<KaCallableSymbol> = withValidityAssertion {
         firScope.getCallableSymbols(getPossibleCallableNames().filter(nameFilter), builder)
     }
 
@@ -31,7 +30,7 @@ internal abstract class KaFirBasedScope<S : FirScope>(
         firScope.getCallableSymbols(names, builder)
     }
 
-    override fun classifiers(nameFilter: KaScopeNameFilter): Sequence<KaClassifierSymbol> = withValidityAssertion {
+    override fun classifiers(nameFilter: (Name) -> Boolean): Sequence<KaClassifierSymbol> = withValidityAssertion {
         firScope.getClassifierSymbols(getPossibleClassifierNames().filter(nameFilter), builder)
     }
 
@@ -44,7 +43,7 @@ internal abstract class KaFirBasedScope<S : FirScope>(
             firScope.getConstructors(builder)
         }
 
-    override fun getPackageSymbols(nameFilter: KaScopeNameFilter): Sequence<KaPackageSymbol> = withValidityAssertion {
+    override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = withValidityAssertion {
         emptySequence()
     }
 }

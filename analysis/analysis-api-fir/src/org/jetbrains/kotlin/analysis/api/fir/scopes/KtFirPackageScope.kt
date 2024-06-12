@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
-import org.jetbrains.kotlin.analysis.api.scopes.KaScopeNameFilter
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
@@ -36,7 +35,7 @@ internal class KaFirPackageScope(
         DeclarationsInPackageProvider.getTopLevelClassifierNamesInPackageProvider(fqName, analysisSession)
     }
 
-    override fun callables(nameFilter: KaScopeNameFilter): Sequence<KaCallableSymbol> = withValidityAssertion {
+    override fun callables(nameFilter: (Name) -> Boolean): Sequence<KaCallableSymbol> = withValidityAssertion {
         firScope.getCallableSymbols(getPossibleCallableNames().filter(nameFilter), analysisSession.firSymbolBuilder)
     }
 
@@ -44,7 +43,7 @@ internal class KaFirPackageScope(
         firScope.getCallableSymbols(names, analysisSession.firSymbolBuilder)
     }
 
-    override fun classifiers(nameFilter: KaScopeNameFilter): Sequence<KaClassifierSymbol> = withValidityAssertion {
+    override fun classifiers(nameFilter: (Name) -> Boolean): Sequence<KaClassifierSymbol> = withValidityAssertion {
         firScope.getClassifierSymbols(getPossibleClassifierNames().filter(nameFilter), analysisSession.firSymbolBuilder)
     }
 
@@ -55,7 +54,7 @@ internal class KaFirPackageScope(
     override val constructors: Sequence<KaConstructorSymbol>
         get() = withValidityAssertion { emptySequence() }
 
-    override fun getPackageSymbols(nameFilter: KaScopeNameFilter): Sequence<KaPackageSymbol> = withValidityAssertion {
+    override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = withValidityAssertion {
         sequence {
             analysisSession.useSitePackageProvider.getSubPackageFqNames(fqName, analysisSession.targetPlatform, nameFilter).forEach {
                 yield(analysisSession.firSymbolBuilder.createPackageSymbol(fqName.child(it)))

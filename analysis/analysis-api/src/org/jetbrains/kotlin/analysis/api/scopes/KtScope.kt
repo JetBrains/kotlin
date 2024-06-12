@@ -40,10 +40,10 @@ public interface KaScope : KaScopeLike {
      * This function needs to retrieve a set of all possible names before processing the scope.
      * The overload with `names: Collection<Name>` should be used when the candidate name set is known.
      */
-    public fun callables(nameFilter: KaScopeNameFilter): Sequence<KaCallableSymbol>
+    public fun callables(nameFilter: (Name) -> Boolean): Sequence<KaCallableSymbol>
 
     @Deprecated("Use 'callables' instead.", replaceWith = ReplaceWith("callables(nameFilter)"))
-    public fun getCallableSymbols(nameFilter: KaScopeNameFilter = { true }): Sequence<KaCallableSymbol> = callables(nameFilter)
+    public fun getCallableSymbols(nameFilter: (Name) -> Boolean = { true }): Sequence<KaCallableSymbol> = callables(nameFilter)
 
     /**
      * Returns a sequence of [KaCallableSymbol]s contained in this scope, limited to callables whose name is contained in [names].
@@ -87,10 +87,10 @@ public interface KaScope : KaScopeLike {
      * This function needs to retrieve a set of all possible names before processing the scope.
      * The overload with `names: Collection<Name>` should be used when the candidate name set is known.
      */
-    public fun classifiers(nameFilter: KaScopeNameFilter): Sequence<KaClassifierSymbol>
+    public fun classifiers(nameFilter: (Name) -> Boolean): Sequence<KaClassifierSymbol>
 
     @Deprecated("Use 'classifiers' instead.", replaceWith = ReplaceWith("classifiers(nameFilter)"))
-    public fun getClassifierSymbols(nameFilter: KaScopeNameFilter = { true }): Sequence<KaClassifierSymbol> = classifiers(nameFilter)
+    public fun getClassifierSymbols(nameFilter: (Name) -> Boolean = { true }): Sequence<KaClassifierSymbol> = classifiers(nameFilter)
 
     /**
      * Returns a sequence of [KaClassifierSymbol]s contained in this scope, limited to classifiers whose name is contained in [names].
@@ -127,7 +127,7 @@ public interface KaScope : KaScopeLike {
     /**
      * Return a sequence of [KaPackageSymbol] nested in current scope contain if package name matches [nameFilter]
      */
-    public fun getPackageSymbols(nameFilter: KaScopeNameFilter = { true }): Sequence<KaPackageSymbol>
+    public fun getPackageSymbols(nameFilter: (Name) -> Boolean = { true }): Sequence<KaPackageSymbol>
 }
 
 public typealias KtScope = KaScope

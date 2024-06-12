@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
-import org.jetbrains.kotlin.analysis.api.scopes.KaScopeNameFilter
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaPossiblyNamedSymbol
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
@@ -23,7 +22,7 @@ internal abstract class KaFe10ScopeResolution : KaScope, KaLifetimeOwner {
     abstract val analysisContext: Fe10AnalysisContext
     abstract val scope: ResolutionScope
 
-    override fun callables(nameFilter: KaScopeNameFilter): Sequence<KaCallableSymbol> = withValidityAssertion {
+    override fun callables(nameFilter: (Name) -> Boolean): Sequence<KaCallableSymbol> = withValidityAssertion {
         return scope
             .getContributedDescriptors(kindFilter = DescriptorKindFilter.ALL, nameFilter)
             .asSequence()
@@ -37,7 +36,7 @@ internal abstract class KaFe10ScopeResolution : KaScope, KaLifetimeOwner {
         return callables { it in namesSet }
     }
 
-    override fun classifiers(nameFilter: KaScopeNameFilter): Sequence<KaClassifierSymbol> = withValidityAssertion {
+    override fun classifiers(nameFilter: (Name) -> Boolean): Sequence<KaClassifierSymbol> = withValidityAssertion {
         return scope
             .getContributedDescriptors(kindFilter = DescriptorKindFilter.CLASSIFIERS, nameFilter)
             .asSequence()
@@ -51,7 +50,7 @@ internal abstract class KaFe10ScopeResolution : KaScope, KaLifetimeOwner {
         return classifiers { it in namesSet }
     }
 
-    override fun getPackageSymbols(nameFilter: KaScopeNameFilter): Sequence<KaPackageSymbol> = withValidityAssertion {
+    override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = withValidityAssertion {
         emptySequence()
     }
 
@@ -107,10 +106,10 @@ internal open class KaFe10ScopeNonStaticMember(
     constructors: Collection<ConstructorDescriptor>,
     analysisContext: Fe10AnalysisContext
 ) : KaFe10ScopeMember(scope, constructors, analysisContext) {
-    override fun classifiers(nameFilter: KaScopeNameFilter): Sequence<KaClassifierSymbol> =
+    override fun classifiers(nameFilter: (Name) -> Boolean): Sequence<KaClassifierSymbol> =
         super.classifiers(nameFilter).filter { it is KaNamedClassOrObjectSymbol && it.isInner }
 
-    override fun callables(nameFilter: KaScopeNameFilter): Sequence<KaCallableSymbol> = withValidityAssertion {
+    override fun callables(nameFilter: (Name) -> Boolean): Sequence<KaCallableSymbol> = withValidityAssertion {
         super.callables(nameFilter).filter { symbol ->
             when (symbol) {
                 is KaFunctionSymbol -> !symbol.isStatic

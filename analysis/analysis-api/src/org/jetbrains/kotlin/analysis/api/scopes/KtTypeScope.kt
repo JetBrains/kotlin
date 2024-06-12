@@ -22,7 +22,7 @@ public interface KaTypeScope : KaScopeLike {
     /**
      * Return a sequence of [KaCallableSignature] which current scope contain if declaration name matches [nameFilter].
      */
-    public fun getCallableSignatures(nameFilter: KaScopeNameFilter = { true }): Sequence<KaCallableSignature<*>>
+    public fun getCallableSignatures(nameFilter: (Name) -> Boolean = { true }): Sequence<KaCallableSignature<*>>
 
     /**
      * Return a sequence of [KaCallableSignature] which current scope contain if declaration, if declaration name present in [names]
@@ -47,7 +47,7 @@ public interface KaTypeScope : KaScopeLike {
      * This function needs to retrieve a set of all possible names before processing the scope.
      * The overload with `names: Collection<Name>` should be used when the candidate name set is known.
      */
-    public fun getClassifierSymbols(nameFilter: KaScopeNameFilter = { true }): Sequence<KaClassifierSymbol>
+    public fun getClassifierSymbols(nameFilter: (Name) -> Boolean = { true }): Sequence<KaClassifierSymbol>
 
     /**
      * Return a sequence of [KaClassifierSymbol] which current scope contains, if classifier name present in [names].

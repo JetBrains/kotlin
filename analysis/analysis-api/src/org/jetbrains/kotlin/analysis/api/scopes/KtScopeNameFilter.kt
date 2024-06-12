@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.analysis.api.scopes
 
 import org.jetbrains.kotlin.name.Name
 
+@Deprecated("Use '(Name) -> Boolean' instead.", replaceWith = ReplaceWith("(Name) -> Boolean"))
 public typealias KaScopeNameFilter = (Name) -> Boolean
 
-public typealias KtScopeNameFilter = KaScopeNameFilter
+@Deprecated("Use '(Name) -> Boolean' instead.", replaceWith = ReplaceWith("(Name) -> Boolean"))
+public typealias KtScopeNameFilter = (Name) -> Boolean
