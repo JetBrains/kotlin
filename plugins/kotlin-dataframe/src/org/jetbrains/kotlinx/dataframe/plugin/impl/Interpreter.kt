@@ -113,6 +113,7 @@ abstract class AbstractInterpreter<T> : Interpreter<T> {
             if (name !in args && defaultValue is Present) {
                 defaultValue.value
             } else {
+                @Suppress("UNCHECKED_CAST")
                 args[name] as Value
             }
         }

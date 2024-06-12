@@ -40,6 +40,7 @@ fun <T, E : Enum<E>> AbstractInterpreter<T>.enum(
     defaultValue: DefaultValue<E> = Absent
 ): ExpectedArgumentProvider<E> = argConvert(name = name, lens = Interpreter.Value, defaultValue = defaultValue) { it: DataFrameCallableId ->
     val forName: Class<*> = Class.forName("${it.packageName}.${it.className}")
+    @Suppress("UNCHECKED_CAST")
     java.lang.Enum.valueOf(forName as Class<out Enum<*>>, it.callableName) as E
 }
 
