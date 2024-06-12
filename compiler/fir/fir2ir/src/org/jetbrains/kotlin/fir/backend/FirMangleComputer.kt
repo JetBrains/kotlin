@@ -165,7 +165,14 @@ open class FirMangleComputer(
             }
 
             is ConeRawType -> {
-                mangleType(tBuilder, type.lowerBound, declarationSiteSession)
+                mangleType(
+                    tBuilder,
+                    type.lowerBound.withNullability(
+                        ConeNullability.NULLABLE,
+                        declarationSiteSession.typeContext
+                    ),
+                    declarationSiteSession
+                )
             }
 
             is ConeDynamicType -> {
