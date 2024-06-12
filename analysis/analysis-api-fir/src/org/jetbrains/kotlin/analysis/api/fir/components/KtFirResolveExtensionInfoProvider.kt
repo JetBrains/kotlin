@@ -57,24 +57,24 @@ private class KaFirResolveExtensionScope(
 
     override val token: KaLifetimeToken get() = analysisSession.token
 
-    override fun getCallableSymbols(nameFilter: KaScopeNameFilter): Sequence<KaCallableSymbol> = withValidityAssertion {
+    override fun callables(nameFilter: KaScopeNameFilter): Sequence<KaCallableSymbol> = withValidityAssertion {
         getTopLevelDeclarations(nameFilter) { it.getTopLevelCallables() }
     }
 
-    override fun getCallableSymbols(names: Collection<Name>): Sequence<KaCallableSymbol> = withValidityAssertion {
+    override fun callables(names: Collection<Name>): Sequence<KaCallableSymbol> = withValidityAssertion {
         if (names.isEmpty()) return emptySequence()
         val namesSet = names.toSet()
-        return getCallableSymbols { it in namesSet }
+        return callables { it in namesSet }
     }
 
-    override fun getClassifierSymbols(nameFilter: KaScopeNameFilter): Sequence<KaClassifierSymbol> = withValidityAssertion {
+    override fun classifiers(nameFilter: KaScopeNameFilter): Sequence<KaClassifierSymbol> = withValidityAssertion {
         getTopLevelDeclarations(nameFilter) { it.getTopLevelClassifiers() }
     }
 
-    override fun getClassifierSymbols(names: Collection<Name>): Sequence<KaClassifierSymbol> = withValidityAssertion {
+    override fun classifiers(names: Collection<Name>): Sequence<KaClassifierSymbol> = withValidityAssertion {
         if (names.isEmpty()) return emptySequence()
         val namesSet = names.toSet()
-        return getClassifierSymbols { it in namesSet }
+        return classifiers { it in namesSet }
     }
 
     private inline fun <D : KtNamedDeclaration, reified S : KaDeclarationSymbol> getTopLevelDeclarations(
@@ -92,9 +92,8 @@ private class KaFirResolveExtensionScope(
         }
     }
 
-    override fun getConstructors(): Sequence<KaConstructorSymbol> = withValidityAssertion {
-        emptySequence()
-    }
+    override val constructors: Sequence<KaConstructorSymbol>
+        get() = withValidityAssertion { emptySequence() }
 
     override fun getPackageSymbols(nameFilter: KaScopeNameFilter): Sequence<KaPackageSymbol> = withValidityAssertion {
         sequence {

@@ -41,7 +41,7 @@ class KlibScopeTests : AbstractNativeSimpleTest() {
                 fun foo() {}
             """.trimIndent()
         ) {
-            val symbol = getAllSymbols().single()
+            val symbol = declarations.single()
             assertTrue(symbol is KaFunctionSymbol)
             assertEquals("foo", symbol.name.asString())
         }
@@ -50,7 +50,7 @@ class KlibScopeTests : AbstractNativeSimpleTest() {
     @Test
     fun `smoke empty file`() {
         withKlibScope(source = "") {
-            val symbols = getAllSymbols()
+            val symbols = declarations
             val classifiersNames = getPossibleClassifierNames()
             val callableNames = getPossibleCallableNames()
             assertTrue(symbols.toList().isEmpty())
@@ -72,7 +72,7 @@ class KlibScopeTests : AbstractNativeSimpleTest() {
     @Test
     fun `callable name filter`() {
         withKlibScope(source = simpleContentWithCollisions) {
-            val symbol = getCallableSymbols { it.asString() == "foo" }.single()
+            val symbol = callables { it.asString() == "foo" }.single()
             assertTrue(symbol is KaFunctionSymbol)
             assertEquals("foo", symbol.name.asString())
         }
@@ -81,7 +81,7 @@ class KlibScopeTests : AbstractNativeSimpleTest() {
     @Test
     fun `classifier name filter`() {
         withKlibScope(source = simpleContentWithCollisions) {
-            val symbol = getClassifierSymbols { it.asString() == "foo" }.single()
+            val symbol = classifiers { it.asString() == "foo" }.single()
             assertTrue(symbol is KaNamedSymbol)
             assertEquals("foo", symbol.name.asString())
         }

@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.sir.providers.SirSession
 public class SirDeclarationChildrenProviderImpl(private val sirSession: SirSession) : SirChildrenProvider {
 
     override fun KaScope.extractDeclarations(ktAnalysisSession: KaSession): Sequence<SirDeclaration> =
-        getAllSymbols()
+        declarations
             .filter {
                 with(sirSession) { (it as? KaSymbolWithVisibility)?.sirVisibility(ktAnalysisSession) == SirVisibility.PUBLIC }
             }

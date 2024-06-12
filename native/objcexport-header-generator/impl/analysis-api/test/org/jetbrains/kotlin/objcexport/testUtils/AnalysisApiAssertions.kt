@@ -22,7 +22,7 @@ fun KtFile.getClassOrFail(name: String): KtNamedClassOrObjectSymbol {
 
 context(KtAnalysisSession)
 fun KtScope.getClassOrFail(name: String): KtNamedClassOrObjectSymbol {
-    val allSymbols = getClassifierSymbols(Name.identifier(name)).toList()
+    val allSymbols = classifiers(Name.identifier(name)).toList()
     if (allSymbols.isEmpty()) fail("Missing class '$name'")
     if (allSymbols.size > 1) fail("Found multiple classes with name '$name'")
     val classifier = allSymbols.single()
@@ -42,7 +42,7 @@ fun KtFile.getPropertyOrFail(name: String): KtPropertySymbol {
 
 context(KtAnalysisSession)
 fun KtScope.getFunctionOrFail(name: String): KtFunctionSymbol {
-    val allSymbols = getCallableSymbols(Name.identifier(name)).toList()
+    val allSymbols = callables(Name.identifier(name)).toList()
     if (allSymbols.isEmpty()) fail("Missing function '$name'")
     if (allSymbols.size > 1) fail("Found multiple functions with name '$name'")
     val symbol = allSymbols.single()
@@ -52,7 +52,7 @@ fun KtScope.getFunctionOrFail(name: String): KtFunctionSymbol {
 
 context(KtAnalysisSession)
 fun KtScope.getPropertyOrFail(name: String): KtPropertySymbol {
-    val allSymbols = getCallableSymbols(Name.identifier(name)).toList()
+    val allSymbols = callables(Name.identifier(name)).toList()
     if (allSymbols.isEmpty()) fail("Missing property '$name'")
     if (allSymbols.size > 1) fail("Found multiple callables with name '$name'")
     val symbol = allSymbols.single()

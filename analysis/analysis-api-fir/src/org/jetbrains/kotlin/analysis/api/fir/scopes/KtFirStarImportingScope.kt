@@ -29,7 +29,8 @@ internal class KaFirStarImportingScope(
         }
     }
 
-    override fun getConstructors(): Sequence<KaConstructorSymbol> = withValidityAssertion { emptySequence() }
+    override val constructors: Sequence<KaConstructorSymbol>
+        get() = withValidityAssertion { emptySequence() }
 
     // todo cache?
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {

@@ -36,7 +36,7 @@ internal class KaFirSimpleNameReference(
 
         return resultsToFix.map { targetSymbol ->
             if (targetSymbol is KaFirNamedClassOrObjectSymbol && targetSymbol.classKind == KaClassKind.ANNOTATION_CLASS) {
-                targetSymbol.getMemberScope().getConstructors().firstOrNull() ?: targetSymbol
+                targetSymbol.getMemberScope().constructors.firstOrNull() ?: targetSymbol
             } else targetSymbol
         }
     }

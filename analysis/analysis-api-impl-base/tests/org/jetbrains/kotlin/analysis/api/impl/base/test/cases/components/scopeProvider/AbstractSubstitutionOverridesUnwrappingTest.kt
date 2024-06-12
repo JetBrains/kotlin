@@ -28,7 +28,7 @@ abstract class AbstractSubstitutionOverridesUnwrappingTest : AbstractSymbolTest(
 
         require(classSymbolUnderCaret is KaSymbolWithMembers)
 
-        return SymbolsData(classSymbolUnderCaret.getMemberScope().getAllSymbols().toList())
+        return SymbolsData(classSymbolUnderCaret.getMemberScope().declarations.toList())
     }
 
     override fun KaSession.renderSymbolForComparison(symbol: KaSymbol, directives: RegisteredDirectives): String {

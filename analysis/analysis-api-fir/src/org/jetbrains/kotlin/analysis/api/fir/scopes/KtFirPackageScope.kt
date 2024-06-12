@@ -36,25 +36,24 @@ internal class KaFirPackageScope(
         DeclarationsInPackageProvider.getTopLevelClassifierNamesInPackageProvider(fqName, analysisSession)
     }
 
-    override fun getCallableSymbols(nameFilter: KaScopeNameFilter): Sequence<KaCallableSymbol> = withValidityAssertion {
+    override fun callables(nameFilter: KaScopeNameFilter): Sequence<KaCallableSymbol> = withValidityAssertion {
         firScope.getCallableSymbols(getPossibleCallableNames().filter(nameFilter), analysisSession.firSymbolBuilder)
     }
 
-    override fun getCallableSymbols(names: Collection<Name>): Sequence<KaCallableSymbol> = withValidityAssertion {
+    override fun callables(names: Collection<Name>): Sequence<KaCallableSymbol> = withValidityAssertion {
         firScope.getCallableSymbols(names, analysisSession.firSymbolBuilder)
     }
 
-    override fun getClassifierSymbols(nameFilter: KaScopeNameFilter): Sequence<KaClassifierSymbol> = withValidityAssertion {
+    override fun classifiers(nameFilter: KaScopeNameFilter): Sequence<KaClassifierSymbol> = withValidityAssertion {
         firScope.getClassifierSymbols(getPossibleClassifierNames().filter(nameFilter), analysisSession.firSymbolBuilder)
     }
 
-    override fun getClassifierSymbols(names: Collection<Name>): Sequence<KaClassifierSymbol> = withValidityAssertion {
+    override fun classifiers(names: Collection<Name>): Sequence<KaClassifierSymbol> = withValidityAssertion {
         firScope.getClassifierSymbols(names, analysisSession.firSymbolBuilder)
     }
 
-    override fun getConstructors(): Sequence<KaConstructorSymbol> = withValidityAssertion {
-        emptySequence()
-    }
+    override val constructors: Sequence<KaConstructorSymbol>
+        get() = withValidityAssertion { emptySequence() }
 
     override fun getPackageSymbols(nameFilter: KaScopeNameFilter): Sequence<KaPackageSymbol> = withValidityAssertion {
         sequence {

@@ -43,43 +43,45 @@ class KaCompositeScope private constructor(
         }
     }
 
-    override fun getAllSymbols(): Sequence<KaDeclarationSymbol> = withValidityAssertion {
+    override val declarations: Sequence<KaDeclarationSymbol>
+        get() = withValidityAssertion {
+            sequence {
+                subScopes.forEach { yieldAll(it.declarations) }
+            }
+        }
+
+    override fun callables(nameFilter: KaScopeNameFilter): Sequence<KaCallableSymbol> = withValidityAssertion {
         sequence {
-            subScopes.forEach { yieldAll(it.getAllSymbols()) }
+            subScopes.forEach { yieldAll(it.callables(nameFilter)) }
         }
     }
 
-    override fun getCallableSymbols(nameFilter: KaScopeNameFilter): Sequence<KaCallableSymbol> = withValidityAssertion {
-        sequence {
-            subScopes.forEach { yieldAll(it.getCallableSymbols(nameFilter)) }
-        }
-    }
-
-    override fun getCallableSymbols(names: Collection<Name>): Sequence<KaCallableSymbol> = withValidityAssertion {
+    override fun callables(names: Collection<Name>): Sequence<KaCallableSymbol> = withValidityAssertion {
         if (names.isEmpty()) return emptySequence()
         sequence {
-            subScopes.forEach { yieldAll(it.getCallableSymbols(names)) }
+            subScopes.forEach { yieldAll(it.callables(names)) }
         }
     }
 
-    override fun getClassifierSymbols(nameFilter: KaScopeNameFilter): Sequence<KaClassifierSymbol> = withValidityAssertion {
+    override fun classifiers(nameFilter: KaScopeNameFilter): Sequence<KaClassifierSymbol> = withValidityAssertion {
         sequence {
-            subScopes.forEach { yieldAll(it.getClassifierSymbols(nameFilter)) }
+            subScopes.forEach { yieldAll(it.classifiers(nameFilter)) }
         }
     }
 
-    override fun getClassifierSymbols(names: Collection<Name>): Sequence<KaClassifierSymbol> = withValidityAssertion {
+    override fun classifiers(names: Collection<Name>): Sequence<KaClassifierSymbol> = withValidityAssertion {
         if (names.isEmpty()) return emptySequence()
         sequence {
-            subScopes.forEach { yieldAll(it.getClassifierSymbols(names)) }
+            subScopes.forEach { yieldAll(it.classifiers(names)) }
         }
     }
 
-    override fun getConstructors(): Sequence<KaConstructorSymbol> = withValidityAssertion {
-        sequence {
-            subScopes.forEach { yieldAll(it.getConstructors()) }
+    override val constructors: Sequence<KaConstructorSymbol>
+        get() = withValidityAssertion {
+            sequence {
+                subScopes.forEach { yieldAll(it.constructors) }
+            }
         }
-    }
 
     override fun getPackageSymbols(nameFilter: KaScopeNameFilter): Sequence<KaPackageSymbol> = withValidityAssertion {
         sequence {

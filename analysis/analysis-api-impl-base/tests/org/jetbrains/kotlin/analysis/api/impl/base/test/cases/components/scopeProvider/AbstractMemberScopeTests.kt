@@ -43,5 +43,5 @@ abstract class AbstractCombinedDeclaredMemberScopeTest : AbstractMemberScopeTest
 abstract class AbstractDelegateMemberScopeTest : AbstractMemberScopeTestBase() {
     override fun KaSession.getScope(symbol: KaSymbolWithMembers): KaScope = symbol.getDelegatedMemberScope()
 
-    override fun KaSession.getSymbolsFromScope(scope: KaScope): Sequence<KaDeclarationSymbol> = scope.getCallableSymbols()
+    override fun KaSession.getSymbolsFromScope(scope: KaScope): Sequence<KaDeclarationSymbol> = scope.callables()
 }

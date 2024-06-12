@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.name.Name
 
@@ -21,7 +20,7 @@ internal fun KtClassOrObjectSymbol.translateEnumMembers(): List<ObjCExportStub> 
 
 context(KtAnalysisSession, KtObjCExportSession)
 private fun KtClassOrObjectSymbol.getEnumEntries(): List<ObjCProperty> {
-    val staticMembers = this.getStaticDeclaredMemberScope().getCallableSymbols().toList()
+    val staticMembers = this.getStaticDeclaredMemberScope().callables().toList()
     return staticMembers.filterIsInstance<KtEnumEntrySymbol>().map { entry ->
 
         val entryName = entry.getEnumEntryName(false)
@@ -42,7 +41,7 @@ private fun KtClassOrObjectSymbol.getEnumEntries(): List<ObjCProperty> {
  */
 context(KtAnalysisSession, KtObjCExportSession)
 private fun KtClassOrObjectSymbol.getEnumValuesMethod(): ObjCMethod {
-    val valuesFunctionSymbol = getStaticMemberScope().getCallableSymbols(Name.identifier("values")).firstOrNull()
+    val valuesFunctionSymbol = getStaticMemberScope().callables(Name.identifier("values")).firstOrNull()
     return ObjCMethod(
         comment = null,
         isInstanceMethod = false,
@@ -59,7 +58,7 @@ private fun KtClassOrObjectSymbol.getEnumValuesMethod(): ObjCMethod {
  */
 context(KtAnalysisSession, KtObjCExportSession)
 private fun KtClassOrObjectSymbol.getEnumEntriesProperty(): ObjCProperty {
-    val entriesSymbol = getStaticMemberScope().getCallableSymbols(Name.identifier("entries")).firstOrNull()
+    val entriesSymbol = getStaticMemberScope().callables(Name.identifier("entries")).firstOrNull()
 
     return ObjCProperty(
         name = "entries",

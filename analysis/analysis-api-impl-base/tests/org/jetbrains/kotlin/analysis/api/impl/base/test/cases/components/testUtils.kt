@@ -291,7 +291,7 @@ internal fun KaSession.renderScopeWithParentDeclarations(scope: KaScope): String
         }
     }
 
-    printCollection(scope.getAllSymbols().toList(), separator = "\n\n") { symbol ->
+    printCollection(scope.declarations.toList(), separator = "\n\n") { symbol ->
         val containingDeclaration = symbol.getContainingSymbol() as KaClassLikeSymbol
         append(symbol.render(renderer))
         append(" fromClass ")

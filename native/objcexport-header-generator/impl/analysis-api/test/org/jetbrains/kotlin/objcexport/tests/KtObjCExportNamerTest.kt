@@ -23,7 +23,7 @@ class KtObjCExportNamerTest(
         val foo = inlineSourceCodeAnalysis.createKtFile("class Foo")
         analyzeWithObjCExport(foo) {
             val fooSymbol = foo.getFileSymbol().getFileScope()
-                .getClassifierSymbols(Name.identifier("Foo"))
+                .classifiers(Name.identifier("Foo"))
                 .single() as KtNamedClassOrObjectSymbol
 
             assertEquals(

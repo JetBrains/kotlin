@@ -101,12 +101,12 @@ fun KtClassOrObjectSymbol.translateToObjCClass(): ObjCClass? {
 context(KtAnalysisSession)
 internal fun KtClassOrObjectSymbol.getCallableSymbolsForObjCMemberTranslation(): Set<KtCallableSymbol> {
     val generatedCallableSymbols = getMemberScope()
-        .getCallableSymbols()
+        .callables()
         .filter { it.origin == KtSymbolOrigin.SOURCE_MEMBER_GENERATED }
         .toSet()
 
     val declaredCallableSymbols = getDeclaredMemberScope()
-        .getCallableSymbols()
+        .callables()
         .toSet()
 
     return generatedCallableSymbols + declaredCallableSymbols

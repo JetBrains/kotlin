@@ -87,7 +87,7 @@ internal class SymbolLightClassForFacade(
             val result = mutableListOf<KtLightMethod>()
             val methodsAndProperties = sequence<KaCallableSymbol> {
                 for (fileSymbol in fileSymbols) {
-                    for (callableSymbol in fileSymbol.getFileScope().getCallableSymbols()) {
+                    for (callableSymbol in fileSymbol.getFileScope().callables()) {
                         if (callableSymbol !is KaFunctionSymbol && callableSymbol !is KaKotlinPropertySymbol) continue
                         @Suppress("USELESS_IS_CHECK") // K2 warning suppression, TODO: KT-62472
                         if (callableSymbol !is KaSymbolWithVisibility) continue
@@ -116,7 +116,7 @@ internal class SymbolLightClassForFacade(
         nameGenerator: SymbolLightField.FieldNameGenerator,
         result: MutableList<KtLightField>
     ) {
-        for (propertySymbol in fileScope.getCallableSymbols()) {
+        for (propertySymbol in fileScope.callables()) {
             if (propertySymbol !is KaKotlinPropertySymbol) continue
 
             // If this facade represents multiple files, only `const` properties need to be generated.

@@ -23,7 +23,7 @@ internal abstract class KaFe10ScopeResolution : KaScope, KaLifetimeOwner {
     abstract val analysisContext: Fe10AnalysisContext
     abstract val scope: ResolutionScope
 
-    override fun getCallableSymbols(nameFilter: KaScopeNameFilter): Sequence<KaCallableSymbol> = withValidityAssertion {
+    override fun callables(nameFilter: KaScopeNameFilter): Sequence<KaCallableSymbol> = withValidityAssertion {
         return scope
             .getContributedDescriptors(kindFilter = DescriptorKindFilter.ALL, nameFilter)
             .asSequence()
@@ -31,13 +31,13 @@ internal abstract class KaFe10ScopeResolution : KaScope, KaLifetimeOwner {
             .mapNotNull { it.toKtSymbol(analysisContext) as? KaCallableSymbol }
     }
 
-    override fun getCallableSymbols(names: Collection<Name>): Sequence<KaCallableSymbol> = withValidityAssertion {
+    override fun callables(names: Collection<Name>): Sequence<KaCallableSymbol> = withValidityAssertion {
         if (names.isEmpty()) return emptySequence()
         val namesSet = names.toSet()
-        return getCallableSymbols { it in namesSet }
+        return callables { it in namesSet }
     }
 
-    override fun getClassifierSymbols(nameFilter: KaScopeNameFilter): Sequence<KaClassifierSymbol> = withValidityAssertion {
+    override fun classifiers(nameFilter: KaScopeNameFilter): Sequence<KaClassifierSymbol> = withValidityAssertion {
         return scope
             .getContributedDescriptors(kindFilter = DescriptorKindFilter.CLASSIFIERS, nameFilter)
             .asSequence()
@@ -45,10 +45,10 @@ internal abstract class KaFe10ScopeResolution : KaScope, KaLifetimeOwner {
             .mapNotNull { it.toKtSymbol(analysisContext) as? KaClassifierSymbol }
     }
 
-    override fun getClassifierSymbols(names: Collection<Name>): Sequence<KaClassifierSymbol> = withValidityAssertion {
+    override fun classifiers(names: Collection<Name>): Sequence<KaClassifierSymbol> = withValidityAssertion {
         if (names.isEmpty()) return emptySequence()
         val namesSet = names.toSet()
-        return getClassifierSymbols { it in namesSet }
+        return classifiers { it in namesSet }
     }
 
     override fun getPackageSymbols(nameFilter: KaScopeNameFilter): Sequence<KaPackageSymbol> = withValidityAssertion {
@@ -71,19 +71,19 @@ internal class KaFe10ScopeLexical(
         return emptySet()
     }
 
-    override fun getConstructors(): Sequence<KaConstructorSymbol> = withValidityAssertion {
-        return scope
-            .getContributedDescriptors(kindFilter = DescriptorKindFilter.FUNCTIONS)
-            .asSequence()
-            .filterIsInstance<ConstructorDescriptor>()
-            .map { it.toKtConstructorSymbol(analysisContext) }
-    }
-
+    override val constructors: Sequence<KaConstructorSymbol>
+        get() = withValidityAssertion {
+            return scope
+                .getContributedDescriptors(kindFilter = DescriptorKindFilter.FUNCTIONS)
+                .asSequence()
+                .filterIsInstance<ConstructorDescriptor>()
+                .map { it.toKtConstructorSymbol(analysisContext) }
+        }
 }
 
 internal open class KaFe10ScopeMember(
     override val scope: MemberScope,
-    private val constructors: Collection<ConstructorDescriptor>,
+    private val constructorDescriptors: Collection<ConstructorDescriptor>,
     override val analysisContext: Fe10AnalysisContext
 ) : KaFe10ScopeResolution() {
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
@@ -94,9 +94,12 @@ internal open class KaFe10ScopeMember(
         return scope.getClassifierNames() ?: emptySet()
     }
 
-    override fun getConstructors(): Sequence<KaConstructorSymbol> = sequence {
-        constructors.forEach { yield(it.toKtConstructorSymbol(analysisContext)) }
-    }
+    override val constructors: Sequence<KaConstructorSymbol>
+        get() = withValidityAssertion {
+            sequence {
+                constructorDescriptors.forEach { yield(it.toKtConstructorSymbol(analysisContext)) }
+            }
+        }
 }
 
 internal open class KaFe10ScopeNonStaticMember(
@@ -104,11 +107,11 @@ internal open class KaFe10ScopeNonStaticMember(
     constructors: Collection<ConstructorDescriptor>,
     analysisContext: Fe10AnalysisContext
 ) : KaFe10ScopeMember(scope, constructors, analysisContext) {
-    override fun getClassifierSymbols(nameFilter: KaScopeNameFilter): Sequence<KaClassifierSymbol> =
-        super.getClassifierSymbols(nameFilter).filter { it is KaNamedClassOrObjectSymbol && it.isInner }
+    override fun classifiers(nameFilter: KaScopeNameFilter): Sequence<KaClassifierSymbol> =
+        super.classifiers(nameFilter).filter { it is KaNamedClassOrObjectSymbol && it.isInner }
 
-    override fun getCallableSymbols(nameFilter: KaScopeNameFilter): Sequence<KaCallableSymbol> = withValidityAssertion {
-        super.getCallableSymbols(nameFilter).filter { symbol ->
+    override fun callables(nameFilter: KaScopeNameFilter): Sequence<KaCallableSymbol> = withValidityAssertion {
+        super.callables(nameFilter).filter { symbol ->
             when (symbol) {
                 is KaFunctionSymbol -> !symbol.isStatic
                 is KaPropertySymbol -> !symbol.isStatic
@@ -123,12 +126,13 @@ internal class KaFe10ScopeImporting(
     override val analysisContext: Fe10AnalysisContext
 ) : KaFe10ScopeResolution() {
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
-        return getCallableSymbols().mapNotNullTo(mutableSetOf()) { (it as? KaPossiblyNamedSymbol)?.name }
+        return callables().mapNotNullTo(mutableSetOf()) { (it as? KaPossiblyNamedSymbol)?.name }
     }
 
     override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
-        return getClassifierSymbols().mapNotNullTo(mutableSetOf()) { (it as? KaPossiblyNamedSymbol)?.name }
+        return classifiers().mapNotNullTo(mutableSetOf()) { (it as? KaPossiblyNamedSymbol)?.name }
     }
 
-    override fun getConstructors(): Sequence<KaConstructorSymbol> = withValidityAssertion { emptySequence() }
+    override val constructors: Sequence<KaConstructorSymbol>
+        get() = withValidityAssertion { emptySequence() }
 }

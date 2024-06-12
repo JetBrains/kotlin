@@ -25,7 +25,8 @@ internal class KaFirDefaultStarImportingScope(
         emptySequence()
     }
 
-    override fun getConstructors(): Sequence<KaConstructorSymbol> = withValidityAssertion { emptySequence() }
+    override val constructors: Sequence<KaConstructorSymbol>
+        get() = withValidityAssertion { emptySequence() }
 
     override fun getPossibleCallableNames(): Set<Name> = buildSet {
         addAll(firstWrappedScope.getPossibleCallableNames())

@@ -20,7 +20,6 @@ internal class KaFirNonStarImportingScope(
     firScope: FirAbstractSimpleImportingScope,
     builder: KaSymbolByFirBuilder,
 ) : KaFirBasedScope<FirAbstractSimpleImportingScope>(firScope, builder) {
-
     private val imports: List<NonStarImport> by cached {
         buildList {
             firScope.simpleImports.values.forEach { imports ->
@@ -46,7 +45,8 @@ internal class KaFirNonStarImportingScope(
         emptySequence()
     }
 
-    override fun getConstructors(): Sequence<KaConstructorSymbol> = withValidityAssertion { emptySequence() }
+    override val constructors: Sequence<KaConstructorSymbol>
+        get() = withValidityAssertion { emptySequence() }
 
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
         imports.flatMapTo(hashSetOf()) { listOfNotNull(it.callableName, it.aliasName) }

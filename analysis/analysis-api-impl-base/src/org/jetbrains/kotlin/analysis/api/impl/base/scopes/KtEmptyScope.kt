@@ -25,29 +25,27 @@ class KaEmptyScope(override val token: KaLifetimeToken) : KaScope {
         return emptySet()
     }
 
-    override fun getAllSymbols(): Sequence<KaDeclarationSymbol> = withValidityAssertion {
+    override val declarations: Sequence<KaDeclarationSymbol>
+        get() = withValidityAssertion { emptySequence() }
+
+    override fun callables(nameFilter: KaScopeNameFilter): Sequence<KaCallableSymbol> = withValidityAssertion {
         return emptySequence()
     }
 
-    override fun getCallableSymbols(nameFilter: KaScopeNameFilter): Sequence<KaCallableSymbol> = withValidityAssertion {
+    override fun callables(names: Collection<Name>): Sequence<KaCallableSymbol> = withValidityAssertion {
         return emptySequence()
     }
 
-    override fun getCallableSymbols(names: Collection<Name>): Sequence<KaCallableSymbol> = withValidityAssertion {
+    override fun classifiers(nameFilter: KaScopeNameFilter): Sequence<KaClassifierSymbol> = withValidityAssertion {
         return emptySequence()
     }
 
-    override fun getClassifierSymbols(nameFilter: KaScopeNameFilter): Sequence<KaClassifierSymbol> = withValidityAssertion {
+    override fun classifiers(names: Collection<Name>): Sequence<KaClassifierSymbol> = withValidityAssertion {
         return emptySequence()
     }
 
-    override fun getClassifierSymbols(names: Collection<Name>): Sequence<KaClassifierSymbol> = withValidityAssertion {
-        return emptySequence()
-    }
-
-    override fun getConstructors(): Sequence<KaConstructorSymbol> = withValidityAssertion {
-        return emptySequence()
-    }
+    override val constructors: Sequence<KaConstructorSymbol>
+        get() = withValidityAssertion { emptySequence() }
 
     override fun getPackageSymbols(nameFilter: KaScopeNameFilter): Sequence<KaPackageSymbol> = withValidityAssertion {
         emptySequence()

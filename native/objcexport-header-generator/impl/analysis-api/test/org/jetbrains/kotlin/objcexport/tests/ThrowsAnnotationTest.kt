@@ -109,7 +109,7 @@ class ThrowsAnnotationTest(private val inlineSourceCodeAnalysis: InlineSourceCod
         )
 
         analyze(file) {
-            val foo = file.getClassOrFail("Foo").getMemberScope().getConstructors().first()
+            val foo = file.getClassOrFail("Foo").getMemberScope().constructors.first()
             assertEquals(listOf("IllegalStateException"), foo.effectiveThrows.mapName())
             assertEquals(listOf("IllegalStateException"), foo.definedThrows.mapName())
         }

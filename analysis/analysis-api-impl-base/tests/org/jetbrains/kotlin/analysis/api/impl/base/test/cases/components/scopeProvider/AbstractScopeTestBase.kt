@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractScopeTestBase : AbstractSymbolByFqNameTest() {
     protected abstract fun KaSession.getScope(mainFile: KtFile, testServices: TestServices): KaScope
 
-    protected open fun KaSession.getSymbolsFromScope(scope: KaScope): Sequence<KaDeclarationSymbol> = scope.getAllSymbols()
+    protected open fun KaSession.getSymbolsFromScope(scope: KaScope): Sequence<KaDeclarationSymbol> = scope.declarations
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         super.doTestByMainFile(mainFile, mainModule, testServices)

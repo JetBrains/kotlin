@@ -72,14 +72,14 @@ abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<
     ) {
         val companionObjectSymbol = classOrObjectSymbol.companionObject ?: return
         val methods = companionObjectSymbol.getDeclaredMemberScope()
-            .getCallableSymbols()
+            .callables()
             .filterIsInstance<KaFunctionSymbol>()
             .filter { it.hasJvmStaticAnnotation() }
 
         createMethods(methods, result)
 
         companionObjectSymbol.getDeclaredMemberScope()
-            .getCallableSymbols()
+            .callables()
             .filterIsInstance<KaPropertySymbol>()
             .forEach { property ->
                 createPropertyAccessors(
@@ -102,7 +102,7 @@ abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<
     ) {
         classOrObjectSymbol.companionObject
             ?.getDeclaredMemberScope()
-            ?.getCallableSymbols()
+            ?.callables()
             ?.filterIsInstance<KaPropertySymbol>()
             ?.applyIf(isInterface) {
                 filter { it.isConstOrJvmField }

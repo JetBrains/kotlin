@@ -36,7 +36,7 @@ class ObjCReceiverTypeTest(
 
             val outerClass = file.getClassOrFail("Outer")
             val innerClass = outerClass.getMemberScope().getClassOrFail("Inner")
-            val innerClassConstructor = innerClass.getMemberScope().getConstructors().first()
+            val innerClassConstructor = innerClass.getMemberScope().constructors.first()
 
             assertEquals(
                 innerClassConstructor.objCReceiverType?.expandedSymbol?.classId,

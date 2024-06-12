@@ -272,7 +272,7 @@ internal object KDocReferenceResolver {
             .dropLast(1)
             .fold(scope) { currentScope, fqNamePart ->
                 currentScope
-                    .getClassifierSymbols(fqNamePart)
+                    .classifiers(fqNamePart)
                     .filterIsInstance<KaSymbolWithMembers>()
                     .map { getCompositeCombinedMemberAndCompanionObjectScope(it) }
                     .toList()
@@ -285,8 +285,8 @@ internal object KDocReferenceResolver {
     private fun KaScope.getAllSymbolsFromScopeByShortName(fqName: FqName): Collection<KaDeclarationSymbol> {
         val shortName = fqName.shortName()
         return buildSet {
-            addAll(getCallableSymbols(shortName))
-            addAll(getClassifierSymbols(shortName))
+            addAll(callables(shortName))
+            addAll(classifiers(shortName))
         }
     }
 
@@ -430,7 +430,7 @@ internal object KDocReferenceResolver {
                 val symbol = getClassOrObjectSymbolByClassId(classId)
                 if (symbol != null) {
                     val scope = getCompositeCombinedMemberAndCompanionObjectScope(symbol)
-                    consumer.addAll(scope.getCallableSymbols(callableId.callableName))
+                    consumer.addAll(scope.callables(callableId.callableName))
                 }
             }
         }

@@ -36,17 +36,17 @@ public class KlibScope(
         libraryModule.readKlibDeclarationAddresses() ?: emptySet()
     }
 
-    override fun getCallableSymbols(nameFilter: KaScopeNameFilter): Sequence<KaCallableSymbol> = with(analysisSession) {
+    override fun callables(nameFilter: KaScopeNameFilter): Sequence<KaCallableSymbol> = with(analysisSession) {
         addresses.asSequence()
             .filterIsInstance<KlibCallableAddress>()
             .filter { nameFilter(it.callableName) }
             .flatMap { it.getCallableSymbols() }
     }
 
-    override fun getCallableSymbols(names: Collection<Name>): Sequence<KaCallableSymbol> =
-        getCallableSymbols { it in names }
+    override fun callables(names: Collection<Name>): Sequence<KaCallableSymbol> =
+        callables { it in names }
 
-    override fun getClassifierSymbols(nameFilter: KaScopeNameFilter): Sequence<KaClassifierSymbol> = with(analysisSession) {
+    override fun classifiers(nameFilter: KaScopeNameFilter): Sequence<KaClassifierSymbol> = with(analysisSession) {
         addresses.asSequence()
             .filterIsInstance<KlibClassifierAddress>()
             .mapNotNull {
@@ -59,11 +59,11 @@ public class KlibScope(
             .filter { it is KaNamedSymbol && nameFilter(it.name) }
     }
 
-    override fun getClassifierSymbols(names: Collection<Name>): Sequence<KaClassifierSymbol> =
-        getClassifierSymbols { it in names }
+    override fun classifiers(names: Collection<Name>): Sequence<KaClassifierSymbol> =
+        classifiers { it in names }
 
     // There are no constructors at the top-level scope.
-    override fun getConstructors(): Sequence<KaConstructorSymbol> = emptySequence()
+    override val constructors: Sequence<KaConstructorSymbol> get() = emptySequence()
 
     override fun getPackageSymbols(nameFilter: KaScopeNameFilter): Sequence<KaPackageSymbol> =
         throw NotImplementedError("Reading package symbols from ${libraryModule.libraryName} is unsupported. Please report an issue: https://kotl.in/issue")

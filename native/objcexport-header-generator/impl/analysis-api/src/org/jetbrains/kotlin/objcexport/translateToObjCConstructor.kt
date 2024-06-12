@@ -18,7 +18,7 @@ fun KtClassOrObjectSymbol.translateToObjCConstructors(): List<ObjCMethod> {
 
     /* Translate declared constructors */
     val result = getDeclaredMemberScope()
-        .getConstructors()
+        .constructors
         .filter { !it.hasExportForCompilerAnnotation }
         .filter { it.isVisibleInObjC() }
         .sortedWith(StableCallableOrder)
@@ -58,7 +58,7 @@ fun KtClassOrObjectSymbol.translateToObjCConstructors(): List<ObjCMethod> {
     }
 
     // Hide "unimplemented" super constructors:
-    getSuperClassSymbolNotAny()?.getMemberScope()?.getConstructors().orEmpty()
+    getSuperClassSymbolNotAny()?.getMemberScope()?.constructors.orEmpty()
         .filter { it.isVisibleInObjC() }
         .forEach { superClassConstructor ->
             val translatedSuperClassConstructor = superClassConstructor.buildObjCMethod(unavailable = true)

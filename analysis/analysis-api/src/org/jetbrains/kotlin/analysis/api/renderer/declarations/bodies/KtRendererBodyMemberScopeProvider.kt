@@ -15,7 +15,7 @@ public interface KaRendererBodyMemberScopeProvider {
     public object ALL : KaRendererBodyMemberScopeProvider {
         override fun getMemberScope(analysisSession: KaSession, symbol: KaSymbolWithMembers): List<KaDeclarationSymbol> {
             with(analysisSession) {
-                return symbol.getCombinedDeclaredMemberScope().getAllSymbols().toList()
+                return symbol.getCombinedDeclaredMemberScope().declarations.toList()
             }
         }
     }
@@ -23,7 +23,7 @@ public interface KaRendererBodyMemberScopeProvider {
     public object ALL_DECLARED : KaRendererBodyMemberScopeProvider {
         override fun getMemberScope(analysisSession: KaSession, symbol: KaSymbolWithMembers): List<KaDeclarationSymbol> {
             with(analysisSession) {
-                return symbol.getCombinedDeclaredMemberScope().getAllSymbols()
+                return symbol.getCombinedDeclaredMemberScope().declarations
                     .filter { member ->
                         val origin = member.origin
                         origin != KaSymbolOrigin.DELEGATED &&
