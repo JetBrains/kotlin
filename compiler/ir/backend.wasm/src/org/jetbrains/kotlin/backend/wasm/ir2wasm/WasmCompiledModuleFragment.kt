@@ -54,6 +54,19 @@ class WasmCompiledModuleFragment(
     private val wasmCompiledFileFragments: List<WasmCompiledFileFragment>,
     private val generateTrapsInsteadOfExceptions: Boolean,
 ) {
+    // Used during linking
+    private val serviceCodeLocation = SourceLocation.NoLocation("Generated service code")
+    private val parameterlessNoReturnFunctionType = WasmFunctionType(emptyList(), emptyList())
+    private val canonicalFunctionTypes = LinkedHashMap<WasmFunctionType, WasmFunctionType>()
+    private val classIds = mutableMapOf<IdSignature, Int>()
+    private val data = mutableListOf<WasmData>()
+    private val exports = mutableListOf<WasmExport<*>>()
+    private val fieldInitializerFunction = WasmFunction.Defined("_fieldInitialize", WasmSymbol(parameterlessNoReturnFunctionType))
+    private val masterInitFunction = WasmFunction.Defined("_initialize", WasmSymbol(parameterlessNoReturnFunctionType))
+    private val startUnitTestsFunction = WasmFunction.Defined("kotlin.test.startUnitTests", WasmSymbol(parameterlessNoReturnFunctionType))
+    private var memory: WasmMemory = WasmMemory(WasmLimits(0U, 0U), null)
+    private var currentDataSectionAddress = 0
+
     class JsCodeSnippet(val importName: WasmSymbolReadOnly<String>, val jsCode: String)
 
     open class ReferencableElements<Ir, Wasm : Any>(
@@ -84,19 +97,6 @@ class WasmCompiledModuleFragment(
             elements += wasm
             defined[ir] = wasm
             wasmToIr[wasm] = ir
-        }
-    }
-
-    private fun <IrSymbolType, WasmDeclarationType : Any, WasmSymbolType : WasmSymbol<WasmDeclarationType>> bindFileFragments(
-        fragments: List<WasmCompiledFileFragment>,
-        unboundSelector: (WasmCompiledFileFragment) -> Map<IrSymbolType, WasmSymbolType>,
-        definedSelector: (WasmCompiledFileFragment) -> Map<IrSymbolType, WasmDeclarationType>,
-    ) {
-        val allDefined = mutableMapOf<IrSymbolType, WasmDeclarationType>()
-        fragments.forEach { allDefined.putAll(definedSelector(it)) }
-        for (fragment in fragments) {
-            val unbound = unboundSelector(fragment)
-            bind(unbound, allDefined)
         }
     }
 
@@ -170,6 +170,207 @@ class WasmCompiledModuleFragment(
     }
 
     fun linkWasmCompiledFragments(): WasmModule {
+        bindUnboundSymbols()
+        addCompileTimePerClassData()
+        handleExports()
+
+        val (recGroupTypes, nonRecursiveFunctionTypes, tags) = getTypes()
+        val importedFunctions = getImportedFunctions()
+
+        return WasmModule(
+            functionTypes = nonRecursiveFunctionTypes,
+            recGroupTypes = recGroupTypes,
+            importsInOrder = importedFunctions,
+            importedFunctions = importedFunctions,
+            definedFunctions = getDefinedFunctions(),
+            tables = emptyList(),
+            memories = listOf(memory),
+            globals = getGlobals(),
+            exports = exports,
+            startFunction = null,  // Module is initialized via export call
+            elements = emptyList(),
+            data = data,
+            dataCount = true,
+            tags = tags
+        ).apply { calculateIds() }
+    }
+
+    private fun getDefinedFunctions() = wasmCompiledFileFragments.flatMap {
+        it.functions.elements.filterIsInstance<WasmFunction.Defined>()
+    } + fieldInitializerFunction + masterInitFunction + startUnitTestsFunction
+
+    private fun getImportedFunctions() = wasmCompiledFileFragments.flatMap {
+        it.functions.elements.filterIsInstance<WasmFunction.Imported>()
+    }
+
+    private fun getTypes(): WasmTypes {
+        val recGroupTypes = getRecGroupTypesWithoutPotentiallyRecursiveFunctionTypes()
+
+        val tagFuncType = getTagFunctionType()
+        val tags = if (generateTrapsInsteadOfExceptions) emptyList() else listOf(WasmTag(tagFuncType))
+
+        val allFunctionTypes = canonicalFunctionTypes.values.toList() + tagFuncType + parameterlessNoReturnFunctionType
+
+        // Partition out function types that can't be recursive that don't need to be put into a
+        //  rec group so that they can be matched with function types from other Wasm modules.
+        val (potentiallyRecursiveFunctionTypes, nonRecursiveFunctionTypes) = allFunctionTypes.partition { it.referencesTypeDeclarations() }
+        recGroupTypes.addAll(potentiallyRecursiveFunctionTypes)
+
+        return WasmTypes(recGroupTypes, nonRecursiveFunctionTypes, tags)
+    }
+
+    private fun getTagFunctionType(): WasmFunctionType {
+        //OPT
+        //TODO(FIND THROWABLE)
+        val throwableDeclaration = wasmCompiledFileFragments.firstNotNullOfOrNull { fragment ->
+            fragment.gcTypes.defined.values.find { it.name == "kotlin.Throwable" }
+        }
+        check(throwableDeclaration != null)
+        return WasmFunctionType(
+            listOf(WasmRefNullType(WasmHeapType.Type(WasmSymbol(throwableDeclaration)))),
+            emptyList()
+        )
+    }
+
+    private fun getRecGroupTypesWithoutPotentiallyRecursiveFunctionTypes(): MutableList<WasmTypeDeclaration> {
+        fun wasmTypeDeclarationOrderKey(declaration: WasmTypeDeclaration): Int {
+            return when (declaration) {
+                is WasmArrayDeclaration -> 0
+                is WasmFunctionType -> 0
+                is WasmStructDeclaration ->
+                    // Subtype depth
+                    declaration.superType?.let { wasmTypeDeclarationOrderKey(it.owner) + 1 } ?: 0
+            }
+        }
+
+        val recGroupTypes = mutableSetOf<WasmTypeDeclaration>()
+        wasmCompiledFileFragments.forEach { fragment ->
+            recGroupTypes.addAll(fragment.vTableGcTypes.elements)
+            recGroupTypes.addAll(fragment.gcTypes.elements)
+            recGroupTypes.addAll(fragment.classITableGcType.unbound.values.mapNotNull { it.takeIf { it.isBound() }?.owner })
+        }
+
+        val recGroupTypesList = recGroupTypes.toMutableList()
+        recGroupTypesList.sortBy(::wasmTypeDeclarationOrderKey)
+        return recGroupTypesList
+    }
+
+    private fun getGlobals() = mutableListOf<WasmGlobal>().apply {
+        wasmCompiledFileFragments.forEach { fragment ->
+            addAll(fragment.globalFields.elements)
+            addAll(fragment.globalVTables.elements)
+            addAll(fragment.globalClassITables.elements.distinct())
+        }
+    }
+
+    private fun createAndExportMemory() {
+        val typeInfoSize = currentDataSectionAddress
+        val memorySizeInPages = (typeInfoSize / 65_536) + 1
+        memory = WasmMemory(WasmLimits(memorySizeInPages.toUInt(), null /* "unlimited" */))
+
+        // Need to export the memory in order to pass complex objects to the host language.
+        // Export name "memory" is a WASI ABI convention.
+        exports += WasmExport.Memory("memory", memory)
+    }
+
+    private fun resolveExportedFunctionsClashes() {
+        //TODO Better way to resolve clashed exports (especially for adapters)
+        val exportNames = mutableMapOf<String, Int>()
+        wasmCompiledFileFragments.forEach { fragment ->
+            fragment.exports.forEach { export ->
+                if (export is WasmExport.Function) {
+                    val exportNumber = exportNames[export.name]
+                    if (exportNumber == null) {
+                        exports.add(export)
+                        exportNames[export.name] = 1
+                    } else {
+                        val renamedExport = WasmExport.Function("${export.name}_$exportNumber", export.field)
+                        exports.add(renamedExport)
+                        exportNames[export.name] = exportNumber + 1
+                    }
+                } else {
+                    exports.add(export)
+                }
+            }
+        }
+    }
+
+    private fun handleExports() {
+        // The clashes are resolved first because clashes are currently resolved by renaming functions and
+        //  this will be problematic for the exported functions that are expected to be with an exact name
+        resolveExportedFunctionsClashes()
+        createMasterInitFunction()
+        createStartUnitTestsFunction()
+        exports += WasmExport.Function("_initialize", masterInitFunction)
+        exports += WasmExport.Function("startUnitTests", startUnitTestsFunction)
+        createAndExportMemory()
+    }
+
+    private fun createMasterInitFunction() {
+        createFieldInitializerFunction()
+
+        masterInitFunction.instructions.clear()
+        with(WasmIrExpressionBuilder(masterInitFunction.instructions)) {
+            buildCall(WasmSymbol(fieldInitializerFunction), serviceCodeLocation)
+            wasmCompiledFileFragments.forEach { fragment ->
+                fragment.mainFunctionWrappers.forEach { signature ->
+                    val wrapperFunction = fragment.functions.defined[signature] ?: error("Cannot find symbol for main wrapper")
+                    buildCall(WasmSymbol(wrapperFunction), serviceCodeLocation)
+                }
+            }
+            buildInstr(WasmOp.RETURN, serviceCodeLocation)
+        }
+    }
+
+    private fun createStartUnitTestsFunction() {
+        startUnitTestsFunction.instructions.clear()
+        with(WasmIrExpressionBuilder(startUnitTestsFunction.instructions)) {
+            wasmCompiledFileFragments.forEach { fragment ->
+                val signature = fragment.testFun
+                if (signature != null) {
+                    val testRunner = fragment.functions.defined[signature] ?: error("Cannot find symbol for test runner")
+                    buildCall(WasmSymbol(testRunner), serviceCodeLocation)
+                }
+            }
+        }
+    }
+
+    private fun createFieldInitializerFunction() {
+        fieldInitializerFunction.instructions.clear()
+        with(WasmIrExpressionBuilder(fieldInitializerFunction.instructions)) {
+            wasmCompiledFileFragments.forEach { fragment ->
+                fragment.fieldInitializers.forEach { (field, initializer) ->
+                    val fieldSymbol = WasmSymbol(fragment.globalFields.defined[field])
+                    if (fieldSymbol.owner.name == "kotlin.wasm.internal.stringPool") {
+                        expression.add(0, WasmInstrWithoutLocation(WasmOp.GLOBAL_SET, listOf(WasmImmediate.GlobalIdx(fieldSymbol))))
+                        expression.addAll(0, initializer)
+                    } else {
+                        expression.addAll(initializer)
+                        buildSetGlobal(fieldSymbol, serviceCodeLocation)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun addCompileTimePerClassData() {
+        wasmCompiledFileFragments.forEach { fragment ->
+            fragment.typeInfo.forEach { (referenceKey, typeInfo) ->
+                val instructions = mutableListOf<WasmInstr>()
+                WasmIrExpressionBuilder(instructions).buildConstI32(
+                    classIds.getValue(referenceKey),
+                    SourceLocation.NoLocation("Compile time data per class")
+                )
+                val typeData = WasmData(
+                    WasmDataMode.Active(0, instructions),
+                    typeInfo.toBytes()
+                )
+                data.add(typeData)
+            }
+        }
+    }
+
+    private fun bindUnboundSymbols() {
         bindFileFragments(wasmCompiledFileFragments, { it.functions.unbound }, { it.functions.defined })
         bindFileFragments(wasmCompiledFileFragments, { it.globalFields.unbound }, { it.globalFields.defined })
         bindFileFragments(wasmCompiledFileFragments, { it.globalVTables.unbound }, { it.globalVTables.defined })
@@ -177,9 +378,39 @@ class WasmCompiledModuleFragment(
         bindFileFragments(wasmCompiledFileFragments, { it.vTableGcTypes.unbound }, { it.vTableGcTypes.defined })
         bindFileFragments(wasmCompiledFileFragments, { it.globalClassITables.unbound }, { it.globalClassITables.defined })
         bindFileFragments(wasmCompiledFileFragments, { it.functionTypes.unbound }, { it.functionTypes.defined })
+        bindUnboundFunctionTypes()
+        bindInterfaceIds()
+        bindClassIds()
+        bindScratchMemAddr()
+        bindStringPoolSymbols()
+        bindConstantArrayDataSegmentIds()
+        bindUniqueJsFunNames()
+        bindClosureCallsToSingleAdapterAcrossFiles()
+    }
 
+    private fun <IrSymbolType, WasmDeclarationType : Any, WasmSymbolType : WasmSymbol<WasmDeclarationType>> bindFileFragments(
+        fragments: List<WasmCompiledFileFragment>,
+        unboundSelector: (WasmCompiledFileFragment) -> Map<IrSymbolType, WasmSymbolType>,
+        definedSelector: (WasmCompiledFileFragment) -> Map<IrSymbolType, WasmDeclarationType>,
+    ) {
+        val allDefined = mutableMapOf<IrSymbolType, WasmDeclarationType>()
+        fragments.forEach { fragment ->
+            definedSelector(fragment).forEach { defined ->
+                check(!allDefined.containsKey(defined.key)) {
+                    "Redeclaration of symbol ${defined.key}"
+                }
+                allDefined[defined.key] = defined.value
+            }
+        }
+        for (fragment in fragments) {
+            val unbound = unboundSelector(fragment)
+            bind(unbound, allDefined)
+        }
+    }
+
+    private fun bindUnboundFunctionTypes() {
         // Associate function types to a single canonical function type
-        val canonicalFunctionTypes = LinkedHashMap<WasmFunctionType, WasmFunctionType>()
+        canonicalFunctionTypes.clear()
         wasmCompiledFileFragments.forEach { fragment ->
             fragment.functionTypes.elements.associateWithTo(canonicalFunctionTypes) { it }
         }
@@ -189,16 +420,20 @@ class WasmCompiledModuleFragment(
                 wasmSymbol.bind(canonicalFunctionTypes.getValue(wasmSymbol.owner))
             }
         }
+    }
 
+    private fun bindInterfaceIds() {
         var interfaceId = 0
         wasmCompiledFileFragments.forEach { fragment ->
             fragment.interfaceIds.unbound.values.forEach { wasmSymbol ->
                 wasmSymbol.bind(interfaceId--)
             }
         }
+    }
 
-        var currentDataSectionAddress = 0
-        val classIds = mutableMapOf<IdSignature, Int>()
+    private fun bindClassIds() {
+        classIds.clear()
+        currentDataSectionAddress = 0
         wasmCompiledFileFragments.forEach { fragment ->
             fragment.typeInfo.forEach { (referenceKey, dataElement) ->
                 classIds[referenceKey] = currentDataSectionAddress
@@ -208,12 +443,17 @@ class WasmCompiledModuleFragment(
         wasmCompiledFileFragments.forEach { fragment ->
             bind(fragment.classIds.unbound, classIds)
         }
+    }
 
+    private fun bindScratchMemAddr() {
         currentDataSectionAddress = alignUp(currentDataSectionAddress, INT_SIZE_BYTES)
         wasmCompiledFileFragments.forEach { fragment ->
             fragment.scratchMemAddr.bind(currentDataSectionAddress)
         }
+    }
 
+    private fun bindStringPoolSymbols() {
+        data.clear()
         val stringDataSectionBytes = mutableListOf<Byte>()
         var stringDataSectionStart = 0
         val stringAddressAndId = mutableMapOf<String, Pair<Int, Int>>()
@@ -245,9 +485,10 @@ class WasmCompiledModuleFragment(
             fragment.stringPoolSize.bind(stringAddressAndId.size)
         }
 
-        val data = mutableListOf<WasmData>()
         data.add(WasmData(WasmDataMode.Passive, stringDataSectionBytes.toByteArray()))
+    }
 
+    private fun bindConstantArrayDataSegmentIds() {
         wasmCompiledFileFragments.forEach { fragment ->
             fragment.constantArrayDataSegmentId.unbound.forEach { (constantArraySegment, symbol) ->
                 symbol.bind(data.size)
@@ -262,22 +503,9 @@ class WasmCompiledModuleFragment(
                 data.add(WasmData(WasmDataMode.Passive, constData.toBytes()))
             }
         }
+    }
 
-        wasmCompiledFileFragments.forEach { fragment ->
-            fragment.typeInfo.forEach { (referenceKey, typeInfo) ->
-                val instructions = mutableListOf<WasmInstr>()
-                WasmIrExpressionBuilder(instructions).buildConstI32(
-                    classIds.getValue(referenceKey),
-                    SourceLocation.NoLocation("Compile time data per class")
-                )
-                val typeData = WasmData(
-                    WasmDataMode.Active(0, instructions),
-                    typeInfo.toBytes()
-                )
-                data.add(typeData)
-            }
-        }
-
+    private fun bindUniqueJsFunNames() {
         val jsCodeCounter = mutableMapOf<String, Int>()
         wasmCompiledFileFragments.forEach { fragment ->
             fragment.uniqueJsFunNames.unbound.forEach { (jsFunName, symbol) ->
@@ -287,168 +515,51 @@ class WasmCompiledModuleFragment(
                 symbol.bind("$jsFunName$counterSuffix")
             }
         }
-
-        val serviceCodeLocation = SourceLocation.NoLocation("Generated service code")
-
-        val parameterlessNoReturnFunctionType = WasmFunctionType(emptyList(), emptyList())
-
-        val fieldInitializerFunction = WasmFunction.Defined("_fieldInitialize", WasmSymbol(parameterlessNoReturnFunctionType))
-        with(WasmIrExpressionBuilder(fieldInitializerFunction.instructions)) {
-            wasmCompiledFileFragments.forEach { fragment ->
-                fragment.fieldInitializers.forEach { (field, initializer) ->
-                    val fieldSymbol = WasmSymbol(fragment.globalFields.defined[field])
-                    if (fieldSymbol.owner.name == "kotlin.wasm.internal.stringPool") {
-                        expression.add(0, WasmInstrWithoutLocation(WasmOp.GLOBAL_SET, listOf(WasmImmediate.GlobalIdx(fieldSymbol))))
-                        expression.addAll(0, initializer)
-                    } else {
-                        expression.addAll(initializer)
-                        buildSetGlobal(fieldSymbol, serviceCodeLocation)
-                    }
-                }
-            }
-        }
-
-        val masterInitFunction = WasmFunction.Defined("_initialize", WasmSymbol(parameterlessNoReturnFunctionType))
-        with(WasmIrExpressionBuilder(masterInitFunction.instructions)) {
-            buildCall(WasmSymbol(fieldInitializerFunction), serviceCodeLocation)
-            wasmCompiledFileFragments.forEach { fragment ->
-                fragment.mainFunctionWrappers.forEach { signature ->
-                    val wrapperFunction = fragment.functions.defined[signature] ?: error("Cannot find symbol for main wrapper")
-                    buildCall(WasmSymbol(wrapperFunction), serviceCodeLocation)
-                }
-            }
-            buildInstr(WasmOp.RETURN, serviceCodeLocation)
-        }
-
-        //closureCallExports
-//        val visitedClosureCallExports = mutableMapOf<String, WasmSymbol<WasmFunction>>()
-//        wasmCompiledFileFragments.forEach { fragment ->
-//            fragment.closureCallExports.forEach { (exportSignature, exportFunction) ->
-//                val symbol = visitedClosureCallExports.getOrPut(exportSignature) {
-//                    val wasmExportFunction = fragment.functions.defined[exportFunction] ?: error("Cannot find export function")
-//                    WasmSymbol(wasmExportFunction)
-//                }
-//                //Rebind export function
-//                fragment.functions.unbound[exportFunction]!!.bind(symbol)
-//            }
-//        }
-
-        //OPT
-        //TODO(CREATE NEW STARTUNITTEST?)
-        val startUnitTests = wasmCompiledFileFragments.firstNotNullOfOrNull { fragment ->
-            fragment.functions.defined.values.find { it.name == "kotlin.test.startUnitTests" }
-        }
-        check(startUnitTests is WasmFunction.Defined)
-        with(WasmIrExpressionBuilder(startUnitTests.instructions)) {
-            wasmCompiledFileFragments.forEach { fragment ->
-                val signature = fragment.testFun
-                if (signature != null) {
-                    val testRunner = fragment.functions.defined[signature] ?: error("Cannot find symbol for test runner")
-                    buildCall(WasmSymbol(testRunner), serviceCodeLocation)
-                }
-            }
-        }
-
-        val exports = mutableListOf<WasmExport<*>>()
-
-        //TODO Better way to resolve clashed exports (especially for adapters)
-        val exportNames = mutableMapOf<String, Int>()
-        wasmCompiledFileFragments.forEach { fragment ->
-            fragment.exports.forEach { export ->
-                if (export is WasmExport.Function) {
-                    val exportNumber = exportNames[export.name]
-                    if (exportNumber == null) {
-                        exports.add(export)
-                        exportNames[export.name] = 1
-                    } else {
-                        val renamedExport = WasmExport.Function("${export.name}_$exportNumber", export.field)
-                        exports.add(renamedExport)
-                        exportNames[export.name] = exportNumber + 1
-                    }
-                } else {
-                    exports.add(export)
-                }
-            }
-        }
-
-        exports += WasmExport.Function("_initialize", masterInitFunction)
-
-        val typeInfoSize = currentDataSectionAddress
-        val memorySizeInPages = (typeInfoSize / 65_536) + 1
-        val memory = WasmMemory(WasmLimits(memorySizeInPages.toUInt(), null /* "unlimited" */))
-
-        // Need to export the memory in order to pass complex objects to the host language.
-        // Export name "memory" is a WASI ABI convention.
-        exports += WasmExport.Memory("memory", memory)
-
-        val importedFunctions = wasmCompiledFileFragments.flatMap {
-            it.functions.elements.filterIsInstance<WasmFunction.Imported>()
-        }
-
-        fun wasmTypeDeclarationOrderKey(declaration: WasmTypeDeclaration): Int {
-            return when (declaration) {
-                is WasmArrayDeclaration -> 0
-                is WasmFunctionType -> 0
-                is WasmStructDeclaration ->
-                    // Subtype depth
-                    declaration.superType?.let { wasmTypeDeclarationOrderKey(it.owner) + 1 } ?: 0
-            }
-        }
-
-        val recGroupTypes = mutableListOf<WasmTypeDeclaration>()
-        val globals = mutableListOf<WasmGlobal>()
-        wasmCompiledFileFragments.forEach { fragment ->
-            recGroupTypes.addAll(fragment.vTableGcTypes.elements)
-            recGroupTypes.addAll(fragment.gcTypes.elements)
-            recGroupTypes.addAll(fragment.classITableGcType.unbound.values.mapNotNull { it.takeIf { it.isBound() }?.owner })
-            globals.addAll(fragment.globalFields.elements)
-            globals.addAll(fragment.globalVTables.elements)
-            globals.addAll(fragment.globalClassITables.elements.distinct())
-        }
-        recGroupTypes.sortBy(::wasmTypeDeclarationOrderKey)
-
-        //OPT
-        //TODO(FIND THROWABLE)
-        val throwableDeclaration = wasmCompiledFileFragments.firstNotNullOfOrNull { fragment ->
-            fragment.gcTypes.defined.values.find { it.name == "kotlin.Throwable" }
-        }
-        check(throwableDeclaration != null)
-        val tagFuncType = WasmFunctionType(
-            listOf(WasmRefNullType(WasmHeapType.Type(WasmSymbol(throwableDeclaration)))),
-            emptyList()
-        )
-        val tags = if (generateTrapsInsteadOfExceptions) emptyList() else listOf(WasmTag(tagFuncType))
-
-        val allFunctionTypes = canonicalFunctionTypes.values.toList() + tagFuncType + parameterlessNoReturnFunctionType
-
-        // Partition out function types that can't be recursive,
-        // we don't need to put them into a rec group
-        // so that they can be matched with function types from other Wasm modules.
-        val (potentiallyRecursiveFunctionTypes, nonRecursiveFunctionTypes) =
-            allFunctionTypes.partition { it.referencesTypeDeclarations() }
-        recGroupTypes.addAll(potentiallyRecursiveFunctionTypes)
-
-        val definedFunctions = wasmCompiledFileFragments.flatMap { it.functions.elements.filterIsInstance<WasmFunction.Defined>() }
-
-        val module = WasmModule(
-            functionTypes = nonRecursiveFunctionTypes,
-            recGroupTypes = recGroupTypes,
-            importsInOrder = importedFunctions,
-            importedFunctions = importedFunctions,
-            definedFunctions = definedFunctions + fieldInitializerFunction + masterInitFunction,
-            tables = emptyList(),
-            memories = listOf(memory),
-            globals = globals,
-            exports = exports,
-            startFunction = null,  // Module is initialized via export call
-            elements = emptyList(),
-            data = data,
-            dataCount = true,
-            tags = tags
-        )
-        module.calculateIds()
-        return module
     }
+
+    /**
+     * private fun foo(f: (String) -> String): String = js("f() + 1")
+     * private fun bar(h: (String) -> String): String = js("h() + 2")
+     * For the two functions above, an adapter for the closures f and h will be
+     *  created for them to be callable from JS code. Since the signature of both
+     *  f and h are the same, the same adapter will be used for both of them. This
+     *  is fine within a single file, but when dealing with multiple files, it's a
+     *  problem if the same adapter is defined more than once.
+     * Given that adapters with same signature are similar across files, this function
+     *  binds all calls to a closure adapter in all file fragments to a single adapter.
+     * For more details about the per-file adapter generation, take a look at
+     *  [org.jetbrains.kotlin.backend.wasm.lower.JsInteropFunctionsLowering]
+     */
+    private fun bindClosureCallsToSingleAdapterAcrossFiles() {
+        val existingClosureCallAdapters = mutableMapOf<String, WasmSymbol<WasmFunction>>()
+        wasmCompiledFileFragments.forEach { fragment ->
+            for ((signatureString, idSignature) in fragment.closureCallExports) {
+                var symbol = existingClosureCallAdapters[signatureString]
+                if (symbol == null) {
+                    // First occurrence of the adapter, register it (if not removed by DCE).
+                    val func = fragment.functions.defined[idSignature] ?: continue
+                    symbol = WasmSymbol(func)
+                    existingClosureCallAdapters[signatureString] = symbol
+                } else {
+                    // Adapter already exists, remove this one and use the existing adapter.
+                    fragment.functions.defined.remove(idSignature)?.let { duplicate ->
+                        fragment.functions.elements.remove(duplicate)
+                        fragment.functions.wasmToIr.remove(duplicate)
+                        fragment.exports.removeAll { it.field == duplicate }
+                    }
+                }
+                // Rebind adapter function to the single instance
+                // There might not be any unbound references in case it's called only from JS side
+                fragment.functions.unbound[idSignature]?.bind(symbol)
+            }
+        }
+    }
+
+    private data class WasmTypes(
+        val recGroupTypes: List<WasmTypeDeclaration>,
+        val nonRecursiveFunctionTypes: List<WasmFunctionType>,
+        val tags: List<WasmTag>
+    )
 }
 
 fun <IrSymbolType, WasmDeclarationType : Any, WasmSymbolType : WasmSymbol<WasmDeclarationType>> bind(
@@ -458,7 +569,9 @@ fun <IrSymbolType, WasmDeclarationType : Any, WasmSymbolType : WasmSymbol<WasmDe
     unbound.forEach { (irSymbol, wasmSymbol) ->
         if (irSymbol !in defined)
             error("Can't link symbol ${irSymbolDebugDump(irSymbol)}")
-        wasmSymbol.bind(defined.getValue(irSymbol))
+        if (!wasmSymbol.isBound()) {
+            wasmSymbol.bind(defined.getValue(irSymbol))
+        }
     }
 }
 

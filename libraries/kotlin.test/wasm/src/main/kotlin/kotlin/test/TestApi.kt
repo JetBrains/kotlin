@@ -5,9 +5,6 @@
 
 package kotlin.test
 
-import kotlin.wasm.WasmExport
-
-
 internal expect fun adapter(): FrameworkAdapter
 
 /**
@@ -28,10 +25,4 @@ internal fun suite(name: String, ignored: Boolean, suiteFn: () -> Unit) {
 
 internal fun test(name: String, ignored: Boolean, testFn: () -> Any?) {
     adapter().test(name, ignored, testFn)
-}
-
-// This is called from the js-launcher alongside wasm start function
-@WasmExport
-internal fun startUnitTests() {
-    // This will be filled with the corresponding code during lowering
 }
