@@ -47,7 +47,7 @@ import org.jetbrains.kotlin.name.Name
 //         isNotFirstWasmExportCall = currentIsNotFirstWasmExportCall
 //     }
 // }
-// TODO Wrap fieldInitializer function (now it building by later FieldInitializersLowering)
+// TODO Wrap fieldInitializer function (now it building by later linkWasmCompiledFragments)
 
 internal class UnhandledExceptionLowering(val context: WasmBackendContext) : FileLoweringPass {
     private val throwableType = context.irBuiltIns.throwableType
