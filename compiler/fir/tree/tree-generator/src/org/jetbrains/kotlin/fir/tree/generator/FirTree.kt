@@ -23,6 +23,10 @@ import org.jetbrains.kotlin.fir.tree.generator.util.type
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
+// Note the style of the DSL to describe FIR elements, which is these things in the following order:
+// 1) config (see properties of Element)
+// 2) parents
+// 3) fields
 object FirTree : AbstractFirTreeBuilder() {
     override val rootElement: Element by element(Other, name = "Element") {
         +field("source", sourceElementType, nullable = true)
@@ -67,6 +71,8 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val elementWithResolveState: Element by element(Other) {
+        kind = ImplementationKind.AbstractClass
+
         +field("resolvePhase", resolvePhaseType) { isParameter = true; }
         +field("resolveState", resolveStateType) {
             isMutable = true; isVolatile = true; isFinal = true;
@@ -76,10 +82,11 @@ object FirTree : AbstractFirTreeBuilder() {
             optInAnnotation = resolveStateAccessAnnotation
         }
         +field("moduleData", firModuleDataType)
-        kind = ImplementationKind.AbstractClass
     }
 
     val declaration: Element by sealedElement(Declaration) {
+        kind = ImplementationKind.AbstractClass
+
         parent(elementWithResolveState)
         parent(annotationContainer)
 
@@ -87,7 +94,6 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("moduleData", firModuleDataType)
         +field("origin", declarationOriginType)
         +field("attributes", declarationAttributesType)
-        kind = ImplementationKind.AbstractClass
     }
 
     val callableDeclaration: Element by sealedElement(Declaration) {
@@ -99,10 +105,8 @@ object FirTree : AbstractFirTreeBuilder() {
             isMutable = true
         }
         +referencedSymbol(callableSymbolType.withArgs(callableDeclaration))
-
         +field("containerSource", type<DeserializedContainerSource>(), nullable = true)
         +field("dispatchReceiverType", coneSimpleKotlinTypeType, nullable = true)
-
         +listField(contextReceiver, useMutableOrEmpty = true, withReplace = true)
     }
 
@@ -168,10 +172,11 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val block: Element by element(Expression) {
+        needTransformOtherChildren()
+
         parent(expression)
 
         +listField(statement, withTransform = true)
-        needTransformOtherChildren()
     }
 
     val lazyBlock: Element by element(Expression) {
@@ -179,20 +184,22 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val binaryLogicExpression: Element by element(Expression) {
+        needTransformOtherChildren()
+
         parent(expression)
 
         +field("leftOperand", expression, withTransform = true)
         +field("rightOperand", expression, withTransform = true)
         +field("kind", operationKindType)
-        needTransformOtherChildren()
     }
 
     val targetElement: Element by element(Other)
 
     val jump: Element by sealedElement(Expression) {
+        val e = +param("E", targetElement)
+
         parent(expression)
 
-        val e = +param("E", targetElement)
         +field("target", jumpTargetType.withArgs(e))
     }
 
@@ -209,10 +216,11 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val returnExpression: Element by element(Expression) {
+        needTransformOtherChildren()
+
         parent(jump.withArgs("E" to function))
 
         +field("result", expression, withTransform = true)
-        needTransformOtherChildren()
     }
 
     val label: Element by element(Other) {
@@ -220,13 +228,14 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val loop: Element by sealedElement(Expression) {
+        needTransformOtherChildren()
+
         parent(statement)
         parent(targetElement)
 
         +field(block, withTransform = true)
         +field("condition", expression, withTransform = true)
         +field(label, nullable = true)
-        needTransformOtherChildren()
     }
 
     val whileLoop: Element by element(Expression) {
@@ -246,19 +255,21 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val catchClause: Element by element(Expression, name = "Catch") {
+        needTransformOtherChildren()
+
         +field("parameter", property, withTransform = true)
         +field(block, withTransform = true)
-        needTransformOtherChildren()
     }
 
     val tryExpression: Element by element(Expression) {
+        needTransformOtherChildren()
+
         parent(expression)
         parent(resolvable)
 
         +field("tryBlock", block, withTransform = true)
         +listField("catches", catchClause, withTransform = true)
         +field("finallyBlock", block, nullable = true, withTransform = true)
-        needTransformOtherChildren()
     }
 
     val elvisExpression: Element by element(Expression) {
@@ -339,28 +350,29 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val typeOperatorCall: Element by element(Expression) {
+        needTransformOtherChildren()
+
         parent(expression)
         parent(call)
 
         +field("operation", operationType)
         +field("conversionTypeRef", typeRef, withTransform = true)
         +field("argFromStubType", boolean, withReplace = true)
-        needTransformOtherChildren()
     }
 
     val augmentedAssignment: Element by element(Expression) {
-        parent(statement)
-
-        +field("operation", operationType)
-        +field("leftArgument", expression, withTransform = true)
-        +field("rightArgument", expression, withTransform = true)
-
         kDoc = """
                 Represents an augmented assignment statement (e.g. `x += y`) **before** it gets resolved.
                 After resolution, it will be either represented as an assignment (`x = x.plus(y)`) or a call (`x.plusAssign(y)`). 
                 
                 Augmented assignments with an indexed access as receiver are represented as [${indexedAccessAugmentedAssignment.render()}]. 
             """.trimIndent()
+
+        parent(statement)
+
+        +field("operation", operationType)
+        +field("leftArgument", expression, withTransform = true)
+        +field("rightArgument", expression, withTransform = true)
     }
 
     val incrementDecrementExpression: Element by element(Expression) {
@@ -380,10 +392,11 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val whenBranch: Element by element(Expression) {
+        needTransformOtherChildren()
+
         +field("condition", expression, withTransform = true)
         +field("result", block, withTransform = true)
         +field("hasGuard", boolean)
-        needTransformOtherChildren()
     }
 
     val classLikeDeclaration: Element by sealedElement(Declaration) {
@@ -569,11 +582,12 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val resolvedDeclarationStatus: Element by element(Declaration) {
+        kind = ImplementationKind.Interface
+
         parent(declarationStatus)
 
         +field(modalityType, nullable = false)
         +field("effectiveVisibility", effectiveVisibilityType)
-        kind = ImplementationKind.Interface
     }
 
     val implicitInvokeCall: Element by element(Expression) {
@@ -645,6 +659,8 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val variable: Element by sealedElement(Declaration) {
+        needTransformOtherChildren()
+
         parent(callableDeclaration)
         parent(statement)
 
@@ -657,7 +673,6 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("setter", propertyAccessor, nullable = true, withReplace = true, withTransform = true)
         +field("backingField", backingField, nullable = true, withTransform = true)
         +annotations
-        needTransformOtherChildren()
     }
 
     val functionTypeParameter: Element by element(Other) {
@@ -750,11 +765,12 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val import: Element by element(Declaration) {
+        kind = ImplementationKind.AbstractClass
+
         +field("importedFqName", fqNameType, nullable = true)
         +field("isAllUnder", boolean)
         +field("aliasName", nameType, nullable = true)
         +field("aliasSource", sourceElementType, nullable = true)
-        kind = ImplementationKind.AbstractClass
     }
 
     val resolvedImport: Element by element(Declaration) {
@@ -802,6 +818,14 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val indexedAccessAugmentedAssignment: Element by element(Expression) {
+        kDoc = """
+                    Represents an augmented assignment with an indexed access as the receiver (e.g., `arr[i] += 1`)
+                    **before** it gets resolved.
+                    
+                    After resolution, the call will be desugared into regular function calls,
+                    either of the form `arr.set(i, arr.get(i).plus(1))` or `arr.get(i).plusAssign(1)`.
+                """.trimIndent()
+
         parent(statement)
 
         +field("lhsGetCall", functionCall)
@@ -810,14 +834,6 @@ object FirTree : AbstractFirTreeBuilder() {
         // Used for resolution errors reporting in case
         +field("calleeReference", reference, withReplace = true)
         +field("arrayAccessSource", sourceElementType, nullable = true)
-
-        kDoc = """
-                    Represents an augmented assignment with an indexed access as the receiver (e.g., `arr[i] += 1`)
-                    **before** it gets resolved.
-                    
-                    After resolution, the call will be desugared into regular function calls,
-                    either of the form `arr.set(i, arr.get(i).plus(1))` or `arr.get(i).plusAssign(1)`.
-                """.trimIndent()
     }
 
     val classReferenceExpression: Element by element(Expression) {
@@ -885,11 +901,6 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val spreadArgumentExpression: Element by element(Expression) {
-        parent(wrappedArgumentExpression)
-
-        +field("isNamed", boolean)
-        +field("isFakeSpread", boolean)
-
         kDoc = """
                 |### Up to and including body resolution phase
                 |
@@ -910,13 +921,14 @@ object FirTree : AbstractFirTreeBuilder() {
                 |[FirSpreadArgumentExpression]s should be treated uniformly since they always represent an array that was passed to a
                 |`vararg` parameter and don't influence the resulting platform code.
             """.trimMargin()
+
+        parent(wrappedArgumentExpression)
+
+        +field("isNamed", boolean)
+        +field("isFakeSpread", boolean)
     }
 
     val namedArgumentExpression: Element by element(Expression) {
-        parent(wrappedArgumentExpression)
-
-        +FieldSets.name
-
         kDoc = """
                 |Represents a named argument `foo = bar` before and during body resolution phase.
                 |
@@ -931,6 +943,10 @@ object FirTree : AbstractFirTreeBuilder() {
                 |
                 |See [${varargArgumentsExpression.render()}] for the general structure of arguments of `vararg` parameters after resolution.
             """.trimMargin()
+
+        parent(wrappedArgumentExpression)
+
+        +FieldSets.name
     }
 
     val varargArgumentsExpression: Element by element(Expression) {
@@ -1110,10 +1126,10 @@ object FirTree : AbstractFirTreeBuilder() {
 
     val resolvedTypeRef: Element by element(TypeRefElement) {
         parent(typeRef)
+        parent(typeRefMarkerType)
 
         +field("type", coneKotlinTypeType)
         +field("delegatedTypeRef", typeRef, nullable = true, isChild = false)
-        otherParents.add(typeRefMarkerType)
     }
 
     val typeRefWithNullability: Element by element(TypeRefElement) {
@@ -1136,7 +1152,6 @@ object FirTree : AbstractFirTreeBuilder() {
         +listField("parameters", functionTypeParameter)
         +field("returnTypeRef", typeRef)
         +field("isSuspend", boolean)
-
         +listField("contextReceiverTypeRefs", typeRef)
     }
 
@@ -1156,10 +1171,10 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val resolvedErrorReference: Element by element(Reference) {
+        customParentInVisitor = resolvedNamedReference
+
         parent(resolvedNamedReference)
         parent(diagnosticHolder)
-
-        customParentInVisitor = resolvedNamedReference
     }
 
     val errorNamedReference: Element by element(Reference) {
@@ -1189,6 +1204,8 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val whenExpression: Element by element(Expression) {
+        needTransformOtherChildren()
+
         parent(expression)
         parent(resolvable)
 
@@ -1197,7 +1214,6 @@ object FirTree : AbstractFirTreeBuilder() {
         +listField("branches", whenBranch, withTransform = true)
         +field("exhaustivenessStatus", exhaustivenessStatusType, nullable = true, withReplace = true)
         +field("usedAsExpression", boolean)
-        needTransformOtherChildren()
     }
 
     val typeProjection: Element by element(TypeRefElement)
@@ -1253,7 +1269,11 @@ object FirTree : AbstractFirTreeBuilder() {
     private object FieldSets {
         val typeArguments = fieldSet(listField("typeArguments", typeProjection, useMutableOrEmpty = true, withReplace = true))
 
-        val declarations = fieldSet(listField(declaration).apply { useInBaseTransformerDetection = false })
+        val declarations = fieldSet(
+            listField(declaration) {
+                useInBaseTransformerDetection = false
+            }
+        )
 
         val annotations = fieldSet(
             listField("annotations", annotation, withReplace = true, useMutableOrEmpty = true, withTransform = true) {
