@@ -33,19 +33,26 @@ FixedBlockPage::FixedBlockPage(uint32_t blockSize) noexcept : blockSize_(blockSi
     end_ = FIXED_BLOCK_PAGE_CELL_COUNT / blockSize * blockSize;
 }
 
-ALWAYS_INLINE uint8_t* FixedBlockPage::TryAllocate() noexcept {
+ALWAYS_INLINE uint8_t* FixedBlockPage::TryAllocate(uint32_t blockSize) noexcept {
+    RuntimeAssert(blockSize == blockSize_, "Trying to allocate block of size %d in the FixedBlockPage with block size %d", blockSize, blockSize_);
     uint32_t next = nextFree_.first;
     if (next < nextFree_.last) {
-        nextFree_.first += blockSize_;
+        nextFree_.first += blockSize;
         return cells_[next].data;
     }
-    if (next >= end_) {
-        allocatedSizeTracker_.onPageOverflow(end_ * sizeof(FixedBlockCell));
+    // FIXME generalize
+    auto end = FIXED_BLOCK_PAGE_CELL_COUNT / blockSize * blockSize;
+    if (next >= end) {
         return nullptr;
     }
     nextFree_ = cells_[next].nextFree;
     memset(&cells_[next], 0, sizeof(cells_[next]));
     return cells_[next].data;
+}
+
+void FixedBlockPage::OnPageOverflow() noexcept {
+    RuntimeAssert(nextFree_.first >= end_, "Page must overflow"); // FIXME only == ?
+    allocatedSizeTracker_.onPageOverflow(end_ * sizeof(FixedBlockCell));
 }
 
 bool FixedBlockPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept {

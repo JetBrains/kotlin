@@ -128,7 +128,7 @@ ALWAYS_INLINE uint8_t* CustomAllocator::Allocate(uint64_t size) noexcept {
     }
 }
 
-ALWAYS_INLINE uint8_t* CustomAllocator::AllocateInSingleObjectPage(uint64_t cellCount) noexcept {
+uint8_t* CustomAllocator::AllocateInSingleObjectPage(uint64_t cellCount) noexcept {
     // TODO no slow path here?
     CustomAllocDebug("CustomAllocator::AllocateInSingleObjectPage(%" PRIu64 ")", cellCount);
     // FIXME WTF is TryAllocate?
@@ -159,16 +159,19 @@ ALWAYS_INLINE uint8_t* CustomAllocator::AllocateInFixedBlockPage(uint32_t cellCo
     CustomAllocDebug("CustomAllocator::AllocateInFixedBlockPage(%u)", cellCount);
     FixedBlockPage* page = fixedBlockPages_[cellCount];
     if (page) {
-        uint8_t* block = page->TryAllocate();
+        uint8_t* block = page->TryAllocate(cellCount);
         if (block) return block;
     }
-    return AllocateInFixedBlockPageSlowPath(cellCount);
+    return AllocateInFixedBlockPageSlowPath(page, cellCount);
 }
 
-NO_INLINE uint8_t* CustomAllocator::AllocateInFixedBlockPageSlowPath(uint32_t cellCount) noexcept {
-    CustomAllocDebug("Failed to allocate in current FixedBlockPage");
+NO_INLINE uint8_t* CustomAllocator::AllocateInFixedBlockPageSlowPath(FixedBlockPage* overflownPage, uint32_t cellCount) noexcept {
+    CustomAllocDebug("Failed to allocate in current FixedBlockPage(%p)", overflownPage);
+    if (overflownPage != nullptr) {
+        overflownPage->OnPageOverflow();
+    }
     while (auto* page = heap_.GetFixedBlockPage(cellCount, finalizerQueue_)) {
-        uint8_t* block = page->TryAllocate();
+        uint8_t* block = page->TryAllocate(cellCount);
         if (block) {
             fixedBlockPages_[cellCount] = page;
             return block;

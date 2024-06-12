@@ -52,7 +52,7 @@ private:
     uint8_t* AllocateInNextFitPageSlowPath(uint32_t cellCount) noexcept;
 
     uint8_t* AllocateInFixedBlockPage(uint32_t cellCount) noexcept;
-    uint8_t* AllocateInFixedBlockPageSlowPath(uint32_t cellCount) noexcept;
+    uint8_t* AllocateInFixedBlockPageSlowPath(FixedBlockPage* overflownPage, uint32_t cellCount) noexcept;
 
 
     Heap& heap_;
