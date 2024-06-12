@@ -93,10 +93,7 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
     @Test
     @TestMetadata("smoke.kt")
     fun testInteropObjCSmokeGC() {
-        Assumptions.assumeTrue(
-            testRunSettings.get<GCType>() != GCType.NOOP
-                    || testRunSettings.get<CacheMode>() != CacheMode.WithoutCache // TODO: Remove line after fix of KT-63944
-        )
+        Assumptions.assumeTrue(testRunSettings.get<GCType>() != GCType.NOOP)
         testInteropObjCSmoke("smoke")
     }
 
@@ -104,7 +101,6 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
     @TestMetadata("smoke_noopgc.kt")
     fun testInteropObjCSmokeNoopGC() {
         Assumptions.assumeTrue(testRunSettings.get<GCType>() == GCType.NOOP)
-        Assumptions.assumeTrue(testRunSettings.get<CacheMode>() == CacheMode.WithoutCache) // TODO: Remove line after fix of KT-63944
         testInteropObjCSmoke("smoke_noopgc")
     }
 

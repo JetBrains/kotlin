@@ -94,9 +94,12 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
             // For LibraryCompilation any backend-related options are useless.
             // All this would "soon" change, when 1-stage testing would be stopped, and SourceBasedCompilation would have only one subclass:
             // LibraryCompilation. Three others (Executable, ObjCFramework, BinaryLibrary) would go to separate hierarchy: KLibBasedCompilation.
-            cacheMode.staticCacheForDistributionLibrariesRootDir
-                ?.takeIf { tryPassSystemCacheDirectory}
-                ?.let { cacheRootDir -> add("-Xcache-directory=$cacheRootDir") }
+            if (cacheMode.useStaticCacheForDistributionLibraries && tryPassSystemCacheDirectory) {
+                // Instead of directly passing system cache directory (which depends on a lot of different compiler options),
+                // just pass auto cacheable directory which will force the compiler to select and use proper system cache directory.
+                add("-Xauto-cache-from=${this@BasicCompilation.home.librariesDir}")
+                add("-Xbackend-threads=1") // The tests are run in parallel already, don't add more here.
+            }
             add(dependencies.uniqueCacheDirs) { libraryCacheDir -> "-Xcache-directory=${libraryCacheDir.path}" }
         }
     }

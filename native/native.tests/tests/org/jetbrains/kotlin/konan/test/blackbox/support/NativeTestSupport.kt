@@ -359,8 +359,6 @@ object NativeTestSupport {
         return if (defaultCache == CacheMode.Alias.NO)
             CacheMode.WithoutCache
         else CacheMode.WithStaticCache(
-            distribution,
-            kotlinNativeTargets,
             optimizationMode,
             useStaticCacheForUserLibraries,
             makePerFileCaches,
