@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.BuildSPMSwiftExportPackage
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.MergeStaticLibrariesTask
-import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SwiftExportTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.unitTests.utils.applyEmbedAndSignEnvironment
 import org.jetbrains.kotlin.gradle.util.*
