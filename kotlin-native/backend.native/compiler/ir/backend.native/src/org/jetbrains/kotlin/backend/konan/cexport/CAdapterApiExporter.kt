@@ -263,7 +263,13 @@ internal class CAdapterApiExporter(
     |typedef struct FrameOverlay FrameOverlay;
     |
     |#define RUNTIME_NOTHROW __attribute__((nothrow))
+    |
+    |#if __has_attribute(retain)
+    |#define RUNTIME_EXPORT __attribute__((used,retain))
+    |#else
     |#define RUNTIME_EXPORT __attribute__((used))
+    |#endif
+    |
     |#define RUNTIME_NORETURN __attribute__((noreturn))
     |
     |extern "C" {
