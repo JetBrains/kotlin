@@ -920,6 +920,10 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override val isK2: Boolean
         get() = false
+
+    override fun supportsImprovedVarianceInCst(): Boolean {
+        return false
+    }
 }
 
 fun TypeVariance.convertVariance(): Variance {

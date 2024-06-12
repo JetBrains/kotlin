@@ -494,7 +494,10 @@ object NewCommonSuperTypeCalculator {
 
         // CS(Out<X>, Out<Y>) = Out<CS(X, Y)>
         // CS(In<X>, In<Y>) = In<X & Y>
-        // CS(Inv<X>, Inv<Y>) = Inv<out CS(X, Y)>)
+        // CS(Inv<X>, Inv<Y>) =
+        //                     Inv<X>            if X == Y with `stubTypesEqualToAnything = false`
+        //                     Inv<CS(X, Y)>     if CS(X, Y) == X == Y with stubTypesEqualToAnything = true and ImprovedVarianceInCst is enabled
+        //                     Inv<out CS(X, Y)> otherwise
         if (asOut) {
             val argumentTypes = arguments.map { it.getType() }
             val parameterIsNotInv = parameter.getVariance() != TypeVariance.INV
@@ -510,7 +513,21 @@ object NewCommonSuperTypeCalculator {
             }
 
             return if (equalToEachOtherType == null) {
-                createTypeArgument(commonSuperType(argumentTypes, depth + 1), TypeVariance.OUT)
+                val cst = commonSuperType(argumentTypes, depth + 1)
+
+                // If the CST is equal to all arguments with stubTypesEqualToAnything = true, we use it with INV variance.
+                // This is only supported in K2,
+                // where the only stub types we can encounter here are 'stub types for type variables in subtyping'
+                // from ResultTypeResolver.
+                val variance = if (
+                    supportsImprovedVarianceInCst() &&
+                    argumentTypes.all { AbstractTypeChecker.equalTypes(this, it, cst, stubTypesEqualToAnything = true) }
+                ) {
+                    TypeVariance.INV
+                } else {
+                    TypeVariance.OUT
+                }
+                createTypeArgument(cst, variance)
             } else {
                 val thereIsNotInv = arguments.any { it.getVariance() != TypeVariance.INV }
                 createTypeArgument(equalToEachOtherType.getType(), if (thereIsNotInv) TypeVariance.OUT else TypeVariance.INV)

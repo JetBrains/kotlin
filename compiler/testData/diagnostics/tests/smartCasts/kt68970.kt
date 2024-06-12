@@ -1,3 +1,4 @@
+// LANGUAGE: +ImprovedVarianceInCst
 class A<V>
 
 class B<K, V>
