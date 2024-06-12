@@ -36,6 +36,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.DECLARATION_RETURN_TYPE
     )
 
+    val CONTEXT_KEYWORD = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.CONTEXT_KEYWORD,
+        PositioningStrategies.CONTEXT_KEYWORD
+    )
+
     val DECLARATION_NAME = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.DECLARATION_NAME,
         PositioningStrategies.DECLARATION_NAME
