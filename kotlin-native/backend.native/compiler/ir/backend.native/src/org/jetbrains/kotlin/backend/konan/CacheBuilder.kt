@@ -46,7 +46,9 @@ class CacheBuilder(
     private val includedLibraries = configuration.get(KonanConfigKeys.INCLUDED_LIBRARIES).orEmpty().toSet()
     private val generateTestRunner = configuration.getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER)
 
-    fun needToBuild() = konanConfig.isFinalBinary && konanConfig.ignoreCacheReason == null && (autoCacheableFrom.isNotEmpty() || icEnabled)
+    fun needToBuild() = konanConfig.ignoreCacheReason == null
+            && (konanConfig.isFinalBinary || konanConfig.produce.isFullCache)
+            && (autoCacheableFrom.isNotEmpty() || icEnabled)
 
     private val allLibraries by lazy { konanConfig.resolvedLibraries.getFullList(TopologicalLibraryOrder) }
     private val uniqueNameToLibrary by lazy { allLibraries.associateBy { it.uniqueName } }
