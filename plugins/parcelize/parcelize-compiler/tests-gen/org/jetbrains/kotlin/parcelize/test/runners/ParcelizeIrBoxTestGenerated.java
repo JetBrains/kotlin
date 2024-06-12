@@ -79,6 +79,12 @@ public class ParcelizeIrBoxTestGenerated extends AbstractParcelizeIrBoxTest {
   }
 
   @Test
+  @TestMetadata("constructorParamAndPropertyWithSameName.kt")
+  public void testConstructorParamAndPropertyWithSameName() {
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/constructorParamAndPropertyWithSameName.kt");
+  }
+
+  @Test
   @TestMetadata("constructorWithoutValOrVar.kt")
   public void testConstructorWithoutValOrVar() {
     runTest("plugins/parcelize/parcelize-compiler/testData/box/constructorWithoutValOrVar.kt");

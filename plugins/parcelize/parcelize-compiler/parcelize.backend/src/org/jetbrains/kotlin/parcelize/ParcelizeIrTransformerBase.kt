@@ -183,15 +183,19 @@ abstract class ParcelizeIrTransformerBase(
 
             val constructor = primaryConstructor ?: return emptyList()
             val topLevelScope = getParcelerScope()
-
             return constructor.valueParameters.map { parameter ->
                 val property = properties.firstOrNull { it.name == parameter.name }
                 if (property == null || property.hasAnyAnnotation(IGNORED_ON_PARCEL_FQ_NAMES)) {
                     null
                 } else {
                     val localScope = property.getParcelerScope(topLevelScope)
-                    ParcelableProperty(property.backingField!!) {
-                        serializerFactory.get(parameter.type, parcelizeType = defaultType, scope = localScope)
+                    val backingField = property.backingField
+                    if (backingField == null) {
+                        null
+                    } else {
+                        ParcelableProperty(backingField) {
+                            serializerFactory.get(parameter.type, parcelizeType = defaultType, scope = localScope)
+                        }
                     }
                 }
             }
