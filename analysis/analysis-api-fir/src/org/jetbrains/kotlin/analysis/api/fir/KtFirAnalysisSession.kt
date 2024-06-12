@@ -9,10 +9,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
-import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.fir.components.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbolProvider
+import org.jetbrains.kotlin.analysis.api.impl.base.KaBaseSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAnalysisScopeProviderImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaRendererImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaGlobalSearchScope
@@ -54,7 +53,7 @@ private constructor(
     token: KaLifetimeToken,
     analysisSessionProvider: () -> KaFirSession,
     useSiteScope: KaGlobalSearchScope
-) : KaSession(
+) : KaBaseSession(
     token,
     resolver = KaFirResolver(analysisSessionProvider, token),
     symbolRelationProvider = KaFirSymbolRelationProvider(analysisSessionProvider, token),

@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.analysis.api.descriptors
 
 import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
-import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.descriptors.components.*
+import org.jetbrains.kotlin.analysis.api.impl.base.KaBaseSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAnalysisScopeProviderImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaRendererImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaGlobalSearchScope
@@ -17,14 +16,13 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 
 @OptIn(KaAnalysisApiInternals::class, KaAnalysisNonPublicApi::class)
-@Suppress("LeakingThis")
 class KaFe10Session(
     val analysisContext: Fe10AnalysisContext,
     override val useSiteModule: KtModule,
     token: KaLifetimeToken,
     analysisSessionProvider: () -> KaFe10Session,
     resolutionScope: KaGlobalSearchScope
-) : KaSession(
+) : KaBaseSession(
     token,
     resolver = KaFe10Resolver(analysisSessionProvider, token),
     symbolRelationProvider = KaFe10SymbolRelationProvider(analysisSessionProvider, token),
