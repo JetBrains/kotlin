@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.scopes
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirFileSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
@@ -31,6 +32,7 @@ internal class KaFirFileScope(
         backingCallableNames + _classifierNames
     }
 
+    @KaExperimentalApi
     override fun getAllPossibleNames(): Set<Name> = withValidityAssertion { allNamesCached }
 
     private val backingCallableNames: Set<Name> by cached {
@@ -47,6 +49,7 @@ internal class KaFirFileScope(
         result
     }
 
+    @KaExperimentalApi
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion { backingCallableNames }
 
     private val _classifierNames: Set<Name> by cached {
@@ -59,6 +62,7 @@ internal class KaFirFileScope(
         result
     }
 
+    @KaExperimentalApi
     override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion { _classifierNames }
 
     override fun callables(nameFilter: (Name) -> Boolean): Sequence<KaCallableSymbol> = withValidityAssertion {
@@ -107,6 +111,7 @@ internal class KaFirFileScope(
     override val constructors: Sequence<KaConstructorSymbol>
         get() = withValidityAssertion { emptySequence() }
 
+    @KaExperimentalApi
     override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = withValidityAssertion {
         emptySequence()
     }

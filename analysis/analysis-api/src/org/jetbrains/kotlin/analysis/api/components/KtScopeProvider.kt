@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
@@ -48,8 +49,10 @@ public abstract class KaScopeProvider : KaSessionComponent() {
 
     public abstract fun getCompositeScope(subScopes: List<KaScope>): KaScope
 
+    @KaExperimentalApi
     public abstract fun getTypeScope(type: KaType): KaTypeScope?
 
+    @KaExperimentalApi
     public abstract fun getSyntheticJavaPropertiesScope(type: KaType): KaTypeScope?
 
     public abstract fun getImportingScopeContext(file: KtFile): KaScopeContext
@@ -227,12 +230,14 @@ public interface KaScopeProviderMixIn : KaSessionMixIn {
      * @see KaTypeScope
      * @see KaTypeProviderMixIn.getKaType
      */
+    @KaExperimentalApi
     public fun KaType.getTypeScope(): KaTypeScope? =
         withValidityAssertion { analysisSession.scopeProvider.getTypeScope(this) }
 
     /**
      * Returns a [KaTypeScope] with synthetic Java properties created for a given [KaType].
      */
+    @KaExperimentalApi
     public fun KaType.getSyntheticJavaPropertiesScope(): KaTypeScope? =
         withValidityAssertion { analysisSession.scopeProvider.getSyntheticJavaPropertiesScope(this) }
 

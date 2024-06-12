@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.components.KaScopeSubstitution
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.scopes.KaFirDelegatingNamesAwareScope
@@ -21,6 +22,7 @@ internal class KaFirScopeSubstitution(
 ) : KaScopeSubstitution(), KaFirSessionComponent {
 
     @OptIn(KaAnalysisApiInternals::class)
+    @KaExperimentalApi
     override fun getDeclarationScope(scope: KaTypeScope): KaScope {
         return when (scope) {
             is KaFirDelegatingTypeScope -> KaFirDelegatingNamesAwareScope(scope.firScope, analysisSession.firSymbolBuilder)

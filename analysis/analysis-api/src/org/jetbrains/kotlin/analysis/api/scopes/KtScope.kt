@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.scopes
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.name.Name
 
+@OptIn(KaExperimentalApi::class)
 public interface KaScope : KaScopeLike {
     /**
      * A sequence of all [KaDeclarationSymbol]s contained in this scope.
@@ -127,6 +129,7 @@ public interface KaScope : KaScopeLike {
     /**
      * Return a sequence of [KaPackageSymbol] nested in current scope contain if package name matches [nameFilter]
      */
+    @KaExperimentalApi
     public fun getPackageSymbols(nameFilter: (Name) -> Boolean = { true }): Sequence<KaPackageSymbol>
 }
 

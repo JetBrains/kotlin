@@ -5,17 +5,20 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.scopes.KaTypeScope
 
 public abstract class KaScopeSubstitution : KaSessionComponent() {
+    @KaExperimentalApi
     public abstract fun getDeclarationScope(scope: KaTypeScope): KaScope
 }
 
 public typealias KtScopeSubstitution = KaScopeSubstitution
 
 public interface KaScopeSubstitutionMixIn : KaSessionMixIn {
+    @KaExperimentalApi
     public fun KaTypeScope.getDeclarationScope(): KaScope =
         withValidityAssertion { analysisSession.scopeSubstitution.getDeclarationScope(this) }
 }

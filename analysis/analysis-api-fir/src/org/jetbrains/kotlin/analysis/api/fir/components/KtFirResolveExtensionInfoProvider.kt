@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.components.KaResolveExtensionInfoProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaEmptyScope
@@ -94,6 +95,7 @@ private class KaFirResolveExtensionScope(
     override val constructors: Sequence<KaConstructorSymbol>
         get() = withValidityAssertion { emptySequence() }
 
+    @KaExperimentalApi
     override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = withValidityAssertion {
         sequence {
             // Only emit package symbols for top-level packages (subpackages of root). This matches the behavior
@@ -109,10 +111,12 @@ private class KaFirResolveExtensionScope(
         }
     }
 
+    @KaExperimentalApi
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
         tools.flatMapTo(mutableSetOf()) { it.declarationProvider.getTopLevelCallableNames() }
     }
 
+    @KaExperimentalApi
     override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
         tools.flatMapTo(mutableSetOf()) { it.declarationProvider.getTopLevelClassifierNames() }
     }

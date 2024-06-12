@@ -3,8 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(KaExperimentalApi::class)
+
 package org.jetbrains.kotlin.analysis.api.fir.scopes
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -27,10 +30,12 @@ internal class KaFirPackageScope(
         FirPackageMemberScope(fqName, analysisSession.useSiteSession)
     }
 
+    @KaExperimentalApi
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
         DeclarationsInPackageProvider.getTopLevelCallableNamesInPackageProvider(fqName, analysisSession)
     }
 
+    @KaExperimentalApi
     override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
         DeclarationsInPackageProvider.getTopLevelClassifierNamesInPackageProvider(fqName, analysisSession)
     }
@@ -54,6 +59,7 @@ internal class KaFirPackageScope(
     override val constructors: Sequence<KaConstructorSymbol>
         get() = withValidityAssertion { emptySequence() }
 
+    @KaExperimentalApi
     override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = withValidityAssertion {
         sequence {
             analysisSession.useSitePackageProvider.getSubPackageFqNames(fqName, analysisSession.targetPlatform, nameFilter).forEach {

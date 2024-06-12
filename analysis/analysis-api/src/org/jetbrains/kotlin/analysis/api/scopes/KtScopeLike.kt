@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.scopes
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.name.Name
 
+@KaExperimentalApi
 public interface KaScopeLike : KaLifetimeOwner {
     /**
      * Returns a **superset** of names which current scope may contain.
@@ -40,4 +42,5 @@ public interface KaScopeLike : KaLifetimeOwner {
     }
 }
 
+@KaExperimentalApi
 public typealias KtScopeLike = KaScopeLike

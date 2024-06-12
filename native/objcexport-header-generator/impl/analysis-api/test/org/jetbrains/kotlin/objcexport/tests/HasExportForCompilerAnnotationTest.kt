@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.objcexport.tests
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
@@ -40,6 +41,7 @@ class HasExportForCompilerAnnotationTest(
 }
 
 context(KtAnalysisSession)
+@OptIn(KaExperimentalApi::class)
 private fun verifyHasExportForCompilerAnnotation(property: KtPropertySymbol): Boolean {
     return property
         .returnType

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import com.intellij.openapi.diagnostic.Logger
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
@@ -202,11 +203,13 @@ internal class KaFe10ScopeProvider(
         return KaCompositeScope.create(subScopes, token)
     }
 
+    @KaExperimentalApi
     override fun getTypeScope(type: KaType): KaTypeScope {
         require(type is KaFe10Type)
         TODO()
     }
 
+    @KaExperimentalApi
     override fun getSyntheticJavaPropertiesScope(type: KaType): KaTypeScope {
         require(type is KaFe10Type)
         TODO()

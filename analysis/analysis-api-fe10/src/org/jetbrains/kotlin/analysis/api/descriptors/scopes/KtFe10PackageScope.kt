@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.scopes
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.KaFe10PackageSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -18,6 +19,7 @@ internal class KaFe10PackageScope(
     private val owner: KaPackageSymbol,
     analysisContext: Fe10AnalysisContext
 ) : KaFe10ScopeMember(scope, constructorDescriptors = emptyList(), analysisContext) {
+    @KaExperimentalApi
     override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = withValidityAssertion {
         val packageFragmentProvider = analysisContext.resolveSession.packageFragmentProvider
         return packageFragmentProvider.getSubPackagesOf(owner.fqName, nameFilter)

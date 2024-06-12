@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone.klib
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
@@ -64,12 +65,15 @@ public class KlibScope(
     // There are no constructors at the top-level scope.
     override val constructors: Sequence<KaConstructorSymbol> get() = emptySequence()
 
+    @KaExperimentalApi
     override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> =
         throw NotImplementedError("Reading package symbols from ${libraryModule.libraryName} is unsupported. Please report an issue: https://kotl.in/issue")
 
+    @KaExperimentalApi
     override fun getPossibleCallableNames(): Set<Name> =
         addresses.filterIsInstance<KlibCallableAddress>().map { it.callableName }.toSet()
 
+    @KaExperimentalApi
     override fun getPossibleClassifierNames(): Set<Name> =
         addresses.filterIsInstance<KlibClassifierAddress>().map { it.classId.shortClassName }.toSet()
 }

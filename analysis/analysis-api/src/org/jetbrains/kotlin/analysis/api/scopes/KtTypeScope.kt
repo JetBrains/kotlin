@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.scopes
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.name.Name
  * @see org.jetbrains.kotlin.analysis.api.components.KaScopeProviderMixIn.getTypeScope
  * @see KaCallableSignature
  */
+@KaExperimentalApi
 public interface KaTypeScope : KaScopeLike {
 
     /**
@@ -73,4 +75,5 @@ public interface KaTypeScope : KaScopeLike {
     public fun getConstructors(): Sequence<KaConstructorSymbol>
 }
 
+@KaExperimentalApi
 public typealias KtTypeScope = KaTypeScope
