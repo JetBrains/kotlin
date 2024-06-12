@@ -118,7 +118,7 @@ public abstract class KaSession(
 
     public abstract val useSiteModule: KtModule
 
-    override val analysisSession: KaSession get() = this
+    public val analysisSession: KaSession get() = this
 
     public fun <S : KaSymbol> KaSymbolPointer<S>.restoreSymbol(): S? = withValidityAssertion {
         @OptIn(KaImplementationDetail::class)
