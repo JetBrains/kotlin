@@ -42,7 +42,7 @@ fun testUShortSumOfArray(): Int {
 }
 
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
 fun box(): String {
     assertEquals(6, testIntSumOfArray())
     assertEquals(6, testIntSumOfArrayVal())

@@ -18,7 +18,7 @@ fun testDoubleSumOfList(): Double {
     return listOf(1.0, 2.0, 3.0).sumOf { it }
 }
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
 fun box(): String {
     assertEquals(6, testIntSumOfList())
     assertEquals(6.0, testDoubleSumOfList())
