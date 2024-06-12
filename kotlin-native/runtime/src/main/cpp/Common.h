@@ -21,7 +21,14 @@
 #define RUNTIME_NORETURN __attribute__((noreturn))
 #define RUNTIME_CONST __attribute__((const))
 #define RUNTIME_PURE __attribute__((pure))
+
+#if __has_attribute(retain)
+// See https://youtrack.jetbrains.com/issue/KT-68640
+#define RUNTIME_EXPORT __attribute__((used,retain))
+#else
 #define RUNTIME_EXPORT __attribute__((used))
+#endif
+
 #define RUNTIME_WEAK __attribute__((weak))
 #define RUNTIME_NODEBUG __attribute__((nodebug))
 
