@@ -302,7 +302,7 @@ internal class ExportedElement(
             "${cname}_impl"
 
     private fun translateBody(cfunction: List<SignatureElement>): String {
-        val visibility = if (isTopLevelFunction) "RUNTIME_USED extern \"C\"" else "static"
+        val visibility = if (isTopLevelFunction) "RUNTIME_EXPORT extern \"C\"" else "static"
         val builder = StringBuilder()
         builder.append("$visibility ${typeTranslator.translateType(cfunction[0])} ${cnameImpl}(${cfunction.drop(1).
                 mapIndexed { index, it -> "${typeTranslator.translateType(it)} arg${index}" }.joinToString(", ")}) {\n")

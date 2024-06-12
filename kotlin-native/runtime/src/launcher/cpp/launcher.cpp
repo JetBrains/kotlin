@@ -48,7 +48,7 @@ extern "C" KInt Konan_run_start(int argc, const char** argv) {
     return Konan_start(args.obj());
 }
 
-extern "C" RUNTIME_USED int Init_and_run_start(int argc, const char** argv, int memoryDeInit) {
+extern "C" RUNTIME_EXPORT int Init_and_run_start(int argc, const char** argv, int memoryDeInit) {
   Kotlin_initRuntimeIfNeeded();
   Kotlin_mm_switchThreadStateRunnable();
 
@@ -62,9 +62,9 @@ extern "C" RUNTIME_USED int Init_and_run_start(int argc, const char** argv, int 
 }
 
 #ifndef KONAN_ANDROID
-extern "C" RUNTIME_USED int Konan_main(int argc, const char** argv) {
+extern "C" RUNTIME_EXPORT int Konan_main(int argc, const char** argv) {
 #else
-extern "C" RUNTIME_USED int Konan_main_standalone(int argc, const char** argv) {
+extern "C" RUNTIME_EXPORT int Konan_main_standalone(int argc, const char** argv) {
 #endif
     return Init_and_run_start(argc, argv, 1);
 }

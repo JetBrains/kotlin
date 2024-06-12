@@ -215,7 +215,7 @@ void onInputQueueDestroyed(ANativeActivity* activity, AInputQueue* queue) {
 }
 }
 
-extern "C" void RUNTIME_USED Konan_main(
+extern "C" void RUNTIME_EXPORT Konan_main(
     ANativeActivity* activity, void* savedState, size_t savedStateSize) {
   bool launchThread = activity->instance == nullptr;
   if (launchThread) {
