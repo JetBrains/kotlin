@@ -17,6 +17,8 @@ fun updateCompilerXml() {
     val modulesExcludedFromJps = listOf(
         "buildSrc",
         "compiler/build-tools/kotlin-build-tools-api-tests",
+        "jps/jps-plugin/jps-tests",
+        "generators/sir-tests-generator",
         "libraries/examples",
         "libraries/scripting/dependencies-maven-all",
         "libraries/tools/atomicfu",
