@@ -30,6 +30,12 @@ public class CompilerFacilityTestForComposeCompilerPluginGenerated extends Abstr
   }
 
   @Test
+  @TestMetadata("interface.kt")
+  public void testInterface() {
+    runTest("plugins/compose/compiler-hosted/testData/codegen/interface.kt");
+  }
+
+  @Test
   @TestMetadata("lazyPropertyBackingField.kt")
   public void testLazyPropertyBackingField() {
     runTest("plugins/compose/compiler-hosted/testData/codegen/lazyPropertyBackingField.kt");
