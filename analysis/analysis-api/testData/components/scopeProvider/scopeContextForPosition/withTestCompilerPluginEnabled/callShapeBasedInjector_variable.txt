@@ -463,7 +463,7 @@ scopes:
             name: expression
             origin: SOURCE
             receiverParameter: null
-            returnType: KaFunctionalType:
+            returnType: KaFunctionType:
               annotations: []
               typeArguments: [
                 KaTypeParameterType:

@@ -25,7 +25,7 @@ KaFunctionSymbol:
               name: block
               origin: SOURCE
               receiverParameter: null
-              returnType: KaFunctionalType:
+              returnType: KaFunctionType:
                 annotations: []
                 typeArguments: [
                   KaUsualClassType:
@@ -80,7 +80,7 @@ KaFunctionSymbol:
       name: block
       origin: SOURCE
       receiverParameter: null
-      returnType: KaFunctionalType:
+      returnType: KaFunctionType:
         annotations: []
         typeArguments: [
           KaUsualClassType:

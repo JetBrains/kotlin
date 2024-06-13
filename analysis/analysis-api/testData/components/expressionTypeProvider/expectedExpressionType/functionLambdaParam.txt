@@ -1,5 +1,5 @@
 expression: av
-expected type: KaFunctionalType:
+expected type: KaFunctionType:
   annotations: []
   typeArguments: [
     KaUsualClassType:

@@ -136,7 +136,7 @@ public sealed class KaNonErrorClassType : KaType {
 
 public typealias KtNonErrorClassType = KaNonErrorClassType
 
-public abstract class KaFunctionalType : KaNonErrorClassType(), KaContextReceiversOwner {
+public abstract class KaFunctionType : KaNonErrorClassType(), KaContextReceiversOwner {
     public abstract val isSuspend: Boolean
     public abstract val isReflectType: Boolean
     public abstract val arity: Int
@@ -147,7 +147,10 @@ public abstract class KaFunctionalType : KaNonErrorClassType(), KaContextReceive
     public abstract val returnType: KaType
 }
 
-public typealias KtFunctionalType = KaFunctionalType
+@Deprecated("Use 'KaFunctionType' instead.", replaceWith = ReplaceWith("KaFunctionType"))
+public typealias KaFunctionalType = KaFunctionType
+
+public typealias KtFunctionalType = KaFunctionType
 
 public abstract class KaUsualClassType : KaNonErrorClassType()
 

@@ -99,7 +99,7 @@ public class KaTypeRenderer private constructor(
     private fun KaSession.renderTypeAsIs(type: KaType, printer: PrettyPrinter) {
         when (type) {
             is KaCapturedType -> capturedTypeRenderer.renderType(this, type, this@KaTypeRenderer, printer)
-            is KaFunctionalType -> functionalTypeRenderer.renderType(this, type, this@KaTypeRenderer, printer)
+            is KaFunctionType -> functionalTypeRenderer.renderType(this, type, this@KaTypeRenderer, printer)
             is KaUsualClassType -> usualClassTypeRenderer.renderType(this, type, this@KaTypeRenderer, printer)
             is KaDefinitelyNotNullType -> definitelyNotNullTypeRenderer.renderType(this, type, this@KaTypeRenderer, printer)
             is KaDynamicType -> dynamicTypeRenderer.renderType(this, type, this@KaTypeRenderer, printer)

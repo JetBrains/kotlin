@@ -1,5 +1,5 @@
 expression: consumer::accept
-expected type: KaFunctionalType:
+expected type: KaFunctionType:
   annotations: []
   typeArguments: [
     KaTypeParameterType:

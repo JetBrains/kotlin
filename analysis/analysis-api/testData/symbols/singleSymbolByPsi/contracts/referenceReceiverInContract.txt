@@ -15,7 +15,7 @@ KaFunctionSymbol:
               location: LOCAL
               origin: SOURCE
               owningCallableSymbol: KaFunctionSymbol(/referenceReceiverInContract)
-              type: KaFunctionalType:
+              type: KaFunctionType:
                 annotations: []
                 typeArguments: [
                   KaUsualClassType:
@@ -51,7 +51,7 @@ KaFunctionSymbol:
     location: LOCAL
     origin: SOURCE
     owningCallableSymbol: KaFunctionSymbol(/referenceReceiverInContract)
-    type: KaFunctionalType:
+    type: KaFunctionType:
       annotations: []
       typeArguments: [
         KaUsualClassType:

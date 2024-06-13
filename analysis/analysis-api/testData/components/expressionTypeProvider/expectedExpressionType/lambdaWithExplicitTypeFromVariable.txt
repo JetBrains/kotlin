@@ -1,7 +1,7 @@
 expression: {
     val (a, b) = listOf(1, 2)
 }
-expected type: KaFunctionalType:
+expected type: KaFunctionType:
   annotations: []
   typeArguments: [
     KaUsualClassType:

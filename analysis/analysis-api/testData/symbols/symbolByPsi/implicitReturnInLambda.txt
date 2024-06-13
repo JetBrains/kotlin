@@ -73,7 +73,7 @@ KaLocalVariableSymbol:
   name: lam1
   origin: SOURCE
   receiverParameter: null
-  returnType: KaFunctionalType:
+  returnType: KaFunctionType:
     annotations: []
     typeArguments: [
       KaUsualClassType:
@@ -167,7 +167,7 @@ KaLocalVariableSymbol:
   name: lam2
   origin: SOURCE
   receiverParameter: null
-  returnType: KaFunctionalType:
+  returnType: KaFunctionType:
     annotations: []
     typeArguments: [
       KaUsualClassType:
@@ -330,7 +330,7 @@ KaFunctionSymbol:
       name: lmbd
       origin: SOURCE
       receiverParameter: null
-      returnType: KaFunctionalType:
+      returnType: KaFunctionType:
         annotations: []
         typeArguments: [
           KaUsualClassType:

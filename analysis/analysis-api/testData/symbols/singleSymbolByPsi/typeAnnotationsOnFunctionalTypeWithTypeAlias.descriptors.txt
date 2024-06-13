@@ -21,7 +21,7 @@ KaFunctionSymbol:
   name: foo
   origin: SOURCE
   receiverParameter: null
-  returnType: KaFunctionalType:
+  returnType: KaFunctionType:
     annotations: [
       Anno3()
         psi: KtAnnotationEntry

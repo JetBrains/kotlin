@@ -1,7 +1,7 @@
 KaTypeAliasSymbol:
   annotations: []
   classId: kotlin/DeepRecursiveFunctionBlock
-  expandedType: KaFunctionalType:
+  expandedType: KaFunctionType:
     annotations: []
     typeArguments: [
       KaUsualClassType:

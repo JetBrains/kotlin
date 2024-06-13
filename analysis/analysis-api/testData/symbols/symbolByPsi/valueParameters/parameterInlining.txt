@@ -42,7 +42,7 @@ KaFunctionSymbol:
       name: inlineParameter
       origin: SOURCE
       receiverParameter: null
-      returnType: KaFunctionalType:
+      returnType: KaFunctionType:
         annotations: []
         typeArguments: [
           KaUsualClassType:
@@ -71,7 +71,7 @@ KaFunctionSymbol:
       name: crossinlineParameter
       origin: SOURCE
       receiverParameter: null
-      returnType: KaFunctionalType:
+      returnType: KaFunctionType:
         annotations: []
         typeArguments: [
           KaUsualClassType:
@@ -100,7 +100,7 @@ KaFunctionSymbol:
       name: noinlineParameter
       origin: SOURCE
       receiverParameter: null
-      returnType: KaFunctionalType:
+      returnType: KaFunctionType:
         annotations: []
         typeArguments: [
           KaUsualClassType:

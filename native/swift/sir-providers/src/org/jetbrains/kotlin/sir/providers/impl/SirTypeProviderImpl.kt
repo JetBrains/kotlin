@@ -74,7 +74,7 @@ public class SirTypeProviderImpl(
                     else -> SirUnsupportedType()
                 }
             }
-            is KaFunctionalType,
+            is KaFunctionType,
             is KaTypeParameterType,
             -> SirUnsupportedType()
             is KaErrorType -> SirErrorType(ktType.errorMessage)

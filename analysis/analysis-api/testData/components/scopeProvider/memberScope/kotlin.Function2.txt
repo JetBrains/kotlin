@@ -74,7 +74,7 @@ KaFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KaFunctionalType:
+  getDispatchReceiver(): KaFunctionType:
     annotations: []
     typeArguments: [
       KaTypeParameterType:

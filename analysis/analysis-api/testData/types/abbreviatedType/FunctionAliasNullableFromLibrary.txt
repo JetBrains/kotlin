@@ -1,4 +1,4 @@
-KaFunctionalType:
+KaFunctionType:
   abbreviatedType: null
   annotations: []
   arity: 1

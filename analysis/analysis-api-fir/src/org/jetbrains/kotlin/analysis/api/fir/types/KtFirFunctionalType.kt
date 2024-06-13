@@ -16,12 +16,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.KaContextReceiverImpl
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.types.KaClassTypeQualifier
-import org.jetbrains.kotlin.analysis.api.types.KaFunctionalType
-import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
-import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
-import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -30,7 +25,7 @@ import org.jetbrains.kotlin.name.ClassId
 internal class KaFirFunctionalType(
     override val coneType: ConeClassLikeTypeImpl,
     private val builder: KaSymbolByFirBuilder,
-) : KaFunctionalType(), KaFirType {
+) : KaFunctionType(), KaFirType {
     override val token: KaLifetimeToken get() = builder.token
 
     override val classId: ClassId get() = withValidityAssertion { coneType.lookupTag.classId }

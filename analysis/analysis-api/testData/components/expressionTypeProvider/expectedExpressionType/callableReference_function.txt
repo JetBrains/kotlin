@@ -1,5 +1,5 @@
 expression: function::apply
-expected type: KaFunctionalType:
+expected type: KaFunctionType:
   annotations: []
   typeArguments: [
     KaTypeParameterType:

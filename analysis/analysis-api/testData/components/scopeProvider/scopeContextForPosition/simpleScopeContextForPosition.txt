@@ -971,7 +971,7 @@ scopes:
             name: f
             origin: SOURCE
             receiverParameter: null
-            returnType: KaFunctionalType:
+            returnType: KaFunctionType:
               annotations: []
               typeArguments: [
                 KaUsualClassType:
@@ -1031,7 +1031,7 @@ scopes:
             name: f
             origin: SOURCE
             receiverParameter: null
-            returnType: KaFunctionalType:
+            returnType: KaFunctionType:
               annotations: []
               typeArguments: [
                 KaUsualClassType:
@@ -1091,7 +1091,7 @@ scopes:
             name: f
             origin: SOURCE
             receiverParameter: null
-            returnType: KaFunctionalType:
+            returnType: KaFunctionType:
               annotations: []
               typeArguments: [
                 KaUsualClassType:

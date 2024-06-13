@@ -19,12 +19,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.utils.KaFe10JvmTypeMapperCo
 import org.jetbrains.kotlin.analysis.api.impl.base.KaContextReceiverImpl
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.types.KaClassTypeQualifier
-import org.jetbrains.kotlin.analysis.api.types.KaFunctionalType
-import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
-import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
-import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.builtins.functions.isSuspendOrKSuspendFunction
@@ -35,7 +30,7 @@ internal class KaFe10FunctionalType(
     override val fe10Type: SimpleType,
     private val descriptor: FunctionClassDescriptor,
     override val analysisContext: Fe10AnalysisContext
-) : KaFunctionalType(), KaFe10Type {
+) : KaFunctionType(), KaFe10Type {
     override val nullability: KaTypeNullability
         get() = withValidityAssertion { fe10Type.ktNullability }
 

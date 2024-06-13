@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaErrorType
-import org.jetbrains.kotlin.analysis.api.types.KaFunctionalType
+import org.jetbrains.kotlin.analysis.api.types.KaFunctionType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -254,7 +254,7 @@ class KaFe10ExpressionTypeProvider(
                 if (expression == parentExpression.statements.lastOrNull()) {
                     val functionLiteral = parentExpression.parent as? KtFunctionLiteral
                     if (functionLiteral != null) {
-                        val functionalType = computeExpectedType(functionLiteral) as? KaFunctionalType
+                        val functionalType = computeExpectedType(functionLiteral) as? KaFunctionType
                         functionalType?.returnType?.let { return it }
                     }
                 }

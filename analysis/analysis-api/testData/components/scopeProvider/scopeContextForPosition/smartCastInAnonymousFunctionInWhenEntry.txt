@@ -264,7 +264,7 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Any
-        returnType: KaFunctionalType:
+        returnType: KaFunctionType:
           annotations: []
           typeArguments: [
             KaUsualClassType:

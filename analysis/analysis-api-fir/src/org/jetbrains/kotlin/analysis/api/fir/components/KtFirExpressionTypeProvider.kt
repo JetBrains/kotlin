@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaErrorType
-import org.jetbrains.kotlin.analysis.api.types.KaFunctionalType
+import org.jetbrains.kotlin.analysis.api.types.KaFunctionType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
@@ -348,7 +348,7 @@ internal class KaFirExpressionTypeProvider(
 
         val functionLiteral = blockExpression.parent as? KtFunctionLiteral
         return if (functionLiteral != null) {
-            val functionalType = functionLiteral.expectedType as? KaFunctionalType
+            val functionalType = functionLiteral.expectedType as? KaFunctionType
             functionalType?.returnType
         } else {
             blockExpression.expectedType
