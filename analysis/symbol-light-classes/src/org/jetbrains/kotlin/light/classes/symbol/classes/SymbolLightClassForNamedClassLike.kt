@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
+import org.jetbrains.kotlin.analysis.api.symbols.isLocal
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.getParentForLocalDeclaration
@@ -54,7 +54,7 @@ abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<
     )
 
     protected val isLocal: Boolean by lazyPub {
-        classOrObjectDeclaration?.isLocal ?: withClassOrObjectSymbol { it.location == KaSymbolLocation.LOCAL }
+        classOrObjectDeclaration?.isLocal ?: withClassOrObjectSymbol { it.isLocal }
     }
 
     override fun getParent(): PsiElement? {

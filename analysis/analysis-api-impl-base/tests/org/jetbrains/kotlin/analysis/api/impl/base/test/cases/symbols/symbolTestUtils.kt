@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.symbols.isLocal
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
@@ -37,7 +37,7 @@ internal fun KaSession.checkContainingJvmClassName(
 ) {
     if (ktFile.isScript()) return
     val expectedClassName = when {
-        symbol.location == KaSymbolLocation.LOCAL ->
+        symbol.isLocal ->
             null
         ktClass != null ->
             // member
