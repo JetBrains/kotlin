@@ -26,10 +26,10 @@ internal class KaFe10TypeRelationChecker(
         return getTypeCheckerFor(errorTypePolicy).equalTypes(this.fe10Type, other.fe10Type)
     }
 
-    override fun KaType.isSubTypeOf(superType: KaType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean = withValidityAssertion {
+    override fun KaType.isSubtypeOf(supertype: KaType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean = withValidityAssertion {
         require(this is KaFe10Type)
-        require(superType is KaFe10Type)
-        return getTypeCheckerFor(errorTypePolicy).isSubtypeOf(this.fe10Type, superType.fe10Type)
+        require(supertype is KaFe10Type)
+        return getTypeCheckerFor(errorTypePolicy).isSubtypeOf(this.fe10Type, supertype.fe10Type)
     }
 
     private fun getTypeCheckerFor(errorTypePolicy: KaSubtypingErrorTypePolicy): KotlinTypeChecker {

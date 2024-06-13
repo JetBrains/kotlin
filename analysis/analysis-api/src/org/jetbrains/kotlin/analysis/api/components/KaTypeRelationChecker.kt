@@ -21,10 +21,16 @@ public interface KaTypeRelationChecker {
     public fun KaType.isEqualTo(other: KaType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean =
         semanticallyEquals(other, errorTypePolicy)
 
+    public fun KaType.isSubtypeOf(
+        supertype: KaType,
+        errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT
+    ): Boolean
+
+    @Deprecated("Use 'isSubtypeOf' instead.", replaceWith = ReplaceWith("isSubtypeOf(other, errorTypePolicy)"))
     public fun KaType.isSubTypeOf(
         superType: KaType,
         errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT
-    ): Boolean
+    ): Boolean = isSubtypeOf(superType, errorTypePolicy)
 
     @Deprecated(
         "Use negated 'isSubtypeOf()' instead.",
@@ -34,7 +40,7 @@ public interface KaTypeRelationChecker {
         superType: KaType,
         errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT
     ): Boolean = withValidityAssertion {
-        return !isSubTypeOf(superType, errorTypePolicy)
+        return !isSubtypeOf(superType, errorTypePolicy)
     }
 }
 

@@ -105,7 +105,10 @@ public interface KaTypeProvider {
     }
 
     /** Check whether this type is compatible with that type. If they are compatible, it means they can have a common subtype. */
-    public fun KaType.hasCommonSubTypeWith(that: KaType): Boolean
+    public fun KaType.hasCommonSubtypeWith(that: KaType): Boolean
+
+    @Deprecated("Use 'hasCommonSubtypeWith() instead.", replaceWith = ReplaceWith("hasCommonSubtypeWith(that)"))
+    public fun KaType.hasCommonSubTypeWith(that: KaType): Boolean = hasCommonSubtypeWith(that)
 
     /**
      * Gets all the implicit receiver types available at the given position. The type of the outermost receiver appears at the beginning
@@ -129,7 +132,7 @@ public interface KaTypeProvider {
      * @param shouldApproximate whether to approximate non-denotable types. For example, super type of `List<out String>` is
      * `Collection<CAPTURED out String>`. With approximation set to true, `Collection<out String>` is returned instead.
      */
-    public fun KaType.directSuperTypes(shouldApproximate: Boolean): Sequence<KaType>
+    public fun KaType.directSupertypes(shouldApproximate: Boolean): Sequence<KaType>
 
     /**
      * Gets the direct super types of the given type. For example, given `MutableList<String>`, this returns `List<String>` and
@@ -138,11 +141,11 @@ public interface KaTypeProvider {
      * Note that for flexible types, both direct super types of the upper and lower bounds are returned. If that's not desirable, please
      * first call [KaFlexibleType.upperBound] or [KaFlexibleType.lowerBound] and then call this method.
      */
-    public val KaType.directSuperTypes: Sequence<KaType>
-        get() = directSuperTypes(shouldApproximate = false)
+    public val KaType.directSupertypes: Sequence<KaType>
+        get() = directSupertypes(shouldApproximate = false)
 
     @Deprecated("Use 'directSuperTypes()' instead.", replaceWith = ReplaceWith("directSuperTypes(shouldApproximate)"))
-    public fun KaType.getDirectSuperTypes(shouldApproximate: Boolean = false): List<KaType> = directSuperTypes(shouldApproximate).toList()
+    public fun KaType.getDirectSuperTypes(shouldApproximate: Boolean = false): List<KaType> = directSupertypes(shouldApproximate).toList()
 
     /**
      * Gets all the super types of the given type. The returned result is ordered by a BFS traversal of the class hierarchy, without any
@@ -150,17 +153,17 @@ public interface KaTypeProvider {
      *
      * @param shouldApproximate see [getDirectSuperTypes]
      */
-    public fun KaType.allSuperTypes(shouldApproximate: Boolean): Sequence<KaType>
+    public fun KaType.allSupertypes(shouldApproximate: Boolean): Sequence<KaType>
 
     /**
      * Gets all the super types of the given type. The returned result is ordered by a BFS traversal of the class hierarchy, without any
      * duplicates.
      */
-    public val KaType.allSuperTypes: Sequence<KaType>
-        get() = allSuperTypes(shouldApproximate = false)
+    public val KaType.allSupertypes: Sequence<KaType>
+        get() = allSupertypes(shouldApproximate = false)
 
-    @Deprecated("Use 'allSuperTypes()' instead.", replaceWith = ReplaceWith("allSuperTypes(shouldApproximate)"))
-    public fun KaType.getAllSuperTypes(shouldApproximate: Boolean = false): List<KaType> = allSuperTypes(shouldApproximate).toList()
+    @Deprecated("Use 'allSupertypes()' instead.", replaceWith = ReplaceWith("allSupertypes(shouldApproximate)"))
+    public fun KaType.getAllSuperTypes(shouldApproximate: Boolean = false): List<KaType> = allSupertypes(shouldApproximate).toList()
 
     /**
      * This function is provided for a few use-cases where it's hard to go without it.

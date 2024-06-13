@@ -29,14 +29,14 @@ internal class KaFirTypeRelationChecker(
         )
     }
 
-    override fun KaType.isSubTypeOf(superType: KaType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean = withValidityAssertion {
-        superType.assertIsValidAndAccessible()
+    override fun KaType.isSubtypeOf(supertype: KaType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean = withValidityAssertion {
+        supertype.assertIsValidAndAccessible()
         check(this is KaFirType)
-        check(superType is KaFirType)
+        check(supertype is KaFirType)
         return AbstractTypeChecker.isSubtypeOf(
             createTypeCheckerContext(errorTypePolicy),
             this.coneType,
-            superType.coneType,
+            supertype.coneType,
         )
     }
 }

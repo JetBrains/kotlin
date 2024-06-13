@@ -378,7 +378,7 @@ internal object KDocReferenceResolver {
             return true
         }
 
-        return actualReceiverType.isSubTypeOf(type)
+        return actualReceiverType.isSubtypeOf(type)
     }
 
     private fun KaSession.getNonImportedSymbolsByFullyQualifiedName(fqName: FqName): Collection<KaSymbol> = buildSet {

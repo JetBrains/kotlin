@@ -65,7 +65,7 @@ abstract class AbstractHasCommonSubtypeTest : AbstractAnalysisApiBasedTest() {
                         super.visitCallExpression(expression)
                         return
                     }
-                    if (haveCommonSubtype != aType.hasCommonSubTypeWith(bType)) {
+                    if (haveCommonSubtype != aType.hasCommonSubtypeWith(bType)) {
                         if (haveCommonSubtype) {
                             actualTextBuilder.append("typesHaveNoCommonSubtype")
                         } else {

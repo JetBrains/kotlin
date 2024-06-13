@@ -132,7 +132,7 @@ internal class KaFe10TypeProvider(
         return fe10Type.makeNullableAsSpecified(newNullability == KaTypeNullability.NULLABLE).toKtType(analysisContext)
     }
 
-    override fun KaType.hasCommonSubTypeWith(that: KaType): Boolean = withValidityAssertion {
+    override fun KaType.hasCommonSubtypeWith(that: KaType): Boolean = withValidityAssertion {
         return areTypesCompatible((this as KaFe10Type).fe10Type, (that as KaFe10Type).fe10Type)
     }
 
@@ -144,12 +144,12 @@ internal class KaFe10TypeProvider(
         return lexicalScope.getImplicitReceiversHierarchy().map { it.type.toKtType(analysisContext) }
     }
 
-    override fun KaType.directSuperTypes(shouldApproximate: Boolean): Sequence<KaType> = withValidityAssertion {
+    override fun KaType.directSupertypes(shouldApproximate: Boolean): Sequence<KaType> = withValidityAssertion {
         require(this is KaFe10Type)
         return TypeUtils.getImmediateSupertypes(fe10Type).asSequence().map { it.toKtType(analysisContext) }
     }
 
-    override fun KaType.allSuperTypes(shouldApproximate: Boolean): Sequence<KaType> {
+    override fun KaType.allSupertypes(shouldApproximate: Boolean): Sequence<KaType> {
         require(this is KaFe10Type)
         return TypeUtils.getAllSupertypes(fe10Type).asSequence().map { it.toKtType(analysisContext) }
     }

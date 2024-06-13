@@ -240,7 +240,7 @@ internal class KaFirTypeProvider(
         return coneType.withNullability(newNullability.toConeNullability(), rootModuleSession.typeContext).asKtType()
     }
 
-    override fun KaType.hasCommonSubTypeWith(that: KaType): Boolean = withValidityAssertion {
+    override fun KaType.hasCommonSubtypeWith(that: KaType): Boolean = withValidityAssertion {
         return analysisSession.firSession.typeContext.isCompatible(
             this.coneType,
             that.coneType
@@ -262,7 +262,7 @@ internal class KaFirTypeProvider(
         return context.towerDataContext.implicitReceiverStack.map { it.type.asKtType() }
     }
 
-    override fun KaType.directSuperTypes(shouldApproximate: Boolean): Sequence<KaType> = withValidityAssertion {
+    override fun KaType.directSupertypes(shouldApproximate: Boolean): Sequence<KaType> = withValidityAssertion {
         require(this is KaFirType)
         return coneType.getDirectSuperTypes(shouldApproximate).map { it.asKtType() }
     }
@@ -316,7 +316,7 @@ internal class KaFirTypeProvider(
         }
     }
 
-    override fun KaType.allSuperTypes(shouldApproximate: Boolean): Sequence<KaType> = withValidityAssertion {
+    override fun KaType.allSupertypes(shouldApproximate: Boolean): Sequence<KaType> = withValidityAssertion {
         require(this is KaFirType)
         return listOf(this.coneType)
             .bfs { it.getDirectSuperTypes(shouldApproximate).iterator() }
