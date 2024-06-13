@@ -111,6 +111,7 @@ internal class SymbolLightClassForFacade(
     override val multiFileClass: Boolean get() = files.size > 1 || firstFileInFacade.isJvmMultifileClassFile
 
     context(KaSession)
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     private fun loadFieldsFromFile(
         fileScope: KaScope,
         nameGenerator: SymbolLightField.FieldNameGenerator,

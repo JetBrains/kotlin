@@ -80,6 +80,7 @@ internal class SymbolLightAccessorMethod private constructor(
     )
 
     context(KaSession)
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     private val KaPropertySymbol.accessorSymbol: KaPropertyAccessorSymbol
         get() = if (isGetter) getter!! else setter!!
 
@@ -246,6 +247,7 @@ internal class SymbolLightAccessorMethod private constructor(
     override fun getNameIdentifier(): PsiIdentifier = KtLightIdentifier(this, containingPropertyDeclaration)
 
     context(KaSession)
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     private fun forceBoxedReturnType(propertySymbol: KaPropertySymbol): Boolean {
         return propertySymbol.returnType.isPrimitiveBacked &&
                 propertySymbol.getAllOverriddenSymbols().any { overriddenSymbol ->

@@ -66,6 +66,7 @@ abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<
     }
 
     context(KaSession)
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     protected fun addMethodsFromCompanionIfNeeded(
         result: MutableList<KtLightMethod>,
         classOrObjectSymbol: KaNamedClassOrObjectSymbol,
@@ -95,6 +96,7 @@ abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<
         get() = classOrObjectDeclaration?.hasModifier(KtTokens.INNER_KEYWORD) ?: withClassOrObjectSymbol { it.isInner }
 
     context(KaSession)
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     internal fun addFieldsFromCompanionIfNeeded(
         result: MutableList<KtLightField>,
         classOrObjectSymbol: KaNamedClassOrObjectSymbol,
@@ -118,6 +120,7 @@ abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<
     }
 
     context(KaSession)
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     protected fun addCompanionObjectFieldIfNeeded(result: MutableList<KtLightField>, classOrObjectSymbol: KaNamedClassOrObjectSymbol) {
         val companionObjectSymbols: List<KaNamedClassOrObjectSymbol>? = classOrObjectDeclaration?.companionObjects?.mapNotNull {
             it.getNamedClassOrObjectSymbol()

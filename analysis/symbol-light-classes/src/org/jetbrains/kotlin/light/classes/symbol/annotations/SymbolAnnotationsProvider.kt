@@ -19,6 +19,7 @@ internal class SymbolAnnotationsProvider<T : KaAnnotatedSymbol>(
     private val annotatedSymbolPointer: KaSymbolPointer<T>,
     private val annotationUseSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
 ) : AnnotationsProvider {
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     private inline fun <T> withAnnotatedSymbol(crossinline action: context(KaSession) (KaAnnotatedSymbol) -> T): T =
         annotatedSymbolPointer.withSymbol(ktModule, action)
 

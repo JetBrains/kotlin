@@ -52,6 +52,7 @@ internal class SymbolLightAnnotationsMethod private constructor(
     )
 
     context(KaSession)
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     private fun propertySymbol(): KaPropertySymbol {
         return containingPropertySymbolPointer.restoreSymbolOrThrowIfDisposed()
     }

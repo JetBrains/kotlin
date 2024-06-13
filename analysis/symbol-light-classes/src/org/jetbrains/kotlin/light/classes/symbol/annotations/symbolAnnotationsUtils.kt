@@ -65,12 +65,14 @@ internal fun KaAnnotatedSymbol.getJvmNameFromAnnotation(
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun isHiddenByDeprecation(
     symbol: KaAnnotatedSymbol,
     annotationUseSiteTarget: AnnotationUseSiteTarget? = null,
 ): Boolean = symbol.getDeprecationStatus(annotationUseSiteTarget)?.deprecationLevel == DeprecationLevelValue.HIDDEN
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaAnnotatedSymbol.isHiddenOrSynthetic(
     annotationUseSiteTarget: AnnotationUseSiteTarget? = null,
     useSiteTargetFilter: AnnotationUseSiteTargetFilter = annotationUseSiteTarget.toFilter(),
@@ -97,6 +99,7 @@ internal fun KaAnnotatedSymbol.hasJvmStaticAnnotation(
 internal fun KaAnnotatedSymbol.hasInlineOnlyAnnotation(): Boolean = StandardClassIds.Annotations.InlineOnly in annotations
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaDeclarationSymbol.suppressWildcardMode(
     declarationFilter: (KaDeclarationSymbol) -> Boolean = { true },
 ): Boolean? {
@@ -144,6 +147,7 @@ internal fun KaAnnotatedSymbol.annotationsByClassId(
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaAnnotatedSymbol.computeThrowsList(
     builder: LightReferenceListBuilder,
     useSitePosition: PsiElement,
@@ -185,6 +189,7 @@ internal fun KaAnnotatedSymbol.computeThrowsList(
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 @KaAnalysisNonPublicApi
 fun annotateByKtType(
     psiType: PsiType,
