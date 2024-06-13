@@ -147,8 +147,6 @@ class JvmBackendContext(
 
     val inlineMethodGenerationLock = Any()
 
-    val publicAbiSymbols = mutableSetOf<IrClassSymbol>()
-
     val optionalAnnotations = mutableListOf<MetadataSource.Class>()
 
     init {
