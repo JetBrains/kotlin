@@ -1584,6 +1584,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ContextReceiversWithBackingField::class
     }
 
+    interface ContextReceiversDeprecated : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = ContextReceiversDeprecated::class
+    }
+
     interface RecursionInImplicitTypes : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = RecursionInImplicitTypes::class
     }
