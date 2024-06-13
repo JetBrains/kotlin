@@ -27,3 +27,5 @@ var IrFunction.hasSpecialBridge: Boolean by irFlag(followAttributeOwner = false)
 var IrSimpleFunction.overridesWithoutStubs: List<IrSimpleFunctionSymbol>? by irAttribute(followAttributeOwner = false)
 
 var IrClass.multifileFacadeForPart: JvmClassName? by irAttribute(followAttributeOwner = true)
+
+var IrClass.multifileFacadeClassForPart: IrClass? by irAttribute(followAttributeOwner = true)

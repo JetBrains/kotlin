@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
+import org.jetbrains.kotlin.ir.get
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
@@ -132,7 +133,7 @@ private fun generateMultifileFacades(
 
         for (partClass in partClasses) {
             partClass.multifileFacadeForPart = jvmClassName
-            context.multifileFacadeClassForPart[partClass.attributeOwnerId as IrClass] = facadeClass
+            partClass.multifileFacadeClassForPart = facadeClass
 
             val correspondingProperties = CorrespondingPropertyCache(context, facadeClass)
             for (member in partClass.declarations) {
@@ -343,7 +344,7 @@ private class UpdateConstantFacadePropertyReferences(
             else -> null
         } ?: return null
         val parent = declaration.parent as? IrClass ?: return null
-        val facadeClass = context.multifileFacadeClassForPart[parent.attributeOwnerId]
+        val facadeClass = parent.multifileFacadeClassForPart
 
         return if (shouldGeneratePartHierarchy ||
             (declaration is IrProperty && declaration.backingField?.shouldMoveToFacade() == true)
