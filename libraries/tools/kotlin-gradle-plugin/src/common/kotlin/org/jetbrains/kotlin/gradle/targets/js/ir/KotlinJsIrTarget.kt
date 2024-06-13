@@ -54,8 +54,6 @@ constructor(
     KotlinJsSubTargetContainerDsl,
     KotlinWasmSubTargetContainerDsl {
 
-    private val nodeJsPlugin = NodeJsRootPlugin.apply(project.rootProject)
-
     private val propertiesProvider = PropertiesProvider(project)
 
     override val testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun> by lazy {
@@ -229,6 +227,8 @@ constructor(
     private val nodejsLazyDelegate = lazy {
         if (wasmTargetType != KotlinWasmTargetType.WASI) {
             commonLazy
+        } else {
+            NodeJsRootPlugin.apply(project.rootProject)
         }
 
         project.objects.newInstance(KotlinNodeJsIr::class.java, this).also {

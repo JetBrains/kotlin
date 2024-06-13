@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer.Companion.generateBinaryName
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.createDefaultDistribution
 import org.jetbrains.kotlin.gradle.targets.js.typescript.TypeScriptValidationTask
@@ -61,6 +62,7 @@ sealed class JsIrBinary(
         if (target.wasmTargetType == KotlinWasmTargetType.WASI) {
             null
         } else {
+            NodeJsRootPlugin.apply(project.rootProject)
             project.registerTask<DefaultIncrementalSyncTask>(
                 linkSyncTaskName
             ) { task ->
