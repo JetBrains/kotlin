@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.objcexport.*
  * See K1 implementation [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapperKt.bridgeMethodImpl]
  */
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaFunctionLikeSymbol.getFunctionMethodBridge(): MethodBridge {
 
     val valueParameters = mutableListOf<MethodBridgeValueParameter>()
@@ -52,6 +53,7 @@ internal fun KaFunctionLikeSymbol.getFunctionMethodBridge(): MethodBridge {
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal val KaCallableSymbol.bridgeReceiverType: MethodBridgeReceiver
     get() {
         return if (isArrayConstructor) {
@@ -67,6 +69,7 @@ internal val KaCallableSymbol.bridgeReceiverType: MethodBridgeReceiver
  * [ObjCExportMapper.bridgeParameter]
  */
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun bridgeParameter(type: KaType): MethodBridgeValueParameter {
     return MethodBridgeValueParameter.Mapped(bridgeType(type))
 }
@@ -75,6 +78,7 @@ private fun bridgeParameter(type: KaType): MethodBridgeValueParameter {
  * [ObjCExportMapper.bridgeType]
  */
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun bridgeType(
     type: KaType,
 ): TypeBridge {
@@ -117,6 +121,7 @@ private fun bridgeType(
  * [ObjCExportMapper.bridgeFunctionType]
  */
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun bridgeFunctionType(type: KaType): TypeBridge {
 
     val numberOfParameters: Int
@@ -138,6 +143,7 @@ private fun bridgeFunctionType(type: KaType): TypeBridge {
  * [ObjCExportMapper.bridgeReturnType]
  */
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaCallableSymbol.bridgeReturnType(): MethodBridge.ReturnValue {
 
     if (isArrayConstructor) {

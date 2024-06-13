@@ -43,6 +43,7 @@ internal fun <L : Any> L.invalidAccess(): Nothing =
     error("Cls delegate shouldn't be accessed for symbol light classes! Qualified name: ${javaClass.name}")
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaDeclarationSymbol.getContainingSymbolsWithSelf(): Sequence<KaDeclarationSymbol> =
     generateSequence(this) { it.containingSymbol }
 
@@ -68,6 +69,7 @@ internal fun KaSymbolWithModality.computeSimpleModality(): String? = when (modal
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaClassOrObjectSymbol.enumClassModality(): String? {
     if (memberScope.callables.any { (it as? KaSymbolWithModality)?.modality == Modality.ABSTRACT }) {
         return PsiModifier.ABSTRACT
@@ -81,6 +83,7 @@ internal fun KaClassOrObjectSymbol.enumClassModality(): String? {
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaEnumEntrySymbol.requiresSubClass(): Boolean {
     val initializer = enumEntryInitializer ?: return false
     return initializer.combinedDeclaredMemberScope.declarations.any { it !is KaConstructorSymbol }
@@ -284,6 +287,7 @@ internal inline fun <T> Project.withElementFactorySafe(crossinline action: PsiEl
 internal fun BitSet.copy(): BitSet = clone() as BitSet
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun <T : KaSymbol> KaSymbolPointer<T>.restoreSymbolOrThrowIfDisposed(): T =
     restoreSymbol()
         ?: errorWithAttachment("${this::class} pointer already disposed") {

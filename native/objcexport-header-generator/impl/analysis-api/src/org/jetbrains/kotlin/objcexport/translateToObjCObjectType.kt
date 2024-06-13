@@ -40,6 +40,7 @@ private val objCProtocolClassId = ClassId(cInteropPackage, Name.identifier("ObjC
  * `@ExternalObjCClass` annotation. (See [org.jetbrains.kotlin.objcexport.analysisApiUtils.isObjCObjectType]
  */
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaType.translateToObjCObjectType(): ObjCNonNullReferenceType {
     if (this !is KaClassType) return objCErrorType
     val classSymbol = this.symbol as? KaClassOrObjectSymbol ?: return ObjCIdType
@@ -47,6 +48,7 @@ internal fun KaType.translateToObjCObjectType(): ObjCNonNullReferenceType {
 }
 
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaClassOrObjectSymbol.translateToObjCObjectType(): ObjCNonNullReferenceType {
     if (isObjCMetaClass()) return ObjCMetaClassType
     if (isObjCProtocolClass()) return ObjCClassType("Protocol", extras = objCTypeExtras {
@@ -69,23 +71,27 @@ private fun KaClassOrObjectSymbol.translateToObjCObjectType(): ObjCNonNullRefere
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaClassOrObjectSymbol.isObjCMetaClass(): Boolean {
     if (classId == objCClassClassId) return true
     return getDeclaredSuperInterfaceSymbols().any { superInterfaceSymbol -> superInterfaceSymbol.isObjCMetaClass() }
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaClassOrObjectSymbol.isObjCProtocolClass(): Boolean {
     if (classId == objCProtocolClassId) return true
     return getDeclaredSuperInterfaceSymbols().any { superInterfaceSymbol -> superInterfaceSymbol.isObjCProtocolClass() }
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaClassOrObjectSymbol.isExternalObjCClass(): Boolean {
     return NativeStandardInteropNames.externalObjCClassClassId in annotations
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaClassOrObjectSymbol.isObjCForwardDeclaration(): Boolean {
     val classId = classId ?: return false
     return when (NativeForwardDeclarationKind.packageFqNameToKind[classId.packageFqName]) {

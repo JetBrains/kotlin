@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.objcexport.extras.originClassId
 import org.jetbrains.kotlin.objcexport.extras.requiresForwardDeclaration
 
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun KaClassOrObjectSymbol.translateToObjCObject(): ObjCClass? {
     require(classKind == KaClassKind.OBJECT || classKind == KaClassKind.COMPANION_OBJECT)
     if (!isVisibleInObjC()) return null
@@ -49,6 +50,7 @@ fun KaClassOrObjectSymbol.translateToObjCObject(): ObjCClass? {
 }
 
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaClassOrObjectSymbol.getDefaultMembers(): List<ObjCExportStub> {
 
     val result = mutableListOf<ObjCExportStub>()
@@ -85,6 +87,7 @@ private fun KaClassOrObjectSymbol.getDefaultMembers(): List<ObjCExportStub> {
  * See also: [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mapReferenceType]
  */
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaClassOrObjectSymbol.toPropertyType() = ObjCClassType(
     className = getObjCClassOrProtocolName().objCName,
     typeArguments = emptyList(),
@@ -98,6 +101,7 @@ private fun KaClassOrObjectSymbol.toPropertyType() = ObjCClassType(
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getObjectInstanceSelector]
  */
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun getObjectInstanceSelector(objectSymbol: KaClassOrObjectSymbol): String {
     return objectSymbol.getObjCClassOrProtocolName(bareName = true)
         .objCName
@@ -109,6 +113,7 @@ private fun getObjectInstanceSelector(objectSymbol: KaClassOrObjectSymbol): Stri
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getObjectPropertySelector]
  */
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun getObjectPropertySelector(descriptor: KaClassOrObjectSymbol): String {
     val collides = ObjCPropertyNames.objectPropertyName == getObjectInstanceSelector(descriptor)
     return ObjCPropertyNames.objectPropertyName + (if (collides) "_" else "")

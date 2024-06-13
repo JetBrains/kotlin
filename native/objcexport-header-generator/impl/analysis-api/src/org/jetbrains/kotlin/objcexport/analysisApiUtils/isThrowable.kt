@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.ClassId
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal val KaClassOrObjectSymbol.isThrowable: Boolean
     get() {
         val classId = classId ?: return false
@@ -13,6 +14,7 @@ internal val KaClassOrObjectSymbol.isThrowable: Boolean
     }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal val ClassId.isThrowable: Boolean
     get() {
         return StandardNames.FqNames.throwable == this.asSingleFqName()

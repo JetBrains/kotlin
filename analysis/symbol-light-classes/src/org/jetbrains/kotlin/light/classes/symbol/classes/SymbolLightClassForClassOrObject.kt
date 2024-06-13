@@ -156,6 +156,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
     }
 
     context(KaSession)
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     private fun addMethodsFromDataClass(result: MutableList<KtLightMethod>, classOrObjectSymbol: KaNamedClassOrObjectSymbol) {
         if (!classOrObjectSymbol.isData) return
 
@@ -200,6 +201,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
     }
 
     context(KaSession)
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     private fun addDelegatesToInterfaceMethods(result: MutableList<KtLightMethod>, classOrObjectSymbol: KaNamedClassOrObjectSymbol) {
         fun createDelegateMethod(ktFunctionSymbol: KaFunctionSymbol) {
             val kotlinOrigin = ktFunctionSymbol.psiSafe<KtDeclaration>() ?: classOrObjectDeclaration
@@ -248,6 +250,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
     }
 
     context(KaSession)
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     private fun addInstanceFieldIfNeeded(result: MutableList<KtLightField>, namedClassOrObjectSymbol: KaNamedClassOrObjectSymbol) {
         if (classKind() != KaClassKind.OBJECT || isLocal) return
 
@@ -264,6 +267,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
     }
 
     context(KaSession)
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     private fun addFieldsForEnumEntries(result: MutableList<KtLightField>, classOrObjectSymbol: KaNamedClassOrObjectSymbol) {
         if (!isEnum) return
 

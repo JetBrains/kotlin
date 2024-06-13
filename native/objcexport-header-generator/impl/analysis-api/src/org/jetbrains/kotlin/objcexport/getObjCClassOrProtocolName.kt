@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
  *
  */
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun KaClassLikeSymbol.getObjCClassOrProtocolName(bareName: Boolean = false): ObjCExportClassOrProtocolName {
     val resolvedObjCNameAnnotation = resolveObjCNameAnnotation()
 
@@ -42,6 +43,7 @@ fun KaClassLikeSymbol.getObjCClassOrProtocolName(bareName: Boolean = false): Obj
 }
 
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaClassLikeSymbol.getObjCName(
     resolvedObjCNameAnnotation: KtResolvedObjCNameAnnotation? = resolveObjCNameAnnotation(),
     bareName: Boolean = false,
@@ -65,6 +67,7 @@ private fun KaClassLikeSymbol.getObjCName(
 }
 
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaClassLikeSymbol.getSwiftName(
     resolvedObjCNameAnnotation: KtResolvedObjCNameAnnotation? = resolveObjCNameAnnotation(),
     bareName: Boolean = false,
@@ -102,6 +105,7 @@ private fun KaClassLikeSymbol.getSwiftName(
 }
 
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaClassLikeSymbol.canBeInnerSwift(): Boolean {
     if (configuration.objcGenerics && this.typeParameters.isNotEmpty()) {
         // Swift compiler doesn't seem to handle this case properly.
@@ -119,6 +123,7 @@ private fun KaClassLikeSymbol.canBeInnerSwift(): Boolean {
 }
 
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaClassLikeSymbol.canBeOuterSwift(): Boolean {
     if (configuration.objcGenerics && this.typeParameters.isNotEmpty()) {
         // Swift nested classes are static but capture outer's generics.
@@ -139,6 +144,7 @@ private fun mangleSwiftNestedClassName(name: String): String = when (name) {
 }
 
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaSymbol.getObjCModuleNamePrefix(): String? {
     val module = containingModule
     val moduleName = module.getObjCKotlinModuleName() ?: return null

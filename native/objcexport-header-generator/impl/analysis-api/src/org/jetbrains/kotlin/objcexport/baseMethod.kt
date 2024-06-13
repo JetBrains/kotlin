@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
  * - [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapperKt.isBaseMethod]
  */
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal val KaFunctionSymbol.baseMethod: KaFunctionSymbol
     get() {
         val overriddenSymbols = allOverriddenSymbols.filter { symbol -> symbol.isVisibleInObjC() }.toList()

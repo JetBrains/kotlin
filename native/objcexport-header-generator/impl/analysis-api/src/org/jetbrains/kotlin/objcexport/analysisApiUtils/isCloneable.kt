@@ -11,12 +11,14 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal val KaDeclarationSymbol?.implementsCloneable: Boolean
     get() {
         return (this as? KaClassOrObjectSymbol)?.implementsCloneable ?: false
     }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal val KaClassOrObjectSymbol.implementsCloneable: Boolean
     get() {
         return superTypes.any {
@@ -35,6 +37,7 @@ internal val ClassId.isCloneable: Boolean
     }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal val KaFunctionSymbol.isClone: Boolean
     get() {
         val cloneCallableId = CallableId(StandardClassIds.Cloneable, Name.identifier("clone"))

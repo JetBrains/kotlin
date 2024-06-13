@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportClassOrProtocolNa
  * @receiver The name of the Kotlin class or protocol
  */
 context(KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun String.getObjCKotlinStdlibClassOrProtocolName() = ObjCExportClassOrProtocolName(
     swiftName = "Kotlin$this",
     objCName = "${configuration.frameworkName.orEmpty()}$this"

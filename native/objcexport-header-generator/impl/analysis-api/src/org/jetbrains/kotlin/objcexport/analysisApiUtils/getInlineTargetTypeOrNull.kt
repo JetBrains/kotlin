@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.InteropFqNames
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaType.getInlineTargetTypeOrNull(): KaType? {
     if (this !is KaClassType) return null
     val classSymbol = symbol as? KaNamedClassOrObjectSymbol ?: return null
@@ -22,6 +23,7 @@ internal fun KaType.getInlineTargetTypeOrNull(): KaType? {
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaNamedClassOrObjectSymbol.getInlineTargetTypeOrNull(): KaType? {
     if (!isInlineIncludingKotlinNativeSpecialClasses()) return null
 
@@ -47,6 +49,7 @@ internal fun KaNamedClassOrObjectSymbol.getInlineTargetTypeOrNull(): KaType? {
  * despite no modifier being present. This is considered a 'special Kotlin Native' class in the context of this function.
  */
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaNamedClassOrObjectSymbol.isInlineIncludingKotlinNativeSpecialClasses(): Boolean {
     if (this.isInline) return true
     val classId = classId ?: return false
@@ -66,12 +69,14 @@ private fun KaNamedClassOrObjectSymbol.isInlineIncludingKotlinNativeSpecialClass
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaType.markNullable(): KaType {
     if (this.nullability == KaTypeNullability.NULLABLE) return this
     return this.withNullability(KaTypeNullability.NULLABLE)
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaType.markNullableIf(shouldMarkNullable: Boolean): KaType {
     return if (shouldMarkNullable) markNullable() else this
 }

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaClassType
  * ```
  */
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaClassOrObjectSymbol.getSuperClassSymbolNotAny(): KaClassOrObjectSymbol? {
     return getSuperClassTypeNotAny()?.expandedSymbol
 }
@@ -43,6 +44,7 @@ internal fun KaClassOrObjectSymbol.getSuperClassSymbolNotAny(): KaClassOrObjectS
  * ```
  */
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaClassOrObjectSymbol.getSuperClassTypeNotAny(): KaClassType? {
     return superTypes.firstNotNullOfOrNull find@{ superType ->
         if (superType.isAnyType || superType.isError) return@find null

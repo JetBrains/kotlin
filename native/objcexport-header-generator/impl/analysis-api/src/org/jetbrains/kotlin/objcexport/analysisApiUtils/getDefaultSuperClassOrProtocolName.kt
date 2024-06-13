@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.objcexport.getObjCKotlinStdlibClassOrProtocolName
  * @end
  */
 context(KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun getDefaultSuperClassOrProtocolName(): ObjCExportClassOrProtocolName {
     return "Base".getObjCKotlinStdlibClassOrProtocolName()
 }

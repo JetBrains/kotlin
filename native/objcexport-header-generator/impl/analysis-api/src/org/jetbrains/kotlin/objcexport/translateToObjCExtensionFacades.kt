@@ -47,6 +47,7 @@ internal val ObjCInterface.isExtensionsFacade: Boolean
  * See related [translateToObjCTopLevelFacade]
  */
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun KtResolvedObjCExportFile.translateToObjCExtensionFacades(): List<ObjCInterface> {
     val extensions = callableSymbols
         .filter { it.isExtension }

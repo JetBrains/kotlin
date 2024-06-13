@@ -67,6 +67,7 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
     }
 
     context(KaSession)
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     protected open fun acceptCallableSymbol(symbol: KaCallableSymbol): Boolean =
         !(symbol is KaFunctionSymbol && symbol.visibility.isPrivateOrPrivateToThis() || symbol.hasTypeForValueClassInSignature())
 

@@ -41,6 +41,7 @@ class HasExportForCompilerAnnotationTest(
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 @OptIn(KaExperimentalApi::class)
 private fun verifyHasExportForCompilerAnnotation(property: KaPropertySymbol): Boolean {
     return property

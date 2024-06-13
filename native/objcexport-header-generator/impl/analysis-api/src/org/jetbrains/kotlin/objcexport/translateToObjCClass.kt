@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.isThrowable
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun KaClassOrObjectSymbol.translateToObjCClass(): ObjCClass? {
     require(classKind == KaClassKind.CLASS || classKind == KaClassKind.ENUM_CLASS)
     if (!isVisibleInObjC()) return null
@@ -99,6 +100,7 @@ fun KaClassOrObjectSymbol.translateToObjCClass(): ObjCClass? {
  * @see [Predefined]
  */
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaClassOrObjectSymbol.getCallableSymbolsForObjCMemberTranslation(): Set<KaCallableSymbol> {
     val generatedCallableSymbols = memberScope
         .callables
@@ -113,6 +115,7 @@ internal fun KaClassOrObjectSymbol.getCallableSymbolsForObjCMemberTranslation():
 }
 
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaClassType.getSuperClassName(): ObjCExportClassOrProtocolName? {
     val symbol = expandedSymbol ?: return null
     return symbol.getObjCClassOrProtocolName()

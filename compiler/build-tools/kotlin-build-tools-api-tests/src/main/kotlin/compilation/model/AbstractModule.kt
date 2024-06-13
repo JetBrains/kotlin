@@ -80,6 +80,7 @@ abstract class AbstractModule(
 
     override val scenarioDslCacheKey = AbstractModuleCacheKey(moduleName, dependencies.map { it.scenarioDslCacheKey }, additionalCompilationArguments)
 
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     override fun compile(
         strategyConfig: CompilerExecutionStrategyConfiguration,
         forceOutput: LogLevel?,

@@ -62,7 +62,8 @@ internal class SymbolLightFieldForProperty private constructor(
         backingFieldSymbolPointer = with(ktAnalysisSession) { propertySymbol.backingFieldSymbol?.createPointer() },
     )
 
-    private inline fun <T> withPropertySymbol(crossinline action: context (KaSession) (KaPropertySymbol) -> T): T {
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+    private inline fun <T> withPropertySymbol(crossinline action: context(KaSession) (KaPropertySymbol) -> T): T {
         return propertySymbolPointer.withSymbol(ktModule, action)
     }
 
