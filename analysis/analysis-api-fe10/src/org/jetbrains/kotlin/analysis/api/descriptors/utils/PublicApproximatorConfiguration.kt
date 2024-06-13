@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 internal class PublicApproximatorConfiguration(override val approximateLocalTypes: Boolean) : TypeApproximatorConfiguration.AllFlexibleSameValue() {
     override val approximateAllFlexible: Boolean get() = true
     override val approximateErrorTypes: Boolean get() = false
-    override val keepDefinitelyNotNullTypes: Boolean get() = false
+    override val approximateDefinitelyNotNullTypes: Boolean get() = true
     override val approximateIntegerLiteralConstantTypes: Boolean get() = true
     override val approximateIntersectionTypesInContravariantPositions: Boolean get() = true
 }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.config.LanguageFeature
 
 open class TypeApproximatorConfiguration {
     enum class IntersectionStrategy {
@@ -24,7 +25,10 @@ open class TypeApproximatorConfiguration {
     open val approximateIntegerConstantOperatorTypes: Boolean get() = false
     open val expectedTypeForIntegerLiteralType: KotlinTypeMarker? get() = null
 
-    open val keepDefinitelyNotNullTypes: Boolean get() = true
+    /**
+     * If [LanguageFeature.DefinitelyNonNullableTypes] is enabled, this property is ignored.
+     */
+    open val approximateDefinitelyNotNullTypes: Boolean get() = false
     open val intersectionStrategy: IntersectionStrategy = IntersectionStrategy.TO_COMMON_SUPERTYPE
     open val approximateIntersectionTypesInContravariantPositions = false
     open val approximateLocalTypes = false
@@ -75,7 +79,6 @@ open class TypeApproximatorConfiguration {
     open class PublicDeclaration(override val approximateLocalTypes: Boolean, override val approximateAnonymous: Boolean) : AllFlexibleSameValue() {
         override val approximateAllFlexible: Boolean get() = false
         override val approximateErrorTypes: Boolean get() = false
-        override val keepDefinitelyNotNullTypes: Boolean get() = false
         override val approximateIntegerLiteralConstantTypes: Boolean get() = true
         override val approximateIntersectionTypesInContravariantPositions: Boolean get() = true
 
