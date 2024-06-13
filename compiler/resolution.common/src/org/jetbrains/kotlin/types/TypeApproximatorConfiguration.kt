@@ -89,7 +89,7 @@ open class TypeApproximatorConfiguration {
         object ApproximateAnonymousTypes : PublicDeclaration(approximateLocalTypes = false, approximateAnonymous = true)
     }
 
-    sealed class AbstractCapturedTypesApproximation(val approximatedCapturedStatus: CaptureStatus?) :
+    sealed class AbstractCapturedTypesApproximation(private val approximatedCapturedStatus: CaptureStatus?) :
         AllFlexibleSameValue() {
         override val approximateAllFlexible: Boolean get() = false
         override val approximateErrorTypes: Boolean get() = false
