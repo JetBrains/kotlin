@@ -69,7 +69,7 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) : SyntheticAcces
 
     private fun getSyntheticConstructorAccessor(
         declaration: IrConstructor,
-        constructorToAccessorMap: ConcurrentHashMap<IrConstructor, IrConstructor>
+        constructorToAccessorMap: MutableMap<IrConstructor, IrConstructor>
     ): IrConstructor {
         return constructorToAccessorMap.getOrPut(declaration) {
             declaration.makeConstructorAccessor(JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR).also { accessor ->

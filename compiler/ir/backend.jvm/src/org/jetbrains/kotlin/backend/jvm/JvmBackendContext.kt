@@ -24,9 +24,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.declarations.*
@@ -121,7 +119,7 @@ class JvmBackendContext(
     // Store evaluated SMAP for anonymous classes. Used only with IR inliner.
     val typeToCachedSMAP = mutableMapOf<Type, SMAP>()
 
-    private val localClassType = ConcurrentHashMap<IrAttributeContainer, Type>()
+    private val localClassType by irAttribute<IrAttributeContainer, Type>(false).asMap()
 
     val isCompilingAgainstJdk8OrLater = state.jvmBackendClassResolver.resolveToClassDescriptors(
         Type.getObjectType("java/lang/invoke/LambdaMetafactory")
@@ -135,27 +133,27 @@ class JvmBackendContext(
     }
 
     val isEnclosedInConstructor = ConcurrentHashMap.newKeySet<IrAttributeContainer>()
-    val enclosingMethodOverride = ConcurrentHashMap<IrFunction, IrFunction>()
+    val enclosingMethodOverride by irAttribute<IrFunction, IrFunction>(false).asMap()
 
-    private val classCodegens = ConcurrentHashMap<IrClass, Any>()
+    private val classCodegens by irAttribute<IrClass, Any>(false).asMap()
 
     @Suppress("UNCHECKED_CAST")
     fun <ClassCodegen : Any> getOrCreateClassCodegen(klass: IrClass, create: (IrClass) -> ClassCodegen): ClassCodegen =
         classCodegens.computeIfAbsent(klass, create) as ClassCodegen
 
-    val localDelegatedProperties = ConcurrentHashMap<IrAttributeContainer, List<IrLocalDelegatedPropertySymbol>>()
+    val localDelegatedProperties by irAttribute<IrAttributeContainer, List<IrLocalDelegatedPropertySymbol>>(false).asMap()
 
     val multifileFacadesToAdd = mutableMapOf<JvmClassName, MutableList<IrClass>>()
-    val multifileFacadeForPart = mutableMapOf<IrClass, JvmClassName>()
-    val multifileFacadeClassForPart = mutableMapOf<IrClass, IrClass>()
-    val multifileFacadeMemberToPartMember = mutableMapOf<IrSimpleFunction, IrSimpleFunction>()
+    val multifileFacadeForPart by irAttribute<IrClass, JvmClassName>(false).asMap()
+    val multifileFacadeClassForPart by irAttribute<IrClass, IrClass>(false).asMap()
+    val multifileFacadeMemberToPartMember by irAttribute<IrSimpleFunction, IrSimpleFunction>(false).asMap()
 
-    val hiddenConstructorsWithMangledParams = ConcurrentHashMap<IrConstructor, IrConstructor>()
-    val hiddenConstructorsOfSealedClasses = ConcurrentHashMap<IrConstructor, IrConstructor>()
+    val hiddenConstructorsWithMangledParams by irAttribute<IrConstructor, IrConstructor>(false).asMap()
+    val hiddenConstructorsOfSealedClasses by irAttribute<IrConstructor, IrConstructor>(false).asMap()
 
     val collectionStubComputer = CollectionStubComputer(this)
 
-    private val overridesWithoutStubs = HashMap<IrSimpleFunction, List<IrSimpleFunctionSymbol>>()
+    private val overridesWithoutStubs by irAttribute<IrSimpleFunction, List<IrSimpleFunctionSymbol>>(false).asMap()
 
     fun recordOverridesWithoutStubs(function: IrSimpleFunction) {
         overridesWithoutStubs[function] = function.overriddenSymbols.toList()
@@ -165,7 +163,7 @@ class JvmBackendContext(
         overridesWithoutStubs.getOrElse(function) { function.overriddenSymbols }
 
     val bridgeLoweringCache = BridgeLoweringCache(this)
-    val functionsWithSpecialBridges: MutableSet<IrFunction> = ConcurrentHashMap.newKeySet()
+    val functionsWithSpecialBridges by irFlag<IrFunction>(false).asSet()
 
     override var inVerbosePhase: Boolean = false // TODO: needs parallelizing
 
@@ -181,13 +179,13 @@ class JvmBackendContext(
 
     val multiFieldValueClassReplacements = MemoizedMultiFieldValueClassReplacements(irFactory, this)
 
-    val continuationClassesVarsCountByType: MutableMap<IrAttributeContainer, Map<Type, Int>> = hashMapOf()
+    val continuationClassesVarsCountByType by irAttribute<IrAttributeContainer, Map<Type, Int>>(false).asMap()
 
     val inlineMethodGenerationLock = Any()
 
     val publicAbiSymbols = mutableSetOf<IrClassSymbol>()
 
-    val visitedDeclarationsForRegenerationLowering: MutableSet<IrDeclaration> = ConcurrentHashMap.newKeySet()
+    val visitedDeclarationsForRegenerationLowering: MutableSet<IrDeclaration> by irFlag<IrDeclaration>(false).asSet()
 
     val optionalAnnotations = mutableListOf<MetadataSource.Class>()
 
