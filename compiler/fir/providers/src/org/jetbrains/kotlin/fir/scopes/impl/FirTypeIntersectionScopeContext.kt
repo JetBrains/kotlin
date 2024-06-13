@@ -362,7 +362,7 @@ class FirTypeIntersectionScopeContext(
             newDispatchReceiverType = dispatchReceiverType,
             deferredReturnTypeCalculation = deferredReturnTypeCalculation,
             newReturnType = if (!forClassUseSiteScope && deferredReturnTypeCalculation == null) intersectReturnTypes(mostSpecific) else null,
-            newSource = dispatchReceiverType.toSymbol(session)?.source,
+            newSource = dispatchReceiverType.toSymbol(session)?.source ?: keyFir.source,
         ).apply {
             originalForIntersectionOverrideAttr = keyFir
         }
