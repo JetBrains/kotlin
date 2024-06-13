@@ -29,6 +29,7 @@ public interface KaTypeCreator {
 
 public sealed class KaTypeBuilder : KaLifetimeOwner
 
+@Deprecated("Use 'KaTypeBuilder' instead.", replaceWith = ReplaceWith("KaTypeBuilder"))
 public typealias KtTypeBuilder = KaTypeBuilder
 
 public sealed class KaClassTypeBuilder : KaTypeBuilder() {
@@ -59,6 +60,7 @@ public sealed class KaClassTypeBuilder : KaTypeBuilder() {
     }
 }
 
+@Deprecated("Use 'KaClassTypeBuilder' instead.", replaceWith = ReplaceWith("KaClassTypeBuilder"))
 public typealias KtClassTypeBuilder = KaClassTypeBuilder
 
 public sealed class KaTypeParameterTypeBuilder : KaTypeBuilder() {
@@ -73,4 +75,5 @@ public sealed class KaTypeParameterTypeBuilder : KaTypeBuilder() {
     }
 }
 
+@Deprecated("Use 'KaTypeParameterTypeBuilder' instead.", replaceWith = ReplaceWith("KaTypeParameterTypeBuilder"))
 public typealias KtTypeParameterTypeBuilder = KaTypeParameterTypeBuilder

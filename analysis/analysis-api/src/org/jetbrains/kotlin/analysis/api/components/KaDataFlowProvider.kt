@@ -64,6 +64,7 @@ public class KaSmartCastInfo(
     override fun hashCode(): Int = Objects.hash(backingSmartCastType, backingIsStable)
 }
 
+@Deprecated("Use 'KaSmartCastInfo' instead.", replaceWith = ReplaceWith("KaSmartCastInfo"))
 public typealias KtSmartCastInfo = KaSmartCastInfo
 
 public class KaImplicitReceiverSmartCast(
@@ -86,12 +87,14 @@ public class KaImplicitReceiverSmartCast(
     }
 }
 
+@Deprecated("Use 'KaImplicitReceiverSmartCast' instead.", replaceWith = ReplaceWith("KaImplicitReceiverSmartCast"))
 public typealias KtImplicitReceiverSmartCast = KaImplicitReceiverSmartCast
 
 public enum class KaImplicitReceiverSmartCastKind {
     DISPATCH, EXTENSION
 }
 
+@Deprecated("Use 'KaImplicitReceiverSmartCastKind' instead.", replaceWith = ReplaceWith("KaImplicitReceiverSmartCastKind"))
 public typealias KtImplicitReceiverSmartCastKind = KaImplicitReceiverSmartCastKind
 
 @KaAnalysisNonPublicApi
@@ -177,4 +180,5 @@ public class KaDataFlowExitPointSnapshot(
 }
 
 @KaAnalysisNonPublicApi
+@Deprecated("Use 'KaDataFlowExitPointSnapshot' instead.", replaceWith = ReplaceWith("KaDataFlowExitPointSnapshot"))
 public typealias KtDataFlowExitPointSnapshot = KaDataFlowExitPointSnapshot

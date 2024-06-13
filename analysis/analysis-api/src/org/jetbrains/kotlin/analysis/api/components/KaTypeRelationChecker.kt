@@ -70,4 +70,5 @@ public enum class KaSubtypingErrorTypePolicy {
     LENIENT,
 }
 
+@Deprecated("Use 'KaSubtypingErrorTypePolicy' instead.", replaceWith = ReplaceWith("KaSubtypingErrorTypePolicy"))
 public typealias KtSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy

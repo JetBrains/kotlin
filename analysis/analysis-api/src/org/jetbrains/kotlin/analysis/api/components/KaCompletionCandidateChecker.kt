@@ -37,6 +37,7 @@ public interface KaCompletionExtensionCandidateChecker {
     public fun computeApplicability(candidate: KaCallableSymbol): KaExtensionApplicabilityResult
 }
 
+@Deprecated("Use 'KaCompletionExtensionCandidateChecker' instead.", replaceWith = ReplaceWith("KaCompletionExtensionCandidateChecker"))
 public typealias KtCompletionExtensionCandidateChecker = KaCompletionExtensionCandidateChecker
 
 public sealed class KaExtensionApplicabilityResult : KaLifetimeOwner {
@@ -68,4 +69,5 @@ public sealed class KaExtensionApplicabilityResult : KaLifetimeOwner {
     ) : KaExtensionApplicabilityResult()
 }
 
+@Deprecated("Use 'KaExtensionApplicabilityResult' instead.", replaceWith = ReplaceWith("KaExtensionApplicabilityResult"))
 public typealias KtExtensionApplicabilityResult = KaExtensionApplicabilityResult

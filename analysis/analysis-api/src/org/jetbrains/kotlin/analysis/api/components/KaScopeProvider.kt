@@ -240,6 +240,7 @@ public class KaScopeContext(
     public val scopes: List<KaScopeWithKind> by validityAsserted(scopes)
 }
 
+@Deprecated("Use 'KaScopeContext' instead.", replaceWith = ReplaceWith("KaScopeContext"))
 public typealias KtScopeContext = KaScopeContext
 
 public class KaImplicitReceiver(
@@ -253,6 +254,7 @@ public class KaImplicitReceiver(
     public val scopeIndexInTower: Int by validityAsserted(scopeIndexInTower)
 }
 
+@Deprecated("Use 'KaImplicitReceiver' instead.", replaceWith = ReplaceWith("KaImplicitReceiver"))
 public typealias KtImplicitReceiver = KaImplicitReceiver
 
 public sealed class KaScopeKind {
@@ -325,6 +327,7 @@ public sealed class KaScopeKind {
     public class ScriptMemberScope(override val indexInTower: Int) : NonLocalScope()
 }
 
+@Deprecated("Use KaScopeKind' instead.", replaceWith = ReplaceWith("KaScopeKind"))
 public typealias KtScopeKind = KaScopeKind
 
 public class KaScopeWithKind(
@@ -345,4 +348,5 @@ public class KaScopeWithKind(
     override fun hashCode(): Int = Objects.hash(backingScope, backingKind)
 }
 
+@Deprecated("Use 'KaScopeWithKind' instead.", replaceWith = ReplaceWith("KaScopeWithKind"))
 public typealias KtScopeWithKind = KaScopeWithKind

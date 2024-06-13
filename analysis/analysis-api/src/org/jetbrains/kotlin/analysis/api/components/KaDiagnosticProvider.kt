@@ -31,4 +31,5 @@ public enum class KaDiagnosticCheckerFilter {
     EXTENDED_AND_COMMON_CHECKERS,
 }
 
+@Deprecated("Use 'KaDiagnosticCheckerFilter' instead.", replaceWith = ReplaceWith("KaDiagnosticCheckerFilter"))
 public typealias KtDiagnosticCheckerFilter = KaDiagnosticCheckerFilter

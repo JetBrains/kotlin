@@ -41,6 +41,7 @@ public sealed class KaCompilationResult {
     public class Failure(public val errors: List<KaDiagnostic>) : KaCompilationResult()
 }
 
+@Deprecated("Use 'KaCompilationResult' instead.", replaceWith = ReplaceWith("KaCompilationResult"))
 public typealias KtCompilationResult = KaCompilationResult
 
 public interface KaCompiledFile {
@@ -60,6 +61,7 @@ public interface KaCompiledFile {
     public val content: ByteArray
 }
 
+@Deprecated("Use 'KaCompiledFile' instead.", replaceWith = ReplaceWith("KaCompiledFile"))
 public typealias KtCompiledFile = KaCompiledFile
 
 /**
@@ -76,6 +78,7 @@ public sealed class KaCompilerTarget {
     public class Jvm(public val classBuilderFactory: ClassBuilderFactory) : KaCompilerTarget()
 }
 
+@Deprecated("Use 'KaCompilerTarget' instead.", replaceWith = ReplaceWith("KaCompilerTarget"))
 public typealias KtCompilerTarget = KaCompilerTarget
 
 public interface KaCompilerFacility {

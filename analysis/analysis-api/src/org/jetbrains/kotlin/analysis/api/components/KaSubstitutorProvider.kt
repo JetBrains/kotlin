@@ -84,4 +84,5 @@ public class KaSubstitutorBuilder
     }
 }
 
+@Deprecated("Use 'KaSubstitutorBuilder' instead.", replaceWith = ReplaceWith("KaSubstitutorBuilder"))
 public typealias KtSubstitutorBuilder = KaSubstitutorBuilder

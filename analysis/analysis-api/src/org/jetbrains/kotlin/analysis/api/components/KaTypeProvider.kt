@@ -275,4 +275,5 @@ public abstract class KaBuiltinTypes : KaLifetimeOwner {
         get() = nullableNothing
 }
 
+@Deprecated("Use 'KaBuiltinTypes' instead.", replaceWith = ReplaceWith("KaBuiltinTypes"))
 public typealias KtBuiltinTypes = KaBuiltinTypes
