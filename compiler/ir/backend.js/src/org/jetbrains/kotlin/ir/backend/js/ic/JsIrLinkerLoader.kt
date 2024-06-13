@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolD
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -30,7 +31,6 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.irMessageLogger
 import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -136,17 +136,17 @@ internal class JsIrLinkerLoader(
         val typeTranslator = TypeTranslatorImpl(symbolTable, compilerConfiguration.languageVersionSettings, moduleDescriptor)
         val errorPolicy = compilerConfiguration[JSConfigurationKeys.ERROR_TOLERANCE_POLICY] ?: ErrorTolerancePolicy.DEFAULT
         val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
-        val messageLogger = compilerConfiguration.irMessageLogger
+        val messageCollector = compilerConfiguration.messageCollector
         val linker = JsIrLinker(
             currentModule = null,
-            messageLogger = messageLogger,
+            messageCollector = messageCollector,
             builtIns = irBuiltIns,
             symbolTable = symbolTable,
             partialLinkageSupport = createPartialLinkageSupportForLinker(
                 partialLinkageConfig = compilerConfiguration.partialLinkageConfig,
                 allowErrorTypes = errorPolicy.allowErrors,
                 builtIns = irBuiltIns,
-                messageLogger = messageLogger
+                messageCollector = messageCollector
             ),
             translationPluginContext = null,
             friendModules = mapOf(mainLibrary.uniqueName to mainModuleFriends.map { it.uniqueName })

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.*
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
@@ -22,7 +23,7 @@ import org.jetbrains.kotlin.library.containsErrorCode
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 class JsIrLinker(
-    private val currentModule: ModuleDescriptor?, messageLogger: IrMessageLogger, builtIns: IrBuiltIns, symbolTable: SymbolTable,
+    private val currentModule: ModuleDescriptor?, messageCollector: MessageCollector, builtIns: IrBuiltIns, symbolTable: SymbolTable,
     override val partialLinkageSupport: PartialLinkageSupportForLinker,
     override val translationPluginContext: TranslationPluginContext?,
     private val icData: ICData? = null,
@@ -30,7 +31,7 @@ class JsIrLinker(
     private val stubGenerator: DeclarationStubGenerator? = null
 ) : KotlinIrLinker(
     currentModule = currentModule,
-    messageLogger = messageLogger,
+    messageCollector = messageCollector,
     builtIns = builtIns,
     symbolTable = symbolTable,
     exportedDependencies = emptyList(),

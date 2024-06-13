@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.backend.konan.InlineFunctionOriginInfo
 import org.jetbrains.kotlin.backend.konan.PartialCacheInfo
 import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumAndCStructStubs
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -261,7 +262,7 @@ internal data class DeserializedInlineFunction(val firstAccess: Boolean, val fun
 internal class KonanIrLinker(
         private val currentModule: ModuleDescriptor,
         override val translationPluginContext: TranslationPluginContext?,
-        messageLogger: IrMessageLogger,
+        messageCollector: MessageCollector,
         builtIns: IrBuiltIns,
         symbolTable: SymbolTable,
         friendModules: Map<String, Collection<String>>,
@@ -275,7 +276,7 @@ internal class KonanIrLinker(
         private val libraryBeingCached: PartialCacheInfo?,
         override val userVisibleIrModulesSupport: UserVisibleIrModulesSupport,
         externalOverridabilityConditions: List<IrExternalOverridabilityCondition>,
-) : KotlinIrLinker(currentModule, messageLogger, builtIns, symbolTable, exportedDependencies) {
+) : KotlinIrLinker(currentModule, messageCollector, builtIns, symbolTable, exportedDependencies) {
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean = moduleDescriptor.isNativeStdlib()
 
     private val forwardDeclarationDeserializer = forwardModuleDescriptor?.let {

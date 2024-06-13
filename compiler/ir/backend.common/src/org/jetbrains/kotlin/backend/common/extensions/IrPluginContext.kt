@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.extensions
 
 import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -13,7 +14,6 @@ import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.name.CallableId
@@ -71,7 +71,7 @@ interface IrPluginContext : IrGeneratorContext {
      * @param pluginId the unique plugin ID to make it easy to distinguish in log
      * @return         the logger associated with specified ID
      */
-    fun createDiagnosticReporter(pluginId: String): IrMessageLogger
+    fun createDiagnosticReporter(pluginId: String): MessageCollector
 
     // The following API is experimental
     @FirIncompatiblePluginAPI("Use classId overload instead")

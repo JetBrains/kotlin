@@ -10,9 +10,10 @@ import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.linkage.issues.PotentialConflictKind.*
 import org.jetbrains.kotlin.backend.common.linkage.issues.PotentialConflictKind.Companion.mostSignificantConflictKind
 import org.jetbrains.kotlin.backend.common.linkage.issues.PotentialConflictReason.Companion.mostSignificantConflictReasons
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.ResolvedDependency
@@ -23,8 +24,8 @@ import kotlin.Comparator
 abstract class KotlinIrLinkerIssue {
     protected abstract val errorMessage: String
 
-    fun raiseIssue(messageLogger: IrMessageLogger): Nothing {
-        messageLogger.report(IrMessageLogger.Severity.ERROR, errorMessage, null)
+    fun raiseIssue(messageCollector: MessageCollector): Nothing {
+        messageCollector.report(CompilerMessageSeverity.ERROR, errorMessage, null)
         throw CompilationErrorException(errorMessage)
     }
 }

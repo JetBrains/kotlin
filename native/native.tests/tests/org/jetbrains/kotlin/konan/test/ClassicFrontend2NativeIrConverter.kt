@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignature
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
@@ -75,7 +76,7 @@ class ClassicFrontend2NativeIrConverter(
                 ignoreErrors = CodegenTestDirectives.IGNORE_ERRORS in module.directives,
                 configuration.partialLinkageConfig.isEnabled
             ),
-            configuration.irMessageLogger::checkNoUnboundSymbols
+            configuration.messageCollector::checkNoUnboundSymbols
         )
         val manglerDesc = KonanManglerDesc
         val konanIdSignaturerClass = kotlinNativeClass("org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer")
@@ -125,7 +126,7 @@ class ClassicFrontend2NativeIrConverter(
             generatorContext.typeTranslator,
             generatorContext.irBuiltIns,
             linker = irDeserializer,
-            diagnosticReporter = configuration.irMessageLogger
+            diagnosticReporter = configuration.messageCollector
         )
 
         @OptIn(ObsoleteDescriptorBasedAPI::class)

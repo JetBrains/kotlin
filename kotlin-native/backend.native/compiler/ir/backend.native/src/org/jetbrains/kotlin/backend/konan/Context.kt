@@ -18,12 +18,12 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportCodeSpec
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportedInterface
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
-import org.jetbrains.kotlin.ir.util.irMessageLogger
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -108,7 +108,7 @@ internal class Context(
     override val partialLinkageSupport = createPartialLinkageSupportForLowerings(
             config.partialLinkageConfig,
             irBuiltIns,
-            configuration.irMessageLogger
+            configuration.messageCollector
     )
 }
 

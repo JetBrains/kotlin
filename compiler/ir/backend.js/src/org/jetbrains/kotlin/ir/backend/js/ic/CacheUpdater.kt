@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.serialization.IrInterningService
 import org.jetbrains.kotlin.backend.common.serialization.cityHash64String
 import org.jetbrains.kotlin.backend.common.toLogger
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragments
@@ -115,7 +116,7 @@ class CacheUpdater(
             val zipAccessor = compilerConfiguration.get(JSConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR)
             val allResolvedDependencies = CommonKLibResolver.resolve(
                 allModules,
-                compilerConfiguration.irMessageLogger.toLogger(),
+                compilerConfiguration.messageCollector.toLogger(),
                 zipAccessor
             )
 
