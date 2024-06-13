@@ -14,13 +14,7 @@ import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractEffectD
 import org.jetbrains.kotlin.analysis.api.contracts.description.renderKaContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaPossiblyNamedSymbol
-import org.jetbrains.kotlin.analysis.api.types.KaClassTypeQualifier
-import org.jetbrains.kotlin.analysis.api.types.KaErrorType
-import org.jetbrains.kotlin.analysis.api.types.KaNonErrorClassType
-import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
-import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeArgumentWithVariance
-import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
@@ -235,7 +229,7 @@ public class DebugSymbolRenderer(
                 append("annotations: ")
                 renderAnnotationsList(typeToRender.annotations, printer)
 
-                if (typeToRender is KaNonErrorClassType) {
+                if (typeToRender is KaClassType) {
                     appendLine()
                     append("typeArguments: ")
                     renderList(typeToRender.typeArguments, printer, renderSymbolsFully = false)

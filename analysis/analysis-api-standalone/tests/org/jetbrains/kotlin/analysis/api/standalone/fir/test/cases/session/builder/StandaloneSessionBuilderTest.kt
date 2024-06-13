@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISe
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaLocalVariableSymbol
-import org.jetbrains.kotlin.analysis.api.types.KaNonErrorClassType
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
@@ -116,7 +116,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
         val localVariable = testFunction.findDescendantOfType<KtProperty>()!!
         analyze(localVariable) {
             val localVariableSymbol = localVariable.symbol
-            val type = localVariableSymbol.returnType as KaNonErrorClassType
+            val type = localVariableSymbol.returnType as KaClassType
             Assertions.assertEquals(
                 ClassId(FqName("test.pkg"), FqName("NativePointerKeyboardModifiers"), isLocal = false),
                 type.classId
@@ -131,7 +131,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
         val actualProperty = actualClass.findDescendantOfType<KtProperty>()!!
         analyze(actualProperty) {
             val symbol = actualProperty.symbol
-            val type = symbol.returnType as KaNonErrorClassType
+            val type = symbol.returnType as KaClassType
             Assertions.assertEquals(
                 ClassId.fromString("kotlin/jvm/JvmInline"),
                 type.symbol.annotations.single().classId

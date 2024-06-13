@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.analysis.api.types.KaNonErrorClassType
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -144,7 +144,7 @@ internal fun KaAnnotationValue.toLightClassAnnotationValue(): AnnotationValue {
 
 internal fun KaKClassAnnotationValue.toLightClassAnnotationValue(): AnnotationValue.KClass {
     when (val type = type) {
-        is KaNonErrorClassType -> {
+        is KaClassType -> {
             val classId = type.classId.takeUnless { it.isLocal }
             return AnnotationValue.KClass(classId, isError = false, sourcePsi)
         }

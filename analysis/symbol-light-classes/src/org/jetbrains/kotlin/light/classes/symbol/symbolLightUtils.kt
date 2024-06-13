@@ -149,7 +149,7 @@ internal fun KaSession.getTypeNullability(type: KaType): KaTypeNullability {
         return if (!subtypeOfNullableSuperType) KaTypeNullability.NON_NULLABLE else KaTypeNullability.UNKNOWN
     }
 
-    if (ktType !is KaNonErrorClassType) return KaTypeNullability.NON_NULLABLE
+    if (ktType !is KaClassType) return KaTypeNullability.NON_NULLABLE
     if (ktType.typeArguments.any { it.type is KaClassErrorType }) return KaTypeNullability.NON_NULLABLE
     if (ktType.classId.shortClassName.asString() == SpecialNames.ANONYMOUS_STRING) return KaTypeNullability.NON_NULLABLE
 

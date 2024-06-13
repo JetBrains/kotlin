@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithMembers
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithTypeParameters
 import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThis
 import org.jetbrains.kotlin.analysis.api.types.KaClassErrorType
-import org.jetbrains.kotlin.analysis.api.types.KaNonErrorClassType
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -490,7 +490,7 @@ internal fun SymbolLightClassForClassLike<*>.createInheritanceList(
         if (isInterface) return forExtendsList
 
         return when (this) {
-            is KaNonErrorClassType -> {
+            is KaClassType -> {
                 // We don't have Enum among enums supertype in sources neither we do for decompiled class-files and light-classes
                 if (isEnum && this.classId == StandardClassIds.Enum) return false
 
@@ -530,7 +530,7 @@ internal fun SymbolLightClassForClassLike<*>.createInheritanceList(
                     // Add java supertype
                     listBuilder.addReference(mappedToNoCollectionAsIs)
                     // Add marker interface
-                    if (superType is KaNonErrorClassType) {
+                    if (superType is KaClassType) {
                         listBuilder.addMarkerInterfaceIfNeeded(superType.classId)
                     }
                 }

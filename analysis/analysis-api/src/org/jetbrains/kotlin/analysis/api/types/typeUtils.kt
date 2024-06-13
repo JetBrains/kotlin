@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
  * Returns a [KaClassLikeSymbol] for this [KaType] if the type represents a uniquely resolvable class/object/type alias.
  */
 public val KaType.symbol: KaClassLikeSymbol?
-    get() = (this as? KaNonErrorClassType)?.symbol
+    get() = (this as? KaClassType)?.symbol
 
 /**
  * Returns a [KtClassLikeSymbol] for this [KtType] if the type represents a uniquely resolvable class/object/type alias.

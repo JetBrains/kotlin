@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaFlexibleType
-import org.jetbrains.kotlin.analysis.api.types.KaNonErrorClassType
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -145,7 +145,7 @@ public interface KaTypeInformationProvider {
     public val KaType.expandedSymbol: KaClassOrObjectSymbol?
         get() = withValidityAssertion {
             return when (this) {
-                is KaNonErrorClassType -> when (val symbol = symbol) {
+                is KaClassType -> when (val symbol = symbol) {
                     is KaClassOrObjectSymbol -> symbol
                     is KaTypeAliasSymbol -> symbol.expandedType.expandedSymbol
                 }
@@ -185,7 +185,7 @@ public interface KaTypeInformationProvider {
     public val KaType.isNestedArray: Boolean
 
     public fun KaType.isClassType(classId: ClassId): Boolean = withValidityAssertion {
-        if (this !is KaNonErrorClassType) return false
+        if (this !is KaClassType) return false
         return this.classId == classId
     }
 
@@ -194,7 +194,7 @@ public interface KaTypeInformationProvider {
 
     public val KaType.isPrimitive: Boolean
         get() = withValidityAssertion {
-            if (this !is KaNonErrorClassType) return false
+            if (this !is KaClassType) return false
             return this.classId in DefaultTypeClassIds.PRIMITIVES
         }
 

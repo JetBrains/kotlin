@@ -14,11 +14,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
-import org.jetbrains.kotlin.analysis.api.types.KaFlexibleType
-import org.jetbrains.kotlin.analysis.api.types.KaNonErrorClassType
-import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
-import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.asJava.classes.annotateByTypeAnnotationProvider
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -164,7 +160,7 @@ internal fun KaAnnotatedSymbol.computeThrowsList(
             }
 
             is KaKClassAnnotationValue -> {
-                if (annotationValue.type is KaNonErrorClassType) {
+                if (annotationValue.type is KaClassType) {
                     val psiType = annotationValue.type.asPsiType(
                         useSitePosition,
                         allowErrorTypes = true,
@@ -220,7 +216,7 @@ fun annotateByKtType(
 
         yield(explicitTypeAnnotations + listOfNotNull(nullabilityAnnotation))
 
-        if (unwrappedType is KaNonErrorClassType) {
+        if (unwrappedType is KaClassType) {
             unwrappedType.typeArguments.forEach { typeProjection ->
                 typeProjection.type?.let {
                     yieldAll(getAnnotationsSequence(it))
