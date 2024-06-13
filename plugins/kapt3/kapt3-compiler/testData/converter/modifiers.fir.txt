@@ -85,14 +85,6 @@ public final class Modifiers {
         return null;
     }
 
-    public final void setVolatileField(@org.jetbrains.annotations.NotNull()
-    java.lang.String p0) {
-    }
-
-    @kotlin.jvm.Strictfp()
-    public final strictfp void strictFp() {
-    }
-
     @kotlin.jvm.JvmOverloads()
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String overloads() {
@@ -111,6 +103,14 @@ public final class Modifiers {
     public final java.lang.String overloads(@org.jetbrains.annotations.NotNull()
     java.lang.String a, int n) {
         return null;
+    }
+
+    public final void setVolatileField(@org.jetbrains.annotations.NotNull()
+    java.lang.String p0) {
+    }
+
+    @kotlin.jvm.Strictfp()
+    public final strictfp void strictFp() {
     }
 }
 
@@ -201,9 +201,9 @@ package modifiers;
  *   // signature: <init>()V
  *   protected constructor()
  *
- *   // nested class: PrivateInterface
- *
  *   // nested class: ProtectedInterface
+ *
+ *   // nested class: PrivateInterface
  *
  *   // module name: main
  * }
@@ -260,13 +260,13 @@ package modifiers;
  *   // signature: <init>()V
  *   protected constructor()
  *
- *   // nested class: Four
- *
  *   // nested class: One
+ *
+ *   // nested class: Two
  *
  *   // nested class: Three
  *
- *   // nested class: Two
+ *   // nested class: Four
  *
  *   // sealed subclass: modifiers/SealedClass.One
  *
