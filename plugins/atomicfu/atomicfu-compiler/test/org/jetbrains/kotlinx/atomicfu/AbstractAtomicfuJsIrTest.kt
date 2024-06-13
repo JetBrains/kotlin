@@ -30,10 +30,6 @@ open class AbstractAtomicfuJsIrTest : AbstractJsIrTest(
         with(builder) {
             useConfigurators(::AtomicfuEnvironmentConfigurator)
             useCustomRuntimeClasspathProviders(::AtomicfuJsRuntimeClasspathProvider)
-            defaultDirectives {
-                // TODO: Remove this as soon as KT-68840 is fixed
-                CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS with targetBackend
-            }
         }
     }
 }
