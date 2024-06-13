@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.ir
 
 import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.declarations.copyAttributes
+import org.jetbrains.kotlin.utils.DummyDelegate
 import java.lang.ref.WeakReference
 import java.util.function.Function
+import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
@@ -180,9 +182,9 @@ class IrAttribute<E : IrElement, T : Any> internal constructor(
                 return Flag(attribute)
             }
 
-            fun asSet() = ReadOnlyProperty<Any?, IrAttributeMapWrapper.FlagSetWrapper<E>> { thisRef, property ->
+            fun asSet() = PropertyDelegateProvider { thisRef: Any?, property: KProperty<*> ->
                 val attribute = this@Delegate.provideDelegate(thisRef, property)
-                IrAttributeMapWrapper.FlagSetWrapper(attribute)
+                DummyDelegate(IrAttributeMapWrapper.FlagSetWrapper(attribute))
             }
         }
     }
@@ -201,9 +203,10 @@ class IrAttribute<E : IrElement, T : Any> internal constructor(
         operator fun provideDelegate(thisRef: Any?, property: KProperty<*>): IrAttribute<E, T> =
             create(thisRef, property.name)
 
-        fun asMap() = ReadOnlyProperty<Any?, IrAttributeMapWrapper<E, T>> { thisRef, property ->
+
+        fun asMap() = PropertyDelegateProvider { thisRef: Any?, property: KProperty<*> ->
             val attribute = this@Delegate.provideDelegate(thisRef, property)
-            IrAttributeMapWrapper(attribute)
+            DummyDelegate(IrAttributeMapWrapper(attribute))
         }
     }
 }
