@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.sir.providers.impl
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.providers.SirVisibilityChecker
@@ -32,13 +33,11 @@ public class SirVisibilityCheckerImpl(
             is KaVariableSymbol -> {
                 true
             }
-            is KaTypeAliasSymbol -> {
-                val type = ktSymbol.expandedType
-
-                !type.isMarkedNullable && (type.fullyExpandedType.isPrimitive || type.fullyExpandedType.isNothing ||
-                        (type.expandedSymbol as? KaSymbolWithVisibility)
-                            ?.sirVisibility(ktAnalysisSession) == SirVisibility.PUBLIC)
-            }
+            is KaTypeAliasSymbol -> ktSymbol.expandedType.fullyExpandedType
+                .takeIf { !it.isMarkedNullable }
+                ?.let {
+                    it.isPrimitive || it.isNothing || it.isVisible(ktAnalysisSession)
+                } ?: false
             else -> false
         }
         return if (isConsumable) SirVisibility.PUBLIC else SirVisibility.PRIVATE
@@ -97,6 +96,10 @@ public class SirVisibilityCheckerImpl(
             }
             return true
         }
+
+    private fun KaType.isVisible(ktAnalysisSession: KaSession): Boolean = with(ktAnalysisSession) {
+        (expandedSymbol as? KaSymbolWithVisibility)?.sirVisibility(ktAnalysisSession) == SirVisibility.PUBLIC
+    }
 
     private fun KaSymbolWithVisibility.isPublic(): Boolean = visibility.isPublicAPI
 }

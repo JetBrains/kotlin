@@ -35,6 +35,7 @@ typealias ShouldHaveNoAnnotation = @UselessAnnotation Int
 typealias UselessDeclaration = UselessAnnotation
 
 // FILE: should_be_ignored.kt
+import typealiases.Foo
 
 public annotation class OptIn
 typealias annotationClass = OptIn
@@ -109,6 +110,7 @@ typealias dataObjectWithPackage = DATA_OBJECT_WITH_PACKAGE
 
 typealias closure = () -> Unit
 
-typealias nullable = Int?
+typealias nullable_primitive = Int?
+typealias nullable_class = Foo?
 
 typealias never = Nothing
