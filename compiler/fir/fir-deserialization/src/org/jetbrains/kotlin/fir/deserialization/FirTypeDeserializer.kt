@@ -46,7 +46,8 @@ class FirTypeDeserializer(
     private val flexibleTypeFactory: FlexibleTypeFactory,
     typeParameterProtos: List<ProtoBuf.TypeParameter>,
     private val parent: FirTypeDeserializer?,
-    private val containingSymbol: FirBasedSymbol<*>?
+    private val containingSymbol: FirBasedSymbol<*>?,
+    val origin: FirDeclarationOrigin = FirDeclarationOrigin.Library
 ) {
     private val typeParameterDescriptors: Map<Int, FirTypeParameterSymbol> = if (typeParameterProtos.isNotEmpty()) {
         LinkedHashMap<Int, FirTypeParameterSymbol>()
@@ -73,7 +74,7 @@ class FirTypeDeserializer(
                 builders += FirTypeParameterBuilder().apply {
                     moduleData = this@FirTypeDeserializer.moduleData
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-                    origin = FirDeclarationOrigin.Library
+                    this.origin = this@FirTypeDeserializer.origin
                     this.name = name
                     this.symbol = symbol
                     this.containingDeclarationSymbol = containingSymbol ?: error("Top-level type parameter ???")

@@ -126,7 +126,8 @@ class FirDeserializationContext(
             flexibleTypeFactory: FirTypeDeserializer.FlexibleTypeFactory,
             constDeserializer: FirConstDeserializer,
             containerSource: DeserializedContainerSource?,
-            outerClassSymbol: FirRegularClassSymbol
+            outerClassSymbol: FirRegularClassSymbol,
+            origin: FirDeclarationOrigin = FirDeclarationOrigin.Library
         ): FirDeserializationContext = createRootContext(
             nameResolver,
             TypeTable(classProto.typeTable),
@@ -140,7 +141,8 @@ class FirDeserializationContext(
             classProto.typeParameterList,
             containerSource,
             outerClassSymbol,
-            outerClassSymbol
+            outerClassSymbol,
+            origin
         )
 
         private fun createRootContext(
@@ -156,7 +158,8 @@ class FirDeserializationContext(
             typeParameterProtos: List<ProtoBuf.TypeParameter>,
             containerSource: DeserializedContainerSource?,
             outerClassSymbol: FirRegularClassSymbol?,
-            containingDeclarationSymbol: FirBasedSymbol<*>?
+            containingDeclarationSymbol: FirBasedSymbol<*>?,
+            origin: FirDeclarationOrigin = FirDeclarationOrigin.Library
         ): FirDeserializationContext {
             return FirDeserializationContext(
                 nameResolver, typeTable,
@@ -172,7 +175,8 @@ class FirDeserializationContext(
                     flexibleTypeFactory,
                     typeParameterProtos,
                     null,
-                    containingDeclarationSymbol
+                    containingDeclarationSymbol,
+                    origin
                 ),
                 annotationDeserializer,
                 constDeserializer,
