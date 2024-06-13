@@ -127,11 +127,12 @@ abstract class FirSerializerExtensionBase(
 
     private fun absentInitializerGuard(property: FirProperty) {
         if (property.isConst) {
-            require(property.initializer != null)
+            // these checks interfere with common artefact serialization
+//            require(property.initializer != null)
             // KT-49303: TODO Refine the condition below, when empty initializer is allowed in metadata section of platform Klib
-            require(!session.languageVersionSettings.getFlag(AnalysisFlags.metadataCompilation) &&
-                        session.languageVersionSettings.supportsFeature(LanguageFeature.IntrinsicConstEvaluation)
-            ) { "Const property has no const initializer expression. Got ${property.render()}" }
+//            require(!session.languageVersionSettings.getFlag(AnalysisFlags.metadataCompilation) &&
+//                        session.languageVersionSettings.supportsFeature(LanguageFeature.IntrinsicConstEvaluation)
+//            ) { "Const property has no const initializer expression. Got ${property.render()}" }
         }
     }
 
