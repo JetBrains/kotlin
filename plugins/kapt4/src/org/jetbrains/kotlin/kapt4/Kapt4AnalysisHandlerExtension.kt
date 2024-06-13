@@ -113,70 +113,71 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
         )
 
         val projectDisposable = Disposer.newDisposable("K2KaptSession.project")
-        val projectEnvironment =
-            createProjectEnvironment(updatedConfiguration, projectDisposable, EnvironmentConfigFiles.JVM_CONFIG_FILES, messageCollector)
-        if (messageCollector.hasErrors()) {
-            return false
-        }
-
-        val diagnosticsReporter = FirKotlinToJvmBytecodeCompiler.createPendingReporter(messageCollector)
-
-        if (options.mode.generateStubs) {
-            val (analysisTime, analysisResults) = measureTimeMillis {
-                compileModuleToAnalyzedFir(
-                    compilerInput,
-                    projectEnvironment,
-                    emptyList(),
-                    null,
-                    diagnosticsReporter,
-                )
+        try {
+            val projectEnvironment =
+                createProjectEnvironment(updatedConfiguration, projectDisposable, EnvironmentConfigFiles.JVM_CONFIG_FILES, messageCollector)
+            if (messageCollector.hasErrors()) {
+                return false
             }
 
-            logger.info { "Initial analysis took $analysisTime ms" }
+            val diagnosticsReporter = FirKotlinToJvmBytecodeCompiler.createPendingReporter(messageCollector)
 
-            val (classFilesCompilationTime, codegenOutput) = measureTimeMillis {
-                // Ignore all FE errors
-                val cleanDiagnosticReporter = FirKotlinToJvmBytecodeCompiler.createPendingReporter(messageCollector)
-                val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, cleanDiagnosticReporter)
-                val irInput = convertAnalyzedFirToIr(compilerInput, analysisResults, compilerEnvironment, skipBodies = true)
+            if (options.mode.generateStubs) {
+                val (analysisTime, analysisResults) = measureTimeMillis {
+                    compileModuleToAnalyzedFir(
+                        compilerInput,
+                        projectEnvironment,
+                        emptyList(),
+                        null,
+                        diagnosticsReporter,
+                    )
+                }
 
-                generateCodeFromIr(irInput, compilerEnvironment, skipBodies = true)
-            }
+                logger.info { "Initial analysis took $analysisTime ms" }
 
-            val builderFactory = codegenOutput.builderFactory
-            val compiledClasses = (builderFactory as OriginCollectingClassBuilderFactory).compiledClasses
-            val origins = builderFactory.origins
+                val (classFilesCompilationTime, codegenOutput) = measureTimeMillis {
+                    // Ignore all FE errors
+                    val cleanDiagnosticReporter = FirKotlinToJvmBytecodeCompiler.createPendingReporter(messageCollector)
+                    val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, cleanDiagnosticReporter)
+                    val irInput = convertAnalyzedFirToIr(compilerInput, analysisResults, compilerEnvironment, skipBodies = true)
 
-            logger.info { "Stubs compilation took $classFilesCompilationTime ms" }
-            logger.info { "Compiled classes: " + compiledClasses.joinToString { it.name } }
+                    generateCodeFromIr(irInput, compilerEnvironment, skipBodies = true)
+                }
 
-            KaptContextForStubGeneration(
-                options, false, logger, compiledClasses, origins, codegenOutput.generationState,
-                analysisResults.outputs.flatMap { it.fir }
-            ).use { context ->
-                generateKotlinSourceStubs(context)
-            }
-        }
+                val builderFactory = codegenOutput.builderFactory
+                val compiledClasses = (builderFactory as OriginCollectingClassBuilderFactory).compiledClasses
+                val origins = builderFactory.origins
 
-        if (options.mode.runAnnotationProcessing) {
-            val (annotationProcessingTime) = measureTimeMillis {
-                KaptContext(
-                    options,
-                    false,
-                    logger
+                logger.info { "Stubs compilation took $classFilesCompilationTime ms" }
+                logger.info { "Compiled classes: " + compiledClasses.joinToString { it.name } }
+
+                KaptContextForStubGeneration(
+                    options, false, logger, compiledClasses, origins, codegenOutput.generationState,
+                    analysisResults.outputs.flatMap { it.fir }
                 ).use { context ->
-                    try {
-                        runProcessors(context, options)
-                    } catch (e: KaptBaseError) {
-                        return false
-                    }
+                    generateKotlinSourceStubs(context)
                 }
             }
 
-            logger.info { "Annotation processing took $annotationProcessingTime ms" }
-        }
+            if (options.mode.runAnnotationProcessing) {
+                val (annotationProcessingTime) = measureTimeMillis {
+                    KaptContext(
+                        options,
+                        false,
+                        logger
+                    ).use { context ->
+                        try {
+                            runProcessors(context, options)
+                        } catch (e: KaptBaseError) {
+                            return false
+                        }
+                    }
+                }
 
-        return true
+                logger.info { "Annotation processing took $annotationProcessingTime ms" }
+            }
+
+            return true
 
 //        val projectDisposable = Disposer.newDisposable("StandaloneAnalysisAPISession.project")
 //        try {
@@ -253,9 +254,9 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
 //                logger.exception(e)
 //                false
 //            }
-//        } finally {
-//            Disposer.dispose(projectDisposable)
-//        }
+        } finally {
+            Disposer.dispose(projectDisposable)
+        }
     }
 
     private fun generateKotlinSourceStubs(kaptContext: KaptContextForStubGeneration) {

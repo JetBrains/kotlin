@@ -53,41 +53,45 @@ internal class Kapt4Facade(private val testServices: TestServices) :
         )
 
         val projectDisposable = Disposer.newDisposable("K2KaptSession.project")
-        val projectEnvironment =
-            createProjectEnvironment(configuration, projectDisposable, EnvironmentConfigFiles.JVM_CONFIG_FILES, messageCollector)
+        try {
+            val projectEnvironment =
+                createProjectEnvironment(configuration, projectDisposable, EnvironmentConfigFiles.JVM_CONFIG_FILES, messageCollector)
 
-        val diagnosticsReporter = FirKotlinToJvmBytecodeCompiler.createPendingReporter(messageCollector)
+            val diagnosticsReporter = FirKotlinToJvmBytecodeCompiler.createPendingReporter(messageCollector)
 
-        val analysisResults = compileModuleToAnalyzedFir(
-            compilerInput,
-            projectEnvironment,
-            emptyList(),
-            null,
-            diagnosticsReporter,
-        )
+            val analysisResults = compileModuleToAnalyzedFir(
+                compilerInput,
+                projectEnvironment,
+                emptyList(),
+                null,
+                diagnosticsReporter,
+            )
 
-        val cleanDiagnosticReporter = FirKotlinToJvmBytecodeCompiler.createPendingReporter(messageCollector)
-        val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, cleanDiagnosticReporter)
-        val irInput = convertAnalyzedFirToIr(compilerInput, analysisResults, compilerEnvironment, skipBodies = true)
-        val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment, skipBodies = true)
+            val cleanDiagnosticReporter = FirKotlinToJvmBytecodeCompiler.createPendingReporter(messageCollector)
+            val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, cleanDiagnosticReporter)
+            val irInput = convertAnalyzedFirToIr(compilerInput, analysisResults, compilerEnvironment, skipBodies = true)
+            val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment, skipBodies = true)
 
-        val builderFactory = codegenOutput.builderFactory
-        val compiledClasses = (builderFactory as OriginCollectingClassBuilderFactory).compiledClasses
-        val origins = builderFactory.origins
+            val builderFactory = codegenOutput.builderFactory
+            val compiledClasses = (builderFactory as OriginCollectingClassBuilderFactory).compiledClasses
+            val origins = builderFactory.origins
 
-        val options = testServices.kaptOptionsProvider[module]
+            val options = testServices.kaptOptionsProvider[module]
 
-        val logger = MessageCollectorBackedKaptLogger(
-            isVerbose = true,
-            isInfoAsWarnings = false,
-            messageCollector = testServices.messageCollectorProvider.getCollector(module)
-        )
+            val logger = MessageCollectorBackedKaptLogger(
+                isVerbose = true,
+                isInfoAsWarnings = false,
+                messageCollector = testServices.messageCollectorProvider.getCollector(module)
+            )
 
-        val context = KaptContextForStubGeneration(
-            options, true, logger, compiledClasses, origins, codegenOutput.generationState,
-            analysisResults.outputs.flatMap { it.fir }
-        )
-        return KaptContextBinaryArtifact(context, isFir = true)
+            val context = KaptContextForStubGeneration(
+                options, true, logger, compiledClasses, origins, codegenOutput.generationState,
+                analysisResults.outputs.flatMap { it.fir }
+            )
+            return KaptContextBinaryArtifact(context, isFir = true)
+        } finally {
+            Disposer.dispose(projectDisposable)
+        }
     }
 
     override fun shouldRunAnalysis(module: TestModule): Boolean {
