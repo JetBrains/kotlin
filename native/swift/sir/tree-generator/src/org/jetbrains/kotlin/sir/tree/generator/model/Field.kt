@@ -25,14 +25,14 @@ abstract class Field(
     }
 }
 
-class SingleField(
+class SimpleField(
     name: String,
     override var typeRef: TypeRefWithNullability,
     isMutable: Boolean,
     override val isChild: Boolean,
 ) : Field(name, isMutable) {
 
-    override fun internalCopy() = SingleField(name, typeRef, isMutable, isChild)
+    override fun internalCopy() = SimpleField(name, typeRef, isMutable, isChild)
 
     override fun substituteType(map: TypeParameterSubstitutionMap) {
         typeRef = typeRef.substitute(map) as TypeRefWithNullability

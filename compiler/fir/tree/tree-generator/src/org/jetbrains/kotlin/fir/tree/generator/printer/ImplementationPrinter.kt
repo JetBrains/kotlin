@@ -38,7 +38,7 @@ internal class ImplementationPrinter(
     override fun ImportCollectingPrinter.printAdditionalMethods(implementation: Implementation) {
         fun Field.transform() {
             when (this) {
-                is SingleField ->
+                is SimpleField ->
                     println("$name = ${name}${call()}transform(transformer, data)")
 
                 is ListField -> {
@@ -122,7 +122,7 @@ internal class ImplementationPrinter(
                                         )
                                     } else {
                                         when (field) {
-                                            is SingleField -> {
+                                            is SimpleField -> {
                                                 println(field.acceptString())
                                             }
 

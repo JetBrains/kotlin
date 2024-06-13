@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.generator.elementVisitorType
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
 import org.jetbrains.kotlin.ir.generator.model.ListField
-import org.jetbrains.kotlin.ir.generator.model.SingleField
+import org.jetbrains.kotlin.ir.generator.model.SimpleField
 import org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef
 
 private val transformIfNeeded = ArbitraryImportable("$BASE_PACKAGE.util", "transformIfNeeded")
@@ -68,7 +68,7 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
                     for (child in element.walkableChildren) {
                         print(child.name, child.call())
                         when (child) {
-                            is SingleField -> println("accept(visitor, data)")
+                            is SimpleField -> println("accept(visitor, data)")
                             is ListField -> {
                                 print("forEach { it")
                                 if (child.baseType.nullable) {
@@ -96,7 +96,7 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
                     for (child in element.transformableChildren) {
                         print(child.name)
                         when (child) {
-                            is SingleField -> {
+                            is SimpleField -> {
                                 print(" = ", child.name, child.call())
                                 print("transform(transformer, data)")
                                 val elementRef = child.typeRef as GenericElementRef<*>

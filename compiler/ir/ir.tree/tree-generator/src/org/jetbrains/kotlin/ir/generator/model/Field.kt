@@ -32,7 +32,7 @@ sealed class Field(
     }
 }
 
-class SingleField(
+class SimpleField(
     name: String,
     override var typeRef: TypeRefWithNullability,
     mutable: Boolean,
@@ -49,7 +49,7 @@ class SingleField(
         typeRef = typeRef.substitute(map) as TypeRefWithNullability
     }
 
-    override fun internalCopy() = SingleField(name, typeRef, isMutable, isChild)
+    override fun internalCopy() = SimpleField(name, typeRef, isMutable, isChild)
 }
 
 class ListField(

@@ -23,10 +23,10 @@ abstract class AbstractFirTreeBuilder() : AbstractElementConfigurator<Element, F
         withReplace: Boolean = false,
         withTransform: Boolean = false,
         isChild: Boolean = true,
-        initializer: SingleField.() -> Unit = {},
-    ): SingleField {
+        initializer: SimpleField.() -> Unit = {},
+    ): SimpleField {
         val isMutable = type is ElementOrRef<*> || withReplace
-        return SingleField(
+        return SimpleField(
             name,
             type.copy(nullable),
             isChild = isChild,
@@ -42,8 +42,8 @@ abstract class AbstractFirTreeBuilder() : AbstractElementConfigurator<Element, F
         withReplace: Boolean = false,
         withTransform: Boolean = false,
         isChild: Boolean = true,
-        initializer: SingleField.() -> Unit = {},
-    ): SingleField {
+        initializer: SimpleField.() -> Unit = {},
+    ): SimpleField {
         val name = when (type) {
             is ClassRef<*> -> type.simpleName
             is ElementOrRef<*> -> type.element.name
@@ -107,12 +107,12 @@ abstract class AbstractFirTreeBuilder() : AbstractElementConfigurator<Element, F
 
     protected fun declaredSymbol(symbolType: ClassRef<*>): Field = declaredSymbol("symbol", symbolType)
 
-    protected fun referencedSymbol(name: String, symbolType: ClassRef<*>, nullable: Boolean = false, withReplace: Boolean = false, initializer: SingleField.() -> Unit = {}): Field =
+    protected fun referencedSymbol(name: String, symbolType: ClassRef<*>, nullable: Boolean = false, withReplace: Boolean = false, initializer: SimpleField.() -> Unit = {}): Field =
         field(name, symbolType, nullable, withReplace)
             .apply { symbolFieldRole = AbstractField.SymbolFieldRole.REFERENCED }
             .apply(initializer)
 
-    protected fun referencedSymbol(symbolType: ClassRef<*>, nullable: Boolean = false, withReplace: Boolean = false, initializer: SingleField.() -> Unit = {}): Field =
+    protected fun referencedSymbol(symbolType: ClassRef<*>, nullable: Boolean = false, withReplace: Boolean = false, initializer: SimpleField.() -> Unit = {}): Field =
         referencedSymbol("symbol", symbolType, nullable, withReplace, initializer)
 
     protected fun Element.generateBooleanFields(vararg names: String) {

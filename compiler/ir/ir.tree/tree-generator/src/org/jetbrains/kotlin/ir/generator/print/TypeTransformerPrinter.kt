@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.generator.irTypeType
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
 import org.jetbrains.kotlin.ir.generator.model.ListField
-import org.jetbrains.kotlin.ir.generator.model.SingleField
+import org.jetbrains.kotlin.ir.generator.model.SimpleField
 import org.jetbrains.kotlin.utils.withIndent
 
 internal open class TypeTransformerPrinter(
@@ -49,7 +49,7 @@ internal open class TypeTransformerPrinter(
         val irTypeFields = this.fields
             .filter {
                 val type = when (it) {
-                    is SingleField -> it.typeRef
+                    is SimpleField -> it.typeRef
                     is ListField -> it.baseType
                 }
                 type.toString() == irTypeType.toString()
@@ -84,7 +84,7 @@ internal open class TypeTransformerPrinter(
         fun addVisitTypeStatement(field: Field) {
             val access = "$visitorParam.${field.name}"
             when (field) {
-                is SingleField -> {
+                is SimpleField -> {
                     print(access, " = ", "transformType(", visitorParam, ", ", access)
                     if (hasDataParameter) {
                         print(", data")

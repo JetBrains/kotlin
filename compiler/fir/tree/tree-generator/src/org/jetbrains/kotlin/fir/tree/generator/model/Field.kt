@@ -47,7 +47,7 @@ sealed class Field : AbstractField<Field>() {
     }
 }
 
-class SingleField(
+class SimpleField(
     override val name: String,
     override var typeRef: TypeRefWithNullability,
     override val isChild: Boolean,
@@ -60,7 +60,7 @@ class SingleField(
 ) : Field() {
 
     override fun internalCopy(): Field {
-        return SingleField(
+        return SimpleField(
             name = name,
             typeRef = typeRef,
             isChild = isChild,
@@ -71,7 +71,7 @@ class SingleField(
             isFinal = isFinal,
             isParameter = isParameter,
         ).apply {
-            withBindThis = this@SingleField.withBindThis
+            withBindThis = this@SimpleField.withBindThis
         }
     }
 
