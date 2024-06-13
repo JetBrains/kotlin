@@ -6,21 +6,21 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.util.IdSignature
-import java.util.*
 
 class IrFactoryImplForJsIC(stageController: StageController) : IrFactory(stageController), IdSignatureRetriever {
-    private val declarationToSignature = WeakHashMap<IrDeclaration, IdSignature>()
-
     override fun <T : IrDeclaration> T.declarationCreated(): T {
         val parentSig = stageController.currentDeclaration?.let { declarationSignature(it) } ?: return this
 
-        stageController.createSignature(parentSig)?.let { declarationToSignature[this] = it }
+        stageController.createSignature(parentSig)?.let { this.signatureForJsIC = it }
 
         return this
     }
 
     override fun declarationSignature(declaration: IrDeclaration): IdSignature? {
-        return declarationToSignature[declaration] ?: declaration.symbol.signature ?: declaration.symbol.privateSignature
+        return declaration.signatureForJsIC ?: declaration.symbol.signature ?: declaration.symbol.privateSignature
     }
 }
+
+private var IrDeclaration.signatureForJsIC: IdSignature? by irAttribute(followAttributeOwner = false)
