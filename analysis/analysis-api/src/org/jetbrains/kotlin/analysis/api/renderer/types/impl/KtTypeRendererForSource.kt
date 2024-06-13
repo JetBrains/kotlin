@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.types.impl
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.renderer.base.KaKeywordsRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KaAnnotationRendererForSource
 import org.jetbrains.kotlin.analysis.api.renderer.base.contextReceivers.KaContextReceiversRendererForSource
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.renderer.types.KaExpandedTypeRenderingM
 import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.*
 
+@KaExperimentalApi
 public object KaTypeRendererForSource {
     public val WITH_QUALIFIED_NAMES: KaTypeRenderer = KaTypeRenderer {
         expandedTypeRenderingMode = KaExpandedTypeRenderingMode.RENDER_ABBREVIATED_TYPE
@@ -41,4 +43,5 @@ public object KaTypeRendererForSource {
     }
 }
 
+@KaExperimentalApi
 public typealias KtTypeRendererForSource = KaTypeRendererForSource

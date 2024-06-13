@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiversOwner
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 
+@KaExperimentalApi
 public fun <S> renderAnnotationsModifiersAndContextReceivers(
     analysisSession: KaSession,
     symbol: S,
@@ -22,6 +24,7 @@ public fun <S> renderAnnotationsModifiersAndContextReceivers(
     renderAnnotationsModifiersAndContextReceivers(analysisSession, symbol, declarationRenderer, printer, listOf(keyword))
 }
 
+@KaExperimentalApi
 public fun <S> renderAnnotationsModifiersAndContextReceivers(
     analysisSession: KaSession,
     symbol: S,
@@ -50,6 +53,7 @@ public fun <S> renderAnnotationsModifiersAndContextReceivers(
     }
 }
 
+@KaExperimentalApi
 public fun <S> renderAnnotationsModifiersAndContextReceivers(
     analysisSession: KaSession,
     symbol: S,
@@ -63,6 +67,7 @@ public fun <S> renderAnnotationsModifiersAndContextReceivers(
     )
 }
 
+@KaExperimentalApi
 private fun renderContextReceivers(
     analysisSession: KaSession,
     symbol: KaDeclarationSymbol,

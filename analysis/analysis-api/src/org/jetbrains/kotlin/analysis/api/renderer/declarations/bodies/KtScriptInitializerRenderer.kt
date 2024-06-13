@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.bodies
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaScriptSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
+@KaExperimentalApi
 public interface KaScriptInitializerRenderer {
     public fun renderInitializer(
         analysisSession: KaSession,
@@ -28,4 +30,5 @@ public interface KaScriptInitializerRenderer {
     }
 }
 
+@KaExperimentalApi
 public typealias KtScriptInitializerRenderer = KaScriptInitializerRenderer

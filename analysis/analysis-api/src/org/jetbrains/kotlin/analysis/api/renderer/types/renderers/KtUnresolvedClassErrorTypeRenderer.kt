@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.analysis.api.renderer.types.renderers
 
 import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
 import org.jetbrains.kotlin.analysis.api.types.KaClassErrorType
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
+@KaExperimentalApi
 public interface KaUnresolvedClassErrorTypeRenderer {
     public fun renderType(
         analysisSession: KaSession,
@@ -57,4 +59,5 @@ public interface KaUnresolvedClassErrorTypeRenderer {
     }
 }
 
+@KaExperimentalApi
 public typealias KtUnresolvedClassErrorTypeRenderer = KaUnresolvedClassErrorTypeRenderer

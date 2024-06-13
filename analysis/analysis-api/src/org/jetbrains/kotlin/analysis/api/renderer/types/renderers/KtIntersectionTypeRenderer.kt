@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.types.renderers
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
 import org.jetbrains.kotlin.analysis.api.types.KaIntersectionType
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
+@KaExperimentalApi
 public interface KaIntersectionTypeRenderer {
     public fun renderType(
         analysisSession: KaSession,
@@ -34,4 +36,5 @@ public interface KaIntersectionTypeRenderer {
     }
 }
 
+@KaExperimentalApi
 public typealias KtIntersectionTypeRenderer = KaIntersectionTypeRenderer

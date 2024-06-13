@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.base.KaKeywordsRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KaAnnotationRenderer
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
+@KaExperimentalApi
 public class KaDeclarationRenderer private constructor(
     public val nameRenderer: KaDeclarationNameRenderer,
     public val keywordsRenderer: KaKeywordsRenderer,
@@ -304,4 +306,5 @@ public class KaDeclarationRenderer private constructor(
     }
 }
 
+@KaExperimentalApi
 public typealias KtDeclarationRenderer = KaDeclarationRenderer

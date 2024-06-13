@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 
+@KaExperimentalApi
 public interface KaRendererVisibilityModifierProvider {
     public fun getVisibilityModifier(analysisSession: KaSession, symbol: KaSymbolWithVisibility): KtModifierKeywordToken?
 
@@ -69,4 +71,5 @@ public interface KaRendererVisibilityModifierProvider {
     }
 }
 
+@KaExperimentalApi
 public typealias KtRendererVisibilityModifierProvider = KaRendererVisibilityModifierProvider

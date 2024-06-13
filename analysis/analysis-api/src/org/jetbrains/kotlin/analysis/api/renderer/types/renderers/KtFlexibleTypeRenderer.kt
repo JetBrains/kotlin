@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.types.renderers
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
 import org.jetbrains.kotlin.analysis.api.types.*
@@ -13,7 +14,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-
+@KaExperimentalApi
 public interface KaFlexibleTypeRenderer {
     public fun renderType(
         analysisSession: KaSession,
@@ -117,4 +118,5 @@ public interface KaFlexibleTypeRenderer {
     }
 }
 
+@KaExperimentalApi
 public typealias KtFlexibleTypeRenderer = KaFlexibleTypeRenderer

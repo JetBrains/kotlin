@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.bodies
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
+@KaExperimentalApi
 public interface KaParameterDefaultValueRenderer {
     public fun renderDefaultValue(analysisSession: KaSession, symbol: KaValueParameterSymbol, printer: PrettyPrinter)
 
@@ -26,4 +28,5 @@ public interface KaParameterDefaultValueRenderer {
     }
 }
 
+@KaExperimentalApi
 public typealias KtParameterDefaultValueRenderer = KaParameterDefaultValueRenderer

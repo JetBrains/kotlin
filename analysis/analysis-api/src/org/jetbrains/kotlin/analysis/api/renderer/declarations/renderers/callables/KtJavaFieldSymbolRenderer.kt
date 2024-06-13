@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callables
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaJavaFieldSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtTokens
 
+@KaExperimentalApi
 public interface KaJavaFieldSymbolRenderer {
     public fun renderSymbol(
         session: KaSession,
@@ -37,4 +39,5 @@ public interface KaJavaFieldSymbolRenderer {
     }
 }
 
+@KaExperimentalApi
 public typealias KtJavaFieldSymbolRenderer = KaJavaFieldSymbolRenderer

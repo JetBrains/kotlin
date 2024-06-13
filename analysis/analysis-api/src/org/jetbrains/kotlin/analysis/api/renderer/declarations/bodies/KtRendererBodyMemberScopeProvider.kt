@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.bodies
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithMembers
 
+@KaExperimentalApi
 public interface KaRendererBodyMemberScopeProvider {
     public fun getMemberScope(analysisSession: KaSession, symbol: KaSymbolWithMembers): List<KaDeclarationSymbol>
 
@@ -47,4 +49,5 @@ public interface KaRendererBodyMemberScopeProvider {
     }
 }
 
+@KaExperimentalApi
 public typealias KtRendererBodyMemberScopeProvider = KaRendererBodyMemberScopeProvider

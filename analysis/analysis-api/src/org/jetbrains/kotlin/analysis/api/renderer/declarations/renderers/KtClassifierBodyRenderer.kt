@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithMembers
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrintWithSettingsFrom
 
+@KaExperimentalApi
 public interface KaClassifierBodyRenderer {
     public fun renderBody(
         analysisSession: KaSession,
@@ -54,8 +56,10 @@ public interface KaClassifierBodyRenderer {
     }
 }
 
+@KaExperimentalApi
 public typealias KtClassifierBodyRenderer = KaClassifierBodyRenderer
 
+@KaExperimentalApi
 public abstract class KaClassifierBodyWithMembersRenderer : KaClassifierBodyRenderer {
     public abstract fun renderEmptyBodyForEmptyMemberScope(symbol: KaSymbolWithMembers): Boolean
 
@@ -91,4 +95,5 @@ public abstract class KaClassifierBodyWithMembersRenderer : KaClassifierBodyRend
     }
 }
 
+@KaExperimentalApi
 public typealias KtClassifierBodyWithMembersRenderer = KaClassifierBodyWithMembersRenderer

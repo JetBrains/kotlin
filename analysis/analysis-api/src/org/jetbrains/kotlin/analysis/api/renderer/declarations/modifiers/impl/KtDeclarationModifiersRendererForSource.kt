@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.impl
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.renderer.base.KaKeywordsRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.KaDeclarationModifiersRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers.*
 
+@KaExperimentalApi
 public object KaDeclarationModifiersRendererForSource {
     public val NO_IMPLICIT_MODIFIERS: KaDeclarationModifiersRenderer = KaDeclarationModifiersRenderer {
         modifierListRenderer = KaModifierListRenderer.AS_LIST
@@ -20,4 +22,5 @@ public object KaDeclarationModifiersRendererForSource {
     }
 }
 
+@KaExperimentalApi
 public typealias KtDeclarationModifiersRendererForSource = KaDeclarationModifiersRendererForSource

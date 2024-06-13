@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.impl
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KaAnnotationRendererForSource
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaRendererTypeApproximator
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callabl
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.classifiers.KaSingleTypeParameterSymbolRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KaTypeRendererForDebug
 
+@KaExperimentalApi
 public object KaDeclarationRendererForDebug {
     public val WITH_QUALIFIED_NAMES: KaDeclarationRenderer = KaDeclarationRendererForSource.WITH_QUALIFIED_NAMES.with {
         singleTypeParameterRenderer = KaSingleTypeParameterSymbolRenderer.WITHOUT_BOUNDS
@@ -33,4 +35,5 @@ public object KaDeclarationRendererForDebug {
     }
 }
 
+@KaExperimentalApi
 public typealias KtDeclarationRendererForDebug = KaDeclarationRendererForDebug

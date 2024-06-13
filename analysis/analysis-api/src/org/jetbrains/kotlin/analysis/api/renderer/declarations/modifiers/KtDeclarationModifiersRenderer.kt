@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.base.KaKeywordsRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
+@KaExperimentalApi
 public class KaDeclarationModifiersRenderer private constructor(
     public val modifierListRenderer: KaModifierListRenderer,
     public val modifiersSorter: KaModifiersSorter,
@@ -60,4 +62,5 @@ public class KaDeclarationModifiersRenderer private constructor(
     }
 }
 
+@KaExperimentalApi
 public typealias KtDeclarationModifiersRenderer = KaDeclarationModifiersRenderer

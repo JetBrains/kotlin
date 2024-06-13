@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.types
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+
 /**
  * [KaExpandedTypeRenderingMode] controls how [KaTypeRenderer] renders expanded types (with an associated abbreviated type) and type aliases
  * which can still be expanded.
  */
+@KaExperimentalApi
 public enum class KaExpandedTypeRenderingMode {
     /**
      * Renders only the abbreviated type as-is, e.g. `foo.bar.StringAlias`.
@@ -31,4 +34,5 @@ public enum class KaExpandedTypeRenderingMode {
     RENDER_EXPANDED_TYPE_WITH_ABBREVIATED_TYPE_COMMENT,
 }
 
+@KaExperimentalApi
 public typealias KtExpandedTypeRenderingMode = KaExpandedTypeRenderingMode

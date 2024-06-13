@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.bodies
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertyAccessorSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
+@KaExperimentalApi
 public interface KaPropertyAccessorBodyRenderer {
     public fun renderBody(analysisSession: KaSession, symbol: KaPropertyAccessorSymbol, printer: PrettyPrinter)
 
@@ -17,4 +19,5 @@ public interface KaPropertyAccessorBodyRenderer {
     }
 }
 
+@KaExperimentalApi
 public typealias KtPropertyAccessorBodyRenderer = KaPropertyAccessorBodyRenderer

@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.base.contextReceivers.renderers
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiversOwner
 import org.jetbrains.kotlin.analysis.api.renderer.base.contextReceivers.KaContextReceiversRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
+@KaExperimentalApi
 public interface KaContextReceiverListRenderer {
     public fun renderContextReceivers(
         analysisSession: KaSession,
@@ -45,4 +47,5 @@ public interface KaContextReceiverListRenderer {
     }
 }
 
+@KaExperimentalApi
 public typealias KtContextReceiverListRenderer = KaContextReceiverListRenderer

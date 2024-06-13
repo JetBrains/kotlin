@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers
 
 import com.intellij.psi.tree.TokenSet
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 
+@KaExperimentalApi
 public interface KaRendererKeywordFilter {
     public fun filter(analysisSession: KaSession, modifier: KtKeywordToken, annotated: KaAnnotated): Boolean
 
@@ -65,4 +67,5 @@ public interface KaRendererKeywordFilter {
     }
 }
 
+@KaExperimentalApi
 public typealias KtRendererKeywordFilter = KaRendererKeywordFilter

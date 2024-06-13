@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.classifiers
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderAnnotationsModifiersAndContextReceivers
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousObjectSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtTokens
 
+@KaExperimentalApi
 public interface KaAnonymousObjectSymbolRenderer {
     public fun renderSymbol(
         analysisSession: KaSession,
@@ -40,4 +42,5 @@ public interface KaAnonymousObjectSymbolRenderer {
     }
 }
 
+@KaExperimentalApi
 public typealias KtAnonymousObjectSymbolRenderer = KaAnonymousObjectSymbolRenderer

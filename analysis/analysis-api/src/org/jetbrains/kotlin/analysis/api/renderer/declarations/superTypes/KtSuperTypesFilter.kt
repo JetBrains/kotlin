@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.superTypes
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.StandardClassIds
 
+@KaExperimentalApi
 public fun interface KaSuperTypesFilter {
     public fun filter(analysisSession: KaSession, superType: KaType, symbol: KaClassOrObjectSymbol): Boolean
 
@@ -64,4 +66,5 @@ public fun interface KaSuperTypesFilter {
     }
 }
 
+@KaExperimentalApi
 public typealias KtSuperTypesFilter = KaSuperTypesFilter

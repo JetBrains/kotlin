@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.types.renderers
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
 import org.jetbrains.kotlin.analysis.api.types.KaFunctionalType
@@ -12,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtTokens
 
-
+@KaExperimentalApi
 public interface KaFunctionalTypeRenderer {
     public fun renderType(
         analysisSession: KaSession,
@@ -98,4 +99,5 @@ public interface KaFunctionalTypeRenderer {
     }
 }
 
+@KaExperimentalApi
 public typealias KtFunctionalTypeRenderer = KaFunctionalTypeRenderer

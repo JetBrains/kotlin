@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithTypeParameters
 
+@KaExperimentalApi
 public interface KaTypeParameterRendererFilter {
     public fun filter(
         analysisSession: KaSession,
@@ -44,4 +46,5 @@ public interface KaTypeParameterRendererFilter {
     }
 }
 
+@KaExperimentalApi
 public typealias KtTypeParameterRendererFilter = KaTypeParameterRendererFilter

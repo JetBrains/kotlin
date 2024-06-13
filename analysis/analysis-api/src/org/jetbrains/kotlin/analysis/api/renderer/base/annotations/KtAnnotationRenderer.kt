@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.base.annotations
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
 import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.renderers.KaAnnotationArgumentsRenderer
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.renderers.KaA
 import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.renderers.KaAnnotationUseSiteTargetRenderer
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
+@KaExperimentalApi
 public class KaAnnotationRenderer internal constructor(
     public val annotationListRenderer: KaAnnotationListRenderer,
     public val annotationFilter: KaRendererAnnotationsFilter,
@@ -61,4 +63,5 @@ public class KaAnnotationRenderer internal constructor(
     }
 }
 
+@KaExperimentalApi
 public typealias KtAnnotationRenderer = KaAnnotationRenderer

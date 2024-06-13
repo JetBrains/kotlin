@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.types.Variance
 
+@KaExperimentalApi
 public interface KaTypeParametersRenderer {
     public fun renderTypeParameters(
         analysisSession: KaSession,
@@ -136,4 +138,5 @@ public interface KaTypeParametersRenderer {
     }
 }
 
+@KaExperimentalApi
 public typealias KtTypeParametersRenderer = KaTypeParametersRenderer

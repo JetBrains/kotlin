@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithModality
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 
+@KaExperimentalApi
 public interface KaRendererModalityModifierProvider {
     public fun getModalityModifier(analysisSession: KaSession, symbol: KaSymbolWithModality): KtModifierKeywordToken?
 
@@ -57,4 +59,5 @@ public interface KaRendererModalityModifierProvider {
     }
 }
 
+@KaExperimentalApi
 public typealias KtRendererModalityModifierProvider = KaRendererModalityModifierProvider

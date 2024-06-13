@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.bodies
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionLikeSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
+@KaExperimentalApi
 public interface KaFunctionLikeBodyRenderer {
     public fun renderBody(analysisSession: KaSession, symbol: KaFunctionLikeSymbol, printer: PrettyPrinter)
 
@@ -17,4 +19,5 @@ public interface KaFunctionLikeBodyRenderer {
     }
 }
 
+@KaExperimentalApi
 public typealias KtFunctionLikeBodyRenderer = KaFunctionLikeBodyRenderer

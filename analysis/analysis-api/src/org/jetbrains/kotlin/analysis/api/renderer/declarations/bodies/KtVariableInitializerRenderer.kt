@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.analysis.api.renderer.declarations.bodies
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.KaConstantInitializerValue
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
+@KaExperimentalApi
 public interface KaVariableInitializerRenderer {
     public fun renderInitializer(analysisSession: KaSession, symbol: KaVariableSymbol, printer: PrettyPrinter)
 
@@ -29,4 +31,5 @@ public interface KaVariableInitializerRenderer {
     }
 }
 
+@KaExperimentalApi
 public typealias KtVariableInitializerRenderer = KaVariableInitializerRenderer

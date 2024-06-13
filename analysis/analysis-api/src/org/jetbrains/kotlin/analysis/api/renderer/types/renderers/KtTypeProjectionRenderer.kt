@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.types.renderers
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
 import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
+@KaExperimentalApi
 public interface KaTypeProjectionRenderer {
     public fun renderTypeProjection(
         analysisSession: KaSession,
@@ -58,4 +60,5 @@ public interface KaTypeProjectionRenderer {
     }
 }
 
+@KaExperimentalApi
 public typealias KtTypeProjectionRenderer = KaTypeProjectionRenderer

@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callables
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderAnnotationsModifiersAndContextReceivers
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
+@KaExperimentalApi
 public interface KaEnumEntrySymbolRenderer {
     public fun renderSymbol(
         analysisSession: KaSession,
@@ -35,4 +37,5 @@ public interface KaEnumEntrySymbolRenderer {
     }
 }
 
+@KaExperimentalApi
 public typealias KtEnumEntrySymbolRenderer = KaEnumEntrySymbolRenderer

@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.classifiers
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.types.Variance
 
+@KaExperimentalApi
 public interface KaSingleTypeParameterSymbolRenderer {
     public fun renderSymbol(
         analysisSession: KaSession,
@@ -76,4 +78,5 @@ public interface KaSingleTypeParameterSymbolRenderer {
     }
 }
 
+@KaExperimentalApi
 public typealias KtSingleTypeParameterSymbolRenderer = KaSingleTypeParameterSymbolRenderer

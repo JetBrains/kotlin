@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.base
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers.KaRendererKeywordFilter
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 
+@KaExperimentalApi
 public class KaKeywordsRenderer private constructor(
     public val keywordRenderer: KaKeywordRenderer,
     public val keywordFilter: KaRendererKeywordFilter,
@@ -51,4 +53,5 @@ public class KaKeywordsRenderer private constructor(
     }
 }
 
+@KaExperimentalApi
 public typealias KtKeywordsRenderer = KaKeywordsRenderer

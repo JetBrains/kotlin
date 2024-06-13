@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.types.impl
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.renderer.types.KaExpandedTypeRenderingMode
 import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KaCapturedTypeRenderer
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KaFlexibleType
 import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KaErrorTypeRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KaUnresolvedClassErrorTypeRenderer
 
+@KaExperimentalApi
 public object KaTypeRendererForDebug {
     public val WITH_QUALIFIED_NAMES: KaTypeRenderer = KaTypeRendererForSource.WITH_QUALIFIED_NAMES.with {
         expandedTypeRenderingMode = KaExpandedTypeRenderingMode.RENDER_ABBREVIATED_TYPE_WITH_EXPANDED_TYPE_COMMENT
@@ -30,4 +32,5 @@ public object KaTypeRendererForDebug {
     }
 }
 
+@KaExperimentalApi
 public typealias KtTypeRendererForDebug = KaTypeRendererForDebug

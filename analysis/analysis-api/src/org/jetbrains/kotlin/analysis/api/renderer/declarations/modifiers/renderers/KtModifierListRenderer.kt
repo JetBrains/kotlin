@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.KaDeclarationModifiersRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 
+@KaExperimentalApi
 public interface KaModifierListRenderer {
     public fun renderModifiers(
         analysisSession: KaSession,
@@ -56,4 +58,5 @@ public interface KaModifierListRenderer {
     }
 }
 
+@KaExperimentalApi
 public typealias KtModifierListRenderer = KaModifierListRenderer

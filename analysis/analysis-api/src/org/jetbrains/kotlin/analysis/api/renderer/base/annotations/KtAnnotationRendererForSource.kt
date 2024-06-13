@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.base.annotations
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.renderers.KaAnnotationArgumentsRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.renderers.KaAnnotationListRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.renderers.KaAnnotationQualifierRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.renderers.KaAnnotationUseSiteTargetRenderer
 
+@KaExperimentalApi
 public object KaAnnotationRendererForSource {
     public val WITH_QUALIFIED_NAMES: KaAnnotationRenderer = KaAnnotationRenderer {
         annotationListRenderer = KaAnnotationListRenderer.FOR_SOURCE
@@ -24,4 +26,5 @@ public object KaAnnotationRendererForSource {
     }
 }
 
+@KaExperimentalApi
 public typealias KtAnnotationRendererForSource = KaAnnotationRendererForSource

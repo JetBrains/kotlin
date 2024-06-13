@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callables
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousFunctionSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtTokens
 
+@KaExperimentalApi
 public interface KaAnonymousFunctionSymbolRenderer {
     public fun renderSymbol(
         analysisSession: KaSession,
@@ -34,4 +36,5 @@ public interface KaAnonymousFunctionSymbolRenderer {
     }
 }
 
+@KaExperimentalApi
 public typealias KtAnonymousFunctionSymbolRenderer = KaAnonymousFunctionSymbolRenderer

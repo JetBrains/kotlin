@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.types.Variance
 
+@KaExperimentalApi
 public interface KaRendererTypeApproximator {
     public fun approximateType(analysisSession: KaSession, type: KaType, position: Variance): KaType
 
@@ -35,4 +36,5 @@ public interface KaRendererTypeApproximator {
     }
 }
 
+@KaExperimentalApi
 public typealias KtRendererTypeApproximator = KaRendererTypeApproximator

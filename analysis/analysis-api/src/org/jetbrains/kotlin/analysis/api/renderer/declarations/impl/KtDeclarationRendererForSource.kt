@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.impl
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.renderer.base.KaKeywordsRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KaAnnotationRendererForSource
 import org.jetbrains.kotlin.analysis.api.renderer.base.contextReceivers.KaContextReceiversRendererForSource
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.analysis.api.renderer.declarations.superTypes.KaSupe
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.superTypes.KaSuperTypesFilter
 import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KaTypeRendererForSource
 
+@KaExperimentalApi
 public object KaDeclarationRendererForSource {
     public val WITH_QUALIFIED_NAMES: KaDeclarationRenderer = KaDeclarationRenderer {
         nameRenderer = KaDeclarationNameRenderer.QUOTED
@@ -94,4 +96,5 @@ public object KaDeclarationRendererForSource {
     }
 }
 
+@KaExperimentalApi
 public typealias KtDeclarationRendererForSource = KaDeclarationRendererForSource
