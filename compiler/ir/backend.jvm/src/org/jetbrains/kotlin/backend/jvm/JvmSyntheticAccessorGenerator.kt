@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.org.objectweb.asm.Opcodes
-import java.util.concurrent.ConcurrentHashMap
 
 class JvmSyntheticAccessorGenerator(context: JvmBackendContext) : SyntheticAccessorGenerator<JvmBackendContext>(context) {
 
@@ -67,32 +66,26 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) : SyntheticAcces
     override val DescriptorVisibility.isProtected: Boolean
         get() = AsmUtil.getVisibilityAccessFlag(delegate) == Opcodes.ACC_PROTECTED
 
-    private fun getSyntheticConstructorAccessor(
-        declaration: IrConstructor,
-        constructorToAccessorMap: MutableMap<IrConstructor, IrConstructor>
-    ): IrConstructor {
-        return constructorToAccessorMap.getOrPut(declaration) {
-            declaration.makeConstructorAccessor(JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR).also { accessor ->
-                if (declaration.constructedClass.modality != Modality.SEALED) {
-                    // There's a special case in the JVM backend for serializing the metadata of hidden
-                    // constructors - we serialize the descriptor of the original constructor, but the
-                    // signature of the accessor. We implement this special case in the JVM IR backend by
-                    // attaching the metadata directly to the accessor. We also have to move all annotations
-                    // to the accessor. Parameter annotations are already moved by the copyTo method.
-                    if (declaration.metadata != null) {
-                        accessor.metadata = declaration.metadata
-                        declaration.metadata = null
-                    }
-                    accessor.annotations += declaration.annotations
-                    declaration.annotations = emptyList()
-                    declaration.valueParameters.forEach { it.annotations = emptyList() }
+    private fun createSyntheticConstructorAccessor(declaration: IrConstructor): IrConstructor =
+        declaration.makeConstructorAccessor(JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR).also { accessor ->
+            if (declaration.constructedClass.modality != Modality.SEALED) {
+                // There's a special case in the JVM backend for serializing the metadata of hidden
+                // constructors - we serialize the descriptor of the original constructor, but the
+                // signature of the accessor. We implement this special case in the JVM IR backend by
+                // attaching the metadata directly to the accessor. We also have to move all annotations
+                // to the accessor. Parameter annotations are already moved by the copyTo method.
+                if (declaration.metadata != null) {
+                    accessor.metadata = declaration.metadata
+                    declaration.metadata = null
                 }
+                accessor.annotations += declaration.annotations
+                declaration.annotations = emptyList()
+                declaration.valueParameters.forEach { it.annotations = emptyList() }
             }
         }
-    }
 
     fun isOrShouldBeHiddenSinceHasMangledParams(constructor: IrConstructor): Boolean {
-        if (constructor in context.hiddenConstructorsWithMangledParams.keys) return true
+        if (constructor.hiddenConstructorMangledParams != null) return true
         return constructor.isOrShouldBeHiddenDueToOrigin &&
                 !DescriptorVisibilities.isPrivate(constructor.visibility) &&
                 !constructor.constructedClass.isValue &&
@@ -102,7 +95,7 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) : SyntheticAcces
     }
 
     fun isOrShouldBeHiddenAsSealedClassConstructor(constructor: IrConstructor): Boolean {
-        if (constructor in context.hiddenConstructorsOfSealedClasses.keys) return true
+        if (constructor.hiddenConstructorOfSealedClass != null) return true
         return constructor.isOrShouldBeHiddenDueToOrigin &&
                 constructor.visibility != DescriptorVisibilities.PUBLIC &&
                 constructor.constructedClass.modality == Modality.SEALED
@@ -115,8 +108,12 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) : SyntheticAcces
                 origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB)
 
     fun getSyntheticConstructorWithMangledParams(declaration: IrConstructor) =
-        getSyntheticConstructorAccessor(declaration, context.hiddenConstructorsWithMangledParams)
+        declaration.hiddenConstructorMangledParams ?: createSyntheticConstructorAccessor(declaration).also {
+            declaration.hiddenConstructorMangledParams = it
+        }
 
     fun getSyntheticConstructorOfSealedClass(declaration: IrConstructor) =
-        getSyntheticConstructorAccessor(declaration, context.hiddenConstructorsOfSealedClasses)
+        declaration.hiddenConstructorOfSealedClass ?: createSyntheticConstructorAccessor(declaration).also {
+            declaration.hiddenConstructorOfSealedClass = it
+        }
 }

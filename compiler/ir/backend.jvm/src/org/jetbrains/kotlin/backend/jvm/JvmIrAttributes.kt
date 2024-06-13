@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
@@ -27,7 +24,8 @@ var IrFunction.hasSpecialBridge: Boolean by irFlag(followAttributeOwner = false)
 var IrSimpleFunction.overridesWithoutStubs: List<IrSimpleFunctionSymbol>? by irAttribute(followAttributeOwner = false)
 
 var IrClass.multifileFacadeForPart: JvmClassName? by irAttribute(followAttributeOwner = true)
-
 var IrClass.multifileFacadeClassForPart: IrClass? by irAttribute(followAttributeOwner = true)
-
 var IrSimpleFunction.multifileFacadePartMember: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+
+var IrConstructor.hiddenConstructorMangledParams: IrConstructor? by irAttribute(followAttributeOwner = false)
+var IrConstructor.hiddenConstructorOfSealedClass: IrConstructor? by irAttribute(followAttributeOwner = false)

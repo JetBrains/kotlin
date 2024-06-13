@@ -127,9 +127,6 @@ class JvmBackendContext(
 
     val multifileFacadesToAdd = mutableMapOf<JvmClassName, MutableList<IrClass>>()
 
-    val hiddenConstructorsWithMangledParams by irAttribute<IrConstructor, IrConstructor>(false).asMap()
-    val hiddenConstructorsOfSealedClasses by irAttribute<IrConstructor, IrConstructor>(false).asMap()
-
     val collectionStubComputer = CollectionStubComputer(this)
 
     val bridgeLoweringCache = BridgeLoweringCache(this)
