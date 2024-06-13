@@ -52,17 +52,30 @@ class ObjCExportDependenciesHeaderGeneratorTest(
         doTest(dependenciesDir.resolve("implementIterator"))
     }
 
+    /**
+     * See KT-68478
+     */
+    @Test
+    @TodoAnalysisApi
+    fun `test - kotlinxSerializationJson`() {
+        doTest(
+            dependenciesDir.resolve("kotlinxSerializationJson"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOfNotNull(testLibraryKotlinxSerializationJson),
+                exportedDependencies = setOf(testLibraryKotlinxSerializationJson)
+            )
+        )
+    }
 
     /**
      * See KT-68478
      */
     @Test
     @TodoAnalysisApi
-    fun `test - kotlinxSerialization`() {
+    fun `test - kotlinxSerializationCore`() {
         doTest(
-            dependenciesDir.resolve("kotlinxSerialization"), configuration = HeaderGenerator.Configuration(
-                dependencies = listOfNotNull(testLibraryKotlinxSerializationJson),
-                exportedDependencies = setOf(testLibraryKotlinxSerializationJson)
+            dependenciesDir.resolve("kotlinxSerializationCore"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOfNotNull(testLibraryKotlinxSerializationCore),
+                exportedDependencies = setOf(testLibraryKotlinxSerializationCore)
             )
         )
     }
