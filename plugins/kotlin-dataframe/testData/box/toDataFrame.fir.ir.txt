@@ -259,6 +259,10 @@ FILE fqName:<root> fileName:/toDataFrame.kt
         public final fun compareTo (other: E of kotlin.Enum): kotlin.Int declared in kotlin.Enum
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.Switch>
       VALUE_PARAMETER name:other index:0 type:<root>.Switch
+    FUN FAKE_OVERRIDE name:describeConstable visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.Switch>) returnType:@[FlexibleNullability] java.util.Optional<@[FlexibleNullability] java.lang.Enum.EnumDesc<@[FlexibleNullability] <root>.Switch?>?>? [fake_override]
+      overridden:
+        public final fun describeConstable (): @[FlexibleNullability] java.util.Optional<@[FlexibleNullability] java.lang.Enum.EnumDesc<@[FlexibleNullability] E of kotlin.Enum?>?>? declared in kotlin.Enum
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.Switch>
     FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.Switch>, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public final fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Enum
