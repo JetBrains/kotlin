@@ -82,6 +82,11 @@ sourceSets {
 kotlin {
     compilerOptions {
         freeCompilerArgs.add("-Xcontext-receivers")
+
+        optIn.addAll(
+            "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
+            "org.jetbrains.kotlin.analysis.api.KaPlatformInterface",
+        )
     }
 }
 

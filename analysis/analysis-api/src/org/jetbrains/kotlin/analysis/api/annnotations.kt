@@ -72,3 +72,19 @@ public annotation class KaExperimentalApi
 @Deprecated("Use 'KaNonPublicApi' instead", ReplaceWith("KaNonPublicApi"))
 @Suppress("OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN")
 public typealias KtAnalysisNonPublicApi = KaAnalysisNonPublicApi
+
+/**
+ * Marks an API intended for Analysis API implementations & platforms. The API is neither stable nor intended for user consumption.
+ *
+ * Only declarations inside the user-facing part of the Analysis API (`analysis-api` module) require this opt-in annotation. Platform
+ * interface services defined in `analysis-api-platform-interface` are not annotated with [KaPlatformInterface].
+ */
+@Target(
+    AnnotationTarget.CLASS,
+    AnnotationTarget.PROPERTY,
+    AnnotationTarget.CONSTRUCTOR,
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.TYPEALIAS,
+)
+@RequiresOptIn("An API intended for Analysis API implementations & platforms. The API is neither stable nor intended for user consumption.")
+public annotation class KaPlatformInterface

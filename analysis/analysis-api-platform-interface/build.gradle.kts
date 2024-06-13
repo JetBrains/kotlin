@@ -21,4 +21,8 @@ sourceSets {
 
 kotlin {
     explicitApi()
+
+    compilerOptions {
+        optIn.add("org.jetbrains.kotlin.analysis.api.KaPlatformInterface")
+    }
 }

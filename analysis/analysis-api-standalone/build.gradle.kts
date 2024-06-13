@@ -29,6 +29,10 @@ dependencies {
 
 kotlin {
     explicitApi()
+
+    compilerOptions {
+        optIn.add("org.jetbrains.kotlin.analysis.api.KaPlatformInterface")
+    }
 }
 
 sourceSets {
@@ -46,4 +50,3 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
 }.also { confugureFirPluginAnnotationsDependency(it) }
 
 testsJar()
-

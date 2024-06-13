@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.objcexport
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -66,6 +67,7 @@ internal object KtKlibObjCExportModuleNaming : KtObjCExportModuleNaming {
 
 internal object KtSimpleObjCExportModuleNaming : KtObjCExportModuleNaming {
     context(KaSession)
+    @OptIn(KaExperimentalApi::class)
     @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     override fun getModuleName(module: KaModule): String? {
         return when (module) {

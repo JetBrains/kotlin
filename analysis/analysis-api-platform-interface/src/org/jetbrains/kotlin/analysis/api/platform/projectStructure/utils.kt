@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.utils.topologicalSort
 
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.utils.topologicalSort
 public fun computeTransitiveDependsOnDependencies(directDependsOnDependencies: List<KaModule>): List<KaModule> =
     topologicalSort(directDependsOnDependencies) { this.directDependsOnDependencies }
 
+@OptIn(KaExperimentalApi::class)
 public fun KaModule.asDebugString(indent: Int = 0): String =
     buildString {
         appendLine("$moduleDescription {")

@@ -12,6 +12,7 @@ import com.intellij.psi.impl.light.LightReferenceListBuilder
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.MethodSignature
 import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
@@ -118,6 +119,7 @@ internal abstract class SymbolLightMethodBase(
 
     context(KaSession)
     @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+    @OptIn(KaExperimentalApi::class)
     protected fun <T> T.computeJvmMethodName(
         defaultName: String,
         containingClass: SymbolLightClassBase,

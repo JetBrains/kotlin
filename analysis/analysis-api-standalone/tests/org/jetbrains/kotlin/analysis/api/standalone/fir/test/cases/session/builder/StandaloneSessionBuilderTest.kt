@@ -7,6 +7,7 @@
 package org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.session.builder
 
 import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
 import org.jetbrains.kotlin.analysis.api.resolution.successfulFunctionCallOrNull
@@ -38,7 +39,7 @@ import org.junit.jupiter.api.Test
 import java.nio.file.Paths
 import kotlin.test.assertEquals
 
-@OptIn(KaAnalysisApiInternals::class)
+@OptIn(KaAnalysisApiInternals::class, KaExperimentalApi::class)
 class StandaloneSessionBuilderTest : TestWithDisposable() {
     @Test
     fun testJdkSessionBuilder() {

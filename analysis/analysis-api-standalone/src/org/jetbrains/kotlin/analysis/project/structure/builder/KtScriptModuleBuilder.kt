@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.project.structure.builder
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
 import org.jetbrains.kotlin.analysis.project.structure.impl.KaScriptModuleImpl
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
@@ -17,6 +18,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
+@KaExperimentalApi
 @KtModuleBuilderDsl
 public class KtScriptModuleBuilder(
     private val kotlinCoreProjectEnvironment: KotlinCoreProjectEnvironment
@@ -39,6 +41,7 @@ public class KtScriptModuleBuilder(
     }
 }
 
+@KaExperimentalApi
 @OptIn(ExperimentalContracts::class)
 public inline fun KtModuleProviderBuilder.buildKtScriptModule(init: KtScriptModuleBuilder.() -> Unit): KaScriptModule {
     contract {

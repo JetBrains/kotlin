@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.project.structure
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaBinaryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
@@ -36,16 +38,21 @@ public typealias KtSdkModule = KaSdkModule
 public typealias KtLibrarySourceModule = KaLibrarySourceModule
 
 @Deprecated("Use 'KaBuiltinsModule' instead", ReplaceWith("KaBuiltinsModule"))
+@KaPlatformInterface
 public typealias KtBuiltinsModule = KaBuiltinsModule
 
 @Deprecated("Use 'KaScriptModule' instead", ReplaceWith("KaScriptModule"))
+@KaExperimentalApi
 public typealias KtScriptModule = KaScriptModule
 
 @Deprecated("Use 'KaScriptDependencyModule' instead", ReplaceWith("KaScriptDependencyModule"))
+@KaPlatformInterface
 public typealias KtScriptDependencyModule = KaScriptDependencyModule
 
 @Deprecated("Use 'KaDanglingFileModule' instead", ReplaceWith("KaDanglingFileModule"))
+@KaPlatformInterface
 public typealias KtDanglingFileModule = KaDanglingFileModule
 
 @Deprecated("Use 'KaNotUnderContentRootModule' instead", ReplaceWith("KaNotUnderContentRootModule"))
+@KaPlatformInterface
 public typealias KtNotUnderContentRootModule = KaNotUnderContentRootModule

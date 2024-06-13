@@ -119,5 +119,10 @@ compileKotlin.dependsOn(generateCode)
 
 tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions.freeCompilerArgs.add("-Xcontext-receivers")
-    compilerOptions.optIn.add("org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals")
+
+    compilerOptions.optIn.addAll(
+        "org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals",
+        "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
+        "org.jetbrains.kotlin.analysis.api.KaPlatformInterface",
+    )
 }

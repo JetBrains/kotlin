@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.project.structure.impl
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.computeTransitiveDependsOnDependencies
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 
+@KaExperimentalApi
 internal class KaScriptModuleImpl(
     override val directRegularDependencies: List<KaModule> = emptyList(),
     override val directDependsOnDependencies: List<KaModule> = emptyList(),

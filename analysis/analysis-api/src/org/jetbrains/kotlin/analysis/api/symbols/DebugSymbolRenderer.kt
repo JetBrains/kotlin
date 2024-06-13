@@ -370,6 +370,7 @@ public class DebugSymbolRenderer(
         }
     }
 
+    @OptIn(KaExperimentalApi::class)
     private fun renderModule(module: KaModule, printer: PrettyPrinter) {
         val ktModuleClass = module::class.allSuperclasses.first { it in kaModuleSubclasses }
         printer.append(ktModuleClass.simpleName + " \"" + module.moduleDescription + "\"")
@@ -380,6 +381,7 @@ public class DebugSymbolRenderer(
         sealedSubclasses.flatMapTo(this) { it.allSealedSubClasses() }
     }
 
+    @OptIn(KaPlatformInterface::class, KaExperimentalApi::class)
     private val kaModuleSubclasses =
         listOf(
             KaModule::class,

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.utils.errors
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
@@ -22,6 +23,7 @@ public fun ExceptionAttachmentBuilder.withPsiEntry(name: String, psi: PsiElement
     withKaModuleEntry("${name}Module", module)
 }
 
+@OptIn(KaExperimentalApi::class)
 @KaAnalysisApiInternals
 public fun ExceptionAttachmentBuilder.withKaModuleEntry(name: String, module: KaModule?) {
     withEntry(name, module) { module -> module.moduleDescription }

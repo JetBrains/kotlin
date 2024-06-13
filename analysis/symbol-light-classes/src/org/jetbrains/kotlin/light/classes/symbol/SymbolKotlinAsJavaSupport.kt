@@ -10,6 +10,7 @@ import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.DecompiledLightClassesFactory
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
@@ -199,6 +200,7 @@ class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KaMo
 
     private fun KtElement.isFromSourceOrLibraryBinary(): Boolean = getModuleIfSupportEnabled()?.isFromSourceOrLibraryBinary() == true
 
+    @OptIn(KaPlatformInterface::class)
     private fun KaModule.isFromSourceOrLibraryBinary(): Boolean {
         return when (this) {
             is KaSourceModule -> true
