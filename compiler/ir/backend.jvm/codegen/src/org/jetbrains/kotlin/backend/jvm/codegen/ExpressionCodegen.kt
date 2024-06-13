@@ -546,7 +546,7 @@ class ExpressionCodegen(
 
     private fun IrInlinedFunctionBlock.buildOrGetClassSMAP(data: BlockInfo): SMAP {
         if (this.isLambdaInlining()) {
-            return context.typeToCachedSMAP[context.getLocalClassType(this.inlinedElement as IrAttributeContainer)]!!
+            return context.typeToCachedSMAP[(this.inlinedElement as IrAttributeContainer).localClassType]!!
         }
 
         val callee = this.inlineDeclaration

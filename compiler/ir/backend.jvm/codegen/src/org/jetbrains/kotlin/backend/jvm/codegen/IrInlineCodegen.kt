@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.backend.jvm.localClassType
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineOnly
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
 import org.jetbrains.kotlin.backend.jvm.ir.unwrapInlineLambda
@@ -183,7 +184,7 @@ class IrExpressionLambdaImpl(
     // arguments apart from any other scope's. So long as it's unique, any value is fine.
     // This particular string slightly aids in debugging internal compiler errors as it at least
     // points towards the function containing the lambda.
-    override val lambdaClassType: Type = codegen.context.getLocalClassType(reference)
+    override val lambdaClassType: Type = reference.localClassType
         ?: throw AssertionError("callable reference ${reference.dump()} has no name in context")
 
     override val capturedVars: List<CapturedParamDesc>

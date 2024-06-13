@@ -862,7 +862,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
                 putValueArgument(index, arg?.transform(this@JvmMultiFieldValueClassLowering, null))
             }
             copyAttributes(expression)
-            context.getLocalClassType(expression.attributeOwnerId)?.let { context.putLocalClassType(this, it) }
+            localClassType = expression.localClassType
         }
         return context.createJvmIrBuilder(getCurrentScopeSymbol(), expression).irBlock(origin = IrStatementOrigin.LAMBDA) {
             +wrapper
