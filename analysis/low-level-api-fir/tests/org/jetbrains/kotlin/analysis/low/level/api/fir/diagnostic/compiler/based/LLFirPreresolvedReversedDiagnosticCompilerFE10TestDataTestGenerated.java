@@ -2931,6 +2931,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
           }
 
           @Test
+          @TestMetadata("mixedTargeting.kt")
+          public void testMixedTargeting() {
+            runTest("compiler/testData/diagnostics/tests/annotations/options/targets/mixedTargeting.kt");
+          }
+
+          @Test
           @TestMetadata("nested.kt")
           public void testNested() {
             runTest("compiler/testData/diagnostics/tests/annotations/options/targets/nested.kt");
