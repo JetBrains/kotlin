@@ -126,7 +126,6 @@ class JvmBackendContext(
     val isEnclosedInConstructor = ConcurrentHashMap.newKeySet<IrAttributeContainer>()
 
     val multifileFacadesToAdd = mutableMapOf<JvmClassName, MutableList<IrClass>>()
-    val multifileFacadeForPart by irAttribute<IrClass, JvmClassName>(false).asMap()
     val multifileFacadeClassForPart by irAttribute<IrClass, IrClass>(false).asMap()
     val multifileFacadeMemberToPartMember by irAttribute<IrSimpleFunction, IrSimpleFunction>(false).asMap()
 

@@ -11,11 +11,8 @@ import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.LoweredDeclarationOrigins
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.MultifileFacadeFileEntry
+import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.fileParent
-import org.jetbrains.kotlin.backend.jvm.isMultifileBridge
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -134,7 +131,7 @@ private fun generateMultifileFacades(
         file.declarations.add(facadeClass)
 
         for (partClass in partClasses) {
-            context.multifileFacadeForPart[partClass.attributeOwnerId as IrClass] = jvmClassName
+            partClass.multifileFacadeForPart = jvmClassName
             context.multifileFacadeClassForPart[partClass.attributeOwnerId as IrClass] = facadeClass
 
             val correspondingProperties = CorrespondingPropertyCache(context, facadeClass)

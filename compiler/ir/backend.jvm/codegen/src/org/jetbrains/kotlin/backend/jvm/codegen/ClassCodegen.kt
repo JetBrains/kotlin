@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.common.lower.ANNOTATION_IMPLEMENTATION
 import org.jetbrains.kotlin.backend.common.lower.LoweredDeclarationOrigins
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmBackendExtension
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.MultifileFacadeFileEntry
+import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.extensions.descriptorOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
@@ -275,7 +272,7 @@ class ClassCodegen private constructor(
     }
 
     private fun generateKotlinMetadataAnnotation() {
-        val facadeClassName = context.multifileFacadeForPart[irClass.attributeOwnerId]
+        val facadeClassName = irClass.multifileFacadeForPart
         val metadata = irClass.metadata
         val entry = irClass.fileParent.fileEntry
         val kind = when {

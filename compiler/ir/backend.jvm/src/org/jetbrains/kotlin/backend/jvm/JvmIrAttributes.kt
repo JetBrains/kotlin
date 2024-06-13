@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.Type
 
 var IrAttributeContainer.localClassType: Type? by irAttribute(followAttributeOwner = true)
@@ -24,3 +25,5 @@ var IrClass.localDelegatedProperties: List<IrLocalDelegatedPropertySymbol>? by i
 var IrFunction.hasSpecialBridge: Boolean by irFlag(followAttributeOwner = false)
 
 var IrSimpleFunction.overridesWithoutStubs: List<IrSimpleFunctionSymbol>? by irAttribute(followAttributeOwner = false)
+
+var IrClass.multifileFacadeForPart: JvmClassName? by irAttribute(followAttributeOwner = true)
