@@ -404,6 +404,7 @@ internal object BodyStateKeepers {
 }
 
 context(StateKeeperBuilder)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun StateKeeperScope<FirFunction, FirDesignation>.preserveContractBlock(function: FirFunction) {
     val oldBody = function.body
     if (oldBody == null || oldBody is FirLazyBlock) {

@@ -30,6 +30,7 @@ internal class SymbolLightParameterForReceiver private constructor(
     methodName: String,
     method: SymbolLightMethodBase,
 ) : SymbolLightParameterBase(method) {
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     private inline fun <T> withReceiverSymbol(crossinline action: context(KaSession) (KaReceiverParameterSymbol) -> T): T =
         receiverPointer.withSymbol(ktModule, action)
 

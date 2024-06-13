@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportStub
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaCallableSymbol.translateToObjCExportStub(): List<ObjCExportStub> {
     val result = mutableListOf<ObjCExportStub>()
     when (this) {
@@ -30,6 +31,7 @@ internal fun KaCallableSymbol.translateToObjCExportStub(): List<ObjCExportStub> 
 }
 
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaClassSymbol.translateToObjCExportStub(): ObjCClass? = when (classKind) {
     KaClassKind.INTERFACE -> translateToObjCProtocol()
     KaClassKind.CLASS -> translateToObjCClass()

@@ -26,6 +26,7 @@ internal val KaSymbol.isConstructor: Boolean
     get() = this is KaConstructorSymbol
 
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun KaFunctionSymbol.translateToObjCMethod(): ObjCMethod? {
     if (!isVisibleInObjC()) return null
     if (isFakeOverride) return null
@@ -37,6 +38,7 @@ fun KaFunctionSymbol.translateToObjCMethod(): ObjCMethod? {
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.buildMethod]
  */
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaFunctionSymbol.buildObjCMethod(
     unavailable: Boolean = false,
 ): ObjCMethod {
@@ -117,6 +119,7 @@ internal fun KaCallableSymbol.isRefinedInSwift(): Boolean = when {
 }
 
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaFunctionSymbol.getSwiftName(methodBridge: MethodBridge): String {
     //assert(mapper.isBaseMethod(method)) //TODO: implement isBaseMethod
     if (this is KaNamedSymbol) {
@@ -213,6 +216,7 @@ private fun splitSelector(selector: String): List<String> {
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getSelector]
  */
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun KaFunctionSymbol.getSelector(methodBridge: MethodBridge): String {
 
     if (this is KaNamedSymbol) {
@@ -270,6 +274,7 @@ fun KaFunctionSymbol.getSelector(methodBridge: MethodBridge): String {
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getMangledName]
  */
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaFunctionSymbol.getMangledName(forSwift: Boolean): String {
     return if (this.isConstructor) {
         if (isArrayConstructor && !forSwift) "array" else "init"
@@ -295,6 +300,7 @@ private fun String.startsWithWords(words: String) = this.startsWith(words) &&
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mapReturnType]
  */
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun KaFunctionSymbol.mapReturnType(returnBridge: MethodBridge.ReturnValue): ObjCType {
     return when (returnBridge) {
         MethodBridge.ReturnValue.Suspend,

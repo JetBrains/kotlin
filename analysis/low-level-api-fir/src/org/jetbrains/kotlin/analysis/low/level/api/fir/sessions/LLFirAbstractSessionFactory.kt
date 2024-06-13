@@ -497,6 +497,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
     abstract fun createDanglingFileSession(module: KaDanglingFileModule, contextSession: LLFirSession): LLFirSession
 
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     protected fun doCreateDanglingFileSession(
         module: KaDanglingFileModule,
         contextSession: LLFirSession,
@@ -683,6 +684,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
      * See [mergeDependencySymbolProvidersInto] for more information on symbol provider merging.
      */
     context(LLFirSession)
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     private fun MutableList<FirSymbolProvider>.addMerged(dependencies: List<FirSymbolProvider>) {
         dependencies.mergeDependencySymbolProvidersInto(this@LLFirSession, this)
     }

@@ -31,6 +31,7 @@ internal val ObjCReferenceType.requiresForwardDeclaration: Boolean
  * @see ObjCReferenceType.requiresForwardDeclaration
  */
 context(ObjCTypeExtrasBuilderContext)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal var MutableExtras.requiresForwardDeclaration: Boolean
     get() = this[requiresForwardDeclarationKey] ?: false
     set(value) {

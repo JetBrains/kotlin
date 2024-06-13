@@ -33,6 +33,7 @@ internal value class StateKeeperScope<Owner : Any, Context : Any>(private val ow
      * @param arranger a function that provides a tweaked entity state. Such a state is then applied using a [mutator].
      */
     context(StateKeeperBuilder)
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     inline fun <Value> add(provider: (Owner) -> Value, crossinline mutator: (Owner, Value) -> Unit, arranger: (Value & Any) -> Value) {
         val owner = this@StateKeeperScope.owner
 
@@ -57,6 +58,7 @@ internal value class StateKeeperScope<Owner : Any, Context : Any>(private val ow
      * @param mutator a function that modifies the entity state (a setter).
      */
     context(StateKeeperBuilder)
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     inline fun <Value> add(provider: (Owner) -> Value, crossinline mutator: (Owner, Value) -> Unit) {
         val owner = this@StateKeeperScope.owner
         val storedValue = provider(owner)
@@ -72,6 +74,7 @@ internal value class StateKeeperScope<Owner : Any, Context : Any>(private val ow
      * In other words, applies all rules defined in the [keeper] to the current entity.
      */
     context(StateKeeperBuilder)
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     fun add(keeper: StateKeeper<Owner, Context>, context: Context) {
         val owner = this@StateKeeperScope.owner
         register(keeper.prepare(owner, context))
@@ -81,6 +84,7 @@ internal value class StateKeeperScope<Owner : Any, Context : Any>(private val ow
      * Defines a post-processor.
      */
     context(StateKeeperBuilder)
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     fun postProcess(block: PostProcessor) {
         register(object : PreservedState {
             override fun postProcess() = block()
@@ -94,6 +98,7 @@ internal value class StateKeeperScope<Owner : Any, Context : Any>(private val ow
  * Does nothing if the [entity] is `null`.
  */
 context(StateKeeperBuilder)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun <Entity : Any, Context : Any> entity(entity: Entity?, keeper: StateKeeper<Entity, Context>, context: Context) {
     if (entity != null) {
         StateKeeperScope<Entity, Context>(entity).add(keeper, context)
@@ -105,6 +110,7 @@ internal fun <Entity : Any, Context : Any> entity(entity: Entity?, keeper: State
  * Does nothing if the [entity] is `null`.
  */
 context(StateKeeperBuilder)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal inline fun <Entity : Any, Context : Any> entity(
     entity: Entity?,
     context: Context,
@@ -121,6 +127,7 @@ internal inline fun <Entity : Any, Context : Any> entity(
  * Skips `null` elements in the [list].
  */
 context(StateKeeperBuilder)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun <Entity : Any, Context : Any> entityList(list: List<Entity?>?, keeper: StateKeeper<Entity, Context>, context: Context) {
     if (list != null) {
         for (entity in list) {
@@ -137,6 +144,7 @@ internal fun <Entity : Any, Context : Any> entityList(list: List<Entity?>?, keep
  * Skips `null` elements in the [list].
  */
 context(StateKeeperBuilder)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal inline fun <Entity : Any, Context : Any> entityList(
     list: List<Entity?>?,
     context: Context,
@@ -159,6 +167,7 @@ internal inline fun <Entity : Any, Context : Any> entityList(
  *  The function collects rules for each individual owner separately.
  *  Nested owners can be handled inside [entity] or [entityList] blocks.
  */
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun <Owner : Any, Context : Any> stateKeeper(block: context(StateKeeperBuilder) StateKeeperScope<Owner, Context>.(Owner, Context) -> Unit): StateKeeper<Owner, Context> {
     return StateKeeper { owner, context ->
         val states = mutableListOf<PreservedState>()

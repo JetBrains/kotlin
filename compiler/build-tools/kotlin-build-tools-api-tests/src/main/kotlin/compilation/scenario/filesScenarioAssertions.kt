@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.Module
  * If you decided to start using it, don't mix it with regular [assertOutputs]
  */
 context(Module, ScenarioModule)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun CompilationOutcome.assertAddedOutputs(vararg addedOutputs: String) {
     assertAddedOutputs(addedOutputs.toSet())
 }
@@ -23,6 +24,7 @@ fun CompilationOutcome.assertAddedOutputs(vararg addedOutputs: String) {
  * If you decided to start using it, don't mix it with regular [assertOutputs]
  */
 context(Module, ScenarioModule)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun CompilationOutcome.assertAddedOutputs(addedOutputs: Set<String>) {
     val outputs = requireScenarioModuleImpl().outputs
     outputs.addAll(addedOutputs)
@@ -34,6 +36,7 @@ fun CompilationOutcome.assertAddedOutputs(addedOutputs: Set<String>) {
  * If you decided to start using it, don't mix it with regular [assertOutputs]
  */
 context(Module, ScenarioModule)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun CompilationOutcome.assertRemovedOutputs(vararg removedOutputs: String) {
     assertRemovedOutputs(removedOutputs.toSet())
 }
@@ -43,6 +46,7 @@ fun CompilationOutcome.assertRemovedOutputs(vararg removedOutputs: String) {
  * If you decided to start using it, don't mix it with regular [assertOutputs]
  */
 context(Module, ScenarioModule)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun CompilationOutcome.assertRemovedOutputs(removedOutputs: Set<String>) {
     val outputs = requireScenarioModuleImpl().outputs
     val notPresentOutputs = removedOutputs - outputs
@@ -54,11 +58,13 @@ fun CompilationOutcome.assertRemovedOutputs(removedOutputs: Set<String>) {
 }
 
 context(Module, ScenarioModule)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun CompilationOutcome.assertNoOutputSetChanges() {
     val outputs = requireScenarioModuleImpl().outputs
     assertOutputs(outputs)
 }
 
 context(ScenarioModule)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun requireScenarioModuleImpl() =
     (this@ScenarioModule as? ScenarioModuleImpl ?: error("Expected an instance of ScenarioModuleImpl"))

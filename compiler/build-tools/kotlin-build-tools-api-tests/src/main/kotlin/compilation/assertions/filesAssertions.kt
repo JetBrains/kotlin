@@ -18,16 +18,19 @@ import kotlin.io.path.walk
  * Equivalent to [assertNoCompiledSources] with an empty array/set
  */
 context(Module)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun CompilationOutcome.assertNoCompiledSources() {
     assertCompiledSources()
 }
 
 context(Module)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun CompilationOutcome.assertCompiledSources(vararg expectedCompiledSources: String) {
     assertCompiledSources(expectedCompiledSources.toSet())
 }
 
 context(Module)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun CompilationOutcome.assertCompiledSources(expectedCompiledSources: Set<String>) {
     requireLogLevel(LogLevel.DEBUG)
     val actualCompiledSources = logLines.getValue(LogLevel.DEBUG)
@@ -45,11 +48,13 @@ fun CompilationOutcome.assertCompiledSources(expectedCompiledSources: Set<String
 }
 
 context(Module)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun CompilationOutcome.assertOutputs(vararg expectedOutputs: String) {
     assertOutputs(expectedOutputs.toSet())
 }
 
 context(Module)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun CompilationOutcome.assertOutputs(expectedOutputs: Set<String>) {
     val filesLeft = expectedOutputs.map { outputDirectory.resolve(it).relativeTo(outputDirectory) }
         .toMutableSet()

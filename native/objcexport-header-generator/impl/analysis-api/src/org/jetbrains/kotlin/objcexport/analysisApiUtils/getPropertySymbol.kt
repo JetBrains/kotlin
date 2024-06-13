@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.tooling.core.linearClosure
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 @OptIn(KaExperimentalApi::class)
 internal fun KaPropertyAccessorSymbol.getPropertySymbol(): KaPropertySymbol {
     return this.linearClosure<KaSymbol> { it.containingSymbol }.filterIsInstance<KaPropertySymbol>().firstOrNull()

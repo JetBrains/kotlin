@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.isCompanion
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslator.needCompanionObjectProperty]
  */
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal val KaClassSymbol.needsCompanionProperty: Boolean
     get() {
         return this.staticMemberScope.classifiers

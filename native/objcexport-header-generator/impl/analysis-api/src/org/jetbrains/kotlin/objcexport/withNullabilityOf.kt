@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.getInlineTargetTypeOrNul
  * So types could be marked with "_Nullable" in Objective-C
  */
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun ObjCNonNullReferenceType.withNullabilityOf(kotlinType: KaType): ObjCReferenceType {
     return if (kotlinType.isBinaryRepresentationNullable()) {
         ObjCNullableReferenceType(this)
@@ -22,6 +23,7 @@ internal fun ObjCNonNullReferenceType.withNullabilityOf(kotlinType: KaType): Obj
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaType.isBinaryRepresentationNullable(): Boolean {
     /* Convention to match K1 implementation */
     if (this is KaErrorType) return false

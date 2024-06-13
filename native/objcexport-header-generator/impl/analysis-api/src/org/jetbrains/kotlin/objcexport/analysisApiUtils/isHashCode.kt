@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 private val hashCodeCallableId = CallableId(StandardClassIds.Any, Name.identifier("hashCode"))
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal val KaCallableSymbol.isHashCode: Boolean
     get() = this.callableId == hashCodeCallableId ||
         allOverriddenSymbols.any { overriddenSymbol -> overriddenSymbol.callableId == hashCodeCallableId }

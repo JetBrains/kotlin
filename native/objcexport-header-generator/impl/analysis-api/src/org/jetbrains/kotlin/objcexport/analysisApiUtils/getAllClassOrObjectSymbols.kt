@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
  * returns `sequenceOf(A, B, C)`
  */
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaFileSymbol.getAllClassOrObjectSymbols(): List<KaClassSymbol> {
     return fileScope.classifiers
         .filterIsInstance<KaClassSymbol>()
@@ -32,6 +33,7 @@ internal fun KaFileSymbol.getAllClassOrObjectSymbols(): List<KaClassSymbol> {
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaClassSymbol.getAllClassOrObjectSymbols(): Sequence<KaClassSymbol> {
     return sequence {
         val nestedClasses = memberScope.classifiers.filterIsInstance<KaClassSymbol>()

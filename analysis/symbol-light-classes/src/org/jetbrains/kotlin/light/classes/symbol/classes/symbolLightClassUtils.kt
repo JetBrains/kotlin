@@ -80,6 +80,7 @@ internal fun KtClassOrObject.modificationTrackerForClassInnerStuff(): List<Modif
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun createLightClassNoCache(
     classSymbol: KaNamedClassSymbol,
     ktModule: KaModule,
@@ -119,6 +120,7 @@ private fun lightClassForEnumEntry(ktEnumEntry: KtEnumEntry): KtLightClass? {
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun SymbolLightClassBase.createConstructors(
     declarations: Sequence<KaConstructorSymbol>,
     result: MutableList<KtLightMethod>,
@@ -162,6 +164,7 @@ internal fun SymbolLightClassBase.createConstructors(
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun SymbolLightClassBase.shouldGenerateNoArgOverload(
     primaryConstructor: KaConstructorSymbol,
     constructors: Iterable<KaConstructorSymbol>,
@@ -204,6 +207,7 @@ private fun SymbolLightClassBase.noArgConstructor(
 )
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun SymbolLightClassBase.createMethods(
     declarations: Sequence<KaCallableSymbol>,
     result: MutableList<KtLightMethod>,
@@ -269,6 +273,7 @@ internal fun SymbolLightClassBase.createMethods(
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private inline fun <T : KaFunctionSymbol> createJvmOverloadsIfNeeded(
     declaration: T,
     result: MutableList<KtLightMethod>,
@@ -287,6 +292,7 @@ private inline fun <T : KaFunctionSymbol> createJvmOverloadsIfNeeded(
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun SymbolLightClassBase.createPropertyAccessors(
     result: MutableList<KtLightMethod>,
     declaration: KaPropertySymbol,
@@ -406,6 +412,7 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun SymbolLightClassBase.createField(
     declaration: KaPropertySymbol,
     nameGenerator: SymbolLightField.FieldNameGenerator,
@@ -435,6 +442,7 @@ internal fun SymbolLightClassBase.createField(
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun hasBackingField(property: KaPropertySymbol): Boolean {
     if (property is KaSyntheticJavaPropertySymbol) return true
     requireIsInstance<KaKotlinPropertySymbol>(property)
@@ -469,6 +477,7 @@ private fun PsiElement.hasBackingField(): Boolean {
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun SymbolLightClassForClassLike<*>.createInheritanceList(
     forExtendsList: Boolean,
     superTypes: List<KaType>,
@@ -541,6 +550,7 @@ internal fun SymbolLightClassForClassLike<*>.createInheritanceList(
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaDeclarationContainerSymbol.createInnerClasses(
     manager: PsiManager,
     containingClass: SymbolLightClassBase,
@@ -582,6 +592,7 @@ internal fun KaDeclarationContainerSymbol.createInnerClasses(
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KtClassOrObject.checkIsInheritor(superClassOrigin: KtClassOrObject, checkDeep: Boolean): Boolean {
     if (this == superClassOrigin) return false
     if (superClassOrigin is KtEnumEntry) {
@@ -624,6 +635,7 @@ private val KaSymbolWithTypeParameters.hasReifiedParameters: Boolean
     get() = typeParameters.any { it.isReified }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun SymbolLightClassBase.addPropertyBackingFields(
     result: MutableList<KtLightField>,
     containerSymbol: KaDeclarationContainerSymbol,
@@ -661,6 +673,7 @@ internal fun SymbolLightClassBase.addPropertyBackingFields(
  * E.g., if [JvmName] is checked manually later
  */
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaCallableSymbol.hasTypeForValueClassInSignature(
     ignoreReturnType: Boolean = false,
     suppressJvmNameCheck: Boolean = false,
@@ -687,6 +700,7 @@ internal fun KaCallableSymbol.hasTypeForValueClassInSignature(
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal val KaType.typeForValueClass: Boolean
     get() {
         val symbol = expandedSymbol as? KaNamedClassSymbol ?: return false

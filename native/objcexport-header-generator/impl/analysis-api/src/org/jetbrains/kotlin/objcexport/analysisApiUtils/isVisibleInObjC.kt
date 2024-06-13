@@ -22,6 +22,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaSymbol.isVisibleInObjC(): Boolean = when (this) {
     is KaCallableSymbol -> this.isVisibleInObjC()
     is KaClassSymbol -> this.isVisibleInObjC()
@@ -29,6 +30,7 @@ internal fun KaSymbol.isVisibleInObjC(): Boolean = when (this) {
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaCallableSymbol.isVisibleInObjC(): Boolean {
     if (this is KaSymbolWithVisibility && !isPublicApi(this)) return false
     if (this is KaPossibleMultiplatformSymbol && isExpect) return false
@@ -42,6 +44,7 @@ internal fun KaCallableSymbol.isVisibleInObjC(): Boolean {
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaClassSymbol.isVisibleInObjC(): Boolean {
     // TODO if(specialMapped()) return false
     // TODO if(!defaultType.isObjCObjectType()) return false
@@ -61,6 +64,7 @@ Private utility functions
  */
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaSymbol.isSealedClassConstructor(): Boolean {
     if (this !is KaConstructorSymbol) return false
     val containingSymbol = this.containingSymbol as? KaSymbolWithModality ?: return false
@@ -68,6 +72,7 @@ private fun KaSymbol.isSealedClassConstructor(): Boolean {
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 @OptIn(ExperimentalContracts::class)
 private fun KaSymbol.isComponentNMethod(): Boolean {
     contract {
@@ -82,6 +87,7 @@ private fun KaSymbol.isComponentNMethod(): Boolean {
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaCallableSymbol.isHiddenFromObjCByAnnotation(): Boolean {
     val overwrittenSymbols = directlyOverriddenSymbols.toList()
     if (overwrittenSymbols.isNotEmpty()) return overwrittenSymbols.first().isHiddenFromObjCByAnnotation()
@@ -89,6 +95,7 @@ private fun KaCallableSymbol.isHiddenFromObjCByAnnotation(): Boolean {
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaClassSymbol.isHiddenFromObjCByAnnotation(): Boolean {
     val containingSymbol = containingSymbol
     if (containingSymbol is KaClassSymbol && containingSymbol.isHiddenFromObjCByAnnotation()) return true
@@ -115,6 +122,7 @@ private fun KaClassSymbol.isHiddenFromObjCByAnnotation(): Boolean {
  *
  */
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaAnnotatedSymbol.containsHidesFromObjCAnnotation(): Boolean {
     return annotations.any { annotation ->
         val annotationClassId = annotation.classId ?: return@any false
@@ -124,6 +132,7 @@ private fun KaAnnotatedSymbol.containsHidesFromObjCAnnotation(): Boolean {
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 @OptIn(KaExperimentalApi::class)
 private fun KaCallableSymbol.isHiddenFromObjCByDeprecation(): Boolean {
     /*
@@ -145,6 +154,7 @@ private fun KaCallableSymbol.isHiddenFromObjCByDeprecation(): Boolean {
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 @OptIn(KaExperimentalApi::class)
 private fun KaClassSymbol.isHiddenFromObjCByDeprecation(): Boolean {
     if (this.deprecationStatus?.deprecationLevel == DeprecationLevelValue.HIDDEN) return true
@@ -168,6 +178,7 @@ private fun KaClassSymbol.isHiddenFromObjCByDeprecation(): Boolean {
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaClassSymbol.isInlined(): Boolean {
     if (this !is KaNamedClassSymbol) return false
     if (this.isInline) return true

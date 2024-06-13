@@ -176,11 +176,13 @@ public interface KaSymbolProvider {
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 @Deprecated("Use 'getSymbol()' instead", ReplaceWith("this.getSymbol() as S"))
 public inline fun <reified S : KaSymbol> KtDeclaration.getSymbolOfType(): S =
     withValidityAssertion { symbol } as S
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 @Deprecated("Use 'getSymbol()' instead", ReplaceWith("this.getSymbol() as? S"))
 public inline fun <reified S : KaSymbol> KtDeclaration.getSymbolOfTypeSafe(): S? =
     withValidityAssertion { symbol } as? S

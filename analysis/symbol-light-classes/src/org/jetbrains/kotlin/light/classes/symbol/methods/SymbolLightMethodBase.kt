@@ -117,6 +117,7 @@ internal abstract class SymbolLightMethodBase(
     override fun getDefaultValue(): PsiAnnotationMemberValue? = null
 
     context(KaSession)
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     protected fun <T> T.computeJvmMethodName(
         defaultName: String,
         containingClass: SymbolLightClassBase,

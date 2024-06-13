@@ -64,7 +64,8 @@ internal object TestScopeRenderer {
         renderScopeMembers(scope, printer, printPretty, additionalSymbolInfo)
     }
 
-    context (KaSession)
+    context(KaSession)
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     private fun renderType(
         type: KaType,
         printPretty: Boolean

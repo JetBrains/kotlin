@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 
 object TypeParser {
-    context (KaSession)
+    context(KaSession)
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     fun parseTypeFromString(
         stringType: String,
         contextElement: KtElement,
@@ -23,7 +24,8 @@ object TypeParser {
         return convertType(type.typeElement ?: incorrectType(type), scopeForTypeParameters)
     }
 
-    context (KaSession)
+    context(KaSession)
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     private fun convertType(type: KtTypeElement, scopeForTypeParameters: KtElement): KaType =
         when (type) {
             is KtUserType -> {

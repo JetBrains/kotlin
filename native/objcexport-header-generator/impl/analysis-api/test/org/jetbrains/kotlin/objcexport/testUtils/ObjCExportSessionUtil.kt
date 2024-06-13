@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.objcexport.KtObjCExportSession
 import org.jetbrains.kotlin.objcexport.withKtObjCExportSession
 import org.jetbrains.kotlin.psi.KtElement
 
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 inline fun <T> analyzeWithObjCExport(
     useSiteKtElement: KtElement,
     configuration: KtObjCExportConfiguration = KtObjCExportConfiguration(),
