@@ -76,7 +76,10 @@ open class TypeApproximatorConfiguration {
         override fun shouldApproximateTypeVariableBasedType(marker: TypeVariableTypeConstructorMarker, isK2: Boolean): Boolean = !isK2
     }
 
-    open class PublicDeclaration(override val approximateLocalTypes: Boolean, override val approximateAnonymous: Boolean) : AllFlexibleSameValue() {
+    open class PublicDeclaration(
+        override val approximateLocalTypes: Boolean,
+        override val approximateAnonymous: Boolean,
+    ) : AllFlexibleSameValue() {
         override val approximateAllFlexible: Boolean get() = false
         override val approximateErrorTypes: Boolean get() = false
         override val approximateIntegerLiteralConstantTypes: Boolean get() = true
