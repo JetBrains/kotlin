@@ -615,13 +615,11 @@ abstract class AbstractTypeApproximator(
                     if (
                         conf.intersectionTypesInContravariantPositions &&
                         effectiveVariance == TypeVariance.IN &&
-                        argumentType.typeConstructor().isIntersection()
+                        argumentType.typeConstructor().isIntersection() &&
+                        isIntersectionTypeEffectivelyNothing(argumentType.typeConstructor() as IntersectionTypeConstructorMarker)
                     ) {
-                        val argumentTypeConstructor = argumentType.typeConstructor()
-                        if (argumentTypeConstructor.isIntersection() && isIntersectionTypeEffectivelyNothing(argumentTypeConstructor as IntersectionTypeConstructorMarker)) {
-                            newArguments[index] = createStarProjection(parameter)
-                            continue@loop
-                        }
+                        newArguments[index] = createStarProjection(parameter)
+                        continue@loop
                     }
 
                     /**
