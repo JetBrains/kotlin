@@ -446,6 +446,7 @@ object FirErrors {
     val UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL: KtDiagnosticFactory0 by error0<KtElement>(SourceElementPositioningStrategies.NAME_IDENTIFIER)
     val SUBTYPING_BETWEEN_CONTEXT_RECEIVERS: KtDiagnosticFactory0 by error0<KtElement>()
     val CONTEXT_RECEIVERS_WITH_BACKING_FIELD: KtDiagnosticFactory0 by error0<KtElement>()
+    val CONTEXT_RECEIVERS_DEPRECATED: KtDiagnosticFactory0 by warning0<KtElement>()
 
     // Types & type parameters
     val RECURSION_IN_IMPLICIT_TYPES: KtDiagnosticFactory0 by error0<PsiElement>()
