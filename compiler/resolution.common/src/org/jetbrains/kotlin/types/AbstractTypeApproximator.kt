@@ -55,7 +55,7 @@ abstract class AbstractTypeApproximator(
 
             type.isError() ->
                 // todo -- fix builtIns. Now builtIns here is DefaultBuiltIns
-                (if (conf.keepErrorTypes) null else type.defaultResult(toSuper)).toApproximationResult()
+                (if (!conf.approximateErrorTypes) null else type.defaultResult(toSuper)).toApproximationResult()
 
             depth > 3 ->
                 type.defaultResult(toSuper).toApproximationResult()
@@ -566,7 +566,7 @@ abstract class AbstractTypeApproximator(
     ): SimpleTypeMarker? {
         val typeConstructor = type.typeConstructor()
         if (typeConstructor.parametersCount() != type.argumentsCount()) {
-            return if (conf.keepErrorTypes) {
+            return if (!conf.approximateErrorTypes) {
                 createErrorType(
                     "Inconsistent type: $type (parameters.size = ${typeConstructor.parametersCount()}, arguments.size = ${type.argumentsCount()})",
                     type
@@ -603,7 +603,7 @@ abstract class AbstractTypeApproximator(
 
             when (effectiveVariance) {
                 null -> {
-                    return if (conf.keepErrorTypes) {
+                    return if (!conf.approximateErrorTypes) {
                         createErrorType(
                             "Inconsistent type: $type ($index parameter has declared variance: ${parameter.getVariance()}, " +
                                     "but argument variance is ${argument.getVariance()})",
