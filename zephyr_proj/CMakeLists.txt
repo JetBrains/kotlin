@@ -41,13 +41,19 @@ set(KOTLINC_NATIVE_BIN ${CMAKE_CURRENT_SOURCE_DIR}/../kotlin-native/dist/bin/kot
 target_sources(app PRIVATE ${SOURCE__NATIVE}/main.cpp  ${SOURCE__NATIVE}/polyfill.c)
 # enable below if building KN
 
-add_custom_command(
-  OUTPUT ${OBJ__KN_LIB}
-  COMMAND rm -rf ${OUT_DIR__KN}
-  COMMAND ${KOTLINC_NATIVE_BIN} ${SOURCE__KN}/lib.kt -target zephyr_m55 -produce static -Xtemporary-files-dir=${OUT_DIR__KN} -module-name libkn
-  COMMAND mv ${OBJ__KN_LIB_ORIGINAL} ${OBJ__KN_LIB}
-  VERBATIM
-)
+# add_custom_command(
+#   OUTPUT ${OBJ__KN_LIB}
+#   COMMAND rm -rf ${OUT_DIR__KN}
+#   COMMAND ${KOTLINC_NATIVE_BIN} ${SOURCE__KN}/lib.kt \
+#     -target zephyr_m55 \
+#     -produce static \
+#     -Xtemporary-files-dir=${OUT_DIR__KN} \
+#     -Xsave-llvm-ir-after=MandatoryBitcodeLLVMPostprocessingPhase \
+#     -Xsave-llvm-ir-directory=${OUT_DIR__KN} \
+#     -module-name libkn
+#   COMMAND mv ${OBJ__KN_LIB_ORIGINAL} ${OBJ__KN_LIB}
+#   VERBATIM
+# )
 add_library(kn_out ${OBJ__KN_LIB} ${INCL__KN_HEADER})
 set_target_properties(kn_out PROPERTIES LINKER_LANGUAGE CXX)
 target_link_libraries(app PUBLIC kn_out)

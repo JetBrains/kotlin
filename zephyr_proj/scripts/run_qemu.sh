@@ -4,4 +4,4 @@ if [[ $1 == debug ]]; then
 fi
 
 
-qemu-system-arm -machine mps3-an547 -nographic -kernel ~/zephyrproject/zephyr/build/zephyr/zephyr.elf $debug_param
+~/qemu/build/qemu-system-arm -machine mps2-an385 -nographic -kernel ~/zephyrproject/zephyr/build/zephyr/zephyr.elf $debug_param

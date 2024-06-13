@@ -17,6 +17,6 @@ LOG_MODULE_REGISTER(main, LOG_LEVEL_WRN);
 
 int main(void)
 {
-	libkn_symbols()->kotlin.root.example.get_globalString();
-	LOG_WRN("%s", "ended");
+	libkn_symbols()->kotlin.root.example.run();
+	printf("program ended\n");
 }

@@ -68,7 +68,7 @@ typedef struct {
 } libkn_kref_example_Object;
 typedef struct {
   libkn_KNativePtr pinned;
-} libkn_kref_example_Clazz;
+} libkn_kref_example_MyClass;
 
 
 typedef struct {
@@ -113,12 +113,17 @@ typedef struct {
         } Object;
         struct {
           libkn_KType* (*_type)(void);
-          libkn_kref_example_Clazz (*Clazz)();
-          libkn_KULong (*memberFunction)(libkn_kref_example_Clazz thiz, libkn_KInt p);
-        } Clazz;
+          libkn_kref_example_MyClass (*MyClass)(const char* brand, libkn_KInt cost);
+          const char* (*get_brand)(libkn_kref_example_MyClass thiz);
+          void (*set_brand)(libkn_kref_example_MyClass thiz, const char* set);
+          libkn_KInt (*get_cost)(libkn_kref_example_MyClass thiz);
+          void (*set_cost)(libkn_kref_example_MyClass thiz, libkn_KInt set);
+          void (*printCost)(libkn_kref_example_MyClass thiz);
+        } MyClass;
         const char* (*get_globalString)();
         void (*forFloats)(libkn_KFloat f, libkn_KDouble d);
         void (*forIntegers)(libkn_KByte b, libkn_KShort s, libkn_KUInt i, libkn_KLong l);
+        void (*run)();
         const char* (*strings)(const char* str);
       } example;
     } root;

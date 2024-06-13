@@ -55,7 +55,7 @@ internal class BitcodeCompiler(
                     addNonEmpty(configurables.clangFlags)
                     if (configurables is ZephyrConfigurables) {
                         // for zephyr, do not link through clang, it needs to be linked against zephyr itself
-                        addNonEmpty(listOf("-target", "thumb", "-mtp=soft", "-mfloat-abi=softfp", "-mcpu=cortex-m55", "-c", "-D__GLIBC_USE"))
+                        addNonEmpty(listOf("-target", "thumb", "-mtp=soft", "-mfloat-abi=soft", "-mcpu=cortex-m3", "-c", "-D__GLIBC_USE"))
                     } else {
                         addNonEmpty(listOf("-triple", targetTriple.toString()))
                     }

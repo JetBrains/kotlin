@@ -20,6 +20,11 @@ void __atomic_exchange_8(void)
     __ASSERT(false, "called %s\n", "__atomic_exchange_8");
 }
 
+void __atomic_compare_exchange_8(void)
+{
+    __ASSERT(false, "called %s\n", "__atomic_exchange_8");
+}
+
 typedef long long di_int;
 
 di_int
@@ -60,3 +65,7 @@ __mulodi4(di_int a, di_int b, int *overflow)
     }
     return result;
 }
+
+// int	posix_memalign (void **, size_t, size_t) {
+
+// }

@@ -23,3 +23,22 @@ This command invokes the compiler you just built from previous step against a ve
 * `out.bc` - this is the bitcode for KN runtime
 * `out.Codegen.ll` - this is the decoded llvm code after KN runs code-gen
 * `out.ll` - this is result after we run `llvm-dis` on `out.bc`
+
+# Issues
+
+## unbox{type} functions are not generated in llvm code
+
+### Repro
+after running `kn_compile.sh` script mentioned above, open `out.Codegen.ll` and search for `define float @Kotlin_unboxFloat`, you will notice it has instructions, but if you inspect `out.ll`, all those functions only have `@llvm.trap
+
+however, if we change the `-target zephyr_m55` to `-target linux_arm64` for example, and run `kn_compile.sh` again, we can see `Kotlin_unboxFloat` exists in both `ll` files.
+
+Some steps ran after code gen removed these implementations for some reason - also the `out.ll` is significantly larger in the case of linux target.
+
+# Important Files
+* /home/txie/kn_exp/kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/BitcodeCompiler.kt 
+    * modify the clang flags for bit code compiler
+* /home/txie/kn_exp/native/utils/src/org/jetbrains/kotlin/konan/target/ClangArgs.kt
+    * also clang flags but for konan
+* /home/txie/kn_exp/kotlin-native/konan/konan.properties
+    * modify targetCpu.zephyr_m55 and targetTriple.zephyr_m55
