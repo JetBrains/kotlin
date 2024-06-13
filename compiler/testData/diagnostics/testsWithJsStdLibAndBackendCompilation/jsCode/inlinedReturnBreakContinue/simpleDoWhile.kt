@@ -1,0 +1,21 @@
+// ISSUE: KT-68975
+// See same test for codegen: compiler/testData/codegen/box/js/inlinedReturnBreakContinue/simpleDoWhile.kt
+// LANGUAGE: +BreakContinueInInlineLambdas
+
+inline fun foo(<!UNUSED_PARAMETER!>block<!>: () -> Unit) { js("block()") }
+
+fun box(): String {
+    var i = 0
+    do {
+        if (++i == 1)
+            foo { continue }
+
+        if (i == 2)
+            foo { break }
+        return "FAIL 1: $i"
+    } while (true)
+
+    <!UNREACHABLE_CODE!>if (i != 2) return "FAIL 2: $i"<!>
+
+    <!UNREACHABLE_CODE!>return "OK"<!>
+}
