@@ -10,7 +10,6 @@ import org.gradle.api.DomainObjectSet
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Task
 import org.gradle.api.plugins.ExtensionAware
-import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
-import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
@@ -66,20 +64,16 @@ abstract class KotlinJsIrSubTarget(
         }
     }
 
-    private val produceExecutable: Unit by lazy {
-        configureMainExecutable()
+    private val produceBinary: Unit by lazy {
+        configureMainCompilation()
     }
 
     internal fun produceExecutable() {
-        produceExecutable
-    }
-
-    private val produceLibrary: Unit by lazy {
-        configureMainLibrary()
+        produceBinary
     }
 
     internal fun produceLibrary() {
-        produceLibrary
+        produceBinary
     }
 
     override fun testTask(body: Action<KotlinJsTest>) {
@@ -171,15 +165,15 @@ abstract class KotlinJsIrSubTarget(
     protected abstract fun configureDefaultTestFramework(test: KotlinJsTest)
     protected abstract fun configureTestDependencies(test: KotlinJsTest)
 
-    private fun configureMainExecutable() {
+    private fun configureMainCompilation() {
         target.compilations.all { compilation ->
             if (compilation.isMain()) {
-                configureExecutable(compilation)
+                configureCompilation(compilation)
             }
         }
     }
 
-    private fun configureExecutable(compilation: KotlinJsIrCompilation) {
+    fun configureCompilation(compilation: KotlinJsIrCompilation) {
         setupRun(compilation)
         setupBuild(compilation)
     }
@@ -194,19 +188,6 @@ abstract class KotlinJsIrSubTarget(
         subTargetConfigurators.configureEach {
             it.setupBuild(compilation)
         }
-    }
-
-    private fun configureMainLibrary() {
-        target.compilations.all { compilation ->
-            if (compilation.isMain()) {
-                configureLibrary(compilation)
-            }
-        }
-    }
-
-    protected open fun configureLibrary(compilation: KotlinJsIrCompilation) {
-        setupRun(compilation)
-        setupBuild(compilation)
     }
 
     companion object {
