@@ -28799,6 +28799,19 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       public void testAllFilesPresentInJs() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/js"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
       }
+
+      @Nested
+      @TestMetadata("compiler/testData/codegen/box/js/inlinedReturnBreakContinue")
+      @TestDataPath("$PROJECT_ROOT")
+      @Tag("frontend-fir")
+      @FirPipeline()
+      @UseExtTestCaseGroupProvider()
+      public class InlinedReturnBreakContinue {
+        @Test
+        public void testAllFilesPresentInInlinedReturnBreakContinue() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/js/inlinedReturnBreakContinue"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+      }
     }
 
     @Nested

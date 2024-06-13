@@ -233,6 +233,12 @@ public class FirPsiJsOldFrontendDiagnosticsWithBackendTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("lambdaWithoutNonLocalControlflow.kt")
+    public void testLambdaWithoutNonLocalControlflow() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/lambdaWithoutNonLocalControlflow.kt");
+    }
+
+    @Test
     @TestMetadata("noJavaScriptProduced.kt")
     public void testNoJavaScriptProduced() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/noJavaScriptProduced.kt");
@@ -242,6 +248,70 @@ public class FirPsiJsOldFrontendDiagnosticsWithBackendTestGenerated extends Abst
     @TestMetadata("warning.kt")
     public void testWarning() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/warning.kt");
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/inlinedReturnBreakContinue")
+    @TestDataPath("$PROJECT_ROOT")
+    public class InlinedReturnBreakContinue {
+      @Test
+      public void testAllFilesPresentInInlinedReturnBreakContinue() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/inlinedReturnBreakContinue"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
+      }
+
+      @Test
+      @TestMetadata("inlineFunctionWithMultipleParameters.kt")
+      public void testInlineFunctionWithMultipleParameters() {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/inlinedReturnBreakContinue/inlineFunctionWithMultipleParameters.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdaPassedToInlineFunction.kt")
+      public void testLambdaPassedToInlineFunction() {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/inlinedReturnBreakContinue/lambdaPassedToInlineFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("loopWithinInlineFunction.kt")
+      public void testLoopWithinInlineFunction() {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/inlinedReturnBreakContinue/loopWithinInlineFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("nonLocalReturn.kt")
+      public void testNonLocalReturn() {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/inlinedReturnBreakContinue/nonLocalReturn.kt");
+      }
+
+      @Test
+      @TestMetadata("simple.kt")
+      public void testSimple() {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/inlinedReturnBreakContinue/simple.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleDoWhile.kt")
+      public void testSimpleDoWhile() {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/inlinedReturnBreakContinue/simpleDoWhile.kt");
+      }
+
+      @Test
+      @TestMetadata("withReturnValue.kt")
+      public void testWithReturnValue() {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/inlinedReturnBreakContinue/withReturnValue.kt");
+      }
+
+      @Test
+      @TestMetadata("withReturnValueDoWhileContinue.kt")
+      public void testWithReturnValueDoWhileContinue() {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/inlinedReturnBreakContinue/withReturnValueDoWhileContinue.kt");
+      }
+
+      @Test
+      @TestMetadata("withReturnValueNested.kt")
+      public void testWithReturnValueNested() {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/inlinedReturnBreakContinue/withReturnValueNested.kt");
+      }
     }
   }
 

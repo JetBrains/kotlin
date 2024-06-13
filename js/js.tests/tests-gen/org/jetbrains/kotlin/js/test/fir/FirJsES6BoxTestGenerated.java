@@ -7485,6 +7485,30 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
     }
 
     @Test
+    @TestMetadata("lambdaCrossInline.kt")
+    public void testLambdaCrossInline() {
+      runTest("js/js.translator/testData/box/jsCode/lambdaCrossInline.kt");
+    }
+
+    @Test
+    @TestMetadata("lambdaInline.kt")
+    public void testLambdaInline() {
+      runTest("js/js.translator/testData/box/jsCode/lambdaInline.kt");
+    }
+
+    @Test
+    @TestMetadata("lambdaNoInline.kt")
+    public void testLambdaNoInline() {
+      runTest("js/js.translator/testData/box/jsCode/lambdaNoInline.kt");
+    }
+
+    @Test
+    @TestMetadata("lambdaNonLocalReturn.kt")
+    public void testLambdaNonLocalReturn() {
+      runTest("js/js.translator/testData/box/jsCode/lambdaNonLocalReturn.kt");
+    }
+
+    @Test
     @TestMetadata("literal.kt")
     public void testLiteral() {
       runTest("js/js.translator/testData/box/jsCode/literal.kt");

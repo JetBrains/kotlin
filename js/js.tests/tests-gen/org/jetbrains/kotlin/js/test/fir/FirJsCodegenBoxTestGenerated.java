@@ -25926,6 +25926,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
     }
 
     @Test
+    @TestMetadata("lambdaWithoutNonLocalControlflow.kt")
+    public void testLambdaWithoutNonLocalControlflow() {
+      runTest("compiler/testData/codegen/box/js/lambdaWithoutNonLocalControlflow.kt");
+    }
+
+    @Test
     @TestMetadata("MultiDollarInterpolation.kt")
     public void testMultiDollarInterpolation() {
       runTest("compiler/testData/codegen/box/js/MultiDollarInterpolation.kt");
@@ -25935,6 +25941,70 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
     @TestMetadata("trailingLambdaOnDynamic.kt")
     public void testTrailingLambdaOnDynamic() {
       runTest("compiler/testData/codegen/box/js/trailingLambdaOnDynamic.kt");
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/js/inlinedReturnBreakContinue")
+    @TestDataPath("$PROJECT_ROOT")
+    public class InlinedReturnBreakContinue {
+      @Test
+      public void testAllFilesPresentInInlinedReturnBreakContinue() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/js/inlinedReturnBreakContinue"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+
+      @Test
+      @TestMetadata("inlineFunctionWithMultipleParameters.kt")
+      public void testInlineFunctionWithMultipleParameters() {
+        runTest("compiler/testData/codegen/box/js/inlinedReturnBreakContinue/inlineFunctionWithMultipleParameters.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdaPassedToInlineFunction.kt")
+      public void testLambdaPassedToInlineFunction() {
+        runTest("compiler/testData/codegen/box/js/inlinedReturnBreakContinue/lambdaPassedToInlineFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("loopWithinInlineFunction.kt")
+      public void testLoopWithinInlineFunction() {
+        runTest("compiler/testData/codegen/box/js/inlinedReturnBreakContinue/loopWithinInlineFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("nonLocalReturn.kt")
+      public void testNonLocalReturn() {
+        runTest("compiler/testData/codegen/box/js/inlinedReturnBreakContinue/nonLocalReturn.kt");
+      }
+
+      @Test
+      @TestMetadata("simple.kt")
+      public void testSimple() {
+        runTest("compiler/testData/codegen/box/js/inlinedReturnBreakContinue/simple.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleDoWhile.kt")
+      public void testSimpleDoWhile() {
+        runTest("compiler/testData/codegen/box/js/inlinedReturnBreakContinue/simpleDoWhile.kt");
+      }
+
+      @Test
+      @TestMetadata("withReturnValue.kt")
+      public void testWithReturnValue() {
+        runTest("compiler/testData/codegen/box/js/inlinedReturnBreakContinue/withReturnValue.kt");
+      }
+
+      @Test
+      @TestMetadata("withReturnValueDoWhileContinue.kt")
+      public void testWithReturnValueDoWhileContinue() {
+        runTest("compiler/testData/codegen/box/js/inlinedReturnBreakContinue/withReturnValueDoWhileContinue.kt");
+      }
+
+      @Test
+      @TestMetadata("withReturnValueNested.kt")
+      public void testWithReturnValueNested() {
+        runTest("compiler/testData/codegen/box/js/inlinedReturnBreakContinue/withReturnValueNested.kt");
+      }
     }
   }
 
