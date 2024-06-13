@@ -156,7 +156,7 @@ abstract class FirAbstractSessionFactory {
                 moduleDataImpl.dependsOnDependencies.map {
                     val session = sessionProvider?.getSession(it) ?: return@map it
                     if (it.isCommon && session.kind == FirSession.Kind.Source) {
-                        createNewCommonArtefactModuleDataWithSession(it, session, registerExtraComponents, createKotlinScopeProvider)
+                        getOrCreateCommonArtefactModuleDataWithSession(it, session, registerExtraComponents, createKotlinScopeProvider)
                     } else it
                 }
             )
@@ -172,14 +172,18 @@ abstract class FirAbstractSessionFactory {
             .sortedBy { it.session.kind }
     }
 
-    private fun createNewCommonArtefactModuleDataWithSession(
+    private fun getOrCreateCommonArtefactModuleDataWithSession(
         sourceModuleData: FirModuleData,
         sourceSession: FirSession,
         registerExtraComponents: (FirSession) -> Unit,
         createKotlinScopeProvider: () -> FirKotlinScopeProvider,
     ): FirModuleData {
-        val commonArtefactSession by lazy(LazyThreadSafetyMode.NONE) {
-            FirCliSession(sourceSession.sessionProvider as FirProjectSessionProvider, FirSession.Kind.Library).apply {
+        val moduleDataName = Name.special("<common-from-${sourceModuleData.name.asStringStripSpecialMarkers()}>")
+        val firProjectSessionProvider = sourceSession.sessionProvider as FirProjectSessionProvider
+        firProjectSessionProvider.getSessionByName(moduleDataName)?.let { return it.moduleData }
+
+        val commonArtefactSession =
+            FirCliSession(firProjectSessionProvider, FirSession.Kind.Library).apply {
                 registerCliCompilerOnlyComponents()
                 registerCommonComponents(sourceSession.languageVersionSettings)
                 registerExtraComponents(this)
@@ -187,12 +191,11 @@ abstract class FirAbstractSessionFactory {
                 register(FirKotlinScopeProvider::class, kotlinScopeProvider)
                 registerCommonComponentsAfterExtensionsAreConfigured()
             }
-        }
         val commonArtefactModuleData = FirModuleDataImpl(
-            Name.special("<common-from-${sourceModuleData.name.asStringStripSpecialMarkers()}>"),
-            sourceModuleData.dependencies, sourceModuleData.dependsOnDependencies, sourceModuleData.friendDependencies, sourceModuleData.platform, sourceModuleData.capabilities, sourceModuleData.isCommon,
+            moduleDataName, sourceModuleData.dependencies, sourceModuleData.dependsOnDependencies, sourceModuleData.friendDependencies,
+            sourceModuleData.platform, sourceModuleData.capabilities, sourceModuleData.isCommon,
         )
-        (sourceSession.sessionProvider as FirProjectSessionProvider).registerSession(commonArtefactModuleData, commonArtefactSession)
+        firProjectSessionProvider.registerSession(commonArtefactModuleData, commonArtefactSession)
         commonArtefactModuleData.bindSession(commonArtefactSession)
         val providers = sourceSession.computeDependencyProviderList(sourceModuleData, registerExtraComponents, createKotlinScopeProvider) +
                 LazySerializedMetadataSymbolProvider(

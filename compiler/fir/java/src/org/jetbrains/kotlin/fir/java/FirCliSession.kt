@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.java
 
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.name.Name
 
 @OptIn(PrivateSessionConstructor::class)
 class FirCliSession @PrivateSessionConstructor constructor(
@@ -16,6 +17,10 @@ class FirCliSession @PrivateSessionConstructor constructor(
 class FirProjectSessionProvider : FirSessionProvider() {
     override fun getSession(moduleData: FirModuleData): FirSession? {
         return sessionCache[moduleData]
+    }
+
+    fun getSessionByName(moduleDataName: Name): FirSession? {
+        return sessionCache.asIterable().find { it.key.name == moduleDataName }?.value
     }
 
     fun registerSession(moduleData: FirModuleData, session: FirSession) {
