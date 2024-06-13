@@ -44,7 +44,7 @@ scopes:
           callableId: null
           contextReceivers: []
           isExtension: false
-          location: LOCAL
+          location: PROPERTY
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(test/Child.constructorProp)
@@ -140,7 +140,7 @@ scopes:
           callableId: null
           contextReceivers: []
           isExtension: false
-          location: LOCAL
+          location: PROPERTY
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(test/Child.childProp)
@@ -206,7 +206,7 @@ scopes:
           callableId: null
           contextReceivers: []
           isExtension: false
-          location: LOCAL
+          location: PROPERTY
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(test/Base.value)
@@ -302,7 +302,7 @@ scopes:
           callableId: null
           contextReceivers: []
           isExtension: false
-          location: LOCAL
+          location: PROPERTY
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(test/Base.baseProp)
@@ -503,7 +503,7 @@ scopes:
                 callableId: null
                 contextReceivers: []
                 isExtension: false
-                location: LOCAL
+                location: PROPERTY
                 name: field
                 origin: PROPERTY_BACKING_FIELD
                 owningProperty: KaKotlinPropertySymbol(test/Child.constructorProp)

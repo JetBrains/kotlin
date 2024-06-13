@@ -38,7 +38,7 @@ public abstract class KaBackingFieldSymbol : KaVariableLikeSymbol() {
 
     final override val name: Name get() = withValidityAssertion { fieldName }
     final override val psi: PsiElement? get() = withValidityAssertion { null }
-    final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.LOCAL }
+    final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.PROPERTY }
     override val origin: KaSymbolOrigin get() = withValidityAssertion { KaSymbolOrigin.PROPERTY_BACKING_FIELD }
     final override val callableId: CallableId? get() = withValidityAssertion { null }
     final override val isExtension: Boolean get() = withValidityAssertion { false }

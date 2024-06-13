@@ -167,7 +167,7 @@ callables: 5
       callableId: null
       contextReceivers: []
       isExtension: false
-      location: LOCAL
+      location: PROPERTY
       name: field
       origin: PROPERTY_BACKING_FIELD
       owningProperty: KaKotlinPropertySymbol(generated/genTopLevelVal1)
@@ -237,7 +237,7 @@ callables: 5
       callableId: null
       contextReceivers: []
       isExtension: false
-      location: LOCAL
+      location: PROPERTY
       name: field
       origin: PROPERTY_BACKING_FIELD
       owningProperty: KaKotlinPropertySymbol(generated/genTopLevelVar1)
@@ -368,7 +368,7 @@ callables: 5
       callableId: null
       contextReceivers: []
       isExtension: false
-      location: LOCAL
+      location: PROPERTY
       name: field
       origin: PROPERTY_BACKING_FIELD
       owningProperty: KaKotlinPropertySymbol(generated/genExtensionVal1)

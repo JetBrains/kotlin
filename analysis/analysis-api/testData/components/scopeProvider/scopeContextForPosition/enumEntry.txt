@@ -61,7 +61,7 @@ scopes:
           callableId: null
           contextReceivers: []
           isExtension: false
-          location: LOCAL
+          location: PROPERTY
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(<local>/x)
@@ -352,7 +352,7 @@ scopes:
           callableId: null
           contextReceivers: []
           isExtension: false
-          location: LOCAL
+          location: PROPERTY
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(kotlin/Enum.name)
@@ -418,7 +418,7 @@ scopes:
           callableId: null
           contextReceivers: []
           isExtension: false
-          location: LOCAL
+          location: PROPERTY
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(kotlin/Enum.ordinal)

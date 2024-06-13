@@ -28,7 +28,7 @@ KaConstructorSymbol:
           callableId: null
           contextReceivers: []
           isExtension: false
-          location: LOCAL
+          location: PROPERTY
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(/Anno.param1)
@@ -141,7 +141,7 @@ KaConstructorSymbol:
           callableId: null
           contextReceivers: []
           isExtension: false
-          location: LOCAL
+          location: PROPERTY
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(/Anno.param2)
