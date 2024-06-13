@@ -5,88 +5,97 @@
 
 package org.jetbrains.kotlin.backend.common
 
+import org.jetbrains.kotlin.ir.IrAttribute
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.get
+import org.jetbrains.kotlin.ir.irAttribute
+import org.jetbrains.kotlin.ir.set
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty
 
-interface Mapping {
-    val defaultArgumentsDispatchFunction: Delegate<IrFunction, IrFunction>
-    val defaultArgumentsOriginalFunction: Delegate<IrFunction, IrFunction>
-    val suspendFunctionToCoroutineConstructor: Delegate<IrFunction, IrConstructor>
-    val lateInitFieldToNullableField: Delegate<IrField, IrField>
-    val inlineClassMemberToStatic: Delegate<IrFunction, IrSimpleFunction>
-    val capturedFields: Delegate<IrClass, Collection<IrField>>
-    val capturedConstructors: Delegate<IrConstructor, IrConstructor>
-    val reflectedNameAccessor: Delegate<IrClass, IrSimpleFunction>
-    val suspendFunctionsToFunctionWithContinuations: Delegate<IrSimpleFunction, IrSimpleFunction>
-    val functionWithContinuationsToSuspendFunctions: Delegate<IrSimpleFunction, IrSimpleFunction>
+open class Mapping {
+    val defaultArgumentsDispatchFunction: DeclarationMapping<IrFunction, IrFunction> by AttributeBasedMappingDelegate()
+    val defaultArgumentsOriginalFunction: MapBasedMapping<IrFunction, IrFunction> = MapBasedMapping()
+    val suspendFunctionToCoroutineConstructor: DeclarationMapping<IrFunction, IrConstructor> by AttributeBasedMappingDelegate()
+    val lateInitFieldToNullableField: DeclarationMapping<IrField, IrField> by AttributeBasedMappingDelegate()
+    val inlineClassMemberToStatic: DeclarationMapping<IrFunction, IrSimpleFunction> by AttributeBasedMappingDelegate()
+    val capturedFields: DeclarationMapping<IrClass, Collection<IrField>> by AttributeBasedMappingDelegate()
+    val capturedConstructors: MapBasedMapping<IrConstructor, IrConstructor> = MapBasedMapping()
+    val reflectedNameAccessor: DeclarationMapping<IrClass, IrSimpleFunction> by AttributeBasedMappingDelegate()
+    val suspendFunctionsToFunctionWithContinuations: DeclarationMapping<IrSimpleFunction, IrSimpleFunction> by AttributeBasedMappingDelegate()
+    val functionWithContinuationsToSuspendFunctions: DeclarationMapping<IrSimpleFunction, IrSimpleFunction> by AttributeBasedMappingDelegate()
 
-    abstract class Delegate<K : IrDeclaration, V> {
-        abstract operator fun get(key: K): V?
-
-        abstract operator fun set(key: K, value: V?)
+    abstract class DeclarationMapping<K : IrDeclaration, V> {
+        abstract operator fun get(declaration: K): V?
+        abstract operator fun set(declaration: K, value: V?)
 
         operator fun getValue(thisRef: K, desc: KProperty<*>): V? = get(thisRef)
 
         operator fun setValue(thisRef: K, desc: KProperty<*>, value: V?) {
             set(thisRef, value)
         }
-
-        abstract val keys: Set<K>
     }
-}
 
-interface DelegateFactory {
-    fun <K : IrDeclaration, V : IrDeclaration> newDeclarationToDeclarationMapping(): Mapping.Delegate<K, V>
-
-    fun <K : IrDeclaration, V : Collection<IrDeclaration>> newDeclarationToDeclarationCollectionMapping(): Mapping.Delegate<K, V>
-}
-
-object DefaultDelegateFactory : DelegateFactory {
-    fun <K : IrDeclaration, V> newDeclarationToValueMapping(): Mapping.Delegate<K, V> = newMappingImpl()
-
-    override fun <K : IrDeclaration, V : IrDeclaration> newDeclarationToDeclarationMapping(): Mapping.Delegate<K, V> = newMappingImpl()
-
-    override fun <K : IrDeclaration, V : Collection<IrDeclaration>> newDeclarationToDeclarationCollectionMapping(): Mapping.Delegate<K, V> = newMappingImpl()
-
-    private fun <K : IrDeclaration, V> newMappingImpl() = object : Mapping.Delegate<K, V>() {
+    /**
+     * Mapping from K to V backed by a regular MutableMap.
+     * Its only use is when the access to [keys] is necessary,
+     * otherwise it should be avoided.
+     */
+    class MapBasedMapping<K : IrDeclaration, V> : DeclarationMapping<K, V>() {
         private val map: MutableMap<K, V> = ConcurrentHashMap()
 
-        override operator fun get(key: K): V? {
-            return map[key]
+        override operator fun get(declaration: K): V? {
+            return map[declaration]
         }
 
-        override operator fun set(key: K, value: V?) {
+        override operator fun set(declaration: K, value: V?) {
             if (value == null) {
-                map.remove(key)
+                map.remove(declaration)
             } else {
-                map[key] = value
+                map[declaration] = value
             }
         }
 
-        override val keys: Set<K>
+        val keys: Set<K>
             get() = map.keys
     }
-}
 
-open class DefaultMapping(delegateFactory: DelegateFactory = DefaultDelegateFactory) : Mapping {
-    override val defaultArgumentsDispatchFunction: Mapping.Delegate<IrFunction, IrFunction> = delegateFactory.newDeclarationToDeclarationMapping()
-    override val defaultArgumentsOriginalFunction: Mapping.Delegate<IrFunction, IrFunction> = delegateFactory.newDeclarationToDeclarationMapping()
-    override val suspendFunctionToCoroutineConstructor: Mapping.Delegate<IrFunction, IrConstructor> = delegateFactory.newDeclarationToDeclarationMapping()
-    override val lateInitFieldToNullableField: Mapping.Delegate<IrField, IrField> = delegateFactory.newDeclarationToDeclarationMapping()
-    override val inlineClassMemberToStatic: Mapping.Delegate<IrFunction, IrSimpleFunction> = delegateFactory.newDeclarationToDeclarationMapping()
-    override val capturedFields: Mapping.Delegate<IrClass, Collection<IrField>> = delegateFactory.newDeclarationToDeclarationCollectionMapping()
-    override val capturedConstructors: Mapping.Delegate<IrConstructor, IrConstructor> = delegateFactory.newDeclarationToDeclarationMapping()
-    override val reflectedNameAccessor: Mapping.Delegate<IrClass, IrSimpleFunction> = delegateFactory.newDeclarationToDeclarationMapping()
-    override val suspendFunctionsToFunctionWithContinuations: Mapping.Delegate<IrSimpleFunction, IrSimpleFunction> = delegateFactory.newDeclarationToDeclarationMapping()
-    override val functionWithContinuationsToSuspendFunctions: Mapping.Delegate<IrSimpleFunction, IrSimpleFunction> = delegateFactory.newDeclarationToDeclarationMapping()
+    /**
+     * Mapping from K to V backed by [IrAttribute].
+     * Usages are to be refactored to use [IrAttribute]s directly - KT-69082.
+     */
+    protected class AttributeBasedMapping<K : IrDeclaration, V : Any>(
+        private val attribute: IrAttribute<K, V>
+    ) : DeclarationMapping<K, V>() {
+        override fun get(declaration: K): V? {
+            return declaration[attribute]
+        }
+
+        override fun set(declaration: K, value: V?) {
+            declaration[attribute] = value
+        }
+    }
+
+    protected class AttributeBasedMappingDelegate<K : IrDeclaration, V : Any> () {
+        private lateinit var mapping: AttributeBasedMapping<K, V>
+
+        operator fun provideDelegate(thisRef: Any?, desc: KProperty<*>): AttributeBasedMappingDelegate<K, V> {
+            val attribute = irAttribute<K, V>(followAttributeOwner = false).provideDelegate(thisRef, desc)
+            this.mapping = AttributeBasedMapping(attribute)
+            return this
+        }
+
+        operator fun getValue(thisRef: Any?, desc: KProperty<*>): AttributeBasedMapping<K, V> {
+            return mapping
+        }
+    }
 }
 
 fun <V : Any> KMutableProperty0<V?>.getOrPut(fn: () -> V) = this.get() ?: fn().also {
     this.set(it)
 }
 
-fun <K : IrDeclaration, V> Mapping.Delegate<K, V>.getOrPut(key: K, fn: () -> V) = this[key] ?: fn().also {
+fun <K : IrDeclaration, V> Mapping.DeclarationMapping<K, V>.getOrPut(key: K, fn: () -> V) = this[key] ?: fn().also {
     this[key] = it
 }

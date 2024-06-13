@@ -5,58 +5,51 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
-import org.jetbrains.kotlin.backend.common.DefaultDelegateFactory
-import org.jetbrains.kotlin.backend.common.DefaultMapping
+import org.jetbrains.kotlin.backend.common.Mapping
 import org.jetbrains.kotlin.ir.backend.js.utils.MutableReference
 import org.jetbrains.kotlin.ir.declarations.*
-import java.util.WeakHashMap
 
-class JsMapping : DefaultMapping() {
-    val classToItsDefaultConstructor = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrConstructor>()
+class JsMapping : Mapping() {
+    val classToItsDefaultConstructor: DeclarationMapping<IrClass, IrConstructor> by AttributeBasedMappingDelegate()
 
-    val esClassWhichNeedBoxParameters = DefaultDelegateFactory.newDeclarationToValueMapping<IrClass, Boolean>()
-    val esClassToPossibilityForOptimization = DefaultDelegateFactory.newDeclarationToValueMapping<IrClass, MutableReference<Boolean>>()
+    val esClassWhichNeedBoxParameters: DeclarationMapping<IrClass, Boolean> by AttributeBasedMappingDelegate()
+    val esClassToPossibilityForOptimization: DeclarationMapping<IrClass, MutableReference<Boolean>> by AttributeBasedMappingDelegate()
 
     // Main function wrappers
-    val mainFunctionToItsWrapper = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrSimpleFunction, IrSimpleFunction>()
-    val outerThisFieldSymbols = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrField>()
-    val innerClassConstructors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrConstructor, IrConstructor>()
-    val originalInnerClassPrimaryConstructorByClass = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrConstructor>()
-    val secondaryConstructorToDelegate = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrConstructor, IrSimpleFunction>()
-    val secondaryConstructorToFactory = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrConstructor, IrSimpleFunction>()
-    val objectToGetInstanceFunction = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
-    val objectToInstanceField = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrField>()
-    val classToSyntheticPrimaryConstructor = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrConstructor>()
-    val privateMemberToCorrespondingStatic = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrFunction, IrSimpleFunction>()
+    val mainFunctionToItsWrapper: DeclarationMapping<IrSimpleFunction, IrSimpleFunction> by AttributeBasedMappingDelegate()
+    val outerThisFieldSymbols: DeclarationMapping<IrClass, IrField> by AttributeBasedMappingDelegate()
+    val innerClassConstructors: DeclarationMapping<IrConstructor, IrConstructor> by AttributeBasedMappingDelegate()
+    val originalInnerClassPrimaryConstructorByClass: DeclarationMapping<IrClass, IrConstructor> by AttributeBasedMappingDelegate()
+    val secondaryConstructorToDelegate: DeclarationMapping<IrConstructor, IrSimpleFunction> by AttributeBasedMappingDelegate()
+    val secondaryConstructorToFactory: DeclarationMapping<IrConstructor, IrSimpleFunction> by AttributeBasedMappingDelegate()
+    val objectToGetInstanceFunction: DeclarationMapping<IrClass, IrSimpleFunction> by AttributeBasedMappingDelegate()
+    val objectToInstanceField: DeclarationMapping<IrClass, IrField> by AttributeBasedMappingDelegate()
+    val classToSyntheticPrimaryConstructor: DeclarationMapping<IrClass, IrConstructor> by AttributeBasedMappingDelegate()
+    val privateMemberToCorrespondingStatic: DeclarationMapping<IrFunction, IrSimpleFunction> by AttributeBasedMappingDelegate()
 
-    val enumEntryToGetInstanceFun = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrEnumEntry, IrSimpleFunction>()
-    val enumEntryToInstanceField = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrEnumEntry, IrField>()
-    val enumConstructorToNewConstructor = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrConstructor, IrConstructor>()
-    val enumClassToCorrespondingEnumEntry = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrEnumEntry>()
-    val enumConstructorOldToNewValueParameters = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrValueDeclaration, IrValueParameter>()
-    val enumEntryToCorrespondingField = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrEnumEntry, IrField>()
-    val fieldToEnumEntry = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrField, IrEnumEntry>()
-    val enumClassToInitEntryInstancesFun = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
+    val enumEntryToGetInstanceFun: DeclarationMapping<IrEnumEntry, IrSimpleFunction> by AttributeBasedMappingDelegate()
+    val enumEntryToInstanceField: DeclarationMapping<IrEnumEntry, IrField> by AttributeBasedMappingDelegate()
+    val enumConstructorToNewConstructor: DeclarationMapping<IrConstructor, IrConstructor> by AttributeBasedMappingDelegate()
+    val enumClassToCorrespondingEnumEntry: DeclarationMapping<IrClass, IrEnumEntry> by AttributeBasedMappingDelegate()
+    val enumConstructorOldToNewValueParameters: DeclarationMapping<IrValueDeclaration, IrValueParameter> by AttributeBasedMappingDelegate()
+    val enumEntryToCorrespondingField: DeclarationMapping<IrEnumEntry, IrField> by AttributeBasedMappingDelegate()
+    val fieldToEnumEntry: DeclarationMapping<IrField, IrEnumEntry> by AttributeBasedMappingDelegate()
+    val enumClassToInitEntryInstancesFun: DeclarationMapping<IrClass, IrSimpleFunction> by AttributeBasedMappingDelegate()
 
-    val suspendArityStore = DefaultDelegateFactory.newDeclarationToDeclarationCollectionMapping<IrClass, Collection<IrSimpleFunction>>()
+    val suspendArityStore: DeclarationMapping<IrClass, Collection<IrSimpleFunction>> by AttributeBasedMappingDelegate()
 
-    val objectsWithPureInitialization = DefaultDelegateFactory.newDeclarationToValueMapping<IrClass, Boolean>()
+    val objectsWithPureInitialization: DeclarationMapping<IrClass, Boolean> by AttributeBasedMappingDelegate()
 
-    val inlineFunctionsBeforeInlining = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrFunction, IrFunction>()
+    val inlineFunctionsBeforeInlining: DeclarationMapping<IrFunction, IrFunction> by AttributeBasedMappingDelegate()
 
     // Wasm mappings
-    val wasmJsInteropFunctionToWrapper =
-        DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrSimpleFunction, IrSimpleFunction>()
+    val wasmJsInteropFunctionToWrapper: DeclarationMapping<IrSimpleFunction, IrSimpleFunction> by AttributeBasedMappingDelegate()
 
-    val wasmNestedExternalToNewTopLevelFunction =
-        DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrFunction, IrSimpleFunction>()
+    val wasmNestedExternalToNewTopLevelFunction: DeclarationMapping<IrFunction, IrSimpleFunction> by AttributeBasedMappingDelegate()
 
-    val wasmExternalObjectToGetInstanceFunction =
-        DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
+    val wasmExternalObjectToGetInstanceFunction: DeclarationMapping<IrClass, IrSimpleFunction> by AttributeBasedMappingDelegate()
 
-    val wasmExternalClassToInstanceCheck =
-        DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
+    val wasmExternalClassToInstanceCheck: DeclarationMapping<IrClass, IrSimpleFunction> by AttributeBasedMappingDelegate()
 
-    val wasmGetJsClass =
-        DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
+    val wasmGetJsClass: DeclarationMapping<IrClass, IrSimpleFunction> by AttributeBasedMappingDelegate()
 }

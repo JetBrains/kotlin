@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.DefaultMapping
 import org.jetbrains.kotlin.backend.common.Mapping
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.Ir
@@ -107,7 +106,7 @@ class JvmBackendContext(
         this, generatorExtensions.cachedFields
     )
 
-    override val mapping: Mapping = DefaultMapping()
+    override val mapping: Mapping = Mapping()
 
     val ktDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(state.diagnosticReporter, config.languageVersionSettings)
 
