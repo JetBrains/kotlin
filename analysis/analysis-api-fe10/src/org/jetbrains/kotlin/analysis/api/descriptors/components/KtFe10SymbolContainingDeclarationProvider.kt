@@ -41,7 +41,7 @@ internal class KaFe10SymbolContainingDeclarationProvider(
         get() = analysisSession.token
 
     override fun getContainingDeclaration(symbol: KaSymbol): KaDeclarationSymbol? {
-        if (symbol.location == KaSymbolLocation.TOP_LEVEL) {
+        if (symbol.isTopLevel) {
             return null
         }
 
@@ -102,7 +102,7 @@ internal class KaFe10SymbolContainingDeclarationProvider(
                 }?.fqNameForClassNameWithoutDollars?.asString()
             }
             else -> {
-                return if (containingSymbolOrSelf.location == KaSymbolLocation.TOP_LEVEL) {
+                return if (containingSymbolOrSelf.isTopLevel) {
                     descriptor?.let(DescriptorToSourceUtils::getContainingFile)
                         ?.takeUnless { it.isScript() }
                         ?.javaFileFacadeFqName?.asString()

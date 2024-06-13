@@ -138,7 +138,7 @@ internal class KaFirSymbolContainingDeclarationProvider(
             else -> {}
         }
 
-        if (symbol.location == KaSymbolLocation.TOP_LEVEL) {
+        if (symbol.isTopLevel) {
             val containingFile = (symbol.firSymbol.fir as? FirElementWithResolveState)?.getContainingFile()
             if (containingFile == null || containingFile.declarations.firstOrNull() !is FirScript) {
                 // Should be replaced with proper check after KT-61451 and KT-61887
@@ -206,7 +206,7 @@ internal class KaFirSymbolContainingDeclarationProvider(
             return it.fqNameForClassNameWithoutDollars.asString()
         }
 
-        return if (containingSymbolOrSelf.location == KaSymbolLocation.TOP_LEVEL) {
+        return if (containingSymbolOrSelf.isTopLevel) {
             (firSymbol.fir.getContainingFile()?.psi as? KtFile)
                 ?.takeUnless { it.isScript() }
                 ?.javaFileFacadeFqName?.asString()
