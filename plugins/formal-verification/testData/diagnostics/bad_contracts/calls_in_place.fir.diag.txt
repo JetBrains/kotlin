@@ -13,9 +13,9 @@ method global$fun_incorrect_at_most_once$fun_take$fun_take$T_Int$return$T_Int$re
   var anonymous$1: Ref
   var anonymous$2: Ref
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$f), dom$RuntimeType$functionType())
-  anonymous$0 := global$fun_unknown$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(local$f)
+  anonymous$1 := global$fun_unknown$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(local$f)
   special$invoke_function_object(local$f)
-  anonymous$2 := anonymous$1
+  anonymous$2 := anonymous$0
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$2), dom$RuntimeType$intType())
   ret$0 := anonymous$2
   goto label$ret$0
@@ -51,10 +51,10 @@ method global$fun_incorrect_exactly_once$fun_take$fun_take$T_Int$return$T_Int$re
   var anonymous$3: Ref
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$f), dom$RuntimeType$functionType())
   special$invoke_function_object(local$f)
-  anonymous$1 := anonymous$0
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$1), dom$RuntimeType$intType())
+  anonymous$2 := anonymous$1
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$2), dom$RuntimeType$intType())
   special$invoke_function_object(local$f)
-  anonymous$3 := anonymous$2
+  anonymous$3 := anonymous$0
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$3), dom$RuntimeType$intType())
   ret$0 := anonymous$3
   goto label$ret$0

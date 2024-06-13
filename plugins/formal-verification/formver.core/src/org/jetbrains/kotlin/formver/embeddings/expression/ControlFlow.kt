@@ -200,9 +200,9 @@ data class MethodCall(val method: NamedFunctionSignature, val args: List<ExpEmbe
 data class InvokeFunctionObject(val receiver: ExpEmbedding, val args: List<ExpEmbedding>, override val type: TypeEmbedding) :
     OnlyToViperExpEmbedding {
     override fun toViper(ctx: LinearizationContext): Exp {
+        val variable = ctx.freshAnonVar(type)
         val receiverViper = receiver.toViper(ctx)
         for (arg in args) arg.toViperUnusedResult(ctx)
-        val variable = ctx.freshAnonVar(type)
         // NOTE: Since it is only relevant to update the number of times that a function object is called,
         // the function call invocation is intentionally not assigned to the return variable
         ctx.addStatement(
