@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.symbols.pointers
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.utils.relfection.renderAsDataClassToString
@@ -30,7 +31,7 @@ public abstract class KaSymbolPointer<out S : KaSymbol> {
      *
      * Consider using [org.jetbrains.kotlin.analysis.api.KaSession.restoreSymbol]
      */
-    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KaSession.restoreSymbol")
+    @KaImplementationDetail
     public abstract fun restoreSymbol(analysisSession: KaSession): S?
 
     /**
@@ -45,7 +46,7 @@ public typealias KtSymbolPointer<S> = KaSymbolPointer<S>
 
 public inline fun <S : KaSymbol> symbolPointer(crossinline getSymbol: (KaSession) -> S?): KaSymbolPointer<S> =
     object : KaSymbolPointer<S>() {
-        @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KaSession.restoreSymbol")
+        @KaImplementationDetail
         override fun restoreSymbol(analysisSession: KaSession): S? = getSymbol(analysisSession)
     }
 
@@ -53,7 +54,7 @@ public inline fun <T : KaSymbol, R : KaSymbol> symbolPointerDelegator(
     pointer: KaSymbolPointer<T>,
     crossinline transformer: KaSession.(T) -> R?,
 ): KaSymbolPointer<R> = object : KaSymbolPointer<R>() {
-    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KaSession.restoreSymbol")
+    @KaImplementationDetail
     override fun restoreSymbol(analysisSession: KaSession): R? = with(analysisSession) {
         val symbol = pointer.restoreSymbol() ?: return null
         transformer(this, symbol)

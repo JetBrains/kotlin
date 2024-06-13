@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassOrObjectSymbol
@@ -15,7 +16,7 @@ import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.name.ClassId
 
 class KaFe10DescNamedClassOrObjectSymbolSymbol(private val classId: ClassId) : KaSymbolPointer<KaNamedClassOrObjectSymbol>() {
-    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KaSession.restoreSymbol")
+    @KaImplementationDetail
     override fun restoreSymbol(analysisSession: KaSession): KaNamedClassOrObjectSymbol? {
         check(analysisSession is KaFe10Session)
         val analysisContext = analysisSession.analysisContext

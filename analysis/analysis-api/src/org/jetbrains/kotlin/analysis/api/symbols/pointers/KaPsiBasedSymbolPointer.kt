@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.symbols.pointers
 
 import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.psi.*
@@ -17,7 +18,7 @@ public class KaPsiBasedSymbolPointer<S : KaSymbol> private constructor(
     private val psiPointer: SmartPsiElementPointer<out KtElement>,
     private val expectedClass: KClass<S>,
 ) : KaSymbolPointer<S>() {
-    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KaSession.restoreSymbol")
+    @KaImplementationDetail
     override fun restoreSymbol(analysisSession: KaSession): S? {
         val psi = psiPointer.element ?: return null
 

@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
@@ -17,7 +18,7 @@ internal class KaFirClassLikeSymbolPointer<T : KaClassLikeSymbol>(
     private val classId: ClassId,
     private val expectedClass: KClass<T>,
 ) : KaSymbolPointer<T>() {
-    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KaSession.restoreSymbol")
+    @KaImplementationDetail
     override fun restoreSymbol(analysisSession: KaSession): T? {
         require(analysisSession is KaFirSession)
         val classLikeSymbol = analysisSession.firSymbolBuilder.classifierBuilder.buildClassLikeSymbolByClassId(classId) ?: return null

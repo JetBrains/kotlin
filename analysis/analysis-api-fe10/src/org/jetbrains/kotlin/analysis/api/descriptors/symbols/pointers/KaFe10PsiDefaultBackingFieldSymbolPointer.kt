@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
@@ -15,7 +16,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 internal class KaFe10PsiDefaultBackingFieldSymbolPointer(
     private val propertySymbolPointer: KaPsiBasedSymbolPointer<KaPropertySymbol>,
 ) : KaSymbolPointer<KaBackingFieldSymbol>() {
-    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KaSession.restoreSymbol")
+    @KaImplementationDetail
     override fun restoreSymbol(analysisSession: KaSession): KaBackingFieldSymbol? {
         val property = with(analysisSession) { propertySymbolPointer.restoreSymbol() }
         return property?.backingFieldSymbol
