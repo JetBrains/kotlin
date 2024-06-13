@@ -1,0 +1,61 @@
+/**
+ * public final class C : I {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: foo()Ljava/lang/Integer;
+ *   public open fun foo(): kotlin/Int
+ *
+ *   // getter: getValue()Ljava/lang/Integer;
+ *   public open val value: kotlin/Int
+ *     public open (* non-default *) get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class C implements I {
+
+    public C() {
+        super();
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.Integer getValue() {
+        return null;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.Integer foo() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * public abstract interface I : kotlin/Any {
+ *
+ *   // signature: foo()Ljava/lang/Integer;
+ *   public abstract fun foo(): kotlin/Int?
+ *
+ *   // getter: getValue()Ljava/lang/Integer;
+ *   public abstract val value: kotlin/Int?
+ *     public abstract get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface I {
+
+    @org.jetbrains.annotations.Nullable()
+    public abstract java.lang.Integer getValue();
+
+    @org.jetbrains.annotations.Nullable()
+    public abstract java.lang.Integer foo();
+}

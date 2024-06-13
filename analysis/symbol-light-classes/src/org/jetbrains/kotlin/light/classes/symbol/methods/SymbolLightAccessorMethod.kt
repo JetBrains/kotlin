@@ -247,9 +247,9 @@ internal class SymbolLightAccessorMethod private constructor(
 
     context(KtAnalysisSession)
     private fun forceBoxedReturnType(propertySymbol: KtPropertySymbol): Boolean {
-        return propertySymbol.returnType.isPrimitive &&
+        return propertySymbol.returnType.isPrimitiveBacked &&
                 propertySymbol.getAllOverriddenSymbols().any { overriddenSymbol ->
-                    !overriddenSymbol.returnType.isPrimitive
+                    !overriddenSymbol.returnType.isPrimitiveBacked
                 }
     }
 

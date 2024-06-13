@@ -199,9 +199,9 @@ internal class SymbolLightSimpleMethod(
         if (functionSymbol.isBuiltinFunctionInvoke && returnType.isInlineClassType)
             return true
 
-        return returnType.isPrimitive &&
+        return returnType.isPrimitiveBacked &&
                 functionSymbol.getAllOverriddenSymbols().any { overriddenSymbol ->
-                    !overriddenSymbol.returnType.isPrimitive
+                    !overriddenSymbol.returnType.isPrimitiveBacked
                 }
     }
 
