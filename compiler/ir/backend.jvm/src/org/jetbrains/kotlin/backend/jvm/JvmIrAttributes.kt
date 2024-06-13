@@ -29,3 +29,5 @@ var IrSimpleFunction.multifileFacadePartMember: IrSimpleFunction? by irAttribute
 
 var IrConstructor.hiddenConstructorMangledParams: IrConstructor? by irAttribute(followAttributeOwner = false)
 var IrConstructor.hiddenConstructorOfSealedClass: IrConstructor? by irAttribute(followAttributeOwner = false)
+
+var IrClass.continuationClassVarsCountByType: Map<Type, Int>? by irAttribute(followAttributeOwner = true)

@@ -145,13 +145,9 @@ class JvmBackendContext(
 
     val multiFieldValueClassReplacements = MemoizedMultiFieldValueClassReplacements(irFactory, this)
 
-    val continuationClassesVarsCountByType by irAttribute<IrAttributeContainer, Map<Type, Int>>(false).asMap()
-
     val inlineMethodGenerationLock = Any()
 
     val publicAbiSymbols = mutableSetOf<IrClassSymbol>()
-
-    val visitedDeclarationsForRegenerationLowering: MutableSet<IrDeclaration> by irFlag<IrDeclaration>(false).asSet()
 
     val optionalAnnotations = mutableListOf<MetadataSource.Class>()
 

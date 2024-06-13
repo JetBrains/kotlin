@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
@@ -30,6 +31,8 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
     prerequisite = [JvmIrInliner::class, CreateSeparateCallForInlinedLambdasLowering::class]
 )
 internal class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: JvmBackendContext) : IrElementVisitorVoid, FileLoweringPass {
+    private var IrDeclaration.wasVisitedForRegenerationLowering: Boolean by irFlag(false)
+
     override fun lower(irFile: IrFile) {
         if (context.config.enableIrInliner) {
             irFile.acceptChildrenVoid(this)
@@ -43,9 +46,10 @@ internal class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: Jvm
     override fun visitBlock(expression: IrBlock) {
         if (expression is IrInlinedFunctionBlock && expression.isFunctionInlining()) {
             val element = expression.inlineDeclaration
-            if (context.visitedDeclarationsForRegenerationLowering.add(element)) {
+            if (!element.wasVisitedForRegenerationLowering) {
                 // Note: functions from other module will not be affected here, they are loaded as IrLazy declarations.
                 // BUT during IR serialization support we need to carefully test this logic.
+                element.wasVisitedForRegenerationLowering = true
                 element.acceptVoid(this)
             }
 
