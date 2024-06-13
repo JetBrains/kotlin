@@ -49,12 +49,7 @@ internal class KaFe10DescFunctionSymbol private constructor(
     }
 
     override val location: KaSymbolLocation
-        get() = withValidityAssertion {
-            if (descriptor.isDynamic()) {
-                return@withValidityAssertion KaSymbolLocation.CLASS
-            }
-            descriptor.kSymbolLocation
-        }
+        get() = withValidityAssertion { descriptor.kaSymbolLocation }
 
     override val isSuspend: Boolean
         get() = withValidityAssertion { descriptor.isSuspend }

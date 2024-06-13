@@ -226,6 +226,9 @@ public abstract class KaLocalVariableSymbol : KaVariableSymbol(),
     final override val typeParameters: List<KaTypeParameterSymbol>
         get() = withValidityAssertion { emptyList() }
 
+    final override val location: KaSymbolLocation
+        get() = withValidityAssertion { KaSymbolLocation.LOCAL }
+
     abstract override fun createPointer(): KaSymbolPointer<KaLocalVariableSymbol>
 }
 

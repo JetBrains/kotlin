@@ -39,7 +39,7 @@ internal class KaFe10DescTypeAliasSymbol(
         get() = withValidityAssertion { descriptor.expandedType.toKtType(analysisContext) }
 
     override val location: KaSymbolLocation
-        get() = withValidityAssertion { descriptor.kSymbolLocation }
+        get() = withValidityAssertion { descriptor.kaSymbolLocation }
 
     override val classId: ClassId?
         get() = withValidityAssertion { descriptor.classId }

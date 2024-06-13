@@ -84,7 +84,7 @@ internal class KaFe10DescNamedClassOrObjectSymbol(
         get() = withValidityAssertion { descriptor.classId }
 
     override val location: KaSymbolLocation
-        get() = withValidityAssertion { descriptor.kSymbolLocation }
+        get() = withValidityAssertion { descriptor.kaSymbolLocation }
 
     override val typeParameters: List<KaTypeParameterSymbol>
         get() = withValidityAssertion { descriptor.declaredTypeParameters.map { KaFe10DescTypeParameterSymbol(it, analysisContext) } }

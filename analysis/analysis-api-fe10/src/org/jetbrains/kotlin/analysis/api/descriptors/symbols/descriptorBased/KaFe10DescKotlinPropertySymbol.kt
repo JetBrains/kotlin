@@ -36,12 +36,7 @@ internal class KaFe10DescKotlinPropertySymbol(
         get() = withValidityAssertion { descriptor.name }
 
     override val location: KaSymbolLocation
-        get() = withValidityAssertion {
-            if (descriptor.isDynamic()) {
-                return@withValidityAssertion KaSymbolLocation.CLASS
-            }
-            descriptor.kSymbolLocation
-        }
+        get() = withValidityAssertion { descriptor.kaSymbolLocation }
 
     override val isLateInit: Boolean
         get() = withValidityAssertion { descriptor.isLateInit }

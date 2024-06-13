@@ -73,16 +73,15 @@ import org.jetbrains.kotlin.types.error.ErrorType
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
 
-internal val DeclarationDescriptor.kSymbolLocation: KaSymbolLocation
-    get() {
-        return when (this) {
-            is PropertyAccessorDescriptor -> KaSymbolLocation.PROPERTY
-            is SamConstructorDescriptor -> KaSymbolLocation.TOP_LEVEL
-            else -> when (containingDeclaration) {
-                is PackageFragmentDescriptor -> KaSymbolLocation.TOP_LEVEL
-                is ClassDescriptor -> KaSymbolLocation.CLASS
-                else -> KaSymbolLocation.LOCAL
-            }
+internal val DeclarationDescriptor.kaSymbolLocation: KaSymbolLocation
+    get() = when {
+        isDynamic() -> KaSymbolLocation.CLASS
+        this is PropertyAccessorDescriptor -> KaSymbolLocation.PROPERTY
+        this is SamConstructorDescriptor -> KaSymbolLocation.TOP_LEVEL
+        else -> when (containingDeclaration) {
+            is PackageFragmentDescriptor -> KaSymbolLocation.TOP_LEVEL
+            is ClassDescriptor -> KaSymbolLocation.CLASS
+            else -> KaSymbolLocation.LOCAL
         }
     }
 
