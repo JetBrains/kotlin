@@ -13,6 +13,16 @@ import org.jetbrains.kotlin.analysis.api.contracts.description.Context
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.contracts.description.renderKaContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaBinaryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaNotUnderContentRootModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptDependencyModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSdkModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaPossiblyNamedSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
@@ -370,14 +380,27 @@ public class DebugSymbolRenderer(
         sealedSubclasses.flatMapTo(this) { it.allSealedSubClasses() }
     }
 
-    private val kaModuleSubclasses = KaModule::class.allSealedSubClasses().distinct().sortedWith { a, b ->
-        when {
-            a == b -> 0
-            a.isSubclassOf(b) -> -1
-            b.isSubclassOf(a) -> 1
-            else -> 0
+    private val kaModuleSubclasses =
+        listOf(
+            KaModule::class,
+            KaSourceModule::class,
+            KaBinaryModule::class,
+            KaLibraryModule::class,
+            KaSdkModule::class,
+            KaLibrarySourceModule::class,
+            KaBuiltinsModule::class,
+            KaScriptModule::class,
+            KaScriptDependencyModule::class,
+            KaDanglingFileModule::class,
+            KaNotUnderContentRootModule::class,
+        ).sortedWith { a, b ->
+            when {
+                a == b -> 0
+                a.isSubclassOf(b) -> -1
+                b.isSubclassOf(a) -> 1
+                else -> 0
+            }
         }
-    }
 
     private fun renderKtInitializerValue(value: KaInitializerValue, printer: PrettyPrinter) {
         with(printer) {

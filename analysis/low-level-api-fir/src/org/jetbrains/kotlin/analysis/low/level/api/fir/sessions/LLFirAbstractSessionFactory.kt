@@ -631,11 +631,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
                 llFirSessionCache.getSession(dependency)
             }
 
-            is KaScriptModule,
-            is KaScriptDependencyModule,
-            is KaNotUnderContentRootModule,
-            is KaLibrarySourceModule,
-            -> {
+            else -> {
                 errorWithAttachment("Module ${module::class} cannot depend on ${dependency::class}") {
                     withKaModuleEntry("module", module)
                     withKaModuleEntry("dependency", dependency)

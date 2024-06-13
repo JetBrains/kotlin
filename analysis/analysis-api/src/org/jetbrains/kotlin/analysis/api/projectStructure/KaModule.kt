@@ -18,9 +18,8 @@ import java.nio.file.Path
  *
  * [KaModule] is a Source Set (or considering a new project model naming a Fragment).
  * Some examples of a module: main source set, test source set, library, JDK.
- *
  */
-public sealed interface KaModule {
+public interface KaModule {
     /**
      * A list of Regular dependencies. Regular dependency allows the current module to see symbols from the dependent module. In the case
      * of a source set, it can be either the source set it depends on, a library, or an SDK.
@@ -106,7 +105,7 @@ public interface KaSourceModule : KaModule {
 /**
  * A module which consists of binary declarations.
  */
-public sealed interface KaBinaryModule : KaModule {
+public interface KaBinaryModule : KaModule {
     /**
      * A list of binary files which forms a binary module. It can be a list of JARs, KLIBs, folders with .class files.
      *
