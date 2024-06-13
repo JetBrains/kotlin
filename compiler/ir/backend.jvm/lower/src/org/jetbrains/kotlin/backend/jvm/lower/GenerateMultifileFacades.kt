@@ -61,7 +61,9 @@ internal class GenerateMultifileFacades(private val context: JvmBackendContext) 
 
         context.multifileFacadesToAdd.clear()
 
-        functionDelegates.entries.associateTo(context.multifileFacadeMemberToPartMember) { (member, newMember) -> newMember to member }
+        for ((member, newMember) in functionDelegates) {
+            newMember.multifileFacadePartMember = member
+        }
     }
 }
 

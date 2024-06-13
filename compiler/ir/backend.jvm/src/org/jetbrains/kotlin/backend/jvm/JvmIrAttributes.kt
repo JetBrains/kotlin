@@ -29,3 +29,5 @@ var IrSimpleFunction.overridesWithoutStubs: List<IrSimpleFunctionSymbol>? by irA
 var IrClass.multifileFacadeForPart: JvmClassName? by irAttribute(followAttributeOwner = true)
 
 var IrClass.multifileFacadeClassForPart: IrClass? by irAttribute(followAttributeOwner = true)
+
+var IrSimpleFunction.multifileFacadePartMember: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
