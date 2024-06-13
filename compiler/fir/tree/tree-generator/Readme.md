@@ -1,61 +1,40 @@
 # Fir elements
 
-- All fir elements are listed in [`FirTreeBuilder.kt`](src/org/jetbrains/kotlin/fir/tree/generator/FirTreeBuilder.kt).
-- The syntax for declaring a new element: `element(elementName, elementKind: Kind, vararg parents: Element)`.
-    - `elementName` is a name of the declared element. If `elementName = Foo` then it's class will be called `FirFoo`.
+- All fir elements are listed in [`FirTree.kt`](src/org/jetbrains/kotlin/fir/tree/generator/FirTree.kt).
+- The syntax for declaring a new element: `val foo by element(elementKind: Kind, name: String?)`.
+    - By default, the generated class will be named `FirFoo`. If you specify `name = "Bar"` it will be called `FirBar` instead.
     - `kind` describes target package of an element. Available kinds:
         - `Expression` (package `fir.expression`)
         - `Declaration` (package `fir.declaration`)
         - `Reference` (package `fir.references`)
         - `TypeRef` (package `fir.types`)
         - `Other` (package `fir`)
-    - if not a single parent element was declared, then the generated element will be a direct inheritor of `FirElement`.
-
-# Types
-
-- Types commonly used in configuration are listed in [`Types.kt`](src/org/jetbrains/kotlin/fir/tree/generator/Types.kt)
-- There are multiple ways to describe a new type:
-    - `fun <reified T : Any> type()` uses FQN of the corresponding `T` class.
-    - `fun type(packageName: String, typeName: String, exactPackage: Boolean = false, kind: TypeKind = TypeKind.Interface)`.
-        - if `exactPackage = false`, its return type with default package prefix: `org.jetbrains.kotlin.packageName.typeName`.
-        - otherwise, there is no default prefix: `packageName.typeName` .
-    - `generatedType([packageName: String], typeName: String)` — same as `type(packageName, typeName)` but with
-      the `org.jetbrains.kotlin.fir` prefix .
 
 # Content of elements
 
-- Fields of elements are described in [`FirTree.kt`](src/org/jetbrains/kotlin/fir/tree/generator/FirTree.kt).
-- Syntax: 
-```
-elementName.configure {
-    // node configuration
-}
-```
 - **Fields:**
-    - The `Field` class describes a field of an element.
-    - There are multiple ways of creating new fields, but they have similar syntax:
-      `field(..., nullable: Boolean = false, withReplace: Boolean)`.
+    - You can create fields with `field(..., nullable: Boolean = false, withReplace: Boolean)`.
         - if `nullable` is true, then the type of the field will be nullable.
         - if `withReplace` is true, then in the element the `replace...` method will be generated for that field.
+        - if `withTransform` is true, then in the element the `transform...` method will be generated for that field.
         - in place of `...` you can pass an optional name (with `String` type), and `TypeRef` or `Element` object
         - if no `name` is passed, then it will be inferred based on the type.
         - if `TypeRef` or `Element` have type arguments, then you can use `TypeRef.withArgs(vararg types: TypeRef)`.
     - Also, you can create fields with lists of some types.
-        - Syntax: `fieldList([name: String], element: ElementOrRef)` (if no name is specified, it will be inferred based on the type of
+        - Syntax: `fieldList([name: String], element: TypeRef)` (if no name is specified, it will be inferred based on the type of
           `element`).
-    - And there are helper functions for fields of primitive types: `booleanField`, `intField`, `stringField`.
-    - If you want to generate a separate `transform...` function for the field, you should call `withTransform()` on it.
     - To add the field to the node being configured, you should call the infix `+` operator:
-      `+fieldList("catches", catchClause).withTransform()`.
+      `+fieldList("catches", catchClause)`.
     - Also, you can use `symbol(symbolTypeName: String)` to create a field named `symbol` with a lying in
       the `org.jetbrains.kotlin.fir.symbols` package.
-    - Some predefined fields are listed in [`FieldSets.kt`](src/org/jetbrains/kotlin/fir/tree/generator/FieldSets.kt).
+    - Some predefined fields are listed in [`FieldSets.kt`](src/org/jetbrains/kotlin/fir/tree/generator/FirTree.kt).
+- Parent (base) nodes are added by separate calls to `parent(foo)`
+    - If not a single parent element was declared, then the generated element will be a direct inheritor of `FirElement`.
 - If your node has some `transform...` methods, and you want to add methods for transforming all other children, you should call
   `needTransformOtherChildren()`.
-- If an element has type parameters, you should declare them using `withArg(typeParameterName: String, [upperBound: TypeRef])`.
+- If an element has type parameters, you should declare them using `+param(typeParameterName: String, [upperBound: TypeRef])`.
 - If an element inherits another element with type parameters, you should match those parameters with concrete types using
-  `parentArgs(parent: Element, typeParameterName: String, vararg arguments: Pair<String, TypeRef>)`.
-- Note that if some element contains type parameters, it should be configured before its inheritors (will be fixed later).
+  `parent(foo.withArgs(...))`.
 
 # Implementations
 
@@ -91,9 +70,20 @@ elementName.configure {
     - If some fields should be `lateinit`, you describe them in the `lateinit(vararg fields: String)` call.
     - If you use some types that should be imported, list them by calling `additionalImports(vararg types: Importable)`   
 
+# Types
+
+- Types commonly used in configuration are listed in [`Types.kt`](src/org/jetbrains/kotlin/fir/tree/generator/Types.kt)
+- There are multiple ways to describe a new type:
+    - `fun <reified T : Any> type()` uses FQN of the corresponding `T` class.
+    - `fun type(packageName: String, typeName: String, exactPackage: Boolean = false, kind: TypeKind = TypeKind.Interface)`.
+        - if `exactPackage = false`, its return type with default package prefix: `org.jetbrains.kotlin.packageName.typeName`.
+        - otherwise, there is no default prefix: `packageName.typeName` .
+    - `generatedType([packageName: String], typeName: String)` — same as `type(packageName, typeName)` but with
+      the `org.jetbrains.kotlin.fir` prefix .
+
 # Notes
 
 - There is an algorithm that automatically makes as most abstract classes instead of interfaces as possible.
   If you want to some `Element` or `Implementation` should be always an interface you should:
-    - call `shouldBeAnInterface()` when configuring a `Element` in `FirTree.kt`
+    - call `kind = ImplementationKind.Interface` when configuring a `Element` in `FirTree.kt`
     - specify `kind = Interface` when configuring an `Implementation` in `ImplementationConfigurator.kt`
