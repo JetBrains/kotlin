@@ -12,12 +12,13 @@ import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.withIndent
 
-abstract class AbstractImplementationPrinter<Implementation, Element, ImplementationField>(
+abstract class AbstractImplementationPrinter<Implementation, Element, Field>(
     private val printer: ImportCollectingPrinter,
 )
-        where Implementation : AbstractImplementation<Implementation, Element, ImplementationField>,
-              Element : AbstractElement<Element, *, Implementation>,
-              ImplementationField : AbstractField<*> {
+        where Implementation : AbstractImplementation<Implementation, Element, Field>,
+              Element : AbstractElement<Element, Field, Implementation>,
+              Field : AbstractField<Field> {
+
 
     protected abstract val implementationOptInAnnotation: ClassRef<*>
 
@@ -29,7 +30,7 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Implementa
     protected open fun ImportCollecting.parentConstructorArguments(implementation: Implementation): List<String> =
         emptyList()
 
-    protected abstract fun makeFieldPrinter(printer: ImportCollectingPrinter): AbstractFieldPrinter<ImplementationField>
+    protected abstract fun makeFieldPrinter(printer: ImportCollectingPrinter): AbstractFieldPrinter<Field>
 
     protected open fun ImportCollectingPrinter.printAdditionalMethods(implementation: Implementation) {
     }

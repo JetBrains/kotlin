@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.generator.model.symbol.SymbolField
 import org.jetbrains.kotlin.ir.generator.model.symbol.SymbolImplementation
 
 abstract class AbstractIrSymbolTreeImplementationConfigurator :
-    AbstractImplementationConfigurator<SymbolImplementation, Symbol, SymbolField, SymbolField>() {
+    AbstractImplementationConfigurator<SymbolImplementation, Symbol, SymbolField>() {
 
     final override fun createImplementation(element: Symbol, name: String?): SymbolImplementation =
         SymbolImplementation(element, name)

@@ -12,15 +12,13 @@ import org.jetbrains.kotlin.fir.tree.generator.model.Implementation
 import org.jetbrains.kotlin.generators.tree.config.AbstractBuilderConfigurator
 
 abstract class AbstractFirBuilderConfigurator<T : AbstractFirTreeBuilder>(model: Model) :
-    AbstractBuilderConfigurator<Element, Implementation, Field, Field>(model) {
+    AbstractBuilderConfigurator<Element, Implementation, Field>(model) {
 
     final override val namePrefix: String
         get() = "Fir"
 
     final override val defaultBuilderPackage: String
         get() = "org.jetbrains.kotlin.fir.tree.builder"
-
-    final override fun builderFieldFromElementField(elementField: Field) = elementField.copy()
 
     protected fun BuilderConfigurationContext.defaultNoReceivers(notNullExplicitReceiver: Boolean = false) {
         if (!notNullExplicitReceiver) {

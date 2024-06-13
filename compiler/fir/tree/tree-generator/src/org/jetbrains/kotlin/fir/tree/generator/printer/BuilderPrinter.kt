@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 
 internal class BuilderPrinter(
     printer: ImportCollectingPrinter
-) : AbstractBuilderPrinter<Element, Implementation, Field, Field>(printer) {
+) : AbstractBuilderPrinter<Element, Implementation, Field>(printer) {
 
     override val implementationDetailAnnotation: ClassRef<*>
         get() = firImplementationDetailType

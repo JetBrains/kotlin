@@ -14,13 +14,11 @@ import org.jetbrains.kotlin.sir.tree.generator.model.Implementation
 
 abstract class AbstractSwiftIrTreeBuilderConfigurator(
     model: Model
-) : AbstractBuilderConfigurator<Element, Implementation, Field, Field>(model) {
+) : AbstractBuilderConfigurator<Element, Implementation, Field>(model) {
 
     override val namePrefix: String
         get() = "Sir"
 
     override val defaultBuilderPackage: String
         get() = "$BASE_PACKAGE.builder"
-
-    override fun builderFieldFromElementField(elementField: Field) = elementField.copy()
 }

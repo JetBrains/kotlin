@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.tree.generator.standardClassIdsType
 import org.jetbrains.kotlin.generators.tree.config.AbstractImplementationConfigurator
 
 abstract class AbstractFirTreeImplementationConfigurator :
-    AbstractImplementationConfigurator<Implementation, Element, Field, Field>() {
+    AbstractImplementationConfigurator<Implementation, Element, Field>() {
 
     final override fun createImplementation(element: Element, name: String?) = Implementation(element, name)
 

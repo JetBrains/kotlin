@@ -10,6 +10,6 @@ import org.jetbrains.kotlin.sir.tree.generator.model.Element
 import org.jetbrains.kotlin.sir.tree.generator.model.Field
 import org.jetbrains.kotlin.sir.tree.generator.model.Implementation
 
-abstract class AbstractSwiftIrTreeImplementationConfigurator : AbstractImplementationConfigurator<Implementation, Element, Field, Field>() {
+abstract class AbstractSwiftIrTreeImplementationConfigurator : AbstractImplementationConfigurator<Implementation, Element, Field>() {
     override fun createImplementation(element: Element, name: String?) = Implementation(element, name)
 }

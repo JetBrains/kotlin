@@ -141,23 +141,22 @@ class TreeGenerator(private val generationPath: File, private val treeGeneratorR
          * element, see [detectBaseTransformerTypes].
          * @param addFiles Arbitrary files to add to the set of generated files.
          */
-        fun <Element, Implementation, ElementField, ImplementationField> generateTree(
+        fun <Element, Implementation, ElementField> generateTree(
             model: Model<Element>,
             pureAbstractElement: ClassRef<*>?,
             createElementPrinter: (ImportCollectingPrinter) -> AbstractElementPrinter<Element, ElementField>,
             createVisitorPrinters: List<Pair<ClassRef<*>, (ImportCollectingPrinter, ClassRef<*>) -> AbstractVisitorPrinter<Element, ElementField>>>,
-            implementationConfigurator: AbstractImplementationConfigurator<Implementation, Element, ElementField, ImplementationField>,
-            builderConfigurator: AbstractBuilderConfigurator<Element, Implementation, ImplementationField, ElementField>? = null,
-            createImplementationPrinter: (ImportCollectingPrinter) -> AbstractImplementationPrinter<Implementation, Element, ImplementationField>,
-            createBuilderPrinter: ((ImportCollectingPrinter) -> AbstractBuilderPrinter<Element, Implementation, ImplementationField, ElementField>)? = null,
+            implementationConfigurator: AbstractImplementationConfigurator<Implementation, Element, ElementField>,
+            builderConfigurator: AbstractBuilderConfigurator<Element, Implementation, ElementField>? = null,
+            createImplementationPrinter: (ImportCollectingPrinter) -> AbstractImplementationPrinter<Implementation, Element, ElementField>,
+            createBuilderPrinter: ((ImportCollectingPrinter) -> AbstractBuilderPrinter<Element, Implementation, ElementField>)? = null,
             enableBaseTransformerTypeDetection: Boolean = true,
             addFiles: MutableList<GeneratedFile>.() -> Unit = {},
             putElementsInSingleFile: Pair<String, String>? = null,
             putImplementationsInSingleFile: Pair<String, String>? = null,
         ) where Element : AbstractElement<Element, ElementField, Implementation>,
-                Implementation : AbstractImplementation<Implementation, Element, ImplementationField>,
-                ElementField : AbstractField<ElementField>,
-                ImplementationField : AbstractField<ElementField> {
+                Implementation : AbstractImplementation<Implementation, Element, ElementField>,
+                ElementField : AbstractField<ElementField> {
             model.inheritFields()
             if (enableBaseTransformerTypeDetection) {
                 detectBaseTransformerTypes(model)
@@ -205,7 +204,7 @@ class TreeGenerator(private val generationPath: File, private val treeGeneratorR
                     putImplementationsInSingleFile.second,
                     fileSuppressions = listOf("DuplicatedCode"),
                     makeTypePrinter = createImplementationPrinter,
-                    printType = AbstractImplementationPrinter<Implementation, Element, ImplementationField>::printImplementation,
+                    printType = AbstractImplementationPrinter<Implementation, Element, ElementField>::printImplementation,
                 ).let(generatedFiles::add)
             } else {
                 implementationsToPrint.mapTo(generatedFiles) { implementation ->

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.sir.tree.generator.model.Implementation
 import org.jetbrains.kotlin.sir.tree.generator.swiftIrBuilderDslAnnotation
 import org.jetbrains.kotlin.sir.tree.generator.swiftIrImplementationDetailAnnotation
 
-internal class BuilderPrinter(printer: ImportCollectingPrinter) : AbstractBuilderPrinter<Element, Implementation, Field, Field>(printer) {
+internal class BuilderPrinter(printer: ImportCollectingPrinter) : AbstractBuilderPrinter<Element, Implementation, Field>(printer) {
 
     override val implementationDetailAnnotation: ClassRef<*>
         get() = swiftIrImplementationDetailAnnotation
