@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
@@ -25,6 +26,7 @@ public interface KaTypeProvider {
      * Return `null` if the type do not need approximation and can be rendered as is
      * Otherwise, for type `T` return type `S` such `T <: S` and `T` and every type argument is denotable
      */
+    @KaExperimentalApi
     public fun KaType.approximateToSuperPublicDenotable(approximateLocalTypes: Boolean): KaType?
 
     /**
@@ -33,12 +35,15 @@ public interface KaTypeProvider {
      * Return `null` if the type do not need approximation and can be rendered as is
      * Otherwise, for type `T` return type `S` such `S <: T` and `T` and every type argument is denotable
      */
+    @KaExperimentalApi
     public fun KaType.approximateToSubPublicDenotable(approximateLocalTypes: Boolean): KaType?
 
+    @KaExperimentalApi
     public fun KaType.approximateToSubPublicDenotableOrSelf(approximateLocalTypes: Boolean): KaType = withValidityAssertion {
         return approximateToSubPublicDenotable(approximateLocalTypes) ?: this
     }
 
+    @KaExperimentalApi
     public fun KaType.approximateToSuperPublicDenotableOrSelf(approximateLocalTypes: Boolean): KaType = withValidityAssertion {
         return approximateToSuperPublicDenotable(approximateLocalTypes) ?: this
     }
@@ -46,8 +51,10 @@ public interface KaTypeProvider {
     /**
      * Returns a warning-level enhanced type for [KaType] if it is present. Otherwise, returns `null`.
      */
+    @KaExperimentalApi
     public val KaType.enhancedType: KaType?
 
+    @KaExperimentalApi
     public val KaType.enhancedTypeOrSelf: KaType?
         get() = withValidityAssertion { enhancedType ?: this }
 

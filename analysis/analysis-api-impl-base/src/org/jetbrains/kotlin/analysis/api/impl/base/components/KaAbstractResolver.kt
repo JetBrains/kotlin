@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.components
 
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiMember
-import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaResolver
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
-@KaAnalysisApiInternals
+@KaImplementationDetail
 abstract class KaAbstractResolver<T : KaSession> : KaSessionComponent<T>(), KaResolver {
     override fun KtReference.resolveToSymbol(): KaSymbol? = withValidityAssertion {
         return resolveToSymbols().singleOrNull()

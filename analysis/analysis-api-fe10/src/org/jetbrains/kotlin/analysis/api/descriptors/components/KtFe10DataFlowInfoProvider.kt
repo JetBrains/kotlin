@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.MultipleSmartCasts
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.intersectWrappedTypes
 
-@OptIn(KaAnalysisNonPublicApi::class)
 internal class KaFe10DataFlowProvider(
     override val analysisSessionProvider: () -> KaFe10Session
 ) : KaSessionComponent<KaFe10Session>(), KaDataFlowProvider, KaFe10SessionComponent {

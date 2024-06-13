@@ -52,7 +52,8 @@ import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
  * }
  * ```
  */
-@OptIn(KaAnalysisApiInternals::class, KaAnalysisNonPublicApi::class)
+@Suppress("DEPRECATION")
+@OptIn(KaNonPublicApi::class, KaExperimentalApi::class, KaIdeApi::class)
 public interface KaSession : KaLifetimeOwner,
     KaResolver,
     KaSymbolRelationProvider,

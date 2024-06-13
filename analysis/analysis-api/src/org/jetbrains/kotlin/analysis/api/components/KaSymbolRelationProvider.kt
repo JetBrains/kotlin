@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
@@ -89,6 +90,7 @@ public interface KaSymbolRelationProvider {
      * Gets the [ImplementationStatus] of the [this] member symbol in the given [parentClassSymbol]. Or null if this symbol is not a
      * member.
      */
+    @KaExperimentalApi
     public fun KaCallableSymbol.getImplementationStatus(parentClassSymbol: KaClassOrObjectSymbol): ImplementationStatus?
 
     /**
@@ -135,9 +137,11 @@ public interface KaSymbolRelationProvider {
      *
      * @return a single expect declaration corresponds to the [KaDeclarationSymbol] on valid code or multiple expects in a case of erroneous code with multiple expects.
      **/
+    @KaExperimentalApi
     public fun KaDeclarationSymbol.getExpectsForActual(): List<KaDeclarationSymbol>
 
     public val KaNamedClassOrObjectSymbol.sealedClassInheritors: List<KaNamedClassOrObjectSymbol>
 
+    @Deprecated("Use the declaration scope instead.")
     public val KaNamedClassOrObjectSymbol.enumEntries: List<KaEnumEntrySymbol>
 }

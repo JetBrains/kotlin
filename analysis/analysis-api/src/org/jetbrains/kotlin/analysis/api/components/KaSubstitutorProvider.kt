@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
@@ -18,6 +19,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
+@KaExperimentalApi
 public interface KaSubstitutorProvider {
     /**
      * Creates a [KaSubstitutor] based on the inheritance relationship between [subClass] and [superClass].
@@ -42,14 +44,17 @@ public interface KaSubstitutorProvider {
      * @param superClass the super class symbol.
      * @return [KaSubstitutor] if [subClass] inherits [superClass] and there are no error types in the inheritance path. Returns `null` otherwise.
      */
+    @KaExperimentalApi
     public fun createInheritanceTypeSubstitutor(subClass: KaClassOrObjectSymbol, superClass: KaClassOrObjectSymbol): KaSubstitutor?
 
+    @KaExperimentalApi
     public fun createSubstitutor(mappings: Map<KaTypeParameterSymbol, KaType>): KaSubstitutor
 }
 
 /**
  * Creates new [KaSubstitutor] using substitutions specified inside [build] lambda
  */
+@KaExperimentalApi
 @OptIn(ExperimentalContracts::class, KaAnalysisApiInternals::class)
 public inline fun KaSession.buildSubstitutor(
     build: KaSubstitutorBuilder.() -> Unit,
@@ -60,6 +65,7 @@ public inline fun KaSession.buildSubstitutor(
     return createSubstitutor(KaSubstitutorBuilder(token).apply(build).mappings)
 }
 
+@KaExperimentalApi
 public class KaSubstitutorBuilder
 @KaAnalysisApiInternals constructor(override val token: KaLifetimeToken) : KaLifetimeOwner {
     private val backingMapping = mutableMapOf<KaTypeParameterSymbol, KaType>()
@@ -84,5 +90,6 @@ public class KaSubstitutorBuilder
     }
 }
 
+@KaExperimentalApi
 @Deprecated("Use 'KaSubstitutorBuilder' instead.", replaceWith = ReplaceWith("KaSubstitutorBuilder"))
 public typealias KtSubstitutorBuilder = KaSubstitutorBuilder

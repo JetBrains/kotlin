@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.signatures
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
@@ -18,6 +19,7 @@ public abstract class KaFunctionLikeSignature<out S : KaFunctionLikeSymbol> : Ka
      */
     public abstract val valueParameters: List<KaVariableLikeSignature<KaValueParameterSymbol>>
 
+    @KaExperimentalApi
     abstract override fun substitute(substitutor: KaSubstitutor): KaFunctionLikeSignature<S>
 }
 

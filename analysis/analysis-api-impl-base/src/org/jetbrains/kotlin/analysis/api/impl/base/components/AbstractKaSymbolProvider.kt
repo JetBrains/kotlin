@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.components
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.psi.KtScriptInitializer
 import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.psi.KtTypeParameter
 
+@KaImplementationDetail
 abstract class AbstractKaSymbolProvider<T : KaSession> : KaSessionComponent<T>(), KaSymbolProvider {
     override val KtDeclaration.symbol: KaDeclarationSymbol
         get() = withValidityAssertion {

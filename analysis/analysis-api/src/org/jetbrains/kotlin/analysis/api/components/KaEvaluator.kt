@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
 import org.jetbrains.kotlin.psi.KtExpression
@@ -20,5 +21,6 @@ public interface KaEvaluator {
      * Returns a [KaConstantValue] if the expression evaluates to a value that can be used as an annotation parameter value,
      * e.g. an array of constants, otherwise returns null.
      */
+    @KaExperimentalApi
     public fun KtExpression.evaluateAsAnnotationValue(): KaAnnotationValue?
 }

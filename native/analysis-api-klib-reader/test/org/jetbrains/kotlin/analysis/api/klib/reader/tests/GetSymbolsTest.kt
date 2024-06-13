@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.klib.reader.tests
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.klib.reader.testUtils.providedTestProjectKlib
@@ -128,6 +129,7 @@ class GetSymbolsTest {
     }
 
     @Test
+    @OptIn(KaExperimentalApi::class)
     fun `test - filePrivateSymbolsClash - function`() {
         withTestProjectLibraryAnalysisSession {
             val addresses = (useSiteModule as KtLibraryModule).readKlibDeclarationAddresses() ?: fail("Failed reading addresses")
@@ -158,6 +160,7 @@ class GetSymbolsTest {
     }
 
     @Test
+    @OptIn(KaExperimentalApi::class)
     fun `test - filePrivateSymbolsClash - property`() {
         withTestProjectLibraryAnalysisSession {
             val addresses = (useSiteModule as KtLibraryModule).readKlibDeclarationAddresses() ?: fail("Failed reading addresses")

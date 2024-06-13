@@ -251,6 +251,7 @@ internal class KaFe10SymbolRelationProvider(
                 .mapNotNull { it.toKtClassifierSymbol(analysisContext) as? KaNamedClassOrObjectSymbol }
         }
 
+    @Deprecated("Use the declaration scope instead.")
     override val KaNamedClassOrObjectSymbol.enumEntries: List<KaEnumEntrySymbol>
         get() = withValidityAssertion {
             val enumDescriptor = getSymbolDescriptor(this) as? ClassDescriptor ?: return emptyList()

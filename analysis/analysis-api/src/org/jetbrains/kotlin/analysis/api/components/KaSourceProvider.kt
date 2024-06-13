@@ -5,17 +5,17 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
+import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.psi.KtDeclaration
 
-@KaAnalysisNonPublicApi
+@KaNonPublicApi
 public interface KaSourceProvider {
     /**
      * If [KtDeclaration] is a deserialized klib-based symbol, then information about the original
      * [SourceFile] is returned when available.
      */
-    @KaAnalysisNonPublicApi
+    @KaNonPublicApi
     public val KaDeclarationSymbol.klibSourceFileName: String?
 }

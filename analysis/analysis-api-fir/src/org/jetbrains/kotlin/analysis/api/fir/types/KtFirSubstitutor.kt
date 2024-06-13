@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.types
 
-import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.impl.base.KaChainedSubstitutor
 import org.jetbrains.kotlin.analysis.api.impl.base.KaMapBackedSubstitutor
@@ -35,7 +34,6 @@ internal class KaFirGenericSubstitutor(
     builder: KaSymbolByFirBuilder,
 ) : AbstractKaFirSubstitutor<ConeSubstitutor>(substitutor, builder)
 
-@OptIn(KaAnalysisApiInternals::class)
 internal class KaFirMapBackedSubstitutor(
     substitutor: ConeSubstitutorByMap,
     builder: KaSymbolByFirBuilder,
@@ -53,7 +51,6 @@ internal class KaFirMapBackedSubstitutor(
     }
 }
 
-@OptIn(KaAnalysisApiInternals::class)
 internal class KaFirChainedSubstitutor(
     substitutor: ChainedSubstitutor,
     builder: KaSymbolByFirBuilder,

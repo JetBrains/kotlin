@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.components
 
-import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaRenderer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.types.Variance
 
-@KaAnalysisApiInternals
+@KaImplementationDetail
 class KaRendererImpl(
     override val analysisSessionProvider: () -> KaSession
 ) : KaRenderer, KaSessionComponent<KaSession>() {

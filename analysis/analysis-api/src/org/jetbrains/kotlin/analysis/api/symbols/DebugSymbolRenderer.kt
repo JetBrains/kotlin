@@ -41,6 +41,8 @@ import kotlin.reflect.KVisibility
 import kotlin.reflect.full.*
 import kotlin.reflect.jvm.isAccessible
 
+@KaNonPublicApi
+@OptIn(KaExperimentalApi::class)
 public class DebugSymbolRenderer(
     public val renderExtra: Boolean = false,
     public val renderTypeByProperties: Boolean = false,

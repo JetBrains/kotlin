@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.SmartPsiElementPointer
+import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.components.ShortenStrategy.Companion.defaultCallableShortenStrategy
 import org.jetbrains.kotlin.analysis.api.components.ShortenStrategy.Companion.defaultClassShortenStrategy
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.psi.KtUserType
  * @property removeThisLabels If set to `true`, reference shortener will detect redundant labels on `this` expressions,
  * and will collect them to [ShortenCommand.thisLabelsToShorten]
  */
+@KaIdeApi
 public data class ShortenOptions(
     public val removeThis: Boolean = false,
     public val removeThisLabels: Boolean = false,
@@ -38,6 +40,7 @@ public data class ShortenOptions(
     }
 }
 
+@KaIdeApi
 public enum class ShortenStrategy {
     /** Skip shortening references to this symbol. */
     DO_NOT_SHORTEN,
@@ -77,6 +80,7 @@ public enum class ShortenStrategy {
     SHORTEN_AND_STAR_IMPORT;
 
     public companion object {
+        @KaIdeApi
         public val defaultClassShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy = {
             if (it.classId?.isNestedClass == true) {
                 SHORTEN_IF_ALREADY_IMPORTED
@@ -85,6 +89,7 @@ public enum class ShortenStrategy {
             }
         }
 
+        @KaIdeApi
         public val defaultCallableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy = { symbol ->
             when (symbol) {
                 is KaEnumEntrySymbol -> DO_NOT_SHORTEN
@@ -113,7 +118,7 @@ public enum class ShortenStrategy {
     }
 }
 
-
+@KaIdeApi
 public interface KaReferenceShortener {
     /**
      * Collects possible references to shorten. By default, it shortens a fully-qualified members to the outermost class and does not
@@ -124,6 +129,7 @@ public interface KaReferenceShortener {
      *
      * Also see [org.jetbrains.kotlin.idea.base.analysis.api.utils.shortenReferences] and functions around it.
      */
+    @KaIdeApi
     public fun collectPossibleReferenceShortenings(
         file: KtFile,
         selection: TextRange = file.textRange,
@@ -141,6 +147,7 @@ public interface KaReferenceShortener {
      *
      * Also see [org.jetbrains.kotlin.idea.base.analysis.api.utils.shortenReferences] and functions around it.
      */
+    @KaIdeApi
     public fun collectPossibleReferenceShorteningsInElement(
         element: KtElement,
         shortenOptions: ShortenOptions = ShortenOptions.DEFAULT,
@@ -159,6 +166,7 @@ public interface KaReferenceShortener {
  * ... my.package.Ne<caret>wType ... // -> we can replace this with `AliasType`.
  * ```
  */
+@KaIdeApi
 public data class TypeToShortenInfo(val typeToShorten: SmartPsiElementPointer<KtUserType>, val shortenedReference: String?)
 
 /**
@@ -171,6 +179,7 @@ public data class TypeToShortenInfo(val typeToShorten: SmartPsiElementPointer<Kt
  * ... my.package.fo<caret>o ... // -> we can replace this with `bar`.
  * ```
  */
+@KaIdeApi
 public data class QualifierToShortenInfo(
     val qualifierToShorten: SmartPsiElementPointer<KtDotQualifiedExpression>,
     val shortenedReference: String?,
@@ -180,10 +189,12 @@ public data class QualifierToShortenInfo(
  * A class with a reference to [KtThisExpression] with a label qualifier ([KtThisExpression.labelQualifier]) that can be safely removed
  * without changing the semantics of the code.
  */
+@KaIdeApi
 public data class ThisLabelToShortenInfo(
     val labelToShorten: SmartPsiElementPointer<KtThisExpression>,
 )
 
+@KaIdeApi
 public interface ShortenCommand {
     public val targetFile: SmartPsiElementPointer<KtFile>
     public val importsToAdd: Set<FqName>

@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import org.jetbrains.kotlin.analysis.api.KaSession
@@ -12,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 
+@Suppress("OVERRIDE_DEPRECATION")
 internal class KaFe10OriginalPsiProvider(
     override val analysisSessionProvider: () -> KaSession
 ) : KaSessionComponent<KaSession>(), KaOriginalPsiProvider {

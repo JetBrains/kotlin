@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.psi.KtExpression
@@ -12,8 +13,10 @@ import org.jetbrains.kotlin.psi.KtReturnExpression
 import org.jetbrains.kotlin.psi.KtWhenExpression
 
 public interface KaExpressionInformationProvider {
+    @KaIdeApi
     public val KtReturnExpression.targetSymbol: KaCallableSymbol?
 
+    @KaIdeApi
     @Deprecated("Use 'targetSymbol' instead.", replaceWith = ReplaceWith("targetSymbol"))
     public fun KtReturnExpression.getReturnTargetSymbol(): KaCallableSymbol? = targetSymbol
 
@@ -44,8 +47,10 @@ public interface KaExpressionInformationProvider {
      * If you have to assume that it does not have the missing cases when it has an else branch,
      * you need a separate check whether it has an else branch or not.
      */
+    @KaIdeApi
     public fun KtWhenExpression.computeMissingCases(): List<WhenMissingCase>
 
+    @KaIdeApi
     @Deprecated("Use 'computeMissingCases()' instead.", ReplaceWith("computeMissingCases()"))
     public fun KtWhenExpression.getMissingCases(): List<WhenMissingCase> = computeMissingCases()
 

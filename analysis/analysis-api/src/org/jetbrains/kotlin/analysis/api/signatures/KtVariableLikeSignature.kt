@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.signatures
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.annotations.KaConstantAnnotationValue
 import org.jetbrains.kotlin.analysis.api.annotations.annotationsByClassId
@@ -57,6 +58,7 @@ public abstract class KaVariableLikeSignature<out S : KaVariableLikeSymbol> : Ka
             runIf(nameCanBeDeclaredInAnnotation) { getValueFromParameterNameAnnotation() } ?: symbol.name
         }
 
+    @KaExperimentalApi
     abstract override fun substitute(substitutor: KaSubstitutor): KaVariableLikeSignature<S>
 
     private fun getValueFromParameterNameAnnotation(): Name? {

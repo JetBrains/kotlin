@@ -5,6 +5,7 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.sir.*
@@ -30,6 +31,8 @@ internal class SirTypealiasFromKtSymbol(
     override val name: String by lazy {
         ktSymbol.name.asString()
     }
+
+    @OptIn(KaExperimentalApi::class)
     override val type: SirType by lazyWithSessions {
         ktSymbol.expandedType.translateType(
             useSiteSession,

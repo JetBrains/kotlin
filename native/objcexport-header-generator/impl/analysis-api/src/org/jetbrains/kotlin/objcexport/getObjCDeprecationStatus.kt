@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.objcexport
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
  * See K1 [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapper.getDeprecation]
  */
 context(KtAnalysisSession)
+@OptIn(KaExperimentalApi::class)
 internal fun KaSymbol.getObjCDeprecationStatus(): String? {
     return deprecationStatus?.toDeprecationAttribute() ?: if (this.isConstructor) {
         this.containingSymbol?.deprecationStatus?.toDeprecationAttribute()

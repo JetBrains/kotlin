@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.objcexport.analysisApiUtils
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind.*
@@ -123,6 +124,7 @@ private fun KtAnnotatedSymbol.containsHidesFromObjCAnnotation(): Boolean {
 }
 
 context(KtAnalysisSession)
+@OptIn(KaExperimentalApi::class)
 private fun KtCallableSymbol.isHiddenFromObjCByDeprecation(): Boolean {
     /*
     Note: ObjCExport generally expect overrides of exposed methods to be exposed.
@@ -143,6 +145,7 @@ private fun KtCallableSymbol.isHiddenFromObjCByDeprecation(): Boolean {
 }
 
 context(KtAnalysisSession)
+@OptIn(KaExperimentalApi::class)
 private fun KtClassOrObjectSymbol.isHiddenFromObjCByDeprecation(): Boolean {
     if (this.deprecationStatus?.deprecationLevel == DeprecationLevelValue.HIDDEN) return true
 

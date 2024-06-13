@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.fir.components.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbolProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.KaBaseSession
@@ -42,7 +40,6 @@ import org.jetbrains.kotlin.utils.addIfNotNull
  * strong reference to the `LLFirSession`. See the documentation of [LLFirSession][org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession]
  * for more information.
  */
-@OptIn(KaAnalysisApiInternals::class, KaAnalysisNonPublicApi::class)
 @Suppress("AnalysisApiMissingLifetimeCheck")
 internal class KaFirSession
 private constructor(

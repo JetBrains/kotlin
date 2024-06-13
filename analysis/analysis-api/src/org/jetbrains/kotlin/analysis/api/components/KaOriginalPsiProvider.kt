@@ -5,34 +5,33 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 
-@KaAnalysisApiInternals
+@Deprecated("Obsolete API")
 public interface KaOriginalPsiProvider {
     /**
      * If [KtDeclaration] is a non-local declaration in a fake file analyzed in dependent session, returns the original declaration.
      * Otherwise, returns `null`.
      */
-    @KaAnalysisApiInternals
+    @Deprecated("Obsolete API")
     public fun KtDeclaration.getOriginalDeclaration(): KtDeclaration?
 
     /**
      * If [this] is a fake file analyzed in dependent session, returns the original file for [this]. Otherwise, returns `null`.
      */
-    @KaAnalysisApiInternals
+    @Deprecated("Obsolete API")
     public fun KtFile.getOriginalKtFile(): KtFile?
 
     /**
      * Records [declaration] as an original declaration for [this].
      */
-    @KaAnalysisApiInternals
+    @Deprecated("Obsolete API")
     public fun KtDeclaration.recordOriginalDeclaration(declaration: KtDeclaration)
 
     /**
      * Records [file] as an original file for [this].
      */
-    @KaAnalysisApiInternals
+    @Deprecated("Obsolete API")
     public fun KtFile.recordOriginalKtFile(file: KtFile)
 }

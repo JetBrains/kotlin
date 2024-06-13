@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.signatures
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
@@ -52,6 +53,7 @@ public sealed class KaCallableSignature<out S : KaCallableSymbol> : KaLifetimeOw
      *
      * @see KaSubstitutor.substitute
      */
+    @KaExperimentalApi
     public abstract fun substitute(substitutor: KaSubstitutor): KaCallableSignature<S>
 
     abstract override fun equals(other: Any?): Boolean

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.compile.CodeFragmentCapturedValue
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
@@ -21,6 +22,7 @@ import java.io.File
  * Compilation fails if there are critical errors reported either on the frontend or on the backend side.
  * Keep in mind that [KaCompilationResult] is a part of Analysis API, so it should only be used inside an analysis block.
  */
+@KaExperimentalApi
 public sealed class KaCompilationResult {
     /**
      * Successful compilation result.
@@ -28,6 +30,7 @@ public sealed class KaCompilationResult {
      * @property output Output files produced by the compiler. For the JVM target, these are class files and '.kotlin_module'.
      * @property capturedValues Context values captured by a [KtCodeFragment]. Empty for an ordinary [KtFile].
      */
+    @KaExperimentalApi
     public class Success(
         public val output: List<KaCompiledFile>,
         public val capturedValues: List<CodeFragmentCapturedValue>
@@ -38,12 +41,15 @@ public sealed class KaCompilationResult {
      *
      * @property errors Non-recoverable errors either during code analysis, or during code generation.
      */
+    @KaExperimentalApi
     public class Failure(public val errors: List<KaDiagnostic>) : KaCompilationResult()
 }
 
+@KaExperimentalApi
 @Deprecated("Use 'KaCompilationResult' instead.", replaceWith = ReplaceWith("KaCompilationResult"))
 public typealias KtCompilationResult = KaCompilationResult
 
+@KaExperimentalApi
 public interface KaCompiledFile {
     /**
      * Path of the compiled file relative to the root of the output directory.
@@ -61,26 +67,32 @@ public interface KaCompiledFile {
     public val content: ByteArray
 }
 
+@KaExperimentalApi
 @Deprecated("Use 'KaCompiledFile' instead.", replaceWith = ReplaceWith("KaCompiledFile"))
 public typealias KtCompiledFile = KaCompiledFile
 
 /**
  * `true` if the compiled file is a Java class file.
  */
+@KaExperimentalApi
 public val KaCompiledFile.isClassFile: Boolean
     get() = path.endsWith(".class", ignoreCase = true)
 
 /**
  * Compilation target platform.
  */
+@KaExperimentalApi
 public sealed class KaCompilerTarget {
     /** JVM target (produces '.class' files). */
+    @KaExperimentalApi
     public class Jvm(public val classBuilderFactory: ClassBuilderFactory) : KaCompilerTarget()
 }
 
+@KaExperimentalApi
 @Deprecated("Use 'KaCompilerTarget' instead.", replaceWith = ReplaceWith("KaCompilerTarget"))
 public typealias KtCompilerTarget = KaCompilerTarget
 
+@KaExperimentalApi
 public interface KaCompilerFacility {
     public companion object {
         /** Simple class name for the code fragment facade class. */
@@ -113,6 +125,7 @@ public interface KaCompilerFacility {
      * The function rethrows exceptions from the compiler, wrapped in [KaCodeCompilationException].
      * The implementation should wrap the `compile()` call into a `try`/`catch` block when necessary.
      */
+    @KaExperimentalApi
     @Throws(KaCodeCompilationException::class)
     public fun compile(
         file: KtFile,
@@ -125,4 +138,5 @@ public interface KaCompilerFacility {
 /**
  * Thrown when an exception occurred on analyzing the code to be compiled, or during target platform code generation.
  */
+@KaExperimentalApi
 public class KaCodeCompilationException(cause: Throwable) : RuntimeException(cause)

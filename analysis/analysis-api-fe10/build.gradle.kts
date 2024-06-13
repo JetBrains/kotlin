@@ -50,6 +50,10 @@ tasks.withType<KotlinJvmCompile>().configureEach {
             listOf(
                 "kotlin.RequiresOptIn",
                 "org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals",
+                "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
+                "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
+                "org.jetbrains.kotlin.analysis.api.KaNonPublicApi",
+                "org.jetbrains.kotlin.analysis.api.KaIdeApi",
                 "org.jetbrains.kotlin.analysis.api.permissions.KaAllowProhibitedAnalyzeFromWriteAction",
             )
         )

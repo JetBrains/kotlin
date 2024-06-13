@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 
+@KaIdeApi
 public interface KaImportOptimizer {
     /**
      * Takes [file] and inspects its imports and their usages,
@@ -17,8 +19,10 @@ public interface KaImportOptimizer {
      *
      * Does **not** change the file.
      */
+    @KaIdeApi
     public fun analyzeImportsToOptimize(file: KtFile): KaImportOptimizerResult
 
+    @KaIdeApi
     @Deprecated("Use 'analyzeImportsToOptimize()' instead.", replaceWith = ReplaceWith("analyzeImportsToOptimize()"))
     public fun analyseImports(file: KtFile): KaImportOptimizerResult {
         return analyzeImportsToOptimize(file)
@@ -27,9 +31,11 @@ public interface KaImportOptimizer {
     /**
      * @return a [FqName] which can be used to import [this] symbol or `null` if the symbol cannot be imported.
      */
+    @KaIdeApi
     public val KaSymbol.importableFqName: FqName?
 }
 
+@KaIdeApi
 public class KaImportOptimizerResult(
     public val usedDeclarations: Map<FqName, Set<Name>> = emptyMap(),
     public val unresolvedNames: Set<Name> = emptySet(),

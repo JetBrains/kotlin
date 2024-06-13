@@ -9,6 +9,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiType
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
@@ -42,6 +43,7 @@ public interface KaJavaInteroperabilityComponent {
      *
      * @param preserveAnnotations if **true** the result [PsiType] will have converted annotations from the original [type][this]
      */
+    @KaExperimentalApi
     public fun KaType.asPsiType(
         useSitePosition: PsiElement,
         allowErrorTypes: Boolean,
@@ -60,8 +62,10 @@ public interface KaJavaInteroperabilityComponent {
      * @receiver [PsiType] to be converted.
      * @return The converted [KaType], or null if conversion is not possible e.g., [PsiType] is not resolved
      */
+    @KaExperimentalApi
     public fun PsiType.asKaType(useSitePosition: PsiElement): KaType?
 
+    @KaExperimentalApi
     @Deprecated("Use 'asKaType()' instead.", replaceWith = ReplaceWith("asKaType(useSitePosition)"))
     public fun PsiType.asKtType(useSitePosition: PsiElement): KaType? = asKaType(useSitePosition)
 
@@ -70,14 +74,17 @@ public interface KaJavaInteroperabilityComponent {
      *
      * @see TypeMappingMode
      */
+    @KaExperimentalApi
     public fun KaType.mapToJvmType(mode: TypeMappingMode = TypeMappingMode.DEFAULT): Type
 
+    @KaExperimentalApi
     @Deprecated("Use 'mapToJvmType()' instead.", replaceWith = ReplaceWith("mapToJvmType(mode)"))
     public fun KaType.mapTypeToJvmType(mode: TypeMappingMode = TypeMappingMode.DEFAULT): Type = mapToJvmType(mode)
 
     /**
      * Returns true if the type is backed by a single JVM primitive type
      */
+    @KaExperimentalApi
     public val KaType.isPrimitiveBacked: Boolean
 
     public val PsiClass.namedClassSymbol: KaNamedClassOrObjectSymbol?
@@ -94,9 +101,12 @@ public interface KaJavaInteroperabilityComponent {
      *
      * Note that this API is applicable for common or JVM modules only, and returns `null` for non-JVM modules.
      */
+    @KaExperimentalApi
     public val KaCallableSymbol.containingJvmClassName: String?
 
+    @KaExperimentalApi
     public val KaPropertySymbol.javaGetterName: Name
 
+    @KaExperimentalApi
     public val KaPropertySymbol.javaSetterName: Name?
 }

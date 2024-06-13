@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.test.framework.services
 
 import com.intellij.psi.PsiComment
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.buildSubstitutor
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
@@ -15,17 +16,19 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
 object SubstitutionParser {
+    @KaExperimentalApi
     fun parseSubstitutor(analysisSession: KaSession, declaration: KtCallableDeclaration): KaSubstitutor {
         val comment = declaration.firstChild as PsiComment
         return parseSubstitutor(analysisSession, comment, declaration)
     }
 
+    @KaExperimentalApi
     fun parseSubstitutor(analysisSession: KaSession, ktFile: KtFile, declaration: KtCallableDeclaration): KaSubstitutor {
         val comment = ktFile.children.filterIsInstance<PsiComment>().single { it.text.startsWith(SUBSTITUTOR_PREFIX) }
         return parseSubstitutor(analysisSession, comment, declaration)
     }
 
-
+    @KaExperimentalApi
     fun parseSubstitutor(analysisSession: KaSession, comment: PsiComment, scopeForTypeParameters: KtElement): KaSubstitutor {
         val directivesAsString = comment.text.trim()
         check(directivesAsString.startsWith(SUBSTITUTOR_PREFIX))

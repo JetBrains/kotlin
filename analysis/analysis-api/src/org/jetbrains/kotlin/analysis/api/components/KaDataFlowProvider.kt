@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
+import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtReturnExpression
 import java.util.Objects
 
-@KaAnalysisNonPublicApi
 public interface KaDataFlowProvider {
     /**
      * Smart cast information of the given expression, or null if the expression is not smart cast.
@@ -34,13 +33,14 @@ public interface KaDataFlowProvider {
      * }
      * ```
      */
+    @KaNonPublicApi
     public val KtExpression.implicitReceiverSmartCasts: Collection<KaImplicitReceiverSmartCast>
 
-    @KaAnalysisNonPublicApi
+    @KaNonPublicApi
     public fun computeExitPointSnapshot(statements: List<KtExpression>): KaDataFlowExitPointSnapshot
 
-    @KaAnalysisNonPublicApi
-    @Deprecated("Use 'computeExitPointSnapshot()' instead.")
+    @KaNonPublicApi
+    @Deprecated("Use 'computeExitPointSnapshot()' instead.", replaceWith = ReplaceWith("computeExitPointSnapshot(statements)"))
     public fun getExitPointSnapshot(statements: List<KtExpression>): KaDataFlowExitPointSnapshot {
         return computeExitPointSnapshot(statements)
     }
@@ -97,7 +97,7 @@ public enum class KaImplicitReceiverSmartCastKind {
 @Deprecated("Use 'KaImplicitReceiverSmartCastKind' instead.", replaceWith = ReplaceWith("KaImplicitReceiverSmartCastKind"))
 public typealias KtImplicitReceiverSmartCastKind = KaImplicitReceiverSmartCastKind
 
-@KaAnalysisNonPublicApi
+@KaNonPublicApi
 public class KaDataFlowExitPointSnapshot(
     /**
      * A default expression, if any.
@@ -179,6 +179,6 @@ public class KaDataFlowExitPointSnapshot(
     )
 }
 
-@KaAnalysisNonPublicApi
+@KaNonPublicApi
 @Deprecated("Use 'KaDataFlowExitPointSnapshot' instead.", replaceWith = ReplaceWith("KaDataFlowExitPointSnapshot"))
 public typealias KtDataFlowExitPointSnapshot = KaDataFlowExitPointSnapshot

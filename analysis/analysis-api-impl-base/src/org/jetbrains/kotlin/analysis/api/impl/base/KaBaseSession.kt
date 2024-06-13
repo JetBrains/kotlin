@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base
 
-import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolProvider
 
-@OptIn(KaAnalysisApiInternals::class, KaAnalysisNonPublicApi::class)
+@Suppress("DEPRECATION")
+@KaImplementationDetail
 abstract class KaBaseSession(
     final override val token: KaLifetimeToken,
     resolver: KaResolver,

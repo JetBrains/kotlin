@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.types
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -21,12 +22,14 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
  *
  * Can be built by [org.jetbrains.kotlin.analysis.api.components.buildSubstitutor] or retrieved via a [org.jetbrains.kotlin.analysis.api.calls.KaCall]
  */
+@KaExperimentalApi
 public interface KaSubstitutor : KaLifetimeOwner {
     /**
      * substitutes type parameters in a given type corresponding to internal mapping rules.
      *
      * @return substituted type if there was at least one substitution, [type] itself if there was no type parameter to substitute
      */
+    @KaExperimentalApi
     public fun substitute(type: KaType): KaType = withValidityAssertion { substituteOrNull(type) ?: type }
 
     /**
@@ -34,11 +37,13 @@ public interface KaSubstitutor : KaLifetimeOwner {
      *
      * @return substituted type if there was at least one substitution, `null` if there was no type parameter to substitute
      */
+    @KaExperimentalApi
     public fun substituteOrNull(type: KaType): KaType?
 
     /**
      * [KaSubstitutor] which does nothing on a type and always returns the type intact
      */
+    @KaExperimentalApi
     public class Empty(override val token: KaLifetimeToken) : KaSubstitutor {
         override fun substituteOrNull(type: KaType): KaType? = withValidityAssertion { null }
 

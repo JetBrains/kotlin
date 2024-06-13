@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
-import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaSourceProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 
-@OptIn(KaAnalysisNonPublicApi::class)
 internal class KaFe10SourceProvider(
     override val analysisSessionProvider: () -> KaSession
 ) : KaSessionComponent<KaSession>(), KaSourceProvider {

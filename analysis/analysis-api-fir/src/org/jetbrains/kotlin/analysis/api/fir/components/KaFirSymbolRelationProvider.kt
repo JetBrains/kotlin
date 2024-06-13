@@ -396,6 +396,7 @@ internal class KaFirSymbolRelationProvider(
             }
         }
 
+    @Deprecated("Use the declaration scope instead.")
     override val KaNamedClassOrObjectSymbol.enumEntries: List<KaEnumEntrySymbol>
         get() = withValidityAssertion {
             require(classKind == KaClassKind.ENUM_CLASS)

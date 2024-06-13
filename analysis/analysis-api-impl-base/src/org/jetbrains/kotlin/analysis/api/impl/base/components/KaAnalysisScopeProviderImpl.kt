@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.components
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaAnalysisScopeProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaGlobalSearchScope
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.contains
 
+@KaImplementationDetail
 class KaAnalysisScopeProviderImpl(
     override val analysisSessionProvider: () -> KaSession,
     private val useSiteScope: KaGlobalSearchScope

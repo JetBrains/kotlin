@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 import org.jetbrains.kotlin.psi.KtExpression
 
 public interface KaVisibilityChecker {
+    @KaExperimentalApi
     public fun isVisible(
         candidateSymbol: KaSymbolWithVisibility,
         useSiteFile: KaFileSymbol,
@@ -21,6 +23,7 @@ public interface KaVisibilityChecker {
     ): Boolean
 
     /** Checks if the given symbol (possibly a symbol inherited from a super class) is visible in the given class. */
+    @KaExperimentalApi
     public fun KaCallableSymbol.isVisibleInClass(classSymbol: KaClassOrObjectSymbol): Boolean
 
     /**

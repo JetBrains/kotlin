@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
@@ -35,17 +36,22 @@ public interface KaTypeInformationProvider {
     /**
      * Returns [FunctionTypeKind] of the given [KaType]
      */
+    @KaExperimentalApi
     public val KaType.functionTypeKind: FunctionTypeKind?
 
+    @OptIn(KaExperimentalApi::class)
     public val KaType.isFunctionType: Boolean
         get() = withValidityAssertion { functionTypeKind == FunctionTypeKind.Function }
 
+    @OptIn(KaExperimentalApi::class)
     public val KaType.isKFunctionType: Boolean
         get() = withValidityAssertion { functionTypeKind == FunctionTypeKind.KFunction }
 
+    @OptIn(KaExperimentalApi::class)
     public val KaType.isSuspendFunctionType: Boolean
         get() = withValidityAssertion { functionTypeKind == FunctionTypeKind.SuspendFunction }
 
+    @OptIn(KaExperimentalApi::class)
     public val KaType.isKSuspendFunctionType: Boolean
         get() = withValidityAssertion { functionTypeKind == FunctionTypeKind.KSuspendFunction }
 
@@ -192,6 +198,7 @@ public interface KaTypeInformationProvider {
             return this.classId in DefaultTypeClassIds.PRIMITIVES
         }
 
+    @KaExperimentalApi
     public val KaType.defaultInitializer: String?
         get() = withValidityAssertion {
             when {

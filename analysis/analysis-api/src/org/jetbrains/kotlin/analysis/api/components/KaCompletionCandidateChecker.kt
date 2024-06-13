@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
@@ -14,6 +16,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
+@KaIdeApi
 public interface KaCompletionCandidateChecker {
     /**
      * Returns an extension applicability checker for the given context [nameExpression].
@@ -26,6 +29,7 @@ public interface KaCompletionCandidateChecker {
      *     with a dummy identifier inserted. Also see `CompletionUtilCore.DUMMY_IDENTIFIER` in IntelliJ IDEA.
      * @param explicitReceiver A receiver expression, if available (also from the in-memory copy of [originalFile]).
      */
+    @KaIdeApi
     public fun createExtensionCandidateChecker(
         originalFile: KtFile,
         nameExpression: KtSimpleNameExpression,
@@ -33,19 +37,31 @@ public interface KaCompletionCandidateChecker {
     ): KaCompletionExtensionCandidateChecker
 }
 
+@KaIdeApi
 public interface KaCompletionExtensionCandidateChecker {
+    @KaIdeApi
+    @KaExperimentalApi
     public fun computeApplicability(candidate: KaCallableSymbol): KaExtensionApplicabilityResult
 }
 
+@KaIdeApi
 @Deprecated("Use 'KaCompletionExtensionCandidateChecker' instead.", replaceWith = ReplaceWith("KaCompletionExtensionCandidateChecker"))
 public typealias KtCompletionExtensionCandidateChecker = KaCompletionExtensionCandidateChecker
 
+@KaIdeApi
+@KaExperimentalApi
 public sealed class KaExtensionApplicabilityResult : KaLifetimeOwner {
+    @KaIdeApi
+    @KaExperimentalApi
     public sealed class Applicable : KaExtensionApplicabilityResult() {
         public abstract val receiverCastRequired: Boolean
+
+        @KaExperimentalApi
         public abstract val substitutor: KaSubstitutor
     }
 
+    @KaIdeApi
+    @KaExperimentalApi
     public class ApplicableAsExtensionCallable(
         substitutor: KaSubstitutor,
         receiverCastRequired: Boolean,
@@ -55,6 +71,8 @@ public sealed class KaExtensionApplicabilityResult : KaLifetimeOwner {
         override val receiverCastRequired: Boolean by validityAsserted(receiverCastRequired)
     }
 
+    @KaIdeApi
+    @KaExperimentalApi
     public class ApplicableAsFunctionalVariableCall(
         substitutor: KaSubstitutor,
         receiverCastRequired: Boolean,
@@ -64,10 +82,14 @@ public sealed class KaExtensionApplicabilityResult : KaLifetimeOwner {
         override val receiverCastRequired: Boolean by validityAsserted(receiverCastRequired)
     }
 
+    @KaIdeApi
+    @KaExperimentalApi
     public class NonApplicable(
         override val token: KaLifetimeToken
     ) : KaExtensionApplicabilityResult()
 }
 
+@KaIdeApi
+@KaExperimentalApi
 @Deprecated("Use 'KaExtensionApplicabilityResult' instead.", replaceWith = ReplaceWith("KaExtensionApplicabilityResult"))
 public typealias KtExtensionApplicabilityResult = KaExtensionApplicabilityResult

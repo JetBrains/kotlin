@@ -5,13 +5,16 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
 public interface KaDiagnosticProvider {
+    @KaExperimentalApi
     public fun KtElement.diagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>>
 
+    @KaExperimentalApi
     @Deprecated("Use 'diagnostics()' instead.", replaceWith = ReplaceWith("diagnostic(filter)"))
     public fun KtElement.getDiagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>> {
         return diagnostics(filter)
