@@ -4,6 +4,7 @@ KaSamConstructorSymbol:
   contextReceivers: []
   hasStableParameterNames: true
   isExtension: false
+  location: TOP_LEVEL
   name: Runnable
   origin: SAM_CONSTRUCTOR
   receiverParameter: null
@@ -11,7 +12,6 @@ KaSamConstructorSymbol:
     annotations: []
     typeArguments: []
     type: java/lang/Runnable
-  symbolKind: SAM_CONSTRUCTOR
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
@@ -25,6 +25,7 @@ KaSamConstructorSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: function
       origin: SAM_CONSTRUCTOR
       receiverParameter: null
@@ -37,7 +38,6 @@ KaSamConstructorSymbol:
             type: kotlin/Unit
         ]
         type: kotlin/Function0<kotlin/Unit>
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: null

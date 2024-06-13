@@ -11,6 +11,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: String
   origin: JAVA_LIBRARY
@@ -36,7 +37,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/CharSequence
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: null

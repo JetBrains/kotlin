@@ -1,3 +1,3 @@
 KtNameReferenceExpression(45,46): 'T'
   KtSimpleNameReference:
-    reified T
+    (in <local>: functionWithLambda) reified T

@@ -12,6 +12,7 @@ KaFunctionSymbol:
           parameterSymbol:
             KaReceiverParameterSymbol:
               annotations: []
+              location: LOCAL
               origin: SOURCE
               owningCallableSymbol: KaFunctionSymbol(/referenceReceiverInContract)
               type: KaFunctionalType:
@@ -41,11 +42,13 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: referenceReceiverInContract
   origin: SOURCE
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
+    location: LOCAL
     origin: SOURCE
     owningCallableSymbol: KaFunctionSymbol(/referenceReceiverInContract)
     type: KaFunctionalType:
@@ -64,7 +67,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Unit
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Public

@@ -8,6 +8,7 @@ KaKotlinPropertySymbol:
     callableId: null
     contextReceivers: []
     isExtension: false
+    location: LOCAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(one/topLevelVariableWithAnnotations)
@@ -16,7 +17,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Long
-    symbolKind: LOCAL
     typeParameters: []
     getContainingFileSymbol: null
     getContainingJvmClassName: one.LibKt
@@ -37,6 +37,7 @@ KaKotlinPropertySymbol:
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: LIBRARY
     receiverParameter: null
@@ -44,7 +45,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Long
-    symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
@@ -66,6 +66,7 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: false
+  location: TOP_LEVEL
   modality: FINAL
   name: topLevelVariableWithAnnotations
   origin: LIBRARY
@@ -87,6 +88,7 @@ KaKotlinPropertySymbol:
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: LIBRARY
     parameter: KaValueParameterSymbol:
@@ -103,6 +105,7 @@ KaKotlinPropertySymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: value
       origin: LIBRARY
       receiverParameter: null
@@ -110,7 +113,6 @@ KaKotlinPropertySymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Long
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: null
@@ -121,7 +123,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Unit
-    symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
@@ -138,6 +139,7 @@ KaKotlinPropertySymbol:
         isImplicitLambdaParameter: false
         isNoinline: false
         isVararg: false
+        location: LOCAL
         name: value
         origin: LIBRARY
         receiverParameter: null
@@ -145,7 +147,6 @@ KaKotlinPropertySymbol:
           annotations: []
           typeArguments: []
           type: kotlin/Long
-        symbolKind: LOCAL
         typeParameters: []
         getContainingFileSymbol: null
         getContainingJvmClassName: null
@@ -157,7 +158,6 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.LibKt
     getContainingModule: KtLibraryModule "Library lib"
     deprecationStatus: null
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: null

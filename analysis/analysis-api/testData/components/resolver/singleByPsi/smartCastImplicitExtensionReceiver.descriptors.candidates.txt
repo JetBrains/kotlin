@@ -8,6 +8,7 @@ KtCallExpression(51,56): 'foo()'
           original = KaImplicitReceiverValue:
             symbol = KaReceiverParameterSymbol:
               annotations: []
+              location: LOCAL
               origin: SOURCE
               owningCallableSymbol: KaFunctionSymbol(/test)
               type: KaUsualClassType:

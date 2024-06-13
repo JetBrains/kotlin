@@ -11,6 +11,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: A
   origin: SOURCE
@@ -20,7 +21,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)
@@ -37,9 +37,9 @@ KaTypeAliasSymbol:
     type: A
   isActual: false
   isExpect: false
+  location: TOP_LEVEL
   name: TypeAlias
   origin: SOURCE
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)
@@ -64,6 +64,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: function
   origin: SOURCE
@@ -72,7 +73,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Unit
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
@@ -86,6 +86,7 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: t
       origin: SOURCE
       receiverParameter: null
@@ -93,7 +94,6 @@ KaFunctionSymbol:
         annotations: []
         typeArguments: []
         type: {TypeAlias=} A
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)
       getContainingJvmClassName: FunctionWithTypeAliasKt
@@ -124,6 +124,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: function
   origin: SOURCE
@@ -132,7 +133,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Unit
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
@@ -146,6 +146,7 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: t
       origin: SOURCE
       receiverParameter: null
@@ -153,7 +154,6 @@ KaFunctionSymbol:
         annotations: []
         typeArguments: []
         type: A
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)
       getContainingJvmClassName: FunctionWithTypeAliasKt

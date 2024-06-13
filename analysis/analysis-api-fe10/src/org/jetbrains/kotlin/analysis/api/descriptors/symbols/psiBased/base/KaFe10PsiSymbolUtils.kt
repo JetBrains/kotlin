@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KaFe10Symbol
 import org.jetbrains.kotlin.analysis.api.descriptors.types.KaFe10ClassErrorType
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.cfg.getElementParentDeclaration
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
@@ -57,21 +57,21 @@ internal val KtDeclaration.ktModality: Modality?
         else -> null
     }
 
-internal val KtElement.ktSymbolKind: KaSymbolKind
+internal val KtElement.kaSymbolLocation: KaSymbolLocation
     get() {
         if (this is KtPropertyAccessor) {
-            return KaSymbolKind.ACCESSOR
+            return KaSymbolLocation.PROPERTY
         }
 
         if (this is KtDeclaration) {
             return when (this.getParentOfType<KtDeclaration>(strict = true)) {
-                null -> KaSymbolKind.TOP_LEVEL
-                is KtCallableDeclaration, is KtPropertyAccessor -> KaSymbolKind.LOCAL
-                else -> KaSymbolKind.CLASS_MEMBER
+                null -> KaSymbolLocation.TOP_LEVEL
+                is KtCallableDeclaration, is KtPropertyAccessor, is KtTypeAlias -> KaSymbolLocation.LOCAL
+                else -> KaSymbolLocation.CLASS
             }
         }
 
-        return KaSymbolKind.LOCAL
+        return KaSymbolLocation.LOCAL
     }
 
 internal val KtDeclaration.callableId: CallableId?

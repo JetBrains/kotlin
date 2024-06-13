@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,12 +13,12 @@ import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirClassLikeSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.UnsupportedSymbolKind
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.UnsupportedSymbolLocation
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -53,7 +53,7 @@ internal class KaFirTypeAliasSymbol(
         KaFirAnnotationListForDeclaration.create(firSymbol, builder)
     }
 
-    override val symbolKind: KaSymbolKind get() = withValidityAssertion { getSymbolKind() }
+    override val location: KaSymbolLocation get() = withValidityAssertion { getSymbolKind() }
 
     override val isActual: Boolean get() = withValidityAssertion { firSymbol.isActual }
     override val isExpect: Boolean get() = withValidityAssertion { firSymbol.isExpect }
@@ -61,12 +61,12 @@ internal class KaFirTypeAliasSymbol(
     override fun createPointer(): KaSymbolPointer<KaTypeAliasSymbol> = withValidityAssertion {
         KaPsiBasedSymbolPointer.createForSymbolFromSource<KaTypeAliasSymbol>(this)?.let { return it }
 
-        when (val symbolKind = symbolKind) {
-            KaSymbolKind.LOCAL ->
+        when (val symbolKind = location) {
+            KaSymbolLocation.LOCAL ->
                 throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(classId?.asString() ?: name.asString())
 
-            KaSymbolKind.CLASS_MEMBER, KaSymbolKind.TOP_LEVEL -> KaFirClassLikeSymbolPointer(classId!!, KaTypeAliasSymbol::class)
-            else -> throw UnsupportedSymbolKind(this::class, symbolKind)
+            KaSymbolLocation.CLASS, KaSymbolLocation.TOP_LEVEL -> KaFirClassLikeSymbolPointer(classId!!, KaTypeAliasSymbol::class)
+            else -> throw UnsupportedSymbolLocation(this::class, symbolKind)
         }
     }
 

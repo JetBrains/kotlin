@@ -4,6 +4,7 @@ KaLocalVariableSymbol:
   contextReceivers: []
   isExtension: false
   isVal: true
+  location: LOCAL
   name: a
   origin: SOURCE
   receiverParameter: null
@@ -11,7 +12,6 @@ KaLocalVariableSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: LOCAL
   typeParameters: []
   getContainingFileSymbol: KaFileSymbol(entryInDestructuringDeclarationParameterInLambda.kt)
   getContainingJvmClassName: null

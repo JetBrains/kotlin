@@ -13,6 +13,7 @@ KaPropertyGetterSymbol:
   isExtension: false
   isInline: false
   isOverride: false
+  location: PROPERTY
   modality: FINAL
   origin: SOURCE
   receiverParameter: null
@@ -20,7 +21,6 @@ KaPropertyGetterSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: ACCESSOR
   typeParameters: []
   valueParameters: []
   visibility: Public

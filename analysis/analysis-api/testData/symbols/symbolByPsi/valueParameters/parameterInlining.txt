@@ -16,6 +16,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: foo
   origin: SOURCE
@@ -24,7 +25,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Unit
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
@@ -38,6 +38,7 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: inlineParameter
       origin: SOURCE
       receiverParameter: null
@@ -50,7 +51,6 @@ KaFunctionSymbol:
             type: kotlin/Int
         ]
         type: kotlin/Function0<kotlin/Int>
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(parameterInlining.kt)
       getContainingJvmClassName: ParameterInliningKt
@@ -67,6 +67,7 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: crossinlineParameter
       origin: SOURCE
       receiverParameter: null
@@ -79,7 +80,6 @@ KaFunctionSymbol:
             type: kotlin/Int
         ]
         type: kotlin/Function0<kotlin/Int>
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(parameterInlining.kt)
       getContainingJvmClassName: ParameterInliningKt
@@ -96,6 +96,7 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: true
       isVararg: false
+      location: LOCAL
       name: noinlineParameter
       origin: SOURCE
       receiverParameter: null
@@ -108,7 +109,6 @@ KaFunctionSymbol:
             type: kotlin/Int
         ]
         type: kotlin/Function0<kotlin/Int>
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(parameterInlining.kt)
       getContainingJvmClassName: ParameterInliningKt

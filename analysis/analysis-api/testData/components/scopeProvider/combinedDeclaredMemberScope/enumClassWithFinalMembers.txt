@@ -4,6 +4,7 @@ KaEnumEntrySymbol:
   contextReceivers: []
   enumEntryInitializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
   isExtension: false
+  location: CLASS
   name: A
   origin: SOURCE
   receiverParameter: null
@@ -11,7 +12,6 @@ KaEnumEntrySymbol:
     annotations: []
     typeArguments: []
     type: test/E
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   getContainingFileSymbol: KaFileSymbol(enumClassWithFinalMembers.kt)
   getContainingJvmClassName: test.E
@@ -24,6 +24,7 @@ KaEnumEntrySymbol:
   contextReceivers: []
   enumEntryInitializer: null
   isExtension: false
+  location: CLASS
   name: B
   origin: SOURCE
   receiverParameter: null
@@ -31,7 +32,6 @@ KaEnumEntrySymbol:
     annotations: []
     typeArguments: []
     type: test/E
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   getContainingFileSymbol: KaFileSymbol(enumClassWithFinalMembers.kt)
   getContainingJvmClassName: test.E
@@ -45,6 +45,7 @@ KaKotlinPropertySymbol:
     callableId: null
     contextReceivers: []
     isExtension: false
+    location: LOCAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(test/E.foo)
@@ -53,7 +54,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: LOCAL
     typeParameters: []
     getContainingFileSymbol: KaFileSymbol(enumClassWithFinalMembers.kt)
     getContainingJvmClassName: test.E
@@ -71,6 +71,7 @@ KaKotlinPropertySymbol:
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
@@ -78,7 +79,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
@@ -104,6 +104,7 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
+  location: CLASS
   modality: FINAL
   name: foo
   origin: SOURCE
@@ -113,7 +114,6 @@ KaKotlinPropertySymbol:
     typeArguments: []
     type: kotlin/Int
   setter: null
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
@@ -147,6 +147,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: FINAL
   name: bar
   origin: SOURCE
@@ -155,7 +156,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Unit
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -186,6 +186,7 @@ KaFunctionSymbol:
   isStatic: true
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: FINAL
   name: values
   origin: SOURCE_MEMBER_GENERATED
@@ -199,7 +200,6 @@ KaFunctionSymbol:
         type: test/E
     ]
     type: kotlin/Array<test/E>
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -226,6 +226,7 @@ KaFunctionSymbol:
   isStatic: true
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: FINAL
   name: valueOf
   origin: SOURCE_MEMBER_GENERATED
@@ -234,7 +235,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: test/E
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
@@ -248,6 +248,7 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: value
       origin: SOURCE_MEMBER_GENERATED
       receiverParameter: null
@@ -255,7 +256,6 @@ KaFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/String
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(enumClassWithFinalMembers.kt)
       getContainingJvmClassName: test.E
@@ -283,6 +283,7 @@ KaKotlinPropertySymbol:
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE_MEMBER_GENERATED
     receiverParameter: null
@@ -295,7 +296,6 @@ KaKotlinPropertySymbol:
           type: test/E
       ]
       type: kotlin/enums/EnumEntries<test/E>
-    symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
@@ -317,6 +317,7 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: true
   isVal: true
+  location: CLASS
   modality: FINAL
   name: entries
   origin: SOURCE_MEMBER_GENERATED
@@ -331,7 +332,6 @@ KaKotlinPropertySymbol:
     ]
     type: kotlin/enums/EnumEntries<test/E>
   setter: null
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(enumClassWithFinalMembers.kt)
@@ -353,13 +353,13 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: true
+  location: CLASS
   origin: SOURCE_MEMBER_GENERATED
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
     type: test/E
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Private

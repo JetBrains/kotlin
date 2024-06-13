@@ -1,6 +1,7 @@
 KaTypeParameterSymbol:
   annotations: []
   isReified: false
+  location: CLASS
   name: T
   origin: SOURCE
   typeParameters: []
@@ -23,6 +24,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: X
   origin: SOURCE
@@ -32,7 +34,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: [
     KaTypeParameterSymbol(T)
   ]
@@ -56,9 +57,9 @@ KaTypeAliasSymbol:
     type: X<kotlin/Int>
   isActual: false
   isExpect: false
+  location: TOP_LEVEL
   name: TopLevelAlias
   origin: SOURCE
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
@@ -79,9 +80,9 @@ KaTypeAliasSymbol:
     type: X<kotlin/String>
   isActual: false
   isExpect: false
+  location: CLASS
   name: NestedLevelAlias
   origin: SOURCE
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
@@ -102,9 +103,9 @@ KaTypeAliasSymbol:
     type: X<kotlin/String>
   isActual: false
   isExpect: false
+  location: LOCAL
   name: LocalTypeAlias
   origin: SOURCE
-  symbolKind: LOCAL
   typeParameters: []
   visibility: Local
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
@@ -125,9 +126,9 @@ KaTypeAliasSymbol:
     type: X<kotlin/String>
   isActual: false
   isExpect: false
+  location: CLASS
   name: NestedLevelAliasInLocalClass
   origin: SOURCE
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
@@ -148,9 +149,9 @@ KaTypeAliasSymbol:
     type: X<kotlin/String>
   isActual: false
   isExpect: false
+  location: LOCAL
   name: LocalTypeAlias
   origin: SOURCE
-  symbolKind: LOCAL
   typeParameters: []
   visibility: Local
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
@@ -171,9 +172,9 @@ KaTypeAliasSymbol:
     type: X<kotlin/String>
   isActual: false
   isExpect: false
+  location: CLASS
   name: NestedLevelAliasInLocalClass
   origin: SOURCE
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
@@ -198,6 +199,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: FINAL
   name: check
   origin: SOURCE
@@ -206,7 +208,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Unit
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -232,6 +233,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: LOCAL
   modality: FINAL
   name: LocalClass
   origin: SOURCE
@@ -241,7 +243,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: LOCAL
   typeParameters: []
   visibility: Local
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
@@ -267,6 +268,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: FINAL
   name: check
   origin: SOURCE
@@ -275,7 +277,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Unit
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -301,6 +302,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: LOCAL
   modality: FINAL
   name: LocalClass
   origin: SOURCE
@@ -310,7 +312,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: LOCAL
   typeParameters: []
   visibility: Local
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
@@ -336,6 +337,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: FINAL
   name: check
   origin: SOURCE
@@ -344,7 +346,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Unit
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -370,6 +371,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: A
   origin: SOURCE
@@ -379,7 +381,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)

@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRend
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtNamedDeclarationUtil
@@ -99,7 +98,7 @@ object TestReferenceResolveResultRenderer {
             FqName.ROOT -> return "ROOT"
             else -> return nonLocalFqName.asString()
         }
-        val container = (symbol as? KaSymbolWithKind)?.getContainingSymbol() ?: return null
+        val container = symbol.getContainingSymbol() ?: return null
         val parents = generateSequence(container) { it.getContainingSymbol() }.toList().asReversed()
         return "<local>: " + parents.joinToString(separator = ".") { (it as? KaNamedSymbol)?.name?.asString() ?: "<no name>" }
     }

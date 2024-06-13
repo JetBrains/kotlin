@@ -16,6 +16,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: foo
   origin: SOURCE
@@ -31,7 +32,6 @@ KaFunctionSymbol:
     ]
     typeArguments: []
     type: @R|Anno3|() @R|Anno2|() @R|Anno1|()  @R|Anno3|()  SecondTypeAlias
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Public

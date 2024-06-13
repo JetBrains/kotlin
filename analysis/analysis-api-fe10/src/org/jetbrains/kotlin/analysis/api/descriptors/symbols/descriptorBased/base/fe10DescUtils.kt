@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.analysis.api.descriptors.types.*
 import org.jetbrains.kotlin.analysis.api.impl.base.KaContextReceiverImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaAnnotationImpl
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
 import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeArgumentWithVariance
@@ -74,15 +73,15 @@ import org.jetbrains.kotlin.types.error.ErrorType
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
 
-internal val MemberDescriptor.ktSymbolKind: KaSymbolKind
+internal val DeclarationDescriptor.kSymbolLocation: KaSymbolLocation
     get() {
         return when (this) {
-            is PropertyAccessorDescriptor -> KaSymbolKind.ACCESSOR
-            is SamConstructorDescriptor -> KaSymbolKind.SAM_CONSTRUCTOR
+            is PropertyAccessorDescriptor -> KaSymbolLocation.PROPERTY
+            is SamConstructorDescriptor -> KaSymbolLocation.TOP_LEVEL
             else -> when (containingDeclaration) {
-                is PackageFragmentDescriptor -> KaSymbolKind.TOP_LEVEL
-                is ClassDescriptor -> KaSymbolKind.CLASS_MEMBER
-                else -> KaSymbolKind.LOCAL
+                is PackageFragmentDescriptor -> KaSymbolLocation.TOP_LEVEL
+                is ClassDescriptor -> KaSymbolLocation.CLASS
+                else -> KaSymbolLocation.LOCAL
             }
         }
     }

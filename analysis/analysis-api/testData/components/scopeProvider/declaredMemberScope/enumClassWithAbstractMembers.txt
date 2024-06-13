@@ -5,6 +5,7 @@ KaKotlinPropertySymbol:
     callableId: null
     contextReceivers: []
     isExtension: false
+    location: LOCAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(test/E.foo)
@@ -13,7 +14,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int?
-    symbolKind: LOCAL
     typeParameters: []
     getContainingFileSymbol: KaFileSymbol(enumClassWithAbstractMembers.kt)
     getContainingJvmClassName: test.E
@@ -31,6 +31,7 @@ KaKotlinPropertySymbol:
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: ABSTRACT
     origin: SOURCE
     receiverParameter: null
@@ -38,7 +39,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int?
-    symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
@@ -64,6 +64,7 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
+  location: CLASS
   modality: ABSTRACT
   name: foo
   origin: SOURCE
@@ -73,7 +74,6 @@ KaKotlinPropertySymbol:
     typeArguments: []
     type: kotlin/Int?
   setter: null
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
@@ -107,6 +107,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: ABSTRACT
   name: bar
   origin: SOURCE
@@ -115,7 +116,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Unit
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -138,13 +138,13 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: true
+  location: CLASS
   origin: SOURCE_MEMBER_GENERATED
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
     type: test/E
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Private

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithKind
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -43,7 +41,7 @@ internal class KaFe10SymbolContainingDeclarationProvider(
         get() = analysisSession.token
 
     override fun getContainingDeclaration(symbol: KaSymbol): KaDeclarationSymbol? {
-        if (symbol is KaSymbolWithKind && symbol.symbolKind == KaSymbolKind.TOP_LEVEL) {
+        if (symbol.location == KaSymbolLocation.TOP_LEVEL) {
             return null
         }
 
@@ -94,7 +92,7 @@ internal class KaFe10SymbolContainingDeclarationProvider(
         val platform = getContainingModule(symbol).platform
         if (!platform.has<JvmPlatform>()) return null
 
-        val containingSymbolOrSelf = symbol.containingSymbolOrSelf as KaSymbolWithKind
+        val containingSymbolOrSelf = symbol.containingSymbolOrSelf
         return when (val descriptor = containingSymbolOrSelf.getDescriptor()) {
             is DescriptorWithContainerSource -> {
                 when (val containerSource = descriptor.containerSource) {
@@ -104,7 +102,7 @@ internal class KaFe10SymbolContainingDeclarationProvider(
                 }?.fqNameForClassNameWithoutDollars?.asString()
             }
             else -> {
-                return if (containingSymbolOrSelf.symbolKind == KaSymbolKind.TOP_LEVEL) {
+                return if (containingSymbolOrSelf.location == KaSymbolLocation.TOP_LEVEL) {
                     descriptor?.let(DescriptorToSourceUtils::getContainingFile)
                         ?.takeUnless { it.isScript() }
                         ?.javaFileFacadeFqName?.asString()

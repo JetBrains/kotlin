@@ -4,6 +4,7 @@ KaEnumEntrySymbol:
   contextReceivers: []
   enumEntryInitializer: KaEnumEntrySymbol(kotlin/LazyThreadSafetyMode.SYNCHRONIZED)
   isExtension: false
+  location: CLASS
   name: SYNCHRONIZED
   origin: LIBRARY
   receiverParameter: null
@@ -11,7 +12,6 @@ KaEnumEntrySymbol:
     annotations: []
     typeArguments: []
     type: kotlin/LazyThreadSafetyMode
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   getContainingFileSymbol: null
   getContainingJvmClassName: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescEnumEntrySymbol

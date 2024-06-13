@@ -28,6 +28,7 @@ KaFunctionSymbol:
                   isImplicitLambdaParameter: false
                   isNoinline: false
                   isVararg: false
+                  location: LOCAL
                   name: foo
                   origin: SOURCE
                   receiverParameter: null
@@ -35,7 +36,6 @@ KaFunctionSymbol:
                     annotations: []
                     typeArguments: []
                     type: kotlin/Any?
-                  symbolKind: LOCAL
                   typeParameters: []
                   getContainingFileSymbol: KaFileSymbol(returnsTrueContract.kt)
                   getContainingJvmClassName: ReturnsTrueContractKt
@@ -56,6 +56,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: returnsTrueContract
   origin: SOURCE
@@ -64,7 +65,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Boolean
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
@@ -78,6 +78,7 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: foo
       origin: SOURCE
       receiverParameter: null
@@ -85,7 +86,6 @@ KaFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Any?
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(returnsTrueContract.kt)
       getContainingJvmClassName: ReturnsTrueContractKt

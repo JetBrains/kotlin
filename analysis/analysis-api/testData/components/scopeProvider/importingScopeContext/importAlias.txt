@@ -30,6 +30,7 @@ scopes:
         isFun: false
         isInline: false
         isInner: false
+        location: TOP_LEVEL
         modality: FINAL
         name: A
         origin: SOURCE
@@ -39,7 +40,6 @@ scopes:
             typeArguments: []
             type: kotlin/Any
         ]
-        symbolKind: TOP_LEVEL
         typeParameters: []
         visibility: Public
     callables: 0

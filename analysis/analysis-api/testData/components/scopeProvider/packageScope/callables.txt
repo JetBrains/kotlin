@@ -5,6 +5,7 @@ KaKotlinPropertySymbol:
     callableId: null
     contextReceivers: []
     isExtension: false
+    location: LOCAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(test/foo)
@@ -13,7 +14,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: LOCAL
     typeParameters: []
     getContainingFileSymbol: KaFileSymbol(Foo.kt)
     getContainingJvmClassName: test.FooKt
@@ -31,6 +31,7 @@ KaKotlinPropertySymbol:
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
@@ -38,7 +39,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
@@ -60,6 +60,7 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
+  location: TOP_LEVEL
   modality: FINAL
   name: foo
   origin: SOURCE
@@ -69,7 +70,6 @@ KaKotlinPropertySymbol:
     typeArguments: []
     type: kotlin/Int
   setter: null
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(Foo.kt)
@@ -88,6 +88,7 @@ KaKotlinPropertySymbol:
     callableId: null
     contextReceivers: []
     isExtension: false
+    location: LOCAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(test/internalFoo)
@@ -96,7 +97,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: LOCAL
     typeParameters: []
     getContainingFileSymbol: KaFileSymbol(Foo.kt)
     getContainingJvmClassName: test.FooKt
@@ -114,6 +114,7 @@ KaKotlinPropertySymbol:
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
@@ -121,7 +122,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Internal
@@ -143,6 +143,7 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
+  location: TOP_LEVEL
   modality: FINAL
   name: internalFoo
   origin: SOURCE
@@ -152,7 +153,6 @@ KaKotlinPropertySymbol:
     typeArguments: []
     type: kotlin/Int
   setter: null
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Internal
   getContainingFileSymbol: KaFileSymbol(Foo.kt)
@@ -171,6 +171,7 @@ KaKotlinPropertySymbol:
     callableId: null
     contextReceivers: []
     isExtension: false
+    location: LOCAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(test/privateFoo)
@@ -179,7 +180,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: LOCAL
     typeParameters: []
     getContainingFileSymbol: KaFileSymbol(Foo.kt)
     getContainingJvmClassName: test.FooKt
@@ -197,6 +197,7 @@ KaKotlinPropertySymbol:
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
@@ -204,7 +205,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Private
@@ -226,6 +226,7 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
+  location: TOP_LEVEL
   modality: FINAL
   name: privateFoo
   origin: SOURCE
@@ -235,7 +236,6 @@ KaKotlinPropertySymbol:
     typeArguments: []
     type: kotlin/Int
   setter: null
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Private
   getContainingFileSymbol: KaFileSymbol(Foo.kt)
@@ -254,6 +254,7 @@ KaKotlinPropertySymbol:
     callableId: null
     contextReceivers: []
     isExtension: false
+    location: LOCAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(test/bar)
@@ -262,7 +263,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: LOCAL
     typeParameters: []
     getContainingFileSymbol: KaFileSymbol(Bar.kt)
     getContainingJvmClassName: test.BarKt
@@ -280,6 +280,7 @@ KaKotlinPropertySymbol:
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
@@ -287,7 +288,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
@@ -309,6 +309,7 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
+  location: TOP_LEVEL
   modality: FINAL
   name: bar
   origin: SOURCE
@@ -318,7 +319,6 @@ KaKotlinPropertySymbol:
     typeArguments: []
     type: kotlin/Int
   setter: null
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(Bar.kt)
@@ -337,6 +337,7 @@ KaKotlinPropertySymbol:
     callableId: null
     contextReceivers: []
     isExtension: false
+    location: LOCAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(test/internalBar)
@@ -345,7 +346,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: LOCAL
     typeParameters: []
     getContainingFileSymbol: KaFileSymbol(Bar.kt)
     getContainingJvmClassName: test.BarKt
@@ -363,6 +363,7 @@ KaKotlinPropertySymbol:
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
@@ -370,7 +371,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Internal
@@ -392,6 +392,7 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
+  location: TOP_LEVEL
   modality: FINAL
   name: internalBar
   origin: SOURCE
@@ -401,7 +402,6 @@ KaKotlinPropertySymbol:
     typeArguments: []
     type: kotlin/Int
   setter: null
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Internal
   getContainingFileSymbol: KaFileSymbol(Bar.kt)
@@ -420,6 +420,7 @@ KaKotlinPropertySymbol:
     callableId: null
     contextReceivers: []
     isExtension: false
+    location: LOCAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(test/privateBar)
@@ -428,7 +429,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: LOCAL
     typeParameters: []
     getContainingFileSymbol: KaFileSymbol(Bar.kt)
     getContainingJvmClassName: test.BarKt
@@ -446,6 +446,7 @@ KaKotlinPropertySymbol:
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
@@ -453,7 +454,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Private
@@ -475,6 +475,7 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
+  location: TOP_LEVEL
   modality: FINAL
   name: privateBar
   origin: SOURCE
@@ -484,7 +485,6 @@ KaKotlinPropertySymbol:
     typeArguments: []
     type: kotlin/Int
   setter: null
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Private
   getContainingFileSymbol: KaFileSymbol(Bar.kt)
@@ -514,6 +514,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: doFoo
   origin: SOURCE
@@ -522,7 +523,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Unit
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -549,6 +549,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: internalDoFoo
   origin: SOURCE
@@ -557,7 +558,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Unit
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Internal
@@ -584,6 +584,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: privateDoFoo
   origin: SOURCE
@@ -592,7 +593,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Unit
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Private
@@ -619,6 +619,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: doBar
   origin: SOURCE
@@ -627,7 +628,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Unit
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -654,6 +654,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: internalDoBar
   origin: SOURCE
@@ -662,7 +663,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Unit
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Internal
@@ -689,6 +689,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: privateDoBar
   origin: SOURCE
@@ -697,7 +698,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Unit
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Private

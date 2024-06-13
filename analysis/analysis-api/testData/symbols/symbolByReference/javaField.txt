@@ -5,6 +5,7 @@ KaJavaFieldSymbol:
   isExtension: false
   isStatic: false
   isVal: false
+  location: CLASS
   modality: OPEN
   name: field
   origin: JAVA_SOURCE
@@ -13,7 +14,6 @@ KaJavaFieldSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:

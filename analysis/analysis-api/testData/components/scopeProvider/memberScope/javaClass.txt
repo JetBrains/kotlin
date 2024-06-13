@@ -16,6 +16,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: hello
   origin: JAVA_SOURCE
@@ -24,7 +25,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Unit
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -55,6 +55,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: method
   origin: JAVA_SOURCE
@@ -63,7 +64,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Unit
-  symbolKind: CLASS_MEMBER
   typeParameters: [
     KaTypeParameterSymbol(T)
   ]
@@ -79,13 +79,13 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: true
+      location: LOCAL
       name: classes
       origin: JAVA_SOURCE
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: ft<java/lang/Class<out T!>, java/lang/Class<out T!>?>
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: JavaClass
@@ -123,6 +123,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: getActualRandomNumber
   origin: JAVA_SOURCE
@@ -131,7 +132,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -162,6 +162,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: equals
   origin: LIBRARY
@@ -170,7 +171,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Boolean
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
@@ -184,6 +184,7 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: other
       origin: LIBRARY
       receiverParameter: null
@@ -191,7 +192,6 @@ KaFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Any?
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Any
@@ -226,6 +226,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: hashCode
   origin: LIBRARY
@@ -234,7 +235,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -265,6 +265,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: toString
   origin: LIBRARY
@@ -273,7 +274,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/String
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -299,6 +299,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: CLASS
   modality: OPEN
   name: NestedClass
   origin: JAVA_SOURCE
@@ -308,7 +309,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: null
@@ -329,6 +329,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: true
+  location: CLASS
   modality: OPEN
   name: InnerClass
   origin: JAVA_SOURCE
@@ -338,7 +339,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: null
@@ -359,6 +359,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: CLASS
   modality: OPEN
   name: NestedSuperClass
   origin: JAVA_SOURCE
@@ -368,7 +369,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: null
@@ -389,6 +389,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: true
+  location: CLASS
   modality: OPEN
   name: InnerSuperClass
   origin: JAVA_SOURCE
@@ -398,7 +399,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: null
@@ -416,13 +416,13 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: true
+  location: CLASS
   origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
     type: JavaClass
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public

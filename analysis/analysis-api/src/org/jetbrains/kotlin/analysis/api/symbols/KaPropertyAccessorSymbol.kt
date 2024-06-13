@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,7 +14,7 @@ public sealed class KaPropertyAccessorSymbol : KaFunctionLikeSymbol(),
     KaPossibleMemberSymbol,
     KaSymbolWithModality,
     KaSymbolWithVisibility,
-    KaSymbolWithKind {
+    @Suppress("DEPRECATION") KaSymbolWithKind {
 
     final override val isExtension: Boolean get() = withValidityAssertion { false }
 
@@ -28,7 +28,7 @@ public sealed class KaPropertyAccessorSymbol : KaFunctionLikeSymbol(),
     public abstract val isOverride: Boolean
     public abstract val hasBody: Boolean
 
-    final override val symbolKind: KaSymbolKind get() = withValidityAssertion { KaSymbolKind.ACCESSOR }
+    final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.PROPERTY }
 
     abstract override fun createPointer(): KaSymbolPointer<KaPropertyAccessorSymbol>
 }

@@ -11,6 +11,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: ABSTRACT
   name: KClass
   origin: LIBRARY
@@ -28,7 +29,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/reflect/KClassifier
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: [
     KaTypeParameterSymbol(T)
   ]

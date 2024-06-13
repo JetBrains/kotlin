@@ -16,6 +16,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: ABSTRACT
   name: get
   origin: LIBRARY
@@ -23,7 +24,6 @@ KaFunctionSymbol:
   returnType: KaTypeParameterType:
     annotations: []
     type: E
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
@@ -37,6 +37,7 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: index
       origin: SOURCE
       receiverParameter: null
@@ -44,7 +45,6 @@ KaFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor

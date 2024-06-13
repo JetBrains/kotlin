@@ -16,6 +16,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: f
   origin: SOURCE
@@ -24,7 +25,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Unit
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
@@ -38,6 +38,7 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: p
       origin: SOURCE
       receiverParameter: null
@@ -56,7 +57,6 @@ KaFunctionSymbol:
             type: ERROR_TYPE
         ]
         type: kotlin/Function2<kotlin/Int, ERROR CLASS: Symbol not found for p2, ERROR CLASS: Incomplete code>
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(parameterNotFunctionalType.kt)
       getContainingJvmClassName: ParameterNotFunctionalTypeKt
@@ -73,13 +73,13 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: <no name provided>
       origin: SOURCE
       receiverParameter: null
       returnType: KaErrorType:
         annotations: []
         type: ERROR_TYPE
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(parameterNotFunctionalType.kt)
       getContainingJvmClassName: ParameterNotFunctionalTypeKt

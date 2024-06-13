@@ -1,6 +1,6 @@
 KtNameReferenceExpression(88,89): 'T'
   KtSimpleNameReference:
-    T
+    (in <local>: test) T
   
   SyntheticPropertyAccessorReference:
     Nothing (Unresolved reference)

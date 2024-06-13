@@ -4,6 +4,7 @@ KaTypeParameterSymbol:
       psi: KtAnnotationEntry
   ]
   isReified: false
+  location: LOCAL
   name: T
   origin: SOURCE
   typeParameters: []

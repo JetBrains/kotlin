@@ -8,13 +8,13 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: true
+  location: CLASS
   origin: SOURCE_MEMBER_GENERATED
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
     type: test/<anonymous>
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Private

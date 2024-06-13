@@ -13,6 +13,7 @@ KaKotlinPropertySymbol:
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE_MEMBER_GENERATED
     receiverParameter: null
@@ -25,7 +26,6 @@ KaKotlinPropertySymbol:
           type: MyKotlinEnum
       ]
       type: kotlin/enums/EnumEntries<MyKotlinEnum>
-    symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
@@ -47,6 +47,7 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: true
   isVal: true
+  location: CLASS
   modality: FINAL
   name: entries
   origin: SOURCE_MEMBER_GENERATED
@@ -61,7 +62,6 @@ KaKotlinPropertySymbol:
     ]
     type: kotlin/enums/EnumEntries<MyKotlinEnum>
   setter: null
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(enumEntries.kt)

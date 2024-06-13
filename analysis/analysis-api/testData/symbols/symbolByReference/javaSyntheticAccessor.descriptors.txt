@@ -13,10 +13,12 @@ KaSyntheticJavaPropertySymbol:
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE_MEMBER_GENERATED
     receiverParameter: KaReceiverParameterSymbol:
       annotations: []
+      location: LOCAL
       origin: SOURCE
       owningCallableSymbol: KaSyntheticJavaPropertySymbol(/JavaClass.foo)
       type: KaUsualClassType:
@@ -31,7 +33,6 @@ KaSyntheticJavaPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
@@ -53,11 +54,13 @@ KaSyntheticJavaPropertySymbol:
   isVal: true
   javaGetterSymbol: KaFunctionSymbol(/JavaClass.getFoo)
   javaSetterSymbol: null
+  location: CLASS
   modality: FINAL
   name: foo
   origin: JAVA_SYNTHETIC_PROPERTY
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
+    location: LOCAL
     origin: SOURCE
     owningCallableSymbol: KaSyntheticJavaPropertySymbol(/JavaClass.foo)
     type: KaUsualClassType:
@@ -73,7 +76,6 @@ KaSyntheticJavaPropertySymbol:
     typeArguments: []
     type: kotlin/Int
   setter: null
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: null

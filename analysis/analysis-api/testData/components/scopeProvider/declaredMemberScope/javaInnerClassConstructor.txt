@@ -8,13 +8,13 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
+  location: CLASS
   origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
     type: JavaClass.InnerClass
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
@@ -28,13 +28,13 @@ KaConstructorSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: other
       origin: JAVA_SOURCE
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: JavaClass!
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: JavaClass.InnerClass

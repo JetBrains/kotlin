@@ -13,10 +13,12 @@ KaSyntheticJavaPropertySymbol:
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE_MEMBER_GENERATED
     receiverParameter: KaReceiverParameterSymbol:
       annotations: []
+      location: LOCAL
       origin: SOURCE
       owningCallableSymbol: KaSyntheticJavaPropertySymbol(/Derived.something)
       type: KaUsualClassType:
@@ -31,7 +33,6 @@ KaSyntheticJavaPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/String
-    symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
@@ -53,11 +54,13 @@ KaSyntheticJavaPropertySymbol:
   isVal: false
   javaGetterSymbol: KaFunctionSymbol(/Derived.getSomething)
   javaSetterSymbol: KaFunctionSymbol(/Derived.setSomething)
+  location: CLASS
   modality: FINAL
   name: something
   origin: JAVA_SYNTHETIC_PROPERTY
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
+    location: LOCAL
     origin: SOURCE
     owningCallableSymbol: KaSyntheticJavaPropertySymbol(/Derived.something)
     type: KaUsualClassType:
@@ -82,6 +85,7 @@ KaSyntheticJavaPropertySymbol:
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE_MEMBER_GENERATED
     parameter: KaValueParameterSymbol:
@@ -95,6 +99,7 @@ KaSyntheticJavaPropertySymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: value
       origin: SOURCE
       receiverParameter: null
@@ -102,7 +107,6 @@ KaSyntheticJavaPropertySymbol:
         annotations: []
         typeArguments: []
         type: kotlin/String
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescValueParameterSymbol
@@ -112,6 +116,7 @@ KaSyntheticJavaPropertySymbol:
       deprecationStatus: null
     receiverParameter: KaReceiverParameterSymbol:
       annotations: []
+      location: LOCAL
       origin: SOURCE
       owningCallableSymbol: KaSyntheticJavaPropertySymbol(/Derived.something)
       type: KaUsualClassType:
@@ -126,7 +131,6 @@ KaSyntheticJavaPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Unit
-    symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
@@ -140,6 +144,7 @@ KaSyntheticJavaPropertySymbol:
         isImplicitLambdaParameter: false
         isNoinline: false
         isVararg: false
+        location: LOCAL
         name: value
         origin: SOURCE
         receiverParameter: null
@@ -147,7 +152,6 @@ KaSyntheticJavaPropertySymbol:
           annotations: []
           typeArguments: []
           type: kotlin/String
-        symbolKind: LOCAL
         typeParameters: []
         getContainingFileSymbol: null
         getContainingJvmClassName: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescValueParameterSymbol
@@ -163,7 +167,6 @@ KaSyntheticJavaPropertySymbol:
     getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescPropertySetterSymbol
 
     deprecationStatus: null
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: null

@@ -16,6 +16,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: add
   origin: JAVA_SOURCE
@@ -24,7 +25,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
@@ -38,13 +38,13 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: s
       origin: JAVA_SOURCE
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: JavaClass
@@ -79,6 +79,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: removeAt
   origin: JAVA_SOURCE
@@ -86,7 +87,6 @@ KaFunctionSymbol:
   returnType: KaFlexibleType:
     annotations: []
     type: kotlin/String!
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
@@ -100,6 +100,7 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: index
       origin: JAVA_SOURCE
       receiverParameter: null
@@ -107,7 +108,6 @@ KaFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: JavaClass
@@ -134,13 +134,13 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
+  location: CLASS
   origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
     type: JavaClass
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: PackageVisibility

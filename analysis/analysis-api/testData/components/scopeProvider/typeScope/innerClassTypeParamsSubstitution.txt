@@ -79,6 +79,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: FINAL
   name: foo
   origin: SOURCE
@@ -102,7 +103,6 @@ KaFunctionSymbol:
         type: kotlin/collections/Map<Y, O>
     ]
     type: kotlin/collections/Map<X, kotlin/collections/Map<Y, O>>
-  symbolKind: CLASS_MEMBER
   typeParameters: [
     KaTypeParameterSymbol(Y)
   ]
@@ -118,13 +118,13 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: x
       origin: SOURCE
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
         type: X
-      symbolKind: LOCAL
       typeParameters: []
     KaValueParameterSymbol:
       annotations: []
@@ -137,13 +137,13 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: y
       origin: SOURCE
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
         type: Y
-      symbolKind: LOCAL
       typeParameters: []
   ]
   visibility: Public
@@ -154,6 +154,7 @@ KaKotlinPropertySymbol:
     callableId: null
     contextReceivers: []
     isExtension: false
+    location: LOCAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/Outer.A.map)
@@ -169,7 +170,6 @@ KaKotlinPropertySymbol:
           type: O
       ]
       type: kotlin/collections/Map<X, O>
-    symbolKind: LOCAL
     typeParameters: []
   callableId: /Outer.A.map
   contextReceivers: []
@@ -183,6 +183,7 @@ KaKotlinPropertySymbol:
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
@@ -197,7 +198,6 @@ KaKotlinPropertySymbol:
           type: O
       ]
       type: kotlin/collections/Map<X, O>
-    symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
@@ -215,6 +215,7 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
+  location: CLASS
   modality: FINAL
   name: map
   origin: SOURCE
@@ -231,7 +232,6 @@ KaKotlinPropertySymbol:
     ]
     type: kotlin/collections/Map<X, O>
   setter: null
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
 KaFunctionSymbol:
@@ -252,6 +252,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: ABSTRACT
   name: fromSuper
   origin: SUBSTITUTION_OVERRIDE
@@ -259,7 +260,6 @@ KaFunctionSymbol:
   returnType: KaTypeParameterType:
     annotations: []
     type: O
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -281,6 +281,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: equals
   origin: LIBRARY
@@ -289,7 +290,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Boolean
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
@@ -303,6 +303,7 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: other
       origin: LIBRARY
       receiverParameter: null
@@ -310,7 +311,6 @@ KaFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Any?
-      symbolKind: LOCAL
       typeParameters: []
   ]
   visibility: Public
@@ -332,6 +332,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: hashCode
   origin: LIBRARY
@@ -340,7 +341,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -362,6 +362,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: toString
   origin: LIBRARY
@@ -370,7 +371,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/String
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public

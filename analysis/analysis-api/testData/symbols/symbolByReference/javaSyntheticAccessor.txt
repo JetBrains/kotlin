@@ -13,6 +13,7 @@ KaSyntheticJavaPropertySymbol:
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: OPEN
     origin: JAVA_SYNTHETIC_PROPERTY
     receiverParameter: null
@@ -20,7 +21,6 @@ KaSyntheticJavaPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
@@ -44,6 +44,7 @@ KaSyntheticJavaPropertySymbol:
   isVal: true
   javaGetterSymbol: KaFunctionSymbol(/JavaClass.getFoo)
   javaSetterSymbol: null
+  location: CLASS
   modality: OPEN
   name: foo
   origin: JAVA_SYNTHETIC_PROPERTY
@@ -53,7 +54,6 @@ KaSyntheticJavaPropertySymbol:
     typeArguments: []
     type: kotlin/Int
   setter: null
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:

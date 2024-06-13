@@ -4,6 +4,7 @@ KaAnonymousObjectSymbol:
   classKind: ANONYMOUS_OBJECT
   isActual: false
   isExpect: false
+  location: LOCAL
   name: null
   origin: SOURCE
   superTypes: [
@@ -12,7 +13,6 @@ KaAnonymousObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: LOCAL
   typeParameters: []
   getContainingFileSymbol: KaFileSymbol(objectWithTypeArgsAsExpression.kt)
   getContainingModule: KtSourceModule "Sources of main"

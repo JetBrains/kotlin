@@ -14,6 +14,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: MyClass
   origin: SOURCE
@@ -27,7 +28,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: foo/MyInterface
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(myInterfaceSupertype.kt)

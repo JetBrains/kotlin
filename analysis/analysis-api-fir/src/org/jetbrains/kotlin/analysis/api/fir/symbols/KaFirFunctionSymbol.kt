@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,12 +21,12 @@ import org.jetbrains.kotlin.analysis.api.impl.base.util.kotlinFunctionInvokeCall
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.UnsupportedSymbolKind
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.UnsupportedSymbolLocation
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -84,13 +84,13 @@ internal class KaFirFunctionSymbol(
 
     override val callableId: CallableId? get() = withValidityAssertion { firSymbol.getCallableId() }
 
-    override val symbolKind: KaSymbolKind
+    override val location: KaSymbolLocation
         get() = withValidityAssertion {
             when {
-                firSymbol.origin == FirDeclarationOrigin.DynamicScope -> KaSymbolKind.CLASS_MEMBER
-                firSymbol.isLocal -> KaSymbolKind.LOCAL
-                firSymbol.containingClassLookupTag()?.classId == null -> KaSymbolKind.TOP_LEVEL
-                else -> KaSymbolKind.CLASS_MEMBER
+                firSymbol.origin == FirDeclarationOrigin.DynamicScope -> KaSymbolLocation.CLASS
+                firSymbol.isLocal -> KaSymbolLocation.LOCAL
+                firSymbol.containingClassLookupTag()?.classId == null -> KaSymbolLocation.TOP_LEVEL
+                else -> KaSymbolLocation.CLASS
             }
         }
 
@@ -100,24 +100,24 @@ internal class KaFirFunctionSymbol(
     override fun createPointer(): KaSymbolPointer<KaFunctionSymbol> = withValidityAssertion {
         KaPsiBasedSymbolPointer.createForSymbolFromSource<KaFunctionSymbol>(this)?.let { return it }
 
-        return when (val kind = symbolKind) {
-            KaSymbolKind.TOP_LEVEL -> KaFirTopLevelFunctionSymbolPointer(
+        return when (val kind = location) {
+            KaSymbolLocation.TOP_LEVEL -> KaFirTopLevelFunctionSymbolPointer(
                 firSymbol.callableId,
                 FirCallableSignature.createSignature(firSymbol),
             )
 
-            KaSymbolKind.CLASS_MEMBER -> KaFirMemberFunctionSymbolPointer(
+            KaSymbolLocation.CLASS -> KaFirMemberFunctionSymbolPointer(
                 analysisSession.createOwnerPointer(this),
                 firSymbol.name,
                 FirCallableSignature.createSignature(firSymbol),
                 isStatic = firSymbol.isStatic,
             )
 
-            KaSymbolKind.LOCAL -> throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(
+            KaSymbolLocation.LOCAL -> throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(
                 callableId?.toString() ?: name.asString()
             )
 
-            else -> throw UnsupportedSymbolKind(this::class, kind)
+            else -> throw UnsupportedSymbolLocation(this::class, kind)
         }
     }
 

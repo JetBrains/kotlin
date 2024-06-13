@@ -29,6 +29,7 @@ scopes:
         isStatic: false
         isSuspend: false
         isTailRec: false
+        location: CLASS
         modality: OPEN
         name: equals
         origin: LIBRARY
@@ -37,7 +38,6 @@ scopes:
           annotations: []
           typeArguments: []
           type: kotlin/Boolean
-        symbolKind: CLASS_MEMBER
         typeParameters: []
         valueParameters: [
           KaValueParameterSymbol:
@@ -51,6 +51,7 @@ scopes:
             isImplicitLambdaParameter: false
             isNoinline: false
             isVararg: false
+            location: LOCAL
             name: other
             origin: LIBRARY
             receiverParameter: null
@@ -58,7 +59,6 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/Any?
-            symbolKind: LOCAL
             typeParameters: []
         ]
         visibility: Public
@@ -80,6 +80,7 @@ scopes:
         isStatic: false
         isSuspend: false
         isTailRec: false
+        location: CLASS
         modality: OPEN
         name: hashCode
         origin: LIBRARY
@@ -88,7 +89,6 @@ scopes:
           annotations: []
           typeArguments: []
           type: kotlin/Int
-        symbolKind: CLASS_MEMBER
         typeParameters: []
         valueParameters: []
         visibility: Public
@@ -110,6 +110,7 @@ scopes:
         isStatic: false
         isSuspend: false
         isTailRec: false
+        location: CLASS
         modality: OPEN
         name: toString
         origin: LIBRARY
@@ -118,7 +119,6 @@ scopes:
           annotations: []
           typeArguments: []
           type: kotlin/String
-        symbolKind: CLASS_MEMBER
         typeParameters: []
         valueParameters: []
         visibility: Public
@@ -133,13 +133,13 @@ scopes:
         isExpect: false
         isExtension: false
         isPrimary: true
+        location: CLASS
         origin: SOURCE_MEMBER_GENERATED
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
           typeArguments: []
           type: test/Receiver
-        symbolKind: CLASS_MEMBER
         typeParameters: []
         valueParameters: []
         visibility: Public
@@ -159,6 +159,7 @@ scopes:
         isImplicitLambdaParameter: false
         isNoinline: false
         isVararg: false
+        location: LOCAL
         name: param1
         origin: SOURCE
         receiverParameter: null
@@ -166,7 +167,6 @@ scopes:
           annotations: []
           typeArguments: []
           type: test/Param1
-        symbolKind: LOCAL
         typeParameters: []
       KaValueParameterSymbol:
         annotations: []
@@ -179,6 +179,7 @@ scopes:
         isImplicitLambdaParameter: false
         isNoinline: false
         isVararg: false
+        location: LOCAL
         name: param2
         origin: SOURCE
         receiverParameter: null
@@ -186,7 +187,6 @@ scopes:
           annotations: []
           typeArguments: []
           type: test/Param2
-        symbolKind: LOCAL
         typeParameters: []
     constructors: 0
 
@@ -196,6 +196,7 @@ scopes:
       KaTypeParameterSymbol:
         annotations: []
         isReified: false
+        location: LOCAL
         name: TypeParam
         origin: SOURCE
         typeParameters: []
@@ -226,6 +227,7 @@ scopes:
         isFun: false
         isInline: false
         isInner: false
+        location: TOP_LEVEL
         modality: FINAL
         name: Receiver
         origin: SOURCE
@@ -235,7 +237,6 @@ scopes:
             typeArguments: []
             type: kotlin/Any
         ]
-        symbolKind: TOP_LEVEL
         typeParameters: []
         visibility: Public
       KaNamedClassOrObjectSymbol:
@@ -251,6 +252,7 @@ scopes:
         isFun: false
         isInline: false
         isInner: false
+        location: TOP_LEVEL
         modality: FINAL
         name: Param1
         origin: SOURCE
@@ -260,7 +262,6 @@ scopes:
             typeArguments: []
             type: kotlin/Any
         ]
-        symbolKind: TOP_LEVEL
         typeParameters: []
         visibility: Public
       KaNamedClassOrObjectSymbol:
@@ -276,6 +277,7 @@ scopes:
         isFun: false
         isInline: false
         isInner: false
+        location: TOP_LEVEL
         modality: FINAL
         name: Param2
         origin: SOURCE
@@ -285,7 +287,6 @@ scopes:
             typeArguments: []
             type: kotlin/Any
         ]
-        symbolKind: TOP_LEVEL
         typeParameters: []
         visibility: Public
     callables: 1
@@ -307,11 +308,13 @@ scopes:
         isStatic: false
         isSuspend: false
         isTailRec: false
+        location: TOP_LEVEL
         modality: FINAL
         name: function
         origin: SOURCE
         receiverParameter: KaReceiverParameterSymbol:
           annotations: []
+          location: LOCAL
           origin: SOURCE
           owningCallableSymbol: KaFunctionSymbol(test/function)
           type: KaUsualClassType:
@@ -321,7 +324,6 @@ scopes:
         returnType: KaTypeParameterType:
           annotations: []
           type: TypeParam
-        symbolKind: TOP_LEVEL
         typeParameters: [
           KaTypeParameterSymbol(TypeParam)
         ]
@@ -337,6 +339,7 @@ scopes:
             isImplicitLambdaParameter: false
             isNoinline: false
             isVararg: false
+            location: LOCAL
             name: param1
             origin: SOURCE
             receiverParameter: null
@@ -344,7 +347,6 @@ scopes:
               annotations: []
               typeArguments: []
               type: test/Param1
-            symbolKind: LOCAL
             typeParameters: []
           KaValueParameterSymbol:
             annotations: []
@@ -357,6 +359,7 @@ scopes:
             isImplicitLambdaParameter: false
             isNoinline: false
             isVararg: false
+            location: LOCAL
             name: param2
             origin: SOURCE
             receiverParameter: null
@@ -364,7 +367,6 @@ scopes:
               annotations: []
               typeArguments: []
               type: test/Param2
-            symbolKind: LOCAL
             typeParameters: []
         ]
         visibility: Public

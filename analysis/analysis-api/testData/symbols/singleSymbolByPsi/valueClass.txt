@@ -14,6 +14,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: true
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: ValueClass
   origin: SOURCE
@@ -23,7 +24,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(valueClass.kt)

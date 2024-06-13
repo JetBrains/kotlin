@@ -4,6 +4,7 @@ KaEnumEntrySymbol:
   contextReceivers: []
   enumEntryInitializer: null
   isExtension: false
+  location: CLASS
   name: Y
   origin: SOURCE
   receiverParameter: null
@@ -11,7 +12,6 @@ KaEnumEntrySymbol:
     annotations: []
     typeArguments: []
     type: X
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   getContainingFileSymbol: KaFileSymbol(enum.kt)
   getContainingJvmClassName: X
@@ -24,6 +24,7 @@ KaEnumEntrySymbol:
   contextReceivers: []
   enumEntryInitializer: null
   isExtension: false
+  location: CLASS
   name: Z
   origin: SOURCE
   receiverParameter: null
@@ -31,7 +32,6 @@ KaEnumEntrySymbol:
     annotations: []
     typeArguments: []
     type: X
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   getContainingFileSymbol: KaFileSymbol(enum.kt)
   getContainingJvmClassName: X
@@ -51,6 +51,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: X
   origin: SOURCE
@@ -65,7 +66,6 @@ KaNamedClassOrObjectSymbol:
       ]
       type: kotlin/Enum<X>
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(enum.kt)

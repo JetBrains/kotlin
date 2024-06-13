@@ -17,6 +17,7 @@ scopes:
         contextReceivers: []
         isExtension: false
         isVal: true
+        location: LOCAL
         name: <iterator>
         origin: SOURCE
         receiverParameter: null
@@ -29,7 +30,6 @@ scopes:
               type: kotlin/Int
           ]
           type: kotlin/collections/Iterator<kotlin/Int>
-        symbolKind: LOCAL
         typeParameters: []
     constructors: 0
 
@@ -54,6 +54,7 @@ scopes:
         isImplicitLambdaParameter: false
         isNoinline: false
         isVararg: false
+        location: LOCAL
         name: list
         origin: SOURCE
         receiverParameter: null
@@ -66,7 +67,6 @@ scopes:
               type: kotlin/Int
           ]
           type: kotlin/collections/List<kotlin/Int>
-        symbolKind: LOCAL
         typeParameters: []
     constructors: 0
 
@@ -98,6 +98,7 @@ scopes:
         isStatic: false
         isSuspend: false
         isTailRec: false
+        location: TOP_LEVEL
         modality: FINAL
         name: usage
         origin: SOURCE
@@ -106,7 +107,6 @@ scopes:
           annotations: []
           typeArguments: []
           type: kotlin/Unit
-        symbolKind: TOP_LEVEL
         typeParameters: []
         valueParameters: [
           KaValueParameterSymbol:
@@ -120,6 +120,7 @@ scopes:
             isImplicitLambdaParameter: false
             isNoinline: false
             isVararg: false
+            location: LOCAL
             name: list
             origin: SOURCE
             receiverParameter: null
@@ -132,7 +133,6 @@ scopes:
                   type: kotlin/Int
               ]
               type: kotlin/collections/List<kotlin/Int>
-            symbolKind: LOCAL
             typeParameters: []
         ]
         visibility: Public

@@ -16,6 +16,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: foo2
   origin: SOURCE
@@ -41,7 +42,6 @@ KaFunctionSymbol:
         type: kotlin/collections/List<@R|Anno3|() @R|Anno2|() @R|Anno1|(s = String(s))  @R|Anno3|()  SecondTypeAlias>
     ]
     type: kotlin/collections/List<kotlin/collections/List<@R|Anno3|() @R|Anno2|() @R|Anno1|(s = String(s))  @R|Anno3|()  SecondTypeAlias>>?
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Public

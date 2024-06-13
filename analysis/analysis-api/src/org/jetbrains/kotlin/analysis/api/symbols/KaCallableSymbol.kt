@@ -1,19 +1,21 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiversOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaPossibleMemberSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithKind
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.CallableId
 
-public sealed class KaCallableSymbol : KaSymbolWithKind, KaPossibleMemberSymbol, KaDeclarationSymbol, KaContextReceiversOwner {
+
+public sealed class KaCallableSymbol : @Suppress("DEPRECATION") org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithKind,
+    KaPossibleMemberSymbol, KaDeclarationSymbol, KaContextReceiversOwner {
     /**
      * The callable's [CallableId] if it exists, or `null` otherwise (e.g. when the callable is local).
      */
@@ -49,6 +51,9 @@ public abstract class KaReceiverParameterSymbol : KaAnnotatedSymbol, KaParameter
     public abstract val owningCallableSymbol: KaCallableSymbol
 
     abstract override fun createPointer(): KaSymbolPointer<KaReceiverParameterSymbol>
+
+    final override val location: KaSymbolLocation
+        get() = withValidityAssertion { KaSymbolLocation.LOCAL }
 }
 
 public typealias KtReceiverParameterSymbol = KaReceiverParameterSymbol

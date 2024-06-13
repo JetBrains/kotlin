@@ -16,6 +16,7 @@ KaFunctionSymbol:
   isStatic: true
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: bar
   origin: JAVA_SOURCE
@@ -23,7 +24,6 @@ KaFunctionSymbol:
   returnType: KaFlexibleType:
     annotations: []
     type: kotlin/String!
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -39,6 +39,7 @@ KaJavaFieldSymbol:
   isExtension: false
   isStatic: true
   isVal: false
+  location: CLASS
   modality: OPEN
   name: foo
   origin: JAVA_SOURCE
@@ -47,7 +48,6 @@ KaJavaFieldSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: null
@@ -68,6 +68,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: true
+  location: CLASS
   modality: OPEN
   name: InnerClass
   origin: JAVA_SOURCE
@@ -77,7 +78,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: null
@@ -98,6 +98,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: CLASS
   modality: OPEN
   name: NestedClass
   origin: JAVA_SOURCE
@@ -107,7 +108,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: null

@@ -4,6 +4,7 @@ KaAnonymousObjectSymbol:
   classKind: ANONYMOUS_OBJECT
   isActual: false
   isExpect: false
+  location: LOCAL
   name: null
   origin: SOURCE
   superTypes: [
@@ -19,7 +20,6 @@ KaAnonymousObjectSymbol:
       typeArguments: []
       type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  {@R|Anno3|()  SecondTypeAlias=} BaseInterface
   ]
-  symbolKind: LOCAL
   typeParameters: []
   getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnSuperInterfaceOnAnonymousObject.kt)
   getContainingModule: KtSourceModule "Sources of main"

@@ -11,6 +11,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: FileWalkDirection
   origin: LIBRARY
@@ -25,7 +26,6 @@ KaNamedClassOrObjectSymbol:
       ]
       type: kotlin/Enum<kotlin/io/FileWalkDirection>
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: null

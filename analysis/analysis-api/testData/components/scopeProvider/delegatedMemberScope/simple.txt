@@ -18,11 +18,13 @@ KaKotlinPropertySymbol:
   isOverride: true
   isStatic: false
   isVal: false
+  location: CLASS
   modality: OPEN
   name: zoo
   origin: DELEGATED
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
+    location: LOCAL
     origin: DELEGATED
     owningCallableSymbol: KaKotlinPropertySymbol(/A.zoo)
     type: KaUsualClassType:
@@ -37,7 +39,6 @@ KaKotlinPropertySymbol:
     typeArguments: []
     type: kotlin/Unit
   setter: null
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
@@ -71,6 +72,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: foo
   origin: DELEGATED
@@ -79,7 +81,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Unit
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -112,6 +113,7 @@ KaKotlinPropertySymbol:
   isOverride: true
   isStatic: false
   isVal: true
+  location: CLASS
   modality: OPEN
   name: foo
   origin: DELEGATED
@@ -121,7 +123,6 @@ KaKotlinPropertySymbol:
     typeArguments: []
     type: kotlin/Int
   setter: null
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
@@ -155,11 +156,13 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: smth
   origin: DELEGATED
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
+    location: LOCAL
     origin: DELEGATED
     owningCallableSymbol: KaFunctionSymbol(/A.smth)
     type: KaUsualClassType:
@@ -173,7 +176,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Short
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -206,6 +208,7 @@ KaKotlinPropertySymbol:
   isOverride: true
   isStatic: false
   isVal: false
+  location: CLASS
   modality: OPEN
   name: bar
   origin: DELEGATED
@@ -215,7 +218,6 @@ KaKotlinPropertySymbol:
     typeArguments: []
     type: kotlin/Long
   setter: null
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
@@ -251,11 +253,13 @@ KaKotlinPropertySymbol:
   isOverride: true
   isStatic: false
   isVal: true
+  location: CLASS
   modality: OPEN
   name: doo
   origin: DELEGATED
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
+    location: LOCAL
     origin: DELEGATED
     owningCallableSymbol: KaKotlinPropertySymbol(/A.doo)
     type: KaUsualClassType:
@@ -270,7 +274,6 @@ KaKotlinPropertySymbol:
     typeArguments: []
     type: kotlin/String
   setter: null
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:

@@ -30,6 +30,7 @@ KaFunctionSymbol:
                       isImplicitLambdaParameter: false
                       isNoinline: false
                       isVararg: false
+                      location: LOCAL
                       name: foo
                       origin: SOURCE
                       receiverParameter: null
@@ -37,7 +38,6 @@ KaFunctionSymbol:
                         annotations: []
                         typeArguments: []
                         type: kotlin/Any?
-                      symbolKind: LOCAL
                       typeParameters: []
                       getContainingFileSymbol: KaFileSymbol(twoContracts.kt)
                       getContainingJvmClassName: TwoContractsKt
@@ -60,6 +60,7 @@ KaFunctionSymbol:
                       isImplicitLambdaParameter: false
                       isNoinline: false
                       isVararg: false
+                      location: LOCAL
                       name: bar
                       origin: SOURCE
                       receiverParameter: null
@@ -67,7 +68,6 @@ KaFunctionSymbol:
                         annotations: []
                         typeArguments: []
                         type: kotlin/Any?
-                      symbolKind: LOCAL
                       typeParameters: []
                       getContainingFileSymbol: KaFileSymbol(twoContracts.kt)
                       getContainingJvmClassName: TwoContractsKt
@@ -90,6 +90,7 @@ KaFunctionSymbol:
               isImplicitLambdaParameter: false
               isNoinline: false
               isVararg: false
+              location: LOCAL
               name: block
               origin: SOURCE
               receiverParameter: null
@@ -102,7 +103,6 @@ KaFunctionSymbol:
                     type: kotlin/Unit
                 ]
                 type: kotlin/Function0<kotlin/Unit>
-              symbolKind: LOCAL
               typeParameters: []
               getContainingFileSymbol: KaFileSymbol(twoContracts.kt)
               getContainingJvmClassName: TwoContractsKt
@@ -123,6 +123,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: twoContracts
   origin: SOURCE
@@ -131,7 +132,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Boolean
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
@@ -145,6 +145,7 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: foo
       origin: SOURCE
       receiverParameter: null
@@ -152,7 +153,6 @@ KaFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Any?
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(twoContracts.kt)
       getContainingJvmClassName: TwoContractsKt
@@ -169,6 +169,7 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: bar
       origin: SOURCE
       receiverParameter: null
@@ -176,7 +177,6 @@ KaFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Any?
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(twoContracts.kt)
       getContainingJvmClassName: TwoContractsKt
@@ -193,6 +193,7 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: block
       origin: SOURCE
       receiverParameter: null
@@ -205,7 +206,6 @@ KaFunctionSymbol:
             type: kotlin/Unit
         ]
         type: kotlin/Function0<kotlin/Unit>
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(twoContracts.kt)
       getContainingJvmClassName: TwoContractsKt

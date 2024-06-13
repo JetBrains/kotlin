@@ -11,6 +11,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: CLASS
   modality: ABSTRACT
   name: MutableEntry
   origin: LIBRARY
@@ -27,7 +28,6 @@ KaNamedClassOrObjectSymbol:
       ]
       type: kotlin/collections/Map.Entry<K, V>
   ]
-  symbolKind: CLASS_MEMBER
   typeParameters: [
     KaTypeParameterSymbol(K)
     KaTypeParameterSymbol(V)

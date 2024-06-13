@@ -13,6 +13,7 @@ KaPropertyGetterSymbol:
   isExtension: false
   isInline: false
   isOverride: false
+  location: PROPERTY
   modality: FINAL
   origin: SOURCE
   receiverParameter: KaReceiverParameterSymbol:
@@ -20,6 +21,7 @@ KaPropertyGetterSymbol:
       ReceiverAnnotation()
         psi: KtAnnotationEntry
     ]
+    location: LOCAL
     origin: SOURCE
     owningCallableSymbol: KaKotlinPropertySymbol(/x)
     type: KaUsualClassType:
@@ -36,7 +38,6 @@ KaPropertyGetterSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: ACCESSOR
   typeParameters: []
   valueParameters: []
   visibility: Public

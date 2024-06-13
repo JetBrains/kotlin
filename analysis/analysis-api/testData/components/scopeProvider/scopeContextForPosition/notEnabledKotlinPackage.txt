@@ -27,6 +27,7 @@ scopes:
         isImplicitLambdaParameter: false
         isNoinline: false
         isVararg: false
+        location: LOCAL
         name: param
         origin: SOURCE
         receiverParameter: null
@@ -34,7 +35,6 @@ scopes:
           annotations: []
           typeArguments: []
           type: kotlin/String
-        symbolKind: LOCAL
         typeParameters: []
     constructors: 0
 

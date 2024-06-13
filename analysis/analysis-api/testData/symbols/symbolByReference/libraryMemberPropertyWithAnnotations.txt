@@ -8,6 +8,7 @@ KaKotlinPropertySymbol:
     callableId: null
     contextReceivers: []
     isExtension: false
+    location: LOCAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(one/SimpleClass.memberPropertyWithAnnotations)
@@ -16,7 +17,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Short
-    symbolKind: LOCAL
     typeParameters: []
     getContainingFileSymbol: null
     getContainingJvmClassName: one.SimpleClass
@@ -37,6 +37,7 @@ KaKotlinPropertySymbol:
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: LIBRARY
     receiverParameter: null
@@ -44,7 +45,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Short
-    symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
@@ -70,6 +70,7 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
+  location: CLASS
   modality: FINAL
   name: memberPropertyWithAnnotations
   origin: LIBRARY
@@ -79,7 +80,6 @@ KaKotlinPropertySymbol:
     typeArguments: []
     type: kotlin/Short
   setter: null
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:

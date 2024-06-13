@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirScriptParamet
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaLocalVariableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -42,7 +42,7 @@ internal abstract class KaFirLocalOrErrorVariableSymbol<E : FirVariable, S : Fir
     override val name: Name get() = withValidityAssertion { firSymbol.name }
     override val returnType: KaType get() = withValidityAssertion { firSymbol.returnType(builder) }
 
-    override val symbolKind: KaSymbolKind get() = withValidityAssertion { KaSymbolKind.LOCAL }
+    override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.LOCAL }
 
     override fun createPointer(): KaSymbolPointer<KaLocalVariableSymbol> = withValidityAssertion {
         KaPsiBasedSymbolPointer.createForSymbolFromSource<KaLocalVariableSymbol>(this)?.let { return it }

@@ -3,6 +3,7 @@ KaBackingFieldSymbol:
   callableId: null
   contextReceivers: []
   isExtension: false
+  location: LOCAL
   name: field
   origin: PROPERTY_BACKING_FIELD
   owningProperty: KaKotlinPropertySymbol(/foo)
@@ -18,7 +19,6 @@ KaBackingFieldSymbol:
     ]
     typeArguments: []
     type: @R|Anno3|() @R|Anno2|() @R|Anno1|()  @R|Anno3|()  SecondTypeAlias
-  symbolKind: LOCAL
   typeParameters: []
   getContainingFileSymbol: KaFileSymbol(typeAnnotationOnBackingField.kt)
   getContainingJvmClassName: TypeAnnotationOnBackingFieldKt

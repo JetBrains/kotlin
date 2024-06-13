@@ -4,6 +4,7 @@ KaTypeParameterSymbol:
       psi: KtAnnotationEntry
   ]
   isReified: false
+  location: CLASS
   name: T
   origin: SOURCE
   typeParameters: []
@@ -16,6 +17,7 @@ KaTypeParameterSymbol:
 KaTypeParameterSymbol:
   annotations: []
   isReified: false
+  location: CLASS
   name: R
   origin: SOURCE
   typeParameters: []
@@ -38,6 +40,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: A
   origin: SOURCE
@@ -47,7 +50,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: [
     KaTypeParameterSymbol(T)
     KaTypeParameterSymbol(R)

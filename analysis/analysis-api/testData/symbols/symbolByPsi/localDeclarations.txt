@@ -4,6 +4,7 @@ KaLocalVariableSymbol:
   contextReceivers: []
   isExtension: false
   isVal: true
+  location: LOCAL
   name: q
   origin: SOURCE
   receiverParameter: null
@@ -11,7 +12,6 @@ KaLocalVariableSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: LOCAL
   typeParameters: []
   getContainingFileSymbol: KaFileSymbol(localDeclarations.kt)
   getContainingJvmClassName: null
@@ -36,6 +36,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: LOCAL
   modality: FINAL
   name: aaa
   origin: SOURCE
@@ -44,7 +45,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Unit
-  symbolKind: LOCAL
   typeParameters: []
   valueParameters: []
   visibility: Local
@@ -66,6 +66,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: LOCAL
   modality: FINAL
   name: F
   origin: SOURCE
@@ -75,7 +76,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: LOCAL
   typeParameters: []
   visibility: Local
   getContainingFileSymbol: KaFileSymbol(localDeclarations.kt)
@@ -101,6 +101,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: yyy
   origin: SOURCE
@@ -109,7 +110,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Unit
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Public

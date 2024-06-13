@@ -16,11 +16,13 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: foo2
   origin: SOURCE
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
+    location: LOCAL
     origin: SOURCE
     owningCallableSymbol: KaFunctionSymbol(/foo2)
     type: KaTypeParameterType:
@@ -45,7 +47,6 @@ KaFunctionSymbol:
         type: kotlin/collections/List<@R|@R|Anno1|(LAZY_EXPRESSION)  @R|Anno2|()  {SecondTypeAlias=} BaseAnnotation|()  T>
     ]
     type: kotlin/collections/List<kotlin/collections/List<@R|@R|Anno1|(LAZY_EXPRESSION)  @R|Anno2|()  {SecondTypeAlias=} BaseAnnotation|()  T>>?
-  symbolKind: TOP_LEVEL
   typeParameters: [
     KaTypeParameterSymbol(T)
   ]

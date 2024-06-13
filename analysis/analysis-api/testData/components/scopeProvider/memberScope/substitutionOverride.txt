@@ -16,6 +16,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: FINAL
   name: noGeneric
   origin: SOURCE
@@ -24,7 +25,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -59,6 +59,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: FINAL
   name: noGenericWithExplicitType
   origin: SOURCE
@@ -67,7 +68,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -102,6 +102,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: FINAL
   name: withOuterGeneric
   origin: SUBSTITUTION_OVERRIDE
@@ -110,7 +111,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/String
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
@@ -124,6 +124,7 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: t
       origin: SUBSTITUTION_OVERRIDE
       receiverParameter: null
@@ -131,7 +132,6 @@ KaFunctionSymbol:
         annotations: []
         typeArguments: []
         type: test/Foo
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
       getContainingJvmClassName: test.ClassWithGenericBase
@@ -166,6 +166,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: FINAL
   name: withOuterGenericWithExplicitType
   origin: SUBSTITUTION_OVERRIDE
@@ -174,7 +175,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/String
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
@@ -188,6 +188,7 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: t
       origin: SUBSTITUTION_OVERRIDE
       receiverParameter: null
@@ -195,7 +196,6 @@ KaFunctionSymbol:
         annotations: []
         typeArguments: []
         type: test/Foo
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
       getContainingJvmClassName: test.ClassWithGenericBase
@@ -230,6 +230,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: FINAL
   name: withOwnGeneric
   origin: SOURCE
@@ -238,7 +239,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Boolean
-  symbolKind: CLASS_MEMBER
   typeParameters: [
     KaTypeParameterSymbol(TT)
   ]
@@ -254,13 +254,13 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: tt
       origin: SOURCE
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
         type: TT
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
       getContainingJvmClassName: test.Base
@@ -299,6 +299,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: FINAL
   name: withOwnGenericWithExplicitType
   origin: SOURCE
@@ -307,7 +308,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Boolean
-  symbolKind: CLASS_MEMBER
   typeParameters: [
     KaTypeParameterSymbol(TT)
   ]
@@ -323,13 +323,13 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: tt
       origin: SOURCE
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
         type: TT
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
       getContainingJvmClassName: test.Base
@@ -368,6 +368,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: FINAL
   name: withOuterAndOwnGeneric
   origin: SUBSTITUTION_OVERRIDE
@@ -376,7 +377,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Long
-  symbolKind: CLASS_MEMBER
   typeParameters: [
     KaTypeParameterSymbol(TT)
   ]
@@ -392,6 +392,7 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: t
       origin: SUBSTITUTION_OVERRIDE
       receiverParameter: null
@@ -399,7 +400,6 @@ KaFunctionSymbol:
         annotations: []
         typeArguments: []
         type: test/Foo
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
       getContainingJvmClassName: test.ClassWithGenericBase
@@ -416,13 +416,13 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: tt
       origin: SUBSTITUTION_OVERRIDE
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
         type: TT
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
       getContainingJvmClassName: test.ClassWithGenericBase
@@ -457,6 +457,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: FINAL
   name: withOuterAndOwnGenericWithExplicitType
   origin: SUBSTITUTION_OVERRIDE
@@ -465,7 +466,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Long
-  symbolKind: CLASS_MEMBER
   typeParameters: [
     KaTypeParameterSymbol(TT)
   ]
@@ -481,6 +481,7 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: t
       origin: SUBSTITUTION_OVERRIDE
       receiverParameter: null
@@ -488,7 +489,6 @@ KaFunctionSymbol:
         annotations: []
         typeArguments: []
         type: test/Foo
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
       getContainingJvmClassName: test.ClassWithGenericBase
@@ -505,13 +505,13 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: tt
       origin: SUBSTITUTION_OVERRIDE
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
         type: TT
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
       getContainingJvmClassName: test.ClassWithGenericBase
@@ -546,6 +546,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: equals
   origin: LIBRARY
@@ -554,7 +555,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Boolean
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
@@ -568,6 +568,7 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: other
       origin: LIBRARY
       receiverParameter: null
@@ -575,7 +576,6 @@ KaFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Any?
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Any
@@ -610,6 +610,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: hashCode
   origin: LIBRARY
@@ -618,7 +619,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -649,6 +649,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: toString
   origin: LIBRARY
@@ -657,7 +658,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/String
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -680,13 +680,13 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: true
+  location: CLASS
   origin: SOURCE_MEMBER_GENERATED
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
     type: test/ClassWithGenericBase
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public

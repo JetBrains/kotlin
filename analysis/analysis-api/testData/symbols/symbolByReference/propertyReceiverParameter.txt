@@ -3,6 +3,7 @@ KaReceiverParameterSymbol:
     ReceiverAnnotation()
       psi: KtAnnotationEntry
   ]
+  location: LOCAL
   origin: SOURCE
   owningCallableSymbol: KaKotlinPropertySymbol(/prop)
   type: KaUsualClassType:

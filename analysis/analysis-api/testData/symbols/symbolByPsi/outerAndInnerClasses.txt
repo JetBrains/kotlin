@@ -1,6 +1,7 @@
 KaTypeParameterSymbol:
   annotations: []
   isReified: false
+  location: CLASS
   name: T
   origin: SOURCE
   typeParameters: []
@@ -13,6 +14,7 @@ KaTypeParameterSymbol:
 KaTypeParameterSymbol:
   annotations: []
   isReified: false
+  location: CLASS
   name: T1
   origin: SOURCE
   typeParameters: []
@@ -35,6 +37,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: true
+  location: CLASS
   modality: FINAL
   name: Y
   origin: SOURCE
@@ -44,7 +47,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: CLASS_MEMBER
   typeParameters: [
     KaTypeParameterSymbol(T1)
   ]
@@ -57,6 +59,7 @@ KaNamedClassOrObjectSymbol:
 KaTypeParameterSymbol:
   annotations: []
   isReified: false
+  location: CLASS
   name: T2
   origin: SOURCE
   typeParameters: []
@@ -79,6 +82,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: CLASS
   modality: FINAL
   name: Z
   origin: SOURCE
@@ -88,7 +92,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: CLASS_MEMBER
   typeParameters: [
     KaTypeParameterSymbol(T2)
   ]
@@ -101,6 +104,7 @@ KaNamedClassOrObjectSymbol:
 KaTypeParameterSymbol:
   annotations: []
   isReified: false
+  location: LOCAL
   name: T3
   origin: SOURCE
   typeParameters: []
@@ -113,6 +117,7 @@ KaTypeParameterSymbol:
 KaTypeParameterSymbol:
   annotations: []
   isReified: false
+  location: CLASS
   name: T4
   origin: SOURCE
   typeParameters: []
@@ -125,6 +130,7 @@ KaTypeParameterSymbol:
 KaTypeParameterSymbol:
   annotations: []
   isReified: false
+  location: CLASS
   name: T5
   origin: SOURCE
   typeParameters: []
@@ -147,6 +153,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: true
+  location: CLASS
   modality: FINAL
   name: K
   origin: SOURCE
@@ -156,7 +163,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: CLASS_MEMBER
   typeParameters: [
     KaTypeParameterSymbol(T5)
   ]
@@ -169,6 +175,7 @@ KaNamedClassOrObjectSymbol:
 KaTypeParameterSymbol:
   annotations: []
   isReified: false
+  location: CLASS
   name: T6
   origin: SOURCE
   typeParameters: []
@@ -191,6 +198,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: CLASS
   modality: FINAL
   name: C
   origin: SOURCE
@@ -200,7 +208,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: CLASS_MEMBER
   typeParameters: [
     KaTypeParameterSymbol(T6)
   ]
@@ -213,6 +220,7 @@ KaNamedClassOrObjectSymbol:
 KaTypeParameterSymbol:
   annotations: []
   isReified: false
+  location: CLASS
   name: T
   origin: SOURCE
   typeParameters: []
@@ -225,6 +233,7 @@ KaTypeParameterSymbol:
 KaTypeParameterSymbol:
   annotations: []
   isReified: false
+  location: CLASS
   name: T1
   origin: SOURCE
   typeParameters: []
@@ -247,6 +256,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: true
+  location: CLASS
   modality: FINAL
   name: Y
   origin: SOURCE
@@ -256,7 +266,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: CLASS_MEMBER
   typeParameters: [
     KaTypeParameterSymbol(T1)
   ]
@@ -269,6 +278,7 @@ KaNamedClassOrObjectSymbol:
 KaTypeParameterSymbol:
   annotations: []
   isReified: false
+  location: CLASS
   name: T2
   origin: SOURCE
   typeParameters: []
@@ -291,6 +301,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: CLASS
   modality: FINAL
   name: Z
   origin: SOURCE
@@ -300,7 +311,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: CLASS_MEMBER
   typeParameters: [
     KaTypeParameterSymbol(T2)
   ]
@@ -313,6 +323,7 @@ KaNamedClassOrObjectSymbol:
 KaTypeParameterSymbol:
   annotations: []
   isReified: false
+  location: LOCAL
   name: T3
   origin: SOURCE
   typeParameters: []
@@ -325,6 +336,7 @@ KaTypeParameterSymbol:
 KaTypeParameterSymbol:
   annotations: []
   isReified: false
+  location: CLASS
   name: T4
   origin: SOURCE
   typeParameters: []
@@ -337,6 +349,7 @@ KaTypeParameterSymbol:
 KaTypeParameterSymbol:
   annotations: []
   isReified: false
+  location: CLASS
   name: T5
   origin: SOURCE
   typeParameters: []
@@ -359,6 +372,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: true
+  location: CLASS
   modality: FINAL
   name: K
   origin: SOURCE
@@ -368,7 +382,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: CLASS_MEMBER
   typeParameters: [
     KaTypeParameterSymbol(T5)
   ]
@@ -381,6 +394,7 @@ KaNamedClassOrObjectSymbol:
 KaTypeParameterSymbol:
   annotations: []
   isReified: false
+  location: CLASS
   name: T6
   origin: SOURCE
   typeParameters: []
@@ -403,6 +417,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: CLASS
   modality: FINAL
   name: C
   origin: SOURCE
@@ -412,7 +427,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: CLASS_MEMBER
   typeParameters: [
     KaTypeParameterSymbol(T6)
   ]
@@ -435,6 +449,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: LOCAL
   modality: FINAL
   name: U
   origin: SOURCE
@@ -444,7 +459,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: LOCAL
   typeParameters: [
     KaTypeParameterSymbol(T4)
   ]
@@ -472,6 +486,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: FINAL
   name: foo
   origin: SOURCE
@@ -480,7 +495,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Unit
-  symbolKind: CLASS_MEMBER
   typeParameters: [
     KaTypeParameterSymbol(T3)
   ]
@@ -512,6 +526,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: CLASS
   modality: FINAL
   name: X
   origin: SOURCE
@@ -521,7 +536,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: CLASS_MEMBER
   typeParameters: [
     KaTypeParameterSymbol(T)
   ]
@@ -544,6 +558,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: LOCAL
   modality: FINAL
   name: U
   origin: SOURCE
@@ -553,7 +568,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: LOCAL
   typeParameters: [
     KaTypeParameterSymbol(T4)
   ]
@@ -581,6 +595,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: FINAL
   name: foo
   origin: SOURCE
@@ -589,7 +604,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Unit
-  symbolKind: CLASS_MEMBER
   typeParameters: [
     KaTypeParameterSymbol(T3)
   ]
@@ -621,6 +635,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: X
   origin: SOURCE
@@ -630,7 +645,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: [
     KaTypeParameterSymbol(T)
   ]

@@ -1,6 +1,7 @@
 packages: 1
   KaPackageSymbol:
     fqName: generated
+    location: TOP_LEVEL
     origin: SOURCE
 classifiers: 2
   KaNamedClassOrObjectSymbol:
@@ -16,6 +17,7 @@ classifiers: 2
     isFun: false
     isInline: false
     isInner: false
+    location: TOP_LEVEL
     modality: FINAL
     name: GenClass1
     origin: SOURCE
@@ -25,7 +27,6 @@ classifiers: 2
         typeArguments: []
         type: kotlin/Any
     ]
-    symbolKind: TOP_LEVEL
     typeParameters: []
     visibility: Public
     PSI: KtClass GenClass1 [from extension1.kt]
@@ -45,6 +46,7 @@ classifiers: 2
     isFun: false
     isInline: false
     isInner: false
+    location: TOP_LEVEL
     modality: OPEN
     name: GenClass2
     origin: SOURCE
@@ -54,7 +56,6 @@ classifiers: 2
         typeArguments: []
         type: kotlin/Any
     ]
-    symbolKind: TOP_LEVEL
     typeParameters: []
     visibility: Public
     PSI: KtClass GenClass2 [from extension2.kt]
@@ -80,6 +81,7 @@ callables: 5
     isStatic: false
     isSuspend: false
     isTailRec: false
+    location: TOP_LEVEL
     modality: FINAL
     name: genTopLevelFun1
     origin: SOURCE
@@ -88,7 +90,6 @@ callables: 5
       annotations: []
       typeArguments: []
       type: kotlin/String
-    symbolKind: TOP_LEVEL
     typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
@@ -102,6 +103,7 @@ callables: 5
         isImplicitLambdaParameter: false
         isNoinline: false
         isVararg: false
+        location: LOCAL
         name: foo
         origin: SOURCE
         receiverParameter: null
@@ -109,7 +111,6 @@ callables: 5
           annotations: []
           typeArguments: []
           type: generated/GenClass2
-        symbolKind: LOCAL
         typeParameters: []
     ]
     visibility: Public
@@ -135,11 +136,13 @@ callables: 5
     isStatic: false
     isSuspend: false
     isTailRec: false
+    location: TOP_LEVEL
     modality: FINAL
     name: genTopLevelExtension1
     origin: SOURCE
     receiverParameter: KaReceiverParameterSymbol:
       annotations: []
+      location: LOCAL
       origin: SOURCE
       owningCallableSymbol: KaFunctionSymbol(generated/genTopLevelExtension1)
       type: KaUsualClassType:
@@ -150,7 +153,6 @@ callables: 5
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: TOP_LEVEL
     typeParameters: []
     valueParameters: []
     visibility: Public
@@ -165,6 +167,7 @@ callables: 5
       callableId: null
       contextReceivers: []
       isExtension: false
+      location: LOCAL
       name: field
       origin: PROPERTY_BACKING_FIELD
       owningProperty: KaKotlinPropertySymbol(generated/genTopLevelVal1)
@@ -173,7 +176,6 @@ callables: 5
         annotations: []
         typeArguments: []
         type: kotlin/String
-      symbolKind: LOCAL
       typeParameters: []
     callableId: generated/genTopLevelVal1
     contextReceivers: []
@@ -187,6 +189,7 @@ callables: 5
       isExtension: false
       isInline: false
       isOverride: false
+      location: PROPERTY
       modality: FINAL
       origin: SOURCE
       receiverParameter: null
@@ -194,7 +197,6 @@ callables: 5
         annotations: []
         typeArguments: []
         type: kotlin/String
-      symbolKind: ACCESSOR
       typeParameters: []
       valueParameters: []
       visibility: Public
@@ -212,6 +214,7 @@ callables: 5
     isOverride: false
     isStatic: false
     isVal: true
+    location: TOP_LEVEL
     modality: FINAL
     name: genTopLevelVal1
     origin: SOURCE
@@ -221,7 +224,6 @@ callables: 5
       typeArguments: []
       type: kotlin/String
     setter: null
-    symbolKind: TOP_LEVEL
     typeParameters: []
     visibility: Public
     PSI: KtProperty genTopLevelVal1 [from extension1.kt]
@@ -235,6 +237,7 @@ callables: 5
       callableId: null
       contextReceivers: []
       isExtension: false
+      location: LOCAL
       name: field
       origin: PROPERTY_BACKING_FIELD
       owningProperty: KaKotlinPropertySymbol(generated/genTopLevelVar1)
@@ -243,7 +246,6 @@ callables: 5
         annotations: []
         typeArguments: []
         type: kotlin/String
-      symbolKind: LOCAL
       typeParameters: []
     callableId: generated/genTopLevelVar1
     contextReceivers: []
@@ -257,6 +259,7 @@ callables: 5
       isExtension: false
       isInline: false
       isOverride: false
+      location: PROPERTY
       modality: FINAL
       origin: SOURCE
       receiverParameter: null
@@ -264,7 +267,6 @@ callables: 5
         annotations: []
         typeArguments: []
         type: kotlin/String
-      symbolKind: ACCESSOR
       typeParameters: []
       valueParameters: []
       visibility: Public
@@ -282,6 +284,7 @@ callables: 5
     isOverride: false
     isStatic: false
     isVal: false
+    location: TOP_LEVEL
     modality: FINAL
     name: genTopLevelVar1
     origin: SOURCE
@@ -300,6 +303,7 @@ callables: 5
       isExtension: false
       isInline: false
       isOverride: false
+      location: PROPERTY
       modality: FINAL
       origin: SOURCE
       parameter: KaValueParameterSymbol:
@@ -313,6 +317,7 @@ callables: 5
         isImplicitLambdaParameter: false
         isNoinline: false
         isVararg: false
+        location: LOCAL
         name: value
         origin: SOURCE
         receiverParameter: null
@@ -320,14 +325,12 @@ callables: 5
           annotations: []
           typeArguments: []
           type: kotlin/String
-        symbolKind: LOCAL
         typeParameters: []
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Unit
-      symbolKind: ACCESSOR
       typeParameters: []
       valueParameters: [
         KaValueParameterSymbol:
@@ -341,6 +344,7 @@ callables: 5
           isImplicitLambdaParameter: false
           isNoinline: false
           isVararg: false
+          location: LOCAL
           name: value
           origin: SOURCE
           receiverParameter: null
@@ -348,11 +352,9 @@ callables: 5
             annotations: []
             typeArguments: []
             type: kotlin/String
-          symbolKind: LOCAL
           typeParameters: []
       ]
       visibility: Internal
-    symbolKind: TOP_LEVEL
     typeParameters: []
     visibility: Public
     PSI: KtProperty genTopLevelVar1 [from extension1.kt]
@@ -366,6 +368,7 @@ callables: 5
       callableId: null
       contextReceivers: []
       isExtension: false
+      location: LOCAL
       name: field
       origin: PROPERTY_BACKING_FIELD
       owningProperty: KaKotlinPropertySymbol(generated/genExtensionVal1)
@@ -374,7 +377,6 @@ callables: 5
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
       typeParameters: []
     callableId: generated/genExtensionVal1
     contextReceivers: []
@@ -388,10 +390,12 @@ callables: 5
       isExtension: false
       isInline: false
       isOverride: false
+      location: PROPERTY
       modality: FINAL
       origin: SOURCE
       receiverParameter: KaReceiverParameterSymbol:
         annotations: []
+        location: LOCAL
         origin: SOURCE
         owningCallableSymbol: KaKotlinPropertySymbol(generated/genExtensionVal1)
         type: KaUsualClassType:
@@ -402,7 +406,6 @@ callables: 5
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: ACCESSOR
       typeParameters: []
       valueParameters: []
       visibility: Public
@@ -420,11 +423,13 @@ callables: 5
     isOverride: false
     isStatic: false
     isVal: true
+    location: TOP_LEVEL
     modality: FINAL
     name: genExtensionVal1
     origin: SOURCE
     receiverParameter: KaReceiverParameterSymbol:
       annotations: []
+      location: LOCAL
       origin: SOURCE
       owningCallableSymbol: KaKotlinPropertySymbol(generated/genExtensionVal1)
       type: KaUsualClassType:
@@ -436,7 +441,6 @@ callables: 5
       typeArguments: []
       type: kotlin/Int
     setter: null
-    symbolKind: TOP_LEVEL
     typeParameters: []
     visibility: Public
     PSI: KtProperty genExtensionVal1 [from extension1.kt]

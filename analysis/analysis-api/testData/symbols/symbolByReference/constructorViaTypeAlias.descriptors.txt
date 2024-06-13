@@ -8,6 +8,7 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
+  location: CLASS
   origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -18,7 +19,6 @@ KaConstructorSymbol:
         type: E
     ]
     type: java/util/ArrayList<E>
-  symbolKind: CLASS_MEMBER
   typeParameters: [
     KaTypeParameterSymbol(E)
   ]
@@ -34,13 +34,13 @@ KaConstructorSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: (kotlin/collections/MutableCollection<out E!>..kotlin/collections/Collection<E!>?)
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.util.ArrayList

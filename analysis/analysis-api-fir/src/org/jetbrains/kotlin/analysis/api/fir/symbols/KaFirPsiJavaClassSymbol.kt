@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,9 +18,9 @@ import org.jetbrains.kotlin.analysis.api.impl.base.symbols.toKtClassKind
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.firClassByPsiClassProvider
 import org.jetbrains.kotlin.analysis.utils.classId
 import org.jetbrains.kotlin.descriptors.Modality
@@ -60,11 +60,11 @@ internal class KaFirPsiJavaClassSymbol(
             if (javaClass.isFromSource) KaSymbolOrigin.JAVA_SOURCE else KaSymbolOrigin.JAVA_LIBRARY
         }
 
-    override val symbolKind: KaSymbolKind
+    override val location: KaSymbolLocation
         get() = withValidityAssertion {
             when {
-                classId.outerClassId != null -> KaSymbolKind.CLASS_MEMBER
-                else -> KaSymbolKind.TOP_LEVEL
+                classId.outerClassId != null -> KaSymbolLocation.CLASS
+                else -> KaSymbolLocation.TOP_LEVEL
             }
         }
 

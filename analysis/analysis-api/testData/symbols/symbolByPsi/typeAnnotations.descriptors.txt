@@ -14,6 +14,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: Anno1
   origin: SOURCE
@@ -23,7 +24,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Annotation
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
@@ -47,6 +47,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: Anno2
   origin: SOURCE
@@ -56,7 +57,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Annotation
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
@@ -80,6 +80,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: Anno3
   origin: SOURCE
@@ -89,7 +90,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Annotation
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
@@ -113,6 +113,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: Anno4
   origin: SOURCE
@@ -122,7 +123,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Annotation
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
@@ -140,13 +140,13 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: true
+  location: CLASS
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
     type: Anno5
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
@@ -160,6 +160,7 @@ KaConstructorSymbol:
           callableId: null
           contextReceivers: []
           isExtension: false
+          location: LOCAL
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(/Anno5.s)
@@ -168,7 +169,6 @@ KaConstructorSymbol:
             annotations: []
             typeArguments: []
             type: kotlin/String
-          symbolKind: LOCAL
           typeParameters: []
           getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
           getContainingJvmClassName: Anno5
@@ -186,6 +186,7 @@ KaConstructorSymbol:
           isExtension: false
           isInline: false
           isOverride: false
+          location: PROPERTY
           modality: FINAL
           origin: SOURCE
           receiverParameter: null
@@ -193,7 +194,6 @@ KaConstructorSymbol:
             annotations: []
             typeArguments: []
             type: kotlin/String
-          symbolKind: ACCESSOR
           typeParameters: []
           valueParameters: []
           visibility: Public
@@ -219,6 +219,7 @@ KaConstructorSymbol:
         isOverride: false
         isStatic: false
         isVal: true
+        location: CLASS
         modality: FINAL
         name: s
         origin: SOURCE
@@ -228,7 +229,6 @@ KaConstructorSymbol:
           typeArguments: []
           type: kotlin/String
         setter: null
-        symbolKind: CLASS_MEMBER
         typeParameters: []
         visibility: Public
         getDispatchReceiver(): KaUsualClassType:
@@ -249,6 +249,7 @@ KaConstructorSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: s
       origin: SOURCE
       receiverParameter: null
@@ -256,7 +257,6 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/String
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
       getContainingJvmClassName: Anno5
@@ -285,6 +285,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: Anno5
   origin: SOURCE
@@ -294,7 +295,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Annotation
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
@@ -315,6 +315,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: ABSTRACT
   name: I
   origin: SOURCE
@@ -324,7 +325,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
@@ -350,6 +350,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: FINAL
   name: f
   origin: SOURCE
@@ -361,7 +362,6 @@ KaFunctionSymbol:
     ]
     typeArguments: []
     type: @R|Anno3|()  I
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
@@ -375,6 +375,7 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: arg
       origin: SOURCE
       receiverParameter: null
@@ -385,7 +386,6 @@ KaFunctionSymbol:
         ]
         typeArguments: []
         type: @R|Anno2|()  I
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
       getContainingJvmClassName: X
@@ -409,6 +409,7 @@ KaKotlinPropertySymbol:
     callableId: null
     contextReceivers: []
     isExtension: false
+    location: LOCAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/X.x)
@@ -420,7 +421,6 @@ KaKotlinPropertySymbol:
       ]
       typeArguments: []
       type: @R|Anno4|()  I
-    symbolKind: LOCAL
     typeParameters: []
     getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
     getContainingJvmClassName: X
@@ -438,6 +438,7 @@ KaKotlinPropertySymbol:
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
@@ -448,7 +449,6 @@ KaKotlinPropertySymbol:
       ]
       typeArguments: []
       type: @R|Anno4|()  I
-    symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
@@ -474,6 +474,7 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
+  location: CLASS
   modality: FINAL
   name: x
   origin: SOURCE
@@ -486,7 +487,6 @@ KaKotlinPropertySymbol:
     typeArguments: []
     type: @R|Anno4|()  I
   setter: null
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
@@ -515,6 +515,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: X
   origin: SOURCE
@@ -531,7 +532,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: @R|Anno1|()  I
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
@@ -542,6 +542,7 @@ KaNamedClassOrObjectSymbol:
 KaTypeParameterSymbol:
   annotations: []
   isReified: false
+  location: LOCAL
   name: T
   origin: SOURCE
   typeParameters: []
@@ -569,11 +570,13 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: foo
   origin: SOURCE
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
+    location: LOCAL
     origin: SOURCE
     owningCallableSymbol: KaFunctionSymbol(/foo)
     type: KaTypeParameterType:
@@ -593,7 +596,6 @@ KaFunctionSymbol:
         type: @R|Anno5|(s = String(1))  T
     ]
     type: kotlin/collections/List<@R|Anno5|(s = String(1))  T>?
-  symbolKind: TOP_LEVEL
   typeParameters: [
     KaTypeParameterSymbol(T)
   ]
@@ -607,6 +609,7 @@ KaFunctionSymbol:
 KaTypeParameterSymbol:
   annotations: []
   isReified: false
+  location: LOCAL
   name: T
   origin: SOURCE
   typeParameters: []
@@ -634,11 +637,13 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: foo2
   origin: SOURCE
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
+    location: LOCAL
     origin: SOURCE
     owningCallableSymbol: KaFunctionSymbol(/foo2)
     type: KaTypeParameterType:
@@ -663,7 +668,6 @@ KaFunctionSymbol:
         type: kotlin/collections/List<@R|Anno5|(s = String(1))  T>
     ]
     type: kotlin/collections/List<kotlin/collections/List<@R|Anno5|(s = String(1))  T>>?
-  symbolKind: TOP_LEVEL
   typeParameters: [
     KaTypeParameterSymbol(T)
   ]

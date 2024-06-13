@@ -1,6 +1,7 @@
 KaTypeParameterSymbol:
   annotations: []
   isReified: false
+  location: CLASS
   name: T
   origin: SOURCE
   typeParameters: []
@@ -23,6 +24,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: X
   origin: SOURCE
@@ -32,7 +34,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: [
     KaTypeParameterSymbol(T)
   ]
@@ -45,6 +46,7 @@ KaNamedClassOrObjectSymbol:
 KaTypeParameterSymbol:
   annotations: []
   isReified: false
+  location: LOCAL
   name: Z
   origin: SOURCE
   typeParameters: []
@@ -67,9 +69,9 @@ KaTypeAliasSymbol:
     type: X<Z>
   isActual: false
   isExpect: false
+  location: TOP_LEVEL
   name: Y
   origin: SOURCE
-  symbolKind: TOP_LEVEL
   typeParameters: [
     KaTypeParameterSymbol(Z)
   ]

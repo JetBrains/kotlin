@@ -30,6 +30,7 @@ KaFunctionSymbol:
                       isImplicitLambdaParameter: false
                       isNoinline: false
                       isVararg: false
+                      location: LOCAL
                       name: foo
                       origin: SOURCE
                       receiverParameter: null
@@ -37,7 +38,6 @@ KaFunctionSymbol:
                         annotations: []
                         typeArguments: []
                         type: kotlin/Any?
-                      symbolKind: LOCAL
                       typeParameters: []
                       getContainingFileSymbol: KaFileSymbol(booleanExprContract.kt)
                       getContainingJvmClassName: BooleanExprContractKt
@@ -60,6 +60,7 @@ KaFunctionSymbol:
                       isImplicitLambdaParameter: false
                       isNoinline: false
                       isVararg: false
+                      location: LOCAL
                       name: bar
                       origin: SOURCE
                       receiverParameter: null
@@ -67,7 +68,6 @@ KaFunctionSymbol:
                         annotations: []
                         typeArguments: []
                         type: kotlin/Any?
-                      symbolKind: LOCAL
                       typeParameters: []
                       getContainingFileSymbol: KaFileSymbol(booleanExprContract.kt)
                       getContainingJvmClassName: BooleanExprContractKt
@@ -89,6 +89,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: boolenExprContract
   origin: SOURCE
@@ -97,7 +98,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Boolean
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
@@ -111,6 +111,7 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: foo
       origin: SOURCE
       receiverParameter: null
@@ -118,7 +119,6 @@ KaFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Any?
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(booleanExprContract.kt)
       getContainingJvmClassName: BooleanExprContractKt
@@ -135,6 +135,7 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: bar
       origin: SOURCE
       receiverParameter: null
@@ -142,7 +143,6 @@ KaFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Any?
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(booleanExprContract.kt)
       getContainingJvmClassName: BooleanExprContractKt

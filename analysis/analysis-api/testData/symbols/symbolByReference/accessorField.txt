@@ -8,6 +8,7 @@ KaBackingFieldSymbol:
   callableId: null
   contextReceivers: []
   isExtension: false
+  location: LOCAL
   name: field
   origin: PROPERTY_BACKING_FIELD
   owningProperty: KaKotlinPropertySymbol(/x)
@@ -16,7 +17,6 @@ KaBackingFieldSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: LOCAL
   typeParameters: []
   getContainingFileSymbol: KaFileSymbol(accessorField.kt)
   getContainingJvmClassName: AccessorFieldKt

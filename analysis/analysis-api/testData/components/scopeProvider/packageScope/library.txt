@@ -16,6 +16,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: fooApi3
   origin: SOURCE
@@ -24,7 +25,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/String
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -51,6 +51,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: internalFooApi3
   origin: SOURCE
@@ -59,7 +60,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/String
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Internal
@@ -86,6 +86,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: privateFooApi3
   origin: SOURCE
@@ -94,7 +95,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/String
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Private
@@ -121,11 +121,13 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: barApi3
   origin: SOURCE
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
+    location: LOCAL
     origin: SOURCE
     owningCallableSymbol: KaFunctionSymbol(library/api/barApi3)
     type: KaUsualClassType:
@@ -139,7 +141,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: library/api/I
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -166,11 +167,13 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: internalBarApi3
   origin: SOURCE
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
+    location: LOCAL
     origin: SOURCE
     owningCallableSymbol: KaFunctionSymbol(library/api/internalBarApi3)
     type: KaUsualClassType:
@@ -184,7 +187,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: library/api/I
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Internal
@@ -211,11 +213,13 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: privateBarApi3
   origin: SOURCE
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
+    location: LOCAL
     origin: SOURCE
     owningCallableSymbol: KaFunctionSymbol(library/api/privateBarApi3)
     type: KaUsualClassType:
@@ -229,7 +233,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: library/api/I
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Private
@@ -256,6 +259,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: fooApi2
   origin: LIBRARY
@@ -264,7 +268,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/String
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -291,6 +294,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: internalFooApi2
   origin: LIBRARY
@@ -299,7 +303,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/String
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Internal
@@ -326,6 +329,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: privateFooApi2
   origin: LIBRARY
@@ -334,7 +338,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/String
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Private
@@ -361,11 +364,13 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: barApi2
   origin: LIBRARY
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
+    location: LOCAL
     origin: LIBRARY
     owningCallableSymbol: KaFunctionSymbol(library/api/barApi2)
     type: KaUsualClassType:
@@ -379,7 +384,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: library/api/I
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -406,11 +410,13 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: internalBarApi2
   origin: LIBRARY
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
+    location: LOCAL
     origin: LIBRARY
     owningCallableSymbol: KaFunctionSymbol(library/api/internalBarApi2)
     type: KaUsualClassType:
@@ -424,7 +430,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: library/api/InternalI
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Internal
@@ -451,11 +456,13 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: privateBarApi2
   origin: LIBRARY
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
+    location: LOCAL
     origin: LIBRARY
     owningCallableSymbol: KaFunctionSymbol(library/api/privateBarApi2)
     type: KaUsualClassType:
@@ -469,7 +476,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: library/api/I
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Private
@@ -496,6 +502,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: fooApi1
   origin: LIBRARY
@@ -504,7 +511,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/String
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -531,6 +537,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: internalFooApi1
   origin: LIBRARY
@@ -539,7 +546,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/String
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Internal
@@ -566,6 +572,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: privateFooApi1
   origin: LIBRARY
@@ -574,7 +581,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/String
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Private
@@ -601,11 +607,13 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: barApi1
   origin: LIBRARY
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
+    location: LOCAL
     origin: LIBRARY
     owningCallableSymbol: KaFunctionSymbol(library/api/barApi1)
     type: KaUsualClassType:
@@ -619,7 +627,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: library/api/I
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -646,11 +653,13 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: internalBarApi1
   origin: LIBRARY
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
+    location: LOCAL
     origin: LIBRARY
     owningCallableSymbol: KaFunctionSymbol(library/api/internalBarApi1)
     type: KaUsualClassType:
@@ -664,7 +673,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: library/api/InternalI
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Internal
@@ -691,11 +699,13 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: privateBarApi1
   origin: LIBRARY
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
+    location: LOCAL
     origin: LIBRARY
     owningCallableSymbol: KaFunctionSymbol(library/api/privateBarApi1)
     type: KaUsualClassType:
@@ -709,7 +719,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: library/api/PrivateI
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Private
@@ -731,6 +740,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: ABSTRACT
   name: I
   origin: LIBRARY
@@ -740,7 +750,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: null
@@ -761,6 +770,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: C1
   origin: LIBRARY
@@ -770,7 +780,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: library/api/I
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: null
@@ -791,6 +800,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: PrivateC1
   origin: LIBRARY
@@ -800,7 +810,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: library/api/I
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Private
   getContainingFileSymbol: null
@@ -821,6 +830,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: InternalC1
   origin: LIBRARY
@@ -830,7 +840,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: library/api/InternalI
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Internal
   getContainingFileSymbol: null
@@ -851,6 +860,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: ABSTRACT
   name: InternalI
   origin: LIBRARY
@@ -860,7 +870,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Internal
   getContainingFileSymbol: null
@@ -881,6 +890,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: ABSTRACT
   name: PrivateI
   origin: LIBRARY
@@ -890,7 +900,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Private
   getContainingFileSymbol: null
@@ -911,6 +920,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: ABSTRACT
   name: FakeI
   origin: SOURCE
@@ -920,7 +930,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: library/api/I
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(extension.kt)
@@ -941,6 +950,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: ABSTRACT
   name: InternalFakeI
   origin: SOURCE
@@ -950,7 +960,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: library/api/I
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Internal
   getContainingFileSymbol: KaFileSymbol(extension.kt)
@@ -971,6 +980,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: ABSTRACT
   name: PrivateFakeI
   origin: SOURCE
@@ -980,7 +990,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: library/api/I
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Private
   getContainingFileSymbol: KaFileSymbol(extension.kt)

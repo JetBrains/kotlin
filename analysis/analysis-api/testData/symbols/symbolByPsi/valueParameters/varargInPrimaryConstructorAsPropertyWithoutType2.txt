@@ -8,13 +8,13 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: true
+  location: CLASS
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
     type: Foo
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
@@ -28,6 +28,7 @@ KaConstructorSymbol:
           callableId: null
           contextReceivers: []
           isExtension: false
+          location: LOCAL
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(/Foo.ints)
@@ -40,7 +41,6 @@ KaConstructorSymbol:
                 type: ERROR_TYPE
             ]
             type: kotlin/Array<out ERROR CLASS: No type for parameter>
-          symbolKind: LOCAL
           typeParameters: []
           getContainingFileSymbol: KaFileSymbol(varargInPrimaryConstructorAsPropertyWithoutType2.kt)
           getContainingJvmClassName: Foo
@@ -58,6 +58,7 @@ KaConstructorSymbol:
           isExtension: false
           isInline: false
           isOverride: false
+          location: PROPERTY
           modality: FINAL
           origin: SOURCE
           receiverParameter: null
@@ -69,7 +70,6 @@ KaConstructorSymbol:
                 type: ERROR_TYPE
             ]
             type: kotlin/Array<out ERROR CLASS: No type for parameter>
-          symbolKind: ACCESSOR
           typeParameters: []
           valueParameters: []
           visibility: Public
@@ -95,6 +95,7 @@ KaConstructorSymbol:
         isOverride: false
         isStatic: false
         isVal: true
+        location: CLASS
         modality: FINAL
         name: ints
         origin: SOURCE
@@ -108,7 +109,6 @@ KaConstructorSymbol:
           ]
           type: kotlin/Array<out ERROR CLASS: No type for parameter>
         setter: null
-        symbolKind: CLASS_MEMBER
         typeParameters: []
         visibility: Public
         getDispatchReceiver(): KaUsualClassType:
@@ -129,13 +129,13 @@ KaConstructorSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: true
+      location: LOCAL
       name: ints
       origin: SOURCE
       receiverParameter: null
       returnType: KaErrorType:
         annotations: []
         type: ERROR_TYPE
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(varargInPrimaryConstructorAsPropertyWithoutType2.kt)
       getContainingJvmClassName: Foo
@@ -161,6 +161,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: Foo
   origin: SOURCE
@@ -170,7 +171,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(varargInPrimaryConstructorAsPropertyWithoutType2.kt)

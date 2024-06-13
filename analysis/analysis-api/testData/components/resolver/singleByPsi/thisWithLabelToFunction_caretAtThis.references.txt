@@ -1,3 +1,3 @@
 KtNameReferenceExpression(43,47): 'this'
   KtSimpleNameReference:
-    extension receiver with type kotlin.String
+    (in <local>: Foo.foo) extension receiver with type kotlin.String

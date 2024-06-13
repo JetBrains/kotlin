@@ -5,6 +5,7 @@ KaKotlinPropertySymbol:
     callableId: null
     contextReceivers: []
     isExtension: false
+    location: LOCAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/I.p)
@@ -13,7 +14,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: A
-    symbolKind: LOCAL
     typeParameters: []
     getContainingFileSymbol: KaFileSymbol(A.kt)
     getContainingJvmClassName: I
@@ -31,6 +31,7 @@ KaKotlinPropertySymbol:
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
@@ -38,7 +39,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: A
-    symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Private
@@ -64,6 +64,7 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
+  location: CLASS
   modality: FINAL
   name: p
   origin: SOURCE
@@ -73,7 +74,6 @@ KaKotlinPropertySymbol:
     typeArguments: []
     type: A
   setter: null
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Private
   getDispatchReceiver(): KaUsualClassType:
@@ -99,13 +99,13 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: true
+  location: CLASS
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
     type: I
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
@@ -119,6 +119,7 @@ KaConstructorSymbol:
           callableId: null
           contextReceivers: []
           isExtension: false
+          location: LOCAL
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(/I.p)
@@ -127,7 +128,6 @@ KaConstructorSymbol:
             annotations: []
             typeArguments: []
             type: A
-          symbolKind: LOCAL
           typeParameters: []
           getContainingFileSymbol: KaFileSymbol(A.kt)
           getContainingJvmClassName: I
@@ -145,6 +145,7 @@ KaConstructorSymbol:
           isExtension: false
           isInline: false
           isOverride: false
+          location: PROPERTY
           modality: FINAL
           origin: SOURCE
           receiverParameter: null
@@ -152,7 +153,6 @@ KaConstructorSymbol:
             annotations: []
             typeArguments: []
             type: A
-          symbolKind: ACCESSOR
           typeParameters: []
           valueParameters: []
           visibility: Private
@@ -178,6 +178,7 @@ KaConstructorSymbol:
         isOverride: false
         isStatic: false
         isVal: true
+        location: CLASS
         modality: FINAL
         name: p
         origin: SOURCE
@@ -187,7 +188,6 @@ KaConstructorSymbol:
           typeArguments: []
           type: A
         setter: null
-        symbolKind: CLASS_MEMBER
         typeParameters: []
         visibility: Private
         getDispatchReceiver(): KaUsualClassType:
@@ -208,6 +208,7 @@ KaConstructorSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: p
       origin: SOURCE
       receiverParameter: null
@@ -215,7 +216,6 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: A
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(A.kt)
       getContainingJvmClassName: I

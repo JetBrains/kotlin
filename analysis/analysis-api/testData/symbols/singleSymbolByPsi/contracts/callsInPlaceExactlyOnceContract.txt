@@ -21,6 +21,7 @@ KaFunctionSymbol:
               isImplicitLambdaParameter: false
               isNoinline: false
               isVararg: false
+              location: LOCAL
               name: block
               origin: SOURCE
               receiverParameter: null
@@ -33,7 +34,6 @@ KaFunctionSymbol:
                     type: kotlin/Unit
                 ]
                 type: kotlin/Function0<kotlin/Unit>
-              symbolKind: LOCAL
               typeParameters: []
               getContainingFileSymbol: KaFileSymbol(callsInPlaceExactlyOnceContract.kt)
               getContainingJvmClassName: CallsInPlaceExactlyOnceContractKt
@@ -54,6 +54,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: exactlyOnceContract
   origin: SOURCE
@@ -62,7 +63,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Unit
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
@@ -76,6 +76,7 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: block
       origin: SOURCE
       receiverParameter: null
@@ -88,7 +89,6 @@ KaFunctionSymbol:
             type: kotlin/Unit
         ]
         type: kotlin/Function0<kotlin/Unit>
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(callsInPlaceExactlyOnceContract.kt)
       getContainingJvmClassName: CallsInPlaceExactlyOnceContractKt

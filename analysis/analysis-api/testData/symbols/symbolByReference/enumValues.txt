@@ -16,6 +16,7 @@ KaFunctionSymbol:
   isStatic: true
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: FINAL
   name: values
   origin: SOURCE_MEMBER_GENERATED
@@ -29,7 +30,6 @@ KaFunctionSymbol:
         type: MyKotlinEnum
     ]
     type: kotlin/Array<MyKotlinEnum>
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public

@@ -1,13 +1,11 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithKind
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 
 /**
@@ -17,8 +15,9 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
  * - `val (a, _) = Pair(1, 2)` leads to `KaDestructuringDeclarationSymbol(entries = [a, _])`
  * - `Pair(1, _).let { (a, b) -> }` leads to `KaDestructuringDeclarationSymbol(entries = [a, _])`
  */
-public abstract class KaDestructuringDeclarationSymbol : KaDeclarationSymbol, KaSymbolWithKind {
-    final override val symbolKind: KaSymbolKind get() = withValidityAssertion { KaSymbolKind.LOCAL }
+public abstract class KaDestructuringDeclarationSymbol : KaDeclarationSymbol,
+    @Suppress("DEPRECATION") org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithKind {
+    final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.LOCAL }
     final override val typeParameters: List<KaTypeParameterSymbol> get() = withValidityAssertion { emptyList() }
 
     /**

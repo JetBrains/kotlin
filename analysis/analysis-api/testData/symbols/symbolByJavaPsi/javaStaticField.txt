@@ -5,6 +5,7 @@ KaJavaFieldSymbol:
   isExtension: false
   isStatic: true
   isVal: false
+  location: CLASS
   modality: OPEN
   name: count
   origin: JAVA_SOURCE
@@ -12,7 +13,6 @@ KaJavaFieldSymbol:
   returnType: KaFlexibleType:
     annotations: []
     type: kotlin/Int!
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: null

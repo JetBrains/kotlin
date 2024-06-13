@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 
-public sealed class KaFunctionLikeSymbol : KaCallableSymbol(), KaSymbolWithKind {
+public sealed class KaFunctionLikeSymbol : KaCallableSymbol(), @Suppress("DEPRECATION") KaSymbolWithKind {
     public abstract val valueParameters: List<KaValueParameterSymbol>
 
     /**
@@ -29,7 +29,7 @@ public sealed class KaFunctionLikeSymbol : KaCallableSymbol(), KaSymbolWithKind 
 public typealias KtFunctionLikeSymbol = KaFunctionLikeSymbol
 
 public abstract class KaAnonymousFunctionSymbol : KaFunctionLikeSymbol() {
-    final override val symbolKind: KaSymbolKind get() = withValidityAssertion { KaSymbolKind.LOCAL }
+    final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.LOCAL }
     final override val callableId: CallableId? get() = withValidityAssertion { null }
 
     final override val typeParameters: List<KaTypeParameterSymbol>
@@ -41,7 +41,7 @@ public abstract class KaAnonymousFunctionSymbol : KaFunctionLikeSymbol() {
 public typealias KtAnonymousFunctionSymbol = KaAnonymousFunctionSymbol
 
 public abstract class KaSamConstructorSymbol : KaFunctionLikeSymbol(), KaNamedSymbol {
-    final override val symbolKind: KaSymbolKind get() = withValidityAssertion { KaSymbolKind.SAM_CONSTRUCTOR }
+    final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.TOP_LEVEL }
 
     abstract override fun createPointer(): KaSymbolPointer<KaSamConstructorSymbol>
 }
@@ -97,7 +97,7 @@ public abstract class KaConstructorSymbol : KaFunctionLikeSymbol(),
     public val containingClassIdIfNonLocal: ClassId? get() = containingClassId
 
     final override val callableId: CallableId? get() = withValidityAssertion { null }
-    final override val symbolKind: KaSymbolKind get() = withValidityAssertion { KaSymbolKind.CLASS_MEMBER }
+    final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.CLASS }
     final override val isExtension: Boolean get() = withValidityAssertion { false }
     final override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { null }
     final override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }

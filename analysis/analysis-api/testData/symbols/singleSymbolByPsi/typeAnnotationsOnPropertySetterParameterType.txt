@@ -8,6 +8,7 @@ KaPropertySetterSymbol:
   isExtension: false
   isInline: false
   isOverride: false
+  location: PROPERTY
   modality: FINAL
   origin: SOURCE
   parameter: KaValueParameterSymbol:
@@ -21,6 +22,7 @@ KaPropertySetterSymbol:
     isImplicitLambdaParameter: false
     isNoinline: false
     isVararg: false
+    location: LOCAL
     name: value
     origin: SOURCE
     receiverParameter: null
@@ -35,7 +37,6 @@ KaPropertySetterSymbol:
       ]
       typeArguments: []
       type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  {@R|Anno3|()  SecondTypeAlias=} BaseInterface
-    symbolKind: LOCAL
     typeParameters: []
     getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnPropertySetterParameterType.kt)
     getContainingJvmClassName: null
@@ -46,7 +47,6 @@ KaPropertySetterSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Unit
-  symbolKind: ACCESSOR
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
@@ -60,6 +60,7 @@ KaPropertySetterSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: value
       origin: SOURCE
       receiverParameter: null
@@ -74,7 +75,6 @@ KaPropertySetterSymbol:
         ]
         typeArguments: []
         type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  {@R|Anno3|()  SecondTypeAlias=} BaseInterface
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnPropertySetterParameterType.kt)
       getContainingJvmClassName: null

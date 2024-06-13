@@ -23,6 +23,7 @@ scopes:
         isFun: false
         isInline: false
         isInner: false
+        location: TOP_LEVEL
         modality: ABSTRACT
         name: BaseInterface
         origin: SOURCE
@@ -32,7 +33,6 @@ scopes:
             typeArguments: []
             type: kotlin/Any
         ]
-        symbolKind: TOP_LEVEL
         typeParameters: []
         visibility: Public
       KaNamedClassOrObjectSymbol:
@@ -48,6 +48,7 @@ scopes:
         isFun: false
         isInline: false
         isInner: false
+        location: TOP_LEVEL
         modality: OPEN
         name: Base
         origin: SOURCE
@@ -57,7 +58,6 @@ scopes:
             typeArguments: []
             type: test/BaseInterface
         ]
-        symbolKind: TOP_LEVEL
         typeParameters: [
           KaTypeParameterSymbol(T)
         ]
@@ -75,6 +75,7 @@ scopes:
         isFun: false
         isInline: false
         isInner: false
+        location: TOP_LEVEL
         modality: FINAL
         name: Child
         origin: SOURCE
@@ -89,7 +90,6 @@ scopes:
             ]
             type: test/Base<test/Base.NestedFromClass>
         ]
-        symbolKind: TOP_LEVEL
         typeParameters: []
         visibility: Public
     callables: 0

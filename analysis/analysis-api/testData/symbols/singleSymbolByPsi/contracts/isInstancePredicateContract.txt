@@ -25,6 +25,7 @@ KaFunctionSymbol:
                   isImplicitLambdaParameter: false
                   isNoinline: false
                   isVararg: false
+                  location: LOCAL
                   name: value
                   origin: SOURCE
                   receiverParameter: null
@@ -32,7 +33,6 @@ KaFunctionSymbol:
                     annotations: []
                     typeArguments: []
                     type: kotlin/Any
-                  symbolKind: LOCAL
                   typeParameters: []
                   getContainingFileSymbol: KaFileSymbol(isInstancePredicateContract.kt)
                   getContainingJvmClassName: IsInstancePredicateContractKt
@@ -58,6 +58,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: isInstancePredicateContract
   origin: SOURCE
@@ -66,7 +67,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Unit
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
@@ -80,6 +80,7 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: value
       origin: SOURCE
       receiverParameter: null
@@ -87,7 +88,6 @@ KaFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Any
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(isInstancePredicateContract.kt)
       getContainingJvmClassName: IsInstancePredicateContractKt

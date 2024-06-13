@@ -7,8 +7,8 @@ KaDestructuringDeclarationSymbol:
     KaLocalVariableSymbol(<local>/a)
     KaLocalVariableSymbol(<local>/b)
   ]
+  location: LOCAL
   origin: SOURCE
-  symbolKind: LOCAL
   typeParameters: []
   getContainingFileSymbol: KaFileSymbol(destructuringDeclaration.kt)
   getContainingModule: KtSourceModule "Sources of main"

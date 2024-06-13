@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,12 +14,10 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
-import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
@@ -27,6 +25,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
 import org.jetbrains.kotlin.fir.scopes.impl.originalForWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal interface KaFirSymbol<out S : FirBasedSymbol<*>> : KaSymbol, KaLifetimeOwner {
     val firSymbol: S
@@ -103,12 +103,12 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KaSymbolOrigin = when (ori
     is FirDeclarationOrigin.ScriptCustomization -> KaSymbolOrigin.PLUGIN
 }
 
-internal fun KaClassLikeSymbol.getSymbolKind(): KaSymbolKind {
+internal fun KaClassLikeSymbol.getSymbolKind(): KaSymbolLocation {
     val firSymbol = firSymbol
     return when {
-        firSymbol.classId.isNestedClass -> KaSymbolKind.CLASS_MEMBER
-        firSymbol.isLocal -> KaSymbolKind.LOCAL
-        else -> KaSymbolKind.TOP_LEVEL
+        firSymbol.classId.isNestedClass -> KaSymbolLocation.CLASS
+        firSymbol.isLocal -> KaSymbolLocation.LOCAL
+        else -> KaSymbolLocation.TOP_LEVEL
     }
 }
 

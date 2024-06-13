@@ -35,6 +35,7 @@ scopes:
         isStatic: false
         isSuspend: false
         isTailRec: false
+        location: CLASS
         modality: FINAL
         name: fromReceiver
         origin: SOURCE
@@ -43,7 +44,6 @@ scopes:
           annotations: []
           typeArguments: []
           type: kotlin/Unit
-        symbolKind: CLASS_MEMBER
         typeParameters: []
         valueParameters: []
         visibility: Public
@@ -65,6 +65,7 @@ scopes:
         isStatic: false
         isSuspend: false
         isTailRec: false
+        location: CLASS
         modality: OPEN
         name: equals
         origin: LIBRARY
@@ -73,7 +74,6 @@ scopes:
           annotations: []
           typeArguments: []
           type: kotlin/Boolean
-        symbolKind: CLASS_MEMBER
         typeParameters: []
         valueParameters: [
           KaValueParameterSymbol:
@@ -87,6 +87,7 @@ scopes:
             isImplicitLambdaParameter: false
             isNoinline: false
             isVararg: false
+            location: LOCAL
             name: other
             origin: LIBRARY
             receiverParameter: null
@@ -94,7 +95,6 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/Any?
-            symbolKind: LOCAL
             typeParameters: []
         ]
         visibility: Public
@@ -116,6 +116,7 @@ scopes:
         isStatic: false
         isSuspend: false
         isTailRec: false
+        location: CLASS
         modality: OPEN
         name: hashCode
         origin: LIBRARY
@@ -124,7 +125,6 @@ scopes:
           annotations: []
           typeArguments: []
           type: kotlin/Int
-        symbolKind: CLASS_MEMBER
         typeParameters: []
         valueParameters: []
         visibility: Public
@@ -146,6 +146,7 @@ scopes:
         isStatic: false
         isSuspend: false
         isTailRec: false
+        location: CLASS
         modality: OPEN
         name: toString
         origin: LIBRARY
@@ -154,7 +155,6 @@ scopes:
           annotations: []
           typeArguments: []
           type: kotlin/String
-        symbolKind: CLASS_MEMBER
         typeParameters: []
         valueParameters: []
         visibility: Public
@@ -169,13 +169,13 @@ scopes:
         isExpect: false
         isExtension: false
         isPrimary: true
+        location: CLASS
         origin: SOURCE_MEMBER_GENERATED
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
           typeArguments: []
           type: test/Receiver
-        symbolKind: CLASS_MEMBER
         typeParameters: []
         valueParameters: []
         visibility: Public
@@ -214,6 +214,7 @@ scopes:
         isFun: false
         isInline: false
         isInner: false
+        location: TOP_LEVEL
         modality: FINAL
         name: Receiver
         origin: SOURCE
@@ -223,7 +224,6 @@ scopes:
             typeArguments: []
             type: kotlin/Any
         ]
-        symbolKind: TOP_LEVEL
         typeParameters: []
         visibility: Public
       KaNamedClassOrObjectSymbol:
@@ -239,6 +239,7 @@ scopes:
         isFun: false
         isInline: false
         isInner: false
+        location: TOP_LEVEL
         modality: OPEN
         name: Base
         origin: SOURCE
@@ -248,7 +249,6 @@ scopes:
             typeArguments: []
             type: kotlin/Any
         ]
-        symbolKind: TOP_LEVEL
         typeParameters: []
         visibility: Public
       KaNamedClassOrObjectSymbol:
@@ -264,6 +264,7 @@ scopes:
         isFun: false
         isInline: false
         isInner: false
+        location: TOP_LEVEL
         modality: FINAL
         name: Child
         origin: SOURCE
@@ -273,7 +274,6 @@ scopes:
             typeArguments: []
             type: test/Base
         ]
-        symbolKind: TOP_LEVEL
         typeParameters: []
         visibility: Public
     callables: 0

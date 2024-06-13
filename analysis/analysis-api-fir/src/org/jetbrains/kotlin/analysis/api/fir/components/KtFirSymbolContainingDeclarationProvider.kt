@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.getContainingKtModule
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.isForeignValue
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.jvmClassNameIfDeserialized
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
@@ -54,6 +52,8 @@ internal class KaFirSymbolContainingDeclarationProvider(
             return null
         }
 
+        getContainingDeclarationForDependentDeclaration(symbol)?.let { return it }
+
         val firSymbol = symbol.firSymbol
         val symbolFirSession = firSymbol.llFirSession
         val symbolModule = symbolFirSession.ktModule
@@ -61,8 +61,6 @@ internal class KaFirSymbolContainingDeclarationProvider(
         if (firSymbol is FirErrorPropertySymbol && firSymbol.diagnostic is ConeDestructuringDeclarationsOnTopLevel) {
             return null
         }
-
-        getContainingDeclarationForDependentDeclaration(symbol)?.let { return it }
 
         if (symbolModule is KtDanglingFileModule && symbolModule.resolutionMode == DanglingFileResolutionMode.IGNORE_SELF) {
             if (hasParentPsi(symbol)) {
@@ -140,7 +138,7 @@ internal class KaFirSymbolContainingDeclarationProvider(
             else -> {}
         }
 
-        if (symbol is KaSymbolWithKind && symbol.symbolKind == KaSymbolKind.TOP_LEVEL) {
+        if (symbol.location == KaSymbolLocation.TOP_LEVEL) {
             val containingFile = (symbol.firSymbol.fir as? FirElementWithResolveState)?.getContainingFile()
             if (containingFile == null || containingFile.declarations.firstOrNull() !is FirScript) {
                 // Should be replaced with proper check after KT-61451 and KT-61887
@@ -208,7 +206,7 @@ internal class KaFirSymbolContainingDeclarationProvider(
             return it.fqNameForClassNameWithoutDollars.asString()
         }
 
-        return if (containingSymbolOrSelf.symbolKind == KaSymbolKind.TOP_LEVEL) {
+        return if (containingSymbolOrSelf.location == KaSymbolLocation.TOP_LEVEL) {
             (firSymbol.fir.getContainingFile()?.psi as? KtFile)
                 ?.takeUnless { it.isScript() }
                 ?.javaFileFacadeFqName?.asString()

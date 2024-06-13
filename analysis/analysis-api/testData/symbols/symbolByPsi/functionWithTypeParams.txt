@@ -1,6 +1,7 @@
 KaTypeParameterSymbol:
   annotations: []
   isReified: false
+  location: LOCAL
   name: X
   origin: SOURCE
   typeParameters: []
@@ -28,6 +29,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: foo
   origin: SOURCE
@@ -36,7 +38,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Unit
-  symbolKind: TOP_LEVEL
   typeParameters: [
     KaTypeParameterSymbol(X)
   ]
@@ -52,13 +53,13 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: x
       origin: SOURCE
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
         type: X
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(functionWithTypeParams.kt)
       getContainingJvmClassName: FunctionWithTypeParamsKt

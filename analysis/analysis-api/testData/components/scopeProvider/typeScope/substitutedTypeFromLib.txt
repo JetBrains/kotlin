@@ -91,6 +91,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: FINAL
   name: component1
   origin: LIBRARY
@@ -98,7 +99,6 @@ KaFunctionSymbol:
   returnType: KaTypeParameterType:
     annotations: []
     type: A
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -120,6 +120,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: FINAL
   name: component2
   origin: LIBRARY
@@ -127,7 +128,6 @@ KaFunctionSymbol:
   returnType: KaTypeParameterType:
     annotations: []
     type: B
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -149,6 +149,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: FINAL
   name: copy
   origin: LIBRARY
@@ -164,7 +165,6 @@ KaFunctionSymbol:
         type: B
     ]
     type: kotlin/Pair<A, B>
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
@@ -178,13 +178,13 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: first
       origin: LIBRARY
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
         type: A
-      symbolKind: LOCAL
       typeParameters: []
     KaValueParameterSymbol:
       annotations: []
@@ -197,13 +197,13 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: second
       origin: LIBRARY
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
         type: B
-      symbolKind: LOCAL
       typeParameters: []
   ]
   visibility: Public
@@ -225,6 +225,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: equals
   origin: LIBRARY
@@ -233,7 +234,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Boolean
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
@@ -247,6 +247,7 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: other
       origin: LIBRARY
       receiverParameter: null
@@ -254,7 +255,6 @@ KaFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Any?
-      symbolKind: LOCAL
       typeParameters: []
   ]
   visibility: Public
@@ -276,6 +276,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: hashCode
   origin: LIBRARY
@@ -284,7 +285,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -306,6 +306,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: toString
   origin: LIBRARY
@@ -314,7 +315,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/String
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
@@ -325,6 +325,7 @@ KaKotlinPropertySymbol:
     callableId: null
     contextReceivers: []
     isExtension: false
+    location: LOCAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(kotlin/Pair.first)
@@ -332,7 +333,6 @@ KaKotlinPropertySymbol:
     returnType: KaTypeParameterType:
       annotations: []
       type: A
-    symbolKind: LOCAL
     typeParameters: []
   callableId: kotlin/Pair.first
   contextReceivers: []
@@ -346,13 +346,13 @@ KaKotlinPropertySymbol:
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: LIBRARY
     receiverParameter: null
     returnType: KaTypeParameterType:
       annotations: []
       type: A
-    symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
@@ -370,6 +370,7 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
+  location: CLASS
   modality: FINAL
   name: first
   origin: LIBRARY
@@ -378,7 +379,6 @@ KaKotlinPropertySymbol:
     annotations: []
     type: A
   setter: null
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
 KaKotlinPropertySymbol:
@@ -388,6 +388,7 @@ KaKotlinPropertySymbol:
     callableId: null
     contextReceivers: []
     isExtension: false
+    location: LOCAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(kotlin/Pair.second)
@@ -395,7 +396,6 @@ KaKotlinPropertySymbol:
     returnType: KaTypeParameterType:
       annotations: []
       type: B
-    symbolKind: LOCAL
     typeParameters: []
   callableId: kotlin/Pair.second
   contextReceivers: []
@@ -409,13 +409,13 @@ KaKotlinPropertySymbol:
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: LIBRARY
     receiverParameter: null
     returnType: KaTypeParameterType:
       annotations: []
       type: B
-    symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
@@ -433,6 +433,7 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
+  location: CLASS
   modality: FINAL
   name: second
   origin: LIBRARY
@@ -441,7 +442,6 @@ KaKotlinPropertySymbol:
     annotations: []
     type: B
   setter: null
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
 

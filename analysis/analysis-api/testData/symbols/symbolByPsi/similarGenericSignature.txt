@@ -11,6 +11,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: OPEN
   name: A
   origin: SOURCE
@@ -20,7 +21,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(similarGenericSignature.kt)
@@ -31,6 +31,7 @@ KaNamedClassOrObjectSymbol:
 KaTypeParameterSymbol:
   annotations: []
   isReified: false
+  location: LOCAL
   name: J
   origin: SOURCE
   typeParameters: []
@@ -63,6 +64,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: foo
   origin: SOURCE
@@ -70,7 +72,6 @@ KaFunctionSymbol:
   returnType: KaTypeParameterType:
     annotations: []
     type: J
-  symbolKind: TOP_LEVEL
   typeParameters: [
     KaTypeParameterSymbol(J)
   ]
@@ -86,13 +87,13 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: j
       origin: SOURCE
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
         type: J
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(similarGenericSignature.kt)
       getContainingJvmClassName: SimilarGenericSignatureKt
@@ -108,6 +109,7 @@ KaFunctionSymbol:
 KaTypeParameterSymbol:
   annotations: []
   isReified: false
+  location: LOCAL
   name: T
   origin: SOURCE
   typeParameters: []
@@ -135,6 +137,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: foo
   origin: SOURCE
@@ -142,7 +145,6 @@ KaFunctionSymbol:
   returnType: KaTypeParameterType:
     annotations: []
     type: T
-  symbolKind: TOP_LEVEL
   typeParameters: [
     KaTypeParameterSymbol(T)
   ]
@@ -158,13 +160,13 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: j
       origin: SOURCE
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
         type: T
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(similarGenericSignature.kt)
       getContainingJvmClassName: SimilarGenericSignatureKt

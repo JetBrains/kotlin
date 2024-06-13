@@ -11,21 +11,27 @@ scopes:
     packages: 6
       KaPackageSymbol:
         fqName: META-INF
+        location: TOP_LEVEL
         origin: SOURCE
       KaPackageSymbol:
         fqName: java
+        location: TOP_LEVEL
         origin: SOURCE
       KaPackageSymbol:
         fqName: javax
+        location: TOP_LEVEL
         origin: SOURCE
       KaPackageSymbol:
         fqName: kotlin
+        location: TOP_LEVEL
         origin: SOURCE
       KaPackageSymbol:
         fqName: org
+        location: TOP_LEVEL
         origin: SOURCE
       KaPackageSymbol:
         fqName: sun
+        location: TOP_LEVEL
         origin: SOURCE
     classifiers: 0
     callables: 0

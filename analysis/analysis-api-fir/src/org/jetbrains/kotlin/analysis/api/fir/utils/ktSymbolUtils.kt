@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.analysis.checkers.getActualTargetList
@@ -20,7 +21,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 
 internal val KaSymbol.firSymbol: FirBasedSymbol<*>
     get() {
-        require(this is KaFirSymbol<*>)
+        // Currently, KaFirReceiverParameterSymbol is not KaFirSymbol
+        requireIsInstance<KaFirSymbol<*>>(this)
         return this.firSymbol
     }
 

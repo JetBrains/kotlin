@@ -4,6 +4,7 @@ KaLocalVariableSymbol:
   contextReceivers: []
   isExtension: false
   isVal: true
+  location: LOCAL
   name: loopVariable
   origin: SOURCE
   receiverParameter: null
@@ -11,7 +12,6 @@ KaLocalVariableSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: LOCAL
   typeParameters: []
   getContainingFileSymbol: KaFileSymbol(forLoopVariable.kt)
   getContainingJvmClassName: null
@@ -36,6 +36,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: usage
   origin: SOURCE
@@ -44,7 +45,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Unit
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Public

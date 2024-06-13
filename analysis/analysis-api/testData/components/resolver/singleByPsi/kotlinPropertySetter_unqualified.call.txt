@@ -5,6 +5,7 @@ KtNameReferenceExpression(50,51): 'i'
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
+            location: LOCAL
             origin: SOURCE
             owningCallableSymbol: KaFunctionSymbol(/foo)
             type: KaUsualClassType:

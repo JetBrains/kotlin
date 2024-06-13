@@ -25,6 +25,7 @@ KaFunctionSymbol:
                   isImplicitLambdaParameter: false
                   isNoinline: false
                   isVararg: false
+                  location: LOCAL
                   name: value
                   origin: SOURCE
                   receiverParameter: null
@@ -32,7 +33,6 @@ KaFunctionSymbol:
                     annotations: []
                     typeArguments: []
                     type: kotlin/Boolean
-                  symbolKind: LOCAL
                   typeParameters: []
                   getContainingFileSymbol: KaFileSymbol(logicalNotContract.kt)
                   getContainingJvmClassName: LogicalNotContractKt
@@ -52,6 +52,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: logicalNotContract
   origin: SOURCE
@@ -60,7 +61,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Unit
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
@@ -74,6 +74,7 @@ KaFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: value
       origin: SOURCE
       receiverParameter: null
@@ -81,7 +82,6 @@ KaFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Boolean
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(logicalNotContract.kt)
       getContainingJvmClassName: LogicalNotContractKt

@@ -6,6 +6,7 @@ KtNameReferenceExpression(51,57): 'length'
           original = KaImplicitReceiverValue:
             symbol = KaReceiverParameterSymbol:
               annotations: []
+              location: LOCAL
               origin: SOURCE
               owningCallableSymbol: KaFunctionSymbol(/test)
               type: KaUsualClassType:

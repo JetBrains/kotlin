@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,10 +16,9 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.*
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.UnsupportedSymbolKind
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.UnsupportedSymbolLocation
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -61,14 +60,14 @@ internal class KaFirKotlinPropertySymbol(
     override val isExtension: Boolean get() = withValidityAssertion { firSymbol.isExtension }
     override val initializer: KaInitializerValue? by cached { firSymbol.getKtConstantInitializer(builder) }
 
-    override val symbolKind: KaSymbolKind
+    override val location: KaSymbolLocation
         get() = withValidityAssertion {
             if (firSymbol.origin == FirDeclarationOrigin.DynamicScope) {
-                return@withValidityAssertion KaSymbolKind.CLASS_MEMBER
+                return@withValidityAssertion KaSymbolLocation.CLASS
             }
             when (firSymbol.containingClassLookupTag()?.classId) {
-                null -> KaSymbolKind.TOP_LEVEL
-                else -> KaSymbolKind.CLASS_MEMBER
+                null -> KaSymbolLocation.TOP_LEVEL
+                else -> KaSymbolLocation.CLASS
             }
         }
 
@@ -127,8 +126,8 @@ internal class KaFirKotlinPropertySymbol(
             return KaFirPsiBasedPropertySymbolPointer(psiPointer)
         }
 
-        return when (val kind = symbolKind) {
-            KaSymbolKind.TOP_LEVEL -> {
+        return when (val kind = location) {
+            KaSymbolLocation.TOP_LEVEL -> {
                 if (firSymbol.fir.origin is FirDeclarationOrigin.ScriptCustomization.ResultProperty) {
                     KaFirResultPropertySymbolPointer(analysisSession.createOwnerPointer(this))
                 } else {
@@ -139,7 +138,7 @@ internal class KaFirKotlinPropertySymbol(
                 }
             }
 
-            KaSymbolKind.CLASS_MEMBER ->
+            KaSymbolLocation.CLASS ->
                 KaFirMemberPropertySymbolPointer(
                     ownerPointer = analysisSession.createOwnerPointer(this),
                     name = firSymbol.name,
@@ -147,7 +146,7 @@ internal class KaFirKotlinPropertySymbol(
                     isStatic = firSymbol.isStatic,
                 )
 
-            else -> throw UnsupportedSymbolKind(this::class, kind)
+            else -> throw UnsupportedSymbolLocation(this::class, kind)
         }
     }
 

@@ -13,6 +13,7 @@ KaSyntheticJavaPropertySymbol:
     isExtension: false
     isInline: false
     isOverride: true
+    location: PROPERTY
     modality: OPEN
     origin: JAVA_SYNTHETIC_PROPERTY
     receiverParameter: null
@@ -20,7 +21,6 @@ KaSyntheticJavaPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/String
-    symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
@@ -44,6 +44,7 @@ KaSyntheticJavaPropertySymbol:
   isVal: false
   javaGetterSymbol: KaFunctionSymbol(/Derived.getSomething)
   javaSetterSymbol: KaFunctionSymbol(/Derived.setSomething)
+  location: CLASS
   modality: OPEN
   name: something
   origin: JAVA_SYNTHETIC_PROPERTY
@@ -62,6 +63,7 @@ KaSyntheticJavaPropertySymbol:
     isExtension: false
     isInline: false
     isOverride: true
+    location: PROPERTY
     modality: OPEN
     origin: JAVA_SYNTHETIC_PROPERTY
     parameter: KaValueParameterSymbol:
@@ -75,6 +77,7 @@ KaSyntheticJavaPropertySymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
+      location: LOCAL
       name: s
       origin: SOURCE
       receiverParameter: null
@@ -82,7 +85,6 @@ KaSyntheticJavaPropertySymbol:
         annotations: []
         typeArguments: []
         type: kotlin/String
-      symbolKind: LOCAL
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(Derived.kt)
       getContainingJvmClassName: Derived
@@ -93,7 +95,6 @@ KaSyntheticJavaPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Unit
-    symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
@@ -107,6 +108,7 @@ KaSyntheticJavaPropertySymbol:
         isImplicitLambdaParameter: false
         isNoinline: false
         isVararg: false
+        location: LOCAL
         name: s
         origin: SOURCE
         receiverParameter: null
@@ -114,7 +116,6 @@ KaSyntheticJavaPropertySymbol:
           annotations: []
           typeArguments: []
           type: kotlin/String
-        symbolKind: LOCAL
         typeParameters: []
         getContainingFileSymbol: KaFileSymbol(Derived.kt)
         getContainingJvmClassName: Derived
@@ -130,7 +131,6 @@ KaSyntheticJavaPropertySymbol:
     getContainingJvmClassName: Derived
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:

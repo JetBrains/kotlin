@@ -5,6 +5,7 @@ KaKotlinPropertySymbol:
     callableId: null
     contextReceivers: []
     isExtension: false
+    location: LOCAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/prop)
@@ -13,7 +14,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Boolean
-    symbolKind: LOCAL
     typeParameters: []
     getContainingFileSymbol: KaFileSymbol(propertyReceiverParameter.kt)
     getContainingJvmClassName: PropertyReceiverParameterKt
@@ -31,6 +31,7 @@ KaKotlinPropertySymbol:
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE
     receiverParameter: KaReceiverParameterSymbol:
@@ -38,6 +39,7 @@ KaKotlinPropertySymbol:
         ReceiverAnnotation()
           psi: KtAnnotationEntry
       ]
+      location: LOCAL
       origin: SOURCE
       owningCallableSymbol: KaKotlinPropertySymbol(/prop)
       type: KaUsualClassType:
@@ -54,7 +56,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Boolean
-    symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
@@ -76,6 +77,7 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
+  location: TOP_LEVEL
   modality: FINAL
   name: prop
   origin: SOURCE
@@ -84,6 +86,7 @@ KaKotlinPropertySymbol:
       ReceiverAnnotation()
         psi: KtAnnotationEntry
     ]
+    location: LOCAL
     origin: SOURCE
     owningCallableSymbol: KaKotlinPropertySymbol(/prop)
     type: KaUsualClassType:
@@ -101,7 +104,6 @@ KaKotlinPropertySymbol:
     typeArguments: []
     type: kotlin/Boolean
   setter: null
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(propertyReceiverParameter.kt)

@@ -11,6 +11,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: ABSTRACT
   name: A
   origin: SOURCE
@@ -20,7 +21,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: test/api/I
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(A.kt)
@@ -41,6 +41,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: ABSTRACT
   name: InternalA
   origin: SOURCE
@@ -50,7 +51,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: test/api/InternalI
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Internal
   getContainingFileSymbol: KaFileSymbol(A.kt)
@@ -71,6 +71,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: ABSTRACT
   name: PrivateA
   origin: SOURCE
@@ -80,7 +81,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: test/api/I
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Private
   getContainingFileSymbol: KaFileSymbol(A.kt)
@@ -101,6 +101,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: B
   origin: SOURCE
@@ -110,7 +111,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: test/A
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(B.kt)
@@ -131,6 +131,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: InternalB
   origin: SOURCE
@@ -140,7 +141,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: test/InternalA
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Internal
   getContainingFileSymbol: KaFileSymbol(B.kt)
@@ -161,6 +161,7 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: PrivateB
   origin: SOURCE
@@ -170,7 +171,6 @@ KaNamedClassOrObjectSymbol:
       typeArguments: []
       type: test/A
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Private
   getContainingFileSymbol: KaFileSymbol(B.kt)

@@ -9,6 +9,7 @@ KaValueParameterSymbol:
   isImplicitLambdaParameter: true
   isNoinline: false
   isVararg: false
+  location: LOCAL
   name: it
   origin: SOURCE_MEMBER_GENERATED
   receiverParameter: null
@@ -16,7 +17,6 @@ KaValueParameterSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: LOCAL
   typeParameters: []
   getContainingFileSymbol: KaFileSymbol(implicitLambdaParameter.kt)
   getContainingJvmClassName: null

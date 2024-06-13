@@ -1,6 +1,7 @@
 KaTypeParameterSymbol:
   annotations: []
   isReified: false
+  location: LOCAL
   name: T
   origin: SOURCE
   typeParameters: []
@@ -16,6 +17,7 @@ KaLocalVariableSymbol:
   contextReceivers: []
   isExtension: false
   isVal: true
+  location: LOCAL
   name: x
   origin: SOURCE
   receiverParameter: null
@@ -23,7 +25,6 @@ KaLocalVariableSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: LOCAL
   typeParameters: []
   getContainingFileSymbol: KaFileSymbol(typeParameters.kt)
   getContainingJvmClassName: null
@@ -48,6 +49,7 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: f
   origin: SOURCE
@@ -56,7 +58,6 @@ KaFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Unit
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Public

@@ -53,6 +53,7 @@ scopes:
         isStatic: false
         isSuspend: false
         isTailRec: false
+        location: CLASS
         modality: OPEN
         name: equals
         origin: LIBRARY
@@ -61,7 +62,6 @@ scopes:
           annotations: []
           typeArguments: []
           type: kotlin/Boolean
-        symbolKind: CLASS_MEMBER
         typeParameters: []
         valueParameters: [
           KaValueParameterSymbol:
@@ -75,6 +75,7 @@ scopes:
             isImplicitLambdaParameter: false
             isNoinline: false
             isVararg: false
+            location: LOCAL
             name: other
             origin: LIBRARY
             receiverParameter: null
@@ -82,7 +83,6 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/Any?
-            symbolKind: LOCAL
             typeParameters: []
         ]
         visibility: Public
@@ -104,6 +104,7 @@ scopes:
         isStatic: false
         isSuspend: false
         isTailRec: false
+        location: CLASS
         modality: OPEN
         name: hashCode
         origin: LIBRARY
@@ -112,7 +113,6 @@ scopes:
           annotations: []
           typeArguments: []
           type: kotlin/Int
-        symbolKind: CLASS_MEMBER
         typeParameters: []
         valueParameters: []
         visibility: Public
@@ -134,6 +134,7 @@ scopes:
         isStatic: false
         isSuspend: false
         isTailRec: false
+        location: CLASS
         modality: OPEN
         name: toString
         origin: LIBRARY
@@ -142,7 +143,6 @@ scopes:
           annotations: []
           typeArguments: []
           type: kotlin/String
-        symbolKind: CLASS_MEMBER
         typeParameters: []
         valueParameters: []
         visibility: Public
@@ -157,13 +157,13 @@ scopes:
         isExpect: false
         isExtension: false
         isPrimary: true
+        location: CLASS
         origin: SOURCE_MEMBER_GENERATED
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
           typeArguments: []
           type: A
-        symbolKind: CLASS_MEMBER
         typeParameters: []
         valueParameters: []
         visibility: Public
@@ -184,21 +184,27 @@ scopes:
     packages: 6
       KaPackageSymbol:
         fqName: META-INF
+        location: TOP_LEVEL
         origin: SOURCE
       KaPackageSymbol:
         fqName: java
+        location: TOP_LEVEL
         origin: SOURCE
       KaPackageSymbol:
         fqName: javax
+        location: TOP_LEVEL
         origin: SOURCE
       KaPackageSymbol:
         fqName: kotlin
+        location: TOP_LEVEL
         origin: SOURCE
       KaPackageSymbol:
         fqName: org
+        location: TOP_LEVEL
         origin: SOURCE
       KaPackageSymbol:
         fqName: sun
+        location: TOP_LEVEL
         origin: SOURCE
     classifiers: 1
       KaNamedClassOrObjectSymbol:
@@ -214,6 +220,7 @@ scopes:
         isFun: false
         isInline: false
         isInner: false
+        location: TOP_LEVEL
         modality: FINAL
         name: A
         origin: SOURCE
@@ -223,7 +230,6 @@ scopes:
             typeArguments: []
             type: kotlin/Any
         ]
-        symbolKind: TOP_LEVEL
         typeParameters: []
         visibility: Public
     callables: 1
@@ -245,11 +251,13 @@ scopes:
         isStatic: false
         isSuspend: false
         isTailRec: false
+        location: TOP_LEVEL
         modality: FINAL
         name: test
         origin: SOURCE
         receiverParameter: KaReceiverParameterSymbol:
           annotations: []
+          location: LOCAL
           origin: SOURCE
           owningCallableSymbol: KaFunctionSymbol(/test)
           type: KaUsualClassType:
@@ -265,7 +273,6 @@ scopes:
               type: kotlin/Int
           ]
           type: kotlin/Function0<kotlin/Int>
-        symbolKind: TOP_LEVEL
         typeParameters: []
         valueParameters: []
         visibility: Public

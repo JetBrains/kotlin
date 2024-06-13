@@ -23,9 +23,9 @@ KaTypeAliasSymbol:
     type: kotlin/coroutines/SuspendFunction2<kotlin/DeepRecursiveScope<*, *>, kotlin/Any?, kotlin/Any?>
   isActual: false
   isExpect: false
+  location: TOP_LEVEL
   name: DeepRecursiveFunctionBlock
   origin: LIBRARY
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Private
   getContainingFileSymbol: null

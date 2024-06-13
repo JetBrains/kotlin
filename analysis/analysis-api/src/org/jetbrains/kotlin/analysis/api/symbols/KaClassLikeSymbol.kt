@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -35,7 +35,8 @@ public abstract class KaTypeParameterSymbol : KaClassifierSymbol(), KaNamedSymbo
 
 public typealias KtTypeParameterSymbol = KaTypeParameterSymbol
 
-public sealed class KaClassLikeSymbol : KaClassifierSymbol(), KaSymbolWithKind, KaPossibleMemberSymbol, KaPossibleMultiplatformSymbol {
+public sealed class KaClassLikeSymbol : KaClassifierSymbol(), @Suppress("DEPRECATION") KaSymbolWithKind, KaPossibleMemberSymbol,
+    KaPossibleMultiplatformSymbol {
     /**
      * The [ClassId] of this class, or `null` if this class is local.
      */
@@ -77,7 +78,7 @@ public typealias KtClassOrObjectSymbol = KaClassOrObjectSymbol
 public abstract class KaAnonymousObjectSymbol : KaClassOrObjectSymbol() {
     final override val classKind: KaClassKind get() = withValidityAssertion { KaClassKind.ANONYMOUS_OBJECT }
     final override val classId: ClassId? get() = withValidityAssertion { null }
-    final override val symbolKind: KaSymbolKind get() = withValidityAssertion { KaSymbolKind.LOCAL }
+    final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.LOCAL }
     final override val name: Name? get() = withValidityAssertion { null }
     final override val isActual: Boolean get() = withValidityAssertion { false }
     final override val isExpect: Boolean get() = withValidityAssertion { false }

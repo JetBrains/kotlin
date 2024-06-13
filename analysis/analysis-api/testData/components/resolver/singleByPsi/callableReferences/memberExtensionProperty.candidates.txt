@@ -5,6 +5,7 @@ KtCallableReferenceExpression(249,257): 'Bar::foo'
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
+            location: LOCAL
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
             type: KaUsualClassType:

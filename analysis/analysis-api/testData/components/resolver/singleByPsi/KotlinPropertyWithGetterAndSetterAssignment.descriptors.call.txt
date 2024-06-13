@@ -102,6 +102,7 @@
           dispatchReceiver = KaImplicitReceiverValue:
             symbol = KaReceiverParameterSymbol:
               annotations: []
+              location: LOCAL
               origin: SOURCE
               owningCallableSymbol: KaFunctionSymbol(/foo)
               type: KaUsualClassType:
@@ -127,6 +128,7 @@
           dispatchReceiver = KaImplicitReceiverValue:
             symbol = KaReceiverParameterSymbol:
               annotations: []
+              location: LOCAL
               origin: SOURCE
               owningCallableSymbol: KaFunctionSymbol(/foo)
               type: KaUsualClassType:
@@ -152,6 +154,7 @@
           dispatchReceiver = KaImplicitReceiverValue:
             symbol = KaReceiverParameterSymbol:
               annotations: []
+              location: LOCAL
               origin: SOURCE
               owningCallableSymbol: KaFunctionSymbol(/foo)
               type: KaUsualClassType:
