@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.objcexport.extras.requiresForwardDeclaration
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mapType]
  */
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaType.translateToObjCType(typeBridge: TypeBridge): ObjCType {
     return when (typeBridge) {
         is ReferenceBridge -> this.translateToObjCReferenceType()
@@ -56,6 +57,7 @@ internal fun KaType.translateToObjCType(typeBridge: TypeBridge): ObjCType {
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mapReferenceType]
  */
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaType.translateToObjCReferenceType(): ObjCReferenceType {
     return mapToReferenceTypeIgnoringNullability().withNullabilityOf(this)
 }
@@ -64,6 +66,7 @@ internal fun KaType.translateToObjCReferenceType(): ObjCReferenceType {
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mapReferenceTypeIgnoringNullability]
  */
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReferenceType {
     val fullyExpandedType = fullyExpandedType
     val classId = (fullyExpandedType as? KaClassType)?.classId
@@ -150,6 +153,7 @@ internal fun KaType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReferenc
 }
 
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private val KaClassType.objCTypeName: String
     get() {
         return findClass(classId)?.getObjCClassOrProtocolName()?.objCName
@@ -157,6 +161,7 @@ private val KaClassType.objCTypeName: String
     }
 
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaType.translateTypeArgumentsToObjC(): List<ObjCNonNullReferenceType> {
     if (this !is KaClassType) return emptyList()
 

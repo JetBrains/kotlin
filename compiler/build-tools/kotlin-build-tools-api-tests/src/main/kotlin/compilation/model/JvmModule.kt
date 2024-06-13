@@ -77,6 +77,7 @@ class JvmModule(
         return snapshotFile
     }
 
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     override fun compileIncrementally(
         sourcesChanges: SourcesChanges,
         strategyConfig: CompilerExecutionStrategyConfiguration,

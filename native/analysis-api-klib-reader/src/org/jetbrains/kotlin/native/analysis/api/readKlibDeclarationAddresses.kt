@@ -83,6 +83,7 @@ internal fun readKlibDeclarationAddresses(library: KotlinLibrary): Set<KlibDecla
 }
 
 context(PackageFragmentReadingContext)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun ProtoBuf.PackageFragment.readKlibClassAddresses(): Set<KlibClassAddress> {
     return class_List.mapNotNull { classProto ->
         val classId = ClassId.fromString(nameResolver.getQualifiedClassName(classProto.fqName))
@@ -99,6 +100,7 @@ internal fun ProtoBuf.PackageFragment.readKlibClassAddresses(): Set<KlibClassAdd
 }
 
 context(PackageFragmentReadingContext)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun ProtoBuf.PackageFragment.readKlibTypeAliasAddresses(): Set<KlibTypeAliasAddress> {
     return this.`package`.typeAliasList.map { typeAliasProto ->
         val name = Name.identifier(nameResolver.getString(typeAliasProto.name))
@@ -111,6 +113,7 @@ internal fun ProtoBuf.PackageFragment.readKlibTypeAliasAddresses(): Set<KlibType
 }
 
 context(PackageFragmentReadingContext)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun ProtoBuf.PackageFragment.readKlibPropertyAddresses(): Set<KlibPropertyAddress> {
     return `package`.propertyList.map { propertyProto ->
         KlibPropertyAddress(
@@ -125,6 +128,7 @@ internal fun ProtoBuf.PackageFragment.readKlibPropertyAddresses(): Set<KlibPrope
 }
 
 context(PackageFragmentReadingContext)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun ProtoBuf.PackageFragment.readKlibFunctionAddresses(): Set<KlibFunctionAddress> {
     return `package`.functionList.map { functionProto ->
         KlibFunctionAddress(

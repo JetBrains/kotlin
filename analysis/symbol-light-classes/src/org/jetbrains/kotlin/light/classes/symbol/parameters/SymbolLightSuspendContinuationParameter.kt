@@ -30,6 +30,7 @@ internal class SymbolLightSuspendContinuationParameter(
     private val functionSymbolPointer: KaSymbolPointer<KaNamedFunctionSymbol>,
     private val containingMethod: SymbolLightMethodBase,
 ) : SymbolLightParameterBase(containingMethod) {
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     private inline fun <T> withFunctionSymbol(crossinline action: context(KaSession) (KaNamedFunctionSymbol) -> T): T {
         return functionSymbolPointer.withSymbol(ktModule, action)
     }

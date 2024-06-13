@@ -16,11 +16,13 @@ import org.jetbrains.kotlin.psi.KtFile
 import kotlin.test.fail
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun KtFile.getClassOrFail(name: String): KaNamedClassSymbol {
     return symbol.fileScope.getClassOrFail(name)
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun KaScope.getClassOrFail(name: String): KaNamedClassSymbol {
     val allSymbols = classifiers(Name.identifier(name)).toList()
     if (allSymbols.isEmpty()) fail("Missing class '$name'")
@@ -31,16 +33,19 @@ fun KaScope.getClassOrFail(name: String): KaNamedClassSymbol {
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun KtFile.getFunctionOrFail(name: String): KaNamedFunctionSymbol {
     return symbol.fileScope.getFunctionOrFail(name)
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun KtFile.getPropertyOrFail(name: String): KaPropertySymbol {
     return symbol.fileScope.getPropertyOrFail(name)
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun KaScope.getFunctionOrFail(name: String): KaNamedFunctionSymbol {
     val allSymbols = callables(Name.identifier(name)).toList()
     if (allSymbols.isEmpty()) fail("Missing function '$name'")
@@ -51,6 +56,7 @@ fun KaScope.getFunctionOrFail(name: String): KaNamedFunctionSymbol {
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun KaScope.getPropertyOrFail(name: String): KaPropertySymbol {
     val allSymbols = callables(Name.identifier(name)).toList()
     if (allSymbols.isEmpty()) fail("Missing property '$name'")
@@ -61,6 +67,7 @@ fun KaScope.getPropertyOrFail(name: String): KaPropertySymbol {
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun KaClassSymbol.getFunctionOrFail(name: String): KaNamedFunctionSymbol {
     return this.memberScope.getFunctionOrFail(name)
 }

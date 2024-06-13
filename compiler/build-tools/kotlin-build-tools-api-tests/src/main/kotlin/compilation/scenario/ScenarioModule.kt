@@ -49,6 +49,7 @@ interface ScenarioModule {
      */
     fun createPredefinedFile(fileName: String, version: String)
 
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     fun compile(
         forceOutput: LogLevel? = null,
         assertions: context(Module, ScenarioModule) CompilationOutcome.() -> Unit = {},

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.name.StandardClassIds
 
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaFunctionSymbol.translateToObjCParameters(baseMethodBridge: MethodBridge): List<ObjCParameter> {
     fun unifyName(initialName: String, usedNames: Set<String>): String {
         var unique = initialName.toValidObjCSwiftIdentifier()

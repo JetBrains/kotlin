@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
  * documentation.
  */
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaAnnotatedSymbol.getObjCDocumentedAnnotations(): List<KaAnnotation> {
     return annotations.getObjCDocumentedAnnotations()
 }
@@ -28,6 +29,7 @@ internal fun KaAnnotatedSymbol.getObjCDocumentedAnnotations(): List<KaAnnotation
  * See [getObjCDocumentedAnnotations]
  */
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaAnnotationList.getObjCDocumentedAnnotations(): List<KaAnnotation> {
     return this
         .filter { annotation ->

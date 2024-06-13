@@ -18,12 +18,14 @@ import org.jetbrains.kotlin.name.Name
  * the Analysis API by requesting the combined member scope and looking for [KtSymbolOrigin.SOURCE_MEMBER_GENERATED].
  */
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaClassSymbol.translateEnumMembers(): List<ObjCExportStub> {
     if (classKind != KaClassKind.ENUM_CLASS) return emptyList()
     return getEnumEntries() + listOf(getEnumValuesMethod(), getEnumEntriesProperty())
 }
 
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaClassSymbol.getEnumEntries(): List<ObjCProperty> {
     val staticMembers = this.staticDeclaredMemberScope.callables.toList()
     return staticMembers.filterIsInstance<KaEnumEntrySymbol>().map { entry ->
@@ -45,6 +47,7 @@ private fun KaClassSymbol.getEnumEntries(): List<ObjCProperty> {
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.buildEnumValuesMethod]
  */
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaClassSymbol.getEnumValuesMethod(): ObjCMethod {
     val valuesFunctionSymbol = staticMemberScope.callables(Name.identifier("values")).firstOrNull()
     return ObjCMethod(
@@ -62,6 +65,7 @@ private fun KaClassSymbol.getEnumValuesMethod(): ObjCMethod {
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.buildEnumEntriesProperty]
  */
 context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaClassSymbol.getEnumEntriesProperty(): ObjCProperty {
     val entriesSymbol = staticMemberScope.callables(Name.identifier("entries")).firstOrNull()
 
@@ -78,6 +82,7 @@ private fun KaClassSymbol.getEnumEntriesProperty(): ObjCProperty {
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaEnumEntrySymbol.getEnumEntryName(forSwift: Boolean): String {
 
     val propertyName: String = getObjCPropertyName().run {

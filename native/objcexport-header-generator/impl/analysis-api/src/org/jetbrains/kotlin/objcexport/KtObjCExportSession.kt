@@ -79,6 +79,7 @@ internal class KtObjCExportSessionImpl(
  * ```
  */
 context(KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal inline fun <reified T> cached(key: Any, noinline computation: () -> T): T {
     return cached(T::class.java, key, computation)
 }
@@ -87,6 +88,7 @@ internal inline fun <reified T> cached(key: Any, noinline computation: () -> T):
  * @see cached
  */
 context(KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun <T> cached(typeOfT: Class<T>, key: Any, computation: () -> T): T {
     val value = private.cache.getOrPutNullable(key) {
         computation()

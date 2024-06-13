@@ -21,6 +21,7 @@ internal object ObjCTypeExtrasBuilderContext
 /**
  * Convenience function for building extras for [ObjCType]
  */
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun objCTypeExtras(builder: context(ObjCTypeExtrasBuilderContext) MutableExtras.() -> Unit): Extras {
     return mutableExtrasOf().also { extras -> builder(ObjCTypeExtrasBuilderContext, extras) }
 }

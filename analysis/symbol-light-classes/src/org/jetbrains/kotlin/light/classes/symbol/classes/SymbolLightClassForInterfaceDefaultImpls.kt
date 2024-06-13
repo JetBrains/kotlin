@@ -69,6 +69,7 @@ internal class SymbolLightClassForInterfaceDefaultImpls(private val containingCl
     override fun getOwnInnerClasses() = emptyList<PsiClass>()
 
     context(KaSession)
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     override fun acceptCallableSymbol(symbol: KaCallableSymbol): Boolean {
         return super.acceptCallableSymbol(symbol) && (symbol as? KaSymbolWithModality)?.modality != Modality.ABSTRACT
     }
