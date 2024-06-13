@@ -192,7 +192,7 @@ internal fun IrExpression.castIfNecessary(targetClass: IrClass) =
             // KT-68888: TODO `!type.isNullable()` can(?) be removed to get rid of conversion from nullable to non-nullable
             if (!type.isNullable() && classifier.isSubtypeOfClass(targetClass.symbol)) this
             else {
-                makeIrCallConversionToTargetClass(this, classifier.closestSuperClass()!!.owner, targetClass)
+                makeIrCallConversionToTargetClass(classifier.closestSuperClass()!!.owner, targetClass)
             }
         }
     }
@@ -208,21 +208,21 @@ private fun IrClassifierSymbol.closestSuperClass(): IrClassSymbol? =
         superTypes().mapNotNull { it.classifierOrFail.closestSuperClass() }.singleOrNull()
 
 private fun IrExpression.makeIrCallConversionToTargetClass(
-    receiver: IrExpression,
     sourceClass: IrClass,
     targetClass: IrClass,
 ): IrExpression {
-    val numberCastFunctionName = Name.identifier("to${targetClass.name.asString()}")
-    val castFun = sourceClass.functions.single {
+    val numberCastFunctionName = Name.identifier("to${targetClass.name}")
+    val castFun = sourceClass.functions.singleOrNull {
         it.name == numberCastFunctionName &&
                 it.dispatchReceiverParameter != null && it.extensionReceiverParameter == null && it.valueParameters.isEmpty()
-    }
+    } ?: error("Internal error: cannot convert ${sourceClass.name} to ${targetClass.name}: ${render()}")
+
     return IrCallImpl(
         startOffset, endOffset,
         castFun.returnType, castFun.symbol,
         typeArgumentsCount = 0,
         valueArgumentsCount = 0
-    ).apply { dispatchReceiver = receiver }
+    ).also { it.dispatchReceiver = this }
 }
 
 // Gets type of the deepest EXPRESSION from possible recursive snippet `IrGetValue(IrVariable(initializer=EXPRESSION))`.
