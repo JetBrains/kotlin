@@ -39,10 +39,12 @@ data class Block(val exps: List<ExpEmbedding>) : OptionalResultExpEmbedding {
 data class If(val condition: ExpEmbedding, val thenBranch: ExpEmbedding, val elseBranch: ExpEmbedding, override val type: TypeEmbedding) :
     OptionalResultExpEmbedding, DefaultDebugTreeViewImplementation {
     override fun toViperMaybeStoringIn(result: VariableEmbedding?, ctx: LinearizationContext) {
-        val condViper = condition.toViperBuiltinType(ctx)
-        val thenViper = ctx.asBlock { thenBranch.withType(type).toViperMaybeStoringIn(result, this) }
-        val elseViper = ctx.asBlock { elseBranch.withType(type).toViperMaybeStoringIn(result, this) }
-        ctx.addStatement(Stmt.If(condViper, thenViper, elseViper, ctx.source.asPosition))
+        ctx.addStatement {
+            val condViper = condition.toViperBuiltinType(ctx)
+            val thenViper = ctx.asBlock { thenBranch.withType(type).toViperMaybeStoringIn(result, this) }
+            val elseViper = ctx.asBlock { elseBranch.withType(type).toViperMaybeStoringIn(result, this) }
+            Stmt.If(condViper, thenViper, elseViper, ctx.source.asPosition)
+        }
     }
 
     override val debugAnonymousSubexpressions: List<ExpEmbedding>
@@ -59,21 +61,21 @@ data class While(
     override val type: TypeEmbedding = UnitTypeEmbedding
 
     override fun toViperSideEffects(ctx: LinearizationContext) {
-        val condVar = ctx.freshAnonVar(BooleanTypeEmbedding)
         ctx.addLabel(continueLabel)
-        condition.toViperStoringIn(condVar, ctx)
-        val bodyBlock = ctx.asBlock {
-            body.toViperUnusedResult(this)
-            condition.toViperStoringIn(condVar, this)
-        }
-        ctx.addStatement(
+        ctx.addStatement {
+            val condVar = ctx.freshAnonVar(BooleanTypeEmbedding)
+            condition.toViperStoringIn(condVar, ctx)
+            val bodyBlock = ctx.asBlock {
+                body.toViperUnusedResult(this)
+                condition.toViperStoringIn(condVar, this)
+            }
             Stmt.While(
                 condVar.toViperBuiltinType(ctx),
                 invariants.pureToViper(toBuiltin = true, ctx.source),
                 bodyBlock,
                 ctx.source.asPosition
             )
-        )
+        }
         ctx.addLabel(breakLabel)
     }
 
@@ -91,7 +93,7 @@ data class While(
 data class Goto(val target: Label) : NoResultExpEmbedding, DefaultDebugTreeViewImplementation {
     override val type: TypeEmbedding = NothingTypeEmbedding
     override fun toViperUnusedResult(ctx: LinearizationContext) {
-        ctx.addStatement(target.toGoto(ctx.source.asPosition))
+        ctx.addStatement { target.toGoto(ctx.source.asPosition) }
     }
 
     override val debugAnonymousSubexpressions: List<ExpEmbedding>
@@ -121,8 +123,10 @@ data class GotoChainNode(val label: Label?, val exp: ExpEmbedding, val next: Lab
 
     override fun toViperMaybeStoringIn(result: VariableEmbedding?, ctx: LinearizationContext) {
         label?.let { ctx.addLabel(it) }
-        exp.toViperMaybeStoringIn(result, ctx)
-        ctx.addStatement(next.toGoto(ctx.source.asPosition))
+        ctx.addStatement {
+            exp.toViperMaybeStoringIn(result, ctx)
+            next.toGoto(ctx.source.asPosition)
+        }
     }
 
     override val debugTreeView: TreeView
@@ -131,9 +135,11 @@ data class GotoChainNode(val label: Label?, val exp: ExpEmbedding, val next: Lab
 
 data class NonDeterministically(val exp: ExpEmbedding) : UnitResultExpEmbedding, DefaultDebugTreeViewImplementation {
     override fun toViperSideEffects(ctx: LinearizationContext) {
-        val choice = ctx.freshAnonVar(BooleanTypeEmbedding)
-        val expViper = ctx.asBlock { exp.toViper(this) }
-        ctx.addStatement(Stmt.If(choice.toViperBuiltinType(ctx), expViper, Stmt.Seqn(), ctx.source.asPosition))
+        ctx.addStatement {
+            val choice = ctx.freshAnonVar(BooleanTypeEmbedding)
+            val expViper = ctx.asBlock { exp.toViper(this) }
+            Stmt.If(choice.toViperBuiltinType(ctx), expViper, Stmt.Seqn(), ctx.source.asPosition)
+        }
     }
 
     override val debugAnonymousSubexpressions: List<ExpEmbedding>
@@ -174,13 +180,13 @@ data class MethodCall(val method: NamedFunctionSignature, val args: List<ExpEmbe
     override val type: TypeEmbedding = method.returnType
 
     override fun toViperStoringIn(result: VariableEmbedding, ctx: LinearizationContext) {
-        ctx.addStatement(
+        ctx.addStatement {
             method.toMethodCall(
                 args.map { it.toViper(ctx) },
                 result.toLocalVarUse(ctx.source.asPosition),
                 ctx.source.asPosition
             )
-        )
+        }
     }
 
     override val debugTreeView: TreeView
@@ -201,17 +207,17 @@ data class InvokeFunctionObject(val receiver: ExpEmbedding, val args: List<ExpEm
     OnlyToViperExpEmbedding {
     override fun toViper(ctx: LinearizationContext): Exp {
         val variable = ctx.freshAnonVar(type)
-        val receiverViper = receiver.toViper(ctx)
-        for (arg in args) arg.toViperUnusedResult(ctx)
-        // NOTE: Since it is only relevant to update the number of times that a function object is called,
-        // the function call invocation is intentionally not assigned to the return variable
-        ctx.addStatement(
+        ctx.addStatement {
+            val receiverViper = receiver.toViper(ctx)
+            for (arg in args) arg.toViperUnusedResult(ctx)
+            // NOTE: Since it is only relevant to update the number of times that a function object is called,
+            // the function call invocation is intentionally not assigned to the return variable
             InvokeFunctionObjectMethod.toMethodCall(
                 listOf(receiverViper),
                 listOf(),
                 ctx.source.asPosition
             )
-        )
+        }
         // TODO: figure out which exactly invariants we want here
         return variable.withAccessAndProvenInvariants().toViper(ctx)
     }
@@ -236,7 +242,7 @@ data class FunctionExp(val signature: FullNamedFunctionSignature?, val body: Exp
             // provenInvariants don't contain permissions.
             // TODO (inhale vs require) Decide if `predicateAccessInvariant` should be required rather than inhaled in the beginning of the body.
             (arg.provenInvariants() + listOfNotNull(arg.predicateAccessInvariant())).forEach { invariant ->
-                ctx.addStatement(Stmt.Inhale(invariant.toViperBuiltinType(ctx), ctx.source.asPosition))
+                ctx.addStatement { Stmt.Inhale(invariant.toViperBuiltinType(ctx), ctx.source.asPosition) }
             }
         }
         body.toViperMaybeStoringIn(result, ctx)

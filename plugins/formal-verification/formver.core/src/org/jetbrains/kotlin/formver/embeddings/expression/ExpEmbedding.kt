@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.formver.asPosition
 import org.jetbrains.kotlin.formver.domains.RuntimeTypeDomain
 import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.embeddings.expression.debug.*
+import org.jetbrains.kotlin.formver.linearization.InhaleExhaleStmtModifier
 import org.jetbrains.kotlin.formver.linearization.LinearizationContext
 import org.jetbrains.kotlin.formver.linearization.pureToViper
 import org.jetbrains.kotlin.formver.viper.MangledName
@@ -102,7 +103,7 @@ sealed interface DefaultToBuiltinExpEmbedding : ExpEmbedding {
  */
 sealed interface DefaultStoringInExpEmbedding : ExpEmbedding {
     override fun toViperStoringIn(result: VariableEmbedding, ctx: LinearizationContext) {
-        ctx.addStatement(Stmt.assign(result.toViper(ctx), toViper(ctx)))
+        ctx.addStatement { Stmt.assign(result.toViper(ctx), toViper(ctx)) }
     }
 }
 
@@ -366,9 +367,10 @@ data class FieldAccess(val receiver: ExpEmbedding, val field: FieldEmbedding) : 
 
         val fieldAccess = PrimitiveFieldAccess(receiverWrapper, field)
         val invariant = accessInvariant?.fillHole(receiverWrapper)?.pureToViper(toBuiltin = true, ctx.source)
-        invariant?.let { ctx.addStatement(Stmt.Inhale(it, ctx.source.asPosition)) }
-        ctx.addStatement(Stmt.assign(result.toViper(ctx), fieldAccess.pureToViper(toBuiltin = false, ctx.source), ctx.source.asPosition))
-        invariant?.let { ctx.addStatement(Stmt.Exhale(it, ctx.source.asPosition)) }
+        ctx.addStatement {
+            invariant?.let { addModifier(InhaleExhaleStmtModifier(it)) }
+            Stmt.assign(result.toViper(ctx), fieldAccess.pureToViper(toBuiltin = false, ctx.source), ctx.source.asPosition)
+        }
     }
 
     private fun unfoldHierarchy(receiverWrapper: ExpEmbedding, ctx: LinearizationContext) {
@@ -376,7 +378,7 @@ data class FieldAccess(val receiver: ExpEmbedding, val field: FieldEmbedding) : 
         hierarchyPath?.forEach { classType ->
             val predAcc = classType.predicateAccessInvariant().fillHole(receiverWrapper)
                 .pureToViper(toBuiltin = true, ctx.source) as? Exp.PredicateAccess
-            predAcc?.let { ctx.addStatement(Stmt.Unfold(it)) }
+            predAcc?.let { ctx.addStatement { Stmt.Unfold(it) } }
         }
     }
 
@@ -397,9 +399,11 @@ data class FieldModification(val receiver: ExpEmbedding, val field: FieldEmbeddi
         val newValueViper = newValue.withType(field.type).toViper(ctx)
         val invariant =
             field.accessInvariantForAccess()?.fillHole(ExpWrapper(receiverViper, receiver.type))?.pureToViper(toBuiltin = true, ctx.source)
-        invariant?.let { ctx.addStatement(Stmt.Inhale(it, ctx.source.asPosition)) }
-        ctx.addStatement(Stmt.FieldAssign(Exp.FieldAccess(receiverViper, field.toViper()), newValueViper, ctx.source.asPosition))
-        invariant?.let { ctx.addStatement(Stmt.Exhale(it, ctx.source.asPosition)) }
+
+        ctx.addStatement {
+            invariant?.let { addModifier(InhaleExhaleStmtModifier(it)) }
+            Stmt.FieldAssign(Exp.FieldAccess(receiverViper, field.toViper()), newValueViper, ctx.source.asPosition)
+        }
     }
 
     override val debugTreeView: TreeView
@@ -445,7 +449,7 @@ data class Assign(val lhs: ExpEmbedding, val rhs: ExpEmbedding) : UnitResultExpE
             rhs.withType(lhs.type).toViperStoringIn(LinearizationVariableEmbedding(lhsViper.name, lhs.type), ctx)
         } else {
             val rhsViper = rhs.withType(lhs.type).toViper(ctx)
-            ctx.addStatement(Stmt.assign(lhsViper, rhsViper, ctx.source.asPosition))
+            ctx.addStatement { Stmt.assign(lhsViper, rhsViper, ctx.source.asPosition) }
         }
     }
 

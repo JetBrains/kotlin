@@ -25,7 +25,7 @@ data class ExpWrapper(val value: Exp, override val type: TypeEmbedding) : PureEx
 data object ErrorExp : NoResultExpEmbedding, DefaultDebugTreeViewImplementation {
     override val type: TypeEmbedding = NothingTypeEmbedding
     override fun toViperUnusedResult(ctx: LinearizationContext) {
-        ctx.addStatement(Stmt.Inhale(Exp.BoolLit(false, ctx.source.asPosition), ctx.source.asPosition))
+        ctx.addStatement { Stmt.Inhale(Exp.BoolLit(false, ctx.source.asPosition), ctx.source.asPosition) }
     }
 
     override val debugAnonymousSubexpressions: List<ExpEmbedding>
@@ -34,7 +34,7 @@ data object ErrorExp : NoResultExpEmbedding, DefaultDebugTreeViewImplementation 
 
 data class Assert(val exp: ExpEmbedding) : UnitResultExpEmbedding, DefaultDebugTreeViewImplementation {
     override fun toViperSideEffects(ctx: LinearizationContext) {
-        ctx.addStatement(Stmt.Assert(exp.toViperBuiltinType(ctx), ctx.source.asPosition))
+        ctx.addStatement { Stmt.Assert(exp.toViperBuiltinType(ctx), ctx.source.asPosition) }
     }
 
     override val debugAnonymousSubexpressions: List<ExpEmbedding>
@@ -49,7 +49,7 @@ data class Assert(val exp: ExpEmbedding) : UnitResultExpEmbedding, DefaultDebugT
  */
 data class InhaleDirect(val exp: ExpEmbedding) : UnitResultExpEmbedding, DefaultDebugTreeViewImplementation {
     override fun toViperSideEffects(ctx: LinearizationContext) {
-        ctx.addStatement(Stmt.Inhale(exp.toViperBuiltinType(ctx), ctx.source.asPosition))
+        ctx.addStatement { Stmt.Inhale(exp.toViperBuiltinType(ctx), ctx.source.asPosition) }
     }
 
     override val debugAnonymousSubexpressions: List<ExpEmbedding>

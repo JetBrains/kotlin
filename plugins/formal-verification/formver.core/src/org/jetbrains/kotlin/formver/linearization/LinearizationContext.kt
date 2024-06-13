@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.formver.linearization
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.expression.AnonymousVariableEmbedding
+import org.jetbrains.kotlin.formver.viper.ast.Declaration
 import org.jetbrains.kotlin.formver.viper.ast.Label
 import org.jetbrains.kotlin.formver.viper.ast.Stmt
 
@@ -18,16 +19,21 @@ import org.jetbrains.kotlin.formver.viper.ast.Stmt
  * As such, an `ExpEmbedding` can represent a nested structure that has to be flattened into sequences
  * of statements. We call this process linearization.
  */
-interface LinearizationContext : SeqnBuildContext {
+interface LinearizationContext {
     val source: KtSourceElement?
 
     fun freshAnonVar(type: TypeEmbedding): AnonymousVariableEmbedding
 
     fun asBlock(action: LinearizationContext.() -> Unit): Stmt.Seqn
     fun <R> withPosition(newSource: KtSourceElement, action: LinearizationContext.() -> R): R
+
+    fun addStatement(buildStmt: LinearizationContext.() -> Stmt)
+    fun addDeclaration(decl: Declaration)
+
+    fun addModifier(mod: StmtModifier)
 }
 
 fun LinearizationContext.addLabel(label: Label) {
     addDeclaration(label.toDecl())
-    addStatement(label.toStmt())
+    addStatement { label.toStmt() }
 }

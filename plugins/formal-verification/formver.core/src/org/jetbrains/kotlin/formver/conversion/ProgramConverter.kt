@@ -370,9 +370,10 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
             if (signature.returnType != UnitTypeEmbedding) body
             else Block(Assign(stmtCtx.defaultResolvedReturnTarget.variable, UnitLit), body)
         val bodyExp = FunctionExp(signature, unitExtendedBody, returnTarget.label)
-        val linearizer = Linearizer(SharedLinearizationState(anonVarProducer), SeqnBuilder(declaration.source), declaration.source)
+        val seqnBuilder = SeqnBuilder(declaration.source)
+        val linearizer = Linearizer(SharedLinearizationState(anonVarProducer), seqnBuilder, declaration.source)
         bodyExp.toViperUnusedResult(linearizer)
-        return FunctionBodyEmbedding(linearizer.block, returnTarget, bodyExp)
+        return FunctionBodyEmbedding(seqnBuilder.block, returnTarget, bodyExp)
     }
 
     private fun unimplementedTypeEmbedding(type: ConeKotlinType): TypeEmbedding =
