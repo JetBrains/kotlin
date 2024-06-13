@@ -52,7 +52,7 @@ open class TypeApproximatorConfiguration {
      * @param isK2 true for K2 compiler, false for K1 compiler
      * @return true if the type variable based type should be kept, false if it should be approximated
      */
-    internal open fun shouldKeepTypeVariableBasedType(marker: TypeVariableTypeConstructorMarker, isK2: Boolean): Boolean = false
+    internal open fun shouldApproximateTypeVariableBasedType(marker: TypeVariableTypeConstructorMarker, isK2: Boolean): Boolean = true
 
     open fun shouldApproximateCapturedType(ctx: TypeSystemInferenceExtensionContext, type: CapturedTypeMarker): Boolean =
         true  // false means that this type we can leave as is
@@ -73,7 +73,7 @@ open class TypeApproximatorConfiguration {
         override val approximateIntersectionTypesInContravariantPositions: Boolean get() = true
 
         // Probably, it's worth thinking of returning true only for delegated property accessors, see KT-61090
-        override fun shouldKeepTypeVariableBasedType(marker: TypeVariableTypeConstructorMarker, isK2: Boolean): Boolean = isK2
+        override fun shouldApproximateTypeVariableBasedType(marker: TypeVariableTypeConstructorMarker, isK2: Boolean): Boolean = !isK2
     }
 
     open class PublicDeclaration(override val approximateLocalTypes: Boolean, override val approximateAnonymous: Boolean) : AllFlexibleSameValue() {
@@ -83,7 +83,7 @@ open class TypeApproximatorConfiguration {
         override val approximateIntersectionTypesInContravariantPositions: Boolean get() = true
 
         // Probably, it's worth thinking of returning true only for delegated property accessors, see KT-61090
-        override fun shouldKeepTypeVariableBasedType(marker: TypeVariableTypeConstructorMarker, isK2: Boolean): Boolean = isK2
+        override fun shouldApproximateTypeVariableBasedType(marker: TypeVariableTypeConstructorMarker, isK2: Boolean): Boolean = !isK2
 
         object SaveAnonymousTypes : PublicDeclaration(approximateLocalTypes = false, approximateAnonymous = false)
         object ApproximateAnonymousTypes : PublicDeclaration(approximateLocalTypes = false, approximateAnonymous = true)
@@ -99,7 +99,7 @@ open class TypeApproximatorConfiguration {
             approximatedCapturedStatus != null && type.captureStatus(ctx) == approximatedCapturedStatus
 
         override val intersectionStrategy: IntersectionStrategy get() = IntersectionStrategy.ALLOWED
-        override fun shouldKeepTypeVariableBasedType(marker: TypeVariableTypeConstructorMarker, isK2: Boolean): Boolean = true
+        override fun shouldApproximateTypeVariableBasedType(marker: TypeVariableTypeConstructorMarker, isK2: Boolean): Boolean = false
     }
 
     object IncorporationConfiguration : AbstractCapturedTypesApproximation(CaptureStatus.FOR_INCORPORATION)
@@ -156,7 +156,7 @@ open class TypeApproximatorConfiguration {
         override val approximateIntegerLiteralConstantTypes: Boolean get() = true
         override val approximateAllFlexible: Boolean get() = false
         override val intersectionStrategy: IntersectionStrategy get() = IntersectionStrategy.ALLOWED
-        override fun shouldKeepTypeVariableBasedType(marker: TypeVariableTypeConstructorMarker, isK2: Boolean): Boolean = true
+        override fun shouldApproximateTypeVariableBasedType(marker: TypeVariableTypeConstructorMarker, isK2: Boolean): Boolean = false
         override val approximateErrorTypes: Boolean get() = false
 
         override fun shouldApproximateCapturedType(ctx: TypeSystemInferenceExtensionContext, type: CapturedTypeMarker): Boolean = false
