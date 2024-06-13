@@ -1,6 +1,6 @@
 FILE: [ResolvedTo(BODY_RESOLVE)] functionWithImplicitTypeAndPropertyInsideScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-functionWithImplicitTypeAndPropertyInsideScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|)) @R|kotlin/annotation/Retention|[Types](value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE|) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
@@ -26,8 +26,9 @@ FILE: [ResolvedTo(BODY_RESOLVE)] functionWithImplicitTypeAndPropertyInsideScript
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun topLevelFunction(): R|kotlin/Unit| {
-            ^topLevelFunction R|kotlin/run|<R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] run@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^topLevelFunction this@R|?|.R|kotlin/run|<R|kotlin/script/templates/standard/ScriptTemplateWithArgs|, R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] run@fun R|kotlin/script/templates/standard/ScriptTemplateWithArgs|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
                 @R|myPack/Anno|[Types](number = R|myPack/localAnnotationProperty|) [ResolvedTo(BODY_RESOLVE)] lvar @RECEIVER:R|myPack/Anno|[Types](number = R|myPack/receiverAnnotationProperty|) R|kotlin/Int|.variableToResolve: R|kotlin/String| = @R|myPack/Anno|[Types](number = R|myPack/expressionAnnotationProperty|) String(str)
             }
             )
         }
+

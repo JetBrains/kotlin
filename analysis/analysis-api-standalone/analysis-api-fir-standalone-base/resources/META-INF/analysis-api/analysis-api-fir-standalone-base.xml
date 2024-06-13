@@ -3,8 +3,8 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <projectService
-        serviceInterface="org.jetbrains.kotlin.analysis.providers.KotlinDirectInheritorsProvider"
-        serviceImplementation="org.jetbrains.kotlin.analysis.api.standalone.base.providers.KotlinStandaloneDirectInheritorsProvider"
+        serviceInterface="org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDirectInheritorsProvider"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneFirDirectInheritorsProvider"
     />
   </extensions>
 </idea-plugin>

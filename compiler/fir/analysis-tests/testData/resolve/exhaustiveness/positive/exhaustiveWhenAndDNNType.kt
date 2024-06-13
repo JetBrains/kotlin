@@ -1,4 +1,4 @@
-// !DUMP_CFG
+// DUMP_CFG
 // ISSUE: KT-37091
 
 enum class SomeEnum {

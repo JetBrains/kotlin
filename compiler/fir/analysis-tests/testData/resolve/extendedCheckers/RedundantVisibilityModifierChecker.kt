@@ -10,7 +10,7 @@ internal <!NOTHING_TO_INLINE!>inline<!> fun internal() {
     f()
 }
 
-class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>C<!> {
+class <!CLASSIFIER_REDECLARATION!>C<!> {
     internal val z = object {
         fun foo() = 13
     }
@@ -26,7 +26,7 @@ class Foo2<
     internal inner class B<T,T2,>
 }
 
-<!REDUNDANT_VISIBILITY_MODIFIER!>public<!> class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>C<!> {
+<!REDUNDANT_VISIBILITY_MODIFIER!>public<!> class <!CLASSIFIER_REDECLARATION!>C<!> {
     <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> val foo: Int = 0
 
     <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> fun bar() {}

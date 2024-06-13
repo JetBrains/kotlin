@@ -9,38 +9,44 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
 import kotlin.reflect.KClass
 
-public abstract class KtLifetimeToken {
+public abstract class KaLifetimeToken {
+    public abstract val factory: KaLifetimeTokenFactory
+
     public abstract fun isValid(): Boolean
     public abstract fun getInvalidationReason(): String
 
     public abstract fun isAccessible(): Boolean
     public abstract fun getInaccessibilityReason(): String
-
-    public abstract val factory: KtLifetimeTokenFactory
 }
 
-public abstract class KtLifetimeTokenFactory {
-    public abstract val identifier: KClass<out KtLifetimeToken>
+public typealias KtLifetimeToken = KaLifetimeToken
 
-    public abstract fun create(project: Project, modificationTracker: ModificationTracker): KtLifetimeToken
+public abstract class KaLifetimeTokenFactory {
+    public abstract val identifier: KClass<out KaLifetimeToken>
 
-    public open fun beforeEnteringAnalysisContext(token: KtLifetimeToken) {}
-    public open fun afterLeavingAnalysisContext(token: KtLifetimeToken) {}
+    public abstract fun create(project: Project, modificationTracker: ModificationTracker): KaLifetimeToken
 }
 
+public typealias KtLifetimeTokenFactory = KaLifetimeTokenFactory
 
 @Suppress("NOTHING_TO_INLINE")
-public inline fun KtLifetimeToken.assertIsValidAndAccessible() {
+public inline fun KaLifetimeToken.assertIsValidAndAccessible() {
     if (!isValid()) {
-        throw KtInvalidLifetimeOwnerAccessException("Access to invalid $this: ${getInvalidationReason()}")
+        throw KaInvalidLifetimeOwnerAccessException("Access to invalid $this: ${getInvalidationReason()}")
     }
     if (!isAccessible()) {
-        throw KtInaccessibleLifetimeOwnerAccessException("$this is inaccessible: ${getInaccessibilityReason()}")
+        throw KaInaccessibleLifetimeOwnerAccessException("$this is inaccessible: ${getInaccessibilityReason()}")
     }
 }
 
-public abstract class KtIllegalLifetimeOwnerAccessException : IllegalStateException()
+public abstract class KaIllegalLifetimeOwnerAccessException : IllegalStateException()
 
-public class KtInvalidLifetimeOwnerAccessException(override val message: String) : KtIllegalLifetimeOwnerAccessException()
-public class KtInaccessibleLifetimeOwnerAccessException(override val message: String) : KtIllegalLifetimeOwnerAccessException()
+public typealias KtIllegalLifetimeOwnerAccessException = KaIllegalLifetimeOwnerAccessException
 
+public class KaInvalidLifetimeOwnerAccessException(override val message: String) : KaIllegalLifetimeOwnerAccessException()
+
+public typealias KtInvalidLifetimeOwnerAccessException = KaInvalidLifetimeOwnerAccessException
+
+public class KaInaccessibleLifetimeOwnerAccessException(override val message: String) : KaIllegalLifetimeOwnerAccessException()
+
+public typealias KtInaccessibleLifetimeOwnerAccessException = KaInaccessibleLifetimeOwnerAccessException

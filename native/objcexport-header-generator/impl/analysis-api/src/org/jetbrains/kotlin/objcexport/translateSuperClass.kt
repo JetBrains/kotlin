@@ -26,10 +26,10 @@ internal fun KtClassOrObjectSymbol.translateSuperClass(): KtObjCSuperClassTransl
     val superClassGenerics: List<ObjCNonNullReferenceType> = superTypes
         .filterIsInstance<KtNonErrorClassType>()
         .find { type ->
-            val classSymbol = type.classSymbol as? KtClassOrObjectSymbol ?: return@find false
+            val classSymbol = type.symbol as? KtClassOrObjectSymbol ?: return@find false
             classSymbol.classKind.isClass
         }
-        ?.ownTypeArguments
+        ?.typeArguments
         .orEmpty()
         .mapNotNull { typeProjection -> typeProjection.type?.mapToReferenceTypeIgnoringNullability() }
 

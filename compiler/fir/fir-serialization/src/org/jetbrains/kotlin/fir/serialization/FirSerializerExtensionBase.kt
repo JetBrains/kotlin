@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 abstract class FirSerializerExtensionBase(
     val protocol: SerializerExtensionProtocol,
 ) : FirSerializerExtension() {
-    final override val stringTable = FirElementAwareSerializableStringTable()
+    final override val stringTable: FirElementAwareSerializableStringTable = FirElementAwareSerializableStringTable()
 
     override fun serializePackage(packageFqName: FqName, proto: ProtoBuf.Package.Builder) {
         proto.setExtension(protocol.packageFqName, stringTable.getPackageFqNameIndex(packageFqName))

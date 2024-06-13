@@ -1,28 +1,28 @@
-KtKotlinPropertySymbol:
-  annotationsList: []
-  backingFieldSymbol: KtBackingFieldSymbol:
-    annotationsList: []
-    callableIdIfNonLocal: null
+KaKotlinPropertySymbol:
+  annotations: []
+  backingFieldSymbol: KaBackingFieldSymbol:
+    annotations: []
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
     origin: PROPERTY_BACKING_FIELD
-    owningProperty: KtKotlinPropertySymbol(/Foo.p)
+    owningProperty: KaKotlinPropertySymbol(/Foo.p)
     receiverParameter: null
-    returnType: KtDynamicType:
-      annotationsList: []
+    returnType: KaDynamicType:
+      annotations: []
       type: dynamic
     symbolKind: LOCAL
     typeParameters: []
-    getContainingFileSymbol: KtFileSymbol(dynamic.kt)
+    getContainingFileSymbol: KaFileSymbol(dynamic.kt)
     getContainingJvmClassName: Foo
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  callableIdIfNonLocal: /Foo.p
+  callableId: /Foo.p
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
-    annotationsList: []
-    callableIdIfNonLocal: null
+  getter: KaPropertyGetterSymbol:
+    annotations: []
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -33,18 +33,18 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
-    returnType: KtDynamicType:
-      annotationsList: []
+    returnType: KaDynamicType:
+      annotations: []
       type: dynamic
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
-    getDispatchReceiver(): KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: Foo
-    getContainingFileSymbol: KtFileSymbol(dynamic.kt)
+    getContainingFileSymbol: KaFileSymbol(dynamic.kt)
     getContainingJvmClassName: Foo
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
@@ -66,18 +66,18 @@ KtKotlinPropertySymbol:
   name: p
   origin: SOURCE
   receiverParameter: null
-  returnType: KtDynamicType:
-    annotationsList: []
+  returnType: KaDynamicType:
+    annotations: []
     type: dynamic
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: Foo
-  getContainingFileSymbol: KtFileSymbol(dynamic.kt)
+  getContainingFileSymbol: KaFileSymbol(dynamic.kt)
   getContainingJvmClassName: Foo
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
@@ -86,28 +86,28 @@ KtKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
 
-KtAnonymousFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
+KaAnonymousFunctionSymbol:
+  annotations: []
+  callableId: null
   contextReceivers: []
   hasStableParameterNames: true
   isExtension: false
   origin: SOURCE
   receiverParameter: null
-  returnType: KtDynamicType:
-    annotationsList: []
+  returnType: KaDynamicType:
+    annotations: []
     type: dynamic
   symbolKind: LOCAL
   typeParameters: []
   valueParameters: []
-  getContainingFileSymbol: KtFileSymbol(dynamic.kt)
+  getContainingFileSymbol: KaFileSymbol(dynamic.kt)
   getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /Foo.f
+KaFunctionSymbol:
+  annotations: []
+  callableId: /Foo.f
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -127,15 +127,15 @@ KtFunctionSymbol:
   name: f
   origin: SOURCE
   receiverParameter: null
-  returnType: KtDynamicType:
-    annotationsList: []
+  returnType: KaDynamicType:
+    annotations: []
     type: dynamic
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -147,29 +147,29 @@ KtFunctionSymbol:
       name: p
       origin: SOURCE
       receiverParameter: null
-      returnType: KtDynamicType:
-        annotationsList: []
+      returnType: KaDynamicType:
+        annotations: []
         type: dynamic
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(dynamic.kt)
+      getContainingFileSymbol: KaFileSymbol(dynamic.kt)
       getContainingJvmClassName: Foo
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: Foo
-  getContainingFileSymbol: KtFileSymbol(dynamic.kt)
+  getContainingFileSymbol: KaFileSymbol(dynamic.kt)
   getContainingJvmClassName: Foo
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: Foo
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: Foo
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -184,15 +184,15 @@ KtNamedClassOrObjectSymbol:
   name: Foo
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(dynamic.kt)
+  getContainingFileSymbol: KaFileSymbol(dynamic.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

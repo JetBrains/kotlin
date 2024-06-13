@@ -6,14 +6,14 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.calls.KtSimpleVariableAccessCall
-import org.jetbrains.kotlin.analysis.api.calls.KtSuccessCallInfo
-import org.jetbrains.kotlin.analysis.api.components.KtExpressionInfoProvider
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
+import org.jetbrains.kotlin.analysis.api.components.KaExpressionInfoProvider
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccessCall
+import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
@@ -26,11 +26,11 @@ import org.jetbrains.kotlin.psi.psiUtil.unwrapParenthesesLabelsAndAnnotations
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
-internal class KtFirExpressionInfoProvider(
-    override val analysisSession: KtFirAnalysisSession,
-    override val token: KtLifetimeToken,
-) : KtExpressionInfoProvider(), KtFirAnalysisSessionComponent {
-    override fun getReturnExpressionTargetSymbol(returnExpression: KtReturnExpression): KtCallableSymbol? {
+internal class KaFirExpressionInfoProvider(
+    override val analysisSession: KaFirSession,
+    override val token: KaLifetimeToken,
+) : KaExpressionInfoProvider(), KaFirSessionComponent {
+    override fun getReturnExpressionTargetSymbol(returnExpression: KtReturnExpression): KaCallableSymbol? {
         val fir = returnExpression.getOrBuildFirSafe<FirReturnExpression>(firResolveSession) ?: return null
         val firTargetSymbol = fir.target.labeledElement
         if (firTargetSymbol is FirErrorFunction) return null
@@ -175,6 +175,9 @@ internal class KtFirExpressionInfoProvider(
             // Finally blocks are never used
             is KtFinallySection ->
                 false
+
+            is KtPropertyDelegate ->
+                parent.expression == child
 
             !is KtExpression ->
                 errorWithAttachment("Unhandled Non-KtExpression parent of KtExpression: ${parent::class}") {
@@ -423,23 +426,23 @@ private fun doesNamedFunctionUseBody(namedFunction: KtNamedFunction, body: PsiEl
         true
     namedFunction.bodyExpression == body ->
         analyze(namedFunction) {
-            (body as KtExpression).getKtType()?.isUnit == true
+            (body as KtExpression).getKaType()?.isUnit == true
         }
     else ->
         false
 }
 
 
-private fun KtAnalysisSession.isSimpleVariableAccessCall(reference: KtReferenceExpression): Boolean =
-    when (val resolution = reference.resolveCall()) {
-        is KtSuccessCallInfo ->
-            resolution.call is KtSimpleVariableAccessCall
+private fun KaSession.isSimpleVariableAccessCall(reference: KtReferenceExpression): Boolean =
+    when (val resolution = reference.resolveCallOld()) {
+        is KaSuccessCallInfo ->
+            resolution.call is KaSimpleVariableAccessCall
         else ->
             false
     }
 
 private fun returnsUnit(declaration: KtDeclaration): Boolean {
     return analyze(declaration) {
-        declaration.getReturnKtType().isUnit
+        declaration.getReturnKaType().isUnit
     }
 }

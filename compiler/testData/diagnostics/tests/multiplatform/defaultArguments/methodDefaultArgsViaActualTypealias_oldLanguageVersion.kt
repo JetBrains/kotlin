@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -ACTUAL_WITHOUT_EXPECT
+// DIAGNOSTICS: -ACTUAL_WITHOUT_EXPECT
 // LANGUAGE: -MultiplatformRestrictions
 // MODULE: m1-common
 // FILE: common.kt

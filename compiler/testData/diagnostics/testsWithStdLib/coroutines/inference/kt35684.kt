@@ -1,5 +1,5 @@
-// !OPT_IN: kotlin.RequiresOptIn
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // ISSUE: KT-35684
 
 import kotlin.experimental.ExperimentalTypeInference

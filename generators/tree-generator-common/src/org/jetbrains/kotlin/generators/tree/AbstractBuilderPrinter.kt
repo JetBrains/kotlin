@@ -336,7 +336,7 @@ abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, Ele
             val copyBuilderVariableName = "copyBuilder"
             println("val ", copyBuilderVariableName, " = ", builder.render(), "()")
             for (field in builder.allFields) {
-                if (field.invisibleField) continue
+                if (field.invisibleField || field.skippedInCopy) continue
                 copyField(field, originalParameter.name, copyBuilderVariableName)
             }
             println("return ", copyBuilderVariableName, ".apply(", initParameter.name, ").build()")

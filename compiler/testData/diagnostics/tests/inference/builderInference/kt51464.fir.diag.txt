@@ -1,7 +1,7 @@
-/kt51464.fir.kt:(298,307): error: Cannot infer type for this parameter. Please specify it explicitly.
+/kt51464.fir.kt:(297,306): error: Cannot infer type for this parameter. Please specify it explicitly.
 
-/kt51464.fir.kt:(298,307): error: Not enough information to infer type argument for 'R'.
+/kt51464.fir.kt:(297,306): error: Not enough information to infer type argument for 'R'.
 
-/kt51464.fir.kt:(310,316): error: Cannot infer type for this parameter. Please specify it explicitly.
+/kt51464.fir.kt:(309,315): error: Cannot infer type for this parameter. Please specify it explicitly.
 
-/kt51464.fir.kt:(310,316): error: Not enough information to infer type argument for 'T'.
+/kt51464.fir.kt:(309,315): error: Not enough information to infer type argument for 'T'.

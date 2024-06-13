@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +InnerClassInEnumEntryClass
+// LANGUAGE: +InnerClassInEnumEntryClass
 
 enum class A {
     X {

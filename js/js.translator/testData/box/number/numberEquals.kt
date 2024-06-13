@@ -1,4 +1,4 @@
-// !LANGUAGE: +ProperIeee754Comparisons
+// LANGUAGE: +ProperIeee754Comparisons
 // EXPECTED_REACHABLE_NODES: 1328
 package foo
 

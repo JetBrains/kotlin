@@ -5,27 +5,29 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.types.renderers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.renderer.types.KtTypeRenderer
-import org.jetbrains.kotlin.analysis.api.types.KtTypeErrorType
+import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
+import org.jetbrains.kotlin.analysis.api.types.KaErrorType
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
-public interface KtTypeErrorTypeRenderer {
+public interface KaErrorTypeRenderer {
     public fun renderType(
-        analysisSession: KtAnalysisSession,
-        type: KtTypeErrorType,
-        typeRenderer: KtTypeRenderer,
+        analysisSession: KaSession,
+        type: KaErrorType,
+        typeRenderer: KaTypeRenderer,
         printer: PrettyPrinter,
     )
 
-    public object AS_CODE_IF_POSSIBLE : KtTypeErrorTypeRenderer {
+    public object AS_CODE_IF_POSSIBLE : KaErrorTypeRenderer {
+        @OptIn(KaAnalysisNonPublicApi::class)
         override fun renderType(
-            analysisSession: KtAnalysisSession,
-            type: KtTypeErrorType,
-            typeRenderer: KtTypeRenderer,
+            analysisSession: KaSession,
+            type: KaErrorType,
+            typeRenderer: KaTypeRenderer,
             printer: PrettyPrinter,
         ) {
-            type.tryRenderAsNonErrorType()?.let {
+            type.presentableText?.let {
                 printer.append(it)
                 return
             }
@@ -33,22 +35,23 @@ public interface KtTypeErrorTypeRenderer {
         }
     }
 
-    public object AS_ERROR_WORD : KtTypeErrorTypeRenderer {
+    public object AS_ERROR_WORD : KaErrorTypeRenderer {
         override fun renderType(
-            analysisSession: KtAnalysisSession,
-            type: KtTypeErrorType,
-            typeRenderer: KtTypeRenderer,
+            analysisSession: KaSession,
+            type: KaErrorType,
+            typeRenderer: KaTypeRenderer,
             printer: PrettyPrinter,
         ) {
             printer.append("ERROR")
         }
     }
 
-    public object WITH_ERROR_MESSAGE : KtTypeErrorTypeRenderer {
+    public object WITH_ERROR_MESSAGE : KaErrorTypeRenderer {
+        @OptIn(KaAnalysisNonPublicApi::class)
         override fun renderType(
-            analysisSession: KtAnalysisSession,
-            type: KtTypeErrorType,
-            typeRenderer: KtTypeRenderer,
+            analysisSession: KaSession,
+            type: KaErrorType,
+            typeRenderer: KaTypeRenderer,
             printer: PrettyPrinter,
         ) {
             printer.append("ERROR(${type.errorMessage})")
@@ -56,3 +59,4 @@ public interface KtTypeErrorTypeRenderer {
     }
 }
 
+public typealias KtTypeErrorTypeRenderer = KaErrorTypeRenderer

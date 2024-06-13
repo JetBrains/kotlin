@@ -175,6 +175,7 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "-[NSMethodSignature getArgumentTypeAtIndex:]",
         "-[NSMethodSignature methodReturnType]",
         "-[NSMethodSignature numberOfArguments]",
+        "-[NSObject class]",
         "-[NSObject conformsToProtocol:]",
         "-[NSObject init]",
         "-[NSObject isKindOfClass:]",

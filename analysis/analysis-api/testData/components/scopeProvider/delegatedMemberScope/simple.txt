@@ -1,7 +1,7 @@
-KtKotlinPropertySymbol:
-  annotationsList: []
+KaKotlinPropertySymbol:
+  annotations: []
   backingFieldSymbol: null
-  callableIdIfNonLocal: /A.zoo
+  callableId: /A.zoo
   contextReceivers: []
   getter: null
   hasBackingField: false
@@ -21,30 +21,30 @@ KtKotlinPropertySymbol:
   modality: OPEN
   name: zoo
   origin: DELEGATED
-  receiverParameter: KtReceiverParameterSymbol:
-    annotationsList: []
+  receiverParameter: KaReceiverParameterSymbol:
+    annotations: []
     origin: DELEGATED
-    owningCallableSymbol: KtKotlinPropertySymbol(/A.zoo)
-    type: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    owningCallableSymbol: KaKotlinPropertySymbol(/A.zoo)
+    type: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Int
-    getContainingFileSymbol: KtFileSymbol(simple.kt)
+    getContainingFileSymbol: KaFileSymbol(simple.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Unit
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: A
-  getContainingFileSymbol: KtFileSymbol(simple.kt)
+  getContainingFileSymbol: KaFileSymbol(simple.kt)
   getContainingJvmClassName: A
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
@@ -53,9 +53,9 @@ KtKotlinPropertySymbol:
   javaSetterName: setZoo
   setterDeprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /A.foo
+KaFunctionSymbol:
+  annotations: []
+  callableId: /A.foo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -75,27 +75,27 @@ KtFunctionSymbol:
   name: foo
   origin: DELEGATED
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: A
-  getContainingFileSymbol: KtFileSymbol(simple.kt)
+  getContainingFileSymbol: KaFileSymbol(simple.kt)
   getContainingJvmClassName: A
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtKotlinPropertySymbol:
-  annotationsList: []
+KaKotlinPropertySymbol:
+  annotations: []
   backingFieldSymbol: null
-  callableIdIfNonLocal: /A.foo
+  callableId: /A.foo
   contextReceivers: []
   getter: null
   hasBackingField: false
@@ -116,19 +116,19 @@ KtKotlinPropertySymbol:
   name: foo
   origin: DELEGATED
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: A
-  getContainingFileSymbol: KtFileSymbol(simple.kt)
+  getContainingFileSymbol: KaFileSymbol(simple.kt)
   getContainingJvmClassName: A
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
@@ -137,9 +137,9 @@ KtKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /A.smth
+KaFunctionSymbol:
+  annotations: []
+  callableId: /A.smth
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -158,38 +158,38 @@ KtFunctionSymbol:
   modality: OPEN
   name: smth
   origin: DELEGATED
-  receiverParameter: KtReceiverParameterSymbol:
-    annotationsList: []
+  receiverParameter: KaReceiverParameterSymbol:
+    annotations: []
     origin: DELEGATED
-    owningCallableSymbol: KtFunctionSymbol(/A.smth)
-    type: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    owningCallableSymbol: KaFunctionSymbol(/A.smth)
+    type: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Int
-    getContainingFileSymbol: KtFileSymbol(simple.kt)
+    getContainingFileSymbol: KaFileSymbol(simple.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Short
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: A
-  getContainingFileSymbol: KtFileSymbol(simple.kt)
+  getContainingFileSymbol: KaFileSymbol(simple.kt)
   getContainingJvmClassName: A
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtKotlinPropertySymbol:
-  annotationsList: []
+KaKotlinPropertySymbol:
+  annotations: []
   backingFieldSymbol: null
-  callableIdIfNonLocal: /A.bar
+  callableId: /A.bar
   contextReceivers: []
   getter: null
   hasBackingField: false
@@ -210,19 +210,19 @@ KtKotlinPropertySymbol:
   name: bar
   origin: DELEGATED
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Long
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: A
-  getContainingFileSymbol: KtFileSymbol(simple.kt)
+  getContainingFileSymbol: KaFileSymbol(simple.kt)
   getContainingJvmClassName: A
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
@@ -231,10 +231,10 @@ KtKotlinPropertySymbol:
   javaSetterName: setBar
   setterDeprecationStatus: null
 
-KtKotlinPropertySymbol:
-  annotationsList: []
+KaKotlinPropertySymbol:
+  annotations: []
   backingFieldSymbol: null
-  callableIdIfNonLocal: /A.doo
+  callableId: /A.doo
   contextReceivers: []
   getter: null
   hasBackingField: false
@@ -254,30 +254,30 @@ KtKotlinPropertySymbol:
   modality: OPEN
   name: doo
   origin: DELEGATED
-  receiverParameter: KtReceiverParameterSymbol:
-    annotationsList: []
+  receiverParameter: KaReceiverParameterSymbol:
+    annotations: []
     origin: DELEGATED
-    owningCallableSymbol: KtKotlinPropertySymbol(/A.doo)
-    type: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    owningCallableSymbol: KaKotlinPropertySymbol(/A.doo)
+    type: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Int
-    getContainingFileSymbol: KtFileSymbol(simple.kt)
+    getContainingFileSymbol: KaFileSymbol(simple.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/String
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: A
-  getContainingFileSymbol: KtFileSymbol(simple.kt)
+  getContainingFileSymbol: KaFileSymbol(simple.kt)
   getContainingJvmClassName: A
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

@@ -6,27 +6,27 @@
 package org.jetbrains.kotlin.analysis.api.descriptors
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaBaseSessionProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
-import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
+import org.jetbrains.kotlin.analysis.api.platform.modification.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.psi.KtElement
 
-internal class KtFe10AnalysisSessionProvider(project: Project) : KtAnalysisSessionProvider(project) {
-    override fun getAnalysisSession(useSiteKtElement: KtElement): KtAnalysisSession {
+internal class KaFe10SessionProvider(project: Project) : KaBaseSessionProvider(project) {
+    override fun getAnalysisSession(useSiteKtElement: KtElement): KaSession {
         val facade = Fe10AnalysisFacade.getInstance(project)
         val token = tokenFactory.create(project, project.createProjectWideOutOfBlockModificationTracker())
         val context = facade.getAnalysisContext(useSiteKtElement, token)
         val useSiteModule = ProjectStructureProvider.getModule(project, useSiteKtElement, contextualModule = null)
-        return KtFe10AnalysisSession(context, useSiteModule, token)
+        return KaFe10Session(context, useSiteModule, token)
     }
 
-    override fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KtModule): KtAnalysisSession {
+    override fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KtModule): KaSession {
         val facade = Fe10AnalysisFacade.getInstance(project)
         val token = tokenFactory.create(project, project.createProjectWideOutOfBlockModificationTracker())
         val context = facade.getAnalysisContext(useSiteKtModule, token)
-        return KtFe10AnalysisSession(context, useSiteKtModule, token)
+        return KaFe10Session(context, useSiteKtModule, token)
     }
 
     override fun clearCaches() {}

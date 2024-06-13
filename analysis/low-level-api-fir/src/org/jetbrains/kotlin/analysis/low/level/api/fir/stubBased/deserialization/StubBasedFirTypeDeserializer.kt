@@ -143,24 +143,7 @@ internal class StubBasedFirTypeDeserializer(
                 }
             }
             is KotlinClassTypeBean -> {
-                val projections = type.arguments.map { typeArgumentBean ->
-                    val kind = typeArgumentBean.projectionKind
-                    if (kind == KtProjectionKind.STAR) {
-                        return@map ConeStarProjection
-                    }
-                    val argBean = typeArgumentBean.type!!
-                    val lowerBound = type(argBean)
-                        ?: errorWithAttachment("Broken type argument ${typeArgumentBean.type?.let { it::class }}") {
-                            withEntry("type", typeArgumentBean.type) { it.toString() }
-                        }
-                    typeArgument(lowerBound, kind)
-                }
-                return ConeClassLikeTypeImpl(
-                    type.classId.toLookupTag(),
-                    projections.toTypedArray(),
-                    isNullable = type.nullable,
-                    ConeAttributes.Empty
-                )
+                return deserializeClassType(type)
             }
             is KotlinFlexibleTypeBean -> {
                 val lowerBound = type(type.lowerBound)
@@ -179,21 +162,61 @@ internal class StubBasedFirTypeDeserializer(
         }
     }
 
+    private fun deserializeClassType(typeBean: KotlinClassTypeBean): ConeClassLikeType {
+        val projections = typeBean.arguments.map { typeArgumentBean ->
+            val kind = typeArgumentBean.projectionKind
+            if (kind == KtProjectionKind.STAR) {
+                return@map ConeStarProjection
+            }
+            val argBean = typeArgumentBean.type!!
+            val lowerBound = type(argBean)
+                ?: errorWithAttachment("Broken type argument ${typeArgumentBean.type?.let { it::class }}") {
+                    withEntry("type", typeArgumentBean.type) { it.toString() }
+                }
+            typeArgument(lowerBound, kind)
+        }
+
+        val abbreviatedTypeAttribute = typeBean.abbreviatedType?.let { AbbreviatedTypeAttribute(deserializeClassType(it)) }
+        val attributes = ConeAttributes.create(listOfNotNull(abbreviatedTypeAttribute))
+
+        return ConeClassLikeTypeImpl(
+            typeBean.classId.toLookupTag(),
+            projections.toTypedArray(),
+            isNullable = typeBean.nullable,
+            attributes,
+        )
+    }
+
     private fun type(typeReference: KtTypeReference, attributes: ConeAttributes): ConeKotlinType {
-        if (typeReference.typeElement?.unwrapNullability() is KtDynamicType) {
+        val unwrappedTypeElement = typeReference.typeElement?.unwrapNullability()
+        if (unwrappedTypeElement is KtDynamicType) {
             return ConeDynamicType.create(moduleData.session)
         }
 
-        val userType = typeReference.typeElement as? KtUserType
-        val upperBoundType = (userType?.let { it.stub ?: loadStubByElement(it) } as? KotlinUserTypeStubImpl)?.upperBound
-        if (upperBoundType != null) {
-            val lowerBound = simpleType(typeReference, attributes)
-            val upperBound = type(upperBoundType)
+        val userType = unwrappedTypeElement as? KtUserType
+        val userTypeStub = userType?.let { it.stub ?: loadStubByElement(it) } as? KotlinUserTypeStubImpl
 
-            return ConeFlexibleType(lowerBound!!, upperBound as ConeSimpleKotlinType)
+        val abbreviatedType = userTypeStub?.abbreviatedType?.let { deserializeClassType(it) }
+
+        val attributesWithAbbreviatedType = if (abbreviatedType != null) {
+            attributes + AbbreviatedTypeAttribute(abbreviatedType)
+        } else {
+            attributes
         }
 
-        return simpleType(typeReference, attributes) ?: ConeErrorType(ConeSimpleDiagnostic("?!id:0", DiagnosticKind.DeserializationError))
+        val coneType = simpleType(typeReference, attributesWithAbbreviatedType)
+            ?: ConeErrorType(ConeSimpleDiagnostic("?!id:0", DiagnosticKind.DeserializationError))
+
+        val upperBoundTypeBean = userTypeStub?.upperBound
+        if (upperBoundTypeBean != null) {
+            val upperBoundType = type(upperBoundTypeBean)
+
+            // If an upper bound is specified, `typeReference` represents a flexible type. The cone type deserialized from `typeReference`
+            // is defined as the lower bound of this flexible type.
+            return ConeFlexibleType(coneType, upperBoundType as ConeSimpleKotlinType)
+        } else {
+            return coneType
+        }
     }
 
     private fun typeParameterSymbol(typeParameterName: String): ConeTypeParameterLookupTag? =

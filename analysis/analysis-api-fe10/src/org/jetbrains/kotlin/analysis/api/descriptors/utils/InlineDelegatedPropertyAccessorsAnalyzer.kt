@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.utils
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisNonPublicApi
+import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
+import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.descriptors.accessors
 import org.jetbrains.kotlin.psi.KtFile
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import org.jetbrains.kotlin.resolve.BindingContext
 
-@OptIn(KtAnalysisNonPublicApi::class)
+@OptIn(KaAnalysisNonPublicApi::class)
 fun MutableSet<KtFile>.collectReachableInlineDelegatedPropertyAccessors() {
     if (isEmpty()) return
 
@@ -45,7 +45,7 @@ fun MutableSet<KtFile>.collectReachableInlineDelegatedPropertyAccessors() {
     while (filesQueueToAnalyze.isNotEmpty()) {
         val file = filesQueueToAnalyze.removeFirst()
         analyze(file) {
-            require(this is KtFe10AnalysisSession) {
+            require(this is KaFe10Session) {
                 "K2 implementation shouldn't call this code"
             }
             file.accept(InlineDelegatedPropertyAccessorsAnalyzer(analysisContext, collector))
@@ -53,7 +53,7 @@ fun MutableSet<KtFile>.collectReachableInlineDelegatedPropertyAccessors() {
     }
 }
 
-@OptIn(KtAnalysisNonPublicApi::class)
+@OptIn(KaAnalysisNonPublicApi::class)
 fun List<KtFile>.collectReachableInlineDelegatedPropertyAccessors(): List<KtFile> {
     if (isEmpty()) return this
 

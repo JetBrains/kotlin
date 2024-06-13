@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers
 
 interface Semigroup<T> {
     infix fun T.combine(other: T): T

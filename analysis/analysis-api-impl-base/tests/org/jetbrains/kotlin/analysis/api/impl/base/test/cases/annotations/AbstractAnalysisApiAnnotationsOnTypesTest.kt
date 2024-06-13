@@ -23,7 +23,7 @@ abstract class AbstractAnalysisApiAnnotationsOnTypesTest : AbstractAnalysisApiBa
             val ktType = ktTypeReference.getKtType()
             val annotations = ktType.annotations
             buildString {
-                appendLine("KtTypeReference: ${ktTypeReference.text}")
+                appendLine("${KtTypeReference::class.simpleName}: ${ktTypeReference.text}")
                 appendLine("annotations: [")
                 for (annotation in annotations) {
                     appendLine(DebugSymbolRenderer().renderAnnotationApplication(analysisSession, annotation).indented(indent = 2))

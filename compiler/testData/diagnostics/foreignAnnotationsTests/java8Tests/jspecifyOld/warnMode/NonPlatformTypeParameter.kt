@@ -1,5 +1,5 @@
 // JSPECIFY_STATE: warn
-// !LANGUAGE: +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
+// LANGUAGE: +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
 // MUTE_FOR_PSI_CLASS_FILES_READING
 
 // FILE: NonPlatformTypeParameter.java

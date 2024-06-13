@@ -1,4 +1,4 @@
-KtTypeScope:
+KaTypeScope:
 fun contains(element: AAA): kotlin.Boolean
 fun containsAll(elements: kotlin.collections.Collection<AAA>): kotlin.Boolean
 fun get(index: kotlin.Int): AAA

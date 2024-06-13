@@ -43,7 +43,14 @@ abstract class AbstractField<Field : AbstractField<Field>> {
 
     var visibility: Visibility = Visibility.PUBLIC
 
-    var fromParent: Boolean = false
+    var isOverride: Boolean = false
+
+    /**
+     * If `true`, this field is skipped in `build%Element%Copy` functions.
+     *
+     *  @see AbstractBuilderPrinter.printDslBuildCopyFunction
+     */
+    open var skippedInCopy: Boolean = false
 
     /**
      * Whether this field can contain an element either directly or e.g. in a list.
@@ -81,35 +88,29 @@ abstract class AbstractField<Field : AbstractField<Field>> {
      */
     abstract val isChild: Boolean
 
-    open val overriddenTypes: MutableSet<TypeRefWithNullability> = mutableSetOf()
+    open val overriddenFields: MutableSet<Field> = mutableSetOf<Field>()
 
-    open fun updatePropertiesFromOverriddenField(parentField: Field, haveSameClass: Boolean) {}
+    open fun updatePropertiesFromOverriddenFields(parentFields: List<Field>) {
+        overriddenFields += parentFields
+        isMutable = isMutable || parentFields.any { it.isMutable }
+    }
 
     override fun toString(): String {
         return name
     }
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null) return false
-        if (javaClass != other.javaClass) return false
-        other as AbstractField<*>
-        return name == other.name
-    }
-
-    override fun hashCode(): Int {
-        return name.hashCode()
-    }
-
     /**
-     * Returns a copy of this field with its [typeRef] set to [newType] (if it's possible).
+     * Replaces the type of the field with its substituted [TypeRef.substitute] version,
+     * if it's possible.
      */
-    abstract fun replaceType(newType: TypeRefWithNullability): Field
+    abstract fun substituteType(map: TypeParameterSubstitutionMap)
 
     /**
      * Returns a copy of this field.
      */
-    abstract fun copy(): Field
+    fun copy() = internalCopy().also(::updateFieldsInCopy)
+
+    protected abstract fun internalCopy(): Field
 
     protected open fun updateFieldsInCopy(copy: Field) {
         copy.kDoc = kDoc
@@ -119,9 +120,9 @@ abstract class AbstractField<Field : AbstractField<Field>> {
         copy.isMutable = isMutable
         copy.deprecation = deprecation
         copy.visibility = visibility
-        copy.fromParent = fromParent
+        copy.isOverride = isOverride
         copy.useInBaseTransformerDetection = useInBaseTransformerDetection
-        copy.overriddenTypes += overriddenTypes
+        copy.overriddenFields += overriddenFields
         copy.implementationDefaultStrategy = implementationDefaultStrategy
     }
 

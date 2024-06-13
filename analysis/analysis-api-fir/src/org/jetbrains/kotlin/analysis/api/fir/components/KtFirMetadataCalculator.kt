@@ -10,12 +10,13 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiType
+import com.intellij.psi.PsiTypes
 import com.intellij.psi.util.ClassUtil
-import org.jetbrains.kotlin.analysis.api.KtAnalysisNonPublicApi
-import org.jetbrains.kotlin.analysis.api.components.KtMetadataCalculator
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
+import org.jetbrains.kotlin.analysis.api.components.KaMetadataCalculator
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfType
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.backend.jvm.JvmBackendExtension
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
@@ -29,13 +30,13 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmSerializerExtension.Companion.
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmSerializerExtension.Companion.METHOD_FOR_FIR_FUNCTION
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
-import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.serialization.FirElementAwareStringTable
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembers
 import org.jetbrains.kotlin.fir.types.typeApproximator
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
@@ -52,11 +53,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.toMetadataVersion
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
-import java.util.*
 
-@OptIn(KtAnalysisNonPublicApi::class)
-internal class KtFirMetadataCalculator(override val analysisSession: KtFirAnalysisSession) : KtMetadataCalculator(),
-    KtFirAnalysisSessionComponent {
+@OptIn(KaAnalysisNonPublicApi::class)
+internal class KaFirMetadataCalculator(override val analysisSession: KaFirSession) : KaMetadataCalculator(),
+    KaFirSessionComponent {
     private val firSession: FirSession
         get() = rootModuleSession
 
@@ -66,7 +66,8 @@ internal class KtFirMetadataCalculator(override val analysisSession: KtFirAnalys
     private val metadataVersion = firSession.languageVersionSettings.languageVersion.toMetadataVersion()
 
     override fun calculateMetadata(ktClass: KtClassOrObject, mapping: Multimap<KtElement, PsiElement>): Metadata {
-        val firClass = ktClass.getOrBuildFirOfType<FirRegularClass>(firResolveSession)
+        val firClass = ktClass.resolveToFirSymbolOfType<FirClassSymbol<*>>(firResolveSession).fir
+        firClass.lazyResolveToPhaseWithCallableMembers(FirResolvePhase.STATUS)
         val bindings = JvmSerializationBindings().also { collectBindings(firClass.declarations, mapping, it) }
         val (serializer, stringTable) = createTopLevelSerializer(bindings)
         val classProto = serializer.classProto(firClass)
@@ -87,10 +88,7 @@ internal class KtFirMetadataCalculator(override val analysisSession: KtFirAnalys
         bindings: JvmSerializationBindings,
     ) {
         for (fir in declarations) {
-            if (fir !is FirFunction && fir !is FirProperty && fir !is FirTypeAlias) continue
-
-            fir.symbol.lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
-
+            if (fir !is FirFunction && fir !is FirProperty) continue
             val psiElements = mapping[fir.psi as KtElement]
             val methods = psiElements.filterIsInstance<PsiMethod>()
             when (fir) {
@@ -102,13 +100,11 @@ internal class KtFirMetadataCalculator(override val analysisSession: KtFirAnalys
                     )
                 }
                 is FirProperty -> {
-                    if (fir.hasBackingField || fir.delegateFieldSymbol != null) {
-                        psiElements.firstIsInstanceOrNull<PsiField>()?.let {
-                            bindings.put(FIELD_FOR_PROPERTY, fir, Type.getType(getBinaryPresentationWithCorrection(it.type)) to it.name)
-                        }
+                    psiElements.firstIsInstanceOrNull<PsiField>()?.let {
+                        bindings.put(FIELD_FOR_PROPERTY, fir, Type.getType(getBinaryPresentationWithCorrection(it.type)) to it.name)
                     }
                     fir.getter?.let { getter ->
-                        methods.singleOrNull { it.returnType != PsiType.VOID }?.let {
+                        methods.singleOrNull { it.returnType != PsiTypes.voidType() }?.let {
                             bindings.put(METHOD_FOR_FIR_FUNCTION, getter, Method(it.name, getAsmMethodSignatureWithCorrection(it)))
                         }
                     }
@@ -185,7 +181,7 @@ private fun getAsmMethodSignatureWithCorrection(method: PsiMethod): String = bui
         append(getBinaryPresentationWithCorrection(param.type))
     }
     append(")")
-    append(getBinaryPresentationWithCorrection(Optional.ofNullable(method.returnType).orElse(PsiType.VOID)))
+    append(getBinaryPresentationWithCorrection(method.returnType ?: PsiTypes.voidType()))
 }
 
 private fun getBinaryPresentationWithCorrection(psiType: PsiType): String =

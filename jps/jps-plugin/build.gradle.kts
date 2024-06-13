@@ -13,7 +13,7 @@ val compilerModules: Array<String> by rootProject.extra
 val generateTests by generator("org.jetbrains.kotlin.jps.GenerateJpsPluginTestsKt") {
     javaLauncher.set(
         javaToolchains.launcherFor {
-            languageVersion.set(JavaLanguageVersion.of(11))
+            languageVersion.set(JavaLanguageVersion.of(17))
         }
     )
 }
@@ -42,11 +42,14 @@ dependencies {
     compileOnly(jpsModel())
     compileOnly(jpsBuild())
     compileOnly(jpsModelSerialization())
+    compileOnly(intellijJDom())
     testRuntimeOnly(jpsModel())
 
     // testFramework includes too many unnecessary dependencies. Here we manually list all we need to successfully run JPS tests
+    testImplementation(jpsModelSerialization()) { isTransitive = false }
     testImplementation(testFramework()) { isTransitive = false }
     testImplementation("com.jetbrains.intellij.platform:test-framework-core:$intellijVersion") { isTransitive = false }
+    testImplementation("com.jetbrains.intellij.platform:test-framework-common:$intellijVersion") { isTransitive = false }
     testRuntimeOnly("com.jetbrains.intellij.platform:analysis-impl:$intellijVersion") { isTransitive = false }
     testRuntimeOnly("com.jetbrains.intellij.platform:boot:$intellijVersion") { isTransitive = false }
     testRuntimeOnly("com.jetbrains.intellij.platform:analysis:$intellijVersion") { isTransitive = false }
@@ -66,14 +69,12 @@ dependencies {
     testRuntimeOnly("com.jetbrains.intellij.platform:lang-impl:$intellijVersion") { isTransitive = false }
     testRuntimeOnly("com.jetbrains.intellij.platform:util-ex:$intellijVersion") { isTransitive = false }
     testRuntimeOnly("com.google.code.gson:gson:2.8.9")
+    testRuntimeOnly(intellijJDom())
+    testRuntimeOnly(libs.kotlinx.coroutines.core.jvm)
 
     testImplementation(projectTests(":compiler:incremental-compilation-impl"))
-    testCompileOnly(jpsBuild())
-    testImplementation(devKitJps()) {
-        exclude(group = "com.google.code.gson", module = "gson") // Workaround for Gradle dependency resolution error
-    }
+    testImplementation(jpsBuild())
 
-    testImplementation(jpsBuildTest())
     compilerModules.forEach {
         testRuntimeOnly(project(it))
     }
@@ -95,7 +96,7 @@ sourceSets {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(11))
+        languageVersion.set(JavaLanguageVersion.of(17))
     }
 }
 
@@ -114,6 +115,26 @@ projectTest(parallel = true) {
     dependsOn(":kotlin-compiler:dist")
     dependsOn(":kotlin-stdlib:jsJarForTests")
     workingDir = rootDir
+    jvmArgs(
+        // https://github.com/JetBrains/intellij-community/blob/b49faf433f8d73ccd46016a5717f997d167de65f/jps/jps-builders/src/org/jetbrains/jps/cmdline/ClasspathBootstrap.java#L67
+        "--add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.jvm=ALL-UNNAMED",
+        // the minimal required set of modules to be opened for the intellij platform itself
+        "--add-opens=java.desktop/java.awt=ALL-UNNAMED",
+        "--add-opens=java.desktop/sun.awt=ALL-UNNAMED",
+        "--add-opens=java.base/java.lang=ALL-UNNAMED",
+        "--add-opens=java.desktop/javax.swing=ALL-UNNAMED",
+        "--add-opens=java.base/java.io=ALL-UNNAMED",
+    )
 }
 
 testsJar {}

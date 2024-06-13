@@ -5,8 +5,8 @@
   <artifactId>org.jetbrains.kotlin.plugin.compose.gradle.plugin</artifactId>
   <version>ArtifactsTest.version</version>
   <packaging>pom</packaging>
-  <name>Kotlin Compose Compiler plugin</name>
-  <description>Kotlin Compose Compiler plugin</description>
+  <name>Compose Compiler Gradle plugin</name>
+  <description>Compose Compiler Gradle plugin</description>
   <url>https://kotlinlang.org/</url>
   <licenses>
     <license>

@@ -1,24 +1,24 @@
-KtBackingFieldSymbol:
-  annotationsList: [
+KaBackingFieldSymbol:
+  annotations: [
     FieldAnnotation()
       psi: KtAnnotationEntry
     java/lang/Deprecated()
       psi: KtAnnotationEntry
   ]
-  callableIdIfNonLocal: null
+  callableId: null
   contextReceivers: []
   isExtension: false
   name: field
   origin: PROPERTY_BACKING_FIELD
-  owningProperty: KtKotlinPropertySymbol(/x)
+  owningProperty: KaKotlinPropertySymbol(/x)
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
-  getContainingFileSymbol: KtFileSymbol(accessorField.kt)
+  getContainingFileSymbol: KaFileSymbol(accessorField.kt)
   getContainingJvmClassName: AccessorFieldKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)

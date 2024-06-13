@@ -1,0 +1,8 @@
+STEP 0:
+    dependencies: stdlib
+    compiler: BOTTOM_V1
+STEP 1:
+    dependencies: stdlib
+    modifications:
+        U : l1.kt.1 -> l1.kt
+    compiler: BOTTOM_V2

@@ -1,14 +1,14 @@
 FILE: script1.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: <script-script1.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         lval args: R|kotlin/Array<kotlin/String>|
 
         public final val a: R|kotlin/Int| = Int(42)
             public get(): R|kotlin/Int|
 
 FILE: script2.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: <script-script2.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         lval args: R|kotlin/Array<kotlin/String>|
 
         public final val a: R|kotlin/String| = String(42)

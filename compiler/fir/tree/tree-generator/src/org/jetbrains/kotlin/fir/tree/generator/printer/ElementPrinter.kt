@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
 import org.jetbrains.kotlin.fir.tree.generator.*
-import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
 import org.jetbrains.kotlin.generators.tree.*
@@ -31,24 +30,32 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
                 element = element,
                 transformerClass = firTransformerType,
                 implementation = "transformer.transform${element.name}(this, data)",
-                returnType = TypeVariable("E", listOf(AbstractFirTreeBuilder.baseFirElement)),
+                returnType = TypeVariable("E", listOf(FirTreeBuilder.baseFirElement)),
                 treeName = treeName,
             )
 
-            fun Field.replaceDeclaration(override: Boolean, overridenType: TypeRefWithNullability? = null, forceNullable: Boolean = false) {
+            fun Field.replaceDeclaration(
+                override: Boolean,
+                overriddenType: TypeRefWithNullability? = null,
+                forceNullable: Boolean = false,
+            ) {
                 println()
                 if (name == "source") {
                     println("@", firImplementationDetailType.render())
                 }
-                replaceFunctionDeclaration(this, override, kind, overridenType, forceNullable)
+                replaceFunctionDeclaration(this, override, kind, overriddenType, forceNullable)
                 println()
             }
 
-            allFields.filter { it.withReplace }.forEach {
-                val override = overriddenFieldsHaveSameClass[it, it] && !(it.name == "source" && element in elementsWithReplaceSource)
-                it.replaceDeclaration(override, forceNullable = it.useNullableForReplace)
-                for (overriddenType in it.overriddenTypes) {
-                    it.replaceDeclaration(true, overriddenType)
+            allFields.filter { it.withReplace }.forEach { field ->
+                val clazz = field.typeRef.copy(nullable = false)
+                val overriddenClasses = field.overriddenFields.map { it -> it.typeRef.copy(nullable = false) }.toSet()
+
+                val override = clazz in overriddenClasses && !(field.name == "source" && element in elementsWithReplaceSource)
+                field.replaceDeclaration(override, forceNullable = field.receiveNullableTypeInReplace)
+
+                for (overriddenClass in overriddenClasses - clazz) {
+                    field.replaceDeclaration(true, overriddenType = overriddenClass)
                 }
             }
 
@@ -58,7 +65,7 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
                 transformFunctionDeclaration(
                     field = field,
                     returnType = element.withSelfArgs(),
-                    override = field.fromParent && field.parentHasSeparateTransform,
+                    override = field.overriddenFields.any { it.needsSeparateTransform },
                     implementationKind = kind
                 )
                 println()
@@ -87,7 +94,7 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
                 printTransformChildrenMethod(
                     element = element,
                     transformerClass = firTransformerType,
-                    returnType = AbstractFirTreeBuilder.baseFirElement,
+                    returnType = FirTreeBuilder.baseFirElement,
                 )
                 println()
             }

@@ -5,37 +5,37 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.components.KtInheritorsProvider
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.components.KaInheritorsProvider
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.declarations.getSealedClassInheritors
 
-internal class KtFirInheritorsProvider(
-    override val analysisSession: KtFirAnalysisSession,
-    override val token: KtLifetimeToken,
-) : KtInheritorsProvider(), KtFirAnalysisSessionComponent {
+internal class KaFirInheritorsProvider(
+    override val analysisSession: KaFirSession,
+    override val token: KaLifetimeToken,
+) : KaInheritorsProvider(), KaFirSessionComponent {
     override fun getInheritorsOfSealedClass(
-        classSymbol: KtNamedClassOrObjectSymbol
-    ): List<KtNamedClassOrObjectSymbol> {
+        classSymbol: KaNamedClassOrObjectSymbol
+    ): List<KaNamedClassOrObjectSymbol> {
         require(classSymbol.modality == Modality.SEALED)
-        require(classSymbol is KtFirNamedClassOrObjectSymbol)
+        require(classSymbol is KaFirNamedClassOrObjectSymbol)
 
         val inheritorClassIds = classSymbol.firSymbol.fir.getSealedClassInheritors(analysisSession.useSiteSession)
 
         return with(analysisSession) {
-            inheritorClassIds.mapNotNull { getClassOrObjectSymbolByClassId(it) as? KtNamedClassOrObjectSymbol }
+            inheritorClassIds.mapNotNull { getClassOrObjectSymbolByClassId(it) as? KaNamedClassOrObjectSymbol }
         }
     }
 
-    override fun getEnumEntries(classSymbol: KtNamedClassOrObjectSymbol): List<KtEnumEntrySymbol> {
-        require(classSymbol.classKind == KtClassKind.ENUM_CLASS)
+    override fun getEnumEntries(classSymbol: KaNamedClassOrObjectSymbol): List<KaEnumEntrySymbol> {
+        require(classSymbol.classKind == KaClassKind.ENUM_CLASS)
         return with(analysisSession) {
-            classSymbol.getStaticDeclaredMemberScope().getCallableSymbols().filterIsInstance<KtEnumEntrySymbol>().toList()
+            classSymbol.getStaticDeclaredMemberScope().getCallableSymbols().filterIsInstance<KaEnumEntrySymbol>().toList()
         }
     }
 

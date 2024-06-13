@@ -5,22 +5,22 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
-import org.jetbrains.kotlin.analysis.api.KtInitializerValue
-import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
+import org.jetbrains.kotlin.analysis.api.KaInitializerValue
+import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.*
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.isEqualTo
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10NeverRestoringSymbolPointer
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.*
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -34,10 +34,10 @@ import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 
-internal class KtFe10PsiKotlinPropertySymbol(
+internal class KaFe10PsiKotlinPropertySymbol(
     override val psi: KtProperty,
     override val analysisContext: Fe10AnalysisContext
-) : KtKotlinPropertySymbol(), KtFe10PsiSymbol<KtProperty, PropertyDescriptor> {
+) : KaKotlinPropertySymbol(), KaFe10PsiSymbol<KtProperty, PropertyDescriptor> {
     override val descriptor: PropertyDescriptor? by cached {
         val bindingContext = analysisContext.analyze(psi, AnalysisMode.PARTIAL)
         bindingContext[BindingContext.VARIABLE, psi] as? PropertyDescriptor
@@ -55,26 +55,26 @@ internal class KtFe10PsiKotlinPropertySymbol(
     override val hasSetter: Boolean
         get() = withValidityAssertion { psi.isVar }
 
-    override val getter: KtPropertyGetterSymbol
+    override val getter: KaPropertyGetterSymbol
         get() = withValidityAssertion {
-            val getter = psi.getter ?: return KtFe10PsiDefaultPropertyGetterSymbol(psi, analysisContext)
-            return KtFe10PsiPropertyGetterSymbol(getter, analysisContext)
+            val getter = psi.getter ?: return KaFe10PsiDefaultPropertyGetterSymbol(psi, analysisContext)
+            return KaFe10PsiPropertyGetterSymbol(getter, analysisContext)
         }
 
-    override val setter: KtPropertySetterSymbol?
+    override val setter: KaPropertySetterSymbol?
         get() = withValidityAssertion {
             if (!psi.isVar) {
                 return null
             }
 
-            val setter = psi.setter ?: return KtFe10PsiDefaultPropertySetterSymbol(psi, analysisContext)
-            return KtFe10PsiPropertySetterSymbol(setter, analysisContext)
+            val setter = psi.setter ?: return KaFe10PsiDefaultPropertySetterSymbol(psi, analysisContext)
+            return KaFe10PsiPropertySetterSymbol(setter, analysisContext)
         }
 
-    override val backingFieldSymbol: KtBackingFieldSymbol?
+    override val backingFieldSymbol: KaBackingFieldSymbol?
         get() = withValidityAssertion {
             if (psi.isLocal) null
-            else KtFe10PsiDefaultBackingFieldSymbol(propertyPsi = psi, owningProperty = this, analysisContext)
+            else KaFe10PsiDefaultBackingFieldSymbol(propertyPsi = psi, owningProperty = this, analysisContext)
         }
 
     override val hasBackingField: Boolean
@@ -103,19 +103,19 @@ internal class KtFe10PsiKotlinPropertySymbol(
     override val isExpect: Boolean
         get() = withValidityAssertion { descriptor?.isExpect ?: psi.hasExpectModifier() }
 
-    override val initializer: KtInitializerValue?
+    override val initializer: KaInitializerValue?
         get() = withValidityAssertion { createKtInitializerValue(psi.initializer, descriptor, analysisContext) }
 
     override val isVal: Boolean
         get() = withValidityAssertion { !psi.isVar }
 
-    override val callableIdIfNonLocal: CallableId?
-        get() = withValidityAssertion { psi.callableIdIfNonLocal }
+    override val callableId: CallableId?
+        get() = withValidityAssertion { psi.callableId }
 
-    override val returnType: KtType
+    override val returnType: KaType
         get() = withValidityAssertion { descriptor?.type?.toKtType(analysisContext) ?: createErrorType() }
 
-    override val receiverParameter: KtReceiverParameterSymbol?
+    override val receiverParameter: KaReceiverParameterSymbol?
         get() = withValidityAssertion {
             if (!psi.isExtensionDeclaration()) {
                 return null
@@ -124,21 +124,21 @@ internal class KtFe10PsiKotlinPropertySymbol(
             descriptor?.extensionReceiverParameter?.toKtReceiverParameterSymbol(analysisContext)
         }
 
-    override val contextReceivers: List<KtContextReceiver>
+    override val contextReceivers: List<KaContextReceiver>
         get() = withValidityAssertion { descriptor?.createContextReceivers(analysisContext) ?: emptyList() }
 
     override val isExtension: Boolean
         get() = withValidityAssertion { psi.isExtensionDeclaration() }
 
-    override val symbolKind: KtSymbolKind
+    override val symbolKind: KaSymbolKind
         get() = withValidityAssertion { psi.ktSymbolKind }
 
     override val name: Name
         get() = withValidityAssertion { psi.nameAsSafeName }
 
-    override val typeParameters: List<KtTypeParameterSymbol>
+    override val typeParameters: List<KaTypeParameterSymbol>
         get() = withValidityAssertion {
-            psi.typeParameters.map { KtFe10PsiTypeParameterSymbol(it, analysisContext) }
+            psi.typeParameters.map { KaFe10PsiTypeParameterSymbol(it, analysisContext) }
         }
 
     override val modality: Modality
@@ -147,8 +147,8 @@ internal class KtFe10PsiKotlinPropertySymbol(
     override val visibility: Visibility
         get() = withValidityAssertion { psi.ktVisibility ?: descriptor?.ktVisibility ?: Visibilities.Public }
 
-    override fun createPointer(): KtSymbolPointer<KtKotlinPropertySymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtKotlinPropertySymbol>(this) ?: KtFe10NeverRestoringSymbolPointer()
+    override fun createPointer(): KaSymbolPointer<KaKotlinPropertySymbol> = withValidityAssertion {
+        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaKotlinPropertySymbol>(this) ?: KaFe10NeverRestoringSymbolPointer()
     }
 
 

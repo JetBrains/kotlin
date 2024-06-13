@@ -5,12 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.klib.reader.tests
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.klib.reader.testUtils.providedTestProjectKlib
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
-import org.jetbrains.kotlin.analysis.api.standalone.KtAlwaysAccessibleLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
@@ -126,7 +123,7 @@ class GetSymbolsTest {
 
             val typeAliasASymbol = assertNotNull(typeAliasAAddress.getTypeAliasSymbol())
             assertEquals(Name.identifier("TypeAliasA"), typeAliasASymbol.name)
-            assertEquals(Name.identifier("AClass"), typeAliasASymbol.expandedType.expandedClassSymbol?.name)
+            assertEquals(Name.identifier("AClass"), typeAliasASymbol.expandedType.expandedSymbol?.name)
         }
     }
 
@@ -151,11 +148,11 @@ class GetSymbolsTest {
             )
 
             val fooInASymbol = fooInASymbols.first()
-            if (!fooInASymbol.annotationsList.hasAnnotation(ClassId.fromString("org/jetbrains/sample/filePrivateSymbolsClash/A")))
+            if (ClassId.fromString("org/jetbrains/sample/filePrivateSymbolsClash/A") !in fooInASymbol.annotations)
                 fail("Missing annotation 'A' on 'fun foo()' in A.kt")
 
             val fooInBSymbol = fooInBSymbols.first()
-            if (!fooInBSymbol.annotationsList.hasAnnotation(ClassId.fromString("org/jetbrains/sample/filePrivateSymbolsClash/B")))
+            if (ClassId.fromString("org/jetbrains/sample/filePrivateSymbolsClash/B") !in fooInBSymbol.annotations)
                 fail("Missing annotation 'B' on 'fun foo()' in B.kt")
         }
     }
@@ -181,11 +178,11 @@ class GetSymbolsTest {
             )
 
             val fooInASymbol = fooInASymbols.first()
-            if (!fooInASymbol.annotationsList.hasAnnotation(ClassId.fromString("org/jetbrains/sample/filePrivateSymbolsClash/A")))
+            if (ClassId.fromString("org/jetbrains/sample/filePrivateSymbolsClash/A") !in fooInASymbol.annotations)
                 fail("Missing annotation 'A' on 'val fooProperty' in A.kt")
 
             val fooInBSymbol = fooInBSymbols.first()
-            if (!fooInBSymbol.annotationsList.hasAnnotation(ClassId.fromString("org/jetbrains/sample/filePrivateSymbolsClash/B")))
+            if (ClassId.fromString("org/jetbrains/sample/filePrivateSymbolsClash/B") !in fooInBSymbol.annotations)
                 fail("Missing annotation 'B' on 'val fooProperty' in B.kt")
         }
     }
@@ -197,9 +194,6 @@ class GetSymbolsTest {
         val session = buildStandaloneAnalysisAPISession {
             val currentArchitectureTarget = HostManager.host
             val nativePlatform = NativePlatforms.nativePlatformByTargets(listOf(currentArchitectureTarget))
-
-            @OptIn(KtAnalysisApiInternals::class)
-            registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
 
             buildKtModuleProvider {
                 platform = nativePlatform

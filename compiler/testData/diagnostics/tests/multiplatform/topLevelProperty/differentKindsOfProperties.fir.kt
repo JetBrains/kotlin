@@ -1,4 +1,4 @@
-// !LANGUAGE: +LateinitTopLevelProperties
+// LANGUAGE: +LateinitTopLevelProperties
 // MODULE: m1-common
 // FILE: common.kt
 
@@ -21,10 +21,10 @@
 <!NO_ACTUAL_FOR_EXPECT{JVM}!>expect var backingFieldVar: String = <!EXPECTED_PROPERTY_INITIALIZER!>"no"<!><!>
 
 <!NO_ACTUAL_FOR_EXPECT{JVM}!>expect val customAccessorVal: String
-    get() = "no"<!>
+    <!EXPECTED_DECLARATION_WITH_BODY!>get()<!> = "no"<!>
 <!NO_ACTUAL_FOR_EXPECT{JVM}!>expect var customAccessorVar: String
-    get() = "no"
-    set(value) {}<!>
+    <!EXPECTED_DECLARATION_WITH_BODY!>get()<!> = "no"
+    <!EXPECTED_DECLARATION_WITH_BODY!>set(value)<!> {}<!>
 
 <!NO_ACTUAL_FOR_EXPECT{JVM}!>expect <!CONST_VAL_WITHOUT_INITIALIZER!>const<!> val constVal: Int<!>
 

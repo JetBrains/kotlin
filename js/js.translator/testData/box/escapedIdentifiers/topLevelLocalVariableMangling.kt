@@ -1,4 +1,4 @@
-// !LANGUAGE: +JsAllowInvalidCharsIdentifiersEscaping
+// LANGUAGE: +JsAllowInvalidCharsIdentifiersEscaping
 
 package foo
 

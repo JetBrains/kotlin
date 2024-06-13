@@ -1,4 +1,4 @@
-// !LANGUAGE: +DefinitelyNonNullableTypes
+// LANGUAGE: +DefinitelyNonNullableTypes
 
 fun <T : Comparable<<!INCORRECT_LEFT_COMPONENT_OF_INTERSECTION!>T<!> & Any>> sort1() {}
 fun <T : Comparable<T & Any>?> sort2() {}

@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.generators.tree.ImplementationKind.OpenClass
 object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() {
 
     override fun configure(model: Model) = with(FirTreeBuilder) {
+
+        impl(receiverParameter)
+
         impl(constructor) {
             defaultFalse("isPrimary", withGetter = true)
         }
@@ -344,6 +347,13 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         impl(equalityOperatorCall) {
             default("coneTypeOrNull", "StandardClassIds.Boolean.constructClassLikeType()")
             additionalImports(standardClassIdsType, constructClassLikeTypeImport)
+        }
+
+        impl(whenBranch, "FirRegularWhenBranch") {
+            defaultFalse("hasGuard", withGetter = true)
+        }
+        impl(whenBranch, "FirGuardedWhenBranch") {
+            defaultTrue("hasGuard", withGetter = true)
         }
 
         impl(resolvedQualifier) {

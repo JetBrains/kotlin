@@ -17,6 +17,6 @@ private fun FirDeclaration.isLexicallyInsideJsNative(context: CheckerContext): B
 }
 
 class FirJsPlatformDiagnosticSuppressor : FirPlatformDiagnosticSuppressor {
-    override fun shouldReportNoBody(declaration: FirCallableDeclaration, context: CheckerContext) =
+    override fun shouldReportNoBody(declaration: FirCallableDeclaration, context: CheckerContext): Boolean =
         !declaration.isLexicallyInsideJsNative(context)
 }

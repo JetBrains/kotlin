@@ -1,30 +1,30 @@
-KtTypeParameterSymbol:
-  annotationsList: []
+KaTypeParameterSymbol:
+  annotations: []
   isReified: false
   name: T
   origin: SOURCE
   typeParameters: []
   upperBounds: []
   variance: INVARIANT
-  getContainingFileSymbol: KtFileSymbol(outerAndInnerClasses.kt)
+  getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtTypeParameterSymbol:
-  annotationsList: []
+KaTypeParameterSymbol:
+  annotations: []
   isReified: false
   name: T1
   origin: SOURCE
   typeParameters: []
   upperBounds: []
   variance: INVARIANT
-  getContainingFileSymbol: KtFileSymbol(outerAndInnerClasses.kt)
+  getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: X.Y
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: X.Y
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -39,36 +39,36 @@ KtNamedClassOrObjectSymbol:
   name: Y
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: CLASS_MEMBER
   typeParameters: [
-    KtTypeParameterSymbol(T1)
+    KaTypeParameterSymbol(T1)
   ]
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(outerAndInnerClasses.kt)
+  getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtTypeParameterSymbol:
-  annotationsList: []
+KaTypeParameterSymbol:
+  annotations: []
   isReified: false
   name: T2
   origin: SOURCE
   typeParameters: []
   upperBounds: []
   variance: INVARIANT
-  getContainingFileSymbol: KtFileSymbol(outerAndInnerClasses.kt)
+  getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: X.Z
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: X.Z
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -83,60 +83,60 @@ KtNamedClassOrObjectSymbol:
   name: Z
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: CLASS_MEMBER
   typeParameters: [
-    KtTypeParameterSymbol(T2)
+    KaTypeParameterSymbol(T2)
   ]
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(outerAndInnerClasses.kt)
+  getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtTypeParameterSymbol:
-  annotationsList: []
+KaTypeParameterSymbol:
+  annotations: []
   isReified: false
   name: T3
   origin: SOURCE
   typeParameters: []
   upperBounds: []
   variance: INVARIANT
-  getContainingFileSymbol: KtFileSymbol(outerAndInnerClasses.kt)
+  getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtTypeParameterSymbol:
-  annotationsList: []
+KaTypeParameterSymbol:
+  annotations: []
   isReified: false
   name: T4
   origin: SOURCE
   typeParameters: []
   upperBounds: []
   variance: INVARIANT
-  getContainingFileSymbol: KtFileSymbol(outerAndInnerClasses.kt)
+  getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtTypeParameterSymbol:
-  annotationsList: []
+KaTypeParameterSymbol:
+  annotations: []
   isReified: false
   name: T5
   origin: SOURCE
   typeParameters: []
   upperBounds: []
   variance: INVARIANT
-  getContainingFileSymbol: KtFileSymbol(outerAndInnerClasses.kt)
+  getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: null
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: null
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -151,36 +151,36 @@ KtNamedClassOrObjectSymbol:
   name: K
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: CLASS_MEMBER
   typeParameters: [
-    KtTypeParameterSymbol(T5)
+    KaTypeParameterSymbol(T5)
   ]
   visibility: Local
-  getContainingFileSymbol: KtFileSymbol(outerAndInnerClasses.kt)
+  getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtTypeParameterSymbol:
-  annotationsList: []
+KaTypeParameterSymbol:
+  annotations: []
   isReified: false
   name: T6
   origin: SOURCE
   typeParameters: []
   upperBounds: []
   variance: INVARIANT
-  getContainingFileSymbol: KtFileSymbol(outerAndInnerClasses.kt)
+  getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: null
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: null
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -195,48 +195,48 @@ KtNamedClassOrObjectSymbol:
   name: C
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: CLASS_MEMBER
   typeParameters: [
-    KtTypeParameterSymbol(T6)
+    KaTypeParameterSymbol(T6)
   ]
   visibility: Local
-  getContainingFileSymbol: KtFileSymbol(outerAndInnerClasses.kt)
+  getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtTypeParameterSymbol:
-  annotationsList: []
+KaTypeParameterSymbol:
+  annotations: []
   isReified: false
   name: T
   origin: SOURCE
   typeParameters: []
   upperBounds: []
   variance: INVARIANT
-  getContainingFileSymbol: KtFileSymbol(outerAndInnerClasses.kt)
+  getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtTypeParameterSymbol:
-  annotationsList: []
+KaTypeParameterSymbol:
+  annotations: []
   isReified: false
   name: T1
   origin: SOURCE
   typeParameters: []
   upperBounds: []
   variance: INVARIANT
-  getContainingFileSymbol: KtFileSymbol(outerAndInnerClasses.kt)
+  getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: null
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: null
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -251,36 +251,36 @@ KtNamedClassOrObjectSymbol:
   name: Y
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: CLASS_MEMBER
   typeParameters: [
-    KtTypeParameterSymbol(T1)
+    KaTypeParameterSymbol(T1)
   ]
   visibility: Local
-  getContainingFileSymbol: KtFileSymbol(outerAndInnerClasses.kt)
+  getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtTypeParameterSymbol:
-  annotationsList: []
+KaTypeParameterSymbol:
+  annotations: []
   isReified: false
   name: T2
   origin: SOURCE
   typeParameters: []
   upperBounds: []
   variance: INVARIANT
-  getContainingFileSymbol: KtFileSymbol(outerAndInnerClasses.kt)
+  getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: null
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: null
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -295,60 +295,60 @@ KtNamedClassOrObjectSymbol:
   name: Z
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: CLASS_MEMBER
   typeParameters: [
-    KtTypeParameterSymbol(T2)
+    KaTypeParameterSymbol(T2)
   ]
   visibility: Local
-  getContainingFileSymbol: KtFileSymbol(outerAndInnerClasses.kt)
+  getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtTypeParameterSymbol:
-  annotationsList: []
+KaTypeParameterSymbol:
+  annotations: []
   isReified: false
   name: T3
   origin: SOURCE
   typeParameters: []
   upperBounds: []
   variance: INVARIANT
-  getContainingFileSymbol: KtFileSymbol(outerAndInnerClasses.kt)
+  getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtTypeParameterSymbol:
-  annotationsList: []
+KaTypeParameterSymbol:
+  annotations: []
   isReified: false
   name: T4
   origin: SOURCE
   typeParameters: []
   upperBounds: []
   variance: INVARIANT
-  getContainingFileSymbol: KtFileSymbol(outerAndInnerClasses.kt)
+  getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtTypeParameterSymbol:
-  annotationsList: []
+KaTypeParameterSymbol:
+  annotations: []
   isReified: false
   name: T5
   origin: SOURCE
   typeParameters: []
   upperBounds: []
   variance: INVARIANT
-  getContainingFileSymbol: KtFileSymbol(outerAndInnerClasses.kt)
+  getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: null
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: null
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -363,36 +363,36 @@ KtNamedClassOrObjectSymbol:
   name: K
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: CLASS_MEMBER
   typeParameters: [
-    KtTypeParameterSymbol(T5)
+    KaTypeParameterSymbol(T5)
   ]
   visibility: Local
-  getContainingFileSymbol: KtFileSymbol(outerAndInnerClasses.kt)
+  getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtTypeParameterSymbol:
-  annotationsList: []
+KaTypeParameterSymbol:
+  annotations: []
   isReified: false
   name: T6
   origin: SOURCE
   typeParameters: []
   upperBounds: []
   variance: INVARIANT
-  getContainingFileSymbol: KtFileSymbol(outerAndInnerClasses.kt)
+  getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: null
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: null
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -407,24 +407,24 @@ KtNamedClassOrObjectSymbol:
   name: C
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: CLASS_MEMBER
   typeParameters: [
-    KtTypeParameterSymbol(T6)
+    KaTypeParameterSymbol(T6)
   ]
   visibility: Local
-  getContainingFileSymbol: KtFileSymbol(outerAndInnerClasses.kt)
+  getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: null
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: null
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -439,24 +439,24 @@ KtNamedClassOrObjectSymbol:
   name: U
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: LOCAL
   typeParameters: [
-    KtTypeParameterSymbol(T4)
+    KaTypeParameterSymbol(T4)
   ]
   visibility: Local
-  getContainingFileSymbol: KtFileSymbol(outerAndInnerClasses.kt)
+  getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
+KaFunctionSymbol:
+  annotations: []
+  callableId: null
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -476,32 +476,32 @@ KtFunctionSymbol:
   name: foo
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: [
-    KtTypeParameterSymbol(T3)
+    KaTypeParameterSymbol(T3)
   ]
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: T
     ]
     type: X<T>
-  getContainingFileSymbol: KtFileSymbol(outerAndInnerClasses.kt)
+  getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
   getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: null
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: null
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -516,24 +516,24 @@ KtNamedClassOrObjectSymbol:
   name: X
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: CLASS_MEMBER
   typeParameters: [
-    KtTypeParameterSymbol(T)
+    KaTypeParameterSymbol(T)
   ]
   visibility: Local
-  getContainingFileSymbol: KtFileSymbol(outerAndInnerClasses.kt)
+  getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: null
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: null
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -548,24 +548,24 @@ KtNamedClassOrObjectSymbol:
   name: U
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: LOCAL
   typeParameters: [
-    KtTypeParameterSymbol(T4)
+    KaTypeParameterSymbol(T4)
   ]
   visibility: Local
-  getContainingFileSymbol: KtFileSymbol(outerAndInnerClasses.kt)
+  getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /X.foo
+KaFunctionSymbol:
+  annotations: []
+  callableId: /X.foo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -585,32 +585,32 @@ KtFunctionSymbol:
   name: foo
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: [
-    KtTypeParameterSymbol(T3)
+    KaTypeParameterSymbol(T3)
   ]
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: T
     ]
     type: X<T>
-  getContainingFileSymbol: KtFileSymbol(outerAndInnerClasses.kt)
+  getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
   getContainingJvmClassName: X
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: X
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: X
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -625,17 +625,17 @@ KtNamedClassOrObjectSymbol:
   name: X
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: [
-    KtTypeParameterSymbol(T)
+    KaTypeParameterSymbol(T)
   ]
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(outerAndInnerClasses.kt)
+  getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

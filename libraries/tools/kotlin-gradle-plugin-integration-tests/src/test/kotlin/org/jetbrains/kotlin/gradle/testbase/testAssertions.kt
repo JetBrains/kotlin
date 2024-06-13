@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
+import com.intellij.openapi.util.JDOMUtil
 import org.jdom.CDATA
 import org.jdom.Content
 import org.jdom.Element
-import org.jdom.input.SAXBuilder
-import org.jdom.output.Format
-import org.jdom.output.XMLOutputter
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespaces
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
@@ -58,7 +56,7 @@ internal fun readAndCleanupTestResults(
         appendLine("</results>")
     }
 
-    val doc = SAXBuilder().build(xmlString.reader())
+    val doc = JDOMUtil.load(xmlString.reader())
     val skipAttrs = setOf("timestamp", "hostname", "time", "message")
     val skipContentsOf = setOf("failure")
 
@@ -91,9 +89,9 @@ internal fun readAndCleanupTestResults(
         }
     }
 
-    cleanup(doc.rootElement)
-    return XMLOutputter(Format.getPrettyFormat()).outputString(doc)
+    cleanup(doc)
+    return JDOMUtil.write(doc)
 }
 
 internal fun prettyPrintXml(uglyXml: String): String =
-    XMLOutputter(Format.getPrettyFormat()).outputString(SAXBuilder().build(uglyXml.reader()))
+    JDOMUtil.write(JDOMUtil.load(uglyXml.reader()))

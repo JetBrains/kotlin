@@ -201,6 +201,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.WHEN_EXPRESSION
     )
 
+    val WHEN_GUARD = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.WHEN_GUARD,
+        PositioningStrategies.WHEN_GUARD
+    )
+
     val IF_EXPRESSION = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.IF_EXPRESSION,
         PositioningStrategies.IF_EXPRESSION
@@ -411,5 +416,10 @@ object SourceElementPositioningStrategies {
     val TYPE_ARGUMENT_LIST_OR_SELF = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.TYPE_ARGUMENT_LIST_OR_SELF,
         PositioningStrategies.TYPE_ARGUMENT_LIST_OR_SELF,
+    )
+
+    val PACKAGE_DIRECTIVE_NAME_EXPRESSION = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.PACKAGE_DIRECTIVE_NAME_EXPRESSION,
+        PositioningStrategies.PACKAGE_DIRECTIVE_NAME_EXPRESSION,
     )
 }

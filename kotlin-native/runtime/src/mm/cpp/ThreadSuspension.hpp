@@ -19,14 +19,14 @@ class ThreadData;
 namespace internal {
 
 using SuspensionReason = const char*;
-extern std::atomic<SuspensionReason> gSuspensionReauestReason;
+extern std::atomic<SuspensionReason> gSuspensionRequestReason;
 
 } // namespace internal
 
 inline bool IsThreadSuspensionRequested() noexcept {
     // Must use seq_cst ordering for synchronization with GC
     // in native->runnable transition.
-    return internal::gSuspensionReauestReason.load();
+    return internal::gSuspensionRequestReason.load();
 }
 
 class ThreadSuspensionData : private Pinned {
@@ -57,6 +57,8 @@ public:
 
     void suspendIfRequested() noexcept;
 
+    void requestThreadsSuspension(const char* reason) noexcept;
+
     /**
      * Signals that the thread would not mutate a heap during a relatively long time.
      * For example while waiting for or participating in the GC.
@@ -73,22 +75,17 @@ private:
     mm::ThreadData& threadData_;
 };
 
-bool RequestThreadsSuspension(const char* reason) noexcept;
-void WaitForThreadsSuspension() noexcept;
-
 /**
- * Suspends all threads registered in ThreadRegistry except threads that are in the Native state.
+ * Sends a request to suspend all threads registered in ThreadRegistry except threads that are in the Native state.
  * Blocks until all such threads are suspended. Threads that are in the Native state on the moment
  * of this call will be suspended on exit from the Native state.
- * Returns false if some other thread has suspended the threads.
+ *
+ * Returns false if some other thread tries to suspended the threads at the moment.
  */
-inline bool SuspendThreads(internal::SuspensionReason reason) noexcept {
-    if (!RequestThreadsSuspension(reason)) {
-        return false;
-    }
-    WaitForThreadsSuspension();
-    return true;
-}
+bool TryRequestThreadsSuspension(const char* reason) noexcept;
+void RequestThreadsSuspension(const char* reason) noexcept;
+
+void WaitForThreadsSuspension() noexcept;
 
 /**
  * Resumes all threads registered in ThreadRegistry that were suspended by the SuspendThreads call.

@@ -44,16 +44,8 @@ class Kotlin {
         return null
     }
 
-
-    fun <T> fooGenericIn(s: @Ann Bar<in @Ann2 T>) {
-    }
-
-    fun <T> fooGenericOut(s: @Ann Bar<out @Ann2 T>) {
-    }
-
     fun <T: Bar<Outer.Inner<@Ann Outer>>> innerClassInBound() {
     }
-
 }
 
 class WithBound<T: Bar<Outer.Inner<@Ann Outer>>>()

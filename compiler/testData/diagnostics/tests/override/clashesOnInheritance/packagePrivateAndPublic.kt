@@ -1,5 +1,6 @@
 // FIR_IDENTICAL
-// FILE: ViewModel.java
+
+// FILE: viewmodel/ViewModel.java
 package viewmodel;
 
 public class ViewModel {

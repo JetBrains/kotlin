@@ -1,9 +1,3 @@
 expression: "Analysis API".toString()
-
-CONSTANT_EXPRESSION_EVALUATION
 constant: "Analysis API"
 constantValueKind: String
-
-CONSTANT_LIKE_EXPRESSION_EVALUATION
-constantLike: "Analysis API"
-constantLikeValueKind: String

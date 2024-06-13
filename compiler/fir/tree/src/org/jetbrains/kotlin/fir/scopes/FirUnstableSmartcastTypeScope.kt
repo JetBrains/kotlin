@@ -87,7 +87,7 @@ class FirUnstableSmartcastTypeScope(
         return ProcessorAction.NEXT
     }
 
-    fun isSymbolFromUnstableSmartcast(symbol: FirBasedSymbol<*>) = symbol in symbolsFromUnstableSmartcast
+    fun isSymbolFromUnstableSmartcast(symbol: FirBasedSymbol<*>): Boolean = symbol in symbolsFromUnstableSmartcast
 
     fun markSymbolFromUnstableSmartcast(symbol: FirCallableSymbol<*>) {
         symbolsFromUnstableSmartcast += symbol

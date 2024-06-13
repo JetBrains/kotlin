@@ -1,63 +1,63 @@
-expression: a
-KtType: A<kotlin.Int>
+Expression: a
+KaType: A<kotlin.Int>
 
-KtTypeScope:
-KtFunctionLikeSignature:
+KaTypeScope:
+KaFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.collections.Map<kotlin.Int, Y>
   symbol = /A.foo(<dispatch receiver>: A<X>, x: X, y: Y): kotlin.collections.Map<X, Y>
   valueParameters = [
-    KtVariableLikeSignature:
+    KaVariableLikeSignature:
       name = x
       receiverType = null
       returnType = kotlin.Int
       symbol = x: X
-      callableIdIfNonLocal = null,
-    KtVariableLikeSignature:
+      callableId = null,
+    KaVariableLikeSignature:
       name = y
       receiverType = null
       returnType = Y
       symbol = y: Y
-      callableIdIfNonLocal = null
+      callableId = null
   ]
-  callableIdIfNonLocal = /A.foo
-KtVariableLikeSignature:
+  callableId = /A.foo
+KaVariableLikeSignature:
   name = map
   receiverType = null
   returnType = kotlin.collections.Map<kotlin.Int, kotlin.String>
   symbol = val map: kotlin.collections.Map<X, kotlin.String>
-  callableIdIfNonLocal = /A.map
-KtFunctionLikeSignature:
+  callableId = /A.map
+KaFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.Boolean
   symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
   valueParameters = [
-    KtVariableLikeSignature:
+    KaVariableLikeSignature:
       name = other
       receiverType = null
       returnType = kotlin.Any?
       symbol = other: kotlin.Any?
-      callableIdIfNonLocal = null
+      callableId = null
   ]
-  callableIdIfNonLocal = kotlin/Any.equals
-KtFunctionLikeSignature:
+  callableId = kotlin/Any.equals
+KaFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.Int
   symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
   valueParameters = []
-  callableIdIfNonLocal = kotlin/Any.hashCode
-KtFunctionLikeSignature:
+  callableId = kotlin/Any.hashCode
+KaFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.String
   symbol = kotlin/Any.toString(<dispatch receiver>: kotlin.Any): kotlin.String
   valueParameters = []
-  callableIdIfNonLocal = kotlin/Any.toString
+  callableId = kotlin/Any.toString
 
 
 Declaration Scope:
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /A.foo
+KaFunctionSymbol:
+  annotations: []
+  callableId: /A.foo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -77,25 +77,25 @@ KtFunctionSymbol:
   name: foo
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: X
-      KtTypeParameterType:
-        annotationsList: []
+      KaTypeParameterType:
+        annotations: []
         type: Y
     ]
     type: kotlin/collections/Map<X, Y>
   symbolKind: CLASS_MEMBER
   typeParameters: [
-    KtTypeParameterSymbol(Y)
+    KaTypeParameterSymbol(Y)
   ]
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -107,14 +107,14 @@ KtFunctionSymbol:
       name: x
       origin: SOURCE
       receiverParameter: null
-      returnType: KtTypeParameterType:
-        annotationsList: []
+      returnType: KaTypeParameterType:
+        annotations: []
         type: X
       symbolKind: LOCAL
       typeParameters: []
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -126,43 +126,43 @@ KtFunctionSymbol:
       name: y
       origin: SOURCE
       receiverParameter: null
-      returnType: KtTypeParameterType:
-        annotationsList: []
+      returnType: KaTypeParameterType:
+        annotations: []
         type: Y
       symbolKind: LOCAL
       typeParameters: []
   ]
   visibility: Public
-KtKotlinPropertySymbol:
-  annotationsList: []
-  backingFieldSymbol: KtBackingFieldSymbol:
-    annotationsList: []
-    callableIdIfNonLocal: null
+KaKotlinPropertySymbol:
+  annotations: []
+  backingFieldSymbol: KaBackingFieldSymbol:
+    annotations: []
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
     origin: PROPERTY_BACKING_FIELD
-    owningProperty: KtKotlinPropertySymbol(/A.map)
+    owningProperty: KaKotlinPropertySymbol(/A.map)
     receiverParameter: null
-    returnType: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: [
-        KtTypeParameterType:
-          annotationsList: []
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: [
+        KaTypeParameterType:
+          annotations: []
           type: X
-        KtUsualClassType:
-          annotationsList: []
-          ownTypeArguments: []
+        KaUsualClassType:
+          annotations: []
+          typeArguments: []
           type: kotlin/String
       ]
       type: kotlin/collections/Map<X, kotlin/String>
     symbolKind: LOCAL
     typeParameters: []
-  callableIdIfNonLocal: /A.map
+  callableId: /A.map
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
-    annotationsList: []
-    callableIdIfNonLocal: null
+  getter: KaPropertyGetterSymbol:
+    annotations: []
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -173,15 +173,15 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
-    returnType: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: [
-        KtTypeParameterType:
-          annotationsList: []
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: [
+        KaTypeParameterType:
+          annotations: []
           type: X
-        KtUsualClassType:
-          annotationsList: []
-          ownTypeArguments: []
+        KaUsualClassType:
+          annotations: []
+          typeArguments: []
           type: kotlin/String
       ]
       type: kotlin/collections/Map<X, kotlin/String>
@@ -207,15 +207,15 @@ KtKotlinPropertySymbol:
   name: map
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: X
-      KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/String
     ]
     type: kotlin/collections/Map<X, kotlin/String>
@@ -223,9 +223,9 @@ KtKotlinPropertySymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.equals
+KaFunctionSymbol:
+  annotations: []
+  callableId: kotlin/Any.equals
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -245,16 +245,16 @@ KtFunctionSymbol:
   name: equals
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -266,17 +266,17 @@ KtFunctionSymbol:
       name: other
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
   ]
   visibility: Public
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.hashCode
+KaFunctionSymbol:
+  annotations: []
+  callableId: kotlin/Any.hashCode
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -296,17 +296,17 @@ KtFunctionSymbol:
   name: hashCode
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.toString
+KaFunctionSymbol:
+  annotations: []
+  callableId: kotlin/Any.toString
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -326,9 +326,9 @@ KtFunctionSymbol:
   name: toString
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/String
   symbolKind: CLASS_MEMBER
   typeParameters: []

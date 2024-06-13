@@ -5,49 +5,54 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.types
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.KtTypeProjection
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
-import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
-import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForType
+import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
+import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
+import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForType
 import org.jetbrains.kotlin.analysis.api.fir.types.qualifiers.UsualClassTypeQualifierBuilder
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
-import org.jetbrains.kotlin.analysis.api.impl.base.KtContextReceiverImpl
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.impl.base.KaContextReceiverImpl
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtClassTypeQualifier
-import org.jetbrains.kotlin.analysis.api.types.KtFunctionalType
-import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaClassTypeQualifier
+import org.jetbrains.kotlin.analysis.api.types.KaFunctionalType
+import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
+import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
+import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 
-internal class KtFirFunctionalType(
+internal class KaFirFunctionalType(
     override val coneType: ConeClassLikeTypeImpl,
-    private val builder: KtSymbolByFirBuilder,
-) : KtFunctionalType(), KtFirType {
-    override val token: KtLifetimeToken get() = builder.token
+    private val builder: KaSymbolByFirBuilder,
+) : KaFunctionalType(), KaFirType {
+    override val token: KaLifetimeToken get() = builder.token
 
     override val classId: ClassId get() = withValidityAssertion { coneType.lookupTag.classId }
-    override val classSymbol: KtClassLikeSymbol by cached {
+
+    override val symbol: KaClassLikeSymbol by cached {
         builder.classifierBuilder.buildClassLikeSymbolByLookupTag(coneType.lookupTag)
             ?: errorWithFirSpecificEntries("Class was not found", coneType = coneType)
     }
-    override val ownTypeArguments: List<KtTypeProjection> get() = withValidityAssertion { qualifiers.last().typeArguments }
+    override val typeArguments: List<KaTypeProjection> get() = withValidityAssertion { qualifiers.last().typeArguments }
 
-    override val qualifiers: List<KtClassTypeQualifier.KtResolvedClassTypeQualifier> by cached {
+    override val qualifiers: List<KaClassTypeQualifier.KaResolvedClassTypeQualifier> by cached {
         UsualClassTypeQualifierBuilder.buildQualifiers(coneType, builder)
     }
 
-    override val annotationsList: KtAnnotationsList by cached {
-        KtFirAnnotationListForType.create(coneType, builder)
+    override val annotations: KaAnnotationList by cached {
+        KaFirAnnotationListForType.create(coneType, builder)
     }
 
-    override val nullability: KtTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
+    override val nullability: KaTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
+
+    override val abbreviatedType: KaUsualClassType?
+        get() = withValidityAssertion { null }
 
     override val isSuspend: Boolean get() = withValidityAssertion { coneType.isSuspendOrKSuspendFunctionType(builder.rootSession) }
 
@@ -56,34 +61,34 @@ internal class KtFirFunctionalType(
 
     override val arity: Int get() = withValidityAssertion { parameterTypes.size }
 
-    @OptIn(KtAnalysisApiInternals::class)
-    override val contextReceivers: List<KtContextReceiver> by cached {
+    @OptIn(KaAnalysisApiInternals::class)
+    override val contextReceivers: List<KaContextReceiver> by cached {
         coneType.contextReceiversTypes(builder.rootSession)
             .map {
                 // Context receivers in function types may not have labels, hence the `null` label.
-                KtContextReceiverImpl(it.buildKtType(), label = null, token)
+                KaContextReceiverImpl(it.buildKtType(), label = null, token)
             }
     }
 
     override val hasContextReceivers: Boolean get() = withValidityAssertion { contextReceivers.isNotEmpty() }
 
-    override val receiverType: KtType? by cached {
+    override val receiverType: KaType? by cached {
         coneType.receiverType(builder.rootSession)?.buildKtType()
     }
 
     override val hasReceiver: Boolean get() = withValidityAssertion { receiverType != null }
 
-    override val parameterTypes: List<KtType> by cached {
+    override val parameterTypes: List<KaType> by cached {
         coneType.valueParameterTypesWithoutReceivers(builder.rootSession).map { it.buildKtType() }
     }
 
-    override val returnType: KtType by cached {
+    override val returnType: KaType by cached {
         coneType.returnType(builder.rootSession).buildKtType()
     }
 
-    override fun asStringForDebugging(): String = withValidityAssertion { coneType.renderForDebugging() }
     override fun equals(other: Any?) = typeEquals(other)
     override fun hashCode() = typeHashcode()
+    override fun toString() = coneType.renderForDebugging()
 
-    private fun ConeKotlinType.buildKtType(): KtType = builder.typeBuilder.buildKtType(this)
+    private fun ConeKotlinType.buildKtType(): KaType = builder.typeBuilder.buildKtType(this)
 }

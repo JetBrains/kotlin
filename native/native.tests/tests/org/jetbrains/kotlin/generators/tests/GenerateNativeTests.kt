@@ -155,6 +155,23 @@ fun main() {
             }
         }
 
+        // Klib Compatibility tests.
+        testGroup("native/native.tests/klib-compatibility/tests-gen", "compiler/testData") {
+            testClass<AbstractNativeKlibCompatibilityTest>(
+                suiteTestClassName = "NativeKlibCompatibilityTestGenerated"
+            ) {
+                model("klib/versionCompatibility/", pattern = "^([^_](.+))$", recursive = false)
+            }
+            testClass<AbstractNativeKlibCompatibilityTest>(
+                suiteTestClassName = "FirNativeKlibCompatibilityTestGenerated",
+                annotations = listOf(
+                    *frontendFir()
+                )
+            ) {
+                model("klib/versionCompatibility/", pattern = "^([^_](.+))$", recursive = false)
+            }
+        }
+
         // KLIB evolution tests.
         testGroup("native/native.tests/tests-gen", "compiler/testData") {
             testClass<AbstractNativeKlibEvolutionTest>(
@@ -509,27 +526,13 @@ fun main() {
             }
         }
         // Swift Export
-        testGroup(
-            "native/native.tests/tests-gen/",
-            "native/swift/swift-export-standalone/testData"
-        ) {
-            testClass<SwiftTypeCheckBaseTest>(
-                suiteTestClassName = "TypeCheckSwiftExportGoldenData"
-            ) {
-                model("", pattern = "^([^_](.+))\$", recursive = false, excludeDirs = listOf("source_based_only"))
-            }
-        }
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
-            testClass<AbstractNativeSwiftExportTest>(
-                suiteTestClassName = "FirSwiftExportTestGenerated",
+            testClass<AbstractNativeSwiftExportExecutionTest>(
+                suiteTestClassName = "SwiftExportExecutionTestGenerated",
                 annotations = listOf(
-                    *frontendFir()
+                    *frontendFir(),
+                    provider<UseStandardTestCaseGroupProvider>(),
                 ),
-            ) {
-                model("SwiftExport", pattern = "^([^_](.+))$", recursive = false)
-            }
-            testClass<AbstractNativeSwiftExportTest>(
-                suiteTestClassName = "SwiftExportTestGenerated",
             ) {
                 model("SwiftExport", pattern = "^([^_](.+))$", recursive = false)
             }
@@ -581,7 +584,7 @@ fun main() {
     }
 }
 
-private inline fun <reified T : Annotation> provider() = annotation(T::class.java)
+inline fun <reified T : Annotation> provider() = annotation(T::class.java)
 
 private fun forceDebugMode() = annotation(
     EnforcedProperty::class.java,
@@ -610,7 +613,7 @@ private fun TestGroup.disabledInOneStageMode(vararg unexpandedPaths: String): An
     )
 }
 
-private fun frontendFir() = arrayOf(
+fun frontendFir() = arrayOf(
     annotation(Tag::class.java, "frontend-fir"),
     annotation(FirPipeline::class.java)
 )

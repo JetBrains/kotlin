@@ -53,6 +53,79 @@ class ObjCExportDependenciesHeaderGeneratorTest(
     }
 
 
+    /**
+     * See KT-68478
+     */
+    @Test
+    @TodoAnalysisApi
+    fun `test - kotlinxSerialization`() {
+        doTest(
+            dependenciesDir.resolve("kotlinxSerialization"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOfNotNull(testLibraryKotlinxSerializationJson),
+                exportedDependencies = setOf(testLibraryKotlinxSerializationJson)
+            )
+        )
+    }
+
+    /**
+     * Depends on unimplemented AA deprecation message: KT-67823
+     */
+    @Test
+    @TodoAnalysisApi
+    fun `test - serializersModule`() {
+        doTest(
+            dependenciesDir.resolve("serializersModule"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOfNotNull(testLibraryKotlinxSerializationCore)
+            )
+        )
+    }
+
+    /**
+     * See KT-68479
+     */
+    @Test
+    @TodoAnalysisApi
+    fun `test - kotlinxDatetime`() {
+        doTest(
+            dependenciesDir.resolve("kotlinxDatetime"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOfNotNull(testLibraryKotlinxDatetime),
+                exportedDependencies = setOf(testLibraryKotlinxDatetime)
+            )
+        )
+    }
+
+    /**
+     * See KT-68480
+     */
+    @Test
+    @TodoAnalysisApi
+    fun `test - kotlinxCoroutines`() {
+        doTest(
+            dependenciesDir.resolve("kotlinxCoroutines"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOfNotNull(testLibraryKotlinxCoroutines),
+                exportedDependencies = setOf(testLibraryKotlinxCoroutines)
+            )
+        )
+    }
+
+    @Test
+    fun `test - propertyAnnotation`() {
+        doTest(
+            dependenciesDir.resolve("propertyAnnotation"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOfNotNull(testLibraryKotlinxSerializationCore, testLibraryKotlinxSerializationJson)
+            )
+        )
+    }
+
+    @Test
+    fun `test - jsonNamingStrategy`() {
+        doTest(
+            dependenciesDir.resolve("jsonNamingStrategy"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOfNotNull(testLibraryKotlinxSerializationCore, testLibraryKotlinxSerializationJson)
+            )
+        )
+    }
+
     @Test
     fun `test - notExportedDependency`() {
         doTest(

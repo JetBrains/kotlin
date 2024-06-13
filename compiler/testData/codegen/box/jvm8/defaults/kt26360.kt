@@ -1,5 +1,5 @@
 // JVM_TARGET: 1.8
-// !JVM_DEFAULT_MODE: all
+// JVM_DEFAULT_MODE: all
 // WITH_STDLIB
 // TARGET_BACKEND: JVM
 interface Base {

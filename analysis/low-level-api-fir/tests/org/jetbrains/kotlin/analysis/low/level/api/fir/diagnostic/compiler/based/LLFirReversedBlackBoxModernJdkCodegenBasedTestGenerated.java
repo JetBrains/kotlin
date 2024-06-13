@@ -817,5 +817,11 @@ public class LLFirReversedBlackBoxModernJdkCodegenBasedTestGenerated extends Abs
     public void testAllFilesPresentInTestsWithJava21() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava21"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
+
+    @Test
+    @TestMetadata("EnumsWithNonNullaryConstructors.kt")
+    public void testEnumsWithNonNullaryConstructors() {
+      runTest("compiler/testData/codegen/boxModernJdk/testsWithJava21/EnumsWithNonNullaryConstructors.kt");
+    }
   }
 }

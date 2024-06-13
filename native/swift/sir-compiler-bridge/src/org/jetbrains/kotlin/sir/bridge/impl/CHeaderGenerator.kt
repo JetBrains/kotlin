@@ -12,7 +12,7 @@ internal class CBridgePrinter : BridgePrinter {
 
     private val includes = mutableSetOf<String>()
 
-    private val functions = mutableListOf<List<String>>()
+    private val functions = mutableSetOf<List<String>>()
 
     override fun add(bridge: FunctionBridge) {
         functions += bridge.cDeclarationBridge.lines

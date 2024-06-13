@@ -1,9 +1,9 @@
-KtNamedClassOrObjectSymbol:
-  annotationsList: [
+KaNamedClassOrObjectSymbol:
+  annotations: [
     <Error class: unknown class>()
       psi: KtAnnotationEntry
   ]
-  classIdIfNonLocal: foo/MyClass
+  classId: foo/MyClass
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -18,15 +18,15 @@ KtNamedClassOrObjectSymbol:
   name: MyClass
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(myInterfaceSupertype.kt)
+  getContainingFileSymbol: KaFileSymbol(myInterfaceSupertype.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

@@ -1,4 +1,4 @@
-// !LANGUAGE: -MangleClassMembersReturningInlineClasses +ValueClasses, +GenericInlineClassParameter
+// LANGUAGE: -MangleClassMembersReturningInlineClasses +ValueClasses, +GenericInlineClassParameter
 // WITH_STDLIB
 // TARGET_BACKEND: JVM
 // WORKS_WHEN_VALUE_CLASS

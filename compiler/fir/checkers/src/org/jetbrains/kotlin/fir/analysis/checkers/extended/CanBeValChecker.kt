@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirPropertyInitializationChecker
 import org.jetbrains.kotlin.fir.analysis.cfa.requiresInitialization
-import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoData
+import org.jetbrains.kotlin.fir.analysis.cfa.util.VariableInitializationInfoData
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -23,10 +23,11 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraphVisitorVoid
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.VariableAssignmentNode
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.util.getChildren
 
 object CanBeValChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.Common) {
-    override fun analyze(data: PropertyInitializationInfoData, reporter: DiagnosticReporter, context: CheckerContext) {
+    override fun analyze(data: VariableInitializationInfoData, reporter: DiagnosticReporter, context: CheckerContext) {
         val collector = ReassignedVariableCollector(data).apply { data.graph.traverse(this) }
         val iterator = data.properties.iterator()
         for (symbol in iterator) {
@@ -47,7 +48,7 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind
         }
     }
 
-    private class ReassignedVariableCollector(val data: PropertyInitializationInfoData) : ControlFlowGraphVisitorVoid() {
+    private class ReassignedVariableCollector(val data: VariableInitializationInfoData) : ControlFlowGraphVisitorVoid() {
         private val reassigned = mutableSetOf<FirPropertySymbol>()
 
         override fun visitNode(node: CFGNode<*>) {}
@@ -62,7 +63,9 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind
             }
         }
 
-        fun canBeVal(symbol: FirPropertySymbol): Boolean =
-            symbol.isVar && !symbol.hasDelegate && symbol.source?.kind !is KtFakeSourceElementKind? && symbol !in reassigned
+        fun canBeVal(symbol: FirVariableSymbol<*>): Boolean {
+            require(symbol is FirPropertySymbol)
+            return symbol.isVar && !symbol.hasDelegate && symbol.source?.kind !is KtFakeSourceElementKind? && symbol !in reassigned
+        }
     }
 }

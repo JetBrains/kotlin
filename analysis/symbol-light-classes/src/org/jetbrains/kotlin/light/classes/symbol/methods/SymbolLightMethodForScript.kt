@@ -101,7 +101,7 @@ internal class SymbolLightMethodForScriptMain(
         )
     }
 
-    override fun getReturnType(): PsiType = PsiType.VOID
+    override fun getReturnType(): PsiType = PsiTypes.voidType()
 
     override fun isConstructor(): Boolean = false
     override fun isOverride(): Boolean = false

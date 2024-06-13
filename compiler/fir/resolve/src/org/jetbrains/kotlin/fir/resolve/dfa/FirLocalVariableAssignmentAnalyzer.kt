@@ -60,13 +60,13 @@ internal class FirLocalVariableAssignmentAnalyzer {
 
     /** Checks whether the given access is an unstable access to a local variable at this moment. */
     @OptIn(DfaInternals::class)
-    fun isAccessToUnstableLocalVariable(fir: FirElement, targetType: ConeKotlinType?, session: FirSession): Boolean {
+    fun isAccessToUnstableLocalVariable(fir: FirElement, targetTypes: Set<ConeKotlinType>?, session: FirSession): Boolean {
         if (assignedLocalVariablesByDeclaration == null) return false
 
         val realFir = fir.unwrapElement() as? FirQualifiedAccessExpression ?: return false
         val property = realFir.calleeReference.toResolvedPropertySymbol()?.fir ?: return false
         // Have data => have a root function => `scopes` is not empty.
-        return !isStableType(scopes.top().second[property], targetType, session) || postponedLambdas.all().any { lambdas ->
+        return !isStableType(scopes.top().second[property], targetTypes, session) || postponedLambdas.all().any { lambdas ->
             // Control-flow-postponed lambdas' assignments should be in `functionScopes.top()`.
             // The reason we can't check them here is that one of the entries may be the lambda
             // that is currently being analyzed, and assignments in it are, in fact, totally fine.
@@ -74,13 +74,15 @@ internal class FirLocalVariableAssignmentAnalyzer {
         }
     }
 
-    private fun isStableType(assignments: Collection<Assignment>?, targetType: ConeKotlinType?, session: FirSession): Boolean {
+    private fun isStableType(assignments: Collection<Assignment>?, targetTypes: Set<ConeKotlinType>?, session: FirSession): Boolean {
         if (assignments == null) return true // No assignments => always stable.
-        if (targetType == null) return false // No target type => always unstable.
+        if (targetTypes == null) return false // No target type => always unstable.
         if (assignments.any { it.type == null }) return false // At least 1 unknown assignment type => always unstable.
 
-        // Stability is determined by assignments. All assignments must be a subtype of the target type.
-        return assignments.all { AbstractTypeChecker.isSubtypeOf(session.typeContext, it.type!!, targetType) }
+        // Stability is determined by assignments. All assignments must be a subtype of all target types.
+        return assignments.all { assignment ->
+            targetTypes.all { AbstractTypeChecker.isSubtypeOf(session.typeContext, assignment.type!!, it) }
+        }
     }
 
     private fun getInfoForDeclaration(symbol: Any): Fork? {

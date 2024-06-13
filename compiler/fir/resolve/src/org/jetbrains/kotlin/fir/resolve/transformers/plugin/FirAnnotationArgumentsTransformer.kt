@@ -45,6 +45,7 @@ open class FirAnnotationArgumentsTransformer(
     scopeSession,
     outerBodyResolveContext = outerBodyResolveContext,
     returnTypeCalculator = returnTypeCalculator,
+    expandTypeAliases = true,
 ) {
     final override val expressionsTransformer: FirExpressionsResolveTransformer = FirExpressionTransformerForAnnotationArguments(this)
 
@@ -53,7 +54,7 @@ open class FirAnnotationArgumentsTransformer(
     private val usualDeclarationTransformer = FirDeclarationsResolveTransformer(this)
 
     @PrivateForInline
-    var isInsideAnnotationArgument = false
+    var isInsideAnnotationArgument: Boolean = false
 
     @OptIn(PrivateForInline::class)
     inline fun <R> insideAnnotationArgument(action: () -> R): R {

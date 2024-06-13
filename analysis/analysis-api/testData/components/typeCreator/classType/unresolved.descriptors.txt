@@ -1,2 +1,2 @@
-originalTypeString: UNRESOLVED
-ktType: ERROR_TYPE(Unresolved class UNRESOLVED)
+OriginalTypeString: UNRESOLVED
+KaType: ERROR_TYPE(Unresolved class UNRESOLVED)

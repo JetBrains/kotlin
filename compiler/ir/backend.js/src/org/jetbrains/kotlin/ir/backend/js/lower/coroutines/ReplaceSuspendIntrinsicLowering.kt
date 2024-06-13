@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 class ReplaceSuspendIntrinsicLowering(private val context: JsIrBackendContext) : BodyLoweringPass {
     private val valueParamSizeToItsCreateCoroutineUnintercepted =
         context.intrinsics.createCoroutineUninterceptedGeneratorVersion.groupPerValueParamSize()
-    private val valueParamSizeToItsStartCoroutineUninterceptedOrReturn =
+    private val valueParamSizeToItsStartCoroutineUninterceptedOrReturnGeneratorVersion =
         context.intrinsics.startCoroutineUninterceptedOrReturnGeneratorVersion.groupPerValueParamSize()
 
     private fun Set<IrSimpleFunctionSymbol>.groupPerValueParamSize(): Map<Int, IrSimpleFunctionSymbol> {
@@ -39,8 +39,8 @@ class ReplaceSuspendIntrinsicLowering(private val context: JsIrBackendContext) :
                 when (val symbol = reference.symbol) {
                     in context.intrinsics.createCoroutineUnintercepted ->
                         reference.symbol = valueParamSizeToItsCreateCoroutineUnintercepted.getValue(symbol.owner.valueParameters.size)
-                    in context.intrinsics.startCoroutineUninterceptedOrReturn ->
-                        reference.symbol = valueParamSizeToItsStartCoroutineUninterceptedOrReturn.getValue(symbol.owner.valueParameters.size)
+                    in context.intrinsics.startCoroutineUninterceptedOrReturnNonGeneratorVersion ->
+                        reference.symbol = valueParamSizeToItsStartCoroutineUninterceptedOrReturnGeneratorVersion.getValue(symbol.owner.valueParameters.size)
                 }
 
                 return super.visitCallableReference(reference)
@@ -50,8 +50,8 @@ class ReplaceSuspendIntrinsicLowering(private val context: JsIrBackendContext) :
                 when (val symbol = expression.symbol) {
                     in context.intrinsics.createCoroutineUnintercepted ->
                         expression.symbol = valueParamSizeToItsCreateCoroutineUnintercepted.getValue(symbol.owner.valueParameters.size)
-                    in context.intrinsics.startCoroutineUninterceptedOrReturn ->
-                        expression.symbol = valueParamSizeToItsStartCoroutineUninterceptedOrReturn.getValue(symbol.owner.valueParameters.size)
+                    in context.intrinsics.startCoroutineUninterceptedOrReturnNonGeneratorVersion ->
+                        expression.symbol = valueParamSizeToItsStartCoroutineUninterceptedOrReturnGeneratorVersion.getValue(symbol.owner.valueParameters.size)
                 }
                 return super.visitCall(expression)
             }

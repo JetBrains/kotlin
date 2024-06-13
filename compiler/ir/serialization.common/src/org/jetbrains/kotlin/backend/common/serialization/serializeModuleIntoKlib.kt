@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFileMetadataSerializer
 import org.jetbrains.kotlin.backend.common.serialization.metadata.serializeKlibHeader
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -124,10 +124,6 @@ fun <Dependency : KotlinLibrary, SourceFile> serializeModuleIntoKlib(
         }
     }
 
-    val sourceBaseDirs = configuration[CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES] ?: emptyList()
-    val normalizeAbsolutePath = configuration.getBoolean(CommonConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH)
-    val signatureClashChecks = configuration[CommonConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS] ?: true
-
     val serializedIr = irModuleFragment?.let {
         val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, configuration.languageVersionSettings)
         runKlibCheckers(it, irDiagnosticReporter, configuration)
@@ -135,10 +131,10 @@ fun <Dependency : KotlinLibrary, SourceFile> serializeModuleIntoKlib(
             irDiagnosticReporter,
             it.irBuiltins,
             compatibilityMode,
-            normalizeAbsolutePath,
-            sourceBaseDirs,
+            configuration.getBoolean(KlibConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH),
+            configuration.getList(KlibConfigurationKeys.KLIB_RELATIVE_PATH_BASES),
             configuration.languageVersionSettings,
-            signatureClashChecks,
+            configuration.get(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS, true),
         ).serializedIrModule(it)
     }
 

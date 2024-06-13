@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.scopes.getSingleClassifier
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractImportingScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildPlaceholderProjection
 import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
@@ -55,6 +56,9 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS,
         scopeSession = scopeSession,
         implicitTypeOnly = false,
+        // This transformer is only used for COMPILER_REQUIRED_ANNOTATIONS, which is <=SUPER_TYPES,
+        // so we can't yet expand typealiases.
+        expandTypeAliases = false,
     ) {
         override val expressionsTransformer: FirExpressionsResolveTransformer = FirEnumAnnotationArgumentsTransformer(this)
         override val declarationsTransformer: FirDeclarationsResolveTransformer? = null
@@ -287,16 +291,19 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         session,
         errorTypeAsResolved = false,
         resolveDeprecations = false,
+        // This transformer is only used for COMPILER_REQUIRED_ANNOTATIONS, which is <=SUPER_TYPES,
+        // so we can't yet expand typealiases.
+        expandTypeAliases = false,
     )
 
     @PrivateForInline
-    val argumentsTransformer = FirEnumAnnotationArgumentsTransformerDispatcher()
+    val argumentsTransformer: FirEnumAnnotationArgumentsTransformerDispatcher = FirEnumAnnotationArgumentsTransformerDispatcher()
 
     @PrivateForInline
     var owners: PersistentList<FirDeclaration> = persistentListOf()
 
     @PrivateForInline
-    val classDeclarationsStack = ArrayDeque<FirClass>().apply {
+    val classDeclarationsStack: ArrayDeque<FirClass> = ArrayDeque<FirClass>().apply {
         for (declaration in containingDeclarations) {
             if (declaration is FirClass) {
                 add(declaration)
@@ -333,7 +340,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
     }
 
     private fun resolveAnnotationsOnAnnotationIfNeeded(annotationTypeRef: FirResolvedTypeRef) {
-        val symbol = annotationTypeRef.coneType.toRegularClassSymbol(session) ?: return
+        val symbol = annotationTypeRef.coneType.toSymbol(session) as? FirRegularClassSymbol ?: return
         computationSession.resolveAnnotationsOnAnnotationIfNeeded(symbol, scopeSession)
     }
 
@@ -557,7 +564,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         } as FirConstructor
     }
 
-    override fun transformErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: Nothing?) =
+    override fun transformErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: Nothing?): FirConstructor =
         transformConstructor(errorPrimaryConstructor, data)
 
     override fun transformEnumEntry(enumEntry: FirEnumEntry, data: Nothing?): FirStatement {

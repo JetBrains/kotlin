@@ -29,7 +29,7 @@ dependencies {
     testApi(projectTests(":compiler:tests-common"))
     testApi(intellijCore())
     testApi(commonDependency("org.jetbrains.intellij.deps:log4j"))
-    testApi(commonDependency("org.jetbrains.intellij.deps:jdom"))
+    testApi(intellijJDom())
 
     testImplementation(commonDependency("com.google.code.gson:gson"))
     testRuntimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }

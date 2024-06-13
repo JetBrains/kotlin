@@ -1,4 +1,4 @@
-// !JVM_DEFAULT_MODE: all
+// JVM_DEFAULT_MODE: all
 @JvmDefaultWithCompatibility
 interface A {
     fun f() {}

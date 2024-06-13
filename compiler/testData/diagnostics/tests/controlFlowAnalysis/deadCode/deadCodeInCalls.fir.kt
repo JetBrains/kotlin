@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun testArgumentInCall() {
     fun bar(i: Int, s: String, x: Any) {}

@@ -39,23 +39,8 @@ class ComposableFunctionsTransformer(val pluginContext: IrPluginContext) : IrEle
     override fun visitValueParameter(declaration: IrValueParameter) {
         declaration.apply {
             type = type.update()
-            type.checkStability()
         }
         visitElement(declaration)
-    }
-
-    // Mimic stability check of Compose compiler plugin.
-    private fun IrType.checkStability() {
-        val classForType = classifierOrNull?.owner as? IrClass ?: return
-        for (member in classForType.declarations) {
-            when (member) {
-                is IrProperty -> {
-                    member.backingField?.let {
-                        if (member.isVar && !member.isDelegated) return
-                    }
-                }
-            }
-        }
     }
 
     override fun visitFunction(declaration: IrFunction) {

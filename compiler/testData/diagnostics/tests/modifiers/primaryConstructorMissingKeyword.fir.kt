@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 annotation class Ann(val x: Int = 1)
 class A <!MISSING_CONSTRUCTOR_KEYWORD!>private (val x: Int)<!> {
     inner class B <!MISSING_CONSTRUCTOR_KEYWORD!>@Ann(2) (val y: Int)<!>

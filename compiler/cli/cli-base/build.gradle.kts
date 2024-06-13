@@ -23,6 +23,7 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
     compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
+    runtimeOnly(libs.kotlinx.coroutines.core)
 }
 
 sourceSets {

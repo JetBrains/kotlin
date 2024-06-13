@@ -1,4 +1,4 @@
-// !DUMP_CFG
+// DUMP_CFG
 fun testWhile(b: Boolean, x: Any?) {
     while (b) {
         val y = x is String

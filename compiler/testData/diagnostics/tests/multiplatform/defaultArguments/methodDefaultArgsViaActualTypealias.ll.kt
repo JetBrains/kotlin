@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -ACTUAL_WITHOUT_EXPECT
+// DIAGNOSTICS: -ACTUAL_WITHOUT_EXPECT
 // MODULE: m1-common
 // FILE: common.kt
 expect class A {

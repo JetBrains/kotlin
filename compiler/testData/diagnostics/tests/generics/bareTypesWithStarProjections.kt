@@ -1,7 +1,7 @@
 // FIR_IDENTICAL
 // SKIP_TXT
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface FirMemberDeclaration : FirDeclaration
 interface TypeConstructorMarker

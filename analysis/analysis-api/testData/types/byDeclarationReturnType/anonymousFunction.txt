@@ -1,15 +1,16 @@
-KtUsualClassType:
-  annotationsList: []
+KaUsualClassType:
+  abbreviatedType: null
+  annotations: []
   classId: kotlin/Unit
-  classSymbol: KtNamedClassOrObjectSymbol(kotlin/Unit)
   nullability: NON_NULLABLE
-  ownTypeArguments: []
   qualifiers: [
     qualifier:
       name: Unit
-      symbol: KtNamedClassOrObjectSymbol(kotlin/Unit)
+      symbol: KaNamedClassOrObjectSymbol(kotlin/Unit)
       typeArguments: []
   ]
+  symbol: KaNamedClassOrObjectSymbol(kotlin/Unit)
+  typeArguments: []
 
 Rendered type:
 kotlin.Unit

@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 
 abstract class FirMangler : AbstractKotlinMangler<FirDeclaration>() {
 
-    override fun FirDeclaration.signatureString(compatibleMode: Boolean): String = getMangleComputer(MangleMode.SIGNATURE, compatibleMode).computeMangle(this)
+    override fun FirDeclaration.signatureString(compatibleMode: Boolean): String {
+        return getMangleComputer(MangleMode.SIGNATURE, compatibleMode).computeMangle(this)
+    }
 
     override fun FirDeclaration.isExported(compatibleMode: Boolean): Boolean = true
 

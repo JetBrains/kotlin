@@ -5,32 +5,32 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.components
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.components.KtSymbolDeclarationRendererProvider
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtDeclarationRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtRendererTypeApproximator
-import org.jetbrains.kotlin.analysis.api.renderer.types.KtTypeRenderer
-import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.KaSymbolDeclarationRendererProvider
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaRendererTypeApproximator
+import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.types.Variance
 
-@KtAnalysisApiInternals
-open class KtRendererProviderImpl(
-    override val analysisSession: KtAnalysisSession,
-    override val token: KtLifetimeToken
-) : KtSymbolDeclarationRendererProvider() {
+@KaAnalysisApiInternals
+open class KaRendererProviderImpl(
+    override val analysisSession: KaSession,
+    override val token: KaLifetimeToken
+) : KaSymbolDeclarationRendererProvider() {
 
-    override fun renderType(type: KtType, renderer: KtTypeRenderer, position: Variance): String {
+    override fun renderType(type: KaType, renderer: KaTypeRenderer, position: Variance): String {
         return with(analysisSession) {
-            val approximatedType = KtRendererTypeApproximator.TO_DENOTABLE.approximateType(analysisSession, type, position)
+            val approximatedType = KaRendererTypeApproximator.TO_DENOTABLE.approximateType(analysisSession, type, position)
             prettyPrint { renderer.renderType(analysisSession, approximatedType, this) }
         }
     }
 
-    override fun renderDeclaration(symbol: KtDeclarationSymbol, renderer: KtDeclarationRenderer): String {
+    override fun renderDeclaration(symbol: KaDeclarationSymbol, renderer: KaDeclarationRenderer): String {
         return with(analysisSession) {
             prettyPrint { renderer.renderDeclaration(analysisSession, symbol, this) }
         }

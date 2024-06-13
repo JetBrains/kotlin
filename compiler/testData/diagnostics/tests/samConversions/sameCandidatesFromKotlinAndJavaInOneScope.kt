@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +SamConversionForKotlinFunctions +SamConversionPerArgument
-// !DIAGNOSTICS: -UNUSED_PARAMETER,-UNUSED_VARIABLE
+// LANGUAGE: +SamConversionForKotlinFunctions +SamConversionPerArgument
+// DIAGNOSTICS: -UNUSED_PARAMETER,-UNUSED_VARIABLE
 
 // FILE: Action.java
 public interface Action<T> {

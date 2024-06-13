@@ -1,83 +1,83 @@
-KtFunctionSymbol:
-  callableIdIfNonLocal: java/util/Collection.size
+KaFunctionSymbol:
+  callableId: java/util/Collection.size
   name: size
-  origin: JAVA
+  origin: JAVA_LIBRARY
 
-KtFunctionSymbol:
-  callableIdIfNonLocal: java/util/Collection.isEmpty
+KaFunctionSymbol:
+  callableId: java/util/Collection.isEmpty
   name: isEmpty
-  origin: JAVA
+  origin: JAVA_LIBRARY
 
-KtFunctionSymbol:
-  callableIdIfNonLocal: java/util/Collection.contains
+KaFunctionSymbol:
+  callableId: java/util/Collection.contains
   name: contains
-  origin: JAVA
+  origin: JAVA_LIBRARY
 
-KtFunctionSymbol:
-  callableIdIfNonLocal: test/MyList.iterator
+KaFunctionSymbol:
+  callableId: test/MyList.iterator
   name: iterator
   origin: SUBSTITUTION_OVERRIDE
 
-KtFunctionSymbol:
-  callableIdIfNonLocal: java/util/Collection.toArray
+KaFunctionSymbol:
+  callableId: java/util/Collection.toArray
   name: toArray
-  origin: JAVA
+  origin: JAVA_LIBRARY
 
-KtFunctionSymbol:
-  callableIdIfNonLocal: java/util/Collection.toArray
+KaFunctionSymbol:
+  callableId: java/util/Collection.toArray
   name: toArray
-  origin: JAVA
+  origin: JAVA_LIBRARY
 
-KtFunctionSymbol:
-  callableIdIfNonLocal: test/MyList.add
+KaFunctionSymbol:
+  callableId: test/MyList.add
   name: add
   origin: SUBSTITUTION_OVERRIDE
 
-KtFunctionSymbol:
-  callableIdIfNonLocal: java/util/Collection.remove
+KaFunctionSymbol:
+  callableId: java/util/Collection.remove
   name: remove
-  origin: JAVA
+  origin: JAVA_LIBRARY
 
-KtFunctionSymbol:
-  callableIdIfNonLocal: java/util/Collection.containsAll
+KaFunctionSymbol:
+  callableId: java/util/Collection.containsAll
   name: containsAll
-  origin: JAVA
+  origin: JAVA_LIBRARY
 
-KtFunctionSymbol:
-  callableIdIfNonLocal: test/MyList.addAll
+KaFunctionSymbol:
+  callableId: test/MyList.addAll
   name: addAll
   origin: SUBSTITUTION_OVERRIDE
 
-KtFunctionSymbol:
-  callableIdIfNonLocal: java/util/Collection.removeAll
+KaFunctionSymbol:
+  callableId: java/util/Collection.removeAll
   name: removeAll
-  origin: JAVA
+  origin: JAVA_LIBRARY
 
-KtFunctionSymbol:
-  callableIdIfNonLocal: java/util/Collection.retainAll
+KaFunctionSymbol:
+  callableId: java/util/Collection.retainAll
   name: retainAll
-  origin: JAVA
+  origin: JAVA_LIBRARY
 
-KtFunctionSymbol:
-  callableIdIfNonLocal: java/util/Collection.clear
+KaFunctionSymbol:
+  callableId: java/util/Collection.clear
   name: clear
-  origin: JAVA
+  origin: JAVA_LIBRARY
 
-KtFunctionSymbol:
-  callableIdIfNonLocal: kotlin/Any.equals
+KaFunctionSymbol:
+  callableId: kotlin/Any.equals
   name: equals
   origin: LIBRARY
 
-KtFunctionSymbol:
-  callableIdIfNonLocal: kotlin/Any.hashCode
+KaFunctionSymbol:
+  callableId: kotlin/Any.hashCode
   name: hashCode
   origin: LIBRARY
 
-KtFunctionSymbol:
-  callableIdIfNonLocal: kotlin/Any.toString
+KaFunctionSymbol:
+  callableId: kotlin/Any.toString
   name: toString
   origin: LIBRARY
 
-KtConstructorSymbol:
-  callableIdIfNonLocal: null
+KaConstructorSymbol:
+  callableId: null
   origin: SOURCE_MEMBER_GENERATED

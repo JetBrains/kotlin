@@ -290,10 +290,10 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
         context: CheckerContext,
         firTypeScope: FirTypeScope,
     ) {
-        val ownDeprecation = this.getDeprecation(context.session)
+        val ownDeprecation = this.getDeprecation(context.languageVersionSettings)
         if (ownDeprecation == null || ownDeprecation.isNotEmpty()) return
         for (overriddenSymbol in overriddenSymbols) {
-            val deprecationInfoFromOverridden = overriddenSymbol.getDeprecation(context.session)
+            val deprecationInfoFromOverridden = overriddenSymbol.getDeprecation(context.languageVersionSettings)
                 ?: continue
             val deprecationFromOverriddenSymbol = deprecationInfoFromOverridden.all
                 ?: deprecationInfoFromOverridden.bySpecificSite?.values?.firstOrNull()
@@ -309,8 +309,11 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
                 firTypeScope.processOverriddenFunctions(this) {
                     if (it.hiddenStatusOfCall(isSuperCall = false, isCallToOverride = true) == VisibleWithDeprecation) {
                         val message = FirDeprecationChecker.getDeprecatedOverrideOfHiddenMessage(callableName)
-                        val deprecationInfo =
-                            SimpleDeprecationInfo(DeprecationLevelValue.WARNING, propagatesToOverrides = false, message)
+                        val deprecationInfo = object : FirDeprecationInfo() {
+                            override val deprecationLevel: DeprecationLevelValue get() = DeprecationLevelValue.WARNING
+                            override val propagatesToOverrides: Boolean get() = false
+                            override fun getMessage(session: FirSession): String = message
+                        }
                         reporter.reportOn(source, FirErrors.OVERRIDE_DEPRECATION, it, deprecationInfo, context)
                         return@processOverriddenFunctions ProcessorAction.STOP
                     }

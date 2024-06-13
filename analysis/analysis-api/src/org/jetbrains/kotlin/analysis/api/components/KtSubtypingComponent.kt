@@ -6,32 +6,36 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 
-public abstract class KtSubtypingComponent : KtAnalysisSessionComponent() {
-    public abstract fun isEqualTo(first: KtType, second: KtType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean
-    public abstract fun isSubTypeOf(subType: KtType, superType: KtType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean
+public abstract class KaSubtypingComponent : KaSessionComponent() {
+    public abstract fun isEqualTo(first: KaType, second: KaType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean
+    public abstract fun isSubTypeOf(subType: KaType, superType: KaType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean
 }
 
-public interface KtSubtypingComponentMixIn : KtAnalysisSessionMixIn {
-    public fun KtType.isEqualTo(other: KtType): Boolean =
+public typealias KtSubtypingComponent = KaSubtypingComponent
+
+public interface KaSubtypingComponentMixIn : KaSessionMixIn {
+    public fun KaType.isEqualTo(other: KaType): Boolean =
         withValidityAssertion { analysisSession.subtypingComponent.isEqualTo(this, other, KaSubtypingErrorTypePolicy.STRICT) }
 
-    public fun KtType.isEqualTo(other: KtType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean =
+    public fun KaType.isEqualTo(other: KaType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean =
         withValidityAssertion { analysisSession.subtypingComponent.isEqualTo(this, other, errorTypePolicy) }
 
-    public fun KtType.isSubTypeOf(superType: KtType): Boolean =
+    public fun KaType.isSubTypeOf(superType: KaType): Boolean =
         withValidityAssertion { analysisSession.subtypingComponent.isSubTypeOf(this, superType, KaSubtypingErrorTypePolicy.STRICT) }
 
-    public fun KtType.isSubTypeOf(superType: KtType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean =
+    public fun KaType.isSubTypeOf(superType: KaType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean =
         withValidityAssertion { analysisSession.subtypingComponent.isSubTypeOf(this, superType, errorTypePolicy) }
 
-    public fun KtType.isNotSubTypeOf(superType: KtType): Boolean =
+    public fun KaType.isNotSubTypeOf(superType: KaType): Boolean =
         withValidityAssertion { !analysisSession.subtypingComponent.isSubTypeOf(this, superType, KaSubtypingErrorTypePolicy.STRICT) }
 
-    public fun KtType.isNotSubTypeOf(superType: KtType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean =
+    public fun KaType.isNotSubTypeOf(superType: KaType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean =
         withValidityAssertion { !analysisSession.subtypingComponent.isSubTypeOf(this, superType, errorTypePolicy) }
 }
+
+public typealias KtSubtypingComponentMixIn = KaSubtypingComponentMixIn
 
 /**
  * [KaSubtypingErrorTypePolicy] determines the treatment of error types in type equality and subtyping checks.
@@ -64,3 +68,5 @@ public enum class KaSubtypingErrorTypePolicy {
      */
     LENIENT,
 }
+
+public typealias KtSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy

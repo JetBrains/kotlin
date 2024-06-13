@@ -1,0 +1,6 @@
+public final class home/MainKt {
+    // source: 'main.kt'
+    private final static method Home$lambda$1(p0: androidx.compose.runtime.MutableState): home.EmailState
+    private final static method Home$lambda$3(p0: int, p1: androidx.compose.runtime.Composer, p2: int): kotlin.Unit
+    public final static method Home(p0: androidx.compose.runtime.Composer, p1: int): void
+}

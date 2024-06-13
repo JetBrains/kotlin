@@ -612,6 +612,13 @@ object PositioningStrategies {
     }
 
     @JvmField
+    val WHEN_GUARD: PositioningStrategy<KtWhenEntry> = object : PositioningStrategy<KtWhenEntry>() {
+        override fun mark(element: KtWhenEntry): List<TextRange> {
+            return markElement(element.guard ?: element)
+        }
+    }
+
+    @JvmField
     val IF_EXPRESSION: PositioningStrategy<KtIfExpression> = object : PositioningStrategy<KtIfExpression>() {
         override fun mark(element: KtIfExpression): List<TextRange> {
             return markElement(element.ifKeyword)
@@ -1131,6 +1138,13 @@ object PositioningStrategies {
         override fun mark(element: PsiElement): List<TextRange> {
             element.getChildOfType<KtTypeArgumentList>()?.let { return markElement(it) }
             return super.mark(element)
+        }
+    }
+
+    val PACKAGE_DIRECTIVE_NAME_EXPRESSION: PositioningStrategy<KtElement> = object : PositioningStrategy<KtElement>() {
+        override fun mark(element: KtElement): List<TextRange> {
+            val packageNameExpression = (element as? KtPackageDirective)?.packageNameExpression
+            return super.mark(packageNameExpression ?: element)
         }
     }
 }

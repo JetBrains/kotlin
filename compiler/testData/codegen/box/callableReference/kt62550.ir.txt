@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/main.kt
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.lambdaEmpty'
-                GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-lambdaEmpty> visibility:public modality:FINAL <> () returnType:kotlin.Function0<kotlin.Any>
       correspondingProperty: PROPERTY name:lambdaEmpty visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -43,7 +43,7 @@ FILE fqName:<root> fileName:/main.kt
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.lambdaExplicitUnit'
-                GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-lambdaExplicitUnit> visibility:public modality:FINAL <> () returnType:kotlin.Function0<kotlin.Any>
       correspondingProperty: PROPERTY name:lambdaExplicitUnit visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -62,7 +62,7 @@ FILE fqName:<root> fileName:/main.kt
                       $this: CONST String type=kotlin.String value="0"
                     arg1: CONST Int type=kotlin.Int value=42
                   then: RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any declared in <root>.lambdaExplicitUnitOrString'
-                    GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                    GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any declared in <root>.lambdaExplicitUnitOrString'
                 CONST String type=kotlin.String value=""
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-lambdaExplicitUnitOrString> visibility:public modality:FINAL <> () returnType:kotlin.Function0<kotlin.Any>
@@ -126,7 +126,7 @@ FILE fqName:<root> fileName:/main.kt
                     CALL 'public final fun materialize <E> (): E of <root>.materialize declared in <root>' type=kotlin.Any? origin=null
                       <E>: kotlin.Any?
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any? declared in <root>.lambdaTypeVariableConstructor'
-                GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-lambdaTypeVariableConstructor> visibility:public modality:FINAL <> () returnType:kotlin.Function0<kotlin.Any?>
       correspondingProperty: PROPERTY name:lambdaTypeVariableConstructor visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -144,7 +144,7 @@ FILE fqName:<root> fileName:/main.kt
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.box'
-                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                  GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
       CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
         <T>: kotlin.String
         expected: CONST String type=kotlin.String value="kotlin.jvm.functions.Function0<kotlin.Unit>"
@@ -167,7 +167,7 @@ FILE fqName:<root> fileName:/main.kt
                         $this: CONST String type=kotlin.String value="0"
                       arg1: CONST Int type=kotlin.Int value=42
                     then: RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any? declared in <root>.box'
-                      GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                      GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any? declared in <root>.box'
                   CONST String type=kotlin.String value=""
       CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
@@ -187,7 +187,7 @@ FILE fqName:<root> fileName:/main.kt
                       CALL 'public final fun materialize <E> (): E of <root>.materialize declared in <root>' type=kotlin.Any? origin=null
                         <E>: kotlin.Any?
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any? declared in <root>.box'
-                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                  GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
       CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
         <T>: kotlin.String
         expected: CONST String type=kotlin.String value="kotlin.jvm.functions.Function0<kotlin.Unit>"
@@ -196,7 +196,7 @@ FILE fqName:<root> fileName:/main.kt
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.box'
-                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                  GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
       CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
         <T>: kotlin.String
         expected: CONST String type=kotlin.String value="kotlin.jvm.functions.Function0<kotlin.Unit>"
@@ -333,7 +333,7 @@ FILE fqName:<root> fileName:/main.kt
   FUN name:myUnit visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun myUnit (): kotlin.Unit declared in <root>'
-        GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+        GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
   FUN name:renderSuperInterface visibility:public modality:FINAL <T> (value:T of <root>.renderSuperInterface) returnType:kotlin.String
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false
     VALUE_PARAMETER name:value index:0 type:T of <root>.renderSuperInterface

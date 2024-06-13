@@ -12,7 +12,7 @@ interface Semaphore {}
 
 fun Semaphore(arg0: Int, arg: Int = 0) = 1
 
-// FILE: 2.java
+// FILE: java/util/concurrent/Semaphore.java
 package java.util.concurrent;
 
 public class Semaphore {

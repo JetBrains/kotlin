@@ -6,7 +6,6 @@
 package org.jetbrains.kotlinx.serialization.compiler.fir
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.fir.FirEvaluatorResult
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.deserialization.toQualifiedPropertyAccessExpression
@@ -25,9 +24,9 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.platform.isJs
@@ -279,6 +278,13 @@ fun ConeKotlinType.isGeneratedSerializableObject(session: FirSession): Boolean =
 fun ConeKotlinType.isAbstractOrSealedOrInterface(session: FirSession): Boolean =
     toRegularClassSymbol(session)?.let { it.classKind.isInterface || it.rawStatus.modality == Modality.ABSTRACT || it.rawStatus.modality == Modality.SEALED }
         ?: false
+
+fun ConeKotlinType.classSymbolOrUpperBound(session: FirSession): FirClassSymbol<*>? {
+    return when (this) {
+        is ConeSimpleKotlinType -> toClassSymbol(session)
+        is ConeFlexibleType -> upperBound.toClassSymbol(session)
+    }
+}
 
 fun FirDeclaration.excludeFromJsExport(session: FirSession) {
     if (!session.moduleData.platform.isJs()) {

@@ -1,5 +1,5 @@
-// !LANGUAGE: +ProhibitAssigningSingleElementsToVarargsInNamedForm
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +ProhibitAssigningSingleElementsToVarargsInNamedForm
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 object X1
 object X2

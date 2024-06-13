@@ -20,9 +20,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFr
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
-import org.jetbrains.kotlin.fir.expressions.toReference
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -52,7 +49,7 @@ object FirOptInUsageBaseChecker {
     ) {
         enum class Severity { WARNING, ERROR }
         companion object {
-            val DEFAULT_SEVERITY = Severity.ERROR
+            val DEFAULT_SEVERITY: Severity = Severity.ERROR
         }
 
         override fun equals(other: Any?): Boolean {
@@ -208,13 +205,13 @@ object FirOptInUsageBaseChecker {
             )
         } else {
             // Without coneTypeSafe v fails in MT test (FirRenderer.kt)
-            returnTypeRef.coneTypeSafe<ConeKotlinType>().addExperimentalities(context, result, visited)
-            receiverParameter?.typeRef?.coneType.addExperimentalities(context, result, visited)
+            returnTypeRef.coneTypeSafe<ConeKotlinType>()?.abbreviatedTypeOrSelf.addExperimentalities(context, result, visited)
+            receiverParameter?.typeRef?.coneType?.abbreviatedTypeOrSelf.addExperimentalities(context, result, visited)
         }
         dispatchReceiverType?.addExperimentalities(context, result, visited)
         if (this is FirFunction) {
             valueParameters.forEach {
-                it.returnTypeRef.coneType.addExperimentalities(context, result, visited)
+                it.returnTypeRef.coneType.abbreviatedTypeOrSelf.addExperimentalities(context, result, visited)
             }
 
             // Handling data class 'componentN' function
@@ -281,7 +278,7 @@ object FirOptInUsageBaseChecker {
         val levelName = levelArgument?.extractEnumValueArgumentInfo()?.enumEntryName?.asString()
 
         val severity = Experimentality.Severity.entries.firstOrNull { it.name == levelName } ?: Experimentality.DEFAULT_SEVERITY
-        val message = (experimental.findArgumentByName(MESSAGE) as? FirLiteralExpression<*>)?.value as? String
+        val message = (experimental.findArgumentByName(MESSAGE) as? FirLiteralExpression)?.value as? String
         return Experimentality(symbol.classId, severity, message, annotatedOwnerClassName)
     }
 
@@ -299,7 +296,11 @@ object FirOptInUsageBaseChecker {
                     Experimentality.Severity.ERROR -> FirErrors.OPT_IN_USAGE_ERROR to "must"
                 }
                 val reportedMessage = message?.takeIf { it.isNotBlank() }
-                    ?: OptInNames.buildDefaultDiagnosticMessage(OptInNames.buildMessagePrefix(verb), annotationClassId.asFqNameString())
+                    ?: OptInNames.buildDefaultDiagnosticMessage(
+                        OptInNames.buildMessagePrefix(verb),
+                        annotationClassId.asFqNameString(),
+                        isSubclassOptInApplicable = fromSupertype
+                    )
                 reporter.reportOn(source, diagnostic, annotationClassId, reportedMessage, context)
             }
         }

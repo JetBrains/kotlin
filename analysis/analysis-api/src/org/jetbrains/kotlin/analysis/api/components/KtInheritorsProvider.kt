@@ -6,18 +6,22 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
 
-public abstract class KtInheritorsProvider : KtAnalysisSessionComponent() {
-    public abstract fun getInheritorsOfSealedClass(classSymbol: KtNamedClassOrObjectSymbol): List<KtNamedClassOrObjectSymbol>
-    public abstract fun getEnumEntries(classSymbol: KtNamedClassOrObjectSymbol): List<KtEnumEntrySymbol>
+public abstract class KaInheritorsProvider : KaSessionComponent() {
+    public abstract fun getInheritorsOfSealedClass(classSymbol: KaNamedClassOrObjectSymbol): List<KaNamedClassOrObjectSymbol>
+    public abstract fun getEnumEntries(classSymbol: KaNamedClassOrObjectSymbol): List<KaEnumEntrySymbol>
 }
 
-public interface KtInheritorsProviderMixIn : KtAnalysisSessionMixIn {
-    public fun KtNamedClassOrObjectSymbol.getSealedClassInheritors(): List<KtNamedClassOrObjectSymbol> =
+public typealias KtInheritorsProvider = KaInheritorsProvider
+
+public interface KaInheritorsProviderMixIn : KaSessionMixIn {
+    public fun KaNamedClassOrObjectSymbol.getSealedClassInheritors(): List<KaNamedClassOrObjectSymbol> =
         withValidityAssertion { analysisSession.inheritorsProvider.getInheritorsOfSealedClass(this) }
 
-    public fun KtNamedClassOrObjectSymbol.getEnumEntries(): List<KtEnumEntrySymbol> =
+    public fun KaNamedClassOrObjectSymbol.getEnumEntries(): List<KaEnumEntrySymbol> =
         withValidityAssertion { analysisSession.inheritorsProvider.getEnumEntries(this) }
 }
+
+public typealias KtInheritorsProviderMixIn = KaInheritorsProviderMixIn

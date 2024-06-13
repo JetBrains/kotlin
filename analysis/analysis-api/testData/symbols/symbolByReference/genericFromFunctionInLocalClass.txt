@@ -1,6 +1,6 @@
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
+KaFunctionSymbol:
+  annotations: []
+  callableId: null
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -20,18 +20,18 @@ KtFunctionSymbol:
   name: withOuter
   origin: SOURCE
   receiverParameter: null
-  returnType: KtTypeParameterType:
-    annotationsList: []
+  returnType: KaTypeParameterType:
+    annotations: []
     type: Outer?
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: <local>/Base<Outer>
-  getContainingFileSymbol: KtFileSymbol(genericFromFunctionInLocalClass.kt)
+  getContainingFileSymbol: KaFileSymbol(genericFromFunctionInLocalClass.kt)
   getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

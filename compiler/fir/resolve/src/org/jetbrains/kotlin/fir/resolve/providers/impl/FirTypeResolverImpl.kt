@@ -435,7 +435,8 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         isOperandOfIsOperator: Boolean,
         resolveDeprecations: Boolean,
         useSiteFile: FirFile?,
-        supertypeSupplier: SupertypeSupplier
+        supertypeSupplier: SupertypeSupplier,
+        expandTypeAliases: Boolean,
     ): FirTypeResolutionResult {
         return when (typeRef) {
             is FirResolvedTypeRef -> error("Do not resolve, resolved type-refs")
@@ -448,7 +449,22 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     scopeClassDeclaration.topContainer ?: scopeClassDeclaration.containingDeclarations.lastOrNull(),
                     isOperandOfIsOperator,
                 )
-                FirTypeResolutionResult(resolvedType, (result as? TypeResolutionResult.Resolved)?.typeCandidate?.diagnostic)
+                val resolvedTypeSymbol = resolvedType.toSymbol(session)
+                // We can expand typealiases from dependencies right away, as it won't depend on us back,
+                // so there will be no problems with recursion.
+                // In the ideal world, this should also work with some source dependencies as the only case
+                // where it does not is when we are a platform module, and we look at the common module
+                // from our dependencies.
+                // Those are guaranteed to have source sessions, though.
+                val isFromLibraryDependency = resolvedTypeSymbol?.moduleData?.session?.kind == FirSession.Kind.Library
+                val resolvedExpandedType = when {
+                    (expandTypeAliases || isFromLibraryDependency) && resolvedTypeSymbol is FirTypeAliasSymbol -> {
+                        resolvedType.fullyExpandedType(resolvedTypeSymbol.moduleData.session)
+                            .withAbbreviation(AbbreviatedTypeAttribute(resolvedType))
+                    }
+                    else -> resolvedType
+                }
+                FirTypeResolutionResult(resolvedExpandedType, (result as? TypeResolutionResult.Resolved)?.typeCandidate?.diagnostic)
             }
             is FirFunctionTypeRef -> createFunctionType(typeRef)
             is FirDynamicTypeRef -> {
@@ -471,7 +487,6 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             session.lookupTracker?.recordTypeResolveAsLookup(it.type, typeRef.source, useSiteFile?.source)
         }
     }
-
 
     class TypeCandidate(
         override val symbol: FirBasedSymbol<*>,

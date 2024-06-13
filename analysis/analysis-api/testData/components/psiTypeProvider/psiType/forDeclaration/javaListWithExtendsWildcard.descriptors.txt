@@ -1,2 +1,2 @@
-KtType: List!
+KaType: List!
 PsiType: .List

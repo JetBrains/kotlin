@@ -1,0 +1,65 @@
+KaKotlinPropertySymbol:
+  annotations: []
+  backingFieldSymbol: null
+  callableId: /<unused var>
+  contextReceivers: []
+  getter: KaPropertyGetterSymbol:
+    annotations: []
+    callableId: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: true
+    isDefault: true
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: SOURCE
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Int
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
+    getContainingFileSymbol: KaFileSymbol(entryUnderscoreInScriptDestructuringDeclaration.kts)
+    getContainingJvmClassName: null
+    getContainingModule: KtScriptModule "Script entryUnderscoreInScriptDestructuringDeclaration.kts"
+    deprecationStatus: null
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: false
+  initializer: KtNonConstantInitializerValue(_)
+  isActual: false
+  isConst: false
+  isDelegatedProperty: false
+  isExpect: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  modality: FINAL
+  name: <unused var>
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Int
+  setter: null
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: Public
+  getContainingFileSymbol: KaFileSymbol(entryUnderscoreInScriptDestructuringDeclaration.kts)
+  getContainingJvmClassName: null
+  getContainingModule: KtScriptModule "Script entryUnderscoreInScriptDestructuringDeclaration.kts"
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: Could not render due to java.lang.IllegalStateException: not identifier: <unused var>
+
+  javaSetterName: null
+  setterDeprecationStatus: null

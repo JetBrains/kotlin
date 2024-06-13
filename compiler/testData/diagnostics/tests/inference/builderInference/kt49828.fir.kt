@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// !DIAGNOSTICS: -OPT_IN_USAGE_ERROR
+// DIAGNOSTICS: -OPT_IN_USAGE_ERROR
 // For FIR, see: KT-50704
 import kotlin.experimental.ExperimentalTypeInference
 

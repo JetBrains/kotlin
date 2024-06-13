@@ -275,8 +275,6 @@ class StaticExpressionDetectionTests(useFir: Boolean) : AbstractIrTransformTest(
         extraSrc: String = "",
         includeUiImports: Boolean = false
     ) {
-        // todo: ui/foundation dependencies are not supported by Kotlin repo yet
-        assumeFalse(includeUiImports)
         @Language("kotlin")
         val source = """
             import androidx.compose.runtime.Composable

@@ -10,12 +10,10 @@ package org.jetbrains.kotlin.gradle.unitTests
 import com.android.build.gradle.LibraryExtension
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
-import org.jetbrains.kotlin.cfg.pseudocode.and
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.util.addBuildEventsListenerRegistryMock
 import org.jetbrains.kotlin.gradle.util.androidLibrary
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
@@ -149,8 +147,6 @@ class KotlinAndroidDependsOnEdgesTest {
     }
 
     private fun createProject() = ProjectBuilder.builder().build()
-        .also { addBuildEventsListenerRegistryMock(it) }
-
 }
 
 private fun Iterable<KotlinSourceSet>.sorted() = this.sortedBy { it.name }

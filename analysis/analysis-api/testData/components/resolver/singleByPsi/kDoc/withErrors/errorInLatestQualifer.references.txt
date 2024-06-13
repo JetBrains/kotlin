@@ -1,0 +1,3 @@
+KDocName(8,12): 'A.BB'
+  KDocReference:
+    (in A) class BB

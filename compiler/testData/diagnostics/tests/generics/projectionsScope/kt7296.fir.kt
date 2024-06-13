@@ -1,5 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
-// !CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_VARIABLE
+// CHECK_TYPE
 import java.util.ArrayList
 
 class ListOfLists<T>(public val x : ArrayList<ArrayList<T>>)

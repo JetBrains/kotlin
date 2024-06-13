@@ -1,7 +1,7 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!>(i: Int) {
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect class <!CLASSIFIER_REDECLARATION!>Foo<!>(i: Int) {
     fun foo()
 }<!>
 
@@ -15,6 +15,6 @@ public class Foo {
 
 // FILE: jvm.kt
 
-class <!ACTUAL_MISSING, PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!><T>(t: T) {
+class <!ACTUAL_MISSING, CLASSIFIER_REDECLARATION!>Foo<!><T>(t: T) {
     fun <!ACTUAL_MISSING!>foo<!>() {}
 }

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.backend.konan.KonanFqNames
 context(KtAnalysisSession)
 internal fun KtType.getInlineTargetTypeOrNull(): KtType? {
     if (this !is KtNonErrorClassType) return null
-    val classSymbol = classSymbol as? KtNamedClassOrObjectSymbol ?: return null
+    val classSymbol = symbol as? KtNamedClassOrObjectSymbol ?: return null
     return classSymbol.getInlineTargetTypeOrNull()?.markNullableIf(isMarkedNullable)
 }
 
@@ -49,7 +49,7 @@ internal fun KtNamedClassOrObjectSymbol.getInlineTargetTypeOrNull(): KtType? {
 context(KtAnalysisSession)
 private fun KtNamedClassOrObjectSymbol.isInlineIncludingKotlinNativeSpecialClasses(): Boolean {
     if (this.isInline) return true
-    val classId = classIdIfNonLocal ?: return false
+    val classId = classId ?: return false
 
     /* Top Level symbols can be special K/N types */
     if (getContainingSymbol() is KtClassOrObjectSymbol) return false

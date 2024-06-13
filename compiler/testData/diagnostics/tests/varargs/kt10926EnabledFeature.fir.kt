@@ -1,4 +1,4 @@
-// !LANGUAGE: +EliminateAmbiguitiesWithExternalTypeParameters
+// LANGUAGE: +EliminateAmbiguitiesWithExternalTypeParameters
 // WITH_STDLIB
 
 class AllCollection<T> {

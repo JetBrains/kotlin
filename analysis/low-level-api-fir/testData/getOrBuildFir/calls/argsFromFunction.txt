@@ -7,8 +7,8 @@ this@R|?|.R|kotlin/script/templates/standard/ScriptTemplateWithArgs.args|.R|Subs
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] argsFromFunction.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-argsFromFunction.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Int| {

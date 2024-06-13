@@ -94,6 +94,24 @@ public class ContextCollectorScriptTestGenerated extends AbstractContextCollecto
     public void testTopLevel() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/scripts/topLevel.kts");
     }
+
+    @Test
+    @TestMetadata("topLevelDestructuring_after.kts")
+    public void testTopLevelDestructuring_after() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/scripts/topLevelDestructuring_after.kts");
+    }
+
+    @Test
+    @TestMetadata("topLevelDestructuring_initializer.kts")
+    public void testTopLevelDestructuring_initializer() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/scripts/topLevelDestructuring_initializer.kts");
+    }
+
+    @Test
+    @TestMetadata("topLevelDestructuring_subProperty.kts")
+    public void testTopLevelDestructuring_subProperty() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/scripts/topLevelDestructuring_subProperty.kts");
+    }
   }
 
   @Nested
@@ -113,6 +131,16 @@ public class ContextCollectorScriptTestGenerated extends AbstractContextCollecto
     @Test
     public void testAllFilesPresentInTypeParameters() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/typeParameters"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/withTestCompilerPluginEnabled")
+  @TestDataPath("$PROJECT_ROOT")
+  public class WithTestCompilerPluginEnabled {
+    @Test
+    public void testAllFilesPresentInWithTestCompilerPluginEnabled() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/withTestCompilerPluginEnabled"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
     }
   }
 }

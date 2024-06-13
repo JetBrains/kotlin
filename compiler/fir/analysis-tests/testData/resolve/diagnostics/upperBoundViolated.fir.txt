@@ -14,7 +14,7 @@ FILE: upperBoundViolated.kt
 
     }
     public final typealias GGG = R|C|
-    public final typealias HHH = R|GGG|
+    public final typealias HHH = R|{GGG=} C|
     public final typealias JJJ = R|B<C>|
     public final fun <T : R|A|> fest(): R|kotlin/Unit| {
     }
@@ -26,8 +26,8 @@ FILE: upperBoundViolated.kt
         lval b5: R|B<B<ERROR CLASS: Symbol not found for UnexistingType>>| = R|/B.B<Inapplicable(INAPPLICABLE): /B.B>#|<R|B<ERROR CLASS: Symbol not found for UnexistingType>|>()
         R|/fest<Inapplicable(INAPPLICABLE): /fest>#|<R|kotlin/Boolean|>()
         R|/fest|<R|C|>()
-        R|/fest|<R|C|>()
-        R|/fest<Inapplicable(INAPPLICABLE): /fest>#|<R|B<C>|>()
+        R|/fest|<R|{HHH=} C|>()
+        R|/fest<Inapplicable(INAPPLICABLE): /fest>#|<R|{JJJ=} B<C>|>()
     }
     public open class S<F, G : R|F|> : R|kotlin/Any| {
         public constructor<F, G : R|F|>(): R|S<F, G>| {

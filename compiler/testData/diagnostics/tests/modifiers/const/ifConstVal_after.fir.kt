@@ -1,4 +1,4 @@
-// !LANGUAGE: +IntrinsicConstEvaluation
+// LANGUAGE: +IntrinsicConstEvaluation
 
 const val flag = true
 const val value = 10

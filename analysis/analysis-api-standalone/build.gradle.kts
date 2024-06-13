@@ -7,7 +7,7 @@ dependencies {
     implementation(intellijCore())
     implementation(project(":compiler:psi"))
     api(project(":analysis:analysis-api"))
-    api(project(":analysis:analysis-api-providers"))
+    api(project(":analysis:analysis-api-platform-interface"))
     api(project(":analysis:project-structure"))
     api(project(":analysis:analysis-api-fir"))
     api(project(":analysis:low-level-api-fir"))
@@ -21,7 +21,8 @@ dependencies {
     testImplementation(projectTests(":analysis:low-level-api-fir"))
 
     testImplementation(kotlinTest("junit"))
-    testImplementation(toolsJar())
+    testCompileOnly(toolsJarApi())
+    testRuntimeOnly(toolsJar())
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)

@@ -375,15 +375,6 @@ class FirElementSerializer private constructor(
             }
         }
 
-        for (contextReceiver in script.contextReceivers) {
-            val typeRef = contextReceiver.typeRef
-            if (useTypeTable()) {
-                builder.addContextReceiverTypeId(typeId(typeRef))
-            } else {
-                builder.addContextReceiverType(typeProto(contextReceiver.typeRef))
-            }
-        }
-
         if (versionRequirementTable == null) error("Version requirements must be serialized for scripts: ${script.render()}")
 
         builder.addAllVersionRequirement(versionRequirementTable.serializeVersionRequirements(script))
@@ -532,10 +523,9 @@ class FirElementSerializer private constructor(
             }
         }
 
-        val hasConstant = (!property.isVar
+        val hasConstant = property.isConst || (!property.isVar
                 && property.returnTypeRef.coneType.fullyExpandedType(session).canBeUsedForConstVal()
-                && property.initializer.hasConstantValue(session))
-                || property.isConst
+                && property.symbol.resolvedInitializer.hasConstantValue(session))
         val flags = Flags.getPropertyFlags(
             hasAnnotations,
             ProtoEnumFlags.visibility(normalizeVisibility(property)),
@@ -730,7 +720,7 @@ class FirElementSerializer private constructor(
         if (useTypeTable()) {
             builder.underlyingTypeId = local.typeId(underlyingType)
         } else {
-            builder.setUnderlyingType(local.typeProto(underlyingType))
+            builder.setUnderlyingType(local.typeProto(underlyingType, abbreviationOnly = true))
         }
 
         val expandedType = underlyingType.fullyExpandedType(session)
@@ -888,26 +878,52 @@ class FirElementSerializer private constructor(
         toSuper: Boolean = false,
         correspondingTypeRef: FirTypeRef? = null,
         isDefinitelyNotNullType: Boolean = false,
+        abbreviationOnly: Boolean = false,
     ): ProtoBuf.Type.Builder {
-        val typeProto = typeOrTypealiasProto(type, toSuper, correspondingTypeRef, isDefinitelyNotNullType)
-        val expanded = if (type is ConeClassLikeType) type.fullyExpandedType(session) else type
-        if (expanded === type) {
-            return typeProto
+        // `type` we'll see here will be fully expanded with the declaration
+        // site session, but [FirElementSerializer] will be run with a use site one,
+        // so it must be expanded twice.
+        val useSiteSessionExpandedType = type.fullyExpandedType(session)
+        val abbreviation = type.abbreviatedTypeOrSelf
+        val mainType = if (!abbreviationOnly) useSiteSessionExpandedType else abbreviation
+        val mainTypeProto = typeOrTypealiasProto(
+            mainType, toSuper, correspondingTypeRef, isDefinitelyNotNullType,
+            abbreviationOnly = abbreviationOnly,
+        )
+
+        // `typeOrTypealiasProto()` calls may in turn call `typeProto()`
+        // for some other types in such a way that those types share the same
+        // AbbreviatedType attribute (this happens, for example, with aliases
+        // to suspend function types).
+        // So, the abbreviated type may have been set already by an inner call.
+        // Note that in case of an `expect typealias`, the second expansion will
+        // erase `AbbreviatedTypeAttribute` of `type`.
+        if (abbreviation != mainType && !mainTypeProto.hasAbbreviatedType() && !abbreviation.containsCapturedTypes) {
+            val abbreviationProto = typeOrTypealiasProto(
+                abbreviation, toSuper, correspondingTypeRef, isDefinitelyNotNullType,
+                abbreviationOnly = false,
+                isAbbreviation = true,
+            )
+
+            if (useTypeTable()) {
+                mainTypeProto.abbreviatedTypeId = typeTable[abbreviationProto]
+            } else {
+                mainTypeProto.setAbbreviatedType(abbreviationProto)
+            }
         }
-        val expandedProto = typeOrTypealiasProto(expanded, toSuper, correspondingTypeRef, isDefinitelyNotNullType)
-        if (useTypeTable()) {
-            expandedProto.abbreviatedTypeId = typeTable[typeProto]
-        } else {
-            expandedProto.setAbbreviatedType(typeProto)
-        }
-        return expandedProto
+
+        return mainTypeProto
     }
+
+    private val ConeKotlinType.containsCapturedTypes get() = contains { it is ConeCapturedType }
 
     private fun typeOrTypealiasProto(
         type: ConeKotlinType,
         toSuper: Boolean,
         correspondingTypeRef: FirTypeRef?,
         isDefinitelyNotNullType: Boolean,
+        isAbbreviation: Boolean = false,
+        abbreviationOnly: Boolean = false,
     ): ProtoBuf.Type.Builder {
         val builder = ProtoBuf.Type.newBuilder()
         val typeAnnotations = mutableListOf<FirAnnotation>()
@@ -930,7 +946,7 @@ class FirElementSerializer private constructor(
             }
             is ConeClassLikeType -> {
                 val functionTypeKind = type.functionTypeKind(session)
-                if (functionTypeKind == FunctionTypeKind.SuspendFunction) {
+                if (!isAbbreviation && functionTypeKind == FunctionTypeKind.SuspendFunction) {
                     val runtimeFunctionType = type.suspendFunctionTypeToFunctionTypeWithContinuation(
                         session, StandardClassIds.Continuation
                     )
@@ -938,14 +954,14 @@ class FirElementSerializer private constructor(
                     functionType.flags = Flags.getTypeFlags(true, false)
                     return functionType
                 }
-                if (functionTypeKind?.isBuiltin == false) {
+                if (!isAbbreviation && functionTypeKind?.isBuiltin == false) {
                     val legacySerializationUntil =
                         LanguageVersion.fromVersionString(functionTypeKind.serializeAsFunctionWithAnnotationUntil)
                     if (legacySerializationUntil != null && languageVersionSettings.languageVersion < legacySerializationUntil) {
                         return typeProto(type.customFunctionTypeToSimpleFunctionType(session))
                     }
                 }
-                fillFromPossiblyInnerType(builder, type)
+                fillFromPossiblyInnerType(builder, type, abbreviationOnly)
                 if (type.hasContextReceivers) {
                     typeAnnotations.addIfNotNull(
                         createAnnotationFromAttribute(
@@ -1016,17 +1032,6 @@ class FirElementSerializer private constructor(
         }
 
         extension.serializeTypeAnnotations(typeAnnotations, builder)
-
-        // TODO: abbreviated type
-//        val abbreviation = type.getAbbreviatedType()?.abbreviation
-//        if (abbreviation != null) {
-//            if (useTypeTable()) {
-//                builder.abbreviatedTypeId = typeId(abbreviation)
-//            } else {
-//                builder.setAbbreviatedType(typeProto(abbreviation))
-//            }
-//        }
-
         return builder
     }
 
@@ -1064,7 +1069,8 @@ class FirElementSerializer private constructor(
         builder: ProtoBuf.Type.Builder,
         symbol: FirClassLikeSymbol<*>,
         typeArguments: Array<out ConeTypeProjection>,
-        typeArgumentIndex: Int
+        typeArgumentIndex: Int,
+        abbreviationOnly: Boolean = false,
     ) {
         var argumentIndex = typeArgumentIndex
         val classifier = symbol.fir
@@ -1080,7 +1086,7 @@ class FirElementSerializer private constructor(
             // No explicit type argument provided. For example: `Map.Entry<K, V>` when we get to `Map`
             // it has type parameters, but no explicit type arguments are provided for it.
             if (argumentIndex >= typeArguments.size) return
-            builder.addArgument(typeArgument(typeArguments[argumentIndex++]))
+            builder.addArgument(typeArgument(typeArguments[argumentIndex++], abbreviationOnly))
         }
 
         if (!symbol.isInner) return
@@ -1098,17 +1104,17 @@ class FirElementSerializer private constructor(
         }
     }
 
-    private fun fillFromPossiblyInnerType(builder: ProtoBuf.Type.Builder, type: ConeClassLikeType) {
+    private fun fillFromPossiblyInnerType(builder: ProtoBuf.Type.Builder, type: ConeClassLikeType, abbreviationOnly: Boolean = false) {
         val classifierSymbol = type.lookupTag.toSymbol(session)
         if (classifierSymbol != null) {
-            fillFromPossiblyInnerType(builder, classifierSymbol, type.typeArguments, 0)
+            fillFromPossiblyInnerType(builder, classifierSymbol, type.typeArguments, 0, abbreviationOnly)
         } else {
             builder.className = getClassifierId(type.lookupTag.classId)
-            type.typeArguments.forEach { builder.addArgument(typeArgument(it)) }
+            type.typeArguments.forEach { builder.addArgument(typeArgument(it, abbreviationOnly)) }
         }
     }
 
-    private fun typeArgument(typeProjection: ConeTypeProjection): ProtoBuf.Type.Argument.Builder {
+    private fun typeArgument(typeProjection: ConeTypeProjection, abbreviationOnly: Boolean = false): ProtoBuf.Type.Argument.Builder {
         val builder = ProtoBuf.Type.Argument.newBuilder()
 
         if (typeProjection is ConeStarProjection) {
@@ -1123,7 +1129,7 @@ class FirElementSerializer private constructor(
             if (useTypeTable()) {
                 builder.typeId = typeId(typeProjection.type)
             } else {
-                builder.setType(typeProto(typeProjection.type))
+                builder.setType(typeProto(typeProjection.type, abbreviationOnly = abbreviationOnly))
             }
         }
 

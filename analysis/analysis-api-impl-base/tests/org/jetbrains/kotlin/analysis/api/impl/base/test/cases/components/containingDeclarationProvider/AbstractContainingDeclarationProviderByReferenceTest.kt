@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider
 
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -27,20 +27,20 @@ abstract class AbstractContainingDeclarationProviderByReferenceTest : AbstractAn
             val ktSymbol = referenceExpression.mainReference.resolveToSymbol() ?: error("Reference is not resolved")
 
             val actualString = generateSequence(ktSymbol) { it.getContainingSymbol() }
-                .filterIsInstance<KtDeclarationSymbol>()
+                .filterIsInstance<KaDeclarationSymbol>()
                 .joinToString("\n") { render(it) }
 
             testServices.assertions.assertEqualsToTestDataFileSibling(actualString)
         }
     }
 
-    private fun render(symbol: KtSymbol): String {
+    private fun render(symbol: KaSymbol): String {
         val qualifiedName = when (symbol) {
-            is KtCallableSymbol -> symbol.callableIdIfNonLocal?.toString()
-            is KtClassLikeSymbol -> symbol.classIdIfNonLocal?.toString()
+            is KaCallableSymbol -> symbol.callableId?.toString()
+            is KaClassLikeSymbol -> symbol.classId?.toString()
             else -> null
         }
 
-        return qualifiedName ?: (symbol as? KtNamedSymbol)?.name?.asString() ?: "Unnamed"
+        return qualifiedName ?: (symbol as? KaNamedSymbol)?.name?.asString() ?: "Unnamed"
     }
 }

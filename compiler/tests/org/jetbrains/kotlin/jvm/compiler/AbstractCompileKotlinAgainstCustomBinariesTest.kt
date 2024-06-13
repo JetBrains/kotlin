@@ -572,6 +572,20 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         )
     }
 
+    fun testAnnotationsFromBinariesWithNonTrivialJvmDefaultConfiguration() {
+        val disabledJvmDefaults = compileLibrary(
+            "disabledJvmDefaults",
+            additionalOptions = listOf("-Xjvm-default=disable"),
+            extraClassPath = emptyList()
+        )
+        val enabledJvmDefaults = compileLibrary(
+            "enabledJvmDefaults",
+            additionalOptions = listOf("-Xjvm-default=all"),
+            extraClassPath = listOf(disabledJvmDefaults)
+        )
+        compileKotlin("source.kt", tmpdir, listOf(disabledJvmDefaults, enabledJvmDefaults))
+    }
+
     // KT-60531 K2/JS: Report diagnostics before running FIR2IR
     fun testInternalFromForeignModuleJs() = muteForK2 {
         compileKotlin(

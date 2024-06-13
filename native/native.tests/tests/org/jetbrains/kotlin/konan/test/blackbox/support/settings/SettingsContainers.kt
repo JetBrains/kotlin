@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
+import java.net.URLClassLoader
 import kotlin.reflect.KClass
 
 abstract class Settings(private val parent: Settings?, settings: Iterable<Any>) {
@@ -49,8 +50,8 @@ abstract class Settings(private val parent: Settings?, settings: Iterable<Any>) 
  * | [TestRunSettings]     | [TestClassSettings]    | The single test run of a test function      |
  */
 class TestProcessSettings(vararg settings: Any) : Settings(parent = null, settings.asIterable())
-internal class TestClassSettings(parent: TestProcessSettings, settings: Iterable<Any>) : Settings(parent, settings)
-internal class TestRunSettings(parent: TestClassSettings, settings: Iterable<Any>) : Settings(parent, settings)
+class TestClassSettings(parent: TestProcessSettings, settings: Iterable<Any>) : Settings(parent, settings)
+class TestRunSettings(parent: TestClassSettings, settings: Iterable<Any>) : Settings(parent, settings)
 
 /**
  * The hierarchy of settings containers for simple Native tests (e.g. KLIB tests):
@@ -64,7 +65,7 @@ internal class TestRunSettings(parent: TestClassSettings, settings: Iterable<Any
 class SimpleTestClassSettings(parent: TestProcessSettings, settings: Iterable<Any>) : Settings(parent, settings)
 class SimpleTestRunSettings(parent: SimpleTestClassSettings, settings: Iterable<Any>) : Settings(parent, settings)
 
-internal val Settings.configurables: Configurables
+val Settings.configurables: Configurables
     get() {
         val distribution = Distribution(
             get<KotlinNativeHome>().dir.path,
@@ -73,3 +74,17 @@ internal val Settings.configurables: Configurables
         )
         return PlatformManager(distribution).platform(get<KotlinNativeTargets>().testTarget).configurables
     }
+
+internal fun Settings.withCustomCompiler(compiler: ReleasedCompiler): Settings {
+    return object : Settings(
+        parent = this,
+        settings = listOf(
+            compiler.nativeHome,
+            LLDB(compiler.nativeHome),
+            KotlinNativeClassLoader(lazyClassLoader = compiler.lazyClassloader),
+            PipelineType.DEFAULT,
+            GCType.UNSPECIFIED,
+            ThreadStateChecker.DISABLED
+        )
+    ) {}
+}

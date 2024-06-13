@@ -1,5 +1,5 @@
-// !JDK_KIND: MODIFIED_MOCK_JDK
-// !CHECK_TYPE
+// JDK_KIND: MODIFIED_MOCK_JDK
+// CHECK_TYPE
 
 interface A : MutableCollection<String> {
     // Override of deprecated function could be marked as deprecated too

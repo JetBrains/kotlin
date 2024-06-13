@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.SourceNavigator
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.isExplicitTypeArgumentSource
 import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.type.FirTypeRefChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_NULLABLE
@@ -18,9 +20,13 @@ import org.jetbrains.kotlin.fir.types.*
 
 object RedundantNullableChecker : FirTypeRefChecker(MppCheckerKind.Common) {
     override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (typeRef !is FirResolvedTypeRef || typeRef.isMarkedNullable != true) return
+        if (
+            typeRef !is FirResolvedTypeRef ||
+            !typeRef.coneType.abbreviatedTypeOrSelf.isMarkedNullable ||
+            typeRef.source?.kind == KtFakeSourceElementKind.ImplicitTypeArgument
+        ) return
 
-        var symbol = typeRef.toClassLikeSymbol(context.session)
+        var symbol = typeRef.coneType.abbreviatedTypeOrSelf.toSymbol(context.session)
         if (symbol is FirTypeAliasSymbol) {
             while (symbol is FirTypeAliasSymbol) {
                 val resolvedExpandedTypeRef = symbol.resolvedExpandedTypeRef

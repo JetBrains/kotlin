@@ -1,4 +1,4 @@
-// !LANGUAGE: +EnumEntries -PrioritizedEnumEntries
+// LANGUAGE: +EnumEntries -PrioritizedEnumEntries
 // WITH_STDLIB
 // ISSUE: KT-56587
 

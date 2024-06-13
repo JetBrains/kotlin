@@ -1,4 +1,4 @@
-// !LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers
 
 typealias IterableClass<C, T> = (C) -> Iterator<T>
 

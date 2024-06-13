@@ -7,8 +7,11 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineFunctionCall
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.inline.FunctionInlining
+import org.jetbrains.kotlin.ir.inline.InlineFunctionResolver
 
 @PhaseDescription(
     name = "FunctionInliningPhase",
@@ -17,6 +20,7 @@ import org.jetbrains.kotlin.ir.inline.FunctionInlining
 )
 class JvmIrInliner(context: JvmBackendContext) : FunctionInlining(
     context,
+    inlineFunctionResolver = JvmInlineFunctionResolver(context),
     innerClassesSupport = context.innerClassesSupport,
     regenerateInlinedAnonymousObjects = true,
 ) {
@@ -27,4 +31,8 @@ class JvmIrInliner(context: JvmBackendContext) : FunctionInlining(
             super.lower(irFile)
         }
     }
+}
+
+class JvmInlineFunctionResolver(private val context: JvmBackendContext) : InlineFunctionResolver() {
+    override fun needsInlining(function: IrFunction): Boolean = function.isInlineFunctionCall(context)
 }

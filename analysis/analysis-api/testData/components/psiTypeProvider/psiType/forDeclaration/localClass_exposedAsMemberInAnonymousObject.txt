@@ -1,2 +1,2 @@
-KtType: kotlin.collections.MutableList<TagData>
+KaType: kotlin.collections.MutableList<TagData>
 PsiType: @org.jetbrains.annotations.NotNull() java.util.List<@org.jetbrains.annotations.NotNull() TagData>

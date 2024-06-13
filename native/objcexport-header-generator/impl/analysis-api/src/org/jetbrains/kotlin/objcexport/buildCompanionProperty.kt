@@ -28,7 +28,7 @@ internal fun KtClassOrObjectSymbol.buildCompanionProperty(): ObjCProperty {
         origin = null,
         type = ObjCClassType(typeName.objCName, extras = objCTypeExtras {
             requiresForwardDeclaration = true
-            originClassId = companion.classIdIfNonLocal
+            originClassId = companion.classId
         }),
         propertyAttributes = listOf("class", "readonly"),
         getterName = propertyName,

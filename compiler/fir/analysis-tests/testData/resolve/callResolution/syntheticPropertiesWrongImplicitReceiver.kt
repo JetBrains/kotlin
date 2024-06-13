@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 // FILE: JavaClass.java
 public class JavaClass {
     public String getFoo() {

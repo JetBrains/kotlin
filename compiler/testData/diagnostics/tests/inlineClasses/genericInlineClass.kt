@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses, +GenericInlineClassParameter
+// LANGUAGE: +InlineClasses, -JvmInlineValueClasses, +GenericInlineClassParameter
 // SKIP_TXT
 
 inline class ICAny<T>(val value: T)

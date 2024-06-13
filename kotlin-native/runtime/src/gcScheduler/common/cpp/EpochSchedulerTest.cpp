@@ -21,17 +21,17 @@ TEST(EpochSchedulerTest, ScheduleNext) {
 
     // Schedule new epoch.
     EXPECT_CALL(scheduleGC, Call()).WillOnce(testing::Return(1));
-    EXPECT_THAT(adapter.scheduleNextEpoch(), 1);
+    EXPECT_THAT(adapter.scheduleNextEpoch(gcScheduler::ScheduleReason::manually()), 1);
     testing::Mock::VerifyAndClear(&scheduleGC);
 
     // Schedule already scheduled epoch.
     EXPECT_CALL(scheduleGC, Call()).WillOnce(testing::Return(1));
-    EXPECT_THAT(adapter.scheduleNextEpoch(), 1);
+    EXPECT_THAT(adapter.scheduleNextEpoch(gcScheduler::ScheduleReason::manually()), 1);
     testing::Mock::VerifyAndClear(&scheduleGC);
 
     // Schedule new epoch, while the other is still in progress
     EXPECT_CALL(scheduleGC, Call()).WillOnce(testing::Return(2));
-    EXPECT_THAT(adapter.scheduleNextEpoch(), 2);
+    EXPECT_THAT(adapter.scheduleNextEpoch(gcScheduler::ScheduleReason::manually()), 2);
     testing::Mock::VerifyAndClear(&scheduleGC);
 
     // Finish the first epoch.
@@ -39,7 +39,7 @@ TEST(EpochSchedulerTest, ScheduleNext) {
 
     // Schedule yet another epoch, while the other is still in progress
     EXPECT_CALL(scheduleGC, Call()).WillOnce(testing::Return(3));
-    EXPECT_THAT(adapter.scheduleNextEpoch(), 3);
+    EXPECT_THAT(adapter.scheduleNextEpoch(gcScheduler::ScheduleReason::manually()), 3);
     testing::Mock::VerifyAndClear(&scheduleGC);
 
     // Finish all epochs
@@ -48,7 +48,7 @@ TEST(EpochSchedulerTest, ScheduleNext) {
 
     // Schedule and finish the final epoch
     EXPECT_CALL(scheduleGC, Call()).WillOnce(testing::Return(4));
-    EXPECT_THAT(adapter.scheduleNextEpoch(), 4);
+    EXPECT_THAT(adapter.scheduleNextEpoch(gcScheduler::ScheduleReason::manually()), 4);
     testing::Mock::VerifyAndClear(&scheduleGC);
     adapter.onGCFinish(4);
 }
@@ -59,12 +59,12 @@ TEST(EpochSchedulerTest, ScheduleNextIfNotInProgress) {
 
     // Schedule new epoch.
     EXPECT_CALL(scheduleGC, Call()).WillOnce(testing::Return(1));
-    EXPECT_THAT(adapter.scheduleNextEpochIfNotInProgress(), 1);
+    EXPECT_THAT(adapter.scheduleNextEpochIfNotInProgress(gcScheduler::ScheduleReason::manually()), 1);
     testing::Mock::VerifyAndClear(&scheduleGC);
 
     // Schedule already scheduled epoch.
     EXPECT_CALL(scheduleGC, Call()).Times(0);
-    EXPECT_THAT(adapter.scheduleNextEpochIfNotInProgress(), 1);
+    EXPECT_THAT(adapter.scheduleNextEpochIfNotInProgress(gcScheduler::ScheduleReason::manually()), 1);
     testing::Mock::VerifyAndClear(&scheduleGC);
 
     // Finish the first epoch.
@@ -72,7 +72,7 @@ TEST(EpochSchedulerTest, ScheduleNextIfNotInProgress) {
 
     // Schedule and finish the final epoch
     EXPECT_CALL(scheduleGC, Call()).WillOnce(testing::Return(2));
-    EXPECT_THAT(adapter.scheduleNextEpochIfNotInProgress(), 2);
+    EXPECT_THAT(adapter.scheduleNextEpochIfNotInProgress(gcScheduler::ScheduleReason::manually()), 2);
     testing::Mock::VerifyAndClear(&scheduleGC);
     adapter.onGCFinish(2);
 }
@@ -83,17 +83,17 @@ TEST(EpochSchedulerTest, ScheduleNextMix) {
 
     // Schedule new epoch.
     EXPECT_CALL(scheduleGC, Call()).WillOnce(testing::Return(1));
-    EXPECT_THAT(adapter.scheduleNextEpochIfNotInProgress(), 1);
+    EXPECT_THAT(adapter.scheduleNextEpochIfNotInProgress(gcScheduler::ScheduleReason::manually()), 1);
     testing::Mock::VerifyAndClear(&scheduleGC);
 
     // Schedule new epoch, while the other is still in progress
     EXPECT_CALL(scheduleGC, Call()).WillOnce(testing::Return(2));
-    EXPECT_THAT(adapter.scheduleNextEpoch(), 2);
+    EXPECT_THAT(adapter.scheduleNextEpoch(gcScheduler::ScheduleReason::manually()), 2);
     testing::Mock::VerifyAndClear(&scheduleGC);
 
     // Schedule already scheduled epoch.
     EXPECT_CALL(scheduleGC, Call()).Times(0);
-    EXPECT_THAT(adapter.scheduleNextEpochIfNotInProgress(), 2);
+    EXPECT_THAT(adapter.scheduleNextEpochIfNotInProgress(gcScheduler::ScheduleReason::manually()), 2);
     testing::Mock::VerifyAndClear(&scheduleGC);
 
     // Finish the first epoch.
@@ -101,7 +101,7 @@ TEST(EpochSchedulerTest, ScheduleNextMix) {
 
     // Schedule already scheduled epoch again.
     EXPECT_CALL(scheduleGC, Call()).Times(0);
-    EXPECT_THAT(adapter.scheduleNextEpochIfNotInProgress(), 2);
+    EXPECT_THAT(adapter.scheduleNextEpochIfNotInProgress(gcScheduler::ScheduleReason::manually()), 2);
     testing::Mock::VerifyAndClear(&scheduleGC);
 
     // Finish the second epoch.
@@ -109,7 +109,7 @@ TEST(EpochSchedulerTest, ScheduleNextMix) {
 
     // Schedule and finish the final epoch
     EXPECT_CALL(scheduleGC, Call()).WillOnce(testing::Return(3));
-    EXPECT_THAT(adapter.scheduleNextEpochIfNotInProgress(), 3);
+    EXPECT_THAT(adapter.scheduleNextEpochIfNotInProgress(gcScheduler::ScheduleReason::manually()), 3);
     testing::Mock::VerifyAndClear(&scheduleGC);
     adapter.onGCFinish(3);
 }
@@ -151,7 +151,8 @@ TEST(EpochSchedulerTest, StressScheduleNext) {
         threads.emplace_back([&, i] {
             Epoch pastEpoch = 0;
             while (!canStop.load(std::memory_order_relaxed)) {
-                auto epoch = (i % 2 == 0) ? adapter.scheduleNextEpoch() : adapter.scheduleNextEpochIfNotInProgress();
+                auto epoch = (i % 2 == 0) ? adapter.scheduleNextEpoch(gcScheduler::ScheduleReason::manually())
+                                          : adapter.scheduleNextEpochIfNotInProgress(gcScheduler::ScheduleReason::manually());
                 EXPECT_THAT(epoch, testing::Ge(pastEpoch));
                 pastEpoch = epoch;
                 std::this_thread::yield();

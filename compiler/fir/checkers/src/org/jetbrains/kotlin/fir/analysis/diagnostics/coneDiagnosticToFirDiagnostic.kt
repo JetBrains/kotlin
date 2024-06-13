@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.*
+import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
@@ -186,7 +187,6 @@ private fun ConeDiagnostic.toKtDiagnostic(
         FirErrors.AMBIGUOUS_ANNOTATION_ARGUMENT.createOn(source, listOfNotNull(symbolFromCompilerPhase, symbolFromAnnotationArgumentsPhase))
     is ConeAmbiguousFunctionTypeKinds -> FirErrors.AMBIGUOUS_FUNCTION_TYPE_KIND.createOn(source, kinds)
     is ConeUnsupportedClassLiteralsWithEmptyLhs -> FirErrors.UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS.createOn(source)
-    is ConeMissingConstructorKeyword -> FirErrors.MISSING_CONSTRUCTOR_KEYWORD.createOn(source)
     is ConeMultipleLabelsAreForbidden -> FirErrors.MULTIPLE_LABELS_ARE_FORBIDDEN.createOn(this.source)
     else -> throw IllegalArgumentException("Unsupported diagnostic type: ${this.javaClass}")
 }
@@ -292,8 +292,22 @@ private fun mapInapplicableCandidateError(
                 FirErrors.ARGUMENT_TYPE_MISMATCH.createOn(
                     rootCause.argument.source ?: source,
                     rootCause.expectedType.removeTypeVariableTypes(typeContext),
-                    rootCause.actualType.removeTypeVariableTypes(typeContext),
+                    // For lambda expressions, use their resolved type because `rootCause.actualType` can contain unresolved types
+                    if (rootCause.argument is FirAnonymousFunctionExpression && !rootCause.argument.resolvedType.hasError()) {
+                        rootCause.argument.resolvedType
+                    } else {
+                        rootCause.actualType.removeTypeVariableTypes(typeContext)
+                    },
                     rootCause.isMismatchDueToNullability
+                )
+            }
+
+            is UnitReturnTypeLambdaContradictsExpectedType -> {
+                FirErrors.ARGUMENT_TYPE_MISMATCH.createOn(
+                    rootCause.sourceForFunctionExpression ?: rootCause.lambda.source ?: source,
+                    rootCause.wholeLambdaExpectedType.removeTypeVariableTypes(typeContext),
+                    rootCause.lambda.typeRef.coneType.removeTypeVariableTypes(typeContext),
+                    false // not isMismatchDueToNullability
                 )
             }
 

@@ -1,9 +1,9 @@
 element: param
 implicit receivers:
-  type: KtClassErrorType:
-    annotationsList: []
+  type: KaClassErrorType:
+    annotations: []
     type: ERROR_TYPE
-  owner symbol: KtFirNamedClassOrObjectSymbol
+  owner symbol: KaFirNamedClassOrObjectSymbol
 
 scopes:
   LocalScope, index = 0
@@ -16,9 +16,9 @@ scopes:
     packages: 0
     classifiers: 0
     callables: 1
-      KtValueParameterSymbol:
-        annotationsList: []
-        callableIdIfNonLocal: null
+      KaValueParameterSymbol:
+        annotations: []
+        callableId: null
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDefaultValue: false
@@ -30,9 +30,9 @@ scopes:
         name: param
         origin: SOURCE
         receiverParameter: null
-        returnType: KtUsualClassType:
-          annotationsList: []
-          ownTypeArguments: []
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
           type: kotlin/String
         symbolKind: LOCAL
         typeParameters: []

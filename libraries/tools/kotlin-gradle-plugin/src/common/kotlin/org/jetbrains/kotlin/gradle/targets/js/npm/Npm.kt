@@ -62,7 +62,6 @@ class Npm : NpmApiExecution<NpmEnvironment> {
         logger: Logger,
         nodeJs: NodeJsEnvironment,
         packageManagerEnvironment: NpmEnvironment,
-        npmProjects: Collection<PreparedKotlinCompilationNpmResolution>,
         cliArgs: List<String>,
     ) {
         val nodeJsWorldDir = nodeJs.rootPackageDir

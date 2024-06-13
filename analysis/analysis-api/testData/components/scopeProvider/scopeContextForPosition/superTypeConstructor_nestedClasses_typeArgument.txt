@@ -10,9 +10,9 @@ scopes:
   PackageMemberScope, index = 1
     packages: 0
     classifiers: 3
-      KtNamedClassOrObjectSymbol:
-        annotationsList: []
-        classIdIfNonLocal: test/BaseInterface
+      KaNamedClassOrObjectSymbol:
+        annotations: []
+        classId: test/BaseInterface
         classKind: INTERFACE
         companionObject: null
         contextReceivers: []
@@ -27,17 +27,17 @@ scopes:
         name: BaseInterface
         origin: SOURCE
         superTypes: [
-          KtUsualClassType:
-            annotationsList: []
-            ownTypeArguments: []
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
             type: kotlin/Any
         ]
         symbolKind: TOP_LEVEL
         typeParameters: []
         visibility: Public
-      KtNamedClassOrObjectSymbol:
-        annotationsList: []
-        classIdIfNonLocal: test/Base
+      KaNamedClassOrObjectSymbol:
+        annotations: []
+        classId: test/Base
         classKind: CLASS
         companionObject: null
         contextReceivers: []
@@ -52,19 +52,19 @@ scopes:
         name: Base
         origin: SOURCE
         superTypes: [
-          KtUsualClassType:
-            annotationsList: []
-            ownTypeArguments: []
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
             type: test/BaseInterface
         ]
         symbolKind: TOP_LEVEL
         typeParameters: [
-          KtTypeParameterSymbol(T)
+          KaTypeParameterSymbol(T)
         ]
         visibility: Public
-      KtNamedClassOrObjectSymbol:
-        annotationsList: []
-        classIdIfNonLocal: test/Child
+      KaNamedClassOrObjectSymbol:
+        annotations: []
+        classId: test/Child
         classKind: CLASS
         companionObject: null
         contextReceivers: []
@@ -79,12 +79,12 @@ scopes:
         name: Child
         origin: SOURCE
         superTypes: [
-          KtUsualClassType:
-            annotationsList: []
-            ownTypeArguments: [
-              KtUsualClassType:
-                annotationsList: []
-                ownTypeArguments: []
+          KaUsualClassType:
+            annotations: []
+            typeArguments: [
+              KaUsualClassType:
+                annotations: []
+                typeArguments: []
                 type: test/Base.NestedFromClass
             ]
             type: test/Base<test/Base.NestedFromClass>

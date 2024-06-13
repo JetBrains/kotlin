@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 //KT-4420 Type inference with type projections
 
 class Foo<T>

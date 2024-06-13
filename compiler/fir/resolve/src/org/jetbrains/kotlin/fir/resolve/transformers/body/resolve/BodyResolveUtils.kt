@@ -101,7 +101,7 @@ fun FirBlock.writeResultType(session: FirSession) {
     resultType = resultExpression?.coneTypeOrNull ?: session.builtinTypes.unitType.type
 }
 
-fun ConstantValueKind<*>.expectedConeType(session: FirSession): ConeKotlinType {
+fun ConstantValueKind.expectedConeType(session: FirSession): ConeKotlinType {
     fun constructLiteralType(classId: ClassId, isNullable: Boolean = false): ConeKotlinType {
         val symbol = session.symbolProvider.getClassLikeSymbolByClassId(classId)
             ?: return ConeErrorType(ConeSimpleDiagnostic("Missing stdlib class: $classId", DiagnosticKind.MissingStdlibClass))
@@ -127,5 +127,11 @@ fun ConstantValueKind<*>.expectedConeType(session: FirSession): ConeKotlinType {
         ConstantValueKind.IntegerLiteral -> constructLiteralType(StandardClassIds.Int)
         ConstantValueKind.UnsignedIntegerLiteral -> constructLiteralType(StandardClassIds.UInt)
         ConstantValueKind.Error -> error("Unexpected error ConstantValueKind")
+    }
+}
+
+fun FirWhenExpression.replaceReturnTypeIfNotExhaustive(session: FirSession) {
+    if (!isProperlyExhaustive && !usedAsExpression) {
+        resultType = session.builtinTypes.unitType.type
     }
 }

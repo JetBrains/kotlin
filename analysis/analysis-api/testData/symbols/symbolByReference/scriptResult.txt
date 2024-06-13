@@ -1,11 +1,11 @@
-KtKotlinPropertySymbol:
-  annotationsList: []
+KaKotlinPropertySymbol:
+  annotations: []
   backingFieldSymbol: null
-  callableIdIfNonLocal: /$$result
+  callableId: /$$result
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
-    annotationsList: []
-    callableIdIfNonLocal: null
+  getter: KaPropertyGetterSymbol:
+    annotations: []
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -16,15 +16,15 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: PLUGIN
     receiverParameter: null
-    returnType: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
-    getContainingFileSymbol: KtFileSymbol(scriptResult.kts)
+    getContainingFileSymbol: KaFileSymbol(scriptResult.kts)
     getContainingJvmClassName: null
     getContainingModule: KtScriptModule "Script scriptResult.kts"
     deprecationStatus: null
@@ -46,15 +46,15 @@ KtKotlinPropertySymbol:
   name: $$result
   origin: PLUGIN
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Int
   setter: null
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(scriptResult.kts)
+  getContainingFileSymbol: KaFileSymbol(scriptResult.kts)
   getContainingJvmClassName: null
   getContainingModule: KtScriptModule "Script scriptResult.kts"
   deprecationStatus: null

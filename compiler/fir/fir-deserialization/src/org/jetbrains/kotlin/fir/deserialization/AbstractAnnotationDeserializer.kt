@@ -172,7 +172,7 @@ abstract class AbstractAnnotationDeserializer(
 
     abstract fun loadTypeAnnotations(typeProto: ProtoBuf.Type, nameResolver: NameResolver): List<FirAnnotation>
 
-    open fun loadTypeParameterAnnotations(typeParameterProto: ProtoBuf.TypeParameter, nameResolver: NameResolver) =
+    open fun loadTypeParameterAnnotations(typeParameterProto: ProtoBuf.TypeParameter, nameResolver: NameResolver): List<FirAnnotation> =
         emptyList<FirAnnotation>()
 
     fun deserializeAnnotation(
@@ -294,7 +294,7 @@ abstract class AbstractAnnotationDeserializer(
         }
     }
 
-    private fun <T> const(kind: ConstantValueKind<T>, value: T, typeRef: FirResolvedTypeRef): FirLiteralExpression<T> {
+    private fun const(kind: ConstantValueKind, value: Any?, typeRef: FirResolvedTypeRef): FirLiteralExpression {
         return buildLiteralExpression(null, kind, value, setType = true).apply { this.replaceConeTypeOrNull(typeRef.coneType) }
     }
 }

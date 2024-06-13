@@ -5,17 +5,19 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.impl
 
-import org.jetbrains.kotlin.analysis.api.renderer.base.KtKeywordsRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.KtDeclarationModifiersRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.base.KaKeywordsRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.KaDeclarationModifiersRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers.*
 
-public object KtDeclarationModifiersRendererForSource {
-    public val NO_IMPLICIT_MODIFIERS: KtDeclarationModifiersRenderer = KtDeclarationModifiersRenderer {
-        modifierListRenderer = KtModifierListRenderer.AS_LIST
-        modifiersSorter = KtModifiersSorter.CANONICAL
-        modalityProvider = KtRendererModalityModifierProvider.WITHOUT_IMPLICIT_MODALITY
-        visibilityProvider = KtRendererVisibilityModifierProvider.NO_IMPLICIT_VISIBILITY
-        otherModifiersProvider = KtRendererOtherModifiersProvider.ALL
-        keywordsRenderer = KtKeywordsRenderer.AS_WORD
+public object KaDeclarationModifiersRendererForSource {
+    public val NO_IMPLICIT_MODIFIERS: KaDeclarationModifiersRenderer = KaDeclarationModifiersRenderer {
+        modifierListRenderer = KaModifierListRenderer.AS_LIST
+        modifiersSorter = KaModifiersSorter.CANONICAL
+        modalityProvider = KaRendererModalityModifierProvider.WITHOUT_IMPLICIT_MODALITY
+        visibilityProvider = KaRendererVisibilityModifierProvider.NO_IMPLICIT_VISIBILITY
+        otherModifiersProvider = KaRendererOtherModifiersProvider.ALL
+        keywordsRenderer = KaKeywordsRenderer.AS_WORD
     }
 }
+
+public typealias KtDeclarationModifiersRendererForSource = KaDeclarationModifiersRendererForSource

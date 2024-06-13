@@ -7,22 +7,24 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFunction
 
-public abstract class KtExpressionTypeProvider : KtAnalysisSessionComponent() {
-    public abstract fun getKtExpressionType(expression: KtExpression): KtType?
-    public abstract fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KtType
-    public abstract fun getFunctionalTypeForKtFunction(declaration: KtFunction): KtType
+public abstract class KaExpressionTypeProvider : KaSessionComponent() {
+    public abstract fun getKtExpressionType(expression: KtExpression): KaType?
+    public abstract fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KaType
+    public abstract fun getFunctionalTypeForKtFunction(declaration: KtFunction): KaType
 
-    public abstract fun getExpectedType(expression: PsiElement): KtType?
+    public abstract fun getExpectedType(expression: PsiElement): KaType?
     public abstract fun isDefinitelyNull(expression: KtExpression): Boolean
     public abstract fun isDefinitelyNotNull(expression: KtExpression): Boolean
 }
 
-public interface KtExpressionTypeProviderMixIn : KtAnalysisSessionMixIn {
+public typealias KtExpressionTypeProvider = KaExpressionTypeProvider
+
+public interface KaExpressionTypeProviderMixIn : KaSessionMixIn {
     /**
      * Get type of given expression.
      *
@@ -31,18 +33,22 @@ public interface KtExpressionTypeProviderMixIn : KtAnalysisSessionMixIn {
      * - `null` for [KtExpression] inside pacakges and import declarations;
      * - `Unit` type for statements;
      */
-    public fun KtExpression.getKtType(): KtType? =
+    public fun KtExpression.getKaType(): KaType? =
         withValidityAssertion { analysisSession.expressionTypeProvider.getKtExpressionType(this) }
 
+    public fun KtExpression.getKtType(): KaType? = getKaType()
+
     /**
-     * Returns the return type of the given [KtDeclaration] as [KtType].
+     * Returns the return type of the given [KtDeclaration] as [KaType].
      *
      * IMPORTANT: For `vararg foo: T` parameter returns full `Array<out T>` type (unlike
-     * [KtValueParameterSymbol.returnType][org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol.returnType],
+     * [KaValueParameterSymbol.returnType][org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol.returnType],
      * which returns `T`).
      */
-    public fun KtDeclaration.getReturnKtType(): KtType =
+    public fun KtDeclaration.getReturnKaType(): KaType =
         withValidityAssertion { analysisSession.expressionTypeProvider.getReturnTypeForKtDeclaration(this) }
+
+    public fun KtDeclaration.getReturnKtType(): KaType = getReturnKaType()
 
     /**
      * Returns the functional type of the given [KtFunction].
@@ -54,14 +60,14 @@ public interface KtExpressionTypeProviderMixIn : KtAnalysisSessionMixIn {
      * Depending on the function's attributes, such as `suspend` or reflective access, different functional type,
      * such as `SuspendFunction`, `KFunction`, or `KSuspendFunction`, will be constructed.
      */
-    public fun KtFunction.getFunctionalType(): KtType =
+    public fun KtFunction.getFunctionalType(): KaType =
         withValidityAssertion { analysisSession.expressionTypeProvider.getFunctionalTypeForKtFunction(this) }
 
     /**
-     * Returns the expected [KtType] of this [PsiElement] if it is an expression. The returned value should not be a
-     * [org.jetbrains.kotlin.analysis.api.types.KtErrorType].
+     * Returns the expected [KaType] of this [PsiElement] if it is an expression. The returned value should not be a
+     * [org.jetbrains.kotlin.analysis.api.types.KaErrorType].
      */
-    public fun PsiElement.getExpectedType(): KtType? =
+    public fun PsiElement.getExpectedType(): KaType? =
         withValidityAssertion { analysisSession.expressionTypeProvider.getExpectedType(this) }
 
     /**
@@ -95,3 +101,5 @@ public interface KtExpressionTypeProviderMixIn : KtAnalysisSessionMixIn {
     public fun KtExpression.isDefinitelyNotNull(): Boolean =
         withValidityAssertion { analysisSession.expressionTypeProvider.isDefinitelyNotNull(this) }
 }
+
+public typealias KtExpressionTypeProviderMixIn = KaExpressionTypeProviderMixIn

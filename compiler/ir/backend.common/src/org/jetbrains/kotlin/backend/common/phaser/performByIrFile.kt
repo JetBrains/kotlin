@@ -32,7 +32,7 @@ fun <Context : CommonBackendContext> performByIrFile(
 ): SameTypeNamedCompilerPhase<Context, IrModuleFragment> =
     SameTypeNamedCompilerPhase(
         name, description, emptySet(), PerformByIrFilePhase(lower, copyBeforeLowering), emptySet(), emptySet(), emptySet(),
-        setOf(defaultDumper), nlevels = 1,
+        setOf(getIrDumper()), nlevels = 1,
     )
 
 private class PerformByIrFilePhase<Context : CommonBackendContext>(

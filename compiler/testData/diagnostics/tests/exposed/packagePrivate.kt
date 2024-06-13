@@ -1,9 +1,14 @@
 // JAVAC_EXPECTED_FILE
-// FILE: test/My.java
+
+// FILE: test/Internal.java
 
 package test;
 
 class Internal {}
+
+// FILE: test/My.java
+
+package test;
 
 public class My {
     static public Internal foo() { return new Internal(); }

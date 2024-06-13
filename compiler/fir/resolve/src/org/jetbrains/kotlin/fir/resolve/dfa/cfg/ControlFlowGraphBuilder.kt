@@ -1050,7 +1050,7 @@ class ControlFlowGraphBuilder {
         return exitNode
     }
 
-    private val FirExpression.booleanLiteralValue: Boolean? get() = (this as? FirLiteralExpression<*>)?.value as? Boolean?
+    private val FirExpression.booleanLiteralValue: Boolean? get() = (this as? FirLiteralExpression)?.value as? Boolean?
 
     // ----------------------------------- Try-catch-finally -----------------------------------
 
@@ -1333,7 +1333,7 @@ class ControlFlowGraphBuilder {
         return node
     }
 
-    fun exitLiteralExpression(literalExpression: FirLiteralExpression<*>): LiteralExpressionNode {
+    fun exitLiteralExpression(literalExpression: FirLiteralExpression): LiteralExpressionNode {
         return createLiteralExpressionNode(literalExpression).also { addNewSimpleNode(it) }
     }
 

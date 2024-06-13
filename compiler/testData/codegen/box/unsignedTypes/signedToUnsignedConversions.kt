@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// !LANGUAGE: +ImplicitSignedToUnsignedIntegerConversion
+// LANGUAGE: +ImplicitSignedToUnsignedIntegerConversion
 // IGNORE_BACKEND_K1: JVM
 // FILE: signedToUnsignedConversions_annotation.kt
 

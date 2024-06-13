@@ -27,13 +27,15 @@ import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 
-internal const val TEST_ROOT = "plugins/compose/compiler-hosted/integration-tests"
+internal const val TEST_RESOURCES_ROOT = "plugins/compose/compiler-hosted/integration-tests/src/jvmTest/resources"
 
 abstract class AbstractIrTransformTest(useFir: Boolean) : AbstractCodegenTest(useFir) {
     override fun CompilerConfiguration.updateConfiguration() {
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, true)
-        put(ComposeConfiguration.STRONG_SKIPPING_ENABLED_KEY, true)
-        put(ComposeConfiguration.NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_KEY, true)
+        put(ComposeConfiguration.FEATURE_FLAGS, listOf(
+            FeatureFlag.StrongSkipping.featureName,
+            FeatureFlag.OptimizeNonSkippingGroups.featureName,
+        ))
     }
 
     @JvmField
@@ -42,8 +44,7 @@ abstract class AbstractIrTransformTest(useFir: Boolean) : AbstractCodegenTest(us
 
     @JvmField
     @Rule
-    val goldenTransformRule =
-        GoldenTransformRule("$TEST_ROOT/src/test/resources/golden")
+    val goldenTransformRule = GoldenTransformRule()
 
     fun verifyCrossModuleComposeIrTransform(
         @Language("kotlin")

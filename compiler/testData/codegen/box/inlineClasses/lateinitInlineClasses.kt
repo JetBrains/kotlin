@@ -2,6 +2,9 @@
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses, +InlineLateinit
 
+// DISABLE_IR_VISIBILITY_CHECKS: NATIVE, WASM
+// ^ UninitializedPropertyAccessException is internal on Native and Wasm
+
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 
 OPTIONAL_JVM_INLINE_ANNOTATION

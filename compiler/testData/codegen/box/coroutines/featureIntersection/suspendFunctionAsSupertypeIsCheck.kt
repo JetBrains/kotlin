@@ -1,7 +1,7 @@
 // WITH_STDLIB
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND: JVM
-// !LANGUAGE: +SuspendFunctionAsSupertype
+// LANGUAGE: +SuspendFunctionAsSupertype
 
 import kotlin.coroutines.*
 

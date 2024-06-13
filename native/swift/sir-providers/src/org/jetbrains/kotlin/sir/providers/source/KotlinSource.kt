@@ -5,11 +5,17 @@
 
 package org.jetbrains.kotlin.sir.providers.source
 
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.sir.SirOrigin
+import org.jetbrains.kotlin.sir.SirParameter
 
 public data class KotlinSource(
-    val symbol: KtSymbol,
+    val symbol: KaSymbol,
 ) : SirOrigin.Foreign.SourceCode
 
 public class KotlinRuntimeElement : SirOrigin.Foreign.SourceCode
+
+public sealed class KotlinParameterOrigin : SirParameter.Origin {
+    public class ValueParameter(public val parameter: KaValueParameterSymbol) : KotlinParameterOrigin()
+}

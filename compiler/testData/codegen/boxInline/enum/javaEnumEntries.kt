@@ -1,7 +1,7 @@
 // TARGET_BACKEND: JVM_IR
 // IGNORE_BACKEND_MULTI_MODULE: JVM_MULTI_MODULE_IR_AGAINST_OLD
 // NO_CHECK_LAMBDA_INLINING
-// !OPT_IN: kotlin.ExperimentalStdlibApi
+// OPT_IN: kotlin.ExperimentalStdlibApi
 // WITH_STDLIB
 // FILE: test/Z.java
 

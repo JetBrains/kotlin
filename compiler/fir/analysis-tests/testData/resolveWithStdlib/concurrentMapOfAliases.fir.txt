@@ -5,14 +5,14 @@ FILE: concurrentMapOfAliases.kt
             super<R|kotlin/Any|>()
         }
 
-        private final val foo: R|java/util/concurrent/ConcurrentHashMap<kotlin/String, kotlin/CharSequence>| = Q|java/util/concurrent|.R|java/util/concurrent/ConcurrentHashMap.ConcurrentHashMap|<R|kotlin/String|, R|kotlin/CharSequence|>()
-            private get(): R|java/util/concurrent/ConcurrentHashMap<kotlin/String, kotlin/CharSequence>|
+        private final val foo: R|java/util/concurrent/ConcurrentHashMap<kotlin/String, {MyAlias=} kotlin/CharSequence>| = Q|java/util/concurrent|.R|java/util/concurrent/ConcurrentHashMap.ConcurrentHashMap|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/String) kotlin/String!|, R|{MyAlias=} ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType={MyAlias=} kotlin/CharSequence) kotlin/CharSequence!|>()
+            private get(): R|java/util/concurrent/ConcurrentHashMap<kotlin/String, {MyAlias=} kotlin/CharSequence>|
 
         private final fun bar(): R|kotlin/Unit| {
-            this@R|/A|.R|/A.foo|.R|SubstitutionOverride<java/util/concurrent/ConcurrentHashMap.get: R|@EnhancedNullability kotlin/CharSequence?|>|(String(dd))?.{ (this@R|/A|, $subj$).R|/A.baz|() }
+            this@R|/A|.R|/A.foo|.R|SubstitutionOverride<java/util/concurrent/ConcurrentHashMap.get: R|@EnhancedNullability {MyAlias?=} kotlin/CharSequence?|>|(String(dd))?.{ (this@R|/A|, $subj$).R|/A.baz|() }
         }
 
-        private final fun R|MyAlias|.baz(): R|kotlin/Unit| {
+        private final fun R|{MyAlias=} kotlin/CharSequence|.baz(): R|kotlin/Unit| {
         }
 
     }

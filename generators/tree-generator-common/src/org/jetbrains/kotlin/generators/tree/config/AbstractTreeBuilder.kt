@@ -63,7 +63,7 @@ abstract class AbstractElementConfigurator<Element, Field, Category>
             del.element!!.apply {
                 initializer()
                 if (elementParents.isEmpty() && this != rootElement) {
-                    elementParents.add(ElementRef(rootElement))
+                    addParent(rootElement.toRef())
                 }
             }
         }
@@ -81,7 +81,7 @@ abstract class AbstractElementConfigurator<Element, Field, Category>
     }
 
     protected fun Element.parent(type: ElementOrRef<Element>) {
-        elementParents.add(ElementRef(type.element, type.args, type.nullable))
+        addParent(type.toRef())
     }
 
     protected fun param(name: String, vararg bounds: TypeRef, variance: Variance = Variance.INVARIANT): TypeVariable {

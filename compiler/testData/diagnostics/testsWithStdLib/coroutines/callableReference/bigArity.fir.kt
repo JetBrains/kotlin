@@ -1,5 +1,5 @@
-// !LANGUAGE: -FunctionTypesWithBigArity
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: -FunctionTypesWithBigArity
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // SKIP_TXT
 
 class A {

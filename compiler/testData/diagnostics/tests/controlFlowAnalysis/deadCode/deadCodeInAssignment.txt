@@ -1,6 +1,17 @@
 package
 
 public fun testAssignment(): kotlin.Unit
+public fun testClassPropertyAssignment(/*0*/ foo: Foo): kotlin.Unit
+public fun testClassPropertyPlusAssign(/*0*/ foo: Foo): kotlin.Unit
 public fun testPlusAssign(): kotlin.Unit
 public fun testVariableDeclaration(): kotlin.Unit
 public fun todo(): kotlin.Nothing
+
+public final class Foo {
+    public constructor Foo()
+    public final var property: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

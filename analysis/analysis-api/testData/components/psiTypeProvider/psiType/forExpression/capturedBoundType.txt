@@ -1,4 +1,4 @@
-KtType: T
+KaType: T
 asPsiType(allowErrorTypes=false, mode=DEFAULT, isAnnotationMethod=false):
   PsiType: null
 

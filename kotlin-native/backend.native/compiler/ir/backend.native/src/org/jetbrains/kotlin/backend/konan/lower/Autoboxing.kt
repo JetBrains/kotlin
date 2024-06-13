@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
+import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.AbstractValueUsageTransformer
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.utils.atMostOne
-import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.hasCCallAnnotation
@@ -20,14 +19,14 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstantPrimitiveImpl
+import org.jetbrains.kotlin.ir.objcinterop.isObjCForwardDeclaration
+import org.jetbrains.kotlin.ir.objcinterop.isObjCMetaClass
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
 import org.jetbrains.kotlin.ir.transformStatement
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.isNullable
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
@@ -50,25 +49,41 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
         context.ir.symbols,
         context.irBuiltIns
 ) {
+    private val insertSafeCasts = context.config.genericSafeCasts
 
     // TODO: should we handle the cases when expression type
     // is not equal to e.g. called function return type?
 
-    override fun IrExpression.useInTypeOperator(operator: IrTypeOperator, typeOperand: IrType): IrExpression {
-        return if (operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT ||
-                   operator == IrTypeOperator.IMPLICIT_INTEGER_COERCION) {
-            this
-        } else {
+    override fun IrExpression.useInTypeOperator(operator: IrTypeOperator, typeOperand: IrType) = when {
+        operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT || operator == IrTypeOperator.IMPLICIT_INTEGER_COERCION -> this
+        insertSafeCasts && operator == IrTypeOperator.IMPLICIT_CAST -> {
+            if (typeOperand.isInlinedNative())
+                this.useAs(context.irBuiltIns.anyNType)
+                        .useAs(typeOperand)
+            else
+                this.useAs(typeOperand)
+        }
+        else -> {
             // Codegen expects the argument of type-checking operator to be an object reference:
             this.useAs(context.irBuiltIns.anyNType)
         }
     }
 
     private var currentFunction: IrFunction? = null
+    private val irBuilders = mutableListOf<DeclarationIrBuilder>()
+
+    override fun visitField(declaration: IrField): IrStatement {
+        irBuilders.push(context.createIrBuilder(declaration.symbol))
+        val result = super.visitField(declaration)
+        irBuilders.pop()
+        return result
+    }
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
         currentFunction = declaration
+        irBuilders.push(context.createIrBuilder(declaration.symbol))
         val result = super.visitFunction(declaration)
+        irBuilders.pop()
         currentFunction = null
         return result
     }
@@ -80,26 +95,29 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
     }
 
     override fun IrExpression.useAs(type: IrType): IrExpression {
+        return this.useAs(type, forceSkipTypeCheck = false)
+    }
+
+    private fun IrExpression.useAs(type: IrType, forceSkipTypeCheck: Boolean): IrExpression {
+        val skipTypeCheck = forceSkipTypeCheck || !insertSafeCasts || (this as? IrTypeOperatorCall)?.operator == IrTypeOperator.CAST
         val actualType = when (this) {
-            is IrCall -> {
-                if (this.symbol == symbols.reinterpret) this.getTypeArgument(1)!!
-                else this.callTarget.returnType
-            }
             is IrGetField -> this.symbol.owner.type
-
+            is IrCall -> when (this.symbol) {
+                symbols.reinterpret -> this.getTypeArgument(1)!!
+                else -> this.callTarget.returnType
+            }
             is IrTypeOperatorCall -> when (this.operator) {
-                IrTypeOperator.IMPLICIT_INTEGER_COERCION ->
-                    // TODO: is it a workaround for inconsistent IR?
-                    this.typeOperand
-
-                IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST -> context.irBuiltIns.anyNType
-
+                IrTypeOperator.CAST -> context.irBuiltIns.anyNType
+                IrTypeOperator.IMPLICIT_CAST -> if (insertSafeCasts) this.type else context.irBuiltIns.anyNType
                 else -> this.type
             }
-
             else -> this.type
         }
-        return this.adaptIfNecessary(actualType, type)
+        return if (this.type.isUnit() && !actualType.isUnit())
+            irBuilders.peek()!!.at(this).irImplicitCoercionToUnit(this)
+                    .adaptIfNecessary(actualType = irBuiltIns.unitType, type, skipTypeCheck)
+        else
+            this.adaptIfNecessary(actualType, type, skipTypeCheck)
     }
 
     private val IrFunctionAccessExpression.target: IrFunction get() = when (this) {
@@ -117,7 +135,9 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
         }
 
     override fun IrExpression.useAsDispatchReceiver(expression: IrFunctionAccessExpression): IrExpression {
-        return this.useAsArgument(expression.target.dispatchReceiverParameter!!)
+        val target = expression.target
+        return useAs(target.dispatchReceiverParameter!!.type,
+                forceSkipTypeCheck = currentFunction?.bridgeTarget == target) // A bridge cannot be called on an improper receiver.
     }
 
     override fun IrExpression.useAsExtensionReceiver(expression: IrFunctionAccessExpression): IrExpression {
@@ -126,14 +146,45 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
 
     override fun IrExpression.useAsValueArgument(expression: IrFunctionAccessExpression,
                                                  parameter: IrValueParameter): IrExpression {
-
         return this.useAsArgument(expression.target.valueParameters[parameter.index])
     }
 
-    private fun IrExpression.adaptIfNecessary(actualType: IrType, expectedType: IrType): IrExpression {
+    /**
+     * Performs an actual type check operation.
+     */
+    private fun IrExpression.checkedCast(actualType: IrType, expectedType: IrType) =
+            irBuilders.peek()!!.at(this).run {
+                val expression = irImplicitCast(this@checkedCast, actualType)
+                if (expectedType.isNullable())
+                    irAs(expression, expectedType)
+                else irAs(expression, expectedType.makeNullable())
+            }
+
+    private fun IrClass.canBeAssignedTo(expectedClass: IrClass) =
+            this.isNothing() || this.symbol.isSubtypeOfClass(expectedClass.symbol)
+
+    private fun IrExpression.adaptIfNecessary(actualType: IrType, expectedType: IrType, skipTypeCheck: Boolean = false): IrExpression {
         val conversion = context.getTypeConversion(actualType, expectedType)
         return if (conversion == null) {
-            this
+            val actualClass = actualType.classOrNull?.owner
+            val erasedExpectedType = expectedType.erasure()
+            val erasedExpectedClass = erasedExpectedType.classOrFail.owner
+            return when {
+                actualType.makeNotNull() == expectedType.makeNotNull() -> this
+                expectedType.isUnit() ->
+                    irBuilders.peek()!!.at(this).irImplicitCoercionToUnit(this)
+                insertSafeCasts && !skipTypeCheck
+                        // For type parameters, actualClass is null, and we
+                        // conservatively insert type check for them (due to unsafe casts).
+                        && actualClass?.canBeAssignedTo(erasedExpectedType.getClass()!!) != true
+                        && actualType.getInlinedClassNative() == null
+                        && !erasedExpectedClass.isObjCForwardDeclaration()
+                        && !erasedExpectedClass.isObjCMetaClass() // See KT-65260 for details.
+                -> {
+                    this.checkedCast(actualType, erasedExpectedType)
+                }
+                else -> this
+            }
         } else {
             when (this) {
                 is IrConst<*> -> IrConstantPrimitiveImpl(this.startOffset, this.endOffset, this)
@@ -145,12 +196,12 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
                 return it
             }
             val parameter = conversion.owner.valueParameters.single()
-            val argument = this.uncheckedCast(parameter.type)
+            val argument = if (insertSafeCasts && !skipTypeCheck && expectedType.isInlinedNative())
+                this.checkedCast(actualType, conversion.owner.returnType)
+            else this
 
-            IrCallImpl(startOffset, endOffset, conversion.owner.returnType, conversion,
-                    conversion.owner.typeParameters.size, conversion.owner.valueParameters.size).apply {
-                this.putValueArgument(parameter.index, argument)
-            }.uncheckedCast(this.type) // Try not to bring new type incompatibilities.
+            irBuilders.peek()!!.at(this)
+                    .irCall(conversion).apply { this.putValueArgument(parameter.index, argument) }
         }
     }
 
@@ -158,15 +209,6 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
         expression.transformChildrenVoid()
         assert(expression.getArgumentsWithIr().isEmpty())
         return expression
-    }
-
-    /**
-     * Casts this expression to `type` without changing its representation in generated code.
-     */
-    @Suppress("UNUSED_PARAMETER")
-    private fun IrExpression.uncheckedCast(type: IrType): IrExpression {
-        // TODO: apply some cast if types are incompatible; not required currently.
-        return this
     }
 
     override fun visitCall(expression: IrCall): IrExpression {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -28,7 +28,8 @@ import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.kotlin.test.services.configuration.getDependencies
+import org.jetbrains.kotlin.test.services.configuration.getFriendDependencies
 
 class FirJsKlibBackendFacade(
     testServices: TestServices,
@@ -86,10 +87,8 @@ class FirJsKlibBackendFacade(
             inputArtifact.irModuleFragment.descriptor.builtIns,
             packageAccessHandler = null,
             lookupTracker = LookupTracker.DO_NOTHING
-        )
-        // TODO: find out why it must be so weird
-        moduleDescriptor.safeAs<ModuleDescriptorImpl>()?.let {
-            it.setDependencies(inputArtifact.irModuleFragment.descriptor.allDependencyModules.filterIsInstance<ModuleDescriptorImpl>() + it)
+        ).apply {
+            setDependencies(inputArtifact.regularDependencyModules + this, getFriendDependencies(module, testServices))
         }
 
         testServices.moduleDescriptorProvider.replaceModuleDescriptorForModule(module, moduleDescriptor)
@@ -100,4 +99,15 @@ class FirJsKlibBackendFacade(
 
         return BinaryArtifacts.KLib(outputFile, inputArtifact.diagnosticReporter)
     }
+
+
+    /**
+     * Note: If it is implemented the same way as [getFriendDependencies] (i.e., get regular
+     * dependencies through [getDependencies] call), then important dependencies which do
+     * not exist in the form of [TestModule] such as stdlib & stdlib-test would not be included here.
+     */
+    private val IrBackendInput.regularDependencyModules: List<ModuleDescriptorImpl>
+        get() = irModuleFragment.descriptor.allDependencyModules
+            .filterIsInstance<ModuleDescriptorImpl>()
+
 }

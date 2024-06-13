@@ -1,6 +1,6 @@
-// !OPT_IN: kotlin.js.ExperimentalJsExport
-// !RENDER_DIAGNOSTICS_MESSAGES
-// !DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
+// OPT_IN: kotlin.js.ExperimentalJsExport
+// RENDER_DIAGNOSTICS_MESSAGES
+// DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
 
 package foo
 

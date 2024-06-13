@@ -15,9 +15,11 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.backend.generators.FirBasedFakeOverrideGenerator
 import org.jetbrains.kotlin.fir.backend.generators.addDeclarationToParent
 import org.jetbrains.kotlin.fir.backend.generators.setParent
+import org.jetbrains.kotlin.fir.backend.utils.conversionData
+import org.jetbrains.kotlin.fir.backend.utils.createFilesWithBuiltinsSyntheticDeclarationsIfNeeded
+import org.jetbrains.kotlin.fir.backend.utils.createFilesWithGeneratedDeclarations
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
@@ -30,7 +32,6 @@ import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.generatedMembers
 import org.jetbrains.kotlin.fir.extensions.generatedNestedClassifiers
 import org.jetbrains.kotlin.fir.java.javaElementFinder
-import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.references.toResolvedValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.fir.types.resolvedType
@@ -66,10 +67,6 @@ class Fir2IrConverter(
 
     private val generatorExtensions = session.extensionService.declarationGenerators
 
-    @FirBasedFakeOverrideGenerator
-    private var wereSourcesFakeOverridesBound = false
-    private val postponedDeclarationsForFakeOverridesBinding = mutableListOf<IrDeclaration>()
-
     private fun runSourcesConversion(
         allFirFiles: List<FirFile>,
         irModuleFragment: IrModuleFragmentImpl,
@@ -90,24 +87,11 @@ class Fir2IrConverter(
         for (firFile in allFirFiles) {
             processFileAndClassMembers(firFile)
         }
-        //   4. Override processing which sets overridden symbols for everything inside non-local regular classes
-        @OptIn(FirBasedFakeOverrideGenerator::class)
-        if (configuration.useFirBasedFakeOverrideGenerator) {
-            for (firFile in allFirFiles) {
-                bindFakeOverridesInFile(firFile)
-            }
 
-            wereSourcesFakeOverridesBound = true
-            fakeOverrideGenerator.bindOverriddenSymbols(postponedDeclarationsForFakeOverridesBinding)
-            postponedDeclarationsForFakeOverridesBinding.clear()
-        } else {
-            require(postponedDeclarationsForFakeOverridesBinding.isEmpty())
-        }
-
-        //   Do (3) and (4) for local classes encountered during (3)
+        //   Do (3) for local classes encountered during (3)
         classifierStorage.processMembersOfClassesCreatedOnTheFly()
 
-        //   5. Body processing
+        //   4. Body processing
         //   If we encounter local class / anonymous object here, then we perform all (1)-(5) stages immediately
         delegatedMemberGenerator.generateBodies()
         for (firFile in allFirFiles) {
@@ -116,29 +100,10 @@ class Fir2IrConverter(
             }
         }
 
-        if (
-            configuration.useFirBasedFakeOverrideGenerator &&
-            c.session.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
-        ) {
-            // See the comment to generateUnboundFakeOverrides function itself
-            @OptIn(LeakedDeclarationCaches::class)
-            declarationStorage.generateUnboundFakeOverrides()
-        }
-
         if (configuration.allowNonCachedDeclarations) {
             // See the comment to fillUnboundSymbols function itself
             @OptIn(LeakedDeclarationCaches::class)
             declarationStorage.fillUnboundSymbols()
-        }
-    }
-
-    @FirBasedFakeOverrideGenerator
-    fun bindFakeOverridesOrPostpone(declarations: List<IrDeclaration>) {
-        // Do not run binding for lazy classes until all sources declarations are processed
-        if (wereSourcesFakeOverridesBound) {
-            fakeOverrideGenerator.bindOverriddenSymbols(declarations)
-        } else {
-            postponedDeclarationsForFakeOverridesBinding += declarations
         }
     }
 
@@ -155,7 +120,6 @@ class Fir2IrConverter(
         conversionScope.withContainingFirClass(klass) {
             processClassAndNestedClassHeaders(klass)
             processClassMembers(klass, irClass)
-            bindFakeOverridesInClass(irClass)
         }
         return irClass
     }
@@ -283,12 +247,6 @@ class Fir2IrConverter(
             }
             declarationStorage.leaveScope(irConstructor.symbol)
         }
-
-        if (configuration.useFirBasedFakeOverrideGenerator) {
-            @OptIn(FirBasedFakeOverrideGenerator::class)
-            fakeOverrideGenerator.computeFakeOverrides(klass, irClass, allDeclarations)
-        }
-
         return irClass
     }
 
@@ -317,7 +275,7 @@ class Fir2IrConverter(
                 body = irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET).apply {
                     statements += IrDelegatingConstructorCallImpl(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                        irBuiltIns.unitType,
+                        builtins.unitType,
                         irAnyConstructor,
                         typeArgumentsCount = 0,
                         valueArgumentsCount = 0
@@ -328,7 +286,7 @@ class Fir2IrConverter(
 
         IrSimpleFunctionSymbolImpl().let { irSymbol ->
             val lastStatement = codeFragment.block.statements.lastOrNull()
-            val returnType = (lastStatement as? FirExpression)?.resolvedType?.toIrType(c) ?: irBuiltIns.unitType
+            val returnType = (lastStatement as? FirExpression)?.resolvedType?.toIrType(c) ?: builtins.unitType
 
             irFactory.createSimpleFunction(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
@@ -374,32 +332,6 @@ class Fir2IrConverter(
 
         declarationStorage.leaveScope(irClass.symbol)
         return irClass
-    }
-
-    @FirBasedFakeOverrideGenerator
-    private fun bindFakeOverridesInFile(file: FirFile) {
-        val irFile = declarationStorage.getIrFile(file)
-        // `irFile` definitely is not a lazy class
-        @OptIn(UnsafeDuringIrConstructionAPI::class)
-        for (irDeclaration in irFile.declarations) {
-            if (irDeclaration is IrClass) {
-                bindFakeOverridesInClass(irDeclaration)
-            }
-        }
-    }
-
-    // `irClass` is a source class and definitely is not a lazy class
-    @OptIn(UnsafeDuringIrConstructionAPI::class, FirBasedFakeOverrideGenerator::class)
-    fun bindFakeOverridesInClass(klass: IrClass) {
-        if (!configuration.useFirBasedFakeOverrideGenerator) return
-        require(klass !is Fir2IrLazyClass)
-        fakeOverrideGenerator.bindOverriddenSymbols(klass.declarations)
-        delegatedMemberGenerator.bindDelegatedMembersOverriddenSymbols(klass)
-        for (irDeclaration in klass.declarations) {
-            if (irDeclaration is IrClass) {
-                bindFakeOverridesInClass(irDeclaration)
-            }
-        }
     }
 
     // `irClass` is a source class and definitely is not a lazy class
@@ -568,7 +500,7 @@ class Fir2IrConverter(
                     delegateFieldToPropertyMap?.remove(declaration)?.let { delegateFields ->
                         val backingField = irProperty.backingField!!
                         for (delegateField in delegateFields) {
-                            declarationStorage.recordDelegateFieldMappedToBackingField(delegateField, backingField.symbol)
+                            declarationStorage.recordSupertypeDelegateFieldMappedToBackingField(delegateField, backingField.symbol)
                             delegatedMemberGenerator.generateWithBodiesIfNeeded(
                                 firField = delegateField,
                                 irField = backingField,
@@ -588,7 +520,7 @@ class Fir2IrConverter(
                 require(parent is IrClass)
                 val correspondingClassProperty = declaration.findCorrespondingDelegateProperty(containingClass)
                 if (correspondingClassProperty == null || correspondingClassProperty.isVar) {
-                    val irField = declarationStorage.createDelegateIrField(declaration, parent)
+                    val irField = declarationStorage.createSupertypeDelegateIrField(declaration, parent)
                     delegatedMemberGenerator.generateWithBodiesIfNeeded(declaration, irField, containingClass, parent)
                 } else {
                     delegateFieldToPropertyMap.putValue(correspondingClassProperty, declaration)
@@ -706,6 +638,7 @@ class Fir2IrConverter(
                     dep.collectDependsOnRecursive(set)
                 }
             }
+
             val moduleData = session.moduleData
             val dependsOnTransitive = buildSet {
                 moduleData.collectDependsOnRecursive(this)
@@ -714,14 +647,15 @@ class Fir2IrConverter(
             return dependsOnTransitive.associate { it.friendsMapName() to friendNames }
         }
 
-        fun generateIrModuleFragment(components: Fir2IrComponentsStorage, firFiles: List<FirFile>): IrModuleFragment {
+        fun generateIrModuleFragment(components: Fir2IrComponentsStorage, firFiles: List<FirFile>): IrModuleFragmentImpl {
             val session = components.session
 
             session.lazyDeclarationResolver.disableLazyResolveContractChecks()
 
-            val irModuleFragment = IrModuleFragmentImpl(components.moduleDescriptor, components.irBuiltIns)
+            val irModuleFragment = IrModuleFragmentImpl(components.moduleDescriptor)
 
             val allFirFiles = buildList {
+                addAll(session.createFilesWithBuiltinsSyntheticDeclarationsIfNeeded())
                 addAll(firFiles)
                 val generatedFiles = session.createFilesWithGeneratedDeclarations()
                 addAll(generatedFiles)

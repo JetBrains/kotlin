@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER
-// !LANGUAGE: +MultiPlatformProjects
+// DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER
+// LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common
 // FILE: common.kt

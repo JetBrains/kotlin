@@ -18,6 +18,7 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower.decoys
 
+import androidx.compose.compiler.plugins.kotlin.FeatureFlags
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.lower.ComposerParamTransformer
@@ -60,15 +61,22 @@ class SubstituteDecoyCallsTransformer(
     signatureBuilder: IdSignatureFactory,
     stabilityInferencer: StabilityInferencer,
     metrics: ModuleMetrics,
+    featureFlags: FeatureFlags,
 ) : AbstractDecoysLowering(
     pluginContext = pluginContext,
     symbolRemapper = symbolRemapper,
     metrics = metrics,
     stabilityInferencer = stabilityInferencer,
-    signatureBuilder = signatureBuilder
+    signatureBuilder = signatureBuilder,
+    featureFlags = featureFlags,
 ), ModuleLoweringPass {
     private val decoysTransformer = CreateDecoysTransformer(
-        pluginContext, symbolRemapper, signatureBuilder, stabilityInferencer, metrics
+        pluginContext,
+        symbolRemapper,
+        signatureBuilder,
+        stabilityInferencer,
+        metrics,
+        featureFlags,
     )
     private val lazyDeclarationsCache = mutableMapOf<IrFunctionSymbol, IrFunction>()
 
@@ -241,7 +249,8 @@ class SubstituteDecoyCallsTransformer(
 
     private val addComposerParameterInplace = object : IrElementTransformerVoid() {
         private val composerParamTransformer = ComposerParamTransformer(
-            context, symbolRemapper, stabilityInferencer, true, metrics
+            context, symbolRemapper, stabilityInferencer, true, metrics, featureFlags
+
         )
         override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
             return composerParamTransformer.visitSimpleFunction(declaration)

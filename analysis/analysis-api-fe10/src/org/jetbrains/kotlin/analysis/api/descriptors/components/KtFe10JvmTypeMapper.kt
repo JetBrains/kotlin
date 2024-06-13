@@ -5,31 +5,31 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
-import org.jetbrains.kotlin.analysis.api.components.KtJvmTypeMapper
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
-import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
-import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
-import org.jetbrains.kotlin.analysis.api.descriptors.utils.KtFe10JvmTypeMapperContext
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.components.KaJvmTypeMapper
+import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
+import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
+import org.jetbrains.kotlin.analysis.api.descriptors.utils.KaFe10JvmTypeMapperContext
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.org.objectweb.asm.Type
 
-internal class KtFe10JvmTypeMapper(
-    override val analysisSession: KtFe10AnalysisSession
-) : KtJvmTypeMapper(), Fe10KtAnalysisSessionComponent {
-    override val token: KtLifetimeToken
+internal class KaFe10JvmTypeMapper(
+    override val analysisSession: KaFe10Session
+) : KaJvmTypeMapper(), KaFe10SessionComponent {
+    override val token: KaLifetimeToken
         get() = analysisSession.token
 
-    private val typeMapper by lazy { KtFe10JvmTypeMapperContext(analysisContext.resolveSession) }
+    private val typeMapper by lazy { KaFe10JvmTypeMapperContext(analysisContext.resolveSession) }
 
-    override fun mapTypeToJvmType(type: KtType, mode: TypeMappingMode): Type {
-        val kotlinType = (type as KtFe10Type).fe10Type
+    override fun mapTypeToJvmType(type: KaType, mode: TypeMappingMode): Type {
+        val kotlinType = (type as KaFe10Type).fe10Type
         return typeMapper.mapType(kotlinType, mode)
     }
 
-    override fun isPrimitiveBacked(type: KtType): Boolean {
-        val kotlinType = (type as KtFe10Type).fe10Type
+    override fun isPrimitiveBacked(type: KaType): Boolean {
+        val kotlinType = (type as KaFe10Type).fe10Type
         return typeMapper.isPrimitiveBacked(kotlinType)
     }
 }

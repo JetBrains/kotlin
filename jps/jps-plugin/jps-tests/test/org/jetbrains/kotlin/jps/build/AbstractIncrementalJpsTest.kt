@@ -19,8 +19,6 @@ import org.apache.log4j.Logger
 import org.apache.log4j.PatternLayout
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.api.CanceledStatus
-import org.jetbrains.jps.builders.BuildResult
-import org.jetbrains.jps.builders.CompileScopeTestBuilder
 import org.jetbrains.jps.builders.impl.BuildDataPathsImpl
 import org.jetbrains.jps.builders.impl.logging.ProjectBuilderLoggerBase
 import org.jetbrains.jps.builders.logging.BuildLoggingManager
@@ -28,7 +26,6 @@ import org.jetbrains.jps.cmdline.ProjectDescriptor
 import org.jetbrains.jps.incremental.*
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.model.JpsDummyElement
-import org.jetbrains.jps.model.JpsModuleRootModificationUtil
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.library.sdk.JpsSdk
 import org.jetbrains.jps.util.JpsPathUtil
@@ -281,7 +278,7 @@ abstract class AbstractIncrementalJpsTest(
     }
 
     private fun clearCachesRebuildAndCheckOutput(makeOverallResult: MakeResult) {
-        FileUtil.delete(BuildDataPathsImpl(myDataStorageRoot).dataStorageRoot!!)
+        FileUtil.delete(BuildDataPathsImpl(myDataStorageRoot).dataStorageRoot)
 
         rebuildAndCheckOutput(makeOverallResult)
     }

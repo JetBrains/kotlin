@@ -16,10 +16,12 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import kotlin.test.assertFalse
 import org.junit.Assume.assumeFalse
 import org.junit.Test
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
+/* ktlint-disable max-line-length */
 class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) {
 
     @Test
@@ -585,11 +587,103 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
             """,
             validate = {
                 // select Example function body
-                val match = Regex("public final static Example[\\s\\S]*?LOCALVARIABLE").find(it)!!
+                val func = Regex("public final static Example[\\s\\S]*?LOCALVARIABLE")
+                    .findAll(it)
+                    .single()
                 assertFalse(message = "Function body should not contain a not-null check.") {
-                    match.value.contains("Intrinsics.checkNotNullParameter")
+                    func.value.contains("Intrinsics.checkNotNullParameter")
+                }
+                val stub = Regex("public final static synthetic Example[\\s\\S]*?LOCALVARIABLE")
+                    .findAll(it)
+                    .single()
+                assertTrue(message = "Function stub should contain a not-null check.") {
+                    stub.value.contains("Intrinsics.checkNotNullParameter")
                 }
             },
-            dumpClasses = true
         )
+
+    @Test // regression test for 336571300
+    fun test_groupAroundIfComposeCallInIfConditionWithShortCircuit() = testCompile(
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun Test() {
+                ReceiveValue(if (state && getCondition()) 0 else 1)
+            }
+
+            val state by mutableStateOf(true)
+
+            @Composable
+            fun getCondition() = remember { mutableStateOf(false) }.value
+
+            @Composable
+            fun ReceiveValue(value: Int) { }
+        """
+    )
+
+    @Test
+    fun testDefaultParametersInVirtualFunctions() = validateBytecode(
+        """
+            import androidx.compose.runtime.*
+
+            interface Test {
+                @Composable fun foo(param: Int = remember { 0 })
+                @Composable fun bar(param: Int = remember { 0 }): Int = param
+            }
+
+            class TestImpl : Test {
+                @Composable override fun foo(param: Int) {}
+                @Composable override fun bar(param: Int): Int {
+                    return super.bar(param)
+                }
+            }
+
+            @Composable fun CallWithDefaults(test: Test) {
+                test.foo()
+                test.foo(0)
+                test.bar()
+                test.bar(0)
+            }
+        """,
+        validate = {
+            assertTrue(
+                it.contains(
+                    "INVOKESTATIC test/Test%ComposeDefaultImpls.foo%default (ILtest/Test;Landroidx/compose/runtime/Composer;II)V"
+                ),
+                "default static functions should be generated in ComposeDefaultsImpl class"
+            )
+        }
+    )
+
+    @Test
+    fun testMemoizingFromDelegate() = testCompile(
+        """
+            import androidx.compose.runtime.*
+
+            class ClassWithData(
+                val action: Int = 0,
+            )
+
+            fun getData(): ClassWithData = TODO()
+
+            @Composable
+            fun StrongSkippingIssue(
+                data: ClassWithData
+            ) {
+                val state by remember { mutableStateOf("") }
+                val action by data::action
+                val action1 by getData()::action
+                { 
+                    action
+                }
+                {
+                    action1
+                }
+                {
+                    state
+                }
+            }
+        """
+    )
 }

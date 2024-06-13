@@ -23,12 +23,27 @@ import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType.BOOLEAN
 
 class TypeEnhancementInfo(val map: Map<Int, JavaTypeQualifiers>) {
     constructor(vararg pairs: Pair<Int, JavaTypeQualifiers>) : this(mapOf(*pairs))
+
+    fun copyForWarnings(): TypeEnhancementInfo =
+        TypeEnhancementInfo(this.map.mapValues { it.value.copy(isNullabilityQualifierForWarning = true) })
 }
 
 class PredefinedFunctionEnhancementInfo(
     val returnTypeInfo: TypeEnhancementInfo? = null,
-    val parametersInfo: List<TypeEnhancementInfo?> = emptyList()
-)
+    val parametersInfo: List<TypeEnhancementInfo?> = emptyList(),
+    // `null` means that it's enabled for any language version
+    val errorsSinceLanguageVersion: String? = null,
+) {
+    val warningModeClone: PredefinedFunctionEnhancementInfo? =
+        if (errorsSinceLanguageVersion != null)
+            PredefinedFunctionEnhancementInfo(
+                returnTypeInfo?.copyForWarnings(),
+                parametersInfo.map { it?.copyForWarnings() },
+                errorsSinceLanguageVersion = null
+            )
+        else
+            null
+}
 
 /** Type is always nullable: `T?` */
 private val NULLABLE = JavaTypeQualifiers(NullabilityQualifier.NULLABLE, null, definitelyNotNull = false)
@@ -38,7 +53,7 @@ private val NOT_PLATFORM = JavaTypeQualifiers(NullabilityQualifier.NOT_NULL, nul
 private val NOT_NULLABLE = JavaTypeQualifiers(NullabilityQualifier.NOT_NULL, null, definitelyNotNull = true)
 
 @Suppress("LocalVariableName")
-val PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE = signatures {
+val PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE: Map<String, PredefinedFunctionEnhancementInfo> = signatures {
     val JLObject = javaLang("Object")
     val JFPredicate = javaFunction("Predicate")
     val JFFunction = javaFunction("Function")
@@ -72,9 +87,48 @@ val PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE = signatures {
                 returns(JUStream, NOT_PLATFORM, NOT_PLATFORM)
             }
         }
+        // See duplications here and in the LinkedList section
+        // Currently it looks redundant to try avoiding duplicated code here
+        @Suppress("DuplicatedCode")
         forClass(javaUtil("List")) {
             function("replaceAll") {
                 parameter(JFUnaryOperator, NOT_PLATFORM, NOT_PLATFORM)
+            }
+
+            function("addFirst", errorsSinceLanguageVersion = "2.1") {
+                parameter(JLObject, NOT_PLATFORM)
+            }
+
+            function("addLast", errorsSinceLanguageVersion = "2.1") {
+                parameter(JLObject, NOT_PLATFORM)
+            }
+
+            function("removeFirst", errorsSinceLanguageVersion = "2.1") {
+                returns(JLObject, NOT_PLATFORM)
+            }
+
+            function("removeLast", errorsSinceLanguageVersion = "2.1") {
+                returns(JLObject, NOT_PLATFORM)
+            }
+        }
+        // Signatures' duplication is necessary because for JDKs < 21, there's no relevant methods in `MutableList` declaration.
+        // But we still want to report preventing warnings (and eventually errors) for usages that would be treated as error since JDK 21
+        @Suppress("DuplicatedCode")
+        forClass(javaUtil("LinkedList")) {
+            function("addFirst", errorsSinceLanguageVersion = "2.1") {
+                parameter(JLObject, NOT_PLATFORM)
+            }
+
+            function("addLast", errorsSinceLanguageVersion = "2.1") {
+                parameter(JLObject, NOT_PLATFORM)
+            }
+
+            function("removeFirst", errorsSinceLanguageVersion = "2.1") {
+                returns(JLObject, NOT_PLATFORM)
+            }
+
+            function("removeLast", errorsSinceLanguageVersion = "2.1") {
+                returns(JLObject, NOT_PLATFORM)
             }
         }
         forClass(javaUtil("Map")) {
@@ -207,11 +261,18 @@ private class SignatureEnhancementBuilder {
         ClassEnhancementBuilder(internalName).block()
 
     inner class ClassEnhancementBuilder(val className: String) {
-        fun function(name: String, block: FunctionEnhancementBuilder.() -> Unit) {
-            signatures += FunctionEnhancementBuilder(name).apply(block).build()
+        fun function(
+            name: String,
+            errorsSinceLanguageVersion: String? = null,
+            block: FunctionEnhancementBuilder.() -> Unit
+        ) {
+            signatures += FunctionEnhancementBuilder(name, errorsSinceLanguageVersion).apply(block).build()
         }
 
-        inner class FunctionEnhancementBuilder(val functionName: String) {
+        inner class FunctionEnhancementBuilder(
+            val functionName: String,
+            val errorsSinceLanguageVersion: String? = null,
+        ) {
             private val parameters = mutableListOf<Pair<String, TypeEnhancementInfo?>>()
             private var returnType: Pair<String, TypeEnhancementInfo?> = "V" to null
 
@@ -243,7 +304,7 @@ private class SignatureEnhancementBuilder {
 
             fun build() = with(SignatureBuildingComponents) {
                 signature(className, jvmDescriptor(functionName, parameters.map { it.first }, returnType.first)) to
-                        PredefinedFunctionEnhancementInfo(returnType.second, parameters.map { it.second })
+                        PredefinedFunctionEnhancementInfo(returnType.second, parameters.map { it.second }, errorsSinceLanguageVersion)
             }
         }
 

@@ -329,10 +329,6 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("codegen/box")
             }
 
-            testClass<AbstractFirLightTreeBlackBoxCodegenWithFir2IrFakeOverrideGeneratorTest> {
-                model("codegen/box", excludeDirs = excludedScriptDirs)
-            }
-
             testClass<AbstractFirLightTreeBlackBoxCodegenTest>("FirLightTreeBlackBoxModernJdkCodegenTestGenerated") {
                 model("codegen/boxModernJdk")
             }

@@ -5,17 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.components.KtClassTypeBuilder
-import org.jetbrains.kotlin.analysis.api.components.KtTypeCreator
-import org.jetbrains.kotlin.analysis.api.components.KtTypeParameterTypeBuilder
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.types.KtClassType
-import org.jetbrains.kotlin.analysis.api.types.KtTypeParameterType
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.analysis.api.components.KaClassTypeBuilder
+import org.jetbrains.kotlin.analysis.api.components.KaTypeCreator
+import org.jetbrains.kotlin.analysis.api.components.KaTypeParameterTypeBuilder
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
@@ -24,21 +22,21 @@ import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.typeContext
 
-internal class KtFirTypeCreator(
-    override val analysisSession: KtFirAnalysisSession,
-    override val token: KtLifetimeToken
-) : KtTypeCreator(), KtFirAnalysisSessionComponent {
+internal class KaFirTypeCreator(
+    override val analysisSession: KaFirSession,
+    override val token: KaLifetimeToken
+) : KaTypeCreator(), KaFirSessionComponent {
 
-    override fun buildClassType(builder: KtClassTypeBuilder): KtClassType {
+    override fun buildClassType(builder: KaClassTypeBuilder): KaType {
         val lookupTag = when (builder) {
-            is KtClassTypeBuilder.ByClassId -> {
+            is KaClassTypeBuilder.ByClassId -> {
                 val classSymbol = rootModuleSession.symbolProvider.getClassLikeSymbolByClassId(builder.classId)
-                    ?: return ConeErrorType(ConeUnresolvedSymbolError(builder.classId)).asKtType() as KtClassType
+                    ?: return ConeErrorType(ConeUnresolvedSymbolError(builder.classId)).asKtType()
                 classSymbol.toLookupTag()
             }
-            is KtClassTypeBuilder.BySymbol -> {
+            is KaClassTypeBuilder.BySymbol -> {
                 val symbol = builder.symbol
-                check(symbol is KtFirSymbol<*>)
+                check(symbol is KaFirSymbol<*>)
                 (symbol.firSymbol as FirClassLikeSymbol<*>).toLookupTag()
             }
         }
@@ -50,16 +48,16 @@ internal class KtFirTypeCreator(
             builder.nullability.isNullable
         ) as ConeClassLikeType
 
-        return coneType.asKtType() as KtClassType
+        return coneType.asKtType()
     }
 
-    override fun buildTypeParameterType(builder: KtTypeParameterTypeBuilder): KtTypeParameterType  {
+    override fun buildTypeParameterType(builder: KaTypeParameterTypeBuilder): KaTypeParameterType {
         val coneType = when (builder) {
-            is KtTypeParameterTypeBuilder.BySymbol -> {
+            is KaTypeParameterTypeBuilder.BySymbol -> {
                 val symbol = builder.symbol
-                (symbol as KtFirTypeParameterSymbol).firSymbol.toConeType()
+                (symbol as KaFirTypeParameterSymbol).firSymbol.toConeType()
             }
         }
-        return coneType.asKtType() as KtTypeParameterType
+        return coneType.asKtType() as KaTypeParameterType
     }
 }

@@ -179,6 +179,9 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun trimToSize (): kotlin.Unit declared in <root>.Java1
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<kotlin.Int>
+    PROPERTY FAKE_OVERRIDE name:modCount visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final modCount: kotlin.Int declared in <root>.Java1
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
       overridden:
         public open size: kotlin.Int declared in <root>.Java1
@@ -368,6 +371,9 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun trimToSize (): kotlin.Unit declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<kotlin.Int>
+    PROPERTY FAKE_OVERRIDE name:modCount visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final modCount: kotlin.Int declared in java.util.ArrayList
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
       overridden:
         public open size: kotlin.Int declared in java.util.ArrayList

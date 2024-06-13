@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
 import org.jetbrains.kotlin.types.error.ErrorType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
-internal class KtFe10DebugTypeRenderer {
+internal class KaFe10DebugTypeRenderer {
     private companion object {
         const val ERROR_TYPE_TEXT = "ERROR_TYPE"
     }
@@ -88,7 +88,7 @@ internal class KtFe10DebugTypeRenderer {
         renderAnnotationDebug(annotation.annotationClass?.classId, namedValues, printer)
     }
 
-    private fun renderAnnotationDebug(classId: ClassId?, namedValues: List<KtNamedAnnotationValue>, printer: PrettyPrinter) {
+    private fun renderAnnotationDebug(classId: ClassId?, namedValues: List<KaNamedAnnotationValue>, printer: PrettyPrinter) {
         with(printer) {
             append("@")
 
@@ -108,34 +108,34 @@ internal class KtFe10DebugTypeRenderer {
         }
     }
 
-    private fun renderConstantValueDebug(value: KtAnnotationValue, printer: PrettyPrinter) {
+    private fun renderConstantValueDebug(value: KaAnnotationValue, printer: PrettyPrinter) {
         when (value) {
-            is KtAnnotationApplicationValue -> {
+            is KaAnnotationApplicationValue -> {
                 renderAnnotationDebug(value.annotationValue.classId, value.annotationValue.arguments, printer)
             }
 
-            is KtArrayAnnotationValue -> {
+            is KaArrayAnnotationValue -> {
                 printer.printCollection(value.values, separator = ", ", prefix = "[", postfix = "]") {
                     renderConstantValueDebug(it, printer)
                 }
             }
 
-            is KtEnumEntryAnnotationValue -> {
+            is KaEnumEntryAnnotationValue -> {
                 printer.append(value.callableId?.asSingleFqName()?.render())
             }
 
-            is KtConstantAnnotationValue -> {
+            is KaConstantAnnotationValue -> {
                 printer.append(value.constantValue.constantValueKind.asString)
                     .append("(")
                     .append(value.constantValue.value.toString())
                     .append(")")
             }
 
-            is KtUnsupportedAnnotationValue -> {
-                printer.append(KtUnsupportedAnnotationValue::class.java.simpleName)
+            is KaUnsupportedAnnotationValue -> {
+                printer.append(KaUnsupportedAnnotationValue::class.java.simpleName)
             }
 
-            is KtKClassAnnotationValue -> {
+            is KaKClassAnnotationValue -> {
                 printer.append(value.renderAsSourceCode())
             }
         }
@@ -191,7 +191,7 @@ internal class KtFe10DebugTypeRenderer {
     }
 
     private fun Fe10AnalysisContext.renderOrdinaryType(type: SimpleType, printer: PrettyPrinter) {
-        val nestedType = KtFe10JvmTypeMapperContext.getNestedType(type)
+        val nestedType = KaFe10JvmTypeMapperContext.getNestedType(type)
         renderTypeSegment(nestedType.root, printer)
         printer.printCollectionIfNotEmpty(nestedType.nested, separator = ".", prefix = ".", postfix = "") {
             renderTypeSegment(it, printer)

@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun test(a: Int, b: Boolean) {
     bar(a.foo(<!TYPE_MISMATCH!>b<!>))

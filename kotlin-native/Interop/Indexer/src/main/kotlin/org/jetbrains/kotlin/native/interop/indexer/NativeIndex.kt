@@ -187,6 +187,7 @@ class AnonymousInnerRecord(val def: StructDef) : StructMember("") {
 abstract class StructDecl(val spelling: String) : TypeDeclaration {
 
     abstract val def: StructDef?
+    abstract val isAnonymous: Boolean
 }
 
 /**
@@ -242,6 +243,7 @@ class EnumConstant(val name: String, val value: Long, val isExplicitlyDefined: B
 abstract class EnumDef(val spelling: String, val baseType: Type) : TypeDeclaration {
 
     abstract val constants: List<EnumConstant>
+    abstract val isAnonymous: Boolean
 }
 
 sealed class ObjCContainer {

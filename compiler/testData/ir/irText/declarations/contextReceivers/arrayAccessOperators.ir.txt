@@ -179,7 +179,7 @@ FILE fqName:<root> fileName:/arrayAccessOperators.kt
                   arg0: GET_VAR '$context_receiver_0: kotlin.Int declared in <root>.set' type=kotlin.Int origin=null
                   arg1: CONST Int type=kotlin.Int value=42
           then: RETURN type=kotlin.Nothing from='public final fun set ($context_receiver_0: kotlin.Int, index: kotlin.Int, value: kotlin.String): kotlin.Unit declared in <root>'
-            GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+            GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
       CALL 'public final fun <set-s> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.MyContainer' type=kotlin.Unit origin=EQ
         $this: GET_VAR '<this>: <root>.MyContainer declared in <root>.set' type=<root>.MyContainer origin=null
         <set-?>: GET_VAR 'value: kotlin.String declared in <root>.set' type=kotlin.String origin=null

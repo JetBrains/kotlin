@@ -1,3 +1,0 @@
-Resolved to:
-0: (in foo.Foo) fun foo(number: kotlin.Int)
-1: (in foo.Foo) fun foo(string: kotlin.String)

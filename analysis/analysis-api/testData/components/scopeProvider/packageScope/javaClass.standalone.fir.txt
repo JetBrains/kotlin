@@ -1,6 +1,6 @@
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: test/KotlinClass
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: test/KotlinClass
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -15,22 +15,22 @@ KtNamedClassOrObjectSymbol:
   name: KotlinClass
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: test/JavaClass
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(main.kt)
+  getContainingFileSymbol: KaFileSymbol(main.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: test/SuperClass
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: test/SuperClass
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -43,15 +43,15 @@ KtNamedClassOrObjectSymbol:
   isInner: false
   modality: ABSTRACT
   name: SuperClass
-  origin: JAVA
+  origin: JAVA_SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: test/api/SuperInterface
   ]
   symbolKind: TOP_LEVEL
@@ -62,9 +62,9 @@ KtNamedClassOrObjectSymbol:
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: test/JavaClass
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: test/JavaClass
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -77,11 +77,11 @@ KtNamedClassOrObjectSymbol:
   isInner: false
   modality: OPEN
   name: JavaClass
-  origin: JAVA
+  origin: JAVA_SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: test/SuperClass
   ]
   symbolKind: TOP_LEVEL

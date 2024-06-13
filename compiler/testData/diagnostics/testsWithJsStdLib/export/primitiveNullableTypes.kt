@@ -1,4 +1,4 @@
-// !OPT_IN: kotlin.js.ExperimentalJsExport kotlin.ExperimentalUnsignedTypes
+// OPT_IN: kotlin.js.ExperimentalJsExport kotlin.ExperimentalUnsignedTypes
 // FIR_IDENTICAL
 
 @JsExport

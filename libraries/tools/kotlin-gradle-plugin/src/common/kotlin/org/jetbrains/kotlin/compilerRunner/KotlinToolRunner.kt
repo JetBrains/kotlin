@@ -6,14 +6,12 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import com.intellij.openapi.util.text.StringUtil.escapeStringCharacters
-import org.gradle.api.Project
-import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.process.ExecOperations
-import org.gradle.process.ExecResult
-import org.gradle.process.JavaExecSpec
 import org.jetbrains.kotlin.build.report.metrics.*
+import org.jetbrains.kotlin.buildtools.internal.KotlinBuildToolsInternalJdkUtils
+import org.jetbrains.kotlin.buildtools.internal.getJdkClassesClassLoader
 import org.jetbrains.kotlin.gradle.logging.gradleLogLevel
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
@@ -21,49 +19,15 @@ import java.lang.reflect.InvocationTargetException
 import java.net.URLClassLoader
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import javax.inject.Inject
 
-// Note: this class is public because it is used in the K/N build infrastructure.
-abstract class KotlinToolRunner(
-    private val executionContext: GradleExecutionContext,
-    private val metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric> = DoNothingBuildMetricsReporter
+abstract class KotlinToolRunner @Inject constructor(
+    private val metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
+    private val objectFactory: ObjectFactory,
+    private val execOperations: ExecOperations,
 ) {
-    /**
-     * Context Services that are required for [KotlinToolRunner] during Gradle Task Execution Phase
-     */
-    class GradleExecutionContext(
-        val filesProvider: (Any) -> ConfigurableFileCollection,
-        val javaexec: ((JavaExecSpec) -> Unit) -> ExecResult,
-        val logger: Logger,
-    ) {
-        companion object {
-            /**
-             * Executing [KotlinToolRunner] during Gradle Configuration Phase is undesired behaviour.
-             * Currently only [KotlinNativeLibraryGenerationRunner] used in this way.
-             * It should be fixed as part of KT-51255
-             */
-            @Deprecated(
-                "Building execution context from Project object isn't compatible with Gradle Configuration Cache",
-                ReplaceWith("fromTaskContext()"),
-                DeprecationLevel.WARNING
-            )
-            fun fromProject(project: Project) = GradleExecutionContext(
-                filesProvider = project::files,
-                javaexec = { spec -> project.javaexec(spec) }, // project::javaexec won't work due to different Classloaders
-                logger = project.logger
-            )
 
-            /** Gradle Configuration Cache friendly context, should be used inside Task Execution Phase */
-            fun fromTaskContext(
-                objectFactory: ObjectFactory,
-                execOperations: ExecOperations,
-                logger: Logger,
-            ) = GradleExecutionContext(
-                filesProvider = objectFactory.fileCollection()::from,
-                javaexec = { spec -> execOperations.javaexec(spec) }, // execOperations::javaexec won't work due to different Classloaders
-                logger = logger
-            )
-        }
-    }
+    private val logger = Logging.getLogger(this::class.java)
 
     // name that will be used in logs
     abstract val displayName: String
@@ -89,7 +53,7 @@ abstract class KotlinToolRunner(
 
     private fun getIsolatedClassLoader(): URLClassLoader = isolatedClassLoaders.computeIfAbsent(isolatedClassLoaderCacheKey) {
         val arrayOfURLs = classpath.map { File(it.absolutePath).toURI().toURL() }.toTypedArray()
-        URLClassLoader(arrayOfURLs, null).apply {
+        URLClassLoader(arrayOfURLs, @OptIn(KotlinBuildToolsInternalJdkUtils::class) getJdkClassesClassLoader()).apply {
             setDefaultAssertionStatus(enableAssertions)
         }
     }
@@ -139,7 +103,7 @@ abstract class KotlinToolRunner(
     private fun runViaExec(args: List<String>, metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>) {
         metricsReporter.measure(GradleBuildTime.NATIVE_IN_EXECUTOR) {
             val transformedArgs = transformArgs(args)
-            val classpath = executionContext.filesProvider(classpath)
+            val classpath = objectFactory.fileCollection().from(classpath)
             val systemProperties = System.getProperties()
                 /* Capture 'System.getProperties()' current state to avoid potential 'ConcurrentModificationException' */
                 .snapshot()
@@ -150,7 +114,7 @@ abstract class KotlinToolRunner(
                 .toMap() + execSystemProperties
 
 
-            executionContext.logger.log(
+            logger.log(
                 compilerArgumentsLogLevel.gradleLogLevel,
                 """|Run "$displayName" tool in a separate JVM process
                    |Main class = $mainClass
@@ -164,7 +128,7 @@ abstract class KotlinToolRunner(
                 """.trimMargin()
             )
 
-            executionContext.javaexec { spec ->
+            execOperations.javaexec { spec ->
                 spec.mainClass.set(mainClass)
                 spec.classpath = classpath
                 spec.jvmArgs(jvmArgs)
@@ -181,7 +145,7 @@ abstract class KotlinToolRunner(
             val transformedArgs = transformArgs(args)
             val isolatedClassLoader = getIsolatedClassLoader()
 
-            executionContext.logger.log(
+            logger.log(
                 compilerArgumentsLogLevel.gradleLogLevel,
                 """|Run in-process tool "$displayName"
                    |Entry point method = $mainClass.$daemonEntryPoint

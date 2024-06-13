@@ -1,8 +1,7 @@
 import org.gradle.crypto.checksum.Checksum
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 buildscript {
@@ -49,6 +48,7 @@ plugins {
         id("kotlin.native.build-tools-conventions") apply false
     }
     `jvm-toolchains`
+    alias(libs.plugins.gradle.node) apply false
 }
 
 val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild
@@ -100,7 +100,7 @@ if (!project.hasProperty("versions.kotlin-native")) {
     extra["versions.kotlin-native"] = if (kotlinBuildProperties.isKotlinNativeEnabled) {
         kotlinBuildProperties.defaultSnapshotVersion
     } else {
-        "2.0.0-dev-19356"
+        "2.0.20-dev-4770"
     }
 }
 
@@ -138,6 +138,7 @@ val commonCompilerModules = arrayOf(
     ":compiler:util",
     ":compiler:config",
     ":compiler:config.jvm",
+    ":compiler:compiler.version",
     ":compiler:cli-common",
     ":compiler:resolution.common",
     ":compiler:resolution.common.jvm",
@@ -160,12 +161,17 @@ val commonCompilerModules = arrayOf(
     ":analysis:decompiled:decompiler-native",
     ":analysis:decompiled:decompiler-to-psi",
     ":analysis:decompiled:light-classes-for-decompiled",
-    ":analysis:analysis-api-providers",
     ":analysis:project-structure",
     ":analysis:kt-references",
     ":kotlin-build-common",
+    ":kotlin-util-io",
+    ":kotlin-util-klib",
+    ":kotlin-util-klib-abi",
+    ":native:kotlin-native-utils",
     ":compiler:build-tools:kotlin-build-statistics",
     ":compiler:build-tools:kotlin-build-tools-api",
+    ":js:js.config",
+    ":wasm:wasm.config",
 ).also { extra["commonCompilerModules"] = it }
 
 val firCompilerCoreModules = arrayOf(
@@ -192,12 +198,13 @@ val firCompilerCoreModules = arrayOf(
     ":compiler:fir:fir2ir" // TODO should not be in core modules but FIR IDE uses Fir2IrSignatureComposer from this module
 ).also { extra["firCompilerCoreModules"] = it }
 
-val firAllCompilerModules = firCompilerCoreModules +
-        arrayOf(
+val firAllCompilerModules: Array<String> = (
+        firCompilerCoreModules + arrayOf(
             ":compiler:fir:raw-fir:light-tree2fir",
             ":compiler:fir:analysis-tests",
             ":compiler:fir:analysis-tests:legacy-fir-tests"
         )
+        ).also { extra["firAllCompilerModules"] = it }
 
 val fe10CompilerModules = arrayOf(
     ":compiler",
@@ -218,32 +225,24 @@ val fe10CompilerModules = arrayOf(
     ":compiler:backend.jvm.entrypoint",
     ":compiler:backend.js",
     ":compiler:backend.wasm",
-    ":kotlin-util-io",
-    ":kotlin-util-klib",
     ":kotlin-util-klib-metadata",
-    ":kotlin-util-klib-abi",
     ":compiler:backend-common",
     ":compiler:backend",
     ":compiler:plugin-api",
     ":compiler:javac-wrapper",
-    ":compiler:cli-common",
     ":compiler:cli-base",
     ":compiler:cli",
     ":compiler:cli-js",
     ":compiler:incremental-compilation-impl",
-    ":compiler:compiler.version",
     ":js:js.ast",
     ":js:js.sourcemap",
     ":js:js.serializer",
     ":js:js.parser",
-    ":js:js.config",
     ":js:js.frontend",
     ":js:js.translator",
     ":js:js.dce",
     ":native:frontend.native",
-    ":native:kotlin-native-utils",
     ":wasm:wasm.frontend",
-    ":wasm:wasm.config",
     ":compiler:backend.common.jvm",
     ":analysis:decompiled:light-classes-for-decompiled-fe10",
 ).also { extra["fe10CompilerModules"] = it }
@@ -271,7 +270,7 @@ val projectsUsedInIntelliJKotlinPlugin =
                 ":analysis:analysis-api-fir",
                 ":analysis:analysis-api-impl-barebone",
                 ":analysis:analysis-api-impl-base",
-                ":analysis:analysis-api-providers",
+                ":analysis:analysis-api-platform-interface",
                 ":analysis:analysis-api-standalone:analysis-api-standalone-base",
                 ":analysis:analysis-api-standalone:analysis-api-fir-standalone-base",
                 ":analysis:analysis-api-standalone",
@@ -431,8 +430,15 @@ extra["compilerArtifactsForIde"] = listOfNotNull(
     ":prepare:ide-plugin-dependencies:high-level-api-fir-tests-for-ide",
     ":prepare:ide-plugin-dependencies:high-level-api-fe10-for-ide",
     ":prepare:ide-plugin-dependencies:high-level-api-fe10-tests-for-ide",
+    ":prepare:ide-plugin-dependencies:analysis-api-for-ide",
+    ":prepare:ide-plugin-dependencies:analysis-api-impl-base-for-ide",
+    ":prepare:ide-plugin-dependencies:analysis-api-impl-base-tests-for-ide",
+    ":prepare:ide-plugin-dependencies:analysis-api-k2-for-ide",
+    ":prepare:ide-plugin-dependencies:analysis-api-k2-tests-for-ide",
+    ":prepare:ide-plugin-dependencies:analysis-api-fe10-for-ide",
+    ":prepare:ide-plugin-dependencies:analysis-api-fe10-tests-for-ide",
     ":prepare:ide-plugin-dependencies:kt-references-fe10-for-ide",
-    ":prepare:ide-plugin-dependencies:analysis-api-providers-for-ide",
+    ":prepare:ide-plugin-dependencies:analysis-api-platform-interface-for-ide",
     ":prepare:ide-plugin-dependencies:analysis-project-structure-for-ide",
     ":prepare:ide-plugin-dependencies:symbol-light-classes-for-ide",
     ":prepare:ide-plugin-dependencies:analysis-api-standalone-for-ide",
@@ -611,7 +617,10 @@ allprojects {
         maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies") {
             content {
                 includeGroupByRegex("org\\.jetbrains\\.intellij\\.deps(\\..+)?")
-                includeVersion("org.jetbrains.jps", "jps-javac-extension", "1")
+                includeVersion("org.jetbrains.jps", "jps-javac-extension", "7")
+                includeVersion("com.google.protobuf", "protobuf-parent", "3.24.4-jb.2")
+                includeVersion("com.google.protobuf", "protobuf-java", "3.24.4-jb.2")
+                includeVersion("com.google.protobuf", "protobuf-bom", "3.24.4-jb.2")
             }
         }
 
@@ -697,6 +706,15 @@ tasks.register("createIdeaHomeForTests") {
 }
 
 tasks {
+    register("compileAll") {
+        allprojects
+            .filter { !it.path.startsWith(":native") || kotlinBuildProperties.isKotlinNativeEnabled }
+            .forEach {
+                dependsOn(it.tasks.withType<KotlinCompilationTask<*>>())
+                dependsOn(it.tasks.withType<JavaCompile>())
+            }
+    }
+
     named<Delete>("clean") {
         delete(distDir)
         delete(layout.buildDirectory.dir("repo"))
@@ -740,7 +758,6 @@ tasks {
     register("jvmCompilerTest") {
         dependsOn("dist")
         dependsOn(
-            ":compiler:test",
             ":compiler:tests-common-new:test",
             ":compiler:container:test",
             ":compiler:tests-java8:test",
@@ -750,7 +767,6 @@ tasks {
     }
 
     register("testsForBootstrapBuildTest") {
-        dependsOn("dist")
         dependsOn(":compiler:tests-common-new:test")
     }
 
@@ -764,6 +780,7 @@ tasks {
     register("jsCompilerTest") {
         dependsOn(":js:js.tests:jsTest")
         dependsOn(":js:js.tests:runMocha")
+        dependsOn(":kotlin-test-js-runner:test")
     }
 
     register("jsFirCompilerTest") {
@@ -797,8 +814,10 @@ tasks {
         dependsOn(":kotlin-atomicfu-compiler-plugin:nativeTest")
         dependsOn(":native:analysis-api-klib-reader:check")
         dependsOn(":native:native.tests:test")
+        dependsOn(":native:native.tests:cli-tests:check")
         dependsOn(":native:native.tests:driver:check")
         dependsOn(":native:native.tests:stress:check")
+        dependsOn(":native:native.tests:klib-compatibility:check")
         dependsOn(":native:objcexport-header-generator:check")
         dependsOn(":native:swift:swift-export-standalone:test")
     }
@@ -862,22 +881,26 @@ tasks {
     }
 
     register("miscCompilerTest") {
-        dependsOn("coreLibsTest")
-        dependsOn("gradlePluginTest")
-        dependsOn("toolsTest")
-        dependsOn("examplesTest")
+        dependsOn(":compiler:test")
         dependsOn("incrementalCompilationTest")
         dependsOn("scriptingTest")
         dependsOn("jvmCompilerIntegrationTest")
         dependsOn("compilerPluginTest")
-
         dependsOn(":kotlin-daemon-tests:test")
+    }
+
+    register("miscTest") {
+        dependsOn("coreLibsTest")
+        dependsOn("gradlePluginTest")
+        dependsOn("toolsTest")
+        dependsOn("examplesTest")
         dependsOn(":kotlin-build-common:test")
         dependsOn(":kotlin-build-common:testJUnit5")
         dependsOn(":core:descriptors.runtime:test")
         dependsOn(":kotlin-util-io:test")
         dependsOn(":kotlin-util-klib:test")
         dependsOn(":kotlin-util-klib-abi:test")
+        dependsOn(":kotlinx-metadata-klib:test")
         dependsOn(":generators:test")
     }
 
@@ -900,6 +923,7 @@ tasks {
         dependsOn(":kotlin-noarg-compiler-plugin:test")
         dependsOn(":kotlin-sam-with-receiver-compiler-plugin:test")
         dependsOn(":kotlin-power-assert-compiler-plugin:test")
+        dependsOn(":plugins:plugins-interactions-testing:test")
     }
 
     register("toolsTest") {
@@ -1113,28 +1137,28 @@ if (disableVerificationTasks) {
 
 gradle.taskGraph.whenReady(checkYarnAndNPMSuppressed)
 
-val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
-
 plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class) {
     extensions.configure(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension::class.java) {
-        // Node.js with canary v8 that supports recent Wasm GC changes
-        version = "21.0.0-v8-canary20231019bd785be450"
-        downloadBaseUrl = if (cacheRedirectorEnabled)
-            "https://cache-redirector.jetbrains.com/nodejs.org/download/v8-canary"
-        else
-            "https://nodejs.org/download/v8-canary"
+        if (kotlinBuildProperties.isCacheRedirectorEnabled) {
+            downloadBaseUrl = "https://cache-redirector.jetbrains.com/nodejs.org/dist"
+        }
 
         npmInstallTaskProvider.configure {
             args += listOf("--network-concurrency", "1", "--mutex", "network")
-            // It's required to pass compatibility checks in some NPM packages while using Node.js with Canary v8.
-            // TODO remove as soon as we switch to release build of Node.js.
-            args += listOf("--ignore-engines")
+        }
+    }
+}
+
+plugins.withType(com.github.gradle.node.NodePlugin::class) {
+    extensions.configure(com.github.gradle.node.NodeExtension::class) {
+        if (kotlinBuildProperties.isCacheRedirectorEnabled) {
+            distBaseUrl = "https://cache-redirector.jetbrains.com/nodejs.org/dist"
         }
     }
 }
 
 afterEvaluate {
-    if (cacheRedirectorEnabled) {
+    if (kotlinBuildProperties.isCacheRedirectorEnabled) {
         rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin::class.java) {
             rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().downloadBaseUrl =
                 "https://cache-redirector.jetbrains.com/github.com/yarnpkg/yarn/releases/download"
@@ -1146,4 +1170,9 @@ afterEvaluate {
 
 afterEvaluate {
     checkExpectedGradlePropertyValues()
+}
+
+// workaround for KT-68482
+tasks.withType<org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask>().configureEach {
+    notCompatibleWithConfigurationCache("KotlinNpmInstallTask is not compatible with Configuration Cache")
 }

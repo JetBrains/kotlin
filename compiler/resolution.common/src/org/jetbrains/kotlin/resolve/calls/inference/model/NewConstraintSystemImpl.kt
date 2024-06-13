@@ -410,7 +410,7 @@ class NewConstraintSystemImpl(
 
     private fun isProperTypeImpl(type: KotlinTypeMarker): Boolean =
         !type.contains {
-            val capturedType = it.asSimpleType()?.asCapturedType()
+            val capturedType = it.asSimpleType()?.originalIfDefinitelyNotNullable()?.asCapturedType()
 
             val typeToCheck = if (capturedType is CapturedTypeMarker && capturedType.captureStatus() == CaptureStatus.FROM_EXPRESSION)
                 capturedType.typeConstructorProjection().takeUnless { projection -> projection.isStarProjection() }?.getType()
@@ -719,19 +719,19 @@ class NewConstraintSystemImpl(
     private fun checkOnlyInputTypesAnnotation(variableWithConstraints: MutableVariableWithConstraints, resultType: KotlinTypeMarker) {
         val substitutor = buildCurrentSubstitutor()
         val approximator = constraintInjector.typeApproximator
-        val isResultTypeEqualSomeInputType =
-            variableWithConstraints.getProjectedInputCallTypes(utilContext).any { (inputType, constraintKind) ->
-                val inputTypeConstructor = inputType.typeConstructor()
-                val otherResultType = inputType.substituteAndApproximateIfNecessary(substitutor, approximator, constraintKind)
+        val projectedInputCallTypes = variableWithConstraints.getProjectedInputCallTypes(utilContext)
+        val isResultTypeEqualSomeInputType = projectedInputCallTypes.any { (inputType, constraintKind) ->
+            val inputTypeConstructor = inputType.typeConstructor()
+            val otherResultType = inputType.substituteAndApproximateIfNecessary(substitutor, approximator, constraintKind)
 
-                if (AbstractTypeChecker.equalTypes(this, resultType, otherResultType)) return@any true
-                if (!inputTypeConstructor.isIntersection()) return@any false
+            if (AbstractTypeChecker.equalTypes(this, resultType, otherResultType)) return@any true
+            if (!inputTypeConstructor.isIntersection()) return@any false
 
-                inputTypeConstructor.supertypes().any {
-                    val intersectionComponentResultType = it.substituteAndApproximateIfNecessary(substitutor, approximator, constraintKind)
-                    AbstractTypeChecker.equalTypes(this, resultType, intersectionComponentResultType)
-                }
+            inputTypeConstructor.supertypes().any {
+                val intersectionComponentResultType = it.substituteAndApproximateIfNecessary(substitutor, approximator, constraintKind)
+                AbstractTypeChecker.equalTypes(this, resultType, intersectionComponentResultType)
             }
+        }
         if (!isResultTypeEqualSomeInputType) {
             addError(OnlyInputTypesDiagnostic(variableWithConstraints.typeVariable))
         }

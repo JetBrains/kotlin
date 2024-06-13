@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider
 
+import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider.AnalysisApiPsiTypeProviderTestUtils.findLightDeclarationContext
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider.AnalysisApiPsiTypeProviderTestUtils.getContainingKtLightClass
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -31,10 +33,10 @@ abstract class AbstractAnalysisApiPsiTypeProviderTest : AbstractAnalysisApiBased
         val actual = buildString {
             executeOnPooledThreadInReadAction {
                 analyze(declaration) {
-                    val ktType = declaration.getReturnKtType()
-                    appendLine("KtType: ${AnalysisApiPsiTypeProviderTestUtils.render(analysisSession, ktType)}")
+                    val ktType = declaration.getReturnKaType()
+                    appendLine("${KaType::class.simpleName}: ${AnalysisApiPsiTypeProviderTestUtils.render(analysisSession, ktType)}")
                     val psiType = ktType.asPsiType(psiContext, allowErrorTypes = false)
-                    appendLine("PsiType: ${AnalysisApiPsiTypeProviderTestUtils.render(psiType)}")
+                    appendLine("${PsiType::class.simpleName}: ${AnalysisApiPsiTypeProviderTestUtils.render(psiType)}")
                 }
             }
         }

@@ -5,23 +5,23 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtBackingFieldSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaBackingFieldSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 
-internal class KtFe10PsiDefaultBackingFieldSymbolPointer(
-    private val propertySymbolPointer: KtPsiBasedSymbolPointer<KtPropertySymbol>,
-) : KtSymbolPointer<KtBackingFieldSymbol>() {
-    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
-    override fun restoreSymbol(analysisSession: KtAnalysisSession): KtBackingFieldSymbol? {
+internal class KaFe10PsiDefaultBackingFieldSymbolPointer(
+    private val propertySymbolPointer: KaPsiBasedSymbolPointer<KaPropertySymbol>,
+) : KaSymbolPointer<KaBackingFieldSymbol>() {
+    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KaSession.restoreSymbol")
+    override fun restoreSymbol(analysisSession: KaSession): KaBackingFieldSymbol? {
         val property = with(analysisSession) { propertySymbolPointer.restoreSymbol() }
         return property?.backingFieldSymbol
     }
 
-    override fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = this === other ||
-            other is KtFe10PsiDefaultBackingFieldSymbolPointer &&
+    override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||
+            other is KaFe10PsiDefaultBackingFieldSymbolPointer &&
             other.propertySymbolPointer.pointsToTheSameSymbolAs(propertySymbolPointer)
 }

@@ -130,9 +130,18 @@ fun createStubForPackageName(packageDirectiveStub: KotlinPlaceHolderStubImpl<KtP
     recCreateStubForPackageName(packageDirectiveStub)
 }
 
+/**
+ * @param abbreviatedType The abbreviated type of the expanded type [typeClassId], if applicable. The abbreviated type always applies to the
+ *  innermost type. For example, if we have `typealias Alias = Map.Entry`, `Alias` refers to `Entry` but not `Map`. It would be correct to
+ *  refer back from `Entry` to `Alias`, but not from `Map` to `Alias`.
+ *
+ *  Furthermore, an outer type in an already expanded type (e.g. `Map` in `Map.Entry`) cannot have originated from a type alias, because
+ *  nested types cannot be accessed from type aliases. (Although this would change with KT-34281.)
+ */
 fun createStubForTypeName(
     typeClassId: ClassId,
     parent: StubElement<out PsiElement>,
+    abbreviatedType: KotlinClassTypeBean? = null,
     upperBoundFun: ((Int) -> KotlinTypeBean?)? = null,
     bindTypeArguments: (KotlinUserTypeStub, Int) -> Unit = { _, _ -> }
 ): KotlinUserTypeStub {
@@ -147,7 +156,7 @@ fun createStubForTypeName(
 
     fun recCreateStubForType(current: StubElement<out PsiElement>, level: Int): KotlinUserTypeStub {
         val lastSegment = segments[level]
-        val userTypeStub = KotlinUserTypeStubImpl(current, upperBoundFun?.invoke(level))
+        val userTypeStub = KotlinUserTypeStubImpl(current, upperBoundFun?.invoke(level), abbreviatedType.takeIf { level == 0 })
         if (level + 1 < segments.size) {
             recCreateStubForType(userTypeStub, level + 1)
         }

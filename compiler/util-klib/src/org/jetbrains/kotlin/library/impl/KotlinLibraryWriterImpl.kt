@@ -76,14 +76,6 @@ class BaseWriterImpl(
         } else {
             val newValue = libraries.map { it.uniqueName }.toSpaceSeparatedString()
             manifestProperties.setProperty(KLIB_PROPERTY_DEPENDS, newValue)
-            libraries.forEach { it ->
-                if (it.versions.libraryVersion != null) {
-                    manifestProperties.setProperty(
-                        "${KLIB_PROPERTY_DEPENDENCY_VERSION}_${it.uniqueName}",
-                        it.versions.libraryVersion
-                    )
-                }
-            }
         }
     }
 

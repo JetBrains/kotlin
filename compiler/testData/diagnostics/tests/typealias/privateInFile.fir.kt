@@ -1,9 +1,9 @@
 // FILE: file1.kt
-private class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>C<!> {
+private class <!CLASSIFIER_REDECLARATION!>C<!> {
     companion object
 }
 
-private typealias <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>TA<!> = C
+private typealias <!CLASSIFIER_REDECLARATION!>TA<!> = C
 
 private val test1: C = C()
 private val test1co: C.Companion = C

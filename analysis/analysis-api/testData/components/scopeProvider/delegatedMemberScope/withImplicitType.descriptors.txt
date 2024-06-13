@@ -1,6 +1,6 @@
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /I.foo
+KaFunctionSymbol:
+  annotations: []
+  callableId: /I.foo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -20,26 +20,26 @@ KtFunctionSymbol:
   name: foo
   origin: DELEGATED
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: A
-  getContainingFileSymbol: KtFileSymbol(withImplicitType.kt)
+  getContainingFileSymbol: KaFileSymbol(withImplicitType.kt)
   getContainingJvmClassName: I
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /I.bar
+KaFunctionSymbol:
+  annotations: []
+  callableId: /I.bar
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -59,19 +59,19 @@ KtFunctionSymbol:
   name: bar
   origin: DELEGATED
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: A
-  getContainingFileSymbol: KtFileSymbol(withImplicitType.kt)
+  getContainingFileSymbol: KaFileSymbol(withImplicitType.kt)
   getContainingJvmClassName: I
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

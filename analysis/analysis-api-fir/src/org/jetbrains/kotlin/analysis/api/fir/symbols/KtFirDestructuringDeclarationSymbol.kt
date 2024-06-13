@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtDestructuringDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtLocalVariableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaDestructuringDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.SpecialNames
@@ -22,10 +22,10 @@ import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
-internal class KtFirDestructuringDeclarationSymbol(
+internal class KaFirDestructuringDeclarationSymbol(
     override val firSymbol: FirVariableSymbol<*>,
-    override val analysisSession: KtFirAnalysisSession,
-) : KtDestructuringDeclarationSymbol(), KtFirSymbol<FirVariableSymbol<*>> {
+    override val analysisSession: KaFirSession,
+) : KaDestructuringDeclarationSymbol(), KaFirSymbol<FirVariableSymbol<*>> {
 
     init {
         require(firSymbol.name == SpecialNames.DESTRUCT)
@@ -45,24 +45,24 @@ internal class KtFirDestructuringDeclarationSymbol(
             }
         }
 
-    override val annotationsList: KtAnnotationsList
-        get() = withValidityAssertion { KtFirAnnotationListForDeclaration.create(firSymbol, builder) }
+    override val annotations: KaAnnotationList
+        get() = withValidityAssertion { KaFirAnnotationListForDeclaration.create(firSymbol, builder) }
 
-    override val entries: List<KtLocalVariableSymbol>
+    override val entries: List<KaVariableSymbol>
         get() = withValidityAssertion {
             psi.entries.map { entry ->
                 with(analysisSession) { entry.getDestructuringDeclarationEntrySymbol() }
             }
         }
 
-    override fun createPointer(): KtSymbolPointer<KtDestructuringDeclarationSymbol> {
-        return KtPsiBasedSymbolPointer.createForSymbolFromSource<KtDestructuringDeclarationSymbol>(this)
+    override fun createPointer(): KaSymbolPointer<KaDestructuringDeclarationSymbol> {
+        return KaPsiBasedSymbolPointer.createForSymbolFromSource<KaDestructuringDeclarationSymbol>(this)
             ?: throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(SpecialNames.DESTRUCT.asString())
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        return other is KtFirDestructuringDeclarationSymbol && firSymbol == other.firSymbol
+        return other is KaFirDestructuringDeclarationSymbol && firSymbol == other.firSymbol
     }
 
     override fun hashCode(): Int {

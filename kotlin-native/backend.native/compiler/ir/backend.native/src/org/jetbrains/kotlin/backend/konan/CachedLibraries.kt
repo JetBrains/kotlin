@@ -198,7 +198,7 @@ class CachedLibraries(
             library.trySelectCacheAt { cacheNameToImplicitDirMapping[it] }
                     ?: autoCacheDirectory.takeIf { autoCacheableFrom.any { libraryPath.startsWith(it.absolutePath) } }
                             ?.let {
-                                val dir = computeVersionedCacheDirectory(it, library, uniqueNameToLibrary, uniqueNameToHash)
+                                val dir = computeLibraryCacheDirectory(it, library, uniqueNameToLibrary, uniqueNameToHash)
                                 library.trySelectCacheAt { cacheName -> dir.child(cacheName) }
                             }
         }
@@ -238,7 +238,7 @@ class CachedLibraries(
                     hashComputer.digest()
                 }
 
-        fun computeVersionedCacheDirectory(
+        fun computeLibraryCacheDirectory(
                 baseCacheDirectory: File,
                 library: KotlinLibrary,
                 allLibraries: Map<String, KotlinLibrary>,
@@ -251,9 +251,8 @@ class CachedLibraries(
                 hashComputer.update(computeLibraryHash(it, librariesHashes))
             }
 
-            val version = library.versions.libraryVersion ?: "unspecified"
             val hashString = hashComputer.digest().toString()
-            return baseCacheDirectory.child(library.uniqueName).child(version).child(hashString)
+            return baseCacheDirectory.child(library.uniqueName).child(hashString)
         }
 
         const val PER_FILE_CACHE_IR_LEVEL_DIR_NAME = "ir"

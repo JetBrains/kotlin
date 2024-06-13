@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.TYPE)
 annotation class Composable

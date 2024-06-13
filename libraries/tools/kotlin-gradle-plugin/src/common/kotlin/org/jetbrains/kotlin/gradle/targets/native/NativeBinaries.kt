@@ -18,6 +18,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.AbstractExecTask
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginPublicDsl
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.utils.attributeOf
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -34,6 +35,7 @@ import java.io.File
  * @param compilation - a compilation used to produce this binary.
  *
  */
+@KotlinGradlePluginPublicDsl
 sealed class NativeBinary(
     private val name: String,
     open var baseName: String,
@@ -114,6 +116,7 @@ sealed class NativeBinary(
     override fun getName(): String = name
 }
 
+@KotlinGradlePluginPublicDsl
 abstract class AbstractExecutable(
     name: String,
     baseName: String,
@@ -121,6 +124,7 @@ abstract class AbstractExecutable(
     compilation: KotlinNativeCompilation
 ) : NativeBinary(name, baseName, buildType, compilation)
 
+@KotlinGradlePluginPublicDsl
 class Executable constructor(
     name: String,
     baseName: String,
@@ -184,6 +188,7 @@ class Executable constructor(
         get() = runTaskProvider?.get()
 }
 
+@KotlinGradlePluginPublicDsl
 class TestExecutable(
     name: String,
     baseName: String,
@@ -195,6 +200,7 @@ class TestExecutable(
         get() = NativeOutputKind.TEST
 }
 
+@KotlinGradlePluginPublicDsl
 abstract class AbstractNativeLibrary(
     name: String,
     baseName: String,
@@ -239,6 +245,7 @@ abstract class AbstractNativeLibrary(
     }
 }
 
+@KotlinGradlePluginPublicDsl
 class StaticLibrary(
     name: String,
     baseName: String,
@@ -249,6 +256,7 @@ class StaticLibrary(
         get() = NativeOutputKind.STATIC
 }
 
+@KotlinGradlePluginPublicDsl
 class SharedLibrary(
     name: String,
     baseName: String,
@@ -259,6 +267,7 @@ class SharedLibrary(
         get() = NativeOutputKind.DYNAMIC
 }
 
+@KotlinGradlePluginPublicDsl
 class Framework(
     name: String,
     baseName: String,

@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.konan.target.*
 import java.io.ByteArrayOutputStream
-import java.nio.file.Paths
 
 description = "XCTest wrapper of Native kotlin.test"
 
@@ -97,37 +96,35 @@ fun registerCopyFrameworkTask(target: KonanTarget): TaskProvider<Sync> =
 
 val nativeTargets = mutableListOf<KotlinNativeTarget>()
 
-if (HostManager.hostIsMac) {
-    kotlin {
-        with(nativeTargets) {
-            add(macosX64())
-            add(macosArm64())
-            add(iosX64())
-            add(iosArm64())
-            add(iosSimulatorArm64())
+kotlin {
+    with(nativeTargets) {
+        add(macosX64())
+        add(macosArm64())
+        add(iosX64())
+        add(iosArm64())
+        add(iosSimulatorArm64())
 
-            forEach {
-                val copyTask = registerCopyFrameworkTask(it.konanTarget)
-                it.compilations.all {
-                    cinterops {
-                        register("XCTest") {
-                            compilerOpts("-iframework", copyTask.map { it.destinationDir }.get().absolutePath)
-                            // cinterop task should depend on the framework copy task
-                            tasks.named(interopProcessingTaskName).configure {
-                                dependsOn(copyTask)
-                            }
+        forEach {
+            val copyTask = registerCopyFrameworkTask(it.konanTarget)
+            it.compilations.all {
+                cinterops {
+                    register("XCTest") {
+                        compilerOpts("-iframework", copyTask.map { it.destinationDir }.get().absolutePath)
+                        // cinterop task should depend on the framework copy task
+                        tasks.named(interopProcessingTaskName).configure {
+                            dependsOn(copyTask)
                         }
                     }
                 }
             }
         }
-        sourceSets.all {
-            languageSettings.apply {
-                // Oh, yeah! So much experimental, so wow!
-                optIn("kotlinx.cinterop.BetaInteropApi")
-                optIn("kotlinx.cinterop.ExperimentalForeignApi")
-                optIn("kotlin.experimental.ExperimentalNativeApi")
-            }
+    }
+    sourceSets.all {
+        languageSettings.apply {
+            // Oh, yeah! So much experimental, so wow!
+            optIn("kotlinx.cinterop.BetaInteropApi")
+            optIn("kotlinx.cinterop.ExperimentalForeignApi")
+            optIn("kotlin.experimental.ExperimentalNativeApi")
         }
     }
 }
@@ -155,8 +152,6 @@ nativeTargets.forEach { target ->
             .interopProcessingTaskName
     ) as? TaskProvider<CInteropProcess> ?: error("Unable to get CInteropProcess task provider")
 
-    val frameworkCopyTask = tasks.named<Sync>("${targetName}FrameworkCopy")
-
     artifacts {
         add(kotlinTestNativeXCTest.name, outputKlibTask.flatMap { it.outputFile }) {
             classifier = targetName
@@ -165,11 +160,6 @@ nativeTargets.forEach { target ->
         add(kotlinTestNativeXCTest.name, cinteropKlibTask.flatMap { it.outputFileProvider }) {
             classifier = targetName
             builtBy(cinteropKlibTask)
-        }
-        // Add a path to a directory that contains copied framework to share it with test infrastructure
-        add(kotlinTestNativeXCTest.name, frameworkCopyTask.map { it.destinationDir }) {
-            classifier = "${targetName}Frameworks"
-            builtBy(frameworkCopyTask)
         }
     }
 }

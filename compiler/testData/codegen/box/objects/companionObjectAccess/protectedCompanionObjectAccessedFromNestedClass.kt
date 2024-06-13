@@ -1,4 +1,4 @@
-// !LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
+// LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
 
 class Outer {
     protected companion object {

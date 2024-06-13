@@ -7,22 +7,22 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiMember
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
-import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolProviderByJavaPsi
+import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolProviderByJavaPsi
 
-@OptIn(KtAnalysisApiInternals::class)
-internal class KtFe10SymbolProviderByJavaPsi(
-    override val analysisSession: KtFe10AnalysisSession
-) : KtSymbolProviderByJavaPsi(), Fe10KtAnalysisSessionComponent {
-    override fun getNamedClassSymbol(psiClass: PsiClass): KtNamedClassOrObjectSymbol? {
+@OptIn(KaAnalysisApiInternals::class)
+internal class KaFe10SymbolProviderByJavaPsi(
+    override val analysisSession: KaFe10Session
+) : KaSymbolProviderByJavaPsi(), KaFe10SessionComponent {
+    override fun getNamedClassSymbol(psiClass: PsiClass): KaNamedClassOrObjectSymbol? {
         return null /*TODO*/
     }
 
-    override fun getCallableSymbol(callable: PsiMember): KtCallableSymbol? {
+    override fun getCallableSymbol(callable: PsiMember): KaCallableSymbol? {
         return null /*TODO*/
     }
 }

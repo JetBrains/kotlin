@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.objcexport.analysisApiUtils
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.annotations.annotationInfos
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
@@ -15,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithModality
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import kotlin.contracts.ExperimentalContracts
@@ -115,12 +115,10 @@ private fun KtClassOrObjectSymbol.isHiddenFromObjCByAnnotation(): Boolean {
  */
 context(KtAnalysisSession)
 private fun KtAnnotatedSymbol.containsHidesFromObjCAnnotation(): Boolean {
-    return annotationsList.annotations.any { annotation ->
+    return annotations.any { annotation ->
         val annotationClassId = annotation.classId ?: return@any false
         val annotationClassSymbol = getClassOrObjectSymbolByClassId(annotationClassId) ?: return@any false
-        annotationClassSymbol.annotationInfos.any { annotationAnnotation ->
-            annotationAnnotation.classId?.asSingleFqName() == KonanFqNames.hidesFromObjC
-        }
+        ClassId.topLevel(KonanFqNames.hidesFromObjC) in annotationClassSymbol.annotations
     }
 }
 

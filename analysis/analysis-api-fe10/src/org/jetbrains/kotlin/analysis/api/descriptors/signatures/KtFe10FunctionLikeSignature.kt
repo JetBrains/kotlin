@@ -5,34 +5,34 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.signatures
 
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.signatures.KtFunctionLikeSignature
-import org.jetbrains.kotlin.analysis.api.signatures.KtVariableLikeSignature
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionLikeSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
+import org.jetbrains.kotlin.analysis.api.types.KaType
 
-internal class KtFe10FunctionLikeSignature<out S : KtFunctionLikeSymbol>(
+internal class KaFe10FunctionLikeSignature<out S : KaFunctionLikeSymbol>(
     private val backingSymbol: S,
-    private val backingReturnType: KtType,
-    private val backingReceiverType: KtType?,
-    private val backingValueParameters: List<KtVariableLikeSignature<KtValueParameterSymbol>>,
-) : KtFunctionLikeSignature<S>() {
-    override val token: KtLifetimeToken get() = backingSymbol.token
+    private val backingReturnType: KaType,
+    private val backingReceiverType: KaType?,
+    private val backingValueParameters: List<KaVariableLikeSignature<KaValueParameterSymbol>>,
+) : KaFunctionLikeSignature<S>() {
+    override val token: KaLifetimeToken get() = backingSymbol.token
     override val symbol: S get() = withValidityAssertion { backingSymbol }
-    override val returnType: KtType get() = withValidityAssertion { backingReturnType }
-    override val receiverType: KtType? get() = withValidityAssertion { backingReceiverType }
-    override val valueParameters: List<KtVariableLikeSignature<KtValueParameterSymbol>> get() = withValidityAssertion { backingValueParameters }
+    override val returnType: KaType get() = withValidityAssertion { backingReturnType }
+    override val receiverType: KaType? get() = withValidityAssertion { backingReceiverType }
+    override val valueParameters: List<KaVariableLikeSignature<KaValueParameterSymbol>> get() = withValidityAssertion { backingValueParameters }
 
-    override fun substitute(substitutor: KtSubstitutor): KtFunctionLikeSignature<S> = withValidityAssertion {
-        KtFe10FunctionLikeSignature(
+    override fun substitute(substitutor: KaSubstitutor): KaFunctionLikeSignature<S> = withValidityAssertion {
+        KaFe10FunctionLikeSignature(
             symbol,
             substitutor.substitute(returnType),
             receiverType?.let { substitutor.substitute(it) },
             valueParameters.map { valueParameter ->
-                KtFe10VariableLikeSignature<KtValueParameterSymbol>(
+                KaFe10VariableLikeSignature<KaValueParameterSymbol>(
                     valueParameter.symbol,
                     substitutor.substitute(valueParameter.returnType),
                     valueParameter.receiverType?.let { substitutor.substitute(it) }
@@ -45,7 +45,7 @@ internal class KtFe10FunctionLikeSignature<out S : KtFunctionLikeSymbol>(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as KtFe10FunctionLikeSignature<*>
+        other as KaFe10FunctionLikeSignature<*>
 
         if (backingSymbol != other.backingSymbol) return false
         if (backingReturnType != other.backingReturnType) return false

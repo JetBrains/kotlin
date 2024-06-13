@@ -1,11 +1,11 @@
 packages: 1
-  KtPackageSymbol:
+  KaPackageSymbol:
     fqName: generated
     origin: SOURCE
 classifiers: 2
-  KtNamedClassOrObjectSymbol:
-    annotationsList: []
-    classIdIfNonLocal: generated/GenClass1
+  KaNamedClassOrObjectSymbol:
+    annotations: []
+    classId: generated/GenClass1
     classKind: CLASS
     companionObject: null
     contextReceivers: []
@@ -20,9 +20,9 @@ classifiers: 2
     name: GenClass1
     origin: SOURCE
     superTypes: [
-      KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/Any
     ]
     symbolKind: TOP_LEVEL
@@ -32,9 +32,9 @@ classifiers: 2
       From resolve extension: true
       Resolve extension navigation targets: 1
         [Resolve extension navigation target for test for KtClass GenClass1]
-  KtNamedClassOrObjectSymbol:
-    annotationsList: []
-    classIdIfNonLocal: generated/GenClass2
+  KaNamedClassOrObjectSymbol:
+    annotations: []
+    classId: generated/GenClass2
     classKind: CLASS
     companionObject: null
     contextReceivers: []
@@ -49,9 +49,9 @@ classifiers: 2
     name: GenClass2
     origin: SOURCE
     superTypes: [
-      KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/Any
     ]
     symbolKind: TOP_LEVEL
@@ -62,9 +62,9 @@ classifiers: 2
       Resolve extension navigation targets: 1
         [Resolve extension navigation target for test for KtClass GenClass2]
 callables: 5
-  KtFunctionSymbol:
-    annotationsList: []
-    callableIdIfNonLocal: generated/genTopLevelFun1
+  KaFunctionSymbol:
+    annotations: []
+    callableId: generated/genTopLevelFun1
     contextReceivers: []
     contractEffects: []
     hasStableParameterNames: true
@@ -84,16 +84,16 @@ callables: 5
     name: genTopLevelFun1
     origin: SOURCE
     receiverParameter: null
-    returnType: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/String
     symbolKind: TOP_LEVEL
     typeParameters: []
     valueParameters: [
-      KtValueParameterSymbol:
-        annotationsList: []
-        callableIdIfNonLocal: null
+      KaValueParameterSymbol:
+        annotations: []
+        callableId: null
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDefaultValue: false
@@ -105,9 +105,9 @@ callables: 5
         name: foo
         origin: SOURCE
         receiverParameter: null
-        returnType: KtUsualClassType:
-          annotationsList: []
-          ownTypeArguments: []
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
           type: generated/GenClass2
         symbolKind: LOCAL
         typeParameters: []
@@ -117,9 +117,9 @@ callables: 5
       From resolve extension: true
       Resolve extension navigation targets: 1
         [Resolve extension navigation target for test for KtNamedFunction genTopLevelFun1]
-  KtFunctionSymbol:
-    annotationsList: []
-    callableIdIfNonLocal: generated/genTopLevelExtension1
+  KaFunctionSymbol:
+    annotations: []
+    callableId: generated/genTopLevelExtension1
     contextReceivers: []
     contractEffects: []
     hasStableParameterNames: true
@@ -138,17 +138,17 @@ callables: 5
     modality: FINAL
     name: genTopLevelExtension1
     origin: SOURCE
-    receiverParameter: KtReceiverParameterSymbol:
-      annotationsList: []
+    receiverParameter: KaReceiverParameterSymbol:
+      annotations: []
       origin: SOURCE
-      owningCallableSymbol: KtFunctionSymbol(generated/genTopLevelExtension1)
-      type: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      owningCallableSymbol: KaFunctionSymbol(generated/genTopLevelExtension1)
+      type: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/String
-    returnType: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Int
     symbolKind: TOP_LEVEL
     typeParameters: []
@@ -158,28 +158,28 @@ callables: 5
       From resolve extension: true
       Resolve extension navigation targets: 1
         [Resolve extension navigation target for test for KtNamedFunction genTopLevelExtension1]
-  KtKotlinPropertySymbol:
-    annotationsList: []
-    backingFieldSymbol: KtBackingFieldSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+  KaKotlinPropertySymbol:
+    annotations: []
+    backingFieldSymbol: KaBackingFieldSymbol:
+      annotations: []
+      callableId: null
       contextReceivers: []
       isExtension: false
       name: field
       origin: PROPERTY_BACKING_FIELD
-      owningProperty: KtKotlinPropertySymbol(generated/genTopLevelVal1)
+      owningProperty: KaKotlinPropertySymbol(generated/genTopLevelVal1)
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
-    callableIdIfNonLocal: generated/genTopLevelVal1
+    callableId: generated/genTopLevelVal1
     contextReceivers: []
-    getter: KtPropertyGetterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    getter: KaPropertyGetterSymbol:
+      annotations: []
+      callableId: null
       contextReceivers: []
       hasBody: false
       hasStableParameterNames: true
@@ -190,9 +190,9 @@ callables: 5
       modality: FINAL
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/String
       symbolKind: ACCESSOR
       typeParameters: []
@@ -216,9 +216,9 @@ callables: 5
     name: genTopLevelVal1
     origin: SOURCE
     receiverParameter: null
-    returnType: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/String
     setter: null
     symbolKind: TOP_LEVEL
@@ -228,28 +228,28 @@ callables: 5
       From resolve extension: true
       Resolve extension navigation targets: 1
         [Resolve extension navigation target for test for KtProperty genTopLevelVal1]
-  KtKotlinPropertySymbol:
-    annotationsList: []
-    backingFieldSymbol: KtBackingFieldSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+  KaKotlinPropertySymbol:
+    annotations: []
+    backingFieldSymbol: KaBackingFieldSymbol:
+      annotations: []
+      callableId: null
       contextReceivers: []
       isExtension: false
       name: field
       origin: PROPERTY_BACKING_FIELD
-      owningProperty: KtKotlinPropertySymbol(generated/genTopLevelVar1)
+      owningProperty: KaKotlinPropertySymbol(generated/genTopLevelVar1)
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
-    callableIdIfNonLocal: generated/genTopLevelVar1
+    callableId: generated/genTopLevelVar1
     contextReceivers: []
-    getter: KtPropertyGetterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    getter: KaPropertyGetterSymbol:
+      annotations: []
+      callableId: null
       contextReceivers: []
       hasBody: false
       hasStableParameterNames: true
@@ -260,9 +260,9 @@ callables: 5
       modality: FINAL
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/String
       symbolKind: ACCESSOR
       typeParameters: []
@@ -286,13 +286,13 @@ callables: 5
     name: genTopLevelVar1
     origin: SOURCE
     receiverParameter: null
-    returnType: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/String
-    setter: KtPropertySetterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    setter: KaPropertySetterSymbol:
+      annotations: []
+      callableId: null
       contextReceivers: []
       hasBody: false
       hasStableParameterNames: true
@@ -302,9 +302,9 @@ callables: 5
       isOverride: false
       modality: FINAL
       origin: SOURCE
-      parameter: KtValueParameterSymbol:
-        annotationsList: []
-        callableIdIfNonLocal: null
+      parameter: KaValueParameterSymbol:
+        annotations: []
+        callableId: null
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDefaultValue: false
@@ -316,23 +316,23 @@ callables: 5
         name: value
         origin: SOURCE
         receiverParameter: null
-        returnType: KtUsualClassType:
-          annotationsList: []
-          ownTypeArguments: []
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
           type: kotlin/String
         symbolKind: LOCAL
         typeParameters: []
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/Unit
       symbolKind: ACCESSOR
       typeParameters: []
       valueParameters: [
-        KtValueParameterSymbol:
-          annotationsList: []
-          callableIdIfNonLocal: null
+        KaValueParameterSymbol:
+          annotations: []
+          callableId: null
           contextReceivers: []
           generatedPrimaryConstructorProperty: null
           hasDefaultValue: false
@@ -344,9 +344,9 @@ callables: 5
           name: value
           origin: SOURCE
           receiverParameter: null
-          returnType: KtUsualClassType:
-            annotationsList: []
-            ownTypeArguments: []
+          returnType: KaUsualClassType:
+            annotations: []
+            typeArguments: []
             type: kotlin/String
           symbolKind: LOCAL
           typeParameters: []
@@ -359,28 +359,28 @@ callables: 5
       From resolve extension: true
       Resolve extension navigation targets: 1
         [Resolve extension navigation target for test for KtProperty genTopLevelVar1]
-  KtKotlinPropertySymbol:
-    annotationsList: []
-    backingFieldSymbol: KtBackingFieldSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+  KaKotlinPropertySymbol:
+    annotations: []
+    backingFieldSymbol: KaBackingFieldSymbol:
+      annotations: []
+      callableId: null
       contextReceivers: []
       isExtension: false
       name: field
       origin: PROPERTY_BACKING_FIELD
-      owningProperty: KtKotlinPropertySymbol(generated/genExtensionVal1)
+      owningProperty: KaKotlinPropertySymbol(generated/genExtensionVal1)
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
-    callableIdIfNonLocal: generated/genExtensionVal1
+    callableId: generated/genExtensionVal1
     contextReceivers: []
-    getter: KtPropertyGetterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    getter: KaPropertyGetterSymbol:
+      annotations: []
+      callableId: null
       contextReceivers: []
       hasBody: true
       hasStableParameterNames: true
@@ -390,17 +390,17 @@ callables: 5
       isOverride: false
       modality: FINAL
       origin: SOURCE
-      receiverParameter: KtReceiverParameterSymbol:
-        annotationsList: []
+      receiverParameter: KaReceiverParameterSymbol:
+        annotations: []
         origin: SOURCE
-        owningCallableSymbol: KtKotlinPropertySymbol(generated/genExtensionVal1)
-        type: KtUsualClassType:
-          annotationsList: []
-          ownTypeArguments: []
+        owningCallableSymbol: KaKotlinPropertySymbol(generated/genExtensionVal1)
+        type: KaUsualClassType:
+          annotations: []
+          typeArguments: []
           type: generated/GenClass2
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/Int
       symbolKind: ACCESSOR
       typeParameters: []
@@ -423,17 +423,17 @@ callables: 5
     modality: FINAL
     name: genExtensionVal1
     origin: SOURCE
-    receiverParameter: KtReceiverParameterSymbol:
-      annotationsList: []
+    receiverParameter: KaReceiverParameterSymbol:
+      annotations: []
       origin: SOURCE
-      owningCallableSymbol: KtKotlinPropertySymbol(generated/genExtensionVal1)
-      type: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      owningCallableSymbol: KaKotlinPropertySymbol(generated/genExtensionVal1)
+      type: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: generated/GenClass2
-    returnType: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Int
     setter: null
     symbolKind: TOP_LEVEL

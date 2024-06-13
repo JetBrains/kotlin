@@ -6,56 +6,58 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtTypeAliasSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtFlexibleType
-import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
-import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaFlexibleType
+import org.jetbrains.kotlin.analysis.api.types.KaNonErrorClassType
+import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.name.ClassId
 
-public abstract class KtTypeInfoProvider : KtAnalysisSessionComponent() {
-    public abstract fun isFunctionalInterfaceType(type: KtType): Boolean
-    public abstract fun getFunctionClassKind(type: KtType): FunctionTypeKind?
-    public abstract fun canBeNull(type: KtType): Boolean
-    public abstract fun isDenotable(type: KtType): Boolean
-    public abstract fun isArrayOrPrimitiveArray(type: KtType): Boolean
-    public abstract fun isNestedArray(type: KtType): Boolean
-    public abstract fun fullyExpandedType(type: KtType): KtType
+public abstract class KaTypeInfoProvider : KaSessionComponent() {
+    public abstract fun isFunctionalInterfaceType(type: KaType): Boolean
+    public abstract fun getFunctionClassKind(type: KaType): FunctionTypeKind?
+    public abstract fun canBeNull(type: KaType): Boolean
+    public abstract fun isDenotable(type: KaType): Boolean
+    public abstract fun isArrayOrPrimitiveArray(type: KaType): Boolean
+    public abstract fun isNestedArray(type: KaType): Boolean
+    public abstract fun fullyExpandedType(type: KaType): KaType
 }
 
-public interface KtTypeInfoProviderMixIn : KtAnalysisSessionMixIn {
+public typealias KtTypeInfoProvider = KaTypeInfoProvider
+
+public interface KaTypeInfoProviderMixIn : KaSessionMixIn {
     /**
      * Returns true if this type is denotable. A denotable type is a type that can be written in Kotlin by end users. See
      * https://kotlinlang.org/spec/type-system.html#type-kinds for more details.
      */
-    public val KtType.isDenotable: Boolean
+    public val KaType.isDenotable: Boolean
         get() = withValidityAssertion { analysisSession.typeInfoProvider.isDenotable(this) }
 
     /**
      * Returns true if this type is a functional interface type, a.k.a. SAM type, e.g., Runnable.
      */
-    public val KtType.isFunctionalInterfaceType: Boolean
+    public val KaType.isFunctionalInterfaceType: Boolean
         get() = withValidityAssertion { analysisSession.typeInfoProvider.isFunctionalInterfaceType(this) }
 
     /**
-     * Returns [FunctionTypeKind] of the given [KtType]
+     * Returns [FunctionTypeKind] of the given [KaType]
      */
-    public val KtType.functionTypeKind: FunctionTypeKind?
+    public val KaType.functionTypeKind: FunctionTypeKind?
         get() = withValidityAssertion { analysisSession.typeInfoProvider.getFunctionClassKind(this) }
 
-    public val KtType.isFunctionType: Boolean
+    public val KaType.isFunctionType: Boolean
         get() = withValidityAssertion { functionTypeKind == FunctionTypeKind.Function }
 
-    public val KtType.isKFunctionType: Boolean
+    public val KaType.isKFunctionType: Boolean
         get() = withValidityAssertion { functionTypeKind == FunctionTypeKind.KFunction }
 
-    public val KtType.isSuspendFunctionType: Boolean
+    public val KaType.isSuspendFunctionType: Boolean
         get() = withValidityAssertion { functionTypeKind == FunctionTypeKind.SuspendFunction }
 
-    public val KtType.isKSuspendFunctionType: Boolean
+    public val KaType.isKSuspendFunctionType: Boolean
         get() = withValidityAssertion { functionTypeKind == FunctionTypeKind.KSuspendFunction }
 
     /**
@@ -64,44 +66,50 @@ public interface KtTypeInfoProviderMixIn : KtAnalysisSessionMixIn {
      * of type `T:Any?` can potentially be null. But one can not assign `null` to such a variable because the instantiated type may not be
      * nullable.
      */
-    public val KtType.canBeNull: Boolean get() = withValidityAssertion { analysisSession.typeInfoProvider.canBeNull(this) }
+    public val KaType.canBeNull: Boolean get() = withValidityAssertion { analysisSession.typeInfoProvider.canBeNull(this) }
 
     /** Returns true if the type is explicitly marked as nullable. This means it's safe to assign `null` to a variable with this type. */
-    public val KtType.isMarkedNullable: Boolean get() = withValidityAssertion { this.nullability == KtTypeNullability.NULLABLE }
+    public val KaType.isMarkedNullable: Boolean get() = withValidityAssertion { this.nullability == KaTypeNullability.NULLABLE }
 
     /** Returns true if the type is a platform flexible type and may or may not be marked nullable. */
-    public val KtType.hasFlexibleNullability: Boolean get() = withValidityAssertion { this is KtFlexibleType && this.upperBound.isMarkedNullable != this.lowerBound.isMarkedNullable }
+    public val KaType.hasFlexibleNullability: Boolean get() = withValidityAssertion { this is KaFlexibleType && this.upperBound.isMarkedNullable != this.lowerBound.isMarkedNullable }
 
-    public val KtType.isUnit: Boolean get() = withValidityAssertion { isClassTypeWithClassId(DefaultTypeClassIds.UNIT) }
-    public val KtType.isInt: Boolean get() = withValidityAssertion { isClassTypeWithClassId(DefaultTypeClassIds.INT) }
-    public val KtType.isLong: Boolean get() = withValidityAssertion { isClassTypeWithClassId(DefaultTypeClassIds.LONG) }
-    public val KtType.isShort: Boolean get() = withValidityAssertion { isClassTypeWithClassId(DefaultTypeClassIds.SHORT) }
-    public val KtType.isByte: Boolean get() = withValidityAssertion { isClassTypeWithClassId(DefaultTypeClassIds.BYTE) }
-    public val KtType.isFloat: Boolean get() = withValidityAssertion { isClassTypeWithClassId(DefaultTypeClassIds.FLOAT) }
-    public val KtType.isDouble: Boolean get() = withValidityAssertion { isClassTypeWithClassId(DefaultTypeClassIds.DOUBLE) }
-    public val KtType.isChar: Boolean get() = withValidityAssertion { isClassTypeWithClassId(DefaultTypeClassIds.CHAR) }
-    public val KtType.isBoolean: Boolean get() = withValidityAssertion { isClassTypeWithClassId(DefaultTypeClassIds.BOOLEAN) }
-    public val KtType.isString: Boolean get() = withValidityAssertion { isClassTypeWithClassId(DefaultTypeClassIds.STRING) }
-    public val KtType.isCharSequence: Boolean get() = withValidityAssertion { isClassTypeWithClassId(DefaultTypeClassIds.CHAR_SEQUENCE) }
-    public val KtType.isAny: Boolean get() = withValidityAssertion { isClassTypeWithClassId(DefaultTypeClassIds.ANY) }
-    public val KtType.isNothing: Boolean get() = withValidityAssertion { isClassTypeWithClassId(DefaultTypeClassIds.NOTHING) }
+    public val KaType.isUnit: Boolean get() = withValidityAssertion { isClassTypeWithClassId(DefaultTypeClassIds.UNIT) }
+    public val KaType.isInt: Boolean get() = withValidityAssertion { isClassTypeWithClassId(DefaultTypeClassIds.INT) }
+    public val KaType.isLong: Boolean get() = withValidityAssertion { isClassTypeWithClassId(DefaultTypeClassIds.LONG) }
+    public val KaType.isShort: Boolean get() = withValidityAssertion { isClassTypeWithClassId(DefaultTypeClassIds.SHORT) }
+    public val KaType.isByte: Boolean get() = withValidityAssertion { isClassTypeWithClassId(DefaultTypeClassIds.BYTE) }
+    public val KaType.isFloat: Boolean get() = withValidityAssertion { isClassTypeWithClassId(DefaultTypeClassIds.FLOAT) }
+    public val KaType.isDouble: Boolean get() = withValidityAssertion { isClassTypeWithClassId(DefaultTypeClassIds.DOUBLE) }
+    public val KaType.isChar: Boolean get() = withValidityAssertion { isClassTypeWithClassId(DefaultTypeClassIds.CHAR) }
+    public val KaType.isBoolean: Boolean get() = withValidityAssertion { isClassTypeWithClassId(DefaultTypeClassIds.BOOLEAN) }
+    public val KaType.isString: Boolean get() = withValidityAssertion { isClassTypeWithClassId(DefaultTypeClassIds.STRING) }
+    public val KaType.isCharSequence: Boolean get() = withValidityAssertion { isClassTypeWithClassId(DefaultTypeClassIds.CHAR_SEQUENCE) }
+    public val KaType.isAny: Boolean get() = withValidityAssertion { isClassTypeWithClassId(DefaultTypeClassIds.ANY) }
+    public val KaType.isNothing: Boolean get() = withValidityAssertion { isClassTypeWithClassId(DefaultTypeClassIds.NOTHING) }
 
-    public val KtType.isUInt: Boolean get() = withValidityAssertion { isClassTypeWithClassId(StandardNames.FqNames.uInt) }
-    public val KtType.isULong: Boolean get() = withValidityAssertion { isClassTypeWithClassId(StandardNames.FqNames.uLong) }
-    public val KtType.isUShort: Boolean get() = withValidityAssertion { isClassTypeWithClassId(StandardNames.FqNames.uShort) }
-    public val KtType.isUByte: Boolean get() = withValidityAssertion { isClassTypeWithClassId(StandardNames.FqNames.uByte) }
+    public val KaType.isUInt: Boolean get() = withValidityAssertion { isClassTypeWithClassId(StandardNames.FqNames.uInt) }
+    public val KaType.isULong: Boolean get() = withValidityAssertion { isClassTypeWithClassId(StandardNames.FqNames.uLong) }
+    public val KaType.isUShort: Boolean get() = withValidityAssertion { isClassTypeWithClassId(StandardNames.FqNames.uShort) }
+    public val KaType.isUByte: Boolean get() = withValidityAssertion { isClassTypeWithClassId(StandardNames.FqNames.uByte) }
 
     /** Gets the class symbol backing the given type, if available. */
-    public val KtType.expandedClassSymbol: KtClassOrObjectSymbol?
+    public val KaType.expandedSymbol: KaClassOrObjectSymbol?
         get() = withValidityAssertion {
             return when (this) {
-                is KtNonErrorClassType -> when (val classSymbol = classSymbol) {
-                    is KtClassOrObjectSymbol -> classSymbol
-                    is KtTypeAliasSymbol -> classSymbol.expandedType.expandedClassSymbol
+                is KaNonErrorClassType -> when (val symbol = symbol) {
+                    is KaClassOrObjectSymbol -> symbol
+                    is KaTypeAliasSymbol -> symbol.expandedType.expandedSymbol
                 }
                 else -> null
             }
         }
+
+    /** Gets the class symbol backing the given type, if available. */
+    @Deprecated("Use 'expandedSymbol' instead.", ReplaceWith("expandedSymbol"))
+    public val KaType.expandedClassSymbol: KaClassOrObjectSymbol?
+        get() = expandedSymbol
+
 
     /**
      * Unwraps type aliases.
@@ -116,34 +124,34 @@ public interface KtTypeInfoProviderMixIn : KtAnalysisSessionMixIn {
      * ```
      * The return type of `foo` will be `@Anno3 @Anno2 @Anno1 Base` instead of `@Anno3 SecondAlias`
      */
-    public val KtType.fullyExpandedType: KtType
+    public val KaType.fullyExpandedType: KaType
         get() = withValidityAssertion {
             analysisSession.typeInfoProvider.fullyExpandedType(this)
         }
 
     /**
-     * Returns whether the given [KtType] is an array or a primitive array type or not.
+     * Returns whether the given [KaType] is an array or a primitive array type or not.
      */
-    public fun KtType.isArrayOrPrimitiveArray(): Boolean =
+    public fun KaType.isArrayOrPrimitiveArray(): Boolean =
         withValidityAssertion { analysisSession.typeInfoProvider.isArrayOrPrimitiveArray(this) }
 
     /**
-     * Returns whether the given [KtType] is an array or a primitive array type and its element is also an array type or not.
+     * Returns whether the given [KaType] is an array or a primitive array type and its element is also an array type or not.
      */
-    public fun KtType.isNestedArray(): Boolean = withValidityAssertion { analysisSession.typeInfoProvider.isNestedArray(this) }
+    public fun KaType.isNestedArray(): Boolean = withValidityAssertion { analysisSession.typeInfoProvider.isNestedArray(this) }
 
-    public fun KtType.isClassTypeWithClassId(classId: ClassId): Boolean = withValidityAssertion {
-        if (this !is KtNonErrorClassType) return false
+    public fun KaType.isClassTypeWithClassId(classId: ClassId): Boolean = withValidityAssertion {
+        if (this !is KaNonErrorClassType) return false
         return this.classId == classId
     }
 
-    public val KtType.isPrimitive: Boolean
+    public val KaType.isPrimitive: Boolean
         get() = withValidityAssertion {
-            if (this !is KtNonErrorClassType) return false
+            if (this !is KaNonErrorClassType) return false
             return this.classId in DefaultTypeClassIds.PRIMITIVES
         }
 
-    public val KtType.defaultInitializer: String?
+    public val KaType.defaultInitializer: String?
         get() = withValidityAssertion {
             when {
                 isMarkedNullable -> "null"
@@ -162,6 +170,8 @@ public interface KtTypeInfoProviderMixIn : KtAnalysisSessionMixIn {
             }
         }
 }
+
+public typealias KtTypeInfoProviderMixIn = KaTypeInfoProviderMixIn
 
 public object DefaultTypeClassIds {
     public val UNIT: ClassId = ClassId.topLevel(StandardNames.FqNames.unit.toSafe())

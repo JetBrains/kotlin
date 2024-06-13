@@ -11,17 +11,16 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.TypeConversionUtil
 import com.intellij.util.IncorrectOperationException
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.annotations.*
-import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithModality
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithTypeParameters
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithModality
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithTypeParameters
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
+import org.jetbrains.kotlin.analysis.api.platform.modification.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.kotlin.asJava.elements.psiType
@@ -43,14 +42,14 @@ import java.util.*
 internal fun <L : Any> L.invalidAccess(): Nothing =
     error("Cls delegate shouldn't be accessed for symbol light classes! Qualified name: ${javaClass.name}")
 
-context(KtAnalysisSession)
-internal fun KtDeclarationSymbol.getContainingSymbolsWithSelf(): Sequence<KtDeclarationSymbol> =
+context(KaSession)
+internal fun KaDeclarationSymbol.getContainingSymbolsWithSelf(): Sequence<KaDeclarationSymbol> =
     generateSequence(this) { it.getContainingSymbol() }
 
-internal fun KtAnalysisSession.mapType(
-    type: KtType,
+internal fun KaSession.mapType(
+    type: KaType,
     psiContext: PsiElement,
-    mode: KtTypeMappingMode,
+    mode: KaTypeMappingMode,
 ): PsiClassType? {
     val psiType = type.asPsiType(
         useSitePosition = psiContext,
@@ -61,35 +60,35 @@ internal fun KtAnalysisSession.mapType(
     return psiType as? PsiClassType
 }
 
-internal fun KtSymbolWithModality.computeSimpleModality(): String? = when (modality) {
+internal fun KaSymbolWithModality.computeSimpleModality(): String? = when (modality) {
     Modality.SEALED -> PsiModifier.ABSTRACT
     Modality.FINAL -> PsiModifier.FINAL
     Modality.ABSTRACT -> PsiModifier.ABSTRACT
     Modality.OPEN -> null
 }
 
-context(KtAnalysisSession)
-internal fun KtClassOrObjectSymbol.enumClassModality(): String? {
-    if (getMemberScope().getCallableSymbols().any { (it as? KtSymbolWithModality)?.modality == Modality.ABSTRACT }) {
+context(KaSession)
+internal fun KaClassOrObjectSymbol.enumClassModality(): String? {
+    if (getMemberScope().getCallableSymbols().any { (it as? KaSymbolWithModality)?.modality == Modality.ABSTRACT }) {
         return PsiModifier.ABSTRACT
     }
 
-    if (getStaticDeclaredMemberScope().getCallableSymbols().none { it is KtEnumEntrySymbol && it.requiresSubClass() }) {
+    if (getStaticDeclaredMemberScope().getCallableSymbols().none { it is KaEnumEntrySymbol && it.requiresSubClass() }) {
         return PsiModifier.FINAL
     }
 
     return null
 }
 
-context(KtAnalysisSession)
-private fun KtEnumEntrySymbol.requiresSubClass(): Boolean {
+context(KaSession)
+private fun KaEnumEntrySymbol.requiresSubClass(): Boolean {
     val initializer = enumEntryInitializer ?: return false
-    return initializer.getCombinedDeclaredMemberScope().getAllSymbols().any { it !is KtConstructorSymbol }
+    return initializer.getCombinedDeclaredMemberScope().getAllSymbols().any { it !is KaConstructorSymbol }
 }
 
-internal fun KtSymbolWithVisibility.toPsiVisibilityForMember(): String = visibility.toPsiVisibilityForMember()
+internal fun KaSymbolWithVisibility.toPsiVisibilityForMember(): String = visibility.toPsiVisibilityForMember()
 
-internal fun KtSymbolWithVisibility.toPsiVisibilityForClass(isNested: Boolean): String = visibility.toPsiVisibilityForClass(isNested)
+internal fun KaSymbolWithVisibility.toPsiVisibilityForClass(isNested: Boolean): String = visibility.toPsiVisibilityForClass(isNested)
 
 private fun Visibility.toPsiVisibilityForMember(): String = when (this) {
     Visibilities.Private, Visibilities.PrivateToThis -> PsiModifier.PRIVATE
@@ -134,33 +133,33 @@ internal fun KtLightElement<*, *>.isOriginEquivalentTo(that: PsiElement?): Boole
     return kotlinOrigin?.isEquivalentTo(that) == true
 }
 
-internal fun KtAnalysisSession.getTypeNullability(type: KtType): KtTypeNullability {
-    if (type is KtClassErrorType) return KtTypeNullability.NON_NULLABLE
+internal fun KaSession.getTypeNullability(type: KaType): KaTypeNullability {
+    if (type is KaClassErrorType) return KaTypeNullability.NON_NULLABLE
 
     val ktType = type.fullyExpandedType
-    if (ktType.nullability != KtTypeNullability.NON_NULLABLE) return ktType.nullability
+    if (ktType.nullability != KaTypeNullability.NON_NULLABLE) return ktType.nullability
 
-    if (ktType.isUnit) return KtTypeNullability.NON_NULLABLE
+    if (ktType.isUnit) return KaTypeNullability.NON_NULLABLE
 
-    if (ktType.isPrimitiveBacked) return KtTypeNullability.UNKNOWN
+    if (ktType.isPrimitiveBacked) return KaTypeNullability.UNKNOWN
 
-    if (ktType is KtTypeParameterType) {
-        if (ktType.isMarkedNullable) return KtTypeNullability.NULLABLE
+    if (ktType is KaTypeParameterType) {
+        if (ktType.isMarkedNullable) return KaTypeNullability.NULLABLE
         val subtypeOfNullableSuperType = ktType.symbol.upperBounds.all { upperBound -> upperBound.canBeNull }
-        return if (!subtypeOfNullableSuperType) KtTypeNullability.NON_NULLABLE else KtTypeNullability.UNKNOWN
+        return if (!subtypeOfNullableSuperType) KaTypeNullability.NON_NULLABLE else KaTypeNullability.UNKNOWN
     }
 
-    if (ktType !is KtNonErrorClassType) return KtTypeNullability.NON_NULLABLE
-    if (ktType.ownTypeArguments.any { it.type is KtClassErrorType }) return KtTypeNullability.NON_NULLABLE
-    if (ktType.classId.shortClassName.asString() == SpecialNames.ANONYMOUS_STRING) return KtTypeNullability.NON_NULLABLE
+    if (ktType !is KaNonErrorClassType) return KaTypeNullability.NON_NULLABLE
+    if (ktType.typeArguments.any { it.type is KaClassErrorType }) return KaTypeNullability.NON_NULLABLE
+    if (ktType.classId.shortClassName.asString() == SpecialNames.ANONYMOUS_STRING) return KaTypeNullability.NON_NULLABLE
 
     return ktType.nullability
 }
 
-internal val KtTypeNullability.asAnnotationQualifier: String?
+internal val KaTypeNullability.asAnnotationQualifier: String?
     get() = when (this) {
-        KtTypeNullability.NON_NULLABLE -> JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION
-        KtTypeNullability.NULLABLE -> JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION
+        KaTypeNullability.NON_NULLABLE -> JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION
+        KaTypeNullability.NULLABLE -> JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION
         else -> null
     }?.asString()
 
@@ -250,7 +249,7 @@ private fun AnnotationValue.KClass.toAnnotationMemberValue(parent: PsiElement): 
     return SymbolPsiClassObjectAccessExpression(sourcePsi, parent, psiType)
 }
 
-private fun KtConstantValue.asStringForPsiExpression(): String =
+private fun KaConstantValue.asStringForPsiExpression(): String =
     when (val value = value) {
         Double.NEGATIVE_INFINITY -> "-1.0 / 0.0"
         Double.NaN -> "0.0 / 0.0"
@@ -266,7 +265,7 @@ private fun KtConstantValue.asStringForPsiExpression(): String =
         else -> value.toString()
     }
 
-internal fun KtConstantValue.createPsiExpression(parent: PsiElement): PsiExpression? {
+internal fun KaConstantValue.createPsiExpression(parent: PsiElement): PsiExpression? {
     val asString = asStringForPsiExpression()
     return parent.project.withElementFactorySafe {
         createExpressionFromText(asString, parent)
@@ -284,8 +283,8 @@ internal inline fun <T> Project.withElementFactorySafe(crossinline action: PsiEl
 
 internal fun BitSet.copy(): BitSet = clone() as BitSet
 
-context(KtAnalysisSession)
-internal fun <T : KtSymbol> KtSymbolPointer<T>.restoreSymbolOrThrowIfDisposed(): T =
+context(KaSession)
+internal fun <T : KaSymbol> KaSymbolPointer<T>.restoreSymbolOrThrowIfDisposed(): T =
     restoreSymbol()
         ?: errorWithAttachment("${this::class} pointer already disposed") {
             withEntry("pointer", this@restoreSymbolOrThrowIfDisposed) { it.toString() }
@@ -294,7 +293,7 @@ internal fun <T : KtSymbol> KtSymbolPointer<T>.restoreSymbolOrThrowIfDisposed():
 internal fun hasTypeParameters(
     ktModule: KtModule,
     declaration: KtTypeParameterListOwner?,
-    declarationPointer: KtSymbolPointer<KtSymbolWithTypeParameters>,
+    declarationPointer: KaSymbolPointer<KaSymbolWithTypeParameters>,
 ): Boolean = declaration?.typeParameters?.isNotEmpty() ?: declarationPointer.withSymbol(ktModule) {
     it.typeParameters.isNotEmpty()
 }
@@ -305,26 +304,26 @@ internal val SymbolLightClassBase.interfaceIfDefaultImpls: SymbolLightClassForIn
 internal val SymbolLightClassBase.isDefaultImplsForInterfaceWithTypeParameters: Boolean
     get() = interfaceIfDefaultImpls?.hasTypeParameters() ?: false
 
-internal fun KtSymbolPointer<*>.isValid(ktModule: KtModule): Boolean = analyzeForLightClasses(ktModule) {
+internal fun KaSymbolPointer<*>.isValid(ktModule: KtModule): Boolean = analyzeForLightClasses(ktModule) {
     restoreSymbol() != null
 }
 
 @Suppress("NOTHING_TO_INLINE")
-internal inline fun <T : KtSymbol> compareSymbolPointers(
-    left: KtSymbolPointer<T>,
-    right: KtSymbolPointer<T>,
+internal inline fun <T : KaSymbol> compareSymbolPointers(
+    left: KaSymbolPointer<T>,
+    right: KaSymbolPointer<T>,
 ): Boolean = left === right || left.pointsToTheSameSymbolAs(right)
 
-internal inline fun <T : KtSymbol, R> KtSymbolPointer<T>.withSymbol(
+internal inline fun <T : KaSymbol, R> KaSymbolPointer<T>.withSymbol(
     ktModule: KtModule,
-    crossinline action: KtAnalysisSession.(T) -> R,
+    crossinline action: KaSession.(T) -> R,
 ): R = analyzeForLightClasses(ktModule) { action(this, restoreSymbolOrThrowIfDisposed()) }
 
-internal val KtPropertySymbol.isConstOrJvmField: Boolean get() = isConst || isJvmField
-internal val KtPropertySymbol.isJvmField: Boolean get() = backingFieldSymbol?.hasJvmFieldAnnotation() == true
-internal val KtPropertySymbol.isConst: Boolean get() = (this as? KtKotlinPropertySymbol)?.isConst == true
-internal val KtPropertySymbol.isLateInit: Boolean get() = (this as? KtKotlinPropertySymbol)?.isLateInit == true
-internal val KtPropertySymbol.canHaveNonPrivateField: Boolean get() = isConstOrJvmField || isLateInit
+internal val KaPropertySymbol.isConstOrJvmField: Boolean get() = isConst || isJvmField
+internal val KaPropertySymbol.isJvmField: Boolean get() = backingFieldSymbol?.hasJvmFieldAnnotation() == true
+internal val KaPropertySymbol.isConst: Boolean get() = (this as? KaKotlinPropertySymbol)?.isConst == true
+internal val KaPropertySymbol.isLateInit: Boolean get() = (this as? KaKotlinPropertySymbol)?.isLateInit == true
+internal val KaPropertySymbol.canHaveNonPrivateField: Boolean get() = isConstOrJvmField || isLateInit
 
 internal inline fun <reified T> Collection<T>.toArrayIfNotEmptyOrDefault(default: Array<T>): Array<T> {
     return if (isNotEmpty()) toTypedArray() else default

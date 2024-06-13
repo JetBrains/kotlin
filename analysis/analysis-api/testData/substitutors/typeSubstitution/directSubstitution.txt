@@ -1,4 +1,4 @@
 PSI type: Map<List<A>, B>
-KtType: kotlin.collections.Map<kotlin.collections.List<A>, B>
+KaType: kotlin.collections.Map<kotlin.collections.List<A>, B>
 substitutor.substitute: kotlin.collections.Map<kotlin.collections.List<kotlin.Int>, kotlin.String>
 substitutor.substituteOrNull: kotlin.collections.Map<kotlin.collections.List<kotlin.Int>, kotlin.String>

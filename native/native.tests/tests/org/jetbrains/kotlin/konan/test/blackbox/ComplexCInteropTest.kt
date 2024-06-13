@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.ClangArgs
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.isSimulator
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ClangDistribution
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClang
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClangToStaticLibrary
 import org.jetbrains.kotlin.native.executors.RunProcessResult
 import org.jetbrains.kotlin.native.executors.runProcess
 import org.jetbrains.kotlin.test.TestMetadata
@@ -49,26 +51,14 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
     @Test
     @TestMetadata("embedStaticLibraries.kt")
     fun testEmbedStaticLibraries() {
-        val llvmAr = ClangArgs.Native(testRunSettings.configurables).llvmAr().first()
         val embedStaticLibrariesDir = interopDir.resolve("embedStaticLibraries")
         (1..4).forEach {
             val source = embedStaticLibrariesDir.resolve("$it.c")
-            val obj = buildDir.resolve("$it.o")
-            compileWithClang(
-                clangDistribution = ClangDistribution.Llvm,
-                sourceFiles = listOf(source),
-                includeDirectories = emptyList(),
-                outputFile = obj,
-                libraryDirectories = emptyList(),
-                libraries = emptyList(),
-                additionalClangFlags = listOf("-c"),
-                fmodules = false, // with `-fmodules`, ld cannot find symbol `_assert`
-            ).assertSuccess()
             val libFile = buildDir.resolve("$it.a")
-            runProcess(llvmAr, "-rc", libFile.absolutePath, obj.absolutePath) {
-                timeout = Duration.parse("1m")
-            }
-            assertTrue(libFile.exists())
+            compileWithClangToStaticLibrary(
+                sourceFiles = listOf(source),
+                outputFile = libFile,
+            ).assertSuccess()
         }
         val defFile = buildDir.resolve("embedStaticLibraries.def").also {
             it.printWriter().use {
@@ -461,5 +451,31 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
             fmodules = false, // with `-fmodules`, ld cannot find symbol `_assert`
         ).assertSuccess()
         return clangResult
+    }
+
+    @Test
+    @TestMetadata("arc_contract")
+    fun arcContract() {
+        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
+        Assumptions.assumeTrue(targets.testTarget.architecture == Architecture.ARM64)
+        val root = interopObjCDir.resolve("arc_contract")
+        val bcFile = buildDir.resolve("arc_contract.bc")
+        runProcess(
+            "${testRunSettings.configurables.absoluteLlvmHome}/bin/llvm-as",
+            root.resolve("main.ll").absolutePath,
+            "-o",
+            bcFile.absolutePath
+        )
+        val testCase = generateTestCaseWithSingleFile(
+            root.resolve("main.kt"),
+            testKind = TestKind.STANDALONE_NO_TR,
+            extras = TestCase.NoTestRunnerExtras(),
+            freeCompilerArgs = TestCompilerArgs("-native-library", bcFile.absolutePath),
+            checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout).copy(
+                outputDataFile = TestRunCheck.OutputDataFile(file = root.resolve("main.out"))
+            )
+        )
+        val compilationResult = compileToExecutableInOneStage(testCase).assertSuccess()
+        runExecutableAndVerify(testCase, TestExecutable.fromCompilationResult(testCase, compilationResult))
     }
 }

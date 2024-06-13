@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +SamConversionForKotlinFunctions +SamConversionPerArgument +FunctionalInterfaceConversion
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +SamConversionForKotlinFunctions +SamConversionPerArgument +FunctionalInterfaceConversion
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun interface KRunnable {
     fun invoke()

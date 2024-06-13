@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 abstract class AbstractSymbolByPsiTest : AbstractSymbolTest() {
     override val defaultRendererOption: PrettyRendererOption get() = PrettyRendererOption.BODY_WITH_MEMBERS
 
-    override fun KtAnalysisSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData {
+    override fun KaSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData {
         val allDeclarationSymbols = ktFile.collectDescendantsOfType<KtDeclaration> { it.isValidForSymbolCreation }.map { declaration ->
             declaration.getSymbol()
         }

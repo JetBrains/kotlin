@@ -1,1 +1,1 @@
-/selectFromCovariantAndContravariantTypes.kt:(335,344): warning: Type argument for type parameter 'V' cannot be inferred because it has incompatible upper bounds: A, B (multiple incompatible classes). This will become an error in a future release.
+/selectFromCovariantAndContravariantTypes.kt:(333,342): warning: Type argument for type parameter 'V' cannot be inferred because it has incompatible upper bounds: A, B (multiple incompatible classes). This will become an error in a future release.

@@ -66,9 +66,10 @@ fun box(): String {
 // CHECK-LABEL: define internal void @"kfun:$stringifyArray$lambda$0$FUNCTION_REFERENCE$0.<init>#internal"
 // CHECK-SAME: (%struct.ObjHeader* {{%[0-9]+}})
 
-// CHECK-LABEL: define internal %struct.ObjHeader* @"kfun:$stringifyArray$lambda$0$FUNCTION_REFERENCE$0.$<bridge-BNNN>invoke(kotlin.Array<1:0>){}kotlin.Int#internal"
+// CHECK-DEBUG: define internal %struct.ObjHeader* @"kfun:$stringifyArray$lambda$0$FUNCTION_REFERENCE$0.$<bridge-UNNN>invoke(kotlin.Array<1:0>){}kotlin.Int#internal"
+// CHECK-OPT: define internal %struct.ObjHeader* @"kfun:$stringifyArray$lambda$0$FUNCTION_REFERENCE$0.$<bridge-UNNN>invoke(kotlin.Array<1:0>){}kotlin.Int#internal"
 // CHECK-SAME: (%struct.ObjHeader* [[this:%[0-9]+]], %struct.ObjHeader* [[array:%[0-9]+]], %struct.ObjHeader** {{%[0-9]+}})
-// CHECK-OPT: call i32 @"kfun:$stringifyArray$lambda$0$FUNCTION_REFERENCE$0.invoke#internal"(%struct.ObjHeader* [[this]], %struct.ObjHeader* [[array]])
+// CHECK-OPT: call i32 @"kfun:$stringifyArray$lambda$0$FUNCTION_REFERENCE$0.invoke#internal"(%struct.ObjHeader* [[this]], %struct.ObjHeader* {{%[0-9]+}})
 // CHECK-DEBUG: call i32 @"kfun:$stringifyArray$lambda$0$FUNCTION_REFERENCE$0.invoke#internal"(%struct.ObjHeader* {{%[0-9]+}}, %struct.ObjHeader* {{%[0-9]+}})
 
 // CHECK-LABEL: define internal %struct.ObjHeader* @"kfun:$get$FUNCTION_REFERENCE$1.invoke#internal"
@@ -79,9 +80,10 @@ fun box(): String {
 // CHECK-LABEL: define internal void @"kfun:$get$FUNCTION_REFERENCE$1.<init>#internal"
 // CHECK-SAME: (%struct.ObjHeader* {{%[0-9]+}})
 
-// CHECK-LABEL: define internal %struct.ObjHeader* @"kfun:$get$FUNCTION_REFERENCE$1.$<bridge-NNNNB>invoke(kotlin.Array<*>;kotlin.Int){}kotlin.Any?#internal"
+// CHECK-DEBUG: define internal %struct.ObjHeader* @"kfun:$get$FUNCTION_REFERENCE$1.$<bridge-NNNNU>invoke(kotlin.Array<*>;kotlin.Int){}kotlin.Any?#internal"
+// CHECK-OPT: define internal %struct.ObjHeader* @"kfun:$get$FUNCTION_REFERENCE$1.$<bridge-NNNNU>invoke(kotlin.Array<*>;kotlin.Int){}kotlin.Any?#internal"
 // CHECK-SAME: (%struct.ObjHeader* [[this:%[0-9]+]], %struct.ObjHeader* [[array:%[0-9]+]], %struct.ObjHeader* [[boxedIndex:%[0-9]+]], %struct.ObjHeader** [[ret:%[0-9]+]])
-// CHECK-OPT: call %struct.ObjHeader* @"kfun:$get$FUNCTION_REFERENCE$1.invoke#internal"(%struct.ObjHeader* [[this]], %struct.ObjHeader* [[array]], i32 {{%[0-9]+}}, %struct.ObjHeader** [[ret]])
+// CHECK-OPT: call %struct.ObjHeader* @"kfun:$get$FUNCTION_REFERENCE$1.invoke#internal"(%struct.ObjHeader* [[this]], %struct.ObjHeader* {{%[0-9]+}}, i32 {{%[0-9]+}}, %struct.ObjHeader** [[ret]])
 // CHECK-DEBUG: call %struct.ObjHeader* @"kfun:$get$FUNCTION_REFERENCE$1.invoke#internal"(%struct.ObjHeader* {{%[0-9]+}}, %struct.ObjHeader* {{%[0-9]+}}, i32 {{%[0-9]+}}, %struct.ObjHeader** {{%[0-9]+}})
 
 // CHECK-LABEL: define internal i32 @"kfun:$stringifyIntArray$lambda$1$FUNCTION_REFERENCE$2.invoke#internal"
@@ -90,9 +92,10 @@ fun box(): String {
 // CHECK-LABEL: define internal void @"kfun:$stringifyIntArray$lambda$1$FUNCTION_REFERENCE$2.<init>#internal"
 // CHECK-SAME: (%struct.ObjHeader* {{%[0-9]+}})
 
-// CHECK-LABEL: define internal %struct.ObjHeader* @"kfun:$stringifyIntArray$lambda$1$FUNCTION_REFERENCE$2.$<bridge-BNNN>invoke(kotlin.Array<kotlin.Int>){}kotlin.Int#internal"
+// CHECK-DEBUG: define internal %struct.ObjHeader* @"kfun:$stringifyIntArray$lambda$1$FUNCTION_REFERENCE$2.$<bridge-UNNN>invoke(kotlin.Array<kotlin.Int>){}kotlin.Int#internal"
+// CHECK-OPT: define internal %struct.ObjHeader* @"kfun:$stringifyIntArray$lambda$1$FUNCTION_REFERENCE$2.$<bridge-UNNN>invoke(kotlin.Array<kotlin.Int>){}kotlin.Int#internal"
 // CHECK-SAME: (%struct.ObjHeader* [[this:%[0-9]+]], %struct.ObjHeader* [[array:%[0-9]+]], %struct.ObjHeader** {{%[0-9]+}})
-// CHECK-OPT: call i32 @"kfun:$stringifyIntArray$lambda$1$FUNCTION_REFERENCE$2.invoke#internal"(%struct.ObjHeader* [[this]], %struct.ObjHeader* [[array]])
+// CHECK-OPT: call i32 @"kfun:$stringifyIntArray$lambda$1$FUNCTION_REFERENCE$2.invoke#internal"(%struct.ObjHeader* [[this]], %struct.ObjHeader* {{%[0-9]+}})
 // CHECK-DEBUG: call i32 @"kfun:$stringifyIntArray$lambda$1$FUNCTION_REFERENCE$2.invoke#internal"(%struct.ObjHeader* {{%[0-9]+}}, %struct.ObjHeader* {{%[0-9]+}})
 
 // CHECK-LABEL: define internal i32 @"kfun:$get$FUNCTION_REFERENCE$3.invoke#internal"
@@ -101,9 +104,10 @@ fun box(): String {
 // CHECK-LABEL: define internal void @"kfun:$get$FUNCTION_REFERENCE$3.<init>#internal"
 // CHECK-SAME: (%struct.ObjHeader* {{%[0-9]+}})
 
-// CHECK-LABEL: define internal %struct.ObjHeader* @"kfun:$get$FUNCTION_REFERENCE$3.$<bridge-BNNNB>invoke(kotlin.Array<kotlin.Int>;kotlin.Int){}kotlin.Int#internal"
+// CHECK-DEBUG: define internal %struct.ObjHeader* @"kfun:$get$FUNCTION_REFERENCE$3.$<bridge-UNNNU>invoke(kotlin.Array<kotlin.Int>;kotlin.Int){}kotlin.Int#internal"
+// CHECK-OPT: define internal %struct.ObjHeader* @"kfun:$get$FUNCTION_REFERENCE$3.$<bridge-UNNNU>invoke(kotlin.Array<kotlin.Int>;kotlin.Int){}kotlin.Int#internal"
 // CHECK-SAME: (%struct.ObjHeader* [[this:%[0-9]+]], %struct.ObjHeader* [[array:%[0-9]+]], %struct.ObjHeader* {{%[0-9]+}}, %struct.ObjHeader** {{%[0-9]+}})
-// CHECK-OPT: call i32 @"kfun:$get$FUNCTION_REFERENCE$3.invoke#internal"(%struct.ObjHeader* [[this]], %struct.ObjHeader* [[array]], i32 {{%[0-9]+}})
+// CHECK-OPT: call i32 @"kfun:$get$FUNCTION_REFERENCE$3.invoke#internal"(%struct.ObjHeader* [[this]], %struct.ObjHeader* {{%[0-9]+}}, i32 {{%[0-9]+}})
 // CHECK-DEBUG: call i32 @"kfun:$get$FUNCTION_REFERENCE$3.invoke#internal"(%struct.ObjHeader* {{%[0-9]+}}, %struct.ObjHeader* {{%[0-9]+}}, i32 {{%[0-9]+}})
 
 // CHECK-LABEL: define internal void @"kfun:$foo$FUNCTION_REFERENCE$4.invoke#internal"
@@ -114,7 +118,7 @@ fun box(): String {
 // CHECK-LABEL: define internal void @"kfun:$foo$FUNCTION_REFERENCE$4.<init>#internal"
 // CHECK-SAME: (%struct.ObjHeader* {{%[0-9]+}})
 
-// CHECK-LABEL: define internal %struct.ObjHeader* @"kfun:$foo$FUNCTION_REFERENCE$4.$<bridge-UNNNN>invoke(1:0;1:0){}#internal"
+// CHECK-LABEL: define internal %struct.ObjHeader* @"kfun:$foo$FUNCTION_REFERENCE$4.$<bridge-DNNNN>invoke(1:0;1:0){}#internal"
 // CHECK-SAME: (%struct.ObjHeader* [[this:%[0-9]+]], %struct.ObjHeader* [[p1:%[0-9]+]], %struct.ObjHeader* [[p2:%[0-9]+]], %struct.ObjHeader** {{%[0-9]+}})
 // CHECK-OPT: call void @"kfun:$foo$FUNCTION_REFERENCE$4.invoke#internal"(%struct.ObjHeader* [[this]], %struct.ObjHeader* [[p1]], %struct.ObjHeader* [[p2]])
 // CHECK-DEBUG: call void @"kfun:$foo$FUNCTION_REFERENCE$4.invoke#internal"(%struct.ObjHeader* {{%[0-9]+}}, %struct.ObjHeader* {{%[0-9]+}}, %struct.ObjHeader* {{%[0-9]+}})
@@ -126,7 +130,7 @@ fun box(): String {
 // CHECK-LABEL: define internal void @"kfun:$foo$FUNCTION_REFERENCE$5.<init>#internal"
 // CHECK-SAME: (%struct.ObjHeader* {{%[0-9]+}})
 
-// CHECK-LABEL: define internal %struct.ObjHeader* @"kfun:$foo$FUNCTION_REFERENCE$5.$<bridge-UNNBB>invoke(kotlin.Int;kotlin.Int){}#internal"
+// CHECK-LABEL: define internal %struct.ObjHeader* @"kfun:$foo$FUNCTION_REFERENCE$5.$<bridge-DNNUU>invoke(kotlin.Int;kotlin.Int){}#internal"
 // CHECK-SAME: (%struct.ObjHeader* [[this:%[0-9]+]], %struct.ObjHeader* {{%[0-9]+}}, %struct.ObjHeader* {{%[0-9]+}}, %struct.ObjHeader** {{%[0-9]+}})
 // CHECK-OPT: call void @"kfun:$foo$FUNCTION_REFERENCE$5.invoke#internal"(%struct.ObjHeader* [[this]], i32 {{%[0-9]+}}, i32 {{%[0-9]+}})
 // CHECK-DEBUG: call void @"kfun:$foo$FUNCTION_REFERENCE$5.invoke#internal"(%struct.ObjHeader* {{%[0-9]+}}, i32 {{%[0-9]+}}, i32 {{%[0-9]+}})

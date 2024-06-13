@@ -30,7 +30,7 @@ fun KtClassOrObjectSymbol.translateToObjCProtocol(): ObjCProtocol? {
         .sortedWith(StableCallableOrder)
         .flatMap { it.translateToObjCExportStub() }
 
-    val comment: ObjCComment? = annotationsList.translateToObjCComment()
+    val comment: ObjCComment? = annotations.translateToObjCComment()
 
     return ObjCProtocolImpl(
         name = name.objCName,

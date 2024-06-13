@@ -1,5 +1,5 @@
-// !CHECK_TYPE
-// !LANGUAGE: +CallableReferencesToClassMembersWithEmptyLHS
+// CHECK_TYPE
+// LANGUAGE: +CallableReferencesToClassMembersWithEmptyLHS
 
 import kotlin.reflect.KFunction0
 

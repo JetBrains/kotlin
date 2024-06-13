@@ -5,51 +5,51 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.diagnostics
 
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.diagnostics.*
 
-internal interface KtFirDiagnosticCreator
+internal interface KaFirDiagnosticCreator
 
-internal fun interface KtFirDiagnostic0Creator : KtFirDiagnosticCreator {
-    fun KtFirAnalysisSession.create(diagnostic: KtSimpleDiagnostic): KtFirDiagnostic<*>
+internal fun interface KaFirDiagnostic0Creator : KaFirDiagnosticCreator {
+    fun KaFirSession.create(diagnostic: KtSimpleDiagnostic): KaFirDiagnostic<*>
 }
 
-internal fun interface KtFirDiagnostic1Creator<A> : KtFirDiagnosticCreator {
-    fun KtFirAnalysisSession.create(diagnostic: KtDiagnosticWithParameters1<A>): KtFirDiagnostic<*>
+internal fun interface KaFirDiagnostic1Creator<A> : KaFirDiagnosticCreator {
+    fun KaFirSession.create(diagnostic: KtDiagnosticWithParameters1<A>): KaFirDiagnostic<*>
 }
 
-internal fun interface KtFirDiagnostic2Creator<A, B> : KtFirDiagnosticCreator {
-    fun KtFirAnalysisSession.create(diagnostic: KtDiagnosticWithParameters2<A, B>): KtFirDiagnostic<*>
+internal fun interface KaFirDiagnostic2Creator<A, B> : KaFirDiagnosticCreator {
+    fun KaFirSession.create(diagnostic: KtDiagnosticWithParameters2<A, B>): KaFirDiagnostic<*>
 }
 
-internal fun interface KtFirDiagnostic3Creator<A, B, C> : KtFirDiagnosticCreator {
-    fun KtFirAnalysisSession.create(diagnostic: KtDiagnosticWithParameters3<A, B, C>): KtFirDiagnostic<*>
+internal fun interface KaFirDiagnostic3Creator<A, B, C> : KaFirDiagnosticCreator {
+    fun KaFirSession.create(diagnostic: KtDiagnosticWithParameters3<A, B, C>): KaFirDiagnostic<*>
 }
 
-internal fun interface KtFirDiagnostic4Creator<A, B, C, D> : KtFirDiagnosticCreator {
-    fun KtFirAnalysisSession.create(diagnostic: KtDiagnosticWithParameters4<A, B, C, D>): KtFirDiagnostic<*>
+internal fun interface KaFirDiagnostic4Creator<A, B, C, D> : KaFirDiagnosticCreator {
+    fun KaFirSession.create(diagnostic: KtDiagnosticWithParameters4<A, B, C, D>): KaFirDiagnostic<*>
 }
 
-internal class KtDiagnosticConverter(private val conversions: Map<AbstractKtDiagnosticFactory, KtFirDiagnosticCreator>) {
-    fun convert(analysisSession: KtFirAnalysisSession, diagnostic: KtDiagnostic): KtFirDiagnostic<*> {
+internal class KaDiagnosticConverter(private val conversions: Map<AbstractKtDiagnosticFactory, KaFirDiagnosticCreator>) {
+    fun convert(analysisSession: KaFirSession, diagnostic: KtDiagnostic): KaFirDiagnostic<*> {
         val creator = conversions[diagnostic.factory] ?: buildCreatorForPluginDiagnostic(diagnostic.factory)
 
         @Suppress("UNCHECKED_CAST")
         return with(analysisSession) {
             when (creator) {
-                is KtFirDiagnostic0Creator -> with(creator) {
+                is KaFirDiagnostic0Creator -> with(creator) {
                     create(diagnostic as KtSimpleDiagnostic)
                 }
-                is KtFirDiagnostic1Creator<*> -> with(creator as KtFirDiagnostic1Creator<Any?>) {
+                is KaFirDiagnostic1Creator<*> -> with(creator as KaFirDiagnostic1Creator<Any?>) {
                     create(diagnostic as KtDiagnosticWithParameters1<Any?>)
                 }
-                is KtFirDiagnostic2Creator<*, *> -> with(creator as KtFirDiagnostic2Creator<Any?, Any?>) {
+                is KaFirDiagnostic2Creator<*, *> -> with(creator as KaFirDiagnostic2Creator<Any?, Any?>) {
                     create(diagnostic as KtDiagnosticWithParameters2<Any?, Any?>)
                 }
-                is KtFirDiagnostic3Creator<*, *, *> -> with(creator as KtFirDiagnostic3Creator<Any?, Any?, Any?>) {
+                is KaFirDiagnostic3Creator<*, *, *> -> with(creator as KaFirDiagnostic3Creator<Any?, Any?, Any?>) {
                     create(diagnostic as KtDiagnosticWithParameters3<Any?, Any?, Any?>)
                 }
-                is KtFirDiagnostic4Creator<*, *, *, *> -> with(creator as KtFirDiagnostic4Creator<Any?, Any?, Any?, Any?>) {
+                is KaFirDiagnostic4Creator<*, *, *, *> -> with(creator as KaFirDiagnostic4Creator<Any?, Any?, Any?, Any?>) {
                     create(diagnostic as KtDiagnosticWithParameters4<Any?, Any?, Any?, Any?>)
                 }
                 else -> error("Invalid KtFirDiagnosticCreator ${creator::class.simpleName}")
@@ -58,28 +58,28 @@ internal class KtDiagnosticConverter(private val conversions: Map<AbstractKtDiag
     }
 
     @Suppress("RemoveExplicitTypeArguments") // See KT-52838
-    private fun buildCreatorForPluginDiagnostic(factory: AbstractKtDiagnosticFactory): KtFirDiagnosticCreator {
+    private fun buildCreatorForPluginDiagnostic(factory: AbstractKtDiagnosticFactory): KaFirDiagnosticCreator {
         return when (factory) {
-            is KtDiagnosticFactory0 -> KtFirDiagnostic0Creator {
-                KtCompilerPluginDiagnostic0Impl(it as KtPsiSimpleDiagnostic, token)
+            is KtDiagnosticFactory0 -> KaFirDiagnostic0Creator {
+                KaCompilerPluginDiagnostic0Impl(it as KtPsiSimpleDiagnostic, token)
             }
-            is KtDiagnosticFactory1<*> -> KtFirDiagnostic1Creator<Any?> { // Type argument specified because of KT-55281
-                KtCompilerPluginDiagnostic1Impl(
+            is KtDiagnosticFactory1<*> -> KaFirDiagnostic1Creator<Any?> { // Type argument specified because of KT-55281
+                KaCompilerPluginDiagnostic1Impl(
                     it as KtPsiDiagnosticWithParameters1<*>,
                     token,
                     convertArgument(it.a, this)
                 )
             }
-            is KtDiagnosticFactory2<*, *> -> KtFirDiagnostic2Creator<Any?, Any?> {
-                KtCompilerPluginDiagnostic2Impl(
+            is KtDiagnosticFactory2<*, *> -> KaFirDiagnostic2Creator<Any?, Any?> {
+                KaCompilerPluginDiagnostic2Impl(
                     it as KtPsiDiagnosticWithParameters2<*, *>,
                     token,
                     convertArgument(it.a, this),
                     convertArgument(it.b, this)
                 )
             }
-            is KtDiagnosticFactory3<*, *, *> -> KtFirDiagnostic3Creator<Any?, Any?, Any?> {
-                KtCompilerPluginDiagnostic3Impl(
+            is KtDiagnosticFactory3<*, *, *> -> KaFirDiagnostic3Creator<Any?, Any?, Any?> {
+                KaCompilerPluginDiagnostic3Impl(
                     it as KtPsiDiagnosticWithParameters3<*, *, *>,
                     token,
                     convertArgument(it.a, this),
@@ -87,8 +87,8 @@ internal class KtDiagnosticConverter(private val conversions: Map<AbstractKtDiag
                     convertArgument(it.c, this)
                 )
             }
-            is KtDiagnosticFactory4<*, *, *, *> -> KtFirDiagnostic4Creator<Any?, Any?, Any?, Any?> {
-                KtCompilerPluginDiagnostic4Impl(
+            is KtDiagnosticFactory4<*, *, *, *> -> KaFirDiagnostic4Creator<Any?, Any?, Any?, Any?> {
+                KaCompilerPluginDiagnostic4Impl(
                     it as KtPsiDiagnosticWithParameters4<*, *, *, *>,
                     token,
                     convertArgument(it.a, this),
@@ -101,33 +101,33 @@ internal class KtDiagnosticConverter(private val conversions: Map<AbstractKtDiag
     }
 }
 
-internal class KtDiagnosticConverterBuilder private constructor() {
-    private val conversions = mutableMapOf<AbstractKtDiagnosticFactory, KtFirDiagnosticCreator>()
+internal class KaDiagnosticConverterBuilder private constructor() {
+    private val conversions = mutableMapOf<AbstractKtDiagnosticFactory, KaFirDiagnosticCreator>()
 
-    fun add(diagnostic: KtDiagnosticFactory0, creator: KtFirDiagnostic0Creator) {
+    fun add(diagnostic: KtDiagnosticFactory0, creator: KaFirDiagnostic0Creator) {
         conversions[diagnostic] = creator
     }
 
-    fun <A> add(diagnostic: KtDiagnosticFactory1<A>, creator: KtFirDiagnostic1Creator<A>) {
+    fun <A> add(diagnostic: KtDiagnosticFactory1<A>, creator: KaFirDiagnostic1Creator<A>) {
         conversions[diagnostic] = creator
     }
 
-    fun <A, B> add(diagnostic: KtDiagnosticFactory2<A, B>, creator: KtFirDiagnostic2Creator<A, B>) {
+    fun <A, B> add(diagnostic: KtDiagnosticFactory2<A, B>, creator: KaFirDiagnostic2Creator<A, B>) {
         conversions[diagnostic] = creator
     }
 
-    fun <A, B, C> add(diagnostic: KtDiagnosticFactory3<A, B, C>, creator: KtFirDiagnostic3Creator<A, B, C>) {
+    fun <A, B, C> add(diagnostic: KtDiagnosticFactory3<A, B, C>, creator: KaFirDiagnostic3Creator<A, B, C>) {
         conversions[diagnostic] = creator
     }
 
-    fun <A, B, C, D> add(diagnostic: KtDiagnosticFactory4<A, B, C, D>, creator: KtFirDiagnostic4Creator<A, B, C, D>) {
+    fun <A, B, C, D> add(diagnostic: KtDiagnosticFactory4<A, B, C, D>, creator: KaFirDiagnostic4Creator<A, B, C, D>) {
         conversions[diagnostic] = creator
     }
 
-    private fun build() = KtDiagnosticConverter(conversions)
+    private fun build() = KaDiagnosticConverter(conversions)
 
     companion object {
-        inline fun buildConverter(init: KtDiagnosticConverterBuilder.() -> Unit) =
-            KtDiagnosticConverterBuilder().apply(init).build()
+        inline fun buildConverter(init: KaDiagnosticConverterBuilder.() -> Unit) =
+            KaDiagnosticConverterBuilder().apply(init).build()
     }
 }

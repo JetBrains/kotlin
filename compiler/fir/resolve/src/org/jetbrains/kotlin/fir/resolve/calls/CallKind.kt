@@ -61,6 +61,7 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         CheckIncompatibleTypeVariableUpperBounds,
         TypeParameterAsCallable,
         TypeVariablesInExplicitReceivers,
+        CheckLambdaAgainstTypeVariableContradiction,
     )
 
     object DelegatingConstructorCall : CallKind(
@@ -79,6 +80,7 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         EagerResolveOfCallableReferences,
         ConstraintSystemForks,
         CheckIncompatibleTypeVariableUpperBounds,
+        CheckLambdaAgainstTypeVariableContradiction,
     )
 
     object CallableReference : CallKind(

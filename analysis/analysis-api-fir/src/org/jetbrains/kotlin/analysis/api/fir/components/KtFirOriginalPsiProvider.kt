@@ -5,18 +5,18 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.components.KtOriginalPsiProvider
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.components.KaOriginalPsiProvider
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalKtFile
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 
-internal class KtFirOriginalPsiProvider(
-    override val analysisSession: KtFirAnalysisSession,
-    override val token: KtLifetimeToken,
-) : KtOriginalPsiProvider(), KtFirAnalysisSessionComponent {
+internal class KaFirOriginalPsiProvider(
+    override val analysisSession: KaFirSession,
+    override val token: KaLifetimeToken,
+) : KaOriginalPsiProvider(), KaFirSessionComponent {
     override fun getOriginalDeclaration(declaration: KtDeclaration): KtDeclaration? = declaration.originalDeclaration
 
     override fun getOriginalKtFile(file: KtFile): KtFile? = file.originalKtFile

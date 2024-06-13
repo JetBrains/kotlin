@@ -9,8 +9,6 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
-import org.jetbrains.kotlin.analysis.api.standalone.KtAlwaysAccessibleLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.project.structure.KtCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
@@ -45,7 +43,7 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
     @OptIn(KtAnalysisApiInternals::class)
     override fun doAnalysis(configuration: CompilerConfiguration): Boolean {
         val optionsBuilder = configuration[KAPT_OPTIONS]!!
-        val messageCollector = configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]!!
+        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         val logger = MessageCollectorBackedKaptLogger(
             KaptFlag.VERBOSE in optionsBuilder.flags,
             KaptFlag.INFO_AS_WARNINGS in optionsBuilder.flags,
@@ -78,7 +76,6 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
                     @Suppress("DEPRECATION") // TODO: KT-61319 Kapt: remove usages of deprecated buildKtModuleProviderByCompilerConfiguration
                     buildKtModuleProviderByCompilerConfiguration(updatedConfiguration)
 
-                    registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
                     registerProjectService(KtCompilerPluginsProvider::class.java, object : KtCompilerPluginsProvider() {
                         private val extensionStorage = CompilerPluginRegistrar.ExtensionStorage().apply {
                             for (registrar in updatedConfiguration.getList(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS)) {

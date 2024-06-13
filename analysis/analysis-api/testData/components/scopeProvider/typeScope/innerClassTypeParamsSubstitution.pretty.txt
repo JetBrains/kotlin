@@ -1,4 +1,4 @@
-KtTypeScope:
+KaTypeScope:
 fun foo(x: kotlin.Int, y: Y): kotlin.collections.Map<kotlin.Int, kotlin.collections.Map<Y, kotlin.String>>
 val map: kotlin.collections.Map<kotlin.Int, kotlin.String>
 fun fromSuper(): kotlin.String
@@ -14,3 +14,4 @@ fun fromSuper(): O
 fun equals(other: kotlin.Any?): kotlin.Boolean
 fun hashCode(): kotlin.Int
 fun toString(): kotlin.String
+

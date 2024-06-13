@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.konan.test
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
-import org.jetbrains.kotlin.konan.test.blackbox.support.NativeSimpleTestSupport
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule
+import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ExecutableCompilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
@@ -23,11 +20,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.executor
 import org.jetbrains.kotlin.konan.test.blackbox.targets
 import org.jetbrains.kotlin.native.executors.RunProcessResult
 import org.jetbrains.kotlin.native.executors.runProcess
-import org.junit.jupiter.api.Assumptions
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Tag
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.junit.jupiter.api.*
 import java.io.File
 import kotlin.test.assertFalse
 import kotlin.test.assertEquals
@@ -37,7 +31,6 @@ import kotlin.time.Duration.Companion.minutes
 
 @Tag("driver")
 @TestDataPath("\$PROJECT_ROOT")
-@ExtendWith(NativeSimpleTestSupport::class)
 class KonanDriverTest : AbstractNativeSimpleTest() {
     private val konanHome get() = testRunSettings.get<KotlinNativeHome>().dir
     private val buildDir get() = testRunSettings.get<Binaries>().testBinariesDir
@@ -46,6 +39,7 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
 
     private val testSuiteDir = File("native/native.tests/driver/testData")
     private val source = testSuiteDir.resolve("driver0.kt")
+    private val fileRC = testSuiteDir.resolve("File.rc")
 
     // Driver tests are flaky on macOS hosts.
     private fun `check for KT-67454`() {
@@ -67,13 +61,13 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
 
         compileSimpleFile(listOf("-Xllvm-variant=dev", "-Xverbose-phases=ObjectFiles")).let {
             assertFalse(
-                it.stdout.contains("-essentials"),
+                it.stderr.contains("-essentials"),
                 "`-essentials` must not be in stdout of dev LLVM.\nSTDOUT: ${it.stdout}\nSTDERR: ${it.stderr}\n---"
             )
         }
         compileSimpleFile(listOf("-Xllvm-variant=user", "-Xverbose-phases=ObjectFiles")).let {
             assertTrue(
-                it.stdout.contains("-essentials"),
+                it.stderr.contains("-essentials"),
                 "`-essentials` must be in stdout of user LLVM.\nSTDOUT: ${it.stdout}\nSTDERR: ${it.stderr}\n---"
             )
         }
@@ -180,10 +174,92 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
         }
         val expected = "inline_threshold: 76"
         assertTrue(
-            compilationResult.stdout.contains(expected),
-            "Compiler's stdout must contain string: $expected\n" +
+            compilationResult.stderr.contains(expected),
+            "Compiler's stderr must contain string: $expected\n" +
                     "STDOUT:\n${compilationResult.stdout}\nSTDERR:${compilationResult.stderr}"
         )
         testRunSettings.executor.runProcess(kexe.absolutePath)
+    }
+
+    @Disabled("The test is not working on Windows Server 2019-based TeamCity agents for the unknown reason." +
+                "KT-49279: TODO: Try re-enable test after LLVM update >=13.0.0 where llvm-windres was added")
+    @Test
+    fun testKT50983() {
+        Assumptions.assumeTrue(HostManager.hostIsMingw)
+
+        val windres = File(testRunSettings.configurables.absoluteTargetToolchain).resolve("bin").resolve("windres")
+        val fileRes = buildDir.resolve("File.res")
+        runProcess(
+            windres.absolutePath,
+            fileRC.absolutePath, "-O", "coff", "-o", fileRes.absolutePath,
+            "--use-temp-file", // https://github.com/msys2/MINGW-packages/issues/534
+            // https://sourceforge.net/p/mingw-w64/discussion/723798/thread/bf2a464d/
+            "--preprocessor=x86_64-w64-mingw32-g++.exe",
+            "--preprocessor-arg=-E", "--preprocessor-arg=-xc-header", "--preprocessor-arg=-DRC_INVOKED",
+        ) {
+            timeout = Duration.parse("1m")
+        }
+
+        val module = TestModule.Exclusive("moduleName", emptySet(), emptySet(), emptySet())
+        val kexe = buildDir.resolve("kexe.kexe").also { it.delete() }
+        val compilation = ExecutableCompilation(
+            settings = testRunSettings,
+            freeCompilerArgs = TestCompilerArgs(listOf("-linker-option", fileRes.absolutePath)),
+            sourceModules = listOf(module),
+            extras = TestCase.NoTestRunnerExtras("main"),
+            dependencies = emptyList(),
+            expectedArtifact = TestCompilationArtifact.Executable(kexe),
+            tryPassSystemCacheDirectory = true
+        )
+        runProcess(konanc.absolutePath, source.absolutePath, *compilation.getCompilerArgs()) {
+            timeout = Duration.parse("5m")
+        }
+        testRunSettings.executor.runProcess(kexe.absolutePath)
+    }
+
+    @Test
+    fun testSplitCompilationPipeline() {
+        val rootDir = testSuiteDir.resolve("split_compilation_pipeline")
+        val libFile = buildDir.resolve("lib.klib")
+        runProcess(
+            konanc.absolutePath,
+            rootDir.resolve("override_lib.kt").absolutePath,
+            "-produce", "library",
+            "-o", libFile.absolutePath,
+            "-target", targets.testTarget.visibleName,
+        ) {
+            timeout = konancTimeout
+        }
+
+        val tmpFilesDir = buildDir.resolve("tmpFiles").apply {
+            deleteRecursively()
+            mkdirs()
+        }
+        val depsFile = buildDir.resolve("deps.deps")
+
+        val mainFile = buildDir.resolve("out.klib")
+        runProcess(
+            konanc.absolutePath,
+            rootDir.resolve("override_main.kt").absolutePath,
+            "-o", mainFile.absolutePath,
+            "-target", targets.testTarget.visibleName,
+            "-l", libFile.absolutePath,
+            "-Xtemporary-files-dir=${tmpFilesDir.absolutePath}",
+            "-Xwrite-dependencies-to=${depsFile.absolutePath}",
+        ) {
+            timeout = konancTimeout
+        }
+
+        val kexe = buildDir.resolve("kexe.kexe").also { it.delete() }
+        runProcess(
+            konanc.absolutePath,
+            rootDir.resolve("override_main.kt").absolutePath,
+            "-o", kexe.absolutePath,
+            "-target", targets.testTarget.visibleName,
+            "-Xread-dependencies-from=${depsFile.absolutePath}",
+            "-Xcompile-from-bitcode=${tmpFilesDir.absolutePath}/out.bc"
+        )
+        val output = testRunSettings.executor.runProcess(kexe.absolutePath).output
+        KotlinTestUtils.assertEqualsToFile(rootDir.resolve("override_main.out"), output)
     }
 }

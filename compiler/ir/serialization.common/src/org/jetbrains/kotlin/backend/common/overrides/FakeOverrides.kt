@@ -136,6 +136,9 @@ private class IrLinkerFakeOverrideBuilderStrategy(
                 manglerCompatibleMode
             )
         }
+        property.backingField?.let { backingField ->
+            backingField.correspondingPropertySymbol = property.symbol
+        }
     }
 
     private fun composeSignature(declaration: IrDeclaration, manglerCompatibleMode: Boolean) =
@@ -290,7 +293,7 @@ class IrLinkerFakeOverrideProvider(
 
         if (!platformSpecificClassFilter.needToConstructFakeOverrides(clazz)) return false
 
-        irFakeOverrideBuilder.buildFakeOverridesForClass(clazz, compatibilityMode.oldSignatures)
+        irFakeOverrideBuilder.buildFakeOverridesForClass(clazz, compatibilityMode.legacySignaturesForPrivateAndLocalDeclarations)
 
         return true
     }

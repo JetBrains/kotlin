@@ -140,7 +140,7 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.A.toArray?>?
     FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN <T> ($this:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>, p0:@[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.A.toArray?>?>?) returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.A.toArray?>? [fake_override]
       annotations:
-        Deprecated(message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = ReplaceWith(expression = "", imports = []), level = GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:WARNING' type=kotlin.DeprecationLevel)
+        Deprecated(message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = ReplaceWith(expression = "", imports = []), level = GET_ENUM 'ENUM_ENTRY name:WARNING' type=kotlin.DeprecationLevel)
       overridden:
         public open fun toArray <T> (p0: @[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.LinkedHashSet.toArray?>?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.LinkedHashSet.toArray?>? declared in java.util.LinkedHashSet
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
@@ -306,7 +306,7 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.B.toArray?>?
     FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN <T> ($this:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>, p0:@[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.B.toArray?>?>?) returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.B.toArray?>? [fake_override]
       annotations:
-        Deprecated(message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = ReplaceWith(expression = "", imports = []), level = GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:WARNING' type=kotlin.DeprecationLevel)
+        Deprecated(message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = ReplaceWith(expression = "", imports = []), level = GET_ENUM 'ENUM_ENTRY name:WARNING' type=kotlin.DeprecationLevel)
       overridden:
         public open fun toArray <T> (p0: @[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.LinkedHashSet.toArray?>?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.LinkedHashSet.toArray?>? declared in java.util.LinkedHashSet
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
@@ -450,7 +450,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>
     FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN <T> ($this:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>, p0:@[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.C.toArray?>?>?) returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.C.toArray?>? [fake_override]
       annotations:
-        Deprecated(message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = ReplaceWith(expression = "", imports = []), level = GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:WARNING' type=kotlin.DeprecationLevel)
+        Deprecated(message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = ReplaceWith(expression = "", imports = []), level = GET_ENUM 'ENUM_ENTRY name:WARNING' type=kotlin.DeprecationLevel)
       overridden:
         public open fun toArray <T> (p0: @[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.Java1.toArray?>?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.Java1.toArray?>? declared in <root>.Java1
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
@@ -592,7 +592,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>
     FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN <T> ($this:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>, p0:@[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.D.toArray?>?>?) returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.D.toArray?>? [fake_override]
       annotations:
-        Deprecated(message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = ReplaceWith(expression = "", imports = []), level = GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:WARNING' type=kotlin.DeprecationLevel)
+        Deprecated(message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = ReplaceWith(expression = "", imports = []), level = GET_ENUM 'ENUM_ENTRY name:WARNING' type=kotlin.DeprecationLevel)
       overridden:
         public open fun toArray <T> (p0: @[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.Java1.toArray?>?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.Java1.toArray?>? declared in <root>.Java1
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
@@ -737,7 +737,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>
     FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN <T> ($this:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>, p0:@[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.E.toArray?>?>?) returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.E.toArray?>? [fake_override]
       annotations:
-        Deprecated(message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = ReplaceWith(expression = "", imports = []), level = GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:WARNING' type=kotlin.DeprecationLevel)
+        Deprecated(message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = ReplaceWith(expression = "", imports = []), level = GET_ENUM 'ENUM_ENTRY name:WARNING' type=kotlin.DeprecationLevel)
       overridden:
         public open fun toArray <T> (p0: @[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.Java1.toArray?>?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.Java1.toArray?>? declared in <root>.Java1
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
@@ -886,7 +886,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>
     FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN <T> ($this:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>, p0:@[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.F.toArray?>?>?) returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.F.toArray?>? [fake_override]
       annotations:
-        Deprecated(message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = ReplaceWith(expression = "", imports = []), level = GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:WARNING' type=kotlin.DeprecationLevel)
+        Deprecated(message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = ReplaceWith(expression = "", imports = []), level = GET_ENUM 'ENUM_ENTRY name:WARNING' type=kotlin.DeprecationLevel)
       overridden:
         public open fun toArray <T> (p0: @[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.Java1.toArray?>?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.Java1.toArray?>? declared in <root>.Java1
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
@@ -1026,7 +1026,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>
     FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN <T> ($this:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>, p0:@[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.G.toArray?>?>?) returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.G.toArray?>? [fake_override]
       annotations:
-        Deprecated(message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = ReplaceWith(expression = "", imports = []), level = GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:WARNING' type=kotlin.DeprecationLevel)
+        Deprecated(message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = ReplaceWith(expression = "", imports = []), level = GET_ENUM 'ENUM_ENTRY name:WARNING' type=kotlin.DeprecationLevel)
       overridden:
         public open fun toArray <T> (p0: @[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.KotlinInterface.toArray?>?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.KotlinInterface.toArray?>? declared in <root>.KotlinInterface
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
@@ -1175,7 +1175,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>
     FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN <T> ($this:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>, p0:@[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.H.toArray?>?>?) returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.H.toArray?>? [fake_override]
       annotations:
-        Deprecated(message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = ReplaceWith(expression = "", imports = []), level = GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:WARNING' type=kotlin.DeprecationLevel)
+        Deprecated(message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = ReplaceWith(expression = "", imports = []), level = GET_ENUM 'ENUM_ENTRY name:WARNING' type=kotlin.DeprecationLevel)
       overridden:
         public open fun toArray <T> (p0: @[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.KotlinInterface.toArray?>?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.KotlinInterface.toArray?>? declared in <root>.KotlinInterface
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
@@ -1314,7 +1314,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>
     FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN <T> ($this:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>, p0:@[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.I.toArray?>?>?) returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.I.toArray?>? [fake_override]
       annotations:
-        Deprecated(message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = ReplaceWith(expression = "", imports = []), level = GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:WARNING' type=kotlin.DeprecationLevel)
+        Deprecated(message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = ReplaceWith(expression = "", imports = []), level = GET_ENUM 'ENUM_ENTRY name:WARNING' type=kotlin.DeprecationLevel)
       overridden:
         public open fun toArray <T> (p0: @[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.Java3.toArray?>?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.Java3.toArray?>? declared in <root>.Java3
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
@@ -1444,7 +1444,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>
     FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN <T> ($this:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>, p0:@[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.J.toArray?>?>?) returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.J.toArray?>? [fake_override]
       annotations:
-        Deprecated(message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = ReplaceWith(expression = "", imports = []), level = GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:WARNING' type=kotlin.DeprecationLevel)
+        Deprecated(message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = ReplaceWith(expression = "", imports = []), level = GET_ENUM 'ENUM_ENTRY name:WARNING' type=kotlin.DeprecationLevel)
       overridden:
         public open fun toArray <T> (p0: @[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.Java3.toArray?>?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.Java3.toArray?>? declared in <root>.Java3
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
@@ -1583,7 +1583,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>
     FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN <T> ($this:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>, p0:@[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.KotlinInterface.toArray?>?>?) returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.KotlinInterface.toArray?>? [fake_override]
       annotations:
-        Deprecated(message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = ReplaceWith(expression = "", imports = []), level = GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:WARNING' type=kotlin.DeprecationLevel)
+        Deprecated(message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = ReplaceWith(expression = "", imports = []), level = GET_ENUM 'ENUM_ENTRY name:WARNING' type=kotlin.DeprecationLevel)
       overridden:
         public open fun toArray <T> (p0: @[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.SequencedSet.toArray?>?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.SequencedSet.toArray?>? declared in java.util.SequencedSet
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false

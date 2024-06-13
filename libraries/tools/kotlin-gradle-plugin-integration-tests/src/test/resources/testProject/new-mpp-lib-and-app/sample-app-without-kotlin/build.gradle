@@ -3,11 +3,6 @@ plugins {
     id 'application'
 }
 
-repositories {
-	mavenLocal()
-	mavenCentral()
-}
-
 dependencies {
     implementation 'com.example:sample-lib:1.0'
 }

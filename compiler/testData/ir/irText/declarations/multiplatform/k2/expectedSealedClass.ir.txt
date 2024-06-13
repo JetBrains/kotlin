@@ -1,4 +1,3 @@
-FILE fqName:<root> fileName:/common.kt
 FILE fqName:<root> fileName:/platform.kt
   CLASS CLASS name:Add modality:FINAL visibility:public superTypes:[<root>.Ops]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Add
@@ -40,3 +39,4 @@ FILE fqName:<root> fileName:/platform.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+FILE fqName:<root> fileName:/common.kt

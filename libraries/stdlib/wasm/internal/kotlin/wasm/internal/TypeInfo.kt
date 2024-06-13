@@ -77,8 +77,3 @@ internal fun <T> wasmIsInterface(obj: Any): Boolean =
 @ExcludedFromCodegen
 internal fun <T> wasmTypeId(): Int =
     implementedAsIntrinsic
-
-//TODO("Remove after bootstrap KT-65322")
-@ExcludedFromCodegen
-internal fun <T> wasmGetTypeInfoData(): TypeInfoData =
-    implementedAsIntrinsic

@@ -1,31 +1,36 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(KtAnalysisApiInternals::class)
+@file:OptIn(KaAnalysisApiInternals::class)
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base
 
+import com.intellij.psi.impl.compiled.ClsElementImpl
 import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.annotations.*
-import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
-import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
+import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
+import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.KtFe10FileSymbol
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.KtFe10PackageSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.KaFe10FileSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.KaFe10PackageSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.*
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.*
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.KtFe10PsiDefaultPropertyGetterSymbol
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.KtFe10PsiDefaultPropertySetterSymbol
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.KtFe10PsiDefaultSetterParameterSymbol
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KtFe10PsiSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.KaFe10PsiDefaultPropertyGetterSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.KaFe10PsiDefaultPropertySetterSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.KaFe10PsiDefaultSetterParameterSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KaFe10PsiSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.types.*
-import org.jetbrains.kotlin.analysis.api.impl.base.KtContextReceiverImpl
+import org.jetbrains.kotlin.analysis.api.impl.base.KaContextReceiverImpl
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaAnnotationImpl
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
-import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
+import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
+import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.KaTypeArgumentWithVariance
+import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
+import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -39,7 +44,6 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaForKotlinOverridePropertyDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
-import org.jetbrains.kotlin.load.java.lazy.types.RawTypeImpl
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.load.kotlin.toSourceElement
 import org.jetbrains.kotlin.name.CallableId
@@ -50,6 +54,7 @@ import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.constants.*
@@ -65,20 +70,19 @@ import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
-import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.eraseContainingTypeParameters
 import org.jetbrains.kotlin.types.error.ErrorType
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
 
-internal val MemberDescriptor.ktSymbolKind: KtSymbolKind
+internal val MemberDescriptor.ktSymbolKind: KaSymbolKind
     get() {
         return when (this) {
-            is PropertyAccessorDescriptor -> KtSymbolKind.ACCESSOR
-            is SamConstructorDescriptor -> KtSymbolKind.SAM_CONSTRUCTOR
+            is PropertyAccessorDescriptor -> KaSymbolKind.ACCESSOR
+            is SamConstructorDescriptor -> KaSymbolKind.SAM_CONSTRUCTOR
             else -> when (containingDeclaration) {
-                is PackageFragmentDescriptor -> KtSymbolKind.TOP_LEVEL
-                is ClassDescriptor -> KtSymbolKind.CLASS_MEMBER
-                else -> KtSymbolKind.LOCAL
+                is PackageFragmentDescriptor -> KaSymbolKind.TOP_LEVEL
+                is ClassDescriptor -> KaSymbolKind.CLASS_MEMBER
+                else -> KaSymbolKind.LOCAL
             }
         }
     }
@@ -96,9 +100,9 @@ internal val ClassDescriptor.isInterfaceLike: Boolean
         else -> true
     }
 
-internal fun DeclarationDescriptor.toKtSymbol(analysisContext: Fe10AnalysisContext): KtSymbol? {
+internal fun DeclarationDescriptor.toKtSymbol(analysisContext: Fe10AnalysisContext): KaSymbol? {
     if (this is ClassDescriptor && kind == ClassKind.ENUM_ENTRY) {
-        return KtFe10DescEnumEntrySymbol(this, analysisContext)
+        return KaFe10DescEnumEntrySymbol(this, analysisContext)
     }
 
     return when (this) {
@@ -110,57 +114,57 @@ internal fun DeclarationDescriptor.toKtSymbol(analysisContext: Fe10AnalysisConte
     }
 }
 
-internal fun ClassifierDescriptor.toKtClassifierSymbol(analysisContext: Fe10AnalysisContext): KtClassifierSymbol? {
+internal fun ClassifierDescriptor.toKtClassifierSymbol(analysisContext: Fe10AnalysisContext): KaClassifierSymbol? {
     return when (this) {
-        is TypeAliasDescriptor -> KtFe10DescTypeAliasSymbol(this, analysisContext)
-        is TypeParameterDescriptor -> KtFe10DescTypeParameterSymbol(this, analysisContext)
-        is ClassDescriptor -> toKtClassSymbol(analysisContext)
+        is TypeAliasDescriptor -> KaFe10DescTypeAliasSymbol(this, analysisContext)
+        is TypeParameterDescriptor -> KaFe10DescTypeParameterSymbol(this, analysisContext)
+        is ClassDescriptor -> toKaClassSymbol(analysisContext)
         else -> null
     }
 }
 
-internal fun ClassDescriptor.toKtClassSymbol(analysisContext: Fe10AnalysisContext): KtClassOrObjectSymbol {
+internal fun ClassDescriptor.toKaClassSymbol(analysisContext: Fe10AnalysisContext): KaClassOrObjectSymbol {
     return if (DescriptorUtils.isAnonymousObject(this)) {
-        KtFe10DescAnonymousObjectSymbol(this, analysisContext)
+        KaFe10DescAnonymousObjectSymbol(this, analysisContext)
     } else {
-        KtFe10DescNamedClassOrObjectSymbol(this, analysisContext)
+        KaFe10DescNamedClassOrObjectSymbol(this, analysisContext)
     }
 }
 
-internal fun PackageViewDescriptor.toKtPackageSymbol(analysisContext: Fe10AnalysisContext): KtPackageSymbol {
-    return KtFe10PackageSymbol(fqName, analysisContext)
+internal fun PackageViewDescriptor.toKtPackageSymbol(analysisContext: Fe10AnalysisContext): KaPackageSymbol {
+    return KaFe10PackageSymbol(fqName, analysisContext)
 }
 
-internal fun ReceiverParameterDescriptor.toKtReceiverParameterSymbol(analysisContext: Fe10AnalysisContext): KtReceiverParameterSymbol {
-    return KtFe10ReceiverParameterSymbol(this, analysisContext)
+internal fun ReceiverParameterDescriptor.toKtReceiverParameterSymbol(analysisContext: Fe10AnalysisContext): KaReceiverParameterSymbol {
+    return KaFe10ReceiverParameterSymbol(this, analysisContext)
 }
 
-internal fun KtSymbol.getDescriptor(): DeclarationDescriptor? {
+internal fun KaSymbol.getDescriptor(): DeclarationDescriptor? {
     return when (this) {
-        is KtFe10PsiSymbol<*, *> -> descriptor
-        is KtFe10DescSymbol<*> -> descriptor
-        is KtFe10DescSyntheticFieldSymbol -> descriptor
-        is KtFe10PsiDefaultPropertyGetterSymbol -> descriptor
-        is KtFe10PsiDefaultPropertySetterSymbol -> descriptor
-        is KtFe10PsiDefaultSetterParameterSymbol -> descriptor
-        is KtFe10DescDefaultPropertySetterSymbol -> null
-        is KtFe10DynamicFunctionDescValueParameterSymbol -> null
-        is KtFe10FileSymbol -> null
-        is KtFe10DescDefaultPropertySetterSymbol.DefaultKtValueParameterSymbol -> descriptor
-        is KtFe10PsiDefaultPropertySetterSymbol.DefaultKtValueParameterSymbol -> descriptor
-        is KtFe10DescDefaultBackingFieldSymbol, is KtFe10PsiDefaultBackingFieldSymbol -> null
-        is KtFe10PsiClassInitializerSymbol -> null
+        is KaFe10PsiSymbol<*, *> -> descriptor
+        is KaFe10DescSymbol<*> -> descriptor
+        is KaFe10DescSyntheticFieldSymbol -> descriptor
+        is KaFe10PsiDefaultPropertyGetterSymbol -> descriptor
+        is KaFe10PsiDefaultPropertySetterSymbol -> descriptor
+        is KaFe10PsiDefaultSetterParameterSymbol -> descriptor
+        is KaFe10DescDefaultPropertySetterSymbol -> null
+        is KaFe10DynamicFunctionDescValueParameterSymbol -> null
+        is KaFe10FileSymbol -> null
+        is KaFe10DescDefaultPropertySetterSymbol.KaDefaultValueParameterSymbol -> descriptor
+        is KaFe10PsiDefaultPropertySetterSymbol.KaDefaultValueParameterSymbol -> descriptor
+        is KaFe10DescDefaultBackingFieldSymbol, is KaFe10PsiDefaultBackingFieldSymbol -> null
+        is KaFe10PsiClassInitializerSymbol -> null
         else -> unexpectedElementError("KtSymbol", this)
     }
 }
 
 
-internal fun ConstructorDescriptor.toKtConstructorSymbol(analysisContext: Fe10AnalysisContext): KtConstructorSymbol {
+internal fun ConstructorDescriptor.toKtConstructorSymbol(analysisContext: Fe10AnalysisContext): KaConstructorSymbol {
     if (this is TypeAliasConstructorDescriptor) {
         return this.underlyingConstructorDescriptor.toKtConstructorSymbol(analysisContext)
     }
 
-    return KtFe10DescConstructorSymbol(this, analysisContext)
+    return KaFe10DescConstructorSymbol(this, analysisContext)
 }
 
 internal val CallableMemberDescriptor.ktHasStableParameterNames: Boolean
@@ -173,33 +177,34 @@ internal val CallableMemberDescriptor.ktHasStableParameterNames: Boolean
         }
     }
 
-internal fun CallableDescriptor.toKtCallableSymbol(analysisContext: Fe10AnalysisContext): KtCallableSymbol? {
+internal fun CallableDescriptor.toKtCallableSymbol(analysisContext: Fe10AnalysisContext): KaCallableSymbol? {
     return when (val unwrapped = unwrapFakeOverrideIfNeeded()) {
-        is PropertyGetterDescriptor -> KtFe10DescPropertyGetterSymbol(unwrapped, analysisContext)
-        is PropertySetterDescriptor -> KtFe10DescPropertySetterSymbol(unwrapped, analysisContext)
-        is SamConstructorDescriptor -> KtFe10DescSamConstructorSymbol(unwrapped, analysisContext)
+        is ImportedFromObjectCallableDescriptor<*> -> unwrapped.callableFromObject.toKtCallableSymbol(analysisContext)
+        is PropertyGetterDescriptor -> KaFe10DescPropertyGetterSymbol(unwrapped, analysisContext)
+        is PropertySetterDescriptor -> KaFe10DescPropertySetterSymbol(unwrapped, analysisContext)
+        is SamConstructorDescriptor -> KaFe10DescSamConstructorSymbol(unwrapped, analysisContext)
         is ConstructorDescriptor -> unwrapped.toKtConstructorSymbol(analysisContext)
         is FunctionDescriptor -> {
             if (DescriptorUtils.isAnonymousFunction(unwrapped)) {
-                KtFe10DescAnonymousFunctionSymbol(unwrapped, analysisContext)
+                KaFe10DescAnonymousFunctionSymbol(unwrapped, analysisContext)
             } else {
-                KtFe10DescFunctionSymbol.build(unwrapped, analysisContext)
+                KaFe10DescFunctionSymbol.build(unwrapped, analysisContext)
             }
         }
-        is SyntheticFieldDescriptor -> KtFe10DescSyntheticFieldSymbol(unwrapped, analysisContext)
-        is LocalVariableDescriptor -> KtFe10DescLocalVariableSymbol(unwrapped, analysisContext)
-        is ValueParameterDescriptor -> KtFe10DescValueParameterSymbol(unwrapped, analysisContext)
-        is SyntheticJavaPropertyDescriptor -> KtFe10DescSyntheticJavaPropertySymbol(unwrapped, analysisContext)
-        is JavaForKotlinOverridePropertyDescriptor -> KtFe10DescSyntheticJavaPropertySymbolForOverride(unwrapped, analysisContext)
-        is JavaPropertyDescriptor -> KtFe10DescJavaFieldSymbol(unwrapped, analysisContext)
-        is PropertyDescriptorImpl -> KtFe10DescKotlinPropertySymbol(unwrapped, analysisContext)
+        is SyntheticFieldDescriptor -> KaFe10DescSyntheticFieldSymbol(unwrapped, analysisContext)
+        is LocalVariableDescriptor -> KaFe10DescLocalVariableSymbol(unwrapped, analysisContext)
+        is ValueParameterDescriptor -> KaFe10DescValueParameterSymbol(unwrapped, analysisContext)
+        is SyntheticJavaPropertyDescriptor -> KaFe10DescSyntheticJavaPropertySymbol(unwrapped, analysisContext)
+        is JavaForKotlinOverridePropertyDescriptor -> KaFe10DescSyntheticJavaPropertySymbolForOverride(unwrapped, analysisContext)
+        is JavaPropertyDescriptor -> KaFe10DescJavaFieldSymbol(unwrapped, analysisContext)
+        is PropertyDescriptorImpl -> KaFe10DescKotlinPropertySymbol(unwrapped, analysisContext)
         else -> null
     }
 }
 
 /**
  * This logic should be equivalent to
- * [org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder.unwrapSubstitutionOverrideIfNeeded]. But this method unwrap all fake
+ * [org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder.unwrapSubstitutionOverrideIfNeeded]. But this method unwrap all fake
  * overrides that do not change the signature.
  */
 internal fun CallableDescriptor.unwrapFakeOverrideIfNeeded(): CallableDescriptor {
@@ -263,23 +268,23 @@ private fun <T : CallableDescriptor> T.unwrapUseSiteSubstitutionOverride(): T {
     return current as T
 }
 
-internal fun KotlinType.toKtType(analysisContext: Fe10AnalysisContext): KtType {
+internal fun KotlinType.toKtType(analysisContext: Fe10AnalysisContext): KaType {
     return when (val unwrappedType = unwrap()) {
-        is DynamicType -> KtFe10DynamicType(unwrappedType, analysisContext)
-        is FlexibleType -> KtFe10FlexibleType(unwrappedType, analysisContext)
-        is DefinitelyNotNullType -> KtFe10DefinitelyNotNullType(unwrappedType, analysisContext)
+        is DynamicType -> KaFe10DynamicType(unwrappedType, analysisContext)
+        is FlexibleType -> KaFe10FlexibleType(unwrappedType, analysisContext)
+        is DefinitelyNotNullType -> KaFe10DefinitelyNotNullType(unwrappedType, analysisContext)
         is ErrorType -> {
             if (unwrappedType.kind.isUnresolved)
-                KtFe10ClassErrorType(unwrappedType, analysisContext)
+                KaFe10ClassErrorType(unwrappedType, analysisContext)
             else
-                KtFe10TypeErrorType(unwrappedType, analysisContext)
+                KaFe10ErrorType(unwrappedType, analysisContext)
         }
-        is CapturedType -> KtFe10CapturedType(unwrappedType, analysisContext)
-        is NewCapturedType -> KtFe10NewCapturedType(unwrappedType, analysisContext)
+        is CapturedType -> KaFe10CapturedType(unwrappedType, analysisContext)
+        is NewCapturedType -> KaFe10NewCapturedType(unwrappedType, analysisContext)
         is SimpleType -> {
             val typeParameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(unwrappedType)
             if (typeParameterDescriptor != null) {
-                return KtFe10TypeParameterType(unwrappedType, typeParameterDescriptor, analysisContext)
+                return KaFe10TypeParameterType(unwrappedType, typeParameterDescriptor, analysisContext)
             }
 
             val typeConstructor = unwrappedType.constructor
@@ -287,23 +292,23 @@ internal fun KotlinType.toKtType(analysisContext: Fe10AnalysisContext): KtType {
             if (typeConstructor is NewTypeVariableConstructor) {
                 val newTypeParameterDescriptor = typeConstructor.originalTypeParameter
                 return if (newTypeParameterDescriptor != null) {
-                    KtFe10TypeParameterType(unwrappedType, newTypeParameterDescriptor, analysisContext)
+                    KaFe10TypeParameterType(unwrappedType, newTypeParameterDescriptor, analysisContext)
                 } else {
-                    KtFe10ClassErrorType(ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_TYPE_PARAMETER_TYPE), analysisContext)
+                    KaFe10ClassErrorType(ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_TYPE_PARAMETER_TYPE), analysisContext)
                 }
             }
 
             if (typeConstructor is IntersectionTypeConstructor) {
-                return KtFe10IntersectionType(unwrappedType, typeConstructor.supertypes, analysisContext)
+                return KaFe10IntersectionType(unwrappedType, typeConstructor.supertypes, analysisContext)
             }
 
             return when (val typeDeclaration = typeConstructor.declarationDescriptor) {
-                is FunctionClassDescriptor -> KtFe10FunctionalType(unwrappedType, typeDeclaration, analysisContext)
-                is ClassDescriptor -> KtFe10UsualClassType(unwrappedType, typeDeclaration, analysisContext)
+                is FunctionClassDescriptor -> KaFe10FunctionalType(unwrappedType, typeDeclaration, analysisContext)
+                is ClassDescriptor -> KaFe10UsualClassType(unwrappedType, typeDeclaration, analysisContext)
                 else -> {
                     val errorType =
                         ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_CLASS_TYPE, typeConstructor, typeDeclaration.toString())
-                    KtFe10ClassErrorType(errorType, analysisContext)
+                    KaFe10ClassErrorType(errorType, analysisContext)
                 }
             }
 
@@ -312,32 +317,32 @@ internal fun KotlinType.toKtType(analysisContext: Fe10AnalysisContext): KtType {
     }
 }
 
-internal fun TypeProjection.toKtTypeProjection(analysisContext: Fe10AnalysisContext): KtTypeProjection {
+internal fun TypeProjection.toKtTypeProjection(analysisContext: Fe10AnalysisContext): KaTypeProjection {
     return if (isStarProjection) {
-        KtStarTypeProjection(analysisContext.token)
+        KaStarTypeProjection(analysisContext.token)
     } else {
-        KtTypeArgumentWithVariance(type.toKtType(analysisContext), this.projectionKind, analysisContext.token)
+        KaTypeArgumentWithVariance(type.toKtType(analysisContext), this.projectionKind, analysisContext.token)
     }
 }
 
-internal fun TypeParameterDescriptor.toKtTypeParameter(analysisContext: Fe10AnalysisContext): KtTypeParameterSymbol {
-    return KtFe10DescTypeParameterSymbol(this, analysisContext)
+internal fun TypeParameterDescriptor.toKtTypeParameter(analysisContext: Fe10AnalysisContext): KaTypeParameterSymbol {
+    return KaFe10DescTypeParameterSymbol(this, analysisContext)
 }
 
-internal fun DeclarationDescriptor.getSymbolOrigin(analysisContext: Fe10AnalysisContext): KtSymbolOrigin {
+internal fun DeclarationDescriptor.getSymbolOrigin(analysisContext: Fe10AnalysisContext): KaSymbolOrigin {
     when (this) {
-        is SyntheticJavaPropertyDescriptor -> return KtSymbolOrigin.JAVA_SYNTHETIC_PROPERTY
-        is SyntheticFieldDescriptor -> return KtSymbolOrigin.PROPERTY_BACKING_FIELD
-        is SamConstructorDescriptor -> return KtSymbolOrigin.SAM_CONSTRUCTOR
-        is JavaClassDescriptor, is JavaCallableMemberDescriptor -> return KtSymbolOrigin.JAVA
-        is DeserializedDescriptor -> return KtSymbolOrigin.LIBRARY
+        is SyntheticJavaPropertyDescriptor -> return KaSymbolOrigin.JAVA_SYNTHETIC_PROPERTY
+        is SyntheticFieldDescriptor -> return KaSymbolOrigin.PROPERTY_BACKING_FIELD
+        is SamConstructorDescriptor -> return KaSymbolOrigin.SAM_CONSTRUCTOR
+        is JavaClassDescriptor, is JavaCallableMemberDescriptor -> return javaOrigin()
+        is DeserializedDescriptor -> return KaSymbolOrigin.LIBRARY
         is EnumEntrySyntheticClassDescriptor -> return containingDeclaration.getSymbolOrigin(analysisContext)
         is CallableMemberDescriptor -> when (kind) {
-            CallableMemberDescriptor.Kind.DELEGATION -> return KtSymbolOrigin.DELEGATED
-            CallableMemberDescriptor.Kind.SYNTHESIZED -> return KtSymbolOrigin.SOURCE_MEMBER_GENERATED
+            CallableMemberDescriptor.Kind.DELEGATION -> return KaSymbolOrigin.DELEGATED
+            CallableMemberDescriptor.Kind.SYNTHESIZED -> return KaSymbolOrigin.SOURCE_MEMBER_GENERATED
             else -> {
                 if (isDynamic()) {
-                    return KtSymbolOrigin.JS_DYNAMIC
+                    return KaSymbolOrigin.JS_DYNAMIC
                 }
             }
         }
@@ -345,13 +350,13 @@ internal fun DeclarationDescriptor.getSymbolOrigin(analysisContext: Fe10Analysis
 
     val sourceElement = this.toSourceElement
     if (sourceElement is JavaSourceElement) {
-        return KtSymbolOrigin.JAVA
+        return javaOrigin()
     }
 
     val psi = sourceElement.getPsi()
     if (psi != null) {
         if (psi.language != KotlinLanguage.INSTANCE) {
-            return KtSymbolOrigin.JAVA
+            return javaOrigin()
         }
 
         val virtualFile = psi.containingFile.virtualFile
@@ -359,18 +364,23 @@ internal fun DeclarationDescriptor.getSymbolOrigin(analysisContext: Fe10Analysis
     } else { // psi == null
         // Implicit lambda parameter
         if (this is ValueParameterDescriptor && this.name == StandardNames.IMPLICIT_LAMBDA_PARAMETER_NAME) {
-            return KtSymbolOrigin.SOURCE_MEMBER_GENERATED
+            return KaSymbolOrigin.SOURCE_MEMBER_GENERATED
         }
     }
 
-    return KtSymbolOrigin.SOURCE
+    return KaSymbolOrigin.SOURCE
 }
 
-internal val KotlinType.ktNullability: KtTypeNullability
+private fun DeclarationDescriptor.javaOrigin(): KaSymbolOrigin {
+    val psi = toSourceElement.getPsi()
+    return if (psi == null || psi is ClsElementImpl) KaSymbolOrigin.JAVA_LIBRARY else KaSymbolOrigin.JAVA_SOURCE
+}
+
+internal val KotlinType.ktNullability: KaTypeNullability
     get() = when {
-        this.isNullabilityFlexible() -> KtTypeNullability.UNKNOWN
-        this.isMarkedNullable -> KtTypeNullability.NULLABLE
-        else -> KtTypeNullability.NON_NULLABLE
+        this.isNullabilityFlexible() -> KaTypeNullability.UNKNOWN
+        this.isMarkedNullable -> KaTypeNullability.NULLABLE
+        else -> KaTypeNullability.NON_NULLABLE
     }
 
 internal val DeclarationDescriptorWithVisibility.ktVisibility: Visibility
@@ -403,23 +413,23 @@ internal val MemberDescriptor.ktModality: Modality
         return this.modality
     }
 
-internal fun ConstantValue<*>.toKtConstantValue(): KtConstantValue {
+internal fun ConstantValue<*>.toKtConstantValue(): KaConstantValue {
     return when (this) {
-        is ErrorValue.ErrorValueWithMessage -> KtConstantValue.KtErrorConstantValue(message, sourcePsi = null)
-        is BooleanValue -> KtConstantValue.KtBooleanConstantValue(value, sourcePsi = null)
-        is DoubleValue -> KtConstantValue.KtDoubleConstantValue(value, sourcePsi = null)
-        is FloatValue -> KtConstantValue.KtFloatConstantValue(value, sourcePsi = null)
-        is NullValue -> KtConstantValue.KtNullConstantValue(sourcePsi = null)
-        is StringValue -> KtConstantValue.KtStringConstantValue(value, sourcePsi = null)
-        is ByteValue -> KtConstantValue.KtByteConstantValue(value, sourcePsi = null)
-        is CharValue -> KtConstantValue.KtCharConstantValue(value, sourcePsi = null)
-        is IntValue -> KtConstantValue.KtIntConstantValue(value, sourcePsi = null)
-        is LongValue -> KtConstantValue.KtLongConstantValue(value, sourcePsi = null)
-        is ShortValue -> KtConstantValue.KtShortConstantValue(value, sourcePsi = null)
-        is UByteValue -> KtConstantValue.KtUnsignedByteConstantValue(value.toUByte(), sourcePsi = null)
-        is UIntValue -> KtConstantValue.KtUnsignedIntConstantValue(value.toUInt(), sourcePsi = null)
-        is ULongValue -> KtConstantValue.KtUnsignedLongConstantValue(value.toULong(), sourcePsi = null)
-        is UShortValue -> KtConstantValue.KtUnsignedShortConstantValue(value.toUShort(), sourcePsi = null)
+        is ErrorValue.ErrorValueWithMessage -> KaConstantValue.KaErrorConstantValue(message, sourcePsi = null)
+        is BooleanValue -> KaConstantValue.KaBooleanConstantValue(value, sourcePsi = null)
+        is DoubleValue -> KaConstantValue.KaDoubleConstantValue(value, sourcePsi = null)
+        is FloatValue -> KaConstantValue.KaFloatConstantValue(value, sourcePsi = null)
+        is NullValue -> KaConstantValue.KaNullConstantValue(sourcePsi = null)
+        is StringValue -> KaConstantValue.KaStringConstantValue(value, sourcePsi = null)
+        is ByteValue -> KaConstantValue.KaByteConstantValue(value, sourcePsi = null)
+        is CharValue -> KaConstantValue.KaCharConstantValue(value, sourcePsi = null)
+        is IntValue -> KaConstantValue.KaIntConstantValue(value, sourcePsi = null)
+        is LongValue -> KaConstantValue.KaLongConstantValue(value, sourcePsi = null)
+        is ShortValue -> KaConstantValue.KaShortConstantValue(value, sourcePsi = null)
+        is UByteValue -> KaConstantValue.KaUnsignedByteConstantValue(value.toUByte(), sourcePsi = null)
+        is UIntValue -> KaConstantValue.KaUnsignedIntConstantValue(value.toUInt(), sourcePsi = null)
+        is ULongValue -> KaConstantValue.KaUnsignedLongConstantValue(value.toULong(), sourcePsi = null)
+        is UShortValue -> KaConstantValue.KaUnsignedShortConstantValue(value.toUShort(), sourcePsi = null)
         else -> error("Unexpected constant value $value")
     }
 }
@@ -439,37 +449,37 @@ internal tailrec fun KotlinBuiltIns.areSameArrayTypeIgnoringProjections(left: Ko
 internal fun List<ConstantValue<*>>.expandArrayAnnotationValue(
     containingArrayType: KotlinType,
     analysisContext: Fe10AnalysisContext,
-): List<KtAnnotationValue> = flatMap { constantValue: ConstantValue<*> ->
+): List<KaAnnotationValue> = flatMap { constantValue: ConstantValue<*> ->
     val constantType = constantValue.getType(analysisContext.resolveSession.moduleDescriptor)
     if (analysisContext.builtIns.areSameArrayTypeIgnoringProjections(containingArrayType, constantType)) {
         // If an element in the array has the same type as the containing array, it's a spread component that needs
         // to be expanded here. (It should have the array element type instead.)
         (constantValue as ArrayValue).value.expandArrayAnnotationValue(containingArrayType, analysisContext)
     } else {
-        listOf(constantValue.toKtAnnotationValue(analysisContext))
+        listOf(constantValue.toKaAnnotationValue(analysisContext))
     }
 }
 
-internal fun ConstantValue<*>.toKtAnnotationValue(analysisContext: Fe10AnalysisContext): KtAnnotationValue {
+internal fun ConstantValue<*>.toKaAnnotationValue(analysisContext: Fe10AnalysisContext): KaAnnotationValue {
     val token = analysisContext.token
 
     return when (this) {
         is ArrayValue -> {
             val arrayType = getType(analysisContext.resolveSession.moduleDescriptor)
-            KtArrayAnnotationValue(value.expandArrayAnnotationValue(arrayType, analysisContext), sourcePsi = null, token)
+            KaArrayAnnotationValue(value.expandArrayAnnotationValue(arrayType, analysisContext), sourcePsi = null, token)
         }
-        is EnumValue -> KtEnumEntryAnnotationValue(CallableId(enumClassId, enumEntryName), sourcePsi = null, token)
+        is EnumValue -> KaEnumEntryAnnotationValue(CallableId(enumClassId, enumEntryName), sourcePsi = null, token)
         is KClassValue -> when (val value = value) {
             is KClassValue.Value.LocalClass -> {
                 val type = value.type.toKtType(analysisContext)
                 val classId = value.type.unwrap().constructor.declarationDescriptor?.maybeLocalClassId
-                KtKClassAnnotationValue(type, classId, sourcePsi = null, token)
+                KaKClassAnnotationValue(type, classId, sourcePsi = null, token)
             }
             is KClassValue.Value.NormalClass -> {
                 val classLiteralInfo = resolveClassLiteral(value, analysisContext)
 
                 if (classLiteralInfo != null) {
-                    KtKClassAnnotationValue(classLiteralInfo.type, classLiteralInfo.classId, sourcePsi = null, token)
+                    KaKClassAnnotationValue(classLiteralInfo.type, classLiteralInfo.classId, sourcePsi = null, token)
                 } else {
                     val classId = if (value.arrayDimensions == 0) value.classId else StandardClassIds.Array
 
@@ -477,32 +487,33 @@ internal fun ConstantValue<*>.toKtAnnotationValue(analysisContext: Fe10AnalysisC
                         .createErrorType(ErrorTypeKind.UNRESOLVED_TYPE, classId.asFqNameString())
                         .toKtType(analysisContext)
 
-                    KtKClassAnnotationValue(type, classId, sourcePsi = null, token)
+                    KaKClassAnnotationValue(type, classId, sourcePsi = null, token)
                 }
             }
         }
 
         is AnnotationValue -> {
-            KtAnnotationApplicationValue(
-                KtAnnotationApplicationWithArgumentsInfo(
+            KaAnnotationApplicationValue(
+                KaAnnotationImpl(
                     value.annotationClass?.classId,
                     psi = null,
                     useSiteTarget = null,
-                    arguments = value.getKtNamedAnnotationArguments(analysisContext),
+                    hasArguments = value.allValueArguments.isNotEmpty(),
+                    lazyArguments = lazy { value.getKtNamedAnnotationArguments(analysisContext) },
                     index = null,
-                    constructorSymbolPointer = null,
+                    constructorSymbol = null,
                     token = token
                 ),
                 token
             )
         }
         else -> {
-            KtConstantAnnotationValue(toKtConstantValue(), token)
+            KaConstantAnnotationValue(toKtConstantValue(), token)
         }
     }
 }
 
-private class ClassLiteralResolutionResult(val type: KtType, val classId: ClassId)
+private class ClassLiteralResolutionResult(val type: KaType, val classId: ClassId)
 
 private fun resolveClassLiteral(value: KClassValue.Value.NormalClass, analysisContext: Fe10AnalysisContext): ClassLiteralResolutionResult? {
     var descriptor = analysisContext.resolveSession.moduleDescriptor.findClassifierAcrossModuleDependencies(value.classId)
@@ -611,11 +622,11 @@ internal val PropertyDescriptor.setterCallableIdIfNotLocal: CallableId?
         return null
     }
 
-internal fun getSymbolDescriptor(symbol: KtSymbol): DeclarationDescriptor? {
+internal fun getSymbolDescriptor(symbol: KaSymbol): DeclarationDescriptor? {
     return when (symbol) {
-        is KtFe10DescSymbol<*> -> symbol.descriptor
-        is KtFe10PsiSymbol<*, *> -> symbol.descriptor
-        is KtFe10DescSyntheticFieldSymbol -> symbol.descriptor
+        is KaFe10DescSymbol<*> -> symbol.descriptor
+        is KaFe10PsiSymbol<*, *> -> symbol.descriptor
+        is KaFe10DescSyntheticFieldSymbol -> symbol.descriptor
         else -> null
     }
 }
@@ -649,52 +660,39 @@ internal fun createKtInitializerValue(
     initializer: KtExpression?,
     propertyDescriptor: PropertyDescriptor?,
     analysisContext: Fe10AnalysisContext,
-): KtInitializerValue? {
+): KaInitializerValue? {
     if (initializer == null && propertyDescriptor?.compileTimeInitializer == null) {
         return null
     }
 
     val compileTimeInitializer = propertyDescriptor?.compileTimeInitializer
     if (compileTimeInitializer != null) {
-        return KtConstantInitializerValue(compileTimeInitializer.toKtConstantValue(), initializer)
+        return KaConstantInitializerValue(compileTimeInitializer.toKtConstantValue(), initializer)
     }
     if (initializer != null) {
         val bindingContext = analysisContext.analyze(initializer)
         val constantValue = ConstantExpressionEvaluator.getConstant(initializer, bindingContext)
         if (constantValue != null) {
             val evaluated = constantValue.toConstantValue(propertyDescriptor?.type ?: TypeUtils.NO_EXPECTED_TYPE).toKtConstantValue()
-            return KtConstantInitializerValue(evaluated, initializer)
+            return KaConstantInitializerValue(evaluated, initializer)
         }
     }
 
-    return KtNonConstantInitializerValue(initializer)
+    return KaNonConstantInitializerValue(initializer)
 }
 
-internal fun AnnotationDescriptor.toKtAnnotationApplication(
+internal fun AnnotationDescriptor.toKaAnnotation(
     analysisContext: Fe10AnalysisContext,
     index: Int,
-): KtAnnotationApplicationWithArgumentsInfo {
-    return KtAnnotationApplicationWithArgumentsInfo(
+): KaAnnotation {
+    return KaAnnotationImpl(
         classId = classIdForAnnotation,
         psi = psi,
         useSiteTarget = useSiteTarget,
-        arguments = getKtNamedAnnotationArguments(analysisContext),
+        hasArguments = allValueArguments.isNotEmpty(),
+        lazyArguments = lazy { getKtNamedAnnotationArguments(analysisContext) },
         index = index,
-        constructorSymbolPointer = null,
-        token = analysisContext.token
-    )
-}
-
-internal fun AnnotationDescriptor.toKtAnnotationInfo(
-    analysisContext: Fe10AnalysisContext,
-    index: Int
-): KtAnnotationApplicationInfo {
-    return KtAnnotationApplicationInfo(
-        classId = classIdForAnnotation,
-        psi = psi,
-        useSiteTarget = useSiteTarget,
-        isCallWithArguments = allValueArguments.isNotEmpty(),
-        index = index,
+        constructorSymbol = null,
         token = analysisContext.token
     )
 }
@@ -704,28 +702,28 @@ internal val AnnotationDescriptor.classIdForAnnotation: ClassId? get() = annotat
 internal val AnnotationDescriptor.useSiteTarget: AnnotationUseSiteTarget?
     get() = (this as? LazyAnnotationDescriptor)?.annotationEntry?.useSiteTarget?.getAnnotationUseSiteTarget()
 
-internal fun AnnotationDescriptor.getKtNamedAnnotationArguments(analysisContext: Fe10AnalysisContext): List<KtNamedAnnotationValue> =
+internal fun AnnotationDescriptor.getKtNamedAnnotationArguments(analysisContext: Fe10AnalysisContext): List<KaNamedAnnotationValue> =
     allValueArguments.map { (name, value) ->
-        KtNamedAnnotationValue(name, value.toKtAnnotationValue(analysisContext), analysisContext.token)
+        KaNamedAnnotationValue(name, value.toKaAnnotationValue(analysisContext), analysisContext.token)
     }
 
 internal fun CallableDescriptor.createContextReceivers(
     analysisContext: Fe10AnalysisContext
-): List<KtContextReceiver> {
+): List<KaContextReceiver> {
     return contextReceiverParameters.map { createContextReceiver(it, analysisContext) }
 }
 
 internal fun ClassDescriptor.createContextReceivers(
     analysisContext: Fe10AnalysisContext
-): List<KtContextReceiver> {
+): List<KaContextReceiver> {
     return contextReceivers.map { createContextReceiver(it, analysisContext) }
 }
 
 private fun createContextReceiver(
     contextReceiver: ReceiverParameterDescriptor,
     analysisContext: Fe10AnalysisContext
-): KtContextReceiverImpl {
-    return KtContextReceiverImpl(
+): KaContextReceiverImpl {
+    return KaContextReceiverImpl(
         contextReceiver.value.type.toKtType(analysisContext),
         (contextReceiver.value as ImplicitContextReceiver).customLabelName,
         analysisContext.token

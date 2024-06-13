@@ -9,8 +9,10 @@ class SirParameter(
     val argumentName: String? = null, // external function parameter (argument) name
     val parameterName: String? = null, // internal function parameter name
     val type: SirType,
-    /* TODO:  val defaultValue: Expression? = null, */
+    val origin: Origin? = null,
 ) {
+    interface Origin
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other != null && this::class != other::class) return false

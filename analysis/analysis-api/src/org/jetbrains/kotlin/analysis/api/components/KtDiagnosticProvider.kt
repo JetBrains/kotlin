@@ -5,26 +5,32 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnosticWithPsi
+import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
-public abstract class KtDiagnosticProvider : KtAnalysisSessionComponent() {
-    public abstract fun getDiagnosticsForElement(element: KtElement, filter: KtDiagnosticCheckerFilter): Collection<KtDiagnosticWithPsi<*>>
-    public abstract fun collectDiagnosticsForFile(ktFile: KtFile, filter: KtDiagnosticCheckerFilter): Collection<KtDiagnosticWithPsi<*>>
+public abstract class KaDiagnosticProvider : KaSessionComponent() {
+    public abstract fun getDiagnosticsForElement(element: KtElement, filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>>
+    public abstract fun collectDiagnosticsForFile(ktFile: KtFile, filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>>
 }
 
-public interface KtDiagnosticProviderMixIn : KtAnalysisSessionMixIn {
-    public fun KtElement.getDiagnostics(filter: KtDiagnosticCheckerFilter): Collection<KtDiagnosticWithPsi<*>> =
+public typealias KtDiagnosticProvider = KaDiagnosticProvider
+
+public interface KaDiagnosticProviderMixIn : KaSessionMixIn {
+    public fun KtElement.getDiagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>> =
         withValidityAssertion { analysisSession.diagnosticProvider.getDiagnosticsForElement(this, filter) }
 
-    public fun KtFile.collectDiagnosticsForFile(filter: KtDiagnosticCheckerFilter): Collection<KtDiagnosticWithPsi<*>> =
+    public fun KtFile.collectDiagnosticsForFile(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>> =
         withValidityAssertion { analysisSession.diagnosticProvider.collectDiagnosticsForFile(this, filter) }
 }
 
-public enum class KtDiagnosticCheckerFilter {
+public typealias KtDiagnosticProviderMixIn = KaDiagnosticProviderMixIn
+
+public enum class KaDiagnosticCheckerFilter {
     ONLY_COMMON_CHECKERS,
     ONLY_EXTENDED_CHECKERS,
     EXTENDED_AND_COMMON_CHECKERS,
 }
+
+public typealias KtDiagnosticCheckerFilter = KaDiagnosticCheckerFilter

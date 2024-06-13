@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] cyclicNestedHierarchy2Script.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-cyclicNestedHierarchy2Script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(RAW_FIR)] class C : D {
@@ -28,8 +28,8 @@ FILE: [ResolvedTo(RAW_FIR)] cyclicNestedHierarchy2Script.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-cyclicNestedHierarchy2Script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(RAW_FIR)] class C : D {
@@ -56,8 +56,8 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-cyclicNestedHierarchy2Script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(RAW_FIR)] class C : D {
@@ -84,8 +84,8 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-cyclicNestedHierarchy2Script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(RAW_FIR)] class C : D {
@@ -112,8 +112,8 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-cyclicNestedHierarchy2Script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
@@ -140,8 +140,8 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-cyclicNestedHierarchy2Script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
@@ -168,8 +168,8 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-cyclicNestedHierarchy2Script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
@@ -196,8 +196,8 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-cyclicNestedHierarchy2Script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
@@ -224,8 +224,8 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-cyclicNestedHierarchy2Script.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
@@ -252,8 +252,8 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-cyclicNestedHierarchy2Script.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
@@ -280,8 +280,8 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-cyclicNestedHierarchy2Script.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
@@ -308,8 +308,8 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-cyclicNestedHierarchy2Script.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
@@ -336,8 +336,8 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-cyclicNestedHierarchy2Script.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
@@ -364,8 +364,8 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] cyclicNestedHierarchy2Script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-cyclicNestedHierarchy2Script.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(BODY_RESOLVE)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
@@ -388,3 +388,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] cyclicNestedHierarchy2Script.kts
             }
 
         }
+

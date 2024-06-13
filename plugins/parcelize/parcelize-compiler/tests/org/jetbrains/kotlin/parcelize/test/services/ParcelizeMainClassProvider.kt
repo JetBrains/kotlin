@@ -5,14 +5,16 @@
 
 package org.jetbrains.kotlin.parcelize.test.services
 
+import org.jetbrains.kotlin.parcelize.test.services.ParcelizeDirectives.ENABLE_PARCELIZE
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeRuntimeClasspathProvider.Companion.JUNIT_GENERATED_TEST_CLASS_FQNAME
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.jvm.JvmBoxMainClassProvider
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.junit.runner.JUnitCore
 
 class ParcelizeMainClassProvider(testServices: TestServices) : JvmBoxMainClassProvider(testServices) {
-    override fun getMainClassNameAndAdditionalArguments(): List<String> {
+    override fun getMainClassNameAndAdditionalArguments(module: TestModule): List<String> {
+        if (ENABLE_PARCELIZE !in module.directives) return emptyList()
         val robolectricProperties = System.getProperties().propertyNames().asSequence()
             .map { it.toString() }.filter { it.startsWith("robolectric") }
             .map { "-D$it=${System.getProperty(it)}" }

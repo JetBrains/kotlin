@@ -9,17 +9,18 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiDecompiledCodeTestServiceRegistrar
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleFactory
+import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiIdeModeTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.AnalysisApiServiceRegistrar
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtSourceTestModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiBinaryLibraryIndexingMode
-import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiJvmEnvironmentConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiIndexingConfiguration
+import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiJvmEnvironmentConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.*
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -53,8 +54,9 @@ object AnalysisApiFe10TestConfigurator : AnalysisApiTestConfigurator() {
         }
     }
 
-    override val serviceRegistrars: List<AnalysisApiTestServiceRegistrar> = listOf(
+    override val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>> = listOf(
         AnalysisApiBaseTestServiceRegistrar,
+        AnalysisApiIdeModeTestServiceRegistrar,
         AnalysisApiDecompiledCodeTestServiceRegistrar,
         AnalysisApiFe10TestServiceRegistrar,
     )

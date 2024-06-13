@@ -1,4 +1,4 @@
-KtType: kotlin.Unit
+KaType: kotlin.Unit
 asPsiType(allowErrorTypes=false, mode=DEFAULT, isAnnotationMethod=false):
   PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
 

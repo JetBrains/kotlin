@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
+// LANGUAGE: +InlineClasses, -JvmInlineValueClasses
 
 abstract class AbstractBaseClass
 

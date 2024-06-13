@@ -16,8 +16,8 @@ fun Foo.zbar(body: ZBar.() -> Unit) = Bar().body()
 
 fun test() {
     Foo().foo {
-        zbar {
+        zbar <!RECURSIVE_TYPEALIAS_EXPANSION!>{
             foo {}
-        }
+        }<!>
     }
 }

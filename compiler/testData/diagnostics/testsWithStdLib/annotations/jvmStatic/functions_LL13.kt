@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
-// !LANGUAGE: +JvmStaticInInterface
+// DIAGNOSTICS: -UNUSED_VARIABLE
+// LANGUAGE: +JvmStaticInInterface
 class A {
     companion object {
         @JvmStatic fun a1() {

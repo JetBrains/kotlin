@@ -10,10 +10,10 @@ import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.analysis.api.components.ShortenStrategy.Companion.defaultCallableShortenStrategy
 import org.jetbrains.kotlin.analysis.api.components.ShortenStrategy.Companion.defaultClassShortenStrategy
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
@@ -78,20 +78,20 @@ public enum class ShortenStrategy {
     SHORTEN_AND_STAR_IMPORT;
 
     public companion object {
-        public val defaultClassShortenStrategy: (KtClassLikeSymbol) -> ShortenStrategy = {
-            if (it.classIdIfNonLocal?.isNestedClass == true) {
+        public val defaultClassShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy = {
+            if (it.classId?.isNestedClass == true) {
                 SHORTEN_IF_ALREADY_IMPORTED
             } else {
                 SHORTEN_AND_IMPORT
             }
         }
 
-        public val defaultCallableShortenStrategy: (KtCallableSymbol) -> ShortenStrategy = { symbol ->
+        public val defaultCallableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy = { symbol ->
             when (symbol) {
-                is KtEnumEntrySymbol -> DO_NOT_SHORTEN
+                is KaEnumEntrySymbol -> DO_NOT_SHORTEN
 
-                is KtConstructorSymbol -> {
-                    val isNestedClassConstructor = symbol.containingClassIdIfNonLocal?.isNestedClass == true
+                is KaConstructorSymbol -> {
+                    val isNestedClassConstructor = symbol.containingClassId?.isNestedClass == true
 
                     if (isNestedClassConstructor) {
                         SHORTEN_IF_ALREADY_IMPORTED
@@ -101,7 +101,7 @@ public enum class ShortenStrategy {
                 }
 
                 else -> {
-                    val isNotTopLevel = symbol.callableIdIfNonLocal?.classId != null
+                    val isNotTopLevel = symbol.callableId?.classId != null
 
                     if (isNotTopLevel) {
                         SHORTEN_IF_ALREADY_IMPORTED
@@ -114,17 +114,19 @@ public enum class ShortenStrategy {
     }
 }
 
-public abstract class KtReferenceShortener : KtAnalysisSessionComponent() {
+public abstract class KaReferenceShortener : KaSessionComponent() {
     public abstract fun collectShortenings(
         file: KtFile,
         selection: TextRange,
         shortenOptions: ShortenOptions,
-        classShortenStrategy: (KtClassLikeSymbol) -> ShortenStrategy,
-        callableShortenStrategy: (KtCallableSymbol) -> ShortenStrategy
+        classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy,
+        callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy
     ): ShortenCommand
 }
 
-public interface KtReferenceShortenerMixIn : KtAnalysisSessionMixIn {
+public typealias KtReferenceShortener = KaReferenceShortener
+
+public interface KaReferenceShortenerMixIn : KaSessionMixIn {
 
     /**
      * Collects possible references to shorten. By default, it shortens a fully-qualified members to the outermost class and does not
@@ -139,8 +141,8 @@ public interface KtReferenceShortenerMixIn : KtAnalysisSessionMixIn {
         file: KtFile,
         selection: TextRange = file.textRange,
         shortenOptions: ShortenOptions = ShortenOptions.DEFAULT,
-        classShortenStrategy: (KtClassLikeSymbol) -> ShortenStrategy = defaultClassShortenStrategy,
-        callableShortenStrategy: (KtCallableSymbol) -> ShortenStrategy = defaultCallableShortenStrategy
+        classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy = defaultClassShortenStrategy,
+        callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy = defaultCallableShortenStrategy
     ): ShortenCommand =
         withValidityAssertion {
             analysisSession.referenceShortener.collectShortenings(
@@ -164,8 +166,8 @@ public interface KtReferenceShortenerMixIn : KtAnalysisSessionMixIn {
     public fun collectPossibleReferenceShorteningsInElement(
         element: KtElement,
         shortenOptions: ShortenOptions = ShortenOptions.DEFAULT,
-        classShortenStrategy: (KtClassLikeSymbol) -> ShortenStrategy = defaultClassShortenStrategy,
-        callableShortenStrategy: (KtCallableSymbol) -> ShortenStrategy = defaultCallableShortenStrategy
+        classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy = defaultClassShortenStrategy,
+        callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy = defaultCallableShortenStrategy
     ): ShortenCommand =
         withValidityAssertion {
             analysisSession.referenceShortener.collectShortenings(
@@ -177,6 +179,8 @@ public interface KtReferenceShortenerMixIn : KtAnalysisSessionMixIn {
             )
         }
 }
+
+public typealias KtReferenceShortenerMixIn = KaReferenceShortenerMixIn
 
 /**
  * A class to keep a [KtUserType] to shorten and what shape the shortened result has to be. [shortenedReference] is the expected result of

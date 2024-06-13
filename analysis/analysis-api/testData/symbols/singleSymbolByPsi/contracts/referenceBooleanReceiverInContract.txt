@@ -1,26 +1,26 @@
-KtFunctionSymbol:
-  annotationsList: [
+KaFunctionSymbol:
+  annotations: [
     kotlin/OptIn(markerClass = [kotlin.contracts.ExperimentalContracts::class])
       psi: KtAnnotationEntry
   ]
-  callableIdIfNonLocal: /referenceReceiverInContract
+  callableId: /referenceReceiverInContract
   contextReceivers: []
   contractEffects: [
-    KtContractConditionalContractEffectDeclaration:
+    KaContractConditionalContractEffectDeclaration:
       effect:
-        KtContractReturnsSuccessfullyEffectDeclaration:
+        KaContractReturnsSuccessfullyEffectDeclaration:
       condition:
-        KtContractBooleanValueParameterExpression:
+        KaContractBooleanValueParameterExpression:
           parameterSymbol:
-            KtReceiverParameterSymbol:
-              annotationsList: []
+            KaReceiverParameterSymbol:
+              annotations: []
               origin: SOURCE
-              owningCallableSymbol: KtFunctionSymbol(/referenceReceiverInContract)
-              type: KtUsualClassType:
-                annotationsList: []
-                ownTypeArguments: []
+              owningCallableSymbol: KaFunctionSymbol(/referenceReceiverInContract)
+              type: KaUsualClassType:
+                annotations: []
+                typeArguments: []
                 type: kotlin/Boolean
-              getContainingFileSymbol: KtFileSymbol(referenceBooleanReceiverInContract.kt)
+              getContainingFileSymbol: KaFileSymbol(referenceBooleanReceiverInContract.kt)
               getContainingModule: KtSourceModule "Sources of main"
               deprecationStatus: null
   ]
@@ -40,26 +40,26 @@ KtFunctionSymbol:
   modality: FINAL
   name: referenceReceiverInContract
   origin: SOURCE
-  receiverParameter: KtReceiverParameterSymbol:
-    annotationsList: []
+  receiverParameter: KaReceiverParameterSymbol:
+    annotations: []
     origin: SOURCE
-    owningCallableSymbol: KtFunctionSymbol(/referenceReceiverInContract)
-    type: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    owningCallableSymbol: KaFunctionSymbol(/referenceReceiverInContract)
+    type: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Boolean
-    getContainingFileSymbol: KtFileSymbol(referenceBooleanReceiverInContract.kt)
+    getContainingFileSymbol: KaFileSymbol(referenceBooleanReceiverInContract.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(referenceBooleanReceiverInContract.kt)
+  getContainingFileSymbol: KaFileSymbol(referenceBooleanReceiverInContract.kt)
   getContainingJvmClassName: ReferenceBooleanReceiverInContractKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

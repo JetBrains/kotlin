@@ -1,3 +1,0 @@
-Resolved to:
-0: (in Foo) operator fun iterator(): Iterator
-1: (in Iterator) operator fun hasNext(): kotlin.Boolean

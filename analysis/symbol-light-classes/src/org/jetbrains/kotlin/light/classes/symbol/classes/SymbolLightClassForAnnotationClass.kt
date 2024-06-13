@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThis
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 
 internal open class SymbolLightClassForAnnotationClass : SymbolLightClassForInterfaceOrAnnotationClass {
     constructor(
-        ktAnalysisSession: KtAnalysisSession,
+        ktAnalysisSession: KaSession,
         ktModule: KtModule,
-        classOrObjectSymbol: KtNamedClassOrObjectSymbol,
+        classOrObjectSymbol: KaNamedClassOrObjectSymbol,
         manager: PsiManager
     ) : super(
         ktAnalysisSession = ktAnalysisSession,
@@ -31,7 +31,7 @@ internal open class SymbolLightClassForAnnotationClass : SymbolLightClassForInte
         classOrObjectSymbol = classOrObjectSymbol,
         manager = manager,
     ) {
-        require(classOrObjectSymbol.classKind == KtClassKind.ANNOTATION_CLASS)
+        require(classOrObjectSymbol.classKind == KaClassKind.ANNOTATION_CLASS)
     }
 
     constructor(classOrObject: KtClassOrObject, ktModule: KtModule) : super(classOrObject, ktModule) {
@@ -40,7 +40,7 @@ internal open class SymbolLightClassForAnnotationClass : SymbolLightClassForInte
 
     constructor(
         classOrObjectDeclaration: KtClassOrObject?,
-        classOrObjectSymbolPointer: KtSymbolPointer<KtNamedClassOrObjectSymbol>,
+        classOrObjectSymbolPointer: KaSymbolPointer<KaNamedClassOrObjectSymbol>,
         ktModule: KtModule,
         manager: PsiManager,
     ) : super(
@@ -50,13 +50,13 @@ internal open class SymbolLightClassForAnnotationClass : SymbolLightClassForInte
         manager = manager,
     )
 
-    override fun classKind(): KtClassKind = KtClassKind.ANNOTATION_CLASS
+    override fun classKind(): KaClassKind = KaClassKind.ANNOTATION_CLASS
 
     protected open fun computeOwnMethods(): List<PsiMethod> = withClassOrObjectSymbol { classOrObjectSymbol ->
         val result = mutableListOf<KtLightMethod>()
         val visibleDeclarations = classOrObjectSymbol.getDeclaredMemberScope().getCallableSymbols()
-            .filterNot { it is KtFunctionSymbol && it.visibility.isPrivateOrPrivateToThis() }
-            .filterNot { it is KtConstructorSymbol }
+            .filterNot { it is KaFunctionSymbol && it.visibility.isPrivateOrPrivateToThis() }
+            .filterNot { it is KaConstructorSymbol }
 
         createMethods(visibleDeclarations, result)
         result

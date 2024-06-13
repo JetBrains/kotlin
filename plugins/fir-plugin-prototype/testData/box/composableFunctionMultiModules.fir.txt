@@ -4,6 +4,12 @@ FILE: foo.kt
 
     @R|org/jetbrains/kotlin/fir/plugin/MyComposable|() public final fun Foo(text: R|@R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  some/MyComposableFunction0<kotlin/Unit>|): R|kotlin/Unit| {
     }
+    @R|org/jetbrains/kotlin/fir/plugin/MyComposable|() public final fun FooReturn(): R|some/MyComposableFunction0<kotlin/Unit>| {
+        ^FooReturn @R|org/jetbrains/kotlin/fir/plugin/MyComposable|() fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            ^ Unit
+        }
+
+    }
 Module: main
 FILE: main.kt
     @R|org/jetbrains/kotlin/fir/plugin/MyComposable|() public final fun Bar(): R|kotlin/Unit| {
@@ -11,6 +17,7 @@ FILE: main.kt
             ^@Foo Unit
         }
         )
+        R|p3/FooReturn|().R|SubstitutionOverride<some/MyComposableFunction0.invoke: R|kotlin/Unit|>|()
     }
     public final fun box(): R|kotlin/String| {
         ^box String(OK)

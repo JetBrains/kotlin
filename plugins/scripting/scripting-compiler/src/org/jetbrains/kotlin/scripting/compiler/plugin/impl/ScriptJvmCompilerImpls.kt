@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.DefaultCodegenFactory
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -89,14 +86,14 @@ class ScriptJvmCompilerFromEnvironment(val environment: KotlinCoreEnvironment) :
 
                 val context = createCompilationContextFromEnvironment(initialConfiguration, environment, messageCollector)
 
-                val previousMessageCollector = environment.configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]
+                val previousMessageCollector = environment.configuration[CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY]
                 try {
-                    environment.configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
+                    environment.configuration.messageCollector = messageCollector
 
                     compileImpl(script, context, initialConfiguration, messageCollector)
                 } finally {
                     if (previousMessageCollector != null)
-                        environment.configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, previousMessageCollector)
+                        environment.configuration.messageCollector = previousMessageCollector
                 }
             }
         }
@@ -254,7 +251,7 @@ private fun doCompile(
 }
 
 private fun analyze(sourceFiles: Collection<KtFile>, environment: KotlinCoreEnvironment): AnalysisResult {
-    val messageCollector = environment.configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]!!
+    val messageCollector = environment.configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
     val analyzerWithCompilerReport = AnalyzerWithCompilerReport(
         messageCollector,

@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.directOverriddenFunctions
 import org.jetbrains.kotlin.fir.analysis.checkers.extractClassFromArgument
 import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
+import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
@@ -24,9 +24,13 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
+import org.jetbrains.kotlin.fir.scopes.MemberWithBaseScope
+import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctionsWithBaseScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.hasError
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -128,26 +132,30 @@ sealed class FirNativeThrowsChecker(mppKind: MppCheckerKind) : FirBasicDeclarati
         val visited = mutableSetOf<FirNamedFunctionSymbol>()
         val result = mutableMapOf<FirNamedFunctionSymbol, ThrowsFilter>()
 
-        fun getInheritedThrows(localThrowsAnnotation: FirAnnotation?, localFunctionSymbol: FirNamedFunctionSymbol) {
+        fun getInheritedThrows(localThrowsAnnotation: FirAnnotation?, functionWithScope: MemberWithBaseScope<FirNamedFunctionSymbol>) {
+            val localFunctionSymbol = functionWithScope.member
             if (!visited.add(localFunctionSymbol)) return
-            val containingClassSymbol = localFunctionSymbol.containingClassLookupTag()?.toFirRegularClassSymbol(context.session)
 
-            if (containingClassSymbol != null) {
-                val overriddenFunctions = localFunctionSymbol.directOverriddenFunctions(context.session, context.scopeSession)
-                if (localFunctionSymbol == function.symbol || localThrowsAnnotation == null && overriddenFunctions.isNotEmpty()) {
-                    for (overriddenFunction in overriddenFunctions) {
-                        val annotation = runUnless(overriddenFunction.isSubstitutionOrIntersectionOverride) {
-                            overriddenFunction.getAnnotationByClassId(throwsClassId, context.session)
-                        }
-                        getInheritedThrows(annotation, overriddenFunction)
+            val directOverriddenFunctionsWithScopes =
+                functionWithScope.baseScope.getDirectOverriddenFunctionsWithBaseScope(localFunctionSymbol)
+
+            if (localFunctionSymbol == function.symbol || localThrowsAnnotation == null && directOverriddenFunctionsWithScopes.isNotEmpty()) {
+                for (directOverriddenFunctionWithScope in directOverriddenFunctionsWithScopes) {
+                    val overriddenFunction = directOverriddenFunctionWithScope.member
+                    val annotation = runUnless(overriddenFunction.isSubstitutionOrIntersectionOverride) {
+                        overriddenFunction.getAnnotationByClassId(throwsClassId, context.session)
                     }
-                } else {
-                    result[localFunctionSymbol] = decodeThrowsFilter(localThrowsAnnotation, context.session)
+                    getInheritedThrows(annotation, directOverriddenFunctionWithScope)
                 }
+            } else {
+                result[localFunctionSymbol] = decodeThrowsFilter(localThrowsAnnotation, context.session)
             }
         }
 
-        getInheritedThrows(throwsAnnotation, function.symbol)
+        val currentScope = function.symbol.containingClassLookupTag()?.toFirRegularClassSymbol(context.session)?.unsubstitutedScope(context)
+        if (currentScope != null) {
+            getInheritedThrows(throwsAnnotation, MemberWithBaseScope(function.symbol, currentScope))
+        }
 
         return result
     }

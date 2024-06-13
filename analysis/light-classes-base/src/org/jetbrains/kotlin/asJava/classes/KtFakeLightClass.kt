@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,11 +10,16 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiClassImplUtil
 import com.intellij.psi.impl.light.AbstractLightClass
+import com.intellij.psi.impl.light.LightMethod
 import com.intellij.psi.search.SearchScope
 import com.intellij.util.IncorrectOperationException
+import org.jetbrains.kotlin.asJava.elements.KtLightElement
+import org.jetbrains.kotlin.asJava.toFakeLightClass
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import javax.swing.Icon
 
 // Used as a placeholder when actual light class does not exist (expect-classes, for example)
@@ -47,7 +52,7 @@ object DummyJavaPsiFactory {
     fun createDummyVoidMethod(project: Project): PsiMethod {
         // Can't use PsiElementFactory.createMethod() because of formatting in PsiElementFactoryImpl.
         val name = "dummy"
-        val returnType = PsiType.VOID
+        val returnType = PsiTypes.voidType()
 
         val canonicalText = GenericsUtil.getVariableTypeByExpressionType(returnType).getCanonicalText(true)
         val file = createDummyJavaFile(project, "class _Dummy_ { public $canonicalText $name() {\n} }")
@@ -69,4 +74,29 @@ object DummyJavaPsiFactory {
     }
 
     private val DUMMY_FILE_NAME = "_Dummy_." + JavaFileType.INSTANCE.defaultExtension
+}
+
+class KtFakeLightMethod private constructor(
+    val ktDeclaration: KtNamedDeclaration,
+    ktClassOrObject: KtClassOrObject
+) : LightMethod(
+    ktDeclaration.manager,
+    DummyJavaPsiFactory.createDummyVoidMethod(ktDeclaration.project),
+    ktClassOrObject.toFakeLightClass(),
+    KotlinLanguage.INSTANCE
+), KtLightElement<KtNamedDeclaration, PsiMethod> {
+    override val kotlinOrigin get() = ktDeclaration
+
+    override fun getName() = ktDeclaration.name ?: ""
+
+    override fun getNavigationElement() = ktDeclaration
+    override fun getIcon(flags: Int): Icon? = ktDeclaration.getIcon(flags)
+    override fun getUseScope() = ktDeclaration.useScope
+
+    companion object {
+        fun get(ktDeclaration: KtNamedDeclaration): KtFakeLightMethod? {
+            val ktClassOrObject = ktDeclaration.containingClassOrObject ?: return null
+            return KtFakeLightMethod(ktDeclaration, ktClassOrObject)
+        }
+    }
 }

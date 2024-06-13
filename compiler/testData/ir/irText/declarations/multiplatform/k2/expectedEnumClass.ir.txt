@@ -1,4 +1,3 @@
-FILE fqName:<root> fileName:/lib.kt
 FILE fqName:<root> fileName:/main.kt
   CLASS ENUM_CLASS name:MyEnum modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.MyEnum>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyEnum
@@ -61,3 +60,4 @@ FILE fqName:<root> fileName:/main.kt
         overridden:
           public final fun <get-ordinal> (): kotlin.Int declared in kotlin.Enum
         $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.MyEnum>
+FILE fqName:<root> fileName:/lib.kt

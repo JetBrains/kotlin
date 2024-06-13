@@ -5,25 +5,25 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtDeclarationRenderer
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassInitializerSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassInitializerSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtTokens
 
-public interface KtClassInitializerRenderer {
+public interface KaClassInitializerRenderer {
     public fun renderClassInitializer(
-        analysisSession: KtAnalysisSession,
-        symbol: KtClassInitializerSymbol,
-        declarationRenderer: KtDeclarationRenderer,
+        analysisSession: KaSession,
+        symbol: KaClassInitializerSymbol,
+        declarationRenderer: KaDeclarationRenderer,
         printer: PrettyPrinter,
     )
 
-    public object INIT_BLOCK_WITH_BRACES : KtClassInitializerRenderer {
+    public object INIT_BLOCK_WITH_BRACES : KaClassInitializerRenderer {
         override fun renderClassInitializer(
-            analysisSession: KtAnalysisSession,
-            symbol: KtClassInitializerSymbol,
-            declarationRenderer: KtDeclarationRenderer,
+            analysisSession: KaSession,
+            symbol: KaClassInitializerSymbol,
+            declarationRenderer: KaDeclarationRenderer,
             printer: PrettyPrinter,
         ) {
             printer {
@@ -36,3 +36,4 @@ public interface KtClassInitializerRenderer {
     }
 }
 
+public typealias KtClassInitializerRenderer = KaClassInitializerRenderer

@@ -13,6 +13,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -127,6 +128,9 @@ internal fun KotlinNativeArtifact.registerLinkFrameworkTask(
         task.exportLibraries.setFrom(project.configurations.getByName(exportConfigurationName))
         @Suppress("DEPRECATION")
         task.kotlinOptions(kotlinOptionsFn)
+        task.kotlinNativeProvider.set(project.provider {
+            KotlinNativeProvider(project, task.konanTarget, task.kotlinNativeBundleBuildService)
+        })
     }
     project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(resultTask)
     return resultTask

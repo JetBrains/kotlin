@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -USELESS_ELVIS
+// DIAGNOSTICS: -USELESS_ELVIS
 
 fun test() {
     bar(<!TYPE_MISMATCH, TYPE_MISMATCH!>if (true) {

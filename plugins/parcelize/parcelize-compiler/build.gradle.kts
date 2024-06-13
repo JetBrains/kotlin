@@ -54,7 +54,7 @@ dependencies {
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
     testRuntimeOnly("com.jetbrains.intellij.platform:util-xml-dom:$intellijVersion") { isTransitive = false }
-
+    testRuntimeOnly(toolsJar())
     testImplementation(libs.junit4)
 
     robolectricDependency("org.robolectric:android-all:5.0.2_r3-robolectric-r0")

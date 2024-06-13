@@ -5,25 +5,25 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.signatures
 
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.signatures.KtVariableLikeSignature
-import org.jetbrains.kotlin.analysis.api.symbols.KtVariableLikeSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
+import org.jetbrains.kotlin.analysis.api.symbols.KaVariableLikeSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
+import org.jetbrains.kotlin.analysis.api.types.KaType
 
-internal class KtFe10VariableLikeSignature<out S : KtVariableLikeSymbol>(
+internal class KaFe10VariableLikeSignature<out S : KaVariableLikeSymbol>(
     private val backingSymbol: S,
-    private val backingReturnType: KtType,
-    private val backingReceiverType: KtType?,
-) : KtVariableLikeSignature<S>() {
-    override val token: KtLifetimeToken get() = backingSymbol.token
+    private val backingReturnType: KaType,
+    private val backingReceiverType: KaType?,
+) : KaVariableLikeSignature<S>() {
+    override val token: KaLifetimeToken get() = backingSymbol.token
     override val symbol: S get() = withValidityAssertion { backingSymbol }
-    override val returnType: KtType get() = withValidityAssertion { backingReturnType }
-    override val receiverType: KtType? get() = withValidityAssertion { backingReceiverType }
+    override val returnType: KaType get() = withValidityAssertion { backingReturnType }
+    override val receiverType: KaType? get() = withValidityAssertion { backingReceiverType }
 
-    override fun substitute(substitutor: KtSubstitutor): KtVariableLikeSignature<S> = withValidityAssertion {
-        KtFe10VariableLikeSignature(
+    override fun substitute(substitutor: KaSubstitutor): KaVariableLikeSignature<S> = withValidityAssertion {
+        KaFe10VariableLikeSignature(
             symbol,
             substitutor.substitute(returnType),
             receiverType?.let { substitutor.substitute(it) },
@@ -34,7 +34,7 @@ internal class KtFe10VariableLikeSignature<out S : KtVariableLikeSymbol>(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as KtFe10VariableLikeSignature<*>
+        other as KaFe10VariableLikeSignature<*>
 
         if (backingSymbol != other.backingSymbol) return false
         if (backingReturnType != other.backingReturnType) return false

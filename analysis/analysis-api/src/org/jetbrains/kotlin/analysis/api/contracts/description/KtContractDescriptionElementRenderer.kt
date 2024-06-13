@@ -1,86 +1,87 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.contracts.description
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.contracts.description.KtContractReturnsContractEffectDeclaration.*
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractReturnsContractEffectDeclaration.*
 import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.*
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
-import org.jetbrains.kotlin.analysis.api.symbols.KtParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
-internal fun Context.renderKtContractEffectDeclaration(value: KtContractEffectDeclaration, endWithNewLine: Boolean = true): Unit =
+internal fun Context.renderKaContractEffectDeclaration(value: KaContractEffectDeclaration, endWithNewLine: Boolean = true): Unit =
     printer.appendHeader(value::class) {
         when (value) {
-            is KtContractCallsInPlaceContractEffectDeclaration -> {
-                appendProperty(value::valueParameterReference, ::renderKtContractParameterValue)
+            is KaContractCallsInPlaceContractEffectDeclaration -> {
+                appendProperty(value::valueParameterReference, ::renderKaContractParameterValue)
                 appendSimpleProperty(value::occurrencesRange, endWithNewLine)
             }
-            is KtContractConditionalContractEffectDeclaration -> {
-                appendProperty(value::effect, ::renderKtContractEffectDeclaration)
-                appendProperty(value::condition, ::renderKtContractBooleanExpression, endWithNewLine)
+            is KaContractConditionalContractEffectDeclaration -> {
+                appendProperty(value::effect, ::renderKaContractEffectDeclaration)
+                appendProperty(value::condition, ::renderKaContractBooleanExpression, endWithNewLine)
             }
-            is KtContractReturnsContractEffectDeclaration -> {
+            is KaContractReturnsContractEffectDeclaration -> {
                 when (value) {
-                    is KtContractReturnsNotNullEffectDeclaration, is KtContractReturnsSuccessfullyEffectDeclaration -> Unit
-                    is KtContractReturnsSpecificValueEffectDeclaration ->
-                        appendProperty(value::value, ::renderKtContractConstantValue, endWithNewLine)
+                    is KaContractReturnsNotNullEffectDeclaration, is KaContractReturnsSuccessfullyEffectDeclaration -> Unit
+                    is KaContractReturnsSpecificValueEffectDeclaration ->
+                        appendProperty(value::value, ::renderKaContractConstantValue, endWithNewLine)
                 }
             }
         }
     }
 
-private fun Context.renderKtContractConstantValue(value: KtContractConstantValue, endWithNewLine: Boolean = true): Unit =
+private fun Context.renderKaContractConstantValue(value: KaContractConstantValue, endWithNewLine: Boolean = true): Unit =
     printer.appendHeader(value::class) {
         appendSimpleProperty(value::constantType, endWithNewLine)
     }
 
-private fun Context.renderKtContractParameterValue(value: KtContractParameterValue, endWithNewLine: Boolean = true): Unit =
+private fun Context.renderKaContractParameterValue(value: KaContractParameterValue, endWithNewLine: Boolean = true): Unit =
     printer.appendHeader(value::class) {
-        appendProperty(value::parameterSymbol, ::renderKtParameterSymbol, endWithNewLine)
+        appendProperty(value::parameterSymbol, ::renderKaParameterSymbol, endWithNewLine)
     }
 
-private fun Context.renderKtContractBooleanExpression(value: KtContractBooleanExpression, endWithNewLine: Boolean = true): Unit =
+private fun Context.renderKaContractBooleanExpression(value: KaContractBooleanExpression, endWithNewLine: Boolean = true): Unit =
     printer.appendHeader(value::class) {
         when (value) {
-            is KtContractLogicalNotExpression -> appendProperty(value::argument, ::renderKtContractBooleanExpression, endWithNewLine)
-            is KtContractBooleanConstantExpression -> appendSimpleProperty(value::booleanConstant, endWithNewLine)
-            is KtContractBinaryLogicExpression -> {
-                appendProperty(value::left, ::renderKtContractBooleanExpression)
-                appendProperty(value::right, ::renderKtContractBooleanExpression)
+            is KaContractLogicalNotExpression -> appendProperty(value::argument, ::renderKaContractBooleanExpression, endWithNewLine)
+            is KaContractBooleanConstantExpression -> appendSimpleProperty(value::booleanConstant, endWithNewLine)
+            is KaContractBinaryLogicExpression -> {
+                appendProperty(value::left, ::renderKaContractBooleanExpression)
+                appendProperty(value::right, ::renderKaContractBooleanExpression)
                 appendSimpleProperty(value::operation, endWithNewLine)
             }
-            is KtContractIsInstancePredicateExpression -> {
-                appendProperty(value::argument, ::renderKtContractParameterValue)
+            is KaContractIsInstancePredicateExpression -> {
+                appendProperty(value::argument, ::renderKaContractParameterValue)
                 appendProperty(value::type, renderer = { type, _ ->
                     appendLine(with(session) { symbolRenderer.renderType(analysisSession, type) })
                 })
                 appendSimpleProperty(value::isNegated, endWithNewLine)
             }
-            is KtContractIsNullPredicateExpression -> {
-                appendProperty(value::argument, ::renderKtContractParameterValue)
+            is KaContractIsNullPredicateExpression -> {
+                appendProperty(value::argument, ::renderKaContractParameterValue)
                 appendSimpleProperty(value::isNegated, endWithNewLine)
             }
-            is KtContractBooleanValueParameterExpression -> {
-                appendProperty(value::parameterSymbol, ::renderKtParameterSymbol, endWithNewLine)
+            is KaContractBooleanValueParameterExpression -> {
+                appendProperty(value::parameterSymbol, ::renderKaParameterSymbol, endWithNewLine)
             }
         }
     }
 
-private fun Context.renderKtParameterSymbol(value: KtParameterSymbol, endWithNewLine: Boolean = true) {
+private fun Context.renderKaParameterSymbol(value: KaParameterSymbol, endWithNewLine: Boolean = true) {
     val renderedValue = symbolRenderer.render(session, value)
     if (endWithNewLine) printer.appendLine(renderedValue) else printer.append(renderedValue)
 }
 
-internal data class Context(val session: KtAnalysisSession, val printer: PrettyPrinter, val symbolRenderer: DebugSymbolRenderer)
+internal data class Context(val session: KaSession, val printer: PrettyPrinter, val symbolRenderer: DebugSymbolRenderer)
 
 private fun PrettyPrinter.appendHeader(clazz: KClass<*>, body: PrettyPrinter.() -> Unit) {
-    appendLine(clazz.simpleName + ":")
+    append(clazz.simpleName)
+    appendLine(":")
     withIndent { body() }
 }
 

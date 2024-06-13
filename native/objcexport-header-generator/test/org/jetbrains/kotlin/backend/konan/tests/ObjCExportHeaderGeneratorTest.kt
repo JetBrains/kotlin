@@ -376,6 +376,69 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("sourceFileWithDotInName"))
     }
 
+    @Test
+    fun `test - c properties`() {
+        doTest(headersTestDataDir.resolve("cProperties"))
+    }
+
+    @Test
+    fun `test - objCMappedPropertyExtension`() {
+        doTest(headersTestDataDir.resolve("objCMappedPropertyExtension"))
+    }
+
+    /**
+     * Translation works as expected except properties order
+     * See KT-66510
+     */
+    @Test
+    @TodoAnalysisApi
+    fun `test - objCMappedMixedTypesExtension`() {
+        doTest(headersTestDataDir.resolve("objCMappedMixedTypesExtension"))
+    }
+
+    @Test
+    fun `test - functionWithReservedMethodName`() {
+        doTest(headersTestDataDir.resolve("functionWithReservedMethodName"))
+    }
+
+    @Test
+    fun `test - functionWithReservedMethodNameAndReturnType`() {
+        doTest(headersTestDataDir.resolve("functionWithReservedMethodNameAndReturnType"))
+    }
+
+    @Test
+    fun `test - nothing`() {
+        doTest(headersTestDataDir.resolve("nothing"))
+    }
+
+    @Test
+    fun `test - classWithReservedName`() {
+        doTest(headersTestDataDir.resolve("classWithReservedName"))
+    }
+
+    @Test
+    fun `test - objectWithReservedName`() {
+        doTest(headersTestDataDir.resolve("objectWithReservedName"))
+    }
+
+    /**
+     * Depends on unimplemented AA deprecation message: KT-67823
+     */
+    @Test
+    @TodoAnalysisApi
+    fun `test - deprecatedHidden`() {
+        doTest(headersTestDataDir.resolve("deprecatedHidden"))
+    }
+
+    /**
+     * Depends on unimplemented AA deprecation message: KT-67823
+     */
+    @Test
+    @TodoAnalysisApi
+    fun `test - deprecatedWarningAndError`() {
+        doTest(headersTestDataDir.resolve("deprecatedWarningAndError"))
+    }
+
     private fun doTest(root: File, configuration: Configuration = Configuration()) {
         if (!root.isDirectory) fail("Expected ${root.absolutePath} to be directory")
         val generatedHeaders = generator.generateHeaders(root, configuration).toString()

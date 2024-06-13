@@ -5,22 +5,22 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.KtFe10PackageSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.KaFe10PackageSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.name.FqName
 
-internal class KtFe10PackageSymbolPointer(private val packageName: FqName) : KtSymbolPointer<KtPackageSymbol>() {
-    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
-    override fun restoreSymbol(analysisSession: KtAnalysisSession): KtPackageSymbol {
-        check(analysisSession is KtFe10AnalysisSession)
-        return KtFe10PackageSymbol(packageName, analysisSession.analysisContext)
+internal class KaFe10PackageSymbolPointer(private val packageName: FqName) : KaSymbolPointer<KaPackageSymbol>() {
+    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KaSession.restoreSymbol")
+    override fun restoreSymbol(analysisSession: KaSession): KaPackageSymbol {
+        check(analysisSession is KaFe10Session)
+        return KaFe10PackageSymbol(packageName, analysisSession.analysisContext)
     }
 
-    override fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = this === other ||
-            other is KtFe10PackageSymbolPointer &&
+    override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||
+            other is KaFe10PackageSymbolPointer &&
             other.packageName == packageName
 }

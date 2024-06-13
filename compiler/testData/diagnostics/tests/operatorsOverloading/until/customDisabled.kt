@@ -1,4 +1,4 @@
-// !LANGUAGE: -RangeUntilOperator
+// LANGUAGE: -RangeUntilOperator
 
 class A {
     <!UNSUPPORTED_FEATURE("The feature \"range until operator\" is disabled")!>operator<!> fun rangeUntil(other: A): Iterable<A> = TODO()

@@ -1,4 +1,4 @@
-// !LANGUAGE: +DefinitelyNonNullableTypes
+// LANGUAGE: +DefinitelyNonNullableTypes
 
 fun <T : Any> foo(x: <!INCORRECT_LEFT_COMPONENT_OF_INTERSECTION!>T<!> & Any, y: <!INCORRECT_LEFT_COMPONENT_OF_INTERSECTION!>List<<!INCORRECT_LEFT_COMPONENT_OF_INTERSECTION!>String<!> & Any><!> & Any) {}
 

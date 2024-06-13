@@ -526,6 +526,18 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     public void testSuperType() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/superType.kt");
     }
+
+    @Test
+    @TestMetadata("whenConditionInRange.kt")
+    public void testWhenConditionInRange() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/whenConditionInRange.kt");
+    }
+
+    @Test
+    @TestMetadata("whenConditionInRangeInverted.kt")
+    public void testWhenConditionInRangeInverted() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/whenConditionInRangeInverted.kt");
+    }
   }
 
   @Nested
@@ -1078,6 +1090,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("longStringTemplateEntryWithTwoExpressions.kt")
+    public void testLongStringTemplateEntryWithTwoExpressions() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/invalidCode/longStringTemplateEntryWithTwoExpressions.kt");
+    }
+
+    @Test
     @TestMetadata("missedTypeArgumentsInAnnotationCall.kt")
     public void testMissedTypeArgumentsInAnnotationCall() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/invalidCode/missedTypeArgumentsInAnnotationCall.kt");
@@ -1087,6 +1105,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     @TestMetadata("secondaryConstructor.kt")
     public void testSecondaryConstructor() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/invalidCode/secondaryConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("setterWithoutBodyValueParameterType.kt")
+    public void testSetterWithoutBodyValueParameterType() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/invalidCode/setterWithoutBodyValueParameterType.kt");
     }
   }
 

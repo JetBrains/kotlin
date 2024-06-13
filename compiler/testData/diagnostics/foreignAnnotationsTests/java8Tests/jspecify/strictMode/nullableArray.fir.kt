@@ -1,6 +1,7 @@
 // ISSUE: KT-57996
 // JSPECIFY_STATE: strict
-// FILE: J.java
+
+// FILE: p/J.java
 package p;
 
 import org.jspecify.annotations.Nullable;

@@ -27,7 +27,7 @@ actual typealias E01 = Nothing
 compiler/testData/multiplatform/implTypeAlias/actualTypealiasToNothing/jvm.kt:4:1: error: right-hand side of actual type alias should be a class, not another type alias.
 actual typealias E02 = MyNothing
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-compiler/testData/multiplatform/implTypeAlias/actualTypealiasToNothing/jvm.kt:4:18: error: 'actual typealias E02 = MyNothing' has no corresponding members for expected class members:
+compiler/testData/multiplatform/implTypeAlias/actualTypealiasToNothing/jvm.kt:4:18: error: 'actual typealias E02 = Nothing' has no corresponding members for expected class members:
 
     fun equals(other: Any?): Boolean
 

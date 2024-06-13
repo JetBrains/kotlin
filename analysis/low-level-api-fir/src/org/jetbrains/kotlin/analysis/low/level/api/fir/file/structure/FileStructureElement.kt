@@ -163,7 +163,7 @@ internal class RootScriptStructureElement(
 
 internal fun <T, R> visitScriptDependentElements(script: FirScript, visitor: FirVisitor<T, R>, data: R) {
     script.annotations.forEach { it.accept(visitor, data) }
-    script.contextReceivers.forEach { it.accept(visitor, data) }
+    script.receivers.forEach { it.accept(visitor, data) }
 }
 
 internal class ClassDeclarationStructureElement(

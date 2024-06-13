@@ -1,0 +1,49 @@
+FILE: redundantTransformedVisibility.kt
+    @R|org/jetbrains/kotlin/fir/plugin/AllPublic|(visibility = Q|org/jetbrains/kotlin/fir/plugin/Visibility|.R|org/jetbrains/kotlin/fir/plugin/Visibility.Protected|) public final class A : R|kotlin/Any| {
+        protected constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        protected final val redundantProtectedProp: R|kotlin/String| = String()
+            protected get(): R|kotlin/String|
+
+        public final val publicProp: R|kotlin/String| = String()
+            public get(): R|kotlin/String|
+
+        private final val privateProp: R|kotlin/String| = String()
+            private get(): R|kotlin/String|
+
+        protected final fun redundantProtectedFun(): R|kotlin/Unit| {
+        }
+
+        public final fun publicFun(): R|kotlin/Unit| {
+        }
+
+        private final fun privateFun(): R|kotlin/Unit| {
+        }
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/AllPublic|(visibility = Q|org/jetbrains/kotlin/fir/plugin/Visibility|.R|org/jetbrains/kotlin/fir/plugin/Visibility.Private|) public final class B : R|kotlin/Any| {
+        private constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        protected final val protectedProp: R|kotlin/String| = String()
+            protected get(): R|kotlin/String|
+
+        public final val publicProp: R|kotlin/String| = String()
+            public get(): R|kotlin/String|
+
+        private final val redundantPrivateProp: R|kotlin/String| = String()
+            private get(): R|kotlin/String|
+
+        protected final fun protectedFun(): R|kotlin/Unit| {
+        }
+
+        public final fun publicFun(): R|kotlin/Unit| {
+        }
+
+        private final fun redundantPrivateFun(): R|kotlin/Unit| {
+        }
+
+    }

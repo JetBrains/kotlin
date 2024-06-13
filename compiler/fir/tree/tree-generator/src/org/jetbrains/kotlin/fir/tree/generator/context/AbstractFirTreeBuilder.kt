@@ -7,24 +7,18 @@ package org.jetbrains.kotlin.fir.tree.generator.context
 
 import org.jetbrains.kotlin.fir.tree.generator.BASE_PACKAGE
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
-import org.jetbrains.kotlin.fir.tree.generator.model.ElementRef
 import org.jetbrains.kotlin.generators.tree.ClassRef
 import org.jetbrains.kotlin.generators.tree.PositionTypeParameterRef
 import org.jetbrains.kotlin.generators.tree.TypeKind
+import org.jetbrains.kotlin.generators.tree.toRef
 import org.jetbrains.kotlin.utils.DummyDelegate
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
 abstract class AbstractFirTreeBuilder {
-    companion object {
-        val baseFirElement: Element = Element(
-            name = "Element",
-            propertyName = this::class.qualifiedName + "." + Companion::baseFirElement.name,
-            kind = Element.Kind.Other
-        )
-    }
+    val elements = mutableListOf<Element>()
 
-    val elements = mutableListOf(baseFirElement)
+    abstract val baseFirElement: Element
 
     protected fun element(kind: Element.Kind, vararg dependencies: Element): ElementDelegateProvider {
         return ElementDelegateProvider(kind, dependencies, isSealed = false, predefinedName = null)
@@ -44,11 +38,8 @@ abstract class AbstractFirTreeBuilder {
 
     private fun createElement(name: String, propertyName: String, kind: Element.Kind, vararg dependencies: Element): Element =
         Element(name, propertyName, kind).also {
-            if (dependencies.isEmpty()) {
-                it.elementParents.add(ElementRef(baseFirElement))
-            }
             for (dependency in dependencies) {
-                it.elementParents.add(ElementRef(dependency))
+                it.addParent(dependency.toRef())
             }
             elements += it
         }
@@ -68,6 +59,9 @@ abstract class AbstractFirTreeBuilder {
 
     fun applyConfigurations() {
         for (element in elements) {
+            if (element.elementParents.isEmpty() && element != baseFirElement) {
+                element.addParent(baseFirElement.toRef())
+            }
             configurations[element]?.invoke()
         }
     }

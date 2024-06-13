@@ -5,35 +5,33 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.types.renderers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.renderer.types.KtTypeRenderer
-import org.jetbrains.kotlin.analysis.api.symbols.KtTypeAliasSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
-import org.jetbrains.kotlin.analysis.api.types.KtUsualClassType
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
+import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
+import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
-
-public interface KtUsualClassTypeRenderer {
+public interface KaUsualClassTypeRenderer {
     public fun renderType(
-        analysisSession: KtAnalysisSession,
-        type: KtUsualClassType,
-        typeRenderer: KtTypeRenderer,
+        analysisSession: KaSession,
+        type: KaUsualClassType,
+        typeRenderer: KaTypeRenderer,
         printer: PrettyPrinter,
     )
 
-    public object AS_CLASS_TYPE_WITH_TYPE_ARGUMENTS : KtUsualClassTypeRenderer {
+    public object AS_CLASS_TYPE_WITH_TYPE_ARGUMENTS : KaUsualClassTypeRenderer {
         override fun renderType(
-            analysisSession: KtAnalysisSession,
-            type: KtUsualClassType,
-            typeRenderer: KtTypeRenderer,
+            analysisSession: KaSession,
+            type: KaUsualClassType,
+            typeRenderer: KaTypeRenderer,
             printer: PrettyPrinter,
         ) {
             printer {
                 " ".separated(
                     { typeRenderer.annotationsRenderer.renderAnnotations(analysisSession, type, printer) },
                     {
-                        typeRenderer.classIdRenderer.renderClassTypeQualifier(analysisSession, type, typeRenderer, printer)
-                        if (type.nullability == KtTypeNullability.NULLABLE) {
+                        typeRenderer.classIdRenderer.renderClassTypeQualifier(analysisSession, type, type.qualifiers, typeRenderer, printer)
+                        if (type.nullability == KaTypeNullability.NULLABLE) {
                             append('?')
                         }
                     },
@@ -41,49 +39,6 @@ public interface KtUsualClassTypeRenderer {
             }
         }
     }
-
-    /**
-     * Renders class type and in case of type alias adds a comment containing fully expanded class type, for example:
-     * ```
-     * typealias MyInt = Int
-     * ```
-     * `MyInt` is rendered as `MyInt /* = Int */`
-     */
-    public object AS_CLASS_TYPE_WITH_TYPE_ARGUMENTS_VERBOSE : KtUsualClassTypeRenderer {
-        override fun renderType(
-            analysisSession: KtAnalysisSession,
-            type: KtUsualClassType,
-            typeRenderer: KtTypeRenderer,
-            printer: PrettyPrinter,
-        ) {
-            with(analysisSession) {
-                printer {
-                    AS_CLASS_TYPE_WITH_TYPE_ARGUMENTS.renderType(analysisSession, type, typeRenderer, printer)
-                    if (type.classSymbol is KtTypeAliasSymbol) {
-                        append(" /* = ")
-                        typeRenderer.renderType(analysisSession, type.fullyExpandedType, printer)
-                        append(" */")
-                    }
-                }
-            }
-        }
-    }
-
-    public object AS_FULLY_EXPANDED_CLASS_TYPE_WITH_TYPE_ARGUMENTS : KtUsualClassTypeRenderer {
-        override fun renderType(
-            analysisSession: KtAnalysisSession,
-            type: KtUsualClassType,
-            typeRenderer: KtTypeRenderer,
-            printer: PrettyPrinter,
-        ) {
-            with(analysisSession) {
-                val fullyExpandedType = type.fullyExpandedType
-                if (fullyExpandedType is KtUsualClassType) {
-                    AS_CLASS_TYPE_WITH_TYPE_ARGUMENTS.renderType(analysisSession, fullyExpandedType, typeRenderer, printer)
-                } else {
-                    typeRenderer.renderType(analysisSession, fullyExpandedType, printer)
-                }
-            }
-        }
-    }
 }
+
+public typealias KtUsualClassTypeRenderer = KaUsualClassTypeRenderer

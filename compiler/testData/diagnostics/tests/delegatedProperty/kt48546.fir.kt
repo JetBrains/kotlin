@@ -1,4 +1,4 @@
-// !LANGUAGE: -ReportErrorsOnRecursiveTypeInsidePlusAssignment
+// LANGUAGE: -ReportErrorsOnRecursiveTypeInsidePlusAssignment
 // WITH_STDLIB
 // FIR: KT-51648
 

@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE
 
 fun test() {
     val a1: Array<Double.(Double) -> Double> = arrayOf(Double::plus, Double::minus)

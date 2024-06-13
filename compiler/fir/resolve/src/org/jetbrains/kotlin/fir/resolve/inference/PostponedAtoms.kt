@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
@@ -46,13 +47,16 @@ class ResolvedLambdaAtom(
     val parameters: List<ConeKotlinType>,
     var returnType: ConeKotlinType,
     typeVariableForLambdaReturnType: ConeTypeVariableForLambdaReturnType?,
-    val coerceFirstParameterToExtensionReceiver: Boolean
+    val coerceFirstParameterToExtensionReceiver: Boolean,
+    // NB: It's not null right now only for lambdas inside the calls
+    // TODO: Handle somehow that kind of lack of information once KT-67961 is fixed
+    val sourceForFunctionExpression: KtSourceElement?,
 ) : PostponedResolvedAtom() {
 
-    var typeVariableForLambdaReturnType = typeVariableForLambdaReturnType
+    var typeVariableForLambdaReturnType: ConeTypeVariableForLambdaReturnType? = typeVariableForLambdaReturnType
         private set
 
-    override var expectedType = expectedType
+    override var expectedType: ConeKotlinType? = expectedType
         private set
 
     lateinit var returnStatements: Collection<FirExpression>
@@ -132,7 +136,7 @@ class ResolvedCallableReferenceAtom(
     var hasBeenResolvedOnce: Boolean = false
     var hasBeenPostponed: Boolean = false
 
-    val mightNeedAdditionalResolution get() = !hasBeenResolvedOnce || hasBeenPostponed
+    val mightNeedAdditionalResolution: Boolean get() = !hasBeenResolvedOnce || hasBeenPostponed
 
     var resultingReference: FirNamedReference? = null
     var resultingTypeForCallableReference: ConeKotlinType? = null

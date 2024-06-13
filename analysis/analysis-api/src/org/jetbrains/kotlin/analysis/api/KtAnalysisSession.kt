@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,24 +7,24 @@ package org.jetbrains.kotlin.analysis.api
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.components.*
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 
 /**
- * [KtAnalysisSession] is the entry point to all frontend-related work. It has the following contracts:
+ * [KaSession] is the entry point to all frontend-related work. It has the following contracts:
  *
  * - It should not be accessed from the event dispatch thread or outside a read action.
  * - It should not be leaked outside the read action it was created in. To ensure that an analysis session isn't leaked, there are
  *   additional conventions, explained further below.
  * - All entities retrieved from an analysis session should not be leaked outside the read action the analysis session was created in.
  *
- * To pass a symbol from one read action to another, use [KtSymbolPointer], which can be created from a symbol by [KtSymbol.createPointer].
+ * To pass a symbol from one read action to another, use [KaSymbolPointer], which can be created from a symbol by [KaSymbol.createPointer].
  *
- * To create a [KtAnalysisSession], please use [analyze] or one of its siblings.
+ * To create a [KaSession], please use [analyze] or one of its siblings.
  *
  * ### Conventions to avoid leakage
  *
@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
  * session, the analysis session should be passed to functions via an extension receiver, or as an ordinary parameter. For example:
  *
  * ```kotlin
- * fun KtAnalysisSession.foo() { ... }
+ * fun KaSession.foo() { ... }
  * ```
  *
  * **Class context receivers** should not be used to pass analysis sessions. While a context receiver on a class will make the analysis
@@ -44,186 +44,191 @@ import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
  *
  * ```kotlin
  * // DO NOT DO THIS
- * context(KtAnalysisSession)
+ * context(KaSession)
  * class Usage {
  *     fun foo() {
- *         // The `KtAnalysisSession` is available here.
+ *         // The `KaSession` is available here.
  *     }
  * }
  * ```
  */
-@OptIn(KtAnalysisApiInternals::class, KtAnalysisNonPublicApi::class)
+@OptIn(KaAnalysisApiInternals::class, KaAnalysisNonPublicApi::class)
 @Suppress("AnalysisApiMissingLifetimeCheck")
-public abstract class KtAnalysisSession(final override val token: KtLifetimeToken) : KtLifetimeOwner,
-    KtSmartCastProviderMixIn,
-    KtCallResolverMixIn,
-    KtSamResolverMixIn,
-    KtDiagnosticProviderMixIn,
-    KtScopeProviderMixIn,
-    KtCompletionCandidateCheckerMixIn,
-    KtSymbolDeclarationOverridesProviderMixIn,
-    KtExpressionTypeProviderMixIn,
-    KtPsiTypeProviderMixIn,
-    KtJvmTypeMapperMixIn,
-    KtTypeProviderMixIn,
-    KtTypeInfoProviderMixIn,
-    KtSymbolProviderMixIn,
-    KtSymbolContainingDeclarationProviderMixIn,
-    KtSymbolInfoProviderMixIn,
-    KtSubtypingComponentMixIn,
-    KtExpressionInfoProviderMixIn,
-    KtCompileTimeConstantProviderMixIn,
-    KtSymbolsMixIn,
-    KtReferenceResolveMixIn,
-    KtReferenceShortenerMixIn,
-    KtImportOptimizerMixIn,
-    KtSymbolDeclarationRendererMixIn,
-    KtVisibilityCheckerMixIn,
-    KtMemberSymbolProviderMixin,
-    KtMultiplatformInfoProviderMixin,
-    KtOriginalPsiProviderMixIn,
-    KtInheritorsProviderMixIn,
-    KtTypeCreatorMixIn,
-    KtAnalysisScopeProviderMixIn,
-    KtSignatureSubstitutorMixIn,
-    KtScopeSubstitutionMixIn,
-    KtSymbolProviderByJavaPsiMixIn,
-    KtResolveExtensionInfoProviderMixIn,
-    KtCompilerFacilityMixIn,
-    KtMetadataCalculatorMixIn,
-    KtSubstitutorProviderMixIn,
-    KtDataFlowInfoProviderMixin,
-    KtKlibSourceFileProviderMixIn {
+public abstract class KaSession(final override val token: KaLifetimeToken) : KaLifetimeOwner,
+    KaSmartCastProviderMixIn,
+    KaResolverMixIn,
+    KaSamResolverMixIn,
+    KaDiagnosticProviderMixIn,
+    KaScopeProviderMixIn,
+    KaCompletionCandidateCheckerMixIn,
+    KaSymbolDeclarationOverridesProviderMixIn,
+    KaExpressionTypeProviderMixIn,
+    KaPsiTypeProviderMixIn,
+    KaJvmTypeMapperMixIn,
+    KaTypeProviderMixIn,
+    KaTypeInfoProviderMixIn,
+    KaSymbolProviderMixIn,
+    KaSymbolContainingDeclarationProviderMixIn,
+    KaSymbolInfoProviderMixIn,
+    KaSubtypingComponentMixIn,
+    KaExpressionInfoProviderMixIn,
+    KaCompileTimeConstantProviderMixIn,
+    KaSymbolsMixIn,
+    KaReferenceResolveMixIn,
+    KaReferenceShortenerMixIn,
+    KaImportOptimizerMixIn,
+    KaSymbolDeclarationRendererMixIn,
+    KaVisibilityCheckerMixIn,
+    KaMemberSymbolProviderMixin,
+    KaMultiplatformInfoProviderMixin,
+    KaOriginalPsiProviderMixIn,
+    KaInheritorsProviderMixIn,
+    KaTypeCreatorMixIn,
+    KaAnalysisScopeProviderMixIn,
+    KaSignatureSubstitutorMixIn,
+    KaScopeSubstitutionMixIn,
+    KaSymbolProviderByJavaPsiMixIn,
+    KaResolveExtensionInfoProviderMixIn,
+    KaCompilerFacilityMixIn,
+    KaMetadataCalculatorMixIn,
+    KaSubstitutorProviderMixIn,
+    KaDataFlowInfoProviderMixin,
+    KaKlibSourceFileProviderMixIn {
 
     public abstract val useSiteModule: KtModule
 
-    override val analysisSession: KtAnalysisSession get() = this
+    override val analysisSession: KaSession get() = this
 
-    internal val smartCastProvider: KtSmartCastProvider get() = smartCastProviderImpl
-    protected abstract val smartCastProviderImpl: KtSmartCastProvider
+    internal val smartCastProvider: KaSmartCastProvider get() = smartCastProviderImpl
+    protected abstract val smartCastProviderImpl: KaSmartCastProvider
 
-    internal val diagnosticProvider: KtDiagnosticProvider get() = diagnosticProviderImpl
-    protected abstract val diagnosticProviderImpl: KtDiagnosticProvider
+    internal val diagnosticProvider: KaDiagnosticProvider get() = diagnosticProviderImpl
+    protected abstract val diagnosticProviderImpl: KaDiagnosticProvider
 
-    internal val scopeProvider: KtScopeProvider get() = scopeProviderImpl
-    protected abstract val scopeProviderImpl: KtScopeProvider
+    internal val scopeProvider: KaScopeProvider get() = scopeProviderImpl
+    protected abstract val scopeProviderImpl: KaScopeProvider
 
-    internal val containingDeclarationProvider: KtSymbolContainingDeclarationProvider get() = containingDeclarationProviderImpl
-    protected abstract val containingDeclarationProviderImpl: KtSymbolContainingDeclarationProvider
+    internal val containingDeclarationProvider: KaSymbolContainingDeclarationProvider get() = containingDeclarationProviderImpl
+    protected abstract val containingDeclarationProviderImpl: KaSymbolContainingDeclarationProvider
 
-    internal val symbolProvider: KtSymbolProvider get() = symbolProviderImpl
-    protected abstract val symbolProviderImpl: KtSymbolProvider
+    internal val symbolProvider: KaSymbolProvider get() = symbolProviderImpl
+    protected abstract val symbolProviderImpl: KaSymbolProvider
 
-    internal val callResolver: KtCallResolver get() = callResolverImpl
-    protected abstract val callResolverImpl: KtCallResolver
+    @KaAnalysisApiInternals
+    internal val resolver: KaResolver get() = resolverImpl
 
-    internal val samResolver: KtSamResolver get() = samResolverImpl
-    protected abstract val samResolverImpl: KtSamResolver
+    @KaAnalysisApiInternals
+    protected abstract val resolverImpl: KaResolver
 
-    internal val completionCandidateChecker: KtCompletionCandidateChecker get() = completionCandidateCheckerImpl
-    protected abstract val completionCandidateCheckerImpl: KtCompletionCandidateChecker
+    internal val samResolver: KaSamResolver get() = samResolverImpl
+    protected abstract val samResolverImpl: KaSamResolver
 
-    internal val symbolDeclarationOverridesProvider: KtSymbolDeclarationOverridesProvider get() = symbolDeclarationOverridesProviderImpl
-    protected abstract val symbolDeclarationOverridesProviderImpl: KtSymbolDeclarationOverridesProvider
+    internal val completionCandidateChecker: KaCompletionCandidateChecker get() = completionCandidateCheckerImpl
+    protected abstract val completionCandidateCheckerImpl: KaCompletionCandidateChecker
 
-    internal val referenceShortener: KtReferenceShortener get() = referenceShortenerImpl
-    protected abstract val referenceShortenerImpl: KtReferenceShortener
+    internal val symbolDeclarationOverridesProvider: KaSymbolDeclarationOverridesProvider get() = symbolDeclarationOverridesProviderImpl
+    protected abstract val symbolDeclarationOverridesProviderImpl: KaSymbolDeclarationOverridesProvider
 
-    internal val importOptimizer: KtImportOptimizer get() = importOptimizerImpl
-    protected abstract val importOptimizerImpl: KtImportOptimizer
+    internal val referenceShortener: KaReferenceShortener get() = referenceShortenerImpl
+    protected abstract val referenceShortenerImpl: KaReferenceShortener
 
-    internal val symbolDeclarationRendererProvider: KtSymbolDeclarationRendererProvider get() = symbolDeclarationRendererProviderImpl
-    protected abstract val symbolDeclarationRendererProviderImpl: KtSymbolDeclarationRendererProvider
+    internal val importOptimizer: KaImportOptimizer get() = importOptimizerImpl
+    protected abstract val importOptimizerImpl: KaImportOptimizer
 
-    internal val expressionTypeProvider: KtExpressionTypeProvider get() = expressionTypeProviderImpl
-    protected abstract val expressionTypeProviderImpl: KtExpressionTypeProvider
+    internal val symbolDeclarationRendererProvider: KaSymbolDeclarationRendererProvider get() = symbolDeclarationRendererProviderImpl
+    protected abstract val symbolDeclarationRendererProviderImpl: KaSymbolDeclarationRendererProvider
 
-    internal val psiTypeProvider: KtPsiTypeProvider get() = psiTypeProviderImpl
-    protected abstract val psiTypeProviderImpl: KtPsiTypeProvider
+    internal val expressionTypeProvider: KaExpressionTypeProvider get() = expressionTypeProviderImpl
+    protected abstract val expressionTypeProviderImpl: KaExpressionTypeProvider
 
-    internal val jvmTypeMapper: KtJvmTypeMapper get() = jvmTypeMapperImpl
-    protected abstract val jvmTypeMapperImpl: KtJvmTypeMapper
+    internal val psiTypeProvider: KaPsiTypeProvider get() = psiTypeProviderImpl
+    protected abstract val psiTypeProviderImpl: KaPsiTypeProvider
 
-    internal val typeProvider: KtTypeProvider get() = typeProviderImpl
-    protected abstract val typeProviderImpl: KtTypeProvider
+    internal val jvmTypeMapper: KaJvmTypeMapper get() = jvmTypeMapperImpl
+    protected abstract val jvmTypeMapperImpl: KaJvmTypeMapper
 
-    internal val typeInfoProvider: KtTypeInfoProvider get() = typeInfoProviderImpl
-    protected abstract val typeInfoProviderImpl: KtTypeInfoProvider
+    internal val typeProvider: KaTypeProvider get() = typeProviderImpl
+    protected abstract val typeProviderImpl: KaTypeProvider
 
-    internal val subtypingComponent: KtSubtypingComponent get() = subtypingComponentImpl
-    protected abstract val subtypingComponentImpl: KtSubtypingComponent
+    internal val typeInfoProvider: KaTypeInfoProvider get() = typeInfoProviderImpl
+    protected abstract val typeInfoProviderImpl: KaTypeInfoProvider
 
-    internal val expressionInfoProvider: KtExpressionInfoProvider get() = expressionInfoProviderImpl
-    protected abstract val expressionInfoProviderImpl: KtExpressionInfoProvider
+    internal val subtypingComponent: KaSubtypingComponent get() = subtypingComponentImpl
+    protected abstract val subtypingComponentImpl: KaSubtypingComponent
 
-    internal val compileTimeConstantProvider: KtCompileTimeConstantProvider get() = compileTimeConstantProviderImpl
-    protected abstract val compileTimeConstantProviderImpl: KtCompileTimeConstantProvider
+    internal val expressionInfoProvider: KaExpressionInfoProvider get() = expressionInfoProviderImpl
+    protected abstract val expressionInfoProviderImpl: KaExpressionInfoProvider
 
-    internal val visibilityChecker: KtVisibilityChecker get() = visibilityCheckerImpl
-    protected abstract val visibilityCheckerImpl: KtVisibilityChecker
+    internal val compileTimeConstantProvider: KaCompileTimeConstantProvider get() = compileTimeConstantProviderImpl
+    protected abstract val compileTimeConstantProviderImpl: KaCompileTimeConstantProvider
 
-    internal val overrideInfoProvider: KtOverrideInfoProvider get() = overrideInfoProviderImpl
-    protected abstract val overrideInfoProviderImpl: KtOverrideInfoProvider
+    internal val visibilityChecker: KaVisibilityChecker get() = visibilityCheckerImpl
+    protected abstract val visibilityCheckerImpl: KaVisibilityChecker
 
-    internal val inheritorsProvider: KtInheritorsProvider get() = inheritorsProviderImpl
-    protected abstract val inheritorsProviderImpl: KtInheritorsProvider
+    internal val overrideInfoProvider: KaOverrideInfoProvider get() = overrideInfoProviderImpl
+    protected abstract val overrideInfoProviderImpl: KaOverrideInfoProvider
 
-    internal val multiplatformInfoProvider: KtMultiplatformInfoProvider get() = multiplatformInfoProviderImpl
-    protected abstract val multiplatformInfoProviderImpl: KtMultiplatformInfoProvider
+    internal val inheritorsProvider: KaInheritorsProvider get() = inheritorsProviderImpl
+    protected abstract val inheritorsProviderImpl: KaInheritorsProvider
 
-    internal val originalPsiProvider: KtOriginalPsiProvider get() = originalPsiProviderImpl
-    protected abstract val originalPsiProviderImpl: KtOriginalPsiProvider
+    internal val multiplatformInfoProvider: KaMultiplatformInfoProvider get() = multiplatformInfoProviderImpl
+    protected abstract val multiplatformInfoProviderImpl: KaMultiplatformInfoProvider
 
-    internal val symbolInfoProvider: KtSymbolInfoProvider get() = symbolInfoProviderImpl
-    protected abstract val symbolInfoProviderImpl: KtSymbolInfoProvider
+    internal val originalPsiProvider: KaOriginalPsiProvider get() = originalPsiProviderImpl
+    protected abstract val originalPsiProviderImpl: KaOriginalPsiProvider
 
-    internal val analysisScopeProvider: KtAnalysisScopeProvider get() = analysisScopeProviderImpl
-    protected abstract val analysisScopeProviderImpl: KtAnalysisScopeProvider
+    internal val symbolInfoProvider: KaSymbolInfoProvider get() = symbolInfoProviderImpl
+    protected abstract val symbolInfoProviderImpl: KaSymbolInfoProvider
 
-    internal val referenceResolveProvider: KtReferenceResolveProvider get() = referenceResolveProviderImpl
-    protected abstract val referenceResolveProviderImpl: KtReferenceResolveProvider
+    internal val analysisScopeProvider: KaAnalysisScopeProvider get() = analysisScopeProviderImpl
+    protected abstract val analysisScopeProviderImpl: KaAnalysisScopeProvider
 
-    internal val signatureSubstitutor: KtSignatureSubstitutor get() = signatureSubstitutorImpl
-    protected abstract val signatureSubstitutorImpl: KtSignatureSubstitutor
+    internal val referenceResolveProvider: KaReferenceResolveProvider get() = referenceResolveProviderImpl
+    protected abstract val referenceResolveProviderImpl: KaReferenceResolveProvider
 
-    internal val scopeSubstitution: KtScopeSubstitution get() = scopeSubstitutionImpl
-    protected abstract val scopeSubstitutionImpl: KtScopeSubstitution
+    internal val signatureSubstitutor: KaSignatureSubstitutor get() = signatureSubstitutorImpl
+    protected abstract val signatureSubstitutorImpl: KaSignatureSubstitutor
 
-    internal val resolveExtensionInfoProvider: KtResolveExtensionInfoProvider get() = resolveExtensionInfoProviderImpl
-    protected abstract val resolveExtensionInfoProviderImpl: KtResolveExtensionInfoProvider
+    internal val scopeSubstitution: KaScopeSubstitution get() = scopeSubstitutionImpl
+    protected abstract val scopeSubstitutionImpl: KaScopeSubstitution
 
-    internal val compilerFacility: KtCompilerFacility get() = compilerFacilityImpl
-    protected abstract val compilerFacilityImpl: KtCompilerFacility
+    internal val resolveExtensionInfoProvider: KaResolveExtensionInfoProvider get() = resolveExtensionInfoProviderImpl
+    protected abstract val resolveExtensionInfoProviderImpl: KaResolveExtensionInfoProvider
 
-    @KtAnalysisApiInternals
-    public val substitutorFactory: KtSubstitutorFactory get() = substitutorFactoryImpl
-    protected abstract val substitutorFactoryImpl: KtSubstitutorFactory
+    internal val compilerFacility: KaCompilerFacility get() = compilerFacilityImpl
+    protected abstract val compilerFacilityImpl: KaCompilerFacility
 
-    @KtAnalysisApiInternals
-    public val symbolProviderByJavaPsi: KtSymbolProviderByJavaPsi get() = symbolProviderByJavaPsiImpl
-    @KtAnalysisApiInternals
-    protected abstract val symbolProviderByJavaPsiImpl: KtSymbolProviderByJavaPsi
+    @KaAnalysisApiInternals
+    public val substitutorFactory: KaSubstitutorFactory get() = substitutorFactoryImpl
+    protected abstract val substitutorFactoryImpl: KaSubstitutorFactory
 
-    internal val metadataCalculator: KtMetadataCalculator get() = metadataCalculatorImpl
-    protected abstract val metadataCalculatorImpl: KtMetadataCalculator
+    @KaAnalysisApiInternals
+    public val symbolProviderByJavaPsi: KaSymbolProviderByJavaPsi get() = symbolProviderByJavaPsiImpl
+    @KaAnalysisApiInternals
+    protected abstract val symbolProviderByJavaPsiImpl: KaSymbolProviderByJavaPsi
+
+    internal val metadataCalculator: KaMetadataCalculator get() = metadataCalculatorImpl
+    protected abstract val metadataCalculatorImpl: KaMetadataCalculator
 
     @PublishedApi
-    internal val typesCreator: KtTypeCreator
+    internal val typesCreator: KaTypeCreator
         get() = typesCreatorImpl
-    protected abstract val typesCreatorImpl: KtTypeCreator
+    protected abstract val typesCreatorImpl: KaTypeCreator
 
-    internal val substitutorProvider: KtSubstitutorProvider get() = substitutorProviderImpl
-    protected abstract val substitutorProviderImpl: KtSubstitutorProvider
+    internal val substitutorProvider: KaSubstitutorProvider get() = substitutorProviderImpl
+    protected abstract val substitutorProviderImpl: KaSubstitutorProvider
 
-    @KtAnalysisNonPublicApi
-    internal val dataFlowInfoProvider: KtDataFlowInfoProvider get() = dataFlowInfoProviderImpl
-    @KtAnalysisNonPublicApi
-    protected abstract val dataFlowInfoProviderImpl: KtDataFlowInfoProvider
+    @KaAnalysisNonPublicApi
+    internal val dataFlowInfoProvider: KaDataFlowInfoProvider get() = dataFlowInfoProviderImpl
+    @KaAnalysisNonPublicApi
+    protected abstract val dataFlowInfoProviderImpl: KaDataFlowInfoProvider
 
-    internal val klibSourceFileProvider: KtKlibSourceFileNameProvider get() = klibSourceFileProviderImpl
-    protected abstract val klibSourceFileProviderImpl: KtKlibSourceFileNameProvider
+    internal val klibSourceFileProvider: KaKlibSourceFileNameProvider get() = klibSourceFileProviderImpl
+    protected abstract val klibSourceFileProviderImpl: KaKlibSourceFileNameProvider
 }
 
-public fun KtAnalysisSession.getModule(element: PsiElement): KtModule {
+public typealias KtAnalysisSession = KaSession
+
+public fun KaSession.getModule(element: PsiElement): KtModule {
     return ProjectStructureProvider.getModule(useSiteModule.project, element, useSiteModule)
 }

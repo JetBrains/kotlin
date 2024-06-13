@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM_IR
 // IGNORE_BACKEND_K1: ANY
-// !LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers
 
 class Ctx(val value: Int)
 

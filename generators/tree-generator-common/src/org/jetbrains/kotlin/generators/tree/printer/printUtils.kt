@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,17 +10,28 @@ import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.imports.ImportCollecting
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.IndentingPrinter
+import org.jetbrains.kotlin.utils.addToStdlib.joinToWithBuffer
 import org.jetbrains.kotlin.utils.withIndent
 
 interface ImportCollectingPrinter : ImportCollecting, IndentingPrinter
 
-/**
- * The braces to print in the inheritance clause if this is a class, or empty string if this is an interface.
- */
-fun ImplementationKind?.braces(): String = when (this) {
-    ImplementationKind.Interface, ImplementationKind.SealedInterface -> ""
-    ImplementationKind.OpenClass, ImplementationKind.AbstractClass, ImplementationKind.SealedClass -> "()"
-    else -> throw IllegalStateException(this.toString())
+fun ImportCollectingPrinter.printInheritanceClause(
+    supertypes: List<ClassOrElementRef>,
+    superclassConstructorArgs: List<String> = emptyList(),
+) {
+    if (supertypes.isEmpty()) return
+    print(
+        buildString {
+            supertypes.sortedBy { it.typeKind }.joinToWithBuffer(this, prefix = " : ") { supertype ->
+                append(supertype.render())
+                if (supertype.typeKind == TypeKind.Class) {
+                    append("(")
+                    superclassConstructorArgs.joinTo(this)
+                    append(")")
+                }
+            }
+        }
+    )
 }
 
 fun IndentingPrinter.printKDoc(kDoc: String?) {
@@ -47,9 +58,17 @@ fun AbstractElement<*, *, *>.extendedKDoc(): String = buildString {
     append("Generated from: [${element.propertyName}]")
 }
 
-data class FunctionParameter(val name: String, val type: TypeRef, val defaultValue: String? = null) {
+data class FunctionParameter(
+    val name: String,
+    val type: TypeRef,
+    val defaultValue: String? = null,
+    val markAsUnused: Boolean = false,
+) {
 
     fun render(importCollector: ImportCollecting): String = buildString {
+        if (markAsUnused) {
+            append("@Suppress(\"UNUSED_PARAMETER\") ")
+        }
         append(name, ": ")
         type.renderTo(this, importCollector)
         defaultValue?.let {
@@ -455,14 +474,18 @@ fun ImportCollectingPrinter.printAcceptVoidMethod(visitorType: ClassRef<*>, tree
     val returnType = StandardTypes.unit
     printKDoc(acceptMethodKDoc(visitorParameter, null, returnType, treeName))
     printFunctionDeclaration("accept", listOf(visitorParameter), returnType)
-    println(" = accept(", visitorParameter.name, ", null)")
+    printBlock {
+        println("accept(", visitorParameter.name, ", null)")
+    }
 }
 
 fun ImportCollectingPrinter.printAcceptChildrenVoidMethod(visitorType: ClassRef<*>) {
     val visitorParameter = FunctionParameter("visitor", visitorType)
     printKDoc(acceptChildrenKDoc(visitorParameter, null))
     printFunctionDeclaration("acceptChildren", listOf(visitorParameter), StandardTypes.unit)
-    println(" = acceptChildren(", visitorParameter.name, ", null)")
+    printBlock {
+        println("acceptChildren(", visitorParameter.name, ", null)")
+    }
 }
 
 fun ImportCollectingPrinter.printTransformVoidMethod(element: AbstractElement<*, *, *>, transformerType: ClassRef<*>, treeName: String) {

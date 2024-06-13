@@ -9,6 +9,8 @@ import kotlinBuildProperties
 import org.gradle.api.*
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationVariant
+import org.gradle.api.attributes.Category
+import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.Usage
 import org.gradle.api.file.*
 import org.gradle.api.provider.ListProperty
@@ -95,6 +97,19 @@ private fun Configuration.targetVariant(target: TargetWithSanitizer): Configurat
         attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, target)
     }
 }
+private fun Project.executorsClasspathConfiguration() = configurations.getOrCreate("executorsClasspath") {
+    description = "Classpath of executors CLI"
+    isCanBeConsumed = false
+    isCanBeResolved = true
+    attributes {
+        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+    }
+    defaultDependencies {
+        add(project.dependencies.project(":native:executors"))
+    }
+}
 
 private abstract class RunGTestSemaphore : BuildService<BuildServiceParameters.None>
 private abstract class CompileTestsSemaphore : BuildService<BuildServiceParameters.None>
@@ -127,6 +142,8 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                 capability(CppConsumerPlugin.testCapability(project))
             }
         }
+
+        project.executorsClasspathConfiguration()
     }
 
     // TODO: These should be set by the plugin users.
@@ -622,6 +639,9 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                         (project.findProperty("gtest_timeout") as? String)?.let {
                             Duration.parse("PT${it}")
                         } ?: Duration.ofMinutes(5))
+                this.executorsClasspath.from(project.executorsClasspathConfiguration())
+                this.distPath.set(project.project(":kotlin-native").projectDir.absolutePath)
+                this.dataDirPath.set(project.kotlinBuildProperties.getOrNull("konan.data.dir") as String?)
 
                 usesService(runGTestSemaphore)
             }

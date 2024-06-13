@@ -1,5 +1,5 @@
-// !LANGUAGE: +TypeAliases
-// !API_VERSION: 1.0
+// LANGUAGE: +TypeAliases
+// API_VERSION: 1.0
 // FILE: test.kt
 val fooException = Exception("foo")
 val fooException2 = java.lang.Exception("foo")

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
-object KtFirArrayOfSymbolProvider {
-    internal fun KtFirAnalysisSession.arrayOfSymbol(identifier: Name): KtFirFunctionSymbol? {
+object KaFirArrayOfSymbolProvider {
+    internal fun KaFirSession.arrayOfSymbol(identifier: Name): KaFirFunctionSymbol? {
         val firSymbol = useSiteSession.symbolProvider.getTopLevelCallableSymbols(kotlinPackage, identifier).firstOrNull {
             /* choose (for byte array)
              * public fun byteArrayOf(vararg elements: kotlin.Byte): kotlin.ByteArray

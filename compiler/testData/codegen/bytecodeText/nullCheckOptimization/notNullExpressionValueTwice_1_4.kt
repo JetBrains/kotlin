@@ -1,4 +1,4 @@
-// !API_VERSION: LATEST
+// API_VERSION: LATEST
 // FILE: j/J.java
 
 package j;

@@ -3,8 +3,8 @@ TARGET: public abstract override [ResolvedTo(STATUS)] [SubstitutedOverrideOrigin
 
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-substitutionFakeOverrideScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
@@ -30,8 +30,8 @@ TARGET: public abstract override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [Substitut
 
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-substitutionFakeOverrideScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
@@ -57,8 +57,8 @@ TARGET: public abstract override [ResolvedTo(CONTRACTS)] [SubstitutedOverrideOri
 
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
@@ -84,8 +84,8 @@ TARGET: public abstract override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [Subs
 
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
@@ -111,8 +111,8 @@ TARGET: public abstract override [ResolvedTo(CONSTANT_EVALUATION)] [SubstitutedO
 
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
@@ -138,8 +138,8 @@ TARGET: public abstract override [ResolvedTo(ANNOTATION_ARGUMENTS)] [Substituted
 
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
@@ -165,8 +165,8 @@ TARGET: public abstract override [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverride
 
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
@@ -189,8 +189,8 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideScript.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] substitutionFakeOverrideScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-substitutionFakeOverrideScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(BODY_RESOLVE)] class SubClass : R|AbstractClass<kotlin/Int>| {
@@ -209,3 +209,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] substitutionFakeOverrideScript.kts
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AbstractClass] get(): R|T|
 
         }
+

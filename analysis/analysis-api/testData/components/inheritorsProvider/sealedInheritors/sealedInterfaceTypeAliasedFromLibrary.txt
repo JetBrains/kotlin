@@ -2,7 +2,7 @@ foo/bar/OneSealedChild
 class OneSealedChild : foo.bar.MySealedInterface
 
 foo/bar/ThreeSealedChild
-class ThreeSealedChild : foo.bar.MySealedInterface
+class ThreeSealedChild : foo.bar.T2 /* = foo.bar.MySealedInterface */
 
 foo/bar/TwoSealedChild
-class TwoSealedChild : foo.bar.MySealedInterface
+class TwoSealedChild : foo.bar.T1 /* = foo.bar.MySealedInterface */

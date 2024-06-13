@@ -1,6 +1,6 @@
 FILE: main.kt
     public final fun main(): R|kotlin/Unit| {
-        R|/MyFunction|<R|kotlin/Int|, R|kotlin/String|>(<L> = MyFunction@fun <anonymous>(x: R|kotlin/Int!|): R|kotlin/String!| <inline=NoInline>  {
+        R|/MyFunction|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/Int) kotlin/Int!|, R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/String) kotlin/String!|>(<L> = MyFunction@fun <anonymous>(x: R|kotlin/Int!|): R|kotlin/String!| <inline=NoInline>  {
             ^ R|<local>/x|.R|kotlin/Int.toInt|().R|kotlin/Int.toString|()
         }
         )

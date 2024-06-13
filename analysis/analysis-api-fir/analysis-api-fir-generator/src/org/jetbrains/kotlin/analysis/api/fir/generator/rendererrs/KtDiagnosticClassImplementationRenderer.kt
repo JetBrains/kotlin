@@ -32,9 +32,9 @@ object KtDiagnosticClassImplementationRenderer : AbstractDiagnosticsDataClassRen
         withIndent {
             printParameters(diagnostic, diagnosticList)
         }
-        print(") : KtAbstractFirDiagnostic<")
+        print(") : KaAbstractFirDiagnostic<")
         printTypeWithShortNames(diagnostic.original.psiType)
-        println(">(firDiagnostic, token), KtFirDiagnostic.${diagnostic.className}")
+        println(">(firDiagnostic, token), KaFirDiagnostic.${diagnostic.className}")
     }
 
     private fun SmartPrinter.printParameters(diagnostic: HLDiagnostic, diagnosticList: HLDiagnosticList) {
@@ -42,7 +42,7 @@ object KtDiagnosticClassImplementationRenderer : AbstractDiagnosticsDataClassRen
             printParameter(parameter, diagnosticList)
         }
         println("firDiagnostic: KtPsiDiagnostic,")
-        println("token: KtLifetimeToken,")
+        println("token: KaLifetimeToken,")
     }
 
     private fun SmartPrinter.printParameter(parameter: HLDiagnosticParameter, diagnosticList: HLDiagnosticList) {
@@ -59,6 +59,6 @@ object KtDiagnosticClassImplementationRenderer : AbstractDiagnosticsDataClassRen
 
     override val defaultImports = listOf(
         "org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic",
-        "org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken",
+        "org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken",
     )
 }

@@ -1,4 +1,4 @@
-// TYPE_ALIAS: as bar
+// TYPE_ALIAS: bar
 import Foo.foo as bar
 
 object Foo {

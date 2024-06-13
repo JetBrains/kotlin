@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.types.Variance
 
+val anyType = type<Any>()
 val sourceElementType = type<KtSourceElement>()
 val sourceFileType = type<KtSourceFile>()
 val sourceFileLinesMappingType = type<KtSourceFileLinesMapping>()

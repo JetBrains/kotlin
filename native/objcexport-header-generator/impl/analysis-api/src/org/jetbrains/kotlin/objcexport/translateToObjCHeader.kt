@@ -128,7 +128,7 @@ private class KtObjCExportHeaderGenerator(
     context(KtAnalysisSession, KtObjCExportSession)
     private fun translateClassOrObjectSymbol(symbol: KtClassOrObjectSymbol): ObjCClass? {
         /* No classId, no stubs ¯\_(ツ)_/¯ */
-        val classId = symbol.classIdIfNonLocal ?: return null
+        val classId = symbol.classId ?: return null
 
         /* Already processed this class, therefore nothing to do! */
         if (classId in objCStubsByClassId) return objCStubsByClassId[classId]

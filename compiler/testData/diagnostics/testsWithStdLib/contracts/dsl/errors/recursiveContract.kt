@@ -1,5 +1,5 @@
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
-// !LANGUAGE: +UseReturnsEffect
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+// LANGUAGE: +UseReturnsEffect
 // Issue: KT-26386
 
 import kotlin.contracts.*

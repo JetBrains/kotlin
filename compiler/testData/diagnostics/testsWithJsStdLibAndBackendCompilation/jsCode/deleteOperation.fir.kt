@@ -3,7 +3,7 @@
 // The diagnostic is implemented as a klib check over IR.
 
 // IGNORE_BACKEND_K1: JS_IR
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun foo(x: Any) {
     js("delete x.foo;")

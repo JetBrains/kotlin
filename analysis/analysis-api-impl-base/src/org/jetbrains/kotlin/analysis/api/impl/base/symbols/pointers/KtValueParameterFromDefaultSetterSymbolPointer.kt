@@ -5,17 +5,17 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 
-@KtAnalysisApiInternals
-class KtValueParameterFromDefaultSetterSymbolPointer(
-    private val ownerPointer: KtSymbolPointer<KtPropertySymbol>,
-) : KtSymbolPointer<KtValueParameterSymbol>() {
-    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
-    override fun restoreSymbol(analysisSession: KtAnalysisSession): KtValueParameterSymbol? {
+@KaAnalysisApiInternals
+class KaValueParameterFromDefaultSetterSymbolPointer(
+    private val ownerPointer: KaSymbolPointer<KaPropertySymbol>,
+) : KaSymbolPointer<KaValueParameterSymbol>() {
+    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KaSession.restoreSymbol")
+    override fun restoreSymbol(analysisSession: KaSession): KaValueParameterSymbol? {
         val ownerSymbol = with(analysisSession) {
             ownerPointer.restoreSymbol()
         }
@@ -23,7 +23,7 @@ class KtValueParameterFromDefaultSetterSymbolPointer(
         return ownerSymbol?.setter?.parameter
     }
 
-    override fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = this === other ||
-            other is KtValueParameterFromDefaultSetterSymbolPointer &&
+    override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||
+            other is KaValueParameterFromDefaultSetterSymbolPointer &&
             other.ownerPointer.pointsToTheSameSymbolAs(ownerPointer)
 }

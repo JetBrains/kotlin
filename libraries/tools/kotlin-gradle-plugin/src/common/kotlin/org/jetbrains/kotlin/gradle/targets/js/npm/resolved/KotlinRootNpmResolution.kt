@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm.resolved
 
 import org.gradle.api.logging.Logger
-import org.gradle.internal.service.ServiceRegistry
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.PackageManagerEnvironment
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.NodeJsEnvironment
@@ -27,7 +26,7 @@ class KotlinRootNpmResolution(
         nodeJsEnvironment: NodeJsEnvironment,
         packageManagerEnvironment: PackageManagerEnvironment,
         npmResolutionManager: KotlinNpmResolutionManager,
-    ): Installation {
+    ) {
         synchronized(projects) {
             npmResolutionManager.parameters.gradleNodeModulesProvider.get().close()
 
@@ -46,31 +45,6 @@ class KotlinRootNpmResolution(
                 rootProjectName,
                 rootProjectVersion,
                 projectResolutions,
-            )
-
-            return Installation(
-                projectResolutions
-            )
-        }
-    }
-}
-
-class Installation(val compilationResolutions: Collection<PreparedKotlinCompilationNpmResolution>) {
-    internal fun install(
-        args: List<String>,
-        services: ServiceRegistry,
-        logger: Logger,
-        nodeJsEnvironment: NodeJsEnvironment,
-        packageManagerEnvironment: PackageManagerEnvironment,
-    ) {
-        synchronized(compilationResolutions) {
-            nodeJsEnvironment.packageManager.resolveRootProject(
-                services,
-                logger,
-                nodeJsEnvironment,
-                packageManagerEnvironment,
-                compilationResolutions,
-                args
             )
         }
     }

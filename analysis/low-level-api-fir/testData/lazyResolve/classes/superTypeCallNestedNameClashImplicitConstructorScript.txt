@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] superTypeCallNestedNameClashImplicitConstructorScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypeCallNestedNameClashImplicitConstructorScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
@@ -28,8 +28,8 @@ FILE: [ResolvedTo(RAW_FIR)] superTypeCallNestedNameClashImplicitConstructorScrip
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashImplicitConstructorScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypeCallNestedNameClashImplicitConstructorScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
@@ -56,8 +56,8 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashImplicitConstructorScrip
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashImplicitConstructorScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypeCallNestedNameClashImplicitConstructorScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
@@ -84,8 +84,8 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashImplicitConstructorScrip
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashImplicitConstructorScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypeCallNestedNameClashImplicitConstructorScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
@@ -112,8 +112,8 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashImplicitConstructorScrip
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashImplicitConstructorScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypeCallNestedNameClashImplicitConstructorScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
@@ -140,8 +140,8 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashImplicitConstructorScrip
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashImplicitConstructorScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypeCallNestedNameClashImplicitConstructorScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
@@ -168,8 +168,8 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashImplicitConstructorScrip
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashImplicitConstructorScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypeCallNestedNameClashImplicitConstructorScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
@@ -196,8 +196,8 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashImplicitConstructorScrip
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashImplicitConstructorScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypeCallNestedNameClashImplicitConstructorScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
@@ -224,8 +224,8 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashImplicitConstructorScrip
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashImplicitConstructorScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-superTypeCallNestedNameClashImplicitConstructorScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
@@ -252,8 +252,8 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashImplicitConstructorScrip
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashImplicitConstructorScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-superTypeCallNestedNameClashImplicitConstructorScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
@@ -280,8 +280,8 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashImplicitConstructorScrip
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashImplicitConstructorScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-superTypeCallNestedNameClashImplicitConstructorScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
@@ -308,8 +308,8 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashImplicitConstructorScrip
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashImplicitConstructorScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-superTypeCallNestedNameClashImplicitConstructorScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
@@ -336,8 +336,8 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashImplicitConstructorScrip
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashImplicitConstructorScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-superTypeCallNestedNameClashImplicitConstructorScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
@@ -364,8 +364,8 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashImplicitConstructorScrip
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] superTypeCallNestedNameClashImplicitConstructorScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-superTypeCallNestedNameClashImplicitConstructorScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(BODY_RESOLVE)] class Base<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
@@ -388,3 +388,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] superTypeCallNestedNameClashImplicitConstructor
             }
 
         }
+

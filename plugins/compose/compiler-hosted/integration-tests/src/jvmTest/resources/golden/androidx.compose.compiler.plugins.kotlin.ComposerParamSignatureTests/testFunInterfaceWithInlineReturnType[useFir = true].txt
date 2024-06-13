@@ -1,0 +1,46 @@
+//
+// Source
+// ------------------------------------------
+
+inline class Color(val value: Int)
+fun interface A {
+    fun compute(value: Int): Color
+}
+fun Example(a: A) {
+    Example { it -> Color(it) }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+public final class Color {
+  public final getValue()I
+  public static toString-impl(I)Ljava/lang/String;
+  public toString()Ljava/lang/String;
+  public static hashCode-impl(I)I
+  public hashCode()I
+  public static equals-impl(ILjava/lang/Object;)Z
+  public equals(Ljava/lang/Object;)Z
+  private synthetic <init>(I)V
+  public static constructor-impl(I)I
+  public final static synthetic box-impl(I)LColor;
+  public final synthetic unbox-impl()I
+  public final static equals-impl0(II)Z
+  private final I value
+}
+public abstract interface A {
+  public abstract compute-dZQu5ag(I)I
+}
+public final class TestKt {
+  public final static Example(LA;)V
+  final static INNERCLASS TestKt%Example%1 null null
+}
+final class TestKt%Example%1 implements A {
+  <init>()V
+  public final compute-dZQu5ag(I)I
+  static <clinit>()V
+  public final static LTestKt%Example%1; INSTANCE
+  OUTERCLASS TestKt Example (LA;)V
+  final static INNERCLASS TestKt%Example%1 null null
+}

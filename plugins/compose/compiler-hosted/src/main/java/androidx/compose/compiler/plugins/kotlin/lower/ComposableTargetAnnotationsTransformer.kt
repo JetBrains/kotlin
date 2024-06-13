@@ -20,7 +20,8 @@ package androidx.compose.compiler.plugins.kotlin.lower
 
 import androidx.compose.compiler.plugins.kotlin.ComposeClassIds
 import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
-import androidx.compose.compiler.plugins.kotlin.KtxNameConventions
+import androidx.compose.compiler.plugins.kotlin.ComposeNames
+import androidx.compose.compiler.plugins.kotlin.FeatureFlags
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
@@ -105,8 +106,9 @@ class ComposableTargetAnnotationsTransformer(
     context: IrPluginContext,
     symbolRemapper: ComposableSymbolRemapper,
     metrics: ModuleMetrics,
-    stabilityInferencer: StabilityInferencer
-) : AbstractComposeLowering(context, symbolRemapper, metrics, stabilityInferencer) {
+    stabilityInferencer: StabilityInferencer,
+    featureFlags: FeatureFlags
+) : AbstractComposeLowering(context, symbolRemapper, metrics, stabilityInferencer, featureFlags) {
     private val ComposableTargetClass = getTopLevelClassOrNull(ComposeClassIds.ComposableTarget)
         ?.let(symbolRemapper::getReferencedClass)
     private val ComposableOpenTargetClass = getTopLevelClassOrNull(ComposeClassIds.ComposableOpenTarget)
@@ -545,7 +547,7 @@ class ComposableTargetAnnotationsTransformer(
      * referenced directly in this module.
      */
     private val IrFunction.isComposable get() =
-        valueParameters.any { it.name == KtxNameConventions.COMPOSER_PARAMETER } ||
+        valueParameters.any { it.name == ComposeNames.COMPOSER_PARAMETER } ||
             annotations.hasAnnotation(ComposeFqNames.Composable)
 
     private val IrType.isSamComposable get() =

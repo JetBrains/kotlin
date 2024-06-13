@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +ForbidExtensionCallsOnInlineFunctionalParameters
+// LANGUAGE: +ForbidExtensionCallsOnInlineFunctionalParameters
 
 fun main() {
     test { }

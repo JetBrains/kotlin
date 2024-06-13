@@ -13,38 +13,34 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.util.SetMultimap
 import org.jetbrains.kotlin.fir.util.setMultimapOf
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-typealias PropertyInitializationEvent = FirPropertySymbol
-typealias PropertyInitializationInfo = EventOccurrencesRangeInfo<PropertyInitializationEvent>
-typealias PathAwarePropertyInitializationInfo = PathAwareEventOccurrencesRangeInfo<PropertyInitializationEvent>
-
 class PropertyInitializationInfoData(
-    val properties: Set<FirPropertySymbol>,
-    val conditionallyInitializedProperties: Set<FirPropertySymbol>,
-    val receiver: FirBasedSymbol<*>?,
-    val graph: ControlFlowGraph,
-) {
+    override val properties: Set<FirVariableSymbol<*>>,
+    override val conditionallyInitializedProperties: Set<FirVariableSymbol<*>>,
+    override val receiver: FirBasedSymbol<*>?,
+    override val graph: ControlFlowGraph,
+) : VariableInitializationInfoData() {
     private val data by lazy(LazyThreadSafetyMode.NONE) {
-        val declaredVariablesInLoop = setMultimapOf<FirStatement, FirPropertySymbol>().apply {
+        val declaredVariablesInLoop = setMultimapOf<FirStatement, FirVariableSymbol<*>>().apply {
             graph.declaration?.accept(PropertyDeclarationCollector(this), null)
         }
         graph.traverseToFixedPoint(PropertyInitializationInfoCollector(properties, receiver, declaredVariablesInLoop))
     }
 
-    fun getValue(node: CFGNode<*>): PathAwarePropertyInitializationInfo {
+    override fun getValue(node: CFGNode<*>): PathAwarePropertyInitializationInfo {
         return data.getValue(node)
     }
 }
 
 class PropertyInitializationInfoCollector(
-    private val localProperties: Set<FirPropertySymbol>,
+    private val localProperties: Set<FirVariableSymbol<*>>,
     private val expectedReceiver: FirBasedSymbol<*>? = null,
-    private val declaredVariablesInLoop: SetMultimap<FirStatement, FirPropertySymbol>,
-) : EventCollectingControlFlowGraphVisitor<PropertyInitializationEvent>() {
+    private val declaredVariablesInLoop: SetMultimap<FirStatement, FirVariableSymbol<*>>,
+) : EventCollectingControlFlowGraphVisitor<VariableInitializationEvent>() {
     // When looking for initializations of member properties, skip subgraphs of member functions;
     // all properties are assumed to be initialized there.
     override fun visitSubGraph(node: CFGNodeWithSubgraphs<*>, graph: ControlFlowGraph): Boolean =
@@ -111,7 +107,7 @@ class PropertyInitializationInfoCollector(
 }
 
 private class PropertyDeclarationCollector(
-    val declaredVariablesInLoop: SetMultimap<FirStatement, FirPropertySymbol>
+    val declaredVariablesInLoop: SetMultimap<FirStatement, FirVariableSymbol<*>>
 ) : FirVisitor<Unit, FirStatement?>() {
     override fun visitElement(element: FirElement, data: FirStatement?) {
         element.acceptChildren(this, data)

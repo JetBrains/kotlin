@@ -1,5 +1,5 @@
-// !LANGUAGE: +NestedClassesInAnnotations +InlineClasses -JvmInlineValueClasses +ProhibitJvmFieldOnOverrideFromInterfaceInPrimaryConstructor
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// LANGUAGE: +NestedClassesInAnnotations +InlineClasses -JvmInlineValueClasses +ProhibitJvmFieldOnOverrideFromInterfaceInPrimaryConstructor
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 <!WRONG_ANNOTATION_TARGET!>@kotlin.jvm.JvmField<!>
 fun foo() {

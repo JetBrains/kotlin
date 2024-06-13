@@ -5,24 +5,26 @@
 
 package org.jetbrains.kotlin.analysis.api.lifetime
 
-public interface KtLifetimeOwner {
-    public val token: KtLifetimeToken
+public interface KaLifetimeOwner {
+    public val token: KaLifetimeToken
 }
 
-public fun KtLifetimeOwner.isValid(): Boolean = token.isValid()
+public typealias KtLifetimeOwner = KaLifetimeOwner
+
+public fun KaLifetimeOwner.isValid(): Boolean = token.isValid()
 
 @Suppress("NOTHING_TO_INLINE")
-public inline fun KtLifetimeOwner.assertIsValidAndAccessible() {
+public inline fun KaLifetimeOwner.assertIsValidAndAccessible() {
     token.assertIsValidAndAccessible()
 }
 
-public inline fun <R> KtLifetimeOwner.withValidityAssertion(action: () -> R): R {
+public inline fun <R> KaLifetimeOwner.withValidityAssertion(action: () -> R): R {
     assertIsValidAndAccessible()
     return action()
 }
 
 /**
- * This is a helper function to properly expose parameters in some [KtLifetimeOwner] implementation.
+ * This is a helper function to properly expose parameters in some [KaLifetimeOwner] implementation.
  *
  * An example:
  * ```kotlin
@@ -31,7 +33,7 @@ public inline fun <R> KtLifetimeOwner.withValidityAssertion(action: () -> R): R 
  * }
  * ```
  *
- * @see KtLifetimeOwner
+ * @see KaLifetimeOwner
  * @see KaLifetimeOwnerField
  */
-public fun <T> KtLifetimeOwner.validityAsserted(value: T): KaLifetimeOwnerField<T> = KaLifetimeOwnerField(value)
+public fun <T> KaLifetimeOwner.validityAsserted(value: T): KaLifetimeOwnerField<T> = KaLifetimeOwnerField(value)

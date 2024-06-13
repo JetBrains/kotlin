@@ -16,13 +16,13 @@ import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
-import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.isSetter
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.utils.checkWithAttachment
@@ -169,7 +169,15 @@ object LightClassUtil {
         getWrappingClasses(declaration).flatMap { it.methods.asSequence() }
             .filterIsInstance<KtLightMethod>()
             .filter(nameFilter)
-            .filter { it.kotlinOrigin === declaration || it.navigationElement === declaration }
+            .filter { it -> it.kotlinOrigin === declaration || it.navigationElement === declaration || declaration.isConstrictorOf(it) }
+
+    private fun KtDeclaration.isConstrictorOf(lightMethod: KtLightMethod): Boolean {
+        if (this is KtPrimaryConstructor && lightMethod.isConstructor) {
+            val containingClass = containingClass()
+            return lightMethod.kotlinOrigin === containingClass || lightMethod.navigationElement === containingClass
+        }
+        return false
+    }
 
     private fun getWrappingClass(declaration: KtDeclaration): PsiClass? {
         if (declaration is KtParameter) {

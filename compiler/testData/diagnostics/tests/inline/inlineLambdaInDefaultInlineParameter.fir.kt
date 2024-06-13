@@ -1,5 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE
-// !LANGUAGE: +InlineDefaultFunctionalParameters
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE
+// LANGUAGE: +InlineDefaultFunctionalParameters
 
 inline fun inlineFun(lambda: () -> String) = lambda()
 

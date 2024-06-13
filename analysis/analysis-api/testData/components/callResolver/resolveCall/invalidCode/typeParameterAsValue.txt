@@ -1,3 +1,0 @@
-KtErrorCallInfo:
-  candidateCalls = []
-  diagnostic = ERROR<null: Type parameter T in qualified access>

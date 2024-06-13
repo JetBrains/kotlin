@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JvmForeignAnnotationsConfigurator
 import org.jetbrains.kotlin.test.services.configuration.ScriptingEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.*
 
@@ -59,6 +60,7 @@ fun TestConfigurationBuilder.commonServicesConfigurationForCodegenAndDebugTest(t
         ::CommonEnvironmentConfigurator,
         ::JvmEnvironmentConfigurator,
         ::ScriptingEnvironmentConfigurator,
+        ::JvmForeignAnnotationsConfigurator,
     )
 
     useAdditionalSourceProviders(
@@ -191,7 +193,6 @@ fun TestConfigurationBuilder.configureModernJavaTest(jdkKind: TestJdkKind, jvmTa
         JvmEnvironmentConfigurationDirectives.JDK_KIND with jdkKind
         JvmEnvironmentConfigurationDirectives.JVM_TARGET with jvmTarget
         +ConfigurationDirectives.WITH_STDLIB
-        +CodegenTestDirectives.USE_JAVAC_BASED_ON_JVM_TARGET
         +CodegenTestDirectives.IGNORE_DEXING
     }
 }

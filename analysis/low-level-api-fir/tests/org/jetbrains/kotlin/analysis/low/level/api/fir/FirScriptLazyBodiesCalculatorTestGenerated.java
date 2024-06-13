@@ -88,6 +88,16 @@ public class FirScriptLazyBodiesCalculatorTestGenerated extends AbstractFirScrip
     }
 
     @Nested
+    @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode")
+    @TestDataPath("$PROJECT_ROOT")
+    public class InvalidCode {
+      @Test
+      public void testAllFilesPresentInInvalidCode() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType")
     @TestDataPath("$PROJECT_ROOT")
     public class NoParameterType {
@@ -105,6 +115,16 @@ public class FirScriptLazyBodiesCalculatorTestGenerated extends AbstractFirScrip
     @Test
     public void testAllFilesPresentInExpressions() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+    }
+
+    @Nested
+    @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/invalidCode")
+    @TestDataPath("$PROJECT_ROOT")
+    public class InvalidCode {
+      @Test
+      public void testAllFilesPresentInInvalidCode() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/invalidCode"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+      }
     }
   }
 }

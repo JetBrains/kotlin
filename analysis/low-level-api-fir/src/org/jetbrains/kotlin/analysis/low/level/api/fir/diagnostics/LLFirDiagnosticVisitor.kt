@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 
+import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.utils.exceptions.shouldIjPlatformExceptionBeRethrown
 
 internal open class LLFirDiagnosticVisitor(
     context: CheckerContextForProvider,
@@ -30,27 +32,29 @@ internal open class LLFirDiagnosticVisitor(
 ) : CheckerRunningDiagnosticCollectorVisitor(context, components) {
     private val beforeElementDiagnosticCollectionHandler = context.session.beforeElementDiagnosticCollectionHandler
 
-    protected var useRegularComponents = true
-
     override fun visitNestedElements(element: FirElement) {
         if (element is FirDeclaration) {
             beforeElementDiagnosticCollectionHandler?.beforeGoingNestedDeclaration(element, context)
         }
+
         super.visitNestedElements(element)
     }
 
     override fun checkElement(element: FirElement) {
-        if (useRegularComponents) {
-            beforeElementDiagnosticCollectionHandler?.beforeCollectingForElement(element)
-            components.regularComponents.forEach {
-                checkCanceled()
-                element.accept(it, context)
+        beforeElementDiagnosticCollectionHandler?.beforeCollectingForElement(element)
+        components.regularComponents.forEach { diagnosticVisitor ->
+            checkCanceled()
+            suppressAndLogExceptions {
+                element.accept(diagnosticVisitor, context)
             }
         }
-        checkCanceled()
-        element.accept(components.reportCommitter, context)
 
-        commitPendingDiagnosticsOnNestedDeclarations(element)
+        checkCanceled()
+        suppressAndLogExceptions {
+            element.accept(components.reportCommitter, context)
+
+            commitPendingDiagnosticsOnNestedDeclarations(element)
+        }
     }
 
     override fun visitCodeFragment(codeFragment: FirCodeFragment, data: Nothing?) {
@@ -118,5 +122,26 @@ internal open class LLFirDiagnosticVisitor(
                 declaration.accept(components.reportCommitter, context)
             }
         }
+    }
+}
+
+private val logger: Logger = Logger.getInstance(LLFirDiagnosticVisitor::class.java)
+
+/**
+ * We don't want to throw exceptions right away to not interrupt other checkers there possible.
+ * It is better to report as much as possible and not crash the entire visitor.
+ *
+ * By default [logger] throws exceptions, but it is up to the user code to provide
+ * alternative handler.
+ *
+ * For instance, the IntelliJ plugin reports such exceptions and doesn't interrupt the execution flow.
+ */
+private inline fun suppressAndLogExceptions(block: () -> Unit) {
+    try {
+        block()
+    } catch (e: Throwable) {
+        if (shouldIjPlatformExceptionBeRethrown(e)) throw e
+
+        logger.error(e)
     }
 }

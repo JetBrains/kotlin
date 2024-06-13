@@ -1,4 +1,4 @@
-// !LANGUAGE: +UnrestrictedBuilderInference -ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound
+// LANGUAGE: +UnrestrictedBuilderInference -ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound
 // ISSUE: KT-48445
 // ISSUE: KT-49160
 

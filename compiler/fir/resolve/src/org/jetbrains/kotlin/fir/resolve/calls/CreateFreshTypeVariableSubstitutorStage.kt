@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -86,6 +85,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
     }
 
     /**
+     * TODO: Get rid of this function once KT-59138 is fixed and the relevant feature for disabling it will be removed
      * This function provides a type for a newly created EQUALS constraint on a fresh type variable,
      * for a situation when we have an explicit type argument and type parameter is a Java type parameter without known nullability.
      *
@@ -135,14 +135,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
         typeParameter: FirTypeParameterRef,
         session: FirSession,
     ): ConeKotlinType {
-        val containingDeclarationSymbol = typeParameter.symbol.containingDeclarationSymbol
-        // To remove constructors (they use class type parameters)
-        return if (
-            containingDeclarationSymbol is FirCallableSymbol &&
-            // To remove SAMs
-            containingDeclarationSymbol !is FirSyntheticFunctionSymbol &&
-            typeParameter.shouldBeFlexible(session.typeContext)
-        ) {
+        return if (typeParameter.shouldBeFlexible(session.typeContext)) {
             when (type) {
                 is ConeSimpleKotlinType -> ConeFlexibleType(
                     type.withNullability(ConeNullability.NOT_NULL, session.typeContext),

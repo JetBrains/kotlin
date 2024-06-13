@@ -413,15 +413,6 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         return this.annotations
     }
 
-    override fun KotlinTypeMarker.hasCustomAttributes(): Boolean {
-        return false
-    }
-
-    override fun KotlinTypeMarker.getCustomAttributes(): List<AnnotationMarker> {
-        require(this is IrType)
-        return emptyList()
-    }
-
     override fun createErrorType(debugName: String, delegatedType: SimpleTypeMarker?): SimpleTypeMarker {
         TODO("IrTypeSystemContext doesn't support constraint system resolution")
     }
@@ -561,7 +552,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun DefinitelyNotNullTypeMarker.original(): SimpleTypeMarker =
         error("DefinitelyNotNullTypeMarker.original() type is unsupported in IR")
 
-    override fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(): KotlinTypeMarker {
+    override fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(preserveAttributes: Boolean): KotlinTypeMarker {
         error("makeDefinitelyNotNullOrNotNull is not supported in IR")
     }
 

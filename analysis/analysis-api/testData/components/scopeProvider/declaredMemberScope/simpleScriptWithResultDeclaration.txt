@@ -1,6 +1,6 @@
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /foo
+KaFunctionSymbol:
+  annotations: []
+  callableId: /foo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -20,16 +20,16 @@ KtFunctionSymbol:
   name: foo
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -41,36 +41,36 @@ KtFunctionSymbol:
       name: action
       origin: SOURCE
       receiverParameter: null
-      returnType: KtFunctionalType:
-        annotationsList: []
-        ownTypeArguments: [
-          KtUsualClassType:
-            annotationsList: []
-            ownTypeArguments: []
+      returnType: KaFunctionalType:
+        annotations: []
+        typeArguments: [
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
             type: kotlin/Int
         ]
         type: kotlin/Function0<kotlin/Int>
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(simpleScriptWithResultDeclaration.kts)
+      getContainingFileSymbol: KaFileSymbol(simpleScriptWithResultDeclaration.kts)
       getContainingJvmClassName: null
       getContainingModule: KtScriptModule "Script simpleScriptWithResultDeclaration.kts"
       deprecationStatus: null
   ]
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(simpleScriptWithResultDeclaration.kts)
+  getContainingFileSymbol: KaFileSymbol(simpleScriptWithResultDeclaration.kts)
   getContainingJvmClassName: null
   getContainingModule: KtScriptModule "Script simpleScriptWithResultDeclaration.kts"
   deprecationStatus: null
 
-KtKotlinPropertySymbol:
-  annotationsList: []
+KaKotlinPropertySymbol:
+  annotations: []
   backingFieldSymbol: null
-  callableIdIfNonLocal: /$$result
+  callableId: /$$result
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
-    annotationsList: []
-    callableIdIfNonLocal: null
+  getter: KaPropertyGetterSymbol:
+    annotations: []
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -81,15 +81,15 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: PLUGIN
     receiverParameter: null
-    returnType: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Unit
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
-    getContainingFileSymbol: KtFileSymbol(simpleScriptWithResultDeclaration.kts)
+    getContainingFileSymbol: KaFileSymbol(simpleScriptWithResultDeclaration.kts)
     getContainingJvmClassName: null
     getContainingModule: KtScriptModule "Script simpleScriptWithResultDeclaration.kts"
     deprecationStatus: null
@@ -111,15 +111,15 @@ KtKotlinPropertySymbol:
   name: $$result
   origin: PLUGIN
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Unit
   setter: null
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(simpleScriptWithResultDeclaration.kts)
+  getContainingFileSymbol: KaFileSymbol(simpleScriptWithResultDeclaration.kts)
   getContainingJvmClassName: null
   getContainingModule: KtScriptModule "Script simpleScriptWithResultDeclaration.kts"
   deprecationStatus: null

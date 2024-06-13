@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.ir.getDefaultAdditionalStatementsFrom
 import org.jetbrains.kotlin.backend.common.ir.getNonDefaultAdditionalStatementsFromInlinedBlock
 import org.jetbrains.kotlin.backend.common.ir.getOriginalStatementsFromInlinedBlock
 import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
+import org.jetbrains.kotlin.backend.common.lower.LoweredDeclarationOrigins
 import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IntrinsicMethod
@@ -295,7 +296,7 @@ class ExpressionCodegen(
 
         if ((DescriptorVisibilities.isPrivate(irFunction.visibility) && !shouldGenerateNonNullAssertionsForPrivateFun(irFunction)) ||
             irFunction.origin.isSynthetic ||
-            irFunction.origin == JvmLoweredDeclarationOrigin.INLINE_LAMBDA ||
+            irFunction.origin == LoweredDeclarationOrigins.INLINE_LAMBDA ||
             // TODO: refine this condition to not generate nullability assertions on parameters
             //       corresponding to captured variables and anonymous object super constructor arguments
             (irFunction is IrConstructor && irFunction.parentAsClass.isAnonymousObject) ||
@@ -1632,7 +1633,7 @@ class ExpressionCodegen(
     }
 
     val isFinallyMarkerRequired: Boolean
-        get() = irFunction.isInline || irFunction.origin == JvmLoweredDeclarationOrigin.INLINE_LAMBDA
+        get() = irFunction.isInline || irFunction.origin == LoweredDeclarationOrigins.INLINE_LAMBDA
 
     companion object {
         internal fun generateClassInstance(v: InstructionAdapter, classType: IrType, typeMapper: IrTypeMapper, wrapPrimitives: Boolean) {

@@ -1,6 +1,6 @@
 {
   "name": "kotlin-test-js-runner",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Simple Kotlin/JS tests runner with TeamCity reporter",
   "license": "Apache-2.0",
   "dependencies": {
@@ -14,6 +14,9 @@
     "@rollup/plugin-typescript": "^11.1.5",
     "@rollup/plugin-terser": "^0.4.4",
     "typescript": "4.3.5",
-    "tslib": "^2.6.2"
+    "tslib": "^2.6.2",
+    "karma-webpack": "^5.0.1",
+    "mocha": "^10.4.0",
+    "mocha-teamcity-reporter": "^4.2.0"
   }
 }

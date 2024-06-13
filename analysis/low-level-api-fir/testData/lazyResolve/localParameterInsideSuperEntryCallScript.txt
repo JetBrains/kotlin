@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localParameterInsideSuperEntryCallScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
@@ -35,8 +35,8 @@ FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localParameterInsideSuperEntryCallScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
@@ -70,8 +70,8 @@ FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localParameterInsideSuperEntryCallScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
@@ -105,8 +105,8 @@ FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localParameterInsideSuperEntryCallScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
@@ -140,8 +140,8 @@ FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localParameterInsideSuperEntryCallScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
@@ -175,8 +175,8 @@ FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localParameterInsideSuperEntryCallScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
@@ -210,8 +210,8 @@ FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localParameterInsideSuperEntryCallScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
@@ -245,8 +245,8 @@ FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localParameterInsideSuperEntryCallScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
@@ -280,8 +280,8 @@ FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localParameterInsideSuperEntryCallScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
@@ -315,8 +315,8 @@ FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localParameterInsideSuperEntryCallScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
@@ -350,8 +350,8 @@ FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localParameterInsideSuperEntryCallScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
@@ -385,8 +385,8 @@ FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localParameterInsideSuperEntryCallScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
@@ -420,8 +420,8 @@ FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localParameterInsideSuperEntryCallScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
@@ -455,8 +455,8 @@ FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCallScript.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] localParameterInsideSuperEntryCallScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-localParameterInsideSuperEntryCallScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(BODY_RESOLVE)] interface Interface : R|kotlin/Any| {
@@ -486,3 +486,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localParameterInsideSuperEntryCallScript.kts
             }
 
         }
+

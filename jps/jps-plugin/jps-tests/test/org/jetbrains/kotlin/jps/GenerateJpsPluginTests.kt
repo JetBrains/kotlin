@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.jps
 import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 import org.jetbrains.kotlin.jps.build.*
+import org.jetbrains.kotlin.jps.incremental.AbstractFirJsProtoComparisonTest
 import org.jetbrains.kotlin.jps.incremental.AbstractJsProtoComparisonTest
 import org.jetbrains.kotlin.jps.incremental.AbstractJvmProtoComparisonTest
 import org.jetbrains.kotlin.test.TargetBackend
@@ -127,6 +128,11 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractJsProtoComparisonTest> {
+                commonProtoComparisonTests()
+                model("comparison/jsOnly", extension = null, excludeParentDirs = true)
+            }
+
+            testClass<AbstractFirJsProtoComparisonTest> {
                 commonProtoComparisonTests()
                 model("comparison/jsOnly", extension = null, excludeParentDirs = true)
             }

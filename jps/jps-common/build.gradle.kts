@@ -28,6 +28,8 @@ dependencies {
     compileOnly(jpsModel())
     compileOnly(jpsModelImpl())
     compileOnly(jpsModelSerialization())
+    compileOnly(intellijJDom())
+    testCompileOnly(intellijJDom())
 
     testImplementation(project(":compiler:cli-common"))
     testImplementation(jpsModelSerialization())

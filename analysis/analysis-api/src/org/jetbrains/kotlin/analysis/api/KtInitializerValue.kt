@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.api
 
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationValue
-import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
+import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
 import org.jetbrains.kotlin.psi.KtExpression
 
 /**
  * Value representing some property or variable initializer
  */
-public sealed class KtInitializerValue {
+public sealed class KaInitializerValue {
     /**
      * [com.intellij.psi.PsiElement] of initializer. May be null if property/variable came from non-source file.
      */
@@ -24,25 +24,25 @@ public sealed class KtInitializerValue {
  *
  * For more info about constant values please see [official Kotlin documentation](https://kotlinlang.org/docs/properties.html#compile-time-constants]).
  */
-public class KtConstantInitializerValue(
-    public val constant: KtConstantValue,
+public class KaConstantInitializerValue(
+    public val constant: KaConstantValue,
     override val initializerPsi: KtExpression?
-) : KtInitializerValue()
+) : KaInitializerValue()
 
 /**
  * Property initializer which cannot be represented as Kotlin const value.
  *
- * See [KtConstantInitializerValue] for more info.
+ * See [KaConstantInitializerValue] for more info.
  */
-public class KtNonConstantInitializerValue(
+public class KaNonConstantInitializerValue(
     override val initializerPsi: KtExpression?,
-) : KtInitializerValue()
+) : KaInitializerValue()
 
 /**
  * Initializer of property of annotation, which can not be which cannot be represented as Kotlin const value,
- *   but can be represented as [KtAnnotationValue]
+ *   but can be represented as [KaAnnotationValue]
  */
-public class KtConstantValueForAnnotation(
-    public val annotationValue: KtAnnotationValue,
+public class KaConstantValueForAnnotation(
+    public val annotationValue: KaAnnotationValue,
     override val initializerPsi: KtExpression?
-) : KtInitializerValue()
+) : KaInitializerValue()

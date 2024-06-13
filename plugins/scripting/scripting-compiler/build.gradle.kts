@@ -37,7 +37,7 @@ dependencies {
     testImplementation(libs.junit4)
 
     testImplementation(intellijCore())
-    testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
+    testImplementation(libs.kotlinx.coroutines.core)
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 }
 

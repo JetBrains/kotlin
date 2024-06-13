@@ -1,0 +1,3 @@
+KDocName(8,12): 'this'
+  KDocReference:
+    extension receiver with type AAA

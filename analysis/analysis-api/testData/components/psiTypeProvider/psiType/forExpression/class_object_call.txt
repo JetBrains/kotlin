@@ -1,4 +1,4 @@
-KtType: getInner
+KaType: getInner
 asPsiType(allowErrorTypes=false, mode=DEFAULT, isAnnotationMethod=false):
   PsiType: null
 

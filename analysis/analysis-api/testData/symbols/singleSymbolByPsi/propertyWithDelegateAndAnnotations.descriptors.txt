@@ -1,34 +1,34 @@
-KtKotlinPropertySymbol:
-  annotationsList: [
+KaKotlinPropertySymbol:
+  annotations: [
     PropertyAnnotation()
       psi: KtAnnotationEntry
     ExplicitPropertyAnnotation()
       psi: KtAnnotationEntry
   ]
-  backingFieldSymbol: KtBackingFieldSymbol:
-    annotationsList: []
-    callableIdIfNonLocal: null
+  backingFieldSymbol: KaBackingFieldSymbol:
+    annotations: []
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
     origin: PROPERTY_BACKING_FIELD
-    owningProperty: KtKotlinPropertySymbol(/lazyProperty)
+    owningProperty: KaKotlinPropertySymbol(/lazyProperty)
     receiverParameter: null
-    returnType: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Int
     symbolKind: LOCAL
     typeParameters: []
-    getContainingFileSymbol: KtFileSymbol(propertyWithDelegateAndAnnotations.kt)
+    getContainingFileSymbol: KaFileSymbol(propertyWithDelegateAndAnnotations.kt)
     getContainingJvmClassName: PropertyWithDelegateAndAnnotationsKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  callableIdIfNonLocal: /lazyProperty
+  callableId: /lazyProperty
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
-    annotationsList: []
-    callableIdIfNonLocal: null
+  getter: KaPropertyGetterSymbol:
+    annotations: []
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -39,15 +39,15 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
-    returnType: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
-    getContainingFileSymbol: KtFileSymbol(propertyWithDelegateAndAnnotations.kt)
+    getContainingFileSymbol: KaFileSymbol(propertyWithDelegateAndAnnotations.kt)
     getContainingJvmClassName: PropertyWithDelegateAndAnnotationsKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
@@ -69,15 +69,15 @@ KtKotlinPropertySymbol:
   name: lazyProperty
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Int
   setter: null
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(propertyWithDelegateAndAnnotations.kt)
+  getContainingFileSymbol: KaFileSymbol(propertyWithDelegateAndAnnotations.kt)
   getContainingJvmClassName: PropertyWithDelegateAndAnnotationsKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

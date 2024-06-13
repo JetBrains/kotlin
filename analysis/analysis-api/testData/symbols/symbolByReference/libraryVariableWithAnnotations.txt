@@ -1,20 +1,20 @@
-KtKotlinPropertySymbol:
-  annotationsList: [
+KaKotlinPropertySymbol:
+  annotations: [
     one/Anno()
       psi: null
   ]
-  backingFieldSymbol: KtBackingFieldSymbol:
-    annotationsList: []
-    callableIdIfNonLocal: null
+  backingFieldSymbol: KaBackingFieldSymbol:
+    annotations: []
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
     origin: PROPERTY_BACKING_FIELD
-    owningProperty: KtKotlinPropertySymbol(one/topLevelVariableWithAnnotations)
+    owningProperty: KaKotlinPropertySymbol(one/topLevelVariableWithAnnotations)
     receiverParameter: null
-    returnType: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Long
     symbolKind: LOCAL
     typeParameters: []
@@ -22,14 +22,14 @@ KtKotlinPropertySymbol:
     getContainingJvmClassName: one.LibKt
     getContainingModule: KtLibraryModule "Library lib"
     deprecationStatus: null
-  callableIdIfNonLocal: one/topLevelVariableWithAnnotations
+  callableId: one/topLevelVariableWithAnnotations
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
-    annotationsList: [
+  getter: KaPropertyGetterSymbol:
+    annotations: [
       one/Anno()
         psi: null
     ]
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -40,9 +40,9 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: LIBRARY
     receiverParameter: null
-    returnType: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Long
     symbolKind: ACCESSOR
     typeParameters: []
@@ -70,16 +70,16 @@ KtKotlinPropertySymbol:
   name: topLevelVariableWithAnnotations
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Long
-  setter: KtPropertySetterSymbol:
-    annotationsList: [
+  setter: KaPropertySetterSymbol:
+    annotations: [
       one/Anno()
         psi: null
     ]
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -89,12 +89,12 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: LIBRARY
-    parameter: KtValueParameterSymbol:
-      annotationsList: [
+    parameter: KaValueParameterSymbol:
+      annotations: [
         one/Anno()
           psi: null
       ]
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -106,9 +106,9 @@ KtKotlinPropertySymbol:
       name: value
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
@@ -117,19 +117,19 @@ KtKotlinPropertySymbol:
       getContainingModule: KtLibraryModule "Library lib"
       deprecationStatus: null
     receiverParameter: null
-    returnType: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Unit
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: [
-      KtValueParameterSymbol:
-        annotationsList: [
+      KaValueParameterSymbol:
+        annotations: [
           one/Anno()
             psi: null
         ]
-        callableIdIfNonLocal: null
+        callableId: null
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDefaultValue: false
@@ -141,9 +141,9 @@ KtKotlinPropertySymbol:
         name: value
         origin: LIBRARY
         receiverParameter: null
-        returnType: KtUsualClassType:
-          annotationsList: []
-          ownTypeArguments: []
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
           type: kotlin/Long
         symbolKind: LOCAL
         typeParameters: []

@@ -29,6 +29,7 @@ dependencies {
     testApi(intellijCore())
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
+    testRuntimeOnly(toolsJar())
 }
 
 optInToExperimentalCompilerApi()

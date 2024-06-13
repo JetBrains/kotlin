@@ -1,0 +1,43 @@
+KtNameReferenceExpression(248,251): 'add'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            origin: SOURCE
+            owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            type: KaUsualClassType:
+              annotations: []
+              typeArguments: [
+                KaUsualClassType:
+                  annotations: []
+                  typeArguments: []
+                  type: kotlin/String
+              ]
+              type: test/Target<kotlin/String>
+          type = test.Target<kotlin.String>
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = test/Target.add(<dispatch receiver>: test.Target<T>, t: T): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = t
+              receiverType = null
+              returnType = kotlin.String
+              symbol = t: T
+              callableId = null
+          ]
+          callableId = test/Target.add
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        s -> (KaVariableLikeSignature:
+          name = t
+          receiverType = null
+          returnType = kotlin.String
+          symbol = t: T
+          callableId = null)
+      }

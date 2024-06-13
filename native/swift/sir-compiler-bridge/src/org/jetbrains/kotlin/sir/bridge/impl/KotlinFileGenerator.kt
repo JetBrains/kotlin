@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.sir.bridge.FunctionBridge
 internal class KotlinBridgePrinter : BridgePrinter {
 
     private val imports = mutableSetOf<String>()
-    private val functions = mutableListOf<List<String>>()
+    private val functions = mutableSetOf<List<String>>()
 
     override fun add(bridge: FunctionBridge) {
         functions += bridge.kotlinFunctionBridge.lines

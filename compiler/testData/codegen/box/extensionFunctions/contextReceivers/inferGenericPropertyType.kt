@@ -1,4 +1,4 @@
-// !LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers
 // TARGET_BACKEND: JVM_IR
 
 class Result<T>(val x: T)

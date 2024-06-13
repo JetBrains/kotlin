@@ -39,9 +39,15 @@ sealed class FirVariableSymbol<out E : FirVariable>(override val callableId: Cal
             lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
             return valueParameter.defaultValue
         }
+
+    val isVal: Boolean
+        get() = fir.isVal
+
+    val isVar: Boolean
+        get() = fir.isVar
 }
 
-open class FirPropertySymbol(callableId: CallableId, ) : FirVariableSymbol<FirProperty>(callableId), PropertySymbolMarker {
+open class FirPropertySymbol(callableId: CallableId) : FirVariableSymbol<FirProperty>(callableId), PropertySymbolMarker {
     // TODO: should we use this constructor for local variables?
     constructor(name: Name) : this(CallableId(name))
 
@@ -77,12 +83,6 @@ open class FirPropertySymbol(callableId: CallableId, ) : FirVariableSymbol<FirPr
             lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
             return fir.controlFlowGraphReference
         }
-
-    val isVal: Boolean
-        get() = fir.isVal
-
-    val isVar: Boolean
-        get() = fir.isVar
 }
 
 class FirIntersectionOverridePropertySymbol(
@@ -98,12 +98,6 @@ class FirIntersectionOverrideFieldSymbol(
 ) : FirFieldSymbol(callableId), FirIntersectionCallableSymbol
 
 class FirBackingFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirBackingField>(callableId) {
-    val isVal: Boolean
-        get() = fir.isVal
-
-    val isVar: Boolean
-        get() = fir.isVar
-
     val propertySymbol: FirPropertySymbol
         get() = fir.propertySymbol
 
@@ -119,12 +113,6 @@ open class FirFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirField>(
 
     val hasConstantInitializer: Boolean
         get() = fir.hasConstantInitializer
-
-    val isVal: Boolean
-        get() = fir.isVal
-
-    val isVar: Boolean
-        get() = fir.isVar
 }
 
 class FirEnumEntrySymbol(callableId: CallableId) : FirVariableSymbol<FirEnumEntry>(callableId) {

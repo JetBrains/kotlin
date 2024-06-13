@@ -18,7 +18,7 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower
 
-import androidx.compose.compiler.plugins.kotlin.KtxNameConventions
+import androidx.compose.compiler.plugins.kotlin.ComposeNames
 import androidx.compose.compiler.plugins.kotlin.hasComposableAnnotation
 import java.util.Locale
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -93,6 +93,7 @@ import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.expressions.IrWhen
 import org.jetbrains.kotlin.ir.expressions.IrWhileLoop
 import org.jetbrains.kotlin.ir.expressions.impl.IrIfThenElseImpl
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
@@ -468,7 +469,7 @@ class IrSourcePrinterVisitor(
             return
         }
 
-        expression.printExplicitReceiver(".")
+        expression.printExplicitReceiver(".", expression.superQualifierSymbol)
 
         val prop = function.correspondingPropertySymbol?.owner
 
@@ -493,7 +494,10 @@ class IrSourcePrinterVisitor(
         }
     }
 
-    private fun IrMemberAccessExpression<*>.printExplicitReceiver(suffix: String? = null) {
+    private fun IrMemberAccessExpression<*>.printExplicitReceiver(
+        suffix: String? = null,
+        superQualifierSymbol: IrClassSymbol? = null
+    ) {
         val dispatchReceiver = dispatchReceiver
         val extensionReceiver = extensionReceiver
         val dispatchIsSpecial = dispatchReceiver.let {
@@ -503,7 +507,10 @@ class IrSourcePrinterVisitor(
             it is IrGetValue && it.symbol.owner.name.isSpecial
         }
 
-        if (dispatchReceiver != null && !dispatchIsSpecial) {
+        if (superQualifierSymbol != null) {
+            print("super<${superQualifierSymbol.owner.name}>")
+            suffix?.let(::print)
+        } else if (dispatchReceiver != null && !dispatchIsSpecial) {
             dispatchReceiver.print()
             suffix?.let(::print)
         } else if (extensionReceiver != null && !extensionIsSpecial) {
@@ -567,8 +574,8 @@ class IrSourcePrinterVisitor(
                         print(" = ")
                     }
                     when {
-                        name.startsWith(KtxNameConventions.DEFAULT_PARAMETER.identifier) ||
-                            name.startsWith(KtxNameConventions.CHANGED_PARAMETER.identifier) -> {
+                        name.startsWith(ComposeNames.DEFAULT_PARAMETER.identifier) ||
+                            name.startsWith(ComposeNames.CHANGED_PARAMETER.identifier) -> {
                             withIntsAsBinaryLiterals {
                                 arg.print()
                             }

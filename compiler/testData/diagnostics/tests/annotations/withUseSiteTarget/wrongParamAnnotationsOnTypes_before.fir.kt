@@ -1,5 +1,5 @@
-// !LANGUAGE: -RestrictionOfWrongAnnotationsWithUseSiteTargetsOnTypes
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: -RestrictionOfWrongAnnotationsWithUseSiteTargetsOnTypes
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun test1(i: <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@setparam:Suppress<!> Int) {}
 fun test2(i: <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@param:Suppress<!> Int) {}

@@ -25,31 +25,10 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
-import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
-import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
-import org.jetbrains.kotlin.ir.util.DeepCopyTypeRemapper
-import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
-import org.jetbrains.kotlin.ir.util.referenceFunction
+import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -162,24 +141,16 @@ class CopyDefaultValuesFromExpectLowering(
                     symbol.owner.findActualForExpected().symbol
                 else super.getReferencedClass(symbol)
 
-            override fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol =
-                when (symbol) {
-                    is IrClassSymbol -> getReferencedClass(symbol)
-                    is IrTypeParameterSymbol -> remapExpectTypeParameter(symbol).symbol
-                    else -> error("Unexpected symbol $symbol ${symbol.descriptor}")
-                }
+            override fun getReferencedTypeParameter(symbol: IrTypeParameterSymbol): IrTypeParameterSymbol =
+                remapExpectTypeParameter(symbol).symbol
+
+            override fun getReferencedScript(symbol: IrScriptSymbol): IrScriptSymbol =
+                error("Unexpected symbol $symbol ${symbol.descriptor}")
 
             override fun getReferencedConstructor(symbol: IrConstructorSymbol) =
                 if (symbol.descriptor.isExpect)
                     symbol.owner.findActualForExpected().symbol
                 else super.getReferencedConstructor(symbol)
-
-            override fun getReferencedFunction(symbol: IrFunctionSymbol): IrFunctionSymbol =
-                when (symbol) {
-                    is IrSimpleFunctionSymbol -> getReferencedSimpleFunction(symbol)
-                    is IrConstructorSymbol -> getReferencedConstructor(symbol)
-                    else -> error("Unexpected symbol $symbol ${symbol.descriptor}")
-                }
 
             override fun getReferencedSimpleFunction(symbol: IrSimpleFunctionSymbol) = when {
                 symbol.descriptor.isExpect -> symbol.owner.findActualForExpected().symbol

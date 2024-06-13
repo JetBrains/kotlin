@@ -14,6 +14,7 @@ version = deployVersion ?: "0.0.1-SNAPSHOT"
 
 sourceSets {
     "main" { projectDefault() }
+    "test" { projectDefault() }
 }
 
 val embedded by configurations
@@ -33,6 +34,8 @@ dependencies {
     embedded(project(":kotlin-util-klib"))
     embedded(project(":kotlin-util-io"))
     embedded(protobufLite())
+    testImplementation(kotlinTest("junit"))
+    testImplementation(libs.junit4)
 }
 
 if (deployVersion != null) {

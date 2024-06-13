@@ -21,6 +21,12 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFirPsiWithActualizerDiagnosticsTest {
   @Test
+  @TestMetadata("abstractEnumInIr.kt")
+  public void testAbstractEnumInIr() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/abstractEnumInIr.kt");
+  }
+
+  @Test
   @TestMetadata("actualClassDelegationWithImplicitType.kt")
   public void testActualClassDelegationWithImplicitType() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassDelegationWithImplicitType.kt");
@@ -236,6 +242,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
   }
 
   @Test
+  @TestMetadata("expectsWithJsExport.kt")
+  public void testExpectsWithJsExport() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/expectsWithJsExport.kt");
+  }
+
+  @Test
   @TestMetadata("extraNestedClassOnActualViaActualTypealias.kt")
   public void testExtraNestedClassOnActualViaActualTypealias() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/extraNestedClassOnActualViaActualTypealias.kt");
@@ -374,9 +386,33 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
   }
 
   @Test
+  @TestMetadata("overloadsWithPotentialRecursion.kt")
+  public void testOverloadsWithPotentialRecursion() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/overloadsWithPotentialRecursion.kt");
+  }
+
+  @Test
+  @TestMetadata("packageConflictsWithClassifierInMultiplatform.kt")
+  public void testPackageConflictsWithClassifierInMultiplatform() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/packageConflictsWithClassifierInMultiplatform.kt");
+  }
+
+  @Test
   @TestMetadata("platformRedeclarationOfExpect.kt")
   public void testPlatformRedeclarationOfExpect() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/platformRedeclarationOfExpect.kt");
+  }
+
+  @Test
+  @TestMetadata("privateExpectFakeOverride.kt")
+  public void testPrivateExpectFakeOverride() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/privateExpectFakeOverride.kt");
+  }
+
+  @Test
+  @TestMetadata("privateExpectFakeOverride_incompatibleReturnType.kt")
+  public void testPrivateExpectFakeOverride_incompatibleReturnType() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/privateExpectFakeOverride_incompatibleReturnType.kt");
   }
 
   @Test
@@ -483,6 +519,24 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
     @TestMetadata("actualInnerClassMissingMember.kt")
     public void testActualInnerClassMissingMember() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/actualInnerClassMissingMember.kt");
+    }
+
+    @Test
+    @TestMetadata("actualizeExpectProtectedToJavaProtected.kt")
+    public void testActualizeExpectProtectedToJavaProtected() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/actualizeExpectProtectedToJavaProtected.kt");
+    }
+
+    @Test
+    @TestMetadata("actualizePropertyByJavaField_supportedCase.kt")
+    public void testActualizePropertyByJavaField_supportedCase() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/actualizePropertyByJavaField_supportedCase.kt");
+    }
+
+    @Test
+    @TestMetadata("actualizePropertyByJavaField_unsupportedCase.kt")
+    public void testActualizePropertyByJavaField_unsupportedCase() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/actualizePropertyByJavaField_unsupportedCase.kt");
     }
 
     @Test

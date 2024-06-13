@@ -42,7 +42,6 @@ class ManifestReadingTest {
                 platformTargets = emptyList(),
                 compilerVersion = "1.23.45",
                 abiVersion = "2.34.56",
-                libraryVersion = "3.45.67",
                 irProviderName = "test_ir_provider_123"
             ),
             "sample-library-2" to LibraryManifest(
@@ -57,7 +56,6 @@ class ManifestReadingTest {
                 ),
                 compilerVersion = null,
                 abiVersion = null,
-                libraryVersion = null,
                 irProviderName = null
             ),
         )
@@ -73,7 +71,6 @@ class ManifestReadingTest {
 
     private fun createEmptyLibraryWithSpecificManifest(libraryName: String, libraryManifest: LibraryManifest): File {
         val libraryVersioning = KotlinLibraryVersioning(
-            libraryVersion = libraryManifest.libraryVersion,
             compilerVersion = libraryManifest.compilerVersion,
             abiVersion = libraryManifest.abiVersion?.parseKotlinAbiVersion(),
             metadataVersion = null

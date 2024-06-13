@@ -5,23 +5,25 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtExpression
 import java.util.Objects
 
-public abstract class KtSmartCastProvider : KtAnalysisSessionComponent() {
-    public abstract fun getSmartCastedInfo(expression: KtExpression): KtSmartCastInfo?
-    public abstract fun getImplicitReceiverSmartCast(expression: KtExpression): Collection<KtImplicitReceiverSmartCast>
+public abstract class KaSmartCastProvider : KaSessionComponent() {
+    public abstract fun getSmartCastedInfo(expression: KtExpression): KaSmartCastInfo?
+    public abstract fun getImplicitReceiverSmartCast(expression: KtExpression): Collection<KaImplicitReceiverSmartCast>
 }
 
-public interface KtSmartCastProviderMixIn : KtAnalysisSessionMixIn {
+public typealias KtSmartCastProvider = KaSmartCastProvider
+
+public interface KaSmartCastProviderMixIn : KaSessionMixIn {
     /**
      * Gets the smart-cast information of the given expression or null if the expression is not smart casted.
      */
-    public fun KtExpression.getSmartCastInfo(): KtSmartCastInfo? =
+    public fun KtExpression.getSmartCastInfo(): KaSmartCastInfo? =
         withValidityAssertion { analysisSession.smartCastProvider.getSmartCastedInfo(this) }
 
     /**
@@ -36,21 +38,23 @@ public interface KtSmartCastProviderMixIn : KtAnalysisSessionMixIn {
      * }
      * ```
      */
-    public fun KtExpression.getImplicitReceiverSmartCast(): Collection<KtImplicitReceiverSmartCast> =
+    public fun KtExpression.getImplicitReceiverSmartCast(): Collection<KaImplicitReceiverSmartCast> =
         withValidityAssertion { analysisSession.smartCastProvider.getImplicitReceiverSmartCast(this) }
 }
 
-public class KtSmartCastInfo(
-    private val backingSmartCastType: KtType,
+public typealias KtSmartCastProviderMixIn = KaSmartCastProviderMixIn
+
+public class KaSmartCastInfo(
+    private val backingSmartCastType: KaType,
     private val backingIsStable: Boolean,
-    override val token: KtLifetimeToken
-) : KtLifetimeOwner {
+    override val token: KaLifetimeToken
+) : KaLifetimeOwner {
     public val isStable: Boolean get() = withValidityAssertion { backingIsStable }
-    public val smartCastType: KtType get() = withValidityAssertion { backingSmartCastType }
+    public val smartCastType: KaType get() = withValidityAssertion { backingSmartCastType }
 
     override fun equals(other: Any?): Boolean {
         return this === other ||
-                other is KtSmartCastInfo &&
+                other is KaSmartCastInfo &&
                 other.backingSmartCastType == backingSmartCastType &&
                 other.backingIsStable == backingIsStable
     }
@@ -58,17 +62,19 @@ public class KtSmartCastInfo(
     override fun hashCode(): Int = Objects.hash(backingSmartCastType, backingIsStable)
 }
 
-public class KtImplicitReceiverSmartCast(
-    private val backingType: KtType,
-    private val backingKind: KtImplicitReceiverSmartCastKind,
-    override val token: KtLifetimeToken
-) : KtLifetimeOwner {
-    public val type: KtType get() = withValidityAssertion { backingType }
-    public val kind: KtImplicitReceiverSmartCastKind get() = withValidityAssertion { backingKind }
+public typealias KtSmartCastInfo = KaSmartCastInfo
+
+public class KaImplicitReceiverSmartCast(
+    private val backingType: KaType,
+    private val backingKind: KaImplicitReceiverSmartCastKind,
+    override val token: KaLifetimeToken
+) : KaLifetimeOwner {
+    public val type: KaType get() = withValidityAssertion { backingType }
+    public val kind: KaImplicitReceiverSmartCastKind get() = withValidityAssertion { backingKind }
 
     override fun equals(other: Any?): Boolean {
         return this === other ||
-                other is KtImplicitReceiverSmartCast &&
+                other is KaImplicitReceiverSmartCast &&
                 other.backingType == backingType &&
                 other.backingKind == backingKind
     }
@@ -78,6 +84,10 @@ public class KtImplicitReceiverSmartCast(
     }
 }
 
-public enum class KtImplicitReceiverSmartCastKind {
+public typealias KtImplicitReceiverSmartCast = KaImplicitReceiverSmartCast
+
+public enum class KaImplicitReceiverSmartCastKind {
     DISPATCH, EXTENSION
 }
+
+public typealias KtImplicitReceiverSmartCastKind = KaImplicitReceiverSmartCastKind

@@ -56,7 +56,7 @@ private class ControlFlowGraphRenderer(
     fun renderPartialGraph(controlFlowGraph: ControlFlowGraph) {
         val nodes = DFS.topologicalOrder(listOf(controlFlowGraph.enterNode)) { it.followingNodes }
             .associateWithTo(linkedMapOf()) { nodeCounter++ }
-        printer.renderNodes(nodes)
+        printer.renderNodes(nodes.filterKeys { it.level >= controlFlowGraph.enterNode.level })
         printer.renderEdges(nodes)
         printer.println()
     }
@@ -131,7 +131,9 @@ private class ControlFlowGraphRenderer(
     private fun Printer.renderEdges(nodes: Map<CFGNode<*>, Int>) {
         for ((node, index) in nodes) {
             for ((style, group) in node.followingNodes.groupBy { node.edgeTo(it).style }.entries.sortedBy { it.key }) {
-                val mappedGroup = group.map { nodes.getValue(it) }.sorted()
+                val mappedGroup = group.map {
+                    nodes.getValue(it)
+                }.sorted()
                 print(index, EDGE, mappedGroup.joinToString(prefix = "{", postfix = "}", separator = " "))
                 style?.let { printWithNoIndent(" $it") }
                 printlnWithNoIndent(";")

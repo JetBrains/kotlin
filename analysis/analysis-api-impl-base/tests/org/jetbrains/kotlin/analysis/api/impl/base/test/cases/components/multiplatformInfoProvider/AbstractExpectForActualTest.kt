@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.multiplatformInfoProvider
 
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KtDeclarationRendererForDebug
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -16,12 +17,14 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractExpectForActualTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
+        val renderer = KtDeclarationRendererForDebug.WITH_QUALIFIED_NAMES
+
         val declaration = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtDeclaration>(mainFile)
         val expectedSymbolText: String? = executeOnPooledThreadInReadAction {
             analyseForTest(declaration) {
                 val expectedSymbols = declaration.getSymbol().getExpectsForActual()
                 expectedSymbols.joinToString(separator = "\n") { expectedSymbol ->
-                    expectedSymbol.psi?.containingFile?.name + " : " + expectedSymbol.render()
+                    expectedSymbol.psi?.containingFile?.name + " : " + expectedSymbol.render(renderer)
                 }
             }
         }

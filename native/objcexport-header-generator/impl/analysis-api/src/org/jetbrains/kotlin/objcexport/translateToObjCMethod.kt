@@ -3,19 +3,21 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.annotations.annotationInfos
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.objcexport.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.objcexport.Predefined.anyMethodSelectors
 import org.jetbrains.kotlin.objcexport.Predefined.anyMethodSwiftNames
+import org.jetbrains.kotlin.objcexport.Predefined.objCReservedNameMethodSelectors
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.*
 import org.jetbrains.kotlin.objcexport.extras.objCExportStubExtras
 import org.jetbrains.kotlin.objcexport.extras.throwsAnnotationClassIds
+import org.jetbrains.kotlin.utils.addIfNotNull
 
-internal val KtCallableSymbol.isConstructor: Boolean
+internal val KaSymbol.isConstructor: Boolean
     get() = this is KtConstructorSymbol
 
 context(KtAnalysisSession, KtObjCExportSession)
@@ -70,16 +72,15 @@ internal fun KtFunctionLikeSymbol.buildObjCMethod(
     if (unavailable) {
         attributes += "unavailable"
     } else {
-        /**
-         * Implement and use [org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver]
-         */
-        //attributes.addIfNotNull(getDeprecationAttribute(method))
+        attributes.addIfNotNull(getObjCDeprecationStatus())
     }
+
+    val isMethodInstance = if (isExtensionOfMappedObjCType) false else bridge.isInstance
 
     return ObjCMethod(
         comment = comment,
         origin = getObjCExportStubOrigin(),
-        isInstanceMethod = bridge.isInstance,
+        isInstanceMethod = isMethodInstance,
         returnType = returnType,
         selectors = selectors,
         parameters = parameters,
@@ -107,9 +108,7 @@ internal fun KtCallableSymbol.getSwiftPrivateAttribute(): String? =
 internal fun KtCallableSymbol.isRefinedInSwift(): Boolean = when {
     // Note: the front-end checker requires all overridden descriptors to be either refined or not refined.
     //overriddenDescriptors.isNotEmpty() -> overriddenDescriptors.first().isRefinedInSwift() //TODO: implement isRefinedInSwift
-    else -> annotationInfos.any { annotation ->
-        annotation.classId?.asSingleFqName() == KonanFqNames.refinesInSwift
-    }
+    else -> ClassId.topLevel(KonanFqNames.refinesInSwift) in annotations
 }
 
 context(KtAnalysisSession, KtObjCExportSession)
@@ -166,6 +165,31 @@ internal object Predefined {
         "toString" to "description()",
         "equals" to "isEqual(_:)"
     ).mapKeys { Name.identifier(it.key) }
+
+    /**
+     * [objCReservedNameMethodSelectors] map keys represent name of methods contained in Objective-C's `NSObject` class.
+     * These function names are considered reserved since using them in generated headers will result
+     * in naming collision with functions from Objective-C's `NSObject` class.
+     *
+     * [objCReservedNameMethodSelectors] map values represent the mangled function names
+     * that should be used
+     * when generating Objective-C headers based on the Kotlin functions
+     * whose name uses a reserved method name.
+     *
+     * To avoid function naming collision,
+     * generated function names are mangled by appending `_` character at the end of the generated function name.
+     *
+     * See KT-68051
+     * See [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.Mapping.reserved]
+     */
+    val objCReservedNameMethodSelectors = mapOf(
+        "retain" to "retain_",
+        "release" to "release_",
+        "autorelease" to "autorelease_",
+        "class" to "class_",
+        "superclass" to "superclass_",
+        "hash" to "hash_"
+    ).mapKeys { Name.identifier(it.key) }
 }
 
 /**
@@ -187,7 +211,10 @@ context(KtAnalysisSession, KtObjCExportSession)
 fun KtFunctionLikeSymbol.getSelector(methodBridge: MethodBridge): String {
 
     if (this is KtNamedSymbol) {
-        anyMethodSelectors[this.name]?.let { return it }
+        val name = this.name
+
+        anyMethodSelectors[name]?.let { return it }
+        objCReservedNameMethodSelectors[name]?.let { return it }
     }
 
     val parameters = methodBridge.valueParametersAssociated(this)
@@ -246,7 +273,7 @@ private fun KtFunctionLikeSymbol.getMangledName(forSwift: Boolean): String {
     }
 }
 
-private fun String.handleSpecialNames(prefix: String): String {
+internal fun String.handleSpecialNames(prefix: String): String {
     val trimmed = this.dropWhile { it == '_' }
     for (family in listOf("alloc", "copy", "mutableCopy", "new", "init")) {
         if (trimmed.startsWithWords(family)) {

@@ -1,7 +1,7 @@
 element: e
 implicit receivers:
   type: JavaClass
-  owner symbol: KtFirFunctionSymbol
+  owner symbol: KaFirFunctionSymbol
 
 scopes:
   LocalScope, index = 0

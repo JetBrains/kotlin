@@ -5,31 +5,31 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
+import org.jetbrains.kotlin.analysis.api.types.KaType
 
 /**
- * A [KtSubstitutor] which substitution logic can be represented as a [Map] from a [KtTypeParameterSymbol] to corresponding [KtType]
- * This is an implementation details and Analysis API clients should not depend on the fact if some [KtSubstitutor] is [KtMapBackedSubstitutor] or not.
+ * A [KaSubstitutor] which substitution logic can be represented as a [Map] from a [KaTypeParameterSymbol] to corresponding [KaType]
+ * This is an implementation details and Analysis API clients should not depend on the fact if some [KaSubstitutor] is [KaMapBackedSubstitutor] or not.
  */
-@KtAnalysisApiInternals
-interface KtMapBackedSubstitutor : KtSubstitutor {
+@KaAnalysisApiInternals
+interface KaMapBackedSubstitutor : KaSubstitutor {
     /**
-     * Substitution rules in a form of a `Map<KtTypeParameterSymbol, KtType>`
+     * Substitution rules in a form of a `Map<KaTypeParameterSymbol, KaType>`
      */
-    fun getAsMap(): Map<KtTypeParameterSymbol, KtType>
+    fun getAsMap(): Map<KaTypeParameterSymbol, KaType>
 }
 
 
 /**
- * A [KtSubstitutor] which substitution logic can be represented as subsequent invocation of two substitutors [first] and [second]
+ * A [KaSubstitutor] which substitution logic can be represented as subsequent invocation of two substitutors [first] and [second]
  * This is an implementation detail,
- * and Analysis API clients should not depend on the fact if some [KtSubstitutor] is [KtChainedSubstitutor] or not.
+ * and Analysis API clients should not depend on the fact if some [KaSubstitutor] is [KaChainedSubstitutor] or not.
  */
-@KtAnalysisApiInternals
-interface KtChainedSubstitutor : KtSubstitutor {
-    val first: KtSubstitutor
-    val second: KtSubstitutor
+@KaAnalysisApiInternals
+interface KaChainedSubstitutor : KaSubstitutor {
+    val first: KaSubstitutor
+    val second: KaSubstitutor
 }

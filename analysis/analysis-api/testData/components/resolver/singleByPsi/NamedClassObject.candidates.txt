@@ -1,0 +1,17 @@
+KtNameReferenceExpression(120,125): 'Named'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = a.A.Named
+          symbol = <constructor>(): a.A.Named
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false

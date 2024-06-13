@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterface
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterfaceImpl
 import org.jetbrains.kotlin.backend.konan.objcexport.toNameAttributes
@@ -47,7 +48,7 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDefaultSuperClassOrPr
 context(KtAnalysisSession, KtObjCExportSession)
 fun KtResolvedObjCExportFile.translateToObjCTopLevelFacade(): ObjCInterface? {
     val extensions = callableSymbols
-        .filter { !it.isExtension }
+        .filter { !it.isExtension || it.isExtensionOfMappedObjCType }
         .toList()
         .sortedWith(StableCallableOrder)
         .ifEmpty { return null }
@@ -67,3 +68,7 @@ fun KtResolvedObjCExportFile.translateToObjCTopLevelFacade(): ObjCInterface? {
         superClassGenerics = emptyList()
     )
 }
+
+context(KtAnalysisSession, KtObjCExportSession)
+internal val KtCallableSymbol.isExtensionOfMappedObjCType: Boolean
+    get() = isExtension && receiverParameter?.type?.isMappedObjCType == true

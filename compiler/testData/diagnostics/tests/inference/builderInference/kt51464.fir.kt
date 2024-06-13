@@ -1,4 +1,4 @@
-// !RENDER_DIAGNOSTICS_FULL_TEXT
+// RENDER_DIAGNOSTICS_FULL_TEXT
 fun <T> flowOf(value: T): Flow<T> = TODO()
 
 interface FlowCollector<in T> {}

@@ -18,6 +18,7 @@ import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.plugins.JavaLibraryPlugin
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.Copy
@@ -27,8 +28,11 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.tasks.Jar
 import org.gradle.jvm.toolchain.JavaToolchainService
 import org.gradle.kotlin.dsl.*
+import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
+import org.gradle.plugin.devel.PluginDeclaration
 import org.gradle.plugin.devel.plugins.JavaGradlePluginPlugin
 import org.gradle.plugin.devel.tasks.ValidatePlugins
+import org.gradle.plugin.use.resolve.internal.ArtifactRepositoriesPluginResolver.PLUGIN_MARKER_SUFFIX
 import org.jetbrains.dokka.DokkaVersion
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.dokka.gradle.GradleExternalDocumentationLinkBuilder
@@ -51,7 +55,7 @@ enum class GradlePluginVariant(
     val sourceSetName: String,
     val minimalSupportedGradleVersion: String,
     val gradleApiVersion: String,
-    val gradleApiJavadocUrl: String
+    val gradleApiJavadocUrl: String,
 ) {
     GRADLE_MIN("main", "6.8.3", "6.9", "https://docs.gradle.org/6.9.3/javadoc/"),
     GRADLE_70("gradle70", "7.0", "7.0", "https://docs.gradle.org/7.0.2/javadoc/"),
@@ -68,6 +72,21 @@ enum class GradlePluginVariant(
 val commonSourceSetName = "common"
 
 /**
+ * We have to handle the returned provider lazily, because the publication's artifactId
+ * and the plugin declaration may be not yet configured,
+ * so we may be not able to find the related plugin declaration eagerly.
+ */
+private fun Project.getPluginDeclarationFor(mavenPublication: MavenPublication): Provider<PluginDeclaration> {
+    return project.provider {
+        val pluginDevelopment = extensions.findByType(GradlePluginDevelopmentExtension::class)
+            ?: error("Plugin marker publication $name detected without the `java-gradle-plugin` plugin")
+        pluginDevelopment.plugins
+            .find { pluginDeclaration -> "${pluginDeclaration.id}${PLUGIN_MARKER_SUFFIX}" == mavenPublication.artifactId }
+            ?: error("Cannot find plugin declaration for publication ${this.name} (${mavenPublication.groupId}:${mavenPublication.artifactId})")
+    }
+}
+
+/**
  * Configures common pom configuration parameters
  */
 fun Project.configureCommonPublicationSettingsForGradle(
@@ -79,7 +98,17 @@ fun Project.configureCommonPublicationSettingsForGradle(
             publications
                 .withType<MavenPublication>()
                 .configureEach {
-                    configureKotlinPomAttributes(project)
+                    val pluginDeclaration: Provider<PluginDeclaration>? =
+                        if (name.endsWith("PluginMarkerMaven")) {
+                            getPluginDeclarationFor(this)
+                        } else {
+                            null
+                        }
+                    configureKotlinPomAttributes(
+                        project,
+                        explicitName = pluginDeclaration?.map { it.displayName } ?: provider { null },
+                        explicitDescription = pluginDeclaration?.map { it.description } ?: provider { null },
+                    )
                     if (sbom && project.name !in internalPlugins) {
                         if (name == "pluginMaven") {
                             val sbomTask = configureSbom(target = "PluginMaven")
@@ -659,7 +688,7 @@ fun Project.addBomCheckTask() {
 fun Project.configureDokkaPublication(
     shouldLinkGradleApi: Boolean = false,
     configurePublishingToKotlinlang: Boolean = false,
-    additionalDokkaTaskConfiguration: DokkaTask.() -> Unit = {}
+    additionalDokkaTaskConfiguration: DokkaTask.() -> Unit = {},
 ) {
 
     val dokkaVersioningPluginVersion = "1.8.10"
@@ -789,7 +818,7 @@ private val SourceSet.embeddedConfigurationName get() = "${name}Embedded"
 // We want to still validate Gradle types without applying `java-gradle-plugin`
 // Following configuration is a copy of configuration for the task done by the `java-gradle-plugin`
 fun Project.registerValidatePluginTasks(
-    sourceSet: SourceSet
+    sourceSet: SourceSet,
 ): TaskProvider<ValidatePlugins> {
     val validatePluginsTask = tasks.register<ValidatePlugins>("validatePlugins${sourceSet.name.capitalize()}") {
         group = "Plugin development" // PLUGIN_DEVELOPMENT_GROUP

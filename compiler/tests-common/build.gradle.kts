@@ -57,7 +57,7 @@ dependencies {
     testApi(commonDependency("com.android.tools:r8"))
     testApi(project(":analysis:analysis-internal-utils"))
     testCompileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    testCompileOnly(toolsJar())
+    testCompileOnly(toolsJarApi())
     testCompileOnly(intellijCore())
 
     /*
@@ -79,7 +79,7 @@ dependencies {
     testImplementation(libs.guava)
     testImplementation(commonDependency("org.jetbrains.intellij.deps:asm-all"))
     testImplementation(commonDependency("org.jetbrains.intellij.deps:log4j"))
-    testImplementation(commonDependency("org.jetbrains.intellij.deps:jdom"))
+    testImplementation(intellijJDom())
 
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)

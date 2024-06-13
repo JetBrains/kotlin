@@ -237,6 +237,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
       runTest("compiler/testData/ir/irText/classes/qualifiedSuperCalls.kt");
     }
 
+    @TestMetadata("sealedClassConstructorVisibility.kt")
+    public void testSealedClassConstructorVisibility() {
+      runTest("compiler/testData/ir/irText/classes/sealedClassConstructorVisibility.kt");
+    }
+
     @TestMetadata("sealedClasses.kt")
     public void testSealedClasses() {
       runTest("compiler/testData/ir/irText/classes/sealedClasses.kt");
@@ -1534,6 +1539,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
       runTest("compiler/testData/ir/irText/expressions/lambdaInCAO.kt");
     }
 
+    @TestMetadata("lambdaWithParameterName.kt")
+    public void testLambdaWithParameterName() {
+      runTest("compiler/testData/ir/irText/expressions/lambdaWithParameterName.kt");
+    }
+
     @TestMetadata("literals.kt")
     public void testLiterals() {
       runTest("compiler/testData/ir/irText/expressions/literals.kt");
@@ -2599,6 +2609,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
     @TestMetadata("TypeAliasInImport.kt")
     public void testTypeAliasInImport() {
       runTest("compiler/testData/ir/irText/firProblems/TypeAliasInImport.kt");
+    }
+
+    @TestMetadata("typeOfNonExhaustiveWhen.kt")
+    public void testTypeOfNonExhaustiveWhen() {
+      runTest("compiler/testData/ir/irText/firProblems/typeOfNonExhaustiveWhen.kt");
     }
 
     @TestMetadata("TypeParameterBounds.kt")

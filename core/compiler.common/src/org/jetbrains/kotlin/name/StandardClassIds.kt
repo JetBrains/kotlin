@@ -90,6 +90,7 @@ object StandardClassIds {
     fun reflectByName(name: String) = name.reflectId()
 
     val primitiveTypes = setOf(Boolean, Char, Byte, Short, Int, Long, Float, Double)
+    val signedIntegerTypes = setOf(Byte, Short, Int, Long)
 
     val primitiveArrayTypeByElementType = primitiveTypes.associateWith { id -> id.shortClassName.primitiveArrayId() }
     val elementTypeByPrimitiveArrayType = primitiveArrayTypeByElementType.inverseMap()
@@ -207,6 +208,8 @@ object StandardClassIds {
         val ExperimentalAssociatedObjects = "ExperimentalAssociatedObjects".reflectId()
 
         val associatedObjectAnnotations = hashSetOf(AssociatedObjectKey, ExperimentalAssociatedObjects)
+
+        val ActualizeByJvmBuiltinProvider = "ActualizeByJvmBuiltinProvider".internalId()
 
         object ParameterNames {
             val value = Name.identifier("value")

@@ -45,11 +45,8 @@ class JavaClassMembersEnhancementScope(
             val symbol = signatureEnhancement.enhancedFunction(original, name)
             val enhancedFunction = (symbol.fir as? FirSimpleFunction)
             val enhancedFunctionSymbol = enhancedFunction?.symbol ?: symbol
-
-            if (enhancedFunctionSymbol is FirNamedFunctionSymbol) {
-                enhancedToOriginalFunctions[enhancedFunctionSymbol] = original
-                processor(enhancedFunctionSymbol)
-            }
+            enhancedToOriginalFunctions[enhancedFunctionSymbol] = original
+            processor(enhancedFunctionSymbol)
         }
     }
 
@@ -59,8 +56,8 @@ class JavaClassMembersEnhancementScope(
 
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
         useSiteMemberScope.processDeclaredConstructors process@{ original ->
-            val function = signatureEnhancement.enhancedFunction(original, name = null)
-            processor(function as FirConstructorSymbol)
+            val function = signatureEnhancement.enhancedConstructor(original)
+            processor(function)
         }
     }
 
@@ -87,7 +84,7 @@ class JavaClassMembersEnhancementScope(
     ): ProcessorAction {
         val unwrappedSymbol = if (callableSymbol.origin == FirDeclarationOrigin.RenamedForOverride) {
             @Suppress("UNCHECKED_CAST")
-            callableSymbol.fir.initialSignatureAttr?.symbol as? S ?: callableSymbol
+            callableSymbol.fir.initialSignatureAttr as? S ?: callableSymbol
         } else {
             callableSymbol
         }

@@ -7,18 +7,18 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightReferenceListBuilder
-import org.jetbrains.kotlin.analysis.api.KtAnalysisNonPublicApi
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.*
-import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtFlexibleType
-import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
-import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
-import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaFlexibleType
+import org.jetbrains.kotlin.analysis.api.types.KaNonErrorClassType
+import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
+import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.asJava.classes.annotateByTypeAnnotationProvider
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -48,111 +48,127 @@ internal fun annotationUseSiteTargetFilterOf(
     filters.any { filter -> filter.isAllowed(useSiteTarget) }
 }
 
-internal fun KtAnnotatedSymbol.hasJvmSyntheticAnnotation(
+internal fun KaAnnotatedSymbol.hasJvmSyntheticAnnotation(
     useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
 ): Boolean {
-    if (this is KtPropertySymbol) return backingFieldSymbol?.hasJvmSyntheticAnnotation(useSiteTargetFilter) == true
+    if (this is KaPropertySymbol) return backingFieldSymbol?.hasJvmSyntheticAnnotation(useSiteTargetFilter) == true
     return hasAnnotation(JVM_SYNTHETIC_ANNOTATION_CLASS_ID, useSiteTargetFilter)
 }
 
-internal fun KtAnnotatedSymbol.getJvmNameFromAnnotation(
+internal fun KaAnnotatedSymbol.getJvmNameFromAnnotation(
     useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
 ): String? {
     val annotation = findAnnotation(JvmStandardClassIds.Annotations.JvmName, useSiteTargetFilter)
     return annotation?.let {
-        (it.arguments.firstOrNull()?.expression as? KtConstantAnnotationValue)?.constantValue?.value as? String
+        (it.arguments.firstOrNull()?.expression as? KaConstantAnnotationValue)?.constantValue?.value as? String
     }
 }
 
-context(KtAnalysisSession)
+context(KaSession)
 internal fun isHiddenByDeprecation(
-    symbol: KtAnnotatedSymbol,
+    symbol: KaAnnotatedSymbol,
     annotationUseSiteTarget: AnnotationUseSiteTarget? = null,
 ): Boolean = symbol.getDeprecationStatus(annotationUseSiteTarget)?.deprecationLevel == DeprecationLevelValue.HIDDEN
 
-context(KtAnalysisSession)
-internal fun KtAnnotatedSymbol.isHiddenOrSynthetic(
+context(KaSession)
+internal fun KaAnnotatedSymbol.isHiddenOrSynthetic(
     annotationUseSiteTarget: AnnotationUseSiteTarget? = null,
     useSiteTargetFilter: AnnotationUseSiteTargetFilter = annotationUseSiteTarget.toFilter(),
 ) = isHiddenByDeprecation(this, annotationUseSiteTarget) || hasJvmSyntheticAnnotation(useSiteTargetFilter)
 
-internal fun KtAnnotatedSymbol.hasJvmFieldAnnotation(): Boolean = hasAnnotation(JvmStandardClassIds.Annotations.JvmField)
+internal fun KaAnnotatedSymbol.hasJvmFieldAnnotation(): Boolean = JvmStandardClassIds.Annotations.JvmField in annotations
 
-internal fun KtAnnotatedSymbol.hasPublishedApiAnnotation(
+internal fun KaAnnotatedSymbol.hasPublishedApiAnnotation(
     useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
 ): Boolean = hasAnnotation(StandardClassIds.Annotations.PublishedApi, useSiteTargetFilter)
 
-internal fun KtAnnotatedSymbol.hasDeprecatedAnnotation(
+internal fun KaAnnotatedSymbol.hasDeprecatedAnnotation(
     useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
 ): Boolean = hasAnnotation(StandardClassIds.Annotations.Deprecated, useSiteTargetFilter)
 
-internal fun KtAnnotatedSymbol.hasJvmOverloadsAnnotation(): Boolean = hasAnnotation(JVM_OVERLOADS_CLASS_ID)
+internal fun KaAnnotatedSymbol.hasJvmOverloadsAnnotation(): Boolean = JVM_OVERLOADS_CLASS_ID in annotations
 
-internal fun KtAnnotatedSymbol.hasJvmNameAnnotation(): Boolean = hasAnnotation(JvmStandardClassIds.Annotations.JvmName)
+internal fun KaAnnotatedSymbol.hasJvmNameAnnotation(): Boolean = JvmStandardClassIds.Annotations.JvmName in annotations
 
-internal fun KtAnnotatedSymbol.hasJvmStaticAnnotation(
+internal fun KaAnnotatedSymbol.hasJvmStaticAnnotation(
     useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
 ): Boolean = hasAnnotation(JvmStandardClassIds.Annotations.JvmStatic, useSiteTargetFilter)
 
-internal fun KtAnnotatedSymbol.hasInlineOnlyAnnotation(): Boolean = hasAnnotation(StandardClassIds.Annotations.InlineOnly)
+internal fun KaAnnotatedSymbol.hasInlineOnlyAnnotation(): Boolean = StandardClassIds.Annotations.InlineOnly in annotations
 
-context(KtAnalysisSession)
-internal fun KtDeclarationSymbol.suppressWildcardMode(
-    declarationFilter: (KtDeclarationSymbol) -> Boolean = { true },
+context(KaSession)
+internal fun KaDeclarationSymbol.suppressWildcardMode(
+    declarationFilter: (KaDeclarationSymbol) -> Boolean = { true },
 ): Boolean? {
     return getContainingSymbolsWithSelf().firstNotNullOfOrNull { symbol ->
         symbol.takeIf(declarationFilter)?.suppressWildcard()
     }
 }
 
-internal fun KtAnnotatedSymbol.suppressWildcard(): Boolean? {
+internal fun KaAnnotatedSymbol.suppressWildcard(): Boolean? {
     if (hasJvmWildcardAnnotation()) return true
     return getJvmSuppressWildcardsFromAnnotation()
 }
 
-internal fun KtAnnotatedSymbol.getJvmSuppressWildcardsFromAnnotation(): Boolean? {
-    return annotationsByClassId(JvmStandardClassIds.Annotations.JvmSuppressWildcards).firstOrNull()?.let { annoApp ->
-        (annoApp.arguments.firstOrNull()?.expression as? KtConstantAnnotationValue)?.constantValue?.value as? Boolean
+internal fun KaAnnotatedSymbol.getJvmSuppressWildcardsFromAnnotation(): Boolean? {
+    return annotations[JvmStandardClassIds.Annotations.JvmSuppressWildcards].firstOrNull()?.let { annoApp ->
+        (annoApp.arguments.firstOrNull()?.expression as? KaConstantAnnotationValue)?.constantValue?.value as? Boolean
     }
 }
 
-internal fun KtAnnotatedSymbol.hasJvmWildcardAnnotation(): Boolean = hasAnnotation(JvmStandardClassIds.Annotations.JvmWildcard)
+internal fun KaAnnotatedSymbol.hasJvmWildcardAnnotation(): Boolean = JvmStandardClassIds.Annotations.JvmWildcard in annotations
 
-internal fun KtAnnotatedSymbol.findAnnotation(
+internal fun KaAnnotatedSymbol.findAnnotation(
     classId: ClassId,
     useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
-): KtAnnotationApplicationWithArgumentsInfo? {
+): KaAnnotation? {
     if (!hasAnnotation(classId, useSiteTargetFilter)) return null
 
     return annotationsByClassId(classId, useSiteTargetFilter).firstOrNull()
 }
 
-context(KtAnalysisSession)
-internal fun KtAnnotatedSymbol.computeThrowsList(
+internal fun KaAnnotatedSymbol.hasAnnotation(
+    classId: ClassId,
+    useSiteTargetFilter: AnnotationUseSiteTargetFilter,
+): Boolean {
+    return annotations[classId]
+        .any { useSiteTargetFilter.isAllowed(it.useSiteTarget) }
+}
+
+internal fun KaAnnotatedSymbol.annotationsByClassId(
+    classId: ClassId,
+    useSiteTargetFilter: AnnotationUseSiteTargetFilter
+): List<KaAnnotation> {
+    return annotations[classId]
+        .filter { useSiteTargetFilter.isAllowed(it.useSiteTarget) }
+}
+
+context(KaSession)
+internal fun KaAnnotatedSymbol.computeThrowsList(
     builder: LightReferenceListBuilder,
     useSitePosition: PsiElement,
     containingClass: SymbolLightClassBase,
     useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
 ) {
-    if (containingClass.isEnum && this is KtFunctionSymbol && name == StandardNames.ENUM_VALUE_OF && isStatic) {
+    if (containingClass.isEnum && this is KaFunctionSymbol && name == StandardNames.ENUM_VALUE_OF && isStatic) {
         builder.addReference(java.lang.IllegalArgumentException::class.qualifiedName)
         builder.addReference(java.lang.NullPointerException::class.qualifiedName)
     }
 
     val annoApp = findAnnotation(JvmStandardClassIds.Annotations.Throws, useSiteTargetFilter) ?: return
 
-    fun handleAnnotationValue(annotationValue: KtAnnotationValue) {
+    fun handleAnnotationValue(annotationValue: KaAnnotationValue) {
         when (annotationValue) {
-            is KtArrayAnnotationValue -> {
+            is KaArrayAnnotationValue -> {
                 annotationValue.values.forEach(::handleAnnotationValue)
             }
 
-            is KtKClassAnnotationValue -> {
-                if (annotationValue.type is KtNonErrorClassType) {
+            is KaKClassAnnotationValue -> {
+                if (annotationValue.type is KaNonErrorClassType) {
                     val psiType = annotationValue.type.asPsiType(
                         useSitePosition,
                         allowErrorTypes = true,
-                        KtTypeMappingMode.DEFAULT,
+                        KaTypeMappingMode.DEFAULT,
                         containingClass.isAnnotationType,
                     )
                     (psiType as? PsiClassType)?.let {
@@ -168,18 +184,18 @@ internal fun KtAnnotatedSymbol.computeThrowsList(
     annoApp.arguments.forEach { handleAnnotationValue(it.expression) }
 }
 
-context(KtAnalysisSession)
-@KtAnalysisNonPublicApi
+context(KaSession)
+@KaAnalysisNonPublicApi
 fun annotateByKtType(
     psiType: PsiType,
-    ktType: KtType,
+    ktType: KaType,
     annotationParent: PsiElement,
 ): PsiType {
-    fun getAnnotationsSequence(type: KtType): Sequence<List<PsiAnnotation>> = sequence {
+    fun getAnnotationsSequence(type: KaType): Sequence<List<PsiAnnotation>> = sequence {
         val unwrappedType = when (type) {
             // We assume that flexible types have to have the same set of annotations on upper and lower bound.
             // Also, the upper bound is more similar to the resulting PsiType as it has fewer restrictions.
-            is KtFlexibleType -> type.upperBound
+            is KaFlexibleType -> type.upperBound
             else -> type
         }
 
@@ -194,7 +210,7 @@ fun annotateByKtType(
 
         // Original type should be used to infer nullability
         val typeNullability = when {
-            psiType !is PsiPrimitiveType && type.isPrimitiveBacked -> KtTypeNullability.NON_NULLABLE
+            psiType !is PsiPrimitiveType && type.isPrimitiveBacked -> KaTypeNullability.NON_NULLABLE
             else -> getTypeNullability(type)
         }
 
@@ -204,8 +220,8 @@ fun annotateByKtType(
 
         yield(explicitTypeAnnotations + listOfNotNull(nullabilityAnnotation))
 
-        if (unwrappedType is KtNonErrorClassType) {
-            unwrappedType.ownTypeArguments.forEach { typeProjection ->
+        if (unwrappedType is KaNonErrorClassType) {
+            unwrappedType.typeArguments.forEach { typeProjection ->
                 typeProjection.type?.let {
                     yieldAll(getAnnotationsSequence(it))
                 }

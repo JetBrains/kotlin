@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNREACHABLE_CODE
+// DIAGNOSTICS: -UNREACHABLE_CODE
 
 // exhaustive
 fun test1(n: Nothing) = when (n) { }

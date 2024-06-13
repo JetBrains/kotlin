@@ -5,59 +5,61 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtDeclarationRenderer
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.renderer.render
 
-public interface KtDeclarationNameRenderer {
+public interface KaDeclarationNameRenderer {
     public fun renderName(
-        analysisSession: KtAnalysisSession,
-        symbol: KtNamedSymbol,
-        declarationRenderer: KtDeclarationRenderer,
+        analysisSession: KaSession,
+        symbol: KaNamedSymbol,
+        declarationRenderer: KaDeclarationRenderer,
         printer: PrettyPrinter
     ) {
         renderName(analysisSession, symbol.name, symbol, declarationRenderer, printer)
     }
 
     public fun renderName(
-        analysisSession: KtAnalysisSession,
+        analysisSession: KaSession,
         name: Name,
-        symbol: KtNamedSymbol?,
-        declarationRenderer: KtDeclarationRenderer,
+        symbol: KaNamedSymbol?,
+        declarationRenderer: KaDeclarationRenderer,
         printer: PrettyPrinter,
     )
 
-    public object QUOTED : KtDeclarationNameRenderer {
+    public object QUOTED : KaDeclarationNameRenderer {
         override fun renderName(
-            analysisSession: KtAnalysisSession,
+            analysisSession: KaSession,
             name: Name,
-            symbol: KtNamedSymbol?,
-            declarationRenderer: KtDeclarationRenderer,
+            symbol: KaNamedSymbol?,
+            declarationRenderer: KaDeclarationRenderer,
             printer: PrettyPrinter,
         ) {
-            if (symbol is KtClassOrObjectSymbol && symbol.classKind == KtClassKind.COMPANION_OBJECT && symbol.name == SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT)
+            if (symbol is KaClassOrObjectSymbol && symbol.classKind == KaClassKind.COMPANION_OBJECT && symbol.name == SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT)
                 return
             printer.append(name.render())
         }
     }
 
-    public object UNQUOTED : KtDeclarationNameRenderer {
+    public object UNQUOTED : KaDeclarationNameRenderer {
         override fun renderName(
-            analysisSession: KtAnalysisSession,
+            analysisSession: KaSession,
             name: Name,
-            symbol: KtNamedSymbol?,
-            declarationRenderer: KtDeclarationRenderer,
+            symbol: KaNamedSymbol?,
+            declarationRenderer: KaDeclarationRenderer,
             printer: PrettyPrinter,
         ) {
-            if (symbol is KtClassOrObjectSymbol && symbol.classKind == KtClassKind.COMPANION_OBJECT && symbol.name == SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT)
+            if (symbol is KaClassOrObjectSymbol && symbol.classKind == KaClassKind.COMPANION_OBJECT && symbol.name == SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT)
                 return
             printer.append(name.asString())
         }
     }
 }
+
+public typealias KtDeclarationNameRenderer = KaDeclarationNameRenderer

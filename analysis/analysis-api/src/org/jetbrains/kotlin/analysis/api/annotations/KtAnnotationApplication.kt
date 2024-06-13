@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.annotations
 
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtCallElement
@@ -17,11 +20,8 @@ import org.jetbrains.kotlin.psi.KtCallElement
  * - For declarations: `@Deprecated("Should not be used") fun foo(){}`
  * - For types: `fun foo(x: List<@A Int>){}`
  * - Inside another annotation (`B` is annotation here): `@A(B()) fun foo(){}
- *
- * @see KtAnnotationApplicationInfo
- * @see KtAnnotationApplicationWithArgumentsInfo
  */
-public sealed interface KtAnnotationApplication : KtLifetimeOwner {
+public interface KaAnnotation : KaLifetimeOwner {
     /**
      * The [ClassId] of applied annotation. [ClassId] is a fully qualified name on annotation class.
      */
@@ -43,14 +43,44 @@ public sealed interface KtAnnotationApplication : KtLifetimeOwner {
 
     /**
      * This property can be used to optimize some argument processing logic.
-     * For example, if you have [KtAnnotationApplicationInfo] from [KtAnnotated.annotationInfos] and [isCallWithArguments] is **false**,
-     * then you can avoid [KtAnnotated.annotationsByClassId] call,
-     * because effectively you already have all necessary information in [KtAnnotationApplicationInfo]
+     * For example, if you have [KaAnnotationApplicationInfo] from [KaAnnotated.annotationInfos] and [hasArguments] is **false**,
+     * then you can avoid [KaAnnotated.annotationsByClassId] call,
+     * because effectively you already have all necessary information in [KaAnnotationApplicationInfo]
      */
+    public val hasArguments: Boolean
+
+    @Deprecated("Use 'hasArguments' instead.", replaceWith = ReplaceWith("hasArguments"))
     public val isCallWithArguments: Boolean
+        get() = hasArguments
 
     /**
      * An index of the annotation in an owner. `null` when annotation is used as an argument of other annotations
      */
     public val index: Int?
+
+    /**
+     * A list of explicitly provided annotation values.
+     */
+    public val arguments: List<KaNamedAnnotationValue>
+
+    /**
+     * An annotation constructor symbol.
+     */
+    public val constructorSymbol: KaConstructorSymbol?
+
+    @Deprecated("Use 'constructorSymbol' instead.")
+    public val constructorSymbolPointer: KaSymbolPointer<KaConstructorSymbol>?
+        get() = withValidityAssertion { constructorSymbol?.createPointer() }
 }
+
+public typealias KtAnnotationApplication = KaAnnotation
+
+public typealias KaAnnotationApplication = KaAnnotation
+
+public typealias KaAnnotationApplicationInfo = KaAnnotation
+
+public typealias KtAnnotationApplicationInfo = KaAnnotationApplicationInfo
+
+public typealias KaAnnotationApplicationWithArgumentsInfo = KtAnnotationApplication
+
+public typealias KtAnnotationApplicationWithArgumentsInfo = KaAnnotationApplicationWithArgumentsInfo

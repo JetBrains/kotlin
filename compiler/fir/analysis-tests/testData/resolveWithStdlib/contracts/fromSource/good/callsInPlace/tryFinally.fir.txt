@@ -56,7 +56,7 @@ FILE: tryFinally.kt
         try {
             R|<local>/f|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
         }
-        catch (<unused var>: R|kotlin/Exception|) {
+        catch (<unused var>: R|{kotlin/Exception=} java/lang/Exception|) {
         }
 
     }
@@ -76,7 +76,7 @@ FILE: tryFinally.kt
         try {
             R|<local>/f|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
         }
-        catch (<unused var>: R|kotlin/Exception|) {
+        catch (<unused var>: R|{kotlin/Exception=} java/lang/Exception|) {
             throw R|java/lang/Exception.Exception|()
         }
 
@@ -97,7 +97,7 @@ FILE: tryFinally.kt
         try {
             R|<local>/f|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
         }
-        catch (<unused var>: R|kotlin/Exception|) {
+        catch (<unused var>: R|{kotlin/Exception=} java/lang/Exception|) {
             throw R|java/lang/Exception.Exception|()
         }
         finally {
@@ -120,7 +120,7 @@ FILE: tryFinally.kt
         try {
             ^test_6 R|<local>/f|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Int|>|()
         }
-        catch (<unused var>: R|kotlin/Exception|) {
+        catch (<unused var>: R|{kotlin/Exception=} java/lang/Exception|) {
             throw R|java/lang/Exception.Exception|()
         }
         finally {
@@ -143,7 +143,7 @@ FILE: tryFinally.kt
         try {
             R|<local>/f|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
         }
-        catch (<unused var>: R|kotlin/Exception|) {
+        catch (<unused var>: R|{kotlin/Exception=} java/lang/Exception|) {
         }
         finally {
         }
@@ -165,7 +165,7 @@ FILE: tryFinally.kt
         try {
             ^test_8 R|<local>/f|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Int|>|()
         }
-        catch (<unused var>: R|kotlin/Exception|) {
+        catch (<unused var>: R|{kotlin/Exception=} java/lang/Exception|) {
             ^test_8 Int(1)
         }
         finally {

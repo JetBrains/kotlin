@@ -1,6 +1,6 @@
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: A
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: A
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -15,25 +15,25 @@ KtNamedClassOrObjectSymbol:
   name: A
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(functionWithTypeAlias.kt)
+  getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtTypeAliasSymbol:
-  annotationsList: []
-  classIdIfNonLocal: TypeAlias
-  expandedType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+KaTypeAliasSymbol:
+  annotations: []
+  classId: TypeAlias
+  expandedType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: A
   isActual: false
   isExpect: false
@@ -42,13 +42,13 @@ KtTypeAliasSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(functionWithTypeAlias.kt)
+  getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /function
+KaFunctionSymbol:
+  annotations: []
+  callableId: /function
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -68,16 +68,16 @@ KtFunctionSymbol:
   name: function
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -89,26 +89,26 @@ KtFunctionSymbol:
       name: t
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
-        type: TypeAlias
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: {TypeAlias=} A
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(functionWithTypeAlias.kt)
+      getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)
       getContainingJvmClassName: FunctionWithTypeAliasKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(functionWithTypeAlias.kt)
+  getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)
   getContainingJvmClassName: FunctionWithTypeAliasKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /function
+KaFunctionSymbol:
+  annotations: []
+  callableId: /function
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -128,16 +128,16 @@ KtFunctionSymbol:
   name: function
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -149,19 +149,19 @@ KtFunctionSymbol:
       name: t
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: A
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(functionWithTypeAlias.kt)
+      getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)
       getContainingJvmClassName: FunctionWithTypeAliasKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(functionWithTypeAlias.kt)
+  getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)
   getContainingJvmClassName: FunctionWithTypeAliasKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

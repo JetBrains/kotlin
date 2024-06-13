@@ -16,10 +16,8 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
 import org.jetbrains.kotlin.gradle.internal.*
-import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.classLoadersCacheSize
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.disableClassloaderCacheForProcessors
-import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.isIncludeCompileClasspath
-import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.isIncrementalKapt
+import org.jetbrains.kotlin.gradle.internal.kapt.KaptProperties
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.CLASS_STRUCTURE_ARTIFACT_TYPE
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.StructureTransformAction
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.StructureTransformLegacyAction
@@ -42,10 +40,12 @@ internal open class KaptConfig<TASK : KaptTask>(
             taskProvider.configure { task ->
                 task.verbose.set(KaptTask.queryKaptVerboseProperty(project))
 
-                task.isIncremental = project.isIncrementalKapt()
+                task.isIncremental = KaptProperties.isIncrementalKapt(project).get()
                 task.useBuildCache = ext.useBuildCache
 
-                task.includeCompileClasspath.set(ext.includeCompileClasspath ?: project.isIncludeCompileClasspath())
+                task.includeCompileClasspath.set(
+                    project.provider { ext.includeCompileClasspath }.orElse(KaptProperties.isIncludeCompileClasspath(project))
+                )
                 task.classpathStructure.from(kaptClasspathSnapshot)
 
                 task.localStateDirectories.from({ task.incAptCache.orNull })
@@ -89,7 +89,7 @@ internal open class KaptConfig<TASK : KaptTask>(
     }
 
     private fun getKaptClasspathSnapshot(taskProvider: TaskProvider<TASK>): FileCollection? {
-        return if (project.isIncrementalKapt()) {
+        return if (KaptProperties.isIncrementalKapt(project).get()) {
             maybeRegisterTransform(project)
 
             val classStructureConfiguration = project.configurations.detachedResolvable()
@@ -132,7 +132,7 @@ internal open class KaptConfig<TASK : KaptTask>(
                 if ("-source" in result || "--source" in result || "--release" in result) return@also
 
                 if (defaultJavaSourceCompatibility.isPresent) {
-                    val atLeast12Java = JavaVersion.current().compareTo(JavaVersion.compose(12, 0, 0, 0, false)) >= 0
+                    val atLeast12Java = JavaVersion.current() >= JavaVersion.compose(12, 0, 0, 0, false)
                     val sourceOptionKey = if (atLeast12Java) {
                         "--source"
                     } else {
@@ -161,7 +161,7 @@ private fun isAncestor(dir: File, file: File): Boolean {
     } else if (pathLength == prefixLength) {
         return true
     } else {
-        val lastPrefixChar: Char = prefix.get(prefixLength - 1)
+        val lastPrefixChar: Char = prefix[prefixLength - 1]
         var slashOrSeparatorIdx = prefixLength
         if (lastPrefixChar == '/' || lastPrefixChar == File.separatorChar) {
             slashOrSeparatorIdx = prefixLength - 1
@@ -187,7 +187,7 @@ internal class KaptWithoutKotlincConfig : KaptConfig<KaptWithoutKotlincTask> {
                 ext.processors.split(',').filter { it.isNotEmpty() }
             })
             task.disableClassloaderCacheForProcessors = project.disableClassloaderCacheForProcessors()
-            task.classLoadersCacheSize = project.classLoadersCacheSize()
+            task.classLoadersCacheSize = KaptProperties.getClassloadersCacheSize(project).get()
             task.javacOptions.set(getJavaOptions(task.defaultJavaSourceCompatibility))
         }
     }
@@ -224,7 +224,7 @@ internal class KaptWithoutKotlincConfig : KaptConfig<KaptWithoutKotlincTask> {
     constructor(project: Project, ext: KaptExtension) : super(project, ext) {
         configureTask { task ->
             val kotlinSourceDir = objectFactory.fileCollection().from(task.kotlinSourcesDestinationDir)
-            val nonAndroidDslOptions = getNonAndroidDslApOptions(ext, project, kotlinSourceDir, null, null)
+            val nonAndroidDslOptions = getNonAndroidDslApOptions(ext, project, kotlinSourceDir)
             task.kaptPluginOptions.add(nonAndroidDslOptions.toCompilerPluginOptions())
         }
     }

@@ -1,5 +1,5 @@
-// !API_VERSION: 1.5
-// !LANGUAGE: +JvmRecordSupport
+// API_VERSION: 1.5
+// LANGUAGE: +JvmRecordSupport
 // ENABLE_JVM_PREVIEW
 // FILE: JavaClass.java
 public class JavaClass {

@@ -5,38 +5,38 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 
-public interface KtRendererVisibilityModifierProvider {
-    public fun getVisibilityModifier(analysisSession: KtAnalysisSession, symbol: KtSymbolWithVisibility): KtModifierKeywordToken?
+public interface KaRendererVisibilityModifierProvider {
+    public fun getVisibilityModifier(analysisSession: KaSession, symbol: KaSymbolWithVisibility): KtModifierKeywordToken?
 
     public fun onlyIf(
-        condition: KtAnalysisSession.(symbol: KtSymbolWithVisibility) -> Boolean
-    ): KtRendererVisibilityModifierProvider {
+        condition: KaSession.(symbol: KaSymbolWithVisibility) -> Boolean
+    ): KaRendererVisibilityModifierProvider {
         val self = this
-        return object : KtRendererVisibilityModifierProvider {
-            override fun getVisibilityModifier(analysisSession: KtAnalysisSession, symbol: KtSymbolWithVisibility): KtModifierKeywordToken? =
+        return object : KaRendererVisibilityModifierProvider {
+            override fun getVisibilityModifier(analysisSession: KaSession, symbol: KaSymbolWithVisibility): KtModifierKeywordToken? =
                 if (condition(analysisSession, symbol)) self.getVisibilityModifier(analysisSession, symbol) else null
         }
     }
 
-    public object NO_IMPLICIT_VISIBILITY : KtRendererVisibilityModifierProvider {
+    public object NO_IMPLICIT_VISIBILITY : KaRendererVisibilityModifierProvider {
         override fun getVisibilityModifier(
-            analysisSession: KtAnalysisSession,
-            symbol: KtSymbolWithVisibility,
+            analysisSession: KaSession,
+            symbol: KaSymbolWithVisibility,
         ): KtModifierKeywordToken? {
             with(analysisSession) {
                 when (symbol) {
-                    is KtFunctionSymbol -> if (symbol.isOverride) return null
-                    is KtPropertySymbol -> if (symbol.isOverride) return null
-                    is KtConstructorSymbol -> {
-                        if ((symbol.getContainingSymbol() as? KtClassOrObjectSymbol)?.classKind == KtClassKind.ENUM_CLASS) return null
+                    is KaFunctionSymbol -> if (symbol.isOverride) return null
+                    is KaPropertySymbol -> if (symbol.isOverride) return null
+                    is KaConstructorSymbol -> {
+                        if ((symbol.getContainingSymbol() as? KaClassOrObjectSymbol)?.classKind == KaClassKind.ENUM_CLASS) return null
                     }
                 }
 
@@ -50,10 +50,10 @@ public interface KtRendererVisibilityModifierProvider {
         }
     }
 
-    public object WITH_IMPLICIT_VISIBILITY : KtRendererVisibilityModifierProvider {
+    public object WITH_IMPLICIT_VISIBILITY : KaRendererVisibilityModifierProvider {
         override fun getVisibilityModifier(
-            analysisSession: KtAnalysisSession,
-            symbol: KtSymbolWithVisibility,
+            analysisSession: KaSession,
+            symbol: KaSymbolWithVisibility,
         ): KtModifierKeywordToken? {
             return when (symbol.visibility) {
                 Visibilities.Private, Visibilities.PrivateToThis -> KtTokens.PRIVATE_KEYWORD
@@ -68,3 +68,5 @@ public interface KtRendererVisibilityModifierProvider {
         }
     }
 }
+
+public typealias KtRendererVisibilityModifierProvider = KaRendererVisibilityModifierProvider

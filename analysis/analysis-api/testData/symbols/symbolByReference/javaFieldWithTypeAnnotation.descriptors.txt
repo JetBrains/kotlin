@@ -1,19 +1,19 @@
-KtJavaFieldSymbol:
-  annotationsList: [
+KaJavaFieldSymbol:
+  annotations: [
     Anno1()
       psi: null
   ]
-  callableIdIfNonLocal: /JavaClass.field
+  callableId: /JavaClass.field
   contextReceivers: []
   isExtension: false
   isStatic: false
   isVal: false
   modality: FINAL
   name: field
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
-  returnType: KtFlexibleType:
-    annotationsList: [
+  returnType: KaFlexibleType:
+    annotations: [
       Anno1()
         psi: null
     ]
@@ -21,9 +21,9 @@ KtJavaFieldSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: JavaClass
   getContainingFileSymbol: null
   getContainingJvmClassName: JavaClass

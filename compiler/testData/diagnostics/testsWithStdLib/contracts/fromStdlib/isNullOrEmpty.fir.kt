@@ -1,5 +1,5 @@
-// !LANGUAGE: +ReadDeserializedContracts +UseReturnsEffect
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
+// LANGUAGE: +ReadDeserializedContracts +UseReturnsEffect
+// DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 
 fun testIsNullOrEmpty(x: String?) {
     if (x.isNullOrEmpty()) {

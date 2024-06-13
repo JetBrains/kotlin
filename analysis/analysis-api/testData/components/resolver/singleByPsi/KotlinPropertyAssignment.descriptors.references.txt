@@ -1,0 +1,6 @@
+KtNameReferenceExpression(221,230): 'something'
+  KtSimpleNameReference:
+    (in A) var something: kotlin.Int
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -14,10 +15,10 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildThisReceiverExpressionCopy
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.resolve.FirSamResolver
-import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceSession
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.PostponedResolvedAtom
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -49,7 +50,7 @@ class Candidate(
     val isFromCompanionObjectTypeScope: Boolean = false,
     // It's only true if we're in the member scope of smart cast receiver and this particular candidate came from original type
     val isFromOriginalTypeInPresenceOfSmartCast: Boolean = false,
-    inferenceSession: FirInferenceSession,
+    bodyResolveContext: BodyResolveContext,
 ) : AbstractCandidate() {
 
     override var symbol: FirBasedSymbol<*> = symbol
@@ -76,7 +77,9 @@ class Candidate(
         val system = constraintSystemFactory.createConstraintSystem()
 
         val baseCSFromInferenceSession =
-            runUnless(baseSystem.usesOuterCs) { inferenceSession.baseConstraintStorageForCandidate(this) }
+            runUnless(baseSystem.usesOuterCs) {
+                bodyResolveContext.inferenceSession.baseConstraintStorageForCandidate(this, bodyResolveContext)
+            }
         if (baseCSFromInferenceSession != null) {
             system.setBaseSystem(baseCSFromInferenceSession)
             system.addOtherSystem(baseSystem)
@@ -116,17 +119,20 @@ class Candidate(
     var numDefaults: Int = 0
     var functionTypesOfSamConversions: HashMap<FirExpression, FirSamResolver.SamConversionInfo>? = null
     lateinit var typeArgumentMapping: TypeArgumentMapping
-    val postponedAtoms = mutableListOf<PostponedResolvedAtom>()
+
+    private val _postponedAtomsByFir: MutableMap<FirElement, PostponedResolvedAtom> = mutableMapOf()
+    val postponedAtomsByFir: Map<FirElement, PostponedResolvedAtom> get() = _postponedAtomsByFir
+    val postponedAtoms: Collection<PostponedResolvedAtom> get() = _postponedAtomsByFir.values
 
     // PCLA-related parts
-    val postponedPCLACalls = mutableListOf<FirStatement>()
-    val lambdasAnalyzedWithPCLA = mutableListOf<FirAnonymousFunction>()
+    val postponedPCLACalls: MutableList<FirStatement> = mutableListOf()
+    val lambdasAnalyzedWithPCLA: MutableList<FirAnonymousFunction> = mutableListOf()
 
     // Currently, it's only about completion results writing for property delegation inference info
     // See the call sites of [FirDelegatedPropertyInferenceSession.completeSessionOrPostponeIfNonRoot]
-    val onPCLACompletionResultsWritingCallbacks = mutableListOf<(ConeSubstitutor) -> Unit>()
+    val onPCLACompletionResultsWritingCallbacks: MutableList<(ConeSubstitutor) -> Unit> = mutableListOf()
 
-    var lowestApplicability = CandidateApplicability.RESOLVED
+    var lowestApplicability: CandidateApplicability = CandidateApplicability.RESOLVED
         private set
 
     override var chosenExtensionReceiver: FirExpression? = givenExtensionReceiverOptions.singleOrNull()
@@ -139,6 +145,10 @@ class Candidate(
     private val _diagnostics: MutableList<ResolutionDiagnostic> = mutableListOf()
     override val diagnostics: List<ResolutionDiagnostic>
         get() = _diagnostics
+
+    fun addPostponedAtom(atom: PostponedResolvedAtom) {
+        _postponedAtomsByFir[atom.atom] = atom
+    }
 
     fun addDiagnostic(diagnostic: ResolutionDiagnostic) {
         _diagnostics += diagnostic
@@ -210,7 +220,7 @@ class Candidate(
         }
     }
 
-    var hasVisibleBackingField = false
+    var hasVisibleBackingField: Boolean = false
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

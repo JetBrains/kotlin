@@ -32,7 +32,8 @@ dependencies {
     }
 
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    testImplementation(toolsJar())
+    testCompileOnly(toolsJarApi())
+    testRuntimeOnly(toolsJar())
 
     antLauncherJar(commonDependency("org.apache.ant", "ant"))
     antLauncherJar(toolsJar())

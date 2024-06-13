@@ -43,7 +43,7 @@ internal fun FirClassSymbol<*>?.classSerializer(c: CheckerContext): FirClassSymb
     if (this == null) return null
     val session = c.session
     // serializer annotation on class?
-    getSerializableWith(session)?.let { return it.toRegularClassSymbol(session) }
+    getSerializableWith(session)?.let { return it.classSymbolOrUpperBound(session) }
     // companion object serializer?
     if (this is FirRegularClassSymbol && isInternallySerializableObject(session)) return companionObjectSymbol
     // can infer @Poly?

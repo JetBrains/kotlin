@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 
-public abstract class KtOriginalPsiProvider : KtAnalysisSessionComponent() {
+@KaAnalysisApiInternals
+public abstract class KaOriginalPsiProvider : KaSessionComponent() {
     public abstract fun getOriginalDeclaration(declaration: KtDeclaration): KtDeclaration?
     public abstract fun getOriginalKtFile(file: KtFile): KtFile?
 
@@ -17,23 +19,30 @@ public abstract class KtOriginalPsiProvider : KtAnalysisSessionComponent() {
     public abstract fun recordOriginalKtFile(fakeFile: KtFile, originalFile: KtFile)
 }
 
-public interface KtOriginalPsiProviderMixIn : KtAnalysisSessionMixIn {
+@KaAnalysisApiInternals
+public typealias KtOriginalPsiProvider = KaOriginalPsiProvider
+
+@KaAnalysisApiInternals
+public interface KaOriginalPsiProviderMixIn : KaSessionMixIn {
     /**
      * If [KtDeclaration] is a non-local declaration in a fake file analyzed in dependent session, returns the original declaration
      * for [this]. Otherwise, returns `null`.
      */
+    @KaAnalysisApiInternals
     public fun KtDeclaration.getOriginalDeclaration(): KtDeclaration? =
         withValidityAssertion { analysisSession.originalPsiProvider.getOriginalDeclaration(this) }
 
     /**
      * If [this] is a fake file analyzed in dependent session, returns the original file for [this]. Otherwise, returns `null`.
      */
+    @KaAnalysisApiInternals
     public fun KtFile.getOriginalKtFile(): KtFile? =
         withValidityAssertion { analysisSession.originalPsiProvider.getOriginalKtFile(this) }
 
     /**
      * Records [declaration] as an original declaration for [this].
      */
+    @KaAnalysisApiInternals
     public fun KtDeclaration.recordOriginalDeclaration(declaration: KtDeclaration) {
         withValidityAssertion { analysisSession.originalPsiProvider.recordOriginalDeclaration(this, declaration) }
     }
@@ -41,7 +50,11 @@ public interface KtOriginalPsiProviderMixIn : KtAnalysisSessionMixIn {
     /**
      * Records [file] as an original file for [this].
      */
+    @KaAnalysisApiInternals
     public fun KtFile.recordOriginalKtFile(file: KtFile) {
         withValidityAssertion { analysisSession.originalPsiProvider.recordOriginalKtFile(this, file) }
     }
 }
+
+@KaAnalysisApiInternals
+public typealias KtOriginalPsiProviderMixIn = KaOriginalPsiProviderMixIn

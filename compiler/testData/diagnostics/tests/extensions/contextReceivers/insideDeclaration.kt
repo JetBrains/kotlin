@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers
 
 class A {
     fun h1() {}

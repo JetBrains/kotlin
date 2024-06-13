@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 
-internal class KtFe10TypeSystemCommonBackendContextForTypeMapping(
+internal class KaFe10TypeSystemCommonBackendContextForTypeMapping(
     private val resolveSession: ResolveSession
 ) : TypeSystemCommonBackendContextForTypeMapping, ClassicTypeSystemContext {
     override val builtIns: KotlinBuiltIns

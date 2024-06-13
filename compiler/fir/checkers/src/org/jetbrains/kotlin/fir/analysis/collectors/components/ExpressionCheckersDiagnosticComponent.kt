@@ -46,7 +46,7 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allTypeOperatorCallCheckers.check(typeOperatorCall, data)
     }
 
-    override fun <T> visitLiteralExpression(literalExpression: FirLiteralExpression<T>, data: CheckerContext) {
+    override fun visitLiteralExpression(literalExpression: FirLiteralExpression, data: CheckerContext) {
         checkers.allLiteralExpressionCheckers.check(literalExpression, data)
     }
 

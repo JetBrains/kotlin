@@ -5,58 +5,60 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-public abstract class KtSubstitutorFactory : KtAnalysisSessionComponent() {
-    public abstract fun buildSubstitutor(builder: KtSubstitutorBuilder): KtSubstitutor
+public abstract class KaSubstitutorFactory : KaSessionComponent() {
+    public abstract fun buildSubstitutor(builder: KaSubstitutorBuilder): KaSubstitutor
 }
 
+public typealias KtSubstitutorFactory = KaSubstitutorFactory
+
 /**
- * Creates new [KtSubstitutor] using substitutions specified inside [build] lambda
+ * Creates new [KaSubstitutor] using substitutions specified inside [build] lambda
  */
-@OptIn(ExperimentalContracts::class, KtAnalysisApiInternals::class)
-public inline fun KtAnalysisSession.buildSubstitutor(
-    build: KtSubstitutorBuilder.() -> Unit,
-): KtSubstitutor {
+@OptIn(ExperimentalContracts::class, KaAnalysisApiInternals::class)
+public inline fun KaSession.buildSubstitutor(
+    build: KaSubstitutorBuilder.() -> Unit,
+): KaSubstitutor {
     contract {
         callsInPlace(build, InvocationKind.EXACTLY_ONCE)
     }
-    return analysisSession.substitutorFactory.buildSubstitutor(KtSubstitutorBuilder(token).apply(build))
+    return analysisSession.substitutorFactory.buildSubstitutor(KaSubstitutorBuilder(token).apply(build))
 }
 
 
-public class KtSubstitutorBuilder
-@KtAnalysisApiInternals constructor(override val token: KtLifetimeToken) : KtLifetimeOwner {
-    private val backingMapping = mutableMapOf<KtTypeParameterSymbol, KtType>()
+public class KaSubstitutorBuilder
+@KaAnalysisApiInternals constructor(override val token: KaLifetimeToken) : KaLifetimeOwner {
+    private val backingMapping = mutableMapOf<KaTypeParameterSymbol, KaType>()
 
-    public val mappings: Map<KtTypeParameterSymbol, KtType> get() = withValidityAssertion { backingMapping }
+    public val mappings: Map<KaTypeParameterSymbol, KaType> get() = withValidityAssertion { backingMapping }
 
     /**
      * Adds a new [typeParameter] -> [type] substitution to the substitutor which is being built.
      * If there already was a substitution with a [typeParameter], replaces corresponding substitution with a new one.
      */
-    public fun substitution(typeParameter: KtTypeParameterSymbol, type: KtType): Unit = withValidityAssertion {
+    public fun substitution(typeParameter: KaTypeParameterSymbol, type: KaType): Unit = withValidityAssertion {
         backingMapping[typeParameter] = type
     }
 
     /**
      * Adds a new substitutions to the substitutor which is being built.
-     * If there already was a substitution with a [KtTypeParameterSymbol] which is present in a [substitutions],
+     * If there already was a substitution with a [KaTypeParameterSymbol] which is present in a [substitutions],
      * replaces corresponding substitution with a new one.
      */
-    public fun substitutions(substitutions: Map<KtTypeParameterSymbol, KtType>): Unit = withValidityAssertion {
+    public fun substitutions(substitutions: Map<KaTypeParameterSymbol, KaType>): Unit = withValidityAssertion {
         backingMapping += substitutions
     }
 }
 
-
+public typealias KtSubstitutorBuilder = KaSubstitutorBuilder

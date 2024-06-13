@@ -1,7 +1,7 @@
-KtConstructorSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
-  containingClassIdIfNonLocal: A
+KaConstructorSymbol:
+  annotations: []
+  callableId: null
+  containingClassId: A
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -10,16 +10,16 @@ KtConstructorSymbol:
   isPrimary: false
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: A
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -31,26 +31,26 @@ KtConstructorSymbol:
       name: i
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(implicitConstructorDelegationCall.kt)
+      getContainingFileSymbol: KaFileSymbol(implicitConstructorDelegationCall.kt)
       getContainingJvmClassName: A
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(implicitConstructorDelegationCall.kt)
+  getContainingFileSymbol: KaFileSymbol(implicitConstructorDelegationCall.kt)
   getContainingJvmClassName: A
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: A
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: A
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -65,15 +65,15 @@ KtNamedClassOrObjectSymbol:
   name: A
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(implicitConstructorDelegationCall.kt)
+  getContainingFileSymbol: KaFileSymbol(implicitConstructorDelegationCall.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

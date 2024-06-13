@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.types.qualifiers
 
-import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.types.KtClassTypeQualifier
+import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.types.KaClassTypeQualifier
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -15,12 +15,12 @@ import org.jetbrains.kotlin.fir.types.toConeTypeProjection
 internal object ErrorClassTypeQualifierBuilder {
     fun createQualifiersForUnresolvedType(
         coneDiagnostic: ConeUnresolvedError,
-        builder: KtSymbolByFirBuilder,
-    ): List<KtClassTypeQualifier> {
+        builder: KaSymbolByFirBuilder,
+    ): List<KaClassTypeQualifier> {
         return when (coneDiagnostic) {
             is ConeUnresolvedTypeQualifierError ->
                 coneDiagnostic.qualifiers.map { part ->
-                    KtClassTypeQualifier.KtUnresolvedClassTypeQualifier(
+                    KaClassTypeQualifier.KaUnresolvedClassTypeQualifier(
                         part.name,
                         part.typeArgumentList.typeArguments.map { builder.typeBuilder.buildTypeProjection(it.toConeTypeProjection()) },
                         builder.token
@@ -28,33 +28,33 @@ internal object ErrorClassTypeQualifierBuilder {
                 }
 
             is ConeUnresolvedNameError -> listOf(
-                KtClassTypeQualifier.KtUnresolvedClassTypeQualifier(coneDiagnostic.name, emptyList(), builder.token)
+                KaClassTypeQualifier.KaUnresolvedClassTypeQualifier(coneDiagnostic.name, emptyList(), builder.token)
             )
 
             is ConeUnresolvedReferenceError -> listOf(
-                KtClassTypeQualifier.KtUnresolvedClassTypeQualifier(coneDiagnostic.name, emptyList(), builder.token)
+                KaClassTypeQualifier.KaUnresolvedClassTypeQualifier(coneDiagnostic.name, emptyList(), builder.token)
             )
 
             is ConeUnresolvedSymbolError ->
                 coneDiagnostic.classId.asSingleFqName().pathSegments()
-                    .map { KtClassTypeQualifier.KtUnresolvedClassTypeQualifier(it, emptyList(), builder.token) }
+                    .map { KaClassTypeQualifier.KaUnresolvedClassTypeQualifier(it, emptyList(), builder.token) }
 
         }
     }
 
     fun createQualifiersForUnmatchedTypeArgumentsType(
         coneDiagnostic: ConeUnmatchedTypeArgumentsError,
-        builder: KtSymbolByFirBuilder
-    ): List<KtClassTypeQualifier> {
+        builder: KaSymbolByFirBuilder
+    ): List<KaClassTypeQualifier> {
         return createQualifiersByClassSymbol(coneDiagnostic.symbol, builder)
     }
 
     private fun createQualifiersByClassSymbol(
         firSymbol: FirClassLikeSymbol<*>,
-        builder: KtSymbolByFirBuilder
-    ): List<KtClassTypeQualifier.KtResolvedClassTypeQualifier> {
+        builder: KaSymbolByFirBuilder
+    ): List<KaClassTypeQualifier.KaResolvedClassTypeQualifier> {
         return generateSequence(firSymbol) { it.getContainingClassSymbol(builder.rootSession) }.mapTo(mutableListOf()) { classSymbol ->
-            KtClassTypeQualifier.KtResolvedClassTypeQualifier(
+            KaClassTypeQualifier.KaResolvedClassTypeQualifier(
                 builder.classifierBuilder.buildClassLikeSymbol(classSymbol),
                 emptyList(),
                 builder.token

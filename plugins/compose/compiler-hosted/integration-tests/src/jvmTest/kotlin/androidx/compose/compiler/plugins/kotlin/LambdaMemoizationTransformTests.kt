@@ -26,7 +26,10 @@ import org.junit.Test
 class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest(useFir) {
     override fun CompilerConfiguration.updateConfiguration() {
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, true)
-        put(ComposeConfiguration.NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_KEY, true)
+        put(
+            ComposeConfiguration.FEATURE_FLAGS,
+            listOf(FeatureFlag.OptimizeNonSkippingGroups.featureName)
+        )
         languageVersionSettings = LanguageVersionSettingsImpl(
             languageVersion = languageVersionSettings.languageVersion,
             apiVersion = languageVersionSettings.apiVersion,
@@ -130,7 +133,6 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
         """
     )
 
-    @Ignore("ui/foundation dependency is not supported for now")
     @Test
     fun testLocalFunCaptures3() = verifyGoldenComposeIrTransform(
         """
@@ -462,7 +464,6 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
         """
         )
 
-    @Ignore("ui/foundation dependency is not supported for now")
     @Test // Regression validating b/246399235
     fun testB246399235() {
         testCompile(
@@ -742,4 +743,36 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
                 }
             """
         )
+
+    @Test
+    fun testMemoizingFromDelegate() = verifyGoldenComposeIrTransform(
+        extra = """
+            class ClassWithData(
+                val action: Int = 0,
+            )
+
+            fun getData(): ClassWithData = TODO()
+        """,
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun StrongSkippingIssue(
+                data: ClassWithData
+            ) {
+                val state by remember { mutableStateOf("") }
+                val action by data::action
+                val action1 by getData()::action
+                { 
+                    action
+                }
+                {
+                    action1
+                }
+                {
+                    state
+                }
+            }
+        """
+    )
 }

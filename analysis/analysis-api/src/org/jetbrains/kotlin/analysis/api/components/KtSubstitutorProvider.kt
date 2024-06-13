@@ -6,21 +6,23 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 
-public abstract class KtSubstitutorProvider : KtAnalysisSessionComponent() {
+public abstract class KaSubstitutorProvider : KaSessionComponent() {
     public abstract fun createSubstitutor(
-        subClass: KtClassOrObjectSymbol,
-        superClass: KtClassOrObjectSymbol,
-    ): KtSubstitutor?
+        subClass: KaClassOrObjectSymbol,
+        superClass: KaClassOrObjectSymbol,
+    ): KaSubstitutor?
 }
 
-public interface KtSubstitutorProviderMixIn : KtAnalysisSessionMixIn {
+public typealias KtSubstitutorProvider = KaSubstitutorProvider
+
+public interface KaSubstitutorProviderMixIn : KaSessionMixIn {
     /**
-     * Creates a [KtSubstitutor] based on the inheritance relationship between [subClass] and [superClass].
+     * Creates a [KaSubstitutor] based on the inheritance relationship between [subClass] and [superClass].
      *
-     * The semantic of resulted [KtSubstitutor] is the substitutor that should be applied to a member of [superClass],
+     * The semantic of resulted [KaSubstitutor] is the substitutor that should be applied to a member of [superClass],
      * so it can be called on an instance of [subClass].
      *
      * Basically, it's a composition of inheritance-based substitutions for all the inheritance chain.
@@ -38,12 +40,14 @@ public interface KtSubstitutorProviderMixIn : KtAnalysisSessionMixIn {
      *
      * @param subClass the subClass or object symbol.
      * @param superClass the super class symbol.
-     * @return [KtSubstitutor] if [subClass] inherits [superClass] and there are no error types in the inheritance path. Returns `null` otherwise.
+     * @return [KaSubstitutor] if [subClass] inherits [superClass] and there are no error types in the inheritance path. Returns `null` otherwise.
      */
     public fun createInheritanceTypeSubstitutor(
-        subClass: KtClassOrObjectSymbol,
-        superClass: KtClassOrObjectSymbol,
-    ): KtSubstitutor? = withValidityAssertion {
+        subClass: KaClassOrObjectSymbol,
+        superClass: KaClassOrObjectSymbol,
+    ): KaSubstitutor? = withValidityAssertion {
         analysisSession.substitutorProvider.createSubstitutor(subClass, superClass)
     }
 }
+
+public typealias KtSubstitutorProviderMixIn = KaSubstitutorProviderMixIn

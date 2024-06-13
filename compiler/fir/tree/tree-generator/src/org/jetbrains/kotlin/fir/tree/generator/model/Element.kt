@@ -59,10 +59,6 @@ class Element(name: String, override val propertyName: String, kind: Kind) : Abs
 
     val needTransformOtherChildren: Boolean get() = _needTransformOtherChildren || elementParents.any { it.element.needTransformOtherChildren }
 
-    override fun toString(): String {
-        return buildString { renderTo(this, ImportCollecting.Empty) }
-    }
-
     enum class Kind(val packageName: String) {
         Expression("expressions"),
         Declaration("declarations"),

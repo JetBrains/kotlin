@@ -5,9 +5,9 @@ scopes:
   ExplicitStarImportingScope, index = 1
     packages: 0
     classifiers: 1
-      KtNamedClassOrObjectSymbol:
-        annotationsList: []
-        classIdIfNonLocal: other/A
+      KaNamedClassOrObjectSymbol:
+        annotations: []
+        classId: other/A
         classKind: CLASS
         companionObject: null
         contextReceivers: []
@@ -22,18 +22,18 @@ scopes:
         name: A
         origin: SOURCE
         superTypes: [
-          KtUsualClassType:
-            annotationsList: []
-            ownTypeArguments: []
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
             type: kotlin/Any
         ]
         symbolKind: TOP_LEVEL
         typeParameters: []
         visibility: Public
     callables: 1
-      KtFunctionSymbol:
-        annotationsList: []
-        callableIdIfNonLocal: other/b
+      KaFunctionSymbol:
+        annotations: []
+        callableId: other/b
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -53,9 +53,9 @@ scopes:
         name: b
         origin: SOURCE
         receiverParameter: null
-        returnType: KtUsualClassType:
-          annotationsList: []
-          ownTypeArguments: []
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
           type: kotlin/Unit
         symbolKind: TOP_LEVEL
         typeParameters: []

@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.wasm.test.diagnostics
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
 import org.jetbrains.kotlin.test.builders.classicFrontendStep
@@ -35,6 +37,7 @@ abstract class AbstractDiagnosticsWasmTestBase(
             frontend = FrontendKinds.ClassicFrontend
             targetPlatform = this@AbstractDiagnosticsWasmTestBase.targetPlatform
             dependencyKind = DependencyKind.Source
+            targetBackend = TargetBackend.WASM
         }
 
         defaultDirectives {
@@ -54,6 +57,7 @@ abstract class AbstractDiagnosticsWasmTestBase(
             ::CoroutineHelpersSourceFilesProvider,
         )
         useAdditionalService(::LibraryProvider)
+        useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
 
         classicFrontendStep()
         classicFrontendHandlersStep {

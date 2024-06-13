@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.generators.tree.PositionTypeParameterRef
 import org.jetbrains.kotlin.generators.tree.TypeKind
 import org.jetbrains.kotlin.generators.tree.type
 import org.jetbrains.kotlin.ir.generator.Packages.declarations
+import org.jetbrains.kotlin.ir.generator.Packages.descriptors
 import org.jetbrains.kotlin.ir.generator.Packages.exprs
 import org.jetbrains.kotlin.ir.generator.Packages.symbols
+import org.jetbrains.kotlin.ir.generator.Packages.symbolsImpl
 import org.jetbrains.kotlin.ir.generator.Packages.tree
 import org.jetbrains.kotlin.ir.generator.Packages.types
 import org.jetbrains.kotlin.ir.generator.Packages.util
@@ -21,6 +23,7 @@ object Packages {
     const val tree = "org.jetbrains.kotlin.ir"
     const val exprs = "org.jetbrains.kotlin.ir.expressions"
     const val symbols = "org.jetbrains.kotlin.ir.symbols"
+    const val symbolsImpl = "org.jetbrains.kotlin.ir.symbols.impl"
     const val declarations = "org.jetbrains.kotlin.ir.declarations"
     const val types = "org.jetbrains.kotlin.ir.types"
     const val visitors = "org.jetbrains.kotlin.ir.visitors"
@@ -35,6 +38,7 @@ val elementVisitorVoidType = type(visitors, "IrElementVisitorVoid")
 val elementTransformerType = type(visitors, "IrElementTransformer")
 val elementTransformerVoidType = type(visitors, "IrElementTransformerVoid", TypeKind.Class)
 val typeTransformerType = type(visitors, "IrTypeTransformer")
+val typeTransformerVoidType = type(visitors, "IrTypeTransformerVoid", TypeKind.Class)
 val irTypeType = type(types, "IrType")
 val irSimpleTypeType = type(types, "IrSimpleType", TypeKind.Class)
 val irTypeAbbreviationType = type(types, "IrTypeAbbreviation")
@@ -46,29 +50,10 @@ val declaredSymbolRemapperType = type(util, "DeclaredSymbolRemapper")
 val referencedSymbolRemapperType = type(util, "ReferencedSymbolRemapper")
 val emptySymbolRemapperType = ClassRef<PositionTypeParameterRef>(TypeKind.Class, util, "SymbolRemapper", "Empty")
 val irImplementationDetailType = type(tree, "IrImplementationDetail", TypeKind.Class)
+val irElementConstructorIndicatorType = type(util, "IrElementConstructorIndicator", TypeKind.Class)
 
-val symbolType = type(symbols, "IrSymbol")
-val packageFragmentSymbolType = type(symbols, "IrPackageFragmentSymbol")
-val fileSymbolType = type(symbols, "IrFileSymbol")
-val externalPackageFragmentSymbolType = type(symbols, "IrExternalPackageFragmentSymbol")
-val anonymousInitializerSymbolType = type(symbols, "IrAnonymousInitializerSymbol")
-val enumEntrySymbolType = type(symbols, "IrEnumEntrySymbol")
-val fieldSymbolType = type(symbols, "IrFieldSymbol")
-val classifierSymbolType = type(symbols, "IrClassifierSymbol")
-val classSymbolType = type(symbols, "IrClassSymbol")
-val scriptSymbolType = type(symbols, "IrScriptSymbol")
-val typeParameterSymbolType = type(symbols, "IrTypeParameterSymbol")
-val valueSymbolType = type(symbols, "IrValueSymbol")
-val valueParameterSymbolType = type(symbols, "IrValueParameterSymbol")
-val variableSymbolType = type(symbols, "IrVariableSymbol")
-val returnTargetSymbolType = type(symbols, "IrReturnTargetSymbol")
-val functionSymbolType = type(symbols, "IrFunctionSymbol")
-val constructorSymbolType = type(symbols, "IrConstructorSymbol")
-val simpleFunctionSymbolType = type(symbols, "IrSimpleFunctionSymbol")
-val returnableBlockSymbolType = type(symbols, "IrReturnableBlockSymbol")
-val propertySymbolType = type(symbols, "IrPropertySymbol")
-val localDelegatedPropertySymbolType = type(symbols, "IrLocalDelegatedPropertySymbol")
-val typeAliasSymbolType = type(symbols, "IrTypeAliasSymbol")
+val irSymbolBaseType = type(symbolsImpl, "IrSymbolBase", TypeKind.Class)
+val irSymbolWithSignatureType = type(symbolsImpl, "IrSymbolWithSignature", TypeKind.Class)
 
 val obsoleteDescriptorBasedApiAnnotation = type(BASE_PACKAGE, "ObsoleteDescriptorBasedAPI", TypeKind.Class)
 val unsafeDuringIrConstructionApiAnnotation = type(symbols, "UnsafeDuringIrConstructionAPI", TypeKind.Class)

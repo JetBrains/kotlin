@@ -313,7 +313,7 @@ digraph castInTryWithJump_fir_kt {
                 subgraph cluster_36 {
                     color=blue
                     104 [label="Catch enter"];
-                    105 [label="Variable declaration: e: R|kotlin/Exception|"];
+                    105 [label="Variable declaration: e: R|{kotlin/Exception=} java/lang/Exception|"];
                     subgraph cluster_37 {
                         color=blue
                         106 [label="Enter block"];
@@ -467,7 +467,7 @@ digraph castInTryWithJump_fir_kt {
                             subgraph cluster_54 {
                                 color=blue
                                 158 [label="Catch enter"];
-                                159 [label="Variable declaration: e: R|kotlin/Exception|"];
+                                159 [label="Variable declaration: e: R|{kotlin/Exception=} java/lang/Exception|"];
                                 subgraph cluster_55 {
                                     color=blue
                                     160 [label="Enter block"];
@@ -697,7 +697,7 @@ digraph castInTryWithJump_fir_kt {
                             subgraph cluster_76 {
                                 color=blue
                                 236 [label="Catch enter"];
-                                237 [label="Variable declaration: e: R|kotlin/Exception|"];
+                                237 [label="Variable declaration: e: R|{kotlin/Exception=} java/lang/Exception|"];
                                 subgraph cluster_77 {
                                     color=blue
                                     238 [label="Enter block"];

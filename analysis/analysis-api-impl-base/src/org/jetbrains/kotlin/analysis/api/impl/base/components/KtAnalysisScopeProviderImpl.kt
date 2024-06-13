@@ -10,22 +10,22 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.components.KtAnalysisScopeProvider
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.KaAnalysisScopeProvider
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleStructureInternals
 import org.jetbrains.kotlin.analysis.project.structure.allDirectDependencies
 import org.jetbrains.kotlin.analysis.project.structure.analysisExtensionFileContextModule
-import org.jetbrains.kotlin.analysis.providers.KotlinResolutionScopeProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinResolutionScopeProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.contains
 
-class KtAnalysisScopeProviderImpl(
-    override val analysisSession: KtAnalysisSession,
-    override val token: KtLifetimeToken,
+class KaAnalysisScopeProviderImpl(
+    override val analysisSession: KaSession,
+    override val token: KaLifetimeToken,
     private val shadowedScope: GlobalSearchScope
-) : KtAnalysisScopeProvider() {
+) : KaAnalysisScopeProvider() {
 
     private val baseResolveScope by lazy(LazyThreadSafetyMode.PUBLICATION) {
         KotlinResolutionScopeProvider.getInstance(analysisSession.useSiteModule.project).getResolutionScope(analysisSession.useSiteModule)

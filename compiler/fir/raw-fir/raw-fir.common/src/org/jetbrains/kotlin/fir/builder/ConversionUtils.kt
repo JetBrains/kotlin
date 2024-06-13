@@ -706,6 +706,17 @@ fun buildBalancedOrExpressionTree(conditions: List<FirExpression>, lower: Int = 
     )
 }
 
+fun FirExpression.guardedBy(
+    guard: FirExpression?,
+): FirExpression = when (guard) {
+    null -> this
+    else -> this.generateLazyLogicalOperation(
+        guard,
+        isAnd = true,
+        (this.source ?: guard.source)?.fakeElement(KtFakeSourceElementKind.WhenCondition)
+    )
+}
+
 fun AnnotationUseSiteTarget?.appliesToPrimaryConstructorParameter() = this == null ||
         this == AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER ||
         this == AnnotationUseSiteTarget.RECEIVER ||
@@ -718,4 +729,23 @@ fun FirErrorTypeRef.wrapIntoArray(): FirResolvedTypeRef {
         type = StandardClassIds.Array.constructClassLikeType(arrayOf(ConeKotlinTypeProjectionOut(typeRef.coneType)))
         delegatedTypeRef = typeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ArrayTypeFromVarargParameter)
     }
+}
+
+fun shouldGenerateDelegatedSuperCall(
+    isAnySuperCall: Boolean,
+    isExpectClass: Boolean,
+    isEnumEntry: Boolean,
+    hasExplicitDelegatedCalls: Boolean
+): Boolean {
+    if (isAnySuperCall) {
+        return false
+    }
+
+    if (isExpectClass) {
+        // Generally, an `expect` class cannot inherit from other expect class.
+        // However, for the IDE resolution purposes, we keep invalid explicit delegate calls.
+        return !isEnumEntry && hasExplicitDelegatedCalls
+    }
+
+    return true
 }

@@ -58,7 +58,7 @@ data class CallInfo(
      * @see FirCallResolver.collectAllCandidates
      */
     val arguments: List<FirExpression> get() = (argumentList as? FirResolvedArgumentList)?.originalArgumentList?.arguments ?: argumentList.arguments
-    val argumentCount get() = arguments.size
+    val argumentCount: Int get() = arguments.size
 
     fun replaceWithVariableAccess(): CallInfo =
         copy(callKind = CallKind.VariableAccess, typeArguments = emptyList(), argumentList = FirEmptyArgumentList)

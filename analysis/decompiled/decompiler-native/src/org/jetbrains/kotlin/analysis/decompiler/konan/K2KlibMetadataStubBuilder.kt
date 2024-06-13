@@ -32,9 +32,10 @@ internal class K2KlibMetadataStubBuilder(
         val packageProto = fileWithMetadata.proto.`package`
         val packageFqName = fileWithMetadata.packageFqName
         val nameResolver = fileWithMetadata.nameResolver
+        val mainClassDataFinder = ProtoBasedClassDataFinder(fileWithMetadata.proto, nameResolver, fileWithMetadata.version)
         val protocol = serializerProtocol()
         val components = ClsStubBuilderComponents(
-            ProtoBasedClassDataFinder(fileWithMetadata.proto, nameResolver, fileWithMetadata.version),
+            NearFileClassDataFinder.wrapIfNeeded(mainClassDataFinder, fileContent.file, readFile),
             AnnotationLoaderForStubBuilderImpl(protocol),
             fileContent.file,
             protocol

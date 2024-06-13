@@ -577,8 +577,9 @@ This also sets the value of '-jvm-target' to be equal to the selected JDK versio
         value = "-Xsam-conversions",
         valueDescription = "{class|indy}",
         description = """Select the code generation scheme for SAM conversions.
--Xsam-conversions=indy          Generate SAM conversions using 'invokedynamic' with 'LambdaMetafactory.metafactory'. Requires '-jvm-target 1.8' or greater.
--Xsam-conversions=class         Generate SAM conversions as explicit classes"""
+-Xsam-conversions=indy          Generate SAM conversions using 'invokedynamic' with 'LambdaMetafactory.metafactory'.
+-Xsam-conversions=class         Generate SAM conversions as explicit classes.
+The default value is 'indy'."""
     )
     var samConversions: String? = null
         set(value) {
@@ -590,9 +591,10 @@ This also sets the value of '-jvm-target' to be equal to the selected JDK versio
         value = "-Xlambdas",
         valueDescription = "{class|indy}",
         description = """Select the code generation scheme for lambdas.
--Xlambdas=indy                  Generate lambdas using 'invokedynamic' with 'LambdaMetafactory.metafactory'. This requires '-jvm-target 1.8' or greater.
+-Xlambdas=indy                  Generate lambdas using 'invokedynamic' with 'LambdaMetafactory.metafactory'.
                                 A lambda object created using 'LambdaMetafactory.metafactory' will have a different 'toString()'.
--Xlambdas=class                 Generate lambdas as explicit classes."""
+-Xlambdas=class                 Generate lambdas as explicit classes.
+The default value is 'indy' if language version is 2.0+, and 'class' otherwise."""
     )
     var lambdas: String? = null
         set(value) {
@@ -725,16 +727,6 @@ See KT-45671 for more details."""
         description = "Save the IR to metadata (Experimental)."
     )
     var serializeIr: String = "none"
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xvalidate-ir",
-        description = "Validate IR before and after lowering."
-    )
-    var validateIr = false
         set(value) {
             checkFrozen()
             field = value

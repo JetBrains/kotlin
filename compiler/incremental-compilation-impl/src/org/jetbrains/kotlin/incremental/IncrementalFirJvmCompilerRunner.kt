@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
-import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
@@ -107,7 +106,7 @@ open class IncrementalFirJvmCompilerRunner(
             val configuration = CompilerConfiguration().apply {
 
                 put(CLIConfigurationKeys.ORIGINAL_MESSAGE_COLLECTOR_KEY, messageCollector)
-                put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, collector)
+                this.messageCollector = collector
                 put(IrMessageLogger.IR_MESSAGE_LOGGER, IrMessageCollector(collector))
 
                 setupCommonArguments(args) { JvmMetadataVersion(*it) }
@@ -262,9 +261,9 @@ open class IncrementalFirJvmCompilerRunner(
 
             val cycleResult = firIncrementalCycle() ?: return ExitCode.COMPILATION_ERROR to allCompiledSources
 
-            val extensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl(), JvmIrMangler)
+            val extensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl())
             val irGenerationExtensions = projectEnvironment.project.let { IrGenerationExtension.getInstances(it) }
-            val (irModuleFragment, components, pluginContext, irActualizedResult) = cycleResult.convertToIrAndActualizeForJvm(
+            val (irModuleFragment, components, pluginContext, irActualizedResult, _, symbolTable) = cycleResult.convertToIrAndActualizeForJvm(
                 extensions, configuration, compilerEnvironment.diagnosticsReporter, irGenerationExtensions,
             )
 
@@ -275,7 +274,8 @@ open class IncrementalFirJvmCompilerRunner(
                 irModuleFragment,
                 components,
                 pluginContext,
-                irActualizedResult
+                irActualizedResult,
+                symbolTable,
             )
 
             val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment)

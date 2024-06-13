@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.fir.backend.generators
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
+import org.jetbrains.kotlin.fir.backend.utils.*
+import org.jetbrains.kotlin.fir.backend.utils.convertCatching
+import org.jetbrains.kotlin.fir.backend.utils.convertWithOffsets
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
@@ -21,7 +24,6 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.java.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
-import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.isKFunctionInvoke
@@ -38,7 +40,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrScriptImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.declarations.impl.SCRIPT_K2_ORIGIN
-import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
@@ -305,9 +306,9 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                                 initializer,
                                 typeToUse
                             ).also { field ->
-                                if (initializer is FirLiteralExpression<*>) {
+                                if (initializer is FirLiteralExpression) {
                                     val constType = initializer.resolvedType.toIrType(c)
-                                    field.initializer = factory.createExpressionBody(initializer.toIrConst(constType))
+                                    field.initializer = factory.createExpressionBody(initializer.toIrConst<Any?>(constType))
                                 }
                             }
                         }
@@ -363,7 +364,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
     private fun getEffectivePropertyInitializer(property: FirProperty, resolveIfNeeded: Boolean): FirExpression? {
         val initializer = property.backingField?.initializer ?: property.initializer
 
-        if (resolveIfNeeded && initializer is FirLiteralExpression<*>) {
+        if (resolveIfNeeded && initializer is FirLiteralExpression) {
             property.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
             return getEffectivePropertyInitializer(property, resolveIfNeeded = false)
         }
@@ -412,7 +413,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
     ): IrSimpleFunction = convertCatching(propertyAccessor ?: property) {
         val prefix = if (isSetter) "set" else "get"
         val containerSource = (correspondingProperty as? IrProperty)?.containerSource
-        val accessorReturnType = if (isSetter) irBuiltIns.unitType else propertyType
+        val accessorReturnType = if (isSetter) builtins.unitType else propertyType
         val visibility = propertyAccessor?.visibility?.let {
             c.visibilityConverter.convertToDescriptorVisibility(it)
         }
@@ -464,12 +465,6 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                     propertyAccessor, irParent, dispatchReceiverType,
                     isStatic = irParent !is IrClass || propertyAccessor?.isStatic == true, forSetter = isSetter,
                     parentPropertyReceiver = property.receiverParameter,
-                )
-            }
-            if (correspondingProperty is Fir2IrLazyProperty && correspondingProperty.containingClass != null && !isFakeOverride && dispatchReceiverType != null) {
-                @OptIn(FirBasedFakeOverrideGenerator::class) // for lazy
-                this.overriddenSymbols = correspondingProperty.fir.generateOverriddenAccessorSymbols(
-                    correspondingProperty.containingClass, !isSetter, c
                 )
             }
         }
@@ -533,7 +528,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         if (field is FirJavaField && field.isStatic && field.isFinal && parentIsExternal) {
             // We are going to create IR for Java static final fields lazily because they can refer to some Kotlin const.
             // This way we delay const evaluation of Java fields until IR tree is fully built, and we can run IR interpreter.
-            return lazyDeclarationsGenerator.createIrLazyField(field, symbol, irParent!!, origin).apply {
+            return lazyDeclarationsGenerator.createIrLazyField(field, symbol, irParent!!, origin, irPropertySymbol = null).apply {
                 setParent(irParent)
                 addDeclarationToParent(this, irParent)
             }
@@ -554,8 +549,8 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
             ).apply {
                 metadata = FirMetadataSource.Field(field)
                 val initializer = field.unwrapFakeOverrides().initializer
-                if (initializer is FirLiteralExpression<*>) {
-                    this.initializer = factory.createExpressionBody(initializer.toIrConst(irType))
+                if (initializer is FirLiteralExpression) {
+                    this.initializer = factory.createExpressionBody(initializer.toIrConst<Any?>(irType))
                 }
                 /*
                  * fields of regular properties are stored inside IrProperty
@@ -830,25 +825,6 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
     }
 
     // ------------------------------------ variables ------------------------------------
-
-    // TODO: KT-58686
-    private var lastTemporaryIndex: Int = 0
-    private fun nextTemporaryIndex(): Int = lastTemporaryIndex++
-
-    private fun getNameForTemporary(nameHint: String?): String {
-        val index = nextTemporaryIndex()
-        return if (nameHint != null) "tmp${index}_$nameHint" else "tmp$index"
-    }
-
-    fun declareTemporaryVariable(base: IrExpression, nameHint: String? = null): IrVariable {
-        return declareIrVariable(
-            base.startOffset, base.endOffset, IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
-            Name.identifier(getNameForTemporary(nameHint)), base.type,
-            isVar = false, isConst = false, isLateinit = false
-        ).apply {
-            initializer = base
-        }
-    }
 
     fun createIrVariable(
         variable: FirVariable,

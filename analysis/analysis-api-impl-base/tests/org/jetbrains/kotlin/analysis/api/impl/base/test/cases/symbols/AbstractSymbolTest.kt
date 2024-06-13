@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K1
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K2
@@ -13,18 +13,17 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_SYMBOL_RESTORE_K1
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_SYMBOL_RESTORE_K2
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.PRETTY_RENDERER_OPTION
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtDeclarationRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KtDeclarationRendererForDebug
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KtClassifierBodyRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KtFunctionalTypeRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KtUsualClassTypeRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KaClassifierBodyRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.types.KaExpandedTypeRenderingMode
+import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KaFunctionalTypeRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithTypeParameters
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithTypeParameters
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.psi.*
@@ -39,7 +38,7 @@ import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import kotlin.test.fail
 
 abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
-    open val defaultRenderer = KtDeclarationRendererForDebug.WITH_QUALIFIED_NAMES
+    open val defaultRenderer = KaDeclarationRendererForDebug.WITH_QUALIFIED_NAMES
 
     open val defaultRendererOption: PrettyRendererOption? = null
 
@@ -50,7 +49,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         }
     }
 
-    abstract fun KtAnalysisSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData
+    abstract fun KaSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val directives = mainModule.testModule.directives
@@ -64,7 +63,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
             prettyRenderingMode.transformation(acc)
         }
 
-        fun KtAnalysisSession.safePointer(ktSymbol: KtSymbol): PointerWrapper? {
+        fun KaSession.safePointer(ktSymbol: KaSymbol): PointerWrapper? {
             val regularPointer = ktSymbol.runCatching {
                 createPointerForTest(disablePsiBasedSymbols = false)
             }.let {
@@ -73,7 +72,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
 
             assertSymbolPointer(regularPointer, testServices)
             val nonPsiPointer = ktSymbol.runCatching {
-                if (this is KtFileSymbol) return@runCatching null
+                if (this is KaFileSymbol) return@runCatching null
                 createPointerForTest(disablePsiBasedSymbols = true)
             }
 
@@ -116,14 +115,14 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
                     PointerWithRenderedSymbol(
                         safePointer(symbol),
                         when (symbol) {
-                            is KtDeclarationSymbol -> symbol.render(prettyRenderer)
-                            is KtFileSymbol -> prettyPrint {
+                            is KaDeclarationSymbol -> symbol.render(prettyRenderer)
+                            is KaFileSymbol -> prettyPrint {
                                 printCollection(symbol.getFileScope().getAllSymbols().asIterable(), separator = "\n\n") {
                                     append(it.render(prettyRenderer))
                                 }
                             }
 
-                            is KtReceiverParameterSymbol -> DebugSymbolRenderer().render(analysisSession, symbol)
+                            is KaReceiverParameterSymbol -> DebugSymbolRenderer().render(analysisSession, symbol)
                             else -> error(symbol::class.toString())
                         },
                     )
@@ -158,20 +157,20 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         }
     }
 
-    private fun KtSymbol.createPointerForTest(disablePsiBasedSymbols: Boolean): KtSymbolPointer<*> =
-        KtPsiBasedSymbolPointer.withDisabledPsiBasedPointers(disable = disablePsiBasedSymbols) { createPointer() }
+    private fun KaSymbol.createPointerForTest(disablePsiBasedSymbols: Boolean): KaSymbolPointer<*> =
+        KaPsiBasedSymbolPointer.withDisabledPsiBasedPointers(disable = disablePsiBasedSymbols) { createPointer() }
 
-    private fun assertSymbolPointer(pointer: KtSymbolPointer<*>, testServices: TestServices) {
+    private fun assertSymbolPointer(pointer: KaSymbolPointer<*>, testServices: TestServices) {
         testServices.assertions.assertTrue(value = pointer.pointsToTheSameSymbolAs(pointer)) {
             "The symbol is not equal to itself: ${pointer::class}"
         }
     }
 
-    private fun KtAnalysisSession.checkContainingFiles(symbols: List<KtSymbol>, mainFile: KtFile, testServices: TestServices) {
+    private fun KaSession.checkContainingFiles(symbols: List<KaSymbol>, mainFile: KtFile, testServices: TestServices) {
         val allowedContainingFileSymbols = getAllowedContainingFiles(mainFile, testServices).mapToSetOrEmpty { it.getFileSymbol() }
 
         for (symbol in symbols) {
-            if (symbol.origin != KtSymbolOrigin.SOURCE) continue
+            if (symbol.origin != KaSymbolOrigin.SOURCE) continue
 
             val containingFileSymbol = symbol.getContainingFileSymbol()
             if (containingFileSymbol !in allowedContainingFileSymbols) {
@@ -200,14 +199,6 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         k2Directive = DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K2,
     )
 
-    private fun RegisteredDirectives.findSpecificDirective(
-        commonDirective: Directive,
-        k1Directive: Directive,
-        k2Directive: Directive,
-    ): Directive? = commonDirective.takeIf { it in this }
-        ?: k1Directive.takeIf { configurator.frontendKind == FrontendKind.Fe10 && it in this }
-        ?: k2Directive.takeIf { configurator.frontendKind == FrontendKind.Fir && it in this }
-
     private fun compareResults(
         data: SymbolPointersData,
         testServices: TestServices,
@@ -235,7 +226,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         directives: RegisteredDirectives,
     ) {
         var failed = false
-        val restoredPointers = mutableListOf<KtSymbolPointer<*>>()
+        val restoredPointers = mutableListOf<KaSymbolPointer<*>>()
         try {
             val restored = analyseForTest(ktFile) {
                 pointersWithRendered.mapNotNull { (pointerWrapper, expectedRender, shouldBeRendered) ->
@@ -259,7 +250,10 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
             }
 
             val actual = restored.renderAsDeclarations()
-            testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+            val expectedFile = getTestDataFileSiblingPath().toFile()
+            if (!testServices.assertions.doesEqualToFile(expectedFile, actual)) {
+                error("Restored content is not the same. Actual:\n$actual")
+            }
         } catch (e: Throwable) {
             if (directiveToIgnore == null) throw e
             failed = true
@@ -280,7 +274,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
     }
 
     private fun compareRestoredSymbols(
-        restoredPointers: List<KtSymbolPointer<*>>,
+        restoredPointers: List<KaSymbolPointer<*>>,
         testServices: TestServices,
         ktFile: KtFile,
         isRegularPointers: Boolean,
@@ -314,7 +308,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         }
     }
 
-    protected open fun KtAnalysisSession.renderSymbolForComparison(symbol: KtSymbol, directives: RegisteredDirectives): String {
+    protected open fun KaSession.renderSymbolForComparison(symbol: KaSymbol, directives: RegisteredDirectives): String {
         val renderExpandedTypes = directives[PRETTY_RENDERER_OPTION].any { it == PrettyRendererOption.FULLY_EXPANDED_TYPES }
         return with(DebugSymbolRenderer(renderExtra = true, renderExpandedTypes = renderExpandedTypes)) { render(analysisSession, symbol) }
     }
@@ -350,11 +344,11 @@ object SymbolTestDirectives : SimpleDirectivesContainer() {
     val TARGET_FILE_NAME by stringDirective(description = "The name of the main file")
 }
 
-enum class PrettyRendererOption(val transformation: (KtDeclarationRenderer) -> KtDeclarationRenderer) {
+enum class PrettyRendererOption(val transformation: (KaDeclarationRenderer) -> KaDeclarationRenderer) {
     BODY_WITH_MEMBERS(
         { renderer ->
             renderer.with {
-                classifierBodyRenderer = KtClassifierBodyRenderer.BODY_WITH_MEMBERS
+                classifierBodyRenderer = KaClassifierBodyRenderer.BODY_WITH_MEMBERS
             }
         }
     ),
@@ -362,8 +356,8 @@ enum class PrettyRendererOption(val transformation: (KtDeclarationRenderer) -> K
         { renderer ->
             renderer.with {
                 typeRenderer = typeRenderer.with {
-                    usualClassTypeRenderer = KtUsualClassTypeRenderer.AS_FULLY_EXPANDED_CLASS_TYPE_WITH_TYPE_ARGUMENTS
-                    functionalTypeRenderer = KtFunctionalTypeRenderer.AS_FULLY_EXPANDED_CLASS_TYPE_FOR_REFELCTION_TYPES
+                    expandedTypeRenderingMode = KaExpandedTypeRenderingMode.RENDER_EXPANDED_TYPE
+                    functionalTypeRenderer = KaFunctionalTypeRenderer.AS_CLASS_TYPE_FOR_REFLECTION_TYPES
                 }
             }
         }
@@ -381,8 +375,8 @@ internal val KtDeclaration.isValidForSymbolCreation
     }
 
 data class SymbolsData(
-    val symbols: List<KtSymbol>,
-    val symbolsForPrettyRendering: List<KtSymbol> = symbols,
+    val symbols: List<KaSymbol>,
+    val symbolsForPrettyRendering: List<KaSymbol> = symbols,
 )
 
 private data class SymbolPointersData(
@@ -397,33 +391,33 @@ private data class PointerWithRenderedSymbol(
 )
 
 private data class PointerWrapper(
-    val regularPointer: KtSymbolPointer<*>,
-    val pointerWithoutPsiAnchor: KtSymbolPointer<*>?,
+    val regularPointer: KaSymbolPointer<*>,
+    val pointerWithoutPsiAnchor: KaSymbolPointer<*>?,
 )
 
-private fun KtSymbol?.withImplicitSymbols(): Sequence<KtSymbol> {
+private fun KaSymbol?.withImplicitSymbols(): Sequence<KaSymbol> {
     val ktSymbol = this ?: return emptySequence()
     return sequence {
         yield(ktSymbol)
 
-        if (ktSymbol is KtSymbolWithTypeParameters) {
+        if (ktSymbol is KaSymbolWithTypeParameters) {
             for (parameter in ktSymbol.typeParameters) {
                 yieldAll(parameter.withImplicitSymbols())
             }
         }
 
-        if (ktSymbol is KtPropertySymbol) {
+        if (ktSymbol is KaPropertySymbol) {
             yieldAll(ktSymbol.getter.withImplicitSymbols())
             yieldAll(ktSymbol.setter.withImplicitSymbols())
         }
 
-        if (ktSymbol is KtFunctionLikeSymbol) {
+        if (ktSymbol is KaFunctionLikeSymbol) {
             for (parameter in ktSymbol.valueParameters) {
                 yieldAll(parameter.withImplicitSymbols())
             }
         }
 
-        if (ktSymbol is KtValueParameterSymbol) {
+        if (ktSymbol is KaValueParameterSymbol) {
             yieldAll(ktSymbol.generatedPrimaryConstructorProperty.withImplicitSymbols())
         }
     }

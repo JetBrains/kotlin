@@ -1,7 +1,7 @@
 // IGNORE_BACKEND: JS
 // RUN_PLAIN_BOX_FUNCTION
 // INFER_MAIN_MODULE
-// !LANGUAGE: +JsAllowInvalidCharsIdentifiersEscaping
+// LANGUAGE: +JsAllowInvalidCharsIdentifiersEscaping
 
 // MODULE: export_invalid_name_variable
 // FILE: lib.kt

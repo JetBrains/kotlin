@@ -1,13 +1,13 @@
 // TARGET_BACKEND: JVM
-// IGNORE_LIGHT_ANALYSIS
-// FILE: Bar.java
+
+// FILE: one/two/Bar.java
 package one.two;
 
 public class Bar {
     public static final int BAR = Doo.DOO + 1;
 }
 
-// FILE: Boo.java
+// FILE: one/two/Boo.java
 package one.two;
 
 public class Boo {

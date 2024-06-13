@@ -5,7 +5,7 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
-import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
@@ -18,10 +18,10 @@ import org.jetbrains.sir.lightclasses.extensions.withSessions
 import org.jetbrains.sir.lightclasses.utils.translateParameters
 
 internal class SirInitFromKtSymbol(
-    override val ktSymbol: KtConstructorSymbol,
+    override val ktSymbol: KaConstructorSymbol,
     override val ktModule: KtModule,
     override val sirSession: SirSession,
-) : SirInit(), SirFromKtSymbol<KtConstructorSymbol> {
+) : SirInit(), SirFromKtSymbol<KaConstructorSymbol> {
 
     override val visibility: SirVisibility = SirVisibility.PUBLIC
     override val isFailable: Boolean = false

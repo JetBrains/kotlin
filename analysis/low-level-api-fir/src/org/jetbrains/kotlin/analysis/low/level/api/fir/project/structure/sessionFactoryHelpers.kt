@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionProvider
+import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CodeFragmentScopeProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.fir.caches.FirThreadSafeCachesFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirIdePredicateBasedProvider
@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirExceptionHandler
 import org.jetbrains.kotlin.analysis.project.structure.KtCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
-import org.jetbrains.kotlin.analysis.providers.KotlinResolutionScopeProvider
-import org.jetbrains.kotlin.analysis.providers.createAnnotationResolver
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinResolutionScopeProvider
+import org.jetbrains.kotlin.analysis.api.platform.declarations.createAnnotationResolver
 import org.jetbrains.kotlin.fir.FirExceptionHandler
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
@@ -47,14 +47,14 @@ internal fun LLFirSession.registerIdeComponents(project: Project) {
 private fun LLFirSession.registerResolveExtensionTool() {
     val resolveExtensionTool = createResolveExtensionTool() ?: return
 
-    // `KtResolveExtension`s are disposables meant to be tied to the lifetime of the `LLFirSession`.
+    // `KaResolveExtension`s are disposables meant to be tied to the lifetime of the `LLFirSession`.
     resolveExtensionTool.extensions.forEach { Disposer.register(requestDisposable(), it) }
 
     register(LLFirResolveExtensionTool::class, resolveExtensionTool)
 }
 
 private fun LLFirSession.createResolveExtensionTool(): LLFirResolveExtensionTool? {
-    val extensions = KtResolveExtensionProvider.provideExtensionsFor(ktModule)
+    val extensions = KaResolveExtensionProvider.provideExtensionsFor(ktModule)
     if (extensions.isEmpty()) return null
     return LLFirNonEmptyResolveExtensionTool(this, extensions)
 }

@@ -6,73 +6,77 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.signatures.KtCallableSignature
-import org.jetbrains.kotlin.analysis.api.signatures.KtFunctionLikeSignature
-import org.jetbrains.kotlin.analysis.api.signatures.KtVariableLikeSignature
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtVariableLikeSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
+import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionLikeSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaVariableLikeSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 
-public abstract class KtSignatureSubstitutor : KtAnalysisSessionComponent() {
-    public open fun <S : KtCallableSymbol> substitute(symbol: S, substitutor: KtSubstitutor): KtCallableSignature<S> = when (symbol) {
-        is KtFunctionLikeSymbol -> substitute(symbol, substitutor)
-        is KtVariableLikeSymbol -> substitute(symbol, substitutor)
+public abstract class KaSignatureSubstitutor : KaSessionComponent() {
+    public open fun <S : KaCallableSymbol> substitute(symbol: S, substitutor: KaSubstitutor): KaCallableSignature<S> = when (symbol) {
+        is KaFunctionLikeSymbol -> substitute(symbol, substitutor)
+        is KaVariableLikeSymbol -> substitute(symbol, substitutor)
         else -> unexpectedElementError("symbol", symbol)
     }
 
-    public abstract fun <S : KtFunctionLikeSymbol> substitute(symbol: S, substitutor: KtSubstitutor): KtFunctionLikeSignature<S>
+    public abstract fun <S : KaFunctionLikeSymbol> substitute(symbol: S, substitutor: KaSubstitutor): KaFunctionLikeSignature<S>
 
-    public abstract fun <S : KtVariableLikeSymbol> substitute(symbol: S, substitutor: KtSubstitutor): KtVariableLikeSignature<S>
+    public abstract fun <S : KaVariableLikeSymbol> substitute(symbol: S, substitutor: KaSubstitutor): KaVariableLikeSignature<S>
 
-    public abstract fun <S : KtCallableSymbol> asSignature(symbol: S): KtCallableSignature<S>
+    public abstract fun <S : KaCallableSymbol> asSignature(symbol: S): KaCallableSignature<S>
 
-    public abstract fun <S : KtFunctionLikeSymbol> asSignature(symbol: S): KtFunctionLikeSignature<S>
+    public abstract fun <S : KaFunctionLikeSymbol> asSignature(symbol: S): KaFunctionLikeSignature<S>
 
-    public abstract fun <S : KtVariableLikeSymbol> asSignature(symbol: S): KtVariableLikeSignature<S>
+    public abstract fun <S : KaVariableLikeSymbol> asSignature(symbol: S): KaVariableLikeSignature<S>
 }
 
-public interface KtSignatureSubstitutorMixIn : KtAnalysisSessionMixIn {
+public typealias KtSignatureSubstitutor = KaSignatureSubstitutor
+
+public interface KaSignatureSubstitutorMixIn : KaSessionMixIn {
     /**
      * Applies a [substitutor] to the given symbol and return a signature with substituted types.
      *
-     * @see KtSubstitutor.substitute
+     * @see KaSubstitutor.substitute
      */
-    public fun <S : KtCallableSymbol> S.substitute(substitutor: KtSubstitutor): KtCallableSignature<S> =
+    public fun <S : KaCallableSymbol> S.substitute(substitutor: KaSubstitutor): KaCallableSignature<S> =
         withValidityAssertion { analysisSession.signatureSubstitutor.substitute(this, substitutor) }
 
     /**
      * Applies a [substitutor] to the given symbol and return a signature with substituted types.
      *
-     * @see KtSubstitutor.substitute
+     * @see KaSubstitutor.substitute
      */
-    public fun <S : KtFunctionLikeSymbol> S.substitute(substitutor: KtSubstitutor): KtFunctionLikeSignature<S> =
+    public fun <S : KaFunctionLikeSymbol> S.substitute(substitutor: KaSubstitutor): KaFunctionLikeSignature<S> =
         withValidityAssertion { analysisSession.signatureSubstitutor.substitute(this, substitutor) }
 
     /**
      * Applies a [substitutor] to the given symbols and return a signature with substituted types.
      *
-     * @see KtSubstitutor.substitute
+     * @see KaSubstitutor.substitute
      */
-    public fun <S : KtVariableLikeSymbol> S.substitute(substitutor: KtSubstitutor): KtVariableLikeSignature<S> =
+    public fun <S : KaVariableLikeSymbol> S.substitute(substitutor: KaSubstitutor): KaVariableLikeSignature<S> =
         withValidityAssertion { analysisSession.signatureSubstitutor.substitute(this, substitutor) }
 
     /**
-     * Creates a new [KtCallableSignature] by given symbol and leave all types intact
+     * Creates a new [KaCallableSignature] by given symbol and leave all types intact
      */
-    public fun <S : KtCallableSymbol> S.asSignature(): KtCallableSignature<S> =
+    public fun <S : KaCallableSymbol> S.asSignature(): KaCallableSignature<S> =
         withValidityAssertion { analysisSession.signatureSubstitutor.asSignature(this) }
 
     /**
-     * Creates a new [KtCallableSignature] by given symbol and leave all types intact
+     * Creates a new [KaCallableSignature] by given symbol and leave all types intact
      */
-    public fun <S : KtFunctionLikeSymbol> S.asSignature(): KtFunctionLikeSignature<S> =
+    public fun <S : KaFunctionLikeSymbol> S.asSignature(): KaFunctionLikeSignature<S> =
         withValidityAssertion { analysisSession.signatureSubstitutor.asSignature(this) }
 
     /**
-     * Creates a new [KtCallableSignature] by given symbol and leave all types intact
+     * Creates a new [KaCallableSignature] by given symbol and leave all types intact
      */
-    public fun <S : KtVariableLikeSymbol> S.asSignature(): KtVariableLikeSignature<S> =
+    public fun <S : KaVariableLikeSymbol> S.asSignature(): KaVariableLikeSignature<S> =
         withValidityAssertion { analysisSession.signatureSubstitutor.asSignature(this) }
 }
+
+public typealias KtSignatureSubstitutorMixIn = KaSignatureSubstitutorMixIn

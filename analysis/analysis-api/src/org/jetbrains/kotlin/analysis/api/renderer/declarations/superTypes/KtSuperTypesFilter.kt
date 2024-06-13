@@ -5,27 +5,27 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.superTypes
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.StandardClassIds
 
-public fun interface KtSuperTypesFilter {
-    public fun filter(analysisSession: KtAnalysisSession, superType: KtType, symbol: KtClassOrObjectSymbol): Boolean
+public fun interface KaSuperTypesFilter {
+    public fun filter(analysisSession: KaSession, superType: KaType, symbol: KaClassOrObjectSymbol): Boolean
 
-    public object NO_DEFAULT_TYPES : KtSuperTypesFilter {
-        override fun filter(analysisSession: KtAnalysisSession, superType: KtType, symbol: KtClassOrObjectSymbol): Boolean {
+    public object NO_DEFAULT_TYPES : KaSuperTypesFilter {
+        override fun filter(analysisSession: KaSession, superType: KaType, symbol: KaClassOrObjectSymbol): Boolean {
             with(analysisSession) {
                 if (superType.isAny) {
                     return false
                 }
 
-                if (symbol.classKind == KtClassKind.ANNOTATION_CLASS && superType.isClassTypeWithClassId(StandardClassIds.Annotation)) {
+                if (symbol.classKind == KaClassKind.ANNOTATION_CLASS && superType.isClassTypeWithClassId(StandardClassIds.Annotation)) {
                     return false
                 }
 
-                if (symbol.classKind == KtClassKind.ENUM_CLASS && superType.isClassTypeWithClassId(StandardClassIds.Enum)) {
+                if (symbol.classKind == KaClassKind.ENUM_CLASS && superType.isClassTypeWithClassId(StandardClassIds.Enum)) {
                     return false
                 }
 
@@ -34,32 +34,34 @@ public fun interface KtSuperTypesFilter {
         }
     }
 
-    public object NO_ANY_FOR_INTERFACES : KtSuperTypesFilter {
-        override fun filter(analysisSession: KtAnalysisSession, superType: KtType, symbol: KtClassOrObjectSymbol): Boolean {
+    public object NO_ANY_FOR_INTERFACES : KaSuperTypesFilter {
+        override fun filter(analysisSession: KaSession, superType: KaType, symbol: KaClassOrObjectSymbol): Boolean {
             with(analysisSession) {
                 return when (symbol.classKind) {
-                    KtClassKind.INTERFACE -> !superType.isAny
+                    KaClassKind.INTERFACE -> !superType.isAny
                     else -> true
                 }
             }
         }
     }
 
-    public object ALL : KtSuperTypesFilter {
-        override fun filter(analysisSession: KtAnalysisSession, superType: KtType, symbol: KtClassOrObjectSymbol): Boolean {
+    public object ALL : KaSuperTypesFilter {
+        override fun filter(analysisSession: KaSession, superType: KaType, symbol: KaClassOrObjectSymbol): Boolean {
             return true
         }
     }
 
-    public object NONE : KtSuperTypesFilter {
-        override fun filter(analysisSession: KtAnalysisSession, superType: KtType, symbol: KtClassOrObjectSymbol): Boolean {
+    public object NONE : KaSuperTypesFilter {
+        override fun filter(analysisSession: KaSession, superType: KaType, symbol: KaClassOrObjectSymbol): Boolean {
             return false
         }
     }
 
     public companion object {
-        public operator fun invoke(predicate: KtAnalysisSession.(type: KtType, symbol: KtClassOrObjectSymbol) -> Boolean): KtSuperTypesFilter {
-            return KtSuperTypesFilter { analysisSession, superType, symbol -> predicate(analysisSession, superType, symbol) }
+        public operator fun invoke(predicate: KaSession.(type: KaType, symbol: KaClassOrObjectSymbol) -> Boolean): KaSuperTypesFilter {
+            return KaSuperTypesFilter { analysisSession, superType, symbol -> predicate(analysisSession, superType, symbol) }
         }
     }
 }
+
+public typealias KtSuperTypesFilter = KaSuperTypesFilter

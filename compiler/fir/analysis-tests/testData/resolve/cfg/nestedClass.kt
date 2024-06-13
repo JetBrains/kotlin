@@ -1,4 +1,4 @@
-// !DUMP_CFG
+// DUMP_CFG
 class OuterClass {
     fun outerFunction() {}
     val outerProperty = 1

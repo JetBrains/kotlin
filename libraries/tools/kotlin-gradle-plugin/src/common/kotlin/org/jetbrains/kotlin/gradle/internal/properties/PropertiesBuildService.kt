@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.internal.properties
 
 import org.gradle.api.Project
+import org.gradle.api.logging.Logging
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
@@ -13,12 +14,15 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.getOrNull
 import org.jetbrains.kotlin.gradle.plugin.internal.ConfigurationTimePropertiesAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
 import org.jetbrains.kotlin.gradle.utils.localProperties
+import org.jetbrains.kotlin.gradle.utils.mapOrNull
 import org.jetbrains.kotlin.gradle.utils.registerClassLoaderScopedBuildService
 import java.util.concurrent.Callable
 import java.util.concurrent.ConcurrentHashMap
@@ -48,6 +52,7 @@ internal abstract class PropertiesBuildService @Inject constructor(
 
     private val configurationTimePropertiesAccessor by lazy { parameters.configurationTimePropertiesAccessor.get() }
     private val localProperties by lazy { parameters.localProperties.get() }
+    private val logger = Logging.getLogger(this::class.java)
 
     /**
      * Returns a [Provider] of the value of the property with the given [propertyName] either from project [extraPropertiesExtension],
@@ -83,6 +88,74 @@ internal abstract class PropertiesBuildService @Inject constructor(
         project: Project,
     ) = property(propertyName, project.path, project.extraProperties)
 
+    fun <T : Any?, PROP : GradleProperty<T>> property(
+        property: PROP,
+        project: Project
+    ): Provider<T> {
+        return property(property.name, project.path, project.extraProperties)
+            .mapOrNull(providerFactory) {
+                val result = when (property) {
+                    is BooleanGradleProperty -> property.toBooleanFromString(it)
+                    is NullableBooleanGradleProperty -> property.toNullableBooleanFromString(it)
+                    is StringGradleProperty, is NullableStringGradleProperty -> it
+                    is IntGradleProperty -> property.toIntFromString(it)
+                    else -> throw IllegalStateException("Unknown Gradle property type $property")
+                }
+
+                @Suppress("UNCHECKED_CAST")
+                result as T?
+            }
+            .run {
+                val propDefaultValue = property.defaultValue
+                @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+                if (propDefaultValue != null) orElse(propDefaultValue) else this
+            }
+    }
+
+    private fun BooleanGradleProperty.toBooleanFromString(
+        value: String?
+    ): Boolean = parseBoolean(value, defaultValue, name)
+
+    private fun NullableBooleanGradleProperty.toNullableBooleanFromString(
+        value: String?
+    ): Boolean? = parseBoolean(value, defaultValue, name)
+
+    private fun <T : Boolean?> parseBoolean(
+        value: String?,
+        defaultValue: T,
+        propName: String,
+    ): T = when {
+        value.equals("true", ignoreCase = true) -> {
+            @Suppress("UNCHECKED_CAST")
+            true as T
+        }
+        value.equals("false", ignoreCase = true) -> {
+            @Suppress("UNCHECKED_CAST")
+            false as T
+        }
+        else -> {
+            warnInvalidPropertyValue("Boolean", propName, value, defaultValue)
+            defaultValue
+        }
+    }
+
+    private fun IntGradleProperty.toIntFromString(value: String?): Int {
+        return value?.toIntOrNull() ?: run {
+            warnInvalidPropertyValue("Int", name, value, defaultValue)
+            defaultValue
+        }
+    }
+
+    private fun warnInvalidPropertyValue(
+        propertyType: String,
+        name: String,
+        value: String?,
+        defaultValue: Any?,
+    ) = logger.warn(
+        "$propertyType option '$name' was set to an invalid value: `$value`." +
+                " Using default value '$defaultValue' instead."
+    )
+
     /** Returns the value of the property with the given [propertyName] in the given [project]. */
     fun get(propertyName: String, project: Project): String? {
         return property(propertyName, project).orNull
@@ -101,4 +174,57 @@ internal abstract class PropertiesBuildService @Inject constructor(
         private val value: T? by lazy { valueResolver.call() }
         override fun call(): T? = value
     }
+
+    internal sealed interface GradleProperty<T : Any?> {
+        val name: String
+        val defaultValue: T
+    }
+
+    internal class BooleanGradleProperty(
+        override val name: String,
+        override val defaultValue: Boolean
+    ) : GradleProperty<Boolean>
+
+    internal class NullableBooleanGradleProperty(
+        override val name: String,
+    ) : GradleProperty<Boolean?> {
+        override val defaultValue: Boolean? = null
+    }
+
+    internal class StringGradleProperty(
+        override val name: String,
+        override val defaultValue: String
+    ) : GradleProperty<String>
+
+    internal class NullableStringGradleProperty(
+        override val name: String,
+    ) : GradleProperty<String?> {
+        override val defaultValue: String? = null
+    }
+
+    internal class IntGradleProperty(
+        override val name: String,
+        override val defaultValue: Int
+    ) : GradleProperty<Int>
 }
+
+internal val Project.propertiesService: Provider<PropertiesBuildService>
+    get() = PropertiesBuildService.registerIfAbsent(this)
+
+internal fun <T> PropertiesBuildService.propertyWithDeprecatedName(
+    nonDeprecatedProperty: PropertiesBuildService.GradleProperty<T>,
+    deprecatedProperty: PropertiesBuildService.GradleProperty<T>,
+    project: Project,
+): Provider<T> = property(nonDeprecatedProperty, project)
+    .orElse(
+        property(deprecatedProperty, project)
+            .map {
+                project.reportDiagnosticOncePerBuild(
+                    KotlinToolingDiagnostics.DeprecatedPropertyWithReplacement(
+                        deprecatedProperty.name,
+                        nonDeprecatedProperty.name
+                    )
+                )
+                it!!
+            }
+    )

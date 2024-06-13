@@ -254,6 +254,12 @@ interface DescriptorRendererOptions {
     var renderConstructorKeyword: Boolean
     var renderUnabbreviatedType: Boolean
     var renderTypeExpansions: Boolean
+
+    /**
+     * If [renderTypeExpansions] is `true`, additionally renders the abbreviated type as a comment behind the expanded type.
+     */
+    var renderAbbreviatedTypeComments: Boolean
+
     var includeAdditionalModifiers: Boolean
     var parameterNamesInFunctionalTypes: Boolean
     var renderFunctionContracts: Boolean

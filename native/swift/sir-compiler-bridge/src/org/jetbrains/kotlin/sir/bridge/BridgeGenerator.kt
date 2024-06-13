@@ -5,43 +5,29 @@
 
 package org.jetbrains.kotlin.sir.bridge
 
-import org.jetbrains.kotlin.sir.SirCallable
-import org.jetbrains.kotlin.sir.SirFunctionBody
+import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.bridge.impl.*
-import org.jetbrains.kotlin.sir.bridge.impl.BridgeGeneratorImpl
-import org.jetbrains.kotlin.sir.bridge.impl.CBridgePrinter
-import org.jetbrains.kotlin.sir.bridge.impl.KotlinBridgePrinter
-import org.jetbrains.kotlin.sir.util.allParameters
-import org.jetbrains.kotlin.sir.util.isVoid
-import org.jetbrains.kotlin.sir.util.name
-import org.jetbrains.kotlin.sir.util.returnType
 
 /**
- * Description of a Kotlin function for which we are creating the bridge.
- *
- * @param callable SIR function we are generating bridge for
- * @param bridgeName C name of the bridge
+ * Description of a Kotlin callable for which we are creating the bridge.
  */
 public class BridgeRequest(
+    /**
+     * SIR callable we are generating bridge for.
+     */
     public val callable: SirCallable,
+    /**
+     * Prefix of the bridge's C name.
+     */
     public val bridgeName: String,
+    /**
+     * Fully Qualified Name of Kotlin callable.
+     */
     public val fqName: List<String>,
-)
-
-/**
- * Generates the body of a function from a given request.
- *
- * @param request the BridgeRequest object that contains information about the function and the bridge
- * @return the generated SirFunctionBody object representing the body of the function
- */
-public fun createFunctionBodyFromRequest(request: BridgeRequest): SirFunctionBody {
-    val callee = request.cDeclarationName()
-    val calleeArguments = request.callable.allParameters.map { it.name }
-    val callSite = "$callee(${calleeArguments.joinToString(separator = ", ")})"
-    val callStatement = if (request.callable.returnType.isVoid) callSite else "return $callSite"
-    return SirFunctionBody(
-        listOf(callStatement)
-    )
+) : Comparable<BridgeRequest> {
+    public override fun compareTo(other: BridgeRequest): Int {
+        return bridgeName.compareTo(other.bridgeName)
+    }
 }
 
 /**
@@ -77,10 +63,11 @@ public class KotlinFunctionBridge(
 )
 
 /**
- * Generates [FunctionBridge] that binds SIR function to its Kotlin origin.
+ * Generates [FunctionBridge] and [SirFunctionBody] that binds SIR function to its Kotlin origin.
  */
 public interface BridgeGenerator {
-    public fun generate(request: BridgeRequest): FunctionBridge
+    public fun generateFunctionBridges(request: BridgeRequest): List<FunctionBridge>
+    public fun generateSirFunctionBody(request: BridgeRequest): SirFunctionBody
 }
 
 /**
@@ -98,8 +85,13 @@ public interface BridgePrinter {
     public fun print(): Sequence<String>
 }
 
-public fun createBridgeGenerator(): BridgeGenerator =
-    BridgeGeneratorImpl()
+public interface SirTypeNamer {
+    public fun swiftFqName(type: SirType): String
+    public fun kotlinFqName(type: SirType): String
+}
+
+public fun createBridgeGenerator(namer: SirTypeNamer): BridgeGenerator =
+    BridgeGeneratorImpl(namer)
 
 public fun createCBridgePrinter(): BridgePrinter =
     CBridgePrinter()

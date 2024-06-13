@@ -5,43 +5,43 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.types
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.impl.base.KtChainedSubstitutor
-import org.jetbrains.kotlin.analysis.api.impl.base.KtMapBackedSubstitutor
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.impl.base.KaChainedSubstitutor
+import org.jetbrains.kotlin.analysis.api.impl.base.KaMapBackedSubstitutor
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 
-internal abstract class AbstractKtFirSubstitutor<T : ConeSubstitutor>(
+internal abstract class AbstractKaFirSubstitutor<T : ConeSubstitutor>(
     val substitutor: T,
-    protected val builder: KtSymbolByFirBuilder,
-) : KtSubstitutor {
-    override val token: KtLifetimeToken get() = builder.token
+    protected val builder: KaSymbolByFirBuilder,
+) : KaSubstitutor {
+    override val token: KaLifetimeToken get() = builder.token
 
-    override fun substituteOrNull(type: KtType): KtType? = withValidityAssertion {
-        require(type is KtFirType)
+    override fun substituteOrNull(type: KaType): KaType? = withValidityAssertion {
+        require(type is KaFirType)
         substitutor.substituteOrNull(type.coneType)?.type?.let { builder.typeBuilder.buildKtType(it) }
     }
 }
 
-internal class KtFirGenericSubstitutor(
+internal class KaFirGenericSubstitutor(
     substitutor: ConeSubstitutor,
-    builder: KtSymbolByFirBuilder,
-) : AbstractKtFirSubstitutor<ConeSubstitutor>(substitutor, builder)
+    builder: KaSymbolByFirBuilder,
+) : AbstractKaFirSubstitutor<ConeSubstitutor>(substitutor, builder)
 
-@OptIn(KtAnalysisApiInternals::class)
-internal class KtFirMapBackedSubstitutor(
+@OptIn(KaAnalysisApiInternals::class)
+internal class KaFirMapBackedSubstitutor(
     substitutor: ConeSubstitutorByMap,
-    builder: KtSymbolByFirBuilder,
-) : AbstractKtFirSubstitutor<ConeSubstitutorByMap>(substitutor, builder,), KtMapBackedSubstitutor {
-    override fun getAsMap(): Map<KtTypeParameterSymbol, KtType> = withValidityAssertion {
-        val result = mutableMapOf<KtTypeParameterSymbol, KtType>()
+    builder: KaSymbolByFirBuilder,
+) : AbstractKaFirSubstitutor<ConeSubstitutorByMap>(substitutor, builder,), KaMapBackedSubstitutor {
+    override fun getAsMap(): Map<KaTypeParameterSymbol, KaType> = withValidityAssertion {
+        val result = mutableMapOf<KaTypeParameterSymbol, KaType>()
         for ((typeParameter, type) in substitutor.substitution) {
             val typeParameterSymbol = builder.classifierBuilder.buildTypeParameterSymbolByLookupTag(typeParameter.toLookupTag())
             if (typeParameterSymbol != null) {
@@ -53,18 +53,18 @@ internal class KtFirMapBackedSubstitutor(
     }
 }
 
-@OptIn(KtAnalysisApiInternals::class)
-internal class KtFirChainedSubstitutor(
+@OptIn(KaAnalysisApiInternals::class)
+internal class KaFirChainedSubstitutor(
     substitutor: ChainedSubstitutor,
-    builder: KtSymbolByFirBuilder,
-) : AbstractKtFirSubstitutor<ChainedSubstitutor>(substitutor, builder), KtChainedSubstitutor {
+    builder: KaSymbolByFirBuilder,
+) : AbstractKaFirSubstitutor<ChainedSubstitutor>(substitutor, builder), KaChainedSubstitutor {
     override val first
-        get(): KtSubstitutor {
+        get(): KaSubstitutor {
             return builder.typeBuilder.buildSubstitutor(substitutor.first)
         }
 
     override val second
-        get(): KtSubstitutor {
+        get(): KaSubstitutor {
             return builder.typeBuilder.buildSubstitutor(substitutor.second)
         }
 }

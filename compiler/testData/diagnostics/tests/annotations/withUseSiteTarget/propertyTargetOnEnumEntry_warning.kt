@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: -ProhibitUseSiteGetTargetAnnotations
+// LANGUAGE: -ProhibitUseSiteGetTargetAnnotations
 
 @Target(AnnotationTarget.PROPERTY) annotation class Annotation
 

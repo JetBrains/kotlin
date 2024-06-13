@@ -1,9 +1,5 @@
 // LANGUAGE: +BreakContinueInInlineLambdas
-// TARGET_BACKEND: JVM_IR
-// TARGET_BACKEND: JS_IR
-// TARGET_BACKEND: JS_IR_ES6
-// TARGET_BACKEND: NATIVE
-// TARGET_BACKEND: WASM
+// IGNORE_BACKEND: JVM
 
 inline fun foo(block: () -> Int): Int  = block()
 
@@ -14,5 +10,5 @@ fun box(): String {
         sum += foo { if (i == 3) break else i }
     }
 
-    return if (sum == 3) "OK" else "FAIL"
+    return if (sum == 3) "OK" else "FAIL: $sum"
 }

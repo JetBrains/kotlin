@@ -22,8 +22,14 @@ private fun extractAdditionInfo(stub: StubElement<*>, builder: StringBuilder, le
         is KotlinUserTypeStubImpl -> {
             val upperBound = stub.upperBound
             if (upperBound != null) {
-                builder.append("    ft: ")
-                appendFlexibleTypeInfo(builder, upperBound)
+                builder.append("    upperBound: ")
+                appendTypeInfo(builder, upperBound)
+            }
+
+            val abbreviatedType = stub.abbreviatedType
+            if (abbreviatedType != null) {
+                builder.append("    abbreviatedType: ")
+                appendTypeInfo(builder, abbreviatedType)
             }
         }
         is KotlinFunctionStubImpl -> {
@@ -61,7 +67,7 @@ private fun extractAdditionInfo(stub: StubElement<*>, builder: StringBuilder, le
     }
 }
 
-private fun appendFlexibleTypeInfo(builder: StringBuilder, typeBean: KotlinTypeBean) {
+private fun appendTypeInfo(builder: StringBuilder, typeBean: KotlinTypeBean) {
     when (typeBean) {
         is KotlinClassTypeBean -> {
             builder.append(typeBean.classId.asFqNameString())
@@ -74,13 +80,20 @@ private fun appendFlexibleTypeInfo(builder: StringBuilder, typeBean: KotlinTypeB
                         builder.append(arg.projectionKind.name)
                     }
                     if (arg.projectionKind != KtProjectionKind.STAR) {
-                        appendFlexibleTypeInfo(builder, arg.type!!)
+                        appendTypeInfo(builder, arg.type!!)
                     }
                 }
                 builder.append(">")
             }
             if (typeBean.nullable) {
                 builder.append("?")
+            }
+
+            val abbreviatedType = typeBean.abbreviatedType
+            if (abbreviatedType != null) {
+                builder.append(" (abbreviatedType: ")
+                appendTypeInfo(builder, abbreviatedType)
+                builder.append(")")
             }
         }
         is KotlinTypeParameterTypeBean -> {
@@ -94,9 +107,9 @@ private fun appendFlexibleTypeInfo(builder: StringBuilder, typeBean: KotlinTypeB
         }
 
         is KotlinFlexibleTypeBean -> {
-            appendFlexibleTypeInfo(builder, typeBean.lowerBound)
+            appendTypeInfo(builder, typeBean.lowerBound)
             builder.append(" .. ")
-            appendFlexibleTypeInfo(builder, typeBean.upperBound)
+            appendTypeInfo(builder, typeBean.upperBound)
         }
     }
 }

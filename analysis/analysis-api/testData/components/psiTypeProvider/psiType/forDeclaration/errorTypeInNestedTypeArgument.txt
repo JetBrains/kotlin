@@ -1,2 +1,2 @@
-KtType: B<kotlin.String, A<Unknown>>
+KaType: B<kotlin.String, A<Unknown>>
 PsiType: null

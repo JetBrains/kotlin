@@ -9,6 +9,9 @@ public final class org/jetbrains/kotlin/gradle/DeprecatedTargetPresetApiKt {
 public abstract interface annotation class org/jetbrains/kotlin/gradle/ExperimentalKotlinGradlePluginApi : java/lang/annotation/Annotation {
 }
 
+public abstract interface annotation class org/jetbrains/kotlin/gradle/ExperimentalWasmDsl : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class org/jetbrains/kotlin/gradle/ExternalKotlinTargetApi : java/lang/annotation/Annotation {
 }
 

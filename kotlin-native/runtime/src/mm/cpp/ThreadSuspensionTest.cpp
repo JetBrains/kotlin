@@ -128,7 +128,8 @@ TEST_F(ThreadSuspensionTest, SimpleStartStop) {
         reportProgress(i, kIterations);
         canStart = true;
 
-        mm::SuspendThreads("test");
+        mm::RequestThreadsSuspension("test");
+        mm::WaitForThreadsSuspension();
         auto suspended = collectSuspended();
         EXPECT_THAT(suspended, testing::Each(true));
         EXPECT_EQ(mm::IsThreadSuspensionRequested(), true);
@@ -171,7 +172,8 @@ TEST_F(ThreadSuspensionTest, SwitchStateToNative) {
         reportProgress(i, kIterations);
         canStart = true;
 
-        mm::SuspendThreads("test");
+        mm::RequestThreadsSuspension("test");
+        mm::WaitForThreadsSuspension();
         EXPECT_EQ(mm::IsThreadSuspensionRequested(), true);
 
         mm::ResumeThreads();
@@ -182,7 +184,7 @@ TEST_F(ThreadSuspensionTest, SwitchStateToNative) {
     }
 }
 
-TEST_F(ThreadSuspensionTest, ConcurrentSuspend) {
+TEST_F(ThreadSuspensionTest, ConcurrentSuspendExclusive) {
     ASSERT_THAT(collectThreadData(), testing::IsEmpty());
     std::atomic<size_t> successCount = 0;
 
@@ -196,8 +198,9 @@ TEST_F(ThreadSuspensionTest, ConcurrentSuspend) {
             ready[i] = true;
             waitUntilThreadsAreReady();
 
-            bool success = mm::SuspendThreads("test");
+            bool success = mm::TryRequestThreadsSuspension("test");
             if (success) {
+                mm::WaitForThreadsSuspension();
                 successCount++;
                 auto allThreadData = collectThreadData();
                 auto isCurrentOrSuspended = [currentThreadData](mm::ThreadData* data) {
@@ -216,6 +219,49 @@ TEST_F(ThreadSuspensionTest, ConcurrentSuspend) {
         thread.join();
     }
     EXPECT_EQ(successCount, 1u);
+}
+
+TEST_F(ThreadSuspensionTest, ConcurrentSuspendSeries) {
+    ASSERT_THAT(collectThreadData(), testing::IsEmpty());
+    std::atomic<size_t> successCount = 0;
+
+    for (size_t i = 0; i < kThreadCount; i++) {
+        threads.emplace_back([this, i, &successCount]() {
+            const bool registeredThread = i < kThreadCount / 2;
+
+            auto memoryInit = registeredThread ? std::optional<ScopedMemoryInit>{std::in_place} : std::nullopt;
+
+            auto* currentThreadData = registeredThread ? memoryInit->memoryState()->GetThreadData() : nullptr;
+            EXPECT_EQ(mm::IsThreadSuspensionRequested(), false);
+
+            // Sync with other threads.
+            ready[i] = true;
+            waitUntilThreadsAreReady();
+
+            if (registeredThread) {
+                currentThreadData->suspensionData().requestThreadsSuspension("test");
+            } else {
+                mm::RequestThreadsSuspension("test");
+            }
+            mm::WaitForThreadsSuspension();
+
+            successCount++;
+            auto threadRegistryLock = mm::ThreadRegistry::Instance().LockForIter(); // don't let threads deregister too early
+            auto allThreadData = collectThreadData();
+            auto isCurrentOrSuspended = [=](mm::ThreadData* data) {
+                return data == currentThreadData || data->suspensionData().suspendedOrNative();
+            };
+            EXPECT_THAT(allThreadData, testing::Each(testing::Truly(isCurrentOrSuspended)));
+            if (registeredThread) {
+                EXPECT_FALSE(currentThreadData->suspensionData().suspendedOrNative());
+            }
+            mm::ResumeThreads();
+        });
+    }
+    for (auto& thread : threads) {
+        thread.join();
+    }
+    EXPECT_EQ(successCount, kThreadCount);
 }
 
 TEST_F(ThreadSuspensionTest, FileInitializationWithSuspend) {

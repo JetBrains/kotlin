@@ -2,9 +2,13 @@ import TestProperty.*
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.tasks.Sync
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.environment
 import org.gradle.kotlin.dsl.project
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
 private enum class TestProperty(shortName: String) {
@@ -30,7 +34,9 @@ private enum class TestProperty(shortName: String) {
     SANITIZER("sanitizer"),
     SHARED_TEST_EXECUTION("sharedTestExecution"),
     EAGER_GROUP_CREATION("eagerGroupCreation"),
-    TEAMCITY("teamcity");
+    XCTEST_FRAMEWORK("xctest"),
+    TEAMCITY("teamcity"),
+    LATEST_RELEASED_COMPILER_PATH("latestReleasedCompilerPath");
 
     val fullName = "kotlin.internal.native.test.$shortName"
 }
@@ -101,11 +107,16 @@ fun Project.nativeTest(
     customTestDependencies: List<Configuration> = emptyList(),
     compilerPluginDependencies: List<Configuration> = emptyList(),
     allowParallelExecution: Boolean = true,
+    releasedCompilerDist: TaskProvider<Sync>? = null,
+    maxMetaspaceSizeMb: Int = 512,
+    defineJDKEnvVariables: List<JdkMajorVersion> = emptyList(),
     body: Test.() -> Unit = {},
 ) = projectTest(
     taskName,
     jUnitMode = JUnitMode.JUnit5,
-    maxHeapSizeMb = 3072 // Extra heap space for Kotlin/Native compiler.
+    maxHeapSizeMb = 3072, // Extra heap space for Kotlin/Native compiler.
+    maxMetaspaceSizeMb = maxMetaspaceSizeMb,
+    defineJDKEnvVariables = defineJDKEnvVariables,
 ) {
     group = "verification"
 
@@ -180,8 +191,32 @@ fun Project.nativeTest(
             }
 
             computeLazy(CUSTOM_KLIBS) {
+                val testTarget = readFromGradle(TEST_TARGET) ?: HostManager.hostName
+                val xcTestEnabled = readFromGradle(XCTEST_FRAMEWORK)?.toBooleanStrictOrNull() ?: false
+
+                val isAppleTarget = KonanTarget.predefinedTargets[testTarget]?.family?.isAppleFamily ?: false
+
+                val xcTestConfiguration = if (xcTestEnabled && isAppleTarget) {
+                    configurations.detachedConfiguration(
+                        dependencies.project(path = ":native:kotlin-test-native-xctest", configuration = "kotlinTestNativeXCTest")
+                    ).apply {
+                        isTransitive = false
+                    }
+                } else null
+
+                val xcTestTargetDependencies = xcTestConfiguration?.run {
+                    dependsOn(this)
+
+                    // Resolve artifacts and filter them by target
+                    resolvedConfiguration
+                        .resolvedArtifacts
+                        .filter { it.classifier == testTarget }
+                }
                 customTestDependencies.forEach(::dependsOn)
-                lazyClassPath { customTestDependencies.flatMapTo(this) { it.files } }
+                lazyClassPath {
+                    customTestDependencies.flatMapTo(this) { it.files }
+                    xcTestTargetDependencies?.mapTo(this) { it.file }
+                }
             }
 
             compute(TEST_KIND) {
@@ -202,6 +237,14 @@ fun Project.nativeTest(
             compute(SANITIZER)
             compute(SHARED_TEST_EXECUTION)
             compute(EAGER_GROUP_CREATION)
+            compute(XCTEST_FRAMEWORK)
+
+            computeLazy(LATEST_RELEASED_COMPILER_PATH) {
+                if (releasedCompilerDist != null) dependsOn(releasedCompilerDist)
+                lazy {
+                    releasedCompilerDist?.get()?.destinationDir?.absolutePath
+                }
+            }
 
             // Pass whether tests are running at TeamCity.
             computePrivate(TEAMCITY) { kotlinBuildProperties.isTeamcityBuild.toString() }

@@ -105,7 +105,6 @@ inline fun buildPropertyAccessorCopy(original: FirPropertyAccessor, init: FirPro
     copyBuilder.valueParameters.addAll(original.valueParameters)
     copyBuilder.body = original.body
     copyBuilder.contractDescription = original.contractDescription
-    copyBuilder.symbol = original.symbol
     copyBuilder.propertySymbol = original.propertySymbol
     copyBuilder.isGetter = original.isGetter
     copyBuilder.annotations.addAll(original.annotations)

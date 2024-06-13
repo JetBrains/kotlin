@@ -24,7 +24,13 @@ object PartialLinkageTestUtils {
         fun customizeModuleSources(moduleName: String, moduleSourceDir: File)
 
         // Build a KLIB from a module.
-        fun buildKlib(moduleName: String, buildDirs: ModuleBuildDirs, dependencies: Dependencies, klibFile: File)
+        fun buildKlib(
+            moduleName: String,
+            buildDirs: ModuleBuildDirs,
+            dependencies: Dependencies,
+            klibFile: File,
+            compilerEdition: KlibCompilerEdition,
+        )
 
         // Build a binary (executable) file given the main KLIB and the rest of dependencies.
         fun buildBinaryAndRun(mainModule: Dependency, otherDependencies: Dependencies)
@@ -70,102 +76,119 @@ object PartialLinkageTestUtils {
         }
     }
 
-    fun runTest(testConfiguration: TestConfiguration) = with(testConfiguration) {
-        val projectName = testDir.name
+    fun runTest(
+        testConfiguration: TestConfiguration,
+        compilerEditionChange: KlibCompilerChangeScenario = KlibCompilerChangeScenario.NoChange,
+    ) =
+        with(testConfiguration) {
+            val projectName = testDir.name
 
-        val projectInfoFile = File(testDir, PROJECT_INFO_FILE)
-        val projectInfo: ProjectInfo = ProjectInfoParser(projectInfoFile).parse(projectName)
+            val projectInfoFile = File(testDir, PROJECT_INFO_FILE)
+            val projectInfo: ProjectInfo = ProjectInfoParser(projectInfoFile).parse(projectName)
 
-        if (isIgnoredTest(projectInfo)) {
-            return onIgnoredTest() // Ignore muted tests.
-        }
-
-        val modulesMap: Map<String, ModuleUnderTest> = buildMap {
-            projectInfo.modules.forEach { moduleName ->
-                val moduleTestDir = File(testDir, moduleName)
-                KtUsefulTestCase.assertExists(moduleTestDir)
-
-                val moduleInfoFile = File(moduleTestDir, MODULE_INFO_FILE)
-                val moduleInfo = ModuleInfoParser(moduleInfoFile).parse(moduleName)
-
-                val moduleBuildDirs = createModuleDirs(buildDir, moduleName)
-
-                // Populate the source dir with *.kt files.
-                copySources(from = moduleTestDir, to = moduleBuildDirs.sourceDir)
-
-                // Customize the source dir if necessary.
-                customizeModuleSources(moduleName, moduleBuildDirs.sourceDir)
-
-                // Include PL utils into the main module.
-                if (moduleName == MAIN_MODULE_NAME) {
-                    val utilsDir = testDir.parentFile.resolve(PL_UTILS_DIR)
-                    KtUsefulTestCase.assertExists(utilsDir)
-
-                    copySources(from = utilsDir, to = moduleBuildDirs.sourceDir) { contents ->
-                        contents.replace(
-                            TEST_MODE_PLACEHOLDER,
-                            buildString {
-                                append("TestMode(")
-                                testModeConstructorParameters.entries.joinTo(this) { it.key + " = " + it.value }
-                                append(")")
-                            }
-                        )
-                    }
-                }
-
-                moduleBuildDirs.outputDir.apply { mkdirs() }
-
-                this[moduleName] = ModuleUnderTest(
-                    info = moduleInfo,
-                    testDir = moduleTestDir,
-                    buildDirs = moduleBuildDirs
-                )
+            if (isIgnoredTest(projectInfo)) {
+                return onIgnoredTest() // Ignore muted tests.
             }
-        }
 
-        // Collect all dependencies for building the final binary file.
-        var binaryDependencies = Dependencies.EMPTY
+            val modulesMap: Map<String, ModuleUnderTest> = buildMap {
+                projectInfo.modules.forEach { moduleName ->
+                    val moduleTestDir = File(testDir, moduleName)
+                    KtUsefulTestCase.assertExists(moduleTestDir)
 
-        projectInfo.steps.forEach { projectStep ->
-            projectStep.order.forEach { moduleName ->
-                val moduleUnderTest = modulesMap[moduleName] ?: fail { "No module $moduleName found on step ${projectStep.id}" }
-                val (moduleInfo, moduleTestDir, moduleBuildDirs) = moduleUnderTest
-                val moduleStep = moduleInfo.steps.getValue(projectStep.id)
+                    val moduleInfoFile = File(moduleTestDir, MODULE_INFO_FILE)
+                    val moduleInfo = ModuleInfoParser(moduleInfoFile).parse(moduleName)
 
-                moduleStep.modifications.forEach { modification ->
-                    modification.execute(moduleTestDir, moduleBuildDirs.sourceDir)
-                }
+                    val moduleBuildDirs = createModuleDirs(buildDir, moduleName)
 
-                if (!moduleBuildDirs.outputDir.list().isNullOrEmpty())
-                    onNonEmptyBuildDirectory(moduleBuildDirs.outputDir)
+                    // Populate the source dir with *.kt files.
+                    copySources(from = moduleTestDir, to = moduleBuildDirs.sourceDir)
 
-                val regularDependencies = hashSetOf<Dependency>()
-                val friendDependencies = hashSetOf<Dependency>()
+                    // Customize the source dir if necessary.
+                    customizeModuleSources(moduleName, moduleBuildDirs.sourceDir)
 
-                moduleStep.dependencies.forEach { dependency ->
-                    if (dependency.moduleName == "stdlib")
-                        regularDependencies += Dependency("stdlib", stdlibFile)
-                    else {
-                        val klibFile = modulesMap[dependency.moduleName]?.klibFile
-                            ?: fail { "No module ${dependency.moduleName} found on step ${projectStep.id}" }
-                        val moduleDependency = Dependency(dependency.moduleName, klibFile)
-                        regularDependencies += moduleDependency
-                        if (dependency.isFriend) friendDependencies += moduleDependency
+                    // Include PL utils into the main module.
+                    if (moduleName == MAIN_MODULE_NAME) {
+                        val utilsDir = testDir.parentFile.parentFile.resolve(PL_UTILS_DIR)
+                        KtUsefulTestCase.assertExists(utilsDir)
+
+                        copySources(from = utilsDir, to = moduleBuildDirs.sourceDir) { contents ->
+                            contents.replace(
+                                TEST_MODE_PLACEHOLDER,
+                                buildString {
+                                    append("TestMode(")
+                                    testModeConstructorParameters.entries.joinTo(this) { it.key + " = " + it.value }
+                                    append(")")
+                                }
+                            )
+                        }
                     }
+
+                    moduleBuildDirs.outputDir.apply { mkdirs() }
+
+                    this[moduleName] = ModuleUnderTest(
+                        info = moduleInfo,
+                        testDir = moduleTestDir,
+                        buildDirs = moduleBuildDirs
+                    )
                 }
-
-                val dependencies = Dependencies(regularDependencies, friendDependencies)
-                binaryDependencies = binaryDependencies.mergeWith(dependencies)
-
-                buildKlib(moduleInfo.moduleName, moduleBuildDirs, dependencies, moduleUnderTest.klibFile)
             }
+
+            // Collect all dependencies for building the final binary file.
+            var binaryDependencies = Dependencies.EMPTY
+
+            projectInfo.steps.forEach { projectStep ->
+                projectStep.order.forEach { moduleName ->
+                    val moduleUnderTest = modulesMap[moduleName] ?: fail { "No module $moduleName found on step ${projectStep.id}" }
+                    val (moduleInfo, moduleTestDir, moduleBuildDirs) = moduleUnderTest
+                    val moduleStep = moduleInfo.steps.getValue(projectStep.id)
+
+                    moduleStep.modifications.forEach { modification ->
+                        modification.execute(moduleTestDir, moduleBuildDirs.sourceDir)
+                    }
+
+                    if (!moduleBuildDirs.outputDir.list().isNullOrEmpty())
+                        onNonEmptyBuildDirectory(moduleBuildDirs.outputDir)
+
+                    val regularDependencies = hashSetOf<Dependency>()
+                    val friendDependencies = hashSetOf<Dependency>()
+
+                    moduleStep.dependencies.forEach { dependency ->
+                        if (dependency.moduleName == "stdlib")
+                            regularDependencies += Dependency("stdlib", stdlibFile)
+                        else {
+                            val klibFile = modulesMap[dependency.moduleName]?.klibFile
+                                ?: fail { "No module ${dependency.moduleName} found on step ${projectStep.id}" }
+                            val moduleDependency = Dependency(dependency.moduleName, klibFile)
+                            regularDependencies += moduleDependency
+                            if (dependency.isFriend) friendDependencies += moduleDependency
+                        }
+                    }
+
+                    val dependencies = Dependencies(regularDependencies, friendDependencies)
+                    binaryDependencies = binaryDependencies.mergeWith(dependencies)
+
+                    val compilerEdition = when (moduleStep.compiler) {
+                        ModuleInfo.CompilerCase.BOTTOM_V1 -> compilerEditionChange.bottomV1
+                        ModuleInfo.CompilerCase.BOTTOM_V2 -> compilerEditionChange.bottomV2
+                        ModuleInfo.CompilerCase.INTERMEDIATE -> compilerEditionChange.intermediate
+                        ModuleInfo.CompilerCase.DEFAULT -> KlibCompilerEdition.CURRENT
+                    }
+
+                    buildKlib(
+                        moduleInfo.moduleName,
+                        moduleBuildDirs,
+                        dependencies,
+                        moduleUnderTest.klibFile,
+                        compilerEdition
+                    )
+                }
+            }
+
+            val mainModuleKlibFile = modulesMap[MAIN_MODULE_NAME]?.klibFile ?: fail { "No main module $MAIN_MODULE_NAME found" }
+            val mainModuleDependency = Dependency(MAIN_MODULE_NAME, mainModuleKlibFile)
+
+            buildBinaryAndRun(mainModuleDependency, binaryDependencies)
         }
-
-        val mainModuleKlibFile = modulesMap[MAIN_MODULE_NAME]?.klibFile ?: fail { "No main module $MAIN_MODULE_NAME found" }
-        val mainModuleDependency = Dependency(MAIN_MODULE_NAME, mainModuleKlibFile)
-
-        buildBinaryAndRun(mainModuleDependency, binaryDependencies)
-    }
 
     private fun copySources(from: File, to: File, patchSourceFile: ((String) -> String)? = null) {
         var anyFilePatched = false
@@ -190,6 +213,8 @@ object PartialLinkageTestUtils {
 
     fun createModuleDirs(buildDir: File, moduleName: String): ModuleBuildDirs {
         val moduleBuildDir = buildDir.resolve(moduleName)
+
+        if (moduleBuildDir.exists()) moduleBuildDir.deleteRecursively()
 
         val moduleSourceDir = moduleBuildDir.resolve(SOURCE_DIR_NAME).apply { mkdirs() }
         val moduleOutputDir = moduleBuildDir.resolve(OUTPUT_DIR_NAME).apply { mkdirs() }

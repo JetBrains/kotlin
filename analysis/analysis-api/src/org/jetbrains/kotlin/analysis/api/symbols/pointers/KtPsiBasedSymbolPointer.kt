@@ -7,21 +7,21 @@ package org.jetbrains.kotlin.analysis.api.symbols.pointers
 
 import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import kotlin.reflect.KClass
 
-public class KtPsiBasedSymbolPointer<S : KtSymbol> private constructor(
+public class KaPsiBasedSymbolPointer<S : KaSymbol> private constructor(
     private val psiPointer: SmartPsiElementPointer<out KtElement>,
     private val expectedClass: KClass<S>,
-) : KtSymbolPointer<S>() {
-    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
-    override fun restoreSymbol(analysisSession: KtAnalysisSession): S? {
+) : KaSymbolPointer<S>() {
+    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KaSession.restoreSymbol")
+    override fun restoreSymbol(analysisSession: KaSession): S? {
         val psi = psiPointer.element ?: return null
 
-        val symbol: KtSymbol = with(analysisSession) {
+        val symbol: KaSymbol = with(analysisSession) {
             if (!psi.canBeAnalysed()) return null
             when (psi) {
                 is KtDeclaration -> psi.getSymbol()
@@ -38,8 +38,8 @@ public class KtPsiBasedSymbolPointer<S : KtSymbol> private constructor(
         return symbol as S
     }
 
-    override fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = this === other ||
-            other is KtPsiBasedSymbolPointer &&
+    override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||
+            other is KaPsiBasedSymbolPointer &&
             other.expectedClass == expectedClass &&
             other.psiPointer == psiPointer
 
@@ -47,14 +47,14 @@ public class KtPsiBasedSymbolPointer<S : KtSymbol> private constructor(
 
     public companion object {
         @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-        public inline fun <reified S : KtSymbol> createForSymbolFromSource(symbol: @kotlin.internal.NoInfer S): KtPsiBasedSymbolPointer<S>? {
+        public inline fun <reified S : KaSymbol> createForSymbolFromSource(symbol: @kotlin.internal.NoInfer S): KaPsiBasedSymbolPointer<S>? {
             return createForSymbolFromSource(symbol, S::class)
         }
 
-        public fun <S : KtSymbol> createForSymbolFromSource(symbol: S, expectedClass: KClass<S>): KtPsiBasedSymbolPointer<S>? {
+        public fun <S : KaSymbol> createForSymbolFromSource(symbol: S, expectedClass: KClass<S>): KaPsiBasedSymbolPointer<S>? {
             ifDisabled { return null }
 
-            if (symbol.origin != KtSymbolOrigin.SOURCE) return null
+            if (symbol.origin != KaSymbolOrigin.SOURCE) return null
 
             val psi = when (val psi = symbol.psi) {
                 is KtDeclaration -> psi
@@ -63,17 +63,17 @@ public class KtPsiBasedSymbolPointer<S : KtSymbol> private constructor(
                 else -> return null
             }
 
-            return KtPsiBasedSymbolPointer(psi, expectedClass)
+            return KaPsiBasedSymbolPointer(psi, expectedClass)
         }
 
 
-        public fun <S : KtSymbol> createForSymbolFromPsi(ktElement: KtElement, expectedClass: KClass<S>): KtPsiBasedSymbolPointer<S>? {
+        public fun <S : KaSymbol> createForSymbolFromPsi(ktElement: KtElement, expectedClass: KClass<S>): KaPsiBasedSymbolPointer<S>? {
             ifDisabled { return null }
 
-            return KtPsiBasedSymbolPointer(ktElement, expectedClass)
+            return KaPsiBasedSymbolPointer(ktElement, expectedClass)
         }
 
-        public inline fun <reified S : KtSymbol> createForSymbolFromPsi(ktElement: KtElement): KtPsiBasedSymbolPointer<S>? {
+        public inline fun <reified S : KaSymbol> createForSymbolFromPsi(ktElement: KtElement): KaPsiBasedSymbolPointer<S>? {
             return createForSymbolFromPsi(ktElement, S::class)
         }
 
@@ -100,5 +100,7 @@ public class KtPsiBasedSymbolPointer<S : KtSymbol> private constructor(
     }
 }
 
-public fun KtElement.symbolPointer(): KtSymbolPointer<KtSymbol> = KtPsiBasedSymbolPointer(this, KtSymbol::class)
-public inline fun <reified S : KtSymbol> KtElement.symbolPointerOfType(): KtSymbolPointer<S> = KtPsiBasedSymbolPointer(this, S::class)
+public typealias KtPsiBasedSymbolPointer<S> = KaPsiBasedSymbolPointer<S>
+
+public fun KtElement.symbolPointer(): KaSymbolPointer<KaSymbol> = KaPsiBasedSymbolPointer(this, KaSymbol::class)
+public inline fun <reified S : KaSymbol> KtElement.symbolPointerOfType(): KaSymbolPointer<S> = KaPsiBasedSymbolPointer(this, S::class)

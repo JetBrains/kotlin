@@ -1,2 +1,2 @@
 PsiType: @MyAnno("type") java.lang.String @MyAnno("vararg") ...
-KtType: @MyAnno(value = "vararg") kotlin.Array<@MyAnno(value = "type") kotlin.String!>!
+KaType: @MyAnno(value = "vararg") kotlin.Array<@MyAnno(value = "type") kotlin.String!>!

@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironmentMod
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.test.getAnalyzerServices
 import org.jetbrains.kotlin.test.services.*
 
 abstract class AnalysisApiEnvironmentManager : TestService {
@@ -57,11 +56,7 @@ class AnalysisApiEnvironmentManagerImpl(
         val ktTestModuleStructure = testServices.ktTestModuleStructure
         val useSiteModule = testServices.moduleStructure.modules.first()
         val useSiteCompilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(useSiteModule)
-        val builtinsModule = KtBuiltinsModule(
-            useSiteModule.targetPlatform,
-            useSiteModule.targetPlatform.getAnalyzerServices(),
-            getProject()
-        )
+        val builtinsModule = KtBuiltinsModule(useSiteModule.targetPlatform, getProject())
 
         val globalLanguageVersionSettings = useSiteModule.languageVersionSettings
 

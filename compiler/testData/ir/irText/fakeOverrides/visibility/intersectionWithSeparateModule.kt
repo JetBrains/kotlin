@@ -2,18 +2,21 @@
 // TARGET_BACKEND: JVM
 
 // MODULE: separate
+
 // FILE: JavaDefaultSeparateModule.java
 public interface JavaDefaultSeparateModule {
     int a = 2;
     void foo();
 }
+
 // FILE: JavaProtectedSeparateModule.java
 public class JavaProtectedSeparateModule {
     protected int a = 22;
-    protected void foo() { }
+    protected void foo() {}
 }
 
-// MODULE: main
+// MODULE: main(separate)
+
 // FILE: JavaProtected.java
 public class JavaProtected {
     protected int a = 3;
@@ -33,14 +36,15 @@ public interface JavaPublic {
 }
 
 // FILE: JavaPrivate.java
-public class JavaPrivate  {
+public class JavaPrivate {
     private int a = 2;
-    private void foo(){}
+    private void foo() {}
 }
 
 // FILE: test.kt
+
 abstract class A: JavaDefaultSeparateModule, KotlinDefault {
-    public override fun foo() { }
+    public override fun foo() {}
     public override val a: Int
         get() = 5
 }

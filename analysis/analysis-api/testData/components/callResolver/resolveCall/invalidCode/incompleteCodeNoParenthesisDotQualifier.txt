@@ -1,3 +1,0 @@
-KtErrorCallInfo:
-  candidateCalls = []
-  diagnostic = ERROR<null: Inapplicable candidate>

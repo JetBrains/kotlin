@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolInfoProvider
 
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KtDeclarationRendererForDebug
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -17,7 +18,7 @@ abstract class AbstractAnnotationApplicableTargetsTest : AbstractAnalysisApiBase
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val annotationEntry = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtAnnotationEntry>(mainFile)
         val actual = analyseForTest(annotationEntry) {
-            val annotationClassSymbol = annotationEntry.typeReference?.getKtType()?.expandedClassSymbol!!
+            val annotationClassSymbol = annotationEntry.typeReference?.getKtType()?.expandedSymbol!!
             val applicableTargetsInOrder =
                 annotationClassSymbol.annotationApplicableTargets
                     ?.map { it.name }
@@ -26,10 +27,10 @@ abstract class AbstractAnnotationApplicableTargetsTest : AbstractAnalysisApiBase
                     ?: "<null>"
 
             buildString {
-                appendLine("KtAnnotationEntry: ${annotationEntry.text}")
+                appendLine("${KtAnnotationEntry::class.simpleName}: ${annotationEntry.text}")
                 appendLine()
                 appendLine("Resolved annotation symbol:")
-                appendLine(annotationClassSymbol.render())
+                appendLine(annotationClassSymbol.render(KtDeclarationRendererForDebug.WITH_QUALIFIED_NAMES))
                 appendLine()
                 appendLine("Applicable targets: $applicableTargetsInOrder")
             }

@@ -5,21 +5,21 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.name.ClassId
 import kotlin.reflect.KClass
 
-internal class KtFirClassLikeSymbolPointer<T : KtClassLikeSymbol>(
+internal class KaFirClassLikeSymbolPointer<T : KaClassLikeSymbol>(
     private val classId: ClassId,
     private val expectedClass: KClass<T>,
-) : KtSymbolPointer<T>() {
-    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
-    override fun restoreSymbol(analysisSession: KtAnalysisSession): T? {
-        require(analysisSession is KtFirAnalysisSession)
+) : KaSymbolPointer<T>() {
+    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KaSession.restoreSymbol")
+    override fun restoreSymbol(analysisSession: KaSession): T? {
+        require(analysisSession is KaFirSession)
         val classLikeSymbol = analysisSession.firSymbolBuilder.classifierBuilder.buildClassLikeSymbolByClassId(classId) ?: return null
         if (!expectedClass.isInstance(classLikeSymbol)) return null
 
@@ -27,8 +27,8 @@ internal class KtFirClassLikeSymbolPointer<T : KtClassLikeSymbol>(
         return classLikeSymbol as T
     }
 
-    override fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = other === this ||
-            other is KtFirClassLikeSymbolPointer &&
+    override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = other === this ||
+            other is KaFirClassLikeSymbolPointer &&
             other.classId == classId &&
             other.expectedClass == expectedClass
 }

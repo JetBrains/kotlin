@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.fir.tree.generator
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
+import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.*
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 object FirTreeBuilder : AbstractFirTreeBuilder() {
+    override val baseFirElement by element("Element", Other)
     val annotationContainer by element(Other)
     val typeRef by sealedElement(TypeRef, annotationContainer)
     val reference by element(Reference)
@@ -45,6 +47,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val variable by sealedElement(Declaration, callableDeclaration, statement)
     val valueParameter by element(Declaration, variable, controlFlowGraphOwner)
     val receiverParameter by element(Declaration, annotationContainer)
+    val scriptReceiverParameter by element(Declaration, receiverParameter)
     val property by element(Declaration, variable, typeParametersOwner, controlFlowGraphOwner)
     val field by element(Declaration, variable, controlFlowGraphOwner)
     val enumEntry by element(Declaration, variable)

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.abbreviatedTypeOrSelf
 import org.jetbrains.kotlin.fir.types.type
 import org.jetbrains.kotlin.name.StandardClassIds
 
@@ -21,7 +22,7 @@ object FirTypeAliasExpandsToArrayOfNothingsChecker : FirTypeAliasChecker(MppChec
     override fun check(declaration: FirTypeAlias, context: CheckerContext, reporter: DiagnosticReporter) {
         val type = declaration.expandedConeType ?: return
 
-        if (type.isMalformed(context)) {
+        if (type.abbreviatedTypeOrSelf.isMalformed(context)) {
             reporter.reportOn(declaration.expandedTypeRef.source, FirErrors.TYPEALIAS_EXPANDS_TO_ARRAY_OF_NOTHINGS, type, context)
         }
     }

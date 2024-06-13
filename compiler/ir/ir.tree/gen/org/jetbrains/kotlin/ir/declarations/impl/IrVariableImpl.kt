@@ -19,15 +19,17 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 import org.jetbrains.kotlin.name.Name
 
-class IrVariableImpl(
+class IrVariableImpl internal constructor(
+    @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
     override val startOffset: Int,
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
-    override val symbol: IrVariableSymbol,
     override var name: Name,
     override var type: IrType,
+    override val symbol: IrVariableSymbol,
     override var isVar: Boolean,
     override var isConst: Boolean,
     override var isLateinit: Boolean,

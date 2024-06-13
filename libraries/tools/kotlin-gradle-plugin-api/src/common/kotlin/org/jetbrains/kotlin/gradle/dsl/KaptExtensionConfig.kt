@@ -154,7 +154,16 @@ interface KaptArguments {
      *
      * Expected [name] and [values] type is [String].
      */
+    @Deprecated(
+        message = "This function with Any parameters is scheduled for removal in Kotlin 2.2. Consider migrating to the function with String parameters.",
+        replaceWith = ReplaceWith("arg(name.toString(), *values.map { it.toString() }.toTypedArray())")
+    )
     fun arg(name: Any, vararg values: Any)
+
+    /**
+     * Adds argument with the specified name and values.
+     */
+    fun arg(name: String, vararg values: String)
 }
 
 /**
@@ -167,12 +176,30 @@ interface KaptJavacOption {
      *
      * Expected [name] and [value] type is [String].
      */
+    @Deprecated(
+        message = "This function with Any parameters is scheduled for removal in Kotlin 2.2. Consider migrating to the function with String parameters.",
+        replaceWith = ReplaceWith("option(name.toString(), value.toString())")
+    )
     fun option(name: Any, value: Any)
+
+    /**
+     * Adds an option with name and value.
+     */
+    fun option(name: String, value: String)
 
     /**
      * Adds an option with name only.
      *
      * Expected [name] type is [String].
      */
+    @Deprecated(
+        message = "This function with Any parameter is scheduled for removal in Kotlin 2.2. Consider migrating to the function with String parameter.",
+        replaceWith = ReplaceWith("option")
+    )
     fun option(name: Any)
+
+    /**
+     * Adds an option with name only.
+     */
+    fun option(name: String)
 }

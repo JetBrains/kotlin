@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 //T-2588 Allow to specify exact super type (expected) in inference if many
 
 import java.util.HashSet

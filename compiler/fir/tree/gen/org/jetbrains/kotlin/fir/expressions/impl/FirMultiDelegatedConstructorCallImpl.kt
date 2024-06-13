@@ -83,6 +83,7 @@ class FirMultiDelegatedConstructorCallImpl @FirImplementationDetail constructor(
     override fun replaceSource(newSource: KtSourceElement?) {}
 
     override fun replaceDelegatedConstructorCalls(newDelegatedConstructorCalls: List<FirDelegatedConstructorCall>) {
+        if (delegatedConstructorCalls === newDelegatedConstructorCalls) return
         delegatedConstructorCalls.clear()
         delegatedConstructorCalls.addAll(newDelegatedConstructorCalls)
     }

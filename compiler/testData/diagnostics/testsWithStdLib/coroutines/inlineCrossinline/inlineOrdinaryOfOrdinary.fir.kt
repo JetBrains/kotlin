@@ -1,5 +1,5 @@
-// !LANGUAGE: +ForbidExtensionCallsOnInlineFunctionalParameters
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// LANGUAGE: +ForbidExtensionCallsOnInlineFunctionalParameters
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // SKIP_TXT
 // WITH_COROUTINES
 import kotlin.coroutines.*

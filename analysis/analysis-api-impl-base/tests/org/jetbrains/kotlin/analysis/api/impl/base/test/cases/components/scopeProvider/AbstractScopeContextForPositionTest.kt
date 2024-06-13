@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.components.KtScopeContext
-import org.jetbrains.kotlin.analysis.api.components.KtScopeKind
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.KaScopeContext
+import org.jetbrains.kotlin.analysis.api.components.KaScopeKind
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider.TestScopeRenderer.renderForTests
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
@@ -33,14 +33,14 @@ abstract class AbstractScopeContextForPositionTest : AbstractAnalysisApiBasedTes
         }
     }
 
-    private fun KtAnalysisSession.renderForTests(
+    private fun KaSession.renderForTests(
         element: KtElement,
-        scopeContext: KtScopeContext,
+        scopeContext: KaScopeContext,
         printPretty: Boolean = false,
     ): String = prettyPrint {
         appendLine("element: ${element.text}")
         renderForTests(analysisSession, scopeContext, this@prettyPrint, printPretty) { scopeKind ->
-            scopeKind !is KtScopeKind.DefaultSimpleImportingScope && scopeKind !is KtScopeKind.DefaultStarImportingScope
+            scopeKind !is KaScopeKind.DefaultSimpleImportingScope && scopeKind !is KaScopeKind.DefaultStarImportingScope
         }
     }
 }

@@ -80,7 +80,7 @@ FILE fqName:<root> fileName:/noSyntheticTypeParameterLeftAfterPCLA.kt
                             then: BLOCK type=kotlin.Unit origin=null
                               CALL 'public abstract fun yield (t: F of <root>.Controller): kotlin.Unit declared in <root>.Controller' type=kotlin.Unit origin=null
                                 $this: GET_VAR '$this$generate: <root>.Controller<kotlin.Unit> declared in <root>.box.<anonymous>' type=<root>.Controller<kotlin.Unit> origin=null
-                                t: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                                t: GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
                   CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.box.<anonymous>.<no name provided>' type=<root>.box.<anonymous>.<no name provided> origin=OBJECT_LITERAL
               CALL 'public final fun someUnit (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
   FUN name:expectIntf visibility:public modality:FINAL <> (intf:<root>.Intf) returnType:kotlin.Unit

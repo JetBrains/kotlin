@@ -3,55 +3,55 @@ Symbol:
 fun <T, S> foo(x: kotlin.collections.List<T>, y: kotlin.collections.Map<T, kotlin.collections.List<S>>, k: kotlin.String): T
 
 Signature before substitution:
-KtFunctionLikeSignature:
+KaFunctionLikeSignature:
   receiverType = null
   returnType = T
   symbol = /foo(x: kotlin.collections.List<T>, y: kotlin.collections.Map<T, kotlin.collections.List<S>>, k: kotlin.String): T
   valueParameters = [
-    KtVariableLikeSignature:
+    KaVariableLikeSignature:
       name = x
       receiverType = null
       returnType = kotlin.collections.List<T>
       symbol = x: kotlin.collections.List<T>
-      callableIdIfNonLocal = null,
-    KtVariableLikeSignature:
+      callableId = null,
+    KaVariableLikeSignature:
       name = y
       receiverType = null
       returnType = kotlin.collections.Map<T, kotlin.collections.List<S>>
       symbol = y: kotlin.collections.Map<T, kotlin.collections.List<S>>
-      callableIdIfNonLocal = null,
-    KtVariableLikeSignature:
+      callableId = null,
+    KaVariableLikeSignature:
       name = k
       receiverType = null
       returnType = kotlin.String
       symbol = k: kotlin.String
-      callableIdIfNonLocal = null
+      callableId = null
   ]
-  callableIdIfNonLocal = /foo
+  callableId = /foo
 
 Signature after substitution:
-KtFunctionLikeSignature:
+KaFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.collections.List<S>
   symbol = /foo(x: kotlin.collections.List<T>, y: kotlin.collections.Map<T, kotlin.collections.List<S>>, k: kotlin.String): T
   valueParameters = [
-    KtVariableLikeSignature:
+    KaVariableLikeSignature:
       name = x
       receiverType = null
       returnType = kotlin.collections.List<kotlin.collections.List<S>>
       symbol = x: kotlin.collections.List<T>
-      callableIdIfNonLocal = null,
-    KtVariableLikeSignature:
+      callableId = null,
+    KaVariableLikeSignature:
       name = y
       receiverType = null
       returnType = kotlin.collections.Map<kotlin.collections.List<S>, kotlin.collections.List<kotlin.Long>>
       symbol = y: kotlin.collections.Map<T, kotlin.collections.List<S>>
-      callableIdIfNonLocal = null,
-    KtVariableLikeSignature:
+      callableId = null,
+    KaVariableLikeSignature:
       name = k
       receiverType = null
       returnType = kotlin.String
       symbol = k: kotlin.String
-      callableIdIfNonLocal = null
+      callableId = null
   ]
-  callableIdIfNonLocal = /foo
+  callableId = /foo

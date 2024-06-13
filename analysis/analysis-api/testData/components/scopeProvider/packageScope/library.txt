@@ -1,6 +1,6 @@
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: library/api/fooApi3
+KaFunctionSymbol:
+  annotations: []
+  callableId: library/api/fooApi3
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -20,22 +20,22 @@ KtFunctionSymbol:
   name: fooApi3
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/String
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(extension.kt)
+  getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingJvmClassName: library.api.ExtensionKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: library/api/internalFooApi3
+KaFunctionSymbol:
+  annotations: []
+  callableId: library/api/internalFooApi3
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -55,22 +55,22 @@ KtFunctionSymbol:
   name: internalFooApi3
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/String
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Internal
-  getContainingFileSymbol: KtFileSymbol(extension.kt)
+  getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingJvmClassName: library.api.ExtensionKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: library/api/privateFooApi3
+KaFunctionSymbol:
+  annotations: []
+  callableId: library/api/privateFooApi3
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -90,22 +90,22 @@ KtFunctionSymbol:
   name: privateFooApi3
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/String
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Private
-  getContainingFileSymbol: KtFileSymbol(extension.kt)
+  getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingJvmClassName: library.api.ExtensionKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: library/api/barApi3
+KaFunctionSymbol:
+  annotations: []
+  callableId: library/api/barApi3
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -124,33 +124,33 @@ KtFunctionSymbol:
   modality: FINAL
   name: barApi3
   origin: SOURCE
-  receiverParameter: KtReceiverParameterSymbol:
-    annotationsList: []
+  receiverParameter: KaReceiverParameterSymbol:
+    annotations: []
     origin: SOURCE
-    owningCallableSymbol: KtFunctionSymbol(library/api/barApi3)
-    type: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    owningCallableSymbol: KaFunctionSymbol(library/api/barApi3)
+    type: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: library/api/FakeI
-    getContainingFileSymbol: KtFileSymbol(extension.kt)
+    getContainingFileSymbol: KaFileSymbol(extension.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: library/api/I
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(extension.kt)
+  getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingJvmClassName: library.api.ExtensionKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: library/api/internalBarApi3
+KaFunctionSymbol:
+  annotations: []
+  callableId: library/api/internalBarApi3
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -169,33 +169,33 @@ KtFunctionSymbol:
   modality: FINAL
   name: internalBarApi3
   origin: SOURCE
-  receiverParameter: KtReceiverParameterSymbol:
-    annotationsList: []
+  receiverParameter: KaReceiverParameterSymbol:
+    annotations: []
     origin: SOURCE
-    owningCallableSymbol: KtFunctionSymbol(library/api/internalBarApi3)
-    type: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    owningCallableSymbol: KaFunctionSymbol(library/api/internalBarApi3)
+    type: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: library/api/InternalFakeI
-    getContainingFileSymbol: KtFileSymbol(extension.kt)
+    getContainingFileSymbol: KaFileSymbol(extension.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: library/api/I
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Internal
-  getContainingFileSymbol: KtFileSymbol(extension.kt)
+  getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingJvmClassName: library.api.ExtensionKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: library/api/privateBarApi3
+KaFunctionSymbol:
+  annotations: []
+  callableId: library/api/privateBarApi3
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -214,33 +214,33 @@ KtFunctionSymbol:
   modality: FINAL
   name: privateBarApi3
   origin: SOURCE
-  receiverParameter: KtReceiverParameterSymbol:
-    annotationsList: []
+  receiverParameter: KaReceiverParameterSymbol:
+    annotations: []
     origin: SOURCE
-    owningCallableSymbol: KtFunctionSymbol(library/api/privateBarApi3)
-    type: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    owningCallableSymbol: KaFunctionSymbol(library/api/privateBarApi3)
+    type: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: library/api/PrivateFakeI
-    getContainingFileSymbol: KtFileSymbol(extension.kt)
+    getContainingFileSymbol: KaFileSymbol(extension.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: library/api/I
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Private
-  getContainingFileSymbol: KtFileSymbol(extension.kt)
+  getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingJvmClassName: library.api.ExtensionKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: library/api/fooApi2
+KaFunctionSymbol:
+  annotations: []
+  callableId: library/api/fooApi2
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -260,9 +260,9 @@ KtFunctionSymbol:
   name: fooApi2
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/String
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -273,9 +273,9 @@ KtFunctionSymbol:
   getContainingModule: KtLibraryModule "Library library"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: library/api/internalFooApi2
+KaFunctionSymbol:
+  annotations: []
+  callableId: library/api/internalFooApi2
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -295,9 +295,9 @@ KtFunctionSymbol:
   name: internalFooApi2
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/String
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -308,9 +308,9 @@ KtFunctionSymbol:
   getContainingModule: KtLibraryModule "Library library"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: library/api/privateFooApi2
+KaFunctionSymbol:
+  annotations: []
+  callableId: library/api/privateFooApi2
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -330,9 +330,9 @@ KtFunctionSymbol:
   name: privateFooApi2
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/String
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -343,9 +343,9 @@ KtFunctionSymbol:
   getContainingModule: KtLibraryModule "Library library"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: library/api/barApi2
+KaFunctionSymbol:
+  annotations: []
+  callableId: library/api/barApi2
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -364,20 +364,20 @@ KtFunctionSymbol:
   modality: FINAL
   name: barApi2
   origin: LIBRARY
-  receiverParameter: KtReceiverParameterSymbol:
-    annotationsList: []
+  receiverParameter: KaReceiverParameterSymbol:
+    annotations: []
     origin: LIBRARY
-    owningCallableSymbol: KtFunctionSymbol(library/api/barApi2)
-    type: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    owningCallableSymbol: KaFunctionSymbol(library/api/barApi2)
+    type: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: library/api/C1
     getContainingFileSymbol: null
     getContainingModule: KtLibraryModule "Library library"
     deprecationStatus: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: library/api/I
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -388,9 +388,9 @@ KtFunctionSymbol:
   getContainingModule: KtLibraryModule "Library library"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: library/api/internalBarApi2
+KaFunctionSymbol:
+  annotations: []
+  callableId: library/api/internalBarApi2
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -409,20 +409,20 @@ KtFunctionSymbol:
   modality: FINAL
   name: internalBarApi2
   origin: LIBRARY
-  receiverParameter: KtReceiverParameterSymbol:
-    annotationsList: []
+  receiverParameter: KaReceiverParameterSymbol:
+    annotations: []
     origin: LIBRARY
-    owningCallableSymbol: KtFunctionSymbol(library/api/internalBarApi2)
-    type: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    owningCallableSymbol: KaFunctionSymbol(library/api/internalBarApi2)
+    type: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: library/api/InternalC1
     getContainingFileSymbol: null
     getContainingModule: KtLibraryModule "Library library"
     deprecationStatus: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: library/api/InternalI
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -433,9 +433,9 @@ KtFunctionSymbol:
   getContainingModule: KtLibraryModule "Library library"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: library/api/privateBarApi2
+KaFunctionSymbol:
+  annotations: []
+  callableId: library/api/privateBarApi2
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -454,20 +454,20 @@ KtFunctionSymbol:
   modality: FINAL
   name: privateBarApi2
   origin: LIBRARY
-  receiverParameter: KtReceiverParameterSymbol:
-    annotationsList: []
+  receiverParameter: KaReceiverParameterSymbol:
+    annotations: []
     origin: LIBRARY
-    owningCallableSymbol: KtFunctionSymbol(library/api/privateBarApi2)
-    type: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    owningCallableSymbol: KaFunctionSymbol(library/api/privateBarApi2)
+    type: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: library/api/PrivateC1
     getContainingFileSymbol: null
     getContainingModule: KtLibraryModule "Library library"
     deprecationStatus: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: library/api/I
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -478,9 +478,9 @@ KtFunctionSymbol:
   getContainingModule: KtLibraryModule "Library library"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: library/api/fooApi1
+KaFunctionSymbol:
+  annotations: []
+  callableId: library/api/fooApi1
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -500,9 +500,9 @@ KtFunctionSymbol:
   name: fooApi1
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/String
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -513,9 +513,9 @@ KtFunctionSymbol:
   getContainingModule: KtLibraryModule "Library library"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: library/api/internalFooApi1
+KaFunctionSymbol:
+  annotations: []
+  callableId: library/api/internalFooApi1
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -535,9 +535,9 @@ KtFunctionSymbol:
   name: internalFooApi1
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/String
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -548,9 +548,9 @@ KtFunctionSymbol:
   getContainingModule: KtLibraryModule "Library library"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: library/api/privateFooApi1
+KaFunctionSymbol:
+  annotations: []
+  callableId: library/api/privateFooApi1
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -570,9 +570,9 @@ KtFunctionSymbol:
   name: privateFooApi1
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/String
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -583,9 +583,9 @@ KtFunctionSymbol:
   getContainingModule: KtLibraryModule "Library library"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: library/api/barApi1
+KaFunctionSymbol:
+  annotations: []
+  callableId: library/api/barApi1
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -604,20 +604,20 @@ KtFunctionSymbol:
   modality: FINAL
   name: barApi1
   origin: LIBRARY
-  receiverParameter: KtReceiverParameterSymbol:
-    annotationsList: []
+  receiverParameter: KaReceiverParameterSymbol:
+    annotations: []
     origin: LIBRARY
-    owningCallableSymbol: KtFunctionSymbol(library/api/barApi1)
-    type: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    owningCallableSymbol: KaFunctionSymbol(library/api/barApi1)
+    type: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: library/api/I
     getContainingFileSymbol: null
     getContainingModule: KtLibraryModule "Library library"
     deprecationStatus: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: library/api/I
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -628,9 +628,9 @@ KtFunctionSymbol:
   getContainingModule: KtLibraryModule "Library library"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: library/api/internalBarApi1
+KaFunctionSymbol:
+  annotations: []
+  callableId: library/api/internalBarApi1
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -649,20 +649,20 @@ KtFunctionSymbol:
   modality: FINAL
   name: internalBarApi1
   origin: LIBRARY
-  receiverParameter: KtReceiverParameterSymbol:
-    annotationsList: []
+  receiverParameter: KaReceiverParameterSymbol:
+    annotations: []
     origin: LIBRARY
-    owningCallableSymbol: KtFunctionSymbol(library/api/internalBarApi1)
-    type: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    owningCallableSymbol: KaFunctionSymbol(library/api/internalBarApi1)
+    type: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: library/api/InternalI
     getContainingFileSymbol: null
     getContainingModule: KtLibraryModule "Library library"
     deprecationStatus: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: library/api/InternalI
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -673,9 +673,9 @@ KtFunctionSymbol:
   getContainingModule: KtLibraryModule "Library library"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: library/api/privateBarApi1
+KaFunctionSymbol:
+  annotations: []
+  callableId: library/api/privateBarApi1
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -694,20 +694,20 @@ KtFunctionSymbol:
   modality: FINAL
   name: privateBarApi1
   origin: LIBRARY
-  receiverParameter: KtReceiverParameterSymbol:
-    annotationsList: []
+  receiverParameter: KaReceiverParameterSymbol:
+    annotations: []
     origin: LIBRARY
-    owningCallableSymbol: KtFunctionSymbol(library/api/privateBarApi1)
-    type: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    owningCallableSymbol: KaFunctionSymbol(library/api/privateBarApi1)
+    type: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: library/api/PrivateI
     getContainingFileSymbol: null
     getContainingModule: KtLibraryModule "Library library"
     deprecationStatus: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: library/api/PrivateI
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -718,9 +718,9 @@ KtFunctionSymbol:
   getContainingModule: KtLibraryModule "Library library"
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: library/api/I
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: library/api/I
   classKind: INTERFACE
   companionObject: null
   contextReceivers: []
@@ -735,9 +735,9 @@ KtNamedClassOrObjectSymbol:
   name: I
   origin: LIBRARY
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
@@ -748,9 +748,9 @@ KtNamedClassOrObjectSymbol:
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: library/api/C1
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: library/api/C1
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -765,9 +765,9 @@ KtNamedClassOrObjectSymbol:
   name: C1
   origin: LIBRARY
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: library/api/I
   ]
   symbolKind: TOP_LEVEL
@@ -778,9 +778,9 @@ KtNamedClassOrObjectSymbol:
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: library/api/PrivateC1
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: library/api/PrivateC1
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -795,9 +795,9 @@ KtNamedClassOrObjectSymbol:
   name: PrivateC1
   origin: LIBRARY
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: library/api/I
   ]
   symbolKind: TOP_LEVEL
@@ -808,9 +808,9 @@ KtNamedClassOrObjectSymbol:
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: library/api/InternalC1
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: library/api/InternalC1
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -825,9 +825,9 @@ KtNamedClassOrObjectSymbol:
   name: InternalC1
   origin: LIBRARY
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: library/api/InternalI
   ]
   symbolKind: TOP_LEVEL
@@ -838,9 +838,9 @@ KtNamedClassOrObjectSymbol:
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: library/api/InternalI
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: library/api/InternalI
   classKind: INTERFACE
   companionObject: null
   contextReceivers: []
@@ -855,9 +855,9 @@ KtNamedClassOrObjectSymbol:
   name: InternalI
   origin: LIBRARY
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
@@ -868,9 +868,9 @@ KtNamedClassOrObjectSymbol:
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: library/api/PrivateI
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: library/api/PrivateI
   classKind: INTERFACE
   companionObject: null
   contextReceivers: []
@@ -885,9 +885,9 @@ KtNamedClassOrObjectSymbol:
   name: PrivateI
   origin: LIBRARY
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
@@ -898,9 +898,9 @@ KtNamedClassOrObjectSymbol:
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: library/api/FakeI
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: library/api/FakeI
   classKind: INTERFACE
   companionObject: null
   contextReceivers: []
@@ -915,22 +915,22 @@ KtNamedClassOrObjectSymbol:
   name: FakeI
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: library/api/I
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(extension.kt)
+  getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: library/api/InternalFakeI
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: library/api/InternalFakeI
   classKind: INTERFACE
   companionObject: null
   contextReceivers: []
@@ -945,22 +945,22 @@ KtNamedClassOrObjectSymbol:
   name: InternalFakeI
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: library/api/I
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Internal
-  getContainingFileSymbol: KtFileSymbol(extension.kt)
+  getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: library/api/PrivateFakeI
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: library/api/PrivateFakeI
   classKind: INTERFACE
   companionObject: null
   contextReceivers: []
@@ -975,15 +975,15 @@ KtNamedClassOrObjectSymbol:
   name: PrivateFakeI
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: library/api/I
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Private
-  getContainingFileSymbol: KtFileSymbol(extension.kt)
+  getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

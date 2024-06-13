@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.components.KtSubstitutorProvider
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.components.KaSubstitutorProvider
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.chain
 import org.jetbrains.kotlin.fir.scopes.substitutorForSuperType
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -17,14 +17,14 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 
-internal class KtFirSubstitutorProvider(
-    override val analysisSession: KtFirAnalysisSession,
-) : KtSubstitutorProvider(), KtFirAnalysisSessionComponent {
+internal class KaFirSubstitutorProvider(
+    override val analysisSession: KaFirSession,
+) : KaSubstitutorProvider(), KaFirSessionComponent {
     override fun createSubstitutor(
-        subClass: KtClassOrObjectSymbol,
-        superClass: KtClassOrObjectSymbol,
-    ): KtSubstitutor? {
-        if (subClass == superClass) return KtSubstitutor.Empty(token)
+        subClass: KaClassOrObjectSymbol,
+        superClass: KaClassOrObjectSymbol,
+    ): KaSubstitutor? {
+        if (subClass == superClass) return KaSubstitutor.Empty(token)
 
         val baseFirSymbol = subClass.firSymbol
         val superFirSymbol = superClass.firSymbol
@@ -33,7 +33,7 @@ internal class KtFirSubstitutorProvider(
             type.substitutorForSuperType(rootModuleSession, symbol)
         }
         return when (substitutors.size) {
-            0 -> KtSubstitutor.Empty(token)
+            0 -> KaSubstitutor.Empty(token)
             else -> {
                 val chained = substitutors.reduce { left, right -> left.chain(right) }
                 firSymbolBuilder.typeBuilder.buildSubstitutor(chained)

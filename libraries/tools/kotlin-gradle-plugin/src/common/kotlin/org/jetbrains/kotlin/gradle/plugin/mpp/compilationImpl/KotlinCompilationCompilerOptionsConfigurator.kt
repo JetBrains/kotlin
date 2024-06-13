@@ -16,21 +16,21 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.moduleNameForCompilation
 internal object KotlinCompilationCompilerOptionsFromTargetConfigurator : KotlinCompilationImplFactory.PostConfigure {
     override fun configure(compilation: DecoratedKotlinCompilation<*>) {
         when (@Suppress("DEPRECATION") val compilationCompilerOptions = compilation.compilerOptions.options) {
-            is KotlinJvmCompilerOptions -> compilation.configureJvmCompilerOptions(compilationCompilerOptions)
-            is KotlinJsCompilerOptions -> compilation.configureJsCompilerOptions(compilationCompilerOptions)
+            is KotlinJvmCompilerOptions -> compilation.useTargetJvmCompilerOptionsAsConvention(compilationCompilerOptions)
+            is KotlinJsCompilerOptions -> compilation.useTargetJsCompilerOptionsAsConvention(compilationCompilerOptions)
             is KotlinNativeCompilerOptions -> {
                 if (compilation.target is KotlinMetadataTarget) {
                     // Shared native compilation, for example, 'appleMain'
-                    compilation.configureCommonCompilerOptions(compilationCompilerOptions)
+                    compilation.useTargetCommonCompilerOptionsAsConvention(compilationCompilerOptions)
                 } else {
-                    compilation.configureNativeCompilerOptions(compilationCompilerOptions)
+                    compilation.useTargetNativeCompilerOptionsAsConvention(compilationCompilerOptions)
                 }
             }
-            else -> compilation.configureCommonCompilerOptions(compilationCompilerOptions)
+            else -> compilation.useTargetCommonCompilerOptionsAsConvention(compilationCompilerOptions)
         }
     }
 
-    private fun DecoratedKotlinCompilation<*>.configureJvmCompilerOptions(
+    private fun DecoratedKotlinCompilation<*>.useTargetJvmCompilerOptionsAsConvention(
         jvmCompilerOptions: KotlinJvmCompilerOptions
     ) {
         val targetCompilerOptions = requireTargetCompilerOptionsType<KotlinJvmCompilerOptions>()
@@ -48,7 +48,7 @@ internal object KotlinCompilationCompilerOptionsFromTargetConfigurator : KotlinC
         )
     }
 
-    private fun DecoratedKotlinCompilation<*>.configureJsCompilerOptions(
+    private fun DecoratedKotlinCompilation<*>.useTargetJsCompilerOptionsAsConvention(
         jsCompilerOptions: KotlinJsCompilerOptions
     ) {
         // Ignoring legacy JS target
@@ -69,7 +69,7 @@ internal object KotlinCompilationCompilerOptionsFromTargetConfigurator : KotlinC
         )
     }
 
-    private fun DecoratedKotlinCompilation<*>.configureNativeCompilerOptions(
+    private fun DecoratedKotlinCompilation<*>.useTargetNativeCompilerOptionsAsConvention(
         nativeCompilerOptions: KotlinNativeCompilerOptions
     ) {
         val targetCompilerOptions = requireTargetCompilerOptionsType<KotlinNativeCompilerOptions>()
@@ -87,7 +87,7 @@ internal object KotlinCompilationCompilerOptionsFromTargetConfigurator : KotlinC
         )
     }
 
-    private fun DecoratedKotlinCompilation<*>.configureCommonCompilerOptions(
+    private fun DecoratedKotlinCompilation<*>.useTargetCommonCompilerOptionsAsConvention(
         commonCompilerOptions: KotlinCommonCompilerOptions
     ) {
         KotlinCommonCompilerOptionsHelper.syncOptionsAsConvention(

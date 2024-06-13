@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFirFromKtFiles
 import org.jetbrains.kotlin.fir.pipeline.runPlatformCheckers
-import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
@@ -144,7 +143,7 @@ object FirKotlinToJvmBytecodeCompiler {
             return null
         }
 
-        val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl(), JvmIrMangler)
+        val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl())
         val fir2IrAndIrActualizerResult =
             firResult.convertToIrAndActualizeForJvm(fir2IrExtensions, configuration, diagnosticsReporter, irGenerationExtensions)
 
@@ -235,7 +234,7 @@ object FirKotlinToJvmBytecodeCompiler {
         fir2IrActualizedResult: Fir2IrActualizedResult,
         diagnosticsReporter: BaseDiagnosticsCollector,
     ): GenerationState {
-        val (moduleFragment, components, pluginContext, irActualizedResult) = fir2IrActualizedResult
+        val (moduleFragment, components, pluginContext, irActualizedResult, _, symbolTable) = fir2IrActualizedResult
         val irInput = ModuleCompilerIrBackendInput(
             TargetId(module),
             configuration,
@@ -243,7 +242,8 @@ object FirKotlinToJvmBytecodeCompiler {
             moduleFragment,
             components,
             pluginContext,
-            irActualizedResult
+            irActualizedResult,
+            symbolTable
         )
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()

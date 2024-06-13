@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualCollectionArgumentsCompatibilityCheckStrategy
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext.AnnotationCallInfo
+import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext.Companion.abstractMutableListModCountCallableId
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -138,11 +139,18 @@ internal abstract class IrExpectActualMatchingContext(
     override val ClassLikeSymbolMarker.modality: Modality
         get() = processIr(
             onClass = {
-                // For some reason kotlin annotations in IR have open modality and java annotations have final modality
-                // But since it's legal to actualize kotlin annotation class with java annotation class
-                //  and effectively all annotation classes have the same modality, it's ok to always return one
-                //  modality for all annotation classes (doesn't matter final or open)
-                if (it.isAnnotationClass) Modality.OPEN else it.modality
+                when {
+                    // Modality for enum classes is not trivial in IR.
+                    // That's why we need to "normalize" modality for the expect-actual checker
+                    // See FirRegularClass.enumClassModality & 940567b8bd72f69b3eb7d54ff780f98a17e6b9fc
+                    it.isEnumClass -> Modality.FINAL
+                    // For some reason kotlin annotations in IR have open modality and java annotations have final modality
+                    // But since it's legal to actualize kotlin annotation class with java annotation class
+                    //  and effectively all annotation classes have the same modality, it's ok to always return one
+                    //  modality for all annotation classes (doesn't matter final or open)
+                    it.isAnnotationClass -> Modality.OPEN
+                    else -> it.modality
+                }
             },
             onTypeAlias = { Modality.FINAL }
         )
@@ -151,7 +159,8 @@ internal abstract class IrExpectActualMatchingContext(
 
     override val CallableSymbolMarker.modality: Modality?
         get() = when (this) {
-            is IrConstructorSymbol -> Modality.FINAL
+            // owner.modality is null for IrEnumEntrySymbol
+            is IrEnumEntrySymbol, is IrConstructorSymbol -> Modality.FINAL
             is IrSymbol -> (owner as? IrOverridableMember)?.modality
             else -> shouldNotBeCalled()
         }
@@ -487,7 +496,10 @@ internal abstract class IrExpectActualMatchingContext(
         }
 
     override val CallableSymbolMarker.isJavaField: Boolean
-        get() = this is IrFieldSymbol && owner.isFromJava()
+        get() = this is IrPropertySymbol && owner.isPropertyForJavaField()
+
+    override val CallableSymbolMarker.canBeActualizedByJavaField: Boolean
+        get() = this is IrPropertySymbol && callableId == abstractMutableListModCountCallableId
 
     override fun onMatchedMembers(
         expectSymbol: DeclarationSymbolMarker,
@@ -504,14 +516,13 @@ internal abstract class IrExpectActualMatchingContext(
                     is IrTypeAliasSymbol -> actualSymbol.owner.expandedType.getClass()!!.symbol
                     else -> actualSymbol.unexpectedSymbolKind<IrClassifierSymbol>()
                 }
-                onMatchedClasses(expectSymbol, actualClassSymbol)
+                onMatchedDeclarations(expectSymbol, actualClassSymbol)
             }
-            else -> onMatchedCallables(expectSymbol, actualSymbol)
+            else -> onMatchedDeclarations(expectSymbol, actualSymbol)
         }
     }
 
-    abstract fun onMatchedClasses(expectClassSymbol: IrClassSymbol, actualClassSymbol: IrClassSymbol)
-    abstract fun onMatchedCallables(expectSymbol: IrSymbol, actualSymbol: IrSymbol)
+    abstract fun onMatchedDeclarations(expectSymbol: IrSymbol, actualSymbol: IrSymbol)
 
     override val DeclarationSymbolMarker.annotations: List<AnnotationCallInfo>
         get() = asIr().annotations.map(::AnnotationCallInfoImpl)

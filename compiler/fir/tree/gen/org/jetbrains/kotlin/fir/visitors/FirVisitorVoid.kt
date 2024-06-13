@@ -243,6 +243,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(receiverParameter)
     }
 
+    final override fun visitScriptReceiverParameter(scriptReceiverParameter: FirScriptReceiverParameter, data: Nothing?) {
+        visitScriptReceiverParameter(scriptReceiverParameter)
+    }
+
+    open fun visitScriptReceiverParameter(scriptReceiverParameter: FirScriptReceiverParameter) {
+        visitElement(scriptReceiverParameter)
+    }
+
     final override fun visitProperty(property: FirProperty, data: Nothing?) {
         visitProperty(property)
     }
@@ -547,11 +555,11 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(tryExpression)
     }
 
-    final override fun <T> visitLiteralExpression(literalExpression: FirLiteralExpression<T>, data: Nothing?) {
+    final override fun visitLiteralExpression(literalExpression: FirLiteralExpression, data: Nothing?) {
         visitLiteralExpression(literalExpression)
     }
 
-    open fun <T> visitLiteralExpression(literalExpression: FirLiteralExpression<T>) {
+    open fun visitLiteralExpression(literalExpression: FirLiteralExpression) {
         visitElement(literalExpression)
     }
 

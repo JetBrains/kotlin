@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
-import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryNext
+import org.jetbrains.kotlin.gradle.utils.KotlinJvmCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
 
 @Suppress("DEPRECATION")
@@ -40,8 +40,7 @@ class KotlinJvmWithJavaTargetPreset(
             {
                 object : DeprecatedHasCompilerOptions<KotlinJvmCompilerOptions> {
                     override val options: KotlinJvmCompilerOptions = project.objects
-                        .newInstance(KotlinJvmCompilerOptionsDefault::class.java)
-                        .configureExperimentalTryNext(project)
+                        .KotlinJvmCompilerOptionsDefault(project)
                 }
             },
             { compilerOptions: KotlinJvmCompilerOptions ->

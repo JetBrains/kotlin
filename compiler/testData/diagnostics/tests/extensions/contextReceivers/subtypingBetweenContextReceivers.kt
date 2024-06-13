@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNCHECKED_CAST
-// !LANGUAGE: +ContextReceivers
+// DIAGNOSTICS: -UNCHECKED_CAST
+// LANGUAGE: +ContextReceivers
 
 interface A
 interface B : A

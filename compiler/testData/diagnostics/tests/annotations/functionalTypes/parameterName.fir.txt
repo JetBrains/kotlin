@@ -1,0 +1,43 @@
+FILE: parameterName.kt
+    public final fun <T, R> foo(t: R|T|, block: R|(@R|kotlin/ParameterName|(name = String(something))  T) -> R|): R|R| {
+        ^foo R|kotlin/TODO|()
+    }
+    public final val x1: R|kotlin/String| = R|/foo|<R|kotlin/String|, R|kotlin/String|>(String(), <L> = foo@fun <anonymous>(x: R|kotlin/String|): R|kotlin/String| <inline=NoInline>  {
+        ^ R|<local>/x|
+    }
+    )
+        public get(): R|kotlin/String|
+    public final val x2: R|kotlin/String| = R|/foo|<R|kotlin/String|, R|kotlin/String|>(String(), <L> = foo@fun <anonymous>(it: R|kotlin/String|): R|kotlin/String| <inline=NoInline>  {
+        ^ R|<local>/it|
+    }
+    )
+        public get(): R|kotlin/String|
+    public final val expectedType1: R|(@R|kotlin/ParameterName|(name = String(s))  kotlin/String) -> kotlin/Int| = fun <anonymous>(it: R|kotlin/String|): R|kotlin/Int| <inline=Unknown>  {
+        ^ R|<local>/it|.R|kotlin/String.length|
+    }
+
+        public get(): R|(@R|kotlin/ParameterName|(name = String(s))  kotlin/String) -> kotlin/Int|
+    public final val expectedType2: R|(@R|kotlin/ParameterName|(name = String(s))  kotlin/String) -> kotlin/Int| = fun <anonymous>(x: R|kotlin/String|): R|kotlin/Int| <inline=Unknown>  {
+        ^ R|<local>/x|.R|kotlin/String.length|
+    }
+
+        public get(): R|(@R|kotlin/ParameterName|(name = String(s))  kotlin/String) -> kotlin/Int|
+    public final fun bar(): R|kotlin/String| {
+        ^bar R|/foo|<R|kotlin/String|, R|kotlin/String|>(String(), <L> = foo@fun <anonymous>(x: R|kotlin/String|): R|kotlin/String| <inline=NoInline>  {
+            ^ R|<local>/x|
+        }
+        )
+    }
+    public final fun myMain(): R|kotlin/Unit| {
+        lval y: R|kotlin/String| = R|/foo|<R|kotlin/String|, R|kotlin/String|>(String(), <L> = foo@fun <anonymous>(x: R|kotlin/String|): R|kotlin/String| <inline=NoInline>  {
+            ^ R|<local>/x|
+        }
+        )
+        local final fun baz(): R|kotlin/String| {
+            ^baz R|/foo|<R|kotlin/String|, R|kotlin/String|>(String(), <L> = foo@fun <anonymous>(x: R|kotlin/String|): R|kotlin/String| <inline=NoInline>  {
+                ^ R|<local>/x|
+            }
+            )
+        }
+
+    }

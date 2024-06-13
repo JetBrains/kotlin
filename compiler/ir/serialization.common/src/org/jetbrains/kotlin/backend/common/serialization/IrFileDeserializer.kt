@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
-import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -73,7 +72,6 @@ class FileDeserializationState(
         IrSymbolDeserializer(
             linker.symbolTable, fileReader, file.symbol,
             ::addIdSignature,
-            linker::handleExpectActualMapping,
             symbolProcessor = linker.symbolProcessor,
             irInterner = linker.irInterner
         ) { idSignature, symbolKind ->
@@ -86,6 +84,7 @@ class FileDeserializationState(
         linker.symbolTable.irFactory,
         fileReader,
         file,
+        allowAlreadyBoundSymbols = false,
         allowErrorNodes,
         deserializeInlineFunctions,
         deserializeBodies,

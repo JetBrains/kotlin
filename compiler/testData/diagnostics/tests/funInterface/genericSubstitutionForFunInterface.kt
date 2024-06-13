@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +SamConversionForKotlinFunctions +SamConversionPerArgument +FunctionalInterfaceConversion
-// !CHECK_TYPE
+// LANGUAGE: +SamConversionForKotlinFunctions +SamConversionPerArgument +FunctionalInterfaceConversion
+// CHECK_TYPE
 
 fun interface F<S> {
     fun apply(s: S)

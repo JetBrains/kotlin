@@ -21,4 +21,3 @@ fun test3(j1: J1<Any>): J2<Int, Any>
 //   Public signature: /test4|6994753301121646380[0]
 //   Public signature debug description: test4(J1<kotlin.Any>){}J1.J2<kotlin.Int,kotlin.Any>
 fun test4(j1: J1<Any>): J2<Int, Any>
-

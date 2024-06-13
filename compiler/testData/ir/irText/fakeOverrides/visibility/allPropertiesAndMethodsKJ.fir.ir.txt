@@ -75,6 +75,15 @@ FILE fqName:<root> fileName:/Test.kt
       overridden:
         public open fun toString (): kotlin.String declared in <root>.J2
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:j1 visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final j1: kotlin.Int declared in <root>.J2
+    PROPERTY FAKE_OVERRIDE name:j2 visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final j2: kotlin.Int declared in <root>.J2
+    PROPERTY FAKE_OVERRIDE name:j4 visibility:public/*package*/ modality:FINAL [fake_override,var]
+      overridden:
+        public/*package*/ final j4: kotlin.Int declared in <root>.J2
 Module: main
 FILE fqName:<root> fileName:/test.kt
   CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<root>.J]
@@ -108,6 +117,15 @@ FILE fqName:<root> fileName:/test.kt
       overridden:
         public open fun toString (): kotlin.String declared in <root>.J
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:j1 visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final j1: kotlin.Int declared in <root>.J
+    PROPERTY FAKE_OVERRIDE name:j2 visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final j2: kotlin.Int declared in <root>.J
+    PROPERTY FAKE_OVERRIDE name:j4 visibility:public/*package*/ modality:FINAL [fake_override,var]
+      overridden:
+        public/*package*/ final j4: kotlin.Int declared in <root>.J
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.J2]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
     CONSTRUCTOR visibility:public <> () returnType:<root>.B [primary]
@@ -139,6 +157,15 @@ FILE fqName:<root> fileName:/test.kt
       overridden:
         public open fun toString (): kotlin.String declared in <root>.J2
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:j1 visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final j1: kotlin.Int declared in <root>.J2
+    PROPERTY FAKE_OVERRIDE name:j2 visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final j2: kotlin.Int declared in <root>.J2
+    PROPERTY FAKE_OVERRIDE name:j4 visibility:public/*package*/ modality:FINAL [fake_override,var]
+      overridden:
+        public/*package*/ final j4: kotlin.Int declared in <root>.J2
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.J]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
     CONSTRUCTOR visibility:public <> () returnType:<root>.C [primary]
@@ -173,6 +200,15 @@ FILE fqName:<root> fileName:/test.kt
         public/*package*/ open fun funJ4 (): kotlin.Unit declared in <root>.J
       $this: VALUE_PARAMETER name:<this> type:<root>.C
       BLOCK_BODY
+    PROPERTY FAKE_OVERRIDE name:j1 visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final j1: kotlin.Int declared in <root>.J
+    PROPERTY FAKE_OVERRIDE name:j2 visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final j2: kotlin.Int declared in <root>.J
+    PROPERTY FAKE_OVERRIDE name:j4 visibility:public/*package*/ modality:FINAL [fake_override,var]
+      overridden:
+        public/*package*/ final j4: kotlin.Int declared in <root>.J
   CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.J2]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.D
     CONSTRUCTOR visibility:public <> () returnType:<root>.D [primary]
@@ -206,6 +242,15 @@ FILE fqName:<root> fileName:/test.kt
         protected/*protected and package*/ open fun funJ2 (): kotlin.Unit declared in <root>.J2
       $this: VALUE_PARAMETER name:<this> type:<root>.D
       BLOCK_BODY
+    PROPERTY FAKE_OVERRIDE name:j1 visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final j1: kotlin.Int declared in <root>.J2
+    PROPERTY FAKE_OVERRIDE name:j2 visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final j2: kotlin.Int declared in <root>.J2
+    PROPERTY FAKE_OVERRIDE name:j4 visibility:public/*package*/ modality:FINAL [fake_override,var]
+      overridden:
+        public/*package*/ final j4: kotlin.Int declared in <root>.J2
   CLASS CLASS name:E modality:FINAL visibility:public superTypes:[<root>.J]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.E
     PROPERTY name:j1 visibility:public modality:FINAL [val]
@@ -281,6 +326,15 @@ FILE fqName:<root> fileName:/test.kt
       overridden:
         public open fun toString (): kotlin.String declared in <root>.J
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:j1 visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final j1: kotlin.Int declared in <root>.J
+    PROPERTY FAKE_OVERRIDE name:j2 visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final j2: kotlin.Int declared in <root>.J
+    PROPERTY FAKE_OVERRIDE name:j4 visibility:public/*package*/ modality:FINAL [fake_override,var]
+      overridden:
+        public/*package*/ final j4: kotlin.Int declared in <root>.J
   CLASS CLASS name:F modality:OPEN visibility:public superTypes:[<root>.J]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.F
     PROPERTY name:j1 visibility:protected modality:FINAL [val]
@@ -364,6 +418,15 @@ FILE fqName:<root> fileName:/test.kt
       overridden:
         public open fun toString (): kotlin.String declared in <root>.J
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:j1 visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final j1: kotlin.Int declared in <root>.J
+    PROPERTY FAKE_OVERRIDE name:j2 visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final j2: kotlin.Int declared in <root>.J
+    PROPERTY FAKE_OVERRIDE name:j4 visibility:public/*package*/ modality:FINAL [fake_override,var]
+      overridden:
+        public/*package*/ final j4: kotlin.Int declared in <root>.J
   CLASS CLASS name:G modality:FINAL visibility:public superTypes:[<root>.J]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.G
     PROPERTY name:j1 visibility:internal modality:FINAL [val]
@@ -447,6 +510,15 @@ FILE fqName:<root> fileName:/test.kt
       overridden:
         public open fun toString (): kotlin.String declared in <root>.J
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:j1 visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final j1: kotlin.Int declared in <root>.J
+    PROPERTY FAKE_OVERRIDE name:j2 visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final j2: kotlin.Int declared in <root>.J
+    PROPERTY FAKE_OVERRIDE name:j4 visibility:public/*package*/ modality:FINAL [fake_override,var]
+      overridden:
+        public/*package*/ final j4: kotlin.Int declared in <root>.J
   CLASS CLASS name:H modality:FINAL visibility:public superTypes:[<root>.J]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.H
     PROPERTY name:j1 visibility:private modality:FINAL [val]
@@ -522,6 +594,15 @@ FILE fqName:<root> fileName:/test.kt
       overridden:
         public open fun toString (): kotlin.String declared in <root>.J
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:j1 visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final j1: kotlin.Int declared in <root>.J
+    PROPERTY FAKE_OVERRIDE name:j2 visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final j2: kotlin.Int declared in <root>.J
+    PROPERTY FAKE_OVERRIDE name:j4 visibility:public/*package*/ modality:FINAL [fake_override,var]
+      overridden:
+        public/*package*/ final j4: kotlin.Int declared in <root>.J
   FUN name:test visibility:public modality:FINAL <> (a:<root>.A, b:<root>.B, c:<root>.C, d:<root>.D, e:<root>.E, f:<root>.F, g:<root>.G, h:<root>.H, i:<root>.I) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:<root>.A
     VALUE_PARAMETER name:b index:1 type:<root>.B
@@ -533,13 +614,13 @@ FILE fqName:<root> fileName:/test.kt
     VALUE_PARAMETER name:h index:7 type:<root>.H
     VALUE_PARAMETER name:i index:8 type:<root>.I
     BLOCK_BODY
-      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j1 type:kotlin.Int visibility:public declared in <root>.J' type=kotlin.Unit origin=EQ
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j1 type:kotlin.Int visibility:public declared in <root>.J' type=kotlin.Unit superQualifierSymbol=<root>.A origin=EQ
         receiver: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
         value: CONST Int type=kotlin.Int value=1
-      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j2 type:kotlin.Int visibility:protected/*protected and package*/ declared in <root>.J' type=kotlin.Unit origin=EQ
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j2 type:kotlin.Int visibility:protected/*protected and package*/ declared in <root>.J' type=kotlin.Unit superQualifierSymbol=<root>.A origin=EQ
         receiver: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
         value: CONST Int type=kotlin.Int value=2
-      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j4 type:kotlin.Int visibility:public/*package*/ declared in <root>.J' type=kotlin.Unit origin=EQ
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j4 type:kotlin.Int visibility:public/*package*/ declared in <root>.J' type=kotlin.Unit superQualifierSymbol=<root>.A origin=EQ
         receiver: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
         value: CONST Int type=kotlin.Int value=3
       CALL 'public open fun funJ1 (): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
@@ -548,18 +629,18 @@ FILE fqName:<root> fileName:/test.kt
         $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
       CALL 'public/*package*/ open fun funJ4 (): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
         $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
-      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j1 type:kotlin.Int visibility:public declared in <root>.J2' type=kotlin.Unit origin=EQ
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j1 type:kotlin.Int visibility:public declared in <root>.J2' type=kotlin.Unit superQualifierSymbol=<root>.B origin=EQ
         receiver: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
         value: CONST Int type=kotlin.Int value=1
       CALL 'public open fun funJ1 (): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
         $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
-      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j1 type:kotlin.Int visibility:public declared in <root>.J' type=kotlin.Unit origin=EQ
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j1 type:kotlin.Int visibility:public declared in <root>.J' type=kotlin.Unit superQualifierSymbol=<root>.C origin=EQ
         receiver: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
         value: CONST Int type=kotlin.Int value=1
-      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j2 type:kotlin.Int visibility:protected/*protected and package*/ declared in <root>.J' type=kotlin.Unit origin=EQ
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j2 type:kotlin.Int visibility:protected/*protected and package*/ declared in <root>.J' type=kotlin.Unit superQualifierSymbol=<root>.C origin=EQ
         receiver: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
         value: CONST Int type=kotlin.Int value=2
-      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j4 type:kotlin.Int visibility:public/*package*/ declared in <root>.J' type=kotlin.Unit origin=EQ
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j4 type:kotlin.Int visibility:public/*package*/ declared in <root>.J' type=kotlin.Unit superQualifierSymbol=<root>.C origin=EQ
         receiver: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
         value: CONST Int type=kotlin.Int value=3
       CALL 'public open fun funJ1 (): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
@@ -568,7 +649,7 @@ FILE fqName:<root> fileName:/test.kt
         $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
       CALL 'internal open fun funJ4 (): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
         $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
-      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j1 type:kotlin.Int visibility:public declared in <root>.J2' type=kotlin.Unit origin=EQ
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j1 type:kotlin.Int visibility:public declared in <root>.J2' type=kotlin.Unit superQualifierSymbol=<root>.D origin=EQ
         receiver: GET_VAR 'd: <root>.D declared in <root>.test' type=<root>.D origin=null
         value: CONST Int type=kotlin.Int value=1
       CALL 'public open fun funJ1 (): kotlin.Unit declared in <root>.D' type=kotlin.Unit origin=null
@@ -588,13 +669,13 @@ FILE fqName:<root> fileName:/test.kt
         CALL 'public final fun <get-j4> (): kotlin.Int declared in <root>.E' type=kotlin.Int origin=GET_PROPERTY
           $this: GET_VAR 'e: <root>.E declared in <root>.test' type=<root>.E origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j1 type:kotlin.Int visibility:public declared in <root>.J' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j1 type:kotlin.Int visibility:public declared in <root>.J' type=kotlin.Int superQualifierSymbol=<root>.F origin=null
           receiver: GET_VAR 'f: <root>.F declared in <root>.test' type=<root>.F origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j2 type:kotlin.Int visibility:protected/*protected and package*/ declared in <root>.J' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j2 type:kotlin.Int visibility:protected/*protected and package*/ declared in <root>.J' type=kotlin.Int superQualifierSymbol=<root>.F origin=null
           receiver: GET_VAR 'f: <root>.F declared in <root>.test' type=<root>.F origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j4 type:kotlin.Int visibility:public/*package*/ declared in <root>.J' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j4 type:kotlin.Int visibility:public/*package*/ declared in <root>.J' type=kotlin.Int superQualifierSymbol=<root>.F origin=null
           receiver: GET_VAR 'f: <root>.F declared in <root>.test' type=<root>.F origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'internal final fun <get-j1> (): kotlin.Int declared in <root>.G' type=kotlin.Int origin=GET_PROPERTY
@@ -609,20 +690,20 @@ FILE fqName:<root> fileName:/test.kt
         CALL 'internal final fun <get-j4> (): kotlin.Int declared in <root>.G' type=kotlin.Int origin=GET_PROPERTY
           $this: GET_VAR 'g: <root>.G declared in <root>.test' type=<root>.G origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j1 type:kotlin.Int visibility:public declared in <root>.J' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j1 type:kotlin.Int visibility:public declared in <root>.J' type=kotlin.Int superQualifierSymbol=<root>.H origin=null
           receiver: GET_VAR 'h: <root>.H declared in <root>.test' type=<root>.H origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j2 type:kotlin.Int visibility:protected/*protected and package*/ declared in <root>.J' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j2 type:kotlin.Int visibility:protected/*protected and package*/ declared in <root>.J' type=kotlin.Int superQualifierSymbol=<root>.H origin=null
           receiver: GET_VAR 'h: <root>.H declared in <root>.test' type=<root>.H origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j4 type:kotlin.Int visibility:public/*package*/ declared in <root>.J' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j4 type:kotlin.Int visibility:public/*package*/ declared in <root>.J' type=kotlin.Int superQualifierSymbol=<root>.H origin=null
           receiver: GET_VAR 'h: <root>.H declared in <root>.test' type=<root>.H origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j1 type:kotlin.Int visibility:public declared in <root>.J2' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j1 type:kotlin.Int visibility:public declared in <root>.J2' type=kotlin.Int superQualifierSymbol=<root>.I origin=null
           receiver: GET_VAR 'i: <root>.I declared in <root>.test' type=<root>.I origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j2 type:kotlin.Int visibility:protected/*protected and package*/ declared in <root>.J2' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j2 type:kotlin.Int visibility:protected/*protected and package*/ declared in <root>.J2' type=kotlin.Int superQualifierSymbol=<root>.I origin=null
           receiver: GET_VAR 'i: <root>.I declared in <root>.test' type=<root>.I origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j4 type:kotlin.Int visibility:public/*package*/ declared in <root>.J2' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j4 type:kotlin.Int visibility:public/*package*/ declared in <root>.J2' type=kotlin.Int superQualifierSymbol=<root>.I origin=null
           receiver: GET_VAR 'i: <root>.I declared in <root>.test' type=<root>.I origin=null

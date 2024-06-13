@@ -1,4 +1,4 @@
-KtType: kotlin.collections.List<Test>
+KaType: kotlin.collections.List<Test>
 asPsiType(allowErrorTypes=false, mode=DEFAULT, isAnnotationMethod=false):
   PsiType: @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.Comparable<? super Test>>
 

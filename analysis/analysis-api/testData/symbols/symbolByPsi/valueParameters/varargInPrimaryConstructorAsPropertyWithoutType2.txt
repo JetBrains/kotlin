@@ -1,7 +1,7 @@
-KtConstructorSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
-  containingClassIdIfNonLocal: Foo
+KaConstructorSymbol:
+  annotations: []
+  callableId: null
+  containingClassId: Foo
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -10,47 +10,47 @@ KtConstructorSymbol:
   isPrimary: true
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: Foo
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
       contextReceivers: []
-      generatedPrimaryConstructorProperty: KtKotlinPropertySymbol:
-        annotationsList: []
-        backingFieldSymbol: KtBackingFieldSymbol:
-          annotationsList: []
-          callableIdIfNonLocal: null
+      generatedPrimaryConstructorProperty: KaKotlinPropertySymbol:
+        annotations: []
+        backingFieldSymbol: KaBackingFieldSymbol:
+          annotations: []
+          callableId: null
           contextReceivers: []
           isExtension: false
           name: field
           origin: PROPERTY_BACKING_FIELD
-          owningProperty: KtKotlinPropertySymbol(/Foo.ints)
+          owningProperty: KaKotlinPropertySymbol(/Foo.ints)
           receiverParameter: null
-          returnType: KtUsualClassType:
-            annotationsList: []
-            ownTypeArguments: [
-              out KtTypeErrorType:
-                annotationsList: []
+          returnType: KaUsualClassType:
+            annotations: []
+            typeArguments: [
+              out KaErrorType:
+                annotations: []
                 type: ERROR_TYPE
             ]
             type: kotlin/Array<out ERROR CLASS: No type for parameter>
           symbolKind: LOCAL
           typeParameters: []
-          getContainingFileSymbol: KtFileSymbol(varargInPrimaryConstructorAsPropertyWithoutType2.kt)
+          getContainingFileSymbol: KaFileSymbol(varargInPrimaryConstructorAsPropertyWithoutType2.kt)
           getContainingJvmClassName: Foo
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
-        callableIdIfNonLocal: /Foo.ints
+        callableId: /Foo.ints
         contextReceivers: []
-        getter: KtPropertyGetterSymbol:
-          annotationsList: []
-          callableIdIfNonLocal: null
+        getter: KaPropertyGetterSymbol:
+          annotations: []
+          callableId: null
           contextReceivers: []
           hasBody: false
           hasStableParameterNames: true
@@ -61,11 +61,11 @@ KtConstructorSymbol:
           modality: FINAL
           origin: SOURCE
           receiverParameter: null
-          returnType: KtUsualClassType:
-            annotationsList: []
-            ownTypeArguments: [
-              out KtTypeErrorType:
-                annotationsList: []
+          returnType: KaUsualClassType:
+            annotations: []
+            typeArguments: [
+              out KaErrorType:
+                annotations: []
                 type: ERROR_TYPE
             ]
             type: kotlin/Array<out ERROR CLASS: No type for parameter>
@@ -73,11 +73,11 @@ KtConstructorSymbol:
           typeParameters: []
           valueParameters: []
           visibility: Public
-          getDispatchReceiver(): KtUsualClassType:
-            annotationsList: []
-            ownTypeArguments: []
+          getDispatchReceiver(): KaUsualClassType:
+            annotations: []
+            typeArguments: []
             type: Foo
-          getContainingFileSymbol: KtFileSymbol(varargInPrimaryConstructorAsPropertyWithoutType2.kt)
+          getContainingFileSymbol: KaFileSymbol(varargInPrimaryConstructorAsPropertyWithoutType2.kt)
           getContainingJvmClassName: Foo
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
@@ -99,11 +99,11 @@ KtConstructorSymbol:
         name: ints
         origin: SOURCE
         receiverParameter: null
-        returnType: KtUsualClassType:
-          annotationsList: []
-          ownTypeArguments: [
-            out KtTypeErrorType:
-              annotationsList: []
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: [
+            out KaErrorType:
+              annotations: []
               type: ERROR_TYPE
           ]
           type: kotlin/Array<out ERROR CLASS: No type for parameter>
@@ -111,11 +111,11 @@ KtConstructorSymbol:
         symbolKind: CLASS_MEMBER
         typeParameters: []
         visibility: Public
-        getDispatchReceiver(): KtUsualClassType:
-          annotationsList: []
-          ownTypeArguments: []
+        getDispatchReceiver(): KaUsualClassType:
+          annotations: []
+          typeArguments: []
           type: Foo
-        getContainingFileSymbol: KtFileSymbol(varargInPrimaryConstructorAsPropertyWithoutType2.kt)
+        getContainingFileSymbol: KaFileSymbol(varargInPrimaryConstructorAsPropertyWithoutType2.kt)
         getContainingJvmClassName: Foo
         getContainingModule: KtSourceModule "Sources of main"
         deprecationStatus: null
@@ -132,25 +132,25 @@ KtConstructorSymbol:
       name: ints
       origin: SOURCE
       receiverParameter: null
-      returnType: KtTypeErrorType:
-        annotationsList: []
+      returnType: KaErrorType:
+        annotations: []
         type: ERROR_TYPE
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(varargInPrimaryConstructorAsPropertyWithoutType2.kt)
+      getContainingFileSymbol: KaFileSymbol(varargInPrimaryConstructorAsPropertyWithoutType2.kt)
       getContainingJvmClassName: Foo
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(varargInPrimaryConstructorAsPropertyWithoutType2.kt)
+  getContainingFileSymbol: KaFileSymbol(varargInPrimaryConstructorAsPropertyWithoutType2.kt)
   getContainingJvmClassName: Foo
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: Foo
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: Foo
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -165,15 +165,15 @@ KtNamedClassOrObjectSymbol:
   name: Foo
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(varargInPrimaryConstructorAsPropertyWithoutType2.kt)
+  getContainingFileSymbol: KaFileSymbol(varargInPrimaryConstructorAsPropertyWithoutType2.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

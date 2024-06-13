@@ -3,17 +3,17 @@ Symbol:
 val <T, S> kotlin.collections.Map<T, S>.value: kotlin.collections.List<S>
 
 Signature before substitution:
-KtVariableLikeSignature:
+KaVariableLikeSignature:
   name = value
   receiverType = kotlin.collections.Map<T, S>
   returnType = kotlin.collections.List<S>
   symbol = val value: kotlin.collections.List<S>
-  callableIdIfNonLocal = /value
+  callableId = /value
 
 Signature after substitution:
-KtVariableLikeSignature:
+KaVariableLikeSignature:
   name = value
   receiverType = kotlin.collections.Map<kotlin.collections.List<S>, kotlin.Long>
   returnType = kotlin.collections.List<kotlin.Long>
   symbol = val value: kotlin.collections.List<S>
-  callableIdIfNonLocal = /value
+  callableId = /value

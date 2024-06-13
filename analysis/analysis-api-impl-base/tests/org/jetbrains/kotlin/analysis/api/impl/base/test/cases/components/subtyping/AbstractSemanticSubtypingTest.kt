@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.subtyping
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaSubtypingErrorTypePolicy
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -26,10 +26,10 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 abstract class AbstractSemanticSubtypingTest : AbstractAnalysisApiBasedTest() {
     protected abstract val resultDirective: StringDirective
 
-    protected abstract fun KtAnalysisSession.checkTypes(
+    protected abstract fun KaSession.checkTypes(
         expectedResult: Boolean,
-        type1: KtType,
-        type2: KtType,
+        type1: KaType,
+        type2: KaType,
         testServices: TestServices,
     )
 
@@ -53,11 +53,11 @@ abstract class AbstractSemanticSubtypingTest : AbstractAnalysisApiBasedTest() {
         }
     }
 
-    private fun KtAnalysisSession.getTypeAtCaret(caretTag: String, mainFile: KtFile, testServices: TestServices): KtType {
+    private fun KaSession.getTypeAtCaret(caretTag: String, mainFile: KtFile, testServices: TestServices): KaType {
         val element = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtElement>(mainFile, caretTag)
         return when (element) {
             is KtProperty -> element.getVariableSymbol().returnType
-            is KtExpression -> element.getKtType() ?: error("Expected the selected expression to have a type.")
+            is KtExpression -> element.getKaType() ?: error("Expected the selected expression to have a type.")
             else -> error("Expected a property or an expression.")
         }
     }
@@ -86,7 +86,7 @@ private object SemanticSubtypingTestDirectives : SimpleDirectivesContainer() {
 abstract class AbstractTypeEqualityTest : AbstractSemanticSubtypingTest() {
     override val resultDirective = SemanticSubtypingTestDirectives.ARE_EQUAL
 
-    override fun KtAnalysisSession.checkTypes(expectedResult: Boolean, type1: KtType, type2: KtType, testServices: TestServices) {
+    override fun KaSession.checkTypes(expectedResult: Boolean, type1: KaType, type2: KaType, testServices: TestServices) {
         testServices.assertions.assertEquals(
             expectedResult,
             type1.isEqualTo(type2),
@@ -99,7 +99,7 @@ abstract class AbstractTypeEqualityTest : AbstractSemanticSubtypingTest() {
 abstract class AbstractLenientTypeEqualityTest : AbstractSemanticSubtypingTest() {
     override val resultDirective = SemanticSubtypingTestDirectives.ARE_EQUAL_LENIENT
 
-    override fun KtAnalysisSession.checkTypes(expectedResult: Boolean, type1: KtType, type2: KtType, testServices: TestServices) {
+    override fun KaSession.checkTypes(expectedResult: Boolean, type1: KaType, type2: KaType, testServices: TestServices) {
         testServices.assertions.assertEquals(
             expectedResult,
             type1.isEqualTo(type2, KaSubtypingErrorTypePolicy.LENIENT),
@@ -112,7 +112,7 @@ abstract class AbstractLenientTypeEqualityTest : AbstractSemanticSubtypingTest()
 abstract class AbstractSubtypingTest : AbstractSemanticSubtypingTest() {
     override val resultDirective = SemanticSubtypingTestDirectives.IS_SUBTYPE
 
-    override fun KtAnalysisSession.checkTypes(expectedResult: Boolean, type1: KtType, type2: KtType, testServices: TestServices) {
+    override fun KaSession.checkTypes(expectedResult: Boolean, type1: KaType, type2: KaType, testServices: TestServices) {
         testServices.assertions.assertEquals(
             expectedResult,
             type1.isSubTypeOf(type2),
@@ -125,7 +125,7 @@ abstract class AbstractSubtypingTest : AbstractSemanticSubtypingTest() {
 abstract class AbstractLenientSubtypingTest : AbstractSemanticSubtypingTest() {
     override val resultDirective = SemanticSubtypingTestDirectives.IS_SUBTYPE_LENIENT
 
-    override fun KtAnalysisSession.checkTypes(expectedResult: Boolean, type1: KtType, type2: KtType, testServices: TestServices) {
+    override fun KaSession.checkTypes(expectedResult: Boolean, type1: KaType, type2: KaType, testServices: TestServices) {
         testServices.assertions.assertEquals(
             expectedResult,
             type1.isSubTypeOf(type2, KaSubtypingErrorTypePolicy.LENIENT),

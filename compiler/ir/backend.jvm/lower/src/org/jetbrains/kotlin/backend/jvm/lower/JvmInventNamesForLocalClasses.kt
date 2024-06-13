@@ -28,7 +28,7 @@ internal class JvmInventNamesForLocalClasses(context: JvmBackendContext) : JvmIn
 open class JvmInventNamesForLocalClassesImpl(
     protected val context: JvmBackendContext,
     generateNamesForRegeneratedObjects: Boolean = false
-) : InventNamesForLocalClasses(allowTopLevelCallables = true, generateNamesForRegeneratedObjects) {
+) : InventNamesForLocalClasses(generateNamesForRegeneratedObjects) {
     override fun computeTopLevelClassName(clazz: IrClass): String {
         val file = clazz.parent as? IrFile
             ?: throw AssertionError("Top-level class expected: ${clazz.render()}")

@@ -82,8 +82,11 @@ val acceptAndroidSdkLicenses = tasks.register("acceptAndroidSdkLicenses") {
 fun JavaExec.usesAndroidSdk() {
     dependsOn(acceptAndroidSdkLicenses)
 
+    val androidSdk: FileCollection by lazy {
+        configurations["androidSdk"]
+    }
     doFirst {
-        environment("ANDROID_HOME", configurations["androidSdk"].singleFile.canonicalPath)
+        environment("ANDROID_HOME", androidSdk.singleFile.canonicalPath)
     }
 }
 

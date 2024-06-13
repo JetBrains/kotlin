@@ -9,12 +9,18 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.analysis.project.structure.*
-import org.jetbrains.kotlin.analysis.providers.KotlinAnchorModuleProvider
-import org.jetbrains.kotlin.analysis.providers.analysisMessageBus
-import org.jetbrains.kotlin.analysis.providers.topics.*
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinAnchorModuleProvider
+import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
+import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinCodeFragmentContextModificationListener
+import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalModuleStateModificationListener
+import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalSourceModuleStateModificationListener
+import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalSourceOutOfBlockModificationListener
+import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleOutOfBlockModificationListener
+import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleStateModificationKind
+import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleStateModificationListener
 
 /**
- * [LLFirSessionInvalidationService] listens to [modification events][KotlinTopics] and invalidates [LLFirSession]s which depend on the
+ * [LLFirSessionInvalidationService] listens to [modification events][org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTopics] and invalidates [LLFirSession]s which depend on the
  * modified [KtModule]. Its invalidation functions should always be invoked in a **write action** because invalidation affects multiple
  * sessions in [LLFirSessionCache] and the cache has to be kept consistent.
  */
@@ -123,7 +129,7 @@ internal class LLFirSessionInvalidationService(private val project: Project) {
         sessionCache.removeAllSessions(includeLibraryModules)
 
         // We could take `includeLibraryModules` into account here, but this will make the global session invalidation event more
-        // complicated to handle, and it isn't currently necessary for `KtFirAnalysisSession` invalidation to be more granular.
+        // complicated to handle, and it isn't currently necessary for `KaFirSession` invalidation to be more granular.
         project.analysisMessageBus.syncPublisher(LLFirSessionInvalidationTopics.SESSION_INVALIDATION).afterGlobalInvalidation()
     }
 

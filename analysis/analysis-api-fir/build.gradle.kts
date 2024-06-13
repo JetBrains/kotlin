@@ -29,7 +29,7 @@ dependencies {
     implementation(project(":compiler:ir.backend.common"))
     implementation(project(":compiler:ir.serialization.jvm"))
     api(intellijCore())
-    implementation(project(":analysis:analysis-api-providers"))
+    implementation(project(":analysis:analysis-api-platform-interface"))
     implementation(project(":analysis:analysis-internal-utils"))
     implementation(project(":analysis:kt-references"))
     implementation(project(":analysis:symbol-light-classes"))
@@ -49,7 +49,8 @@ dependencies {
     testImplementation(kotlinTest("junit"))
     testApi(projectTests(":analysis:analysis-test-framework"))
 
-    testImplementation(toolsJar())
+    testCompileOnly(toolsJarApi())
+    testRuntimeOnly(toolsJar())
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
@@ -78,7 +79,7 @@ allprojects {
         compilerOptions.optIn.addAll(
             listOf(
                 "org.jetbrains.kotlin.fir.symbols.SymbolInternals",
-                "org.jetbrains.kotlin.analysis.api.lifetime.KtAllowProhibitedAnalyzeFromWriteAction"
+                "org.jetbrains.kotlin.analysis.api.permissions.KaAllowProhibitedAnalyzeFromWriteAction"
             )
         )
     }
@@ -113,5 +114,5 @@ compileKotlin.dependsOn(generateCode)
 
 tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions.freeCompilerArgs.add("-Xcontext-receivers")
-    compilerOptions.optIn.add("org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals")
+    compilerOptions.optIn.add("org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals")
 }

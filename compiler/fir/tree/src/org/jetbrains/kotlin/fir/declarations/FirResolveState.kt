@@ -41,7 +41,7 @@ class FirResolvedToPhaseState private constructor(
     companion object {
         private val phases: List<FirResolvedToPhaseState> = FirResolvePhase.entries.map(::FirResolvedToPhaseState)
 
-        operator fun invoke(phase: FirResolvePhase) = phases[phase.ordinal]
+        operator fun invoke(phase: FirResolvePhase): FirResolvedToPhaseState = phases[phase.ordinal]
     }
 
     override fun toString(): String = "ResolvedTo($resolvePhase)"
@@ -125,7 +125,7 @@ class FirInProcessOfResolvingToPhaseStateWithBarrier(override val resolvingTo: F
  * @see FirResolveState
  */
 class FirInProcessOfResolvingToJumpingPhaseState(override val resolvingTo: FirResolvePhase) : FirInProcessOfResolvingToPhaseState() {
-    val latch = CountDownLatch(1)
+    val latch: CountDownLatch = CountDownLatch(1)
 
     @Volatile
     var waitingFor: FirInProcessOfResolvingToJumpingPhaseState? = null

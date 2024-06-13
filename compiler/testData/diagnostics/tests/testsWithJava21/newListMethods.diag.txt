@@ -1,12 +1,12 @@
-/newListMethods.kt:49:7: error: unresolved reference: getFirst
+/newListMethods.kt:46:7: error: unresolved reference: getFirst
     x.getFirst()
       ^^^^^^^^
-/newListMethods.kt:50:7: error: function invocation 'first()' expected
+/newListMethods.kt:47:7: error: function invocation 'first()' expected
     x.first // synthetic property for getFirst()
       ^^^^^
-/newListMethods.kt:52:7: error: unresolved reference: getLast
+/newListMethods.kt:49:7: error: unresolved reference: getLast
     x.getLast()
       ^^^^^^^
-/newListMethods.kt:53:7: error: function invocation 'last()' expected
+/newListMethods.kt:50:7: error: function invocation 'last()' expected
     x.last
       ^^^^

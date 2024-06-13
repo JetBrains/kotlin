@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.generators.tree
 
 import org.jetbrains.kotlin.generators.tree.imports.ImportCollecting
 import org.jetbrains.kotlin.generators.tree.imports.Importable
-import org.jetbrains.kotlin.generators.tree.printer.braces
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.joinToWithBuffer
 import java.util.*
@@ -125,6 +124,9 @@ sealed interface ElementOrRef<Element> : ParametrizedTypeRef<ElementOrRef<Elemen
 
     override fun copy(nullable: Boolean): ElementRef<Element>
 }
+
+fun <Element : AbstractElement<Element, *, *>> ElementOrRef<Element>.toRef(): ElementRef<Element> =
+    ElementRef(element, args, nullable)
 
 data class ElementRef<Element : AbstractElement<Element, *, *>>(
     override val element: Element,
@@ -295,14 +297,6 @@ val ClassOrElementRef.typeKind: TypeKind
         is ElementOrRef<*> -> element.kind!!.typeKind
         is ClassRef<*> -> kind
     }
-
-fun ClassOrElementRef.inheritanceClauseParenthesis(): String = when (this) {
-    is ElementOrRef<*> -> element.kind.braces()
-    is ClassRef<*> -> when (kind) {
-        TypeKind.Class -> "()"
-        TypeKind.Interface -> ""
-    }
-}
 
 val TypeRef.nullable: Boolean
     get() = (this as? TypeRefWithNullability)?.nullable ?: false

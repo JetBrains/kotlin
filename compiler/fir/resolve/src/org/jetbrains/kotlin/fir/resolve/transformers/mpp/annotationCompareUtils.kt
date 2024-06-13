@@ -175,7 +175,7 @@ private fun FirExpectActualMatchingContext.areAnnotationArgumentsEqual(
     return when {
         expression1 == null || expression2 == null -> (expression1 == null) == (expression2 == null)
 
-        expression1 is FirLiteralExpression<*> && expression2 is FirLiteralExpression<*> -> expression1.value == expression2.value
+        expression1 is FirLiteralExpression && expression2 is FirLiteralExpression -> expression1.value == expression2.value
 
         expression1 is FirGetClassCall && expression2 is FirGetClassCall -> {
             areCompatibleExpectActualTypes(expression1.resolvedType, expression2.resolvedType)

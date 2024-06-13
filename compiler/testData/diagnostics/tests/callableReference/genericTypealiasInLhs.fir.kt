@@ -27,12 +27,18 @@ typealias InvUnusedCorrectAlias<T> = Inv<String>
 typealias InvUnusedIncorrectAlias<T> = Inv<<!UPPER_BOUND_VIOLATED!>Int<!>>
 typealias InvSpecificAlias = Inv<String>
 
+typealias Mixed3<B> = Inv<InvAlias<B>>
+
 fun test_2() {
+    Mixed3<String>::foo
+
     Inv<String>::foo
     Inv<<!UPPER_BOUND_VIOLATED!>Int<!>>::foo
     Inv<*>::foo
     Inv<<!UPPER_BOUND_VIOLATED!>out Int<!>>::foo
     Inv<out String>::foo
+    Inv<<!UPPER_BOUND_VIOLATED!>in Int<!>>::foo
+    Inv<in String>::foo
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Inv<!>::foo
     Inv<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String, String><!>::foo
 
@@ -41,6 +47,8 @@ fun test_2() {
     InvAlias<*>::foo
     InvAlias<<!UPPER_BOUND_VIOLATED!>out Int<!>>::foo
     InvAlias<out String>::foo
+    InvAlias<<!UPPER_BOUND_VIOLATED!>in Int<!>>::foo
+    InvAlias<in String>::foo
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvAlias<!>::foo
     InvAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String, String><!>::foo
 
@@ -49,6 +57,8 @@ fun test_2() {
     InvUnusedCorrectAlias<*>::foo
     InvUnusedCorrectAlias<out Int>::foo
     InvUnusedCorrectAlias<out String>::foo
+    InvUnusedCorrectAlias<in Int>::foo
+    InvUnusedCorrectAlias<in String>::foo
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvUnusedCorrectAlias<!>::foo
     InvUnusedCorrectAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String, String><!>::foo
 
@@ -57,11 +67,21 @@ fun test_2() {
     InvUnusedIncorrectAlias<*>::foo
     InvUnusedIncorrectAlias<out Int>::foo
     InvUnusedIncorrectAlias<out String>::foo
+    InvUnusedIncorrectAlias<in Int>::foo
+    InvUnusedIncorrectAlias<in String>::foo
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvUnusedIncorrectAlias<!>::foo
     InvUnusedIncorrectAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String, String><!>::foo
+    InvUnusedIncorrectAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><in String, in String><!>::foo
+    InvUnusedIncorrectAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><out String, out String><!>::foo
+    InvUnusedIncorrectAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><in String, out String><!>::foo
+    InvUnusedIncorrectAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><*, *><!>::foo
 
     InvSpecificAlias::foo
     InvSpecificAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String, String><!>::foo
+    InvSpecificAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><in String, in String><!>::foo
+    InvSpecificAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><out String, out String><!>::foo
+    InvSpecificAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><in String, out String><!>::foo
+    InvSpecificAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><*, *><!>::foo
 }
 
 // ----------------------------------------------------------------

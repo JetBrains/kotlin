@@ -5,28 +5,28 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.superTypes
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtDeclarationRenderer
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.types.Variance
 
-public interface KtSuperTypeRenderer {
+public interface KaSuperTypeRenderer {
     public fun renderSuperType(
-        analysisSession: KtAnalysisSession,
-        type: KtType,
-        symbol: KtClassOrObjectSymbol,
-        declarationRenderer: KtDeclarationRenderer,
+        analysisSession: KaSession,
+        type: KaType,
+        symbol: KaClassOrObjectSymbol,
+        declarationRenderer: KaDeclarationRenderer,
         printer: PrettyPrinter,
     )
 
-    public object WITH_OUT_APPROXIMATION : KtSuperTypeRenderer {
+    public object WITH_OUT_APPROXIMATION : KaSuperTypeRenderer {
         override fun renderSuperType(
-            analysisSession: KtAnalysisSession,
-            type: KtType,
-            symbol: KtClassOrObjectSymbol,
-            declarationRenderer: KtDeclarationRenderer,
+            analysisSession: KaSession,
+            type: KaType,
+            symbol: KaClassOrObjectSymbol,
+            declarationRenderer: KaDeclarationRenderer,
             printer: PrettyPrinter,
         ) {
             val approximatedType = declarationRenderer.declarationTypeApproximator
@@ -36,3 +36,5 @@ public interface KtSuperTypeRenderer {
         }
     }
 }
+
+public typealias KtSuperTypeRenderer = KaSuperTypeRenderer

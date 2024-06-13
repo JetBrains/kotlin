@@ -1,0 +1,43 @@
+KtDotQualifiedExpression(162,171): 'b.clear()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaSmartCastedReceiverValue:
+          original = KaExplicitReceiverValue:
+            expression = b
+            isSafeNavigation = false
+            type = main.B?
+          type = main.B
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/collections/MutableList.clear(<dispatch receiver>: kotlin.collections.MutableList<E>): kotlin.Unit
+          valueParameters = []
+          callableId = kotlin/collections/MutableList.clear
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with clear>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaSmartCastedReceiverValue:
+          original = KaExplicitReceiverValue:
+            expression = b
+            isSafeNavigation = false
+            type = main.B?
+          type = main.B
+        signature = KaFunctionLikeSignature:
+          receiverType = kotlin.text.StringBuilder
+          returnType = kotlin.text.StringBuilder
+          symbol = kotlin/text/clear(<extension receiver>: kotlin.text.StringBuilder): kotlin.text.StringBuilder
+          valueParameters = []
+          callableId = kotlin/text/clear
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false

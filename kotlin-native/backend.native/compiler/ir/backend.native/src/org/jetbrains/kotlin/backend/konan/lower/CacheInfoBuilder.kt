@@ -79,7 +79,7 @@ internal class CacheInfoBuilder(
     }
 
     private val IrDeclaration.isExported
-        get() = with(KonanManglerIr) { isExported(compatibleMode = moduleDeserializer.compatibilityMode.oldSignatures) }
+        get() = with(KonanManglerIr) { isExported(compatibleMode = moduleDeserializer.compatibilityMode.legacySignaturesForPrivateAndLocalDeclarations) }
 
     private val visitedInlineFunctions = mutableSetOf<IrFunction>()
 

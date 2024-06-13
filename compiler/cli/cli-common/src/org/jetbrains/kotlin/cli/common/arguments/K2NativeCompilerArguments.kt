@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
 
-class K2NativeCompilerArguments : CommonCompilerArguments() {
+class K2NativeCompilerArguments : CommonKlibBasedCompilerArguments() {
     // First go the options interesting to the general public.
     // Prepend them with a single dash.
     // Keep the list lexically sorted.
@@ -47,7 +47,12 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-library", shortName = "-l", valueDescription = "<path>", description = "Link with the given library.", delimiter = Argument.Delimiters.none)
     var libraries: Array<String>? = null
 
-    @Argument(value = "-library-version", shortName = "-lv", valueDescription = "<version>", description = "Set the library version.")
+    @Argument(
+        value = "-library-version",
+        shortName = "-lv",
+        valueDescription = "<version>",
+        description = "The library version.\nNote: This option is deprecated and will be removed in one of the future releases."
+    )
     var libraryVersion: String? = null
 
     @Argument(value = "-list-targets", deprecatedName = "-list_targets", description = "List available hardware targets.")
@@ -323,13 +328,6 @@ The default value is 1."""
     @Argument(value = "-Xverify-bitcode", deprecatedName = "--verify_bitcode", description = "Verify LLVM bitcode after each method.")
     var verifyBitCode: Boolean = false
 
-    @Argument(
-        value = "-Xverify-ir",
-        valueDescription = "{none|warning|error}",
-        description = "IR verification mode (no verification by default)."
-    )
-    var verifyIr: String? = null
-
     @Argument(value = "-Xverify-compiler", description = "Verify the compiler.")
     var verifyCompiler: String? = null
 
@@ -431,20 +429,6 @@ The default value is 1."""
 
     @Argument(value = "-Xlazy-ir-for-caches", valueDescription = "{disable|enable}", description = "Use lazy IR for cached libraries.")
     var lazyIrForCaches: String? = null
-
-    @Argument(value = "-Xpartial-linkage", valueDescription = "{enable|disable}", description = "Use partial linkage mode.")
-    var partialLinkageMode: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(value = "-Xpartial-linkage-loglevel", valueDescription = "{info|warning|error}", description = "Define the compile-time log level for partial linkage.")
-    var partialLinkageLogLevel: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
 
     @Argument(value = "-Xomit-framework-binary", description = "Omit binary when compiling the framework.")
     var omitFrameworkBinary: Boolean = false

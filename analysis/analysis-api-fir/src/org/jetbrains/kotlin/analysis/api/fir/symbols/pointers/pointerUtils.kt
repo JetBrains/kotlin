@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -55,5 +55,5 @@ internal inline fun <reified D : FirCallableDeclaration> Collection<FirCallableS
     return null
 }
 
-internal fun KtFirAnalysisSession.getClassLikeSymbol(classId: ClassId) =
+internal fun KaFirSession.getClassLikeSymbol(classId: ClassId) =
     useSiteSession.symbolProvider.getClassLikeSymbolByClassId(classId)?.fir

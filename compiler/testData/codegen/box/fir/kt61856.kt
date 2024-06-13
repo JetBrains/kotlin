@@ -1,7 +1,9 @@
 // TARGET_BACKEND: JVM_IR
 // WITH_STDLIB
-// MODULE: a
-// FILE: Email.java
+
+// MODULE: lib
+
+// FILE: javax/validation/constraints/Email.java
 package javax.validation.constraints;
 
 import java.lang.annotation.ElementType;
@@ -19,14 +21,15 @@ public @interface Email {
     }
 }
 
-// FILE: a.kt
+// FILE: BoardContentLogController.kt
 import javax.validation.constraints.Email
 
 class BoardContentLogController {
     fun getBoardContentItemLogs(@Email.List emails: List<String>) {}
 }
 
-// MODULE: box(a)
+// MODULE: box(lib)
+
 // FILE: box.kt
 fun box(): String {
     BoardContentLogController().getBoardContentItemLogs(listOf("email1", "email2"))

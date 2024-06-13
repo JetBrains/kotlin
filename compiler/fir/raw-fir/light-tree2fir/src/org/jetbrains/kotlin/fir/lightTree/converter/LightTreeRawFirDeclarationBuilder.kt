@@ -53,7 +53,6 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.util.getChildren
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class LightTreeRawFirDeclarationBuilder(
@@ -524,6 +523,7 @@ class LightTreeRawFirDeclarationBuilder(
                                         arrayOf(selfType.type),
                                         isNullable = false
                                     )
+                                    source =classNode.toFirSourceElement(KtFakeSourceElementKind.EnumSuperTypeRef)
                                 }
                                 superTypeRefs += delegatedSuperTypeRef
                             }
@@ -947,8 +947,14 @@ class LightTreeRawFirDeclarationBuilder(
 
             val modifiers = modifiersIfPresent ?: Modifier()
 
-            val defaultVisibility = classWrapper.defaultConstructorVisibility()
-            val firDelegatedCall = runUnless(containingClassIsExpectClass || isKotlinAny) {
+            val generateDelegatedSuperCall = shouldGenerateDelegatedSuperCall(
+                isAnySuperCall = isKotlinAny,
+                isExpectClass = containingClassIsExpectClass,
+                isEnumEntry = isEnumEntry,
+                hasExplicitDelegatedCalls = classWrapper.delegatedSuperCalls.isNotEmpty()
+            )
+
+            val firDelegatedCall = runIf(generateDelegatedSuperCall) {
                 fun createDelegatedConstructorCall(
                     delegatedConstructorSource: KtLightSourceElement?,
                     delegatedSuperTypeRef: FirTypeRef,
@@ -996,7 +1002,7 @@ class LightTreeRawFirDeclarationBuilder(
             val explicitVisibility = runIf(primaryConstructor != null) {
                 modifiers.getVisibility().takeUnless { it == Visibilities.Unknown }
             }
-            val status = FirDeclarationStatusImpl(explicitVisibility ?: defaultVisibility, Modality.FINAL).apply {
+            val status = FirDeclarationStatusImpl(explicitVisibility ?: classWrapper.defaultConstructorVisibility(), Modality.FINAL).apply {
                 isExpect = modifiers.hasExpect() || context.containerIsExpect
                 isActual = modifiers.hasActual() || isImplicitlyActual
                 isInner = classWrapper.isInner()
@@ -1005,7 +1011,6 @@ class LightTreeRawFirDeclarationBuilder(
             }
 
             val builder = when {
-                modifiersIfPresent != null && !hasConstructorKeyword -> createErrorConstructorBuilder(ConeMissingConstructorKeyword)
                 isErrorConstructor -> createErrorConstructorBuilder(ConeNoConstructorError)
                 else -> FirPrimaryConstructorBuilder()
             }
@@ -1099,8 +1104,8 @@ class LightTreeRawFirDeclarationBuilder(
             val delegatedSelfTypeRef = classWrapper.delegatedSelfTypeRef
             val calculatedModifiers = modifiers ?: Modifier()
 
-            val explicitVisibility = calculatedModifiers.getVisibility()
-            val status = FirDeclarationStatusImpl(explicitVisibility, Modality.FINAL).apply {
+            val explicitVisibility = calculatedModifiers.getVisibility().takeUnless { it == Visibilities.Unknown }
+            val status = FirDeclarationStatusImpl(explicitVisibility ?: classWrapper.defaultConstructorVisibility(), Modality.FINAL).apply {
                 isExpect = calculatedModifiers.hasExpect() || context.containerIsExpect
                 isActual = calculatedModifiers.hasActual()
                 isInner = classWrapper.isInner()
@@ -1568,10 +1573,11 @@ class LightTreeRawFirDeclarationBuilder(
             accessorVisibility = propertyVisibility
         }
         val status =
-            // Downward propagation of `inline` and `external` modifiers (from property to its accessors)
+            // Downward propagation of `inline`, `external` and `expect` modifiers (from property to its accessors)
             FirDeclarationStatusImpl(accessorVisibility, calculatedModifiers.getModality(isClassOrObject = false)).apply {
                 isInline = propertyModifiers.hasInline() || calculatedModifiers.hasInline()
                 isExternal = propertyModifiers.hasExternal() || calculatedModifiers.hasExternal()
+                isExpect = propertyModifiers.hasExpect() || calculatedModifiers.hasExpect()
             }
         val sourceElement = getterOrSetter.toFirSourceElement()
         val accessorAdditionalAnnotations = propertyAnnotations.filterUseSiteTarget(
@@ -1587,12 +1593,14 @@ class LightTreeRawFirDeclarationBuilder(
                     propertyTypeRefToUse,
                     accessorVisibility,
                     propertySymbol,
-                    isGetter
+                    isGetter,
+                    parameterSource = firValueParameters.source,
                 )
                 .also { accessor ->
                     accessor.replaceAnnotations(accessorAnnotations + accessorAdditionalAnnotations)
                     accessor.status = status
                     accessor.initContainingClassAttr()
+                    accessor.valueParameters.firstOrNull()?.replaceReturnTypeRef(firValueParameters.returnTypeRef)
                 }
         }
         val target = FirFunctionTarget(labelName = null, isLambda = false)

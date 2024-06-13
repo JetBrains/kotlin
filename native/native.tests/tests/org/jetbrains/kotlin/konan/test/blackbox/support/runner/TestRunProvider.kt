@@ -11,11 +11,14 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.NoTestRunnerExtras
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.WithTestRunnerExtras
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilation
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.Executable
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationFactory
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.TestCaseGroupProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.XCTestRunner
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ThreadSafeCache
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TreeNode
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.buildTree
@@ -28,11 +31,12 @@ import org.junit.jupiter.api.extension.ExtensionContext
 /**
  * [TestRun] provider that is used in Kotlin/Native black box tests together with the corresponding [TestCaseGroupProvider].
  */
-internal class TestRunProvider(
+class TestRunProvider(
     internal val testCaseGroupProvider: TestCaseGroupProvider
 ) : BaseTestRunProvider(), ExtensionContext.Store.CloseableResource {
     private val compilationFactory = TestCompilationFactory()
     private val cachedCompilations = ThreadSafeCache<TestCompilationCacheKey, TestCompilation<Executable>>()
+    private val cachedXCTestCompilations = ThreadSafeCache<TestCompilationCacheKey, TestCompilation<TestCompilationArtifact.XCTestBundle>>()
 
     /**
      * Produces a single [TestRun] per [TestCase]. So-called "one test case/one test run" mode.
@@ -138,35 +142,80 @@ internal class TestRunProvider(
         else
             testCaseId.testCaseGroupId
 
-        val testCompilation = when (testCase.kind) {
-            TestKind.STANDALONE, TestKind.STANDALONE_NO_TR, TestKind.STANDALONE_LLDB -> {
-                // Create a separate compilation for each standalone test case.
-                cachedCompilations.computeIfAbsent(
-                    TestCompilationCacheKey.Standalone(testCaseId)
-                ) {
-                    compilationFactory.testCasesToExecutable(listOf(testCase), settings)
+        val executable = if (settings.get<XCTestRunner>().isEnabled &&
+            testCase.kind in listOf(TestKind.STANDALONE, TestKind.REGULAR)
+        ) {
+            val testCompilation = when (testCase.kind) {
+                TestKind.STANDALONE -> {
+                    // Create a separate compilation for each standalone test case.
+                    cachedXCTestCompilations.computeIfAbsent(
+                        TestCompilationCacheKey.Standalone(testCaseId)
+                    ) {
+                        compilationFactory.testCasesToTestBundle(listOf(testCase), settings)
+                    }
                 }
-            }
-            TestKind.REGULAR -> {
-                // Group regular test cases by compiler arguments.
-                val testRunnerType = testCase.extras<WithTestRunnerExtras>().runnerType
-                cachedCompilations.computeIfAbsent(
-                    TestCompilationCacheKey.Grouped(
-                        testCaseGroupId = testCaseGroupId,
-                        freeCompilerArgs = testCase.freeCompilerArgs,
-                        sharedModules = testCase.sharedModules,
-                        runnerType = testRunnerType
-                    )
-                ) {
-                    val testCases = testCaseGroup.getRegularOnly(testCase.freeCompilerArgs, testCase.sharedModules, testRunnerType)
-                    assertTrue(testCases.isNotEmpty())
-                    compilationFactory.testCasesToExecutable(testCases, settings)
+                TestKind.REGULAR -> {
+                    // Group regular test cases by compiler arguments.
+                    val testRunnerType = testCase.extras<WithTestRunnerExtras>().runnerType
+                    cachedXCTestCompilations.computeIfAbsent(
+                        TestCompilationCacheKey.Grouped(
+                            testCaseGroupId = testCaseGroupId,
+                            freeCompilerArgs = testCase.freeCompilerArgs,
+                            sharedModules = testCase.sharedModules,
+                            runnerType = testRunnerType
+                        )
+                    ) {
+                        val testCases = testCaseGroup.getRegularOnly(testCase.freeCompilerArgs, testCase.sharedModules, testRunnerType)
+                        assertTrue(testCases.isNotEmpty())
+                        compilationFactory.testCasesToTestBundle(testCases, settings)
+                    }
                 }
+                else -> error("Test kind ${testCase.kind} is not supported yet in XCTest runner")
             }
-        }
 
-        val compilationResult = testCompilation.result.assertSuccess() // <-- Compilation happens here.
-        val executable = TestExecutable.fromCompilationResult(testCase, compilationResult)
+            val compilationResult = testCompilation.result.assertSuccess() // <-- Compilation happens here.
+
+            // Create an adapter to match TestExecutable artifact.
+            // Need to refactor TestRun and TestExecutable to be less artifact specific
+            val adapter = TestCompilationResult.Success(
+                resultingArtifact = Executable(
+                    compilationResult.resultingArtifact.bundleDir,
+                    compilationResult.resultingArtifact.fileCheckStage
+                ),
+                loggedData = compilationResult.loggedData
+            )
+            TestExecutable.fromCompilationResult(testCase, adapter)
+        } else {
+            val testCompilation = when (testCase.kind) {
+                TestKind.STANDALONE, TestKind.STANDALONE_NO_TR, TestKind.STANDALONE_LLDB -> {
+                    // Create a separate compilation for each standalone test case.
+                    cachedCompilations.computeIfAbsent(
+                        TestCompilationCacheKey.Standalone(testCaseId)
+                    ) {
+                        compilationFactory.testCasesToExecutable(listOf(testCase), settings)
+                    }
+                }
+                TestKind.REGULAR -> {
+                    // Group regular test cases by compiler arguments.
+                    val testRunnerType = testCase.extras<WithTestRunnerExtras>().runnerType
+                    cachedCompilations.computeIfAbsent(
+                        TestCompilationCacheKey.Grouped(
+                            testCaseGroupId = testCaseGroupId,
+                            freeCompilerArgs = testCase.freeCompilerArgs,
+                            sharedModules = testCase.sharedModules,
+                            runnerType = testRunnerType
+                        )
+                    ) {
+                        val testCases = testCaseGroup.getRegularOnly(testCase.freeCompilerArgs, testCase.sharedModules, testRunnerType)
+                        assertTrue(testCases.isNotEmpty())
+                        compilationFactory.testCasesToExecutable(testCases, settings)
+                    }
+                }
+            }
+
+            val compilationResult = testCompilation.result.assertSuccess() // <-- Compilation happens here.
+            TestExecutable.fromCompilationResult(testCase, compilationResult)
+        }
 
         return action(testCase, executable)
     }

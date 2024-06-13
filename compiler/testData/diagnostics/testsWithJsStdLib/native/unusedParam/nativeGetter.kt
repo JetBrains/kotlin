@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -DEPRECATION
+// DIAGNOSTICS: -DEPRECATION
 @nativeGetter
 fun Int.foo(a: String): Int? = definedExternally
 

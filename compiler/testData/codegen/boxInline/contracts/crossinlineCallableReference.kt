@@ -1,4 +1,4 @@
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
+// OPT_IN: kotlin.contracts.ExperimentalContracts
 // NO_CHECK_LAMBDA_INLINING
 // JVM_ABI_K1_K2_DIFF: KT-62845
 

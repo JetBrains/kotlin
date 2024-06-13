@@ -163,6 +163,16 @@ progressive mode enabled may cause compilation errors in progressive mode."""
             field = value
         }
 
+    @Argument(
+        value = "-Xstdlib-compilation",
+        description = "Enables special features which are relevant only for stdlib compilation.",
+    )
+    var stdlibCompilation = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @Argument(value = "-Xreport-output-files", description = "Report the source-to-output file mapping.")
     var reportOutputFiles = false
         set(value) {
@@ -422,6 +432,28 @@ They should be a subset of sources passed as free arguments."""
         }
 
     @Argument(
+        value = "-Xverify-ir",
+        valueDescription = "{none|warning|error}",
+        description = "IR verification mode (no verification by default)."
+    )
+    var verifyIr: String? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xverify-ir-visibility",
+        description = "Check for visibility violations in IR when validating it before running any lowerings. " +
+                "Only has effect if '-Xverify-ir' is not 'none'.",
+    )
+    var verifyIrVisibility: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xprofile-phases",
         description = "Profile backend phases."
     )
@@ -497,16 +529,6 @@ They should be a subset of sources passed as free arguments."""
         description = "Compile using the LightTree parser with the frontend IR."
     )
     var useFirLT = true
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xuse-fir-fake-override-builder",
-        description = "Generate all fake overrides via FIR2IR instead of IR, i.e. revert to behavior before KT-61514 was resolved."
-    )
-    var useFirFakeOverrideBuilder = false
         set(value) {
             checkFrozen()
             field = value
@@ -662,30 +684,10 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
         }
 
     @Argument(
-        value = "-Xklib-relative-path-base",
-        description = "Provide a base path to compute the source's relative paths in klib (default is empty)."
+        value = "-Xmulti-dollar-interpolation",
+        description = "Enable experimental multi-dollar interpolation."
     )
-    var relativePathBases: Array<String>? = null
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xklib-normalize-absolute-path",
-        description = "Normalize absolute paths in klibs."
-    )
-    var normalizeAbsolutePath = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xklib-enable-signature-clash-checks",
-        description = "Enable signature uniqueness checks."
-    )
-    var enableSignatureClashChecks = true
+    var multiDollarInterpolation = false
         set(value) {
             checkFrozen()
             field = value
@@ -768,6 +770,16 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
             field = value
         }
 
+    @Argument(
+        value = "-Xwhen-guards",
+        description = "Enable language support for when guards."
+    )
+    var whenGuards = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @OptIn(IDEAPluginsCompatibilityAPI::class)
     open fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
@@ -793,6 +805,7 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
             )
             put(AnalysisFlags.extendedCompilerChecks, extendedCompilerChecks)
             put(AnalysisFlags.allowKotlinPackage, allowKotlinPackage)
+            put(AnalysisFlags.stdlibCompilation, stdlibCompilation)
             put(AnalysisFlags.muteExpectActualClassesWarning, expectActualClasses)
             put(AnalysisFlags.consistentDataClassCopyVisibility, consistentDataClassCopyVisibility)
             put(AnalysisFlags.allowFullyQualifiedNameInKClass, true)
@@ -839,6 +852,14 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
 
             if (inferenceCompatibility) {
                 put(LanguageFeature.InferenceCompatibility, LanguageFeature.State.ENABLED)
+            }
+
+            if (whenGuards) {
+                put(LanguageFeature.WhenGuards, LanguageFeature.State.ENABLED)
+            }
+
+            if (multiDollarInterpolation) {
+                put(LanguageFeature.MultiDollarInterpolation, LanguageFeature.State.ENABLED)
             }
 
             if (progressiveMode) {

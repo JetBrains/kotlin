@@ -1,19 +1,19 @@
-KtLocalVariableSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
+KaLocalVariableSymbol:
+  annotations: []
+  callableId: null
   contextReceivers: []
   isExtension: false
   isVal: true
   name: <unused var>
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
-  getContainingFileSymbol: KtFileSymbol(entryUnderscoreInDestructuringDeclarationParameterInLambda.kt)
+  getContainingFileSymbol: KaFileSymbol(entryUnderscoreInDestructuringDeclarationParameterInLambda.kt)
   getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

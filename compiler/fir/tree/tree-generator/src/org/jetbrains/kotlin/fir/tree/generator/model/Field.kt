@@ -12,16 +12,10 @@ sealed class Field : AbstractField<Field>() {
     open var withReplace: Boolean = false
 
     open var needsSeparateTransform: Boolean = false
-    var parentHasSeparateTransform: Boolean = true
     open var needTransformInOtherChildren: Boolean = false
 
     open val isMutableOrEmptyList: Boolean
         get() = false
-
-    open var isMutableInInterface: Boolean = false
-    open val fromDelegate: Boolean get() = false
-
-    open var useNullableForReplace: Boolean = false
 
     var withBindThis = true
 
@@ -40,33 +34,24 @@ sealed class Field : AbstractField<Field>() {
 
     abstract override var isMutable: Boolean
 
-    override fun replaceType(newType: TypeRefWithNullability): Field = copy()
-
-    override fun copy(): Field = internalCopy().also {
-        updateFieldsInCopy(it)
-    }
+    val receiveNullableTypeInReplace: Boolean
+        get() = typeRef.nullable || overriddenFields.any { it.typeRef.nullable }
 
     override fun updateFieldsInCopy(copy: Field) {
         super.updateFieldsInCopy(copy)
         if (copy !is FieldWithDefault) {
             copy.needsSeparateTransform = needsSeparateTransform
             copy.needTransformInOtherChildren = needTransformInOtherChildren
-            copy.useNullableForReplace = useNullableForReplace
             copy.customInitializationCall = customInitializationCall
+            copy.skippedInCopy = skippedInCopy
         }
-        copy.parentHasSeparateTransform = parentHasSeparateTransform
     }
 
-    protected abstract fun internalCopy(): Field
-
-    override fun updatePropertiesFromOverriddenField(parentField: Field, haveSameClass: Boolean) {
-        needsSeparateTransform = needsSeparateTransform || parentField.needsSeparateTransform
-        needTransformInOtherChildren = needTransformInOtherChildren || parentField.needTransformInOtherChildren
-        withReplace = withReplace || parentField.withReplace
-        parentHasSeparateTransform = parentField.needsSeparateTransform
-        if (parentField.nullable != nullable && haveSameClass) {
-            useNullableForReplace = true
-        }
+    override fun updatePropertiesFromOverriddenFields(parentFields: List<Field>) {
+        super.updatePropertiesFromOverriddenFields(parentFields)
+        needsSeparateTransform = needsSeparateTransform || parentFields.any { it.needsSeparateTransform }
+        needTransformInOtherChildren = needTransformInOtherChildren || parentFields.any { it.needTransformInOtherChildren }
+        withReplace = withReplace || parentFields.any { it.withReplace }
     }
 }
 
@@ -117,30 +102,29 @@ class FieldWithDefault(override val origin: Field) : Field() {
     override val isMutableOrEmptyList: Boolean
         get() = origin.isMutableOrEmptyList
 
-    override var isMutableInInterface: Boolean = origin.isMutableInInterface
     override var customSetter: String? = null
-    override var fromDelegate: Boolean = false
-    override val overriddenTypes: MutableSet<TypeRefWithNullability>
-        get() = origin.overriddenTypes
+    override val overriddenFields: MutableSet<Field>
+        get() = origin.overriddenFields
 
     override val arbitraryImportables: MutableList<Importable>
         get() = origin.arbitraryImportables
 
-    override var useNullableForReplace: Boolean
-        get() = origin.useNullableForReplace
+    override var skippedInCopy: Boolean
+        get() = origin.skippedInCopy
         set(_) {}
 
     override fun internalCopy(): Field {
         return FieldWithDefault(origin).also {
             it.isMutable = isMutable
-            it.fromDelegate = fromDelegate
         }
     }
+
+    override fun substituteType(map: TypeParameterSubstitutionMap) {}
 }
 
 class SimpleField(
     override val name: String,
-    override val typeRef: TypeRefWithNullability,
+    override var typeRef: TypeRefWithNullability,
     override val isChild: Boolean,
     override var isMutable: Boolean,
     override var withReplace: Boolean,
@@ -164,25 +148,15 @@ class SimpleField(
         }
     }
 
-    override fun replaceType(newType: TypeRefWithNullability) = SimpleField(
-        name = name,
-        typeRef = newType,
-        isChild = isChild,
-        isMutable = isMutable,
-        withReplace = withReplace,
-        isVolatile = isVolatile,
-        isFinal = isFinal,
-        isParameter = isParameter
-    ).also {
-        it.withBindThis = withBindThis
-        updateFieldsInCopy(it)
+    override fun substituteType(map: TypeParameterSubstitutionMap) {
+        typeRef = typeRef.substitute(map) as TypeRefWithNullability
     }
 }
 // ----------- Field list -----------
 
 class FieldList(
     override val name: String,
-    override val baseType: TypeRef,
+    override var baseType: TypeRef,
     override var withReplace: Boolean,
     override val isChild: Boolean,
     useMutableOrEmpty: Boolean = false,
@@ -207,5 +181,9 @@ class FieldList(
             isChild,
             isMutableOrEmptyList
         )
+    }
+
+    override fun substituteType(map: TypeParameterSubstitutionMap) {
+        baseType = baseType.substitute(map)
     }
 }

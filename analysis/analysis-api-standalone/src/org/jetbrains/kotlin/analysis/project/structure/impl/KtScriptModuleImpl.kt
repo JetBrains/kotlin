@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 
 internal class KtScriptModuleImpl(
     override val directRegularDependencies: List<KtModule> = emptyList(),
@@ -28,9 +27,6 @@ internal class KtScriptModuleImpl(
     override val transitiveDependsOnDependencies: List<KtModule> by lazy {
         computeTransitiveDependsOnDependencies(directDependsOnDependencies)
     }
-
-    override val analyzerServices: PlatformDependentAnalyzerServices
-        get() = super.analyzerServices
 
     override val contentScope: GlobalSearchScope
         get() = GlobalSearchScope.fileScope(file)

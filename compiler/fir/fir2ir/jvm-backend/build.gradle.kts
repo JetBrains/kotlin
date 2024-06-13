@@ -18,6 +18,7 @@ dependencies {
     compileOnly(project(":compiler:backend"))
     compileOnly(project(":compiler:backend.jvm"))
     api(project(":compiler:ir.serialization.common"))
+    compileOnly(project(":compiler:ir.actualization"))
 
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))

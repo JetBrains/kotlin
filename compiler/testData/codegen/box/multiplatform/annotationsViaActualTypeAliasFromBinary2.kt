@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 // WITH_REFLECT
 // IGNORE_BACKEND_K1: ANY
 

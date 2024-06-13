@@ -1,9 +1,9 @@
 element: e
 implicit receivers:
-  type: KtTypeErrorType:
-    annotationsList: []
+  type: KaErrorType:
+    annotations: []
     type: ERROR_TYPE
-  owner symbol: KtFirAnonymousFunctionSymbol
+  owner symbol: KaFirAnonymousFunctionSymbol
 
 scopes:
   LocalScope, index = 0
@@ -44,29 +44,29 @@ scopes:
 
   PackageMemberScope, index = 6
     packages: 6
-      KtPackageSymbol:
+      KaPackageSymbol:
         fqName: META-INF
         origin: SOURCE
-      KtPackageSymbol:
+      KaPackageSymbol:
         fqName: java
         origin: SOURCE
-      KtPackageSymbol:
+      KaPackageSymbol:
         fqName: javax
         origin: SOURCE
-      KtPackageSymbol:
+      KaPackageSymbol:
         fqName: kotlin
         origin: SOURCE
-      KtPackageSymbol:
+      KaPackageSymbol:
         fqName: org
         origin: SOURCE
-      KtPackageSymbol:
+      KaPackageSymbol:
         fqName: sun
         origin: SOURCE
     classifiers: 0
     callables: 1
-      KtFunctionSymbol:
-        annotationsList: []
-        callableIdIfNonLocal: /test
+      KaFunctionSymbol:
+        annotations: []
+        callableId: /test
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -86,9 +86,9 @@ scopes:
         name: test
         origin: SOURCE
         receiverParameter: null
-        returnType: KtUsualClassType:
-          annotationsList: []
-          ownTypeArguments: []
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
           type: kotlin/Unit
         symbolKind: TOP_LEVEL
         typeParameters: []

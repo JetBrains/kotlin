@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.references
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
@@ -35,7 +34,7 @@ class KotlinPsiReferenceRegistrar {
         }
     }
 
-    inline fun <reified E : KtElement>  registerMultiProvider(crossinline factory: (E) -> Array<PsiReference>) {
+    inline fun <reified E : KtElement> registerMultiProvider(crossinline factory: (E) -> Array<PsiReference>) {
         val provider: KotlinPsiReferenceProvider = object : KotlinPsiReferenceProvider {
             override fun getReferencesByElement(element: PsiElement): Array<PsiReference> {
                 return factory(element as E)

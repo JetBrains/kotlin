@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.analysis.api.symbols.KtScriptSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.KaScriptSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.*
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.KtScript
 
 internal class SymbolLightClassForScript private constructor(
     override val script: KtScript,
-    private val symbolPointer: KtSymbolPointer<KtScriptSymbol>,
+    private val symbolPointer: KaSymbolPointer<KaScriptSymbol>,
     ktModule: KtModule,
 ) : KtLightClassForScript, SymbolLightClassBase(ktModule, script.manager) {
 
@@ -171,6 +171,6 @@ internal class SymbolLightClassForScript private constructor(
 
     override fun getScope(): PsiElement = parent
 
-    override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean = false
+    override fun isInheritorDeep(baseClass: PsiClass, classToByPass: PsiClass?): Boolean = false
 
 }

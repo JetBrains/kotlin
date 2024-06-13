@@ -69,6 +69,11 @@ internal fun <R, P, T> (suspend R.(P) -> T).invokeSuspendSuperTypeWithReceiverAn
 @InlineOnly
 public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
     completion: Continuation<T>
+): Any? = startCoroutineUninterceptedOrReturnNonGeneratorVersion(completion)
+
+@PublishedApi
+internal fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturnNonGeneratorVersion(
+    completion: Continuation<T>
 ): Any? {
     val a = this.asDynamic()
     return if (jsTypeOf(a) == "function") a(completion)
@@ -92,6 +97,12 @@ public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrRetu
 public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturn(
     receiver: R,
     completion: Continuation<T>
+): Any? = startCoroutineUninterceptedOrReturnNonGeneratorVersion(receiver, completion)
+
+@PublishedApi
+internal fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturnNonGeneratorVersion(
+    receiver: R,
+    completion: Continuation<T>
 ): Any? {
     val a = this.asDynamic()
     return if (jsTypeOf(a) == "function") a(receiver, completion)
@@ -100,6 +111,13 @@ public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedO
 
 @InlineOnly
 internal actual inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterceptedOrReturn(
+    receiver: R,
+    param: P,
+    completion: Continuation<T>
+): Any? = startCoroutineUninterceptedOrReturnNonGeneratorVersion(receiver, param, completion)
+
+@PublishedApi
+internal fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterceptedOrReturnNonGeneratorVersion(
     receiver: R,
     param: P,
     completion: Continuation<T>

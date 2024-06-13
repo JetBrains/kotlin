@@ -12,8 +12,9 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.MockLibraryUtil
-import org.jetbrains.kotlin.test.TestJavacVersion
+import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives
+import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives.ENABLE_FOREIGN_ANNOTATIONS
 import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives.JSPECIFY_STATE
 import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives.JSR305_GLOBAL_REPORT
 import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives.JSR305_MIGRATION_REPORT
@@ -46,11 +47,11 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(ForeignAnnotationsDirectives)
 
-    @OptIn(ExperimentalStdlibApi::class)
     override fun provideAdditionalAnalysisFlags(
         directives: RegisteredDirectives,
         languageVersion: LanguageVersion
     ): Map<AnalysisFlag<*>, Any?> {
+        if (ENABLE_FOREIGN_ANNOTATIONS !in directives) return emptyMap()
         val defaultJsr305Settings = getDefaultJsr305Settings(languageVersion.toKotlinVersion())
         val globalState = directives.singleOrZeroValue(JSR305_GLOBAL_REPORT) ?: defaultJsr305Settings.globalLevel
         val migrationState = directives.singleOrZeroValue(JSR305_MIGRATION_REPORT) ?: defaultJsr305Settings.migrationLevel
@@ -81,16 +82,16 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         val registeredDirectives = module.directives
-        val javaVersionToCompile = registeredDirectives[JvmEnvironmentConfigurationDirectives.COMPILE_JAVA_USING].singleOrNull()
-        val useJava11ToCompileIncludedJavaFiles = javaVersionToCompile == TestJavacVersion.JAVAC_11
+        if (ENABLE_FOREIGN_ANNOTATIONS !in registeredDirectives) return
+
         val annotationPath = registeredDirectives[ForeignAnnotationsDirectives.ANNOTATIONS_PATH].singleOrNull()
             ?: JavaForeignAnnotationType.Java8Annotations
         val javaFilesDir = createTempDirectory().toFile().also {
             File(annotationPath.path).copyRecursively(it)
         }
-
         val jsr305JarFile = createJsr305Jar(configuration)
-
+        val useJava11ToCompileIncludedJavaFiles =
+            registeredDirectives[JvmEnvironmentConfigurationDirectives.JDK_KIND].singleOrNull() == TestJdkKind.FULL_JDK_11
         val foreignAnnotationsJar = MockLibraryUtil.compileJavaFilesLibraryToJar(
             javaFilesDir.path,
             "foreign-annotations",

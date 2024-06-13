@@ -5,20 +5,20 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.bodies
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
-public interface KtParameterDefaultValueRenderer {
-    public fun renderDefaultValue(analysisSession: KtAnalysisSession, symbol: KtValueParameterSymbol, printer: PrettyPrinter)
+public interface KaParameterDefaultValueRenderer {
+    public fun renderDefaultValue(analysisSession: KaSession, symbol: KaValueParameterSymbol, printer: PrettyPrinter)
 
-    public object NO_DEFAULT_VALUE : KtParameterDefaultValueRenderer {
-        override fun renderDefaultValue(analysisSession: KtAnalysisSession, symbol: KtValueParameterSymbol, printer: PrettyPrinter) {
+    public object NO_DEFAULT_VALUE : KaParameterDefaultValueRenderer {
+        override fun renderDefaultValue(analysisSession: KaSession, symbol: KaValueParameterSymbol, printer: PrettyPrinter) {
         }
     }
 
-    public object THREE_DOTS : KtParameterDefaultValueRenderer {
-        override fun renderDefaultValue(analysisSession: KtAnalysisSession, symbol: KtValueParameterSymbol, printer: PrettyPrinter) {
+    public object THREE_DOTS : KaParameterDefaultValueRenderer {
+        override fun renderDefaultValue(analysisSession: KaSession, symbol: KaValueParameterSymbol, printer: PrettyPrinter) {
             if (symbol.hasDefaultValue) {
                 printer.append("...")
             }
@@ -26,3 +26,4 @@ public interface KtParameterDefaultValueRenderer {
     }
 }
 
+public typealias KtParameterDefaultValueRenderer = KaParameterDefaultValueRenderer

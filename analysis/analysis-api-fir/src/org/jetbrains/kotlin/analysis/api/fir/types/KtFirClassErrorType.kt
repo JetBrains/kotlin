@@ -5,18 +5,21 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.types
 
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
-import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForType
+import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
+import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForType
 import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
 import org.jetbrains.kotlin.analysis.api.fir.types.qualifiers.ErrorClassTypeQualifierBuilder
+import org.jetbrains.kotlin.analysis.api.fir.utils.buildAbbreviatedType
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtClassErrorType
-import org.jetbrains.kotlin.analysis.api.types.KtClassTypeQualifier
-import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaClassErrorType
+import org.jetbrains.kotlin.analysis.api.types.KaClassTypeQualifier
+import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
+import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedError
@@ -24,14 +27,14 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.renderForDebugging
 
-internal class KtFirClassErrorType(
+internal class KaFirClassErrorType(
     override val coneType: ConeClassLikeType,
     private val coneDiagnostic: ConeDiagnostic,
-    private val builder: KtSymbolByFirBuilder,
-) : KtClassErrorType(), KtFirType {
-    override val token: KtLifetimeToken get() = builder.token
+    private val builder: KaSymbolByFirBuilder,
+) : KaClassErrorType(), KaFirType {
+    override val token: KaLifetimeToken get() = builder.token
 
-    override val qualifiers: List<KtClassTypeQualifier> by cached {
+    override val qualifiers: List<KaClassTypeQualifier> by cached {
         when (coneDiagnostic) {
             is ConeUnresolvedError ->
                 ErrorClassTypeQualifierBuilder.createQualifiersForUnresolvedType(coneDiagnostic, builder)
@@ -41,21 +44,31 @@ internal class KtFirClassErrorType(
         }
     }
 
+    override val nullability: KaTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
 
-    override val nullability: KtTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
+    @KaAnalysisNonPublicApi
+    override val presentableText: String?
+        get() = withValidityAssertion {
+            qualifiers.joinToString(separator = ".") { it.name.asString() }
+        }
+
+    @KaAnalysisNonPublicApi
     override val errorMessage: String get() = withValidityAssertion { coneDiagnostic.reason }
 
-    override val annotationsList: KtAnnotationsList by cached {
-        KtFirAnnotationListForType.create(coneType, builder)
+    override val annotations: KaAnnotationList by cached {
+        KaFirAnnotationListForType.create(coneType, builder)
     }
 
-
-    override val candidateClassSymbols: Collection<KtClassLikeSymbol> by cached {
+    override val candidateSymbols: Collection<KaClassLikeSymbol> by cached {
         val symbols = coneDiagnostic.getCandidateSymbols().filterIsInstance<FirClassLikeSymbol<*>>()
         symbols.map { builder.classifierBuilder.buildClassLikeSymbol(it) }
     }
 
-    override fun asStringForDebugging(): String = withValidityAssertion { coneType.renderForDebugging() }
+    override val abbreviatedType: KaUsualClassType? by cached {
+        builder.buildAbbreviatedType(coneType)
+    }
+
     override fun equals(other: Any?) = typeEquals(other)
     override fun hashCode() = typeHashcode()
+    override fun toString() = coneType.renderForDebugging()
 }

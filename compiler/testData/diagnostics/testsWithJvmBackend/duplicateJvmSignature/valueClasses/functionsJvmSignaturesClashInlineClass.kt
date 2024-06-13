@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +InlineClasses, -JvmInlineValueClasses
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 inline class X(val x: Int)
 inline class Z(val x: Int)

@@ -1,0 +1,43 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.*
+
+@Composable
+fun Test(count: Int) {
+    Row {
+        repeat(count) {
+            Text("A")
+        }
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+@ComposableTarget(applier = "androidx.compose.ui.UiComposable")
+fun Test(count: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  val %dirty = %changed
+  if (%changed and 0b1110 == 0) {
+    %dirty = %dirty or if (%composer.changed(count)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
+    Row(null, null, null, { %composer: Composer?, %changed: Int ->
+      %composer.startReplaceGroup(<>)
+      repeat(count) { it: Int ->
+        Text("A", %composer, 0b0110)
+      }
+      %composer.endReplaceGroup()
+    }, %composer, 0, 0b0111)
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(count, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

@@ -7,13 +7,13 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <projectService
-        serviceInterface="org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider"
-        serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSessionProvider"
+        serviceInterface="org.jetbrains.kotlin.analysis.api.session.KaSessionProvider"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.KaFirSessionProvider"
     />
 
     <projectService
         serviceInterface="org.jetbrains.kotlin.idea.references.KotlinReferenceProviderContributor"
-        serviceImplementation="org.jetbrains.kotlin.idea.references.KotlinFirReferenceContributor"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.references.KotlinFirReferenceContributor"
     />
 
     <projectService
@@ -24,7 +24,7 @@
 
   <projectListeners>
     <listener
-        class="org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSessionProvider$SessionInvalidationListener"
+        class="org.jetbrains.kotlin.analysis.api.fir.KaFirSessionProvider$SessionInvalidationListener"
         topic="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationListener"
     />
   </projectListeners>

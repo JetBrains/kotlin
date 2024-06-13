@@ -45,7 +45,7 @@ kotlin {
                 implementation(npm("body-parser", "~1.20.0"))
                 implementation(npm("debug", "~4.3.4"))
                 implementation(npm("ejs", "~3.1.7"))
-                implementation(npm("express", "~4.18.1"))
+                implementation(npm("express", "~4.19.2"))
                 implementation(npm("kotlin", "~1.6.20"))
                 implementation(npm("node-fetch", "~2.6.6"))
             }

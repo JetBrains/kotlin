@@ -152,7 +152,7 @@ class FirDoubleColonExpressionResolver(private val session: FirSession) {
                     // We currently only support local classes with captured type parameters from non-classes
                     // (i.e. local class in generic function).
                     // TODO(KT-66344) Support inner classes
-                    val typeParameter = firClassLikeDeclaration.typeParameters[0]
+                    val typeParameter = firClassLikeDeclaration.typeParameters[index]
                     if (firClassLikeDeclaration.isLocal && typeParameter is FirOuterClassTypeParameterRef && typeParameter.symbol.containingDeclarationSymbol !is FirClassSymbol) {
                         typeParameter.symbol.defaultType
                     } else {

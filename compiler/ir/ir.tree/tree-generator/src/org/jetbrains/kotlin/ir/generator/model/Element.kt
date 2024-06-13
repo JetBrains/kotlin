@@ -29,10 +29,6 @@ class Element(
 
     override val packageName: String = category.packageName
 
-    val additionalIrFactoryMethodParameters = mutableListOf<Field>()
-    var generateIrFactoryMethod = category == Category.Declaration
-    val fieldsToSkipInIrFactoryMethod = hashSetOf<String>()
-
     /**
      * Allows to forcibly skip generation of the method for this element in visitors.
      */
@@ -91,6 +87,4 @@ class Element(
     var ownsChildren = true // If false, acceptChildren/transformChildren will NOT be generated.
 
     var generationCallback: (ImportCollectingPrinter.() -> Unit)? = null
-
-    override fun toString() = name
 }

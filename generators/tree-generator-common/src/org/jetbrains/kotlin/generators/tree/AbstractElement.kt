@@ -35,7 +35,25 @@ abstract class AbstractElement<Element, Field, Implementation>(
 
     val params = mutableListOf<TypeVariable>()
 
-    val elementParents = mutableListOf<ElementRef<Element>>()
+    private val elementParentsMutable = mutableListOf<ElementRef<Element>>()
+
+    val elementParents: List<ElementRef<Element>>
+        get() = elementParentsMutable
+
+    fun addParent(parent: ElementRef<Element>) {
+        elementParentsMutable.add(parent)
+        parent.element.subElementsMutable.add(element)
+    }
+
+    fun replaceParent(oldParent: Element, newParent: ElementRef<Element>) {
+        val parentIndex = elementParentsMutable.indexOfFirst { it.element == oldParent }
+        require(parentIndex >= 0) {
+            "$oldParent is not parent of $this"
+        }
+        elementParentsMutable[parentIndex] = newParent
+        oldParent.subElementsMutable.remove(element)
+        newParent.element.subElementsMutable.add(element)
+    }
 
     val otherParents = mutableListOf<ClassRef<*>>()
 
@@ -45,10 +63,13 @@ abstract class AbstractElement<Element, Field, Implementation>(
     val isRootElement: Boolean
         get() = elementParents.isEmpty()
 
+    private val subElementsMutable: MutableSet<Element> = mutableSetOf()
+
     /**
-     * A list of [Element]s which are direct subclasses of this element.
+     * A set of [Element]s which are direct subclasses of this element.
      */
-    lateinit var subElements: Set<Element>
+    val subElements: Set<Element>
+        get() = subElementsMutable
 
     var isSealed: Boolean = false
 
@@ -92,51 +113,45 @@ abstract class AbstractElement<Element, Field, Implementation>(
         appendable.append(typeName)
     }
 
-    override val allFields: List<Field> by lazy {
-        val result = LinkedHashSet<Field>()
-        result.addAll(fields.toList().asReversed())
-        result.forEach { overriddenFieldsHaveSameClass[it, it] = false }
-        for (parentField in parentFields.asReversed()) {
-            val overrides = !result.add(parentField)
-            if (overrides) {
-                val existingField = result.first { it == parentField }
-                existingField.fromParent = true
-                val haveSameClass = parentField.typeRef.copy(nullable = false) == existingField.typeRef.copy(nullable = false)
-                if (!haveSameClass) {
-                    existingField.overriddenTypes += parentField.typeRef
-                }
-                overriddenFieldsHaveSameClass[existingField, parentField] = haveSameClass
-                existingField.updatePropertiesFromOverriddenField(parentField, haveSameClass)
-            } else {
-                overriddenFieldsHaveSameClass[parentField, parentField] = true
-            }
-        }
-        result.toList().asReversed()
-    }
+    override lateinit var allFields: List<Field>
 
-    val overriddenFieldsHaveSameClass: MutableMap<Field, MutableMap<Field, Boolean>> = mutableMapOf()
-
-    val parentFields: List<Field> by lazy {
+    internal fun inheritFields() {
         val result = LinkedHashMap<String, Field>()
-        elementParents.forEach { parentRef ->
-            val parent = parentRef.element
-            val fields = parent.allFields.map { field ->
-                field.replaceType(field.typeRef.substitute(parentRef.args) as TypeRefWithNullability)
-                    .apply {
-                        fromParent = true
-                    }
-            }
-            fields.forEach {
-                result.merge(it.name, it) { previousField, thisField ->
-                    val resultField = previousField.copy()
-                    if (thisField.isMutable) {
-                        resultField.isMutable = true
-                    }
-                    resultField
+        fields.toList().asReversed().associateByTo(result) { it.name }
+
+        val allInheritedFieldsByParent = buildMap<String, MutableList<Pair<ElementRef<Element>, Field>>> {
+            elementParents.asReversed().forEach { parentRef ->
+                parentRef.element.allFields.asReversed().forEach { field ->
+                    // The list is removed and then added back in, so that it's moved to the back.
+                    // This is required to keep the established order of generated properties.
+                    val list = remove(field.name) ?: mutableListOf()
+                    list.add(parentRef to field)
+                    put(field.name, list)
                 }
             }
         }
-        result.values.toList()
+
+        for ((fieldName, inheritedFieldsByParent) in allInheritedFieldsByParent) {
+            var field = result[fieldName]
+            if (field == null) {
+                val inheritFrom = inheritedFieldsByParent.distinctBy { it.second.typeRef }.singleOrNull() ?: error(
+                    "Field $fieldName has ambiguous type, coming from [${inheritedFieldsByParent.joinToString { it.first.element.typeName }}], " +
+                            "please specify it explicitly for the ${element.name} element"
+                )
+
+                field = inheritFrom.second.copy().apply {
+                    substituteType(inheritFrom.first.args)
+                }
+
+                result[fieldName] = field
+            }
+
+            val inheritedFields = inheritedFieldsByParent.map { it.second }
+            field.isOverride = true
+            field.updatePropertiesFromOverriddenFields(inheritedFields)
+        }
+
+        allFields = result.values.toList().asReversed()
     }
 
     /**
@@ -189,13 +204,9 @@ abstract class AbstractElement<Element, Field, Implementation>(
 
     var doPrint = true
 
-    @Suppress("UNCHECKED_CAST")
-    final override fun copy(nullable: Boolean) =
-        ElementRef(this as Element, args, nullable)
+    final override fun copy(nullable: Boolean) = ElementRef(element, args, nullable)
 
-    @Suppress("UNCHECKED_CAST")
-    final override fun copy(args: Map<NamedTypeParameterRef, TypeRef>) =
-        ElementRef(this as Element, args, nullable)
+    final override fun copy(args: Map<NamedTypeParameterRef, TypeRef>) = ElementRef(element, args, nullable)
 
     @Suppress("UNCHECKED_CAST")
     override fun substitute(map: TypeParameterSubstitutionMap): Element = this as Element
@@ -211,4 +222,6 @@ abstract class AbstractElement<Element, Field, Implementation>(
     operator fun Field.unaryPlus() = apply {
         fields.add(this)
     }
+
+    override fun toString(): String = buildString { renderTo(this, ImportCollecting.Empty) }
 }

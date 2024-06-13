@@ -6,19 +6,17 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.session.builder
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.annotations.annotations
-import org.jetbrains.kotlin.analysis.api.calls.KtSuccessCallInfo
-import org.jetbrains.kotlin.analysis.api.calls.successfulFunctionCallOrNull
-import org.jetbrains.kotlin.analysis.api.calls.symbol
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
-import org.jetbrains.kotlin.analysis.api.standalone.KtAlwaysAccessibleLifetimeTokenProvider
+import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
+import org.jetbrains.kotlin.analysis.api.resolution.successfulFunctionCallOrNull
+import org.jetbrains.kotlin.analysis.api.resolution.symbol
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
-import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtLocalVariableSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
+import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaLocalVariableSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaNonErrorClassType
 import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
@@ -41,14 +39,12 @@ import org.junit.jupiter.api.Test
 import java.nio.file.Paths
 import kotlin.test.assertEquals
 
-@OptIn(KtAnalysisApiInternals::class)
+@OptIn(KaAnalysisApiInternals::class)
 class StandaloneSessionBuilderTest : TestWithDisposable() {
     @Test
     fun testJdkSessionBuilder() {
         lateinit var sourceModule: KtSourceModule
         val session = buildStandaloneAnalysisAPISession(disposable) {
-            registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
-
             buildKtModuleProvider {
                 platform = JvmPlatforms.defaultJvmPlatform
                 val sdk = addModule(
@@ -72,11 +68,11 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
         val ktFile = session.modulesWithFiles.getValue(sourceModule).single() as KtFile
         analyze(ktFile) {
             val ktCallExpression = ktFile.findDescendantOfType<KtCallExpression>()!!
-            val ktCallInfo = ktCallExpression.resolveCall()
-            Assertions.assertInstanceOf(KtSuccessCallInfo::class.java, ktCallInfo); ktCallInfo as KtSuccessCallInfo
+            val ktCallInfo = ktCallExpression.resolveCallOld()
+            Assertions.assertInstanceOf(KaSuccessCallInfo::class.java, ktCallInfo); ktCallInfo as KaSuccessCallInfo
             val symbol = ktCallInfo.successfulFunctionCallOrNull()?.symbol
-            Assertions.assertInstanceOf(KtConstructorSymbol::class.java, symbol); symbol as KtConstructorSymbol
-            Assertions.assertEquals(ClassId.topLevel(FqName("java.lang.Thread")), symbol.containingClassIdIfNonLocal)
+            Assertions.assertInstanceOf(KaConstructorSymbol::class.java, symbol); symbol as KaConstructorSymbol
+            Assertions.assertEquals(ClassId.topLevel(FqName("java.lang.Thread")), symbol.containingClassId)
         }
     }
 
@@ -86,8 +82,6 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
         val root = "jvmInlineOnCommon"
         lateinit var sourceModule: KtSourceModule
         val session = buildStandaloneAnalysisAPISession(disposable) {
-            registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
-
             buildKtModuleProvider {
                 platform = CommonPlatforms.defaultCommonPlatform
                 val stdlib = addModule(
@@ -122,7 +116,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
         val localVariable = testFunction.findDescendantOfType<KtProperty>()!!
         analyze(localVariable) {
             val localVariableSymbol = localVariable.getVariableSymbol()
-            val type = localVariableSymbol.returnType as KtNonErrorClassType
+            val type = localVariableSymbol.returnType as KaNonErrorClassType
             Assertions.assertEquals(
                 ClassId(FqName("test.pkg"), FqName("NativePointerKeyboardModifiers"), isLocal = false),
                 type.classId
@@ -137,10 +131,10 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
         val actualProperty = actualClass.findDescendantOfType<KtProperty>()!!
         analyze(actualProperty) {
             val symbol = actualProperty.getVariableSymbol()
-            val type = symbol.returnType as KtNonErrorClassType
+            val type = symbol.returnType as KaNonErrorClassType
             Assertions.assertEquals(
                 ClassId.fromString("kotlin/jvm/JvmInline"),
-                type.classSymbol.annotations.single().classId
+                type.symbol.annotations.single().classId
             )
         }
     }
@@ -150,8 +144,6 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
         val root = "resolveAgainstCommonKLib"
         lateinit var sourceModule: KtSourceModule
         val session = buildStandaloneAnalysisAPISession(disposable) {
-            registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
-
             buildKtModuleProvider {
                 platform = CommonPlatforms.defaultCommonPlatform
                 val kLib = addModule(
@@ -184,8 +176,6 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
         lateinit var commonModule: KtSourceModule
         lateinit var sourceModule: KtSourceModule
         val session = buildStandaloneAnalysisAPISession(disposable) {
-            registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
-
             buildKtModuleProvider {
                 platform = CommonPlatforms.defaultCommonPlatform
                 val kLib = addModule(
@@ -230,8 +220,6 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
         val root = "otherModuleUsage"
         lateinit var sourceModule: KtSourceModule
         val session = buildStandaloneAnalysisAPISession(disposable) {
-            registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
-
             buildKtModuleProvider {
                 platform = JvmPlatforms.defaultJvmPlatform
                 val main = addModule(
@@ -264,8 +252,6 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
         val root = "otherModuleUsage"
         lateinit var sourceModule: KtSourceModule
         val session = buildStandaloneAnalysisAPISession(disposable) {
-            registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
-
             buildKtModuleProvider {
                 platform = JvmPlatforms.defaultJvmPlatform
                 val dep = addModule(
@@ -307,8 +293,6 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
 
         lateinit var contextModule: KtSourceModule
         val session = buildStandaloneAnalysisAPISession(disposable) {
-            registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
-
             buildKtModuleProvider {
                 platform = JvmPlatforms.defaultJvmPlatform
                 contextModule = addModule(
@@ -337,7 +321,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
 
             val referenceExpression = codeFragment.findDescendantOfType<KtSimpleNameExpression> { it.text == "x" }!!
             val variableSymbol = referenceExpression.mainReference.resolveToSymbol()
-            assert(variableSymbol is KtLocalVariableSymbol)
+            assert(variableSymbol is KaLocalVariableSymbol)
         }
     }
 
@@ -347,8 +331,6 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
 
         lateinit var contextModule: KtSourceModule
         val session = buildStandaloneAnalysisAPISession(disposable) {
-            registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
-
             buildKtModuleProvider {
                 platform = JvmPlatforms.defaultJvmPlatform
                 contextModule = addModule(
@@ -380,8 +362,8 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
             assertEquals(fileSymbol.getContainingModule(), dummyModule)
 
             val callExpression = dummyFile.findDescendantOfType<KtCallExpression>()!!
-            val call = callExpression.resolveCall()?.successfulFunctionCallOrNull() ?: error("Call inside a dummy file is unresolved")
-            assert(call.symbol is KtFunctionSymbol)
+            val call = callExpression.resolveCallOld()?.successfulFunctionCallOrNull() ?: error("Call inside a dummy file is unresolved")
+            assert(call.symbol is KaFunctionSymbol)
         }
     }
 }

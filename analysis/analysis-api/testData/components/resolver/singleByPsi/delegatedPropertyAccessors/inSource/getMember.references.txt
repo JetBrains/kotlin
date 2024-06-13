@@ -1,0 +1,3 @@
+KtPropertyDelegate(11,19): 'by Foo()'
+  KtPropertyDelegationMethodsReference:
+    (in Foo) operator fun getValue(_this: kotlin.Any?, p: kotlin.Any?): kotlin.Int

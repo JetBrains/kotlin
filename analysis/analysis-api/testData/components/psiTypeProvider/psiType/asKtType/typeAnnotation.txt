@@ -1,2 +1,2 @@
 PsiType: @MyAnno() KotlinClass
-KtType: @MyAnno KotlinClass!
+KaType: @MyAnno KotlinClass!

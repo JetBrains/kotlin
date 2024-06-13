@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.OPTIONAL_COLON_TO_
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 
 object FirSyntaxErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
-    override val MAP = KtDiagnosticFactoryToRendererMap("FIR").also { map ->
+    override val MAP: KtDiagnosticFactoryToRendererMap = KtDiagnosticFactoryToRendererMap("FIR").also { map ->
         map.put(FirSyntaxErrors.SYNTAX, "Syntax error{0}.", OPTIONAL_COLON_TO_STRING)
     }
 }

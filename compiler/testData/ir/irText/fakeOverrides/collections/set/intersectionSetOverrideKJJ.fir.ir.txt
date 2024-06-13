@@ -563,6 +563,9 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         CALL 'public final fun TODO (reason: kotlin.String): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
           reason: CONST String type=kotlin.String value="Not yet implemented"
+    PROPERTY FAKE_OVERRIDE name:modCount visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final modCount: kotlin.Int declared in java.util.ArrayList
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
       overridden:
         public abstract size: kotlin.Int declared in java.util.SortedSet

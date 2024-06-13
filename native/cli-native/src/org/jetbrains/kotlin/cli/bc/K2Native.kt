@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.cli.bc
@@ -9,18 +9,17 @@ import com.intellij.openapi.Disposable
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
+import org.jetbrains.kotlin.backend.common.IrValidationError
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
@@ -31,7 +30,6 @@ import org.jetbrains.kotlin.util.profile
 import org.jetbrains.kotlin.utils.KotlinPaths
 
 
-private class K2NativeCompilerPerformanceManager: CommonCompilerPerformanceManager("Kotlin to Native Compiler")
 
 class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
@@ -57,18 +55,16 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 PluginCliParser.loadPluginsSafe(arguments.pluginClasspaths, arguments.pluginOptions, arguments.pluginConfigurations, configuration)
         if (pluginLoadResult != ExitCode.OK) return pluginLoadResult
 
-        val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY) ?: MessageCollector.NONE
-
         val enoughArguments = arguments.freeArgs.isNotEmpty() || arguments.isUsefulWithoutFreeArgs
         if (!enoughArguments) {
-            messageCollector.report(ERROR, "You have not specified any compilation arguments. No output has been produced.")
+            configuration.messageCollector.report(ERROR, "You have not specified any compilation arguments. No output has been produced.")
         }
         val environment = prepareEnvironment(arguments, configuration, rootDisposable)
 
         try {
             runKonanDriver(configuration, environment, rootDisposable)
         } catch (e: Throwable) {
-            if (e is KonanCompilationException || e is CompilationErrorException)
+            if (e is KonanCompilationException || e is CompilationErrorException || e is IrValidationError)
                 return ExitCode.COMPILATION_ERROR
 
             configuration.report(ERROR, """
@@ -101,14 +97,13 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             configuration.put(CommonConfigurationKeys.METADATA_VERSION, KlibMetadataVersion.INSTANCE)
         }
 
-        val relativePathBases = arguments.relativePathBases
-        if (relativePathBases != null) {
-            configuration.put(CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES, relativePathBases.toList())
+        arguments.relativePathBases?.let {
+            configuration.put(KlibConfigurationKeys.KLIB_RELATIVE_PATH_BASES, it.toList())
         }
 
-        configuration.put(CommonConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH, arguments.normalizeAbsolutePath)
+        configuration.put(KlibConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH, arguments.normalizeAbsolutePath)
         configuration.put(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME, arguments.renderInternalDiagnosticNames)
-        configuration.put(CommonConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS, arguments.enableSignatureClashChecks)
+        configuration.put(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS, arguments.enableSignatureClashChecks)
 
         return environment
     }
@@ -133,7 +128,8 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 parseCommandLineArguments(arguments, spawnedArguments)
                 val spawnedConfiguration = CompilerConfiguration()
 
-                spawnedConfiguration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY))
+                spawnedConfiguration.messageCollector =  configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+                spawnedConfiguration.performanceManager = configuration.performanceManager
                 spawnedConfiguration.put(IrMessageLogger.IR_MESSAGE_LOGGER, configuration.getNotNull(IrMessageLogger.IR_MESSAGE_LOGGER))
                 spawnedConfiguration.setupCommonArguments(spawnedArguments, this@K2Native::createMetadataVersion)
                 spawnedConfiguration.setupFromArguments(spawnedArguments)

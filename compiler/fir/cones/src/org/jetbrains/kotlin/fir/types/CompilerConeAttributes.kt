@@ -14,7 +14,7 @@ import kotlin.reflect.KClass
 
 object CompilerConeAttributes {
     object Exact : ConeAttribute<Exact>() {
-        val ANNOTATION_CLASS_ID = ClassId(FqName("kotlin.internal"), Name.identifier("Exact"))
+        val ANNOTATION_CLASS_ID: ClassId = ClassId(FqName("kotlin.internal"), Name.identifier("Exact"))
 
         override fun union(other: Exact?): Exact? = null
         override fun intersect(other: Exact?): Exact? = null
@@ -29,7 +29,7 @@ object CompilerConeAttributes {
     }
 
     object NoInfer : ConeAttribute<NoInfer>() {
-        val ANNOTATION_CLASS_ID = ClassId(FqName("kotlin.internal"), Name.identifier("NoInfer"))
+        val ANNOTATION_CLASS_ID: ClassId = ClassId(FqName("kotlin.internal"), Name.identifier("NoInfer"))
 
         override fun union(other: NoInfer?): NoInfer? = null
         override fun intersect(other: NoInfer?): NoInfer? = null
@@ -43,7 +43,7 @@ object CompilerConeAttributes {
     }
 
     object EnhancedNullability : ConeAttribute<EnhancedNullability>() {
-        val ANNOTATION_CLASS_ID = StandardClassIds.Annotations.EnhancedNullability
+        val ANNOTATION_CLASS_ID: ClassId = StandardClassIds.Annotations.EnhancedNullability
 
         override fun union(other: EnhancedNullability?): EnhancedNullability? = other
         override fun intersect(other: EnhancedNullability?): EnhancedNullability = this
@@ -58,7 +58,7 @@ object CompilerConeAttributes {
     }
 
     object ExtensionFunctionType : ConeAttribute<ExtensionFunctionType>() {
-        val ANNOTATION_CLASS_ID = ClassId(FqName("kotlin"), Name.identifier("ExtensionFunctionType"))
+        val ANNOTATION_CLASS_ID: ClassId = ClassId(FqName("kotlin"), Name.identifier("ExtensionFunctionType"))
 
         override fun union(other: ExtensionFunctionType?): ExtensionFunctionType? = other
         override fun intersect(other: ExtensionFunctionType?): ExtensionFunctionType = this
@@ -97,12 +97,12 @@ object CompilerConeAttributes {
         override fun toString(): String = "@${StandardNames.FqNames.contextFunctionTypeParams.shortName().asString()}"
 
         companion object {
-            val ANNOTATION_CLASS_ID = ClassId.topLevel(StandardNames.FqNames.contextFunctionTypeParams)
+            val ANNOTATION_CLASS_ID: ClassId = ClassId.topLevel(StandardNames.FqNames.contextFunctionTypeParams)
         }
     }
 
     object UnsafeVariance : ConeAttribute<UnsafeVariance>() {
-        val ANNOTATION_CLASS_ID = ClassId(FqName("kotlin"), Name.identifier("UnsafeVariance"))
+        val ANNOTATION_CLASS_ID: ClassId = ClassId(FqName("kotlin"), Name.identifier("UnsafeVariance"))
 
         override fun union(other: UnsafeVariance?): UnsafeVariance? = null
         override fun intersect(other: UnsafeVariance?): UnsafeVariance? = null

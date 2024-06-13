@@ -33,13 +33,13 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualCollectionArgumentsCompatibilityCheckStrategy
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext.AnnotationCallInfo
+import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext.Companion.abstractMutableListModCountCallableId
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.*
-import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.zipIfSizesAreEqual
 
 class FirExpectActualMatchingContextImpl private constructor(
@@ -434,6 +434,9 @@ class FirExpectActualMatchingContextImpl private constructor(
     override val CallableSymbolMarker.isJavaField: Boolean
         get() = this is FirFieldSymbol && this.fir.unwrapFakeOverrides().isJava
 
+    override val CallableSymbolMarker.canBeActualizedByJavaField: Boolean
+        get() = this is FirPropertySymbol && callableId == abstractMutableListModCountCallableId
+
     override val DeclarationSymbolMarker.annotations: List<AnnotationCallInfo>
         get() = asSymbol().resolvedAnnotationsWithArguments.map(::AnnotationCallInfoImpl)
 
@@ -545,7 +548,7 @@ class FirExpectActualMatchingContextImpl private constructor(
 
     private fun <K, V> Map<K, V>.asMutableMap(): MutableMap<K, V> = this as MutableMap
 
-    override val checkClassScopesForAnnotationCompatibility = true
+    override val checkClassScopesForAnnotationCompatibility: Boolean = true
 
     override fun skipCheckingAnnotationsOfActualClassMember(actualMember: DeclarationSymbolMarker): Boolean {
         return (actualMember.asSymbol().fir as? FirMemberDeclaration)?.isActual == true

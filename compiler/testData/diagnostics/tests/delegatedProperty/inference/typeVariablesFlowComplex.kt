@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // WITH_STDLIB
-// !CHECK_TYPE
+// CHECK_TYPE
 // ISSUE: KT-59529
 
 import kotlin.reflect.KProperty

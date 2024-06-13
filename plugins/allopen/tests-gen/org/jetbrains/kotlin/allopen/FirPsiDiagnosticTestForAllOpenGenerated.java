@@ -30,6 +30,12 @@ public class FirPsiDiagnosticTestForAllOpenGenerated extends AbstractFirPsiDiagn
   }
 
   @Test
+  @TestMetadata("kjkHierarchy.kt")
+  public void testKjkHierarchy() {
+    runTest("plugins/allopen/testData/diagnostics/kjkHierarchy.kt");
+  }
+
+  @Test
   @TestMetadata("kt54260.kt")
   public void testKt54260() {
     runTest("plugins/allopen/testData/diagnostics/kt54260.kt");
@@ -39,6 +45,12 @@ public class FirPsiDiagnosticTestForAllOpenGenerated extends AbstractFirPsiDiagn
   @TestMetadata("kt60448.kt")
   public void testKt60448() {
     runTest("plugins/allopen/testData/diagnostics/kt60448.kt");
+  }
+
+  @Test
+  @TestMetadata("redundantModality.kt")
+  public void testRedundantModality() {
+    runTest("plugins/allopen/testData/diagnostics/redundantModality.kt");
   }
 
   @Test

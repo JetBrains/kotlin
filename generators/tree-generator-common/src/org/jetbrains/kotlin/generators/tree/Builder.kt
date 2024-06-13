@@ -53,9 +53,9 @@ class LeafBuilder<BuilderField, Element, Implementation>(
     override val allFields: List<BuilderField> by lazy { implementation.fieldsInConstructor }
 
     override val uselessFields: List<BuilderField> by lazy {
-        val fieldsFromParents = parents.flatMap { it.allFields }.distinct()
+        val fieldsFromParents = parents.flatMap { it.allFields }.map { it.name }.toSet()
         val fieldsFromImplementation = implementation.allFields
-        (fieldsFromImplementation - allFields).filter { it in fieldsFromParents }
+        (fieldsFromImplementation - allFields).filter { it.name in fieldsFromParents }
     }
 
     override val packageName: String = implementation.packageName.replace(".impl", ".builder")
@@ -73,10 +73,12 @@ class IntermediateBuilder<BuilderField, Element>(
     var materializedElement: Element? = null
 
     override val allFields: List<BuilderField> by lazy {
-        mutableSetOf<BuilderField>().apply {
-            parents.forEach { this += it.allFields }
-            this += fields
-        }.toList()
+        buildMap<String, BuilderField> {
+            parents.forEach { parent ->
+                parent.allFields.associateByTo(this) { it.name }
+            }
+            fields.associateByTo(this) { it.name }
+        }.values.toList()
     }
 
     override val uselessFields: List<BuilderField> = emptyList()

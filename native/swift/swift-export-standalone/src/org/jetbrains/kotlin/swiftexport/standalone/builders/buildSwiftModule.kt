@@ -5,12 +5,9 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone.builders
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
-import org.jetbrains.kotlin.analysis.api.scopes.KtScope
-import org.jetbrains.kotlin.analysis.api.standalone.KtAlwaysAccessibleLifetimeTokenProvider
+import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -18,92 +15,95 @@ import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
 import org.jetbrains.kotlin.konan.target.Distribution
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.SirMutableDeclarationContainer
+import org.jetbrains.kotlin.sir.builder.buildModule
+import org.jetbrains.kotlin.sir.providers.impl.SirOneToOneModuleProvider
 import org.jetbrains.kotlin.sir.providers.impl.SirSingleModuleProvider
+import org.jetbrains.kotlin.sir.providers.utils.UnsupportedDeclarationReporter
 import org.jetbrains.kotlin.sir.util.addChild
+import org.jetbrains.kotlin.sir.util.isValidSwiftIdentifier
 import org.jetbrains.kotlin.swiftexport.standalone.InputModule
+import org.jetbrains.kotlin.swiftexport.standalone.MultipleModulesHandlingStrategy
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig
+import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportLogger
 import org.jetbrains.kotlin.swiftexport.standalone.klib.KlibScope
 import org.jetbrains.kotlin.swiftexport.standalone.session.StandaloneSirSession
 import kotlin.io.path.Path
 
-internal fun buildSwiftModule(
-    input: InputModule,
-    config: SwiftExportConfig,
-): SirModule {
-    val (module, scopeProvider) = when (input) {
-        is InputModule.Source -> createModuleWithScopeProviderFromSources(config.distribution, input)
-        is InputModule.Binary -> createModuleWithScopeProviderFromBinary(config.distribution, input)
-    }
+internal class SwiftModuleBuildResults(
+    val mainModule: SirModule,
+    val moduleForPackageEnums: SirModule,
+)
 
-    return analyze(module) {
-        val sirSession = StandaloneSirSession(
-            module,
-            errorTypeStrategy = config.errorTypeStrategy.toInternalType(),
-            unsupportedTypeStrategy = config.unsupportedTypeStrategy.toInternalType(),
-            moduleProviderBuilder = { SirSingleModuleProvider(swiftModuleName = input.name) }
-        )
-        with(sirSession) {
-            module.sirModule().also {
-                scopeProvider(this@analyze).flatMap { scope ->
-                    scope.extractDeclarations(this@analyze)
-                }.forEach { topLevelDeclaration ->
-                    val parent = topLevelDeclaration.parent as? SirMutableDeclarationContainer
-                        ?: error("top level declaration can contain only module or extension to package as a parent")
-                    parent.addChild { topLevelDeclaration }
+internal fun buildSwiftModule(
+    input: InputModule.Binary,
+    config: SwiftExportConfig,
+    unsupportedDeclarationReporter: UnsupportedDeclarationReporter,
+): SwiftModuleBuildResults {
+    val (useSiteModule, mainModule, scopeProvider) =
+        createModuleWithScopeProviderFromBinary(config.distribution, input)
+    val moduleProvider = when (config.multipleModulesHandlingStrategy) {
+        MultipleModulesHandlingStrategy.OneToOneModuleMapping -> SirOneToOneModuleProvider(mainModuleName = input.name)
+        MultipleModulesHandlingStrategy.IntoSingleModule -> SirSingleModuleProvider(swiftModuleName = input.name)
+    }
+    val moduleForPackageEnums = when (config.multipleModulesHandlingStrategy) {
+        MultipleModulesHandlingStrategy.OneToOneModuleMapping -> buildModule {
+            name = "ExportedKotlinPackages"
+        }
+        MultipleModulesHandlingStrategy.IntoSingleModule -> with(moduleProvider) { mainModule.sirModule() }
+    }
+    val sirSession = StandaloneSirSession(
+        useSiteModule = useSiteModule,
+        moduleToTranslate = mainModule,
+        errorTypeStrategy = config.errorTypeStrategy.toInternalType(),
+        unsupportedTypeStrategy = config.unsupportedTypeStrategy.toInternalType(),
+        moduleForPackageEnums = moduleForPackageEnums,
+        unsupportedDeclarationReporter = unsupportedDeclarationReporter,
+        moduleProviderBuilder = { moduleProvider },
+        targetPackageFqName = config.settings[SwiftExportConfig.ROOT_PACKAGE]?.let { packageName ->
+            packageName.takeIf { FqNameUnsafe.isValid(it) }?.let { FqName(it) }
+                ?.takeIf { it.pathSegments().all { it.toString().isValidSwiftIdentifier() } }
+                ?: null.also {
+                    config.logger.report(
+                        SwiftExportLogger.Severity.Warning,
+                        "'$packageName' is not a valid name for ${SwiftExportConfig.ROOT_PACKAGE} and will be ignored"
+                    )
                 }
+        },
+    )
+    analyze(useSiteModule) {
+        with(sirSession) {
+            scopeProvider(this@analyze).flatMap { scope ->
+                scope.extractDeclarations(this@analyze)
+            }.forEach { topLevelDeclaration ->
+                val parent = topLevelDeclaration.parent as? SirMutableDeclarationContainer
+                    ?: error("top level declaration can contain only module or extension to package as a parent")
+                parent.addChild { topLevelDeclaration }
             }
         }
     }
+    val mainSirModule = with(moduleProvider) { mainModule.sirModule() }
+    return SwiftModuleBuildResults(mainSirModule, moduleForPackageEnums)
 }
 
+/**
+ * Post-processed result of [buildStandaloneAnalysisAPISession].
+ * [useSiteModule] is the module that should be passed to [analyze].
+ * [mainModule] is the parent for declarations from [scopeProvider].
+ * We have to make this difference because Analysis API is not suited to work
+ * without root source module (yet?).
+ * [scopeProvider] provides declarations that should be worked with.
+ */
 private data class ModuleWithScopeProvider(
-    val ktModule: KtModule,
-    val scopeProvider: (KtAnalysisSession) -> List<KtScope>
+    val useSiteModule: KtModule,
+    val mainModule: KtModule,
+    val scopeProvider: (KaSession) -> List<KaScope>,
 )
 
-@OptIn(KtAnalysisApiInternals::class)
-private fun createModuleWithScopeProviderFromSources(
-    kotlinDistribution: Distribution,
-    input: InputModule.Source,
-): ModuleWithScopeProvider {
-    val analysisAPISession = buildStandaloneAnalysisAPISession {
-        registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
-
-        buildKtModuleProvider {
-            platform = NativePlatforms.unspecifiedNativePlatform
-
-            val stdlib = addModule(
-                buildKtLibraryModule {
-                    addBinaryRoot(Path(kotlinDistribution.stdlib))
-                    platform = NativePlatforms.unspecifiedNativePlatform
-                    libraryName = "stdlib"
-                }
-            )
-
-            addModule(
-                buildKtSourceModule {
-                    addSourceRoot(input.path)
-                    platform = NativePlatforms.unspecifiedNativePlatform
-                    moduleName = input.name
-                    addRegularDependency(stdlib)
-                }
-            )
-        }
-    }
-
-    val (sourceModule, rawFiles) = analysisAPISession.modulesWithFiles.entries.single()
-    return ModuleWithScopeProvider(sourceModule) { analysisSession ->
-        with(analysisSession) {
-            rawFiles.filterIsInstance<KtFile>().map { it.getFileSymbol().getFileScope() }
-        }
-    }
-}
-
-@OptIn(KtAnalysisApiInternals::class)
 private fun createModuleWithScopeProviderFromBinary(
     kotlinDistribution: Distribution,
     input: InputModule.Binary,
@@ -111,8 +111,6 @@ private fun createModuleWithScopeProviderFromBinary(
     lateinit var binaryModule: KtLibraryModule
     lateinit var fakeSourceModule: KtSourceModule
     buildStandaloneAnalysisAPISession {
-        registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
-
         buildKtModuleProvider {
             platform = NativePlatforms.unspecifiedNativePlatform
 
@@ -142,7 +140,7 @@ private fun createModuleWithScopeProviderFromBinary(
             )
         }
     }
-    return ModuleWithScopeProvider(fakeSourceModule) { analysisSession ->
+    return ModuleWithScopeProvider(fakeSourceModule, binaryModule) { analysisSession ->
         listOf(KlibScope(binaryModule, analysisSession))
     }
 }

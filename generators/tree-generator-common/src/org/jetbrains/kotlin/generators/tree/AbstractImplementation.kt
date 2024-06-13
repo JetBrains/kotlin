@@ -100,4 +100,6 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
 
     open val doPrint: Boolean
         get() = true
+
+    override fun toString(): String = buildString { renderTo(this, ImportCollecting.Empty) }
 }

@@ -4,7 +4,7 @@
 * thread #1, [..] stop reason = breakpoint 1.1
   * frame #0: [..]`kfun:[..]main$lambda$0[..] at kt42208-2.kt:13:5
     frame #1: [..]`kfun:$main$lambda$0$FUNCTION_REFERENCE$0.[..]invoke[..](_this=[..])[..] at kt42208-2.kt:12:20
-    frame #2: [..]`kfun:$main$lambda$0$FUNCTION_REFERENCE$0.[..]$<bridge-BNN>invoke(_this=[..]){}kotlin.Boolean[..] at kt42208-2.kt:12:20
+    frame #2: [..]`kfun:$main$lambda$0$FUNCTION_REFERENCE$0.[..]$<bridge-UNN>invoke(_this=[..]){}kotlin.Boolean[..] at kt42208-2.kt:12:20
     frame #3: [..]`kfun:kotlin.Function0#invoke(){}1:0-trampoline at [K][Suspend]Functions:1:1
     frame #4: [..]`kfun:#bar(v=[..]){} at kt42208-3.kt:17:5
     frame #5: [..]`kfun:#main(){} at kt42208-1.kt:6:5

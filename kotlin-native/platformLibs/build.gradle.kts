@@ -9,32 +9,24 @@ import org.jetbrains.kotlin.PlatformInfo
 import org.jetbrains.kotlin.kotlinNativeDist
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.*
-
-// These properties are used by the 'konan' plugin, thus we set them before applying it.
-val konanHome: String by extra(kotlinNativeDist.absolutePath)
-val jvmArgs: String by extra(
-        mutableListOf<String>().apply {
-            addAll(HostManager.defaultJvmArgs)
-            add(project.findProperty("platformLibsJvmArgs") as? String ?: "-Xmx6G")
-        }.joinToString(" ")
-)
-
-extra["org.jetbrains.kotlin.native.home"] = konanHome
-extra["konan.jvmArgs"] = jvmArgs
+import org.jetbrains.kotlin.platformManager
+import org.jetbrains.kotlin.utils.capitalized
 
 plugins {
+    id("base")
     id("platform-manager")
-    id("konan")
 }
 
 // region: Util functions.
 fun KonanTarget.defFiles() =
-    project.fileTree("src/platform/${family.visibleName}")
-            .filter { it.name.endsWith(".def") }
-            .map { DefFile(it, this) }
+        project.fileTree("src/platform/${family.visibleName}")
+                .filter { it.name.endsWith(".def") }
+                .map { DefFile(it, this) }
 
 
 fun defFileToLibName(target: String, name: String) = "$target-$name"
+
+private fun interopTaskName(libName: String, targetName: String) = "compileKonan${libName.capitalized}${targetName.capitalized}"
 
 // endregion
 
@@ -54,33 +46,37 @@ enabledTargets(platformManager).forEach { target ->
         val fileNamePrefix = PlatformLibsInfo.namePrefix
         val artifactName = "${fileNamePrefix}${df.name}"
 
-        konanArtifacts {
-            interop(args = mapOf("targets" to listOf(targetName)), name = libName) {
-                df.file?.let { defFile(it) }
-                artifactName(artifactName)
-                noDefaultLibs(true)
-                noEndorsedLibs(true)
-                noPack(true)
-                libraries {
-                    klibFiles(df.config.depends.map { "$konanHome/klib/platform/$targetName/${fileNamePrefix}${it}" })
-                }
-                extraOpts("-Xpurge-user-libs", "-Xshort-module-name", df.name, "-Xdisable-experimental-annotation")
-                compilerOpts("-fmodules-cache-path=${project.layout.buildDirectory.dir("clangModulesCache").get().asFile}")
-            }
-        }
+        val libTask = tasks.register(interopTaskName(libName, targetName), KonanInteropTask::class.java) {
+            group = BasePlugin.BUILD_GROUP
+            description = "Build the Kotlin/Native platform library '$libName' for '$target'"
 
-        @Suppress("UNCHECKED_CAST")
-        val libTask = konanArtifacts.getByName(libName).getByTarget(targetName) as TaskProvider<KonanInteropTask>
-        libTask.configure {
-            dependsOn(df.config.depends.map { defFileToLibName(targetName, it) })
+            this.compilerDistributionPath.set(kotlinNativeDist.absolutePath)
             dependsOn(":kotlin-native:${targetName}CrossDist")
 
-            enableParallel = project.findProperty("kotlin.native.platformLibs.parallel")?.toString()?.toBoolean() ?: true
+            this.konanTarget.set(target)
+            this.outputDirectory.set(
+                    layout.buildDirectory.dir("konan/libs/$targetName/${fileNamePrefix}${df.name}")
+            )
+            df.file?.let { this.defFile.set(it) }
+            df.config.depends.forEach { defName ->
+                this.klibFiles.from(tasks.named(interopTaskName(defFileToLibName(targetName, defName), targetName)))
+            }
+            this.extraOpts.addAll(
+                    "-Xpurge-user-libs",
+                    "-Xshort-module-name", df.name,
+                    "-Xdisable-experimental-annotation",
+                    "-no-default-libs",
+                    "-no-endorsed-libs",
+            )
+            this.compilerOpts.addAll(
+                    "-fmodules-cache-path=${project.layout.buildDirectory.dir("clangModulesCache").get().asFile}"
+            )
+            this.enableParallel.set(project.findProperty("kotlin.native.platformLibs.parallel")?.toString()?.toBoolean() ?: true)
         }
 
         val klibInstallTask = tasks.register(libName, Sync::class.java) {
-            from(libTask.map { it.artifact })
-            into("$konanHome/klib/platform/$targetName/$artifactName")
+            from(libTask)
+            into(kotlinNativeDist.resolve("klib/platform/$targetName/$artifactName"))
         }
         installTasks.add(klibInstallTask)
 
@@ -88,11 +84,9 @@ enabledTargets(platformManager).forEach { target ->
             val cacheTask = tasks.register("${libName}Cache", KonanCacheTask::class.java) {
                 notCompatibleWithConfigurationCache("project used in execution time")
                 this.target = targetName
-                originalKlib.fileProvider(libTask.map {
-                    it.artifactDirectory ?: error("Artifact wasn't set for ${it.name}")
-                })
+                originalKlib.fileProvider(libTask.map { it.outputs.files.singleFile })
                 klibUniqName = artifactName
-                cacheRoot = file("$konanHome/klib/cache").absolutePath
+                cacheRoot = kotlinNativeDist.resolve("klib/cache").absolutePath
 
                 dependsOn(":kotlin-native:${targetName}StdlibCache")
 

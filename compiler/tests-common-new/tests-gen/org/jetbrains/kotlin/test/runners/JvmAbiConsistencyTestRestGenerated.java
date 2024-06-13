@@ -1251,6 +1251,12 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
         }
 
         @Test
+        @TestMetadata("inlineVarargWithLetCall.kt")
+        public void testInlineVarargWithLetCall() {
+          runTest("compiler/testData/codegen/boxInline/callableReference/adaptedReferences/inlineVarargWithLetCall.kt");
+        }
+
+        @Test
         @TestMetadata("multipleCallableReferenceUsage.kt")
         public void testMultipleCallableReferenceUsage() {
           runTest("compiler/testData/codegen/boxInline/callableReference/adaptedReferences/multipleCallableReferenceUsage.kt");
@@ -6898,6 +6904,12 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public void testAllFilesPresentInTestsWithJava21() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava21"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
       }
+
+      @Test
+      @TestMetadata("EnumsWithNonNullaryConstructors.kt")
+      public void testEnumsWithNonNullaryConstructors() {
+        runTest("compiler/testData/codegen/boxModernJdk/testsWithJava21/EnumsWithNonNullaryConstructors.kt");
+      }
     }
   }
 
@@ -7136,18 +7148,6 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     @TestMetadata("javaFieldsWithIntersectionTypes.kt")
     public void testJavaFieldsWithIntersectionTypes() {
       runTest("compiler/testData/codegen/bytecodeText/javaFieldsWithIntersectionTypes.kt");
-    }
-
-    @Test
-    @TestMetadata("javaFieldsWithIntersectionTypes_k1.kt")
-    public void testJavaFieldsWithIntersectionTypes_k1() {
-      runTest("compiler/testData/codegen/bytecodeText/javaFieldsWithIntersectionTypes_k1.kt");
-    }
-
-    @Test
-    @TestMetadata("javaFields_k1.kt")
-    public void testJavaFields_k1() {
-      runTest("compiler/testData/codegen/bytecodeText/javaFields_k1.kt");
     }
 
     @Test
@@ -15994,6 +15994,12 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     @TestMetadata("localFunction.kts")
     public void testLocalFunction() {
       runTest("compiler/testData/codegen/script/localFunction.kts");
+    }
+
+    @Test
+    @TestMetadata("MultiDollarInterpolation.kts")
+    public void testMultiDollarInterpolation() {
+      runTest("compiler/testData/codegen/script/MultiDollarInterpolation.kts");
     }
 
     @Test

@@ -1,33 +1,33 @@
-KtFunctionSymbol:
-  callableIdIfNonLocal: test/TopLevel.Base.noGeneric
+KaFunctionSymbol:
+  callableId: test/TopLevel.Base.noGeneric
   name: noGeneric
   origin: SOURCE
 
-KtFunctionSymbol:
-  callableIdIfNonLocal: test/OtherTopLevel.Child.withOuter
+KaFunctionSymbol:
+  callableId: test/OtherTopLevel.Child.withOuter
   name: withOuter
   origin: SUBSTITUTION_OVERRIDE
 
-KtFunctionSymbol:
-  callableIdIfNonLocal: test/OtherTopLevel.Child.withOwnAndOuter
+KaFunctionSymbol:
+  callableId: test/OtherTopLevel.Child.withOwnAndOuter
   name: withOwnAndOuter
   origin: SUBSTITUTION_OVERRIDE
 
-KtFunctionSymbol:
-  callableIdIfNonLocal: kotlin/Any.equals
+KaFunctionSymbol:
+  callableId: kotlin/Any.equals
   name: equals
   origin: LIBRARY
 
-KtFunctionSymbol:
-  callableIdIfNonLocal: kotlin/Any.hashCode
+KaFunctionSymbol:
+  callableId: kotlin/Any.hashCode
   name: hashCode
   origin: LIBRARY
 
-KtFunctionSymbol:
-  callableIdIfNonLocal: kotlin/Any.toString
+KaFunctionSymbol:
+  callableId: kotlin/Any.toString
   name: toString
   origin: LIBRARY
 
-KtConstructorSymbol:
-  callableIdIfNonLocal: null
+KaConstructorSymbol:
+  callableId: null
   origin: SOURCE_MEMBER_GENERATED

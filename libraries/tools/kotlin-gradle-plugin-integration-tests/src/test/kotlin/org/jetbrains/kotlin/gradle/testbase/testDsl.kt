@@ -400,10 +400,14 @@ class TestProject(
 
     /**
      * Includes another project as a submodule in the current project.
+     *
+     * - Copies the other project to a directory inside this project.
+     * - Updates this project's `settings.gradle(.kts)` with `include(":$newSubmoduleName")`
+     *
      * @param otherProjectName The name of the other project to include as a submodule.
      * @param pathPrefix An optional prefix to prepend to the submodule's path. Defaults to an empty string.
-     * @param newSubmoduleName An optional new name for the submodule. Defaults to the otherProjectName.
-     * @param isKts Whether to update a .kts settings file instead of a .gradle settings file. Defaults to false.
+     * @param newSubmoduleName An optional new name for the submodule. Defaults to [otherProjectName].
+     * @param isKts Whether to update a `settings.gradle.kts` instead of a `settings.gradle` file. Defaults to `false`.
      */
     fun includeOtherProjectAsSubmodule(
         otherProjectName: String,
@@ -938,40 +942,6 @@ internal fun TestProject.enableStableConfigurationCachePreview() {
             |enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
             """.trimMargin()
     )
-}
-
-/**
- * Kotlin Multiplatform Projects have dedicated configurations for source files resolution of all source set dependencies
- * This helper can be useful for cases when you want to resolve a bunch of configurations and don't want to see any unexpected failures
- * coming from *DependencySources configurations. Because by nature not every published library has sources variants that can be resolved
- * via gradle Configurations.
- */
-internal fun TestProject.suppressDependencySourcesConfigurations() {
-    if (buildGradleKts.exists()) {
-        buildGradleKts.appendText(
-            """
-                allprojects {
-                    configurations.configureEach {
-                        if (name.endsWith("DependencySources") || name.endsWith("dependencySources")) {
-                            incoming.beforeResolve { setExtendsFrom(emptySet()) }                            
-                        }
-                    }            
-                }
-            """.trimIndent()
-        )
-    } else if (buildGradle.exists()) {
-        """
-            allprojects {
-                configurations {
-                    configureEach {
-                        if (name.endsWith("DependencySources") || name.endsWith("dependencySources")) {
-                            incoming.beforeResolve { setExtendsFrom([]) }
-                        }
-                    }
-                }
-            }
-        """.trimIndent()
-    }
 }
 
 /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.driver.utilities.CExportFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
+import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -20,10 +21,10 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.konan.TempFiles
+import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.library.impl.javaFile
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.LinkerOutputKind
 import org.jetbrains.kotlin.konan.target.ZephyrConfigurables
 import java.util.concurrent.Callable
@@ -61,6 +62,7 @@ internal fun <T> PhaseEngine<PhaseContext>.runPsiToIr(
 
 internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Context, irModule: IrModuleFragment) {
     val config = context.config
+    val rootPerformanceManager = backendContext.configuration.performanceManager
     useContext(backendContext) { backendEngine ->
         backendEngine.runPhase(functionsWithoutBoundCheck)
 
@@ -81,7 +83,9 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                     if (context.config.produce == CompilerOutputKind.PROGRAM) {
                         generationStateEngine.runPhase(EntryPointPhase, module)
                     }
-                    generationStateEngine.lowerModuleWithDependencies(module)
+                    rootPerformanceManager.trackIRLowering {
+                        generationStateEngine.lowerModuleWithDependencies(module)
+                    }
                 }
                 return generationState
             } catch (t: Throwable) {
@@ -102,6 +106,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 return
             }
             try {
+                fragment.performanceManager?.notifyIRGenerationStarted()
                 backendEngine.useContext(generationState) { generationStateEngine ->
                     val bitcodeFile = tempFiles.create(generationState.llvmModuleName, ".bc").javaFile()
                     val cExportFiles = if (config.produceCInterface) {
@@ -125,6 +130,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 }
             } finally {
                 tempFiles.dispose()
+                fragment.performanceManager?.notifyIRGenerationFinished()
             }
         }
 
@@ -162,6 +168,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 thrownFromThread.get()?.let { throw it }
             }
         }
+        (rootPerformanceManager as? K2NativeCompilerPerformanceManager)?.collectChildMeasurements()
     }
 }
 
@@ -191,12 +198,14 @@ private data class BackendJobFragment(
         val cacheDeserializationStrategy: CacheDeserializationStrategy?,
         val dependenciesTracker: DependenciesTracker,
         val llvmModuleSpecification: LlvmModuleSpecification,
+        val performanceManager: CommonCompilerPerformanceManager?,
 )
 
 private fun PhaseEngine<out Context>.splitIntoFragments(
         input: IrModuleFragment,
 ): Sequence<BackendJobFragment> {
     val config = context.config
+    val performanceManager = config.configuration.performanceManager as? K2NativeCompilerPerformanceManager
     return if (context.config.producePerFileCache) {
         val files = input.files.toList()
         val containsStdlib = config.libraryToCache!!.klib == context.stdlibModule.konanLibrary
@@ -227,6 +236,7 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
                     cacheDeserializationStrategy,
                     dependenciesTracker,
                     llvmModuleSpecification,
+                    performanceManager?.createChild(),
             )
         }
     } else {
@@ -241,7 +251,8 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
                         input,
                         context.config.libraryToCache?.strategy,
                         DependenciesTrackerImpl(llvmModuleSpecification, context.config, context),
-                        llvmModuleSpecification
+                        llvmModuleSpecification,
+                        performanceManager?.createChild(),
                 )
         )
     }
@@ -342,13 +353,24 @@ internal fun <C : PhaseContext> PhaseEngine<C>.compileAndLink(
 }
 
 internal fun PhaseEngine<NativeGenerationState>.lowerModuleWithDependencies(module: IrModuleFragment) {
-    runAllLowerings(module)
     val dependenciesToCompile = findDependenciesToCompile()
     // TODO: KonanLibraryResolver.TopologicalLibraryOrder actually returns libraries in the reverse topological order.
     // TODO: Does the order of files really matter with the new MM? (and with lazy top-levels initialization?)
-    dependenciesToCompile.reversed().forEach { irModule ->
-        runAllLowerings(irModule)
-    }
+    val allModulesToLower = listOf(module) + dependenciesToCompile.reversed()
+
+    // In Kotlin/Native, lowerings are run not over modules, but over individual files.
+    // This means that there is no guarantee that after running a lowering in file A, the same lowering has already been run in file B,
+    // and vice versa.
+    // However, in order to validate IR after inlining, we have to make sure that all the modules being compiled are lowered to the same
+    // stage, because otherwise we may be actually validating a partially lowered IR that may not pass certain checks
+    // (like IR visibility checks).
+    // This is what we call a 'lowering synchronization point'.
+    runIrValidationPhase(validateIrBeforeLowering, allModulesToLower)
+    runLowerings(getLoweringsUpToAndIncludingInlining(), allModulesToLower)
+    runIrValidationPhase(validateIrAfterInlining, allModulesToLower)
+    runLowerings(getLoweringsAfterInlining(), allModulesToLower)
+    runIrValidationPhase(validateIrAfterLowering, allModulesToLower)
+
     mergeDependencies(module, dependenciesToCompile)
 }
 

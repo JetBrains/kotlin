@@ -5,27 +5,33 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisNonPublicApi
+import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtVariableLikeSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.symbols.KaVariableLikeSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtReturnExpression
 
-@KtAnalysisNonPublicApi
-public abstract class KtDataFlowInfoProvider : KtAnalysisSessionComponent() {
-    public abstract fun getExitPointSnapshot(statements: List<KtExpression>): KtDataFlowExitPointSnapshot
+@KaAnalysisNonPublicApi
+public abstract class KaDataFlowInfoProvider : KaSessionComponent() {
+    public abstract fun getExitPointSnapshot(statements: List<KtExpression>): KaDataFlowExitPointSnapshot
 }
 
-@KtAnalysisNonPublicApi
-public interface KtDataFlowInfoProviderMixin : KtAnalysisSessionMixIn {
-    public fun getExitPointSnapshot(statements: List<KtExpression>): KtDataFlowExitPointSnapshot = withValidityAssertion {
+@KaAnalysisNonPublicApi
+public typealias KtDataFlowInfoProvider = KaDataFlowInfoProvider
+
+@KaAnalysisNonPublicApi
+public interface KaDataFlowInfoProviderMixin : KaSessionMixIn {
+    public fun getExitPointSnapshot(statements: List<KtExpression>): KaDataFlowExitPointSnapshot = withValidityAssertion {
         return analysisSession.dataFlowInfoProvider.getExitPointSnapshot(statements)
     }
 }
 
-@KtAnalysisNonPublicApi
-public class KtDataFlowExitPointSnapshot(
+@KaAnalysisNonPublicApi
+public typealias KtDataFlowInfoProviderMixin = KaDataFlowInfoProviderMixin
+
+@KaAnalysisNonPublicApi
+public class KaDataFlowExitPointSnapshot(
     /**
      * A default expression, if any.
      * @see [DefaultExpressionInfo] for more information.
@@ -43,7 +49,7 @@ public class KtDataFlowExitPointSnapshot(
     /**
      * A common supertype of values returned in [valuedReturnExpressions].
      */
-    public val returnValueType: KtType?,
+    public val returnValueType: KaType?,
 
     /**
      * All jump expressions.
@@ -88,7 +94,7 @@ public class KtDataFlowExitPointSnapshot(
         public val expression: KtExpression,
 
         /** The default expression type. */
-        public val type: KtType
+        public val type: KaType
     )
 
     /**
@@ -99,9 +105,12 @@ public class KtDataFlowExitPointSnapshot(
         public val expression: KtExpression,
 
         /** Reassigned variable symbol. */
-        public val variable: KtVariableLikeSymbol,
+        public val variable: KaVariableLikeSymbol,
 
         /** `true` if the variable is both read and set (as in `x += y` or `x++`). */
         public val isAugmented: Boolean
     )
 }
+
+@KaAnalysisNonPublicApi
+public typealias KtDataFlowExitPointSnapshot = KaDataFlowExitPointSnapshot

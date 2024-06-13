@@ -1,6 +1,6 @@
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: test/Base.noGeneric
+KaFunctionSymbol:
+  annotations: []
+  callableId: test/Base.noGeneric
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -20,30 +20,30 @@ KtFunctionSymbol:
   name: noGeneric
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: T
     ]
     type: test/Base<T>
-  getContainingFileSymbol: KtFileSymbol(substitutionOverride.kt)
+  getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
   getContainingJvmClassName: test.Base
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: test/Base.noGenericWithExplicitType
+KaFunctionSymbol:
+  annotations: []
+  callableId: test/Base.noGenericWithExplicitType
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -63,30 +63,30 @@ KtFunctionSymbol:
   name: noGenericWithExplicitType
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: T
     ]
     type: test/Base<T>
-  getContainingFileSymbol: KtFileSymbol(substitutionOverride.kt)
+  getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
   getContainingJvmClassName: test.Base
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: test/ClassWithGenericBase.withOuterGeneric
+KaFunctionSymbol:
+  annotations: []
+  callableId: test/ClassWithGenericBase.withOuterGeneric
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -106,16 +106,16 @@ KtFunctionSymbol:
   name: withOuterGeneric
   origin: SUBSTITUTION_OVERRIDE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -127,30 +127,30 @@ KtFunctionSymbol:
       name: t
       origin: SUBSTITUTION_OVERRIDE
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: test/Foo
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(substitutionOverride.kt)
+      getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
       getContainingJvmClassName: test.ClassWithGenericBase
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: test/ClassWithGenericBase
-  getContainingFileSymbol: KtFileSymbol(substitutionOverride.kt)
+  getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
   getContainingJvmClassName: test.ClassWithGenericBase
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: test/ClassWithGenericBase.withOuterGenericWithExplicitType
+KaFunctionSymbol:
+  annotations: []
+  callableId: test/ClassWithGenericBase.withOuterGenericWithExplicitType
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -170,16 +170,16 @@ KtFunctionSymbol:
   name: withOuterGenericWithExplicitType
   origin: SUBSTITUTION_OVERRIDE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -191,30 +191,30 @@ KtFunctionSymbol:
       name: t
       origin: SUBSTITUTION_OVERRIDE
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: test/Foo
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(substitutionOverride.kt)
+      getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
       getContainingJvmClassName: test.ClassWithGenericBase
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: test/ClassWithGenericBase
-  getContainingFileSymbol: KtFileSymbol(substitutionOverride.kt)
+  getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
   getContainingJvmClassName: test.ClassWithGenericBase
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: test/Base.withOwnGeneric
+KaFunctionSymbol:
+  annotations: []
+  callableId: test/Base.withOwnGeneric
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -234,18 +234,18 @@ KtFunctionSymbol:
   name: withOwnGeneric
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: [
-    KtTypeParameterSymbol(TT)
+    KaTypeParameterSymbol(TT)
   ]
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -257,33 +257,33 @@ KtFunctionSymbol:
       name: tt
       origin: SOURCE
       receiverParameter: null
-      returnType: KtTypeParameterType:
-        annotationsList: []
+      returnType: KaTypeParameterType:
+        annotations: []
         type: TT
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(substitutionOverride.kt)
+      getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
       getContainingJvmClassName: test.Base
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: T
     ]
     type: test/Base<T>
-  getContainingFileSymbol: KtFileSymbol(substitutionOverride.kt)
+  getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
   getContainingJvmClassName: test.Base
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: test/Base.withOwnGenericWithExplicitType
+KaFunctionSymbol:
+  annotations: []
+  callableId: test/Base.withOwnGenericWithExplicitType
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -303,18 +303,18 @@ KtFunctionSymbol:
   name: withOwnGenericWithExplicitType
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: [
-    KtTypeParameterSymbol(TT)
+    KaTypeParameterSymbol(TT)
   ]
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -326,33 +326,33 @@ KtFunctionSymbol:
       name: tt
       origin: SOURCE
       receiverParameter: null
-      returnType: KtTypeParameterType:
-        annotationsList: []
+      returnType: KaTypeParameterType:
+        annotations: []
         type: TT
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(substitutionOverride.kt)
+      getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
       getContainingJvmClassName: test.Base
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: T
     ]
     type: test/Base<T>
-  getContainingFileSymbol: KtFileSymbol(substitutionOverride.kt)
+  getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
   getContainingJvmClassName: test.Base
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: test/ClassWithGenericBase.withOuterAndOwnGeneric
+KaFunctionSymbol:
+  annotations: []
+  callableId: test/ClassWithGenericBase.withOuterAndOwnGeneric
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -372,18 +372,18 @@ KtFunctionSymbol:
   name: withOuterAndOwnGeneric
   origin: SUBSTITUTION_OVERRIDE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Long
   symbolKind: CLASS_MEMBER
   typeParameters: [
-    KtTypeParameterSymbol(TT)
+    KaTypeParameterSymbol(TT)
   ]
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -395,19 +395,19 @@ KtFunctionSymbol:
       name: t
       origin: SUBSTITUTION_OVERRIDE
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: test/Foo
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(substitutionOverride.kt)
+      getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
       getContainingJvmClassName: test.ClassWithGenericBase
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -419,29 +419,29 @@ KtFunctionSymbol:
       name: tt
       origin: SUBSTITUTION_OVERRIDE
       receiverParameter: null
-      returnType: KtTypeParameterType:
-        annotationsList: []
+      returnType: KaTypeParameterType:
+        annotations: []
         type: TT
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(substitutionOverride.kt)
+      getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
       getContainingJvmClassName: test.ClassWithGenericBase
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: test/ClassWithGenericBase
-  getContainingFileSymbol: KtFileSymbol(substitutionOverride.kt)
+  getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
   getContainingJvmClassName: test.ClassWithGenericBase
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: test/ClassWithGenericBase.withOuterAndOwnGenericWithExplicitType
+KaFunctionSymbol:
+  annotations: []
+  callableId: test/ClassWithGenericBase.withOuterAndOwnGenericWithExplicitType
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -461,18 +461,18 @@ KtFunctionSymbol:
   name: withOuterAndOwnGenericWithExplicitType
   origin: SUBSTITUTION_OVERRIDE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Long
   symbolKind: CLASS_MEMBER
   typeParameters: [
-    KtTypeParameterSymbol(TT)
+    KaTypeParameterSymbol(TT)
   ]
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -484,19 +484,19 @@ KtFunctionSymbol:
       name: t
       origin: SUBSTITUTION_OVERRIDE
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: test/Foo
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(substitutionOverride.kt)
+      getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
       getContainingJvmClassName: test.ClassWithGenericBase
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -508,29 +508,29 @@ KtFunctionSymbol:
       name: tt
       origin: SUBSTITUTION_OVERRIDE
       receiverParameter: null
-      returnType: KtTypeParameterType:
-        annotationsList: []
+      returnType: KaTypeParameterType:
+        annotations: []
         type: TT
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(substitutionOverride.kt)
+      getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
       getContainingJvmClassName: test.ClassWithGenericBase
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: test/ClassWithGenericBase
-  getContainingFileSymbol: KtFileSymbol(substitutionOverride.kt)
+  getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
   getContainingJvmClassName: test.ClassWithGenericBase
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.equals
+KaFunctionSymbol:
+  annotations: []
+  callableId: kotlin/Any.equals
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -550,16 +550,16 @@ KtFunctionSymbol:
   name: equals
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -571,9 +571,9 @@ KtFunctionSymbol:
       name: other
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
@@ -583,18 +583,18 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Any
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Any
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.hashCode
+KaFunctionSymbol:
+  annotations: []
+  callableId: kotlin/Any.hashCode
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -614,26 +614,26 @@ KtFunctionSymbol:
   name: hashCode
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Any
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Any
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.toString
+KaFunctionSymbol:
+  annotations: []
+  callableId: kotlin/Any.toString
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -653,27 +653,27 @@ KtFunctionSymbol:
   name: toString
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Any
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Any
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtConstructorSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
-  containingClassIdIfNonLocal: test/ClassWithGenericBase
+KaConstructorSymbol:
+  annotations: []
+  callableId: null
+  containingClassId: test/ClassWithGenericBase
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -682,15 +682,15 @@ KtConstructorSymbol:
   isPrimary: true
   origin: SOURCE_MEMBER_GENERATED
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: test/ClassWithGenericBase
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(substitutionOverride.kt)
+  getContainingFileSymbol: KaFileSymbol(substitutionOverride.kt)
   getContainingJvmClassName: test.ClassWithGenericBase
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

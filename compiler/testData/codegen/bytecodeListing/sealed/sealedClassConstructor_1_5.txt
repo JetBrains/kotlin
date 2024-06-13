@@ -18,6 +18,57 @@ public abstract class TestNoSubclassesAllDefaults {
 }
 
 @kotlin.Metadata
+public abstract class TestPrimaryConstructorPrivateVisibility {
+    // source: 'sealedClassConstructor_1_5.kt'
+    private final field x: int
+    private method <init>(p0: int): void
+    public synthetic method <init>(p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final method getX(): int
+}
+
+@kotlin.Metadata
+public abstract class TestPrimaryConstructorProtectedVisibility {
+    // source: 'sealedClassConstructor_1_5.kt'
+    private final field x: int
+    private method <init>(p0: int): void
+    public synthetic method <init>(p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final method getX(): int
+}
+
+@kotlin.Metadata
+public abstract class TestSecondaryConstructorPrivateVisibility {
+    // source: 'sealedClassConstructor_1_5.kt'
+    private final field x: int
+    private method <init>(): void
+    private method <init>(p0: int): void
+    public synthetic method <init>(p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final method getX(): int
+}
+
+@kotlin.Metadata
+public abstract class TestSecondaryConstructorProtectedVisibility {
+    // source: 'sealedClassConstructor_1_5.kt'
+    private final field x: int
+    private method <init>(): void
+    private method <init>(p0: int): void
+    public synthetic method <init>(p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final method getX(): int
+}
+
+@kotlin.Metadata
+public abstract class TestSecondaryConstructorUnspecifiedVisibility {
+    // source: 'sealedClassConstructor_1_5.kt'
+    private final field x: int
+    private method <init>(): void
+    private method <init>(p0: int): void
+    public synthetic method <init>(p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final method getX(): int
+}
+
+@kotlin.Metadata
 public abstract class TestSubclassAfter {
     // source: 'sealedClassConstructor_1_5.kt'
     private final field x: int

@@ -41,27 +41,27 @@
   <projectListeners>
     <listener
         class="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService$LLKotlinModuleStateModificationListener"
-        topic="org.jetbrains.kotlin.analysis.providers.topics.KotlinModuleStateModificationListener"
+        topic="org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleStateModificationListener"
     />
     <listener
         class="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService$LLKotlinModuleOutOfBlockModificationListener"
-        topic="org.jetbrains.kotlin.analysis.providers.topics.KotlinModuleOutOfBlockModificationListener"
+        topic="org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleOutOfBlockModificationListener"
     />
     <listener
         class="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService$LLKotlinGlobalModuleStateModificationListener"
-        topic="org.jetbrains.kotlin.analysis.providers.topics.KotlinGlobalModuleStateModificationListener"
+        topic="org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalModuleStateModificationListener"
     />
     <listener
         class="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService$LLKotlinGlobalSourceModuleStateModificationListener"
-        topic="org.jetbrains.kotlin.analysis.providers.topics.KotlinGlobalSourceModuleStateModificationListener"
+        topic="org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalSourceModuleStateModificationListener"
     />
     <listener
         class="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService$LLKotlinGlobalSourceOutOfBlockModificationListener"
-        topic="org.jetbrains.kotlin.analysis.providers.topics.KotlinGlobalSourceOutOfBlockModificationListener"
+        topic="org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalSourceOutOfBlockModificationListener"
     />
     <listener
         class="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService$LLKotlinCodeFragmentContextModificationListener"
-        topic="org.jetbrains.kotlin.analysis.providers.topics.KotlinCodeFragmentContextModificationListener"
+        topic="org.jetbrains.kotlin.analysis.api.platform.modification.KotlinCodeFragmentContextModificationListener"
     />
     <listener
         class="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService$LLPsiModificationTrackerListener"

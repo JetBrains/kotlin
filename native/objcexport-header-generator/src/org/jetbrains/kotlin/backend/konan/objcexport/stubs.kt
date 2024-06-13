@@ -132,6 +132,6 @@ private fun buildMethodName(selectors: List<String>, parameters: List<ObjCParame
     if (selectors.size == 1 && parameters.size == 0) {
         selectors[0]
     } else {
-        assert(selectors.size == parameters.size)
+        assert(selectors.size == parameters.size) { "selectors.size(${selectors.size}) != parameters.size(${parameters.size})" }
         selectors.joinToString(separator = "")
     }

@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols
 
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KtDeclarationRendererForDebug
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
-import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractSymbolRestoreFromDifferentModuleTest : AbstractAnalysisApiBasedTest() {
-    private val defaultRenderer = KtDeclarationRendererForDebug.WITH_QUALIFIED_NAMES
+    private val defaultRenderer = KaDeclarationRendererForDebug.WITH_QUALIFIED_NAMES
 
     override fun doTest(testServices: TestServices) {
         val declaration =
@@ -42,7 +42,7 @@ abstract class AbstractSymbolRestoreFromDifferentModuleTest : AbstractAnalysisAp
         configurator.doGlobalModuleStateModification(project)
 
         val (debugRenderedRestored, prettyRenderedRestored) = analyseForTest(restoreAt) {
-            val symbol = pointer.restoreSymbol() as? KtDeclarationSymbol
+            val symbol = pointer.restoreSymbol() as? KaDeclarationSymbol
             symbol?.let { DebugSymbolRenderer().render(analysisSession, it) } to symbol?.render(defaultRenderer)
         }
 

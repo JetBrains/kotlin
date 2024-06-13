@@ -25,7 +25,7 @@ import kotlin.reflect.KClass
 @FirExtensionApiInternals
 abstract class FirMetadataSerializerPlugin(session: FirSession) : FirExtension(session) {
     companion object {
-        val NAME = FirExtensionPointName("MetadataSerializerPlugin")
+        val NAME: FirExtensionPointName = FirExtensionPointName("MetadataSerializerPlugin")
     }
 
     final override val name: FirExtensionPointName

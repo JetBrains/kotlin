@@ -5,23 +5,20 @@
 
 package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 
 typealias ReportError = (element: IrElement, message: String) -> Unit
 
-class CheckIrElementVisitor(
+internal class CheckIrElementVisitor(
     val irBuiltIns: IrBuiltIns,
     val reportError: ReportError,
     val config: IrValidatorConfig
@@ -29,9 +26,13 @@ class CheckIrElementVisitor(
     private val visitedElements = hashSetOf<IrElement>()
 
     override fun visitElement(element: IrElement) {
-        if (config.ensureAllNodesAreDifferent && !visitedElements.add(element)) {
+        if (!visitedElements.add(element)) {
             val renderString = if (element is IrTypeParameter) element.render() + " of " + element.parent.render() else element.render()
             reportError(element, "Duplicate IR node: $renderString")
+
+            // The IR tree is completely messed up if it includes one element twice. It may not be a tree at all, there may be cycles.
+            // Give up early to avoid stack overflow.
+            throw DuplicateIrNodeError(element)
         }
     }
 
@@ -245,31 +246,6 @@ class CheckIrElementVisitor(
         super.visitThrow(expression)
 
         expression.ensureTypeIs(irBuiltIns.nothingType)
-    }
-
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    override fun visitClass(declaration: IrClass) {
-        super.visitClass(declaration)
-
-        if (config.checkDescriptors && !declaration.isAnnotationClass) {
-            // Check that all functions and properties from memberScope are present in IR
-            // (including FAKE_OVERRIDE ones).
-
-            val allDescriptors = declaration.descriptor.unsubstitutedMemberScope
-                .getContributedDescriptors().filterIsInstance<CallableMemberDescriptor>()
-                .filter { it.visibility != DescriptorVisibilities.INVISIBLE_FAKE }
-
-            val presentDescriptors = declaration.declarations.map { it.descriptor }
-
-            val missingDescriptors = allDescriptors - presentDescriptors
-
-            if (missingDescriptors.isNotEmpty()) {
-                reportError(
-                    declaration, "Missing declarations for descriptors:\n" +
-                            missingDescriptors.joinToString("\n: ")
-                )
-            }
-        }
     }
 
     override fun visitFunction(declaration: IrFunction) {

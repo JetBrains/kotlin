@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolsData
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithMembers
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -22,16 +22,16 @@ import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractSubstitutionOverridesUnwrappingTest : AbstractSymbolTest() {
 
-    override fun KtAnalysisSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData {
+    override fun KaSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData {
         val declarationUnderCaret = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtClassLikeDeclaration>(ktFile)
-        val classSymbolUnderCaret = declarationUnderCaret.getSymbol() as KtClassLikeSymbol
+        val classSymbolUnderCaret = declarationUnderCaret.getSymbol() as KaClassLikeSymbol
 
-        require(classSymbolUnderCaret is KtSymbolWithMembers)
+        require(classSymbolUnderCaret is KaSymbolWithMembers)
 
         return SymbolsData(classSymbolUnderCaret.getMemberScope().getAllSymbols().toList())
     }
 
-    override fun KtAnalysisSession.renderSymbolForComparison(symbol: KtSymbol, directives: RegisteredDirectives): String {
+    override fun KaSession.renderSymbolForComparison(symbol: KaSymbol, directives: RegisteredDirectives): String {
         return with(DebugSymbolRenderer()) { renderForSubstitutionOverrideUnwrappingTest(symbol) }
     }
 

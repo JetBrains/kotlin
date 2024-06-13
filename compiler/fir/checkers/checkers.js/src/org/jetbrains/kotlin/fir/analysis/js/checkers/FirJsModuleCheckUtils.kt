@@ -37,7 +37,7 @@ internal fun checkJsModuleUsage(
 
     val calleeSession = callee.moduleData.session
     val calleeRoot = getRootClassLikeSymbolOrSelf(callee, calleeSession)
-    val calleeContainingFile = calleeRoot.getContainingFile(calleeSession)
+    val calleeContainingFile = calleeRoot.getContainingFile()
 
     val callToModule = calleeRoot.getAnnotationStringParameter(JsStandardClassIds.Annotations.JsModule, calleeSession) != null ||
             calleeContainingFile?.symbol?.getAnnotationStringParameter(JsStandardClassIds.Annotations.JsModule, calleeSession) != null

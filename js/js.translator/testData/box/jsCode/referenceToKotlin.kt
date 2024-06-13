@@ -91,6 +91,40 @@ fun test10(): String {
     return result
 }
 
+fun test11(): String {
+    var result = ""
+    val list = listOf("t", "e", "s", "t", "11")
+    for (p in list) {
+        run { // Call js() in an inline lambda
+            result += js("p")
+        }
+    }
+    return result
+}
+
+inline fun inlineFun(arg: String): String {
+    return js("p(arg)")
+}
+
+fun test12(): String {
+    // test that the js() call in inlined inlineFun doesn't call this local p
+    val p = { "wrong12" }
+    return inlineFun("test12")
+}
+
+fun test13(): String {
+    val p: (String, Int) -> String = { s, i -> s + i }
+
+    // local inline functions are not supported, so we work this around by using an anonymous object with inline method
+    val o = object {
+        inline fun localInlineFun(arg: String, makeInt: () -> Int): String {
+            return js("p(arg, makeInt())")
+        }
+    }
+    val thirteen = 13
+    return o.localInlineFun("test") { thirteen }
+}
+
 fun box(): String {
     var result = test1("test1")
     if (result != "test1") return "fail1: $result"
@@ -121,6 +155,15 @@ fun box(): String {
 
     result = test10()
     if (result != "string;object") return "fail10: $result"
+
+    result = test11()
+    if (result != "test11") return "fail11: $result"
+
+    result = test12()
+    if (result != "test12;") return "fail12: $result"
+
+    result = test13()
+    if (result != "test13") return "fail13: $result"
 
     if (log != "start1;start2;start6;start7;") return "fail log: $log"
 

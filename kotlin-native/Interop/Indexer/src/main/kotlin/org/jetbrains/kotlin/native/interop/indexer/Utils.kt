@@ -18,6 +18,10 @@ package org.jetbrains.kotlin.native.interop.indexer
 
 import clang.*
 import kotlinx.cinterop.*
+import org.jetbrains.kotlin.konan.exec.Command
+import org.jetbrains.kotlin.konan.target.Distribution
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.PlatformManager
 import java.io.Closeable
 import java.io.File
 import java.nio.file.Files
@@ -142,18 +146,67 @@ internal fun parseTranslationUnit(
         )
 
         if (errorCode != CXErrorCode.CXError_Success) {
-            val copiedSourceFile = sourceFile.copyTo(Files.createTempFile(null, sourceFile.name).toFile(), overwrite = true)
-
-            error("""
-                clang_parseTranslationUnit2 failed with $errorCode;
-                sourceFile = ${copiedSourceFile.absolutePath}
-                arguments = ${compilerArgs.joinToString(" ")}
-                """.trimIndent())
+            reportParseTranslationUnitError(sourceFile, errorCode, compilerArgs)
         }
 
         return resultVar.value!!
     }
 }
+
+private fun reportParseTranslationUnitError(sourceFile: File, errorCode: CXErrorCode, originalCompilerArgs: List<String>): Nothing {
+    val message = buildString {
+        appendLine("clang_parseTranslationUnit2 failed with $errorCode;")
+        appendLine("Arguments:")
+
+        // sourceFile is typically a temporary file to be removed after the process exit;
+        // rescue it by copying to a longer-living temporary file:
+        val copiedSourceFile = sourceFile.copyTo(Files.createTempFile(null, sourceFile.name).toFile(), overwrite = true)
+
+        // Include the source file to arguments for simplicity, to mimic the clang behavior.
+        val compilerArgs = mutableListOf(copiedSourceFile.absolutePath)
+        compilerArgs.addAll(originalCompilerArgs)
+
+        // Included .pch file is typically a temporary file to be removed after the process exit;
+        // rescue it the same way:
+        val indexOfIncludePch = compilerArgs.indexOf("-include-pch")
+        if (indexOfIncludePch != -1 && indexOfIncludePch + 1 < compilerArgs.size) {
+            val pch = File(compilerArgs[indexOfIncludePch + 1])
+            val copiedPch = pch.copyTo(Files.createTempFile(null, pch.name).toFile(), overwrite = true)
+            compilerArgs[indexOfIncludePch + 1] = copiedPch.absolutePath
+        }
+
+        appendLine(compilerArgs.joinToString(" "))
+
+        // At least for CXError_ASTReadError libclang doesn't provide any useful diagnostics.
+        // We have to actually run clang to provide a more detailed error message:
+        tryGetClangInvocationResultMessage(listOf(sourceFile.absolutePath) + originalCompilerArgs)?.let {
+            appendLine()
+            appendLine("clang invocation details:")
+            appendLine(it)
+        }
+    }
+
+    error(message)
+}
+
+private fun tryGetClangInvocationResultMessage(compilerArgs: List<String>): String? = runCatching {
+    // The code below is basically a quick hack, so let's use it only for tests so far:
+    val nativeHome = System.getProperty("kotlin.internal.native.test.nativeHome") ?: return null
+
+    val platform = PlatformManager(Distribution(nativeHome)).platform(HostManager.host)
+    val llvmHome = File(platform.absoluteLlvmHome)
+    val clang = llvmHome.resolve("bin/clang")
+
+    val command = listOf(clang.absolutePath) + compilerArgs
+    val result = Command(command).getResult(withErrors = true)
+
+    buildString {
+        appendLine(command.joinToString(" "))
+        appendLine("Exit code: ${result.exitCode}")
+        appendLine("Output:")
+        result.outputLines.forEach(::appendLine)
+    }
+}.getOrNull()
 
 internal fun Compilation.parse(
         index: CXIndex,

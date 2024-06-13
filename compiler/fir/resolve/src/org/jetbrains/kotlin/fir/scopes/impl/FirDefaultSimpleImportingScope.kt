@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
 import org.jetbrains.kotlin.fir.scopes.defaultImportProvider
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 class FirDefaultSimpleImportingScope(
     session: FirSession,
@@ -25,7 +26,7 @@ class FirDefaultSimpleImportingScope(
     private fun FirImport.resolve(importResolveTransformer: FirImportResolveTransformer) =
         importResolveTransformer.transformImport(this, null) as? FirResolvedImport
 
-    override val simpleImports = run {
+    override val simpleImports: Map<Name, List<FirResolvedImport>> = run {
         val importResolveTransformer = FirImportResolveTransformer(session)
         val defaultImportProvider = session.defaultImportProvider
         val allDefaultImports = priority.getAllDefaultImports(defaultImportProvider, LanguageVersionSettingsImpl.DEFAULT)

@@ -2,7 +2,7 @@ package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.Task
 import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.NormalizeLineEndings
@@ -30,6 +30,12 @@ interface IncrementalSyncTask : Task {
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:SkipWhenEmpty
     val from: ConfigurableFileCollection
+
+    /**
+     * Duplicates strategy for CopySpec inside the task
+     */
+    @get:Input
+    var duplicatesStrategy: DuplicatesStrategy
 
     /**
      * The directory where the set of files are copied to.

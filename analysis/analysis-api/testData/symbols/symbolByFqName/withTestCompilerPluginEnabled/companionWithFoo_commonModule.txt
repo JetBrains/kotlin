@@ -1,6 +1,6 @@
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: test/WithGeneratedCompanion.Companion
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: test/WithGeneratedCompanion.Companion
   classKind: COMPANION_OBJECT
   companionObject: null
   contextReceivers: []
@@ -15,15 +15,15 @@ KtNamedClassOrObjectSymbol:
   name: Companion
   origin: PLUGIN
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(main.kt)
+  getContainingFileSymbol: KaFileSymbol(main.kt)
   getContainingModule: KtSourceModule "Sources of common"
   annotationApplicableTargets: null
   deprecationStatus: null

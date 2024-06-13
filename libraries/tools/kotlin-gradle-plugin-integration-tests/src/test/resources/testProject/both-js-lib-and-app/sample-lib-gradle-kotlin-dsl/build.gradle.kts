@@ -1,15 +1,10 @@
 plugins {
-    id("org.jetbrains.kotlin.multiplatform").version("<pluginMarkerVersion>")
+    id("org.jetbrains.kotlin.multiplatform")
     id("maven-publish")
 }
 
 group = "com.example"
 version = "1.0"
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
 
 kotlin {
     val js = js("nodeJs")
@@ -21,23 +16,12 @@ kotlin {
             })
         })
     }
-
-    sourceSets {
-        val commonMain by getting {
-            dependencies {
-                api(kotlin("stdlib-common"))
-            }
-        }
-        js.compilations["main"].defaultSourceSet {
-            dependencies {
-                api(kotlin("stdlib-js"))
-            }
-        }
-    }
 }
 
 publishing {
     repositories {
-        maven { setUrl("${projectDir.absolutePath.replace('\\', '/')}/repo") }
+        maven("<localRepo>") {
+            name = "LocalRepo"
+        }
     }
 }

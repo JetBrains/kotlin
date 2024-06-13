@@ -3,11 +3,15 @@ val noGeneric: test.Foo?
 val withOuterGeneric: test.Foo?
 
 val <TT> TT.withOwnGeneric: TT?
+  get()
 
 val <TT> TT.withOuterAndOwnGeneric: test.Foo?
+  get()
 
 open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
 open fun hashCode(): kotlin.Int
 
 open fun toString(): kotlin.String
+
+constructor()

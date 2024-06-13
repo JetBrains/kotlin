@@ -1,6 +1,6 @@
 FILE: constructorInObject.kt
     public final? object A : R|kotlin/Any| {
-        public? [ContainingClassKey=A] constructor(): R|A| {
+        private [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
@@ -18,7 +18,7 @@ FILE: constructorInObject.kt
                 super<R|B|>()
             }
 
-            public? [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+            private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                 super<R|B|>()
             }
 
@@ -40,7 +40,7 @@ FILE: constructorInObject.kt
         }
 
         public final? companion object Companion : R|kotlin/Any| {
-            public? [ContainingClassKey=Companion] constructor(): R|C.Companion| {
+            private [ContainingClassKey=Companion] constructor(): R|C.Companion| {
                 super<R|kotlin/Any|>()
             }
 
@@ -48,7 +48,7 @@ FILE: constructorInObject.kt
 
     }
     public? final? val anonObject: <implicit> = object : R|kotlin/Any| {
-        public? [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+        private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
             super<R|kotlin/Any|>()
         }
 

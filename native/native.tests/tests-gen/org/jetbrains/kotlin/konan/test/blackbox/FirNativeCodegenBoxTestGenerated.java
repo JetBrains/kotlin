@@ -1222,6 +1222,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       }
 
       @Test
+      @TestMetadata("kt7972.kt")
+      public void testKt7972() {
+        runTest("compiler/testData/codegen/box/basics/kt7972.kt");
+      }
+
+      @Test
       @TestMetadata("local_variable.kt")
       public void testLocal_variable() {
         runTest("compiler/testData/codegen/box/basics/local_variable.kt");
@@ -1282,6 +1288,30 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       }
 
       @Test
+      @TestMetadata("unchecked_cast10.kt")
+      public void testUnchecked_cast10() {
+        runTest("compiler/testData/codegen/box/basics/unchecked_cast10.kt");
+      }
+
+      @Test
+      @TestMetadata("unchecked_cast11.kt")
+      public void testUnchecked_cast11() {
+        runTest("compiler/testData/codegen/box/basics/unchecked_cast11.kt");
+      }
+
+      @Test
+      @TestMetadata("unchecked_cast12.kt")
+      public void testUnchecked_cast12() {
+        runTest("compiler/testData/codegen/box/basics/unchecked_cast12.kt");
+      }
+
+      @Test
+      @TestMetadata("unchecked_cast13.kt")
+      public void testUnchecked_cast13() {
+        runTest("compiler/testData/codegen/box/basics/unchecked_cast13.kt");
+      }
+
+      @Test
       @TestMetadata("unchecked_cast2.kt")
       public void testUnchecked_cast2() {
         runTest("compiler/testData/codegen/box/basics/unchecked_cast2.kt");
@@ -1297,6 +1327,42 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       @TestMetadata("unchecked_cast4.kt")
       public void testUnchecked_cast4() {
         runTest("compiler/testData/codegen/box/basics/unchecked_cast4.kt");
+      }
+
+      @Test
+      @TestMetadata("unchecked_cast5.kt")
+      public void testUnchecked_cast5() {
+        runTest("compiler/testData/codegen/box/basics/unchecked_cast5.kt");
+      }
+
+      @Test
+      @TestMetadata("unchecked_cast6.kt")
+      public void testUnchecked_cast6() {
+        runTest("compiler/testData/codegen/box/basics/unchecked_cast6.kt");
+      }
+
+      @Test
+      @TestMetadata("unchecked_cast6x.kt")
+      public void testUnchecked_cast6x() {
+        runTest("compiler/testData/codegen/box/basics/unchecked_cast6x.kt");
+      }
+
+      @Test
+      @TestMetadata("unchecked_cast7.kt")
+      public void testUnchecked_cast7() {
+        runTest("compiler/testData/codegen/box/basics/unchecked_cast7.kt");
+      }
+
+      @Test
+      @TestMetadata("unchecked_cast8.kt")
+      public void testUnchecked_cast8() {
+        runTest("compiler/testData/codegen/box/basics/unchecked_cast8.kt");
+      }
+
+      @Test
+      @TestMetadata("unchecked_cast9.kt")
+      public void testUnchecked_cast9() {
+        runTest("compiler/testData/codegen/box/basics/unchecked_cast9.kt");
       }
 
       @Test
@@ -2518,9 +2584,51 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       }
 
       @Test
+      @TestMetadata("test19.kt")
+      public void testTest19() {
+        runTest("compiler/testData/codegen/box/bridges/test19.kt");
+      }
+
+      @Test
       @TestMetadata("test2.kt")
       public void testTest2() {
         runTest("compiler/testData/codegen/box/bridges/test2.kt");
+      }
+
+      @Test
+      @TestMetadata("test20.kt")
+      public void testTest20() {
+        runTest("compiler/testData/codegen/box/bridges/test20.kt");
+      }
+
+      @Test
+      @TestMetadata("test21.kt")
+      public void testTest21() {
+        runTest("compiler/testData/codegen/box/bridges/test21.kt");
+      }
+
+      @Test
+      @TestMetadata("test22.kt")
+      public void testTest22() {
+        runTest("compiler/testData/codegen/box/bridges/test22.kt");
+      }
+
+      @Test
+      @TestMetadata("test23.kt")
+      public void testTest23() {
+        runTest("compiler/testData/codegen/box/bridges/test23.kt");
+      }
+
+      @Test
+      @TestMetadata("test24.kt")
+      public void testTest24() {
+        runTest("compiler/testData/codegen/box/bridges/test24.kt");
+      }
+
+      @Test
+      @TestMetadata("test25.kt")
+      public void testTest25() {
+        runTest("compiler/testData/codegen/box/bridges/test25.kt");
       }
 
       @Test
@@ -3048,6 +3156,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
         }
 
         @Test
+        @TestMetadata("kt64069.kt")
+        public void testKt64069() {
+          runTest("compiler/testData/codegen/box/builderInference/issues/kt64069.kt");
+        }
+
+        @Test
         @TestMetadata("kt65300a.kt")
         public void testKt65300a() {
           runTest("compiler/testData/codegen/box/builderInference/issues/kt65300a.kt");
@@ -3123,6 +3237,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
         @TestMetadata("kt66272.kt")
         public void testKt66272() {
           runTest("compiler/testData/codegen/box/builderInference/issues/kt66272.kt");
+        }
+
+        @Test
+        @TestMetadata("kt67993.kt")
+        public void testKt67993() {
+          runTest("compiler/testData/codegen/box/builderInference/issues/kt67993.kt");
         }
       }
 
@@ -7321,6 +7441,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       public void testInlineFunctionCompanionPropertyAccess() {
         runTest("compiler/testData/codegen/box/companion/inlineFunctionCompanionPropertyAccess.kt");
       }
+
+      @Test
+      @TestMetadata("protectedConstValFromSuperCompanion.kt")
+      public void testProtectedConstValFromSuperCompanion() {
+        runTest("compiler/testData/codegen/box/companion/protectedConstValFromSuperCompanion.kt");
+      }
     }
 
     @Nested
@@ -7388,18 +7514,6 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       @TestMetadata("constructorVararg.kt")
       public void testConstructorVararg() {
         runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/constructorVararg.kt");
-      }
-
-      @Test
-      @TestMetadata("copySamOnInline.kt")
-      public void testCopySamOnInline() {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/copySamOnInline.kt");
-      }
-
-      @Test
-      @TestMetadata("copySamOnInline2.kt")
-      public void testCopySamOnInline2() {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/copySamOnInline2.kt");
       }
 
       @Test
@@ -7730,12 +7844,6 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
           }
 
           @Test
-          @TestMetadata("callStackTrace.kt")
-          public void testCallStackTrace() {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/callStackTrace.kt");
-          }
-
-          @Test
           @TestMetadata("superCall.kt")
           public void testSuperCall() {
             runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/superCall.kt");
@@ -7769,12 +7877,6 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
             @Test
             public void testAllFilesPresentInAllCompatibility() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
-            }
-
-            @Test
-            @TestMetadata("callStackTrace.kt")
-            public void testCallStackTrace() {
-              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/callStackTrace.kt");
             }
 
             @Test
@@ -7864,12 +7966,6 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
             }
 
             @Test
-            @TestMetadata("newAndOldSchemes.kt")
-            public void testNewAndOldSchemes() {
-              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/newAndOldSchemes.kt");
-            }
-
-            @Test
             @TestMetadata("newAndOldSchemes2.kt")
             public void testNewAndOldSchemes2() {
               runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/newAndOldSchemes2.kt");
@@ -7879,12 +7975,6 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
             @TestMetadata("newAndOldSchemes2Compatibility.kt")
             public void testNewAndOldSchemes2Compatibility() {
               runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/newAndOldSchemes2Compatibility.kt");
-            }
-
-            @Test
-            @TestMetadata("newAndOldSchemes3.kt")
-            public void testNewAndOldSchemes3() {
-              runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/newAndOldSchemes3.kt");
             }
           }
         }
@@ -7899,12 +7989,6 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
           @Test
           public void testAllFilesPresentInJvm8against6() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
-          }
-
-          @Test
-          @TestMetadata("jdk8Against6.kt")
-          public void testJdk8Against6() {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/jdk8Against6.kt");
           }
 
           @Test
@@ -8913,6 +8997,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
           }
 
           @Test
+          @TestMetadata("simpleDoWhile.kt")
+          public void testSimpleDoWhile() {
+            runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/simpleDoWhile.kt");
+          }
+
+          @Test
           @TestMetadata("stdlibFunctions.kt")
           public void testStdlibFunctions() {
             runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/stdlibFunctions.kt");
@@ -8922,6 +9012,18 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
           @TestMetadata("withReturnValue.kt")
           public void testWithReturnValue() {
             runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/withReturnValue.kt");
+          }
+
+          @Test
+          @TestMetadata("withReturnValueDoWhileContinue.kt")
+          public void testWithReturnValueDoWhileContinue() {
+            runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/withReturnValueDoWhileContinue.kt");
+          }
+
+          @Test
+          @TestMetadata("withReturnValueNested.kt")
+          public void testWithReturnValueNested() {
+            runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue/withReturnValueNested.kt");
           }
         }
       }
@@ -12717,6 +12819,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
         public void testSubtypeOfFunctionalTypeToSuspendConversion() {
           runTest("compiler/testData/codegen/box/coroutines/suspendConversion/subtypeOfFunctionalTypeToSuspendConversion.kt");
         }
+
+        @Test
+        @TestMetadata("suspendConversionBetweenFunInterfaces.kt")
+        public void testSuspendConversionBetweenFunInterfaces() {
+          runTest("compiler/testData/codegen/box/coroutines/suspendConversion/suspendConversionBetweenFunInterfaces.kt");
+        }
       }
 
       @Nested
@@ -13269,6 +13377,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       @TestMetadata("privateValParams.kt")
       public void testPrivateValParams() {
         runTest("compiler/testData/codegen/box/dataClasses/privateValParams.kt");
+      }
+
+      @Test
+      @TestMetadata("propertyOfDnnType.kt")
+      public void testPropertyOfDnnType() {
+        runTest("compiler/testData/codegen/box/dataClasses/propertyOfDnnType.kt");
       }
 
       @Test
@@ -17133,6 +17247,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/extensionFunctions/contextReceivers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
         }
 
+        @Test
+        @TestMetadata("contextAndNoContextOverloads.kt")
+        public void testContextAndNoContextOverloads() {
+          runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/contextAndNoContextOverloads.kt");
+        }
+
         @Nested
         @TestMetadata("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP")
         @TestDataPath("$PROJECT_ROOT")
@@ -17292,6 +17412,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       @TestMetadata("fakeOverrideOfPrivateSetter.kt")
       public void testFakeOverrideOfPrivateSetter() {
         runTest("compiler/testData/codegen/box/fakeOverride/fakeOverrideOfPrivateSetter.kt");
+      }
+
+      @Test
+      @TestMetadata("fakeOverrideWithMissingClassInSignature.kt")
+      public void testFakeOverrideWithMissingClassInSignature() {
+        runTest("compiler/testData/codegen/box/fakeOverride/fakeOverrideWithMissingClassInSignature.kt");
       }
 
       @Test
@@ -17622,9 +17748,21 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       }
 
       @Test
+      @TestMetadata("inferenceWithTypeAliasFromOtherModule.kt")
+      public void testInferenceWithTypeAliasFromOtherModule() {
+        runTest("compiler/testData/codegen/box/fir/inferenceWithTypeAliasFromOtherModule.kt");
+      }
+
+      @Test
       @TestMetadata("initializationInLocalInnerClassWithSecondaryConstructor.kt")
       public void testInitializationInLocalInnerClassWithSecondaryConstructor() {
         runTest("compiler/testData/codegen/box/fir/initializationInLocalInnerClassWithSecondaryConstructor.kt");
+      }
+
+      @Test
+      @TestMetadata("kt68806.kt")
+      public void testKt68806() {
+        runTest("compiler/testData/codegen/box/fir/kt68806.kt");
       }
 
       @Test
@@ -17846,6 +17984,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       @TestMetadata("funInterfaceWithReceiver.kt")
       public void testFunInterfaceWithReceiver() {
         runTest("compiler/testData/codegen/box/funInterface/funInterfaceWithReceiver.kt");
+      }
+
+      @Test
+      @TestMetadata("funInterfaceWithSuspendMethod.kt")
+      public void testFunInterfaceWithSuspendMethod() {
+        runTest("compiler/testData/codegen/box/funInterface/funInterfaceWithSuspendMethod.kt");
       }
 
       @Test
@@ -19764,6 +19908,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
         @TestMetadata("memberScope.kt")
         public void testMemberScope() {
           runTest("compiler/testData/codegen/box/inference/builderInference/memberScope.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedNonExhaustiveIf.kt")
+        public void testNestedNonExhaustiveIf() {
+          runTest("compiler/testData/codegen/box/inference/builderInference/nestedNonExhaustiveIf.kt");
         }
 
         @Test
@@ -25237,8 +25387,6 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
           register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsCanBeOverriddenGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsDoNotClash.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsDoNotClashGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsPresentInStackTrace.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-          register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsPresentInStackTraceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mixedSignatureFunctionsDoNotClash.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mixedSignatureFunctionsDoNotClashGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
           register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/overridingMethodInGenericClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -25358,20 +25506,6 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
         public void testMangledFunctionsDoNotClashGeneric() {
           // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
           runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsDoNotClashGeneric.kt");
-        }
-
-        @Test
-        @TestMetadata("mangledFunctionsPresentInStackTrace.kt")
-        public void testMangledFunctionsPresentInStackTrace() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsPresentInStackTrace.kt");
-        }
-
-        @Test
-        @TestMetadata("mangledFunctionsPresentInStackTraceGeneric.kt")
-        public void testMangledFunctionsPresentInStackTraceGeneric() {
-          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-          runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsPresentInStackTraceGeneric.kt");
         }
 
         @Test
@@ -27109,6 +27243,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       @TestMetadata("innerWithDefaultArgument.kt")
       public void testInnerWithDefaultArgument() {
         runTest("compiler/testData/codegen/box/innerNested/innerWithDefaultArgument.kt");
+      }
+
+      @Test
+      @TestMetadata("innerWithDefaultArgumentGenericExtensionProperty.kt")
+      public void testInnerWithDefaultArgumentGenericExtensionProperty() {
+        runTest("compiler/testData/codegen/box/innerNested/innerWithDefaultArgumentGenericExtensionProperty.kt");
       }
 
       @Test
@@ -29441,6 +29581,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       }
 
       @Test
+      @TestMetadata("signatureConflictHiddenByTypeParameter.kt")
+      public void testSignatureConflictHiddenByTypeParameter() {
+        runTest("compiler/testData/codegen/box/localClass/signatureConflictHiddenByTypeParameter.kt");
+      }
+
+      @Test
       @TestMetadata("tryCatch.kt")
       public void testTryCatch() {
         runTest("compiler/testData/codegen/box/localClass/tryCatch.kt");
@@ -29741,6 +29887,85 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       @TestMetadata("localDelegatedProperty.kt")
       public void testLocalDelegatedProperty() {
         runTest("compiler/testData/codegen/box/lower/localDelegatedProperty.kt");
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/codegen/box/lower/forLoopsLowering")
+      @TestDataPath("$PROJECT_ROOT")
+      @Tag("frontend-fir")
+      @FirPipeline()
+      @UseExtTestCaseGroupProvider()
+      public class ForLoopsLowering {
+        @Test
+        public void testAllFilesPresentInForLoopsLowering() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/lower/forLoopsLowering"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+
+        @Test
+        @TestMetadata("arrays.kt")
+        public void testArrays() {
+          runTest("compiler/testData/codegen/box/lower/forLoopsLowering/arrays.kt");
+        }
+
+        @Test
+        @TestMetadata("lists.kt")
+        public void testLists() {
+          runTest("compiler/testData/codegen/box/lower/forLoopsLowering/lists.kt");
+        }
+
+        @Test
+        @TestMetadata("listsCME.kt")
+        public void testListsCME() {
+          runTest("compiler/testData/codegen/box/lower/forLoopsLowering/listsCME.kt");
+        }
+
+        @Test
+        @TestMetadata("nested.kt")
+        public void testNested() {
+          runTest("compiler/testData/codegen/box/lower/forLoopsLowering/nested.kt");
+        }
+
+        @Test
+        @TestMetadata("progressions.kt")
+        public void testProgressions() {
+          runTest("compiler/testData/codegen/box/lower/forLoopsLowering/progressions.kt");
+        }
+
+        @Test
+        @TestMetadata("reversed.kt")
+        public void testReversed() {
+          runTest("compiler/testData/codegen/box/lower/forLoopsLowering/reversed.kt");
+        }
+
+        @Test
+        @TestMetadata("reversedCharProgression.kt")
+        public void testReversedCharProgression() {
+          runTest("compiler/testData/codegen/box/lower/forLoopsLowering/reversedCharProgression.kt");
+        }
+
+        @Test
+        @TestMetadata("sequences.kt")
+        public void testSequences() {
+          runTest("compiler/testData/codegen/box/lower/forLoopsLowering/sequences.kt");
+        }
+
+        @Test
+        @TestMetadata("vars.kt")
+        public void testVars() {
+          runTest("compiler/testData/codegen/box/lower/forLoopsLowering/vars.kt");
+        }
+
+        @Test
+        @TestMetadata("withIndex.kt")
+        public void testWithIndex() {
+          runTest("compiler/testData/codegen/box/lower/forLoopsLowering/withIndex.kt");
+        }
+
+        @Test
+        @TestMetadata("withIndexUInt.kt")
+        public void testWithIndexUInt() {
+          runTest("compiler/testData/codegen/box/lower/forLoopsLowering/withIndexUInt.kt");
+        }
       }
     }
 
@@ -30737,6 +30962,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
         }
 
         @Test
+        @TestMetadata("kt68801.kt")
+        public void testKt68801() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/kt68801.kt");
+        }
+
+        @Test
         @TestMetadata("kt-65249.kt")
         public void testKt_65249() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/kt-65249.kt");
@@ -30746,6 +30977,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
         @TestMetadata("mergedOverrides.kt")
         public void testMergedOverrides() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/mergedOverrides.kt");
+        }
+
+        @Test
+        @TestMetadata("privateConstructorWithDefaults.kt")
+        public void testPrivateConstructorWithDefaults() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/privateConstructorWithDefaults.kt");
         }
 
         @Nested
@@ -31534,6 +31771,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       @TestMetadata("expr3.kt")
       public void testExpr3() {
         runTest("compiler/testData/codegen/box/objectExpression/expr3.kt");
+      }
+
+      @Test
+      @TestMetadata("multipleAnonymousObjectsInsideInlineFunction.kt")
+      public void testMultipleAnonymousObjectsInsideInlineFunction() {
+        runTest("compiler/testData/codegen/box/objectExpression/multipleAnonymousObjectsInsideInlineFunction.kt");
       }
     }
 
@@ -40527,6 +40770,97 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
         public void testAllFilesPresentInCallBy() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
         }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/reflection/callBy/valueClasses")
+        @TestDataPath("$PROJECT_ROOT")
+        @Tag("frontend-fir")
+        @FirPipeline()
+        @UseExtTestCaseGroupProvider()
+        public class ValueClasses {
+          @Test
+          public void testAllFilesPresentInValueClasses() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/reflection/callBy/valueClasses/nonNullObject")
+          @TestDataPath("$PROJECT_ROOT")
+          @Tag("frontend-fir")
+          @FirPipeline()
+          @UseExtTestCaseGroupProvider()
+          public class NonNullObject {
+            @Test
+            public void testAllFilesPresentInNonNullObject() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/valueClasses/nonNullObject"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/reflection/callBy/valueClasses/nonNullObject/defaultArguments")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("frontend-fir")
+            @FirPipeline()
+            @UseExtTestCaseGroupProvider()
+            public class DefaultArguments {
+              @Test
+              public void testAllFilesPresentInDefaultArguments() {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/valueClasses/nonNullObject/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+              }
+            }
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/reflection/callBy/valueClasses/nullableObject")
+          @TestDataPath("$PROJECT_ROOT")
+          @Tag("frontend-fir")
+          @FirPipeline()
+          @UseExtTestCaseGroupProvider()
+          public class NullableObject {
+            @Test
+            public void testAllFilesPresentInNullableObject() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/valueClasses/nullableObject"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/reflection/callBy/valueClasses/nullableObject/defaultArguments")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("frontend-fir")
+            @FirPipeline()
+            @UseExtTestCaseGroupProvider()
+            public class DefaultArguments {
+              @Test
+              public void testAllFilesPresentInDefaultArguments() {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/valueClasses/nullableObject/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+              }
+            }
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/reflection/callBy/valueClasses/primitive")
+          @TestDataPath("$PROJECT_ROOT")
+          @Tag("frontend-fir")
+          @FirPipeline()
+          @UseExtTestCaseGroupProvider()
+          public class Primitive {
+            @Test
+            public void testAllFilesPresentInPrimitive() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/valueClasses/primitive"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/reflection/callBy/valueClasses/primitive/defaultArguments")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("frontend-fir")
+            @FirPipeline()
+            @UseExtTestCaseGroupProvider()
+            public class DefaultArguments {
+              @Test
+              public void testAllFilesPresentInDefaultArguments() {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/valueClasses/primitive/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+              }
+            }
+          }
+        }
       }
 
       @Nested
@@ -41621,6 +41955,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       }
 
       @Test
+      @TestMetadata("kt68727.kt")
+      public void testKt68727() {
+        runTest("compiler/testData/codegen/box/regressions/kt68727.kt");
+      }
+
+      @Test
       @TestMetadata("kt7401.kt")
       public void testKt7401() {
         runTest("compiler/testData/codegen/box/regressions/kt7401.kt");
@@ -42659,12 +42999,6 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       }
 
       @Test
-      @TestMetadata("kt42517.kt")
-      public void testKt42517() {
-        runTest("compiler/testData/codegen/box/smartCasts/kt42517.kt");
-      }
-
-      @Test
       @TestMetadata("kt44804.kt")
       public void testKt44804() {
         runTest("compiler/testData/codegen/box/smartCasts/kt44804.kt");
@@ -42746,6 +43080,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       @TestMetadata("smartCastInsideIf.kt")
       public void testSmartCastInsideIf() {
         runTest("compiler/testData/codegen/box/smartCasts/smartCastInsideIf.kt");
+      }
+
+      @Test
+      @TestMetadata("smartCastedGenericWhenSubjectInRangeCheck.kt")
+      public void testSmartCastedGenericWhenSubjectInRangeCheck() {
+        runTest("compiler/testData/codegen/box/smartCasts/smartCastedGenericWhenSubjectInRangeCheck.kt");
       }
 
       @Test
@@ -43165,6 +43505,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       @TestMetadata("kt894.kt")
       public void testKt894() {
         runTest("compiler/testData/codegen/box/strings/kt894.kt");
+      }
+
+      @Test
+      @TestMetadata("MultiDollarInterpolation.kt")
+      public void testMultiDollarInterpolation() {
+        runTest("compiler/testData/codegen/box/strings/MultiDollarInterpolation.kt");
       }
 
       @Test
@@ -44394,6 +44740,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
     @UseExtTestCaseGroupProvider()
     public class Typealias {
       @Test
+      @TestMetadata("abbreviationWithCapturedType.kt")
+      public void testAbbreviationWithCapturedType() {
+        runTest("compiler/testData/codegen/box/typealias/abbreviationWithCapturedType.kt");
+      }
+
+      @Test
       public void testAllFilesPresentInTypealias() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/typealias"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
       }
@@ -44820,6 +45172,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       @TestMetadata("forInUnsignedUntil.kt")
       public void testForInUnsignedUntil() {
         runTest("compiler/testData/codegen/box/unsignedTypes/forInUnsignedUntil.kt");
+      }
+
+      @Test
+      @TestMetadata("generic.kt")
+      public void testGeneric() {
+        runTest("compiler/testData/codegen/box/unsignedTypes/generic.kt");
       }
 
       @Test
@@ -45508,6 +45866,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       }
 
       @Test
+      @TestMetadata("oneUnitBranch.kt")
+      public void testOneUnitBranch() {
+        runTest("compiler/testData/codegen/box/when/oneUnitBranch.kt");
+      }
+
+      @Test
       @TestMetadata("range.kt")
       public void testRange() {
         runTest("compiler/testData/codegen/box/when/range.kt");
@@ -45739,6 +46103,25 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
         @TestMetadata("withoutElse.kt")
         public void testWithoutElse() {
           runTest("compiler/testData/codegen/box/when/enumOptimization/withoutElse.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/codegen/box/when/guard")
+      @TestDataPath("$PROJECT_ROOT")
+      @Tag("frontend-fir")
+      @FirPipeline()
+      @UseExtTestCaseGroupProvider()
+      public class Guard {
+        @Test
+        public void testAllFilesPresentInGuard() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/when/guard"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+
+        @Test
+        @TestMetadata("whenWithGuard.kt")
+        public void testWhenWithGuard() {
+          runTest("compiler/testData/codegen/box/when/guard/whenWithGuard.kt");
         }
       }
 
@@ -46981,6 +47364,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
         @TestMetadata("inlineVarargInts.kt")
         public void testInlineVarargInts() {
           runTest("compiler/testData/codegen/boxInline/callableReference/adaptedReferences/inlineVarargInts.kt");
+        }
+
+        @Test
+        @TestMetadata("inlineVarargWithLetCall.kt")
+        public void testInlineVarargWithLetCall() {
+          runTest("compiler/testData/codegen/boxInline/callableReference/adaptedReferences/inlineVarargWithLetCall.kt");
         }
 
         @Test

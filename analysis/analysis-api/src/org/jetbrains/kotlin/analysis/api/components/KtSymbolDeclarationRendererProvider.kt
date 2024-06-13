@@ -6,37 +6,40 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtDeclarationRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KtDeclarationRendererForSource
-import org.jetbrains.kotlin.analysis.api.renderer.types.KtTypeRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KtTypeRendererForSource
-import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForSource
+import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KaTypeRendererForSource
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.types.Variance
 
+public abstract class KaSymbolDeclarationRendererProvider : KaSessionComponent() {
+    public abstract fun renderDeclaration(symbol: KaDeclarationSymbol, renderer: KaDeclarationRenderer): String
 
-public abstract class KtSymbolDeclarationRendererProvider : KtAnalysisSessionComponent() {
-    public abstract fun renderDeclaration(symbol: KtDeclarationSymbol, renderer: KtDeclarationRenderer): String
-
-    public abstract fun renderType(type: KtType, renderer: KtTypeRenderer, position: Variance): String
+    public abstract fun renderType(type: KaType, renderer: KaTypeRenderer, position: Variance): String
 }
+
+public typealias KtSymbolDeclarationRendererProvider = KaSymbolDeclarationRendererProvider
 
 /**
  * Provides services for rendering Symbols and Types into the Kotlin strings
  */
-public interface KtSymbolDeclarationRendererMixIn : KtAnalysisSessionMixIn {
+public interface KaSymbolDeclarationRendererMixIn : KaSessionMixIn {
     /**
      * Render symbol into the representable Kotlin string
      */
-    public fun KtDeclarationSymbol.render(renderer: KtDeclarationRenderer = KtDeclarationRendererForSource.WITH_QUALIFIED_NAMES): String =
+    public fun KaDeclarationSymbol.render(renderer: KaDeclarationRenderer = KaDeclarationRendererForSource.WITH_QUALIFIED_NAMES): String =
         withValidityAssertion { analysisSession.symbolDeclarationRendererProvider.renderDeclaration(this, renderer) }
 
     /**
      * Render kotlin type into the representable Kotlin type string
      */
-    public fun KtType.render(
-        renderer: KtTypeRenderer = KtTypeRendererForSource.WITH_QUALIFIED_NAMES,
+    public fun KaType.render(
+        renderer: KaTypeRenderer = KaTypeRendererForSource.WITH_QUALIFIED_NAMES,
         position: Variance,
     ): String =
         withValidityAssertion { analysisSession.symbolDeclarationRendererProvider.renderType(this, renderer, position) }
 }
+
+public typealias KtSymbolDeclarationRendererMixIn = KaSymbolDeclarationRendererMixIn

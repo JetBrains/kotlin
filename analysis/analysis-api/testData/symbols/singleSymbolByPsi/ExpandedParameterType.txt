@@ -1,6 +1,6 @@
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /foo
+KaFunctionSymbol:
+  annotations: []
+  callableId: /foo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -20,16 +20,16 @@ KtFunctionSymbol:
   name: foo
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -41,19 +41,19 @@ KtFunctionSymbol:
       name: param
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
-        type: Base
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: {SecondAlias=} Base
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(ExpandedParameterType.kt)
+      getContainingFileSymbol: KaFileSymbol(ExpandedParameterType.kt)
       getContainingJvmClassName: ExpandedParameterTypeKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(ExpandedParameterType.kt)
+  getContainingFileSymbol: KaFileSymbol(ExpandedParameterType.kt)
   getContainingJvmClassName: ExpandedParameterTypeKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

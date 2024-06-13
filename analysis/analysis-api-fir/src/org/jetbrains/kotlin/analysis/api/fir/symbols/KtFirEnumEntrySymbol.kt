@@ -6,44 +6,42 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirEnumEntrySymbolPointer
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirEnumEntrySymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
-internal class KtFirEnumEntrySymbol(
+internal class KaFirEnumEntrySymbol(
     override val firSymbol: FirEnumEntrySymbol,
-    override val analysisSession: KtFirAnalysisSession,
-) : KtEnumEntrySymbol(), KtFirSymbol<FirEnumEntrySymbol> {
+    override val analysisSession: KaFirSession,
+) : KaEnumEntrySymbol(), KaFirSymbol<FirEnumEntrySymbol> {
     override val psi: PsiElement? by cached { firSymbol.findPsi() }
 
-    override val annotationsList: KtAnnotationsList
+    override val annotations: KaAnnotationList
         get() = withValidityAssertion {
-            KtFirAnnotationListForDeclaration.create(firSymbol, builder)
+            KaFirAnnotationListForDeclaration.create(firSymbol, builder)
         }
 
     override val name: Name get() = withValidityAssertion { firSymbol.name }
-    override val returnType: KtType get() = withValidityAssertion { firSymbol.returnType(builder) }
-    override val containingEnumClassIdIfNonLocal: ClassId? get() = withValidityAssertion { callableIdIfNonLocal?.classId }
+    override val returnType: KaType get() = withValidityAssertion { firSymbol.returnType(builder) }
 
-    override val callableIdIfNonLocal: CallableId? get() = withValidityAssertion { firSymbol.getCallableIdIfNonLocal() }
+    override val callableId: CallableId? get() = withValidityAssertion { firSymbol.getCallableId() }
 
-    override val enumEntryInitializer: KtFirEnumEntryInitializerSymbol? by cached {
+    override val enumEntryInitializer: KaFirEnumEntryInitializerSymbol? by cached {
         if (firSymbol.fir.initializer == null) {
             return@cached null
         }
@@ -56,13 +54,13 @@ internal class KtFirEnumEntrySymbol(
         }
 
         val classifierBuilder = analysisSession.firSymbolBuilder.classifierBuilder
-        classifierBuilder.buildAnonymousObjectSymbol(initializerExpression.anonymousObject.symbol) as? KtFirEnumEntryInitializerSymbol
-            ?: error("The anonymous object symbol for an enum entry initializer should be a ${KtFirEnumEntryInitializerSymbol::class.simpleName}")
+        classifierBuilder.buildAnonymousObjectSymbol(initializerExpression.anonymousObject.symbol) as? KaFirEnumEntryInitializerSymbol
+            ?: error("The anonymous object symbol for an enum entry initializer should be a ${KaFirEnumEntryInitializerSymbol::class.simpleName}")
     }
 
-    override fun createPointer(): KtSymbolPointer<KtEnumEntrySymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtEnumEntrySymbol>(this)
-            ?: KtFirEnumEntrySymbolPointer(analysisSession.createOwnerPointer(this), firSymbol.name)
+    override fun createPointer(): KaSymbolPointer<KaEnumEntrySymbol> = withValidityAssertion {
+        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaEnumEntrySymbol>(this)
+            ?: KaFirEnumEntrySymbolPointer(analysisSession.createOwnerPointer(this), firSymbol.name)
     }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)

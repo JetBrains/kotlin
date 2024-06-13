@@ -1,2 +1,2 @@
 PsiType: TYPE
-KtType: (TYPE..TYPE)
+KaType: (TYPE..TYPE)

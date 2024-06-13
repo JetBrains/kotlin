@@ -9,8 +9,10 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.backend.konan.objcexport.NSNumberKind
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCClassType
-import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.builtins.StandardNames.FqNames
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.ClassId.Companion.topLevel
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 /**
  * Will translate [this] type to the corresponding ObjC equivalent.
@@ -23,26 +25,48 @@ import org.jetbrains.kotlin.name.ClassId
 context(KtAnalysisSession, KtObjCExportSession)
 internal fun KtType.translateToMappedObjCTypeOrNull(): ObjCClassType? {
     return listOf(this).plus(this.getAllSuperTypes()).firstNotNullOfOrNull find@{ type ->
-        val classId = type.expandedClassSymbol?.classIdIfNonLocal ?: return@find null
+        val classId = type.expandedSymbol?.classId ?: return@find null
         mappedObjCTypeNames[classId]?.let { mappedTypeName ->
             return@find ObjCClassType(mappedTypeName, type.translateTypeArgumentsToObjC())
         }
     }
 }
 
+private val mappedObjCTypes = buildSet {
+    add(topLevel(FqNames.list))
+    add(topLevel(FqNames.mutableList))
+    add(topLevel(FqNames.set))
+    add(topLevel(FqNames.mutableSet))
+    add(topLevel(FqNames.map))
+    add(topLevel(FqNames.mutableMap))
+    add(topLevel(FqNames.string.toSafe()))
+
+    NSNumberKind.entries.forEach { addIfNotNull(it.mappedKotlinClassId) }
+}
+
 
 context(KtAnalysisSession, KtObjCExportSession)
-private val mappedObjCTypeNames: Map<ClassId, String>
+internal val mappedObjCTypeNames: Map<ClassId, String>
     get() = cached("mappedObjCTypeNames") {
         buildMap {
-            this[ClassId.topLevel(StandardNames.FqNames.list)] = "NSArray"
-            this[ClassId.topLevel(StandardNames.FqNames.mutableList)] = "NSMutableArray"
-            this[ClassId.topLevel(StandardNames.FqNames.set)] = "NSSet"
-            this[ClassId.topLevel(StandardNames.FqNames.mutableSet)] = "MutableSet".getObjCKotlinStdlibClassOrProtocolName().objCName
-            this[ClassId.topLevel(StandardNames.FqNames.map)] = "NSDictionary"
-            this[ClassId.topLevel(StandardNames.FqNames.mutableMap)] = "MutableDictionary".getObjCKotlinStdlibClassOrProtocolName().objCName
-            this[ClassId.topLevel(StandardNames.FqNames.string.toSafe())] = "NSString"
-
+            mappedObjCTypes.forEach { type ->
+                when (type) {
+                    topLevel(FqNames.list) -> this[type] = "NSArray"
+                    topLevel(FqNames.mutableList) -> this[type] = "NSMutableArray"
+                    topLevel(FqNames.set) -> this[type] = "NSSet"
+                    topLevel(FqNames.mutableSet) -> this[type] = "MutableSet".getObjCKotlinStdlibClassOrProtocolName().objCName
+                    topLevel(FqNames.map) -> this[type] = "NSDictionary"
+                    topLevel(FqNames.mutableMap) -> this[type] = "MutableDictionary".getObjCKotlinStdlibClassOrProtocolName().objCName
+                    topLevel(FqNames.string.toSafe()) -> this[type] = "NSString"
+                    else -> {
+                        NSNumberKind.entries.firstNotNullOf { numberClassId ->
+                            numberClassId.mappedKotlinClassId
+                        }.let { clazzId ->
+                            this[type] = clazzId.shortClassName.asString().getObjCKotlinStdlibClassOrProtocolName().objCName
+                        }
+                    }
+                }
+            }
 
             NSNumberKind.entries.forEach { number ->
                 val numberClassId = number.mappedKotlinClassId
@@ -53,4 +77,6 @@ private val mappedObjCTypeNames: Map<ClassId, String>
         }
     }
 
-
+context(KtAnalysisSession)
+internal val KtType.isMappedObjCType: Boolean
+    get() = mappedObjCTypes.contains(expandedSymbol?.classId)

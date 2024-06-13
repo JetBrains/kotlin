@@ -1,5 +1,5 @@
-// !LANGUAGE: -FunctionTypesWithBigArity
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: -FunctionTypesWithBigArity
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class A
 

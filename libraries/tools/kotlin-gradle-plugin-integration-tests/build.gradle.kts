@@ -75,7 +75,8 @@ dependencies {
     testImplementation(project(":native:kotlin-klib-commonizer-api"))
 
     testImplementation(project(":kotlin-compiler-embeddable"))
-    testImplementation(commonDependency("org.jetbrains.intellij.deps:jdom"))
+    testImplementation(intellijJDom())
+    testImplementation(intellijPlatformUtil())
     testImplementation(project(":compiler:cli-common"))
     testImplementation(project(":compiler:build-tools:kotlin-build-statistics"))
     // testCompileOnly dependency on non-shaded artifacts is needed for IDE support
@@ -361,6 +362,7 @@ val swiftExportTestsTask = tasks.register<Test>("kgpSwiftExportTests") {
         excludeTags("JvmKGP", "JsKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "AndroidKGP", "NativeKGP")
         includeEngines("junit-jupiter")
     }
+    applyKotlinNativeFromCurrentBranchIfNeeded()
 }
 
 val jsTestsTask = tasks.register<Test>("kgpJsTests") {

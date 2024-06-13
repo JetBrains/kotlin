@@ -1,26 +1,14 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
@@ -200,6 +188,7 @@ open class DeepCopySymbolRemapper(
     override fun getReferencedScript(symbol: IrScriptSymbol): IrScriptSymbol = scripts.getReferenced(symbol)
     override fun getReferencedEnumEntry(symbol: IrEnumEntrySymbol): IrEnumEntrySymbol = enumEntries.getReferenced(symbol)
     override fun getReferencedVariable(symbol: IrVariableSymbol): IrVariableSymbol = variables.getReferenced(symbol)
+    override fun getReferencedValueParameter(symbol: IrValueParameterSymbol): IrValueSymbol = valueParameters.getReferenced(symbol)
     override fun getReferencedLocalDelegatedProperty(symbol: IrLocalDelegatedPropertySymbol): IrLocalDelegatedPropertySymbol =
         localDelegatedProperties.getReferenced(symbol)
 
@@ -207,30 +196,11 @@ open class DeepCopySymbolRemapper(
     override fun getReferencedConstructor(symbol: IrConstructorSymbol): IrConstructorSymbol = constructors.getReferenced(symbol)
     override fun getReferencedSimpleFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol = functions.getReferenced(symbol)
     override fun getReferencedProperty(symbol: IrPropertySymbol): IrPropertySymbol = properties.getReferenced(symbol)
-    override fun getReferencedValue(symbol: IrValueSymbol): IrValueSymbol =
-        when (symbol) {
-            is IrValueParameterSymbol -> valueParameters.getReferenced(symbol)
-            is IrVariableSymbol -> variables.getReferenced(symbol)
-        }
 
-    override fun getReferencedFunction(symbol: IrFunctionSymbol): IrFunctionSymbol =
-        when (symbol) {
-            is IrSimpleFunctionSymbol -> functions.getReferenced(symbol)
-            is IrConstructorSymbol -> constructors.getReferenced(symbol)
-        }
+    override fun getReferencedReturnableBlock(symbol: IrReturnableBlockSymbol): IrReturnTargetSymbol =
+        returnableBlocks.getReferenced(symbol)
 
-    override fun getReferencedReturnTarget(symbol: IrReturnTargetSymbol): IrReturnTargetSymbol =
-        when (symbol) {
-            is IrFunctionSymbol -> getReferencedFunction(symbol)
-            is IrReturnableBlockSymbol -> returnableBlocks.getReferenced(symbol)
-        }
-
-    override fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol =
-        when (symbol) {
-            is IrClassSymbol -> classes.getReferenced(symbol)
-            is IrScriptSymbol -> scripts.getReferenced(symbol)
-            is IrTypeParameterSymbol -> typeParameters.getReferenced(symbol)
-        }
+    override fun getReferencedTypeParameter(symbol: IrTypeParameterSymbol): IrClassifierSymbol = typeParameters.getReferenced(symbol)
 
     override fun getReferencedTypeAlias(symbol: IrTypeAliasSymbol): IrTypeAliasSymbol = typeAliases.getReferenced(symbol)
 }

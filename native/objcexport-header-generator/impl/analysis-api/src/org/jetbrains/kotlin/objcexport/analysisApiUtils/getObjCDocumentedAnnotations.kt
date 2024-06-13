@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.objcexport.analysisApiUtils
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
-import org.jetbrains.kotlin.analysis.api.annotations.annotationClassIds
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -22,7 +21,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
  */
 context(KtAnalysisSession)
 internal fun KtAnnotatedSymbol.getObjCDocumentedAnnotations(): List<KtAnnotationApplicationWithArgumentsInfo> {
-    return annotationsList.getObjCDocumentedAnnotations()
+    return annotations.getObjCDocumentedAnnotations()
 }
 
 /**
@@ -30,12 +29,12 @@ internal fun KtAnnotatedSymbol.getObjCDocumentedAnnotations(): List<KtAnnotation
  */
 context(KtAnalysisSession)
 internal fun KtAnnotationsList.getObjCDocumentedAnnotations(): List<KtAnnotationApplicationWithArgumentsInfo> {
-    return annotations
+    return this
         .filter { annotation ->
             val annotationClassId = annotation.classId ?: return@filter false
             if (annotationClassId.asSingleFqName() in mustBeDocumentedAnnotationsStopList) return@filter false
             val annotationClassSymbol = getClassOrObjectSymbolByClassId(annotationClassId) ?: return@filter false
-            StandardClassIds.Annotations.MustBeDocumented in annotationClassSymbol.annotationClassIds
+            StandardClassIds.Annotations.MustBeDocumented in annotationClassSymbol.annotations.classIds
         }
 }
 

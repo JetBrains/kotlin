@@ -1,7 +1,7 @@
 // TARGET_BACKEND: JVM_IR
 
 // WITH_STDLIB
-// !LANGUAGE: +InstantiationOfAnnotationClasses
+// LANGUAGE: +InstantiationOfAnnotationClasses
 
 // FILE: A.java
 

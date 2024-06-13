@@ -5,39 +5,39 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-internal fun KtAnalysisSession.checkContainingFileSymbol(
-    ktFileSymbol: KtFileSymbol,
-    symbol: KtSymbol,
+internal fun KaSession.checkContainingFileSymbol(
+    ktFileSymbol: KaFileSymbol,
+    symbol: KaSymbol,
     testServices: TestServices
 ) {
-    if (symbol.origin != KtSymbolOrigin.SOURCE) return
+    if (symbol.origin != KaSymbolOrigin.SOURCE) return
     val containingFileSymbol = symbol.getContainingFileSymbol()
     testServices.assertions.assertEquals(ktFileSymbol, containingFileSymbol) {
         "Invalid file for $symbol, expected $ktFileSymbol but $containingFileSymbol found"
     }
 }
 
-internal fun KtAnalysisSession.checkContainingJvmClassName(
+internal fun KaSession.checkContainingJvmClassName(
     ktFile: KtFile,
     ktClass: KtClassOrObject?,
-    symbol: KtCallableSymbol,
+    symbol: KaCallableSymbol,
     testServices: TestServices
 ) {
     if (ktFile.isScript()) return
     val expectedClassName = when {
-        symbol.symbolKind == KtSymbolKind.LOCAL ->
+        symbol.symbolKind == KaSymbolKind.LOCAL ->
             null
         ktClass != null ->
             // member

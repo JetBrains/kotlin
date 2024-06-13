@@ -9,11 +9,9 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
-import org.jetbrains.kotlin.gradle.targets.js.addWasmExperimentalArguments
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
@@ -118,9 +116,6 @@ constructor(
                 }
                 it.dependsOn(nodeJsTaskProviders.nodeJsSetupTaskProvider)
                 it.dependsOn(compilation.compileTaskProvider)
-                if (compilation.platformType == KotlinPlatformType.wasm) {
-                    it.nodeArgs.addWasmExperimentalArguments()
-                }
                 it.configuration()
             }
         }

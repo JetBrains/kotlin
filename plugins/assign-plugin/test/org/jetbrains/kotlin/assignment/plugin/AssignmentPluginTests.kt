@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.assignment.plugin
 
+import org.jetbrains.kotlin.assignment.plugin.AssignmentDirectives.ENABLE_ASSIGNMENT
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.assignment.plugin.k2.FirAssignmentPluginExtensionRegistrar
@@ -14,6 +15,8 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.resolve.extensions.AssignResolutionAltererExtension
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.RENDER_DIAGNOSTICS_FULL_TEXT
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.AbstractDiagnosticTest
 import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTest
@@ -61,6 +64,9 @@ open class AbstractFirLightTreeBlackBoxCodegenTestForAssignmentPlugin : Abstract
 // ------------------------ configuration ------------------------
 
 fun TestConfigurationBuilder.configurePlugin() {
+    defaultDirectives {
+        +ENABLE_ASSIGNMENT
+    }
     useConfigurators(::AssignmentPluginEnvironmentConfigurator)
 }
 
@@ -78,13 +84,21 @@ class AssignmentPluginEnvironmentConfigurator(testServices: TestServices) : Envi
         )
     }
 
+    override val directiveContainers: List<DirectivesContainer>
+        get() = listOf(AssignmentDirectives)
+
     @OptIn(InternalNonStableExtensionPoints::class)
     override fun CompilerPluginRegistrar.ExtensionStorage.registerCompilerExtensions(
         module: TestModule,
         configuration: CompilerConfiguration
     ) {
+        if (ENABLE_ASSIGNMENT !in module.directives) return
         AssignResolutionAltererExtension.Companion.registerExtension(CliAssignPluginResolutionAltererExtension(TEST_ANNOTATIONS))
         StorageComponentContainerContributor.registerExtension(AssignmentComponentContainerContributor(TEST_ANNOTATIONS))
         FirExtensionRegistrarAdapter.registerExtension(FirAssignmentPluginExtensionRegistrar(TEST_ANNOTATIONS))
     }
+}
+
+object AssignmentDirectives : SimpleDirectivesContainer() {
+    val ENABLE_ASSIGNMENT by directive("Enables assignment plugin")
 }

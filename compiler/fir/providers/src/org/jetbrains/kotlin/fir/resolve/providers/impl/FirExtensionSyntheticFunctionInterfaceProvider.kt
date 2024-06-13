@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.*
@@ -72,7 +73,7 @@ class FirExtensionSyntheticFunctionInterfaceProvider(
 /*
  * Provides kotlin.FunctionN, kotlin.coroutines.SuspendFunctionN, kotlin.reflect.KFunctionN and kotlin.reflect.KSuspendFunctionN
  */
-class FirBuiltinSyntheticFunctionInterfaceProvider(
+open class FirBuiltinSyntheticFunctionInterfaceProvider(
     session: FirSession,
     moduleData: FirModuleData,
     kotlinScopeProvider: FirKotlinScopeProvider
@@ -138,7 +139,7 @@ abstract class FirSyntheticFunctionInterfaceProviderBase(
 
     protected abstract fun FunctionTypeKind.isAcceptable(): Boolean
 
-    private fun createSyntheticFunctionInterface(classId: ClassId, kind: FunctionTypeKind): FirRegularClassSymbol? {
+    protected open fun createSyntheticFunctionInterface(classId: ClassId, kind: FunctionTypeKind): FirRegularClassSymbol? {
         return with(classId) {
             val className = relativeClassName.asString()
             if (!kind.isAcceptable()) return null

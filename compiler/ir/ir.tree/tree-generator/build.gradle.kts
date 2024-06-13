@@ -14,7 +14,7 @@ dependencies {
 
     compileOnly(intellijCore())
 
-    runtimeOnly(commonDependency("org.jetbrains.intellij.deps:jdom"))
+    runtimeOnly(intellijJDom())
 }
 
 application {

@@ -24,6 +24,7 @@ tasks.register("resolveDependencies") {
 
             configurations.findByName("commonCompileClasspath")?.resolve()
             configurations.findByName("testRuntimeClasspath")?.resolve()
+            configurations.findByName(NATIVE_TEST_DEPENDENCY_KLIBS_CONFIGURATION_NAME)?.resolve()
 
             project.extensions.findByType<SpdxSbomExtension>()?.run {
                 targets.forEach { target ->

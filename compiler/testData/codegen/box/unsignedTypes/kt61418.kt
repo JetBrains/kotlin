@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// !LANGUAGE: +ImplicitSignedToUnsignedIntegerConversion
+// LANGUAGE: +ImplicitSignedToUnsignedIntegerConversion
 // FILE: signedToUnsignedConversions_annotation.kt
 
 package kotlin.internal

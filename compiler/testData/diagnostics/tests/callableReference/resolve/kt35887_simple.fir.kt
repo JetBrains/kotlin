@@ -1,5 +1,5 @@
 // SKIP_TXT
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 import kotlin.reflect.KProperty0
 
 object A

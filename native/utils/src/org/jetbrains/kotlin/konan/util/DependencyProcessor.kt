@@ -49,12 +49,15 @@ private fun Properties.findCandidates(dependencies: List<String>): Map<String, L
         dependency to dependencyProfiles.flatMap { profile ->
             val candidateSpecs = propertyList("$dependency.$profile")
             if (profile == "default" && candidateSpecs.isEmpty()) {
-                listOf(DependencySource.Remote.Public)
+                listOf(DependencySource.Remote.Public())
             } else {
                 candidateSpecs.map { candidateSpec ->
-                    when (candidateSpec) {
-                        "remote:public" -> DependencySource.Remote.Public
-                        "remote:internal" -> DependencySource.Remote.Internal
+                    when {
+                        candidateSpec == REMOTE_PUBLIC -> DependencySource.Remote.Public()
+                        candidateSpec.startsWith(REMOTE_PUBLIC_SUBDIRECTORY) ->
+                            DependencySource.Remote.Public(candidateSpec.removePrefix(REMOTE_PUBLIC_SUBDIRECTORY))
+
+                        candidateSpec == REMOTE_INTERNAL -> DependencySource.Remote.Internal
                         else -> DependencySource.Local(File(candidateSpec))
                     }
                 }
@@ -63,6 +66,9 @@ private fun Properties.findCandidates(dependencies: List<String>): Map<String, L
     }.toMap()
 }
 
+private const val REMOTE_PUBLIC = "remote:public"
+private const val REMOTE_PUBLIC_SUBDIRECTORY = "$REMOTE_PUBLIC:"
+private const val REMOTE_INTERNAL = "remote:internal"
 
 private val KonanPropertiesLoader.dependenciesUrl : String            get() = properties.dependenciesUrl
 
@@ -70,7 +76,7 @@ sealed class DependencySource {
     data class Local(val path: File) : DependencySource()
 
     sealed class Remote : DependencySource() {
-        object Public : Remote()
+        class Public(val subDirectory: String? = null) : Remote()
         object Internal : Remote()
     }
 }
@@ -226,7 +232,7 @@ class DependencyProcessor(
         val candidate = candidates.asSequence().mapNotNull { candidate ->
             when (candidate) {
                 is DependencySource.Local -> candidate.takeIf { it.path.exists() }
-                DependencySource.Remote.Public -> candidate
+                is DependencySource.Remote.Public -> candidate
                 DependencySource.Remote.Internal -> candidate.takeIf { InternalServer.isAvailable }
             }
         }.firstOrNull()
@@ -295,7 +301,11 @@ class DependencyProcessor(
                 it.channel.lock().use {
                     remoteDependencies.forEach { (dependency, candidate) ->
                         val baseUrl = when (candidate) {
-                            DependencySource.Remote.Public -> dependenciesUrl
+                            is DependencySource.Remote.Public -> if (candidate.subDirectory != null) {
+                                "$dependenciesUrl/${candidate.subDirectory}"
+                            } else {
+                                dependenciesUrl
+                            }
                             DependencySource.Remote.Internal -> InternalServer.url
                         }
                         // TODO: consider using different caches for different remotes.

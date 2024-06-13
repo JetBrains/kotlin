@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeIntersectionType
@@ -178,7 +179,7 @@ private object InitialSignatureKey : FirDeclarationDataKey()
  *
  * When the receiver is a mapped declaration with a Kotlin signature, this property returns the declaration with the initial Java signature.
  */
-var FirCallableDeclaration.initialSignatureAttr: FirCallableDeclaration? by FirDeclarationDataRegistry.data(InitialSignatureKey)
+var FirCallableDeclaration.initialSignatureAttr: FirNamedFunctionSymbol? by FirDeclarationDataRegistry.data(InitialSignatureKey)
 
 private object MatchingParameterFunctionTypeKey : FirDeclarationDataKey()
 

@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.generators.imltogradle
 
+import com.intellij.openapi.util.JDOMUtil
 import org.jdom.Element
-import org.jdom.input.SAXBuilder
 import org.jetbrains.jps.model.JpsElementFactory
 import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.jps.model.java.JpsJavaDependencyScope
@@ -17,7 +17,7 @@ import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.model.module.JpsModuleDependency
 import org.jetbrains.jps.model.serialization.JpsProjectLoader
 import java.io.File
-import java.net.URL
+import java.nio.file.Paths
 import java.util.*
 
 fun String.trimMarginWithInterpolations(): String {
@@ -37,7 +37,7 @@ fun String.trimMarginWithInterpolations(): String {
 }
 
 fun File.readXml(): Element {
-    return inputStream().use { SAXBuilder().build(it).rootElement }
+    return inputStream().use { JDOMUtil.load(it) }
 }
 
 suspend fun SequenceScope<Element>.visit(element: Element) {
@@ -63,7 +63,7 @@ val JpsDependencyElement.isExported: Boolean
 fun File.loadJpsProject(): JpsProject {
     val model = JpsElementFactory.getInstance().createModel()
     val project = model.project
-    JpsProjectLoader.loadProject(project, mapOf(), this.canonicalPath)
+    JpsProjectLoader.loadProject(project, mapOf(), Paths.get(this.canonicalPath))
     return project
 }
 

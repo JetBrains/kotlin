@@ -8,7 +8,7 @@
 // NATIVE_STANDALONE
 
 // WITH_STDLIB
-// !LANGUAGE: +InstantiationOfAnnotationClasses
+// LANGUAGE: +InstantiationOfAnnotationClasses
 
 
 package test

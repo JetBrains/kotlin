@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
@@ -23,22 +24,25 @@ import org.jetbrains.kotlin.util.PrivateForInline
 class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
     @PublishedApi
     @PrivateForInline
-    internal val parentStack = mutableListOf<IrDeclarationParent>()
+    internal val _parentStack: MutableList<IrDeclarationParent> = mutableListOf()
+
+    val parentStack: List<IrDeclarationParent>
+        get() = _parentStack
 
     @PublishedApi
     @PrivateForInline
-    internal val scopeStack = mutableListOf<Scope>()
+    internal val scopeStack: MutableList<Scope> = mutableListOf()
 
     @PublishedApi
     @PrivateForInline
-    internal val containingFirClassStack = mutableListOf<FirClass>()
+    internal val containingFirClassStack: MutableList<FirClass> = mutableListOf()
 
     @PublishedApi
     @PrivateForInline
-    internal val currentlyGeneratedDelegatedConstructors = mutableMapOf<IrClassSymbol, IrConstructor>()
+    internal val currentlyGeneratedDelegatedConstructors: MutableMap<IrClassSymbol, IrConstructor> = mutableMapOf()
 
     inline fun <T : IrDeclarationParent, R> withParent(parent: T, f: T.() -> R): R {
-        parentStack += parent
+        _parentStack += parent
         if (parent is IrDeclaration) {
             scopeStack += Scope(parent.symbol)
         }
@@ -48,7 +52,7 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
             if (parent is IrDeclaration) {
                 scopeStack.removeAt(scopeStack.size - 1)
             }
-            parentStack.removeAt(parentStack.size - 1)
+            _parentStack.removeAt(_parentStack.size - 1)
         }
     }
 
@@ -64,7 +68,7 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
     fun getConstructorForCurrentlyGeneratedDelegatedConstructor(itClassSymbol: IrClassSymbol): IrConstructor? =
         currentlyGeneratedDelegatedConstructors[itClassSymbol]
 
-    fun containingFileIfAny(): IrFile? = parentStack.getOrNull(0) as? IrFile
+    fun containingFileIfAny(): IrFile? = _parentStack.getOrNull(0) as? IrFile
 
     inline fun withContainingFirClass(containingFirClass: FirClass, f: () -> Unit) {
         containingFirClassStack += containingFirClass
@@ -75,7 +79,7 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
         }
     }
 
-    fun parentFromStack(): IrDeclarationParent = parentStack.last()
+    fun parentFromStack(): IrDeclarationParent = _parentStack.last()
 
     fun scope(): Scope = scopeStack.last()
 
@@ -85,7 +89,7 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
         // We inside accessor -> accessor is built -> property is built
         @OptIn(UnsafeDuringIrConstructionAPI::class)
         val property = propertySymbol.owner
-        for (parent in parentStack.asReversed()) {
+        for (parent in _parentStack.asReversed()) {
             when (parent) {
                 property.getter -> return parent as IrSimpleFunction
                 property.setter -> return parent as IrSimpleFunction
@@ -102,7 +106,7 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
             return symbol.owner as D
         }
         // With slow assertions the following code guarantees that taking owner from symbol is safe
-        for (parent in parentStack.asReversed()) {
+        for (parent in _parentStack.asReversed()) {
             if ((parent as? IrDeclaration)?.symbol == symbol) {
                 return parent as D
             }
@@ -119,7 +123,7 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
     }
 
     fun <T : IrDeclaration> applyParentFromStackTo(declaration: T): T {
-        declaration.parent = parentStack.last()
+        declaration.parent = _parentStack.last()
         return declaration
     }
 
@@ -127,7 +131,7 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
 
     @PublishedApi
     @PrivateForInline
-    internal val functionStack = mutableListOf<IrFunction>()
+    internal val functionStack: MutableList<IrFunction> = mutableListOf()
 
     inline fun <T : IrFunction, R> withFunction(function: T, f: T.() -> R): R {
         functionStack += function
@@ -140,7 +144,7 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
 
     @PublishedApi
     @PrivateForInline
-    internal val propertyStack = mutableListOf<Pair<IrProperty, FirProperty?>>()
+    internal val propertyStack: MutableList<Pair<IrProperty, FirProperty?>> = mutableListOf()
 
     inline fun <R> withProperty(property: IrProperty, firProperty: FirProperty? = null, f: IrProperty.() -> R): R {
         propertyStack += (property to firProperty)
@@ -153,7 +157,7 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
 
     @PublishedApi
     @PrivateForInline
-    internal val classStack = mutableListOf<IrClass>()
+    internal val classStack: MutableList<IrClass> = mutableListOf()
 
     inline fun <R> withClass(klass: IrClass, f: IrClass.() -> R): R {
         classStack += klass
@@ -166,11 +170,11 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
 
     @PublishedApi
     @PrivateForInline
-    internal val whenSubjectVariableStack = mutableListOf<IrVariable>()
+    internal val whenSubjectVariableStack: MutableList<IrVariable> = mutableListOf()
 
     @PublishedApi
     @PrivateForInline
-    internal val safeCallSubjectVariableStack = mutableListOf<IrVariable>()
+    internal val safeCallSubjectVariableStack: MutableList<IrVariable> = mutableListOf()
 
     inline fun <T> withWhenSubject(subject: IrVariable?, f: () -> T): T {
         if (subject != null) whenSubjectVariableStack += subject
@@ -215,7 +219,7 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
         return functionStack.last().symbol
     }
 
-    fun parent(): IrDeclarationParent? = parentStack.lastOrNull()
+    fun parent(): IrDeclarationParent? = _parentStack.lastOrNull()
 
     fun defaultConversionTypeOrigin(): ConversionTypeOrigin =
         if ((parent() as? IrFunction)?.isSetter == true) ConversionTypeOrigin.SETTER else ConversionTypeOrigin.DEFAULT
@@ -234,8 +238,6 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
         return irClass.thisReceiver
     }
 
-    fun lastClass(): IrClass? = classStack.lastOrNull()
-
     fun lastWhenSubject(): IrVariable = whenSubjectVariableStack.last()
     fun lastSafeCallSubject(): IrVariable = safeCallSubjectVariableStack.last()
 
@@ -248,5 +250,20 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
         }
 
         return@any clazz.typeParameters.any { it.symbol === typeParameterSymbol }
+    }
+
+    @PublishedApi
+    @PrivateForInline
+    internal val _initBlocksStack: MutableList<IrAnonymousInitializer> = mutableListOf()
+    internal val initBlocksStack: List<IrAnonymousInitializer>
+        get() = _initBlocksStack
+
+    inline fun <T> withInitBlock(initializer: IrAnonymousInitializer, f: () -> T): T {
+        _initBlocksStack += initializer
+        try {
+            return f()
+        } finally {
+            _initBlocksStack.removeAt(_initBlocksStack.size - 1)
+        }
     }
 }

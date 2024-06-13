@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrPluginContext
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.platform.TargetPlatform
 
@@ -46,5 +47,6 @@ data class ModuleCompilerIrBackendInput(
     val irModuleFragment: IrModuleFragment,
     val components: Fir2IrComponents,
     val pluginContext: Fir2IrPluginContext,
-    val irActualizedResult: IrActualizedResult?
+    val irActualizedResult: IrActualizedResult?,
+    val symbolTable: SymbolTable,
 )

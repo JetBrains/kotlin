@@ -23,8 +23,6 @@ abstract class ConeAttribute<out T : ConeAttribute<T>> : AnnotationMarker {
      * typealias C = @SomeAttribute(2) B
      *
      * For determining attribute value of expanded type of C we should add @SomeAttribute(2) to @SomeAttribute(1)
-     *
-     * This function must be symmetrical: a.add(b) == b.add(a)
      */
     abstract fun add(other: @UnsafeVariance T?): T?
     abstract fun isSubtypeOf(other: @UnsafeVariance T?): Boolean
@@ -119,6 +117,10 @@ class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : A
         return perform(other) { this.add(it) }
     }
 
+    fun add(attribute: ConeAttribute<*>): ConeAttributes {
+        return add(create(listOf(attribute)))
+    }
+
     operator fun contains(attribute: ConeAttribute<*>): Boolean {
         return contains(attribute.key)
     }
@@ -147,6 +149,13 @@ class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : A
     fun remove(attribute: ConeAttribute<*>): ConeAttributes {
         if (isEmpty()) return this
         val attributes = arrayMap.filter { it != attribute }
+        if (attributes.size == arrayMap.size) return this
+        return create(attributes)
+    }
+
+    fun remove(key: ConeAttributeKey): ConeAttributes {
+        if (isEmpty()) return this
+        val attributes = arrayMap.filter { it.key != key }
         if (attributes.size == arrayMap.size) return this
         return create(attributes)
     }

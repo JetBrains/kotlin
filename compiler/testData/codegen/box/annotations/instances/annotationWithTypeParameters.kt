@@ -6,7 +6,7 @@
 // supported: JVM_IR, JS_IR(_ES6), NATIVE
 
 // WITH_STDLIB
-// !LANGUAGE: +InstantiationOfAnnotationClasses
+// LANGUAGE: +InstantiationOfAnnotationClasses
 
 package test
 

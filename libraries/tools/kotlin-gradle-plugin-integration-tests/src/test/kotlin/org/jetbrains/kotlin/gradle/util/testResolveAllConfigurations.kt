@@ -15,12 +15,13 @@ private const val RESOLVE_ALL_CONFIGURATIONS_TASK_NAME = "resolveAllConfiguratio
 private const val UNRESOLVED_MARKER = "<<!>>UNRESOLVED:"
 private val unresolvedConfigurationRegex = "${Regex.escape(UNRESOLVED_MARKER)}(.*)".toRegex()
 
+// TODO KT-65528 delete once all NewMultiplatformIT tests are converted to new test DSL
 fun BaseGradleIT.Project.testResolveAllConfigurations(
     subproject: String? = null,
     skipSetup: Boolean = false,
     excludeConfigurations: List<String> = listOf(),
     options: BaseGradleIT.BuildOptions = testCase.defaultBuildOptions(),
-    withUnresolvedConfigurationNames: BaseGradleIT.CompiledProject.(List<String>) -> Unit = { assertTrue("Unresolved configurations: $it") { it.isEmpty() } }
+    withUnresolvedConfigurationNames: BaseGradleIT.CompiledProject.(List<String>) -> Unit = { assertTrue("Unresolved configurations: $it") { it.isEmpty() } },
 ) = with(testCase) {
 
     if (!skipSetup) {
@@ -48,9 +49,9 @@ fun TestProject.testResolveAllConfigurations(
     skipSetup: Boolean = false,
     excludeConfigurations: List<String> = listOf(),
     options: BuildOptions = buildOptions,
-    withUnresolvedConfigurationNames: TestProject.(List<String>, BuildResult) -> Unit = { conf, _ ->
+    withUnresolvedConfigurationNames: TestProject.(unresolvedConfigurations: List<String>, buildResult: BuildResult) -> Unit = { conf, _ ->
         assertTrue("Unresolved configurations: $conf") { conf.isEmpty() }
-    }
+    },
 ) {
     if (!skipSetup) {
         val targetProject = subproject?.let { subProject(it) } ?: this
@@ -135,8 +136,9 @@ private fun generateResolveAllConfigurationsTaskKts(excludes: List<String>) =
             }
         }
     """.trimIndent()
+
 private fun computeExcludeConfigurations(excludes: List<String>): String {
-    val excludingConfigurations = listOf("compile", "runtime", "compileOnly", "runtimeOnly", "dependencySources")
+    val excludingConfigurations = listOf("compile", "runtime", "compileOnly", "runtimeOnly")
     return """
         kotlin.sourceSets.forEach { sourceSet ->
             "${excludingConfigurations.joinToString()}".split(", ").toList().forEach {

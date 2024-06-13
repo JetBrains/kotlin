@@ -28,7 +28,7 @@ FILE fqName:<root> fileName:/VarargIntegerLiteral.kt
             $receiver: VALUE_PARAMETER name:$this$arrayData type:kotlin.Array<kotlin.Int>
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.box'
-                GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
       CALL 'public final fun arrayLongInheritedData <T> (vararg values: T of <root>.arrayLongInheritedData, toArray: @[ExtensionFunctionType] kotlin.Function1<kotlin.Array<T of <root>.arrayLongInheritedData>, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         <T>: kotlin.Long
         values: VARARG type=kotlin.Array<out kotlin.Long> varargElementType=kotlin.Long
@@ -38,7 +38,7 @@ FILE fqName:<root> fileName:/VarargIntegerLiteral.kt
             $receiver: VALUE_PARAMETER name:$this$arrayLongInheritedData type:kotlin.Array<kotlin.Long>
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.box'
-                GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
       CALL 'public final fun longArrayData (vararg values: kotlin.Long, toArray: @[ExtensionFunctionType] kotlin.Function1<kotlin.LongArray, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         values: VARARG type=kotlin.LongArray varargElementType=kotlin.Long
           CONST Long type=kotlin.Long value=42
@@ -47,7 +47,7 @@ FILE fqName:<root> fileName:/VarargIntegerLiteral.kt
             $receiver: VALUE_PARAMETER name:$this$longArrayData type:kotlin.LongArray
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.box'
-                GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
       CALL 'public final fun shortArrayData (vararg values: kotlin.Short, toArray: @[ExtensionFunctionType] kotlin.Function1<kotlin.ShortArray, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         values: VARARG type=kotlin.ShortArray varargElementType=kotlin.Short
           CONST Short type=kotlin.Short value=42
@@ -56,7 +56,7 @@ FILE fqName:<root> fileName:/VarargIntegerLiteral.kt
             $receiver: VALUE_PARAMETER name:$this$shortArrayData type:kotlin.ShortArray
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.box'
-                GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
       CALL 'public final fun arrayOfLongData (vararg values: kotlin.Long, toArray: @[ExtensionFunctionType] kotlin.Function1<kotlin.Array<kotlin.Long>, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         values: VARARG type=kotlin.LongArray varargElementType=kotlin.Long
           CONST Long type=kotlin.Long value=42
@@ -65,7 +65,7 @@ FILE fqName:<root> fileName:/VarargIntegerLiteral.kt
             $receiver: VALUE_PARAMETER name:$this$arrayOfLongData type:kotlin.Array<kotlin.Long>
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.box'
-                GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
       CALL 'public final fun arrayOfShortData (vararg values: kotlin.Short, toArray: @[ExtensionFunctionType] kotlin.Function1<kotlin.Array<kotlin.Short>, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         values: VARARG type=kotlin.ShortArray varargElementType=kotlin.Short
           CONST Short type=kotlin.Short value=42
@@ -74,7 +74,7 @@ FILE fqName:<root> fileName:/VarargIntegerLiteral.kt
             $receiver: VALUE_PARAMETER name:$this$arrayOfShortData type:kotlin.Array<kotlin.Short>
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.box'
-                GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         CONST String type=kotlin.String value="OK"
   FUN name:longArrayData visibility:public modality:FINAL <> (values:kotlin.LongArray, toArray:@[ExtensionFunctionType] kotlin.Function1<kotlin.LongArray, kotlin.Unit>) returnType:kotlin.Unit

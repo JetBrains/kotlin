@@ -149,13 +149,6 @@ private fun String.replaceSpecialSymbols() =
 
 fun IrDeclaration.isExported() = KonanBinaryInterface.isExported(this)
 
-// TODO: bring here dependencies of this method?
-internal fun ContextUtils.getLlvmFunctionType(function: IrFunction): LLVMTypeRef = functionType(
-        returnType = getLlvmFunctionReturnType(function).llvmType,
-        isVarArg = false,
-        paramTypes = getLlvmFunctionParameterTypes(function).map { it.llvmType }
-)
-
 internal val IrClass.typeInfoHasVtableAttached: Boolean
     get() = !this.isAbstract() && !this.isExternalObjCClass()
 

@@ -56,6 +56,7 @@ abstract class BuildFusService : BuildService<BuildFusService.Parameters>, AutoC
     }
 
     interface Parameters : BuildServiceParameters {
+        val generalConfigurationMetrics: Property<MetricContainer>
         val configurationMetrics: ListProperty<MetricContainer>
         val useBuildFinishFlowAction: Property<Boolean>
         val buildStatisticsConfiguration: Property<KotlinBuildStatsConfiguration>
@@ -94,13 +95,9 @@ abstract class BuildFusService : BuildService<BuildFusService.Parameters>, AutoC
             val isConfigurationCacheRequested = project.isConfigurationCacheRequested
             val isProjectIsolationRequested = project.isProjectIsolationRequested
 
-            project.gradle.sharedServices.registrations.findByName(serviceName)?.let {
-                (it.parameters as Parameters).configurationMetrics.add(
-                    project.provider {
-                        KotlinProjectConfigurationMetrics.collectMetrics(project)
-                    }
+            ProjectConfigurationFusService.registerIfAbsent(project)
 
-                )
+            project.gradle.sharedServices.registrations.findByName(serviceName)?.let {
                 @Suppress("UNCHECKED_CAST")
                 return (it.service as Provider<BuildFusService>)
             }
@@ -116,7 +113,7 @@ abstract class BuildFusService : BuildService<BuildFusService.Parameters>, AutoC
             // when this OperationCompletionListener is called services can be already closed for Gradle 8,
             // so there is a change that no VariantImplementationFactory will be found
             return gradle.sharedServices.registerIfAbsent(serviceName, BuildFusService::class.java) { spec ->
-                spec.parameters.configurationMetrics.add(project.provider {
+                spec.parameters.generalConfigurationMetrics.set(project.provider {
                     //isProjectIsolationEnabled isConfigurationCacheRequested and isProjectIsolationRequested should be calculated beforehand
                     // because since Gradle 8.0 provider's calculation is made in BuildFinishFlowAction
                     // and VariantImplementationFactories is not initialized at that moment
@@ -131,11 +128,6 @@ abstract class BuildFusService : BuildService<BuildFusService.Parameters>, AutoC
                         isConfigurationCacheRequested
                     )
                 })
-                spec.parameters.configurationMetrics.add(
-                    project.provider {
-                        collectProjectConfigurationTimeMetrics(project)
-                    }
-                )
                 spec.parameters.useBuildFinishFlowAction.set(GradleVersion.current().baseVersion >= GradleVersion.version("8.1"))
                 spec.parameters.buildStatisticsConfiguration.set(KotlinBuildStatsConfiguration(project))
             }.also { buildService ->
@@ -182,6 +174,7 @@ abstract class BuildFusService : BuildService<BuildFusService.Parameters>, AutoC
     internal fun recordBuildFinished(buildFailed: Boolean) {
         BuildFinishMetrics.collectMetrics(log, buildFailed, buildStartTime, projectEvaluatedTime, fusMetricsConsumer)
         parameters.configurationMetrics.orElse(emptyList()).get().forEach { it.addToConsumer(fusMetricsConsumer) }
+        parameters.generalConfigurationMetrics.orNull?.addToConsumer(fusMetricsConsumer)
         parameters.buildStatisticsConfiguration.orNull?.also {
             val loggerService = KotlinBuildStatsLoggerService(it)
             loggerService.initSessionLogger(buildId)

@@ -1,0 +1,2 @@
+KtCallExpression(76,85): 'Test<Bar>'
+  null

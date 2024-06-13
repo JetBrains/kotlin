@@ -46,6 +46,23 @@ class ScriptingWithCliCompilerTest {
     }
 
     @Test
+    fun testCompileMainKtsWithDependsOn() {
+        withTempDir { tmpdir ->
+            runWithK2JVMCompiler(
+                arrayOf(
+                    "-d",
+                    tmpdir.absolutePath,
+                    "-cp",
+                    getMainKtsClassPath().joinToString(File.pathSeparator),
+                    "-Xallow-any-scripts-in-source-roots",
+                    "-Xuse-fir-lt=false",
+                    "$TEST_DATA_DIR/integration/hello-resolve-junit.main.kts",
+                ),
+            )
+        }
+    }
+
+    @Test
     fun testStandardScriptWithDepsViaKotlinc() {
         runWithKotlinc(
             "$TEST_DATA_DIR/integration/withDependencyOnCompileClassPath.kts", listOf("Hello from standard kts!"),

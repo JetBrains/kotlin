@@ -9,12 +9,12 @@ import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiType
 import com.intellij.psi.util.TypeConversionUtil
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtReceiverParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -26,19 +26,19 @@ import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassM
 import org.jetbrains.kotlin.psi.KtParameter
 
 internal class SymbolLightParameterForReceiver private constructor(
-    private val receiverPointer: KtSymbolPointer<KtReceiverParameterSymbol>,
+    private val receiverPointer: KaSymbolPointer<KaReceiverParameterSymbol>,
     methodName: String,
     method: SymbolLightMethodBase,
 ) : SymbolLightParameterBase(method) {
-    private inline fun <T> withReceiverSymbol(crossinline action: context(KtAnalysisSession) (KtReceiverParameterSymbol) -> T): T =
+    private inline fun <T> withReceiverSymbol(crossinline action: context(KaSession) (KaReceiverParameterSymbol) -> T): T =
         receiverPointer.withSymbol(ktModule, action)
 
     companion object {
         fun tryGet(
-            callableSymbolPointer: KtSymbolPointer<KtCallableSymbol>,
+            callableSymbolPointer: KaSymbolPointer<KaCallableSymbol>,
             method: SymbolLightMethodBase
         ): SymbolLightParameterForReceiver? = callableSymbolPointer.withSymbol(method.ktModule) { callableSymbol ->
-            if (callableSymbol !is KtNamedSymbol) return@withSymbol null
+            if (callableSymbol !is KaNamedSymbol) return@withSymbol null
             if (!callableSymbol.isExtension) return@withSymbol null
             val receiverSymbol = callableSymbol.receiverParameter ?: return@withSymbol null
 
@@ -78,7 +78,7 @@ internal class SymbolLightParameterForReceiver private constructor(
                 ),
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider {
                     withReceiverSymbol { receiver ->
-                        receiver.type.let { if (it.isPrimitiveBacked) KtTypeNullability.UNKNOWN else it.nullability }
+                        receiver.type.let { if (it.isPrimitiveBacked) KaTypeNullability.UNKNOWN else it.nullability }
                     }
                 },
             ),

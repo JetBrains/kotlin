@@ -24,7 +24,6 @@ dependencies {
     testApi(projectTests(":compiler:tests-common-new"))
 
     testApi(jpsModel())
-    testApi(jpsBuildTest())
 
     testRuntimeOnly(intellijCore())
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))

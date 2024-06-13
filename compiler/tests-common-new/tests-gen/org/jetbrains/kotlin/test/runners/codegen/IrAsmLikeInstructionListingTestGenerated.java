@@ -207,6 +207,12 @@ public class IrAsmLikeInstructionListingTestGenerated extends AbstractIrAsmLikeI
     }
 
     @Test
+    @TestMetadata("supertype.kt")
+    public void testSupertype() {
+      runTest("compiler/testData/codegen/asmLike/typeAnnotations/supertype.kt");
+    }
+
+    @Test
     @TestMetadata("syntheticAccessors.kt")
     public void testSyntheticAccessors() {
       runTest("compiler/testData/codegen/asmLike/typeAnnotations/syntheticAccessors.kt");
@@ -216,6 +222,52 @@ public class IrAsmLikeInstructionListingTestGenerated extends AbstractIrAsmLikeI
     @TestMetadata("typeParameter.kt")
     public void testTypeParameter() {
       runTest("compiler/testData/codegen/asmLike/typeAnnotations/typeParameter.kt");
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/asmLike/typeAnnotations/generics")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Generics {
+      @Test
+      public void testAllFilesPresentInGenerics() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/asmLike/typeAnnotations/generics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @Test
+      @TestMetadata("parameter.kt")
+      public void testParameter() {
+        runTest("compiler/testData/codegen/asmLike/typeAnnotations/generics/parameter.kt");
+      }
+
+      @Test
+      @TestMetadata("returnType.kt")
+      public void testReturnType() {
+        runTest("compiler/testData/codegen/asmLike/typeAnnotations/generics/returnType.kt");
+      }
+
+      @Test
+      @TestMetadata("supertype.kt")
+      public void testSupertype() {
+        runTest("compiler/testData/codegen/asmLike/typeAnnotations/generics/supertype.kt");
+      }
+
+      @Test
+      @TestMetadata("typeParameterBound.kt")
+      public void testTypeParameterBound() {
+        runTest("compiler/testData/codegen/asmLike/typeAnnotations/generics/typeParameterBound.kt");
+      }
+
+      @Test
+      @TestMetadata("val.kt")
+      public void testVal() {
+        runTest("compiler/testData/codegen/asmLike/typeAnnotations/generics/val.kt");
+      }
+
+      @Test
+      @TestMetadata("var.kt")
+      public void testVar() {
+        runTest("compiler/testData/codegen/asmLike/typeAnnotations/generics/var.kt");
+      }
     }
   }
 }

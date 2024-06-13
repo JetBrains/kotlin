@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// !JVM_DEFAULT_MODE: all
+// JVM_DEFAULT_MODE: all
 // JVM_TARGET: 1.8
 interface Foo<T> {
     fun test(p: T) = p

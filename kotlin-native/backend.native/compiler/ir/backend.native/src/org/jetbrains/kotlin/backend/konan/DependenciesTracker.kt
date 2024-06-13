@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.utils.atMostOne
-import org.jetbrains.kotlin.backend.konan.ir.isFromInteropLibrary
 import org.jetbrains.kotlin.backend.konan.llvm.FunctionOrigin
 import org.jetbrains.kotlin.backend.konan.llvm.llvmSymbolOrigin
 import org.jetbrains.kotlin.backend.konan.llvm.standardLlvmSymbolsOrigin
@@ -17,9 +16,9 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.library.metadata.isInteropLibrary
 
 interface DependenciesTracker {
     sealed class DependencyKind {
@@ -122,8 +121,7 @@ internal class DependenciesTrackerImpl(
             }
             when {
                 library == null -> FileOrigin.CurrentFile
-                packageFragment.isFromInteropLibrary() ->
-                    FileOrigin.EntireModule(library)
+                library.isCInteropLibrary() -> FileOrigin.EntireModule(library)
                 else -> FileOrigin.CertainFile(library, packageFragment.packageFqName.asString(), filePathGetter())
             }
         }
@@ -185,7 +183,7 @@ internal class DependenciesTrackerImpl(
                         }
                         val moduleDeserializer = moduleDeserializers[library]
                         if (moduleDeserializer == null) {
-                            require(library.isInteropLibrary()) { "No module deserializer for cached library ${library.uniqueName}" }
+                            require(library.isCInteropLibrary()) { "No module deserializer for cached library ${library.uniqueName}" }
                         } else {
                             moduleDeserializer.eagerInitializedFiles.forEach {
                                 add(CacheSupport.cacheFileId(it.packageFqName.asString(), it.path))

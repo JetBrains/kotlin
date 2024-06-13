@@ -8,12 +8,11 @@ package org.jetbrains.kotlin.scripting.compiler.plugin
 import com.intellij.core.CoreFileTypeRegistry
 import com.intellij.mock.MockProject
 import com.intellij.openapi.fileTypes.FileTypeRegistry
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDefinitionProvider
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.impl.reporter
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.*
 import java.io.File
-import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 
 class ScriptingCompilerConfigurationExtension(
@@ -79,7 +77,7 @@ internal fun configureScriptDefinitions(
     hostConfiguration: ScriptingHostConfiguration,
     classLoader: ClassLoader
 ) {
-    val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY) ?: MessageCollector.NONE
+    val messageCollector = configuration.messageCollector
 
     val explicitScriptDefinitions = configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_CLASSES)
 

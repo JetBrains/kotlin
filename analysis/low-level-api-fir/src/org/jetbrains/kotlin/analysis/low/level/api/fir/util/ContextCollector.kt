@@ -15,15 +15,14 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.Con
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.ContextKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.FilterResponse
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
+import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
-import org.jetbrains.kotlin.fir.resolve.dfa.PropertyStability
 import org.jetbrains.kotlin.fir.resolve.dfa.RealVariable
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ClassExitNode
@@ -32,6 +31,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.smartCastedType
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.addReceiversFromExtensions
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.typeContext
@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import java.util.ArrayList
@@ -185,7 +186,7 @@ private class DesignationInterceptor(val designation: FirDesignation) : () -> Fi
 }
 
 private class ContextCollectorVisitor(
-    private val holder: SessionHolder,
+    private val bodyHolder: SessionHolder,
     private val shouldCollectBodyContext: Boolean,
     private val filter: (PsiElement) -> FilterResponse,
     private val designationPathInterceptor: DesignationInterceptor?,
@@ -211,19 +212,23 @@ private class ContextCollectorVisitor(
         return result[key]
     }
 
-    private val session: FirSession
-        get() = holder.session
-
     private var isActive = true
 
     private val parents = ArrayList<FirElement>()
 
     private val context = BodyResolveContext(
         returnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve.Default,
-        dataFlowAnalyzerContext = DataFlowAnalyzerContext(session)
+        dataFlowAnalyzerContext = DataFlowAnalyzerContext(bodyHolder.session)
     )
 
     private val result = HashMap<ContextKey, Context>()
+
+    private fun getSessionHolder(declaration: FirDeclaration): SessionHolder {
+        return when (val session = declaration.moduleData.session) {
+            bodyHolder.session -> bodyHolder
+            else -> SessionHolderImpl(session, bodyHolder.scopeSession)
+        }
+    }
 
     override fun visitElement(element: FirElement) {
         dumpContext(element, ContextKind.SELF)
@@ -275,7 +280,8 @@ private class ContextCollectorVisitor(
 
             for (realVariable in flow.knownVariables) {
                 val typeStatement = flow.getTypeStatement(realVariable) ?: continue
-                if (realVariable.stability != PropertyStability.STABLE_VALUE && realVariable.stability != PropertyStability.LOCAL_VAR) {
+                val stability = realVariable.getStability(flow, bodyHolder.session)
+                if (stability != SmartcastStability.STABLE_VALUE && stability != SmartcastStability.CAPTURED_VARIABLE) {
                     continue
                 }
 
@@ -291,7 +297,7 @@ private class ContextCollectorVisitor(
                         oldReceiverTypes.add(receiverIndex to implicitReceiverStack.getType(receiverIndex))
 
                         val originalType = implicitReceiverStack.getOriginalType(receiverIndex)
-                        val smartCastedType = typeStatement.smartCastedType(session.typeContext, originalType)
+                        val smartCastedType = typeStatement.smartCastedType(bodyHolder.session.typeContext, originalType)
                         implicitReceiverStack.replaceReceiverType(receiverIndex, smartCastedType)
                     }
                 }
@@ -356,6 +362,8 @@ private class ContextCollectorVisitor(
         processSignatureAnnotations(script)
 
         onActiveBody {
+            val holder = getSessionHolder(script)
+
             context.withScript(script, holder) {
                 dumpContext(script, ContextKind.BODY)
 
@@ -369,6 +377,8 @@ private class ContextCollectorVisitor(
     }
 
     override fun visitFile(file: FirFile) = withProcessor(file) {
+        val holder = getSessionHolder(file)
+
         context.withFile(file, holder) {
             dumpContext(file, ContextKind.SELF)
 
@@ -384,6 +394,8 @@ private class ContextCollectorVisitor(
 
     override fun visitCodeFragment(codeFragment: FirCodeFragment) {
         codeFragment.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+
+        val holder = getSessionHolder(codeFragment)
 
         context.withCodeFragment(codeFragment, holder) {
             super.visitCodeFragment(codeFragment)
@@ -404,6 +416,58 @@ private class ContextCollectorVisitor(
         }
     }
 
+    /**
+     * If the whole function call looks like `foo().bar()`, then we want
+     * the implicit receivers from extensions generated for the `foo()` call
+     * to be available at the `bar()` position.
+     *
+     * That's why we have to accept the children (i.e., the receivers)
+     * and call [addReceiversFromExtensions] on them first, and only then to
+     * dump the context for the [functionCall] itself.
+     *
+     * @see addReceiversFromExtensions
+     */
+    override fun visitFunctionCall(functionCall: FirFunctionCall) {
+        onActive {
+            withParent(functionCall) {
+                functionCall.acceptChildren(this)
+            }
+        }
+
+        dumpContext(functionCall, ContextKind.SELF)
+
+        context.addReceiversFromExtensions(functionCall, bodyHolder)
+    }
+
+    /**
+     * If the whole property access call looks like `foo().baz`, then we want
+     * the implicit receivers from extensions generated for the `foo()` call
+     * to be available at the `baz` position.
+     *
+     * That's why we have to accept the children (i.e., the receivers)
+     * and call [addReceiversFromExtensions] on them first, and only then to
+     * dump the context for the [propertyAccessExpression] itself.
+     *
+     * N.B. [FirPropertyAccessExpression.acceptChildren] implementation visits [FirPropertyAccessExpression.calleeReference]
+     * before it visits the receivers.
+     * We want to visit `calleeReference` last so its context contains
+     * the implicit receivers generated for the receivers' calls.
+     *
+     * @see addReceiversFromExtensions
+     */
+    override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression) {
+        onActive {
+            withParent(propertyAccessExpression) {
+                val calleeReference = propertyAccessExpression.calleeReference
+
+                propertyAccessExpression.acceptChildren(FilteringVisitor(this, elementsToSkip = setOf(calleeReference)))
+                calleeReference.accept(this)
+            }
+        }
+
+        dumpContext(propertyAccessExpression, ContextKind.SELF)
+    }
+
     override fun visitRegularClass(regularClass: FirRegularClass) = withProcessor(regularClass) {
         dumpContext(regularClass, ContextKind.SELF)
 
@@ -414,6 +478,8 @@ private class ContextCollectorVisitor(
 
             context.withContainingClass(regularClass) {
                 processClassHeader(regularClass)
+
+                val holder = getSessionHolder(regularClass)
 
                 context.withRegularClass(regularClass, holder) {
                     dumpContext(regularClass, ContextKind.BODY)
@@ -428,7 +494,7 @@ private class ContextCollectorVisitor(
         }
 
         if (regularClass.isLocal) {
-            context.storeClassIfNotNested(regularClass, session)
+            context.storeClassIfNotNested(regularClass, regularClass.moduleData.session)
         }
     }
 
@@ -473,12 +539,14 @@ private class ContextCollectorVisitor(
             constructor.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
 
             context.withConstructor(constructor) {
-                val owningClass = context.containerIfAny as? FirRegularClass
-                context.forConstructorParameters(constructor, owningClass, holder) {
+                val holder = getSessionHolder(constructor)
+                val containingClass = context.containerIfAny as? FirRegularClass
+
+                context.forConstructorParameters(constructor, containingClass, holder) {
                     processList(constructor.valueParameters)
                 }
 
-                context.forConstructorBody(constructor, session) {
+                context.forConstructorBody(constructor, holder.session) {
                     processList(constructor.valueParameters)
 
                     dumpContext(constructor, ContextKind.BODY)
@@ -525,7 +593,9 @@ private class ContextCollectorVisitor(
         onActiveBody {
             simpleFunction.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
 
-            context.withSimpleFunction(simpleFunction, session) {
+            val holder = getSessionHolder(simpleFunction)
+
+            context.withSimpleFunction(simpleFunction, holder.session) {
                 context.forFunctionBody(simpleFunction, holder) {
                     processList(simpleFunction.valueParameters)
 
@@ -555,7 +625,7 @@ private class ContextCollectorVisitor(
                 dumpContext(property, ContextKind.BODY)
 
                 onActive {
-                    context.forPropertyInitializer {
+                    context.forPropertyInitializerIfNonLocal(property) {
                         process(property.initializer)
 
                         onActive {
@@ -575,7 +645,32 @@ private class ContextCollectorVisitor(
         }
 
         if (property.isLocal) {
-            context.storeVariable(property, session)
+            context.storeVariable(property, property.moduleData.session)
+        }
+    }
+
+    /**
+     * Executes [f] wrapped with [BodyResolveContext.forPropertyInitializer] if the [property] is not local.
+     * Note that [BodyResolveContext.forPropertyInitializer] performs the tower data cleanup in the [BodyResolveContext].
+     *
+     * Otherwise, just calls [f] with no the cleanup.
+     *
+     * We need to disable the context cleanup for local properties
+     * to preserve the implicit receivers introduced by the [addReceiversFromExtensions].
+     */
+    private fun BodyResolveContext.forPropertyInitializerIfNonLocal(property: FirProperty, f: () -> Unit) {
+        if (!property.isLocal) {
+            forPropertyInitializer(f)
+        } else {
+            f()
+        }
+    }
+
+    private fun FirExpression.unwrap(): FirExpression? {
+        return when (this) {
+            is FirCheckNotNullCall -> argument.unwrap()
+            is FirSafeCallExpression -> (selector as? FirExpression)?.unwrap()
+            else -> this
         }
     }
 
@@ -614,6 +709,8 @@ private class ContextCollectorVisitor(
         processSignatureAnnotations(propertyAccessor)
 
         onActiveBody {
+            val holder = getSessionHolder(propertyAccessor)
+
             context.withPropertyAccessor(propertyAccessor.propertySymbol.fir, propertyAccessor, holder) {
                 dumpContext(propertyAccessor, ContextKind.BODY)
 
@@ -630,7 +727,7 @@ private class ContextCollectorVisitor(
         processSignatureAnnotations(valueParameter)
 
         onActiveBody {
-            context.withValueParameter(valueParameter, session) {
+            context.withValueParameter(valueParameter, valueParameter.moduleData.session) {
                 dumpContext(valueParameter, ContextKind.BODY)
 
                 onActive {
@@ -647,7 +744,7 @@ private class ContextCollectorVisitor(
         processSignatureAnnotations(anonymousInitializer)
 
         onActiveBody {
-            context.withAnonymousInitializer(anonymousInitializer, session) {
+            context.withAnonymousInitializer(anonymousInitializer, anonymousInitializer.moduleData.session) {
                 dumpContext(anonymousInitializer, ContextKind.BODY)
 
                 onActive {
@@ -664,10 +761,10 @@ private class ContextCollectorVisitor(
         processSignatureAnnotations(anonymousFunction)
 
         onActiveBody {
-            context.withAnonymousFunction(anonymousFunction, holder, ResolutionMode.ContextIndependent) {
+            context.withAnonymousFunction(anonymousFunction, bodyHolder, ResolutionMode.ContextIndependent) {
                 for (parameter in anonymousFunction.valueParameters) {
                     process(parameter)
-                    context.storeVariable(parameter, holder.session)
+                    context.storeVariable(parameter, bodyHolder.session)
                 }
 
                 dumpContext(anonymousFunction, ContextKind.BODY)
@@ -692,7 +789,7 @@ private class ContextCollectorVisitor(
         onActiveBody {
             processAnonymousObjectHeader(anonymousObject)
 
-            context.withAnonymousObject(anonymousObject, holder) {
+            context.withAnonymousObject(anonymousObject, bodyHolder) {
                 dumpContext(anonymousObject, ContextKind.BODY)
 
                 onActive {
@@ -706,7 +803,7 @@ private class ContextCollectorVisitor(
         dumpContext(block, ContextKind.SELF)
 
         onActiveBody {
-            context.forBlock(session) {
+            context.forBlock(bodyHolder.session) {
                 processChildren(block)
 
                 dumpContext(block, ContextKind.BODY)

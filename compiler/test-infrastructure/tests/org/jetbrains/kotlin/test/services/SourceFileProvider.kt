@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.services
 import com.intellij.codeInsight.ExternalAnnotationsManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
+import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.KtInMemoryTextSourceFile
 import org.jetbrains.kotlin.KtSourceFile
@@ -26,71 +27,62 @@ abstract class ReversibleSourceFilePreprocessor(testServices: TestServices) : So
 }
 
 abstract class SourceFileProvider : TestService {
-    abstract val kotlinSourceDirectory: File
-    abstract val javaSourceDirectory: File
-    abstract val javaBinaryDirectory: File
-    abstract val additionalFilesDirectory: File
+    abstract val preprocessors: List<SourceFilePreprocessor>
+
+    abstract fun getKotlinSourceDirectoryForModule(module: TestModule): File
+    abstract fun getJavaSourceDirectoryForModule(module: TestModule): File
+    abstract fun getAdditionalFilesDirectoryForModule(module: TestModule): File
 
     abstract fun getContentOfSourceFile(testFile: TestFile): String
-    abstract fun getRealFileForSourceFile(testFile: TestFile): File
-    abstract fun getRealFileForBinaryFile(testFile: TestFile): File
-    abstract val preprocessors: List<SourceFilePreprocessor>
+    abstract fun getOrCreateRealFileForSourceFile(testFile: TestFile): File
 }
 
 val TestServices.sourceFileProvider: SourceFileProvider by TestServices.testServiceAccessor()
 
 class SourceFileProviderImpl(val testServices: TestServices, override val preprocessors: List<SourceFilePreprocessor>) : SourceFileProvider() {
-    override val kotlinSourceDirectory: File by lazy(LazyThreadSafetyMode.NONE) { testServices.getOrCreateTempDirectory("kotlin-files") }
-    override val javaSourceDirectory: File by lazy(LazyThreadSafetyMode.NONE) { testServices.getOrCreateTempDirectory("java-files") }
-    override val javaBinaryDirectory: File by lazy(LazyThreadSafetyMode.NONE) { testServices.getOrCreateTempDirectory("java-binary-files") }
-    override val additionalFilesDirectory: File by lazy(LazyThreadSafetyMode.NONE) { testServices.getOrCreateTempDirectory("additional-files") }
+    private val kotlinSourceDirectory: File by lazy(LazyThreadSafetyMode.NONE) { testServices.getOrCreateTempDirectory("kotlin-sources") }
+    private val javaSourceDirectory: File by lazy(LazyThreadSafetyMode.NONE) { testServices.getOrCreateTempDirectory("java-sources") }
+    private val additionalFilesDirectory: File by lazy(LazyThreadSafetyMode.NONE) { testServices.getOrCreateTempDirectory("additional-files") }
 
     private val contentOfFiles = mutableMapOf<TestFile, String>()
     private val realFileMap = mutableMapOf<TestFile, File>()
 
+    override fun getKotlinSourceDirectoryForModule(module: TestModule): File =
+        kotlinSourceDirectory.resolve(module.name).apply { mkdir() }
+
+    override fun getJavaSourceDirectoryForModule(module: TestModule): File =
+        javaSourceDirectory.resolve(module.name).apply { mkdir() }
+
+    override fun getAdditionalFilesDirectoryForModule(module: TestModule): File =
+        additionalFilesDirectory.resolve(module.name).apply { mkdir() }
+
     override fun getContentOfSourceFile(testFile: TestFile): String {
         return contentOfFiles.getOrPut(testFile) {
-            generateFinalContent(testFile)
+            preprocessors.fold(testFile.originalContent) { content, preprocessor ->
+                preprocessor.process(testFile, content)
+            }
         }
     }
 
-    override fun getRealFileForSourceFile(testFile: TestFile): File {
+    override fun getOrCreateRealFileForSourceFile(testFile: TestFile): File {
         return realFileMap.getOrPut(testFile) {
+            val module = testServices.moduleStructure.modules.single { testFile in it.files }
             val directory = when {
-                testFile.isKtFile -> kotlinSourceDirectory
-                testFile.isJavaFile -> javaSourceDirectory
-                else -> additionalFilesDirectory
+                testFile.isKtFile -> getKotlinSourceDirectoryForModule(module)
+                testFile.isJavaFile -> getJavaSourceDirectoryForModule(module)
+                else -> getAdditionalFilesDirectoryForModule(module)
             }
             directory.resolve(testFile.relativePath).also {
                 it.parentFile.mkdirs()
                 it.writeText(getContentOfSourceFile(testFile))
             }
-        }
-    }
-
-    override fun getRealFileForBinaryFile(testFile: TestFile): File {
-        return realFileMap.getOrPut(testFile) {
-            val directory = when {
-                testFile.isJavaFile -> javaBinaryDirectory
-                else -> error("Unknown file type: ${testFile.name}")
-            }
-            directory.resolve(testFile.relativePath).also {
-                it.parentFile.mkdirs()
-                it.writeText(getContentOfSourceFile(testFile))
-            }
-        }
-    }
-
-    private fun generateFinalContent(testFile: TestFile): String {
-        return preprocessors.fold(testFile.originalContent) { content, preprocessor ->
-            preprocessor.process(testFile, content)
         }
     }
 }
 
 fun SourceFileProvider.getKtFileForSourceFile(testFile: TestFile, project: Project, findViaVfs: Boolean = false): KtFile {
     if (findViaVfs) {
-        val realFile = getRealFileForSourceFile(testFile)
+        val realFile = getOrCreateRealFileForSourceFile(testFile)
         StandardFileSystems.local().findFileByPath(realFile.path)
             ?.let { PsiManager.getInstance(project).findFile(it) as? KtFile }
             ?.let { return it }
@@ -131,6 +123,9 @@ val TestFile.isKtsFile: Boolean
 val TestFile.isJavaFile: Boolean
     get() = name.endsWith(".java")
 
+val TestFile.isModuleInfoJavaFile: Boolean
+    get() = name == PsiJavaModule.MODULE_INFO_FILE
+
 val TestFile.isJsFile: Boolean
     get() = name.endsWith(".js")
 
@@ -144,5 +139,5 @@ val TestFile.isExternalAnnotation: Boolean
     get() = name == ExternalAnnotationsManager.ANNOTATIONS_XML
 
 fun SourceFileProvider.getRealJavaFiles(module: TestModule): List<File> {
-    return module.javaFiles.map { getRealFileForSourceFile(it) }
+    return module.javaFiles.map { getOrCreateRealFileForSourceFile(it) }
 }

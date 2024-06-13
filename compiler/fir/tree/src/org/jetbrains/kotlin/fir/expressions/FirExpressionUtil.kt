@@ -32,7 +32,7 @@ inline val FirAnnotation.unexpandedConeClassLikeType: ConeClassLikeType?
 inline val FirAnnotation.unexpandedClassId: ClassId?
     get() = unexpandedConeClassLikeType?.lookupTag?.classId
 
-fun <T> buildConstOrErrorExpression(source: KtSourceElement?, kind: ConstantValueKind<T>, value: T?, diagnostic: ConeDiagnostic): FirExpression =
+fun <T> buildConstOrErrorExpression(source: KtSourceElement?, kind: ConstantValueKind, value: T?, diagnostic: ConeDiagnostic): FirExpression =
     value?.let {
         buildLiteralExpression(source, kind, it, setType = false)
     } ?: buildErrorExpression {

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
@@ -127,6 +128,7 @@ class ClassicFrontend2NativeIrConverter(
             diagnosticReporter = configuration.irMessageLogger
         )
 
+        @OptIn(ObsoleteDescriptorBasedAPI::class)
         return IrBackendInput.NativeBackendInput(
             moduleFragment,
             pluginContext,

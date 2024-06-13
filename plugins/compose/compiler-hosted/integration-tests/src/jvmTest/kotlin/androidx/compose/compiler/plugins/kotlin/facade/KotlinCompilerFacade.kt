@@ -25,8 +25,6 @@ import com.intellij.openapi.util.text.StringUtilRt
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.testFramework.LightVirtualFile
-import java.nio.charset.StandardCharsets
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.IrMessageCollector
@@ -34,16 +32,13 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
+import java.nio.charset.StandardCharsets
 
 class SourceFile(
     val name: String,
@@ -113,9 +108,10 @@ abstract class KotlinCompilerFacade(val environment: KotlinCoreEnvironment) {
             val configuration = CompilerConfiguration().apply {
                 put(CommonConfigurationKeys.MODULE_NAME, TEST_MODULE_NAME)
                 put(JVMConfigurationKeys.IR, true)
-                put(JVMConfigurationKeys.VALIDATE_IR, true)
-                put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_17)
-                put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, TestMessageCollector)
+                put(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.ERROR)
+                put(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS, true)
+                put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_11)
+                messageCollector = TestMessageCollector
                 put(IrMessageLogger.IR_MESSAGE_LOGGER, IrMessageCollector(TestMessageCollector))
                 updateConfiguration()
                 put(CommonConfigurationKeys.USE_FIR, languageVersionSettings.languageVersion.usesK2)

@@ -10,6 +10,7 @@ import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.internal.plugins.DslObject
+import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.provider.Property
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JavaToolchainSpec
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.CoroutineStart.Undispatched
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
@@ -27,7 +29,6 @@ import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.CompletableFuture
 import org.jetbrains.kotlin.gradle.utils.Future
 import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
-import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryNext
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 import org.jetbrains.kotlin.tooling.core.MutableExtras
@@ -211,9 +212,7 @@ abstract class KotlinJvmProjectExtension(project: Project) : KotlinSingleJavaTar
         project.launch(Undispatched) { targetFuture.await().body() }
     }
 
-    val compilerOptions: KotlinJvmCompilerOptions = project.objects
-        .newInstance(KotlinJvmCompilerOptionsDefault::class.java)
-        .configureExperimentalTryNext(project)
+    val compilerOptions: KotlinJvmCompilerOptions = project.objects.KotlinJvmCompilerOptionsDefault(project)
 
     fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>) {
         configure.execute(compilerOptions)
@@ -350,9 +349,7 @@ abstract class KotlinAndroidProjectExtension(project: Project) : KotlinSingleTar
         targetFuture.await().body()
     }
 
-    val compilerOptions: KotlinJvmCompilerOptions = project.objects
-        .newInstance(KotlinJvmCompilerOptionsDefault::class.java)
-        .configureExperimentalTryNext(project)
+    val compilerOptions: KotlinJvmCompilerOptions = project.objects.KotlinJvmCompilerOptionsDefault(project)
 
     fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>) {
         configure.execute(compilerOptions)

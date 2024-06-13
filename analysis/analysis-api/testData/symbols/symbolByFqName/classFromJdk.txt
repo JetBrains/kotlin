@@ -1,6 +1,6 @@
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: java/lang/String
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: java/lang/String
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -13,27 +13,27 @@ KtNamedClassOrObjectSymbol:
   isInner: false
   modality: FINAL
   name: String
-  origin: JAVA
+  origin: JAVA_LIBRARY
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: java/io/Serializable
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: [
-        KtFlexibleType:
-          annotationsList: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: [
+        KaFlexibleType:
+          annotations: []
           type: kotlin/String!
       ]
       type: kotlin/Comparable<kotlin/String!>
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/CharSequence
   ]
   symbolKind: TOP_LEVEL

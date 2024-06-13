@@ -67,9 +67,13 @@ class MetadataSymbolProvider(
         }
     }
 
-    override fun computePackageSetWithNonClassDeclarations() = packageAndMetadataPartProvider.computePackageSetWithNonClassDeclarations()
+    override fun computePackageSetWithNonClassDeclarations(): Set<String> {
+        return packageAndMetadataPartProvider.computePackageSetWithNonClassDeclarations()
+    }
 
-    override fun knownTopLevelClassesInPackage(packageFqName: FqName) = metadataTopLevelClassesInPackageCache.getValue(packageFqName)
+    override fun knownTopLevelClassesInPackage(packageFqName: FqName): Set<String>? {
+        return metadataTopLevelClassesInPackageCache.getValue(packageFqName)
+    }
 
     override fun extractClassMetadata(classId: ClassId, parentContext: FirDeserializationContext?): ClassMetadataFindResult? {
         val classData = classDataFinder.findClassData(classId) ?: return null
@@ -84,11 +88,11 @@ class MetadataSymbolProvider(
         )
     }
 
-    override fun isNewPlaceForBodyGeneration(classProto: ProtoBuf.Class) = false
+    override fun isNewPlaceForBodyGeneration(classProto: ProtoBuf.Class): Boolean = false
 
-    override fun getPackage(fqName: FqName) =
+    override fun getPackage(fqName: FqName): FqName? =
         runIf(metadataTopLevelClassesInPackageCache.getValue(fqName)?.isNotEmpty() == true) { fqName }
 
-    private fun findMetadataTopLevelClassesInPackage(packageFqName: FqName) =
+    private fun findMetadataTopLevelClassesInPackage(packageFqName: FqName): Set<String>? =
         kotlinClassFinder.findMetadataTopLevelClassesInPackage(packageFqName)
 }

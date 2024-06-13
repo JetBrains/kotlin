@@ -8,10 +8,10 @@
 
 package org.jetbrains.kotlin.generators.gradle.dsl
 
-import org.jetbrains.kotlin.gradle.plugin.*
 import org.gradle.api.Action
 import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetsContainerWithPresets
 import java.io.File
 
 fun main() {
@@ -60,7 +60,7 @@ private fun generateKotlinTargetContainerWithPresetFunctionsInterface() {
         "}"
     ).joinToString("\n\n")
 
-    val targetFile = File("$outputSourceRoot/${className.fqName.replace(".", "/")}.kt")
+    val targetFile = File("$kotlinGradlePluginSourceRoot/${className.fqName.replace(".", "/")}.kt")
     targetFile.writeText(code)
 }
 

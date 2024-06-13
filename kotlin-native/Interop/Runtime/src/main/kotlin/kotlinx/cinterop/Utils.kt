@@ -5,6 +5,9 @@
 
 package kotlinx.cinterop
 
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+
 @ExperimentalForeignApi
 public interface NativePlacement {
 
@@ -339,8 +342,15 @@ public fun <T : CVariable> CValues<T>.getBytes(): ByteArray = memScoped {
  * Calls the [block] with temporary copy of this value as receiver.
  */
 @ExperimentalForeignApi
-public inline fun <reified T : CStructVar, R> CValue<T>.useContents(block: T.() -> R): R = memScoped {
-    this@useContents.placeTo(memScope).pointed.block()
+@OptIn(kotlin.contracts.ExperimentalContracts::class)
+public inline fun <reified T : CStructVar, R> CValue<T>.useContents(block: T.() -> R): R {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+
+    return memScoped {
+        this@useContents.placeTo(memScope).pointed.block()
+    }
 }
 
 @ExperimentalForeignApi
@@ -697,7 +707,12 @@ public class MemScope : ArenaBase() {
  * which will be automatically disposed at the end of this scope.
  */
 @ExperimentalForeignApi
+@OptIn(kotlin.contracts.ExperimentalContracts::class)
 public inline fun <R> memScoped(block: MemScope.()->R): R {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+
     val memScope = MemScope()
     try {
         return memScope.block()

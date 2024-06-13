@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.gradle.internal.operation
 import org.jetbrains.kotlin.gradle.internal.processLogMessage
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
-import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.MppTestReportHelper
@@ -104,6 +103,7 @@ class KotlinKarma(
         requiredDependencies.add(versions.karma)
 
         useKotlinReporter()
+        useWebpackOutputPlugin()
         useMocha()
         useWebpack()
         useSourceMapSupport()
@@ -166,6 +166,22 @@ class KotlinKarma(
         }
     }
 
+    private fun useWebpackOutputPlugin() {
+        config.frameworks.add("webpack-output")
+
+        confJsWriters.add {
+            // Not all log events goes through this appender
+            // For example Error in config file
+            //language=ES6
+            it.appendLine(
+                """
+                config.plugins = config.plugins || [];
+                config.plugins.push('kotlin-test-js-runner/karma-webpack-output.js');
+            """.trimIndent()
+            )
+        }
+    }
+
     internal fun watch() {
         config.singleRun = false
         config.autoWatch = true
@@ -201,7 +217,11 @@ class KotlinKarma(
 
     fun useChromeCanaryHeadless() = useChromeLike("ChromeCanaryHeadless")
 
-    @Deprecated("Chrome supports wasm GC by default, so you can use useChromeHeadless", replaceWith = ReplaceWith("useChromHeadless"))
+    @Deprecated(
+        "Chrome supports wasm GC by default, so you can use useChromeHeadless",
+        replaceWith = ReplaceWith("useChromeHeadless"),
+        level = DeprecationLevel.ERROR
+    )
     fun useChromeHeadlessWasmGc() {
         val chromeCanaryHeadlessWasmGc = "ChromeHeadlessWasmGc"
 
@@ -355,8 +375,6 @@ class KotlinKarma(
                     createLoadWasm(npmProject.dir.getFile(), file).normalize().absolutePath
                 )
 
-                config.proxies["/${wasmFile.name}"] = basify(npmProjectDir.getFile(), wasmFile)
-
                 config.customContextFile = npmProject.require("kotlin-test-js-runner/static/context.html")
                 config.customDebugFile = npmProject.require("kotlin-test-js-runner/static/debug.html")
             } else {
@@ -383,6 +401,17 @@ class KotlinKarma(
 
             config.frameworks.add("karma-kotlin-debug")
         }
+
+        val resources = object {
+            val pattern = file.parentFile.resolve("**/*").normalize().absolutePath
+            val watched = false
+            val included = false
+        }
+
+        config.files.add(
+            resources
+        )
+        config.proxies["/"] = "/base/kotlin/"
 
         if (config.browsers.isEmpty()) {
             error("No browsers configured for $task")
@@ -501,10 +530,37 @@ class KotlinKarma(
                         val actualText = if (launcherMessage != null) {
                             val (logLevel, message) = launcherMessage.destructured
                             actualType = LogType.byValueOrNull(logLevel.toLowerCaseAsciiOnly())
-                            if (actualType?.isErrorLike() == true) {
-                                processFailedBrowsers(text)
+
+                            val onlyErrorLike: (LogType?) -> Boolean = { processingType -> processingType?.isErrorLike() == true }
+
+                            val failedBrowserProcessor = KarmaConsoleProcessor(
+                                onlyErrorLike,
+                                { _ -> true },
+                                { processingText ->
+                                    processFailedBrowsers(processingText)
+                                    processingText
+                                }
+                            )
+
+                            val proxyProcessor = KarmaConsoleRejector(
+                                onlyErrorLike
+                            ) { processingText ->
+                                PROXY_FALSE_WARN.matchEntire(processingText) != null
                             }
-                            message
+
+                            val webpackOutputProcessor = KarmaConsoleRejector(
+                                onlyErrorLike
+                            ) { processingText ->
+                                WEBPACK_OUTPUT_WARN.matchEntire(processingText) != null
+                            }
+
+                            listOf(
+                                failedBrowserProcessor,
+                                proxyProcessor,
+                                webpackOutputProcessor
+                            ).fold(message) { acc, processor ->
+                                processor.process(actualType, acc)
+                            }
                         } else {
                             text
                         }
@@ -640,3 +696,6 @@ internal fun createLoadWasm(npmProjectDir: File, file: File): File {
 
 private val KARMA_MESSAGE = "^.*\\d{2} \\d{2} \\d{4,} \\d{2}:\\d{2}:\\d{2}.\\d{3}:(ERROR|WARN|INFO|DEBUG|LOG) \\[.*]: ([\\w\\W]*)\$"
     .toRegex()
+
+private val PROXY_FALSE_WARN = "\"/\" is proxied, you should probably change urlRoot to avoid conflicts".toRegex()
+private val WEBPACK_OUTPUT_WARN = "All files matched by \".+\" were excluded or matched by prior matchers\\.".toRegex()

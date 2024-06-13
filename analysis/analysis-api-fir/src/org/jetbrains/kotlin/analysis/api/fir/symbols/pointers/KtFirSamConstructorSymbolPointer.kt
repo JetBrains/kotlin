@@ -5,20 +5,20 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtSamConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaSamConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.name.ClassId
 
-internal class KtFirSamConstructorSymbolPointer(
+internal class KaFirSamConstructorSymbolPointer(
     private val ownerClassId: ClassId,
-) : KtSymbolPointer<KtSamConstructorSymbol>() {
-    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
-    override fun restoreSymbol(analysisSession: KtAnalysisSession): KtSamConstructorSymbol? {
-        require(analysisSession is KtFirAnalysisSession)
+) : KaSymbolPointer<KaSamConstructorSymbol>() {
+    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KaSession.restoreSymbol")
+    override fun restoreSymbol(analysisSession: KaSession): KaSamConstructorSymbol? {
+        require(analysisSession is KaFirSession)
         val owner = analysisSession.getClassLikeSymbol(ownerClassId) as? FirRegularClass ?: return null
         val classSymbol = analysisSession.firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(owner.symbol)
         with(analysisSession) {
@@ -26,7 +26,7 @@ internal class KtFirSamConstructorSymbolPointer(
         }
     }
 
-    override fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = this === other ||
-            other is KtFirSamConstructorSymbolPointer &&
+    override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||
+            other is KaFirSamConstructorSymbolPointer &&
             other.ownerClassId == ownerClassId
 }

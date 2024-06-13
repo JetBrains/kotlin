@@ -5,29 +5,29 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtDeclarationRenderer
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionLikeSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
-public interface KtCallableParameterRenderer {
+public interface KaCallableParameterRenderer {
     public fun renderValueParameters(
-        analysisSession: KtAnalysisSession,
-        symbol: KtCallableSymbol,
-        declarationRenderer: KtDeclarationRenderer,
+        analysisSession: KaSession,
+        symbol: KaCallableSymbol,
+        declarationRenderer: KaDeclarationRenderer,
         printer: PrettyPrinter,
     )
 
-    public object PARAMETERS_IN_PARENS : KtCallableParameterRenderer {
+    public object PARAMETERS_IN_PARENS : KaCallableParameterRenderer {
         override fun renderValueParameters(
-            analysisSession: KtAnalysisSession,
-            symbol: KtCallableSymbol,
-            declarationRenderer: KtDeclarationRenderer,
+            analysisSession: KaSession,
+            symbol: KaCallableSymbol,
+            declarationRenderer: KaDeclarationRenderer,
             printer: PrettyPrinter,
         ) {
             val valueParameters = when (symbol) {
-                is KtFunctionLikeSymbol -> symbol.valueParameters
+                is KaFunctionLikeSymbol -> symbol.valueParameters
                 else -> return
             }
             printer.printCollection(valueParameters, prefix = "(", postfix = ")") {
@@ -37,3 +37,4 @@ public interface KtCallableParameterRenderer {
     }
 }
 
+public typealias KtCallableParameterRenderer = KaCallableParameterRenderer

@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReferenceList
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThis
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 
 internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceOrAnnotationClass {
     constructor(
-        ktAnalysisSession: KtAnalysisSession,
+        ktAnalysisSession: KaSession,
         ktModule: KtModule,
-        classOrObjectSymbol: KtNamedClassOrObjectSymbol,
+        classOrObjectSymbol: KaNamedClassOrObjectSymbol,
         manager: PsiManager
     ) : super(
         ktAnalysisSession = ktAnalysisSession,
@@ -34,7 +34,7 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
         classOrObjectSymbol = classOrObjectSymbol,
         manager = manager,
     ) {
-        require(classOrObjectSymbol.classKind == KtClassKind.INTERFACE)
+        require(classOrObjectSymbol.classKind == KaClassKind.INTERFACE)
     }
 
     constructor(classOrObject: KtClassOrObject, ktModule: KtModule) : super(classOrObject, ktModule) {
@@ -43,7 +43,7 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
 
     protected constructor(
         classOrObjectDeclaration: KtClassOrObject?,
-        classOrObjectSymbolPointer: KtSymbolPointer<KtNamedClassOrObjectSymbol>,
+        classOrObjectSymbolPointer: KaSymbolPointer<KaNamedClassOrObjectSymbol>,
         ktModule: KtModule,
         manager: PsiManager,
     ) : super(
@@ -66,9 +66,9 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
         }
     }
 
-    context(KtAnalysisSession)
-    protected open fun acceptCallableSymbol(symbol: KtCallableSymbol): Boolean =
-        !(symbol is KtFunctionSymbol && symbol.visibility.isPrivateOrPrivateToThis() || symbol.hasTypeForValueClassInSignature())
+    context(KaSession)
+    protected open fun acceptCallableSymbol(symbol: KaCallableSymbol): Boolean =
+        !(symbol is KaFunctionSymbol && symbol.visibility.isPrivateOrPrivateToThis() || symbol.hasTypeForValueClassInSignature())
 
     override fun copy(): SymbolLightClassForInterface =
         SymbolLightClassForInterface(classOrObjectDeclaration, classOrObjectSymbolPointer, ktModule, manager)
@@ -80,5 +80,5 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
     }
 
     override fun getExtendsList(): PsiReferenceList? = _extendsList
-    override fun classKind(): KtClassKind = KtClassKind.INTERFACE
+    override fun classKind(): KaClassKind = KaClassKind.INTERFACE
 }

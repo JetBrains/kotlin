@@ -52,10 +52,9 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     FirPartialBodyResolveTransformer(transformer) {
     private inline val builtinTypes: BuiltinTypes get() = session.builtinTypes
     private val arrayOfCallTransformer = FirArrayOfCallTransformer()
-    var enableArrayOfCallTransformation = false
+    var enableArrayOfCallTransformation: Boolean = false
     var containingSafeCallExpression: FirSafeCallExpression? = null
 
-    private val expressionResolutionExtensions = session.extensionService.expressionResolutionExtensions.takeIf { it.isNotEmpty() }
     private val assignAltererExtensions = session.extensionService.assignAltererExtensions.takeIf { it.isNotEmpty() }
     @OptIn(FirExtensionApiInternals::class)
     private val callRefinementExtensions = session.extensionService.callRefinementExtensions.takeIf { it.isNotEmpty() }
@@ -506,30 +505,13 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 }
             }
 
-            addReceiversFromExtensions(result)
+            context.addReceiversFromExtensions(result, components)
 
             if (enableArrayOfCallTransformation) {
                 return arrayOfCallTransformer.transformFunctionCall(result, session)
             }
             return result
         }
-
-    @OptIn(PrivateForInline::class)
-    private fun addReceiversFromExtensions(functionCall: FirFunctionCall) {
-        val extensions = expressionResolutionExtensions ?: return
-        val boundSymbol = context.containerIfAny?.symbol as? FirCallableSymbol<*> ?: return
-        for (extension in extensions) {
-            for (receiverType in extension.addNewImplicitReceivers(functionCall)) {
-                val receiverValue = ImplicitExtensionReceiverValue(
-                    boundSymbol,
-                    receiverType,
-                    session,
-                    scopeSession
-                )
-                context.addReceiver(name = null, receiverValue)
-            }
-        }
-    }
 
     private fun FirFunctionCall.transformToIntegerOperatorCallOrApproximateItIfNeeded(resolutionMode: ResolutionMode): FirFunctionCall {
         if (!explicitReceiver.isIntegerLiteralOrOperatorCall()) return this
@@ -1151,7 +1133,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     ): FirStatement = whileAnalysing(session, getClassCall) {
         getClassCall.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
         val arg = getClassCall.argument
-        val dataForLhs = if (arg is FirLiteralExpression<*>) {
+        val dataForLhs = if (arg is FirLiteralExpression) {
             withExpectedType(arg.kind.expectedConeType(session).toFirResolvedTypeRef())
         } else {
             ResolutionMode.ContextIndependent
@@ -1219,8 +1201,8 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         return true
     }
 
-    override fun <T> transformLiteralExpression(
-        literalExpression: FirLiteralExpression<T>,
+    override fun transformLiteralExpression(
+        literalExpression: FirLiteralExpression,
         data: ResolutionMode,
     ): FirStatement {
         literalExpression.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
@@ -1233,13 +1215,12 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     isUnsigned = kind == ConstantValueKind.UnsignedIntegerLiteral
                 )
                 val expectedTypeRef = data.expectedType
-                @Suppress("UNCHECKED_CAST")
                 when {
                     expressionType is ConeErrorType -> {
                         expressionType
                     }
                     expressionType is ConeClassLikeType -> {
-                        literalExpression.replaceKind(expressionType.toConstKind() as ConstantValueKind<T>)
+                        literalExpression.replaceKind(expressionType.toConstKind() as ConstantValueKind)
                         expressionType
                     }
                     data is ResolutionMode.ReceiverResolution && !data.forCallableReference -> {
@@ -1250,7 +1231,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                         require(expressionType is ConeIntegerLiteralConstantTypeImpl)
                         val coneType = expectedTypeRef.coneTypeSafe<ConeKotlinType>()?.fullyExpandedType(session)
                         val approximatedType = expressionType.getApproximatedType(coneType)
-                        literalExpression.replaceKind(approximatedType.toConstKind() as ConstantValueKind<T>)
+                        literalExpression.replaceKind(approximatedType.toConstKind() as ConstantValueKind)
                         approximatedType
                     }
                     else -> {
@@ -1261,7 +1242,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             else -> kind.expectedConeType(session)
         }
 
-        dataFlowAnalyzer.exitLiteralExpression(literalExpression as FirLiteralExpression<*>)
+        dataFlowAnalyzer.exitLiteralExpression(literalExpression)
         literalExpression.resultType = type
 
         return when (val resolvedType = literalExpression.resolvedType) {
@@ -1815,4 +1796,30 @@ private fun FirFunctionCall.setIndexedAccessAugmentedAssignSource(fakeSourceElem
         this.source = newSource
         this.resolvedSymbol = oldCalleeReference.resolvedSymbol
     })
+}
+
+/**
+ * Adds implicit receivers generated by [FirExpressionResolutionExtension.addNewImplicitReceivers]
+ * for this particular [functionCall] to [this] context.
+ */
+@OptIn(PrivateForInline::class)
+fun BodyResolveContext.addReceiversFromExtensions(functionCall: FirFunctionCall, sessionHolder: SessionHolder) {
+    val session = sessionHolder.session
+    val scopeSession = sessionHolder.scopeSession
+
+    val extensions = session.extensionService.expressionResolutionExtensions.takeIf { it.isNotEmpty() } ?: return
+    val boundSymbol = this.containerIfAny?.symbol as? FirCallableSymbol<*> ?: return
+
+    for (extension in extensions) {
+        for (receiverType in extension.addNewImplicitReceivers(functionCall)) {
+            val receiverValue = ImplicitExtensionReceiverValue(
+                boundSymbol,
+                receiverType,
+                session,
+                scopeSession
+            )
+
+            this.addReceiver(name = null, receiverValue)
+        }
+    }
 }

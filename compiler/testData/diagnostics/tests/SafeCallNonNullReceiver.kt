@@ -1,4 +1,4 @@
-// !LANGUAGE: -SafeCallsAreAlwaysNullable
+// LANGUAGE: -SafeCallsAreAlwaysNullable
 // http://youtrack.jetbrains.net/issue/KT-418
 
 fun ff() {

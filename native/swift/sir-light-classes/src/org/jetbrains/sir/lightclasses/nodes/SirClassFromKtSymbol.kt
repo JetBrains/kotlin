@@ -5,8 +5,8 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildGetter
@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.computeIsOverrideForDesignatedInit
+import org.jetbrains.kotlin.sir.providers.utils.updateImport
 import org.jetbrains.kotlin.sir.providers.utils.updateImports
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
@@ -24,10 +25,10 @@ import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
 
 internal class SirClassFromKtSymbol(
-    override val ktSymbol: KtNamedClassOrObjectSymbol,
+    override val ktSymbol: KaNamedClassOrObjectSymbol,
     override val ktModule: KtModule,
     override val sirSession: SirSession,
-) : SirClass(), SirFromKtSymbol<KtNamedClassOrObjectSymbol> {
+) : SirClass(), SirFromKtSymbol<KaNamedClassOrObjectSymbol> {
 
     override val origin: SirOrigin by lazy {
         KotlinSource(ktSymbol)
@@ -55,7 +56,7 @@ internal class SirClassFromKtSymbol(
     override val superClass: SirType? by lazyWithSessions {
         // For now, we support only `class C : Kotlin.Any()` class declarations, and
         // translate Kotlin.Any to KotlinRuntime.KotlinBase.
-        ktSymbol.getContainingModule().sirModule().updateImports(listOf(SirImport(KotlinRuntimeModule.name)))
+        ktSymbol.getContainingModule().sirModule().updateImport(SirImport(KotlinRuntimeModule.name))
         SirNominalType(KotlinRuntimeModule.kotlinBase)
     }
 
@@ -65,8 +66,18 @@ internal class SirClassFromKtSymbol(
             .toList()
     }
 
-    private fun syntheticDeclarations(): List<SirDeclaration> = if (ktSymbol.classKind == KtClassKind.OBJECT)
-        listOf<SirDeclaration>(
+    private fun kotlinBaseInitDeclaration(): SirDeclaration = buildInit {
+        origin = SirOrigin.KotlinBaseInitOverride(`for` = KotlinSource(ktSymbol))
+        kind = SirCallableKind.CLASS_METHOD
+        isFailable = false
+        initKind = SirInitializerKind.ORDINARY
+        isOverride = true
+        parameters.add(SirParameter(argumentName = "__externalRCRef", type = SirNominalType(SirSwiftModule.uint)))
+    }.also { it.parent = this }
+
+    private fun syntheticDeclarations(): List<SirDeclaration> = if (ktSymbol.classKind == KaClassKind.OBJECT)
+        listOf(
+            kotlinBaseInitDeclaration(),
             buildInit {
                 origin = SirOrigin.PrivateObjectInit(`for` = KotlinSource(ktSymbol))
                 visibility = SirVisibility.PRIVATE
@@ -78,7 +89,7 @@ internal class SirClassFromKtSymbol(
             buildVariable {
                 origin = SirOrigin.ObjectAccessor(`for` = KotlinSource(ktSymbol))
                 visibility = SirVisibility.PUBLIC
-                type = SirNominalType(SirSwiftModule.int32) // todo: fixme when types become available - KT-65808
+                type = SirNominalType(this@SirClassFromKtSymbol)
                 name = "shared"
                 getter = buildGetter {
                     kind = SirCallableKind.STATIC_METHOD
@@ -89,5 +100,5 @@ internal class SirClassFromKtSymbol(
         )
             .map { it.also { it.parent = this } }
     else
-        emptyList()
+        listOf(kotlinBaseInitDeclaration())
 }

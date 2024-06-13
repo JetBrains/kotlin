@@ -1,4 +1,4 @@
-// !RENDER_DIAGNOSTICS_FULL_TEXT
+// RENDER_DIAGNOSTICS_FULL_TEXT
 class Foo<K>
 
 fun <K> buildFoo(builderAction: Foo<K>.() -> Unit): Foo<K> = Foo()

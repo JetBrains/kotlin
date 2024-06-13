@@ -45,10 +45,10 @@ class Kotlin {
     }
 
 
-    fun <T> fooGenericIn(s: @Ann Bar<in @Ann2 T>) {
+    fun <T> fooGenericIn(s: @Ann Bar<in @Ann2 Outer.NestedStatic<@Ann3 T>>) {
     }
 
-    fun <T> fooGenericOut(s: @Ann Bar<out @Ann2 T>) {
+    fun <T> fooGenericOut(s: @Ann Bar<out @Ann2 Outer.NestedStatic<@Ann3 T>>) {
     }
 
 

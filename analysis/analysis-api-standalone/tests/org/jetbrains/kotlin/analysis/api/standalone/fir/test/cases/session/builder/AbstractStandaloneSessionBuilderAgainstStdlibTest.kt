@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.session.builder
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
-import org.jetbrains.kotlin.analysis.api.standalone.KtAlwaysAccessibleLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
@@ -28,7 +26,7 @@ import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.junit.jupiter.api.Assertions
 import java.nio.file.Path
 
-@OptIn(KtAnalysisApiInternals::class)
+@OptIn(KaAnalysisApiInternals::class)
 abstract class AbstractStandaloneSessionBuilderAgainstStdlibTest : TestWithDisposable() {
     protected fun doTestKotlinStdLibResolve(
         targetPlatform: TargetPlatform, platformStdlibPath: Path,
@@ -36,8 +34,6 @@ abstract class AbstractStandaloneSessionBuilderAgainstStdlibTest : TestWithDispo
     ) {
         lateinit var sourceModule: KtSourceModule
         val session = buildStandaloneAnalysisAPISession(disposable) {
-            registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
-
             buildKtModuleProvider {
                 platform = targetPlatform
                 val stdlib = addModule(
@@ -71,7 +67,7 @@ abstract class AbstractStandaloneSessionBuilderAgainstStdlibTest : TestWithDispo
 
     private fun KtTypeReference.assertIsReferenceTo(classId: ClassId) {
         analyze(this) {
-            val actualClassId = getKtType().expandedClassSymbol?.classIdIfNonLocal
+            val actualClassId = getKtType().expandedSymbol?.classId
             Assertions.assertEquals(classId, actualClassId)
         }
     }

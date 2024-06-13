@@ -1,8 +1,11 @@
 // ISSUE: KT-58575
-// FILE: JavaBases.java
+
+// FILE: JavaImmutableBase.java
 interface JavaImmutableBase {
     String getData();
 }
+
+// FILE: JavaMutableBase.java
 interface JavaMutableBase {
     String getData();
     void setData(String data);
@@ -37,12 +40,22 @@ open class KotlinMutableChild8: JavaMutableBase {
     override fun setData(data: String?) {}
 }
 
-// FILE: JavaChildren.java
+// FILE: JavaImmutableChild1.java
 class JavaImmutableChild1 extends KotlinImmutableChild1 {}
+
+// FILE: JavaImmutableChild2.java
 class JavaImmutableChild2 extends KotlinImmutableChild2 {}
+
+// FILE: JavaImmutableChild4.java
 class JavaImmutableChild4 extends KotlinImmutableChild4 {}
+
+// FILE: JavaMutableChild1.java
 class JavaMutableChild1 extends KotlinMutableChild1 {}
+
+// FILE: JavaMutableChild6.java
 class JavaMutableChild6 extends KotlinMutableChild6 {}
+
+// FILE: JavaMutableChild8.java
 class JavaMutableChild8 extends KotlinMutableChild8 {}
 
 // FILE: Main.kt

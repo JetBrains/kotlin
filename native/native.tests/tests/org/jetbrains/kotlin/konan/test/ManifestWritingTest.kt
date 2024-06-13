@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.compileLibrary
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
@@ -72,28 +74,33 @@ abstract class ManifestWritingTest : AbstractNativeSimpleTest() {
         val expectedOutput = rootDir.resolve("output.txt")
         KotlinTestUtils.assertEqualsToFile(expectedOutput, compilationResult.toOutput())
 
-        val klibRoot = compilationResult.assertSuccess().resultingArtifact
-        val actualManifest = klibRoot.klibFile.resolve("default/manifest")
-        assert(actualManifest.exists())
-
-        val actualManifestSanitized = sanitizeManifest(Properties().apply { load(actualManifest.reader()) }, targets)
-        val actualManifestSanitizedText = actualManifestSanitized.joinToString(separator = "\n") { (key, value) -> "$key = $value" }
-
-        val expectedManifest = rootDir.resolve("manifest")
-        KotlinTestUtils.assertEqualsToFile(expectedManifest, actualManifestSanitizedText)
+        compareManifests(compilationResult, rootDir.resolve("manifest"))
     }
 
     companion object {
         private val TRANSIENT_MANIFEST_PROPERTIES = listOf(
             KLIB_PROPERTY_ABI_VERSION,
             KLIB_PROPERTY_METADATA_VERSION,
-            KLIB_PROPERTY_LIBRARY_VERSION,
             KLIB_PROPERTY_COMPILER_VERSION,
             KLIB_PROPERTY_IR_SIGNATURE_VERSIONS
         )
 
         private const val SANITIZED_VALUE_STUB = "<value sanitized for test data stability>"
         private const val SANITIZED_TEST_RUN_TARGET = "<test-run-target>"
+
+        internal fun AbstractNativeSimpleTest.compareManifests(
+            compilationResult: TestCompilationResult<out TestCompilationArtifact.KLIB>,
+            expectedManifest: File,
+        ) {
+            val klibRoot = compilationResult.assertSuccess().resultingArtifact
+            val actualManifest = klibRoot.klibFile.resolve("default/manifest")
+            assert(actualManifest.exists())
+
+            val actualManifestSanitized = sanitizeManifest(Properties().apply { load(actualManifest.reader()) }, targets)
+            val actualManifestSanitizedText = actualManifestSanitized.joinToString(separator = "\n") { (key, value) -> "$key = $value" }
+
+            KotlinTestUtils.assertEqualsToFile(expectedManifest, actualManifestSanitizedText)
+        }
 
         private fun sanitizeManifest(original: Properties, testRunTargets: KotlinNativeTargets): List<Pair<String, String>> {
             // intentionally not using Properties as output to guarantee stable order of properties

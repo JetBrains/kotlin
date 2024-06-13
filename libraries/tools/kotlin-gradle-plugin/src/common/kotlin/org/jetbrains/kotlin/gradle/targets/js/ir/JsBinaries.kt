@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
+import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
@@ -64,6 +65,8 @@ sealed class JsIrBinary(
                 linkSyncTaskName
             ) { task ->
                 syncInputConfigure(task)
+
+                task.duplicatesStrategy = DuplicatesStrategy.WARN
 
                 task.from.from(project.tasks.named(compilation.processResourcesTaskName))
 
@@ -249,6 +252,10 @@ open class ExecutableWasm(
                 project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(binaryenExec)
             }
         }
+    }
+
+    val mainOptimizedFile: Provider<RegularFile> = optimizeTask.flatMap {
+        it.outputDirectory.file(mainFileName.get())
     }
 
     private fun optimizeTaskName(): String =

@@ -404,7 +404,7 @@ class IrBodyDeserializer(
     }
 
     private fun deserializeGetValue(proto: ProtoGetValue, start: Int, end: Int, type: IrType): IrGetValue {
-        val symbol = deserializeTypedSymbol<IrValueSymbol>(proto.symbol, fallbackSymbolKind = null, remap = false)
+        val symbol = deserializeTypedSymbol<IrValueSymbol>(proto.symbol, fallbackSymbolKind = null)
         val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
         // TODO: origin!
         return IrGetValueImpl(start, end, type, symbol, origin)
@@ -507,7 +507,7 @@ class IrBodyDeserializer(
     }
 
     private fun deserializeSetValue(proto: ProtoSetValue, start: Int, end: Int): IrSetValue {
-        val symbol = deserializeTypedSymbol<IrValueSymbol>(proto.symbol, fallbackSymbolKind = null, remap = false)
+        val symbol = deserializeTypedSymbol<IrValueSymbol>(proto.symbol, fallbackSymbolKind = null)
         val value = deserializeExpression(proto.value)
         val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
         return IrSetValueImpl(start, end, builtIns.unitType, symbol, value, origin)
@@ -846,9 +846,8 @@ class IrBodyDeserializer(
     private inline fun <reified S : IrSymbol> deserializeTypedSymbol(
         code: Long,
         fallbackSymbolKind: SymbolKind?,
-        remap: Boolean = true
     ): S = with(declarationDeserializer) {
-        val symbol = if (remap) deserializeIrSymbolAndRemap(code) else deserializeIrSymbol(code)
+        val symbol = deserializeIrSymbol(code)
         symbol.checkSymbolType(fallbackSymbolKind)
     }
 
@@ -856,7 +855,7 @@ class IrBodyDeserializer(
         condition: Boolean,
         fallbackSymbolKind: SymbolKind?,
         code: () -> Long
-    ): S? = if (condition) deserializeTypedSymbol(code(), fallbackSymbolKind, remap = true) else null
+    ): S? = if (condition) deserializeTypedSymbol(code(), fallbackSymbolKind) else null
 
     private companion object {
         private val statementOriginIndex = IrStatementOrigin.Companion::class

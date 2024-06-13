@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +JsAllowInvalidCharsIdentifiersEscaping
+// LANGUAGE: +JsAllowInvalidCharsIdentifiersEscaping
 
 // FILE: slashes.kt
 package a.`//`.b.`/`.c

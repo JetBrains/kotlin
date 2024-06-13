@@ -2,7 +2,7 @@
 // IGNORE_BACKEND_K1: JVM_IR
 // ISSUE: KT-28668
 
-// FILE: ZipZap.java
+// FILE: test/ZipZap.java
 package test;
 
 public class ZipZap {

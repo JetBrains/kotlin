@@ -1,5 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNCHECKED_CAST -USELESS_CAST
-// !LANGUAGE: +ProhibitNonReifiedArraysAsReifiedTypeArguments
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNCHECKED_CAST -USELESS_CAST
+// LANGUAGE: +ProhibitNonReifiedArraysAsReifiedTypeArguments
 class A<T>
 class C<T, G>
 class D<T>

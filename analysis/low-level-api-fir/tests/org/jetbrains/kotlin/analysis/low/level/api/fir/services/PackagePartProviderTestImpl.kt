@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.services
 
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.providers.PackagePartProviderFactory
+import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackagePartProviderFactory
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.deserialization.ClassData
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 
 internal class PackagePartProviderTestImpl(
     private val testServices: TestServices,
-) : PackagePartProviderFactory() {
+) : KotlinPackagePartProviderFactory() {
     override fun createPackagePartProvider(scope: GlobalSearchScope): PackagePartProvider {
         val providers = testServices.moduleStructure.modules.map { module ->
             testServices.compilerConfigurationProvider.getPackagePartProviderFactory(module)(scope)

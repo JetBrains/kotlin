@@ -1,6 +1,6 @@
 FILE: hashMapTypeAlias.kt
-    public final typealias MyT<X> = R|kotlin/collections/HashMap<X, kotlin/Int>|
-    public final fun <X> R|MyT<X>|.add(x: R|X|, y: R|kotlin/Int|): R|kotlin/Unit| {
+    public final typealias MyT<X> = R|{kotlin/collections/HashMap<X, kotlin/Int>=} java/util/HashMap<X, kotlin/Int>|
+    public final fun <X> R|{MyT<X>=} java/util/HashMap<X, kotlin/Int>|.add(x: R|X|, y: R|kotlin/Int|): R|kotlin/Unit| {
     }
     public final fun main(): R|kotlin/Unit| {
         R|java/util/HashMap.HashMap|<R|kotlin/String|>().R|kotlin/apply|<R|java/util/HashMap<kotlin/String, kotlin/Int>|>(<L> = apply@fun R|java/util/HashMap<kotlin/String, kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {

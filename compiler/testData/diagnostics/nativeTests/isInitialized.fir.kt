@@ -1,5 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -NOTHING_TO_INLINE
-// !LANGUAGE: -NativeJsProhibitLateinitIsInitializedIntrinsicWithoutPrivateAccess
+// DIAGNOSTICS: -UNUSED_VARIABLE -NOTHING_TO_INLINE
+// LANGUAGE: -NativeJsProhibitLateinitIsInitializedIntrinsicWithoutPrivateAccess
 // FILE: stdlibInternal.kt
 
 package kotlin.internal

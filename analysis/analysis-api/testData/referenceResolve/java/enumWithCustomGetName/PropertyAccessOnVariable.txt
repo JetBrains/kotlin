@@ -1,2 +1,0 @@
-Resolved to:
-0: (in kotlin.Enum) val name: kotlin.String

@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -PARAMETER_NAME_CHANGED_ON_OVERRIDE
+// DIAGNOSTICS: -UNUSED_PARAMETER -PARAMETER_NAME_CHANGED_ON_OVERRIDE
 // FILE: A.java
 abstract public class A implements java.util.Collection<String> {
     public boolean contains(Object x) {return false;}

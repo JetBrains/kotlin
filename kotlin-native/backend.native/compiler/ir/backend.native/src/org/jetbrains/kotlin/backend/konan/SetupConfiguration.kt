@@ -41,7 +41,8 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     arguments.moduleName?.let { put(MODULE_NAME, it) }
 
     // TODO: allow overriding the prefix directly.
-    arguments.moduleName?.let { put(FULL_EXPORTED_NAME_PREFIX, it) }
+    // With Swift Export, exported prefix must be Kotlin.
+    ("Kotlin".takeIf { get(BinaryOptions.swiftExport) == true } ?: arguments.moduleName)?.let { put(FULL_EXPORTED_NAME_PREFIX, it) }
 
     arguments.target?.let { put(TARGET, it) }
 
@@ -66,8 +67,6 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
             (arguments.produce ?: "program").uppercase())
     put(PRODUCE, outputKind)
     putIfNotNull(HEADER_KLIB, arguments.headerKlibPath)
-
-    arguments.libraryVersion?.let { put(LIBRARY_VERSION, it) }
 
     arguments.mainPackage?.let { put(ENTRY, it) }
     arguments.manifestFile?.let { put(MANIFEST_FILE, it) }
@@ -119,16 +118,6 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
 
     if (arguments.verifyCompiler != null)
         put(VERIFY_COMPILER, arguments.verifyCompiler == "true")
-    put(VERIFY_IR, when (arguments.verifyIr) {
-        null -> IrVerificationMode.NONE
-        "none" -> IrVerificationMode.NONE
-        "warning" -> IrVerificationMode.WARNING
-        "error" -> IrVerificationMode.ERROR
-        else -> {
-            report(ERROR, "Unsupported IR verification mode ${arguments.verifyIr}")
-            IrVerificationMode.NONE
-        }
-    })
     put(VERIFY_BITCODE, arguments.verifyBitCode)
 
     put(ENABLE_ASSERTIONS, arguments.enableAssertions)

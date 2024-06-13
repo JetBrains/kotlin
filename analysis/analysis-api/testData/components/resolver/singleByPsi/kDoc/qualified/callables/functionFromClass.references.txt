@@ -1,0 +1,3 @@
+KDocName(40,47): 'Foo.foo'
+  KDocReference:
+    (in Foo) fun foo()

@@ -1,3 +1,0 @@
-fun c() {
-    println("c")
-}

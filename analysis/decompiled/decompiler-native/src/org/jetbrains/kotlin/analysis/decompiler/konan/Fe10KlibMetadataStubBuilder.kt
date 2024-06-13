@@ -30,7 +30,15 @@ internal open class Fe10KlibMetadataStubBuilder(
     private val renderer: DescriptorRenderer = DescriptorRenderer.withOptions { defaultDecompilerRendererOptions() }
 
     override fun buildMetadataFileStub(fileWithMetadata: FileWithMetadata.Compatible, fileContent: FileContent): PsiFileStub<*> {
-        val ktFileText = decompiledText(fileWithMetadata, serializerProtocol(), DynamicTypeDeserializer, renderer)
+        val ktFileText = decompiledText(
+            fileWithMetadata,
+            fileContent.file,
+            serializerProtocol(),
+            readFile,
+            DynamicTypeDeserializer,
+            renderer
+        )
+
         return createFileStub(fileContent.project, ktFileText.text)
     }
 

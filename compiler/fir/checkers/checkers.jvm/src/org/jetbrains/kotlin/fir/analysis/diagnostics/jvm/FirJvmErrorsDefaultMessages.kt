@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INAPPLICAB
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INLINE_FROM_HIGHER_PLATFORM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INNER_JVM_RECORD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JAVA_MODULE_DOES_NOT_READ_UNNAMED_MODULE
@@ -99,7 +100,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.WRONG_NULL
 
 object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
-    override val MAP = KtDiagnosticFactoryToRendererMap("FIR").also { map ->
+    override val MAP: KtDiagnosticFactoryToRendererMap = KtDiagnosticFactoryToRendererMap("FIR").also { map ->
         map.put(JAVA_TYPE_MISMATCH, "Java type mismatch: expected ''{0}'' but found ''{1}''. Use explicit cast.", RENDER_TYPE, RENDER_TYPE)
 
         map.put(
@@ -354,6 +355,14 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
                     "Consider replacing this property access with a ''{1}()'' function call.",
             SYMBOL,
             NAME
+        )
+
+        map.put(
+            JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY,
+            "This variable access is resolved to Java field, but it is clashed with Kotlin property ''{0}'' with backing field " +
+                    "which leads to the incorrect bytecode generation and failure at runtime. So such calls are prohibited until " +
+                    "corresponding bug will be fixed. See https://youtrack.jetbrains.com/issue/KT-56386 for more details",
+            SYMBOL
         )
     }
 }

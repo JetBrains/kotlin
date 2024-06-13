@@ -15,10 +15,8 @@ import org.jetbrains.kotlin.ir.expressions.IrSpreadElement
 import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
 class IrSpreadElementImpl internal constructor(
-    @Suppress("UNUSED_PARAMETER")
-    constructorIndicator: IrElementConstructorIndicator?,
+    @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
     override val startOffset: Int,
     override val endOffset: Int,
     override var expression: IrExpression,
-) : IrSpreadElement() {
-}
+) : IrSpreadElement()

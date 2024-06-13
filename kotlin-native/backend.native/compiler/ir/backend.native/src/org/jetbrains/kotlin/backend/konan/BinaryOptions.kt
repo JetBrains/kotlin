@@ -84,6 +84,10 @@ object BinaryOptions : BinaryOptionRegistry() {
     val cInterfaceMode by option<CInterfaceGenerationMode>()
 
     val globalDataLazyInit by booleanOption()
+
+    val swiftExport by booleanOption()
+
+    val genericSafeCasts by booleanOption()
 }
 
 open class BinaryOption<T : Any>(

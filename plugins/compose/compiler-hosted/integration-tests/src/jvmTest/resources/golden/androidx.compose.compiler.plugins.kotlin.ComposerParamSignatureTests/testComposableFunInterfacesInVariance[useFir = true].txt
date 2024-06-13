@@ -1,0 +1,47 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+ fun interface Consumer<T> {
+     @Composable fun consume(t: T)
+ }
+
+ class Repro<T : Any>() {
+     fun test(consumer: Consumer<in T>) {}
+ }
+
+ fun test() {
+     Repro<String>().test { string ->
+         println(string)
+     }
+ }
+
+//
+// Transformed IR
+// ------------------------------------------
+
+public abstract interface Consumer {
+  public abstract consume(Ljava/lang/Object;Landroidx/compose/runtime/Composer;I)V
+}
+public final class Repro {
+  public <init>()V
+  public final test(LConsumer;)V
+  static <clinit>()V
+  public final static I %stable
+}
+public final class TestKt {
+  public final static test()V
+  final static INNERCLASS TestKt%test%1 null null
+}
+final class TestKt%test%1 implements Consumer {
+  <init>()V
+  public final consume(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
+  private final static consume%lambda%0(LTestKt%test%1;Ljava/lang/String;ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  public synthetic bridge consume(Ljava/lang/Object;Landroidx/compose/runtime/Composer;I)V
+  static <clinit>()V
+  public final static LTestKt%test%1; INSTANCE
+  OUTERCLASS TestKt test ()V
+  final static INNERCLASS TestKt%test%1 null null
+}

@@ -20,7 +20,7 @@ FILE fqName:<root> fileName:/thisInEnumConstructor.kt
         EXPRESSION_BODY
           CALL 'public final fun lowercase (): kotlin.String declared in kotlin.text' type=kotlin.String origin=null
             $receiver: CALL 'public open fun toString (): kotlin.String declared in kotlin.Enum.Companion' type=kotlin.String origin=null
-              $this: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=kotlin.Enum.Companion
+              $this: GET_OBJECT 'CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=kotlin.Enum.Companion
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) declared in kotlin.Enum'
           <E>: <root>.EE

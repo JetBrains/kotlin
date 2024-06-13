@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] delegatedFieldNestedNameClashScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatedFieldNestedNameClashScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
@@ -27,8 +27,8 @@ FILE: [ResolvedTo(RAW_FIR)] delegatedFieldNestedNameClashScript.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatedFieldNestedNameClashScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
@@ -54,8 +54,8 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatedFieldNestedNameClashScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
@@ -81,8 +81,8 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatedFieldNestedNameClashScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
@@ -108,8 +108,8 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatedFieldNestedNameClashScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(SUPER_TYPES)] interface Base : R|kotlin/Any| {
@@ -135,8 +135,8 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatedFieldNestedNameClashScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(SUPER_TYPES)] interface Base : R|kotlin/Any| {
@@ -162,8 +162,8 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatedFieldNestedNameClashScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
@@ -189,8 +189,8 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatedFieldNestedNameClashScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
@@ -216,8 +216,8 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-delegatedFieldNestedNameClashScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
@@ -243,8 +243,8 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-delegatedFieldNestedNameClashScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
@@ -270,8 +270,8 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-delegatedFieldNestedNameClashScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
@@ -297,8 +297,8 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-delegatedFieldNestedNameClashScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
@@ -324,8 +324,8 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-delegatedFieldNestedNameClashScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
@@ -351,8 +351,8 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] delegatedFieldNestedNameClashScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-delegatedFieldNestedNameClashScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(BODY_RESOLVE)] interface Base : R|kotlin/Any| {
@@ -375,3 +375,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegatedFieldNestedNameClashScript.kts
             }
 
         }
+

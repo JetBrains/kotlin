@@ -6,16 +6,16 @@ Substitutor:
 <map substitutor: {A = kotlin/Int, B = kotlin/Long, C = kotlin/collections/List<kotlin/String>}>
 
 Signature after substitution:
-KtFunctionLikeSignature:
+KaFunctionLikeSignature:
   receiverType = kotlin.Int
   returnType = kotlin.collections.List<kotlin.String>
   symbol = /fooo(<extension receiver>: A, x: kotlin.collections.List<B>): C
   valueParameters = [
-    KtVariableLikeSignature:
+    KaVariableLikeSignature:
       name = x
       receiverType = null
       returnType = kotlin.collections.List<kotlin.Long>
       symbol = x: kotlin.collections.List<B>
-      callableIdIfNonLocal = null
+      callableId = null
   ]
-  callableIdIfNonLocal = /fooo
+  callableId = /fooo

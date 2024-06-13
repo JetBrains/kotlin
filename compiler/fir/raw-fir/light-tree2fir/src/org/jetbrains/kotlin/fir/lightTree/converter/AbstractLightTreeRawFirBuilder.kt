@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilder
 import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.fir.builder.escapedStringToCharacter
+import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
@@ -27,7 +28,7 @@ abstract class AbstractLightTreeRawFirBuilder(
     val tree: FlyweightCapableTreeStructure<LighterASTNode>,
     context: Context<LighterASTNode> = Context()
 ) : AbstractRawFirBuilder<LighterASTNode>(baseSession, context) {
-    protected val implicitType = FirImplicitTypeRefImplWithoutSource
+    protected val implicitType: FirImplicitTypeRef = FirImplicitTypeRefImplWithoutSource
 
     override fun LighterASTNode.toFirSourceElement(kind: KtFakeSourceElementKind?): KtLightSourceElement {
         val startOffset = tree.getStartOffset(this)
@@ -167,7 +168,11 @@ abstract class AbstractLightTreeRawFirBuilder(
         for (kid in kidsArray) {
             if (kid == null) break
             val tokenType = kid.tokenType
-            if (COMMENTS.contains(tokenType) || tokenType == WHITE_SPACE || tokenType == SEMICOLON || tokenType in skipTokens || tokenType == TokenType.ERROR_ELEMENT) continue
+            if (COMMENTS.contains(tokenType) || tokenType == WHITE_SPACE || tokenType == SEMICOLON || tokenType in skipTokens ||
+                tokenType == TokenType.ERROR_ELEMENT || tokenType == TokenType.BAD_CHARACTER
+            ) {
+                continue
+            }
             f(kid)
         }
     }

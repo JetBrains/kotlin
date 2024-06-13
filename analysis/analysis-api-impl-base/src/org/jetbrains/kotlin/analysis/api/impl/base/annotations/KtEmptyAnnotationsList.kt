@@ -5,28 +5,33 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.annotations
 
-import org.jetbrains.kotlin.analysis.api.annotations.AnnotationUseSiteTargetFilter
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationInfo
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.name.ClassId
+import java.util.Collections
 
-class KtEmptyAnnotationsList(override val token: KtLifetimeToken) : KtAnnotationsList() {
-    override val annotations: List<KtAnnotationApplicationWithArgumentsInfo> get() = withValidityAssertion { emptyList() }
+class KaEmptyAnnotationList(override val token: KaLifetimeToken) : AbstractList<KaAnnotation>(), KaAnnotationList {
+    override val size: Int
+        get() = withValidityAssertion { 0 }
 
-    override val annotationInfos: List<KtAnnotationApplicationInfo> get() = withValidityAssertion { emptyList() }
+    override fun iterator(): Iterator<KaAnnotation> = withValidityAssertion {
+        return Collections.emptyIterator()
+    }
 
-    override fun hasAnnotation(
-        classId: ClassId,
-        useSiteTargetFilter: AnnotationUseSiteTargetFilter,
-    ): Boolean = withValidityAssertion { false }
+    override fun get(index: Int): KaAnnotation = withValidityAssertion {
+        throw IndexOutOfBoundsException("Index $index out of bounds")
+    }
 
-    override fun annotationsByClassId(
-        classId: ClassId,
-        useSiteTargetFilter: AnnotationUseSiteTargetFilter,
-    ): List<KtAnnotationApplicationWithArgumentsInfo> = withValidityAssertion { emptyList() }
+    override fun contains(classId: ClassId): Boolean = withValidityAssertion {
+        return false
+    }
 
-    override val annotationClassIds: Collection<ClassId> get() = withValidityAssertion { emptyList() }
+    override fun get(classId: ClassId): List<KaAnnotation> = withValidityAssertion {
+        return emptyList()
+    }
+
+    override val classIds: Set<ClassId>
+        get() = withValidityAssertion { emptySet() }
 }

@@ -69,16 +69,19 @@ data class MethodBridge(
     val paramBridges: List<MethodBridgeParameter> =
         listOf(receiver) + MethodBridgeSelector + valueParameters
 
-    // TODO: it is not exactly true in potential future cases.
     val isInstance: Boolean
-        get() = when (receiver) {
-            MethodBridgeReceiver.Static,
-            MethodBridgeReceiver.Factory,
-            -> false
-
-            MethodBridgeReceiver.Instance -> true
-        }
+        get() = receiver.isInstance
 
     val returnsError: Boolean
         get() = returnBridge is ReturnValue.WithError
 }
+
+// TODO: it is not exactly true in potential future cases.
+val MethodBridgeReceiver.isInstance: Boolean
+    get() = when (this) {
+        MethodBridgeReceiver.Static,
+        MethodBridgeReceiver.Factory,
+        -> false
+
+        MethodBridgeReceiver.Instance -> true
+    }

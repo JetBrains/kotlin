@@ -22,13 +22,15 @@ val intellijVersion = rootProject.extra["versions.intellijSdk"]
 dependencies {
     api("com.jetbrains.intellij.platform:util-rt:$intellijVersion") { isTransitive = false }
     api("com.jetbrains.intellij.platform:util-class-loader:$intellijVersion") { isTransitive = false }
-    api("com.jetbrains.intellij.platform:util-text-matching:$intellijVersion") { isTransitive = false }
     api("com.jetbrains.intellij.platform:util:$intellijVersion") { isTransitive = false }
     api("com.jetbrains.intellij.platform:util-base:$intellijVersion") { isTransitive = false }
     api("com.jetbrains.intellij.platform:util-xml-dom:$intellijVersion") { isTransitive = false }
     api("com.jetbrains.intellij.platform:core:$intellijVersion") { isTransitive = false }
     api("com.jetbrains.intellij.platform:core-impl:$intellijVersion") { isTransitive = false }
     api("com.jetbrains.intellij.platform:extensions:$intellijVersion") { isTransitive = false }
+    api("com.jetbrains.intellij.java:java-frontback-psi:$intellijVersion") { isTransitive = false }
+    api("com.jetbrains.intellij.java:java-frontback-psi-impl:$intellijVersion") { isTransitive = false }
     api("com.jetbrains.intellij.java:java-psi:$intellijVersion") { isTransitive = false }
     api("com.jetbrains.intellij.java:java-psi-impl:$intellijVersion") { isTransitive = false }
+    runtimeOnly("com.jetbrains.intellij.platform:diagnostic:$intellijVersion") { isTransitive = false }
 }

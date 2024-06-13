@@ -1,7 +1,8 @@
 // TARGET_BACKEND: JVM
-// IGNORE_LIGHT_ANALYSIS
 // WITH_STDLIB
-// FILE: Bar.java
+
+// FILE: one/two/Bar.java
+
 package one.two;
 
 public class Bar {
@@ -13,7 +14,9 @@ public class Bar {
 }
 
 // FILE: Main.kt
+
 @file:JvmName(<!EVALUATED("OtherKt")!>"OtherKt"<!>)
+
 package one.two
 
 const val FOO = <!EVALUATED("1")!>1<!>

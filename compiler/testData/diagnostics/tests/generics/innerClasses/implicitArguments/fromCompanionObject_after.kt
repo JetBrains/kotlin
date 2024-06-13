@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// LANGUAGE: +ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 open class Outer<E> {
     inner class Inner<F>
 

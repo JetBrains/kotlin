@@ -10,12 +10,11 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.NoTestRunnerExt
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestName
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TCTestOutputFilter
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestOutputFilter
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.utils.addIfNotNull
 import kotlin.test.assertIs
 
-internal open class BaseTestRunProvider {
+open class BaseTestRunProvider {
     protected fun createTestRun(testCase: TestCase, executable: TestExecutable, testRunName: String, testName: TestName?): TestRun {
         val runParameters = getTestRunParameters(testCase, testName)
         return TestRun(displayName = testRunName, executable, runParameters, testCase, testCase.checks, testCase.expectedFailure)

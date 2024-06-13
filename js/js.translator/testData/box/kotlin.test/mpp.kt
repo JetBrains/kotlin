@@ -1,10 +1,13 @@
 // EXPECTED_REACHABLE_NODES: 1697
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 // TARGET_FRONTEND: ClassicFrontend
 // FIR status: expect/actual in one module
 // KJS_WITH_FULL_RUNTIME
 // SKIP_DCE_DRIVEN
 // RUN_UNIT_TESTS
+
+// DISABLE_IR_VISIBILITY_CHECKS: ANY
+// ^ @Suppress("INVISIBLE_MEMBER") in _common.kt
 
 // FILE: lib.kt
 import kotlin.test.Test

@@ -36,7 +36,8 @@ inline fun <reified E : Exception> assertThrows(
  * Asserts that the specified code block does not throw any exception.
  *
  * @param message The message to be included in the AssertionError if an exception is thrown.
- * It can contain the "{}" placeholder, which will be replaced with the thrown exception.
+ * Message is a Java's [java.lang.String.format] string.
+ * It can contain the "%s" placeholder, which will be replaced with the thrown exception.
  * @param body The code block to be executed.
  *
  * @return The result of executing the code block.
@@ -44,13 +45,29 @@ inline fun <reified E : Exception> assertThrows(
  * @throws AssertionError If the code block throws an exception.
  */
 fun <R> assertDoesNotThrow(
-    message: String = "Expected no exception, but {} was thrown",
+    message: String = "Expected no exception, but %s was thrown",
+    body: () -> R,
+): R = assertDoesNotThrow({ message.format(it) }, body)
+
+/**
+ * A replacement for the JUnit Jupiter function to be used in JUnit 4 tests.
+ *
+ * Asserts that the specified code block does not throw any exception.
+ *
+ * @param messageBuilder accepts thrown exception as an argument and should return AssertionError message.
+ * @param body The code block to be executed.
+ *
+ * @return The result of executing the code block.
+ *
+ * @throws AssertionError If the code block throws an exception.
+ */
+fun <R> assertDoesNotThrow(
+    messageBuilder: (Throwable) -> String,
     body: () -> R,
 ): R {
     try {
         return body()
     } catch (e: Throwable) {
-        throw AssertionError(message.format(e))
+        throw AssertionError(messageBuilder(e), e)
     }
 }
-

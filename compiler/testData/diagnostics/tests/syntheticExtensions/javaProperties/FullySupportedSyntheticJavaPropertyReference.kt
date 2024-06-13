@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +ReferencesToSyntheticJavaProperties
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// LANGUAGE: +ReferencesToSyntheticJavaProperties
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 // FILE: KotlinFile.kt
 

@@ -13,11 +13,11 @@ public extension Swift.Int32 {
     }
     public var my_variable1: Swift.Bool {
         get {
-            fatalError()
+            stub()
         }
     }
     public func foo() -> Swift.Bool {
-        fatalError()
+        stub()
     }
 }
 public extension Test.my_enum {

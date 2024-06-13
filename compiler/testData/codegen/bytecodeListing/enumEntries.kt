@@ -1,4 +1,4 @@
-// !LANGUAGE: +EnumEntries
+// LANGUAGE: +EnumEntries
 // TARGET_BACKEND: JVM_IR
 // FULL_JDK
 // WITH_STDLIB

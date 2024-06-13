@@ -248,7 +248,9 @@ object NewCommonSuperTypeCalculator {
 
     private fun TypeSystemCommonSuperTypesContext.isCapturedTypeVariable(type: SimpleTypeMarker): Boolean {
         val projectedType =
-            type.asCapturedType()?.typeConstructor()?.projection()?.takeUnless { it.isStarProjection() }?.getType() ?: return false
+            type.originalIfDefinitelyNotNullable().asCapturedType()?.typeConstructor()?.projection()?.takeUnless {
+                it.isStarProjection()
+            }?.getType() ?: return false
         return projectedType.asSimpleType()?.isStubTypeForVariableInSubtyping() == true
     }
 
@@ -378,7 +380,7 @@ object NewCommonSuperTypeCalculator {
     }
 
     private fun TypeSystemCommonSuperTypesContext.uncaptureFromSubtyping(typeArgument: TypeArgumentMarker): TypeArgumentMarker {
-        val capturedType = typeArgument.getType().asSimpleType()?.asCapturedType() ?: return typeArgument
+        val capturedType = typeArgument.getType().asSimpleType()?.originalIfDefinitelyNotNullable()?.asCapturedType() ?: return typeArgument
         if (capturedType.captureStatus() != CaptureStatus.FOR_SUBTYPING) return typeArgument
 
         return capturedType.typeConstructor().projection()

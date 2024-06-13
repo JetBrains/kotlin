@@ -5,23 +5,29 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisNonPublicApi
+import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.psi.KtDeclaration
 
-@KtAnalysisNonPublicApi
-public abstract class KtKlibSourceFileNameProvider : KtAnalysisSessionComponent() {
-    public abstract fun getKlibSourceFileName(declaration: KtDeclarationSymbol): String?
+@KaAnalysisNonPublicApi
+public abstract class KaKlibSourceFileNameProvider : KaSessionComponent() {
+    public abstract fun getKlibSourceFileName(declaration: KaDeclarationSymbol): String?
 }
 
-@KtAnalysisNonPublicApi
-public interface KtKlibSourceFileProviderMixIn : KtAnalysisSessionMixIn {
+@KaAnalysisNonPublicApi
+public typealias KtKlibSourceFileNameProvider = KaKlibSourceFileNameProvider
+
+@KaAnalysisNonPublicApi
+public interface KaKlibSourceFileProviderMixIn : KaSessionMixIn {
     /**
      * If [KtDeclaration] is a deserialized, klib based symbol, then information about the original
      * [SourceFile] might be retained.
      */
-    public fun KtDeclarationSymbol.getKlibSourceFileName(): String? =
+    public fun KaDeclarationSymbol.getKlibSourceFileName(): String? =
         withValidityAssertion { analysisSession.klibSourceFileProvider.getKlibSourceFileName(this) }
 }
+
+@KaAnalysisNonPublicApi
+public typealias KtKlibSourceFileProviderMixIn = KaKlibSourceFileProviderMixIn

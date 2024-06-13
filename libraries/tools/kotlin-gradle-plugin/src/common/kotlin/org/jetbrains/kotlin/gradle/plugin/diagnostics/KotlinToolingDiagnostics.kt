@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.PRESETS_DEPRECATION_MESSAGE_SUFFIX
-import org.jetbrains.kotlin.gradle.dsl.KotlinSourceSetConvention.isRegisteredByKotlinSourceSetConventionAt
+import org.jetbrains.kotlin.gradle.dsl.KotlinSourceSetConvention.isAccessedByKotlinSourceSetConventionAt
 import org.jetbrains.kotlin.gradle.dsl.NativeTargetShortcutTrace
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
@@ -387,20 +387,29 @@ object KotlinToolingDiagnostics {
         )
     }
 
-    object JsEnvironmentNotChosenExplicitly : ToolingDiagnosticFactory(WARNING) {
+    abstract class JsLikeEnvironmentNotChosenExplicitly(
+        private val environmentName: String,
+        private val targetType: String
+    ) : ToolingDiagnosticFactory(WARNING) {
         operator fun invoke(availableEnvironments: List<String>) = build(
             """
-                |Please choose a JavaScript environment to build distributions and run tests.
+                |Please choose a $environmentName environment to build distributions and run tests.
                 |Not choosing any of them will be an error in the future releases.
                 |kotlin {
-                |    js {
-                |        // To build distributions for and run tests on browser or Node.js use one or both of:
+                |    $targetType {
+                |        // To build distributions for and run tests use one or several of:
                 |        ${availableEnvironments.joinToString(separator = "\n        ")}
                 |    }
                 |}
             """.trimMargin()
         )
     }
+
+    object JsEnvironmentNotChosenExplicitly : JsLikeEnvironmentNotChosenExplicitly("JavaScript", "js")
+
+    object WasmJsEnvironmentNotChosenExplicitly : JsLikeEnvironmentNotChosenExplicitly("WebAssembly-JavaScript", "wasmJs")
+
+    object WasmWasiEnvironmentNotChosenExplicitly : JsLikeEnvironmentNotChosenExplicitly("WebAssembly WASI", "wasmWasi")
 
     object PreHmppDependenciesUsedInBuild : ToolingDiagnosticFactory(WARNING) {
         operator fun invoke(dependencyName: String) = build(
@@ -469,7 +478,7 @@ object KotlinToolingDiagnostics {
                 |       $expectedTargetName()
                 |   }
             """.trimMargin(),
-            throwable = sourceSet.isRegisteredByKotlinSourceSetConventionAt
+            throwable = sourceSet.isAccessedByKotlinSourceSetConventionAt
         )
     }
 
@@ -485,7 +494,7 @@ object KotlinToolingDiagnostics {
                  |      }
                  |  }
                 """.trimMargin(),
-            throwable = sourceSet.isRegisteredByKotlinSourceSetConventionAt
+            throwable = sourceSet.isAccessedByKotlinSourceSetConventionAt
         )
     }
 
@@ -510,7 +519,7 @@ object KotlinToolingDiagnostics {
                 |        androidTarget() /* <- register the androidTarget */
                 |    }
             """.trimMargin(),
-            throwable = sourceSet.isRegisteredByKotlinSourceSetConventionAt
+            throwable = sourceSet.isAccessedByKotlinSourceSetConventionAt
         )
     }
 
@@ -530,7 +539,7 @@ object KotlinToolingDiagnostics {
                 |     }
                 |  }
             """.trimMargin(),
-            throwable = sourceSet.isRegisteredByKotlinSourceSetConventionAt
+            throwable = sourceSet.isAccessedByKotlinSourceSetConventionAt
         )
     }
 
@@ -959,6 +968,14 @@ object KotlinToolingDiagnostics {
             build(
                 "The Kotlin/Native distribution ($kotlinNativeHomePropertyValue) used in this build does not provide required subdirectories." +
                         " Make sure that the '$kotlinNativeHomeProperty' property points to a valid Kotlin/Native distribution.",
+            )
+    }
+
+    object NoComposeCompilerPluginAppliedWarning : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(): ToolingDiagnostic =
+            build(
+                "The Compose compiler plugin is now a part of Kotlin, please apply the 'org.jetbrains.kotlin.plugin.compose' Gradle plugin " +
+                        "to enable it. Learn more about this at https://kotl.in/compose-plugin"
             )
     }
 }

@@ -78,7 +78,7 @@ public class KtSourceModuleBuilder(
                     else -> emptyList()
                 }
                 for (file in files) {
-                    val virtualFile = localFileSystem.findFileByIoFile(file.toFile()) ?: continue
+                    val virtualFile = localFileSystem.findFileByNioFile(file.toAbsolutePath()) ?: continue
                     add(virtualFile)
                 }
             }

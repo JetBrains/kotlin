@@ -10,7 +10,7 @@ import com.intellij.psi.PsiClassOwner
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-public val PsiClass.classIdIfNonLocal: ClassId?
+public val PsiClass.classId: ClassId?
     get() {
         val packageName = (containingFile as? PsiClassOwner)?.packageName ?: return null
         val qualifiedName = qualifiedName ?: return null

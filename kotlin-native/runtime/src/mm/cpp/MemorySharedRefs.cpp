@@ -7,6 +7,7 @@
 
 #include <shared_mutex>
 
+#include "ExternalRCRef.hpp"
 #include "ObjCBackRef.hpp"
 #include "StableRef.hpp"
 
@@ -57,6 +58,16 @@ void BackRefFromAssociatedObject::initAndAddRef(ObjHeader* obj) {
     deallocMutex_.construct();
 }
 
+bool BackRefFromAssociatedObject::initWithExternalRCRef(void* ref) noexcept {
+    if (auto obj = mm::externalRCRefAsPermanentObject(ref)) {
+        permanentObj_ = obj;
+        return true;
+    }
+    ref_ = static_cast<mm::RawSpecialRef*>(ref);
+    deallocMutex_.construct();
+    return false;
+}
+
 template <ErrorPolicy errorPolicy>
 void BackRefFromAssociatedObject::addRef() {
     mm::ObjCBackRef::reinterpret(ref_).retain();
@@ -74,6 +85,7 @@ bool BackRefFromAssociatedObject::tryAddRef() {
         // cannot possibly retain.
         return false;
     }
+    CalledFromNativeGuard threadStateGuard;
     return mm::ObjCBackRef::reinterpret(ref_).tryRetain();
 }
 
@@ -105,4 +117,11 @@ template ObjHeader* BackRefFromAssociatedObject::ref<ErrorPolicy::kTerminate>() 
 
 ObjHeader* BackRefFromAssociatedObject::refPermanent() const {
     return permanentObj_;
+}
+
+void* BackRefFromAssociatedObject::externalRCRef(bool permanent) const noexcept {
+    if (permanent) {
+        return mm::permanentObjectAsExternalRCRef(permanentObj_);
+    }
+    return ref_;
 }

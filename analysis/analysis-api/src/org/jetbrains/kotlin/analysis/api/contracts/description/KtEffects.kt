@@ -6,85 +6,91 @@
 package org.jetbrains.kotlin.analysis.api.contracts.description
 
 import com.google.common.base.Objects
-import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KtContractBooleanExpression
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContractBooleanExpression
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 
 /**
  * Represents [kotlin.contracts.Effect].
  */
-public sealed interface KtContractEffectDeclaration : KtLifetimeOwner
+public sealed interface KaContractEffectDeclaration : KaLifetimeOwner
+
+public typealias KtContractEffectDeclaration = KaContractEffectDeclaration
 
 /**
  * Represents [kotlin.contracts.ContractBuilder.callsInPlace].
  */
-public class KtContractCallsInPlaceContractEffectDeclaration(
-    private val backingValueParameterReference: KtContractParameterValue,
+public class KaContractCallsInPlaceContractEffectDeclaration(
+    private val backingValueParameterReference: KaContractParameterValue,
     private val backingOccurrencesRange: EventOccurrencesRange,
-) : KtContractEffectDeclaration {
-    override val token: KtLifetimeToken get() = backingValueParameterReference.token
+) : KaContractEffectDeclaration {
+    override val token: KaLifetimeToken get() = backingValueParameterReference.token
 
-    public val valueParameterReference: KtContractParameterValue get() = withValidityAssertion { backingValueParameterReference }
+    public val valueParameterReference: KaContractParameterValue get() = withValidityAssertion { backingValueParameterReference }
     public val occurrencesRange: EventOccurrencesRange get() = withValidityAssertion { backingOccurrencesRange }
 
     override fun hashCode(): Int = Objects.hashCode(backingValueParameterReference, backingOccurrencesRange)
     override fun equals(other: Any?): Boolean {
         return this === other ||
-                other is KtContractCallsInPlaceContractEffectDeclaration &&
+                other is KaContractCallsInPlaceContractEffectDeclaration &&
                 other.backingValueParameterReference == backingValueParameterReference &&
                 other.backingOccurrencesRange == backingOccurrencesRange
     }
 }
 
+public typealias KtContractCallsInPlaceContractEffectDeclaration = KaContractCallsInPlaceContractEffectDeclaration
+
 /**
  * Represents [kotlin.contracts.SimpleEffect.implies].
  */
-public class KtContractConditionalContractEffectDeclaration(
-    private val backingEffect: KtContractEffectDeclaration,
-    private val backingCondition: KtContractBooleanExpression
-) : KtContractEffectDeclaration {
-    override val token: KtLifetimeToken get() = backingEffect.token
+public class KaContractConditionalContractEffectDeclaration(
+    private val backingEffect: KaContractEffectDeclaration,
+    private val backingCondition: KaContractBooleanExpression
+) : KaContractEffectDeclaration {
+    override val token: KaLifetimeToken get() = backingEffect.token
 
-    public val effect: KtContractEffectDeclaration get() = withValidityAssertion { backingEffect }
-    public val condition: KtContractBooleanExpression get() = withValidityAssertion { backingCondition }
+    public val effect: KaContractEffectDeclaration get() = withValidityAssertion { backingEffect }
+    public val condition: KaContractBooleanExpression get() = withValidityAssertion { backingCondition }
 
     override fun hashCode(): Int = Objects.hashCode(backingEffect, backingCondition)
     override fun equals(other: Any?): Boolean {
         return this === other ||
-                other is KtContractConditionalContractEffectDeclaration &&
+                other is KaContractConditionalContractEffectDeclaration &&
                 other.backingEffect == backingEffect &&
                 other.backingCondition == backingCondition
     }
 }
 
+public typealias KtContractConditionalContractEffectDeclaration = KaContractConditionalContractEffectDeclaration
+
 /**
  * Represents [kotlin.contracts.ContractBuilder.returnsNotNull] & [kotlin.contracts.ContractBuilder.returns].
  */
-public sealed class KtContractReturnsContractEffectDeclaration : KtContractEffectDeclaration {
+public sealed class KaContractReturnsContractEffectDeclaration : KaContractEffectDeclaration {
     /**
      * Represent [kotlin.contracts.ContractBuilder.returnsNotNull].
      */
-    public class KtContractReturnsNotNullEffectDeclaration(
-        override val token: KtLifetimeToken
-    ) : KtContractReturnsContractEffectDeclaration() {
-        override fun equals(other: Any?): Boolean = other is KtContractReturnsNotNullEffectDeclaration
+    public class KaContractReturnsNotNullEffectDeclaration(
+        override val token: KaLifetimeToken
+    ) : KaContractReturnsContractEffectDeclaration() {
+        override fun equals(other: Any?): Boolean = other is KaContractReturnsNotNullEffectDeclaration
         override fun hashCode(): Int = javaClass.hashCode()
     }
 
     /**
      * Represents [kotlin.contracts.ContractBuilder.returns] with a `value` argument.
      */
-    public class KtContractReturnsSpecificValueEffectDeclaration(
-        private val backingValue: KtContractConstantValue
-    ) : KtContractReturnsContractEffectDeclaration() {
-        override val token: KtLifetimeToken get() = backingValue.token
-        public val value: KtContractConstantValue get() = withValidityAssertion { backingValue }
+    public class KaContractReturnsSpecificValueEffectDeclaration(
+        private val backingValue: KaContractConstantValue
+    ) : KaContractReturnsContractEffectDeclaration() {
+        override val token: KaLifetimeToken get() = backingValue.token
+        public val value: KaContractConstantValue get() = withValidityAssertion { backingValue }
 
         override fun equals(other: Any?): Boolean {
             return this === other ||
-                    other is KtContractReturnsSpecificValueEffectDeclaration &&
+                    other is KaContractReturnsSpecificValueEffectDeclaration &&
                     other.backingValue == backingValue
         }
 
@@ -94,10 +100,12 @@ public sealed class KtContractReturnsContractEffectDeclaration : KtContractEffec
     /**
      * Represents [kotlin.contracts.ContractBuilder.returns] without arguments.
      */
-    public class KtContractReturnsSuccessfullyEffectDeclaration(
-        override val token: KtLifetimeToken
-    ) : KtContractReturnsContractEffectDeclaration() {
-        override fun equals(other: Any?): Boolean = other is KtContractReturnsSuccessfullyEffectDeclaration
+    public class KaContractReturnsSuccessfullyEffectDeclaration(
+        override val token: KaLifetimeToken
+    ) : KaContractReturnsContractEffectDeclaration() {
+        override fun equals(other: Any?): Boolean = other is KaContractReturnsSuccessfullyEffectDeclaration
         override fun hashCode(): Int = javaClass.hashCode()
     }
 }
+
+public typealias KtContractReturnsContractEffectDeclaration = KaContractReturnsContractEffectDeclaration

@@ -2,7 +2,6 @@
  * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-import com.gradle.publish.PluginBundleExtension
 import plugins.signLibraryPublication
 
 plugins {
@@ -33,11 +32,16 @@ gradlePlugin {
 publishing {
     publications {
         withType<MavenPublication>().configureEach {
-            if (name.endsWith("PluginMarkerMaven")) {
-                pom {
-                    // https://github.com/gradle/gradle/issues/8754
-                    // and https://github.com/gradle/gradle/issues/6155
-                    packaging = "pom"
+            when {
+                name == "pluginMaven" -> {
+                    suppressAllPomMetadataWarnings() // Don't warn about additional published variants
+                }
+                name.endsWith("PluginMarkerMaven") -> {
+                    pom {
+                        // https://github.com/gradle/gradle/issues/8754
+                        // and https://github.com/gradle/gradle/issues/6155
+                        packaging = "pom"
+                    }
                 }
             }
         }

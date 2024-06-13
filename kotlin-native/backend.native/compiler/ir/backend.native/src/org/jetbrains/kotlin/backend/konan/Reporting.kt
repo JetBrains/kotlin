@@ -1,11 +1,13 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.ErrorReportingContext
+import org.jetbrains.kotlin.backend.common.getCompilerMessageLocation
+import org.jetbrains.kotlin.backend.common.report
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrElement
@@ -13,22 +15,18 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.render
 
 internal fun ErrorReportingContext.reportCompilationError(message: String, irFile: IrFile, irElement: IrElement): Nothing {
-    report(irElement, irFile, message, true)
+    report(CompilerMessageSeverity.ERROR, irElement, irFile, message)
     throw KonanCompilationException()
 }
 
 internal fun ErrorReportingContext.reportCompilationError(message: String): Nothing {
-    report(null, null, message, true)
+    report(CompilerMessageSeverity.ERROR, null, null, message)
     throw KonanCompilationException()
 }
 
 internal fun CompilerConfiguration.reportCompilationError(message: String): Nothing {
     report(CompilerMessageSeverity.ERROR, message)
     throw KonanCompilationException()
-}
-
-internal fun ErrorReportingContext.reportCompilationWarning(message: String) {
-    report(null, null, message, false)
 }
 
 internal fun error(irFile: IrFile?, element: IrElement?, message: String): Nothing {

@@ -4,7 +4,7 @@
 // (supported: JVM_IR, JS_IR(_E6))
 
 // WITH_STDLIB
-// !LANGUAGE: +InstantiationOfAnnotationClasses
+// LANGUAGE: +InstantiationOfAnnotationClasses
 
 // FILE: 1.kt
 

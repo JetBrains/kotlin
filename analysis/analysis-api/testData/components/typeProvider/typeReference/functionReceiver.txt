@@ -1,2 +1,2 @@
-expression: Foo
-ktType: Foo
+KtTypeReference: Foo
+KaType: Foo

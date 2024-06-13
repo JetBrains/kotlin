@@ -5,19 +5,19 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.scopes
 
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.scopes.KtScopeNameFilter
-import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
+import org.jetbrains.kotlin.analysis.api.scopes.KaScopeNameFilter
+import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractStarImportingScope
 import org.jetbrains.kotlin.name.Name
 
-internal class KtFirStarImportingScope(
+internal class KaFirStarImportingScope(
     firScope: FirAbstractStarImportingScope,
-    private val analysisSession: KtFirAnalysisSession,
-) : KtFirBasedScope<FirAbstractStarImportingScope>(firScope, analysisSession.firSymbolBuilder) {
+    private val analysisSession: KaFirSession,
+) : KaFirBasedScope<FirAbstractStarImportingScope>(firScope, analysisSession.firSymbolBuilder) {
 
     private val imports: List<StarImport> by cached {
         firScope.starImports.map { import ->
@@ -29,7 +29,7 @@ internal class KtFirStarImportingScope(
         }
     }
 
-    override fun getConstructors(): Sequence<KtConstructorSymbol> = withValidityAssertion { emptySequence() }
+    override fun getConstructors(): Sequence<KaConstructorSymbol> = withValidityAssertion { emptySequence() }
 
     // todo cache?
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
@@ -43,7 +43,7 @@ internal class KtFirStarImportingScope(
         }
     }
 
-    override fun getPackageSymbols(nameFilter: KtScopeNameFilter): Sequence<KtPackageSymbol> = withValidityAssertion {
+    override fun getPackageSymbols(nameFilter: KaScopeNameFilter): Sequence<KaPackageSymbol> = withValidityAssertion {
         emptySequence()
     }
 

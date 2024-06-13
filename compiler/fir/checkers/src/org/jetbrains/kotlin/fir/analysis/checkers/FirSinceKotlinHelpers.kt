@@ -56,7 +56,7 @@ private fun FirDeclaration.getOwnSinceKotlinVersion(session: FirSession): FirSin
     val sinceKotlinSingleArgument = getAnnotationByClassId(StandardClassIds.Annotations.SinceKotlin, session)?.findArgumentByName(
         StandardClassIds.Annotations.ParameterNames.sinceKotlinVersion
     )
-    val apiVersion = ((sinceKotlinSingleArgument as? FirLiteralExpression<*>)?.value as? String)?.let(ApiVersion.Companion::parse)
+    val apiVersion = ((sinceKotlinSingleArgument as? FirLiteralExpression)?.value as? String)?.let(ApiVersion.Companion::parse)
     return if (apiVersion != null) {
         FirSinceKotlinValue(apiVersion, loadWasExperimentalMarkerClasses(session))
     } else null

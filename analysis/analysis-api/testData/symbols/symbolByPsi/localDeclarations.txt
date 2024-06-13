@@ -1,26 +1,26 @@
-KtLocalVariableSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
+KaLocalVariableSymbol:
+  annotations: []
+  callableId: null
   contextReceivers: []
   isExtension: false
   isVal: true
   name: q
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
-  getContainingFileSymbol: KtFileSymbol(localDeclarations.kt)
+  getContainingFileSymbol: KaFileSymbol(localDeclarations.kt)
   getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
+KaFunctionSymbol:
+  annotations: []
+  callableId: null
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -40,22 +40,22 @@ KtFunctionSymbol:
   name: aaa
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: LOCAL
   typeParameters: []
   valueParameters: []
   visibility: Local
-  getContainingFileSymbol: KtFileSymbol(localDeclarations.kt)
+  getContainingFileSymbol: KaFileSymbol(localDeclarations.kt)
   getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: null
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: null
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -70,22 +70,22 @@ KtNamedClassOrObjectSymbol:
   name: F
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: LOCAL
   typeParameters: []
   visibility: Local
-  getContainingFileSymbol: KtFileSymbol(localDeclarations.kt)
+  getContainingFileSymbol: KaFileSymbol(localDeclarations.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /yyy
+KaFunctionSymbol:
+  annotations: []
+  callableId: /yyy
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -105,15 +105,15 @@ KtFunctionSymbol:
   name: yyy
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(localDeclarations.kt)
+  getContainingFileSymbol: KaFileSymbol(localDeclarations.kt)
   getContainingJvmClassName: LocalDeclarationsKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

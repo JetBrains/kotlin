@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.renderer.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
 
@@ -92,12 +93,12 @@ fun ConeSimpleKotlinType.originalIfDefinitelyNotNullable(): ConeSimpleKotlinType
     }
 }
 
-fun ConeIntersectionType.withAlternative(alternativeType: ConeKotlinType): ConeIntersectionType {
-    return ConeIntersectionType(intersectedTypes, alternativeType)
+fun ConeIntersectionType.withUpperBound(upperBound: ConeKotlinType): ConeIntersectionType {
+    return ConeIntersectionType(intersectedTypes, upperBoundForApproximation = upperBound)
 }
 
 fun ConeIntersectionType.mapTypes(func: (ConeKotlinType) -> ConeKotlinType): ConeIntersectionType {
-    return ConeIntersectionType(intersectedTypes.map(func), alternativeType?.let(func))
+    return ConeIntersectionType(intersectedTypes.map(func), upperBoundForApproximation?.let(func))
 }
 
 fun ConeClassLikeType.withArguments(typeArguments: Array<out ConeTypeProjection>): ConeClassLikeType = when (this) {
@@ -140,12 +141,24 @@ fun ConeKotlinType.renderReadable(): String {
     return builder.toString()
 }
 
-fun ConeKotlinType.renderReadableWithFqNames(): String {
+fun ConeKotlinType.renderReadableWithFqNames(preRenderedConstructors: Map<TypeConstructorMarker, String>? = null): String {
     val builder = StringBuilder()
-    ConeTypeRendererForReadability(builder) { ConeIdRendererForDiagnostics() }.render(this)
+    ConeTypeRendererForReadability(builder, preRenderedConstructors) { ConeIdRendererForDiagnostics() }.render(this)
     return builder.toString()
 }
 
 fun ConeKotlinType.hasError(): Boolean = contains { it is ConeErrorType }
 
 fun ConeKotlinType.hasCapture(): Boolean = contains { it is ConeCapturedType }
+
+fun ConeSimpleKotlinType.getConstructor(): TypeConstructorMarker {
+    return when (this) {
+        is ConeLookupTagBasedType -> this.lookupTag
+        is ConeCapturedType -> this.constructor
+        is ConeTypeVariableType -> this.typeConstructor
+        is ConeIntersectionType -> this
+        is ConeStubType -> this.constructor
+        is ConeDefinitelyNotNullType -> original.getConstructor()
+        is ConeIntegerLiteralType -> this
+    }
+}

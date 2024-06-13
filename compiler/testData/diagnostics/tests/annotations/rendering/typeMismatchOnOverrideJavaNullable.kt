@@ -1,15 +1,18 @@
-// !RENDER_DIAGNOSTICS_MESSAGES
+// RENDER_DIAGNOSTICS_MESSAGES
 // SKIP_JAVAC
 
-// FILE: A.java
+// FILE: MyTypeQualifier.java
 
-import org.jetbrains.annotations.NotNull;
 import java.lang.annotation.*;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 @javax.annotation.meta.TypeQualifier
 public @interface MyTypeQualifier {}
+
+// FILE: A.java
+
+import org.jetbrains.annotations.NotNull;
 
 @An
 public interface A {

@@ -60,7 +60,7 @@ FILE fqName:<root> fileName:/composableFunction.kt
                     CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
                       $this: GET_VAR 'val tmp_0: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
                   GET_VAR 'val tmp_0: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
-              GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+              GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
       VAR name:l1 type:kotlin.Function0<kotlin.Unit> [val]
         FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
@@ -75,7 +75,7 @@ FILE fqName:<root> fileName:/composableFunction.kt
                     CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
                       $this: GET_VAR 'val tmp_1: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
                   GET_VAR 'val tmp_1: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
-              GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+              GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
       VAR name:l2 type:@[MyComposable] kotlin.Function0<kotlin.Unit> [val]
         FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
@@ -104,7 +104,7 @@ FILE fqName:<root> fileName:/composableFunction.kt
                     CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
                       $this: GET_VAR 'val tmp_3: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
                   GET_VAR 'val tmp_3: kotlin.Int declared in <root>.test_1.<anonymous>' type=kotlin.Int origin=null
-              GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+              GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
       CALL 'public final fun runUsual (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         block: GET_VAR 'val l0: kotlin.Function0<kotlin.Unit> declared in <root>.test_1' type=kotlin.Function0<kotlin.Unit> origin=null
       CALL 'public final fun runUsual (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null

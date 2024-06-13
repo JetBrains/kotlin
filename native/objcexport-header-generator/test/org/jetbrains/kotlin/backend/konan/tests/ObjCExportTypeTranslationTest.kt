@@ -177,6 +177,18 @@ class ObjCExportTypeTranslationTest(
     }
 
     @Test
+    fun `test - Vector128`() {
+        val header = header("""val foo: kotlinx.cinterop.Vector128 get() = error("stub")""")
+        assertEquals("float __attribute__((__vector_size__(16)))", header.renderTypesOfSymbol("foo"))
+    }
+
+    @Test
+    fun `test - Vector128 - nullable`() {
+        val header = header("""val foo: kotlinx.cinterop.Vector128? get() = error("stub")""")
+        assertEquals("id _Nullable", header.renderTypesOfSymbol("foo"))
+    }
+
+    @Test
     fun `test - char`() {
         val header = header("""val foo: Char get() = error("stub")""")
         assertEquals("unichar", header.renderTypesOfSymbol("foo"))

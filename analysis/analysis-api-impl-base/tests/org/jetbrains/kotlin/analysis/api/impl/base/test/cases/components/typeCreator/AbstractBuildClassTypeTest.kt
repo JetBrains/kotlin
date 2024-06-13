@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeCreator
 
-import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KtTypeRendererForDebug
+import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KaTypeRendererForDebug
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.TypeParser
@@ -30,11 +31,11 @@ abstract class AbstractBuildClassTypeTest : AbstractAnalysisApiBasedTest() {
         val actual = analyseForTest(mainFile) {
             val ktType = TypeParser.parseTypeFromString(typeString, mainFile, mainFile)
             buildString {
-                appendLine("originalTypeString: $typeString")
+                appendLine("OriginalTypeString: $typeString")
                 appendLine(
-                    "ktType: ${
+                    "${KaType::class.simpleName}: ${
                         ktType.render(
-                            renderer = KtTypeRendererForDebug.WITH_QUALIFIED_NAMES,
+                            renderer = KaTypeRendererForDebug.WITH_QUALIFIED_NAMES,
                             position = Variance.INVARIANT,
                         )
                     }"

@@ -5,37 +5,40 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.types.impl
 
-import org.jetbrains.kotlin.analysis.api.renderer.base.KtKeywordsRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KtAnnotationRendererForSource
-import org.jetbrains.kotlin.analysis.api.renderer.base.contextReceivers.KtContextReceiversRendererForSource
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtRendererTypeApproximator
-import org.jetbrains.kotlin.analysis.api.renderer.types.KtTypeRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.base.KaKeywordsRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KaAnnotationRendererForSource
+import org.jetbrains.kotlin.analysis.api.renderer.base.contextReceivers.KaContextReceiversRendererForSource
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaRendererTypeApproximator
+import org.jetbrains.kotlin.analysis.api.renderer.types.KaExpandedTypeRenderingMode
+import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.*
 
-public object KtTypeRendererForSource {
-    public val WITH_QUALIFIED_NAMES: KtTypeRenderer = KtTypeRenderer {
-        capturedTypeRenderer = KtCapturedTypeRenderer.AS_PROJECTION
-        definitelyNotNullTypeRenderer = KtDefinitelyNotNullTypeRenderer.AS_TYPE_INTERSECTION
-        dynamicTypeRenderer = KtDynamicTypeRenderer.AS_DYNAMIC_WORD
-        flexibleTypeRenderer = KtFlexibleTypeRenderer.AS_SHORT
-        functionalTypeRenderer = KtFunctionalTypeRenderer.AS_CLASS_TYPE_FOR_REFLECTION_TYPES
-        integerLiteralTypeRenderer = KtIntegerLiteralTypeRenderer.AS_ILT_WITH_VALUE
-        intersectionTypeRenderer = KtIntersectionTypeRenderer.AS_INTERSECTION
-        typeErrorTypeRenderer = KtTypeErrorTypeRenderer.AS_CODE_IF_POSSIBLE
-        typeParameterTypeRenderer = KtTypeParameterTypeRenderer.AS_SOURCE
-        unresolvedClassErrorTypeRenderer = KtUnresolvedClassErrorTypeRenderer.UNRESOLVED_QUALIFIER
-        usualClassTypeRenderer = KtUsualClassTypeRenderer.AS_CLASS_TYPE_WITH_TYPE_ARGUMENTS
-        classIdRenderer = KtClassTypeQualifierRenderer.WITH_QUALIFIED_NAMES
-        typeNameRenderer = KtTypeNameRenderer.QUOTED
-        typeApproximator = KtRendererTypeApproximator.TO_DENOTABLE
-        typeProjectionRenderer = KtTypeProjectionRenderer.WITH_VARIANCE
-        annotationsRenderer = KtAnnotationRendererForSource.WITH_QUALIFIED_NAMES
-        contextReceiversRenderer = KtContextReceiversRendererForSource.WITH_LABELS
-        keywordsRenderer = KtKeywordsRenderer.AS_WORD
+public object KaTypeRendererForSource {
+    public val WITH_QUALIFIED_NAMES: KaTypeRenderer = KaTypeRenderer {
+        expandedTypeRenderingMode = KaExpandedTypeRenderingMode.RENDER_ABBREVIATED_TYPE
+        capturedTypeRenderer = KaCapturedTypeRenderer.AS_PROJECTION
+        definitelyNotNullTypeRenderer = KaDefinitelyNotNullTypeRenderer.AS_TYPE_INTERSECTION
+        dynamicTypeRenderer = KaDynamicTypeRenderer.AS_DYNAMIC_WORD
+        flexibleTypeRenderer = KaFlexibleTypeRenderer.AS_SHORT
+        functionalTypeRenderer = KaFunctionalTypeRenderer.AS_CLASS_TYPE_FOR_REFLECTION_TYPES
+        intersectionTypeRenderer = KaIntersectionTypeRenderer.AS_INTERSECTION
+        errorTypeRenderer = KaErrorTypeRenderer.AS_CODE_IF_POSSIBLE
+        typeParameterTypeRenderer = KaTypeParameterTypeRenderer.AS_SOURCE
+        unresolvedClassErrorTypeRenderer = KaUnresolvedClassErrorTypeRenderer.UNRESOLVED_QUALIFIER
+        usualClassTypeRenderer = KaUsualClassTypeRenderer.AS_CLASS_TYPE_WITH_TYPE_ARGUMENTS
+        classIdRenderer = KaClassTypeQualifierRenderer.WITH_QUALIFIED_NAMES
+        typeNameRenderer = KaTypeNameRenderer.QUOTED
+        typeApproximator = KaRendererTypeApproximator.TO_DENOTABLE
+        typeProjectionRenderer = KaTypeProjectionRenderer.WITH_VARIANCE
+        annotationsRenderer = KaAnnotationRendererForSource.WITH_QUALIFIED_NAMES
+        contextReceiversRenderer = KaContextReceiversRendererForSource.WITH_LABELS
+        keywordsRenderer = KaKeywordsRenderer.AS_WORD
     }
 
-    public val WITH_SHORT_NAMES: KtTypeRenderer = WITH_QUALIFIED_NAMES.with {
-        classIdRenderer = KtClassTypeQualifierRenderer.WITH_SHORT_NAMES_WITH_NESTED_CLASSIFIERS
-        annotationsRenderer = KtAnnotationRendererForSource.WITH_SHORT_NAMES
+    public val WITH_SHORT_NAMES: KaTypeRenderer = WITH_QUALIFIED_NAMES.with {
+        classIdRenderer = KaClassTypeQualifierRenderer.WITH_SHORT_NAMES_WITH_NESTED_CLASSIFIERS
+        annotationsRenderer = KaAnnotationRendererForSource.WITH_SHORT_NAMES
     }
 }
+
+public typealias KtTypeRendererForSource = KaTypeRendererForSource

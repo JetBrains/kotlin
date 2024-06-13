@@ -8,28 +8,26 @@ package org.jetbrains.kotlin.backend.konan
 import com.google.common.base.StandardSystemProperty
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.linkage.issues.UserVisibleIrModulesSupport
+import org.jetbrains.kotlin.backend.konan.ir.BridgesPolicy
 import org.jetbrains.kotlin.backend.konan.serialization.KonanUserVisibleIrModulesSupport
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.IrVerificationMode
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.utils.KotlinNativePaths
 import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
+import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.nio.file.Files
 import java.nio.file.Paths
-
-enum class IrVerificationMode {
-    NONE,
-    WARNING,
-    ERROR
-}
 
 class KonanConfig(val project: Project, val configuration: CompilerConfiguration) {
     internal val distribution = run {
@@ -53,6 +51,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     internal val targetManager = platformManager.targetManager(configuration.get(KonanConfigKeys.TARGET))
     internal val target = targetManager.target
     internal val flexiblePhaseConfig = configuration.get(CLIConfigurationKeys.FLEXIBLE_PHASE_CONFIG)!!
+
+    // See https://youtrack.jetbrains.com/issue/KT-67692.
+    val useLlvmOpaquePointers = false
 
     // TODO: debug info generation mode and debug/release variant selection probably requires some refactoring.
     val debug: Boolean get() = configuration.getBoolean(KonanConfigKeys.DEBUG)
@@ -161,7 +162,11 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     }
 
 
-    val suspendFunctionsFromAnyThreadFromObjC: Boolean by lazy { configuration.get(BinaryOptions.objcExportSuspendFunctionLaunchThreadRestriction) == ObjCExportSuspendFunctionLaunchThreadRestriction.NONE }
+    val suspendFunctionsFromAnyThreadFromObjC: Boolean by lazy {
+        configuration.get(BinaryOptions.objcExportSuspendFunctionLaunchThreadRestriction) !=
+                ObjCExportSuspendFunctionLaunchThreadRestriction.MAIN
+    }
+
     val freezing: Freezing
         get() = configuration.get(BinaryOptions.freezing)?.also {
             if (it != Freezing.Disabled) {
@@ -237,9 +242,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         }
     }
 
-    val irVerificationMode: IrVerificationMode
-        get() = configuration.getNotNull(KonanConfigKeys.VERIFY_IR)
-
     val needCompilerVerification: Boolean
         get() = configuration.get(KonanConfigKeys.VERIFY_COMPILER)
                 ?: (optimizationsEnabled || !KotlinCompilerVersion.VERSION.isRelease())
@@ -274,6 +276,15 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     val globalDataLazyInit: Boolean by lazy {
         configuration.get(BinaryOptions.globalDataLazyInit) ?: true
+    }
+
+    val genericSafeCasts: Boolean by lazy {
+        configuration.get(BinaryOptions.genericSafeCasts)
+                ?: false // For now disabled by default due to performance penalty.
+    }
+
+    internal val bridgesPolicy: BridgesPolicy by lazy {
+        if (genericSafeCasts) BridgesPolicy.BOX_UNBOX_CASTS else BridgesPolicy.BOX_UNBOX_ONLY
     }
 
     init {
@@ -364,6 +375,10 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                 AllocationMode.CUSTOM
             }
         }
+    }
+
+    val swiftExport by lazy {
+        configuration.get(BinaryOptions.swiftExport) ?: false
     }
 
     internal val runtimeNativeLibraries: List<String> = mutableListOf<String>().apply {
@@ -656,7 +671,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 }
 
 fun CompilerConfiguration.report(priority: CompilerMessageSeverity, message: String)
-    = this.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(priority, message)
+    = this.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(priority, message)
 
 private fun String.isRelease(): Boolean {
     // major.minor.patch-meta-build where patch, meta and build are optional.

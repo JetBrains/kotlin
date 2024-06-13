@@ -27,7 +27,6 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.dumpOnlyFqName = from.dumpOnlyFqName
     to.dumpPerf = from.dumpPerf
     to.enableBuilderInference = from.enableBuilderInference
-    to.enableSignatureClashChecks = from.enableSignatureClashChecks
     to.expectActualClasses = from.expectActualClasses
     to.experimental = from.experimental?.copyOf()
     to.explicitApi = from.explicitApi
@@ -47,11 +46,11 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.listPhases = from.listPhases
     to.metadataKlib = from.metadataKlib
     to.metadataVersion = from.metadataVersion
+    to.multiDollarInterpolation = from.multiDollarInterpolation
     to.multiPlatform = from.multiPlatform
     to.newInference = from.newInference
     to.noCheckActual = from.noCheckActual
     to.noInline = from.noInline
-    to.normalizeAbsolutePath = from.normalizeAbsolutePath
     to.optIn = from.optIn?.copyOf()
     to.phasesToDump = from.phasesToDump?.copyOf()
     to.phasesToDumpAfter = from.phasesToDumpAfter?.copyOf()
@@ -64,7 +63,6 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.pluginOptions = from.pluginOptions?.copyOf()
     to.profilePhases = from.profilePhases
     to.progressiveMode = from.progressiveMode
-    to.relativePathBases = from.relativePathBases?.copyOf()
     to.renderInternalDiagnosticNames = from.renderInternalDiagnosticNames
     to.reportAllWarnings = from.reportAllWarnings
     to.reportOutputFiles = from.reportOutputFiles
@@ -73,16 +71,19 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.selfUpperBoundInference = from.selfUpperBoundInference
     to.skipMetadataVersionCheck = from.skipMetadataVersionCheck
     to.skipPrereleaseCheck = from.skipPrereleaseCheck
+    to.stdlibCompilation = from.stdlibCompilation
     to.suppressApiVersionGreaterThanLanguageVersionError = from.suppressApiVersionGreaterThanLanguageVersionError
     to.suppressVersionWarnings = from.suppressVersionWarnings
     to.unrestrictedBuilderInference = from.unrestrictedBuilderInference
     to.useExperimental = from.useExperimental?.copyOf()
     to.useFirExtendedCheckers = from.useFirExtendedCheckers
-    to.useFirFakeOverrideBuilder = from.useFirFakeOverrideBuilder
     to.useFirIC = from.useFirIC
     to.useFirLT = from.useFirLT
     to.useK2 = from.useK2
     to.verbosePhases = from.verbosePhases?.copyOf()
+    to.verifyIr = from.verifyIr
+    to.verifyIrVisibility = from.verifyIrVisibility
+    to.whenGuards = from.whenGuards
 
     return to
 }

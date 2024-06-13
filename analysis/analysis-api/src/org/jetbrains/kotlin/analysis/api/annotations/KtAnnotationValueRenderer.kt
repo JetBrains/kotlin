@@ -1,49 +1,49 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.annotations
 
-import org.jetbrains.kotlin.analysis.api.KtStarTypeProjection
-import org.jetbrains.kotlin.analysis.api.KtTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.types.*
+import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
+import org.jetbrains.kotlin.analysis.api.types.KaTypeArgumentWithVariance
 import org.jetbrains.kotlin.renderer.render
 
-internal object KtAnnotationValueRenderer {
-    fun render(value: KtAnnotationValue): String = buildString {
+internal object KaAnnotationValueRenderer {
+    fun render(value: KaAnnotationValue): String = buildString {
         renderConstantValue(value)
     }
 
-    private fun StringBuilder.renderConstantValue(value: KtAnnotationValue) {
+    private fun StringBuilder.renderConstantValue(value: KaAnnotationValue) {
         when (value) {
-            is KtAnnotationApplicationValue -> {
+            is KaAnnotationApplicationValue -> {
                 renderAnnotationConstantValue(value)
             }
-            is KtArrayAnnotationValue -> {
+            is KaArrayAnnotationValue -> {
                 renderArrayConstantValue(value)
             }
-            is KtEnumEntryAnnotationValue -> {
+            is KaEnumEntryAnnotationValue -> {
                 renderEnumEntryConstantValue(value)
             }
-            is KtConstantAnnotationValue -> {
+            is KaConstantAnnotationValue -> {
                 renderConstantAnnotationValue(value)
             }
-            is KtUnsupportedAnnotationValue -> {
+            is KaUnsupportedAnnotationValue -> {
                 append("error(\"non-annotation value\")")
             }
-            is KtKClassAnnotationValue -> {
+            is KaKClassAnnotationValue -> {
                 renderKClassAnnotationValue(value)
             }
         }
     }
 
-    private fun StringBuilder.renderKClassAnnotationValue(value: KtKClassAnnotationValue) {
+    private fun StringBuilder.renderKClassAnnotationValue(value: KaKClassAnnotationValue) {
         renderType(value.type)
         append("::class")
     }
 
-    private fun StringBuilder.renderType(type: KtType) {
+    private fun StringBuilder.renderType(type: KaType) {
         if (type.annotations.isNotEmpty()) {
             for (annotation in type.annotations) {
                 append('@')
@@ -53,7 +53,7 @@ internal object KtAnnotationValueRenderer {
         }
 
         when (type) {
-            is KtUsualClassType -> {
+            is KaUsualClassType -> {
                 val classId = type.classId
                 if (classId.isLocal) {
                     append(classId.shortClassName.render())
@@ -61,39 +61,39 @@ internal object KtAnnotationValueRenderer {
                     append(classId.asSingleFqName().render())
                 }
 
-                if (type.ownTypeArguments.isNotEmpty()) {
+                if (type.typeArguments.isNotEmpty()) {
                     append('<')
-                    renderWithSeparator(type.ownTypeArguments, ", ") { typeProjection ->
+                    renderWithSeparator(type.typeArguments, ", ") { typeProjection ->
                         when (typeProjection) {
-                            is KtStarTypeProjection -> append('*')
-                            is KtTypeArgumentWithVariance -> renderType(typeProjection.type)
+                            is KaStarTypeProjection -> append('*')
+                            is KaTypeArgumentWithVariance -> renderType(typeProjection.type)
                         }
                     }
                     append('>')
                 }
             }
-            is KtClassErrorType -> {
+            is KaClassErrorType -> {
                 append("UNRESOLVED_CLASS")
             }
             else -> {
-                append(type.asStringForDebugging())
+                append(type)
             }
         }
     }
 
-    private fun StringBuilder.renderConstantAnnotationValue(value: KtConstantAnnotationValue) {
+    private fun StringBuilder.renderConstantAnnotationValue(value: KaConstantAnnotationValue) {
         append(value.constantValue.renderAsKotlinConstant())
     }
 
-    private fun StringBuilder.renderEnumEntryConstantValue(value: KtEnumEntryAnnotationValue) {
+    private fun StringBuilder.renderEnumEntryConstantValue(value: KaEnumEntryAnnotationValue) {
         append(value.callableId?.asSingleFqName()?.asString())
     }
 
-    private fun StringBuilder.renderAnnotationConstantValue(application: KtAnnotationApplicationValue) {
+    private fun StringBuilder.renderAnnotationConstantValue(application: KaAnnotationApplicationValue) {
         renderAnnotationApplication(application.annotationValue)
     }
 
-    private fun StringBuilder.renderAnnotationApplication(value: KtAnnotationApplicationWithArgumentsInfo) {
+    private fun StringBuilder.renderAnnotationApplication(value: KaAnnotation) {
         append(value.classId)
         if (value.arguments.isNotEmpty()) {
             append("(")
@@ -102,19 +102,19 @@ internal object KtAnnotationValueRenderer {
         }
     }
 
-    private fun StringBuilder.renderArrayConstantValue(value: KtArrayAnnotationValue) {
+    private fun StringBuilder.renderArrayConstantValue(value: KaArrayAnnotationValue) {
         append("[")
         renderConstantValueList(value.values)
         append("]")
     }
 
-    private fun StringBuilder.renderConstantValueList(list: Collection<KtAnnotationValue>) {
+    private fun StringBuilder.renderConstantValueList(list: Collection<KaAnnotationValue>) {
         renderWithSeparator(list, ", ") { constantValue ->
             renderConstantValue(constantValue)
         }
     }
 
-    private fun StringBuilder.renderNamedConstantValueList(list: Collection<KtNamedAnnotationValue>) {
+    private fun StringBuilder.renderNamedConstantValueList(list: Collection<KaNamedAnnotationValue>) {
         renderWithSeparator(list, ", ") { namedValue ->
             append(namedValue.name)
             append(" = ")

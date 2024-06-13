@@ -1,4 +1,4 @@
-// !LANGUAGE: +SafeCastCheckBoundSmartCasts
+// LANGUAGE: +SafeCastCheckBoundSmartCasts
 
 interface SomeClass {
     val data: Any?

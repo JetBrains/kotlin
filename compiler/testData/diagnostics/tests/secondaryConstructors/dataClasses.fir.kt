@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // LANGUAGE: +DataClassCopyRespectsConstructorVisibility
 data class A1(val x: String) {
     constructor(): this("")

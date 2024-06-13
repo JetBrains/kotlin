@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION
 
 import kotlin.reflect.KClass
 fun <T : PsiElement> select(vararg classes: KClass<out T>): T? {

@@ -30,11 +30,15 @@ import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.chain
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.multipleDelegatesWithTheSameSignature
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -46,6 +50,7 @@ import org.jetbrains.kotlin.resolve.AnnotationTargetList
 import org.jetbrains.kotlin.resolve.AnnotationTargetLists
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
 import org.jetbrains.kotlin.util.ImplementationStatus
@@ -220,15 +225,15 @@ fun FirClass.modality(): Modality? {
  * Returns a set of [Modality] modifiers which are redundant for the given [FirMemberDeclaration]. If a modality modifier is redundant, the
  * declaration's modality won't be changed by the modifier.
  */
-fun FirMemberDeclaration.redundantModalities(context: CheckerContext): Set<Modality> {
+fun FirMemberDeclaration.redundantModalities(context: CheckerContext, defaultModality: Modality): Set<Modality> {
     if (this is FirRegularClass) {
         return when (classKind) {
             ClassKind.INTERFACE -> setOf(Modality.ABSTRACT, Modality.OPEN)
-            else -> setOf(Modality.FINAL)
+            else -> setOf(defaultModality)
         }
     }
 
-    val containingClass = context.findClosestClassOrObject() ?: return setOf(Modality.FINAL)
+    val containingClass = context.findClosestClassOrObject() ?: return setOf(defaultModality)
 
     return when {
         isOverride && !containingClass.isFinal -> setOf(Modality.OPEN)
@@ -236,7 +241,7 @@ fun FirMemberDeclaration.redundantModalities(context: CheckerContext): Set<Modal
             hasBody() -> setOf(Modality.OPEN)
             else -> setOf(Modality.ABSTRACT, Modality.OPEN)
         }
-        else -> setOf(Modality.FINAL)
+        else -> setOf(defaultModality)
     }
 }
 
@@ -791,7 +796,7 @@ val CheckerContext.isTopLevel get() = containingDeclarations.lastOrNull().let { 
 
 fun FirBasedSymbol<*>.hasAnnotationOrInsideAnnotatedClass(classId: ClassId, session: FirSession): Boolean {
     if (hasAnnotation(classId, session)) return true
-    val container = getContainingClassSymbol(session) ?: return false
+    val container = getContainingClassSymbol(moduleData.session) ?: return false
     return container.hasAnnotationOrInsideAnnotatedClass(classId, session)
 }
 
@@ -804,7 +809,7 @@ fun FirBasedSymbol<*>.getAnnotationFirstArgument(classId: ClassId, session: FirS
 }
 
 fun FirBasedSymbol<*>.getAnnotationStringParameter(classId: ClassId, session: FirSession): String? {
-    val expression = getAnnotationFirstArgument(classId, session) as? FirLiteralExpression<*>
+    val expression = getAnnotationFirstArgument(classId, session) as? FirLiteralExpression
     return expression?.value as? String
 }
 

@@ -9,6 +9,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.Directory
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFile
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
@@ -21,6 +22,8 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.UsesKotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.asNodeJsEnvironment
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
 import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.utils.listProperty
+import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 import java.io.File
 
 @DisableCachingByDefault
@@ -40,9 +43,6 @@ abstract class KotlinNpmInstallTask :
     private val rootResolver: KotlinRootNpmResolver
         get() = nodeJs.resolver
 
-    private val packagesDir: Provider<Directory>
-        get() = nodeJs.projectPackagesDirectory
-
     // -----
 
     private val nodsJsEnvironment by lazy {
@@ -52,6 +52,8 @@ abstract class KotlinNpmInstallTask :
     private val packageManagerEnv by lazy {
         nodeJs.packageManagerExtension.get().environment
     }
+
+    private val packagesDir: Provider<Directory> = nodeJs.projectPackagesDirectory
 
     @Input
     val args: MutableList<String> = mutableListOf()
@@ -112,7 +114,7 @@ abstract class KotlinNpmInstallTask :
                 services = services,
                 logger = logger,
                 nodsJsEnvironment,
-                packageManagerEnv
+                packageManagerEnv,
             ) ?: throw (npmResolutionManager.get().state as KotlinNpmResolutionManager.ResolutionState.Error).wrappedException
     }
 

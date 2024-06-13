@@ -71,6 +71,7 @@ class IrOverrideChecker(
             }
             is IrProperty -> {
                 if (subMember !is IrProperty) return incompatible("Member kind mismatch")
+                if (superMember.getter == null || subMember.getter == null) return incompatible("Fields are not overridable")
                 superMember.getter to subMember.getter
             }
             else -> error("Unexpected type of declaration: ${superMember::class.java}, $superMember")

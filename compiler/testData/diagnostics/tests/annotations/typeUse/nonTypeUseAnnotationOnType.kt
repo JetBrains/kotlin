@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +ProperCheckAnnotationsTargetInTypeUsePositions
+// LANGUAGE: +ProperCheckAnnotationsTargetInTypeUsePositions
 // ISSUE: KT-28449
 
 @Target(AnnotationTarget.PROPERTY_GETTER)

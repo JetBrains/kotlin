@@ -7,7 +7,7 @@ import kotlin.jvm.ImplicitlyActualizedByJvmDeclaration
 
 <!NO_ACTUAL_FOR_EXPECT{JVM}!>@OptIn(ExperimentalMultiplatform::class)
 @ImplicitlyActualizedByJvmDeclaration
-expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!>() {
+expect class <!CLASSIFIER_REDECLARATION!>Foo<!>() {
     fun foo()
 }<!>
 

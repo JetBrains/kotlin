@@ -191,7 +191,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
                         )
                     )
                 }
-                it.parameters.projectDir.set(project.rootProject.layout.projectDirectory)
+                it.parameters.projectDir.set(project.layout.projectDirectory)
                 //init gradle tags for build scan and http reports
                 it.parameters.buildConfigurationTags.value(setupTags(project))
             }.also {

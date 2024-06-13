@@ -34,7 +34,7 @@ class FirScriptBuilder : FirAnnotationContainerBuilder {
     val declarations: MutableList<FirDeclaration> = mutableListOf()
     lateinit var symbol: FirScriptSymbol
     val parameters: MutableList<FirProperty> = mutableListOf()
-    val contextReceivers: MutableList<FirContextReceiver> = mutableListOf()
+    val receivers: MutableList<FirScriptReceiverParameter> = mutableListOf()
     var resultPropertyName: Name? = null
 
     override fun build(): FirScript {
@@ -49,7 +49,7 @@ class FirScriptBuilder : FirAnnotationContainerBuilder {
             declarations,
             symbol,
             parameters,
-            contextReceivers.toMutableOrEmpty(),
+            receivers.toMutableOrEmpty(),
             resultPropertyName,
         )
     }
@@ -78,9 +78,8 @@ inline fun buildScriptCopy(original: FirScript, init: FirScriptBuilder.() -> Uni
     copyBuilder.attributes = original.attributes.copy()
     copyBuilder.name = original.name
     copyBuilder.declarations.addAll(original.declarations)
-    copyBuilder.symbol = original.symbol
     copyBuilder.parameters.addAll(original.parameters)
-    copyBuilder.contextReceivers.addAll(original.contextReceivers)
+    copyBuilder.receivers.addAll(original.receivers)
     copyBuilder.resultPropertyName = original.resultPropertyName
     return copyBuilder.apply(init).build()
 }

@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
+// OPT_IN: kotlin.RequiresOptIn
 // DIAGNOSTICS: -POTENTIALLY_NON_REPORTED_ANNOTATION
 // FILE: api.kt
 

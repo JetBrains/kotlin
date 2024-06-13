@@ -7,18 +7,16 @@ package org.jetbrains.kotlin.analysis.decompiler.psi.text
 
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
-import org.jetbrains.kotlin.analysis.decompiler.stub.COMPILED_DEFAULT_INITIALIZER
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasSuspendModifier
 import org.jetbrains.kotlin.psi.psiUtil.unwrapNullability
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.AbbreviatedType
 import org.jetbrains.kotlin.types.KotlinType
@@ -172,7 +170,7 @@ object ByDescriptorIndexer {
             ktTypeReference.typeElement,
             ktTypeReference.getAllModifierLists().any { it.hasSuspendModifier() }) ?: return false
         val declarationDescriptor =
-            ((kotlinType as? AbbreviatedType)?.abbreviation ?: kotlinType).constructor.declarationDescriptor ?: return false
+            ((kotlinType as? AbbreviatedType)?.expandedType ?: kotlinType).constructor.declarationDescriptor ?: return false
         if (declarationDescriptor is TypeParameterDescriptor) {
             return declarationDescriptor.name.asString() == qualifiedName
         }

@@ -1,5 +1,5 @@
-// !DUMP_CFG
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
+// DUMP_CFG
+// OPT_IN: kotlin.contracts.ExperimentalContracts
 
 import kotlin.contracts.*
 

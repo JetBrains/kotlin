@@ -1,25 +1,29 @@
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 
 plugins {
     kotlin("multiplatform")
 }
 
-val composeVersion = "1.7.0-alpha07"
 repositories {
-    google {
-        content {
-            includeGroup("androidx.collection")
-            includeVersion("androidx.compose.runtime", "runtime", composeVersion)
-            includeVersion("androidx.compose.runtime", "runtime-desktop", composeVersion)
-        }
+    if (!kotlinBuildProperties.isTeamcityBuild) {
+        androidXMavenLocal(androidXMavenLocalPath)
+    }
+    androidxSnapshotRepo(libs.versions.compose.snapshot.id.get())
+    composeGoogleMaven(libs.versions.compose.stable.get())
+}
+
+fun KotlinDependencyHandler.implementationArtifactOnly(dependency: String) {
+    implementation(dependency) {
+        isTransitive = false
     }
 }
 
 optInToObsoleteDescriptorBasedAPI()
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(11)
 
     jvm()
 
@@ -34,7 +38,7 @@ kotlin {
             implementation(kotlinTest("junit"))
         }
 
-        @Suppress("unused") val jvmTest by getting {
+        jvmTest.configure {
             dependsOn(commonTest.get())
 
             dependencies {
@@ -65,10 +69,25 @@ kotlin {
                 implementation(project(":plugins:compose-compiler-plugin:compiler-hosted"))
                 implementation(project(":plugins:compose-compiler-plugin:compiler-hosted:integration-tests:protobuf-test-classes"))
 
-                // external deps
-                implementation("androidx.compose.runtime:runtime:$composeVersion")
-                implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.4")
-                implementation("com.google.dagger:dagger:2.40.1")
+                // coroutines for runtime tests
+                implementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-test-jvm"))
+
+                // runtime tests
+                implementation(composeRuntime())
+                implementation(composeRuntimeTestUtils())
+
+                // other compose
+                implementationArtifactOnly(compose("foundation", "foundation"))
+                implementationArtifactOnly(compose("foundation", "foundation-layout"))
+                implementationArtifactOnly(compose("animation", "animation"))
+                implementationArtifactOnly(compose("ui", "ui"))
+                implementationArtifactOnly(compose("ui", "ui-graphics"))
+                implementationArtifactOnly(compose("ui", "ui-text"))
+                implementationArtifactOnly(compose("ui", "ui-unit"))
+
+                // external
+                implementationArtifactOnly(commonDependency("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm"))
+                implementationArtifactOnly("com.google.dagger:dagger:2.40.1")
             }
         }
     }
@@ -80,4 +99,6 @@ tasks.withType(Test::class.java).configureEach {
     this.jvmArgs("--add-opens=jdk.jdi/com.sun.tools.jdi=ALL-UNNAMED")
     // ensure that debugger tests don't launch a separate window
     this.systemProperty("java.awt.headless", "true")
+    // runtime tests are executed in this module with compiler built from source (see androidx.compose.compiler.plugins.kotlin.RuntimeTests)
+    this.inputs.dir(File(rootDir, "plugins/compose/compiler-hosted/runtime-tests/src")).withPathSensitivity(PathSensitivity.RELATIVE)
 }

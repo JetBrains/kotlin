@@ -281,9 +281,13 @@ fun URI.isCachedOrLocal() = scheme == "file" ||
         host == "teamcity.jetbrains.com" ||
         host == "buildserver.labs.intellij.net"
 
+// The androidx.dev host is used for Compose runtime snapshots which are not currently supported by cache redirector
+// because of maven-metadata.xml redirect.
+fun URI.isComposeSnapshot() = host == "androidx.dev"
+
 fun RepositoryHandler.findNonCachedRepositories(): List<String> {
     val mavenNonCachedRepos = filterIsInstance<MavenArtifactRepository>()
-        .filterNot { it.url.isCachedOrLocal() }
+        .filterNot { it.url.isCachedOrLocal() || it.url.isComposeSnapshot() }
         .map { it.url.toString() }
 
     val ivyNonCachedRepos = filterIsInstance<IvyArtifactRepository>()

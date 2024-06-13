@@ -1,13 +1,13 @@
-/localVariables.fir.kt:(401,409): error: 'val' cannot be reassigned.
+/localVariables.fir.kt:(400,408): error: 'val' cannot be reassigned.
 
-/localVariables.fir.kt:(412,418): error: Assignment type mismatch: actual type is 'kotlin.String', but 'StringProperty' was expected.
+/localVariables.fir.kt:(411,417): error: Assignment type mismatch: actual type is 'kotlin.String', but 'StringProperty' was expected.
 
-/localVariables.fir.kt:(521,529): error: 'val' cannot be reassigned.
+/localVariables.fir.kt:(520,528): error: 'val' cannot be reassigned.
 
-/localVariables.fir.kt:(673,679): error: Assignment type mismatch: actual type is 'kotlin.String', but 'StringProperty' was expected.
+/localVariables.fir.kt:(672,678): error: Assignment type mismatch: actual type is 'kotlin.String', but 'StringProperty' was expected.
 
-/localVariables.fir.kt:(917,925): error: 'val' cannot be reassigned.
+/localVariables.fir.kt:(916,924): error: 'val' cannot be reassigned.
 
-/localVariables.fir.kt:(928,934): error: Assignment type mismatch: actual type is 'kotlin.String', but 'StringProperty' was expected.
+/localVariables.fir.kt:(927,933): error: Assignment type mismatch: actual type is 'kotlin.String', but 'StringProperty' was expected.
 
-/localVariables.fir.kt:(995,1003): error: 'val' cannot be reassigned.
+/localVariables.fir.kt:(994,1002): error: 'val' cannot be reassigned.

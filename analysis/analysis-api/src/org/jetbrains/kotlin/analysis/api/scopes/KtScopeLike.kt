@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.scopes
 
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.name.Name
 
-public interface KtScopeLike : KtLifetimeOwner {
+public interface KaScopeLike : KaLifetimeOwner {
     /**
      * Returns a **superset** of names which current scope may contain.
      * In other words `ALL_NAMES(scope)` is a subset of `scope.getAllNames()`
@@ -39,3 +39,5 @@ public interface KtScopeLike : KtLifetimeOwner {
         name in getPossibleCallableNames() || name in getPossibleClassifierNames()
     }
 }
+
+public typealias KtScopeLike = KaScopeLike

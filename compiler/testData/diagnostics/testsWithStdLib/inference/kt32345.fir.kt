@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 import kotlin.reflect.KProperty
 import kotlin.properties.ReadWriteProperty

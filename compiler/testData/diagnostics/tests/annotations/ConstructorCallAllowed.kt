@@ -1,7 +1,7 @@
 // FIR_IDENTICAL
 // WITH_STDLIB
 // SKIP_TXT
-// !LANGUAGE: +InstantiationOfAnnotationClasses
+// LANGUAGE: +InstantiationOfAnnotationClasses
 
 import kotlin.reflect.KClass
 

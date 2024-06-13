@@ -163,12 +163,6 @@ class IncrementalCompilationK1JsMultiProject : IncrementalCompilationJsMultiProj
 
 class IncrementalCompilationK2JsMultiProject : IncrementalCompilationJsMultiProjectIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
-
-    @Disabled("KT-61153")
-    @GradleTest
-    override fun testRemoveLibFromClasspath(gradleVersion: GradleVersion) {
-        super.testRemoveLibFromClasspath(gradleVersion)
-    }
 }
 
 class IncrementalCompilationK1JsMultiProjectWithoutPreciseBackupIT : IncrementalCompilationJsMultiProjectWithoutPreciseBackupIT() {
@@ -1017,6 +1011,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
     private fun breakCachesAfterKotlinCompile(gradleProject: GradleProject, lookupFile: Path) {
         gradleProject.buildGradle.appendText(
             """
+                
             $compileKotlinTaskName {
                 doLast {
                     new File("${lookupFile.toFile().invariantSeparatorsPath}").write("Invalid contents")

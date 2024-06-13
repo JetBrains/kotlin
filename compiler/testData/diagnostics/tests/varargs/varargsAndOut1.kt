@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 
 fun test(vararg a: String) {
     a checkType { _<Array<out String>>() }

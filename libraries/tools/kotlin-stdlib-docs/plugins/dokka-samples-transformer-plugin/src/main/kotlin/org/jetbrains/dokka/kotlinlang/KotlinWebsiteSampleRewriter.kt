@@ -13,6 +13,8 @@ import org.jetbrains.dokka.plugability.DokkaContext
 class KotlinWebsiteSampleRewriter(ctx: DokkaContext) : SampleRewriter {
     private val importsToIgnore = setOf("samples.*", "samples.Sample")
 
+    private fun String.escapeStringContent(): String = replace("\\", "\\\\").replace("\"", "\\\"")
+
     private val functionCallRewriters: Map<String, FunctionCallRewriter> = mapOf(
         "assertTrue" to object : FunctionCallRewriter {
             // rewrites `assertTrue(actual)` or `assertTrue(actual, message)
@@ -23,7 +25,7 @@ class KotlinWebsiteSampleRewriter(ctx: DokkaContext) : SampleRewriter {
                 if (message != null) {
                     appendLine("// $message")
                 }
-                append("println(\"$actual is \${$actual}\") // true")
+                append("println(\"${actual.escapeStringContent()} is \${$actual}\") // true")
             }
         },
         "assertFalse" to object : FunctionCallRewriter {
@@ -35,7 +37,7 @@ class KotlinWebsiteSampleRewriter(ctx: DokkaContext) : SampleRewriter {
                 if (message != null) {
                     appendLine("// $message")
                 }
-                append("println(\"$actual is \${$actual}\") // false")
+                append("println(\"${actual.escapeStringContent()} is \${$actual}\") // false")
             }
         },
         "assertPrints" to object : FunctionCallRewriter {

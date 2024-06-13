@@ -1,42 +1,42 @@
-KtTypeParameterSymbol:
-  annotationsList: []
+KaTypeParameterSymbol:
+  annotations: []
   isReified: false
   name: T
   origin: SOURCE
   typeParameters: []
   upperBounds: [
-    KtClassErrorType:
-      annotationsList: []
+    KaClassErrorType:
+      annotations: []
       type: ERROR_TYPE
   ]
   variance: INVARIANT
-  getContainingFileSymbol: KtFileSymbol(typeParameters.kt)
+  getContainingFileSymbol: KaFileSymbol(typeParameters.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtLocalVariableSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
+KaLocalVariableSymbol:
+  annotations: []
+  callableId: null
   contextReceivers: []
   isExtension: false
   isVal: true
   name: x
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
-  getContainingFileSymbol: KtFileSymbol(typeParameters.kt)
+  getContainingFileSymbol: KaFileSymbol(typeParameters.kt)
   getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /f
+KaFunctionSymbol:
+  annotations: []
+  callableId: /f
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -56,15 +56,15 @@ KtFunctionSymbol:
   name: f
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(typeParameters.kt)
+  getContainingFileSymbol: KaFileSymbol(typeParameters.kt)
   getContainingJvmClassName: TypeParametersKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

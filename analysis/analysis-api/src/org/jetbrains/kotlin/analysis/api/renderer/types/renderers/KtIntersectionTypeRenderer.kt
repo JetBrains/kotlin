@@ -5,25 +5,24 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.types.renderers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.renderer.types.KtTypeRenderer
-import org.jetbrains.kotlin.analysis.api.types.KtIntersectionType
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
+import org.jetbrains.kotlin.analysis.api.types.KaIntersectionType
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
-
-public interface KtIntersectionTypeRenderer {
+public interface KaIntersectionTypeRenderer {
     public fun renderType(
-        analysisSession: KtAnalysisSession,
-        type: KtIntersectionType,
-        typeRenderer: KtTypeRenderer,
+        analysisSession: KaSession,
+        type: KaIntersectionType,
+        typeRenderer: KaTypeRenderer,
         printer: PrettyPrinter,
     )
 
-    public object AS_INTERSECTION : KtIntersectionTypeRenderer {
+    public object AS_INTERSECTION : KaIntersectionTypeRenderer {
         override fun renderType(
-            analysisSession: KtAnalysisSession,
-            type: KtIntersectionType,
-            typeRenderer: KtTypeRenderer,
+            analysisSession: KaSession,
+            type: KaIntersectionType,
+            typeRenderer: KaTypeRenderer,
             printer: PrettyPrinter,
         ) {
             printer {
@@ -33,5 +32,6 @@ public interface KtIntersectionTypeRenderer {
             }
         }
     }
-
 }
+
+public typealias KtIntersectionTypeRenderer = KaIntersectionTypeRenderer

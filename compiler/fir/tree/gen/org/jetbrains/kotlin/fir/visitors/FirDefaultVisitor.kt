@@ -53,6 +53,9 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitReceiverParameter(receiverParameter: FirReceiverParameter, data: D): R =
         visitAnnotationContainer(receiverParameter, data)
 
+    override fun visitScriptReceiverParameter(scriptReceiverParameter: FirScriptReceiverParameter, data: D): R =
+        visitReceiverParameter(scriptReceiverParameter, data)
+
     override fun visitEnumEntry(enumEntry: FirEnumEntry, data: D): R =
         visitVariable(enumEntry, data)
 
@@ -101,7 +104,7 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitContinueExpression(continueExpression: FirContinueExpression, data: D): R =
         visitLoopJump(continueExpression, data)
 
-    override fun <T> visitLiteralExpression(literalExpression: FirLiteralExpression<T>, data: D): R =
+    override fun visitLiteralExpression(literalExpression: FirLiteralExpression, data: D): R =
         visitExpression(literalExpression, data)
 
     override fun visitStarProjection(starProjection: FirStarProjection, data: D): R =

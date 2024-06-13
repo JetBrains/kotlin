@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // IGNORE_BACKEND: JS, JS_IR, JS_IR_ES6, WASM
-// !API_VERSION: 1.9
+// API_VERSION: 1.9
 
 import kotlin.concurrent.*
 

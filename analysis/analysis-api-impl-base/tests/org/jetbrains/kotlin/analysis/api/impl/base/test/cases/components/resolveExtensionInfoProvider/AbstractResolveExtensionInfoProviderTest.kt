@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolveExtensionInfoProvider
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider.TestScopeRenderer.renderForTests
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.resolve.extensions.KtResolveExtensionTestSupport
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.resolve.extensions.getDescription
-import org.jetbrains.kotlin.analysis.api.scopes.KtScope
-import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.scopes.KaScope
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
@@ -38,9 +38,9 @@ abstract class AbstractResolveExtensionInfoProviderTest : AbstractAnalysisApiBas
         }
     }
 
-    private fun KtAnalysisSession.renderSymbolsWithExtendedPsiInfo(scope: KtScope, printPretty: Boolean) = prettyPrint {
+    private fun KaSession.renderSymbolsWithExtendedPsiInfo(scope: KaScope, printPretty: Boolean) = prettyPrint {
         renderForTests(scope, this@prettyPrint, printPretty) { symbol ->
-            if (symbol is KtDeclarationSymbol) {
+            if (symbol is KaDeclarationSymbol) {
                 getPsiDeclarationInfo(symbol)
             } else {
                 null
@@ -48,7 +48,7 @@ abstract class AbstractResolveExtensionInfoProviderTest : AbstractAnalysisApiBas
         }
     }
 
-    private fun KtAnalysisSession.getPsiDeclarationInfo(symbol: KtDeclarationSymbol): String = prettyPrint {
+    private fun KaSession.getPsiDeclarationInfo(symbol: KaDeclarationSymbol): String = prettyPrint {
         val ktElement = symbol.psi as? KtElement
         val containingVirtualFile = ktElement?.containingFile?.virtualFile
         appendLine("PSI: ${ktElement?.getDescription()} [from ${containingVirtualFile?.name}]")

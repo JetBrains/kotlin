@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir.lazy
 
 import org.jetbrains.kotlin.fir.backend.*
+import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
+import org.jetbrains.kotlin.fir.backend.utils.contextReceiversForFunctionOrContainingProperty
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
@@ -60,7 +62,7 @@ class Fir2IrLazyPropertyAccessor(
         set(_) = mutationNotSupported()
 
     override var returnType: IrType by lazyVar(lock) {
-        if (isSetter) irBuiltIns.unitType else firParentProperty.returnTypeRef.toIrType(typeConverter, conversionTypeContext)
+        if (isSetter) builtins.unitType else firParentProperty.returnTypeRef.toIrType(typeConverter, conversionTypeContext)
     }
 
     override var dispatchReceiverParameter: IrValueParameter? by lazyVar(lock) {

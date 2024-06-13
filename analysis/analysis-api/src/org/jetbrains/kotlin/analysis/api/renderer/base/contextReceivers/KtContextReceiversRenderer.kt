@@ -5,29 +5,29 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.base.contextReceivers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.base.KtContextReceiversOwner
-import org.jetbrains.kotlin.analysis.api.renderer.base.contextReceivers.renderers.KtContextReceiverLabelRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.base.contextReceivers.renderers.KtContextReceiverListRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.types.KtTypeRenderer
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.base.KaContextReceiversOwner
+import org.jetbrains.kotlin.analysis.api.renderer.base.contextReceivers.renderers.KaContextReceiverLabelRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.base.contextReceivers.renderers.KaContextReceiverListRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
-public class KtContextReceiversRenderer(
-    public val contextReceiverListRenderer: KtContextReceiverListRenderer,
-    public val contextReceiverLabelRenderer: KtContextReceiverLabelRenderer,
+public class KaContextReceiversRenderer(
+    public val contextReceiverListRenderer: KaContextReceiverListRenderer,
+    public val contextReceiverLabelRenderer: KaContextReceiverLabelRenderer,
 ) {
     public fun renderContextReceivers(
-        analysisSession: KtAnalysisSession,
-        owner: KtContextReceiversOwner,
-        typeRenderer: KtTypeRenderer,
+        analysisSession: KaSession,
+        owner: KaContextReceiversOwner,
+        typeRenderer: KaTypeRenderer,
         printer: PrettyPrinter,
     ) {
         contextReceiverListRenderer.renderContextReceivers(analysisSession, owner, this, typeRenderer, printer)
     }
 
-    public inline fun with(action: Builder.() -> Unit): KtContextReceiversRenderer {
+    public inline fun with(action: Builder.() -> Unit): KaContextReceiversRenderer {
         val renderer = this
-        return KtContextReceiversRenderer {
+        return KaContextReceiversRenderer {
             this.contextReceiverListRenderer = renderer.contextReceiverListRenderer
             this.contextReceiverLabelRenderer = renderer.contextReceiverLabelRenderer
 
@@ -36,17 +36,19 @@ public class KtContextReceiversRenderer(
     }
 
     public class Builder {
-        public lateinit var contextReceiverListRenderer: KtContextReceiverListRenderer
-        public lateinit var contextReceiverLabelRenderer: KtContextReceiverLabelRenderer
+        public lateinit var contextReceiverListRenderer: KaContextReceiverListRenderer
+        public lateinit var contextReceiverLabelRenderer: KaContextReceiverLabelRenderer
 
-        public fun build(): KtContextReceiversRenderer = KtContextReceiversRenderer(
+        public fun build(): KaContextReceiversRenderer = KaContextReceiversRenderer(
             contextReceiverListRenderer,
             contextReceiverLabelRenderer,
         )
     }
 
     public companion object {
-        public inline operator fun invoke(action: Builder.() -> Unit): KtContextReceiversRenderer =
+        public inline operator fun invoke(action: Builder.() -> Unit): KaContextReceiversRenderer =
             Builder().apply(action).build()
     }
 }
+
+public typealias KtContextReceiversRenderer = KaContextReceiversRenderer

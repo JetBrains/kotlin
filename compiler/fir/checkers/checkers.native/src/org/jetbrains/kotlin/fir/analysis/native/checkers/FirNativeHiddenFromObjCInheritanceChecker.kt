@@ -15,10 +15,12 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChe
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassLikeSymbol
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.isAny
 import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.fir.types.toSymbol
@@ -65,7 +67,10 @@ private fun checkContainingClassIsHidden(classSymbol: FirClassLikeSymbol<*>, ses
 private fun checkIsHiddenFromObjC(classSymbol: FirClassLikeSymbol<*>, session: FirSession): Boolean {
     classSymbol.annotations.forEach { annotation ->
         val annotationClass = annotation.toAnnotationClassLikeSymbol(session) ?: return@forEach
-        val objCExportMetaAnnotations = annotationClass.annotations.findMetaAnnotations(session)
+
+        // `classSymbol` might be a checked class supertype, so its annotation arguments might stay unresolved.
+        // This means meta annotations also don't have to be fully resolved.
+        val objCExportMetaAnnotations = annotationClass.resolvedAnnotationsWithClassIds.findMetaAnnotations(session)
         if (objCExportMetaAnnotations.hidesFromObjCAnnotation != null) {
             return true
         }

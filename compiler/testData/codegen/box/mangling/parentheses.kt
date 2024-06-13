@@ -1,8 +1,8 @@
-// !SANITIZE_PARENTHESES
+// SANITIZE_PARENTHESES
 // JS error: com.google.gwt.dev.js.parserExceptions.JsParserException: missing ) after formal parameters at (95, 33)
 // NATIVE error: name contains illegal characters: "()"
 // IGNORE_BACKEND: JS, NATIVE
-// !LANGUAGE: +JsAllowInvalidCharsIdentifiersEscaping
+// LANGUAGE: +JsAllowInvalidCharsIdentifiersEscaping
 
 // Sanitization is needed here because DxChecker reports ParseException on parentheses in names.
 

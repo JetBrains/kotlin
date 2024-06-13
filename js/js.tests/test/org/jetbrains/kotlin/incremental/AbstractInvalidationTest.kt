@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.backend.js.JsIrCompilerWithIC
@@ -180,7 +181,7 @@ abstract class AbstractInvalidationTest(
         if (bases.isEmpty()) {
             bases.add(moduleSourceDir.absolutePath)
         }
-        put(CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES, bases)
+        put(KlibConfigurationKeys.KLIB_RELATIVE_PATH_BASES, bases)
     }
 
     private inner class ProjectStepsExecutor(

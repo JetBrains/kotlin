@@ -5,66 +5,72 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
-public abstract class KtCompletionCandidateChecker : KtAnalysisSessionComponent() {
+public abstract class KaCompletionCandidateChecker : KaSessionComponent() {
     public abstract fun createExtensionCandidateChecker(
         originalFile: KtFile,
         nameExpression: KtSimpleNameExpression,
         explicitReceiver: KtExpression?
-    ): KtCompletionExtensionCandidateChecker
+    ): KaCompletionExtensionCandidateChecker
 
     @Deprecated("Use createExtensionCandidateChecker() instead.")
     public abstract fun checkExtensionFitsCandidate(
-        firSymbolForCandidate: KtCallableSymbol,
+        firSymbolForCandidate: KaCallableSymbol,
         originalFile: KtFile,
         nameExpression: KtSimpleNameExpression,
         possibleExplicitReceiver: KtExpression?,
-    ): KtExtensionApplicabilityResult
+    ): KaExtensionApplicabilityResult
 }
 
-public interface KtCompletionExtensionCandidateChecker {
-    public fun computeApplicability(candidate: KtCallableSymbol): KtExtensionApplicabilityResult
+public typealias KtCompletionCandidateChecker = KaCompletionCandidateChecker
+
+public interface KaCompletionExtensionCandidateChecker {
+    public fun computeApplicability(candidate: KaCallableSymbol): KaExtensionApplicabilityResult
 }
 
-public sealed class KtExtensionApplicabilityResult : KtLifetimeOwner {
-    public sealed class Applicable : KtExtensionApplicabilityResult() {
+public typealias KtCompletionExtensionCandidateChecker = KaCompletionExtensionCandidateChecker
+
+public sealed class KaExtensionApplicabilityResult : KaLifetimeOwner {
+    public sealed class Applicable : KaExtensionApplicabilityResult() {
         public abstract val receiverCastRequired: Boolean
-        public abstract val substitutor: KtSubstitutor
+        public abstract val substitutor: KaSubstitutor
     }
 
     public class ApplicableAsExtensionCallable(
-        substitutor: KtSubstitutor,
+        substitutor: KaSubstitutor,
         receiverCastRequired: Boolean,
-        override val token: KtLifetimeToken
+        override val token: KaLifetimeToken
     ) : Applicable() {
-        override val substitutor: KtSubstitutor by validityAsserted(substitutor)
+        override val substitutor: KaSubstitutor by validityAsserted(substitutor)
         override val receiverCastRequired: Boolean by validityAsserted(receiverCastRequired)
     }
 
     public class ApplicableAsFunctionalVariableCall(
-        substitutor: KtSubstitutor,
+        substitutor: KaSubstitutor,
         receiverCastRequired: Boolean,
-        override val token: KtLifetimeToken
+        override val token: KaLifetimeToken
     ) : Applicable() {
-        override val substitutor: KtSubstitutor by validityAsserted(substitutor)
+        override val substitutor: KaSubstitutor by validityAsserted(substitutor)
         override val receiverCastRequired: Boolean by validityAsserted(receiverCastRequired)
     }
 
     public class NonApplicable(
-        override val token: KtLifetimeToken
-    ) : KtExtensionApplicabilityResult()
+        override val token: KaLifetimeToken
+    ) : KaExtensionApplicabilityResult()
 }
 
-public interface KtCompletionCandidateCheckerMixIn : KtAnalysisSessionMixIn {
+public typealias KtExtensionApplicabilityResult = KaExtensionApplicabilityResult
+
+public interface KaCompletionCandidateCheckerMixIn : KaSessionMixIn {
     /**
      * Returns an extension applicability checker for the given context [nameExpression].
      * The function is meant to only be used for providing auto-completion for Kotlin in IntelliJ IDEA.
@@ -80,7 +86,7 @@ public interface KtCompletionCandidateCheckerMixIn : KtAnalysisSessionMixIn {
         originalFile: KtFile,
         nameExpression: KtSimpleNameExpression,
         explicitReceiver: KtExpression?
-    ): KtCompletionExtensionCandidateChecker {
+    ): KaCompletionExtensionCandidateChecker {
         return analysisSession.completionCandidateChecker.createExtensionCandidateChecker(
             originalFile,
             nameExpression,
@@ -89,11 +95,11 @@ public interface KtCompletionCandidateCheckerMixIn : KtAnalysisSessionMixIn {
     }
 
     @Deprecated("Use createExtensionCandidateChecker() instead.")
-    public fun KtCallableSymbol.checkExtensionIsSuitable(
+    public fun KaCallableSymbol.checkExtensionIsSuitable(
         originalPsiFile: KtFile,
         psiFakeCompletionExpression: KtSimpleNameExpression,
         psiReceiverExpression: KtExpression?,
-    ): KtExtensionApplicabilityResult = withValidityAssertion {
+    ): KaExtensionApplicabilityResult = withValidityAssertion {
         @Suppress("DEPRECATION")
         analysisSession.completionCandidateChecker.checkExtensionFitsCandidate(
             this,
@@ -103,3 +109,5 @@ public interface KtCompletionCandidateCheckerMixIn : KtAnalysisSessionMixIn {
         )
     }
 }
+
+public typealias KtCompletionCandidateCheckerMixIn = KaCompletionCandidateCheckerMixIn

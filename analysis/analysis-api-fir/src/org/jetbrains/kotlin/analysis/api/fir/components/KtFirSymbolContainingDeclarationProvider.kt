@@ -9,16 +9,16 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.analysis.api.components.KtSymbolContainingDeclarationProvider
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirReceiverParameterSymbol
+import org.jetbrains.kotlin.analysis.api.components.KaSymbolContainingDeclarationProvider
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.getContainingKtModule
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.isForeignValue
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.jvmClassNameIfDeserialized
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
@@ -45,11 +45,11 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
-internal class KtFirSymbolContainingDeclarationProvider(
-    override val analysisSession: KtFirAnalysisSession,
-    override val token: KtLifetimeToken,
-) : KtSymbolContainingDeclarationProvider(), KtFirAnalysisSessionComponent {
-    override fun getContainingDeclaration(symbol: KtSymbol): KtDeclarationSymbol? {
+internal class KaFirSymbolContainingDeclarationProvider(
+    override val analysisSession: KaFirSession,
+    override val token: KaLifetimeToken,
+) : KaSymbolContainingDeclarationProvider(), KaFirSessionComponent {
+    override fun getContainingDeclaration(symbol: KaSymbol): KaDeclarationSymbol? {
         if (!hasParentSymbol(symbol)) {
             return null
         }
@@ -72,28 +72,28 @@ internal class KtFirSymbolContainingDeclarationProvider(
         }
 
         when (symbol) {
-            is KtLocalVariableSymbol,
-            is KtAnonymousFunctionSymbol,
-            is KtAnonymousObjectSymbol,
-            is KtDestructuringDeclarationSymbol -> {
+            is KaLocalVariableSymbol,
+            is KaAnonymousFunctionSymbol,
+            is KaAnonymousObjectSymbol,
+            is KaDestructuringDeclarationSymbol -> {
                 return getContainingDeclarationByPsi(symbol)
             }
 
-            is KtClassInitializerSymbol -> {
+            is KaClassInitializerSymbol -> {
                 val outerFirClassifier = firSymbol.getContainingClassSymbol(symbolFirSession)
                 if (outerFirClassifier != null) {
-                    return firSymbolBuilder.buildSymbol(outerFirClassifier) as? KtDeclarationSymbol
+                    return firSymbolBuilder.buildSymbol(outerFirClassifier) as? KaDeclarationSymbol
                 }
             }
 
-            is KtValueParameterSymbol -> {
+            is KaValueParameterSymbol -> {
                 return firSymbolBuilder.callableBuilder.buildCallableSymbol(symbol.firSymbol.fir.containingFunctionSymbol)
             }
 
-            is KtCallableSymbol -> {
+            is KaCallableSymbol -> {
                 val outerFirClassifier = firSymbol.getContainingClassSymbol(symbolFirSession)
                 if (outerFirClassifier != null) {
-                    return firSymbolBuilder.buildSymbol(outerFirClassifier) as? KtDeclarationSymbol
+                    return firSymbolBuilder.buildSymbol(outerFirClassifier) as? KaDeclarationSymbol
                 }
 
                 if (firSymbol.origin == FirDeclarationOrigin.DynamicScope) {
@@ -103,11 +103,11 @@ internal class KtFirSymbolContainingDeclarationProvider(
                 }
             }
 
-            is KtClassLikeSymbol -> {
-                val outerClassId = symbol.classIdIfNonLocal?.outerClassId
+            is KaClassLikeSymbol -> {
+                val outerClassId = symbol.classId?.outerClassId
                 if (outerClassId != null) { // Won't work for local and top-level classes, or classes inside a script
                     val outerFirClassifier = symbolFirSession.firProvider.getFirClassifierByFqName(outerClassId) ?: return null
-                    return firSymbolBuilder.buildSymbol(outerFirClassifier) as? KtDeclarationSymbol
+                    return firSymbolBuilder.buildSymbol(outerFirClassifier) as? KaDeclarationSymbol
                 }
             }
         }
@@ -115,24 +115,24 @@ internal class KtFirSymbolContainingDeclarationProvider(
         return getContainingDeclarationByPsi(symbol)
     }
 
-    private fun hasParentSymbol(symbol: KtSymbol): Boolean {
+    private fun hasParentSymbol(symbol: KaSymbol): Boolean {
         when (symbol) {
-            is KtReceiverParameterSymbol -> {
+            is KaReceiverParameterSymbol -> {
                 // KT-55124
                 return true
             }
 
-            !is KtDeclarationSymbol -> {
+            !is KaDeclarationSymbol -> {
                 // File, package, etc.
                 return false
             }
 
-            is KtSamConstructorSymbol -> {
+            is KaSamConstructorSymbol -> {
                 // SAM constructors are always top-level
                 return false
             }
 
-            is KtScriptSymbol -> {
+            is KaScriptSymbol -> {
                 // Scripts are always top-level
                 return false
             }
@@ -140,7 +140,7 @@ internal class KtFirSymbolContainingDeclarationProvider(
             else -> {}
         }
 
-        if (symbol is KtSymbolWithKind && symbol.symbolKind == KtSymbolKind.TOP_LEVEL) {
+        if (symbol is KaSymbolWithKind && symbol.symbolKind == KaSymbolKind.TOP_LEVEL) {
             val containingFile = (symbol.firSymbol.fir as? FirElementWithResolveState)?.getContainingFile()
             if (containingFile == null || containingFile.declarations.firstOrNull() !is FirScript) {
                 // Should be replaced with proper check after KT-61451 and KT-61887
@@ -156,26 +156,26 @@ internal class KtFirSymbolContainingDeclarationProvider(
         return true
     }
 
-    fun getContainingDeclarationByPsi(symbol: KtSymbol): KtDeclarationSymbol? {
+    fun getContainingDeclarationByPsi(symbol: KaSymbol): KaDeclarationSymbol? {
         val containingDeclaration = getContainingPsi(symbol) ?: return null
         return with(analysisSession) { containingDeclaration.getSymbol() }
     }
 
-    private fun getContainingDeclarationForDependentDeclaration(symbol: KtSymbol): KtDeclarationSymbol? {
+    private fun getContainingDeclarationForDependentDeclaration(symbol: KaSymbol): KaDeclarationSymbol? {
         return when (symbol) {
-            is KtReceiverParameterSymbol -> symbol.owningCallableSymbol
-            is KtBackingFieldSymbol -> symbol.owningProperty
-            is KtPropertyAccessorSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.propertySymbol) as KtDeclarationSymbol
-            is KtTypeParameterSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.containingDeclarationSymbol) as? KtDeclarationSymbol
-            is KtValueParameterSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.containingFunctionSymbol) as? KtDeclarationSymbol
+            is KaReceiverParameterSymbol -> symbol.owningCallableSymbol
+            is KaBackingFieldSymbol -> symbol.owningProperty
+            is KaPropertyAccessorSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.propertySymbol) as KaDeclarationSymbol
+            is KaTypeParameterSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.containingDeclarationSymbol) as? KaDeclarationSymbol
+            is KaValueParameterSymbol -> firSymbolBuilder.buildSymbol(symbol.firSymbol.containingFunctionSymbol) as? KaDeclarationSymbol
             else -> null
         }
     }
 
-    override fun getContainingFileSymbol(symbol: KtSymbol): KtFileSymbol? {
-        if (symbol is KtFileSymbol) return null
+    override fun getContainingFileSymbol(symbol: KaSymbol): KaFileSymbol? {
+        if (symbol is KaFileSymbol) return null
         val firSymbol = when (symbol) {
-            is KtFirReceiverParameterSymbol -> {
+            is KaFirReceiverParameterSymbol -> {
                 // symbol from receiver parameter
                 symbol.firSymbol
             }
@@ -188,18 +188,18 @@ internal class KtFirSymbolContainingDeclarationProvider(
         return firSymbolBuilder.buildFileSymbol(firFileSymbol)
     }
 
-    override fun getContainingJvmClassName(symbol: KtCallableSymbol): String? {
+    override fun getContainingJvmClassName(symbol: KaCallableSymbol): String? {
         val platform = getContainingModule(symbol).platform
         if (!platform.has<JvmPlatform>()) return null
 
         val containingSymbolOrSelf = when (symbol) {
-            is KtValueParameterSymbol -> {
-                getContainingDeclaration(symbol) as? KtFunctionLikeSymbol ?: symbol
+            is KaValueParameterSymbol -> {
+                getContainingDeclaration(symbol) as? KaFunctionLikeSymbol ?: symbol
             }
-            is KtPropertyAccessorSymbol -> {
-                getContainingDeclaration(symbol) as? KtPropertySymbol ?: symbol
+            is KaPropertyAccessorSymbol -> {
+                getContainingDeclaration(symbol) as? KaPropertySymbol ?: symbol
             }
-            is KtBackingFieldSymbol -> symbol.owningProperty
+            is KaBackingFieldSymbol -> symbol.owningProperty
             else -> symbol
         }
         val firSymbol = containingSymbolOrSelf.firSymbol
@@ -208,23 +208,23 @@ internal class KtFirSymbolContainingDeclarationProvider(
             return it.fqNameForClassNameWithoutDollars.asString()
         }
 
-        return if (containingSymbolOrSelf.symbolKind == KtSymbolKind.TOP_LEVEL) {
+        return if (containingSymbolOrSelf.symbolKind == KaSymbolKind.TOP_LEVEL) {
             (firSymbol.fir.getContainingFile()?.psi as? KtFile)
                 ?.takeUnless { it.isScript() }
                 ?.javaFileFacadeFqName?.asString()
         } else {
-            val classId = (containingSymbolOrSelf as? KtConstructorSymbol)?.containingClassIdIfNonLocal
-                ?: containingSymbolOrSelf.callableIdIfNonLocal?.classId
+            val classId = (containingSymbolOrSelf as? KaConstructorSymbol)?.containingClassId
+                ?: containingSymbolOrSelf.callableId?.classId
             classId?.takeUnless { it.shortClassName.isSpecial }
                 ?.asFqNameString()
         }
     }
 
-    override fun getContainingModule(symbol: KtSymbol): KtModule {
+    override fun getContainingModule(symbol: KaSymbol): KtModule {
         return symbol.getContainingKtModule(analysisSession.firResolveSession)
     }
 
-    private fun getContainingPsi(symbol: KtSymbol): KtDeclaration? {
+    private fun getContainingPsi(symbol: KaSymbol): KtDeclaration? {
         val source = symbol.firSymbol.source
             ?: errorWithAttachment("PSI should present for declaration built by Kotlin code") {
                 withSymbolAttachment("symbolForContainingPsi", analysisSession, symbol)
@@ -270,7 +270,7 @@ internal class KtFirSymbolContainingDeclarationProvider(
         }
     }
 
-    private fun hasParentPsi(symbol: KtSymbol): Boolean {
+    private fun hasParentPsi(symbol: KaSymbol): Boolean {
         val source = symbol.firSymbol.source?.takeIf { it.psi is KtElement } ?: return false
 
         return getContainingPsiForFakeSource(source) != null
@@ -278,15 +278,15 @@ internal class KtFirSymbolContainingDeclarationProvider(
                 || isOrdinarySymbolWithSource(symbol)
     }
 
-    private fun isSyntheticSymbolWithParentSource(symbol: KtSymbol): Boolean {
+    private fun isSyntheticSymbolWithParentSource(symbol: KaSymbol): Boolean {
         return when (symbol.origin) {
-            KtSymbolOrigin.SOURCE_MEMBER_GENERATED -> true
+            KaSymbolOrigin.SOURCE_MEMBER_GENERATED -> true
             else -> false
         }
     }
 
-    private fun isOrdinarySymbolWithSource(symbol: KtSymbol): Boolean {
-        return symbol.origin == KtSymbolOrigin.SOURCE
+    private fun isOrdinarySymbolWithSource(symbol: KaSymbol): Boolean {
+        return symbol.origin == KaSymbolOrigin.SOURCE
                 || symbol.firSymbol.fir.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty
     }
 

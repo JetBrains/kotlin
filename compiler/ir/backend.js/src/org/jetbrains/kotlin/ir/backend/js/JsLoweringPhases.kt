@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,14 +27,20 @@ import org.jetbrains.kotlin.platform.js.JsPlatforms
 private fun List<CompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>>.toCompilerPhase() =
     reduce { acc, lowering -> acc.then(lowering) }
 
-private val validateIrBeforeLowering = makeIrModulePhase(
-    ::IrValidationPhase,
+private val validateIrBeforeLowering = makeIrModulePhase<JsIrBackendContext>(
+    ::IrValidationBeforeLoweringPhase,
     name = "ValidateIrBeforeLowering",
     description = "Validate IR before lowering"
 )
 
-private val validateIrAfterLowering = makeIrModulePhase(
-    ::IrValidationPhase,
+private val validateIrAfterInliningPhase = makeIrModulePhase(
+    ::IrValidationAfterInliningPhase,
+    name = "IrValidationAfterInliningPhase",
+    description = "Validate IR after inlining",
+)
+
+private val validateIrAfterLowering = makeIrModulePhase<JsIrBackendContext>(
+    ::IrValidationAfterLoweringPhase,
     name = "ValidateIrAfterLowering",
     description = "Validate IR after lowering"
 )
@@ -199,7 +205,6 @@ private val saveInlineFunctionsBeforeInlining = makeIrModulePhase(
     name = "SaveInlineFunctionsBeforeInlining",
     description = "Save inline function before inlining",
     prerequisite = setOf(
-        replaceSuspendIntrinsicLowering,
         sharedVariablesLoweringPhase,
         localClassesInInlineLambdasPhase, localClassesExtractionFromInlineFunctionsPhase,
         syntheticAccessorLoweringPhase, wrapInlineDeclarationsWithReifiedTypeParametersLowering
@@ -794,12 +799,13 @@ val loweringList = listOf<SimpleNamedCompilerPhase<JsIrBackendContext, IrModuleF
     localClassesExtractionFromInlineFunctionsPhase,
     syntheticAccessorLoweringPhase,
     wrapInlineDeclarationsWithReifiedTypeParametersLowering,
-    replaceSuspendIntrinsicLowering,
     saveInlineFunctionsBeforeInlining,
     functionInliningPhase,
+    validateIrAfterInliningPhase,
     constEvaluationPhase,
     copyInlineFunctionBodyLoweringPhase,
     removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase,
+    replaceSuspendIntrinsicLowering,
     prepareCollectionsToExportLowering,
     preventExportOfSyntheticDeclarationsLowering,
     jsStaticLowering,
@@ -896,7 +902,7 @@ val jsPhases = SameTypeNamedCompilerPhase(
     name = "IrModuleLowering",
     description = "IR module lowering",
     lower = loweringList.toCompilerPhase(),
-    actions = setOf(defaultDumper, validationAction),
+    actions = DEFAULT_IR_ACTIONS,
     nlevels = 1
 )
 
@@ -960,6 +966,6 @@ val jsOptimizationPhases = SameTypeNamedCompilerPhase(
     name = "IrModuleOptimizationLowering",
     description = "IR module optimization lowering",
     lower = optimizationLoweringList.toCompilerPhase(),
-    actions = setOf(defaultDumper, validationAction),
+    actions = DEFAULT_IR_ACTIONS,
     nlevels = 1
 )

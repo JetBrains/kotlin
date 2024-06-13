@@ -1,23 +1,17 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
-import org.jetbrains.kotlin.backend.common.phaser.ActionState
+import org.jetbrains.kotlin.backend.common.phaser.KotlinBackendIrHolder
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
-import org.jetbrains.kotlin.backend.konan.driver.utilities.KotlinBackendIrHolder
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.ir.GlobalHierarchyAnalysis
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.optimizations.*
-import org.jetbrains.kotlin.backend.konan.optimizations.DevirtualizationAnalysis
-import org.jetbrains.kotlin.backend.konan.optimizations.ExternalModulesDFG
-import org.jetbrains.kotlin.backend.konan.optimizations.ModuleDFG
-import org.jetbrains.kotlin.backend.konan.optimizations.ModuleDFGBuilder
-import org.jetbrains.kotlin.backend.konan.optimizations.dce
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -114,7 +108,8 @@ internal val DevirtualizationPhase = createSimpleNamedCompilerPhase<NativeGenera
                     .associate { it.key.irCallSite!! to it.value }
             val externalModulesDFG = ExternalModulesDFG(emptyList(), emptyMap(), emptyMap(), emptyMap())
             DevirtualizationAnalysis.devirtualize(input.irModule, context,
-                    externalModulesDFG, devirtualizedCallSites)
+                    externalModulesDFG, devirtualizedCallSites,
+                    DevirtualizationUnfoldFactors.IR_DEVIRTUALIZED_VTABLE_CALL, DevirtualizationUnfoldFactors.IR_DEVIRTUALIZED_ITABLE_CALL)
         }
 )
 
@@ -143,7 +138,7 @@ internal val EscapeAnalysisPhase = createSimpleNamedCompilerPhase<NativeGenerati
                         // For a final program it can be safely assumed that what classes we see is what we got,
                         // so can take those. In theory we can always unfold call sites using type hierarchy, but
                         // the analysis might converge much, much slower, so take only reasonably small for now.
-                        5
+                        DevirtualizationUnfoldFactors.DFG_NON_DEVIRTUALIZED_CALL
                     } else {
                         // Can't tolerate any non-devirtualized call site for a library.
                         // TODO: What about private virtual functions?
@@ -157,6 +152,7 @@ internal val EscapeAnalysisPhase = createSimpleNamedCompilerPhase<NativeGenerati
                     input.moduleDFG,
                     externalModulesDFG,
                     input.devirtualizationAnalysisResult,
+                    DevirtualizationUnfoldFactors.DFG_DEVIRTUALIZED_CALL,
                     nonDevirtualizedCallSitesUnfoldFactor
             ).build()
             EscapeAnalysis.computeLifetimes(context, generationState, input.moduleDFG, externalModulesDFG, callGraph, lifetimes)
@@ -189,6 +185,7 @@ internal val RemoveRedundantCallsToStaticInitializersPhase = createSimpleNamedCo
                     moduleDFG,
                     externalModulesDFG,
                     input.devirtualizationAnalysisResult,
+                    devirtualizedCallSitesUnfoldFactor = Int.MAX_VALUE,
                     nonDevirtualizedCallSitesUnfoldFactor = Int.MAX_VALUE
             ).build()
 

@@ -1,43 +1,43 @@
-KtFunctionSymbol:
-  callableIdIfNonLocal: test/InterfaceWithFun.noGenerics_InterfaceWithFun
+KaFunctionSymbol:
+  callableId: test/InterfaceWithFun.noGenerics_InterfaceWithFun
   name: noGenerics_InterfaceWithFun
   origin: SOURCE
 
-KtFunctionSymbol:
-  callableIdIfNonLocal: test/ClassWithInterfaceWithFun.withOuterGeneric_InterfaceWithFun
+KaFunctionSymbol:
+  callableId: test/ClassWithInterfaceWithFun.withOuterGeneric_InterfaceWithFun
   name: withOuterGeneric_InterfaceWithFun
   origin: SUBSTITUTION_OVERRIDE
 
-KtFunctionSymbol:
-  callableIdIfNonLocal: test/InterfaceWithFunBase.noGenerics_InterfaceWithFunBase
+KaFunctionSymbol:
+  callableId: test/InterfaceWithFunBase.noGenerics_InterfaceWithFunBase
   name: noGenerics_InterfaceWithFunBase
   origin: SOURCE
 
-KtFunctionSymbol:
-  callableIdIfNonLocal: test/InterfaceWithFun.withOuterGenericT1_InterfaceWithFunBase
+KaFunctionSymbol:
+  callableId: test/InterfaceWithFun.withOuterGenericT1_InterfaceWithFunBase
   name: withOuterGenericT1_InterfaceWithFunBase
   origin: SUBSTITUTION_OVERRIDE
 
-KtFunctionSymbol:
-  callableIdIfNonLocal: test/ClassWithInterfaceWithFun.withOuterGenericT2_InterfaceWithFunBase
+KaFunctionSymbol:
+  callableId: test/ClassWithInterfaceWithFun.withOuterGenericT2_InterfaceWithFunBase
   name: withOuterGenericT2_InterfaceWithFunBase
   origin: SUBSTITUTION_OVERRIDE
 
-KtFunctionSymbol:
-  callableIdIfNonLocal: kotlin/Any.equals
+KaFunctionSymbol:
+  callableId: kotlin/Any.equals
   name: equals
   origin: LIBRARY
 
-KtFunctionSymbol:
-  callableIdIfNonLocal: kotlin/Any.hashCode
+KaFunctionSymbol:
+  callableId: kotlin/Any.hashCode
   name: hashCode
   origin: LIBRARY
 
-KtFunctionSymbol:
-  callableIdIfNonLocal: kotlin/Any.toString
+KaFunctionSymbol:
+  callableId: kotlin/Any.toString
   name: toString
   origin: LIBRARY
 
-KtConstructorSymbol:
-  callableIdIfNonLocal: null
+KaConstructorSymbol:
+  callableId: null
   origin: SOURCE_MEMBER_GENERATED

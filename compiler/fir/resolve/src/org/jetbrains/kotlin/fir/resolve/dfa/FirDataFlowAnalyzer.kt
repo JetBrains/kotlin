@@ -40,13 +40,14 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
+import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class DataFlowAnalyzerContext(session: FirSession) {
-    val graphBuilder = ControlFlowGraphBuilder()
-    internal val variableAssignmentAnalyzer = FirLocalVariableAssignmentAnalyzer()
+    val graphBuilder: ControlFlowGraphBuilder = ControlFlowGraphBuilder()
+    internal val variableAssignmentAnalyzer: FirLocalVariableAssignmentAnalyzer = FirLocalVariableAssignmentAnalyzer()
 
-    var variableStorage = VariableStorageImpl(session)
+    var variableStorage: VariableStorageImpl = VariableStorageImpl(session)
         private set
 
     private var assignmentCounter = 0
@@ -134,23 +135,30 @@ abstract class FirDataFlowAnalyzer(
      * a non-in-place lambda body. So for a given lexical scope (function body, lambda body, and even local class init) and a given
      * variable, [FirLocalVariableAssignmentAnalyzer] knows all associated assignments (past and/or future) which could limit stability.
      *
-     * When a [targetType] is provided, all assignments are checked for the specified variable access expression:
+     * When [targetTypes] are provided, all assignments are checked for the specified variable access expression:
      * 1. If there are no assignments, the variable is always considered **stable**.
      * 2. If there is an unresolved assignment type, the variable is considered **unstable**.
-     * 3. If any resolved assignment type is not a subtype of the [targetType], the variable is considered **unstable**.
+     * 3. If any resolved assignment type is not a subtype of all [targetTypes], the variable is considered **unstable**.
      * 4. If none of the previous conditions are true, the variable is considered **stable**.
      *
-     * When a [targetType] is **not** provided, **any** assignments cause the variable to be considered **unstable**.
+     * When [targetTypes] are **not** provided, **any** assignments cause the variable to be considered **unstable**.
      *
      * @param expression The variable access expression.
-     * @param targetType Smartcast target type (optional: see function description).
+     * @param targetTypes Smartcast target types (optional: see function description).
      *
      * @see [getTypeUsingSmartcastInfo]
      * @see [FirLocalVariableAssignmentAnalyzer.isAccessToUnstableLocalVariable]
      * @see [FirLocalVariableAssignmentAnalyzer.isStableType]
      */
-    fun isAccessToUnstableLocalVariable(expression: FirElement, targetType: ConeKotlinType?): Boolean =
-        context.variableAssignmentAnalyzer.isAccessToUnstableLocalVariable(expression, targetType, components.session)
+    private fun isAccessToUnstableLocalVariable(expression: FirElement, targetTypes: Set<ConeKotlinType>?): Boolean =
+        context.variableAssignmentAnalyzer.isAccessToUnstableLocalVariable(expression, targetTypes, components.session)
+
+    private fun RealVariable.getStability(flow: Flow, fir: FirElement, targetTypes: Set<ConeKotlinType>?): SmartcastStability =
+        getStability(flow, components.session).let {
+            if (it == SmartcastStability.CAPTURED_VARIABLE && !isAccessToUnstableLocalVariable(fir, targetTypes))
+                SmartcastStability.STABLE_VALUE
+            else it
+        }
 
     /**
      * Retrieve smartcast type information [FirDataFlowAnalyzer] may have for the specified variable access expression. Type information
@@ -158,11 +166,11 @@ abstract class FirDataFlowAnalyzer(
      *
      * @param expression The variable access expression.
      */
-    open fun getTypeUsingSmartcastInfo(expression: FirExpression): Pair<PropertyStability, MutableList<ConeKotlinType>>? {
+    open fun getTypeUsingSmartcastInfo(expression: FirExpression): Pair<SmartcastStability, MutableList<ConeKotlinType>>? {
         val flow = currentSmartCastPosition ?: return null
         val variable = getRealVariableWithoutUnwrappingAlias(flow, expression) ?: return null
         val types = flow.getTypeStatement(variable)?.exactType?.ifEmpty { null } ?: return null
-        return variable.stability to types.toMutableList()
+        return variable.getStability(flow, expression, types) to types.toMutableList()
     }
 
     fun returnExpressionsOfAnonymousFunctionOrNull(function: FirAnonymousFunction): Collection<FirAnonymousFunctionReturnExpressionInfo>? =
@@ -453,8 +461,8 @@ abstract class FirDataFlowAnalyzer(
         val leftConst = when (leftOperand) {
             is FirWhenSubjectExpression -> leftOperand.whenRef.value.subject
             else -> leftOperand
-        } as? FirLiteralExpression<*>
-        val rightConst = rightOperand as? FirLiteralExpression<*>
+        } as? FirLiteralExpression
+        val rightConst = rightOperand as? FirLiteralExpression
         val leftIsNullConst = leftConst?.kind == ConstantValueKind.Null
         val rightIsNullConst = rightConst?.kind == ConstantValueKind.Null
         val leftIsNull = leftIsNullConst || leftOperand.resolvedType.isNullableNothing && !rightIsNullConst
@@ -478,7 +486,7 @@ abstract class FirDataFlowAnalyzer(
         flow: MutableFlow,
         expression: FirEqualityOperatorCall,
         operand: FirExpression,
-        const: FirLiteralExpression<*>,
+        const: FirLiteralExpression,
         isEq: Boolean,
     ) {
         if (const.kind == ConstantValueKind.Null) {
@@ -1048,7 +1056,7 @@ abstract class FirDataFlowAnalyzer(
         }
     }
 
-    fun exitLiteralExpression(literalExpression: FirLiteralExpression<*>) {
+    fun exitLiteralExpression(literalExpression: FirLiteralExpression) {
         if (literalExpression.isResolved) return
         graphBuilder.exitLiteralExpression(literalExpression).mergeIncomingFlow()
     }
@@ -1095,9 +1103,12 @@ abstract class FirDataFlowAnalyzer(
             logicSystem.recordNewAssignment(flow, propertyVariable, context.newAssignmentIndex())
         }
 
-        if (propertyVariable.isStable || propertyVariable.hasLocalStability) {
+        val stability = propertyVariable.getStability(flow, components.session)
+        if (stability == SmartcastStability.STABLE_VALUE || stability == SmartcastStability.CAPTURED_VARIABLE) {
             val initializerVariable = getOrCreateIfRealWithoutUnwrappingAlias(flow, initializer)
-            if (!hasExplicitType && initializerVariable is RealVariable && initializerVariable.isStableOrLocalStableAccess(initializer)) {
+            if (!hasExplicitType && initializerVariable is RealVariable &&
+                initializerVariable.getStability(flow, initializer, targetTypes = null) == SmartcastStability.STABLE_VALUE
+            ) {
                 // val a = ...
                 // val b = a
                 // if (b != null) { /* a != null */ }
@@ -1126,13 +1137,6 @@ abstract class FirDataFlowAnalyzer(
             // a redundant type statement which is fine...probably
             flow.addTypeStatement(flow.unwrapVariable(propertyVariable) typeEq initializer.resolvedType)
         }
-    }
-
-    private val RealVariable.isStable get() = stability == PropertyStability.STABLE_VALUE
-    private val RealVariable.hasLocalStability get() = stability == PropertyStability.LOCAL_VAR
-
-    private fun RealVariable.isStableOrLocalStableAccess(fir: FirElement): Boolean {
-        return isStable || (hasLocalStability && !isAccessToUnstableLocalVariable(fir, targetType = null))
     }
 
     fun exitThrowExceptionNode(throwExpression: FirThrowExpression) {
@@ -1304,7 +1308,7 @@ abstract class FirDataFlowAnalyzer(
 
             // For any predicate P(x), if P(v) != P(u ?: v) then u != null. In general this requires two levels of
             // implications, but for constant v the logic system can handle some basic cases of P(x).
-            val rhs = (elvisExpression.rhs as? FirLiteralExpression<*>)?.value as? Boolean
+            val rhs = (elvisExpression.rhs as? FirLiteralExpression)?.value as? Boolean
             if (rhs != null) {
                 flow.addAllConditionally(elvisVariable eq !rhs, node.firstPreviousNode.getFlow(path))
             }
@@ -1578,7 +1582,7 @@ abstract class FirDataFlowAnalyzer(
 
     private fun RealVariable.unwrapIfStable(flow: Flow, fir: FirElement): RealVariable? {
         val unwrapped = flow.unwrapVariable(this)
-        if (unwrapped != this && !isStableOrLocalStableAccess(fir)) return null
+        if (unwrapped != this && getStability(flow, fir, targetTypes = null) != SmartcastStability.STABLE_VALUE) return null
         return unwrapped
     }
 }

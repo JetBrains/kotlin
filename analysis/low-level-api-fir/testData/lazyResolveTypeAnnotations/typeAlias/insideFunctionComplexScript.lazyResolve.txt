@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] insideFunctionComplexScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-insideFunctionComplexScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
@@ -24,8 +24,8 @@ FILE: [ResolvedTo(RAW_FIR)] insideFunctionComplexScript.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-insideFunctionComplexScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
@@ -48,8 +48,8 @@ FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-insideFunctionComplexScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
@@ -72,8 +72,8 @@ FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-insideFunctionComplexScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
@@ -96,8 +96,8 @@ FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-insideFunctionComplexScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
@@ -120,8 +120,8 @@ FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-insideFunctionComplexScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
@@ -137,15 +137,15 @@ FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias = @TypeAnnWithArg[Unresolved](LAZY_EXPRESSION) List<@TypeAnnWithArg[Unresolved](LAZY_EXPRESSION) List<@TypeAnnWithArg[Unresolved](LAZY_EXPRESSION) Int>>
+        public final [ResolvedTo(SUPER_TYPES)] typealias MyTypeAlias = R|@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/Int>>|
 
-        public? final? [ResolvedTo(TYPES)] fun resolveMe([ResolvedTo(TYPES)] param: R|@R|pack/TypeAnnWithArg|(<strcat>(String(parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(<strcat>(String(nested parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(<strcat>(String(nested nested parameter: ), constant#))  pack/MyTypeAlias>>|): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(TYPES)] fun resolveMe([ResolvedTo(TYPES)] param: R|@R|pack/TypeAnnWithArg|(<strcat>(String(parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(<strcat>(String(nested parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  @R|pack/TypeAnnWithArg|(<strcat>(String(nested nested parameter: ), constant#))  {@R|pack/TypeAnnWithArg|(<strcat>(String(nested nested parameter: ), constant#))  pack/MyTypeAlias=} kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/Int>>>>|): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-insideFunctionComplexScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
@@ -161,15 +161,15 @@ FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias = @TypeAnnWithArg[Unresolved](LAZY_EXPRESSION) List<@TypeAnnWithArg[Unresolved](LAZY_EXPRESSION) List<@TypeAnnWithArg[Unresolved](LAZY_EXPRESSION) Int>>
+        public final [ResolvedTo(SUPER_TYPES)] typealias MyTypeAlias = R|@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/Int>>|
 
-        public final [ResolvedTo(STATUS)] fun resolveMe([ResolvedTo(STATUS)] param: R|@R|pack/TypeAnnWithArg|(<strcat>(String(parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(<strcat>(String(nested parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(<strcat>(String(nested nested parameter: ), constant#))  pack/MyTypeAlias>>|): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] fun resolveMe([ResolvedTo(STATUS)] param: R|@R|pack/TypeAnnWithArg|(<strcat>(String(parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(<strcat>(String(nested parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  @R|pack/TypeAnnWithArg|(<strcat>(String(nested nested parameter: ), constant#))  {@R|pack/TypeAnnWithArg|(<strcat>(String(nested nested parameter: ), constant#))  pack/MyTypeAlias=} kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/Int>>>>|): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-insideFunctionComplexScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
@@ -185,15 +185,15 @@ FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias = @TypeAnnWithArg[Unresolved](LAZY_EXPRESSION) List<@TypeAnnWithArg[Unresolved](LAZY_EXPRESSION) List<@TypeAnnWithArg[Unresolved](LAZY_EXPRESSION) Int>>
+        public final [ResolvedTo(SUPER_TYPES)] typealias MyTypeAlias = R|@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/Int>>|
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe([ResolvedTo(EXPECT_ACTUAL_MATCHING)] param: R|@R|pack/TypeAnnWithArg|(<strcat>(String(parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(<strcat>(String(nested parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(<strcat>(String(nested nested parameter: ), constant#))  pack/MyTypeAlias>>|): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe([ResolvedTo(EXPECT_ACTUAL_MATCHING)] param: R|@R|pack/TypeAnnWithArg|(<strcat>(String(parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(<strcat>(String(nested parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  @R|pack/TypeAnnWithArg|(<strcat>(String(nested nested parameter: ), constant#))  {@R|pack/TypeAnnWithArg|(<strcat>(String(nested nested parameter: ), constant#))  pack/MyTypeAlias=} kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/Int>>>>|): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-insideFunctionComplexScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
@@ -209,16 +209,16 @@ FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias = @TypeAnnWithArg[Unresolved](LAZY_EXPRESSION) List<@TypeAnnWithArg[Unresolved](LAZY_EXPRESSION) List<@TypeAnnWithArg[Unresolved](LAZY_EXPRESSION) Int>>
+        public final [ResolvedTo(SUPER_TYPES)] typealias MyTypeAlias = R|@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/Int>>|
 
-        public final [ResolvedTo(CONTRACTS)] fun resolveMe([ResolvedTo(CONTRACTS)] param: R|@R|pack/TypeAnnWithArg|(<strcat>(String(parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(<strcat>(String(nested parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(<strcat>(String(nested nested parameter: ), constant#))  pack/MyTypeAlias>>|): R|kotlin/Unit| {
+        public final [ResolvedTo(CONTRACTS)] fun resolveMe([ResolvedTo(CONTRACTS)] param: R|@R|pack/TypeAnnWithArg|(<strcat>(String(parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(<strcat>(String(nested parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  @R|pack/TypeAnnWithArg|(<strcat>(String(nested nested parameter: ), constant#))  {@R|pack/TypeAnnWithArg|(<strcat>(String(nested nested parameter: ), constant#))  pack/MyTypeAlias=} kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/Int>>>>|): R|kotlin/Unit| {
         }
 
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-insideFunctionComplexScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
@@ -234,16 +234,16 @@ FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias = @TypeAnnWithArg[Unresolved](LAZY_EXPRESSION) List<@TypeAnnWithArg[Unresolved](LAZY_EXPRESSION) List<@TypeAnnWithArg[Unresolved](LAZY_EXPRESSION) Int>>
+        public final [ResolvedTo(SUPER_TYPES)] typealias MyTypeAlias = R|@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/Int>>|
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] param: R|@R|pack/TypeAnnWithArg|(<strcat>(String(parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(<strcat>(String(nested parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(<strcat>(String(nested nested parameter: ), constant#))  pack/MyTypeAlias>>|): R|kotlin/Unit| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] param: R|@R|pack/TypeAnnWithArg|(<strcat>(String(parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(<strcat>(String(nested parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  @R|pack/TypeAnnWithArg|(<strcat>(String(nested nested parameter: ), constant#))  {@R|pack/TypeAnnWithArg|(<strcat>(String(nested nested parameter: ), constant#))  pack/MyTypeAlias=} kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/Int>>>>|): R|kotlin/Unit| {
         }
 
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-insideFunctionComplexScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
@@ -259,16 +259,16 @@ FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias = @TypeAnnWithArg[Unresolved](LAZY_EXPRESSION) List<@TypeAnnWithArg[Unresolved](LAZY_EXPRESSION) List<@TypeAnnWithArg[Unresolved](LAZY_EXPRESSION) Int>>
+        public final [ResolvedTo(SUPER_TYPES)] typealias MyTypeAlias = R|@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/Int>>|
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] fun resolveMe([ResolvedTo(CONSTANT_EVALUATION)] param: R|@R|pack/TypeAnnWithArg|(<strcat>(String(parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(<strcat>(String(nested parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(<strcat>(String(nested nested parameter: ), constant#))  pack/MyTypeAlias>>|): R|kotlin/Unit| {
+        public final [ResolvedTo(CONSTANT_EVALUATION)] fun resolveMe([ResolvedTo(CONSTANT_EVALUATION)] param: R|@R|pack/TypeAnnWithArg|(<strcat>(String(parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(<strcat>(String(nested parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  @R|pack/TypeAnnWithArg|(<strcat>(String(nested nested parameter: ), constant#))  {@R|pack/TypeAnnWithArg|(<strcat>(String(nested nested parameter: ), constant#))  pack/MyTypeAlias=} kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/Int>>>>|): R|kotlin/Unit| {
         }
 
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-insideFunctionComplexScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
@@ -284,16 +284,16 @@ FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
         public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/Int| = Int(0)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias = @TypeAnnWithArg[Unresolved](LAZY_EXPRESSION) List<@TypeAnnWithArg[Unresolved](LAZY_EXPRESSION) List<@TypeAnnWithArg[Unresolved](LAZY_EXPRESSION) Int>>
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] typealias MyTypeAlias = R|@R|pack/TypeAnnWithArg|(arg = <strcat>(String(type: ), R|pack/constant|))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested type: ), R|pack/constant|))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested nested type: ), R|pack/constant|))  kotlin/Int>>|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun resolveMe([ResolvedTo(ANNOTATION_ARGUMENTS)] param: R|@R|pack/TypeAnnWithArg|(arg = <strcat>(String(parameter: ), R|pack/constant|))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested parameter: ), R|pack/constant|))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested nested parameter: ), R|pack/constant|))  pack/MyTypeAlias>>|): R|kotlin/Unit| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun resolveMe([ResolvedTo(ANNOTATION_ARGUMENTS)] param: R|@R|pack/TypeAnnWithArg|(arg = <strcat>(String(parameter: ), R|pack/constant|))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested parameter: ), R|pack/constant|))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(arg = <strcat>(String(type: ), R|pack/constant|))  @R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested nested parameter: ), R|pack/constant|))  {@R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested nested parameter: ), R|pack/constant|))  pack/MyTypeAlias=} kotlin/collections/List<@R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested type: ), R|pack/constant|))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested nested type: ), R|pack/constant|))  kotlin/Int>>>>|): R|kotlin/Unit| {
         }
 
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-insideFunctionComplexScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
@@ -309,16 +309,16 @@ FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
         public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/Int| = Int(0)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias = @TypeAnnWithArg[Unresolved](LAZY_EXPRESSION) List<@TypeAnnWithArg[Unresolved](LAZY_EXPRESSION) List<@TypeAnnWithArg[Unresolved](LAZY_EXPRESSION) Int>>
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] typealias MyTypeAlias = R|@R|pack/TypeAnnWithArg|(arg = <strcat>(String(type: ), R|pack/constant|))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested type: ), R|pack/constant|))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested nested type: ), R|pack/constant|))  kotlin/Int>>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe([ResolvedTo(BODY_RESOLVE)] param: R|@R|pack/TypeAnnWithArg|(arg = <strcat>(String(parameter: ), R|pack/constant|))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested parameter: ), R|pack/constant|))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested nested parameter: ), R|pack/constant|))  pack/MyTypeAlias>>|): R|kotlin/Unit| {
+        public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe([ResolvedTo(BODY_RESOLVE)] param: R|@R|pack/TypeAnnWithArg|(arg = <strcat>(String(parameter: ), R|pack/constant|))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested parameter: ), R|pack/constant|))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(arg = <strcat>(String(type: ), R|pack/constant|))  @R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested nested parameter: ), R|pack/constant|))  {@R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested nested parameter: ), R|pack/constant|))  pack/MyTypeAlias=} kotlin/collections/List<@R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested type: ), R|pack/constant|))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested nested type: ), R|pack/constant|))  kotlin/Int>>>>|): R|kotlin/Unit| {
         }
 
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] insideFunctionComplexScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-insideFunctionComplexScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
@@ -336,6 +336,6 @@ FILE: [ResolvedTo(BODY_RESOLVE)] insideFunctionComplexScript.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] typealias MyTypeAlias = R|@R|pack/TypeAnnWithArg|(arg = <strcat>(String(type: ), R|pack/constant|))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested type: ), R|pack/constant|))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested nested type: ), R|pack/constant|))  kotlin/Int>>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe([ResolvedTo(BODY_RESOLVE)] param: R|@R|pack/TypeAnnWithArg|(arg = <strcat>(String(parameter: ), R|pack/constant|))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested parameter: ), R|pack/constant|))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested nested parameter: ), R|pack/constant|))  pack/MyTypeAlias>>|): R|kotlin/Unit| {
+        public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe([ResolvedTo(BODY_RESOLVE)] param: R|@R|pack/TypeAnnWithArg|(arg = <strcat>(String(parameter: ), R|pack/constant|))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested parameter: ), R|pack/constant|))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(arg = <strcat>(String(type: ), R|pack/constant|))  @R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested nested parameter: ), R|pack/constant|))  {@R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested nested parameter: ), R|pack/constant|))  pack/MyTypeAlias=} kotlin/collections/List<@R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested type: ), R|pack/constant|))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(arg = <strcat>(String(nested nested type: ), R|pack/constant|))  kotlin/Int>>>>|): R|kotlin/Unit| {
         }
 

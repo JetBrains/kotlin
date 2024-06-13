@@ -7,19 +7,21 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 
-public abstract class KtAnalysisScopeProvider : KtAnalysisSessionComponent() {
+public abstract class KaAnalysisScopeProvider : KaSessionComponent() {
     public abstract fun getAnalysisScope(): GlobalSearchScope
 
     public abstract fun canBeAnalysed(psi: PsiElement): Boolean
 }
 
-public interface KtAnalysisScopeProviderMixIn : KtAnalysisSessionMixIn {
+public typealias KtAnalysisScopeProvider = KaAnalysisScopeProvider
+
+public interface KaAnalysisScopeProviderMixIn : KaSessionMixIn {
     /**
-     * Return [GlobalSearchScope] represent a scope code in which can be analysed by current [KtAnalysisSession].
-     * That means [org.jetbrains.kotlin.analysis.api.symbols.KtSymbol] can be built for the declarations from this scope.
+     * Return [GlobalSearchScope] represent a scope code in which can be analysed by current [KaSession].
+     * That means [org.jetbrains.kotlin.analysis.api.symbols.KaSymbol] can be built for the declarations from this scope.
      */
     public val analysisScope: GlobalSearchScope
         get() = withValidityAssertion { analysisSession.analysisScopeProvider.getAnalysisScope() }
@@ -27,10 +29,12 @@ public interface KtAnalysisScopeProviderMixIn : KtAnalysisSessionMixIn {
 
     /**
      * Checks if [PsiElement] is inside analysis scope.
-     * That means [org.jetbrains.kotlin.analysis.api.symbols.KtSymbol] can be built by this [PsiElement]
+     * That means [org.jetbrains.kotlin.analysis.api.symbols.KaSymbol] can be built by this [PsiElement]
      *
      * @see analysisScope
      */
     public fun PsiElement.canBeAnalysed(): Boolean =
         withValidityAssertion { analysisSession.analysisScopeProvider.canBeAnalysed(this) }
 }
+
+public typealias KtAnalysisScopeProviderMixIn = KaAnalysisScopeProviderMixIn

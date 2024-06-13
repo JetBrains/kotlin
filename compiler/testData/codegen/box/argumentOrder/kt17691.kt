@@ -1,4 +1,4 @@
-// !LANGUAGE: -UseCorrectExecutionOrderForVarargArguments
+// LANGUAGE: -UseCorrectExecutionOrderForVarargArguments
 // FIR status: don't support legacy feature
 // WITH_STDLIB
 // TARGET_BACKEND: JVM

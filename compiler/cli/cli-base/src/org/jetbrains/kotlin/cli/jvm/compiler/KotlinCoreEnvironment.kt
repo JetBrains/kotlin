@@ -27,11 +27,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.openapi.vfs.PersistentFSConstants
-import com.intellij.openapi.vfs.VfsUtilCore
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileSystem
+import com.intellij.openapi.vfs.*
 import com.intellij.openapi.vfs.impl.ZipHandler
+import com.intellij.pom.java.InternalPersistentJavaLanguageLevelReaderService
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.JavaClassSupersImpl
@@ -122,12 +120,12 @@ class KotlinCoreEnvironment private constructor(
         val jarFileSystem: VirtualFileSystem
 
         init {
-            val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+            val messageCollector = configuration.messageCollector
 
             setIdeaIoUseFallback()
 
             if (configuration.getBoolean(JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM)) {
-                messageCollector?.report(
+                messageCollector.report(
                     STRONG_WARNING,
                     "Using new faster version of JAR FS: it should make your build faster, but the new implementation is experimental"
                 )
@@ -140,7 +138,7 @@ class KotlinCoreEnvironment private constructor(
                 configuration.getBoolean(JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM) || configuration.getBoolean(CommonConfigurationKeys.USE_FIR) -> {
                     val fastJarFs = applicationEnvironment.fastJarFileSystem
                     if (fastJarFs == null) {
-                        messageCollector?.report(
+                        messageCollector.report(
                             STRONG_WARNING,
                             "Your JDK doesn't seem to support mapped buffer unmapping, so the slower (old) version of JAR FS will be used"
                         )
@@ -153,7 +151,7 @@ class KotlinCoreEnvironment private constructor(
                             val contentRoots = configuration.get(CLIConfigurationKeys.CONTENT_ROOTS)
                             if (contentRoots?.any { it is JvmClasspathRoot && it.file.path == outputJar.path } == true) {
                                 // See KT-61883
-                                messageCollector?.report(
+                                messageCollector.report(
                                     STRONG_WARNING,
                                     "JAR from the classpath ${outputJar.path} is reused as output JAR, so the slower (old) version of JAR FS will be used"
                                 )
@@ -214,7 +212,7 @@ class KotlinCoreEnvironment private constructor(
 
         sourceFiles += createSourceFilesFromSourceRoots(
             configuration, project,
-            getSourceRootsCheckingForDuplicates(configuration, configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY])
+            getSourceRootsCheckingForDuplicates(configuration, configuration[CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY])
         )
 
         collectAdditionalSources(project)
@@ -223,7 +221,7 @@ class KotlinCoreEnvironment private constructor(
 
         val javaFileManager = project.getService(CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
 
-        val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        val messageCollector = configuration.get(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
         val jdkHome = configuration.get(JVMConfigurationKeys.JDK_HOME)
         val releaseTarget = configuration.get(JVMConfigurationKeys.JDK_RELEASE)
@@ -239,6 +237,8 @@ class KotlinCoreEnvironment private constructor(
             configuration.get(JVMConfigurationKeys.MODULES)?.singleOrNull()?.getOutputDirectory()
                 ?: configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)?.absolutePath
 
+        val contentRoots = configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS)
+
         classpathRootsResolver = ClasspathRootsResolver(
             PsiManager.getInstance(project),
             messageCollector,
@@ -248,11 +248,11 @@ class KotlinCoreEnvironment private constructor(
             !configuration.getBoolean(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE),
             outputDirectory?.let(this::findLocalFile),
             javaFileManager,
-            releaseTarget
+            releaseTarget,
+            hasKotlinSources = contentRoots.any { it is KotlinSourceRoot },
         )
 
-        val (initialRoots, javaModules) =
-            classpathRootsResolver.convertClasspathRoots(configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS))
+        val (initialRoots, javaModules) = classpathRootsResolver.convertClasspathRoots(contentRoots)
         this.initialRoots.addAll(initialRoots)
 
         val (roots, singleJavaFileRoots) =
@@ -320,7 +320,7 @@ class KotlinCoreEnvironment private constructor(
 
     fun createPackagePartProvider(scope: GlobalSearchScope): JvmPackagePartProvider {
         return JvmPackagePartProvider(configuration.languageVersionSettings, scope).apply {
-            addRoots(initialRoots, configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY))
+            addRoots(initialRoots, configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY))
             packagePartProviders += this
         }
     }
@@ -380,7 +380,7 @@ class KotlinCoreEnvironment private constructor(
             initialRoots.addAll(newRoots)
         } else {
             for (packagePartProvider in packagePartProviders) {
-                packagePartProvider.addRoots(newRoots, configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY))
+                packagePartProvider.addRoots(newRoots, configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY))
             }
         }
 
@@ -733,7 +733,7 @@ class KotlinCoreEnvironment private constructor(
                 return "The provided plugin ${extension.javaClass.name} is not compatible with this version of compiler"
             }
 
-            val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+            val messageCollector = configuration.messageCollector
 
             for (registrar in configuration.getList(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS)) {
                 try {
@@ -743,11 +743,11 @@ class KotlinCoreEnvironment private constructor(
                     // Since the scripting plugin is often discovered in the compiler environment, it is often taken from the incompatible
                     // location, and in many cases this is not a fatal error, therefore strong warning is generated instead of exception
                     if (registrar.javaClass.simpleName == "ScriptingCompilerConfigurationComponentRegistrar") {
-                        messageCollector?.report(STRONG_WARNING, "Default scripting plugin is disabled: $message")
+                        messageCollector.report(STRONG_WARNING, "Default scripting plugin is disabled: $message")
                     } else {
                         val errorMessageWithStackTrace = "$message.\n" +
                                 e.stackTraceToString().lines().take(6).joinToString("\n")
-                        messageCollector?.report(ERROR, errorMessageWithStackTrace)
+                        messageCollector.report(ERROR, errorMessageWithStackTrace)
                     }
                 }
             }
@@ -776,6 +776,8 @@ class KotlinCoreEnvironment private constructor(
                 application.registerService(KotlinBinaryClassCache::class.java, KotlinBinaryClassCache())
                 application.registerService(JavaClassSupers::class.java, JavaClassSupersImpl::class.java)
                 application.registerService(TransactionGuard::class.java, TransactionGuardImpl::class.java)
+                application.registerService(VirtualFileSetFactory::class.java, getCompactVirtualFileSetFactory())
+                application.registerService(InternalPersistentJavaLanguageLevelReaderService::class.java, InternalPersistentJavaLanguageLevelReaderService.DefaultImpl())
             }
         }
 

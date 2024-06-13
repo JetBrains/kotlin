@@ -1,4 +1,4 @@
-// !LANGUAGE: +DefinitelyNonNullableTypes +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
+// LANGUAGE: +DefinitelyNonNullableTypes +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
 // TARGET_BACKEND: JVM
 // FILE: JClass.java
 

@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.WRONG_JS
 
 @Suppress("unused")
 object FirWasmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
-    override val MAP = KtDiagnosticFactoryToRendererMap("FIR").also { map ->
+    override val MAP: KtDiagnosticFactoryToRendererMap = KtDiagnosticFactoryToRendererMap("FIR").also { map ->
         map.put(JS_MODULE_PROHIBITED_ON_VAR, "'@JsModule' annotation is prohibited for 'var' declarations. Use 'val' instead.")
         map.put(JS_MODULE_PROHIBITED_ON_NON_EXTERNAL, "'@JsModule' annotation is prohibited for non-external declarations.")
         map.put(

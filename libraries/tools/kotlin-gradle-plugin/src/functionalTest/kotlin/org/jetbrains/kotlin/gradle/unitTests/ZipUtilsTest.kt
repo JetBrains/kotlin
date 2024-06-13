@@ -24,7 +24,6 @@ import kotlin.test.assertTrue
 import kotlin.test.fail
 
 class ZipUtilsTest {
-
     @get:Rule
     val temporaryFolder = TemporaryFolder()
 
@@ -32,13 +31,13 @@ class ZipUtilsTest {
         temporaryFolder.newFolder().apply {
             resolve("stub0.txt").apply {
                 parentFile.mkdirs()
-                writeText("stub0 content")
+                writeText("stub0 content\n")
                 setLastModified(2411)
             }
 
             resolve("a/stub1.txt").apply {
                 parentFile.mkdirs()
-                writeText("stub1 content")
+                writeText("stub1 content\n")
                 setLastModified(2412)
             }
 
@@ -202,11 +201,6 @@ class ZipUtilsTest {
                     )
 
                     assertEquals(
-                        originalEntry.compressedSize, copyEntry.compressedSize,
-                        "Expected same compressedSize on entry ${originalEntry.name}"
-                    )
-
-                    assertEquals(
                         originalEntry.size, copyEntry.size,
                         "Expected same size on entry ${originalEntry.name}"
                     )
@@ -242,6 +236,36 @@ class ZipUtilsTest {
                     )
                 }
             }
+        }
+    }
+
+    @Test
+    fun `test copyZipPartially with 0 compression level for source`() = testWithCompressionLevel(0)
+
+    @Test
+    fun `test copyZipPartially with 9 compression level for source`() = testWithCompressionLevel(9)
+
+    private fun testWithCompressionLevel(level: Int) {
+        val sourceFile = temporaryFolder.newFile()
+        Compressor.Zip(sourceFile)
+            .withLevel(level)
+            .use { compressor -> compressor.addDirectory(zipContentFolder) }
+
+        val allDirectoriesInZip = ZipFile(sourceFile).use { it.entries().toList().filter { it.isDirectory }.map { it.name } }
+
+        assertEquals(setOf("a/", "a/b/", "c/"), allDirectoriesInZip.toSet())
+
+        // try to extract each directory in isolated env, check that content matches
+        for (directory in allDirectoriesInZip + "") { // "" -- means root
+            val destZip = temporaryFolder.newFile()
+            copyZipFilePartially(sourceFile, destZip, directory)
+
+            assertZipContentEquals(
+                temporaryFolder,
+                zipContentFolder.resolve(directory),
+                destZip,
+                "Expected the same content for '${directory.ifEmpty { "<root>" }}'"
+            )
         }
     }
 }

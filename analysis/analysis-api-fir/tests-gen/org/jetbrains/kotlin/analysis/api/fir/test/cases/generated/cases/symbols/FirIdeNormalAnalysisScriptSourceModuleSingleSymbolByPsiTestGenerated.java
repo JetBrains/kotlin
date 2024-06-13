@@ -64,6 +64,18 @@ public class FirIdeNormalAnalysisScriptSourceModuleSingleSymbolByPsiTestGenerate
     public void testAllFilesPresentInDestructuring() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
+
+    @Test
+    @TestMetadata("entryInScriptDestructuringDeclaration.kts")
+    public void testEntryInScriptDestructuringDeclaration() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/entryInScriptDestructuringDeclaration.kts");
+    }
+
+    @Test
+    @TestMetadata("entryUnderscoreInScriptDestructuringDeclaration.kts")
+    public void testEntryUnderscoreInScriptDestructuringDeclaration() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/entryUnderscoreInScriptDestructuringDeclaration.kts");
+    }
   }
 
   @Nested

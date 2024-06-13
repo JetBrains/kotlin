@@ -134,6 +134,7 @@ sealed class ObjCPrimitiveType(
     object uint64_t : ObjCPrimitiveType("uint64_t")
     object float : ObjCPrimitiveType("float")
     object double : ObjCPrimitiveType("double")
+    object vectorFloat128 : ObjCPrimitiveType("float __attribute__((__vector_size__(16)))")
     object NSInteger : ObjCPrimitiveType("NSInteger")
     object char : ObjCPrimitiveType("char")
     object unsigned_char : ObjCPrimitiveType("unsigned char")
@@ -187,6 +188,7 @@ enum class ObjCValueType(val encoding: String) {
     UNSIGNED_LONG_LONG("Q"),
     FLOAT("f"),
     DOUBLE("d"),
+    VECTOR_FLOAT_128(""), // Clang generates empty encoding for this type.
     POINTER("^v")
 }
 

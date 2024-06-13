@@ -1,4 +1,4 @@
-// !WITH_NEW_INFERENCE
+// WITH_NEW_INFERENCE
 // documents inconsistency between scripts and classes, see DeclarationScopeProviderImpl
 // DUMP_CFG: LEVELS
 

@@ -20,7 +20,7 @@ class PsiIrFileEntry(val psiFile: PsiFile) : AbstractIrFileEntry() {
     init {
         val document = fileViewProvider.document ?: throw AssertionError("No document for $psiFile")
         maxOffset = document.textLength
-        lineStartOffsets = IntArray(document.lineCount) { document.getLineStartOffset(it) }
+        lineStartOffsets = IntArray(document.lineCount.takeIf { it != 0 } ?: 1) { document.getLineStartOffset(it) }
     }
 
     private fun getRecognizableName(): String = psiFileName

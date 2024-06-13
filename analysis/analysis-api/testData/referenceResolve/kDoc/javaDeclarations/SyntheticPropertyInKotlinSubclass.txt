@@ -1,5 +1,0 @@
-<caret_2> resolved to:
-0: (in dependency.JavaBase) open fun getProp(): kotlin.String!
-
-<caret_1> resolved to:
-0: (in dependency.JavaBase) open fun getProp(): kotlin.String!

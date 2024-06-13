@@ -1,0 +1,167 @@
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: A
+  classKind: CLASS
+  companionObject: null
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  modality: FINAL
+  name: A
+  origin: SOURCE
+  superTypes: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Any
+  ]
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: Public
+  getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)
+  getContainingModule: KtSourceModule "Sources of main"
+  annotationApplicableTargets: null
+  deprecationStatus: null
+
+KaTypeAliasSymbol:
+  annotations: []
+  classId: TypeAlias
+  expandedType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: A
+  isActual: false
+  isExpect: false
+  name: TypeAlias
+  origin: SOURCE
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: Public
+  getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KaFunctionSymbol:
+  annotations: []
+  callableId: /function
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  modality: FINAL
+  name: function
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Unit
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  valueParameters: [
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: t
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: TypeAlias
+      symbolKind: LOCAL
+      typeParameters: []
+      getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)
+      getContainingJvmClassName: FunctionWithTypeAliasKt
+      getContainingModule: KtSourceModule "Sources of main"
+      deprecationStatus: null
+  ]
+  visibility: Public
+  getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)
+  getContainingJvmClassName: FunctionWithTypeAliasKt
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KaFunctionSymbol:
+  annotations: []
+  callableId: /function
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  modality: FINAL
+  name: function
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Unit
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  valueParameters: [
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: t
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: A
+      symbolKind: LOCAL
+      typeParameters: []
+      getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)
+      getContainingJvmClassName: FunctionWithTypeAliasKt
+      getContainingModule: KtSourceModule "Sources of main"
+      deprecationStatus: null
+  ]
+  visibility: Public
+  getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)
+  getContainingJvmClassName: FunctionWithTypeAliasKt
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null

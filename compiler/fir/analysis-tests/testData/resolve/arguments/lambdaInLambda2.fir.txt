@@ -7,7 +7,7 @@ FILE: main.kt
     public abstract interface PsiClass : R|kotlin/Any| {
     }
     public final fun test(): R|kotlin/Unit| {
-        lval processor: R|AdapterProcessor<PsiMethod, PsiClass>| = R|/AdapterProcessor.AdapterProcessor|<R|PsiMethod|, R|PsiClass|>(R|/Function|<R|PsiMethod!|, R|PsiClass?|>(<L> = Function@fun <anonymous>(method: R|PsiMethod?|): R|PsiClass?| <inline=NoInline>  {
+        lval processor: R|AdapterProcessor<PsiMethod, PsiClass>| = R|/AdapterProcessor.AdapterProcessor|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=PsiMethod) PsiMethod!|, R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=PsiClass) PsiClass!|>(R|/Function|<R|PsiMethod!|, R|PsiClass?|>(<L> = Function@fun <anonymous>(method: R|PsiMethod?|): R|PsiClass?| <inline=NoInline>  {
             ^ R|<local>/method|?.{ $subj$.R|/PsiMethod.containingClass| }
         }
         ))

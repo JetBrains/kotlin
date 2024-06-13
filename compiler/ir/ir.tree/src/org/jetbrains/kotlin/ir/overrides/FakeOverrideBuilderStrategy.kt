@@ -175,6 +175,9 @@ abstract class FakeOverrideBuilderStrategy(
                 it.correspondingPropertySymbol = property.symbol
                 linkFunctionFakeOverride(it as? IrFunctionWithLateBinding ?: error("Unexpected fake override setter: $it"), manglerCompatibleMode)
             }
+            property.backingField?.let {
+                it.correspondingPropertySymbol = property.symbol
+            }
         }
 
         override fun <R> inFile(file: IrFile?, block: () -> R): R = block()

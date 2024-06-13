@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.test.Assertions
 import java.io.File
 import java.util.*
 
-inline fun patchManifest(
+inline fun patchManifestAsMap(
     assertions: Assertions,
     klibDir: File,
-    transform: (String, String) -> String
+    transform: (MutableMap<String, String>) -> Unit
 ) {
     assertions.assertTrue(klibDir.exists()) { "KLIB directory does not exist: ${klibDir.absolutePath}" }
     assertions.assertTrue(klibDir.isDirectory) { "Unpacked KLIB expected: ${klibDir.absolutePath}" }
@@ -22,10 +22,27 @@ inline fun patchManifest(
     val manifestFile = klibDir.resolve("default/manifest")
     assertions.assertTrue(manifestFile.isFile) { "No manifest file: $manifestFile" }
 
-    Properties().apply {
+    val mutableProperties: MutableMap<String, String> = Properties().apply {
         manifestFile.inputStream().use { load(it) }
-        entries.forEach { entry -> entry.setValue(transform(entry.key.toString(), entry.value.toString())) }
+    }.entries.associateTo(linkedMapOf()) { it.key.toString() to it.value.toString() }
+
+    transform(mutableProperties)
+
+    Properties().apply {
+        for ((key, value) in mutableProperties) {
+            this[key] = value
+        }
         manifestFile.outputStream().use { store(it, null) }
+    }
+}
+
+inline fun patchManifest(
+    assertions: Assertions,
+    klibDir: File,
+    transform: (String, String) -> String
+) {
+    patchManifestAsMap(assertions, klibDir) { mutableProperties ->
+        mutableProperties.entries.forEach { entry -> entry.setValue(transform(entry.key, entry.value)) }
     }
 }
 
@@ -39,12 +56,15 @@ fun patchManifestToBumpAbiVersion(
     }
 }
 
-fun assertCompilerOutputHasKlibResolverIncompatibleAbiMessages(
+fun assertCompilerOutputHasKlibResolverIssue(
     assertions: Assertions,
     compilerOutput: String,
     missingLibrary: String,
-    baseDir: File
+    baseDir: File,
+    prefixPatterns: List<(missingLibraryPath: String) -> String>
 ) {
+    assertions.assertTrue(prefixPatterns.isNotEmpty())
+
     val baseDirPath = baseDir.absolutePath
     val missingLibraryPath = missingLibrary.replace('/', File.separatorChar).replace('\\', File.separatorChar)
 
@@ -65,6 +85,23 @@ fun assertCompilerOutputHasKlibResolverIncompatibleAbiMessages(
         }
     }
 
-    assertHasLineWithPrefix("error: KLIB resolver: Could not find \"<path>$missingLibraryPath\"")
-    assertHasLineWithPrefix("warning: KLIB resolver: Skipping '<path>$missingLibraryPath'. Incompatible ABI version")
+    prefixPatterns.forEach { prefixPattern ->
+        val prefix = prefixPattern(missingLibraryPath)
+        assertHasLineWithPrefix(prefix)
+    }
+}
+
+fun assertCompilerOutputHasKlibResolverIncompatibleAbiMessages(
+    assertions: Assertions,
+    compilerOutput: String,
+    missingLibrary: String,
+    baseDir: File
+) {
+    assertCompilerOutputHasKlibResolverIssue(
+        assertions, compilerOutput, missingLibrary, baseDir,
+        listOf(
+            { "error: KLIB resolver: Could not find \"<path>$it\"" },
+            { "warning: KLIB resolver: Skipping '<path>$it'. Incompatible ABI version" },
+        )
+    )
 }

@@ -1,4 +1,4 @@
-// !LANGUAGE: -ExtendedMainConvention
+// LANGUAGE: -ExtendedMainConvention
 
 // ### INVALID
 

@@ -1,0 +1,22 @@
+KaJavaFieldSymbol:
+  annotations: []
+  callableId: /Dependency.bar
+  contextReceivers: []
+  isExtension: false
+  isStatic: true
+  isVal: false
+  modality: FINAL
+  name: bar
+  origin: JAVA_SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Int
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  visibility: Public
+  getContainingFileSymbol: null
+  getContainingJvmClassName: Dependency
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null

@@ -98,6 +98,8 @@ internal val RuntimeAware.kObjHeader: LLVMTypeRef
     get() = runtime.objHeaderType
 internal val RuntimeAware.kObjHeaderPtr: LLVMTypeRef
     get() = pointerType(kObjHeader)
+internal val RuntimeAware.kObjHeaderPtrReturnType: LlvmRetType
+    get() = LlvmRetType(kObjHeaderPtr, isObjectType = true)
 internal val RuntimeAware.kObjHeaderPtrPtr: LLVMTypeRef
     get() = pointerType(kObjHeaderPtr)
 internal val RuntimeAware.kArrayHeader: LLVMTypeRef
@@ -120,14 +122,6 @@ internal fun pointerType(pointeeType: LLVMTypeRef) = LLVMPointerType(pointeeType
 fun extractConstUnsignedInt(value: LLVMValueRef): Long {
     assert(LLVMIsConstant(value) != 0)
     return LLVMConstIntGetZExtValue(value)
-}
-
-internal fun ContextUtils.isObjectRef(value: LLVMValueRef): Boolean {
-    return isObjectType(value.type)
-}
-
-internal fun RuntimeAware.isObjectType(type: LLVMTypeRef): Boolean {
-    return type == kObjHeaderPtr || type == kArrayHeaderPtr
 }
 
 /**
@@ -235,8 +229,8 @@ internal class TLSAddressAccess(private val index: Int) : AddressAccess() {
     }
 }
 
-internal fun ContextUtils.addKotlinThreadLocal(name: String, type: LLVMTypeRef, alignment: Int): AddressAccess {
-    return if (isObjectType(type)) {
+internal fun ContextUtils.addKotlinThreadLocal(name: String, type: LLVMTypeRef, alignment: Int, isObjectType: Boolean): AddressAccess {
+    return if (isObjectType) {
         val index = llvm.tlsCount++
         require(llvm.runtime.pointerAlignment % alignment == 0)
         TLSAddressAccess(index)

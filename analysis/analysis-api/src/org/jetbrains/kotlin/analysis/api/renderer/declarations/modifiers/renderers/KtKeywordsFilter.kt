@@ -6,61 +6,63 @@
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers
 
 import com.intellij.psi.tree.TokenSet
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotated
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 
-public interface KtRendererKeywordFilter {
-    public fun filter(analysisSession: KtAnalysisSession, modifier: KtKeywordToken, ktAnnotated: KtAnnotated): Boolean
+public interface KaRendererKeywordFilter {
+    public fun filter(analysisSession: KaSession, modifier: KtKeywordToken, annotated: KaAnnotated): Boolean
 
-    public infix fun and(other: KtRendererKeywordFilter): KtRendererKeywordFilter {
+    public infix fun and(other: KaRendererKeywordFilter): KaRendererKeywordFilter {
         val self = this
-        return KtRendererKeywordFilter filter@{ modifier, ktAnnotated ->
+        return KaRendererKeywordFilter filter@{ modifier, kaAnnotated ->
             val analysisSession = this@filter
-            self.filter(analysisSession, modifier, ktAnnotated) && other.filter(analysisSession, modifier, ktAnnotated)
+            self.filter(analysisSession, modifier, kaAnnotated) && other.filter(analysisSession, modifier, kaAnnotated)
         }
     }
 
-    public infix fun or(other: KtRendererKeywordFilter): KtRendererKeywordFilter {
+    public infix fun or(other: KaRendererKeywordFilter): KaRendererKeywordFilter {
         val self = this
-        return KtRendererKeywordFilter filter@{ modifier, symbol ->
+        return KaRendererKeywordFilter filter@{ modifier, symbol ->
             val analysisSession = this@filter
             self.filter(analysisSession, modifier, symbol) || other.filter(analysisSession, modifier, symbol)
         }
     }
 
-    public object ALL : KtRendererKeywordFilter {
-        override fun filter(analysisSession: KtAnalysisSession, modifier: KtKeywordToken, ktAnnotated: KtAnnotated): Boolean {
+    public object ALL : KaRendererKeywordFilter {
+        override fun filter(analysisSession: KaSession, modifier: KtKeywordToken, annotated: KaAnnotated): Boolean {
             return true
         }
     }
 
-    public object NONE : KtRendererKeywordFilter {
-        override fun filter(analysisSession: KtAnalysisSession, modifier: KtKeywordToken, ktAnnotated: KtAnnotated): Boolean {
+    public object NONE : KaRendererKeywordFilter {
+        override fun filter(analysisSession: KaSession, modifier: KtKeywordToken, annotated: KaAnnotated): Boolean {
             return false
         }
     }
 
     public companion object {
         public operator fun invoke(
-            predicate: KtAnalysisSession.(modifier: KtKeywordToken, ktAnnotated: KtAnnotated) -> Boolean
-        ): KtRendererKeywordFilter =
-            object : KtRendererKeywordFilter {
-                override fun filter(analysisSession: KtAnalysisSession, modifier: KtKeywordToken, ktAnnotated: KtAnnotated): Boolean {
-                    return predicate(analysisSession, modifier, ktAnnotated)
+            predicate: KaSession.(modifier: KtKeywordToken, annotated: KaAnnotated) -> Boolean
+        ): KaRendererKeywordFilter =
+            object : KaRendererKeywordFilter {
+                override fun filter(analysisSession: KaSession, modifier: KtKeywordToken, annotated: KaAnnotated): Boolean {
+                    return predicate(analysisSession, modifier, annotated)
                 }
             }
 
-        public fun onlyWith(vararg modifiers: KtKeywordToken): KtRendererKeywordFilter =
-            KtRendererKeywordFilter { modifier, _ -> modifier in modifiers }
+        public fun onlyWith(vararg modifiers: KtKeywordToken): KaRendererKeywordFilter =
+            KaRendererKeywordFilter { modifier, _ -> modifier in modifiers }
 
-        public fun onlyWith(modifiers: TokenSet): KtRendererKeywordFilter =
-            KtRendererKeywordFilter { modifier, _ -> modifier in modifiers }
+        public fun onlyWith(modifiers: TokenSet): KaRendererKeywordFilter =
+            KaRendererKeywordFilter { modifier, _ -> modifier in modifiers }
 
-        public fun without(vararg modifiers: KtKeywordToken): KtRendererKeywordFilter =
-            KtRendererKeywordFilter { modifier, _ -> modifier !in modifiers }
+        public fun without(vararg modifiers: KtKeywordToken): KaRendererKeywordFilter =
+            KaRendererKeywordFilter { modifier, _ -> modifier !in modifiers }
 
-        public fun without(modifiers: TokenSet): KtRendererKeywordFilter =
-            KtRendererKeywordFilter { modifier, _ -> modifier !in modifiers }
+        public fun without(modifiers: TokenSet): KaRendererKeywordFilter =
+            KaRendererKeywordFilter { modifier, _ -> modifier !in modifiers }
     }
 }
+
+public typealias KtRendererKeywordFilter = KaRendererKeywordFilter

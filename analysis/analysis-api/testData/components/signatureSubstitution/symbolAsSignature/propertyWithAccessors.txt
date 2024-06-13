@@ -5,9 +5,9 @@ var foo: kotlin.Int
   set(value: kotlin.Int)
 
 Signature:
-KtVariableLikeSignature:
+KaVariableLikeSignature:
   name = foo
   receiverType = null
   returnType = kotlin.Int
   symbol = var foo: kotlin.Int
-  callableIdIfNonLocal = /foo
+  callableId = /foo

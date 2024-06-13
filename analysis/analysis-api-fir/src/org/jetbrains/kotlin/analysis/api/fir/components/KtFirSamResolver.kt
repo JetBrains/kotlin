@@ -1,68 +1,25 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.components.KtSamResolver
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.components.KaSamResolver
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.getClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSamConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSamConstructorSymbol
+import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 
-internal class KtFirSamResolver(
-    override val analysisSession: KtFirAnalysisSession,
-    override val token: KtLifetimeToken,
-) : KtSamResolver(), KtFirAnalysisSessionComponent {
-
-    override fun getSamConstructor(ktClassLikeSymbol: KtClassLikeSymbol): KtSamConstructorSymbol? {
-        val classId = ktClassLikeSymbol.classIdIfNonLocal ?: return null
-        val owner = analysisSession.getClassLikeSymbol(classId) as? FirRegularClass ?: return null
-        val resolver = LocalSamResolver(analysisSession, analysisSession.useSiteSession)
+internal class KaFirSamResolver(override val analysisSession: KaFirSession) : KaSamResolver(), KaFirSessionComponent {
+    override fun getSamConstructor(symbol: KaClassLikeSymbol): KaSamConstructorSymbol? {
+        val classId = symbol.classId ?: return null
+        val owner = analysisSession.getClassLikeSymbol(classId) ?: return null
+        val firSession = analysisSession.useSiteSession
+        val resolver = FirSamResolver(firSession, analysisSession.getScopeSessionFor(firSession))
         return resolver.getSamConstructor(owner)?.let {
             analysisSession.firSymbolBuilder.functionLikeBuilder.buildSamConstructorSymbol(it.symbol)
-        }
-    }
-
-    private class LocalSamResolver(
-        analysisSession: KtFirAnalysisSession,
-        private val firSession: FirSession,
-    ) {
-        private val scopeSession = analysisSession.getScopeSessionFor(firSession)
-
-
-        // TODO: This transformer is not intended for actual transformations and
-        //  created here only to simplify access to SAM resolver in body resolve components
-        private val stubBodyResolveTransformer = object : FirBodyResolveTransformer(
-            session = firSession,
-            phase = FirResolvePhase.BODY_RESOLVE,
-            implicitTypeOnly = false,
-            scopeSession = scopeSession,
-        ) {}
-
-        private val bodyResolveComponents =
-            FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents(
-                firSession,
-                scopeSession,
-                stubBodyResolveTransformer,
-                stubBodyResolveTransformer.context,
-            )
-
-        // TODO: this doesn't guarantee that the same synthetic function (as a SAM constructor) is created/returned
-        fun getSamConstructor(firClass: FirRegularClass): FirSimpleFunction? {
-            val samConstructor = bodyResolveComponents.samResolver.getSamConstructor(firClass) ?: return null
-            if (samConstructor.origin != FirDeclarationOrigin.SamConstructor) return null
-            return samConstructor
         }
     }
 }

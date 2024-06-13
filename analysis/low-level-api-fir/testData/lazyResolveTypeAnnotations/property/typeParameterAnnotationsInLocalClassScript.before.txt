@@ -19,8 +19,8 @@
   anchor -> [FirPropertySymbol <local>/explicitType]
 
 FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterAnnotationsInLocalClassScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -50,3 +50,4 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
             }
 
         }
+

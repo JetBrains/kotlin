@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinAnnotationEntryStubImpl
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassTypeBean
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -188,12 +187,12 @@ class StubBasedAnnotationDeserializer(
         return null
     }
 
-    private fun <T> const(
-        kind: ConstantValueKind<T>,
-        value: T,
+    private fun const(
+        kind: ConstantValueKind,
+        value: Any?,
         typeRef: FirResolvedTypeRef,
         sourceElement: PsiElement
-    ): FirLiteralExpression<T> {
+    ): FirLiteralExpression {
         return buildLiteralExpression(
             KtRealPsiSourceElement(sourceElement),
             kind,

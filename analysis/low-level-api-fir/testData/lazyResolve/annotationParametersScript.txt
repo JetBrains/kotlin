@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] annotationParametersScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationParametersScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
@@ -45,8 +45,8 @@ FILE: [ResolvedTo(RAW_FIR)] annotationParametersScript.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationParametersScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
@@ -90,8 +90,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationParametersScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
@@ -135,8 +135,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationParametersScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
@@ -180,8 +180,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationParametersScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
@@ -225,8 +225,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationParametersScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
@@ -270,8 +270,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationParametersScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
@@ -315,8 +315,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationParametersScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
@@ -360,8 +360,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationParametersScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
@@ -406,8 +406,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationParametersScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
@@ -452,8 +452,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationParametersScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
@@ -498,8 +498,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationParametersScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] enum class X : R|kotlin/Enum<X>| {
@@ -544,8 +544,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationParametersScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] enum class X : R|kotlin/Enum<X>| {
@@ -590,8 +590,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] annotationParametersScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-annotationParametersScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] enum class X : R|kotlin/Enum<X>| {
@@ -633,3 +633,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationParametersScript.kts
             }
 
         }
+

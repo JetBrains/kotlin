@@ -116,6 +116,12 @@ public class FirScriptCodegenTestGenerated extends AbstractFirScriptCodegenTest 
   }
 
   @Test
+  @TestMetadata("MultiDollarInterpolation.kts")
+  public void testMultiDollarInterpolation() {
+    runTest("compiler/testData/codegen/script/MultiDollarInterpolation.kts");
+  }
+
+  @Test
   @TestMetadata("outerCapture.kts")
   public void testOuterCapture() {
     runTest("compiler/testData/codegen/script/outerCapture.kts");

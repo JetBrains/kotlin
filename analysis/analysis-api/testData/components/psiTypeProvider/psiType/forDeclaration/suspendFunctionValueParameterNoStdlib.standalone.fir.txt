@@ -1,2 +1,2 @@
-KtType: suspend (kotlin.Int) -> kotlin.Unit
+KaType: suspend (kotlin.Int) -> kotlin.Unit
 PsiType: @org.jetbrains.annotations.NotNull() kotlin.jvm.functions.Function2<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.NotNull() error.NonExistentClass<kotlin.Unit>, ? extends java.lang.Object>

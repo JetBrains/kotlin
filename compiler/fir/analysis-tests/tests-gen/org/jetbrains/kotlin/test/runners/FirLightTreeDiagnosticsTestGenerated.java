@@ -2146,6 +2146,12 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
       }
 
       @Test
+      @TestMetadata("unusedAnonymLambdaParam.kt")
+      public void testUnusedAnonymLambdaParam() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/unusedAnonymLambdaParam.kt");
+      }
+
+      @Test
       @TestMetadata("upperBoundViolated.kt")
       public void testUpperBoundViolated() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/upperBoundViolated.kt");
@@ -6192,6 +6198,12 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
             @Test
             public void testAllFilesPresentInCallsInPlace() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/callsInPlace"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("coercedInvocationKind.kt")
+            public void testCoercedInvocationKind() {
+              runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/callsInPlace/coercedInvocationKind.kt");
             }
 
             @Test

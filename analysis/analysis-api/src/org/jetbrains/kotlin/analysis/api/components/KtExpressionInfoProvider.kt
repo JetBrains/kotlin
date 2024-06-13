@@ -7,19 +7,21 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtReturnExpression
 import org.jetbrains.kotlin.psi.KtWhenExpression
 
-public abstract class KtExpressionInfoProvider : KtAnalysisSessionComponent() {
-    public abstract fun getReturnExpressionTargetSymbol(returnExpression: KtReturnExpression): KtCallableSymbol?
+public abstract class KaExpressionInfoProvider : KaSessionComponent() {
+    public abstract fun getReturnExpressionTargetSymbol(returnExpression: KtReturnExpression): KaCallableSymbol?
     public abstract fun getWhenMissingCases(whenExpression: KtWhenExpression): List<WhenMissingCase>
     public abstract fun isUsedAsExpression(expression: KtExpression): Boolean
 }
 
-public interface KtExpressionInfoProviderMixIn : KtAnalysisSessionMixIn {
-    public fun KtReturnExpression.getReturnTargetSymbol(): KtCallableSymbol? =
+public typealias KtExpressionInfoProvider = KaExpressionInfoProvider
+
+public interface KaExpressionInfoProviderMixIn : KaSessionMixIn {
+    public fun KtReturnExpression.getReturnTargetSymbol(): KaCallableSymbol? =
         withValidityAssertion { analysisSession.expressionInfoProvider.getReturnExpressionTargetSymbol(this) }
 
     /**
@@ -76,3 +78,5 @@ public interface KtExpressionInfoProviderMixIn : KtAnalysisSessionMixIn {
     public fun KtExpression.isUsedAsExpression(): Boolean =
         withValidityAssertion { analysisSession.expressionInfoProvider.isUsedAsExpression(this) }
 }
+
+public typealias KtExpressionInfoProviderMixIn = KaExpressionInfoProviderMixIn

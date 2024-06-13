@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 
-public interface KtAnalysisSessionMixIn : KtLifetimeOwner {
-    public val analysisSession: KtAnalysisSession
+public interface KaSessionMixIn : KaLifetimeOwner {
+    public val analysisSession: KaSession
 }
+
+public typealias KtAnalysisSessionMixIn = KaSessionMixIn

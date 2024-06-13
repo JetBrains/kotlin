@@ -1,11 +1,15 @@
 // MODULE: lib
-// FILE: test/J.java
+
+// FILE: test/I.java
 package test;
 
 interface I {
     // Not a String to avoid constant inlining
     public static String[] OK = new String[]{"OK"};
 }
+
+// FILE: test/J.java
+package test;
 
 public class J implements I {}
 

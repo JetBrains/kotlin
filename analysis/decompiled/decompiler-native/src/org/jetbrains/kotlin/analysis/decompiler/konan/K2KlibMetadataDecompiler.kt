@@ -36,7 +36,8 @@ abstract class K2KlibMetadataDecompiler<out V : BinaryVersion>(
     }
 
     override fun getDecompiledText(
-        file: FileWithMetadata.Compatible,
+        fileWithMetadata: FileWithMetadata.Compatible,
+        virtualFile: VirtualFile,
         serializerProtocol: SerializerExtensionProtocol,
         flexibleTypeDeserializer: FlexibleTypeDeserializer
     ): DecompiledText {
@@ -45,6 +46,15 @@ abstract class K2KlibMetadataDecompiler<out V : BinaryVersion>(
             // Breaking the order causes psi vs stub mismatch
             override val preserveDeclarationsOrdering: Boolean get() = true
         }
-        return decompiledText(file, serializerProtocol, flexibleTypeDeserializer, renderer, deserializationConfiguration)
+
+        return decompiledText(
+            fileWithMetadata,
+            virtualFile,
+            serializerProtocol,
+            ::readFileSafely,
+            flexibleTypeDeserializer,
+            renderer,
+            deserializationConfiguration
+        )
     }
 }

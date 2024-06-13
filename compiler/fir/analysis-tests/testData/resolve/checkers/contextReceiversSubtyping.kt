@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers
 
 interface D: D1, D2 {}
 interface D1 {}

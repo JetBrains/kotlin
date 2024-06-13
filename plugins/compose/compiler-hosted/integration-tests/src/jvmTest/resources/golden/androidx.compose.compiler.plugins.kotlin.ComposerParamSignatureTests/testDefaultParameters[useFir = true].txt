@@ -1,0 +1,16 @@
+//
+// Source
+// ------------------------------------------
+
+@Composable fun Foo(x: Int = 0) {
+
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+public final class TestKt {
+  public final static Foo(ILandroidx/compose/runtime/Composer;II)V
+  private final static Foo%lambda%0(IIILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+}

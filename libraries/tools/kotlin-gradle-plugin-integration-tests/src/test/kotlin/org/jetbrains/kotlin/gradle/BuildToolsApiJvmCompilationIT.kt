@@ -51,6 +51,16 @@ class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
             )
         ) {
             chooseCompilerVersion(TestVersions.Kotlin.STABLE_RELEASE)
+            buildGradle.append( // FIXME: this is a workaround for KT-68107
+                // language=Gradle
+                """
+                configurations {
+                    kotlinCompilerPluginClasspathMain {
+                        resolutionStrategy.force("org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:${TestVersions.Kotlin.STABLE_RELEASE}")
+                    }
+                }    
+                """.trimIndent()
+            )
             build("assemble") {
                 assertNoDiagnostic(KotlinToolingDiagnostics.BuildToolsApiVersionInconsistency)
             }

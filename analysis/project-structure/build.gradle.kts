@@ -4,7 +4,6 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":core:compiler.common"))
     implementation(project(":compiler:util"))
     implementation(project(":compiler:psi"))
     implementation(intellijCore())

@@ -1,5 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
-// !DIAGNOSTICS: -NO_ACTUAL_FOR_EXPECT, -ACTUAL_WITHOUT_EXPECT
+// DIAGNOSTICS: -NO_ACTUAL_FOR_EXPECT, -ACTUAL_WITHOUT_EXPECT
 // FIR_IDENTICAL
 class SimpleClass {
     protected fun foo() = Unit

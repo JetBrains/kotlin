@@ -13,13 +13,13 @@ import com.intellij.psi.impl.PsiClassImplUtil
 import com.intellij.psi.impl.light.LightElement
 import com.intellij.psi.javadoc.PsiDocComment
 import com.intellij.psi.search.SearchScope
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
-import org.jetbrains.kotlin.analysis.api.types.KtErrorType
-import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
-import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
+import org.jetbrains.kotlin.analysis.api.types.KaErrorType
+import org.jetbrains.kotlin.analysis.api.types.KaNonErrorClassType
+import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
 import org.jetbrains.kotlin.asJava.classes.cannotModify
@@ -38,16 +38,16 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 internal class SymbolLightTypeParameter private constructor(
     private val parent: SymbolLightTypeParameterList,
     private val index: Int,
-    private val typeParameterSymbolPointer: KtSymbolPointer<KtTypeParameterSymbol>,
+    private val typeParameterSymbolPointer: KaSymbolPointer<KaTypeParameterSymbol>,
     override val kotlinOrigin: KtTypeParameter?,
 ) : LightElement(parent.manager, KotlinLanguage.INSTANCE), PsiTypeParameter,
     KtLightDeclaration<KtTypeParameter, PsiTypeParameter> {
 
     constructor(
-        ktAnalysisSession: KtAnalysisSession,
+        ktAnalysisSession: KaSession,
         parent: SymbolLightTypeParameterList,
         index: Int,
-        typeParameterSymbol: KtTypeParameterSymbol,
+        typeParameterSymbol: KaTypeParameterSymbol,
     ) : this(
         parent = parent,
         index = index,
@@ -57,7 +57,7 @@ internal class SymbolLightTypeParameter private constructor(
 
     private val ktModule: KtModule get() = parent.ktModule
 
-    private inline fun <T> withTypeParameterSymbol(crossinline action: KtAnalysisSession.(KtTypeParameterSymbol) -> T): T =
+    private inline fun <T> withTypeParameterSymbol(crossinline action: KaSession.(KaTypeParameterSymbol) -> T): T =
         typeParameterSymbolPointer.withSymbol(ktModule, action)
 
     override val givenAnnotations: List<KtLightAbstractAnnotation> get() = invalidAccess()
@@ -92,13 +92,13 @@ internal class SymbolLightTypeParameter private constructor(
             typeParameterSymbol.upperBounds
                 .filter { type ->
                     when (type) {
-                        is KtNonErrorClassType -> type.classId != StandardClassIds.Any
-                        is KtErrorType -> false
+                        is KaNonErrorClassType -> type.classId != StandardClassIds.Any
+                        is KaErrorType -> false
                         else -> true
                     }
                 }
                 .mapNotNull {
-                    mapType(it, this@SymbolLightTypeParameter, KtTypeMappingMode.GENERIC_ARGUMENT)
+                    mapType(it, this@SymbolLightTypeParameter, KaTypeMappingMode.GENERIC_ARGUMENT)
                 }
                 .forEach { listBuilder.addReference(it) }
         }
@@ -122,9 +122,9 @@ internal class SymbolLightTypeParameter private constructor(
     override fun getAllMethods(): Array<PsiMethod> = PsiMethod.EMPTY_ARRAY
     override fun getAllInnerClasses(): Array<PsiClass> = PsiClass.EMPTY_ARRAY
     override fun findFieldByName(name: String?, checkBases: Boolean): PsiField? = null
-    override fun findMethodBySignature(patternMethod: PsiMethod?, checkBases: Boolean): PsiMethod? = null
-    override fun findMethodsBySignature(patternMethod: PsiMethod?, checkBases: Boolean): Array<PsiMethod> = PsiMethod.EMPTY_ARRAY
-    override fun findMethodsAndTheirSubstitutorsByName(name: String?, checkBases: Boolean): List<Pair<PsiMethod, PsiSubstitutor>> =
+    override fun findMethodBySignature(patternMethod: PsiMethod, checkBases: Boolean): PsiMethod? = null
+    override fun findMethodsBySignature(patternMethod: PsiMethod, checkBases: Boolean): Array<PsiMethod> = PsiMethod.EMPTY_ARRAY
+    override fun findMethodsAndTheirSubstitutorsByName(name: String, checkBases: Boolean): List<Pair<PsiMethod, PsiSubstitutor>> =
         emptyList()
 
     override fun getAllMethodsAndTheirSubstitutors(): List<Pair<PsiMethod, PsiSubstitutor>> = emptyList()
@@ -133,7 +133,7 @@ internal class SymbolLightTypeParameter private constructor(
     override fun getRBrace(): PsiElement? = null
     override fun getScope(): PsiElement = parent
     override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean = false
-    override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean = false
+    override fun isInheritorDeep(baseClass: PsiClass, classToByPass: PsiClass?): Boolean = false
     override fun getVisibleSignatures(): MutableCollection<HierarchicalMethodSignature> = mutableListOf()
     override fun setName(name: String): PsiElement = cannotModify()
     override fun getNameIdentifier(): PsiIdentifier? = null

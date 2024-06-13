@@ -85,7 +85,6 @@ class ComposeCallLoweringTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
         )
     }
 
-    @Ignore("ui/foundation dependency is not supported for now")
     @Test
     fun testUnboundSymbolIssue() {
         codegenNoImports(

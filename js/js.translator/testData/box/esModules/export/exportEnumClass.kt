@@ -1,4 +1,4 @@
-// !LANGUAGE: +EnumEntries
+// LANGUAGE: +EnumEntries
 // DONT_TARGET_EXACT_BACKEND: JS
 // ES_MODULES
 

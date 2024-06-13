@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunctionCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildContextReceiver
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
@@ -1133,6 +1132,7 @@ open class FirDeclarationsResolveTransformer(
             extractLambdaInfoFromFunctionType(
                 it.type, anonymousFunction, returnTypeVariable = null, components, candidate = null,
                 allowCoercionToExtensionReceiver = true,
+                sourceForFunctionExpression = null,
             )
         }
         var lambda = anonymousFunction
@@ -1140,31 +1140,31 @@ open class FirDeclarationsResolveTransformer(
             resolvedLambdaAtom != null -> obtainValueParametersFromResolvedLambdaAtom(resolvedLambdaAtom, lambda)
             else -> obtainValueParametersFromExpectedType(expectedTypeRef.coneTypeSafe(), lambda)
         }
-        lambda = buildAnonymousFunctionCopy(lambda) {
-            receiverParameter = lambda.receiverParameter?.takeIf { it.typeRef !is FirImplicitTypeRef }
+
+        lambda.replaceReceiverParameter(
+            lambda.receiverParameter?.takeIf { it.typeRef !is FirImplicitTypeRef }
                 ?: resolvedLambdaAtom?.receiver?.takeIf {
                     !resolvedLambdaAtom.coerceFirstParameterToExtensionReceiver
                 }?.let { coneKotlinType ->
                     lambda.receiverParameter?.apply {
                         replaceTypeRef(typeRef.resolvedTypeFromPrototype(coneKotlinType))
                     }
-                }
+                })
 
-            contextReceivers.clear()
-            contextReceivers.addAll(
-                lambda.contextReceivers.takeIf { it.isNotEmpty() }
-                    ?: resolvedLambdaAtom?.contextReceivers?.map { receiverType ->
-                        buildContextReceiver {
-                            this.typeRef = buildResolvedTypeRef {
-                                type = receiverType
-                            }
+        lambda.replaceContextReceivers(
+            lambda.contextReceivers.takeIf { it.isNotEmpty() }
+                ?: resolvedLambdaAtom?.contextReceivers?.map { receiverType ->
+                    buildContextReceiver {
+                        this.typeRef = buildResolvedTypeRef {
+                            type = receiverType
                         }
-                    }.orEmpty()
-            )
+                    }
+                }.orEmpty()
+        )
 
-            this.valueParameters.clear()
-            this.valueParameters.addAll(valueParameters)
-        }.transformValueParameters(ImplicitToErrorTypeTransformer, null)
+        lambda.replaceValueParameters(valueParameters)
+
+        lambda = lambda.transformValueParameters(ImplicitToErrorTypeTransformer, null)
 
         val initialReturnTypeRef = lambda.returnTypeRef as? FirResolvedTypeRef
         val expectedReturnTypeRef = initialReturnTypeRef

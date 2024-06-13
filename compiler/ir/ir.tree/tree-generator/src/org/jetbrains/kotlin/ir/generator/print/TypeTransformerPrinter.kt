@@ -1,17 +1,18 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.generator.print
 
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 import org.jetbrains.kotlin.generators.tree.printer.printBlock
 import org.jetbrains.kotlin.generators.tree.printer.printFunctionDeclaration
 import org.jetbrains.kotlin.ir.generator.IrTree
-import org.jetbrains.kotlin.ir.generator.elementTransformerType
+import org.jetbrains.kotlin.ir.generator.elementVisitorType
 import org.jetbrains.kotlin.ir.generator.irTypeType
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
@@ -19,27 +20,27 @@ import org.jetbrains.kotlin.ir.generator.model.ListField
 import org.jetbrains.kotlin.ir.generator.model.SingleField
 import org.jetbrains.kotlin.utils.withIndent
 
-internal class TypeTransformerPrinter(
+internal open class TypeTransformerPrinter(
     printer: ImportCollectingPrinter,
     override val visitorType: ClassRef<*>,
     private val rootElement: Element,
 ) : AbstractVisitorPrinter<Element, Field>(printer) {
 
-    override val visitorSuperType: ClassRef<PositionTypeParameterRef>
-        get() = elementTransformerType.withArgs(dataTypeVariable)
+    override val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>>
+        get() = listOf(elementVisitorType.withArgs(resultTypeVariable, dataTypeVariable))
 
     override val visitorTypeParameters: List<TypeVariable>
-        get() = listOf(dataTypeVariable)
+        get() = listOf(resultTypeVariable, dataTypeVariable)
 
     override val visitorDataType: TypeRef
         get() = dataTypeVariable
 
-    override fun visitMethodReturnType(element: Element) = element.getTransformExplicitType()
+    override fun visitMethodReturnType(element: Element): TypeRef = resultTypeVariable
 
     override val allowTypeParametersInVisitorMethods: Boolean
         get() = false
 
-    private fun Element.getFieldsWithIrTypeType(insideParent: Boolean = false): List<Field> {
+    protected fun Element.getFieldsWithIrTypeType(insideParent: Boolean = false): List<Field> {
         val parentsFields = elementParents.flatMap { it.element.getFieldsWithIrTypeType(insideParent = true) }
         if (insideParent && this.parentInVisitor != null) {
             return parentsFields
@@ -57,19 +58,102 @@ internal class TypeTransformerPrinter(
         return irTypeFields + parentsFields
     }
 
-    override fun ImportCollectingPrinter.printAdditionalMethods() {
+    protected fun ImportCollectingPrinter.printTransformTypeMethod(hasDataParameter: Boolean, modality: Modality?, override: Boolean) {
         val typeTP = TypeVariable("Type", listOf(irTypeType.copy(nullable = true)))
         printFunctionDeclaration(
             name = "transformType",
-            parameters = listOf(
+            parameters = listOfNotNull(
                 FunctionParameter("container", rootElement),
                 FunctionParameter("type", typeTP),
-                FunctionParameter("data", visitorDataType)
+                FunctionParameter("data", visitorDataType).takeIf { hasDataParameter },
             ),
             returnType = typeTP,
             typeParameters = listOf(typeTP),
+            modality = modality,
+            override = override,
         )
+    }
+
+    override fun ImportCollectingPrinter.printAdditionalMethods() {
+        printTransformTypeMethod(hasDataParameter = true, modality = null, override = false)
         println()
+    }
+
+    protected open fun ImportCollectingPrinter.printTypeRemappings(element: Element, irTypeFields: List<Field>, hasDataParameter: Boolean) {
+        val visitorParam = element.visitorParameterName
+        fun addVisitTypeStatement(field: Field) {
+            val access = "$visitorParam.${field.name}"
+            when (field) {
+                is SingleField -> {
+                    print(access, " = ", "transformType(", visitorParam, ", ", access)
+                    if (hasDataParameter) {
+                        print(", data")
+                    }
+                    println(")")
+                }
+                is ListField -> {
+                    if (field.isMutable) {
+                        print(access, " = ", access, ".map { transformType(", visitorParam, ", it")
+                        if (hasDataParameter) {
+                            print(", data")
+                        }
+                        println(") }")
+                    } else {
+                        print("for (i in 0 until ", access, ".size)")
+                        printBlock {
+                            print(access, "[i] = transformType(", visitorParam, ", ", access, "[i]")
+                            if (hasDataParameter) {
+                                print(", data")
+                            }
+                            println(")")
+                        }
+                    }
+                }
+            }
+        }
+        when (element) {
+            IrTree.memberAccessExpression -> {
+                if (irTypeFields.singleOrNull()?.name != "typeArguments") {
+                    error(
+                        """`${IrTree.memberAccessExpression.typeName}` has unexpected fields with `IrType` type. 
+                                        |Please adjust logic of `${visitorType.simpleName}`'s generation.""".trimMargin()
+                    )
+                }
+                println("(0 until ", visitorParam, ".typeArgumentsCount).forEach {")
+                withIndent {
+                    println(visitorParam, ".getTypeArgument(it)?.let { type ->")
+                    withIndent {
+                        print(
+                            visitorParam,
+                            ".putTypeArgument(it, transformType(",
+                            visitorParam,
+                            ", type"
+                        )
+                        if (hasDataParameter) {
+                            print(", data")
+                        }
+                        println("))")
+                    }
+                    println("}")
+                }
+                println("}")
+            }
+            IrTree.`class` -> {
+                println(visitorParam, ".valueClassRepresentation?.mapUnderlyingType {")
+                withIndent {
+                    print("transformType(", visitorParam, ", it")
+                    if (hasDataParameter) {
+                        print(", data")
+                    }
+                    println(")")
+                }
+                println("}")
+                irTypeFields.forEach(::addVisitTypeStatement)
+            }
+            else -> {
+                irTypeFields.forEach(::addVisitTypeStatement)
+            }
+        }
     }
 
     override fun printMethodsForElement(element: Element) {
@@ -78,71 +162,17 @@ internal class TypeTransformerPrinter(
         if (element.parentInVisitor == null) return
         printer.run {
             println()
-            val visitorParam = element.visitorParameterName
             printVisitMethodDeclaration(
                 element = element,
                 override = true,
             )
-
-            fun addVisitTypeStatement(field: Field) {
-                val access = "$visitorParam.${field.name}"
-                when (field) {
-                    is SingleField -> println(access, " = ", "transformType(", visitorParam, ", ", access, ", data)")
-                    is ListField -> {
-                        if (field.isMutable) {
-                            println(access, " = ", access, ".map { transformType(", visitorParam, ", it, data) }")
-                        } else {
-                            println("for (i in 0 until ", access, ".size) {")
-                            withIndent {
-                                println(access, "[i] = transformType(", visitorParam, ", ", access, "[i], data)")
-                            }
-                            println("}")
-                        }
-                    }
-                }
-            }
-
             printBlock {
-                when (element) {
-                    IrTree.memberAccessExpression -> {
-                        if (irTypeFields.singleOrNull()?.name != "typeArguments") {
-                            error(
-                                """`${IrTree.memberAccessExpression.typeName}` has unexpected fields with `IrType` type. 
-                                        |Please adjust logic of `${visitorType.simpleName}`'s generation.""".trimMargin()
-                            )
-                        }
-                        println("(0 until ", visitorParam, ".typeArgumentsCount).forEach {")
-                        withIndent {
-                            println(visitorParam, ".getTypeArgument(it)?.let { type ->")
-                            withIndent {
-                                println(
-                                    visitorParam,
-                                    ".putTypeArgument(it, transformType(",
-                                    visitorParam,
-                                    ", type, data))"
-                                )
-                            }
-                            println("}")
-                        }
-                        println("}")
-                    }
-                    IrTree.`class` -> {
-                        println(visitorParam, ".valueClassRepresentation?.mapUnderlyingType {")
-                        withIndent {
-                            println("transformType(", visitorParam, ", it, data)")
-                        }
-                        println("}")
-                        irTypeFields.forEach(::addVisitTypeStatement)
-                    }
-                    else -> {
-                        irTypeFields.forEach(::addVisitTypeStatement)
-                    }
-                }
+                printTypeRemappings(element, irTypeFields, hasDataParameter = true)
                 println(
                     "return super.",
                     element.visitFunctionName,
                     "(",
-                    visitorParam,
+                    element.visitorParameterName,
                     ", data)"
                 )
             }

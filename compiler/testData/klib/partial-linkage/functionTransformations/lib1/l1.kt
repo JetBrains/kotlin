@@ -97,3 +97,7 @@ open class OpenClass {
     fun newInlineFunction2Caller(x: Int): String = TODO("Not implemented: OpenClass.newInlineFunction2Caller($x)")
     fun newNonInlineFunctionCaller(x: Int): String = TODO("Not implemented: OpenClass.newNonInlineFunctionCaller($x)")
 }
+
+interface KT59153 {
+    fun test(f: () -> String) = "foo".run { f() }
+}

@@ -1,5 +1,5 @@
-// !LANGUAGE: -ProhibitOperatorMod
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: -ProhibitOperatorMod
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 object A {
     @Deprecated("Use mod instead", ReplaceWith("mod"), DeprecationLevel.HIDDEN)

@@ -1,0 +1,3 @@
+KtNameReferenceExpression(39,40): 'T'
+  KtSimpleNameReference:
+    reified T

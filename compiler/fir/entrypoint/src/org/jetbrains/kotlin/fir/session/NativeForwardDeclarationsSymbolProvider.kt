@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.getDeprecationsProvider
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProviderWithoutC
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
+import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -32,7 +34,8 @@ import org.jetbrains.kotlin.fir.types.constructClassType
 import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.includedForwardDeclarations
-import org.jetbrains.kotlin.library.isInterop
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
+import org.jetbrains.kotlin.library.metadata.isCommonizedCInteropLibrary
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -53,7 +56,7 @@ class NativeForwardDeclarationsSymbolProvider(
     private val includedForwardDeclarations: Set<ClassId> by lazy {
         buildSet {
             for (library in kotlinLibraries) {
-                if (!library.isInterop) continue
+                if (!library.isCInteropLibrary() && !library.isCommonizedCInteropLibrary()) continue
 
                 for (fqName in library.includedForwardDeclarations) {
                     val classId = ClassId.topLevel(FqName(fqName))
@@ -83,59 +86,12 @@ class NativeForwardDeclarationsSymbolProvider(
         session.firCachesFactory.createCache(::createSyntheticForwardDeclarationClass)
 
     private fun createSyntheticForwardDeclarationClass(classId: ClassId): FirClassLikeSymbol<*>? {
-        val forwardDeclarationKind = NativeForwardDeclarationKind.packageFqNameToKind[classId.packageFqName] ?: return null
-
-        val symbol = FirRegularClassSymbol(classId)
-
-        buildRegularClass {
-            moduleData = forwardDeclarationsModuleData
-            origin = FirDeclarationOrigin.Synthetic.ForwardDeclaration
-            check(!classId.isNestedClass) { "Expected top-level class when building forward declaration, got $classId" }
-            name = classId.shortClassName
-            status = FirResolvedDeclarationStatusImpl(
-                Visibilities.Public,
-                Modality.FINAL,
-                EffectiveVisibility.Public
-            ).apply {
-                // This will be wrong if we support exported forward declarations.
-                // See https://youtrack.jetbrains.com/issue/KT-51377 for more details.
-                isExpect = false
-
-                isActual = false
-                isCompanion = false
-                isInner = false
-                isData = false
-                isInline = false
-                isExternal = false
-                isFun = false
-            }
-            classKind = forwardDeclarationKind.classKind
-            scopeProvider = kotlinScopeProvider
-            this.symbol = symbol
-
-            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-
-            superTypeRefs += buildResolvedTypeRef {
-                type = ConeClassLikeLookupTagImpl(forwardDeclarationKind.superClassId)
-                    .constructClassType(emptyArray(), isNullable = false)
-            }
-
-            annotations += buildAnnotation {
-                annotationTypeRef = buildResolvedTypeRef {
-                    val annotationClassId = ClassId(
-                        NativeStandardInteropNames.cInteropPackage,
-                        NativeStandardInteropNames.ExperimentalForeignApi
-                    )
-                    type = annotationClassId.toLookupTag()
-                        .constructClassType(typeArguments = ConeTypeProjection.EMPTY_ARRAY, isNullable = false)
-                }
-                argumentMapping = FirEmptyAnnotationArgumentMapping
-            }
-        }.apply {
-            replaceDeprecationsProvider(getDeprecationsProvider(session))
-        }
-
-        return symbol
+        return createSyntheticForwardDeclarationClass(
+            classId,
+            forwardDeclarationsModuleData,
+            session,
+            kotlinScopeProvider
+        )
     }
 
     @FirSymbolProviderInternals
@@ -166,4 +122,67 @@ class NativeForwardDeclarationsSymbolProvider(
         override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> =
             includedForwardDeclarationsByPackage[packageFqName].orEmpty()
     }
+}
+
+fun createSyntheticForwardDeclarationClass(
+    classId: ClassId,
+    firModuleData: FirModuleData,
+    session: FirSession,
+    kotlinScopeProvider: FirScopeProvider,
+    performAdditionalSetup: FirRegularClassBuilder.() -> Unit = {},
+): FirRegularClassSymbol? {
+    val forwardDeclarationKind = NativeForwardDeclarationKind.packageFqNameToKind[classId.packageFqName] ?: return null
+
+    val symbol = FirRegularClassSymbol(classId)
+
+    buildRegularClass {
+        moduleData = firModuleData
+        origin = FirDeclarationOrigin.Synthetic.ForwardDeclaration
+        check(!classId.isNestedClass) { "Expected top-level class when building forward declaration, got $classId" }
+        name = classId.shortClassName
+        status = FirResolvedDeclarationStatusImpl(
+            Visibilities.Public,
+            Modality.FINAL,
+            EffectiveVisibility.Public
+        ).apply {
+            // This will be wrong if we support exported forward declarations.
+            // See https://youtrack.jetbrains.com/issue/KT-51377 for more details.
+            isExpect = false
+
+            isActual = false
+            isCompanion = false
+            isInner = false
+            isData = false
+            isInline = false
+            isExternal = false
+            isFun = false
+        }
+        classKind = forwardDeclarationKind.classKind
+        scopeProvider = kotlinScopeProvider
+        this.symbol = symbol
+
+        resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+
+        superTypeRefs += buildResolvedTypeRef {
+            type = ConeClassLikeLookupTagImpl(forwardDeclarationKind.superClassId)
+                .constructClassType(ConeTypeProjection.EMPTY_ARRAY, isNullable = false)
+        }
+
+        annotations += buildAnnotation {
+            annotationTypeRef = buildResolvedTypeRef {
+                val annotationClassId = ClassId(
+                    NativeStandardInteropNames.cInteropPackage,
+                    NativeStandardInteropNames.ExperimentalForeignApi
+                )
+                type = annotationClassId.toLookupTag()
+                    .constructClassType(typeArguments = ConeTypeProjection.EMPTY_ARRAY, isNullable = false)
+            }
+            argumentMapping = FirEmptyAnnotationArgumentMapping
+        }
+        performAdditionalSetup()
+    }.apply {
+        replaceDeprecationsProvider(getDeprecationsProvider(session))
+    }
+
+    return symbol
 }

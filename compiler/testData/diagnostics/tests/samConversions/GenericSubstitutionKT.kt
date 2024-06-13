@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +SamConversionForKotlinFunctions +SamConversionPerArgument
-// !CHECK_TYPE
+// LANGUAGE: +SamConversionForKotlinFunctions +SamConversionPerArgument
+// CHECK_TYPE
 // FILE: F.java
 public interface F<S> {
     void apply(S s);

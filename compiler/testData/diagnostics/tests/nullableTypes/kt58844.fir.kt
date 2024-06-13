@@ -1,4 +1,4 @@
-// !RENDER_DIAGNOSTICS_MESSAGES
+// RENDER_DIAGNOSTICS_MESSAGES
 
 fun intFun(i: Int) {}
 fun byteFun(i: Byte) {}

@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.analysis.api.fir.contracts
 
 import org.jetbrains.kotlin.analysis.api.contracts.description.*
-import org.jetbrains.kotlin.analysis.api.contracts.description.KtContractConstantValue.KtContractConstantType
-import org.jetbrains.kotlin.analysis.api.contracts.description.KtContractReturnsContractEffectDeclaration.*
+import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractConstantValue.KaContractConstantType
+import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractReturnsContractEffectDeclaration.*
 import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.*
-import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtParameterSymbol
+import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
 import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
@@ -21,20 +21,20 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal fun KtEffectDeclaration<ConeKotlinType, ConeDiagnostic>.coneEffectDeclarationToAnalysisApi(
-    builder: KtSymbolByFirBuilder,
-    firFunctionSymbol: KtFirFunctionSymbol
-): KtContractEffectDeclaration =
-    accept(ConeContractDescriptionElementToAnalysisApi(builder, firFunctionSymbol), Unit) as KtContractEffectDeclaration
+    builder: KaSymbolByFirBuilder,
+    firFunctionSymbol: KaFirFunctionSymbol
+): KaContractEffectDeclaration =
+    accept(ConeContractDescriptionElementToAnalysisApi(builder, firFunctionSymbol), Unit) as KaContractEffectDeclaration
 
 private class ConeContractDescriptionElementToAnalysisApi(
-    private val builder: KtSymbolByFirBuilder,
-    private val firFunctionSymbol: KtFirFunctionSymbol
+    private val builder: KaSymbolByFirBuilder,
+    private val firFunctionSymbol: KaFirFunctionSymbol
 ) : KtContractDescriptionVisitor<Any, Unit, ConeKotlinType, ConeDiagnostic>() {
 
     override fun visitConditionalEffectDeclaration(
         conditionalEffect: ConeConditionalEffectDeclaration,
         data: Unit
-    ): KtContractConditionalContractEffectDeclaration = KtContractConditionalContractEffectDeclaration(
+    ): KaContractConditionalContractEffectDeclaration = KaContractConditionalContractEffectDeclaration(
         conditionalEffect.effect.accept(),
         conditionalEffect.condition.accept()
     )
@@ -42,17 +42,17 @@ private class ConeContractDescriptionElementToAnalysisApi(
     override fun visitReturnsEffectDeclaration(
         returnsEffect: ConeReturnsEffectDeclaration,
         data: Unit
-    ): KtContractReturnsContractEffectDeclaration =
+    ): KaContractReturnsContractEffectDeclaration =
         when (val value = returnsEffect.value) {
             ConeContractConstantValues.NULL ->
-                KtContractReturnsSpecificValueEffectDeclaration(KtContractConstantValue(KtContractConstantType.NULL, builder.token))
-            ConeContractConstantValues.NOT_NULL -> KtContractReturnsNotNullEffectDeclaration(builder.token)
-            ConeContractConstantValues.WILDCARD -> KtContractReturnsSuccessfullyEffectDeclaration(builder.token)
-            is KtBooleanConstantReference -> KtContractReturnsSpecificValueEffectDeclaration(
-                KtContractConstantValue(
+                KaContractReturnsSpecificValueEffectDeclaration(KaContractConstantValue(KaContractConstantType.NULL, builder.token))
+            ConeContractConstantValues.NOT_NULL -> KaContractReturnsNotNullEffectDeclaration(builder.token)
+            ConeContractConstantValues.WILDCARD -> KaContractReturnsSuccessfullyEffectDeclaration(builder.token)
+            is KtBooleanConstantReference -> KaContractReturnsSpecificValueEffectDeclaration(
+                KaContractConstantValue(
                     when (value) {
-                        ConeContractConstantValues.TRUE -> KtContractConstantType.TRUE
-                        ConeContractConstantValues.FALSE -> KtContractConstantType.FALSE
+                        ConeContractConstantValues.TRUE -> KaContractConstantType.TRUE
+                        ConeContractConstantValues.FALSE -> KaContractConstantType.FALSE
                         else -> errorWithAttachment("Can't convert ${value::class} to the Analysis API") {
                             withEntry("value", value) { value.toString() }
                         }
@@ -65,8 +65,8 @@ private class ConeContractDescriptionElementToAnalysisApi(
             }
         }
 
-    override fun visitCallsEffectDeclaration(callsEffect: KtCallsEffectDeclaration<ConeKotlinType, ConeDiagnostic>, data: Unit): KtContractCallsInPlaceContractEffectDeclaration =
-        KtContractCallsInPlaceContractEffectDeclaration(
+    override fun visitCallsEffectDeclaration(callsEffect: KtCallsEffectDeclaration<ConeKotlinType, ConeDiagnostic>, data: Unit): KaContractCallsInPlaceContractEffectDeclaration =
+        KaContractCallsInPlaceContractEffectDeclaration(
             callsEffect.valueParameterReference.accept(),
             callsEffect.kind
         )
@@ -74,52 +74,52 @@ private class ConeContractDescriptionElementToAnalysisApi(
     override fun visitLogicalBinaryOperationContractExpression(
         binaryLogicExpression: ConeBinaryLogicExpression,
         data: Unit
-    ): KtContractBinaryLogicExpression = KtContractBinaryLogicExpression(
+    ): KaContractBinaryLogicExpression = KaContractBinaryLogicExpression(
         binaryLogicExpression.left.accept(),
         binaryLogicExpression.right.accept(),
         when (binaryLogicExpression.kind) {
-            LogicOperationKind.AND -> KtContractBinaryLogicExpression.KtLogicOperation.AND
-            LogicOperationKind.OR -> KtContractBinaryLogicExpression.KtLogicOperation.OR
+            LogicOperationKind.AND -> KaContractBinaryLogicExpression.KaLogicOperation.AND
+            LogicOperationKind.OR -> KaContractBinaryLogicExpression.KaLogicOperation.OR
         }
     )
 
-    override fun visitLogicalNot(logicalNot: ConeLogicalNot, data: Unit): KtContractLogicalNotExpression =
-        KtContractLogicalNotExpression(logicalNot.arg.accept())
+    override fun visitLogicalNot(logicalNot: ConeLogicalNot, data: Unit): KaContractLogicalNotExpression =
+        KaContractLogicalNotExpression(logicalNot.arg.accept())
 
-    override fun visitIsInstancePredicate(isInstancePredicate: ConeIsInstancePredicate, data: Unit): KtContractIsInstancePredicateExpression =
-        KtContractIsInstancePredicateExpression(
+    override fun visitIsInstancePredicate(isInstancePredicate: ConeIsInstancePredicate, data: Unit): KaContractIsInstancePredicateExpression =
+        KaContractIsInstancePredicateExpression(
             isInstancePredicate.arg.accept(),
             builder.typeBuilder.buildKtType(isInstancePredicate.type),
             isInstancePredicate.isNegated
         )
 
-    override fun visitIsNullPredicate(isNullPredicate: ConeIsNullPredicate, data: Unit): KtContractIsNullPredicateExpression =
-        KtContractIsNullPredicateExpression(isNullPredicate.arg.accept(), isNullPredicate.isNegated)
+    override fun visitIsNullPredicate(isNullPredicate: ConeIsNullPredicate, data: Unit): KaContractIsNullPredicateExpression =
+        KaContractIsNullPredicateExpression(isNullPredicate.arg.accept(), isNullPredicate.isNegated)
 
     override fun visitBooleanConstantDescriptor(
         booleanConstantDescriptor: ConeBooleanConstantReference,
         data: Unit
-    ): KtContractBooleanConstantExpression =
+    ): KaContractBooleanConstantExpression =
         when (booleanConstantDescriptor) {
-            ConeContractConstantValues.TRUE -> KtContractBooleanConstantExpression(true, builder.token)
-            ConeContractConstantValues.FALSE -> KtContractBooleanConstantExpression(false, builder.token)
+            ConeContractConstantValues.TRUE -> KaContractBooleanConstantExpression(true, builder.token)
+            ConeContractConstantValues.FALSE -> KaContractBooleanConstantExpression(false, builder.token)
             else -> error("Can't convert $booleanConstantDescriptor to Analysis API")
         }
 
     override fun visitValueParameterReference(
         valueParameterReference: ConeValueParameterReference,
         data: Unit
-    ): Any = visitValueParameterReference(valueParameterReference, ::KtContractParameterValue)
+    ): Any = visitValueParameterReference(valueParameterReference, ::KaContractParameterValue)
 
     override fun visitBooleanValueParameterReference(
         booleanValueParameterReference: ConeBooleanValueParameterReference,
         data: Unit
     ): Any =
-        visitValueParameterReference(booleanValueParameterReference, ::KtContractBooleanValueParameterExpression)
+        visitValueParameterReference(booleanValueParameterReference, ::KaContractBooleanValueParameterExpression)
 
     private fun <T> visitValueParameterReference(
         valueParameterReference: ConeValueParameterReference,
-        constructor: (KtParameterSymbol) -> T
+        constructor: (KaParameterSymbol) -> T
     ): T = constructor(
         if (valueParameterReference.parameterIndex == -1) firFunctionSymbol.receiverParameter
             ?: errorWithAttachment("${firFunctionSymbol::class} should contain a receiver") {

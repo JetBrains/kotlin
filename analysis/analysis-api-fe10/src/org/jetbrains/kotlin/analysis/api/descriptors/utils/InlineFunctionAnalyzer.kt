@@ -5,23 +5,23 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.utils
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisNonPublicApi
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
+import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 
-@OptIn(KtAnalysisNonPublicApi::class) // used in IDEA K1 evaluator
+@OptIn(KaAnalysisNonPublicApi::class) // used in IDEA K1 evaluator
 @Suppress("unused")
-fun KtAnalysisSession.getInlineFunctionAnalyzer(analyzeOnlyReifiedInlineFunctions: Boolean): InlineFunctionAnalyzer {
-    require(this is KtFe10AnalysisSession) {
+fun KaSession.getInlineFunctionAnalyzer(analyzeOnlyReifiedInlineFunctions: Boolean): InlineFunctionAnalyzer {
+    require(this is KaFe10Session) {
         "K2 implementation shouldn't call this code"
     }
     return InlineFunctionAnalyzer(analysisContext, analyzeOnlyReifiedInlineFunctions)
 }
 
-@OptIn(KtAnalysisNonPublicApi::class)
+@OptIn(KaAnalysisNonPublicApi::class)
 class InlineFunctionAnalyzer(
     private val analysisContext: Fe10AnalysisContext,
     private val analyzeOnlyReifiedInlineFunctions: Boolean,

@@ -65,7 +65,7 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
         rootDisposable: Disposable,
         paths: KotlinPaths?
     ): ExitCode {
-        val collector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        val collector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         val performanceManager = configuration.getNotNull(CLIConfigurationKeys.PERF_MANAGER)
 
         val pluginLoadResult = loadPlugins(paths, arguments, configuration)

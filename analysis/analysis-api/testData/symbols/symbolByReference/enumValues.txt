@@ -1,6 +1,6 @@
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /MyKotlinEnum.values
+KaFunctionSymbol:
+  annotations: []
+  callableId: /MyKotlinEnum.values
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -20,12 +20,12 @@ KtFunctionSymbol:
   name: values
   origin: SOURCE_MEMBER_GENERATED
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: MyKotlinEnum
     ]
     type: kotlin/Array<MyKotlinEnum>
@@ -33,7 +33,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(enumValues.kt)
+  getContainingFileSymbol: KaFileSymbol(enumValues.kt)
   getContainingJvmClassName: MyKotlinEnum
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

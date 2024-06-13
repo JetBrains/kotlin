@@ -39,7 +39,7 @@ class IsThrowableTest(
         )
 
         analyze(file) {
-            val isThrowable = file.getPropertyOrFail("foo").returnType.expandedClassSymbol?.isThrowable ?: false
+            val isThrowable = file.getPropertyOrFail("foo").returnType.expandedSymbol?.isThrowable ?: false
             assertTrue(isThrowable)
         }
     }

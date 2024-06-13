@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface A {
     <!CONFLICTING_JVM_DECLARATIONS!>fun f(a: List<Int>): String = TODO()<!>

@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.SmartSet
 
-val DEFAULT_STATUS_FOR_NORMAL_MAIN_FUNCTION = DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
+val DEFAULT_STATUS_FOR_NORMAL_MAIN_FUNCTION: FirResolvedDeclarationStatus = DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
 
 private val FirNamedFunctionSymbol.hasMainFunctionStatus
     get() = when (resolvedStatus.modifiersRepresentation) {
@@ -85,7 +85,7 @@ private fun FirBasedSymbol<*>.isCollectable(): Boolean {
 private val FirNamedFunctionSymbol.isCollectableAccordingToSource: Boolean
     get() = source?.kind !is KtFakeSourceElementKind || source?.kind == KtFakeSourceElementKind.DataClassGeneratedMembers
 
-private val FirBasedSymbol<*>.resolvedStatus
+internal val FirBasedSymbol<*>.resolvedStatus
     get() = when (this) {
         is FirCallableSymbol<*> -> resolvedStatus
         is FirClassLikeSymbol<*> -> resolvedStatus

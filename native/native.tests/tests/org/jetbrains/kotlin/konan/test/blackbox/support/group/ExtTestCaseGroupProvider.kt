@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -42,9 +42,11 @@ import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.test.*
-import org.jetbrains.kotlin.test.InTextDirectivesUtils.*
-import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
+import org.jetbrains.kotlin.test.InTextDirectivesUtils.isCompatibleTarget
+import org.jetbrains.kotlin.test.InTextDirectivesUtils.isDirectiveDefined
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
@@ -150,14 +152,13 @@ private class ExtTestDataFile(
                 testDataBaseDir = testRoots.baseDir,
                 testDataFile = testDataFile
             ),
-            assertionsMode = AssertionsMode.fromString(structure.directives[ASSERTIONS_MODE.name])
+            assertionsMode = structure.directives.singleOrZeroValue(ASSERTIONS_MODE) ?: AssertionsMode.DEFAULT,
         )
     }
 
     val isRelevant: Boolean =
         isCompatibleTarget(TargetBackend.NATIVE, testDataFile) // Checks TARGET_BACKEND/DONT_TARGET_EXACT_BACKEND directives.
                 && !settings.isDisabledNative(structure.directives)
-                && testDataFileSettings.languageSettings.none { it in INCOMPATIBLE_LANGUAGE_SETTINGS }
                 && INCOMPATIBLE_DIRECTIVES.none { it in structure.directives }
                 && structure.directives[API_VERSION_DIRECTIVE] !in INCOMPATIBLE_API_VERSIONS
                 && structure.directives[LANGUAGE_VERSION_DIRECTIVE] !in INCOMPATIBLE_LANGUAGE_VERSIONS
@@ -167,12 +168,16 @@ private class ExtTestDataFile(
                 && !(testDataFileSettings.languageSettings.contains("+${LanguageFeature.MultiPlatformProjects.name}")
                      && pipelineType == PipelineType.K2
                      && testMode == TestMode.ONE_STAGE_MULTI_MODULE)
+                && structure.defFilesContents.all { it.defFileContentsIsSupportedOn(settings.get<KotlinNativeTargets>().testTarget) }
 
     private fun assembleFreeCompilerArgs(): TestCompilerArgs {
         val args = mutableListOf<String>()
-        structure.directives.listValues(FREE_COMPILER_ARGS.name)?.let { args.addAll(it)}
+        args += structure.directives[FREE_COMPILER_ARGS]
         testDataFileSettings.languageSettings.sorted().mapTo(args) { "-XXLanguage:$it" }
         testDataFileSettings.optInsForCompiler.sorted().mapTo(args) { "-opt-in=$it" }
+        if (!structure.directives[CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS].containsNativeOrAny) {
+            args.add("-Xverify-ir-visibility")
+        }
         args += "-opt-in=kotlin.native.internal.InternalForKotlinNative" // for `Any.isPermanent()` and `Any.isLocal()`
         args += "-opt-in=kotlin.native.internal.InternalForKotlinNativeTests" // for ReflectionPackageName
         val freeCInteropArgs = structure.directives.listValues(FREE_CINTEROP_ARGS.name)
@@ -201,13 +206,13 @@ private class ExtTestDataFile(
      */
     private fun determineIfStandaloneTest(): Boolean = with(structure) {
         if (directives.contains(NATIVE_STANDALONE_DIRECTIVE)) return true
-        if (directives.contains(FILECHECK_STAGE.name)) return true
-        if (directives.contains(ASSERTIONS_MODE.name)) return true
+        if (directives.contains(FILECHECK_STAGE)) return true
+        if (directives.contains(ASSERTIONS_MODE)) return true
         if (isExpectedFailure) return true
         // To make the debug of possible failed testruns easier, it makes sense to run dodgy tests alone
-        if (directives.contains(IGNORE_NATIVE.name) ||
-            directives.contains(IGNORE_NATIVE_K1.name) ||
-            directives.contains(IGNORE_NATIVE_K2.name)
+        if (directives.contains(IGNORE_NATIVE) ||
+            directives.contains(IGNORE_NATIVE_K1) ||
+            directives.contains(IGNORE_NATIVE_K2)
         ) return true
 
         /**
@@ -579,18 +584,6 @@ private class ExtTestDataFile(
         private val INCOMPATIBLE_LANGUAGE_VERSIONS = setOf("1.3", "1.4")
 
         private const val LANGUAGE_DIRECTIVE = "LANGUAGE"
-        private val INCOMPATIBLE_LANGUAGE_SETTINGS = setOf(
-            "-ProperIeee754Comparisons",                            // K/N supports only proper IEEE754 comparisons
-            "-ReleaseCoroutines",                                   // only release coroutines
-            "-DataClassInheritance",                                // old behavior is not supported
-            "-ProhibitAssigningSingleElementsToVarargsInNamedForm", // Prohibit these assignments
-            "-ProhibitDataClassesOverridingCopy",                   // Prohibit as no longer supported
-            "-ProhibitOperatorMod",                                 // Prohibit as no longer supported
-            "-ProhibitIllegalValueParameterUsageInDefaultArguments",  // Allow only legal values
-            "-UseBuilderInferenceOnlyIfNeeded",                     // Run only default one
-            "-UseCorrectExecutionOrderForVarargArguments"           // Run only correct one
-        )
-
         private const val USE_EXPERIMENTAL_DIRECTIVE = "USE_EXPERIMENTAL"
 
         private const val NATIVE_STANDALONE_DIRECTIVE = "NATIVE_STANDALONE"
@@ -638,6 +631,11 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
         private val filesAndModules = FilesAndModules(originalTestDataFile, sourceTransformers)
 
         val directives: Directives get() = filesAndModules.directives
+
+        val defFilesContents: List<String>
+            get() = filesAndModules.parsedFiles.filterKeys { it.name.endsWith(".def") }.map {
+                it.value.text
+            }
 
         val filesToTransform: Iterable<CurrentFileHandler>
             get() = filesAndModules.parsedFiles.filter { it.key.name.endsWith(".kt") || it.key.name.endsWith(".def") }

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.SetUpMultipl
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.RegisterMultiplatformResourcesPublicationExtensionAction
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinMultiplatformSourceSetSetupAction
 import org.jetbrains.kotlin.gradle.plugin.sources.LanguageSettingsSetupAction
+import org.jetbrains.kotlin.gradle.plugin.statistics.FinalizeConfigurationFusMetricAction
 import org.jetbrains.kotlin.gradle.plugin.statistics.MultiplatformBuildStatsReportSetupAction
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubpluginSetupAction
 import org.jetbrains.kotlin.gradle.targets.*
@@ -55,6 +56,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, CustomizeKotlinDependenciesSetupAction)
         register(project, AddKotlinPlatformIntegersSupportLibrary)
         register(project, SetupKotlinNativePlatformDependenciesForLegacyImport)
+        register(project, FinalizeConfigurationFusMetricAction)
 
 
         if (isJvm || isMultiplatform) {
@@ -134,6 +136,8 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, DisabledCinteropCommonizationInHmppProjectChecker)
         register(project, DisabledNativeTargetsChecker)
         register(project, JsEnvironmentChecker)
+        register(project, WasmJsEnvironmentChecker)
+        register(project, WasmWasiEnvironmentChecker)
         register(project, PreHmppDependenciesUsageChecker)
         register(project, ExperimentalTryNextUsageChecker)
         register(project, KotlinSourceSetTreeDependsOnMismatchChecker)
@@ -148,6 +152,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, IncorrectCompileOnlyDependenciesChecker)
         register(project, GradleDeprecatedPropertyChecker)
         register(project, OverriddenKotlinNativeHomeChecker)
+        register(project, ComposePluginSuggestApplyChecker)
 
         if (isMultiplatform) {
             register(project, KotlinMultiplatformAndroidGradlePluginCompatibilityChecker)

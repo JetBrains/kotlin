@@ -1,23 +1,11 @@
 package org.jetbrains.kotlin.library.metadata.impl
 
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
-import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.exportForwardDeclarations
-import org.jetbrains.kotlin.library.isInterop
 import org.jetbrains.kotlin.library.metadata.*
-import org.jetbrains.kotlin.library.packageFqName
-import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.utils.Printer
 
 // TODO decouple and move interop-specific logic back to Kotlin/Native.
 open class KlibMetadataDeserializedPackageFragmentsFactoryImpl : KlibMetadataDeserializedPackageFragmentsFactory {

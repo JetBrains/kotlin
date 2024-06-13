@@ -26,7 +26,7 @@ import java.io.File
 class KotlinSourceRootProvider : AdditionalRootsProviderService<JavaSourceRootDescriptor>(JavaModuleBuildTargetType.ALL_TYPES) {
     override fun getAdditionalRoots(
         target: BuildTarget<JavaSourceRootDescriptor>,
-        dataPaths: BuildDataPaths?
+        dataPaths: BuildDataPaths,
     ): List<JavaSourceRootDescriptor> {
         val moduleBuildTarget = target as? ModuleBuildTarget ?: return listOf()
         val module = moduleBuildTarget.module

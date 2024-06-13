@@ -52,14 +52,14 @@ abstract class AbstractHasCommonSubtypeTest : AbstractAnalysisApiBasedTest() {
                     }
 
                     val a = valueArguments[0]
-                    val aType = a.getArgumentExpression()?.getKtType()
+                    val aType = a.getArgumentExpression()?.getKaType()
                     if (aType == null) {
                         errors.add("'${a.text}' has no type at ${a.positionString}")
                         super.visitCallExpression(expression)
                         return
                     }
                     val b = valueArguments[1]
-                    val bType = b.getArgumentExpression()?.getKtType()
+                    val bType = b.getArgumentExpression()?.getKaType()
                     if (bType == null) {
                         errors.add("'${b.text}' has no type at ${b.positionString}")
                         super.visitCallExpression(expression)

@@ -33,7 +33,7 @@ dependencies {
     testApi(commonDependency("org.jetbrains.intellij.deps:trove4j"))
     testApi(commonDependency("org.jetbrains.intellij.deps:asm-all"))
     testApi(commonDependency("org.jetbrains.intellij.deps:log4j"))
-    testApi(commonDependency("org.jetbrains.intellij.deps:jdom"))
+    testApi(intellijJDom())
 }
 
 optInToUnsafeDuringIrConstructionAPI()

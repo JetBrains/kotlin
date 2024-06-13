@@ -38,7 +38,10 @@ object FirJavaSamConstructorNullabilityChecker : FirFunctionCallChecker(MppCheck
         if (lambda !is FirAnonymousFunctionExpression) return
 
         val parameterFunctionType = parameter.returnTypeRef.coneType
-        val substitutor = expression.createConeSubstitutorFromTypeArguments(symbol, context.session)
+        val substitutor = expression.createConeSubstitutorFromTypeArguments(
+            symbol, context.session,
+            unwrapExplicitTypeArgumentForMadeFlexibleSynthetically = true,
+        )
         val expectedReturnType = parameterFunctionType.typeArguments.lastOrNull()?.type?.let(substitutor::substituteOrSelf) ?: return
 
         for (returnedExpression in lambda.getReturnedExpressions()) {

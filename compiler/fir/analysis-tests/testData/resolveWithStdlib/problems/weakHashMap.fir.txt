@@ -1,5 +1,5 @@
 FILE: weakHashMap.kt
-    public final val someMap: R|java/util/WeakHashMap<kotlin/Any?, kotlin/Any?>| = R|java/util/WeakHashMap.WeakHashMap|<R|kotlin/Any?|, R|kotlin/Any?|>()
+    public final val someMap: R|java/util/WeakHashMap<kotlin/Any?, kotlin/Any?>| = R|java/util/WeakHashMap.WeakHashMap|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/Any?) kotlin/Any!|, R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/Any?) kotlin/Any!|>()
         public get(): R|java/util/WeakHashMap<kotlin/Any?, kotlin/Any?>|
     public final fun foo(): R|kotlin/Unit| {
         R|/someMap|.R|SubstitutionOverride<java/util/WeakHashMap.get: R|@EnhancedNullability kotlin/Any?|>|(String())

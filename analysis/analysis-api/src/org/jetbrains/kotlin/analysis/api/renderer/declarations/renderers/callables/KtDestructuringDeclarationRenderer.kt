@@ -5,26 +5,26 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callables
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtDeclarationRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers.KtRendererKeywordFilter
-import org.jetbrains.kotlin.analysis.api.symbols.KtDestructuringDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers.KaRendererKeywordFilter
+import org.jetbrains.kotlin.analysis.api.symbols.KaDestructuringDeclarationSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtTokens
 
-public interface KtDestructuringDeclarationRenderer {
+public interface KaDestructuringDeclarationRenderer {
     public fun renderSymbol(
-        analysisSession: KtAnalysisSession,
-        symbol: KtDestructuringDeclarationSymbol,
-        declarationRenderer: KtDeclarationRenderer,
+        analysisSession: KaSession,
+        symbol: KaDestructuringDeclarationSymbol,
+        declarationRenderer: KaDeclarationRenderer,
         printer: PrettyPrinter,
     )
 
-    public object WITH_ENTRIES : KtDestructuringDeclarationRenderer {
+    public object WITH_ENTRIES : KaDestructuringDeclarationRenderer {
         override fun renderSymbol(
-            analysisSession: KtAnalysisSession,
-            symbol: KtDestructuringDeclarationSymbol,
-            declarationRenderer: KtDeclarationRenderer,
+            analysisSession: KaSession,
+            symbol: KaDestructuringDeclarationSymbol,
+            declarationRenderer: KaDeclarationRenderer,
             printer: PrettyPrinter,
         ) {
             printer {
@@ -35,12 +35,12 @@ public interface KtDestructuringDeclarationRenderer {
                         val rendererWithoutValVar = declarationRenderer.with {
                             keywordsRenderer = keywordsRenderer.with {
                                 keywordFilter =
-                                    keywordFilter and KtRendererKeywordFilter.without(KtTokens.VAL_KEYWORD, KtTokens.VAR_KEYWORD)
+                                    keywordFilter and KaRendererKeywordFilter.without(KtTokens.VAL_KEYWORD, KtTokens.VAR_KEYWORD)
                             }
                         }
                         printCollection(symbol.entries, prefix = "(", postfix = ")") {
                             with(rendererWithoutValVar) {
-                                localVariableRenderer.renderSymbol(analysisSession, it, rendererWithoutValVar, this@printCollection)
+                                renderDeclaration(analysisSession, it, this@printCollection)
                             }
                         }
                     }
@@ -50,3 +50,5 @@ public interface KtDestructuringDeclarationRenderer {
         }
     }
 }
+
+public typealias KtDestructuringDeclarationRenderer = KaDestructuringDeclarationRenderer

@@ -5,27 +5,27 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.renderer.base.KtKeywordsRenderer
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.renderer.base.KaKeywordsRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers.*
-import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
-public class KtDeclarationModifiersRenderer private constructor(
-    public val modifierListRenderer: KtModifierListRenderer,
-    public val modifiersSorter: KtModifiersSorter,
-    public val modalityProvider: KtRendererModalityModifierProvider,
-    public val visibilityProvider: KtRendererVisibilityModifierProvider,
-    public val otherModifiersProvider: KtRendererOtherModifiersProvider,
-    public val keywordsRenderer: KtKeywordsRenderer,
+public class KaDeclarationModifiersRenderer private constructor(
+    public val modifierListRenderer: KaModifierListRenderer,
+    public val modifiersSorter: KaModifiersSorter,
+    public val modalityProvider: KaRendererModalityModifierProvider,
+    public val visibilityProvider: KaRendererVisibilityModifierProvider,
+    public val otherModifiersProvider: KaRendererOtherModifiersProvider,
+    public val keywordsRenderer: KaKeywordsRenderer,
 ) {
-    public fun renderDeclarationModifiers(analysisSession: KtAnalysisSession, symbol: KtDeclarationSymbol, printer: PrettyPrinter) {
+    public fun renderDeclarationModifiers(analysisSession: KaSession, symbol: KaDeclarationSymbol, printer: PrettyPrinter) {
         modifierListRenderer.renderModifiers(analysisSession, symbol, this, printer)
     }
 
-    public inline fun with(action: Builder.() -> Unit): KtDeclarationModifiersRenderer {
+    public inline fun with(action: Builder.() -> Unit): KaDeclarationModifiersRenderer {
         val renderer = this
-        return KtDeclarationModifiersRenderer {
+        return KaDeclarationModifiersRenderer {
             this.modifierListRenderer = renderer.modifierListRenderer
             this.modifiersSorter = renderer.modifiersSorter
             this.modalityProvider = renderer.modalityProvider
@@ -37,19 +37,19 @@ public class KtDeclarationModifiersRenderer private constructor(
     }
 
     public companion object {
-        public inline operator fun invoke(action: Builder.() -> Unit): KtDeclarationModifiersRenderer =
+        public inline operator fun invoke(action: Builder.() -> Unit): KaDeclarationModifiersRenderer =
             Builder().apply(action).build()
     }
 
     public class Builder {
-        public lateinit var modifierListRenderer: KtModifierListRenderer
-        public lateinit var modifiersSorter: KtModifiersSorter
-        public lateinit var modalityProvider: KtRendererModalityModifierProvider
-        public lateinit var visibilityProvider: KtRendererVisibilityModifierProvider
-        public lateinit var otherModifiersProvider: KtRendererOtherModifiersProvider
-        public lateinit var keywordsRenderer: KtKeywordsRenderer
+        public lateinit var modifierListRenderer: KaModifierListRenderer
+        public lateinit var modifiersSorter: KaModifiersSorter
+        public lateinit var modalityProvider: KaRendererModalityModifierProvider
+        public lateinit var visibilityProvider: KaRendererVisibilityModifierProvider
+        public lateinit var otherModifiersProvider: KaRendererOtherModifiersProvider
+        public lateinit var keywordsRenderer: KaKeywordsRenderer
 
-        public fun build(): KtDeclarationModifiersRenderer = KtDeclarationModifiersRenderer(
+        public fun build(): KaDeclarationModifiersRenderer = KaDeclarationModifiersRenderer(
             modifierListRenderer,
             modifiersSorter,
             modalityProvider,
@@ -59,3 +59,5 @@ public class KtDeclarationModifiersRenderer private constructor(
         )
     }
 }
+
+public typealias KtDeclarationModifiersRenderer = KaDeclarationModifiersRenderer

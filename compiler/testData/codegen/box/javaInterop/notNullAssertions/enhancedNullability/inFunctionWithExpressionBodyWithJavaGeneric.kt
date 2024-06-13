@@ -1,4 +1,4 @@
-// !LANGUAGE: +StrictJavaNullabilityAssertions -ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
+// LANGUAGE: +StrictJavaNullabilityAssertions -ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_K2: JVM_IR, JS_IR
 // FIR status: expected: <OK> but was: <Fail: SHOULD NOT throw>, issue related to T & Any

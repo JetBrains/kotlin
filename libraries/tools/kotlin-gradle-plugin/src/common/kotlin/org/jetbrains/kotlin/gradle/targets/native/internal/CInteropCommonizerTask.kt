@@ -12,18 +12,19 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
-import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.compilerRunner.*
+import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.internal.UsesClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.withDependsOnClosure
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
@@ -42,9 +43,10 @@ private typealias GroupedCommonizerDependencies = Map<CInteropCommonizerGroup, L
 internal abstract class CInteropCommonizerTask
 @Inject constructor(
     private val objectFactory: ObjectFactory,
-    private val execOperations: ExecOperations,
     private val projectLayout: ProjectLayout,
-) : AbstractCInteropCommonizerTask() {
+    providerFactory: ProviderFactory,
+) : AbstractCInteropCommonizerTask(),
+    UsesClassLoadersCachingBuildService {
 
     internal class CInteropGist(
         @get:Input val identifier: CInteropIdentifier,
@@ -93,9 +95,9 @@ internal abstract class CInteropCommonizerTask
     override val outputDirectory: File get() = projectLayout.buildDirectory.get().asFile.resolve("classes/kotlin/commonizer")
 
     @get:Internal
-    internal val kotlinPluginVersion: Property<String> = objectFactory
-        .property<String>()
-        .chainedFinalizeValueOnRead()
+    internal val metrics: Provider<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>> = objectFactory
+        .property<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>>(GradleBuildMetricsReporter())
+        .chainedDisallowChanges()
 
     @get:Classpath
     internal val commonizerClasspath: ConfigurableFileCollection = objectFactory.fileCollection()
@@ -105,7 +107,18 @@ internal abstract class CInteropCommonizerTask
         .listProperty<String>()
         .chainedFinalizeValueOnRead()
 
-    private val kotlinCompilerArgumentsLogLevel = project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel
+    @get:Internal
+    internal val commonizerToolRunner: Provider<KotlinNativeToolRunner> = providerFactory.provider {
+        objectFactory.KotlinNativeCommonizerToolRunner(
+            metrics,
+            classLoadersCachingService,
+            commonizerClasspath,
+            customJvmArgs
+        )
+    }
+
+    @get:Internal
+    internal abstract val kotlinCompilerArgumentsLogLevel: Property<KotlinCompilerArgumentsLogLevel>
 
     private val konanHome = project.file(project.konanHome)
     private val commonizerLogLevel = project.commonizerLogLevel
@@ -172,10 +185,6 @@ internal abstract class CInteropCommonizerTask
     val allOutputDirectories: Set<File>
         get() = allInteropGroups.getOrThrow().map { outputDirectory(it) }.toSet()
 
-    @get:Internal
-    val metrics: Property<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>> = project.objects
-        .property(GradleBuildMetricsReporter())
-
     internal fun from(task: TaskProvider<CInteropProcess>) {
         dependsOn(task)
         cinterops.add(task.map { it.toGist() })
@@ -196,20 +205,10 @@ internal abstract class CInteropCommonizerTask
         outputDirectory.deleteRecursively()
         if (cinteropsForTarget.isEmpty()) return
 
-        val runnerSettings = KotlinNativeCommonizerToolRunner.Settings(
-            kotlinPluginVersion = kotlinPluginVersion.get(),
-            classpath = commonizerClasspath.files,
-            customJvmArgs = customJvmArgs.get(),
-            compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel
-        )
-
-        val commonizerRunner = KotlinNativeCommonizerToolRunner(
-            context = KotlinToolRunner.GradleExecutionContext.fromTaskContext(objectFactory, execOperations, logger),
-            settings = runnerSettings,
-            metricsReporter = metrics.get(),
-        )
-
-        GradleCliCommonizer(commonizerRunner).commonizeLibraries(
+        GradleCliCommonizer(
+            commonizerToolRunner.get(),
+            kotlinCompilerArgumentsLogLevel.get(),
+        ).commonizeLibraries(
             konanHome = konanHome,
             outputTargets = group.targets,
             inputLibraries = cinteropsForTarget.map { it.libraryFile.get() }.filter { it.exists() }.toSet(),

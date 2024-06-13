@@ -577,6 +577,12 @@ public class JsIrES6InvalidationPerModuleTestGenerated extends AbstractJsIrES6In
   }
 
   @Test
+  @TestMetadata("unstableIrReproducer")
+  public void testUnstableIrReproducer() {
+    runTest("js/js.translator/testData/incremental/invalidation/unstableIrReproducer/");
+  }
+
+  @Test
   @TestMetadata("updateExports")
   public void testUpdateExports() {
     runTest("js/js.translator/testData/incremental/invalidation/updateExports/");

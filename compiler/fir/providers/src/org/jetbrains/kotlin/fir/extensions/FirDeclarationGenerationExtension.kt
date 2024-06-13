@@ -30,7 +30,7 @@ import kotlin.reflect.KClass
  */
 abstract class FirDeclarationGenerationExtension(session: FirSession) : FirExtension(session) {
     companion object {
-        val NAME = FirExtensionPointName("ExistingClassModification")
+        val NAME: FirExtensionPointName = FirExtensionPointName("ExistingClassModification")
     }
 
     final override val name: FirExtensionPointName
@@ -61,7 +61,7 @@ abstract class FirDeclarationGenerationExtension(session: FirSession) : FirExten
     open fun hasPackage(packageFqName: FqName): Boolean = false
 
     /*
-     * Can be called after SUPERTYPES stage
+     * Can be called on SUPERTYPES stage
      *
      * `generate...` methods will be called only if `get...Names/ClassIds/CallableIds` returned corresponding
      *   declaration name

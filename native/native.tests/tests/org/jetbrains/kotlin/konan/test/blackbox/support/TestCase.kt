@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
+import org.jetbrains.kotlin.test.services.impl.RegisteredDirectivesParser
 import java.io.File
 
 /**
@@ -89,6 +90,7 @@ sealed class TestModule {
         val directDependencySymbols: Set<String>,
         val directFriendSymbols: Set<String>,
         val directDependsOnSymbols: Set<String>, // mimics the name from ModuleStructureExtractorImpl, thought later converted to `-Xfragment-refines` parameter
+        val directives: MutableList<RegisteredDirectivesParser.ParsedDirective> = mutableListOf()
     ) : TestModule() {
         override val files: FailOnDuplicatesSet<TestFile<Exclusive>> = FailOnDuplicatesSet()
 
@@ -301,7 +303,7 @@ interface TestCaseGroupId {
  * [TestCase]s inside of the group with similar [TestCompilerArgs] can be compiled to the single
  * executable file to reduce the time spent for compiling and speed-up overall test execution.
  */
-internal sealed interface TestCaseGroup {
+sealed interface TestCaseGroup {
     fun isEnabled(testCaseId: TestCaseId): Boolean
     fun getByName(testCaseId: TestCaseId): TestCase?
 
@@ -330,6 +332,8 @@ internal sealed interface TestCaseGroup {
                     && testCase.sharedModules == sharedModules
                     && testCase.extras<WithTestRunnerExtras>().runnerType == runnerType
         }
+
+        override fun toString() = "TestCaseGroup.Default::${testCasesById.keys.firstNotNullOfOrNull { it.testCaseGroupId }}"
     }
 
     data class MetaGroup(val testCaseGroupId: TestCaseGroupId, val testGroups: Set<TestCaseGroup>) : TestCaseGroup {

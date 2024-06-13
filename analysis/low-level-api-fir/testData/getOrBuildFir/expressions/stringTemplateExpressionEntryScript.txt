@@ -7,8 +7,8 @@ Int(1).R|kotlin/Int.plus|(Int(2))
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] stringTemplateExpressionEntryScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-stringTemplateExpressionEntryScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/String| = <strcat>(String(string ), Int(1).R|kotlin/Int.plus|(Int(2)), String( template))

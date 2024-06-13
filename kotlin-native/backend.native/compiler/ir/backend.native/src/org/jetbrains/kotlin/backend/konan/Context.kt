@@ -46,6 +46,7 @@ internal class NativeMapping : DefaultMapping() {
     val partiallyLoweredInlineFunctions = mutableMapOf<IrFunctionSymbol, IrFunction>()
     val outerThisCacheAccessors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
     val lateinitPropertyCacheAccessors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrProperty, IrSimpleFunction>()
+    val topLevelFieldCacheAccessors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrField, IrSimpleFunction>()
     val objectInstanceGetter = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
     val boxFunctions = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
     val unboxFunctions = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()

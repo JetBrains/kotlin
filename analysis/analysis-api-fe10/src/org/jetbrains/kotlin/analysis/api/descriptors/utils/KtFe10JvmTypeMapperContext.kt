@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.org.objectweb.asm.Type
 
-internal class KtFe10JvmTypeMapperContext(private val resolveSession: ResolveSession) : TypeMappingContext<JvmSignatureWriter> {
+internal class KaFe10JvmTypeMapperContext(private val resolveSession: ResolveSession) : TypeMappingContext<JvmSignatureWriter> {
     companion object {
         fun getNestedType(type: KotlinType): NestedType {
             val possiblyInnerType = type.buildPossiblyInnerType() ?: throw IllegalArgumentException(type.toString())
@@ -51,7 +51,7 @@ internal class KtFe10JvmTypeMapperContext(private val resolveSession: ResolveSes
             }
     }
 
-    override val typeContext = KtFe10TypeSystemCommonBackendContextForTypeMapping(resolveSession)
+    override val typeContext = KaFe10TypeSystemCommonBackendContextForTypeMapping(resolveSession)
 
     fun mapType(type: KotlinType, mode: TypeMappingMode = TypeMappingMode.DEFAULT, sw: JvmSignatureWriter? = null): Type {
         return AbstractTypeMapper.mapType(this, type, mode, sw)

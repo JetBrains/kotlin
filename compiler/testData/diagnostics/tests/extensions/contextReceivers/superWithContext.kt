@@ -1,4 +1,4 @@
-// !LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers
 
 interface Context {
     fun h() {}

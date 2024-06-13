@@ -1,5 +1,5 @@
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // FILE: main.kt
 class Inv<T>(val x: T)
 

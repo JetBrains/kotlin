@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.swiftexport.standalone;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.junit.jupiter.api.Tag;
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline;
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCaseGroupProvider;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -17,10 +20,13 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("native/swift/swift-export-standalone/testData")
 @TestDataPath("$PROJECT_ROOT")
+@Tag("frontend-fir")
+@FirPipeline()
+@UseStandardTestCaseGroupProvider()
 public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunnerTest {
   @Test
   public void testAllFilesPresentInTestData() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData"), Pattern.compile("^([^\\.]+)$"), null, false, "source_based_only");
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone/testData"), Pattern.compile("^([^\\.]+)$"), null, false);
   }
 
   @Test
@@ -30,15 +36,15 @@ public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunner
   }
 
   @Test
-  @TestMetadata("documentation")
-  public void testDocumentation() {
-    runTest("native/swift/swift-export-standalone/testData/documentation/");
-  }
-
-  @Test
   @TestMetadata("functions")
   public void testFunctions() {
     runTest("native/swift/swift-export-standalone/testData/functions/");
+  }
+
+  @Test
+  @TestMetadata("inner_classes")
+  public void testInner_classes() {
+    runTest("native/swift/swift-export-standalone/testData/inner_classes/");
   }
 
   @Test
@@ -48,9 +54,33 @@ public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunner
   }
 
   @Test
+  @TestMetadata("nothing_type")
+  public void testNothing_type() {
+    runTest("native/swift/swift-export-standalone/testData/nothing_type/");
+  }
+
+  @Test
   @TestMetadata("package_flattening")
   public void testPackage_flattening() {
     runTest("native/swift/swift-export-standalone/testData/package_flattening/");
+  }
+
+  @Test
+  @TestMetadata("package_flattening_invalid_target")
+  public void testPackage_flattening_invalid_target() {
+    runTest("native/swift/swift-export-standalone/testData/package_flattening_invalid_target/");
+  }
+
+  @Test
+  @TestMetadata("package_flattening_missing_target")
+  public void testPackage_flattening_missing_target() {
+    runTest("native/swift/swift-export-standalone/testData/package_flattening_missing_target/");
+  }
+
+  @Test
+  @TestMetadata("single_module_production")
+  public void testSingle_module_production() {
+    runTest("native/swift/swift-export-standalone/testData/single_module_production/");
   }
 
   @Test
@@ -63,6 +93,12 @@ public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunner
   @TestMetadata("typealiases")
   public void testTypealiases() {
     runTest("native/swift/swift-export-standalone/testData/typealiases/");
+  }
+
+  @Test
+  @TestMetadata("unsupportedDeclarationsReporting")
+  public void testUnsupportedDeclarationsReporting() {
+    runTest("native/swift/swift-export-standalone/testData/unsupportedDeclarationsReporting/");
   }
 
   @Test

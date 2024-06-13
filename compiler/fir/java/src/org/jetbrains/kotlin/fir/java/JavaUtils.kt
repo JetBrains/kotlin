@@ -123,7 +123,7 @@ internal fun Any?.createConstantIfAny(session: FirSession, unsigned: Boolean = f
     }
 }
 
-private fun <T> List<T>.createArrayLiteral(session: FirSession, kind: ConstantValueKind<T>): FirArrayLiteral {
+private fun <T> List<T>.createArrayLiteral(session: FirSession, kind: ConstantValueKind): FirArrayLiteral {
     return buildArrayLiteral {
         argumentList = buildArgumentList {
             for (element in this@createArrayLiteral) {
@@ -164,5 +164,5 @@ fun FirDeclaration.findJvmStaticAnnotation(): FirAnnotation? = findAnnotationByC
 
 fun FirDeclaration.findJvmNameValue(): String? =
     findJvmNameAnnotation()?.findArgumentByName(StandardNames.NAME)?.let {
-        (it as? FirLiteralExpression<*>)?.value as? String
+        (it as? FirLiteralExpression)?.value as? String
     }

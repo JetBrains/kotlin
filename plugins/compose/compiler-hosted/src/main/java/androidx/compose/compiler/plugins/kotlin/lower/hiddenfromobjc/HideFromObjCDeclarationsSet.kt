@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
 /**
  * Represents a set of declarations that should have
@@ -42,21 +40,21 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class HideFromObjCDeclarationsSet {
 
-    private val set = mutableSetOf<FqName>()
+    private val declarationsSet = mutableSetOf<DeclarationDescriptor>()
 
     fun add(function: IrFunction) {
-        set.add(function.descriptor.fqNameSafe)
+        declarationsSet.add(function.descriptor)
     }
 
     fun add(property: IrProperty) {
-        set.add(property.descriptor.fqNameSafe)
+        declarationsSet.add(property.descriptor)
     }
 
     fun add(cls: IrClass) {
-        set.add(cls.descriptor.fqNameSafe)
+        declarationsSet.add(cls.descriptor)
     }
 
-    operator fun contains(item: DeclarationDescriptor): Boolean {
-        return set.contains(item.fqNameSafe)
+    operator fun contains(descriptor: DeclarationDescriptor): Boolean {
+        return declarationsSet.contains(descriptor)
     }
 }

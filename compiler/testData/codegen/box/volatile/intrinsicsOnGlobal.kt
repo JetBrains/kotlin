@@ -1,5 +1,5 @@
 // TARGET_BACKEND: NATIVE
-
+// DISABLE_IR_VISIBILITY_CHECKS: ANY
 
 @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 @file:OptIn(kotlin.ExperimentalStdlibApi::class)

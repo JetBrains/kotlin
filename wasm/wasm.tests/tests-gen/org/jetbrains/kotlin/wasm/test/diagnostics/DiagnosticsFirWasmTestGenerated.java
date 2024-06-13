@@ -118,6 +118,12 @@ public class DiagnosticsFirWasmTestGenerated extends AbstractDiagnosticsFirWasmT
     }
 
     @Test
+    @TestMetadata("jsExportPromiseUnit.kt")
+    public void testJsExportPromiseUnit() {
+      runTest("compiler/testData/diagnostics/wasmTests/jsInterop/jsExportPromiseUnit.kt");
+    }
+
+    @Test
     @TestMetadata("jsFun.kt")
     public void testJsFun() {
       runTest("compiler/testData/diagnostics/wasmTests/jsInterop/jsFun.kt");

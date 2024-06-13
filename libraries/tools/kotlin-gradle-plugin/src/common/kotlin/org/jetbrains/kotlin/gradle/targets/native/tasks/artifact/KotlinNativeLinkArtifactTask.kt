@@ -17,12 +17,10 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
-import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
-import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.addBuildMetricsForTaskAction
 import org.jetbrains.kotlin.gradle.dsl.*
@@ -36,7 +34,7 @@ import org.jetbrains.kotlin.gradle.targets.native.tasks.buildKotlinNativeBinaryL
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBundleBuildService
 import org.jetbrains.kotlin.gradle.tasks.KotlinToolTask
-import org.jetbrains.kotlin.gradle.utils.XcodeUtils
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.gradle.utils.property
@@ -52,7 +50,6 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
     @get:Input val konanTarget: KonanTarget,
     @get:Input val outputKind: CompilerOutputKind,
     private val objectFactory: ObjectFactory,
-    private val execOperations: ExecOperations,
     private val projectLayout: ProjectLayout,
 ) : DefaultTask(),
     UsesBuildMetricsService,
@@ -175,9 +172,14 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
         .property(GradleBuildMetricsReporter())
 
     @get:Nested
-    internal val kotlinNativeProvider: Provider<KotlinNativeProvider> = project.provider {
-        KotlinNativeProvider(project, konanTarget, kotlinNativeBundleBuildService)
-    }
+    internal val kotlinNativeProvider: Property<KotlinNativeProvider> =
+        project.objects.propertyWithConvention<KotlinNativeProvider>(
+            // For KT-66452 we need to get rid of invocation of 'Task.project'.
+            // That is why we moved setting this property to task registration
+            // and added convention for backwards compatibility.
+            project.provider {
+                KotlinNativeProvider(project, konanTarget, kotlinNativeBundleBuildService)
+            })
 
     @Deprecated(
         message = "This property will be removed in future releases. Don't use it in your code.",
@@ -243,9 +245,8 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
                 additionalOptions = emptyList()//todo support org.jetbrains.kotlin.gradle.tasks.CacheBuilder and org.jetbrains.kotlin.gradle.tasks.ExternalDependenciesBuilder
             )
 
-            KotlinNativeCompilerRunner(
+            objectFactory.KotlinNativeCompilerRunner(
                 settings = runnerSettings,
-                executionContext = KotlinToolRunner.GradleExecutionContext.fromTaskContext(objectFactory, execOperations, logger),
                 metricReporter,
             ).run(buildArgs)
         }

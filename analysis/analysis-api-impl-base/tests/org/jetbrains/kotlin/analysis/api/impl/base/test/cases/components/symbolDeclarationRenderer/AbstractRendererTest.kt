@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationRenderer
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.bodies.KtRendererBodyMemberScopeSorter
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KtDeclarationRendererForSource
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KtClassifierBodyRenderer
-import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.bodies.KaRendererBodyMemberScopeSorter
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForSource
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KaClassifierBodyRenderer
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithMembers
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
@@ -20,16 +20,16 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractRendererTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val renderer = KtDeclarationRendererForSource.WITH_SHORT_NAMES.with {
-            classifierBodyRenderer = KtClassifierBodyRenderer.BODY_WITH_MEMBERS
-            bodyMemberScopeSorter = object : KtRendererBodyMemberScopeSorter {
+        val renderer = KaDeclarationRendererForSource.WITH_SHORT_NAMES.with {
+            classifierBodyRenderer = KaClassifierBodyRenderer.BODY_WITH_MEMBERS
+            bodyMemberScopeSorter = object : KaRendererBodyMemberScopeSorter {
                 override fun sortMembers(
-                    analysisSession: KtAnalysisSession,
-                    members: List<KtDeclarationSymbol>,
-                    owner: KtSymbolWithMembers,
-                ): List<KtDeclarationSymbol> {
+                    analysisSession: KaSession,
+                    members: List<KaDeclarationSymbol>,
+                    owner: KaSymbolWithMembers,
+                ): List<KaDeclarationSymbol> {
                     with(analysisSession) {
-                        return KtRendererBodyMemberScopeSorter.ENUM_ENTRIES_AT_BEGINING
+                        return KaRendererBodyMemberScopeSorter.ENUM_ENTRIES_AT_BEGINING
                             .sortMembers(analysisSession, members, owner)
                             .sortedBy { it.render() }
                     }

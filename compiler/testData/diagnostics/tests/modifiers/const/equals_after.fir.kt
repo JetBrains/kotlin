@@ -1,4 +1,4 @@
-// !LANGUAGE: +IntrinsicConstEvaluation
+// LANGUAGE: +IntrinsicConstEvaluation
 
 const val equalsBoolean1 = true.equals(true)
 const val equalsBoolean2 = false != true

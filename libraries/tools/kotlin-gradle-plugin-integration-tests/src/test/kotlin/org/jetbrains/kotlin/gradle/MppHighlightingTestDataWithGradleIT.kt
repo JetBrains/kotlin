@@ -193,8 +193,8 @@ internal class MppHighlightingTestDataWithGradleIT : KGPBaseTest() {
             sourceRoots.any { bannedDependencies.intersect(it.dependencies.toSet()).isNotEmpty() } -> false
             // Java sources can't be used in intermediate source sets
             testDataDir.walkTopDown().any { it.extension == "java" } -> false
-            // Cannot test !CHECK_HIGHLIGHTING in CLI
-            testDataDir.walkTopDown().filter { it.isFile }.any { "!CHECK_HIGHLIGHTING" in it.readText() } -> false
+            // Cannot test CHECK_HIGHLIGHTING in CLI
+            testDataDir.walkTopDown().filter { it.isFile }.any { "CHECK_HIGHLIGHTING" in it.readText() } -> false
             else -> true
         }
 

@@ -1,4 +1,4 @@
-// !API_VERSION: 1.0
+// API_VERSION: 1.0
 // MODULE: m1
 // FILE: a.kt
 

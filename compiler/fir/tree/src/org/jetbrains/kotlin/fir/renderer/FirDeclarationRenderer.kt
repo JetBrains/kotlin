@@ -14,9 +14,9 @@ open class FirDeclarationRenderer(
 ) {
 
     internal lateinit var components: FirRendererComponents
-    protected val printer get() = components.printer
-    private val resolvePhaseRenderer get() = components.resolvePhaseRenderer
-    private val typeRenderer get() = components.typeRenderer
+    protected val printer: FirPrinter get() = components.printer
+    private val resolvePhaseRenderer: FirResolvePhaseRenderer? get() = components.resolvePhaseRenderer
+    private val typeRenderer: ConeTypeRenderer get() = components.typeRenderer
 
     fun render(declaration: FirDeclaration) {
         renderPhaseAndAttributes(declaration)

@@ -1,34 +1,18 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analyzer
 
-import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.context.ModuleContext
-import org.jetbrains.kotlin.descriptors.ModuleCapability
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDependencies
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.platform.TargetPlatformVersion
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.SealedClassInheritorsProvider
 import org.jetbrains.kotlin.resolve.lazy.AbsentDescriptorHandler
@@ -86,35 +70,6 @@ data class ModuleContent<out M : ModuleInfo>(
     val syntheticFiles: Collection<KtFile>,
     val moduleContentScope: GlobalSearchScope
 )
-
-interface PlatformAnalysisParameters {
-    object Empty : PlatformAnalysisParameters
-}
-
-interface CombinedModuleInfo : ModuleInfo {
-    val containedModules: List<ModuleInfo>
-    val platformModule: ModuleInfo
-}
-
-/**
- * Special-purpose module info that allows implementors to provide different behavior compared to the [originalModule]'s.
- * E.g. may be used to resolve common code as if it were target-specific, or to change the dependencies visible to the code.
- *
- * Resolvers should accept a derived module info, iff the [originalModule] is accepted.
- */
-interface DerivedModuleInfo : ModuleInfo {
-    val originalModule: ModuleInfo
-}
-
-fun ModuleInfo.flatten(): List<ModuleInfo> = when (this) {
-    is CombinedModuleInfo -> listOf(this) + containedModules
-    else -> listOf(this)
-}
-
-fun ModuleInfo.unwrapPlatform(): ModuleInfo = if (this is CombinedModuleInfo) platformModule else this
-
-interface LibraryModuleSourceInfoBase : ModuleInfo
-interface NonSourceModuleInfoBase : ModuleInfo
 
 abstract class ResolverForModuleFactory {
     open fun <M : ModuleInfo> createResolverForModule(
@@ -261,52 +216,4 @@ class LazyModuleDependencies<M : ModuleInfo>(
         }
     }
 }
-
-interface PackageOracle {
-    fun packageExists(fqName: FqName): Boolean
-
-    object Optimistic : PackageOracle {
-        override fun packageExists(fqName: FqName): Boolean = true
-    }
-}
-
-interface PackageOracleFactory {
-    fun createOracle(moduleInfo: ModuleInfo): PackageOracle
-
-    object OptimisticFactory : PackageOracleFactory {
-        override fun createOracle(moduleInfo: ModuleInfo) = PackageOracle.Optimistic
-    }
-}
-
-interface LanguageSettingsProvider {
-    fun getLanguageVersionSettings(
-        moduleInfo: ModuleInfo,
-        project: Project
-    ): LanguageVersionSettings
-
-    fun getTargetPlatform(moduleInfo: ModuleInfo, project: Project): TargetPlatformVersion
-
-    object Default : LanguageSettingsProvider {
-        override fun getLanguageVersionSettings(
-            moduleInfo: ModuleInfo,
-            project: Project
-        ) = LanguageVersionSettingsImpl.DEFAULT
-
-        override fun getTargetPlatform(moduleInfo: ModuleInfo, project: Project): TargetPlatformVersion = TargetPlatformVersion.NoVersion
-    }
-}
-
-interface ResolverForModuleComputationTracker {
-
-    fun onResolverComputed(moduleInfo: ModuleInfo)
-
-    companion object {
-        fun getInstance(project: Project): ResolverForModuleComputationTracker? =
-            project.getComponent(ResolverForModuleComputationTracker::class.java) ?: null
-    }
-}
-
-
-@Suppress("UNCHECKED_CAST")
-fun <T> ModuleInfo.getCapability(capability: ModuleCapability<T>) = capabilities[capability] as? T
 

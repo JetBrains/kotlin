@@ -1,2 +1,0 @@
-Resolved to:
-0: (in generated) fun generatedTopLevelFunction1(): generated.GeneratedClass2 [origin = SOURCE]

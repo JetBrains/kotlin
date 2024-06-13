@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider
 
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KtTypeRendererForDebug
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KaTypeRendererForDebug
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -32,10 +32,10 @@ abstract class AbstractAnalysisApiGetSuperTypesTest : AbstractAnalysisApiBasedTe
                 val approximatedAllSuperTypes = expectedType.getAllSuperTypes(shouldApproximate = true)
 
                 buildString {
-                    fun List<KtType>.print(name: String) {
+                    fun List<KaType>.print(name: String) {
                         appendLine(name)
                         for (type in this) {
-                            appendLine(type.render(KtTypeRendererForDebug.WITH_QUALIFIED_NAMES, position = Variance.INVARIANT))
+                            appendLine(type.render(KaTypeRendererForDebug.WITH_QUALIFIED_NAMES, position = Variance.INVARIANT))
                         }
                         appendLine()
                     }

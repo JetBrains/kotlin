@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
+import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -82,7 +82,7 @@ internal class SymbolLightClassForEnumEntry(
             symbol.returnType.asPsiType(
                 this@SymbolLightClassForEnumEntry,
                 allowErrorTypes = true,
-                KtTypeMappingMode.SUPER_TYPE
+                KaTypeMappingMode.SUPER_TYPE
             ) as? PsiClassType
         } ?: return@lazyPub null
 
@@ -161,7 +161,7 @@ internal class SymbolLightClassForEnumEntry(
     override fun isDeprecated(): Boolean = false
     override fun isInterface(): Boolean = false
     override fun isAnnotationType(): Boolean = false
-    override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean = false
+    override fun isInheritorDeep(baseClass: PsiClass, classToByPass: PsiClass?): Boolean = false
     override val kotlinOrigin: KtEnumEntry get() = enumConstant.kotlinOrigin
     override val originKind: LightClassOriginKind = LightClassOriginKind.SOURCE
     override fun isValid(): Boolean = enumConstant.isValid

@@ -1,5 +1,5 @@
-// !LANGUAGE: +UnrestrictedBuilderInference
-// !DIAGNOSTICS: -UNUSED_PARAMETER -DEPRECATION -OPT_IN_IS_NOT_ENABLED -UNUSED_VARIABLE
+// LANGUAGE: +UnrestrictedBuilderInference
+// DIAGNOSTICS: -UNUSED_PARAMETER -DEPRECATION -OPT_IN_IS_NOT_ENABLED -UNUSED_VARIABLE
 // WITH_STDLIB
 
 import kotlin.experimental.ExperimentalTypeInference

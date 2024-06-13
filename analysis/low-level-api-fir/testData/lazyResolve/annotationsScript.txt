@@ -1,8 +1,8 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] annotationsScript.kts
     @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationsScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Suppress[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -11,8 +11,8 @@ FILE: [ResolvedTo(RAW_FIR)] annotationsScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
     @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationsScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Suppress[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -21,8 +21,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
     @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationsScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Suppress[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -31,8 +31,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
     @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationsScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Suppress[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -41,8 +41,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
     @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationsScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Suppress[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -51,8 +51,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
     @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationsScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -61,8 +61,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
     @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationsScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -71,8 +71,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
     @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationsScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -81,8 +81,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
     @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationsScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {
@@ -92,8 +92,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
     @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationsScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
@@ -103,8 +103,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
     @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationsScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] fun resolveMe(): R|kotlin/Unit| {
@@ -114,8 +114,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
     @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationsScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/Suppress|[Types](names = vararg(String(2))) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun resolveMe(): R|kotlin/Unit| {
@@ -125,8 +125,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
     @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationsScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/Suppress|[Types](names = vararg(String(2))) public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
@@ -136,9 +136,10 @@ FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] annotationsScript.kts
     @FILE:R|kotlin/Suppress|[Types](names = vararg(String(1)))
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-annotationsScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/Suppress|[Types](names = vararg(String(2))) public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
         }
+

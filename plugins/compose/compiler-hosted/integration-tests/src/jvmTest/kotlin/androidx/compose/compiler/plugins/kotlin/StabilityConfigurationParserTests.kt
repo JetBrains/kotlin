@@ -127,7 +127,7 @@ class StabilityConfigurationParserTests {
     )
 }
 
-private const val PATH_TO_CONFIG_FILES = "$TEST_ROOT/src/test/resources/testStabilityConfigFiles"
+private const val PATH_TO_CONFIG_FILES = "$TEST_RESOURCES_ROOT/testStabilityConfigFiles"
 class SingleStabilityConfigurationTest(useFir: Boolean) : AbstractIrTransformTest(useFir) {
     override fun CompilerConfiguration.updateConfiguration() {
         put(ComposeConfiguration.STABILITY_CONFIG_PATH_KEY,
@@ -166,7 +166,10 @@ class MultipleStabilityConfigurationTest(useFir: Boolean) : AbstractIrTransformT
                 "$PATH_TO_CONFIG_FILES/config2.conf"
             )
         )
-        put(ComposeConfiguration.STRONG_SKIPPING_ENABLED_KEY, false)
+        put(
+            ComposeConfiguration.FEATURE_FLAGS,
+            listOf(FeatureFlag.OptimizeNonSkippingGroups.featureName)
+        )
     }
 
     @Test

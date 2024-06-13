@@ -1,4 +1,3 @@
-
 /// Function foo description.
 /// - Parameters:
 ///   - p: first Integer to consume
@@ -6,5 +5,5 @@
 public func foo(
     p: Swift.Int64
 ) -> Swift.Bool {
-    fatalError()
+    stub()
 }

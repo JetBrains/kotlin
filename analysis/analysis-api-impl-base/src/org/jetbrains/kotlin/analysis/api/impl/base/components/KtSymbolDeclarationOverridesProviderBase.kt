@@ -5,17 +5,17 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.components
 
-import org.jetbrains.kotlin.analysis.api.components.KtSymbolDeclarationOverridesProvider
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.components.KaSymbolDeclarationOverridesProvider
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 
-abstract class KtSymbolDeclarationOverridesProviderBase : KtSymbolDeclarationOverridesProvider() {
-    protected fun KtValueParameterSymbol.getAllOverriddenSymbols(): List<KtCallableSymbol> {
+abstract class KaSymbolDeclarationOverridesProviderBase : KaSymbolDeclarationOverridesProvider() {
+    protected fun KaValueParameterSymbol.getAllOverriddenSymbols(): List<KaCallableSymbol> {
         generatedPrimaryConstructorProperty?.let { return getAllOverriddenSymbols(it) }
         return emptyList()
     }
 
-    protected fun KtValueParameterSymbol.getDirectlyOverriddenSymbols(): List<KtCallableSymbol> {
+    protected fun KaValueParameterSymbol.getDirectlyOverriddenSymbols(): List<KaCallableSymbol> {
         generatedPrimaryConstructorProperty?.let { return getDirectlyOverriddenSymbols(it) }
         return emptyList()
     }

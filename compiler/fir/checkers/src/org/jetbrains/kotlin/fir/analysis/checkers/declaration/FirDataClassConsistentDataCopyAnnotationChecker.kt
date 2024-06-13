@@ -43,13 +43,26 @@ object FirDataClassConsistentDataCopyAnnotationChecker : FirClassChecker(MppChec
                     )
                 }
 
-                if (consistentCopy != null && (context.languageVersionSettings.doesDataClassCopyRespectConstructorVisibility() ||
-                            declaration.primaryConstructorIfAny(context.session)?.visibility == Visibilities.Public)
-                ) {
+                val isPrimaryConstructorVisibilityPublic = run {
+                    val primaryConstructorVisibility = declaration.primaryConstructorIfAny(context.session)?.visibility
+                    primaryConstructorVisibility == Visibilities.Public
+                }
+                val isConstructorVisibilityRespected = context.languageVersionSettings.doesDataClassCopyRespectConstructorVisibility()
+
+                if (consistentCopy != null && (isPrimaryConstructorVisibilityPublic || isConstructorVisibilityRespected)) {
                     reporter.reportOn(
                         consistentCopy.source,
                         FirErrors.REDUNDANT_ANNOTATION,
                         StandardClassIds.Annotations.ConsistentCopyVisibility,
+                        context
+                    )
+                }
+
+                if (exposedCopy != null && isPrimaryConstructorVisibilityPublic) {
+                    reporter.reportOn(
+                        exposedCopy.source,
+                        FirErrors.REDUNDANT_ANNOTATION,
+                        StandardClassIds.Annotations.ExposedCopyVisibility,
                         context
                     )
                 }

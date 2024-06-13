@@ -86,7 +86,6 @@ internal class LibraryAbiReaderImpl(libraryFile: File, filters: List<AbiReadingF
             },
             compilerVersion = versions.compilerVersion,
             abiVersion = versions.abiVersion?.toString(),
-            libraryVersion = versions.libraryVersion,
             irProviderName = library.irProviderName
         )
     }

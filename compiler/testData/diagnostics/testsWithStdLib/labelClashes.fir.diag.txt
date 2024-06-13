@@ -1,23 +1,23 @@
-/labelClashes.fir.kt:(128,132): error: Cannot infer type for this parameter. Please specify it explicitly.
+/labelClashes.fir.kt:(126,130): error: Cannot infer type for this parameter. Please specify it explicitly.
 
-/labelClashes.fir.kt:(137,168): error: Cannot infer type for this parameter. Please specify it explicitly.
+/labelClashes.fir.kt:(135,166): error: Cannot infer type for this parameter. Please specify it explicitly.
 
-/labelClashes.fir.kt:(157,160): error: Unresolved reference 'inc'.
+/labelClashes.fir.kt:(155,158): error: Unresolved reference 'inc'.
 
-/labelClashes.fir.kt:(192,196): error: Cannot infer type for this parameter. Please specify it explicitly.
+/labelClashes.fir.kt:(190,194): error: Cannot infer type for this parameter. Please specify it explicitly.
 
-/labelClashes.fir.kt:(205,235): error: Cannot infer type for this parameter. Please specify it explicitly.
+/labelClashes.fir.kt:(203,233): error: Cannot infer type for this parameter. Please specify it explicitly.
 
-/labelClashes.fir.kt:(224,227): error: Unresolved reference 'inc'.
+/labelClashes.fir.kt:(222,225): error: Unresolved reference 'inc'.
 
-/labelClashes.fir.kt:(308,312): error: Cannot infer type for this parameter. Please specify it explicitly.
+/labelClashes.fir.kt:(306,310): error: Cannot infer type for this parameter. Please specify it explicitly.
 
-/labelClashes.fir.kt:(317,356): error: Cannot infer type for this parameter. Please specify it explicitly.
+/labelClashes.fir.kt:(315,354): error: Cannot infer type for this parameter. Please specify it explicitly.
 
-/labelClashes.fir.kt:(341,344): error: Unresolved reference 'foo'.
+/labelClashes.fir.kt:(339,342): error: Unresolved reference 'foo'.
 
-/labelClashes.fir.kt:(366,370): error: Cannot infer type for this parameter. Please specify it explicitly.
+/labelClashes.fir.kt:(364,368): error: Cannot infer type for this parameter. Please specify it explicitly.
 
-/labelClashes.fir.kt:(380,419): error: Cannot infer type for this parameter. Please specify it explicitly.
+/labelClashes.fir.kt:(378,417): error: Cannot infer type for this parameter. Please specify it explicitly.
 
-/labelClashes.fir.kt:(404,407): error: Unresolved reference 'foo'.
+/labelClashes.fir.kt:(402,405): error: Unresolved reference 'foo'.

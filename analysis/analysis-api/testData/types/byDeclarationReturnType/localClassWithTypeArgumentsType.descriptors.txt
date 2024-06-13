@@ -1,40 +1,43 @@
-KtUsualClassType:
-  annotationsList: []
+KaUsualClassType:
+  abbreviatedType: null
+  annotations: []
   classId: B
-  classSymbol: KtNamedClassOrObjectSymbol(<local>/B)
   nullability: NON_NULLABLE
-  ownTypeArguments: [
-    KtUsualClassType:
-      annotationsList: []
-      classId: kotlin/Int
-      classSymbol: KtNamedClassOrObjectSymbol(kotlin/Int)
-      nullability: NON_NULLABLE
-      ownTypeArguments: []
-      qualifiers: [
-        qualifier:
-          name: Int
-          symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
-          typeArguments: []
-      ]
-  ]
   qualifiers: [
     qualifier:
       name: B
-      symbol: KtNamedClassOrObjectSymbol(<local>/B)
+      symbol: KaNamedClassOrObjectSymbol(<local>/B)
       typeArguments: [
-        KtUsualClassType:
-          annotationsList: []
+        KaUsualClassType:
+          abbreviatedType: null
+          annotations: []
           classId: kotlin/Int
-          classSymbol: KtNamedClassOrObjectSymbol(kotlin/Int)
           nullability: NON_NULLABLE
-          ownTypeArguments: []
           qualifiers: [
             qualifier:
               name: Int
-              symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+              symbol: KaNamedClassOrObjectSymbol(kotlin/Int)
               typeArguments: []
           ]
+          symbol: KaNamedClassOrObjectSymbol(kotlin/Int)
+          typeArguments: []
       ]
+  ]
+  symbol: KaNamedClassOrObjectSymbol(<local>/B)
+  typeArguments: [
+    KaUsualClassType:
+      abbreviatedType: null
+      annotations: []
+      classId: kotlin/Int
+      nullability: NON_NULLABLE
+      qualifiers: [
+        qualifier:
+          name: Int
+          symbol: KaNamedClassOrObjectSymbol(kotlin/Int)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassOrObjectSymbol(kotlin/Int)
+      typeArguments: []
   ]
 
 Rendered type:

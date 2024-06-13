@@ -87,4 +87,18 @@ class MppTestsIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("KT-68638: Kotlin Native Link Task failed to serialize due to configuration resolution error")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4) // Min version for KMP Configuration Cache support
+    @GradleTest
+    fun testKt68638KotlinNativeLinkApiFilesResolutionError(gradleVersion: GradleVersion) {
+        project("kt-68638-native-link-self-dependency", gradleVersion) {
+            val buildOptions = defaultBuildOptions.copy(
+                configurationCache = true,
+                freeArgs = listOf("--dry-run")
+            )
+            // no build failure is expected
+            build(":p1:linkDebugTestLinuxX64", buildOptions = buildOptions) {}
+        }
+    }
 }

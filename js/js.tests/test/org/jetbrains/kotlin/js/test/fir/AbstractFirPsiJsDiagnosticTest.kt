@@ -87,7 +87,7 @@ abstract class AbstractFirJsDiagnosticWithBackendTestBase(parser: FirParser) : A
         super.configureTestBuilder(builder)
 
         facadeStep(::Fir2IrJsResultsConverter)
-        facadeStep { FirJsKlibBackendFacade(it, true) }
+        facadeStep(::FirJsKlibBackendFacade)
 
         // TODO: Currently do not run lowerings, because they don't report anything;
         //      see KT-61881, KT-61882

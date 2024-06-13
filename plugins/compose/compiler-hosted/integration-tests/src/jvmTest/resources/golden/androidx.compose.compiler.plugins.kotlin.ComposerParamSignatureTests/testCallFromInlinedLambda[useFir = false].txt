@@ -1,0 +1,37 @@
+//
+// Source
+// ------------------------------------------
+
+@Composable fun Foo() {
+    listOf(1, 2, 3).forEach { Bar(it) }
+}
+
+@Composable fun Bar(a: Int) {}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+public final class TestKt {
+  public final static Foo(Landroidx/compose/runtime/Composer;I)V
+  public final static Bar(ILandroidx/compose/runtime/Composer;I)V
+  final static INNERCLASS TestKt%Bar%1 null null
+  final static INNERCLASS TestKt%Foo%2 null null
+}
+final class TestKt%Foo%2 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
+  <init>(I)V
+  public final invoke(Landroidx/compose/runtime/Composer;I)V
+  public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+  final synthetic I %%changed
+  OUTERCLASS TestKt Foo (Landroidx/compose/runtime/Composer;I)V
+  final static INNERCLASS TestKt%Foo%2 null null
+}
+final class TestKt%Bar%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
+  <init>(II)V
+  public final invoke(Landroidx/compose/runtime/Composer;I)V
+  public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+  final synthetic I %a
+  final synthetic I %%changed
+  OUTERCLASS TestKt Bar (ILandroidx/compose/runtime/Composer;I)V
+  final static INNERCLASS TestKt%Bar%1 null null
+}

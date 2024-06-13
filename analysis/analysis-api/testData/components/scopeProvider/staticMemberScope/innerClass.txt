@@ -1,6 +1,6 @@
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: test/B.ClassInB
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: test/B.ClassInB
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -15,22 +15,22 @@ KtNamedClassOrObjectSymbol:
   name: ClassInB
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(innerClass.kt)
+  getContainingFileSymbol: KaFileSymbol(innerClass.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: test/B.InnerClassInB
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: test/B.InnerClassInB
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -45,15 +45,15 @@ KtNamedClassOrObjectSymbol:
   name: InnerClassInB
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(innerClass.kt)
+  getContainingFileSymbol: KaFileSymbol(innerClass.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

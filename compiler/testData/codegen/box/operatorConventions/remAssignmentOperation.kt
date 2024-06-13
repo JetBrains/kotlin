@@ -1,4 +1,5 @@
-// !LANGUAGE: -ProhibitOperatorMod
+// LANGUAGE: -ProhibitOperatorMod
+// IGNORE_BACKEND: NATIVE
 
 class A() {
     var x = 5

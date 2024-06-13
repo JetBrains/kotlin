@@ -1,5 +1,5 @@
 // ENABLE_JVM_PREVIEW
-// !JVM_DEFAULT_MODE: all
+// JVM_DEFAULT_MODE: all
 
 // FILE: JavaClass.java
 public class JavaClass {

@@ -221,6 +221,7 @@ class LazyScriptDescriptor(
             }
         }
 
+        // TODO: we may want to treat getScriptingClass call here the same way as in scriptProvidedProperties
         scriptCompilationConfiguration()[ScriptCompilationConfiguration.implicitReceivers]?.mapNotNullTo(res) { receiver ->
             findTypeDescriptor(getScriptingClass(receiver), Errors.MISSING_SCRIPT_RECEIVER_CLASS)
         }
@@ -262,7 +263,18 @@ class LazyScriptDescriptor(
     private val scriptProvidedProperties: () -> List<ScriptProvidedPropertyDescriptor> = resolveSession.storageManager.createLazyValue {
         scriptCompilationConfiguration()[ScriptCompilationConfiguration.providedProperties].orEmpty()
             .mapNotNull { (name, type) ->
-                findTypeDescriptor(getScriptingClass(type), Errors.MISSING_SCRIPT_PROVIDED_PROPERTY_CLASS)?.let {
+                val propertyClass = try {
+                    getScriptingClass(type)
+                } catch (e: IllegalArgumentException) {
+                    // IAE here means that we're unable to access the class of the property, but we can treat it as Any
+                    null
+                }
+                val propertyType =
+                    // If we cannot load the class for the property type, replacing it with Any allows keeping the property avoiding
+                    // possibly risky deleting at this place and also still allows using it from the script with a cast
+                    if (propertyClass == null) builtIns.any
+                    else findTypeDescriptor(propertyClass, Errors.MISSING_SCRIPT_PROVIDED_PROPERTY_CLASS)
+                propertyType?.let {
                     name.toValidJvmIdentifier() to
                             it.defaultType.makeNullableAsSpecified(type.isNullable).replaceArgumentsWithStarProjections()
                 }

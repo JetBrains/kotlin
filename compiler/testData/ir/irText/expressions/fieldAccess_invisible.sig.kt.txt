@@ -1,0 +1,71 @@
+// CHECK:
+//   Mangled name: Impl
+//   Public signature: /Impl|null[0]
+open class Impl : Derived {
+  // CHECK:
+  //   Mangled name: Impl#<init>(){}
+  //   Public signature: /Impl.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: Impl#testClass(){}
+  //   Public signature: /Impl.testClass|5686239790545468755[0]
+  //   Public signature debug description: testClass(){}
+  fun testClass(): Unit
+
+  // CHECK:
+  //   Mangled name: Impl#testClassStatic(){}
+  //   Public signature: /Impl.testClassStatic|-1516402003886352874[0]
+  //   Public signature debug description: testClassStatic(){}
+  fun testClassStatic(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: OtherImpl
+//   Public signature: /OtherImpl|null[0]
+class OtherImpl : Impl {
+  // CHECK:
+  //   Mangled name: OtherImpl#<init>(){}
+  //   Public signature: /OtherImpl.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: OtherImpl#testClass(){}
+  //   Public signature: /OtherImpl.testClass|5686239790545468755[0]
+  //   Public signature debug description: testClass(){}
+  /* fake */ override fun testClass(): Unit
+
+  // CHECK:
+  //   Mangled name: OtherImpl#testClassStatic(){}
+  //   Public signature: /OtherImpl.testClassStatic|-1516402003886352874[0]
+  //   Public signature debug description: testClassStatic(){}
+  /* fake */ override fun testClassStatic(): Unit
+
+  // CHECK:
+  //   Mangled name: OtherImpl#testOtherClass(){}
+  //   Public signature: /OtherImpl.testOtherClass|3436934784352589923[0]
+  //   Public signature debug description: testOtherClass(){}
+  fun testOtherClass(): Unit
+
+  // CHECK:
+  //   Mangled name: OtherImpl#testOtherClassStatic(){}
+  //   Public signature: /OtherImpl.testOtherClassStatic|7726019642919507277[0]
+  //   Public signature debug description: testOtherClassStatic(){}
+  fun testOtherClassStatic(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #testNonStatic(foo.Derived;Impl;OtherImpl){}
+//   Public signature: /testNonStatic|21967847286058273[0]
+//   Public signature debug description: testNonStatic(foo.Derived;Impl;OtherImpl){}
+fun testNonStatic(d: Derived, i: Impl, o: OtherImpl): Unit
+
+// CHECK:
+//   Mangled name: #testStatic(){}
+//   Public signature: /testStatic|-7672607164814462212[0]
+//   Public signature debug description: testStatic(){}
+fun testStatic(): Unit

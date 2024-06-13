@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // SKIP_TXT
-// !DIAGNOSTICS: -CAST_NEVER_SUCCEEDS
+// DIAGNOSTICS: -CAST_NEVER_SUCCEEDS
 
 import kotlin.experimental.ExperimentalTypeInference
 

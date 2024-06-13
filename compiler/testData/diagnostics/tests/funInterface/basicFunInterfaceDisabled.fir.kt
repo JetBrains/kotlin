@@ -1,4 +1,4 @@
-// !LANGUAGE: -FunctionalInterfaceConversion
+// LANGUAGE: -FunctionalInterfaceConversion
 
 fun interface Foo {
     fun invoke()

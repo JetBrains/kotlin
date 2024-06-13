@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: -PreferJavaFieldOverload
+// LANGUAGE: -PreferJavaFieldOverload
 // WITH_STDLIB
 // FILE: Base.java
 

@@ -5,24 +5,24 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithMembers
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.scopes.FirScope
 
-internal class KtFirConstructorSymbolPointer(
-    ownerPointer: KtSymbolPointer<KtSymbolWithMembers>,
+internal class KaFirConstructorSymbolPointer(
+    ownerPointer: KaSymbolPointer<KaSymbolWithMembers>,
     private val isPrimary: Boolean,
     private val signature: FirCallableSignature,
-) : KtFirMemberSymbolPointer<KtConstructorSymbol>(ownerPointer) {
-    override fun KtFirAnalysisSession.chooseCandidateAndCreateSymbol(
+) : KaFirMemberSymbolPointer<KaConstructorSymbol>(ownerPointer) {
+    override fun KaFirSession.chooseCandidateAndCreateSymbol(
         candidates: FirScope,
         firSession: FirSession,
-    ): KtConstructorSymbol? {
+    ): KaConstructorSymbol? {
         val firConstructor = candidates.findDeclarationWithSignature<FirConstructor>(signature) {
             processDeclaredConstructors(it)
         } ?: return null
@@ -31,8 +31,8 @@ internal class KtFirConstructorSymbolPointer(
         return firSymbolBuilder.functionLikeBuilder.buildConstructorSymbol(firConstructor.symbol)
     }
 
-    override fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = other === this ||
-            other is KtFirConstructorSymbolPointer &&
+    override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = other === this ||
+            other is KaFirConstructorSymbolPointer &&
             other.signature == signature &&
             other.isPrimary == isPrimary &&
             hasTheSameOwner(other)

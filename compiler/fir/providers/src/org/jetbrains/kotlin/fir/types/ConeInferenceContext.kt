@@ -100,7 +100,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
             } else {
                 ConeIntersectionType(
                     constructor.intersectedTypes.map { it.withAttributes(coneAttributes) },
-                    constructor.alternativeType?.withAttributes(coneAttributes)
+                    constructor.upperBoundForApproximation?.withAttributes(coneAttributes)
                 )
             }
             else -> error("!")
@@ -252,9 +252,9 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return this.withNullability(ConeNullability.create(nullable), this@ConeInferenceContext)
     }
 
-    override fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(): KotlinTypeMarker {
+    override fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(preserveAttributes: Boolean): KotlinTypeMarker {
         require(this is ConeKotlinType)
-        return makeConeTypeDefinitelyNotNullOrNotNull(this@ConeInferenceContext)
+        return makeConeTypeDefinitelyNotNullOrNotNull(this@ConeInferenceContext, preserveAttributes = preserveAttributes)
     }
 
     override fun SimpleTypeMarker.makeSimpleTypeDefinitelyNotNullOrNotNull(): SimpleTypeMarker {
@@ -337,7 +337,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override fun CapturedTypeMarker.withNotNullProjection(): KotlinTypeMarker {
         require(this is ConeCapturedType)
-        return ConeCapturedType(captureStatus, lowerType, nullability, constructor, attributes, isProjectionNotNull = true)
+        return copy(isProjectionNotNull = true)
     }
 
     override fun CapturedTypeMarker.isProjectionNotNull(): Boolean {
@@ -369,7 +369,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     }
 
     override fun createSubstitutionFromSubtypingStubTypesToTypeVariables(): TypeSubstitutorMarker {
-        return object : AbstractConeSubstitutor(this) {
+        return object : AbstractConeSubstitutor(this@ConeInferenceContext) {
             override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
                 return ((type as? ConeStubTypeForTypeVariableInSubtyping)
                     ?.constructor?.variable?.defaultType)?.withNullability(type.nullability, this@ConeInferenceContext)
@@ -480,9 +480,9 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return withAttributes(ConeAttributes.create(newCustomAttributes + attributesToKeep))
     }
 
-    override fun TypeConstructorMarker.getApproximatedIntegerLiteralType(): KotlinTypeMarker {
-        require(this is ConeIntegerLiteralType)
-        return this.getApproximatedType()
+    override fun TypeConstructorMarker.getApproximatedIntegerLiteralType(expectedType: KotlinTypeMarker?): KotlinTypeMarker {
+        require(this is ConeIntegerLiteralType && expectedType is ConeKotlinType?)
+        return this.getApproximatedType(expectedType)
     }
 
     override fun KotlinTypeMarker.isSignedOrUnsignedNumberType(): Boolean {
@@ -579,7 +579,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return kind.reflectKind().numberedClassId(parametersNumber).toLookupTag()
     }
 
-    override fun createTypeWithAlternativeForIntersectionResult(
+    override fun createTypeWithUpperBoundForIntersectionResult(
         firstCandidate: KotlinTypeMarker,
         secondCandidate: KotlinTypeMarker
     ): KotlinTypeMarker {
@@ -588,7 +588,11 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         val intersectionType = firstCandidate.lowerBoundIfFlexible() as? ConeIntersectionType ?: error {
             "Expected type is intersection, found $firstCandidate"
         }
-        return intersectionType.withAlternative(secondCandidate)
+        return intersectionType.withUpperBound(secondCandidate)
+    }
+
+    override fun KotlinTypeMarker.getUpperBoundForApproximationOfIntersectionType(): KotlinTypeMarker? {
+        return (this as? ConeIntersectionType)?.upperBoundForApproximation
     }
 
     override fun useRefinedBoundsForTypeVariableInFlexiblePosition(): Boolean = session.languageVersionSettings.supportsFeature(

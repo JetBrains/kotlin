@@ -23,7 +23,7 @@ object FirDuplicateParameterNameInFunctionTypeChecker : FirTypeRefChecker(MppChe
             val type = it.type ?: return@groupBy null
             val annotation = type.customAnnotations.getAnnotationByClassId(StandardNames.FqNames.parameterNameClassId, context.session)
             val nameEntry = annotation?.argumentMapping?.mapping?.get(StandardNames.NAME)
-            (nameEntry as? FirLiteralExpression<*>)?.value as? String
+            (nameEntry as? FirLiteralExpression)?.value as? String
         }
 
         for ((name, projections) in nameToArgumentProjection) {

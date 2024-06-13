@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 
 //KT-1558 Exception while analyzing
 package j

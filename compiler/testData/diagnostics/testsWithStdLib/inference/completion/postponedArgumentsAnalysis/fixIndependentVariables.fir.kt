@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNCHECKED_CAST
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNCHECKED_CAST
 
 fun <T : Any> foo(items: List<T>, handler: (T) -> Unit) {}
 

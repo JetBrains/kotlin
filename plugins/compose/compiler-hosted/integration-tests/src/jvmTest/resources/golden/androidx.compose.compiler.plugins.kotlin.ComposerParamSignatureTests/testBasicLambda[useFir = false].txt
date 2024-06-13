@@ -1,0 +1,45 @@
+//
+// Source
+// ------------------------------------------
+
+val foo = @Composable { x: Int -> print(x)  }
+@Composable fun Bar() {
+  foo(123)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+public final class ComposableSingletons%TestKt {
+  public <init>()V
+  public final getLambda-1%test_module()Lkotlin/jvm/functions/Function3;
+  static <clinit>()V
+  public final static LComposableSingletons%TestKt; INSTANCE
+  public static Lkotlin/jvm/functions/Function3; lambda-1
+  final static INNERCLASS ComposableSingletons%TestKt%lambda-1%1 null null
+}
+final class ComposableSingletons%TestKt%lambda-1%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function3 {
+  <init>()V
+  public final invoke(ILandroidx/compose/runtime/Composer;I)V
+  public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+  static <clinit>()V
+  public final static LComposableSingletons%TestKt%lambda-1%1; INSTANCE
+  OUTERCLASS ComposableSingletons%TestKt null
+  final static INNERCLASS ComposableSingletons%TestKt%lambda-1%1 null null
+}
+public final class TestKt {
+  public final static getFoo()Lkotlin/jvm/functions/Function3;
+  public final static Bar(Landroidx/compose/runtime/Composer;I)V
+  static <clinit>()V
+  private final static Lkotlin/jvm/functions/Function3; foo
+  final static INNERCLASS TestKt%Bar%1 null null
+}
+final class TestKt%Bar%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
+  <init>(I)V
+  public final invoke(Landroidx/compose/runtime/Composer;I)V
+  public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+  final synthetic I %%changed
+  OUTERCLASS TestKt Bar (Landroidx/compose/runtime/Composer;I)V
+  final static INNERCLASS TestKt%Bar%1 null null
+}

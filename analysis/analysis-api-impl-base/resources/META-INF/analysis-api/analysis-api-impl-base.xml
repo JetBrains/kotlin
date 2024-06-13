@@ -1,8 +1,8 @@
 <idea-plugin>
   <extensionPoints>
     <extensionPoint
-        qualifiedName="org.jetbrains.kotlin.ktResolveExtensionProvider"
-        interface="org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionProvider"
+        qualifiedName="org.jetbrains.kotlin.kaResolveExtensionProvider"
+        interface="org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider"
         area="IDEA_PROJECT"
         dynamic="true"
     />
@@ -22,8 +22,18 @@
     />
 
     <projectService
-        serviceInterface="org.jetbrains.kotlin.analysis.providers.KotlinMessageBusProvider"
-        serviceImplementation="org.jetbrains.kotlin.analysis.providers.impl.KotlinProjectMessageBusProvider"
+        serviceInterface="org.jetbrains.kotlin.analysis.api.platform.KotlinMessageBusProvider"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.platform.KotlinProjectMessageBusProvider"
+    />
+
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.analysis.api.platform.permissions.KaAnalysisPermissionChecker"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.permissions.KaBaseAnalysisPermissionChecker"
+    />
+
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.analysis.api.platform.lifetime.KaLifetimeTracker"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.lifetime.KaBaseLifetimeTracker"
     />
 
     <java.elementFinder implementation="org.jetbrains.kotlin.asJava.finder.JavaElementFinder"/>

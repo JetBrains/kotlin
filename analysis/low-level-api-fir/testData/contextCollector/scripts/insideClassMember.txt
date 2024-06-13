@@ -34,24 +34,23 @@ Tower Data Context:
             Classifiers:
                 FirRegularClassSymbol public final class MyClass : R|kotlin/Any|
     Element 10
-        Context receivers:
-            FirScriptSymbol context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-            SCRIPT: <script-insideClassMember.kts>
+        Implicit receiver:
+            FirScriptSymbol SCRIPT: <script-insideClassMember.kts>
+                <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
                 lval args: R|kotlin/Array<kotlin/String>|
-
+            
                 public? final? fun before_Fun(): R|kotlin/Unit|
                 public? final? val before_Val: <implicit>
                     public? get(): <implicit>
-
+            
                 public final? class Before_OtherClass : R|kotlin/Any|
                 public final class MyClass : R|kotlin/Any|
                 public? final? fun after_Fun(): R|kotlin/Unit|
                 public? final? val after_Val: <implicit>
                     public? get(): <implicit>
-
+            
                 public final? class After_OtherClass : R|kotlin/Any|
                 Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
-                Label: <script>
     Element 11
         Implicit receiver:
             FirRegularClassSymbol public final class MyClass : R|kotlin/Any|
@@ -62,8 +61,8 @@ Tower Data Context:
         Scope: FirLocalScope
 
 FILE: [ResolvedTo(IMPORTS)] insideClassMember.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-insideClassMember.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun before_Fun(): R|kotlin/Unit| { LAZY_BLOCK }

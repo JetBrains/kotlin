@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.substitutorProvider
 
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
-import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KtTypeRendererForSource
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KaTypeRendererForSource
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
@@ -33,14 +33,14 @@ abstract class AbstractCreateInheritanceTypeSubstitutorTest : AbstractAnalysisAp
                 appendLine("Substitutor: ${stringRepresentation(substitutor)}")
                 if (substitutor != null) {
                     val functions = superClassSymbol.getDeclaredMemberScope().getAllSymbols()
-                        .filterIsInstance<KtFunctionSymbol>()
+                        .filterIsInstance<KaFunctionSymbol>()
                         .toList()
                     if (functions.isNotEmpty()) {
                         appendLine("Substituted callables:")
                         withIndent {
                             for (function in functions) {
                                 val signature = function.substitute(substitutor)
-                                append(signature.callableIdIfNonLocal!!.callableName.asString())
+                                append(signature.callableId!!.callableName.asString())
                                 printCollection(signature.valueParameters, prefix = "(", postfix = ")") {
                                     append(it.returnType.render(typeRenderer, position = Variance.IN_VARIANCE))
                                 }
@@ -55,6 +55,6 @@ abstract class AbstractCreateInheritanceTypeSubstitutorTest : AbstractAnalysisAp
     }
 
     companion object {
-        private val typeRenderer = KtTypeRendererForSource.WITH_SHORT_NAMES
+        private val typeRenderer = KaTypeRendererForSource.WITH_SHORT_NAMES
     }
 }

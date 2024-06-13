@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 interface A {
     val x: CharSequence
 

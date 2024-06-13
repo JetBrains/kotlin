@@ -63,7 +63,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_OPERAT
 
 @Suppress("unused")
 object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
-    override val MAP = KtDiagnosticFactoryToRendererMap("FIR").also { map ->
+    override val MAP: KtDiagnosticFactoryToRendererMap = KtDiagnosticFactoryToRendererMap("FIR").also { map ->
         map.put(JS_MODULE_PROHIBITED_ON_VAR, "'@JsModule' and '@JsNonModule' annotations are prohibited for 'var' declarations. Use 'val' instead.")
         map.put(JS_MODULE_PROHIBITED_ON_NON_NATIVE, "'@JsModule' and '@JsNonModule' annotations are prohibited for non-external declarations.")
         map.put(

@@ -7,4 +7,7 @@ class Foo
 class Bar
 
 @kotlin.ConsistentCopyVisibility
-data class Data(val x: Int)
+data class DataA(val x: Int)
+
+@kotlin.ExposedCopyVisibility
+data class DataB(val x: Int)

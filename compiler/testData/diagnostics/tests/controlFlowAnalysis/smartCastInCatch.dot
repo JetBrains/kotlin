@@ -522,7 +522,7 @@ digraph smartCastInCatch_fir_kt {
                 subgraph cluster_55 {
                     color=blue
                     184 [label="Catch enter"];
-                    185 [label="Variable declaration: e: R|kotlin/Exception|"];
+                    185 [label="Variable declaration: e: R|{kotlin/Exception=} java/lang/Exception|"];
                     subgraph cluster_56 {
                         color=blue
                         186 [label="Enter block"];

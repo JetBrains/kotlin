@@ -1,4 +1,3 @@
-FILE fqName:<root> fileName:/common.kt
 FILE fqName:<root> fileName:/platform.kt
   CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
@@ -50,3 +49,4 @@ FILE fqName:<root> fileName:/platform.kt
         public abstract fun foo (): kotlin.Unit declared in <root>.A
       $this: VALUE_PARAMETER name:<this> type:<root>.B
       BLOCK_BODY
+FILE fqName:<root> fileName:/common.kt

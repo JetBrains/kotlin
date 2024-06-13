@@ -5,7 +5,7 @@ plugins {
     id("jps-compatible")
 }
 
-description = "SIR Providers - family of classes, that transforms KtSymbol into corresponding SIR nodes"
+description = "SIR Providers - family of classes, that transforms KaSymbol into corresponding SIR nodes"
 
 kotlin {
     explicitApi()

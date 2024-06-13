@@ -24,7 +24,7 @@ class ExtensionConfigurationTest {
                 listOf(
                     "generateFunctionKeyMetaClasses" to "false",
                     "sourceInformation" to "false",
-                    "intrinsicRemember" to "false",
+                    "intrinsicRemember" to "true",
                     "nonSkippingGroupOptimization" to "false",
                     "strongSkipping" to "false",
                     "traceMarkersEnabled" to "false",

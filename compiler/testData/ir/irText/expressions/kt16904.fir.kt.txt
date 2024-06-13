@@ -41,7 +41,7 @@ class Test1 : A {
 
 class Test2 : J {
   init {
-    <this>.#field = 42
+    <this>(super<Test2>).#field = 42
   }
 
   constructor() /* primary */ {

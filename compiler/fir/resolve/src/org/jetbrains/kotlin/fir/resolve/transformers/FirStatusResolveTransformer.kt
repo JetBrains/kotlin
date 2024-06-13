@@ -32,7 +32,7 @@ class FirStatusResolveProcessor(
     session: FirSession,
     scopeSession: ScopeSession
 ) : FirTransformerBasedResolveProcessor(session, scopeSession, FirResolvePhase.STATUS) {
-    override val transformer = run {
+    override val transformer: FirStatusResolveTransformer = run {
         val statusComputationSession = StatusComputationSession()
         FirStatusResolveTransformer(
             session,
@@ -194,8 +194,8 @@ abstract class AbstractFirStatusResolveTransformer(
     private val isTransformerForLocalDeclarations: Boolean get() = scopeForLocalClass != null
 
     @PrivateForInline
-    val classes = mutableListOf<FirClass>()
-    val statusResolver = FirStatusResolver(session, scopeSession)
+    val classes: MutableList<FirClass> = mutableListOf()
+    val statusResolver: FirStatusResolver = FirStatusResolver(session, scopeSession)
 
     @OptIn(PrivateForInline::class)
     val containingClass: FirClass? get() = classes.lastOrNull()
@@ -429,8 +429,10 @@ abstract class AbstractFirStatusResolveTransformer(
         return transformDeclaration(constructor, data) as FirStatement
     }
 
-    override fun transformErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: FirResolvedDeclarationStatus?) =
-        transformConstructor(errorPrimaryConstructor, data)
+    override fun transformErrorPrimaryConstructor(
+        errorPrimaryConstructor: FirErrorPrimaryConstructor,
+        data: FirResolvedDeclarationStatus?,
+    ): FirStatement = transformConstructor(errorPrimaryConstructor, data)
 
     override fun transformSimpleFunction(
         simpleFunction: FirSimpleFunction,

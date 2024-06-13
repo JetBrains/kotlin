@@ -1,28 +1,28 @@
-KtKotlinPropertySymbol:
-  callableIdIfNonLocal: test/MyInterface.withOwnGeneric_InterfaceWithValBase
+KaKotlinPropertySymbol:
+  callableId: test/MyInterface.withOwnGeneric_InterfaceWithValBase
   name: withOwnGeneric_InterfaceWithValBase
   origin: SOURCE
 
-KtKotlinPropertySymbol:
-  callableIdIfNonLocal: test/Inheritor.withOwnAndOuterGenericAsTypeBound_InterfaceWithValBase
+KaKotlinPropertySymbol:
+  callableId: test/Inheritor.withOwnAndOuterGenericAsTypeBound_InterfaceWithValBase
   name: withOwnAndOuterGenericAsTypeBound_InterfaceWithValBase
   origin: SUBSTITUTION_OVERRIDE
 
-KtFunctionSymbol:
-  callableIdIfNonLocal: kotlin/Any.equals
+KaFunctionSymbol:
+  callableId: kotlin/Any.equals
   name: equals
   origin: LIBRARY
 
-KtFunctionSymbol:
-  callableIdIfNonLocal: kotlin/Any.hashCode
+KaFunctionSymbol:
+  callableId: kotlin/Any.hashCode
   name: hashCode
   origin: LIBRARY
 
-KtFunctionSymbol:
-  callableIdIfNonLocal: kotlin/Any.toString
+KaFunctionSymbol:
+  callableId: kotlin/Any.toString
   name: toString
   origin: LIBRARY
 
-KtConstructorSymbol:
-  callableIdIfNonLocal: null
+KaConstructorSymbol:
+  callableId: null
   origin: SOURCE_MEMBER_GENERATED

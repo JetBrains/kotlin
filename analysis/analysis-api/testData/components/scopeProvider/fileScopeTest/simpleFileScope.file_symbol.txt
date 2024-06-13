@@ -1,5 +1,5 @@
-KtFileSymbol:
-  annotationsList: []
+KaFileSymbol:
+  annotations: []
   origin: SOURCE
   getContainingFileSymbol: null
   getContainingModule: KtSourceModule "Sources of main"

@@ -72,8 +72,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
         }
 
         if (irFunction.isWithAnnotations) {
-            val skipNullabilityAnnotations = flags and Opcodes.ACC_PRIVATE != 0 || flags and Opcodes.ACC_SYNTHETIC != 0
-            object : AnnotationCodegen(classCodegen, skipNullabilityAnnotations) {
+            val annotationCodegen = object : AnnotationCodegen(classCodegen) {
                 override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
                     return methodVisitor.visitAnnotation(descr, visible)
                 }
@@ -83,7 +82,13 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
                         TypeReference.newTypeReference(TypeReference.METHOD_RETURN).value, path, descr, visible
                     )
                 }
-            }.genAnnotations(irFunction, signature.asmMethod.returnType, irFunction.returnType)
+            }
+            annotationCodegen.genAnnotations(irFunction)
+            val generateNullabilityAnnotations = flags and Opcodes.ACC_PRIVATE == 0 && flags and Opcodes.ACC_SYNTHETIC == 0
+            if (!AsmUtil.isPrimitive(signature.asmMethod.returnType) && generateNullabilityAnnotations) {
+                annotationCodegen.generateNullabilityAnnotation(irFunction)
+            }
+            annotationCodegen.generateTypeAnnotations(irFunction.returnType, TypeAnnotationPosition.FunctionReturnType(irFunction))
 
             AnnotationCodegen.genAnnotationsOnTypeParametersAndBounds(
                 context,
@@ -96,7 +101,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
             }
 
             if (shouldGenerateAnnotationsOnValueParameters()) {
-                generateParameterAnnotations(irFunction, methodVisitor, signature, classCodegen, skipNullabilityAnnotations)
+                generateParameterAnnotations(irFunction, methodVisitor, signature, classCodegen, generateNullabilityAnnotations)
             }
         }
 
@@ -260,45 +265,45 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
         return frameMap
     }
 
-    // Borrowed from org.jetbrains.kotlin.codegen.FunctionCodegen.java
     private fun generateParameterAnnotations(
         irFunction: IrFunction,
         mv: MethodVisitor,
         jvmSignature: JvmMethodSignature,
         classCodegen: ClassCodegen,
-        skipNullabilityAnnotations: Boolean = false
+        generateNullabilityAnnotations: Boolean,
     ) {
         val iterator = irFunction.valueParameters.iterator()
         val kotlinParameterTypes = jvmSignature.valueParameters
         val syntheticParameterCount = irFunction.valueParameters.count { it.isSkippedInGenericSignature }
+        val extensionReceiverParameter = irFunction.extensionReceiverParameter
 
         visitAnnotableParameterCount(mv, kotlinParameterTypes.size - syntheticParameterCount)
 
-        kotlinParameterTypes.forEachIndexed { i, parameterSignature ->
-            val extensionReceiverParameter = irFunction.extensionReceiverParameter
-            val annotated = if (extensionReceiverParameter != null && i == irFunction.contextReceiverParametersCount)
+        for ((i, parameterSignature) in kotlinParameterTypes.withIndex()) {
+            val parameter = if (extensionReceiverParameter != null && i == irFunction.contextReceiverParametersCount)
                 extensionReceiverParameter
             else
                 iterator.next()
 
-            if (i >= syntheticParameterCount && !annotated.isSyntheticMarkerParameter()) {
-                object : AnnotationCodegen(classCodegen, skipNullabilityAnnotations) {
-                    override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
-                        return mv.visitParameterAnnotation(
-                            i - syntheticParameterCount,
-                            descr,
-                            visible
-                        )
-                    }
+            if (i < syntheticParameterCount || parameter.isSyntheticMarkerParameter()) continue
 
-                    override fun visitTypeAnnotation(descr: String, path: TypePath?, visible: Boolean): AnnotationVisitor {
-                        return mv.visitTypeAnnotation(
-                            TypeReference.newFormalParameterReference(i - syntheticParameterCount).value,
-                            path, descr, visible
-                        )
-                    }
-                }.genAnnotations(annotated, parameterSignature.asmType, annotated.type)
+            val annotationCodegen = object : AnnotationCodegen(classCodegen) {
+                override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
+                    return mv.visitParameterAnnotation(i - syntheticParameterCount, descr, visible)
+                }
+
+                override fun visitTypeAnnotation(descr: String, path: TypePath?, visible: Boolean): AnnotationVisitor {
+                    return mv.visitTypeAnnotation(
+                        TypeReference.newFormalParameterReference(i - syntheticParameterCount).value,
+                        path, descr, visible
+                    )
+                }
             }
+            annotationCodegen.genAnnotations(parameter)
+            if (generateNullabilityAnnotations && !AsmUtil.isPrimitive(parameterSignature.asmType)) {
+                annotationCodegen.generateNullabilityAnnotation(parameter)
+            }
+            annotationCodegen.generateTypeAnnotations(parameter.type, TypeAnnotationPosition.ValueParameterType(parameter))
         }
     }
 

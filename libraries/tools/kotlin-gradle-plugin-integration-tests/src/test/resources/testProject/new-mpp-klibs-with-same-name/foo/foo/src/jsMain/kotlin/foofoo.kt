@@ -1,3 +1,0 @@
-fun foofoo() {
-    println("foofoo")
-}

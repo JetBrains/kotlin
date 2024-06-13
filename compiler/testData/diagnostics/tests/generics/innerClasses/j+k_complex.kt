@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 // FILE: BaseOuter.java
 // See KT-10285
 public class BaseOuter<H> {

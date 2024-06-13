@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.sir
 
-class SirImport(val moduleName: String) {
+class SirImport(
+    val moduleName: String,
+    val isExported: Boolean = false,
+) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

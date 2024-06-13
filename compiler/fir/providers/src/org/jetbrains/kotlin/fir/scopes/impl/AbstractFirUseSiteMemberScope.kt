@@ -25,7 +25,7 @@ abstract class AbstractFirUseSiteMemberScope(
     dispatchReceiverType: ConeSimpleKotlinType,
     protected val declaredMemberScope: FirContainingNamesAwareScope
 ) : AbstractFirOverrideScope(session, overrideCheckerForBaseClass) {
-    protected val supertypeScopeContext = FirTypeIntersectionScopeContext(
+    protected val supertypeScopeContext: FirTypeIntersectionScopeContext = FirTypeIntersectionScopeContext(
         session,
         overrideCheckerForIntersection ?: overrideCheckerForBaseClass,
         superTypeScopes, dispatchReceiverType, forClassUseSiteScope = true

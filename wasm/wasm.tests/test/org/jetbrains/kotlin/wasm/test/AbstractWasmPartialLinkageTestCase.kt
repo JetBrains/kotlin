@@ -9,6 +9,7 @@ import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.js.K2JsIrCompiler
 import org.jetbrains.kotlin.codegen.ProjectInfo
+import org.jetbrains.kotlin.klib.KlibCompilerEdition
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.Dependencies
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.Dependency
@@ -57,6 +58,7 @@ abstract class AbstractWasmPartialLinkageTestCase(private val compilerType: Comp
             buildDirs: ModuleBuildDirs,
             dependencies: Dependencies,
             klibFile: File,
+            compilerEdition: KlibCompilerEdition
         ) = this@AbstractWasmPartialLinkageTestCase.buildKlib(moduleName, buildDirs, dependencies, klibFile)
 
         override fun buildBinaryAndRun(mainModule: Dependency, otherDependencies: Dependencies) =

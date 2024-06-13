@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // SKIP_TXT
-// !CHECK_TYPE
+// CHECK_TYPE
 
 sealed class KtClassifierSymbol
 

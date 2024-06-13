@@ -1,5 +1,5 @@
 // JAVAC_EXPECTED_FILE
-// !LANGUAGE: +TypeEnhancementImprovementsInStrictMode
+// LANGUAGE: +TypeEnhancementImprovementsInStrictMode
 
 package test;
 

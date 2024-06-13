@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.lombok
 
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOption
@@ -13,6 +12,7 @@ import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.lombok.LombokConfigurationKeys.CONFIG_FILE
 import org.jetbrains.kotlin.lombok.LombokPluginNames.CONFIG_OPTION_NAME
@@ -32,8 +32,8 @@ class LombokComponentRegistrar : CompilerPluginRegistrar() {
     }
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
-        configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-            ?.report(
+        configuration.messageCollector
+            .report(
                 CompilerMessageSeverity.WARNING,
                 "Lombok Kotlin compiler plugin is an experimental feature." +
                         " See: https://kotlinlang.org/docs/components-stability.html."

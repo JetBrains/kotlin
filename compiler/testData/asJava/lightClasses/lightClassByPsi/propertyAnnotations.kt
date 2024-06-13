@@ -1,4 +1,4 @@
-// !GENERATE_PROPERTY_ANNOTATIONS_METHODS
+// GENERATE_PROPERTY_ANNOTATIONS_METHODS
 
 annotation class Anno(val p: String = "")
 

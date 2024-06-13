@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.diagno
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.components.KtDiagnosticCheckerFilter
-import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnosticWithPsi
+import org.jetbrains.kotlin.analysis.api.components.KaDiagnosticCheckerFilter
+import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.getLineAndColumnRangeInPsiFile
@@ -36,11 +36,11 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
 
         analyseForTest(ktFile) {
             val diagnosticsInFile =
-                ktFile.collectDiagnosticsForFile(KtDiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS).map { it.getKey() }.sorted()
+                ktFile.collectDiagnosticsForFile(KaDiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS).map { it.getKey() }.sorted()
             val diagnosticsFromElements = buildList {
                 ktFile.accept(object : KtTreeVisitorVoid() {
                     override fun visitKtElement(element: KtElement) {
-                        for (diagnostic in element.getDiagnostics(KtDiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS)) {
+                        for (diagnostic in element.getDiagnostics(KaDiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS)) {
                             add(element to diagnostic.getKey())
                         }
                         super.visitKtElement(element)
@@ -81,5 +81,5 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
         override fun compareTo(other: DiagnosticKey): Int = this.toString().compareTo(other.toString())
     }
 
-    private fun KtDiagnosticWithPsi<*>.getKey() = DiagnosticKey(factoryName, psi, textRanges)
+    private fun KaDiagnosticWithPsi<*>.getKey() = DiagnosticKey(factoryName, psi, textRanges)
 }

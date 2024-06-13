@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.types
 
-public enum class KtTypeMappingMode {
+public enum class KaTypeMappingMode {
     /**
      * kotlin.Int is mapped to I
      */
@@ -48,3 +48,5 @@ public enum class KtTypeMappingMode {
      */
     VALUE_PARAMETER,
 }
+
+public typealias KtTypeMappingMode = KaTypeMappingMode

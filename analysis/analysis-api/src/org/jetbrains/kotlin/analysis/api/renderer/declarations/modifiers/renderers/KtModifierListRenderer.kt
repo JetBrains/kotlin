@@ -5,27 +5,27 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.KtDeclarationModifiersRenderer
-import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithModality
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.KaDeclarationModifiersRenderer
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithModality
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 
-public interface KtModifierListRenderer {
+public interface KaModifierListRenderer {
     public fun renderModifiers(
-        analysisSession: KtAnalysisSession,
-        symbol: KtDeclarationSymbol,
-        declarationModifiersRenderer: KtDeclarationModifiersRenderer,
+        analysisSession: KaSession,
+        symbol: KaDeclarationSymbol,
+        declarationModifiersRenderer: KaDeclarationModifiersRenderer,
         printer: PrettyPrinter,
     )
 
-    public object AS_LIST : KtModifierListRenderer {
+    public object AS_LIST : KaModifierListRenderer {
         override fun renderModifiers(
-            analysisSession: KtAnalysisSession,
-            symbol: KtDeclarationSymbol,
-            declarationModifiersRenderer: KtDeclarationModifiersRenderer,
+            analysisSession: KaSession,
+            symbol: KaDeclarationSymbol,
+            declarationModifiersRenderer: KaDeclarationModifiersRenderer,
             printer: PrettyPrinter,
         ) {
             val modifiers = getModifiers(analysisSession, symbol, declarationModifiersRenderer)
@@ -37,16 +37,16 @@ public interface KtModifierListRenderer {
         }
 
         private fun getModifiers(
-            analysisSession: KtAnalysisSession,
-            symbol: KtDeclarationSymbol,
-            declarationModifiersRenderer: KtDeclarationModifiersRenderer,
+            analysisSession: KaSession,
+            symbol: KaDeclarationSymbol,
+            declarationModifiersRenderer: KaDeclarationModifiersRenderer,
         ): List<KtModifierKeywordToken> {
             return buildList {
-                if (symbol is KtSymbolWithVisibility) {
+                if (symbol is KaSymbolWithVisibility) {
                     declarationModifiersRenderer.visibilityProvider.getVisibilityModifier(analysisSession, symbol)?.let(::add)
                 }
 
-                if (symbol is KtSymbolWithModality) {
+                if (symbol is KaSymbolWithModality) {
                     declarationModifiersRenderer.modalityProvider.getModalityModifier(analysisSession, symbol)?.let(::add)
                 }
 
@@ -56,3 +56,4 @@ public interface KtModifierListRenderer {
     }
 }
 
+public typealias KtModifierListRenderer = KaModifierListRenderer

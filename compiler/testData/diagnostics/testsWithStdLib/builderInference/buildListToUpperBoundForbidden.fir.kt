@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// !LANGUAGE: +ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound
+// LANGUAGE: +ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound
 // ISSUE: KT-56169
 
 fun box(): String {

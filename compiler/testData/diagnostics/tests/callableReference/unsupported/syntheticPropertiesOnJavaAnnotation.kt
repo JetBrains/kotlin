@@ -1,4 +1,4 @@
-// !LANGUAGE: -ReferencesToSyntheticJavaProperties
+// LANGUAGE: -ReferencesToSyntheticJavaProperties
 // FIR_IDENTICAL
 
 // FILE: AnnInterface.java

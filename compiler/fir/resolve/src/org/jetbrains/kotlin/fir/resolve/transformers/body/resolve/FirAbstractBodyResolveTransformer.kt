@@ -97,7 +97,8 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         override val session: FirSession,
         override val scopeSession: ScopeSession,
         val transformer: FirAbstractBodyResolveTransformerDispatcher,
-        val context: BodyResolveContext
+        val context: BodyResolveContext,
+        expandTypeAliases: Boolean,
     ) : BodyResolveComponents() {
         override val fileImportsScope: List<FirScope> get() = context.fileImportsScope
         override val towerDataElements: List<FirTowerDataElement> get() = context.towerDataContext.towerDataElements
@@ -119,8 +120,9 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         override val callResolver: FirCallResolver = FirCallResolver(
             this,
         )
-        val typeResolverTransformer = FirSpecificTypeResolverTransformer(
-            session
+        val typeResolverTransformer: FirSpecificTypeResolverTransformer = FirSpecificTypeResolverTransformer(
+            session,
+            expandTypeAliases = expandTypeAliases,
         )
         override val callCompleter: FirCallCompleter = FirCallCompleter(transformer, this)
         override val dataFlowAnalyzer: FirDataFlowAnalyzer =

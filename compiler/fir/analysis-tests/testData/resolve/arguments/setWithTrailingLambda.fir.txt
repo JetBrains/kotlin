@@ -1,10 +1,10 @@
 FILE: setWithTrailingLambda.kt
     public final fun test(m: R|MyMap<EditorData, kotlin/Any>|): R|kotlin/Unit| {
-        R|<local>/m|.R|SubstitutionOverride</MyMap.set: R|kotlin/Unit|>|<R|(kotlin/String, @R|kotlin/ParameterName|(name = String(bar))  kotlin/Any) -> kotlin/Unit|>(Q|SomeKey|, <L> = set@fun <anonymous>(<unused var>: R|kotlin/String|, <unused var>: R|@R|kotlin/ParameterName|(name = String(bar))  kotlin/Any|): R|kotlin/Unit| <inline=NoInline>  {
+        R|<local>/m|.R|SubstitutionOverride</MyMap.set: R|kotlin/Unit|>|<R|(kotlin/String, @R|kotlin/ParameterName|(name = String(bar))  kotlin/Any) -> kotlin/Unit|>(Q|SomeKey|, <L> = set@fun <anonymous>(<unused var>: R|kotlin/String|, <unused var>: R|kotlin/Any|): R|kotlin/Unit| <inline=NoInline>  {
             ^@set Unit
         }
         )
-        R|<local>/m|.R|SubstitutionOverride</MyMap.set: R|kotlin/Unit|>|<R|(kotlin/String, @R|kotlin/ParameterName|(name = String(bar))  kotlin/Any) -> kotlin/Unit|>(Q|SomeKey|, fun <anonymous>(<unused var>: R|kotlin/String|, <unused var>: R|@R|kotlin/ParameterName|(name = String(bar))  kotlin/Any|): R|kotlin/Unit| <inline=NoInline>  {
+        R|<local>/m|.R|SubstitutionOverride</MyMap.set: R|kotlin/Unit|>|<R|(kotlin/String, @R|kotlin/ParameterName|(name = String(bar))  kotlin/Any) -> kotlin/Unit|>(Q|SomeKey|, fun <anonymous>(<unused var>: R|kotlin/String|, <unused var>: R|kotlin/Any|): R|kotlin/Unit| <inline=NoInline>  {
             ^ Unit
         }
         )

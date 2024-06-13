@@ -140,18 +140,6 @@ internal fun getGroovyRepositoryBlock(
     |            }
     |        }
     |        ivy {
-    |            url = uri("https://nodejs.org/download/v8-canary")
-    |            patternLayout {
-    |                artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
-    |            }
-    |            metadataSources { 
-    |                artifact() 
-    |            }
-    |            content { 
-    |                includeModule("org.nodejs", "node") 
-    |            }
-    |        }
-    |        ivy {
     |            url = uri("https://github.com/WebAssembly/binaryen/releases/download")
     |            patternLayout {
     |                artifact("version_[revision]/binaryen-version_[revision]-[classifier].[ext]")
@@ -301,18 +289,6 @@ internal fun getKotlinRepositoryBlock(
     |        }
     |        ivy {
     |            url = uri("https://nodejs.org/dist")
-    |            patternLayout {
-    |                artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
-    |            }
-    |            metadataSources { 
-    |                artifact() 
-    |            }
-    |            content { 
-    |                includeModule("org.nodejs", "node") 
-    |            }
-    |        }
-    |        ivy {
-    |            url = uri("https://nodejs.org/download/v8-canary")
     |            patternLayout {
     |                artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
     |            }

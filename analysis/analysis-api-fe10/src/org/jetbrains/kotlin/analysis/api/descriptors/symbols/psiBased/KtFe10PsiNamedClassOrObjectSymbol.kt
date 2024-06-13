@@ -5,28 +5,28 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
+import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.*
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.isEqualTo
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KtFe10PsiSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10NeverRestoringSymbolPointer
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KaFe10PsiSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.ktModality
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.ktSymbolKind
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.ktVisibility
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.invalidEnumEntryAsClassKind
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
@@ -39,10 +39,10 @@ import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.resolve.BindingContext
 
-internal class KtFe10PsiNamedClassOrObjectSymbol(
+internal class KaFe10PsiNamedClassOrObjectSymbol(
     override val psi: KtClassOrObject,
     override val analysisContext: Fe10AnalysisContext
-) : KtNamedClassOrObjectSymbol(), KtFe10PsiSymbol<KtClassOrObject, ClassDescriptor> {
+) : KaNamedClassOrObjectSymbol(), KaFe10PsiSymbol<KtClassOrObject, ClassDescriptor> {
     override val descriptor: ClassDescriptor? by cached {
         val bindingContext = analysisContext.analyze(psi, AnalysisMode.PARTIAL)
         bindingContext[BindingContext.CLASS, psi]
@@ -69,52 +69,52 @@ internal class KtFe10PsiNamedClassOrObjectSymbol(
     override val isExpect: Boolean
         get() = withValidityAssertion { descriptor?.isExpect ?: psi.hasExpectModifier() }
 
-    override val companionObject: KtNamedClassOrObjectSymbol?
+    override val companionObject: KaNamedClassOrObjectSymbol?
         get() = withValidityAssertion {
             val companionObject = psi.companionObjects.firstOrNull() ?: return null
-            KtFe10PsiNamedClassOrObjectSymbol(companionObject, analysisContext)
+            KaFe10PsiNamedClassOrObjectSymbol(companionObject, analysisContext)
         }
 
-    override val contextReceivers: List<KtContextReceiver>
+    override val contextReceivers: List<KaContextReceiver>
         get() = withValidityAssertion { descriptor?.createContextReceivers(analysisContext) ?: emptyList() }
 
 
-    @OptIn(KtAnalysisApiInternals::class)
-    override val classKind: KtClassKind
+    @OptIn(KaAnalysisApiInternals::class)
+    override val classKind: KaClassKind
         get() = withValidityAssertion {
             when (psi) {
                 is KtEnumEntry -> invalidEnumEntryAsClassKind()
                 is KtObjectDeclaration -> when {
-                    psi.isCompanion() -> KtClassKind.COMPANION_OBJECT
-                    psi.isObjectLiteral() -> KtClassKind.ANONYMOUS_OBJECT
-                    else -> KtClassKind.OBJECT
+                    psi.isCompanion() -> KaClassKind.COMPANION_OBJECT
+                    psi.isObjectLiteral() -> KaClassKind.ANONYMOUS_OBJECT
+                    else -> KaClassKind.OBJECT
                 }
                 is KtClass -> when {
-                    psi.isInterface() -> KtClassKind.INTERFACE
-                    psi.isEnum() -> KtClassKind.ENUM_CLASS
-                    psi.isAnnotation() -> KtClassKind.ANNOTATION_CLASS
-                    else -> KtClassKind.CLASS
+                    psi.isInterface() -> KaClassKind.INTERFACE
+                    psi.isEnum() -> KaClassKind.ENUM_CLASS
+                    psi.isAnnotation() -> KaClassKind.ANNOTATION_CLASS
+                    else -> KaClassKind.CLASS
                 }
                 else -> error("Unexpected class instance")
             }
         }
 
-    override val superTypes: List<KtType>
+    override val superTypes: List<KaType>
         get() = withValidityAssertion {
             descriptor?.getSupertypesWithAny()?.map { it.toKtType(analysisContext) } ?: emptyList()
         }
 
-    override val classIdIfNonLocal: ClassId?
+    override val classId: ClassId?
         get() = withValidityAssertion { psi.getClassId() }
 
     override val name: Name
         get() = withValidityAssertion { psi.nameAsSafeName }
 
-    override val symbolKind: KtSymbolKind
+    override val symbolKind: KaSymbolKind
         get() = withValidityAssertion { psi.ktSymbolKind }
 
-    override val typeParameters: List<KtTypeParameterSymbol>
-        get() = withValidityAssertion { psi.typeParameters.map { KtFe10PsiTypeParameterSymbol(it, analysisContext) } }
+    override val typeParameters: List<KaTypeParameterSymbol>
+        get() = withValidityAssertion { psi.typeParameters.map { KaFe10PsiTypeParameterSymbol(it, analysisContext) } }
 
     override val modality: Modality
         get() = withValidityAssertion { psi.ktModality ?: descriptor?.ktModality ?: Modality.FINAL }
@@ -122,8 +122,8 @@ internal class KtFe10PsiNamedClassOrObjectSymbol(
     override val visibility: Visibility
         get() = withValidityAssertion { psi.ktVisibility ?: descriptor?.ktVisibility ?: Visibilities.Public }
 
-    override fun createPointer(): KtSymbolPointer<KtNamedClassOrObjectSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtNamedClassOrObjectSymbol>(this) ?: KtFe10NeverRestoringSymbolPointer()
+    override fun createPointer(): KaSymbolPointer<KaNamedClassOrObjectSymbol> = withValidityAssertion {
+        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaNamedClassOrObjectSymbol>(this) ?: KaFe10NeverRestoringSymbolPointer()
     }
 
     override fun equals(other: Any?): Boolean = isEqualTo(other)

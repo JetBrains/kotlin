@@ -19,7 +19,7 @@ import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.compilerRunner.konanHome
-import org.jetbrains.kotlin.compilerRunner.konanVersion
+import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForBinariesCompilation
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionCommonizerLock
@@ -54,7 +54,11 @@ internal interface UsesKotlinNativeBundleBuildService : Task {
 /**
  * This service provides functionality to prepare a Kotlin/Native bundle.
  */
-internal abstract class KotlinNativeBundleBuildService : BuildService<BuildServiceParameters.None> {
+internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNativeBundleBuildService.Parameters> {
+
+    internal interface Parameters : BuildServiceParameters {
+        val kotlinNativeVersion: Property<String>
+    }
 
     @get:Inject
     abstract val fso: FileSystemOperations
@@ -69,7 +73,11 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<BuildServi
             project.gradle.sharedServices.registerIfAbsent(
                 "kotlinNativeBundleBuildService",
                 KotlinNativeBundleBuildService::class.java
-            ) {}.also { serviceProvider ->
+            ) {
+                it.parameters.kotlinNativeVersion
+                    .value(project.nativeProperties.kotlinNativeVersion)
+                    .disallowChanges()
+            }.also { serviceProvider ->
                 SingleActionPerProject.run(project, UsesKotlinNativeBundleBuildService::class.java.name) {
                     project.tasks.withType<UsesKotlinNativeBundleBuildService>().configureEach { task ->
                         task.kotlinNativeBundleBuildService.value(serviceProvider).disallowChanges()
@@ -121,7 +129,8 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<BuildServi
             NativeDistributionCommonizerLock(bundleDir) { message -> project.logger.info("Kotlin Native Bundle: $message") }
 
         lock.withLock {
-            val needToReinstall = KotlinToolingVersion(project.konanVersion).maturity == KotlinToolingVersion.Maturity.SNAPSHOT
+            val needToReinstall =
+                KotlinToolingVersion(parameters.kotlinNativeVersion.get()).maturity == KotlinToolingVersion.Maturity.SNAPSHOT
             if (needToReinstall) {
                 project.logger.debug("Snapshot version could be changed, to be sure that up-to-date version is used, Kotlin/Native should be reinstalled")
             }
@@ -196,7 +205,10 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<BuildServi
             ?: error(resolutionErrorMessage)
 
         if (!gradleCachesKotlinNativeDir.exists()) {
-            throw IllegalArgumentException(resolutionErrorMessage)
+            error(
+                "Kotlin Native bundle dependency was used. " +
+                        "Please provide the corresponding version in 'kotlin.native.version' property instead of any other ways."
+            )
         }
         return gradleCachesKotlinNativeDir
     }

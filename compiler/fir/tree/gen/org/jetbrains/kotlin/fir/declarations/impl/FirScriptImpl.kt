@@ -36,7 +36,7 @@ internal class FirScriptImpl(
     override val declarations: MutableList<FirDeclaration>,
     override val symbol: FirScriptSymbol,
     override val parameters: MutableList<FirProperty>,
-    override var contextReceivers: MutableOrEmptyList<FirContextReceiver>,
+    override var receivers: MutableOrEmptyList<FirScriptReceiverParameter>,
     override val resultPropertyName: Name?,
 ) : FirScript() {
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
@@ -51,7 +51,7 @@ internal class FirScriptImpl(
         controlFlowGraphReference?.accept(visitor, data)
         declarations.forEach { it.accept(visitor, data) }
         parameters.forEach { it.accept(visitor, data) }
-        contextReceivers.forEach { it.accept(visitor, data) }
+        receivers.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirScriptImpl {
@@ -59,7 +59,7 @@ internal class FirScriptImpl(
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         transformDeclarations(transformer, data)
         transformParameters(transformer, data)
-        transformContextReceivers(transformer, data)
+        transformReceivers(transformer, data)
         return this
     }
 
@@ -78,8 +78,8 @@ internal class FirScriptImpl(
         return this
     }
 
-    override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirScriptImpl {
-        contextReceivers.transformInplace(transformer, data)
+    override fun <D> transformReceivers(transformer: FirTransformer<D>, data: D): FirScriptImpl {
+        receivers.transformInplace(transformer, data)
         return this
     }
 
@@ -92,6 +92,7 @@ internal class FirScriptImpl(
     }
 
     override fun replaceDeclarations(newDeclarations: List<FirDeclaration>) {
+        if (declarations === newDeclarations) return
         declarations.clear()
         declarations.addAll(newDeclarations)
     }

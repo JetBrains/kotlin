@@ -1,9 +1,3 @@
 expression: "Hello, world".length
-
-CONSTANT_EXPRESSION_EVALUATION
 constant: 12
 constantValueKind: Int
-
-CONSTANT_LIKE_EXPRESSION_EVALUATION
-constantLike: 12
-constantLikeValueKind: Int

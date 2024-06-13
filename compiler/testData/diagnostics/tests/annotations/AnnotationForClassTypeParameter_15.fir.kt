@@ -1,4 +1,4 @@
-// !LANGUAGE: -ClassTypeParameterAnnotations
+// LANGUAGE: -ClassTypeParameterAnnotations
 @Target(AnnotationTarget.TYPE_PARAMETER)
 annotation class A1
 

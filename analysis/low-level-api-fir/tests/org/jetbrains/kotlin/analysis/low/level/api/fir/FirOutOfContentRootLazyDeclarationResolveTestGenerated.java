@@ -667,6 +667,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
   }
 
   @Test
+  @TestMetadata("superclassMetaAnnotation.kt")
+  public void testSuperclassMetaAnnotation() {
+    runTest("analysis/low-level-api-fir/testData/lazyResolve/superclassMetaAnnotation.kt");
+  }
+
+  @Test
   @TestMetadata("topLevelFunctions.kt")
   public void testTopLevelFunctions() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/topLevelFunctions.kt");
@@ -901,6 +907,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     @TestMetadata("emptyInterfaceWithSuper.kt")
     public void testEmptyInterfaceWithSuper() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/emptyInterfaceWithSuper.kt");
+    }
+
+    @Test
+    @TestMetadata("expectWithSuperClass.kt")
+    public void testExpectWithSuperClass() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/expectWithSuperClass.kt");
     }
 
     @Test

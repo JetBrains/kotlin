@@ -5,44 +5,45 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.types.renderers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.renderer.types.KtTypeRenderer
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.renderer.render
 
-public interface KtTypeNameRenderer {
+public interface KaTypeNameRenderer {
     public fun renderName(
-        analysisSession: KtAnalysisSession,
+        analysisSession: KaSession,
         name: Name,
-        owner: KtType,
-        typeRenderer: KtTypeRenderer,
+        owner: KaType,
+        typeRenderer: KaTypeRenderer,
         printer: PrettyPrinter,
     )
 
-    public object QUOTED : KtTypeNameRenderer {
+    public object QUOTED : KaTypeNameRenderer {
         override fun renderName(
-            analysisSession: KtAnalysisSession,
+            analysisSession: KaSession,
             name: Name,
-            owner: KtType,
-            typeRenderer: KtTypeRenderer,
+            owner: KaType,
+            typeRenderer: KaTypeRenderer,
             printer: PrettyPrinter,
         ) {
             printer.append(name.render())
         }
     }
 
-    public object UNQUOTED : KtTypeNameRenderer {
+    public object UNQUOTED : KaTypeNameRenderer {
         override fun renderName(
-            analysisSession: KtAnalysisSession,
+            analysisSession: KaSession,
             name: Name,
-            owner: KtType,
-            typeRenderer: KtTypeRenderer,
+            owner: KaType,
+            typeRenderer: KaTypeRenderer,
             printer: PrettyPrinter,
         ) {
             printer.append(name.asString())
         }
     }
-
 }
+
+public typealias KtTypeNameRenderer = KaTypeNameRenderer

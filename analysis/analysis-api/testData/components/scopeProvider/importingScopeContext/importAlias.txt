@@ -17,9 +17,9 @@ scopes:
   ExplicitSimpleImportingScope, index = 5
     packages: 0
     classifiers: 1
-      KtNamedClassOrObjectSymbol:
-        annotationsList: []
-        classIdIfNonLocal: other/A
+      KaNamedClassOrObjectSymbol:
+        annotations: []
+        classId: other/A
         classKind: CLASS
         companionObject: null
         contextReceivers: []
@@ -34,9 +34,9 @@ scopes:
         name: A
         origin: SOURCE
         superTypes: [
-          KtUsualClassType:
-            annotationsList: []
-            ownTypeArguments: []
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
             type: kotlin/Any
         ]
         symbolKind: TOP_LEVEL

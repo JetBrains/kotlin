@@ -1,4 +1,4 @@
-// !LANGUAGE: -ProhibitSmartcastsOnPropertyFromAlienBaseClassInheritedInInvisibleClass
+// LANGUAGE: -ProhibitSmartcastsOnPropertyFromAlienBaseClassInheritedInInvisibleClass
 // RENDER_DIAGNOSTICS_FULL_TEXT
 // MODULE: m1
 // FILE: A.kt

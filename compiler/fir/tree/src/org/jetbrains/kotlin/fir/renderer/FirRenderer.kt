@@ -56,8 +56,8 @@ class FirRenderer(
     override val getClassCallRenderer: FirGetClassCallRenderer = FirGetClassCallRendererForDebugging(),
 ) : FirRendererComponents {
 
-    override val visitor = Visitor()
-    override val printer = FirPrinter(builder)
+    override val visitor: Visitor = Visitor()
+    override val printer: FirPrinter = FirPrinter(builder)
 
     companion object {
         fun noAnnotationBodiesAccessorAndArguments(): FirRenderer = FirRenderer(
@@ -214,13 +214,17 @@ class FirRenderer(
         }
 
         override fun visitScript(script: FirScript) {
-            renderContexts(script.contextReceivers)
             annotationRenderer?.render(script)
             printer.print("SCRIPT: ")
             declarationRenderer?.renderPhaseAndAttributes(script) ?: resolvePhaseRenderer?.render(script)
             printer.println(script.name)
 
             printer.pushIndent()
+            // following the function convention, although in a compiled script parameters are passed before receivers
+            script.receivers.forEach {
+                it.accept(this)
+                printer.newLine()
+            }
             script.parameters.forEach {
                 it.accept(this)
                 printer.newLine()
@@ -234,6 +238,12 @@ class FirRenderer(
             }
 
             printer.popIndent()
+        }
+
+        override fun visitScriptReceiverParameter(scriptReceiverParameter: FirScriptReceiverParameter) {
+            print("<script receiver parameter>: ")
+            annotationRenderer?.render(scriptReceiverParameter)
+            scriptReceiverParameter.typeRef.accept(this)
         }
 
         override fun visitCodeFragment(codeFragment: FirCodeFragment) {
@@ -427,7 +437,9 @@ class FirRenderer(
             bodyRenderer?.renderBody(body, listOfNotNull<FirStatement>(delegatedConstructor))
         }
 
-        override fun visitErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor) = visitConstructor(errorPrimaryConstructor)
+        override fun visitErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor) {
+            visitConstructor(errorPrimaryConstructor)
+        }
 
         override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) {
             annotationRenderer?.render(propertyAccessor)
@@ -696,7 +708,7 @@ class FirRenderer(
             print("LAZY_EXPRESSION")
         }
 
-        override fun <T> visitLiteralExpression(literalExpression: FirLiteralExpression<T>) {
+        override fun visitLiteralExpression(literalExpression: FirLiteralExpression) {
             annotationRenderer?.render(literalExpression)
             val kind = literalExpression.kind
             val value = literalExpression.value

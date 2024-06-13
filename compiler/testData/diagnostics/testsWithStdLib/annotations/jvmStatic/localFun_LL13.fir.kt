@@ -1,5 +1,5 @@
-// !LANGUAGE: +JvmStaticInInterface
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// LANGUAGE: +JvmStaticInInterface
+// DIAGNOSTICS: -UNUSED_VARIABLE
 fun main() {
     @JvmStatic fun a(){
 

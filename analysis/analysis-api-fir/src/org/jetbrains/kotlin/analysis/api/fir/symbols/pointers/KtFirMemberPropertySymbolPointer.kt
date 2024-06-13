@@ -5,35 +5,35 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithMembers
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.name.Name
 
-internal class KtFirMemberPropertySymbolPointer(
-    ownerPointer: KtSymbolPointer<KtSymbolWithMembers>,
+internal class KaFirMemberPropertySymbolPointer(
+    ownerPointer: KaSymbolPointer<KaSymbolWithMembers>,
     private val name: Name,
     private val signature: FirCallableSignature,
     isStatic: Boolean,
-) : KtFirMemberSymbolPointer<KtKotlinPropertySymbol>(ownerPointer, isStatic) {
-    override fun KtFirAnalysisSession.chooseCandidateAndCreateSymbol(
+) : KaFirMemberSymbolPointer<KaKotlinPropertySymbol>(ownerPointer, isStatic) {
+    override fun KaFirSession.chooseCandidateAndCreateSymbol(
         candidates: FirScope,
         firSession: FirSession
-    ): KtKotlinPropertySymbol? {
+    ): KaKotlinPropertySymbol? {
         val firProperty = candidates.findDeclarationWithSignature<FirProperty>(signature) {
             processPropertiesByName(name, it)
         } ?: return null
 
-        return firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(firProperty.symbol) as? KtKotlinPropertySymbol
+        return firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(firProperty.symbol) as? KaKotlinPropertySymbol
     }
 
-    override fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = this === other ||
-            other is KtFirMemberPropertySymbolPointer &&
+    override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||
+            other is KaFirMemberPropertySymbolPointer &&
             other.name == name &&
             other.signature == signature &&
             hasTheSameOwner(other)

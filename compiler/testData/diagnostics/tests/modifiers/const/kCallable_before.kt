@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: -IntrinsicConstEvaluation
+// LANGUAGE: -IntrinsicConstEvaluation
 
 class SomeClassWithName(val property: Int) {
     val anotherProperty: String = ""

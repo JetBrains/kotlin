@@ -9,35 +9,35 @@ import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.*
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.isEqualTo
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10DescFunctionLikeSymbolPointer
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10DescFunctionLikeSymbolPointer
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10NeverRestoringSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.name.ClassId
 
-internal class KtFe10DescConstructorSymbol(
+internal class KaFe10DescConstructorSymbol(
     override val descriptor: ConstructorDescriptor,
     override val analysisContext: Fe10AnalysisContext
-) : KtConstructorSymbol(), KtFe10DescMemberSymbol<ConstructorDescriptor> {
+) : KaConstructorSymbol(), KaFe10DescMemberSymbol<ConstructorDescriptor> {
     override val isPrimary: Boolean
         get() = withValidityAssertion { descriptor.isPrimary }
 
-    override val containingClassIdIfNonLocal: ClassId?
+    override val containingClassId: ClassId?
         get() = withValidityAssertion { descriptor.constructedClass.classId }
 
-    override val valueParameters: List<KtValueParameterSymbol>
-        get() = withValidityAssertion { descriptor.valueParameters.map { KtFe10DescValueParameterSymbol(it, analysisContext) } }
+    override val valueParameters: List<KaValueParameterSymbol>
+        get() = withValidityAssertion { descriptor.valueParameters.map { KaFe10DescValueParameterSymbol(it, analysisContext) } }
 
     override val hasStableParameterNames: Boolean
         get() = withValidityAssertion { descriptor.ktHasStableParameterNames }
 
-    override val returnType: KtType
+    override val returnType: KaType
         get() = withValidityAssertion { descriptor.returnType.toKtType(analysisContext) }
 
     override val isActual: Boolean
@@ -46,26 +46,26 @@ internal class KtFe10DescConstructorSymbol(
     override val isExpect: Boolean
         get() = withValidityAssertion { descriptor.isExpect }
 
-    override val typeParameters: List<KtTypeParameterSymbol>
+    override val typeParameters: List<KaTypeParameterSymbol>
         get() = withValidityAssertion {
             descriptor.typeParameters.mapNotNull {
                 if (it.containingDeclaration != descriptor) return@mapNotNull null
-                KtFe10DescTypeParameterSymbol(it, analysisContext)
+                KaFe10DescTypeParameterSymbol(it, analysisContext)
             }
         }
 
-    override fun createPointer(): KtSymbolPointer<KtConstructorSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtConstructorSymbol>(this)?.let {
+    override fun createPointer(): KaSymbolPointer<KaConstructorSymbol> = withValidityAssertion {
+        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaConstructorSymbol>(this)?.let {
             return it
         }
 
         val callableId = descriptor.callableIdIfNotLocal
         if (callableId != null) {
             val signature = descriptor.getSymbolPointerSignature()
-            return KtFe10DescFunctionLikeSymbolPointer(callableId, signature)
+            return KaFe10DescFunctionLikeSymbolPointer(callableId, signature)
         }
 
-        return KtFe10NeverRestoringSymbolPointer()
+        return KaFe10NeverRestoringSymbolPointer()
     }
 
     override fun equals(other: Any?): Boolean = isEqualTo(other)

@@ -7,8 +7,8 @@ String(y)
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] annotationApplicationArgumentOnStatement.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationApplicationArgumentOnStatement.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|) @R|kotlin/annotation/Retention|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] annotation class Annotation : R|kotlin/Annotation| {

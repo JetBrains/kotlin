@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmIrSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.backend.jvm.JvmIrTypeSystemContext
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.common.*
+import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleResolver
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -46,8 +48,8 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
-import org.jetbrains.kotlin.fir.backend.extractFirDeclarations
 import org.jetbrains.kotlin.fir.backend.jvm.*
+import org.jetbrains.kotlin.fir.backend.utils.extractFirDeclarations
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
@@ -157,13 +159,13 @@ fun convertAnalyzedFirToIr(
     analysisResults: FirResult,
     environment: ModuleCompilerEnvironment
 ): ModuleCompilerIrBackendInput {
-    val extensions = JvmFir2IrExtensions(input.configuration, JvmIrDeserializerImpl(), JvmIrMangler)
+    val extensions = JvmFir2IrExtensions(input.configuration, JvmIrDeserializerImpl())
 
     val irGenerationExtensions =
         (environment.projectEnvironment as? VfsBasedProjectEnvironment)?.project?.let {
             IrGenerationExtension.getInstances(it)
         } ?: emptyList()
-    val (moduleFragment, components, pluginContext, irActualizedResult) =
+    val (moduleFragment, components, pluginContext, irActualizedResult, _, symbolTable) =
         analysisResults.convertToIrAndActualizeForJvm(
             extensions, input.configuration, environment.diagnosticsReporter, irGenerationExtensions,
         )
@@ -175,7 +177,8 @@ fun convertAnalyzedFirToIr(
         moduleFragment,
         components,
         pluginContext,
-        irActualizedResult
+        irActualizedResult,
+        symbolTable
     )
 }
 
@@ -200,6 +203,7 @@ fun FirResult.convertToIrAndActualizeForJvm(
         DefaultBuiltIns.Instance,
         ::JvmIrTypeSystemContext,
         JvmIrSpecialAnnotationSymbolProvider,
+        FirJvmBuiltinProviderActualDeclarationExtractor.Companion::initializeIfNeeded,
     ).also { performanceManager?.notifyIRTranslationFinished() }
 }
 
@@ -242,7 +246,7 @@ fun generateCodeFromIr(
     codegenFactory.generateModuleInFrontendIRMode(
         generationState,
         input.irModuleFragment,
-        input.components.symbolTable,
+        input.symbolTable,
         input.components.irProviders,
         input.extensions,
         FirJvmBackendExtension(
@@ -373,7 +377,7 @@ private class ProjectEnvironmentWithCoreEnvironmentEmulation(
     override fun getPackagePartProvider(fileSearchScope: AbstractProjectFileSearchScope): PackagePartProvider {
         return super.getPackagePartProvider(fileSearchScope).also {
             (it as? JvmPackagePartProvider)?.run {
-                addRoots(initialRoots, configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY))
+                addRoots(initialRoots, configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY))
                 packagePartProviders += this
             }
         }
@@ -407,6 +411,8 @@ fun createProjectEnvironment(
         configuration.get(JVMConfigurationKeys.MODULES)?.singleOrNull()?.getOutputDirectory()
             ?: configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)?.absolutePath
 
+    val contentRoots = configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS)
+
     val classpathRootsResolver = ClasspathRootsResolver(
         PsiManager.getInstance(project),
         messageCollector,
@@ -416,11 +422,12 @@ fun createProjectEnvironment(
         !configuration.getBoolean(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE),
         outputDirectory?.let { localFileSystem.findFileByPath(it) },
         javaFileManager,
-        releaseTarget
+        releaseTarget,
+        hasKotlinSources = contentRoots.any { it is KotlinSourceRoot },
     )
 
     val (initialRoots, javaModules) =
-        classpathRootsResolver.convertClasspathRoots(configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS))
+        classpathRootsResolver.convertClasspathRoots(contentRoots)
 
     val (roots, singleJavaFileRoots) =
         initialRoots.partition { (file) -> file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION }

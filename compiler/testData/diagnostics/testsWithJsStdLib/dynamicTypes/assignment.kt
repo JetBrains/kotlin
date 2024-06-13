@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
-// !CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_VARIABLE
+// CHECK_TYPE
 
 fun foo(d: dynamic) {
     val s: String = d

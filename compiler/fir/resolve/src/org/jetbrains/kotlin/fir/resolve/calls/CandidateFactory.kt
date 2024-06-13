@@ -97,7 +97,7 @@ class CandidateFactory private constructor(
                 ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS -> false
             },
             isFromOriginalTypeInPresenceOfSmartCast,
-            context.bodyResolveContext.inferenceSession,
+            context.bodyResolveContext,
         )
 
         if (pluginAmbiguity != null) {
@@ -227,7 +227,7 @@ class CandidateFactory private constructor(
             baseSystem,
             callInfo,
             originScope = null,
-            inferenceSession = context.bodyResolveContext.inferenceSession,
+            bodyResolveContext = context.bodyResolveContext,
         )
     }
 

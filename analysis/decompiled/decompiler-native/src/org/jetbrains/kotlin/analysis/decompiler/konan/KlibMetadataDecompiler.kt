@@ -30,7 +30,8 @@ abstract class KlibMetadataDecompiler<out V : BinaryVersion>(
     protected abstract fun doReadFile(file: VirtualFile): FileWithMetadata?
 
     protected abstract fun getDecompiledText(
-        file: FileWithMetadata.Compatible,
+        fileWithMetadata: FileWithMetadata.Compatible,
+        virtualFile: VirtualFile,
         serializerProtocol: SerializerExtensionProtocol,
         flexibleTypeDeserializer: FlexibleTypeDeserializer
     ): DecompiledText
@@ -64,10 +65,16 @@ abstract class KlibMetadataDecompiler<out V : BinaryVersion>(
     private fun buildDecompiledText(virtualFile: VirtualFile): DecompiledText {
         assert(FileTypeRegistry.getInstance().isFileOfType(virtualFile, fileType)) { "Unexpected file type ${virtualFile.fileType}" }
 
-        return when (val file = readFileSafely(virtualFile)) {
-            is FileWithMetadata.Incompatible -> createIncompatibleAbiVersionDecompiledText(expectedBinaryVersion(), file.version)
-            is FileWithMetadata.Compatible -> getDecompiledText(file, serializerProtocol(), flexibleTypeDeserializer)
-            null -> createIncompatibleAbiVersionDecompiledText(expectedBinaryVersion(), invalidBinaryVersion())
+        return when (val fileWithMetadata = readFileSafely(virtualFile)) {
+            is FileWithMetadata.Incompatible -> {
+                createIncompatibleAbiVersionDecompiledText(expectedBinaryVersion(), fileWithMetadata.version)
+            }
+            is FileWithMetadata.Compatible -> {
+                getDecompiledText(fileWithMetadata, virtualFile, serializerProtocol(), flexibleTypeDeserializer)
+            }
+            null -> {
+                createIncompatibleAbiVersionDecompiledText(expectedBinaryVersion(), invalidBinaryVersion())
+            }
         }
     }
 

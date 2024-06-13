@@ -10,53 +10,56 @@ import org.jetbrains.kotlin.name.ClassId
 /**
  * Entity which may have annotations applied inside. E.g, type or declaration
  */
-public interface KtAnnotated {
-    public val annotationsList: KtAnnotationsList
+public interface KaAnnotated {
+    public val annotations: KaAnnotationList
+
+    @Deprecated("Use 'annotations' instead.", replaceWith = ReplaceWith("annotations"))
+    public val annotationsList: KaAnnotationList
+        get() = annotations
 }
+
+public typealias KtAnnotated = KaAnnotated
 
 /**
  * A list of annotations applied.
  *
  * To check if annotation is present, please use [hasAnnotation].
- * [annotationInfos] is more preferable if suits your needs because it is lightweight.
  *
- * @see [KtAnnotationsList.annotations]
+ * @see [KaAnnotationList.annotations]
  */
-public val KtAnnotated.annotations: List<KtAnnotationApplicationWithArgumentsInfo>
-    get() = annotationsList.annotations
+@Deprecated("Use the 'annotations' the member property instead.")
+public val KaAnnotated.annotations: List<KaAnnotation>
+    get() = annotations
+
+@Deprecated("Use 'annotations' instead.", replaceWith = ReplaceWith("annotations"))
+public val KaAnnotated.annotationInfos: List<KaAnnotationApplicationInfo>
+    get() = annotations
 
 /**
- * A list of annotation infos.
+ * Checks if entity has annotation with specified [classId].
  *
- * @see [KtAnnotationsList.annotationInfos]
+ * @see [KaAnnotationList.contains]
  */
-public val KtAnnotated.annotationInfos: List<KtAnnotationApplicationInfo>
-    get() = annotationsList.annotationInfos
+@Deprecated("Use 'annotations' instead.", replaceWith = ReplaceWith("classId in annotations"))
+public fun KaAnnotated.hasAnnotation(classId: ClassId): Boolean {
+    return annotations.contains(classId)
+}
 
 /**
- * Checks if entity has annotation with specified [classId] and filtered by [useSiteTargetFilter].
+ * A list of annotations applied with specified [classId].
  *
- * @see [KtAnnotationsList.hasAnnotation]
+ * @see [KaAnnotationList.classIds]
  */
-public fun KtAnnotated.hasAnnotation(
-    classId: ClassId,
-    useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
-): Boolean = annotationsList.hasAnnotation(classId, useSiteTargetFilter)
-
-/**
- * A list of annotations applied with specified [classId] and filtered by [useSiteTargetFilter].
- *
- * @see [KtAnnotationsList.annotationClassIds]
- */
-public fun KtAnnotated.annotationsByClassId(
-    classId: ClassId,
-    useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
-): List<KtAnnotationApplicationWithArgumentsInfo> = annotationsList.annotationsByClassId(classId, useSiteTargetFilter)
+@Deprecated("Use 'annotations' instead.", replaceWith = ReplaceWith("annotations[classId]"))
+public fun KaAnnotated.annotationsByClassId(classId: ClassId): List<KaAnnotation> {
+    return annotations[classId]
+}
 
 /**
  * A list of annotations applied.
  *
- * @see [KtAnnotationsList.annotationClassIds]
+ * @see [KaAnnotationList.classIds]
  */
-public val KtAnnotated.annotationClassIds: Collection<ClassId>
-    get() = annotationsList.annotationClassIds
+@Deprecated("Use 'annotations' instead.", replaceWith = ReplaceWith("annotations.classIds"))
+public val KaAnnotated.annotationClassIds: Collection<ClassId>
+    get() = annotations.classIds

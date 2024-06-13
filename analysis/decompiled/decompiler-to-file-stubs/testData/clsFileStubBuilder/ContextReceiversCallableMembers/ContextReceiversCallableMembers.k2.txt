@@ -18,6 +18,11 @@ PsiJetFileStubImpl[package=]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=B]
         MODIFIER_LIST[private final]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=MyAnnotation]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
@@ -41,6 +46,11 @@ PsiJetFileStubImpl[package=]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=B]
         MODIFIER_LIST[private final]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=MyAnnotation]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
@@ -73,6 +83,11 @@ PsiJetFileStubImpl[package=]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=B]
         MODIFIER_LIST[private final]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=MyAnnotation]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE

@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.light.classes.symbol.parameters
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
-import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
+import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -20,13 +20,13 @@ import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.psi.KtParameter
 
 internal abstract class SymbolLightParameterCommon(
-    protected val parameterSymbolPointer: KtSymbolPointer<KtValueParameterSymbol>,
+    protected val parameterSymbolPointer: KaSymbolPointer<KaValueParameterSymbol>,
     private val containingMethod: SymbolLightMethodBase,
     override val kotlinOrigin: KtParameter?,
 ) : SymbolLightParameterBase(containingMethod) {
     internal constructor(
-        ktAnalysisSession: KtAnalysisSession,
-        parameterSymbol: KtValueParameterSymbol,
+        ktAnalysisSession: KaSession,
+        parameterSymbol: KaValueParameterSymbol,
         containingMethod: SymbolLightMethodBase,
     ) : this(
         parameterSymbolPointer = with(ktAnalysisSession) { parameterSymbol.createPointer() },
@@ -53,8 +53,8 @@ internal abstract class SymbolLightParameterCommon(
         // true only if this is "last" `vararg`
         containingMethod.parameterList.parameters.lastOrNull() == this && isDeclaredAsVararg()
 
-    protected open fun typeNullability(): KtTypeNullability {
-        if (isDeclaredAsVararg()) return KtTypeNullability.NON_NULLABLE
+    protected open fun typeNullability(): KaTypeNullability {
+        if (isDeclaredAsVararg()) return KaTypeNullability.NON_NULLABLE
 
         val nullabilityApplicable = !containingMethod.hasModifierProperty(PsiModifier.PRIVATE) &&
                 !containingMethod.containingClass.isAnnotationType &&
@@ -67,7 +67,7 @@ internal abstract class SymbolLightParameterCommon(
         return if (nullabilityApplicable) {
             parameterSymbolPointer.withSymbol(ktModule) { getTypeNullability(it.returnType) }
         } else {
-            KtTypeNullability.UNKNOWN
+            KaTypeNullability.UNKNOWN
         }
     }
 

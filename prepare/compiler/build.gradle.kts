@@ -148,7 +148,7 @@ dependencies {
     api(project(":kotlin-script-runtime"))
     api(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     api(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
-    api(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
+    api(libs.kotlinx.coroutines.core)
 
     proguardLibraries(project(":kotlin-annotations-jvm"))
 
@@ -167,7 +167,7 @@ dependencies {
         libraries(kotlinStdlib(classifier = "distJsKlib"))
     }
 
-    librariesStripVersion(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
+    librariesStripVersion(libs.kotlinx.coroutines.core) { isTransitive = false }
     librariesStripVersion(commonDependency("org.jetbrains.intellij.deps:trove4j")) { isTransitive = false }
 
     distLibraryProjects.forEach {
@@ -227,7 +227,7 @@ dependencies {
     fatJarContents(intellijCore())
     fatJarContents(commonDependency("org.jetbrains.intellij.deps.jna:jna")) { isTransitive = false }
     fatJarContents(commonDependency("org.jetbrains.intellij.deps.jna:jna-platform")) { isTransitive = false }
-    fatJarContents(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil")) { isTransitive = false }
+    fatJarContents(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
     fatJarContents(commonDependency("org.lz4:lz4-java")) { isTransitive = false }
     fatJarContents(commonDependency("org.jetbrains.intellij.deps:asm-all")) { isTransitive = false }
     fatJarContents(libs.guava) { isTransitive = false }
@@ -237,10 +237,8 @@ dependencies {
     fatJarContentsStripServices(commonDependency("com.fasterxml:aalto-xml")) { isTransitive = false }
     fatJarContents(commonDependency("org.codehaus.woodstox:stax2-api")) { isTransitive = false }
 
-    fatJarContentsStripServices(jpsModel()) { isTransitive = false }
-    fatJarContentsStripServices(jpsModelImpl()) { isTransitive = false }
     fatJarContentsStripMetadata(commonDependency("oro:oro")) { isTransitive = false }
-    fatJarContentsStripMetadata(commonDependency("org.jetbrains.intellij.deps:jdom")) { isTransitive = false }
+    fatJarContentsStripMetadata(intellijJDom()) { isTransitive = false }
     fatJarContentsStripMetadata(commonDependency("org.jetbrains.intellij.deps:log4j")) { isTransitive = false }
     fatJarContentsStripVersions(commonDependency("one.util:streamex")) { isTransitive = false }
 }
@@ -422,6 +420,9 @@ val distKotlinc = distTask<Sync>("distKotlinc") {
         }
         from(compilerPluginsCompatFiles) {
             rename { it.removePrefix("kotlin-") }
+        }
+        filePermissions {
+            unix("rw-r--r--")
         }
     }
 }

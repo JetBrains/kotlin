@@ -12,63 +12,121 @@ class ChunkedKlibModuleFragmentWriteStrategy(
     private val topLevelClassifierDeclarationsPerFile: Int = 64,
     private val topLevelCallableDeclarationsPerFile: Int = 128
 ) : KlibModuleFragmentWriteStrategy {
-    override fun processPackageParts(parts: List<KmModuleFragment>): List<KmModuleFragment> {
-        if (parts.isEmpty())
-            return emptyList()
+    init {
+        check(topLevelClassifierDeclarationsPerFile > 0) {
+            "Invalid top level classifiers per file: $topLevelClassifierDeclarationsPerFile"
+        }
+        check(topLevelCallableDeclarationsPerFile > 0) {
+            "Invalid top level callables per file: $topLevelCallableDeclarationsPerFile"
+        }
+    }
 
-        val fqName = checkNotNull(parts.first().fqName) {
-            "KmModuleFragment should have a not-null fqName!"
+    override fun processPackageParts(parts: List<KmModuleFragment>): List<KmModuleFragment> {
+        if (parts.isEmpty()) return emptyList()
+
+        val fqName = checkNotNull(parts.first().fqName) { "KmModuleFragment should have a not-null fqName!" }
+
+        val chunks = mutableListOf<KmModuleFragment>()
+        var lastChunk: KmModuleFragment? = null
+
+        fun createNewChunk(): KmModuleFragment = KmModuleFragment().also { chunk ->
+            chunk.fqName = fqName
+            chunks += chunk
+            lastChunk = chunk
         }
 
-        val classifierFragments = parts.asSequence()
-            .flatMap { it.classes.asSequence() + it.pkg?.typeAliases.orEmpty() }
-            .chunked(topLevelClassifierDeclarationsPerFile) { chunkedClassifiers ->
-                KmModuleFragment().also { fragment ->
-                    fragment.fqName = fqName
-                    chunkedClassifiers.forEach { classifier ->
-                        when (classifier) {
-                            is KmClass -> {
-                                fragment.classes += classifier
-                                fragment.className += classifier.name
-                            }
-                            is KmTypeAlias -> {
-                                val pkg = fragment.pkg ?: KmPackage().also { pkg ->
-                                    pkg.fqName = fqName
-                                    fragment.pkg = pkg
-                                }
-                                pkg.typeAliases += classifier
-                            }
-                            else -> error("Unexpected classifier type: $classifier")
-                        }
+        fun getLastChunkOrCreateNew(): KmModuleFragment = lastChunk ?: createNewChunk()
+
+        fun KmModuleFragment.getExistingPkgOrCreateNew(): KmPackage = pkg ?: KmPackage().also { pkg ->
+            pkg.fqName = this.fqName
+            this.pkg = pkg
+        }
+
+        parts.asSequence().flatMap(ClassifierBucket.Companion::createBuckets).forEach { bucket ->
+            val currentChunk = getLastChunkOrCreateNew()
+            val currentChunkSize = currentChunk.classes.size + (currentChunk.pkg?.typeAliases?.size ?: 0)
+
+            val chunkToAddClassifiers =
+                if (currentChunkSize == 0 || currentChunkSize + bucket.size <= topLevelClassifierDeclarationsPerFile)
+                    currentChunk
+                else
+                    createNewChunk()
+
+            when (bucket) {
+                is ClassifierBucket.Classes -> {
+                    chunkToAddClassifiers.classes += bucket.classes
+                    chunkToAddClassifiers.className += bucket.classNames
+                }
+
+                is ClassifierBucket.TypeAlias -> {
+                    chunkToAddClassifiers.getExistingPkgOrCreateNew().typeAliases += bucket.typeAlias
+                }
+            }
+        }
+
+        parts.asSequence().flatMap { it.pkg?.let { pkg -> pkg.functions.asSequence() + pkg.properties } ?: emptySequence() }
+            .chunked(topLevelCallableDeclarationsPerFile)
+            .forEach { chunkedCallables ->
+                val pkgToAddCallables = createNewChunk().getExistingPkgOrCreateNew()
+                chunkedCallables.forEach { callable ->
+                    when (callable) {
+                        is KmFunction -> pkgToAddCallables.functions += callable
+                        is KmProperty -> pkgToAddCallables.properties += callable
+                        else -> error("Unexpected callable type: $callable")
                     }
                 }
             }
 
-        val callableFragments = parts.asSequence()
-            .flatMap { it.pkg?.let { pkg -> pkg.functions.asSequence() + pkg.properties } ?: emptySequence() }
-            .chunked(topLevelCallableDeclarationsPerFile) { chunkedCallables ->
-                KmModuleFragment().also { fragment ->
-                    fragment.fqName = fqName
-                    chunkedCallables.forEach { callable ->
-                        val pkg = fragment.pkg ?: KmPackage().also { pkg ->
-                            pkg.fqName = fqName
-                            fragment.pkg = pkg
-                        }
-                        when (callable) {
-                            is KmFunction -> pkg.functions += callable
-                            is KmProperty -> pkg.properties += callable
-                            else -> error("Unexpected callable type: $callable")
-                        }
-                    }
-                }
-            }
-
-        val allFragments = (classifierFragments + callableFragments).toList()
-        return if (allFragments.isEmpty()) {
-            // We still need to emit empty packages because they may
-            // represent parts of package declaration (e.g. platform.[]).
-            // Tooling (e.g. `klib contents`) expects this kind of behavior.
+        return chunks.ifEmpty {
+            // We still need to emit empty packages because they may represent parts of package declarations
+            // (e.g. platform.* in C-interop KLIBs).
             parts
-        } else allFragments
+        }
+    }
+}
+
+private sealed interface ClassifierBucket {
+    val size: Int
+
+    class Classes private constructor(val classes: List<KmClass>) : ClassifierBucket {
+        override val size get() = classes.size
+        val classNames get() = classes.map(KmClass::name)
+
+        companion object {
+            /**
+             * Split the sequence of [KmClass]es into multiple [Classes] so that
+             * classes with the same top-level name go to the same bucket.
+             */
+            fun createBuckets(classes: List<KmClass>): Sequence<Classes> = when (classes.size) {
+                0 -> emptySequence()
+                1 -> sequenceOf(Classes(classes))
+                else -> {
+                    val groupedByTopLevelClassNames = linkedMapOf<ClassName, MutableList<KmClass>>()
+
+                    for (clazz in classes) {
+                        val className = clazz.name
+                        val topLevelClassName = if (!className.isLocalClassName()) className.substringBefore('.') else className
+                        groupedByTopLevelClassNames.computeIfAbsent(topLevelClassName) { mutableListOf() } += clazz
+                    }
+
+                    groupedByTopLevelClassNames.values.asSequence().map(::Classes)
+                }
+            }
+        }
+    }
+
+    class TypeAlias(val typeAlias: KmTypeAlias) : ClassifierBucket {
+        override val size get() = 1
+
+        companion object {
+            /** Wrap the sequence of [KmTypeAlias]es as the sequence of individual [ClassifierBucket.TypeAlias]es. */
+            fun createBuckets(typeAliases: List<KmTypeAlias>?): Sequence<TypeAlias> =
+                if (typeAliases.isNullOrEmpty()) emptySequence() else typeAliases.asSequence().map(::TypeAlias)
+        }
+    }
+
+    companion object {
+        fun createBuckets(fragment: KmModuleFragment): Sequence<ClassifierBucket> =
+            Classes.createBuckets(fragment.classes) + TypeAlias.createBuckets(fragment.pkg?.typeAliases)
     }
 }

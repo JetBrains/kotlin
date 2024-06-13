@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.config.getModuleNameForSource
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
@@ -172,7 +173,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         rootDisposable: Disposable,
         paths: KotlinPaths?
     ): ExitCode {
-        val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
 
         val targetVersion = arguments.targetVersion?.also {
@@ -224,11 +225,11 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         }
 
         arguments.relativePathBases?.let {
-            configuration.put(CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES, it.toList())
+            configuration.put(KlibConfigurationKeys.KLIB_RELATIVE_PATH_BASES, it.toList())
         }
 
-        configuration.put(CommonConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH, arguments.normalizeAbsolutePath)
-        configuration.put(CommonConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS, arguments.enableSignatureClashChecks)
+        configuration.put(KlibConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH, arguments.normalizeAbsolutePath)
+        configuration.put(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS, arguments.enableSignatureClashChecks)
 
         // ----
 
@@ -552,7 +553,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 wasmTarget = if (!arguments.wasm) null else arguments.wasmTarget?.let(WasmTarget::fromName)
             )
 
-            val messageCollector = environmentForJS.configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+            val messageCollector = environmentForJS.configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
             reportCollectedDiagnostics(environmentForJS.configuration, diagnosticsReporter, messageCollector)
             if (diagnosticsReporter.hasErrors) {
                 throw CompilationErrorException()
@@ -570,7 +571,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
     ): ModulesStructure {
         val configuration = environmentForJS.configuration
         val performanceManager = configuration.get(CLIConfigurationKeys.PERF_MANAGER)
-        val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
 
         val mainModule = MainModule.SourceFiles(environmentForJS.getSourceFiles())
@@ -756,7 +757,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         arguments: K2JSCompilerArguments,
         services: Services
     ) {
-        val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
         if (arguments.sourceMap) {
             configuration.put(JSConfigurationKeys.SOURCE_MAP, true)

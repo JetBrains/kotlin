@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 infix fun Any?.foo(a: Any) {}
 operator fun Any?.contains(a: Any): Boolean = true

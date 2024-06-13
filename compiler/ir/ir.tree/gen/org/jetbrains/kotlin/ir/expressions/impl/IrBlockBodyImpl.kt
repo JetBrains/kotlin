@@ -15,8 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
 class IrBlockBodyImpl internal constructor(
-    @Suppress("UNUSED_PARAMETER")
-    constructorIndicator: IrElementConstructorIndicator?,
+    @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
     override val startOffset: Int,
     override val endOffset: Int,
 ) : IrBlockBody() {

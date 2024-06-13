@@ -61,7 +61,7 @@ abstract class AbstractGetKlibSourceFileNameTest : AbstractAnalysisApiBasedTest(
                 packageFragmentProto.class_List.forEach { classProto ->
                     val classId = ClassId.fromString(nameResolver.getQualifiedClassName(classProto.fqName))
                     val classSymbol = getClassOrObjectSymbolByClassId(classId) ?: fail("Failed to find symbol '$classId'")
-                    actual.appendLine("Classifier: ${classSymbol.classIdIfNonLocal}; klibSourceFile: ${classSymbol.getKlibSourceFileName()}")
+                    actual.appendLine("Classifier: ${classSymbol.classId}; klibSourceFile: ${classSymbol.getKlibSourceFileName()}")
                 }
 
                 val propertyNames = packageFragmentProto.`package`.propertyList
@@ -73,7 +73,7 @@ abstract class AbstractGetKlibSourceFileNameTest : AbstractAnalysisApiBasedTest(
                 val callableNames = (propertyNames + functionNames).distinct()
                 callableNames.forEach { callableName ->
                     getTopLevelCallableSymbols(packageFqName, callableName).forEach { symbol ->
-                        actual.appendLine("Callable: ${symbol.callableIdIfNonLocal}; klibSourceFile: ${symbol.getKlibSourceFileName()}")
+                        actual.appendLine("Callable: ${symbol.callableId}; klibSourceFile: ${symbol.getKlibSourceFileName()}")
                     }
                 }
             }

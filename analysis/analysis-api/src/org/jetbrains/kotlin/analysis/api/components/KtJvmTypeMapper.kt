@@ -6,27 +6,31 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.org.objectweb.asm.Type
 
-public abstract class KtJvmTypeMapper : KtAnalysisSessionComponent() {
-    public abstract fun mapTypeToJvmType(type: KtType, mode: TypeMappingMode): Type
-    public abstract fun isPrimitiveBacked(type: KtType): Boolean
+public abstract class KaJvmTypeMapper : KaSessionComponent() {
+    public abstract fun mapTypeToJvmType(type: KaType, mode: TypeMappingMode): Type
+    public abstract fun isPrimitiveBacked(type: KaType): Boolean
 }
 
-public interface KtJvmTypeMapperMixIn : KtAnalysisSessionMixIn {
+public typealias KtJvmTypeMapper = KaJvmTypeMapper
+
+public interface KaJvmTypeMapperMixIn : KaSessionMixIn {
     /**
-     * Create ASM JVM type by corresponding KtType
+     * Create ASM JVM type by corresponding KaType
      *
      * @see TypeMappingMode
      */
-    public fun KtType.mapTypeToJvmType(mode: TypeMappingMode = TypeMappingMode.DEFAULT): Type =
+    public fun KaType.mapTypeToJvmType(mode: TypeMappingMode = TypeMappingMode.DEFAULT): Type =
         withValidityAssertion { analysisSession.jvmTypeMapper.mapTypeToJvmType(this, mode) }
 
     /**
      * Returns true if the type is backed by a single JVM primitive type
      */
-    public val KtType.isPrimitiveBacked: Boolean
+    public val KaType.isPrimitiveBacked: Boolean
         get() = withValidityAssertion { analysisSession.jvmTypeMapper.isPrimitiveBacked(this) }
 }
+
+public typealias KtJvmTypeMapperMixIn = KaJvmTypeMapperMixIn

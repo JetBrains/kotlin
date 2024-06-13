@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // TODO: muted automatically, investigate should it be ran for JS or not
 // IGNORE_BACKEND: JS
 

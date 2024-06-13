@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols
 
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KaFe10Symbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getDescriptor
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides
 
-internal fun KtFe10Symbol.isEqualTo(other: Any?): Boolean {
+internal fun KaFe10Symbol.isEqualTo(other: Any?): Boolean {
     if (this === other) return true
-    if (other !is KtFe10Symbol) return false
+    if (other !is KaFe10Symbol) return false
     return DescriptorEquivalenceForOverrides.areEquivalent(
         this.getDescriptor(),
         other.getDescriptor(),
@@ -20,7 +20,7 @@ internal fun KtFe10Symbol.isEqualTo(other: Any?): Boolean {
     )
 }
 
-internal fun KtFe10Symbol.calculateHashCode(): Int {
+internal fun KaFe10Symbol.calculateHashCode(): Int {
     val descriptor = this.getDescriptor()
-    return descriptor?.name?.hashCode() ?: (this as? KtNamedSymbol)?.name.hashCode()
+    return descriptor?.name?.hashCode() ?: (this as? KaNamedSymbol)?.name.hashCode()
 }

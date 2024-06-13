@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun foo(dn: dynamic?, d: dynamic, dnn: dynamic??) {
     val a1 = dn.foo()

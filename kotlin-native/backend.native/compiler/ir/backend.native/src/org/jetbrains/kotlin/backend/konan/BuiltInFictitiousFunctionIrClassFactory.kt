@@ -116,7 +116,7 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
             if (field != null)
                 error("Module has already been set")
             field = value
-            value.files += filesMap.values
+            filesMap.values.forEach(value::addFile)
 //            builtClasses.forEach { it.addFakeOverrides() }
         }
 
@@ -299,7 +299,7 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
                     val packageFragmentDescriptor = descriptor.findPackage()
                     val file = filesMap.getOrPut(packageFragmentDescriptor) {
                         IrFileImpl(NaiveSourceBasedFileEntryImpl("[K][Suspend]Functions"), packageFragmentDescriptor).also {
-                            this@BuiltInFictitiousFunctionIrClassFactory.module?.files?.add(it)
+                            this@BuiltInFictitiousFunctionIrClassFactory.module?.addFile(it)
                         }
                     }
                     parent = file

@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.light.classes.symbol.parameters
 import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiType
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.buildClassType
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThis
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
 import org.jetbrains.kotlin.light.classes.symbol.annotations.EmptyAnnotationsProvider
@@ -28,10 +28,10 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtParameter
 
 internal class SymbolLightSuspendContinuationParameter(
-    private val functionSymbolPointer: KtSymbolPointer<KtFunctionSymbol>,
+    private val functionSymbolPointer: KaSymbolPointer<KaFunctionSymbol>,
     private val containingMethod: SymbolLightMethodBase,
 ) : SymbolLightParameterBase(containingMethod) {
-    private inline fun <T> withFunctionSymbol(crossinline action: context(KtAnalysisSession) (KtFunctionSymbol) -> T): T {
+    private inline fun <T> withFunctionSymbol(crossinline action: context(KaSession) (KaFunctionSymbol) -> T): T {
         return functionSymbolPointer.withSymbol(ktModule, action)
     }
 
@@ -63,9 +63,9 @@ internal class SymbolLightSuspendContinuationParameter(
                 annotationsProvider = EmptyAnnotationsProvider,
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider {
                     if (withFunctionSymbol { it.visibility.isPrivateOrPrivateToThis() })
-                        KtTypeNullability.UNKNOWN
+                        KaTypeNullability.UNKNOWN
                     else
-                        KtTypeNullability.NON_NULLABLE
+                        KaTypeNullability.NON_NULLABLE
                 },
             ),
         )

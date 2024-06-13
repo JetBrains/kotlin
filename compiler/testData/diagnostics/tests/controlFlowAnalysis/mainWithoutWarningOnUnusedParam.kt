@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: -WarningOnMainUnusedParameter
+// LANGUAGE: -WarningOnMainUnusedParameter
 
 fun main(args: Array<String>) {
 

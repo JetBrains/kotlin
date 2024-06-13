@@ -1,0 +1,15 @@
+USED DECLARATIONS:
+
+Declaration: dependency.FooAlias1
+By names: [FooAlias1]
+
+Declaration: dependency.FooAlias2
+By names: [FooAlias2]
+
+Declaration: test.ClassWithTypeParam
+By names: [ClassWithTypeParam]
+
+Declaration: test.functionWithTypeParam
+By names: [functionWithTypeParam]
+
+UNRESOLVED NAMES:

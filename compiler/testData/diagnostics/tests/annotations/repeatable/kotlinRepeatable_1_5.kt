@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: -RepeatableAnnotations
+// LANGUAGE: -RepeatableAnnotations
 
 @Repeatable
 annotation class repann

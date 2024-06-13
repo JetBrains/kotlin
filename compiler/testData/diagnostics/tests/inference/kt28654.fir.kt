@@ -1,7 +1,7 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // Related issue: KT-28654
 
-fun <K> select(): K = <!RETURN_TYPE_MISMATCH!>run { }<!>
+fun <K> select(): K = run <!ARGUMENT_TYPE_MISMATCH!>{ }<!>
 
 fun test() {
     val x: Int = select()

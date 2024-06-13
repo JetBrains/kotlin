@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.psi.psiUtil.parents
-import org.jetbrains.kotlin.references.fe10.*
 import org.jetbrains.kotlin.resolve.references.ReferenceAccess
 
 class KtFe10KotlinReferenceProviderContributor : KotlinReferenceProviderContributor {

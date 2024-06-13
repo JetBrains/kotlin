@@ -91,8 +91,6 @@ fun <Context : LoggingContext, Input> createSimpleNamedCompilerPhase(
         op(context, input)
 }
 
-internal val defaultConditions = setOf(defaultDumper, validationAction)
-
 fun <Context : CommonBackendContext> makeIrModulePhase(
     lowering: (Context) -> ModuleLoweringPass,
     name: String,
@@ -104,8 +102,8 @@ fun <Context : CommonBackendContext> makeIrModulePhase(
     createSimpleNamedCompilerPhase(
         name = name,
         description = description,
-        preactions = defaultConditions + preconditions,
-        postactions = defaultConditions + postconditions,
+        preactions = DEFAULT_IR_ACTIONS + preconditions,
+        postactions = DEFAULT_IR_ACTIONS + postconditions,
         prerequisite = prerequisite,
         outputIfNotEnabled = { _, _, _, irModule -> irModule },
         op = { context, irModule ->

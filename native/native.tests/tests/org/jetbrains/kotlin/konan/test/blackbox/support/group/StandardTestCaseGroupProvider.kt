@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.has
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
 import org.jetbrains.kotlin.test.directives.model.Directive
+import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
@@ -132,6 +133,7 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
             val location = Location(testDataFile, lineNumber)
             val expectFileDirectiveAfterModuleDirective =
                 lastParsedDirective == TestDirectives.MODULE // Only FILE directive may follow MODULE directive.
+            // actually, between module and file should be placed directives with applicability MODULE
 
             val rawDirective = RegisteredDirectivesParser.parseDirective(line)
             if (rawDirective != null) {
@@ -149,11 +151,15 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
                 }
 
                 if (parsedDirective != null) {
-                    when (val directive = parsedDirective.directive) {
-                        TestDirectives.FILE -> {
+                    val directive = parsedDirective.directive
+                    when {
+                        directive == TestDirectives.FILE -> {
                             val newFileName = parseFileName(parsedDirective, location)
                             finishTestFile(forceFinish = false, location)
                             beginTestFile(newFileName)
+                        }
+                        directive.applicability == DirectiveApplicability.Module -> {
+                            currentTestModule?.directives?.add(parsedDirective)
                         }
                         else -> {
                             assertFalse(expectFileDirectiveAfterModuleDirective) {
@@ -201,6 +207,10 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
 
         if (settings.isDisabledNative(registeredDirectives))
             return null
+
+        if (testModules.values.any {
+                it.files.any { it.location.extension == "def" && !it.text.defFileContentsIsSupportedOn(settings.get<KotlinNativeTargets>().testTarget) }
+            }) return null
 
         val freeCompilerArgs = parseFreeCompilerArgs(registeredDirectives, location)
         val expectedTimeoutFailure = parseExpectedTimeoutFailure(registeredDirectives)

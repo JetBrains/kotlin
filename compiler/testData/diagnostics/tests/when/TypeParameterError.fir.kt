@@ -1,4 +1,4 @@
-// !LANGUAGE: +ForbidInferringTypeVariablesIntoEmptyIntersection
+// LANGUAGE: +ForbidInferringTypeVariablesIntoEmptyIntersection
 // FILE: ObjectNode.java
 
 public interface ObjectNode {

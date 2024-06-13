@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 // Validation test.
 // Check that type variable is fixed to Data<Nothing> as it's used in input types for lambda

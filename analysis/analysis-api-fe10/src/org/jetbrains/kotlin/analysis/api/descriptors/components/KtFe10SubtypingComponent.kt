@@ -6,31 +6,31 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import org.jetbrains.kotlin.analysis.api.components.KaSubtypingErrorTypePolicy
-import org.jetbrains.kotlin.analysis.api.components.KtSubtypingComponent
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
-import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
-import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.components.KaSubtypingComponent
+import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
+import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.types.checker.IsErrorTypeEqualToAnythingTypeChecker
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeCheckerImpl
 
-internal class KtFe10SubtypingComponent(
-    override val analysisSession: KtFe10AnalysisSession
-) : KtSubtypingComponent(), Fe10KtAnalysisSessionComponent {
-    override val token: KtLifetimeToken
+internal class KaFe10SubtypingComponent(
+    override val analysisSession: KaFe10Session
+) : KaSubtypingComponent(), KaFe10SessionComponent {
+    override val token: KaLifetimeToken
         get() = analysisSession.token
 
-    override fun isEqualTo(first: KtType, second: KtType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean {
-        require(first is KtFe10Type)
-        require(second is KtFe10Type)
+    override fun isEqualTo(first: KaType, second: KaType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean {
+        require(first is KaFe10Type)
+        require(second is KaFe10Type)
         return getTypeCheckerFor(errorTypePolicy).equalTypes(first.fe10Type, second.fe10Type)
     }
 
-    override fun isSubTypeOf(subType: KtType, superType: KtType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean {
-        require(subType is KtFe10Type)
-        require(superType is KtFe10Type)
+    override fun isSubTypeOf(subType: KaType, superType: KaType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean {
+        require(subType is KaFe10Type)
+        require(superType is KaFe10Type)
         return getTypeCheckerFor(errorTypePolicy).isSubtypeOf(subType.fe10Type, superType.fe10Type)
     }
 

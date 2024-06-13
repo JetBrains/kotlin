@@ -1,5 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
-// !OPT_IN: kotlin.ExperimentalMultiplatform
+// OPT_IN: kotlin.ExperimentalMultiplatform
 // TARGET_BACKEND: JS_IR
 // TARGET_BACKEND: NATIVE
 // TARGET_BACKEND: WASM

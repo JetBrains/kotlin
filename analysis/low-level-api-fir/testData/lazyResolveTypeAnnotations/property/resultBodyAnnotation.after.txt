@@ -7,8 +7,8 @@
   anchor -> [FirPropertySymbol foo/$$result]
 
 FILE: [ResolvedTo(IMPORTS)] resultBodyAnnotation.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-resultBodyAnnotation.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -32,3 +32,4 @@ FILE: [ResolvedTo(IMPORTS)] resultBodyAnnotation.kts
         }
         )
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Unit|
+

@@ -1,4 +1,4 @@
-FILE: box.kt
+FILE: C.kt
     private open class C : R|B| {
         public constructor(): R|C| {
             super<R|B|>()
@@ -9,6 +9,7 @@ FILE: box.kt
         }
 
     }
+FILE: box.kt
     public final fun box(): R|kotlin/String| {
-        ^box R|/D.D|().R|/B.foo|(String(s))
+        ^box R|/D.D|().R|/B.foo|(String())
     }

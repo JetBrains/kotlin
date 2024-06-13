@@ -6,16 +6,16 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.components.KtExpressionTypeProvider
+import org.jetbrains.kotlin.analysis.api.components.KaExpressionTypeProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
-import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
+import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.types.KtErrorType
-import org.jetbrains.kotlin.analysis.api.types.KtFunctionalType
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.types.KaErrorType
+import org.jetbrains.kotlin.analysis.api.types.KaFunctionalType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -38,9 +38,9 @@ import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
-class KtFe10ExpressionTypeProvider(
-    override val analysisSession: KtFe10AnalysisSession
-) : KtExpressionTypeProvider(), Fe10KtAnalysisSessionComponent {
+class KaFe10ExpressionTypeProvider(
+    override val analysisSession: KaFe10Session
+) : KaExpressionTypeProvider(), KaFe10SessionComponent {
     private companion object {
         val NON_EXPRESSION_CONTAINERS = arrayOf(
             KtImportDirective::class.java,
@@ -50,10 +50,10 @@ class KtFe10ExpressionTypeProvider(
         )
     }
 
-    override val token: KtLifetimeToken
+    override val token: KaLifetimeToken
         get() = analysisSession.token
 
-    override fun getKtExpressionType(expression: KtExpression): KtType? {
+    override fun getKtExpressionType(expression: KtExpression): KaType? {
         // Not sure if it's safe enough. In theory, some annotations on expressions might change its type
         val unwrapped = expression.unwrapParenthesesLabelsAndAnnotations() as? KtExpression ?: return null
         if (unwrapped.getParentOfTypes(false, *NON_EXPRESSION_CONTAINERS) != null) {
@@ -70,7 +70,7 @@ class KtFe10ExpressionTypeProvider(
         return kotlinType.toKtType(analysisContext)
     }
 
-    override fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KtType {
+    override fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KaType {
         // Handle callable declarations with explicit return type first
         if (declaration is KtCallableDeclaration) {
             val typeReference = declaration.typeReference
@@ -143,7 +143,7 @@ class KtFe10ExpressionTypeProvider(
         return analysisContext.builtIns.unitType.toKtType(analysisContext)
     }
 
-    override fun getFunctionalTypeForKtFunction(declaration: KtFunction): KtType {
+    override fun getFunctionalTypeForKtFunction(declaration: KtFunction): KaType {
         val analysisMode = if (declaration.hasDeclaredReturnType()) AnalysisMode.PARTIAL else AnalysisMode.FULL
         val bindingContext = analysisContext.analyze(declaration, analysisMode)
         val functionDescriptor = bindingContext[BindingContext.FUNCTION, declaration]
@@ -164,7 +164,7 @@ class KtFe10ExpressionTypeProvider(
             .toKtType(analysisContext)
     }
 
-    override fun getExpectedType(expression: PsiElement): KtType? {
+    override fun getExpectedType(expression: PsiElement): KaType? {
         val ktExpression = expression.getParentOfType<KtExpression>(false) ?: return null
         val parentExpression = if (ktExpression.parent is KtLabeledExpression) {
             // lambda -> labeled expression -> lambda argument (value argument)
@@ -238,7 +238,7 @@ class KtFe10ExpressionTypeProvider(
             is KtWhenConditionWithExpression -> {
                 val whenExpression = (parentExpression.parent as? KtWhenEntry)?.parent as? KtWhenExpression
                 if (whenExpression != null) {
-                    val subject = whenExpression.subjectExpression ?: return with(analysisSession) { builtinTypes.BOOLEAN }
+                    val subject = whenExpression.subjectExpression ?: return with(analysisSession) { builtinTypes.boolean }
                     val kotlinType = analysisContext.analyze(subject).getType(subject)
                     return kotlinType?.toKtNonErrorType(analysisContext)
                 }
@@ -248,7 +248,7 @@ class KtFe10ExpressionTypeProvider(
                 if (expression == parentExpression.statements.lastOrNull()) {
                     val functionLiteral = parentExpression.parent as? KtFunctionLiteral
                     if (functionLiteral != null) {
-                        val functionalType = getExpectedType(functionLiteral) as? KtFunctionalType
+                        val functionalType = getExpectedType(functionLiteral) as? KaFunctionalType
                         functionalType?.returnType?.let { return it }
                     }
                 }
@@ -319,6 +319,6 @@ class KtFe10ExpressionTypeProvider(
         return !TypeUtils.isNullableType(expressionType)
     }
 
-    private fun KotlinType.toKtNonErrorType(analysisContext: Fe10AnalysisContext): KtType? =
-        this.toKtType(analysisContext).takeUnless { it is KtErrorType }
+    private fun KotlinType.toKtNonErrorType(analysisContext: Fe10AnalysisContext): KaType? =
+        this.toKtType(analysisContext).takeUnless { it is KaErrorType }
 }

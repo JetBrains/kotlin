@@ -8,18 +8,22 @@ package org.jetbrains.kotlin.fir.lazy
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
-import org.jetbrains.kotlin.fir.backend.toIrConst
 import org.jetbrains.kotlin.fir.backend.toIrType
+import org.jetbrains.kotlin.fir.backend.utils.toIrConst
 import org.jetbrains.kotlin.fir.declarations.FirField
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.utils.isExternal
-import org.jetbrains.kotlin.fir.declarations.utils.isFinal
-import org.jetbrains.kotlin.fir.declarations.utils.isStatic
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
+import org.jetbrains.kotlin.fir.propertyIfBackingField
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
+import org.jetbrains.kotlin.fir.unwrapOr
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.MetadataSource
+import org.jetbrains.kotlin.ir.declarations.createExpressionBody
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
@@ -36,6 +40,7 @@ class Fir2IrLazyField(
     override val fir: FirField,
     val containingClass: FirRegularClass?,
     override val symbol: IrFieldSymbol,
+    correspondingPropertySymbol: IrPropertySymbol?
 ) : IrField(), AbstractFir2IrLazyDeclaration<FirField>, Fir2IrComponents by c {
     init {
         symbol.bind(this)
@@ -71,14 +76,15 @@ class Fir2IrLazyField(
         set(_) = mutationNotSupported()
 
     override var initializer: IrExpressionBody? by lazyVar(lock) {
-        when (val initializer = fir.unwrapFakeOverrides().initializer) {
-            is FirLiteralExpression<*> -> factory.createExpressionBody(initializer.toIrConst(type))
+        val field = fir.unwrapFakeOverrides()
+        val evaluatedInitializer = (field.propertyIfBackingField as? FirProperty)?.evaluatedInitializer?.unwrapOr<FirExpression> {}
+        when (val initializer = evaluatedInitializer ?: field.initializer) {
+            is FirLiteralExpression -> factory.createExpressionBody(initializer.toIrConst<Any?>(type))
             else -> null
         }
     }
 
-    override var correspondingPropertySymbol: IrPropertySymbol?
-        get() = null
+    override var correspondingPropertySymbol: IrPropertySymbol? = correspondingPropertySymbol
         set(_) = mutationNotSupported()
 
     override var metadata: MetadataSource?

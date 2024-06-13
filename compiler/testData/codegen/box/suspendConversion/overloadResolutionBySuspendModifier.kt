@@ -1,5 +1,5 @@
-// !LANGUAGE: +SuspendConversion
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +SuspendConversion
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // IGNORE_BACKEND: JVM
 // IGNORE_LIGHT_ANALYSIS
 //  java.lang.IllegalStateException: OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity:

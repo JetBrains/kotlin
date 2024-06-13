@@ -51,11 +51,11 @@ class BodyResolveContext(
     lateinit var file: FirFile
 
     @PrivateForInline
-    var regularTowerDataContexts = FirRegularTowerDataContexts(regular = FirTowerDataContext())
+    var regularTowerDataContexts: FirRegularTowerDataContexts = FirRegularTowerDataContexts(regular = FirTowerDataContext())
 
     // TODO: Rename to postponed
     @PrivateForInline
-    val specialTowerDataContexts = FirSpecialTowerDataContexts()
+    val specialTowerDataContexts: FirSpecialTowerDataContexts = FirSpecialTowerDataContexts()
 
     @OptIn(PrivateForInline::class)
     val towerDataContext: FirTowerDataContext
@@ -562,7 +562,7 @@ class BodyResolveContext(
                 // TODO: temporary solution for avoiding problem described in KT-62712, flatten back after fix
                 .let { baseCtx ->
                     towerElementsForScript.implicitReceivers.fold(baseCtx) { ctx, it ->
-                        ctx.addContextReceiverGroup(listOf(it))
+                        ctx.addReceiver(it.type.classId?.shortClassName, it)
                     }
                 }
 
@@ -697,7 +697,7 @@ class BodyResolveContext(
                 }
                 val receiverTypeRef = function.receiverParameter?.typeRef
                 val type = receiverTypeRef?.coneType
-                val additionalLabelName = type?.labelName(holder.session)
+                val additionalLabelName = type?.abbreviatedTypeOrSelf?.labelName(holder.session)
                 withLabelAndReceiverType(function.name, function, type, holder, additionalLabelName, f)
             } else {
                 f()
@@ -866,7 +866,7 @@ class BodyResolveContext(
             }
             withContainer(accessor) {
                 val type = receiverTypeRef?.coneType
-                val additionalLabelName = type?.labelName(holder.session)
+                val additionalLabelName = type?.abbreviatedTypeOrSelf?.labelName(holder.session)
                 withLabelAndReceiverType(property.name, property, type, holder, additionalLabelName, f)
             }
         }

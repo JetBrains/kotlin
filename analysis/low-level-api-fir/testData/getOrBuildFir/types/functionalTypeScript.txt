@@ -7,8 +7,8 @@ R|(kotlin/Int) -> kotlin/String|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] functionalTypeScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-functionalTypeScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun x(): R|(kotlin/Int) -> kotlin/String| {

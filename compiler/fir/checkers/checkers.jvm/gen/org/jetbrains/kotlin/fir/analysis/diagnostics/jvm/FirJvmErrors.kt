@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -141,6 +142,7 @@ object FirJvmErrors {
     val JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE: KtDiagnosticFactory0 by error0<PsiElement>()
     val NO_REFLECTION_IN_CLASS_PATH: KtDiagnosticFactory0 by warning0<PsiElement>()
     val SYNTHETIC_PROPERTY_WITHOUT_JAVA_ORIGIN: KtDiagnosticFactory2<FirNamedFunctionSymbol, Name> by warning2<PsiElement, FirNamedFunctionSymbol, Name>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
+    val JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY: KtDiagnosticFactory1<FirPropertySymbol> by error1<PsiElement, FirPropertySymbol>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
 
     init {
         RootDiagnosticRendererFactory.registerFactory(FirJvmErrorsDefaultMessages)

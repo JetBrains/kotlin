@@ -1,29 +1,29 @@
-KtKotlinPropertySymbol:
-  annotationsList: []
-  backingFieldSymbol: KtBackingFieldSymbol:
-    annotationsList: []
-    callableIdIfNonLocal: null
+KaKotlinPropertySymbol:
+  annotations: []
+  backingFieldSymbol: KaBackingFieldSymbol:
+    annotations: []
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
     origin: PROPERTY_BACKING_FIELD
-    owningProperty: KtKotlinPropertySymbol(/prop)
+    owningProperty: KaKotlinPropertySymbol(/prop)
     receiverParameter: null
-    returnType: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Boolean
     symbolKind: LOCAL
     typeParameters: []
-    getContainingFileSymbol: KtFileSymbol(propertyReceiverParameter.kt)
+    getContainingFileSymbol: KaFileSymbol(propertyReceiverParameter.kt)
     getContainingJvmClassName: PropertyReceiverParameterKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  callableIdIfNonLocal: /prop
+  callableId: /prop
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
-    annotationsList: []
-    callableIdIfNonLocal: null
+  getter: KaPropertyGetterSymbol:
+    annotations: []
+    callableId: null
     contextReceivers: []
     hasBody: true
     hasStableParameterNames: true
@@ -33,32 +33,32 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverParameter: KtReceiverParameterSymbol:
-      annotationsList: [
+    receiverParameter: KaReceiverParameterSymbol:
+      annotations: [
         ReceiverAnnotation()
           psi: KtAnnotationEntry
       ]
       origin: SOURCE
-      owningCallableSymbol: KtKotlinPropertySymbol(/prop)
-      type: KtUsualClassType:
-        annotationsList: [
+      owningCallableSymbol: KaKotlinPropertySymbol(/prop)
+      type: KaUsualClassType:
+        annotations: [
           ReceiverTypeAnnotation()
             psi: KtAnnotationEntry
         ]
-        ownTypeArguments: []
+        typeArguments: []
         type: @R|ReceiverTypeAnnotation|()  kotlin/Long
-      getContainingFileSymbol: KtFileSymbol(propertyReceiverParameter.kt)
+      getContainingFileSymbol: KaFileSymbol(propertyReceiverParameter.kt)
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
-    returnType: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Boolean
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
-    getContainingFileSymbol: KtFileSymbol(propertyReceiverParameter.kt)
+    getContainingFileSymbol: KaFileSymbol(propertyReceiverParameter.kt)
     getContainingJvmClassName: PropertyReceiverParameterKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
@@ -79,32 +79,32 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: prop
   origin: SOURCE
-  receiverParameter: KtReceiverParameterSymbol:
-    annotationsList: [
+  receiverParameter: KaReceiverParameterSymbol:
+    annotations: [
       ReceiverAnnotation()
         psi: KtAnnotationEntry
     ]
     origin: SOURCE
-    owningCallableSymbol: KtKotlinPropertySymbol(/prop)
-    type: KtUsualClassType:
-      annotationsList: [
+    owningCallableSymbol: KaKotlinPropertySymbol(/prop)
+    type: KaUsualClassType:
+      annotations: [
         ReceiverTypeAnnotation()
           psi: KtAnnotationEntry
       ]
-      ownTypeArguments: []
+      typeArguments: []
       type: @R|ReceiverTypeAnnotation|()  kotlin/Long
-    getContainingFileSymbol: KtFileSymbol(propertyReceiverParameter.kt)
+    getContainingFileSymbol: KaFileSymbol(propertyReceiverParameter.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Boolean
   setter: null
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(propertyReceiverParameter.kt)
+  getContainingFileSymbol: KaFileSymbol(propertyReceiverParameter.kt)
   getContainingJvmClassName: PropertyReceiverParameterKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

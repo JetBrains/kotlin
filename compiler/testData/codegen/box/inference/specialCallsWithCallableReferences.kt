@@ -2,7 +2,7 @@
 // FIR status: Disabling of StrictOnlyInputTypesChecks is not supported by FIR
 // WITH_STDLIB
 // SKIP_TXT
-// !LANGUAGE: -StrictOnlyInputTypesChecks
+// LANGUAGE: -StrictOnlyInputTypesChecks
 
 import kotlin.experimental.ExperimentalTypeInference
 

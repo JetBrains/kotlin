@@ -1,7 +1,7 @@
 // TARGET_BACKEND: WASM
 // USE_NEW_EXCEPTION_HANDLING_PROPOSAL
 // TODO: remove the test when KT-66906 will be resolved
-// !LANGUAGE: +ProperFinally
+// LANGUAGE: +ProperFinally
 var result = ""
 
 fun test() {

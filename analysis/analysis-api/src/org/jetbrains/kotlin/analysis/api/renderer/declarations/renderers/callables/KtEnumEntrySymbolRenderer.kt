@@ -5,25 +5,25 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callables
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtDeclarationRenderer
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderAnnotationsModifiersAndContextReceivers
-import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
-public interface KtEnumEntrySymbolRenderer {
+public interface KaEnumEntrySymbolRenderer {
     public fun renderSymbol(
-        analysisSession: KtAnalysisSession,
-        symbol: KtEnumEntrySymbol,
-        declarationRenderer: KtDeclarationRenderer,
+        analysisSession: KaSession,
+        symbol: KaEnumEntrySymbol,
+        declarationRenderer: KaDeclarationRenderer,
         printer: PrettyPrinter,
     )
 
-    public object AS_SOURCE : KtEnumEntrySymbolRenderer {
+    public object AS_SOURCE : KaEnumEntrySymbolRenderer {
         override fun renderSymbol(
-            analysisSession: KtAnalysisSession,
-            symbol: KtEnumEntrySymbol,
-            declarationRenderer: KtDeclarationRenderer,
+            analysisSession: KaSession,
+            symbol: KaEnumEntrySymbol,
+            declarationRenderer: KaDeclarationRenderer,
             printer: PrettyPrinter,
         ): Unit = printer {
             " ".separated(
@@ -34,3 +34,5 @@ public interface KtEnumEntrySymbolRenderer {
         }
     }
 }
+
+public typealias KtEnumEntrySymbolRenderer = KaEnumEntrySymbolRenderer

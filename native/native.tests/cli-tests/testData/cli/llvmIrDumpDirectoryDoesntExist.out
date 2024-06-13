@@ -1,0 +1,2 @@
+warning: cannot dump LLVM IR to non-existent location: $USER_DIR$/no/such/dir
+OK

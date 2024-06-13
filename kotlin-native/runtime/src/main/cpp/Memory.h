@@ -335,9 +335,6 @@ bool ClearSubgraphReferences(ObjHeader* root, bool checked) RUNTIME_NOTHROW;
 void* CreateStablePointer(ObjHeader* obj) RUNTIME_NOTHROW;
 // Disposes a stable pointer to the object.
 void DisposeStablePointer(void* pointer) RUNTIME_NOTHROW;
-// Disposes a stable pointer to the object.
-// Accepts a MemoryState, thus can be called from deinitiliazation methods, when TLS is already deallocated.
-void DisposeStablePointerFor(MemoryState* memoryState, void* pointer) RUNTIME_NOTHROW;
 // Translate stable pointer to object reference.
 OBJ_GETTER(DerefStablePointer, void*) RUNTIME_NOTHROW;
 // Move stable pointer ownership.
@@ -605,12 +602,5 @@ void compactObjectPoolInCurrentThread() noexcept;
 RUNTIME_NOTHROW ALWAYS_INLINE extern "C" void Kotlin_processObjectInMark(void* state, ObjHeader* object);
 RUNTIME_NOTHROW ALWAYS_INLINE extern "C" void Kotlin_processArrayInMark(void* state, ObjHeader* object);
 RUNTIME_NOTHROW ALWAYS_INLINE extern "C" void Kotlin_processEmptyObjectInMark(void* state, ObjHeader* object);
-
-RUNTIME_NOTHROW extern "C" OBJ_GETTER(Kotlin_Interop_derefSpecialRef, kotlin::mm::RawSpecialRef *ref);
-RUNTIME_NOTHROW extern "C" kotlin::mm::RawSpecialRef *Kotlin_Interop_createSpecialRef(ObjHeader *object);
-RUNTIME_NOTHROW extern "C" void Kotlin_Interop_disposeSpecialRef(kotlin::mm::RawSpecialRef *ref);
-RUNTIME_NOTHROW extern "C" void Kotlin_Interop_retainSpecialRef(kotlin::mm::RawSpecialRef *ref);
-RUNTIME_NOTHROW extern "C" bool Kotlin_Interop_tryRetainSpecialRef(kotlin::mm::RawSpecialRef *ref);
-RUNTIME_NOTHROW extern "C" void Kotlin_Interop_releaseSpecialRef(kotlin::mm::RawSpecialRef *ref);
 
 #endif // RUNTIME_MEMORY_H

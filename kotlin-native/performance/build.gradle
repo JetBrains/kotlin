@@ -64,7 +64,7 @@ subprojects { proj ->
     proj.ext.platformManager = platformManager
     proj.ext["bootstrapKotlinRepo"] = BootstrapKt.getBootstrapKotlinRepo(proj)
     proj.ext["bootstrapKotlinVersion"] = BootstrapKt.getBootstrapKotlinVersion(proj)
-    proj.ext["kotlin.native.home"] = proj.projectDir.relativePath(UtilsKt.getKotlinNativeDist(project))
+    proj.ext["kotlin.native.home"] = UtilsKt.getKotlinNativeDist(project).toString()
     proj.ext["konan.home"] = proj.ext["kotlin.native.home"]
     proj.ext["kotlin.native.enabled"] = true
     proj.logger.info("${proj.name}<<<[kotlin.native.home] = ${proj.ext["kotlin.native.home"]}")

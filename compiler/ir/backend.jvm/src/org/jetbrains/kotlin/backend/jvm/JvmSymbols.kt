@@ -827,6 +827,27 @@ class JvmSymbols(
             returnType = irBuiltIns.anyNType
         }.symbol
 
+    val getClassByDescriptor: IrSimpleFunctionSymbol =
+        irFactory.buildFun {
+            name = Name.special("<get-class>")
+            origin = IrDeclarationOrigin.IR_BUILTINS_STUB
+        }.apply {
+            parent = kotlinJvmInternalPackage
+            addValueParameter("descriptor", irBuiltIns.stringType)
+            returnType = javaLangClass.defaultType
+        }.symbol
+
+    val handleResultOfReflectiveAccess: IrSimpleFunctionSymbol =
+        irFactory.buildFun {
+            name = Name.special("<coerce-result-of-reflective-access>")
+            origin = IrDeclarationOrigin.IR_BUILTINS_STUB
+        }.apply {
+            parent = kotlinJvmInternalPackage
+            val coerceTo = addTypeParameter("T", irBuiltIns.anyNType)
+            addValueParameter("value", irBuiltIns.anyNType)
+            returnType = coerceTo.defaultType
+        }.symbol
+
     private val collectionToArrayClass: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.CollectionToArray")) { klass ->
         klass.origin = JvmLoweredDeclarationOrigin.TO_ARRAY
 

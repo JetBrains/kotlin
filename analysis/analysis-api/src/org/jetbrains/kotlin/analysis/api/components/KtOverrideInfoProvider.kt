@@ -7,35 +7,37 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.util.ImplementationStatus
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
 
-public abstract class KtOverrideInfoProvider : KtAnalysisSessionComponent() {
-    public abstract fun isVisible(memberSymbol: KtCallableSymbol, classSymbol: KtClassOrObjectSymbol): Boolean
+public abstract class KaOverrideInfoProvider : KaSessionComponent() {
+    public abstract fun isVisible(memberSymbol: KaCallableSymbol, classSymbol: KaClassOrObjectSymbol): Boolean
     public abstract fun getImplementationStatus(
-        memberSymbol: KtCallableSymbol,
-        parentClassSymbol: KtClassOrObjectSymbol
+        memberSymbol: KaCallableSymbol,
+        parentClassSymbol: KaClassOrObjectSymbol
     ): ImplementationStatus?
 
-    public abstract fun unwrapFakeOverrides(symbol: KtCallableSymbol): KtCallableSymbol
-    public abstract fun getOriginalContainingClassForOverride(symbol: KtCallableSymbol): KtClassOrObjectSymbol?
+    public abstract fun unwrapFakeOverrides(symbol: KaCallableSymbol): KaCallableSymbol
+    public abstract fun getOriginalContainingClassForOverride(symbol: KaCallableSymbol): KaClassOrObjectSymbol?
 }
 
-public interface KtMemberSymbolProviderMixin : KtAnalysisSessionMixIn {
+public typealias KtOverrideInfoProvider = KaOverrideInfoProvider
+
+public interface KaMemberSymbolProviderMixin : KaSessionMixIn {
 
     /** Checks if the given symbol (possibly a symbol inherited from a super class) is visible in the given class. */
-    public fun KtCallableSymbol.isVisibleInClass(classSymbol: KtClassOrObjectSymbol): Boolean =
+    public fun KaCallableSymbol.isVisibleInClass(classSymbol: KaClassOrObjectSymbol): Boolean =
         withValidityAssertion { analysisSession.overrideInfoProvider.isVisible(this, classSymbol) }
 
     /**
      * Gets the [ImplementationStatus] of the [this] member symbol in the given [parentClassSymbol]. Or null if this symbol is not a
      * member.
      */
-    public fun KtCallableSymbol.getImplementationStatus(parentClassSymbol: KtClassOrObjectSymbol): ImplementationStatus? =
+    public fun KaCallableSymbol.getImplementationStatus(parentClassSymbol: KaClassOrObjectSymbol): ImplementationStatus? =
         withValidityAssertion { analysisSession.overrideInfoProvider.getImplementationStatus(this, parentClassSymbol) }
 
     /**
-     * Unwraps fake override [KtCallableSymbol]s until an original declared symbol is uncovered.
+     * Unwraps fake override [KaCallableSymbol]s until an original declared symbol is uncovered.
      *
      * In a class scope, a symbol may be derived from symbols declared in super classes. For example, consider
      *
@@ -55,12 +57,14 @@ public interface KtMemberSymbolProviderMixin : KtAnalysisSessionMixIn {
      * Such situation can also happen for intersection symbols (in case of multiple super types containing symbols with identical signature
      * after specialization) and delegation.
      */
-    public val KtCallableSymbol.unwrapFakeOverrides: KtCallableSymbol
+    public val KaCallableSymbol.unwrapFakeOverrides: KaCallableSymbol
         get() = withValidityAssertion { analysisSession.overrideInfoProvider.unwrapFakeOverrides(this) }
 
     /**
      * Gets the class symbol where the given callable symbol is declared. See [unwrapFakeOverrides] for more details.
      */
-    public val KtCallableSymbol.originalContainingClassForOverride: KtClassOrObjectSymbol?
+    public val KaCallableSymbol.originalContainingClassForOverride: KaClassOrObjectSymbol?
         get() = withValidityAssertion { analysisSession.overrideInfoProvider.getOriginalContainingClassForOverride(this) }
 }
+
+public typealias KtMemberSymbolProviderMixin = KaMemberSymbolProviderMixin

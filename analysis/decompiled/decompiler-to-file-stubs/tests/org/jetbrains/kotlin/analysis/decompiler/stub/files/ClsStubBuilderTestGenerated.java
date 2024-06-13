@@ -282,6 +282,12 @@ public class ClsStubBuilderTestGenerated extends AbstractClsStubBuilderTest {
   }
 
   @Test
+  @TestMetadata("TypeAliasExpansion")
+  public void testTypeAliasExpansion() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/TypeAliasExpansion/");
+  }
+
+  @Test
   @TestMetadata("TypeAliases")
   public void testTypeAliases() {
     runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/TypeAliases/");

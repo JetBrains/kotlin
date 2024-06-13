@@ -19,7 +19,6 @@ import java.io.File
 fun buildKotlinMetadataLibrary(configuration: CompilerConfiguration, serializedMetadata: SerializedMetadata, destDir: File) {
     val versions = KotlinLibraryVersioning(
         abiVersion = KotlinAbiVersion.CURRENT,
-        libraryVersion = null,
         compilerVersion = KotlinCompilerVersion.getVersion(),
         metadataVersion = KlibMetadataVersion.INSTANCE.toString(),
     )

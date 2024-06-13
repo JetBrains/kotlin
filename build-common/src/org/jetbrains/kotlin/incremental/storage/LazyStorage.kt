@@ -57,7 +57,7 @@ open class LazyStorage<KEY, VALUE>(
         return storage ?: createMap().also { storage = it }
     }
 
-    private fun createMap() = PersistentHashMap(storageFile, keyDescriptor, valueExternalizer)
+    private fun createMap() = PersistentHashMap(storageFile.toPath(), keyDescriptor, valueExternalizer)
 
     @get:Synchronized
     override val keys: Set<KEY>

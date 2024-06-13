@@ -1,4 +1,4 @@
-// !LANGUAGE: -SuspendOnlySamConversions
+// LANGUAGE: -SuspendOnlySamConversions
 
 fun interface FI {
     suspend fun call() // suspending now(!!!)

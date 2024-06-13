@@ -8,64 +8,89 @@ package org.jetbrains.kotlin.analysis.api.session
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.analyzeCopy
-import org.jetbrains.kotlin.analysis.api.lifetime.impl.NoWriteActionInAnalyseCallChecker
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenFactory
-import org.jetbrains.kotlin.analysis.project.structure.DanglingFileResolutionMode
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
 
 /**
- * Provides [KtAnalysisSession]s by use-site [KtElement]s or [KtModule]s.
+ * Provides [KaSession]s by use-site [KtElement]s or [KtModule]s.
  *
  * This provider should not be used directly.
  * Please use [analyze][org.jetbrains.kotlin.analysis.api.analyze] or [analyzeCopy][org.jetbrains.kotlin.analysis.api.analyzeCopy] instead.
  */
-@OptIn(KtAnalysisApiInternals::class)
-public abstract class KtAnalysisSessionProvider(public val project: Project) : Disposable {
-    @KtAnalysisApiInternals
-    public val tokenFactory: KtLifetimeTokenFactory by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        KtLifetimeTokenProvider.getService(project).getLifetimeTokenFactory()
-    }
+@OptIn(KaAnalysisApiInternals::class)
+public abstract class KaSessionProvider(public val project: Project) : Disposable {
+    public abstract val tokenFactory: KaLifetimeTokenFactory
 
-    @Suppress("LeakingThis")
-    public val noWriteActionInAnalyseCallChecker: NoWriteActionInAnalyseCallChecker = NoWriteActionInAnalyseCallChecker(this)
+    public abstract fun getAnalysisSession(useSiteKtElement: KtElement): KaSession
 
-    public abstract fun getAnalysisSession(useSiteKtElement: KtElement): KtAnalysisSession
+    public abstract fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KtModule): KaSession
 
-    public abstract fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KtModule): KtAnalysisSession
+    // The `analyse` functions affect binary compatibility as they are inlined with every `analyze` call. To avoid breaking binary
+    // compatibility, their implementations should not be changed unless absolutely necessary. It should be possible to put most
+    // functionality into `beforeEnteringAnalysis` and/or `afterLeavingAnalysis`.
 
-    public inline fun <R> analyse(
+    public inline fun <R> analyze(
         useSiteKtElement: KtElement,
-        action: KtAnalysisSession.() -> R,
+        action: KaSession.() -> R,
     ): R {
-        return analyse(getAnalysisSession(useSiteKtElement), action)
+        val analysisSession = getAnalysisSession(useSiteKtElement)
+
+        beforeEnteringAnalysis(analysisSession, useSiteKtElement)
+        return try {
+            analysisSession.action()
+        } finally {
+            afterLeavingAnalysis(analysisSession, useSiteKtElement)
+        }
     }
 
     public inline fun <R> analyze(
         useSiteKtModule: KtModule,
-        action: KtAnalysisSession.() -> R,
+        action: KaSession.() -> R,
     ): R {
-        return analyse(getAnalysisSessionByUseSiteKtModule(useSiteKtModule), action)
-    }
+        val analysisSession = getAnalysisSessionByUseSiteKtModule(useSiteKtModule)
 
-    public inline fun <R> analyse(
-        analysisSession: KtAnalysisSession,
-        action: KtAnalysisSession.() -> R,
-    ): R {
-        noWriteActionInAnalyseCallChecker.beforeEnteringAnalysisContext()
-        tokenFactory.beforeEnteringAnalysisContext(analysisSession.token)
+        beforeEnteringAnalysis(analysisSession, useSiteKtModule)
         return try {
             analysisSession.action()
         } finally {
-            tokenFactory.afterLeavingAnalysisContext(analysisSession.token)
-            noWriteActionInAnalyseCallChecker.afterLeavingAnalysisContext()
+            afterLeavingAnalysis(analysisSession, useSiteKtModule)
         }
     }
+
+    /**
+     * [beforeEnteringAnalysis] hooks into analysis *before* [analyze]'s action is executed.
+     *
+     * The signature of [beforeEnteringAnalysis] should be kept stable to avoid breaking binary compatibility, since [analyze] is inlined.
+     */
+    @KaAnalysisApiInternals
+    public abstract fun beforeEnteringAnalysis(session: KaSession, useSiteElement: KtElement)
+
+    /**
+     * [beforeEnteringAnalysis] hooks into analysis *before* [analyze]'s action is executed.
+     *
+     * The signature of [beforeEnteringAnalysis] should be kept stable to avoid breaking binary compatibility, since [analyze] is inlined.
+     */
+    @KaAnalysisApiInternals
+    public abstract fun beforeEnteringAnalysis(session: KaSession, useSiteModule: KtModule)
+
+    /**
+     * [afterLeavingAnalysis] hooks into analysis *after* [analyze]'s action has been executed.
+     *
+     * The signature of [afterLeavingAnalysis] should be kept stable to avoid breaking binary compatibility, since [analyze] is inlined.
+     */
+    @KaAnalysisApiInternals
+    public abstract fun afterLeavingAnalysis(session: KaSession, useSiteElement: KtElement)
+
+    /**
+     * [afterLeavingAnalysis] hooks into analysis *after* [analyze]'s action has been executed.
+     *
+     * The signature of [afterLeavingAnalysis] should be kept stable to avoid breaking binary compatibility, since [analyze] is inlined.
+     */
+    @KaAnalysisApiInternals
+    public abstract fun afterLeavingAnalysis(session: KaSession, useSiteModule: KtModule)
 
     @TestOnly
     public abstract fun clearCaches()
@@ -73,8 +98,10 @@ public abstract class KtAnalysisSessionProvider(public val project: Project) : D
     override fun dispose() {}
 
     public companion object {
-        @KtAnalysisApiInternals
-        public fun getInstance(project: Project): KtAnalysisSessionProvider =
-            project.getService(KtAnalysisSessionProvider::class.java)
+        @KaAnalysisApiInternals
+        public fun getInstance(project: Project): KaSessionProvider =
+            project.getService(KaSessionProvider::class.java)
     }
 }
+
+public typealias KtAnalysisSessionProvider = KaSessionProvider

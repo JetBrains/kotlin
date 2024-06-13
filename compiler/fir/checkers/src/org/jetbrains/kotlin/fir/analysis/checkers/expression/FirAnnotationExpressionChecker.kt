@@ -121,7 +121,7 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
         context: CheckerContext,
         reporter: DiagnosticReporter
     ): ApiVersion? {
-        val constantExpression = (expression as? FirLiteralExpression<*>) ?: return null
+        val constantExpression = (expression as? FirLiteralExpression) ?: return null
         val stringValue = constantExpression.value as? String ?: return null
         if (!stringValue.matches(RequireKotlinConstants.VERSION_REGEX)) {
             reporter.reportOn(expression.source, FirErrors.ILLEGAL_KOTLIN_VERSION_STRING_VALUE, context)
@@ -239,7 +239,7 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
         if (annotationClassId != StandardClassIds.Annotations.Suppress) return
         val nameExpressions = argumentMapping[StandardClassIds.Annotations.ParameterNames.suppressNames]?.unwrapVarargValue() ?: return
         for (nameExpression in nameExpressions) {
-            val name = (nameExpression as? FirLiteralExpression<*>)?.value as? String ?: continue
+            val name = (nameExpression as? FirLiteralExpression)?.value as? String ?: continue
             val parameter = when (name) {
                 in FIR_NON_SUPPRESSIBLE_ERROR_NAMES -> name
                 AbstractDiagnosticCollector.SUPPRESS_ALL_ERRORS -> "all errors"

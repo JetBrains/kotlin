@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineDeclarationChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.FirAnonymousUnusedParamChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -43,6 +44,7 @@ abstract class CheckerContext : DiagnosticContext {
     abstract val containingElements: List<FirElement>
     abstract val isContractBody: Boolean
     abstract val inlineFunctionBodyContext: FirInlineDeclarationChecker.InlineFunctionBodyContext?
+    abstract val lambdaBodyContext: FirAnonymousUnusedParamChecker.LambdaBodyContext?
 
     // Suppress
     abstract val suppressedDiagnostics: Set<String>

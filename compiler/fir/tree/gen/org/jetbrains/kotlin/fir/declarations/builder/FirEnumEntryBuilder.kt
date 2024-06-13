@@ -100,6 +100,5 @@ inline fun buildEnumEntryCopy(original: FirEnumEntry, init: FirEnumEntryBuilder.
     copyBuilder.initializer = original.initializer
     copyBuilder.backingField = original.backingField
     copyBuilder.annotations.addAll(original.annotations)
-    copyBuilder.symbol = original.symbol
     return copyBuilder.apply(init).build()
 }

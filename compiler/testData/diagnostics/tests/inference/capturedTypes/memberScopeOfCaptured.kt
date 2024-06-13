@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 
 class A<T> {
     fun foo(): T = null!!

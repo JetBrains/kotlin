@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.psi.KtFile
 open class KotlinModificationTrackerService {
     open val modificationTracker: ModificationTracker = ModificationTracker.NEVER_CHANGED
     open val outOfBlockModificationTracker: ModificationTracker = ModificationTracker.NEVER_CHANGED
+    open val allLibrariesModificationTracker: ModificationTracker = ModificationTracker.NEVER_CHANGED
     open fun fileModificationTracker(file: KtFile): ModificationTracker = ModificationTracker.NEVER_CHANGED
 
     companion object {

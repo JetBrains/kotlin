@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses, +JsExternalPropertyParameters
-// !DIAGNOSTICS: +ENUM_CLASS_IN_EXTERNAL_DECLARATION_WARNING
+// LANGUAGE: +InlineClasses, -JvmInlineValueClasses, +JsExternalPropertyParameters
+// DIAGNOSTICS: +ENUM_CLASS_IN_EXTERNAL_DECLARATION_WARNING
 
 external inline class <!WRONG_EXTERNAL_DECLARATION!>C(val a: Int)<!> {
     fun foo()

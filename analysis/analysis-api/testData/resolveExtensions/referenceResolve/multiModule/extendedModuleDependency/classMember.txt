@@ -1,2 +1,0 @@
-Resolved to:
-0: (in generated.GeneratedClass2) fun generatedClassMember2(): generated.GeneratedClass1 [origin = SOURCE]

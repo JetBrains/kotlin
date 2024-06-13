@@ -468,6 +468,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/emptySources.args");
     }
 
+    @TestMetadata("emptySourcesWithModuleInfo.args")
+    public void testEmptySourcesWithModuleInfo() {
+      runTest("compiler/testData/cli/jvm/emptySourcesWithModuleInfo.args");
+    }
+
     @TestMetadata("enumEntriesForJavaNotEnabled.args")
     public void testEnumEntriesForJavaNotEnabled() {
       runTest("compiler/testData/cli/jvm/enumEntriesForJavaNotEnabled.args");
@@ -1356,6 +1361,16 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("werrorWithStrongWarning.args")
     public void testWerrorWithStrongWarning() {
       runTest("compiler/testData/cli/jvm/werrorWithStrongWarning.args");
+    }
+
+    @TestMetadata("whenGuardsEnable.args")
+    public void testWhenGuardsEnable() {
+      runTest("compiler/testData/cli/jvm/whenGuardsEnable.args");
+    }
+
+    @TestMetadata("whenGuardsError.args")
+    public void testWhenGuardsError() {
+      runTest("compiler/testData/cli/jvm/whenGuardsError.args");
     }
 
     @TestMetadata("wrongAbiVersion.args")

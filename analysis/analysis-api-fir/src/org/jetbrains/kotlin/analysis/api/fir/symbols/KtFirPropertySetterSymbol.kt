@@ -6,20 +6,20 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
+import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KtPropertySetterSymbolPointer
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaPropertySetterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySetterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtReceiverParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySetterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -32,10 +32,10 @@ import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.name.CallableId
 
-internal class KtFirPropertySetterSymbol(
+internal class KaFirPropertySetterSymbol(
     override val firSymbol: FirPropertyAccessorSymbol,
-    override val analysisSession: KtFirAnalysisSession,
-) : KtPropertySetterSymbol(), KtFirSymbol<FirPropertyAccessorSymbol> {
+    override val analysisSession: KaFirSession,
+) : KaPropertySetterSymbol(), KaFirSymbol<FirPropertyAccessorSymbol> {
 
     init {
         require(firSymbol.isSetter)
@@ -67,38 +67,38 @@ internal class KtFirPropertySetterSymbol(
     override val modality: Modality get() = withValidityAssertion { firSymbol.modality }
     override val visibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
 
-    override val annotationsList by cached {
-        KtFirAnnotationListForDeclaration.create(firSymbol, builder)
+    override val annotations by cached {
+        KaFirAnnotationListForDeclaration.create(firSymbol, builder)
     }
 
     /**
      * Returns [CallableId] of the delegated Java method if the corresponding property of this setter is a synthetic Java property.
      * Otherwise, returns `null`
      */
-    override val callableIdIfNonLocal: CallableId? by cached {
+    override val callableId: CallableId? by cached {
         val fir = firSymbol.fir
         if (fir is FirSyntheticPropertyAccessor) {
             fir.delegate.symbol.callableId
         } else null
     }
 
-    override val parameter: KtValueParameterSymbol by cached {
+    override val parameter: KaValueParameterSymbol by cached {
         firSymbol.createKtValueParameters(builder).single()
     }
 
-    override val valueParameters: List<KtValueParameterSymbol> by cached { listOf(parameter) }
+    override val valueParameters: List<KaValueParameterSymbol> by cached { listOf(parameter) }
 
-    override val returnType: KtType get() = withValidityAssertion { firSymbol.returnType(builder) }
-    override val receiverParameter: KtReceiverParameterSymbol? get() = withValidityAssertion { firSymbol.fir.propertySymbol.receiver(builder) }
+    override val returnType: KaType get() = withValidityAssertion { firSymbol.returnType(builder) }
+    override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { firSymbol.fir.propertySymbol.receiver(builder) }
 
 
     override val hasStableParameterNames: Boolean
         get() = withValidityAssertion { true }
 
-    @OptIn(KtAnalysisApiInternals::class)
-    override fun createPointer(): KtSymbolPointer<KtPropertySetterSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtPropertySetterSymbol>(this)
-            ?: KtPropertySetterSymbolPointer(analysisSession.createOwnerPointer(this))
+    @OptIn(KaAnalysisApiInternals::class)
+    override fun createPointer(): KaSymbolPointer<KaPropertySetterSymbol> = withValidityAssertion {
+        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaPropertySetterSymbol>(this)
+            ?: KaPropertySetterSymbolPointer(analysisSession.createOwnerPointer(this))
     }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)

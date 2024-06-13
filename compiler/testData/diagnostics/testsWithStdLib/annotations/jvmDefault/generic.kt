@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
-// !JVM_TARGET: 1.8
-// !JVM_DEFAULT_MODE: all
+// JVM_TARGET: 1.8
+// JVM_DEFAULT_MODE: all
 
 interface A<T> {
     fun test(p: T) {

@@ -1,17 +1,17 @@
-group 'com.example'
-version '1.0'
-
 buildscript {
-	repositories {
-		mavenLocal()
-		mavenCentral()
-	}
-	dependencies {
-		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-	}
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
 }
 
 apply plugin: 'kotlin-multiplatform'
+
+group = "com.example"
+version = "1.0"
 
 repositories {
     mavenLocal()
@@ -21,8 +21,8 @@ repositories {
 def shouldBeJs = true
 
 kotlin {
-	// Check the new preset functions:
-	jvm('jvm6') { }
+    // Check the new preset functions:
+    jvm('jvm6') { }
     if (shouldBeJs) {
         js('nodeJs') {
             nodejs {
@@ -34,7 +34,7 @@ kotlin {
     targetFromPreset(presets.jvm, 'jvm6') { println targetName } // access existing target
 
     targets {
-    	// Also check that the old DSL (fromPreset) works:
+        // Also check that the old DSL (fromPreset) works:
         fromPreset(presets.linuxX64, 'linux64')
         fromPreset(presets.mingwX64, 'mingw64')
         fromPreset(presets.macosX64, 'macos64')
@@ -42,7 +42,7 @@ kotlin {
 
         // Check the DSL constructs in the Groovy DSL:
         fromPreset(presets.jvm, 'jvm6') {
-        	println "Configuring $targetName"
+            println "Configuring $targetName"
             compilations.main {
                 kotlinOptions {
                     println "jvmTarget = " + jvmTarget
@@ -105,9 +105,9 @@ kotlin.sourceSets.each { println it.kotlin.srcDirs }
 apply plugin: 'maven-publish'
 
 publishing {
-	repositories {
-		maven { url "${projectDir.absolutePath.replace('\\', '/')}/repo" }
-	}
+    repositories {
+        maven { url "${projectDir.absolutePath.replace('\\', '/')}/repo" }
+    }
 }
 
 // Check that a compilation may be created after project evaluation, KT-28896:

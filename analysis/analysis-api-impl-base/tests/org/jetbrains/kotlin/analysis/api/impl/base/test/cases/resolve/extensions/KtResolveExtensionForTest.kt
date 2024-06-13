@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.resolve.extension
 import com.intellij.mock.MockProject
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtension
-import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionFile
-import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionNavigationTargetsProvider
-import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionProvider
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtension
+import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionFile
+import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionNavigationTargetsProvider
+import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.name.FqName
@@ -22,15 +22,15 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.test.services.TestServices
 
-class KtResolveExtensionProviderForTest(
-    private val files: List<KtResolveExtensionFile>,
+class KaResolveExtensionProviderForTest(
+    private val files: List<KaResolveExtensionFile>,
     private val packages: Set<FqName>,
     private val shadowedScope: GlobalSearchScope,
     private val hasResolveExtension: (KtModule) -> Boolean = { true }
-) : KtResolveExtensionProvider() {
-    override fun provideExtensionsFor(module: KtModule): List<KtResolveExtension> {
+) : KaResolveExtensionProvider() {
+    override fun provideExtensionsFor(module: KtModule): List<KaResolveExtension> {
         if (!hasResolveExtension(module)) return emptyList()
-        return listOf(KtResolveExtensionForTest(files, packages, shadowedScope))
+        return listOf(KaResolveExtensionForTest(files, packages, shadowedScope))
     }
 
     fun register(testServices: TestServices) {
@@ -40,24 +40,24 @@ class KtResolveExtensionProviderForTest(
     }
 }
 
-class KtResolveExtensionForTest(
-    private val files: List<KtResolveExtensionFile>,
+class KaResolveExtensionForTest(
+    private val files: List<KaResolveExtensionFile>,
     private val packages: Set<FqName>,
     private val shadowedScope: GlobalSearchScope,
-) : KtResolveExtension() {
-    override fun getKtFiles(): List<KtResolveExtensionFile> = files
+) : KaResolveExtension() {
+    override fun getKtFiles(): List<KaResolveExtensionFile> = files
     override fun getContainedPackages(): Set<FqName> = packages
     override fun getShadowedScope(): GlobalSearchScope = shadowedScope
 }
 
-class KtResolveExtensionFileForTests(
+class KaResolveExtensionFileForTests(
     private val fileName: String,
     private val packageName: FqName,
     topLevelClassifiersNames: Set<String>,
     topLevelCallableNames: Set<String>,
     private val fileText: String,
-    private val navigationTargetsProvider: KtResolveExtensionNavigationTargetsProvider? = null
-) : KtResolveExtensionFile() {
+    private val navigationTargetsProvider: KaResolveExtensionNavigationTargetsProvider? = null
+) : KaResolveExtensionFile() {
 
     private val topLevelClassifiersNames: Set<Name> = topLevelClassifiersNames.mapTo(mutableSetOf()) { Name.identifier(it) }
     private val topLevelCallableNames: Set<Name> = topLevelCallableNames.mapTo(mutableSetOf()) { Name.identifier(it) }
@@ -68,12 +68,12 @@ class KtResolveExtensionFileForTests(
 
     override fun buildFileText(): String = fileText
 
-    private object ResolveExtensionNavigationTargetProviderForTest : KtResolveExtensionNavigationTargetsProvider() {
-        override fun KtAnalysisSession.getNavigationTargets(element: KtElement): Collection<PsiElement> =
+    private object ResolveExtensionNavigationTargetProviderForTest : KaResolveExtensionNavigationTargetsProvider() {
+        override fun KaSession.getNavigationTargets(element: KtElement): Collection<PsiElement> =
             listOf(KtResolveExtensionNavigationTargetPsiElementForTest(element))
     }
 
-    override fun createNavigationTargetsProvider(): KtResolveExtensionNavigationTargetsProvider =
+    override fun createNavigationTargetsProvider(): KaResolveExtensionNavigationTargetsProvider =
         navigationTargetsProvider ?: ResolveExtensionNavigationTargetProviderForTest
 }
 

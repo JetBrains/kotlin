@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone.konan.fir.test.cases.session.builder
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
-import org.jetbrains.kotlin.analysis.api.standalone.KtAlwaysAccessibleLifetimeTokenProvider
+import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.session.builder.assertIsCallOf
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
@@ -23,7 +21,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.junit.jupiter.api.Test
 
-@OptIn(KtAnalysisApiInternals::class)
+@OptIn(KaAnalysisApiInternals::class)
 class NativeStandaloneSessionBuilderTest {
     @Test
     fun testResolveAgainstCommonKlib() {
@@ -31,8 +29,6 @@ class NativeStandaloneSessionBuilderTest {
         val currentArchitectureTarget = HostManager.host
         val nativePlatform = NativePlatforms.nativePlatformByTargets(listOf(currentArchitectureTarget))
         val session = buildStandaloneAnalysisAPISession {
-            registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
-
             buildKtModuleProvider {
                 platform = nativePlatform
                 val kLib = addModule(

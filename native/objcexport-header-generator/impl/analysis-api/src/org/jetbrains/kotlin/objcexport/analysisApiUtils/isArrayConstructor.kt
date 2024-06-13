@@ -15,4 +15,4 @@ context(KtAnalysisSession)
 internal val KtCallableSymbol.isArrayConstructor: Boolean
     get() = this is KtConstructorSymbol && getContainingSymbol()
         ?.let { containingSymbol -> containingSymbol as? KtClassOrObjectSymbol }
-        ?.let { classSymbol -> classSymbol.classIdIfNonLocal?.asFqNameString() in arrayTypes } ?: false
+        ?.let { classSymbol -> classSymbol.classId?.asFqNameString() in arrayTypes } ?: false

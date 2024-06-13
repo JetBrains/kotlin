@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMapNotNull
 
 class IrFakeOverrideBuilder(
     private val typeSystem: IrTypeSystemContext,
-    private val strategy: FakeOverrideBuilderStrategy,
+    val strategy: FakeOverrideBuilderStrategy,
     private val externalOverridabilityConditions: List<IrExternalOverridabilityCondition>,
 ) {
     private val overrideChecker = IrOverrideChecker(typeSystem, externalOverridabilityConditions)
@@ -485,6 +485,8 @@ private val IrOverridableMember.typeParameters: List<IrTypeParameter>
 private val IrOverridableMember.returnType: IrType
     get() = when (this) {
         is IrSimpleFunction -> returnType
-        is IrProperty -> getter!!.returnType
+        is IrProperty ->
+            getter?.returnType ?: backingField?.type
+            ?: error("Property has neither getter nor backing field: ${render()}")
         else -> error("Unexpected type of declaration: ${this::class.java}, $this")
     }

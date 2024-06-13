@@ -1,4 +1,4 @@
-// !MARK_DYNAMIC_CALLS
+// MARK_DYNAMIC_CALLS
 
 fun withDynamicReceiver(<!UNUSED_PARAMETER!>d<!>: dynamic.() -> Unit) {}
 

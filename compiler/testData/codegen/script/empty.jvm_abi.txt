@@ -10,8 +10,3 @@ MODULE main
 					[kotlin/script/templates/standard/ScriptTemplateWithArgs]
 				K2
 					[]
-			Property: class.metadata.contextReceiverTypes
-				K1
-					[]
-				K2
-					[kotlin/script/templates/standard/ScriptTemplateWithArgs]

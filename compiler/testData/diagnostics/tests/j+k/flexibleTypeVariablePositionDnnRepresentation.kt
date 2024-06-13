@@ -1,4 +1,4 @@
-// !LANGUAGE: +JavaTypeParameterDefaultRepresentationWithDNN
+// LANGUAGE: +JavaTypeParameterDefaultRepresentationWithDNN
 // ISSUE: KT-59138
 // SKIP_TXT
 // FILE: JavaClass.java

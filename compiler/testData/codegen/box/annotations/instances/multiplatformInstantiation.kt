@@ -5,7 +5,7 @@
 // (supported: JVM_IR, JS_IR(_ES6))
 
 // WITH_STDLIB
-// !LANGUAGE: +InstantiationOfAnnotationClasses +MultiPlatformProjects
+// LANGUAGE: +InstantiationOfAnnotationClasses +MultiPlatformProjects
 
 // MODULE: lib
 // FILE: common.kt

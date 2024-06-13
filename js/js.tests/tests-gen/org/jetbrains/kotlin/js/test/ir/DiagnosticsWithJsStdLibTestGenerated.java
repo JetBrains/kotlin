@@ -517,6 +517,12 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
     }
 
     @Test
+    @TestMetadata("promiseUnit.kt")
+    public void testPromiseUnit() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/promiseUnit.kt");
+    }
+
+    @Test
     @TestMetadata("secondaryConstructorWithoutJsName.kt")
     public void testSecondaryConstructorWithoutJsName() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/secondaryConstructorWithoutJsName.kt");
@@ -526,6 +532,12 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
     @TestMetadata("secondaryConstructorWithoutJsNameInExportedFile.kt")
     public void testSecondaryConstructorWithoutJsNameInExportedFile() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/secondaryConstructorWithoutJsNameInExportedFile.kt");
+    }
+
+    @Test
+    @TestMetadata("typeAliasInValueParameter.kt")
+    public void testTypeAliasInValueParameter() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/typeAliasInValueParameter.kt");
     }
 
     @Test
@@ -902,6 +914,12 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
     @TestMetadata("propertyAndMethodInSubclass.kt")
     public void testPropertyAndMethodInSubclass() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/propertyAndMethodInSubclass.kt");
+    }
+
+    @Test
+    @TestMetadata("suspendFun.kt")
+    public void testSuspendFun() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/suspendFun.kt");
     }
 
     @Test

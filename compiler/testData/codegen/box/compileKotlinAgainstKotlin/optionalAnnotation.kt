@@ -1,7 +1,7 @@
 // IGNORE_BACKEND_K2: JVM_IR, JS_IR, NATIVE
 // FIR status: expect/actual in the same module (ACTUAL_WITHOUT_EXPECT)
-// !LANGUAGE: +MultiPlatformProjects
-// !OPT_IN: kotlin.ExperimentalMultiplatform
+// LANGUAGE: +MultiPlatformProjects
+// OPT_IN: kotlin.ExperimentalMultiplatform
 // TARGET_BACKEND: JVM
 // FULL_JDK
 // WITH_STDLIB

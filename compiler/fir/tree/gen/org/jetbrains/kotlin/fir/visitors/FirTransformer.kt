@@ -243,6 +243,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformReceiverParameter(receiverParameter, data)
     }
 
+    open fun transformScriptReceiverParameter(scriptReceiverParameter: FirScriptReceiverParameter, data: D): FirReceiverParameter {
+        return transformElement(scriptReceiverParameter, data)
+    }
+
+    final override fun visitScriptReceiverParameter(scriptReceiverParameter: FirScriptReceiverParameter, data: D): FirReceiverParameter {
+        return transformScriptReceiverParameter(scriptReceiverParameter, data)
+    }
+
     open fun transformProperty(property: FirProperty, data: D): FirStatement {
         return transformElement(property, data)
     }
@@ -547,11 +555,11 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformTryExpression(tryExpression, data)
     }
 
-    open fun <T> transformLiteralExpression(literalExpression: FirLiteralExpression<T>, data: D): FirStatement {
+    open fun transformLiteralExpression(literalExpression: FirLiteralExpression, data: D): FirStatement {
         return transformElement(literalExpression, data)
     }
 
-    final override fun <T> visitLiteralExpression(literalExpression: FirLiteralExpression<T>, data: D): FirStatement {
+    final override fun visitLiteralExpression(literalExpression: FirLiteralExpression, data: D): FirStatement {
         return transformLiteralExpression(literalExpression, data)
     }
 

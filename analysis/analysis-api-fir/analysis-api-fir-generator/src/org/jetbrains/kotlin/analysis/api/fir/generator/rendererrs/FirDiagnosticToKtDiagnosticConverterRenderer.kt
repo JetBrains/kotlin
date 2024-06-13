@@ -20,7 +20,7 @@ object FirDiagnosticToKtDiagnosticConverterRenderer : AbstractDiagnosticsDataCla
     }
 
     private fun SmartPrinter.printDiagnosticConverter(diagnosticList: HLDiagnosticList) {
-        inBracketsWithIndent("internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConverter") {
+        inBracketsWithIndent("internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConverter") {
             for (diagnostic in diagnosticList.diagnostics) {
                 printConverter(diagnostic)
             }

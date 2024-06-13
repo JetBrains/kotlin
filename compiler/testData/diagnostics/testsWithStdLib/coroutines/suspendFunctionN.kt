@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +Coroutines
-// !DIAGNOSTICS: -USELESS_IS_CHECK
+// LANGUAGE: +Coroutines
+// DIAGNOSTICS: -USELESS_IS_CHECK
 // SKIP_TXT
 
 fun test() {

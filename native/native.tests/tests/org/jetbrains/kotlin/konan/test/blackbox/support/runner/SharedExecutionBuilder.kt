@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.runner
 
+import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeBlackBoxTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestName
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.BlackBoxTestInstances
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.NativeTestInstances
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.SharedExecutionTestRunner
 import org.jetbrains.kotlin.native.executors.Executor
@@ -78,7 +79,7 @@ internal object SharedExecutionBuilder {
 
     private fun Settings.computeSeparateTestCases(testRun: TestRun): MutableList<TestCase> =
         testCasesToExecuteSeparately.computeIfAbsent(testRun.executable) {
-            val testRunProvider = get<BlackBoxTestInstances>().enclosingTestInstance.testRunProvider
+            val testRunProvider = get<NativeTestInstances<AbstractNativeBlackBoxTest>>().enclosingTestInstance.testRunProvider
             val testCaseGroupId = testRun.testCase.id.testCaseGroupId
 
             // First, try to get all TestCases for the current executable from the same TestCaseGroup

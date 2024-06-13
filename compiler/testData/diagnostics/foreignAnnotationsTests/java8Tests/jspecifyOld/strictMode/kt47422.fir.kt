@@ -1,6 +1,6 @@
 // JSPECIFY_STATE: strict
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !LANGUAGE: +TypeEnhancementImprovementsInStrictMode
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +TypeEnhancementImprovementsInStrictMode
 // MUTE_FOR_PSI_CLASS_FILES_READING
 
 // FILE: Foo.java

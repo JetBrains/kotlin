@@ -1,4 +1,4 @@
-// !LANGUAGE: +TypeInferenceOnCallsWithSelfTypes
+// LANGUAGE: +TypeInferenceOnCallsWithSelfTypes
 
 // FILE: JavaWriterAppender.java
 public class JavaWriterAppender {

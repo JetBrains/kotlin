@@ -1,6 +1,6 @@
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /JavaClass.bar
+KaFunctionSymbol:
+  annotations: []
+  callableId: /JavaClass.bar
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -18,10 +18,10 @@ KtFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: bar
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
-  returnType: KtFlexibleType:
-    annotationsList: []
+  returnType: KaFlexibleType:
+    annotations: []
     type: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -32,20 +32,20 @@ KtFunctionSymbol:
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtJavaFieldSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /JavaClass.foo
+KaJavaFieldSymbol:
+  annotations: []
+  callableId: /JavaClass.foo
   contextReceivers: []
   isExtension: false
   isStatic: true
   isVal: false
   modality: OPEN
   name: foo
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -55,9 +55,9 @@ KtJavaFieldSymbol:
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: JavaClass.InnerClass
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: JavaClass.InnerClass
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -70,11 +70,11 @@ KtNamedClassOrObjectSymbol:
   isInner: true
   modality: OPEN
   name: InnerClass
-  origin: JAVA
+  origin: JAVA_SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: CLASS_MEMBER
@@ -85,9 +85,9 @@ KtNamedClassOrObjectSymbol:
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: JavaClass.NestedClass
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: JavaClass.NestedClass
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -100,11 +100,11 @@ KtNamedClassOrObjectSymbol:
   isInner: false
   modality: OPEN
   name: NestedClass
-  origin: JAVA
+  origin: JAVA_SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: CLASS_MEMBER

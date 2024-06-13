@@ -61,7 +61,6 @@ class YarnWorkspaces : YarnBasics() {
         logger: Logger,
         nodeJs: NodeJsEnvironment,
         packageManagerEnvironment: YarnEnvironment,
-        npmProjects: Collection<PreparedKotlinCompilationNpmResolution>,
         cliArgs: List<String>
     ) {
         val nodeJsWorldDir = nodeJs.rootPackageDir

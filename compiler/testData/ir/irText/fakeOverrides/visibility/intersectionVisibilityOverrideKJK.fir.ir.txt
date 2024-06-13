@@ -560,6 +560,9 @@ FILE fqName:<root> fileName:/test.kt
             $this: GET_VAR '<this>: <root>.L declared in <root>.L.test' type=<root>.L origin=null
         CALL 'public open fun foo (): kotlin.Unit declared in <root>.L' type=kotlin.Unit origin=null
           $this: GET_VAR '<this>: <root>.L declared in <root>.L.test' type=<root>.L origin=null
+    PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final a: kotlin.Int declared in <root>.JavaProtected
     PROPERTY name:a visibility:public modality:OPEN [val]
       overridden:
         public open a: kotlin.Int declared in <root>.KotlinDefault
@@ -601,10 +604,13 @@ FILE fqName:<root> fileName:/test.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.M
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:protected/*protected and package*/ declared in <root>.JavaProtected' type=kotlin.Int origin=null
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:protected/*protected and package*/ declared in <root>.JavaProtected' type=kotlin.Int superQualifierSymbol=<root>.M origin=null
             receiver: GET_VAR '<this>: <root>.M declared in <root>.M.test' type=<root>.M origin=null
         CALL 'protected/*protected and package*/ open fun foo (): kotlin.Unit declared in <root>.M' type=kotlin.Unit origin=null
           $this: GET_VAR '<this>: <root>.M declared in <root>.M.test' type=<root>.M origin=null
+    PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final a: kotlin.Int declared in <root>.JavaProtected
   CLASS CLASS name:N modality:FINAL visibility:public superTypes:[<root>.JavaProtected; <root>.KotlinPrivate]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.N
     PROPERTY name:a visibility:public modality:FINAL [val]
@@ -651,6 +657,9 @@ FILE fqName:<root> fileName:/test.kt
             $this: GET_VAR '<this>: <root>.N declared in <root>.N.test' type=<root>.N origin=null
         CALL 'public open fun foo (): kotlin.Unit declared in <root>.N' type=kotlin.Unit origin=null
           $this: GET_VAR '<this>: <root>.N declared in <root>.N.test' type=<root>.N origin=null
+    PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final a: kotlin.Int declared in <root>.JavaProtected
   CLASS CLASS name:O modality:FINAL visibility:public superTypes:[<root>.JavaProtected; <root>.KotlinPublic]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.O
     CONSTRUCTOR visibility:public <> () returnType:<root>.O [primary]
@@ -687,6 +696,9 @@ FILE fqName:<root> fileName:/test.kt
             $this: GET_VAR '<this>: <root>.O declared in <root>.O.test' type=<root>.O origin=null
         CALL 'public open fun foo (): kotlin.Unit declared in <root>.O' type=kotlin.Unit origin=null
           $this: GET_VAR '<this>: <root>.O declared in <root>.O.test' type=<root>.O origin=null
+    PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final a: kotlin.Int declared in <root>.JavaProtected
     PROPERTY name:a visibility:public modality:OPEN [val]
       overridden:
         public open a: kotlin.Int declared in <root>.KotlinPublic
@@ -1091,7 +1103,7 @@ FILE fqName:<root> fileName:/test.kt
       CALL 'protected/*protected and package*/ open fun foo (): kotlin.Unit declared in <root>.M' type=kotlin.Unit origin=null
         $this: GET_VAR 'm: <root>.M declared in <root>.test' type=<root>.M origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:protected/*protected and package*/ declared in <root>.JavaProtected' type=kotlin.Int origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:protected/*protected and package*/ declared in <root>.JavaProtected' type=kotlin.Int superQualifierSymbol=<root>.M origin=null
           receiver: GET_VAR 'm: <root>.M declared in <root>.test' type=<root>.M origin=null
       CALL 'public final fun test (): kotlin.Unit declared in <root>.M' type=kotlin.Unit origin=null
         $this: GET_VAR 'm: <root>.M declared in <root>.test' type=<root>.M origin=null

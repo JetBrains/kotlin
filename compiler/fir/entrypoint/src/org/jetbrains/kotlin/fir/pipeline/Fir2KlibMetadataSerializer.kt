@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.ConstValueProviderImpl
-import org.jetbrains.kotlin.fir.backend.extractFirDeclarations
+import org.jetbrains.kotlin.fir.backend.utils.extractFirDeclarations
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -37,7 +37,9 @@ class Fir2KlibMetadataSerializer(
 
     private val firFilesAndSessions: Map<FirFile, Pair<FirSession, ScopeSession>> =
         buildMap {
-            for (firOutput in firOutputs) {
+            // `firOutputs` lists modules in the top-sorted order
+            // Yet `IrModuleFragmentImpl` list modules in backward one (it is crucial, see KT-66443)
+            for (firOutput in firOutputs.reversed()) {
                 for (firFile in firOutput.fir) {
                     put(firFile, firOutput.session to firOutput.scopeSession)
                 }

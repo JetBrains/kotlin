@@ -1,3 +1,3 @@
-/recursionAccess.kt:(178,194): error: Cannot evaluate constant expression: stack overflow (potentially due to infinite recursion)
+/recursionAccess.kt:(176,192): error: Cannot evaluate constant expression: stack overflow (potentially due to infinite recursion)
 
-/recursionAccess.kt:(267,283): error: Cannot evaluate constant expression: null reference access
+/recursionAccess.kt:(265,281): error: Cannot evaluate constant expression: null reference access

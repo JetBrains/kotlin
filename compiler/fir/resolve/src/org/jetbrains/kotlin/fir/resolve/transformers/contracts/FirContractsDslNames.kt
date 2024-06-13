@@ -11,23 +11,23 @@ import org.jetbrains.kotlin.name.Name
 
 object FirContractsDslNames {
     // Types
-    val SIMPLE_EFFECT = id("SimpleEffect")
+    val SIMPLE_EFFECT: CallableId = id("SimpleEffect")
 
     // Structure-defining calls
-    val CONTRACT = id("contract")
-    val IMPLIES = simpleEffect("implies")
+    val CONTRACT: CallableId = id("contract")
+    val IMPLIES: CallableId = simpleEffect("implies")
 
     // Effect-declaration calls
-    val RETURNS = contractBuilder("returns")
-    val RETURNS_NOT_NULL = contractBuilder("returnsNotNull")
-    val CALLS_IN_PLACE = contractBuilder("callsInPlace")
+    val RETURNS: CallableId = contractBuilder("returns")
+    val RETURNS_NOT_NULL: CallableId = contractBuilder("returnsNotNull")
+    val CALLS_IN_PLACE: CallableId = contractBuilder("callsInPlace")
 
     // enum class InvocationKind
-    val INVOCATION_KIND_ENUM = id("InvocationKind")
-    val EXACTLY_ONCE_KIND = invocationKind("EXACTLY_ONCE")
-    val AT_LEAST_ONCE_KIND = invocationKind("AT_LEAST_ONCE")
-    val UNKNOWN_KIND = invocationKind("UNKNOWN")
-    val AT_MOST_ONCE_KIND = invocationKind("AT_MOST_ONCE")
+    val INVOCATION_KIND_ENUM: CallableId = id("InvocationKind")
+    val EXACTLY_ONCE_KIND: CallableId = invocationKind("EXACTLY_ONCE")
+    val AT_LEAST_ONCE_KIND: CallableId = invocationKind("AT_LEAST_ONCE")
+    val UNKNOWN_KIND: CallableId = invocationKind("UNKNOWN")
+    val AT_MOST_ONCE_KIND: CallableId = invocationKind("AT_MOST_ONCE")
 
     private const val CONTRACT_BUILDER = "ContractBuilder"
 

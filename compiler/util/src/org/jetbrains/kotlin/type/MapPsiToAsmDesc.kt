@@ -12,24 +12,23 @@ import org.jetbrains.org.objectweb.asm.Type.*
 
 object MapPsiToAsmDesc {
     fun typeDesc(type: PsiType): String = when (type) {
-        PsiType.VOID -> primitive(VOID_TYPE)
+        PsiTypes.voidType() -> primitive(VOID_TYPE)
 
-        PsiType.BOOLEAN -> primitive(BOOLEAN_TYPE)
+        PsiTypes.booleanType() -> primitive(BOOLEAN_TYPE)
 
-        PsiType.CHAR -> primitive(CHAR_TYPE)
-        PsiType.INT -> primitive(INT_TYPE)
-        PsiType.BYTE -> primitive(BYTE_TYPE)
-        PsiType.SHORT -> primitive(SHORT_TYPE)
-        PsiType.LONG -> primitive(LONG_TYPE)
+        PsiTypes.charType() -> primitive(CHAR_TYPE)
+        PsiTypes.intType() -> primitive(INT_TYPE)
+        PsiTypes.byteType() -> primitive(BYTE_TYPE)
+        PsiTypes.shortType() -> primitive(SHORT_TYPE)
+        PsiTypes.longType() -> primitive(LONG_TYPE)
 
-        PsiType.FLOAT -> primitive(FLOAT_TYPE)
-        PsiType.DOUBLE -> primitive(DOUBLE_TYPE)
+        PsiTypes.floatType() -> primitive(FLOAT_TYPE)
+        PsiTypes.doubleType() -> primitive(DOUBLE_TYPE)
 
         is PsiArrayType -> "[" + typeDesc(type.componentType)
 
         is PsiClassType -> {
-            val resolved = type.resolve()
-            when (resolved) {
+            when (val resolved = type.resolve()) {
                 is PsiTypeParameter -> resolved.superTypes.firstOrNull()?.let { typeDesc(it) } ?: "Ljava/lang/Object;"
                 is PsiClass -> classDesc(resolved)
                 null -> unknownSignature()

@@ -5,63 +5,121 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.types
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.renderer.base.contextReceivers.KtContextReceiversRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.base.KtKeywordsRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KtAnnotationRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtRendererTypeApproximator
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.renderer.base.contextReceivers.KaContextReceiversRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.base.KaKeywordsRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KaAnnotationRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaRendererTypeApproximator
 import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.*
+import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
-public class KtTypeRenderer private constructor(
-    public val capturedTypeRenderer: KtCapturedTypeRenderer,
-    public val definitelyNotNullTypeRenderer: KtDefinitelyNotNullTypeRenderer,
-    public val dynamicTypeRenderer: KtDynamicTypeRenderer,
-    public val flexibleTypeRenderer: KtFlexibleTypeRenderer,
-    public val functionalTypeRenderer: KtFunctionalTypeRenderer,
-    public val integerLiteralTypeRenderer: KtIntegerLiteralTypeRenderer,
-    public val intersectionTypeRenderer: KtIntersectionTypeRenderer,
-    public val typeErrorTypeRenderer: KtTypeErrorTypeRenderer,
-    public val typeParameterTypeRenderer: KtTypeParameterTypeRenderer,
-    public val unresolvedClassErrorTypeRenderer: KtUnresolvedClassErrorTypeRenderer,
-    public val usualClassTypeRenderer: KtUsualClassTypeRenderer,
+public class KaTypeRenderer private constructor(
+    public val expandedTypeRenderingMode: KaExpandedTypeRenderingMode,
 
-    public val classIdRenderer: KtClassTypeQualifierRenderer,
-    public val typeNameRenderer: KtTypeNameRenderer,
-    public val typeApproximator: KtRendererTypeApproximator,
-    public val typeProjectionRenderer: KtTypeProjectionRenderer,
-    public val annotationsRenderer: KtAnnotationRenderer,
-    public val contextReceiversRenderer: KtContextReceiversRenderer,
-    public val keywordsRenderer: KtKeywordsRenderer,
+    public val capturedTypeRenderer: KaCapturedTypeRenderer,
+    public val definitelyNotNullTypeRenderer: KaDefinitelyNotNullTypeRenderer,
+    public val dynamicTypeRenderer: KaDynamicTypeRenderer,
+    public val flexibleTypeRenderer: KaFlexibleTypeRenderer,
+    public val functionalTypeRenderer: KaFunctionalTypeRenderer,
+    public val intersectionTypeRenderer: KaIntersectionTypeRenderer,
+    public val errorTypeRenderer: KaErrorTypeRenderer,
+    public val typeParameterTypeRenderer: KaTypeParameterTypeRenderer,
+    public val unresolvedClassErrorTypeRenderer: KaUnresolvedClassErrorTypeRenderer,
+    public val usualClassTypeRenderer: KaUsualClassTypeRenderer,
+
+    public val classIdRenderer: KaClassTypeQualifierRenderer,
+    public val typeNameRenderer: KaTypeNameRenderer,
+    public val typeApproximator: KaRendererTypeApproximator,
+    public val typeProjectionRenderer: KaTypeProjectionRenderer,
+    public val annotationsRenderer: KaAnnotationRenderer,
+    public val contextReceiversRenderer: KaContextReceiversRenderer,
+    public val keywordsRenderer: KaKeywordsRenderer,
 ) {
-    public fun renderType(analysisSession: KtAnalysisSession, type: KtType, printer: PrettyPrinter) {
-        when (type) {
-            is KtCapturedType -> capturedTypeRenderer.renderType(analysisSession, type, this, printer)
-            is KtFunctionalType -> functionalTypeRenderer.renderType(analysisSession, type, this, printer)
-            is KtUsualClassType -> usualClassTypeRenderer.renderType(analysisSession, type, this, printer)
-            is KtDefinitelyNotNullType -> definitelyNotNullTypeRenderer.renderType(analysisSession, type, this, printer)
-            is KtDynamicType -> dynamicTypeRenderer.renderType(analysisSession, type, this, printer)
-            is KtFlexibleType -> flexibleTypeRenderer.renderType(analysisSession, type, this, printer)
-            is KtIntegerLiteralType -> integerLiteralTypeRenderer.renderType(analysisSession, type, this, printer)
-            is KtIntersectionType -> intersectionTypeRenderer.renderType(analysisSession, type, this, printer)
-            is KtTypeParameterType -> typeParameterTypeRenderer.renderType(analysisSession, type, this, printer)
-            is KtClassErrorType -> unresolvedClassErrorTypeRenderer.renderType(analysisSession, type, this, printer)
-            is KtTypeErrorType -> typeErrorTypeRenderer.renderType(analysisSession, type, this, printer)
+    public fun renderType(analysisSession: KaSession, type: KaType, printer: PrettyPrinter) {
+        with(analysisSession) {
+            when (expandedTypeRenderingMode) {
+                KaExpandedTypeRenderingMode.RENDER_ABBREVIATED_TYPE -> {
+                    renderAbbreviatedType(type, printer)
+                }
+
+                KaExpandedTypeRenderingMode.RENDER_ABBREVIATED_TYPE_WITH_EXPANDED_TYPE_COMMENT -> {
+                    renderAbbreviatedType(type, printer)
+                    renderExpandedTypeComment(type, printer)
+                }
+
+                KaExpandedTypeRenderingMode.RENDER_EXPANDED_TYPE -> {
+                    renderExpandedType(type, printer)
+                }
+
+                KaExpandedTypeRenderingMode.RENDER_EXPANDED_TYPE_WITH_ABBREVIATED_TYPE_COMMENT -> {
+                    renderExpandedType(type, printer)
+                    renderAbbreviatedTypeComment(type, printer)
+                }
+            }
         }
     }
 
-    public fun with(action: Builder.() -> Unit): KtTypeRenderer {
+    private fun KaSession.renderAbbreviatedType(type: KaType, printer: PrettyPrinter) {
+        renderTypeAsIs(type.abbreviatedType ?: type, printer)
+    }
+
+    private fun KaSession.renderExpandedTypeComment(type: KaType, printer: PrettyPrinter) {
+        val expandedType = when {
+            type.abbreviatedType != null -> type
+            type.symbol is KaTypeAliasSymbol -> type.fullyExpandedType
+            else -> return
+        }
+
+        printer.append(" /* = ")
+        renderTypeAsIs(expandedType, printer)
+        printer.append(" */")
+    }
+
+    private fun KaSession.renderExpandedType(type: KaType, printer: PrettyPrinter) {
+        renderTypeAsIs(type.fullyExpandedType, printer)
+    }
+
+    private fun KaSession.renderAbbreviatedTypeComment(type: KaType, printer: PrettyPrinter) {
+        val abbreviatedType = type.abbreviatedType
+            ?: type.takeIf { it.symbol is KaTypeAliasSymbol }
+            ?: return
+
+        printer.append(" /* from: ")
+        renderTypeAsIs(abbreviatedType, printer)
+        printer.append(" */")
+    }
+
+    /**
+     * Renders [type] directly without considering its abbreviation or expansion.
+     */
+    private fun KaSession.renderTypeAsIs(type: KaType, printer: PrettyPrinter) {
+        when (type) {
+            is KaCapturedType -> capturedTypeRenderer.renderType(this, type, this@KaTypeRenderer, printer)
+            is KaFunctionalType -> functionalTypeRenderer.renderType(this, type, this@KaTypeRenderer, printer)
+            is KaUsualClassType -> usualClassTypeRenderer.renderType(this, type, this@KaTypeRenderer, printer)
+            is KaDefinitelyNotNullType -> definitelyNotNullTypeRenderer.renderType(this, type, this@KaTypeRenderer, printer)
+            is KaDynamicType -> dynamicTypeRenderer.renderType(this, type, this@KaTypeRenderer, printer)
+            is KaFlexibleType -> flexibleTypeRenderer.renderType(this, type, this@KaTypeRenderer, printer)
+            is KaIntersectionType -> intersectionTypeRenderer.renderType(this, type, this@KaTypeRenderer, printer)
+            is KaTypeParameterType -> typeParameterTypeRenderer.renderType(this, type, this@KaTypeRenderer, printer)
+            is KaClassErrorType -> unresolvedClassErrorTypeRenderer.renderType(this, type, this@KaTypeRenderer, printer)
+            is KaErrorType -> errorTypeRenderer.renderType(this, type, this@KaTypeRenderer, printer)
+        }
+    }
+
+    public fun with(action: Builder.() -> Unit): KaTypeRenderer {
         val renderer = this
-        return KtTypeRenderer {
+        return KaTypeRenderer {
+            this.expandedTypeRenderingMode = renderer.expandedTypeRenderingMode
             this.capturedTypeRenderer = renderer.capturedTypeRenderer
             this.definitelyNotNullTypeRenderer = renderer.definitelyNotNullTypeRenderer
             this.dynamicTypeRenderer = renderer.dynamicTypeRenderer
             this.flexibleTypeRenderer = renderer.flexibleTypeRenderer
             this.functionalTypeRenderer = renderer.functionalTypeRenderer
-            this.integerLiteralTypeRenderer = renderer.integerLiteralTypeRenderer
             this.intersectionTypeRenderer = renderer.intersectionTypeRenderer
-            this.typeErrorTypeRenderer = renderer.typeErrorTypeRenderer
+            this.errorTypeRenderer = renderer.errorTypeRenderer
             this.typeParameterTypeRenderer = renderer.typeParameterTypeRenderer
             this.unresolvedClassErrorTypeRenderer = renderer.unresolvedClassErrorTypeRenderer
             this.usualClassTypeRenderer = renderer.usualClassTypeRenderer
@@ -77,39 +135,39 @@ public class KtTypeRenderer private constructor(
     }
 
     public companion object {
-        public operator fun invoke(action: Builder.() -> Unit): KtTypeRenderer =
+        public operator fun invoke(action: Builder.() -> Unit): KaTypeRenderer =
             Builder().apply(action).build()
     }
 
     public class Builder {
-        public lateinit var capturedTypeRenderer: KtCapturedTypeRenderer
-        public lateinit var definitelyNotNullTypeRenderer: KtDefinitelyNotNullTypeRenderer
-        public lateinit var dynamicTypeRenderer: KtDynamicTypeRenderer
-        public lateinit var flexibleTypeRenderer: KtFlexibleTypeRenderer
-        public lateinit var functionalTypeRenderer: KtFunctionalTypeRenderer
-        public lateinit var integerLiteralTypeRenderer: KtIntegerLiteralTypeRenderer
-        public lateinit var intersectionTypeRenderer: KtIntersectionTypeRenderer
-        public lateinit var typeErrorTypeRenderer: KtTypeErrorTypeRenderer
-        public lateinit var typeParameterTypeRenderer: KtTypeParameterTypeRenderer
-        public lateinit var unresolvedClassErrorTypeRenderer: KtUnresolvedClassErrorTypeRenderer
-        public lateinit var usualClassTypeRenderer: KtUsualClassTypeRenderer
-        public lateinit var classIdRenderer: KtClassTypeQualifierRenderer
-        public lateinit var typeNameRenderer: KtTypeNameRenderer
-        public lateinit var typeApproximator: KtRendererTypeApproximator
-        public lateinit var typeProjectionRenderer: KtTypeProjectionRenderer
-        public lateinit var annotationsRenderer: KtAnnotationRenderer
-        public lateinit var contextReceiversRenderer: KtContextReceiversRenderer
-        public lateinit var keywordsRenderer: KtKeywordsRenderer
+        public lateinit var expandedTypeRenderingMode: KaExpandedTypeRenderingMode
+        public lateinit var capturedTypeRenderer: KaCapturedTypeRenderer
+        public lateinit var definitelyNotNullTypeRenderer: KaDefinitelyNotNullTypeRenderer
+        public lateinit var dynamicTypeRenderer: KaDynamicTypeRenderer
+        public lateinit var flexibleTypeRenderer: KaFlexibleTypeRenderer
+        public lateinit var functionalTypeRenderer: KaFunctionalTypeRenderer
+        public lateinit var intersectionTypeRenderer: KaIntersectionTypeRenderer
+        public lateinit var errorTypeRenderer: KaErrorTypeRenderer
+        public lateinit var typeParameterTypeRenderer: KaTypeParameterTypeRenderer
+        public lateinit var unresolvedClassErrorTypeRenderer: KaUnresolvedClassErrorTypeRenderer
+        public lateinit var usualClassTypeRenderer: KaUsualClassTypeRenderer
+        public lateinit var classIdRenderer: KaClassTypeQualifierRenderer
+        public lateinit var typeNameRenderer: KaTypeNameRenderer
+        public lateinit var typeApproximator: KaRendererTypeApproximator
+        public lateinit var typeProjectionRenderer: KaTypeProjectionRenderer
+        public lateinit var annotationsRenderer: KaAnnotationRenderer
+        public lateinit var contextReceiversRenderer: KaContextReceiversRenderer
+        public lateinit var keywordsRenderer: KaKeywordsRenderer
 
-        public fun build(): KtTypeRenderer = KtTypeRenderer(
+        public fun build(): KaTypeRenderer = KaTypeRenderer(
+            expandedTypeRenderingMode,
             capturedTypeRenderer,
             definitelyNotNullTypeRenderer,
             dynamicTypeRenderer,
             flexibleTypeRenderer,
             functionalTypeRenderer,
-            integerLiteralTypeRenderer,
             intersectionTypeRenderer,
-            typeErrorTypeRenderer,
+            errorTypeRenderer,
             typeParameterTypeRenderer,
             unresolvedClassErrorTypeRenderer,
             usualClassTypeRenderer,
@@ -123,3 +181,5 @@ public class KtTypeRenderer private constructor(
         )
     }
 }
+
+public typealias KtTypeRenderer = KaTypeRenderer

@@ -229,22 +229,25 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
             return true
         }
 
-        val isFunctionType = isBasicFunctionType(session)
-        val isExportableArgs = isExportableTypeArguments(session, currentlyProcessed, isFunctionType)
+        val expandedType = fullyExpandedType(session)
+
+        val isFunctionType = expandedType.isBasicFunctionType(session)
+        val isExportableArgs = expandedType.isExportableTypeArguments(session, currentlyProcessed, isFunctionType)
         currentlyProcessed.remove(this)
         if (isFunctionType || !isExportableArgs) {
             return isExportableArgs
         }
 
-        val nonNullable = withNullability(ConeNullability.NOT_NULL, session.typeContext)
+        val nonNullable = expandedType.withNullability(ConeNullability.NOT_NULL, session.typeContext)
         val isPrimitiveExportableType = nonNullable.isAny || nonNullable.isNullableAny
                 || nonNullable is ConeDynamicType || nonNullable.isPrimitiveExportableConeKotlinType
-        val symbol = fullyExpandedType(session).toSymbol(session)
+
+        val symbol = expandedType.toSymbol(session)
 
         return when {
             isPrimitiveExportableType -> true
             symbol?.isMemberDeclaration != true -> false
-            isEnum -> true
+            expandedType.isEnum -> true
             else -> symbol.isEffectivelyExternal(session) || symbol.isExportedObject(session)
         }
     }
@@ -276,7 +279,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
 
         val jsNameArgument = declaration.symbol.getAnnotationFirstArgument(JsStandardClassIds.Annotations.JsName, context.session)
         val reportTarget = jsNameArgument?.source ?: declaration.source
-        val name = (jsNameArgument as? FirLiteralExpression<*>)?.value as? String ?: declaration.nameOrSpecialName.asString()
+        val name = (jsNameArgument as? FirLiteralExpression)?.value as? String ?: declaration.nameOrSpecialName.asString()
 
         if (name in SPECIAL_KEYWORDS || (name !in RESERVED_KEYWORDS && sanitizeName(name) == name)) {
             return

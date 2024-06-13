@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.test.runners
 
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.test.TestJavacVersion
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
@@ -14,9 +13,9 @@ import org.jetbrains.kotlin.test.builders.classicFrontendStep
 import org.jetbrains.kotlin.test.builders.configureClassicFrontendHandlersStep
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.SKIP_TXT
 import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives.ANNOTATIONS_PATH
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ALL_JAVA_AS_BINARY
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.COMPILE_JAVA_USING
+import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives.ENABLE_FOREIGN_ANNOTATIONS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.PROVIDE_JAVA_AS_BINARIES
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_FOREIGN_ANNOTATIONS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_JSR305_TEST_ANNOTATIONS
@@ -48,12 +47,13 @@ abstract class AbstractForeignAnnotationsTestBase(private val kind: ForeignAnnot
         defaultDirectives {
             +WITH_FOREIGN_ANNOTATIONS
             if (kind.compiledJava) {
-                +ALL_JAVA_AS_BINARY
+                +PROVIDE_JAVA_AS_BINARIES
                 +SKIP_TXT
             }
             if (kind.psiClassLoading) {
                 +USE_PSI_CLASS_FILES_READING
             }
+            +ENABLE_FOREIGN_ANNOTATIONS
         }
 
         enableMetaInfoHandler()
@@ -98,7 +98,6 @@ abstract class AbstractForeignAnnotationsTestBase(private val kind: ForeignAnnot
             defaultDirectives {
                 ANNOTATIONS_PATH with JavaForeignAnnotationType.Java9Annotations
                 JDK_KIND with TestJdkKind.FULL_JDK_11
-                COMPILE_JAVA_USING with TestJavacVersion.JAVAC_11
             }
         }
     }

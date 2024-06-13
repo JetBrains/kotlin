@@ -61,6 +61,8 @@ fun FileHasher.calculateDirHash(
 }
 
 const val JS = "js"
+const val MJS = "mjs"
+const val WASM = "wasm"
 const val JS_MAP = "js.map"
 const val META_JS = "meta.js"
 const val HTML = "html"
@@ -78,8 +80,4 @@ internal fun writeWasmUnitTestRunner(workingDir: File, compiledFile: File): File
         """.trimIndent()
     )
     return testRunnerFile
-}
-
-internal fun MutableList<String>.addWasmExperimentalArguments() {
-    add("--experimental-wasm-gc")
 }

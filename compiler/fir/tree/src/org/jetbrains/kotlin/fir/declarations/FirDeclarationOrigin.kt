@@ -30,6 +30,7 @@ sealed class FirDeclarationOrigin(
         object JavaProperty : Synthetic()
         object DelegateField : Synthetic()
         object PluginFile : Synthetic()
+        object Builtins : Synthetic()
         object Error : Synthetic()
         object TypeAliasConstructor : Synthetic()
         object FakeFunction : Synthetic()

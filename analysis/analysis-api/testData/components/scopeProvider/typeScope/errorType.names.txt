@@ -1,4 +1,4 @@
-KtTypeScope:
+KaTypeScope:
   NO_SCOPE
 
 Declaration Scope:

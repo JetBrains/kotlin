@@ -1,7 +1,7 @@
-/contextReceiverAmbiguity.fir.kt:(167,171): error: Cannot infer type for this parameter. Please specify it explicitly.
+/contextReceiverAmbiguity.fir.kt:(166,170): error: Cannot infer type for this parameter. Please specify it explicitly.
 
-/contextReceiverAmbiguity.fir.kt:(176,198): error: Cannot infer type for this parameter. Please specify it explicitly.
+/contextReceiverAmbiguity.fir.kt:(175,197): error: Cannot infer type for this parameter. Please specify it explicitly.
 
-/contextReceiverAmbiguity.fir.kt:(186,189): error: Overload resolution ambiguity between candidates:
+/contextReceiverAmbiguity.fir.kt:(185,188): error: Overload resolution ambiguity between candidates:
 context(String) fun foo(x: Comparable<*>): Unit
 context(String) fun foo(x: Number): Unit

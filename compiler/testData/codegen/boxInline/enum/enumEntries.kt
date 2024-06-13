@@ -2,7 +2,7 @@
 // IGNORE_BACKEND: JVM
 // NO_CHECK_LAMBDA_INLINING
 // WITH_STDLIB
-// !OPT_IN: kotlin.ExperimentalStdlibApi
+// OPT_IN: kotlin.ExperimentalStdlibApi
 // FILE: 1.kt
 
 package test

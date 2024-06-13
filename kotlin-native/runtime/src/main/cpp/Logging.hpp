@@ -39,8 +39,9 @@ enum class Tag : int32_t {
     kBalancing = 7,
     kBarriers = 8,
     kGCMark = 9,
+    kGCScheduler = 10,
 
-    kEnumSize = 10
+    kEnumSize = 11
 };
 
 namespace internal {
@@ -67,6 +68,7 @@ inline const char* name(Tag tag) {
         case Tag::kBalancing: return "balancing";
         case Tag::kBarriers: return "barriers";
         case Tag::kGCMark: return "gcMark";
+        case Tag::kGCScheduler: return "gcScheduler";
 
         case Tag::kEnumSize: break;
     }
@@ -86,7 +88,7 @@ ALWAYS_INLINE inline bool enabled(logging::Level level, std_support::span<const 
     return false;
 }
 
-ALWAYS_INLINE inline bool enabled(logging::Level level, std::initializer_list<const logging::Tag> tags) noexcept {
+ALWAYS_INLINE inline bool enabled(logging::Level level, std::initializer_list<const logging::Tag> tags, ...) noexcept {
     std_support::span<const logging::Tag> tagsSpan(std::data(tags), std::size(tags));
     return enabled(level, tagsSpan, compiler::runtimeLogs());
 }
@@ -142,26 +144,14 @@ inline constexpr auto kTagBalancing = logging::Tag::kBalancing;
 // Using macros to simplify forwarding of varargs without breaking __attribute__((format)) and to avoid
 // evaluating args in `...` if logging is disabled.
 
-#define RuntimeLog(level, tags, format, ...) \
+#define RuntimeLog(level, ...) \
     do { \
-        if (::kotlin::logging::internal::enabled(level, tags)) { \
-            ::kotlin::logging::Log(level, tags, format, ##__VA_ARGS__); \
+        if (::kotlin::logging::internal::enabled(level, ##__VA_ARGS__)) { \
+            ::kotlin::logging::Log(level, ##__VA_ARGS__); \
         } \
     } while (false)
 
-#define RuntimeVLog(level, tags, format, args) \
-    do { \
-        if (::kotlin::logging::internal::enabled(level, tags)) { \
-            ::kotlin::logging::VLog(level, tags, format, args); \
-        } \
-    } while (false)
-
-#define RuntimeLogDebug(tags, format, ...) RuntimeLog(::kotlin::logging::Level::kDebug, tags, format, ##__VA_ARGS__)
-#define RuntimeLogInfo(tags, format, ...) RuntimeLog(::kotlin::logging::Level::kInfo, tags, format, ##__VA_ARGS__)
-#define RuntimeLogWarning(tags, format, ...) RuntimeLog(::kotlin::logging::Level::kWarning, tags, format, ##__VA_ARGS__)
-#define RuntimeLogError(tags, format, ...) RuntimeLog(::kotlin::logging::Level::kError, tags, format, ##__VA_ARGS__)
-
-#define RuntimeVLogDebug(tags, format, args) RuntimeVLog(::kotlin::logging::Level::kDebug, tags, format, args)
-#define RuntimeVLogInfo(tags, format, args) RuntimeVLog(::kotlin::logging::Level::kInfo, tags, format, args)
-#define RuntimeVLogWarning(tags, format, args) RuntimeVLog(::kotlin::logging::Level::kWarning, tags, format, args)
-#define RuntimeVLogError(tags, format, args) RuntimeVLog(::kotlin::logging::Level::kError, tags, format, args)
+#define RuntimeLogDebug(...) RuntimeLog(::kotlin::logging::Level::kDebug, ##__VA_ARGS__)
+#define RuntimeLogInfo(...) RuntimeLog(::kotlin::logging::Level::kInfo, ##__VA_ARGS__)
+#define RuntimeLogWarning(...) RuntimeLog(::kotlin::logging::Level::kWarning, ##__VA_ARGS__)
+#define RuntimeLogError(...) RuntimeLog(::kotlin::logging::Level::kError, ##__VA_ARGS__)

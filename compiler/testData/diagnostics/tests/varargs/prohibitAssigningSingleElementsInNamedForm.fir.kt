@@ -1,5 +1,5 @@
-// !LANGUAGE: +ProhibitAssigningSingleElementsToVarargsInNamedForm +AllowAssigningArrayElementsToVarargsInNamedFormForFunctions
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +ProhibitAssigningSingleElementsToVarargsInNamedForm +AllowAssigningArrayElementsToVarargsInNamedFormForFunctions
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 annotation class Anno1(vararg val s: String)
 annotation class Anno2(vararg val i: Int)

@@ -1,0 +1,50 @@
+KaSamConstructorSymbol:
+  annotations: []
+  callableId: /MyInterface
+  contextReceivers: []
+  hasStableParameterNames: true
+  isExtension: false
+  name: MyInterface
+  origin: SAM_CONSTRUCTOR
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: MyInterface
+  symbolKind: SAM_CONSTRUCTOR
+  typeParameters: []
+  valueParameters: [
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: function
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaFunctionalType:
+        annotations: []
+        typeArguments: [
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Unit
+        ]
+        type: kotlin/Function0<kotlin/Unit>
+      symbolKind: LOCAL
+      typeParameters: []
+      getContainingFileSymbol: KaFileSymbol(samConstructorForTypeAlias.kt)
+      getContainingJvmClassName: null
+      getContainingModule: KtSourceModule "Sources of main"
+      deprecationStatus: null
+  ]
+  getContainingFileSymbol: KaFileSymbol(samConstructorForTypeAlias.kt)
+  getContainingJvmClassName: null
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null

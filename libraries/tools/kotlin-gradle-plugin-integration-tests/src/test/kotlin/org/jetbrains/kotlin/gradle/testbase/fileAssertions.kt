@@ -14,10 +14,7 @@ import kotlin.io.path.exists
 import kotlin.io.path.isDirectory
 import kotlin.io.path.readLines
 import kotlin.io.path.readText
-import kotlin.test.assertContentEquals
-import kotlin.test.assertEquals
-import kotlin.test.asserter
-import kotlin.test.fail
+import kotlin.test.*
 
 /**
  * Asserts file under [file] path exists and is a regular file.
@@ -70,7 +67,7 @@ fun GradleProject.assertFileInProjectNotExists(
 
 fun assertFileNotExists(
     pathToFile: Path,
-    message: String = "File '${pathToFile}' exists!"
+    message: String = "File '${pathToFile}' exists!",
 ) {
     assert(!Files.exists(pathToFile)) {
         message
@@ -122,6 +119,24 @@ fun TestProject.assertSymlinkInProjectExists(
     pathToFile: String,
 ) {
     assertSymlinkExists(projectPath.resolve(pathToFile))
+}
+
+/**
+ * Asserts symlink under [pathToFile] relative to the test project exists and points to [pathToPointee].
+ */
+fun TestProject.assertSymlinkInProjectPointsToProjectPath(
+    pathToSymlink: String,
+    pathToPointee: String,
+) {
+    val pointeePath = projectPath.resolve(pathToPointee).toFile().canonicalFile
+    val symlinkPath = projectPath.resolve(pathToSymlink).toFile()
+    val symlinkPointeePath = symlinkPath.canonicalFile
+    assertSymlinkExists(symlinkPath.toPath())
+    assertEquals(
+        pointeePath,
+        symlinkPointeePath,
+        "Symlink '${symlinkPointeePath}' points to '${symlinkPointeePath}', but was expected to point to '${pointeePath}'"
+    )
 }
 
 /**
@@ -203,8 +218,13 @@ fun assertDirectoryDoesNotExist(
 fun GradleProject.assertFileInProjectContains(
     pathToFile: String,
     vararg expectedText: String,
+    ignoreWhitespace: Boolean = false,
 ) {
-    assertFileContains(projectPath.resolve(pathToFile), *expectedText)
+    assertFileContains(
+        file = projectPath.resolve(pathToFile),
+        expectedText = expectedText,
+        ignoreWhitespace = ignoreWhitespace
+    )
 }
 
 /**
@@ -220,38 +240,58 @@ fun GradleProject.assertFileInProjectDoesNotContain(
 /**
  * Asserts file under [file] exists and contains all the lines from [expectedText]
  *
+ * @param[ignoreWhitespace] will remove all whitespace from [file] content.
  * @return the content of the [file]
  */
 fun assertFileContains(
     file: Path,
     vararg expectedText: String,
+    ignoreWhitespace: Boolean = false,
 ): String {
-    return assertFilesCombinedContains(listOf(file), *expectedText)
+    return assertFilesCombinedContains(
+        files = listOf(file),
+        expectedText = expectedText,
+        ignoreWhitespace = ignoreWhitespace,
+    )
 }
 
 /**
  * Asserts files together contains all the lines from [expectedText]
+ *
+ * @param[ignoreWhitespace] will remove all whitespace from the content of all [files].
  */
 fun assertFilesCombinedContains(
     files: List<Path>,
     vararg expectedText: String,
+    ignoreWhitespace: Boolean = false,
 ): String {
+    assertTrue(files.isNotEmpty(), "Must have at least one file")
     files.forEach { assertFileExists(it) }
 
     val text = files.joinToString(separator = "\n") {
-        it.readText()
+        if (ignoreWhitespace) {
+            it.readText().filterNot(Char::isWhitespace)
+        } else {
+            it.readText()
+        }
     }
 
     val textNotInTheFile = expectedText.filterNot { text.contains(it) }
     assert(textNotInTheFile.isEmpty()) {
-        """
-        |$files does not contain:
-        |${textNotInTheFile.joinToString(separator = "\n")}
-        |
-        |actual content:
-        |"$text"
-        |       
-        """.trimMargin()
+        buildString {
+            if (files.size > 1) {
+                appendLine("${files.size} files did not contain expected text:")
+            } else {
+                appendLine("File did not contain expected text:")
+            }
+            textNotInTheFile.forEach { appendLine(it) }
+            if (ignoreWhitespace) appendLine("\n(ignoreWhitespace is enabled)")
+            appendLine("\nActual content:")
+            appendLine(text)
+            appendLine("\nSearched in files:")
+            files.forEach { appendLine(" - $it") }
+            appendLine()
+        }
     }
     return text
 }
@@ -262,19 +302,21 @@ fun assertFilesCombinedContains(
 fun assertFileDoesNotContain(
     file: Path,
     vararg unexpectedText: String,
+    message: String? = null,
 ) {
     assertFileExists(file)
     val text = file.readText()
     val textInTheFile = unexpectedText.filter { text.contains(it) }
     assert(textInTheFile.isEmpty()) {
         """
+        |${message ?: ""}
         |$file contains lines which it should not contain:
         |${textInTheFile.joinToString(separator = "\n")}
         |
         |actual file content:
-        |$text"
-        |       
-        """.trimMargin()
+        |$text
+        |
+        """.trimMargin().trimStart()
     }
 }
 
@@ -347,7 +389,7 @@ fun assertGradleVariant(gradleModuleFile: Path, variantName: String, code: Gradl
 }
 
 fun Path.assertZipArchiveContainsFilesOnce(
-    fileNames: List<String>
+    fileNames: List<String>,
 ) {
     ZipFile(toFile()).use { zip ->
         fileNames.forEach { fileName ->

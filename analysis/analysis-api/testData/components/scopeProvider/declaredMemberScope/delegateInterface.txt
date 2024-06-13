@@ -1,29 +1,29 @@
-KtKotlinPropertySymbol:
-  annotationsList: []
-  backingFieldSymbol: KtBackingFieldSymbol:
-    annotationsList: []
-    callableIdIfNonLocal: null
+KaKotlinPropertySymbol:
+  annotations: []
+  backingFieldSymbol: KaBackingFieldSymbol:
+    annotations: []
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
     origin: PROPERTY_BACKING_FIELD
-    owningProperty: KtKotlinPropertySymbol(/I.p)
+    owningProperty: KaKotlinPropertySymbol(/I.p)
     receiverParameter: null
-    returnType: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: A
     symbolKind: LOCAL
     typeParameters: []
-    getContainingFileSymbol: KtFileSymbol(A.kt)
+    getContainingFileSymbol: KaFileSymbol(A.kt)
     getContainingJvmClassName: I
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  callableIdIfNonLocal: /I.p
+  callableId: /I.p
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
-    annotationsList: []
-    callableIdIfNonLocal: null
+  getter: KaPropertyGetterSymbol:
+    annotations: []
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -34,19 +34,19 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
-    returnType: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: A
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Private
-    getDispatchReceiver(): KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: I
-    getContainingFileSymbol: KtFileSymbol(A.kt)
+    getContainingFileSymbol: KaFileSymbol(A.kt)
     getContainingJvmClassName: I
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
@@ -68,19 +68,19 @@ KtKotlinPropertySymbol:
   name: p
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: A
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Private
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: I
-  getContainingFileSymbol: KtFileSymbol(A.kt)
+  getContainingFileSymbol: KaFileSymbol(A.kt)
   getContainingJvmClassName: I
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
@@ -89,10 +89,10 @@ KtKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
 
-KtConstructorSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
-  containingClassIdIfNonLocal: I
+KaConstructorSymbol:
+  annotations: []
+  callableId: null
+  containingClassId: I
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -101,43 +101,43 @@ KtConstructorSymbol:
   isPrimary: true
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: I
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
       contextReceivers: []
-      generatedPrimaryConstructorProperty: KtKotlinPropertySymbol:
-        annotationsList: []
-        backingFieldSymbol: KtBackingFieldSymbol:
-          annotationsList: []
-          callableIdIfNonLocal: null
+      generatedPrimaryConstructorProperty: KaKotlinPropertySymbol:
+        annotations: []
+        backingFieldSymbol: KaBackingFieldSymbol:
+          annotations: []
+          callableId: null
           contextReceivers: []
           isExtension: false
           name: field
           origin: PROPERTY_BACKING_FIELD
-          owningProperty: KtKotlinPropertySymbol(/I.p)
+          owningProperty: KaKotlinPropertySymbol(/I.p)
           receiverParameter: null
-          returnType: KtUsualClassType:
-            annotationsList: []
-            ownTypeArguments: []
+          returnType: KaUsualClassType:
+            annotations: []
+            typeArguments: []
             type: A
           symbolKind: LOCAL
           typeParameters: []
-          getContainingFileSymbol: KtFileSymbol(A.kt)
+          getContainingFileSymbol: KaFileSymbol(A.kt)
           getContainingJvmClassName: I
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
-        callableIdIfNonLocal: /I.p
+        callableId: /I.p
         contextReceivers: []
-        getter: KtPropertyGetterSymbol:
-          annotationsList: []
-          callableIdIfNonLocal: null
+        getter: KaPropertyGetterSymbol:
+          annotations: []
+          callableId: null
           contextReceivers: []
           hasBody: false
           hasStableParameterNames: true
@@ -148,19 +148,19 @@ KtConstructorSymbol:
           modality: FINAL
           origin: SOURCE
           receiverParameter: null
-          returnType: KtUsualClassType:
-            annotationsList: []
-            ownTypeArguments: []
+          returnType: KaUsualClassType:
+            annotations: []
+            typeArguments: []
             type: A
           symbolKind: ACCESSOR
           typeParameters: []
           valueParameters: []
           visibility: Private
-          getDispatchReceiver(): KtUsualClassType:
-            annotationsList: []
-            ownTypeArguments: []
+          getDispatchReceiver(): KaUsualClassType:
+            annotations: []
+            typeArguments: []
             type: I
-          getContainingFileSymbol: KtFileSymbol(A.kt)
+          getContainingFileSymbol: KaFileSymbol(A.kt)
           getContainingJvmClassName: I
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
@@ -182,19 +182,19 @@ KtConstructorSymbol:
         name: p
         origin: SOURCE
         receiverParameter: null
-        returnType: KtUsualClassType:
-          annotationsList: []
-          ownTypeArguments: []
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
           type: A
         setter: null
         symbolKind: CLASS_MEMBER
         typeParameters: []
         visibility: Private
-        getDispatchReceiver(): KtUsualClassType:
-          annotationsList: []
-          ownTypeArguments: []
+        getDispatchReceiver(): KaUsualClassType:
+          annotations: []
+          typeArguments: []
           type: I
-        getContainingFileSymbol: KtFileSymbol(A.kt)
+        getContainingFileSymbol: KaFileSymbol(A.kt)
         getContainingJvmClassName: I
         getContainingModule: KtSourceModule "Sources of main"
         deprecationStatus: null
@@ -211,19 +211,19 @@ KtConstructorSymbol:
       name: p
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: A
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(A.kt)
+      getContainingFileSymbol: KaFileSymbol(A.kt)
       getContainingJvmClassName: I
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(A.kt)
+  getContainingFileSymbol: KaFileSymbol(A.kt)
   getContainingJvmClassName: I
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

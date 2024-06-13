@@ -56,7 +56,7 @@ fun PsiElement?.position(): String {
     return offsetToLineAndColumn(containingFile.viewProvider.document, textRange.startOffset).toString()
 }
 
-fun KtSymbol.getNameWithPositionString(): String {
+fun KaSymbol.getNameWithPositionString(): String {
     return when (val psi = this.psi) {
         is KtDeclarationWithBody -> psi.name
         is KtNamedDeclaration -> psi.name

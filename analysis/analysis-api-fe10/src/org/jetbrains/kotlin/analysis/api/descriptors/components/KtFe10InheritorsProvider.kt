@@ -5,27 +5,26 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
-import org.jetbrains.kotlin.analysis.api.components.KtInheritorsProvider
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
-import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescEnumEntrySymbol
+import org.jetbrains.kotlin.analysis.api.components.KaInheritorsProvider
+import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtClassifierSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 
-internal class KtFe10InheritorsProvider(
-    override val analysisSession: KtFe10AnalysisSession
-) : KtInheritorsProvider(), Fe10KtAnalysisSessionComponent {
-    override val token: KtLifetimeToken
+internal class KaFe10InheritorsProvider(
+    override val analysisSession: KaFe10Session
+) : KaInheritorsProvider(), KaFe10SessionComponent {
+    override val token: KaLifetimeToken
         get() = analysisSession.token
 
-    override fun getInheritorsOfSealedClass(classSymbol: KtNamedClassOrObjectSymbol): List<KtNamedClassOrObjectSymbol> {
+    override fun getInheritorsOfSealedClass(classSymbol: KaNamedClassOrObjectSymbol): List<KaNamedClassOrObjectSymbol> {
         val classDescriptor = getSymbolDescriptor(classSymbol) as? ClassDescriptor ?: return emptyList()
 
         val inheritorsProvider = analysisContext.resolveSession.sealedClassInheritorsProvider
@@ -33,20 +32,20 @@ internal class KtFe10InheritorsProvider(
             .supportsFeature(LanguageFeature.AllowSealedInheritorsInDifferentFilesOfSamePackage)
 
         return inheritorsProvider.computeSealedSubclasses(classDescriptor, allowInDifferentFiles)
-            .mapNotNull { it.toKtClassifierSymbol(analysisContext) as? KtNamedClassOrObjectSymbol }
+            .mapNotNull { it.toKtClassifierSymbol(analysisContext) as? KaNamedClassOrObjectSymbol }
     }
 
-    override fun getEnumEntries(classSymbol: KtNamedClassOrObjectSymbol): List<KtEnumEntrySymbol> {
+    override fun getEnumEntries(classSymbol: KaNamedClassOrObjectSymbol): List<KaEnumEntrySymbol> {
         val enumDescriptor = getSymbolDescriptor(classSymbol) as? ClassDescriptor ?: return emptyList()
         if (enumDescriptor.kind != ClassKind.ENUM_CLASS) {
             return emptyList()
         }
 
-        val result = mutableListOf<KtEnumEntrySymbol>()
+        val result = mutableListOf<KaEnumEntrySymbol>()
 
         for (entryDescriptor in enumDescriptor.unsubstitutedMemberScope.getContributedDescriptors()) {
             if (entryDescriptor is ClassDescriptor && entryDescriptor.kind == ClassKind.ENUM_ENTRY) {
-                result += KtFe10DescEnumEntrySymbol(entryDescriptor, analysisContext)
+                result += KaFe10DescEnumEntrySymbol(entryDescriptor, analysisContext)
             }
         }
 

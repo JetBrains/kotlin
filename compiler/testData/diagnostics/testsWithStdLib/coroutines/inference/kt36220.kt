@@ -1,6 +1,6 @@
 // FIR_DUMP
-// !OPT_IN: kotlin.RequiresOptIn
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // ISSUE: KT-64823 (K2/PCLA difference)
 
 import kotlin.experimental.ExperimentalTypeInference

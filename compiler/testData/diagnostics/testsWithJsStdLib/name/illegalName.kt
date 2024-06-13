@@ -1,4 +1,4 @@
-// !LANGUAGE: -JsAllowInvalidCharsIdentifiersEscaping
+// LANGUAGE: -JsAllowInvalidCharsIdentifiersEscaping
 // FIR_IDENTICAL
 private fun ` .private `(): String = TODO("")
 

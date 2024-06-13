@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 
 class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val kind: Kind) {
     @set:CfgInternals
-    var nodeCount = 0
+    var nodeCount: Int = 0
 
     lateinit var nodes: List<CFGNode<*>>
         private set
@@ -68,12 +68,12 @@ data class Edge(
     val kind: EdgeKind,
 ) {
     companion object {
-        val Normal_Forward = Edge(NormalPath, EdgeKind.Forward)
-        private val Normal_DeadForward = Edge(NormalPath, EdgeKind.DeadForward)
-        private val Normal_DfgForward = Edge(NormalPath, EdgeKind.DfgForward)
-        private val Normal_CfgForward = Edge(NormalPath, EdgeKind.CfgForward)
-        private val Normal_CfgBackward = Edge(NormalPath, EdgeKind.CfgBackward)
-        private val Normal_DeadBackward = Edge(NormalPath, EdgeKind.DeadBackward)
+        val Normal_Forward: Edge = Edge(NormalPath, EdgeKind.Forward)
+        private val Normal_DeadForward: Edge = Edge(NormalPath, EdgeKind.DeadForward)
+        private val Normal_DfgForward: Edge = Edge(NormalPath, EdgeKind.DfgForward)
+        private val Normal_CfgForward: Edge = Edge(NormalPath, EdgeKind.CfgForward)
+        private val Normal_CfgBackward: Edge = Edge(NormalPath, EdgeKind.CfgBackward)
+        private val Normal_DeadBackward: Edge = Edge(NormalPath, EdgeKind.DeadBackward)
 
         fun create(label: EdgeLabel, kind: EdgeKind): Edge =
             when (label) {

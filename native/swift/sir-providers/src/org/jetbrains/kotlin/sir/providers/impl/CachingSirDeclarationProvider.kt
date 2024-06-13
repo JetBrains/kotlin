@@ -13,9 +13,9 @@ public class CachingSirDeclarationProvider(
     private val declarationsProvider: SirDeclarationProvider,
 ) : SirDeclarationProvider {
 
-    private val visitedDeclarations: MutableMap<KtDeclarationSymbol, SirDeclaration> = mutableMapOf()
+    private val visitedDeclarations: MutableMap<KaDeclarationSymbol, SirDeclaration> = mutableMapOf()
 
-    override fun KtDeclarationSymbol.sirDeclaration(): SirDeclaration {
+    override fun KaDeclarationSymbol.sirDeclaration(): SirDeclaration {
         return visitedDeclarations.getOrPut(this@sirDeclaration) {
             with(declarationsProvider) { this@sirDeclaration.sirDeclaration() }
         }

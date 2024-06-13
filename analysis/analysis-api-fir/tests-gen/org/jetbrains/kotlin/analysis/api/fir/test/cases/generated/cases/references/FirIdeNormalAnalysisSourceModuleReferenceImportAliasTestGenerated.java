@@ -52,9 +52,27 @@ public class FirIdeNormalAnalysisSourceModuleReferenceImportAliasTestGenerated e
   }
 
   @Test
+  @TestMetadata("classAliasWithCompanionObject.kt")
+  public void testClassAliasWithCompanionObject() {
+    runTest("analysis/analysis-api/testData/imports/importAliases/classAliasWithCompanionObject.kt");
+  }
+
+  @Test
+  @TestMetadata("constructorAlias.kt")
+  public void testConstructorAlias() {
+    runTest("analysis/analysis-api/testData/imports/importAliases/constructorAlias.kt");
+  }
+
+  @Test
   @TestMetadata("functionAlias.kt")
   public void testFunctionAlias() {
     runTest("analysis/analysis-api/testData/imports/importAliases/functionAlias.kt");
+  }
+
+  @Test
+  @TestMetadata("kdocReferenceAlias.kt")
+  public void testKdocReferenceAlias() {
+    runTest("analysis/analysis-api/testData/imports/importAliases/kdocReferenceAlias.kt");
   }
 
   @Test

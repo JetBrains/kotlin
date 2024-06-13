@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -67,7 +68,6 @@ abstract class AbstractNativeKlibBackendFacade(
             serializerOutput.serializedIr,
             versions = KotlinLibraryVersioning(
                 abiVersion = KotlinAbiVersion.CURRENT,
-                libraryVersion = null,
                 compilerVersion = KotlinCompilerVersion.getVersion(),
                 metadataVersion = configuration.metadataVersion().toString(),
             ),
@@ -132,10 +132,10 @@ class ClassicNativeKlibBackendFacade(testServices: TestServices) : AbstractNativ
             KtDiagnosticReporterWithImplicitIrBasedContext(inputArtifact.diagnosticReporter, configuration.languageVersionSettings),
             inputArtifact.irModuleFragment.irBuiltins,
             CompatibilityMode.CURRENT,
-            normalizeAbsolutePaths = configuration[CommonConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH] ?: false,
-            sourceBaseDirs = configuration[CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES].orEmpty(),
+            normalizeAbsolutePaths = configuration.getBoolean(KlibConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH),
+            sourceBaseDirs = configuration.getList(KlibConfigurationKeys.KLIB_RELATIVE_PATH_BASES),
             configuration.languageVersionSettings,
-            shouldCheckSignaturesOnUniqueness = configuration[CommonConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS] ?: true
+            shouldCheckSignaturesOnUniqueness = configuration.get(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS, true)
         ).serializedIrModule(inputArtifact.irModuleFragment)
 
         return SerializerOutput(

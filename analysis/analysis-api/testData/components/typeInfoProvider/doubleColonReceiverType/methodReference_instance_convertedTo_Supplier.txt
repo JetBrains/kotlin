@@ -1,0 +1,2 @@
+expression: GenericClass<String>()::foo
+receiver:: type: GenericClass<kotlin.String>

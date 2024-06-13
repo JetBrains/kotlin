@@ -11,14 +11,14 @@ import org.jetbrains.kotlin.KtFakeSourceElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtFakeSourceElementKind.DesugaredAugmentedAssign
 import org.jetbrains.kotlin.KtFakeSourceElementKind.DesugaredIncrementOrDecrement
-import org.jetbrains.kotlin.analysis.api.KtAnalysisNonPublicApi
-import org.jetbrains.kotlin.analysis.api.components.KtDataFlowExitPointSnapshot
-import org.jetbrains.kotlin.analysis.api.components.KtDataFlowExitPointSnapshot.DefaultExpressionInfo
-import org.jetbrains.kotlin.analysis.api.components.KtDataFlowExitPointSnapshot.VariableReassignment
-import org.jetbrains.kotlin.analysis.api.components.KtDataFlowInfoProvider
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
+import org.jetbrains.kotlin.analysis.api.components.KaDataFlowExitPointSnapshot
+import org.jetbrains.kotlin.analysis.api.components.KaDataFlowExitPointSnapshot.DefaultExpressionInfo
+import org.jetbrains.kotlin.analysis.api.components.KaDataFlowExitPointSnapshot.VariableReassignment
+import org.jetbrains.kotlin.analysis.api.components.KaDataFlowInfoProvider
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
@@ -61,19 +61,19 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtOperationReferenceExpression
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.psi2ir.deparenthesize
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import java.util.Optional
-import kotlin.collections.ArrayList
 import kotlin.jvm.optionals.getOrNull
 import kotlin.math.sign
 
-@OptIn(KtAnalysisNonPublicApi::class)
-internal class KtFirDataFlowInfoProvider(override val analysisSession: KtFirAnalysisSession) : KtDataFlowInfoProvider() {
+@OptIn(KaAnalysisNonPublicApi::class)
+internal class KaFirDataFlowInfoProvider(override val analysisSession: KaFirSession) : KaDataFlowInfoProvider() {
     private val firResolveSession: LLFirResolveSession
         get() = analysisSession.firResolveSession
 
-    override fun getExitPointSnapshot(statements: List<KtExpression>): KtDataFlowExitPointSnapshot {
+    override fun getExitPointSnapshot(statements: List<KtExpression>): KaDataFlowExitPointSnapshot {
         val firStatements = computeStatements(statements)
 
         val collector = FirElementCollector()
@@ -99,7 +99,7 @@ internal class KtFirDataFlowInfoProvider(override val analysisSession: KtFirAnal
             add(collector.firContinueExpressions)
         }
 
-        return KtDataFlowExitPointSnapshot(
+        return KaDataFlowExitPointSnapshot(
             defaultExpressionInfo = defaultExpressionInfo,
             valuedReturnExpressions = firValuedReturnExpressions.mapNotNull { it.psi as? KtExpression },
             returnValueType = computeReturnType(firValuedReturnExpressions),
@@ -197,7 +197,7 @@ internal class KtFirDataFlowInfoProvider(override val analysisSession: KtFirAnal
 
         val defaultStatementFromFir = firDefaultStatement.psi as? KtExpression ?: return null
 
-        if (!PsiTreeUtil.isAncestor(defaultStatementFromFir, defaultStatement, false)) {
+        if (!PsiTreeUtil.isAncestor(defaultStatementFromFir, defaultStatement.deparenthesize(), false)) {
             // In certain cases, expressions might be different in PSI and FIR sources.
             // E.g., in 'foo.<expr>bar()</expr>', there is no FIR expression that corresponds to the 'bar()' KtCallExpression.
             return null
@@ -222,7 +222,7 @@ internal class KtFirDataFlowInfoProvider(override val analysisSession: KtFirAnal
         return null
     }
 
-    private fun computeReturnType(firReturnExpressions: List<FirReturnExpression>): KtType? {
+    private fun computeReturnType(firReturnExpressions: List<FirReturnExpression>): KaType? {
         val coneTypes = ArrayList<ConeKotlinType>(firReturnExpressions.size)
 
         for (firReturnExpression in firReturnExpressions) {
@@ -514,7 +514,7 @@ internal class KtFirDataFlowInfoProvider(override val analysisSession: KtFirAnal
         }
     }
 
-    private fun ConeKotlinType.toKtType(): KtType {
+    private fun ConeKotlinType.toKtType(): KaType {
         return analysisSession.firSymbolBuilder.typeBuilder.buildKtType(this)
     }
 }

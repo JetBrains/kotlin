@@ -1,6 +1,6 @@
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /foo
+KaFunctionSymbol:
+  annotations: []
+  callableId: /foo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -19,26 +19,26 @@ KtFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
-  receiverParameter: KtReceiverParameterSymbol:
-    annotationsList: []
+  receiverParameter: KaReceiverParameterSymbol:
+    annotations: []
     origin: SOURCE
-    owningCallableSymbol: KtFunctionSymbol(/foo)
-    type: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    owningCallableSymbol: KaFunctionSymbol(/foo)
+    type: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/String
-    getContainingFileSymbol: KtFileSymbol(extensionFunction.kt)
+    getContainingFileSymbol: KaFileSymbol(extensionFunction.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Int
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(extensionFunction.kt)
+  getContainingFileSymbol: KaFileSymbol(extensionFunction.kt)
   getContainingJvmClassName: ExtensionFunctionKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

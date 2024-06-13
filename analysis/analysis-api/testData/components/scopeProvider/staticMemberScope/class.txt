@@ -1,6 +1,6 @@
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: test/C.C2
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: test/C.C2
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -15,22 +15,22 @@ KtNamedClassOrObjectSymbol:
   name: C2
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(class.kt)
+  getContainingFileSymbol: KaFileSymbol(class.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: test/C.O2
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: test/C.O2
   classKind: OBJECT
   companionObject: null
   contextReceivers: []
@@ -45,22 +45,22 @@ KtNamedClassOrObjectSymbol:
   name: O2
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(class.kt)
+  getContainingFileSymbol: KaFileSymbol(class.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: test/C.Companion
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: test/C.Companion
   classKind: COMPANION_OBJECT
   companionObject: null
   contextReceivers: []
@@ -75,15 +75,15 @@ KtNamedClassOrObjectSymbol:
   name: Companion
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(class.kt)
+  getContainingFileSymbol: KaFileSymbol(class.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

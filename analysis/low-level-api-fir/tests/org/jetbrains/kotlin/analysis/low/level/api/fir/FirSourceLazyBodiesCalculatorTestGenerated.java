@@ -64,6 +64,12 @@ public class FirSourceLazyBodiesCalculatorTestGenerated extends AbstractFirSourc
     }
 
     @Test
+    @TestMetadata("annotationOnTypeParameterInWhereClause.kt")
+    public void testAnnotationOnTypeParameterInWhereClause() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationOnTypeParameterInWhereClause.kt");
+    }
+
+    @Test
     @TestMetadata("annotationsOnNullableParenthesizedTypes.kt")
     public void testAnnotationsOnNullableParenthesizedTypes() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationsOnNullableParenthesizedTypes.kt");
@@ -514,6 +520,22 @@ public class FirSourceLazyBodiesCalculatorTestGenerated extends AbstractFirSourc
     }
 
     @Nested
+    @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode")
+    @TestDataPath("$PROJECT_ROOT")
+    public class InvalidCode {
+      @Test
+      public void testAllFilesPresentInInvalidCode() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("setterWithNoBodyAndDifferentValueParameterType.kt")
+      public void testSetterWithNoBodyAndDifferentValueParameterType() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/setterWithNoBodyAndDifferentValueParameterType.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType")
     @TestDataPath("$PROJECT_ROOT")
     public class NoParameterType {
@@ -816,9 +838,37 @@ public class FirSourceLazyBodiesCalculatorTestGenerated extends AbstractFirSourc
     }
 
     @Test
+    @TestMetadata("whenGuards.kt")
+    public void testWhenGuards() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/whenGuards.kt");
+    }
+
+    @Test
     @TestMetadata("while.kt")
     public void testWhile() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/while.kt");
+    }
+
+    @Nested
+    @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/invalidCode")
+    @TestDataPath("$PROJECT_ROOT")
+    public class InvalidCode {
+      @Test
+      public void testAllFilesPresentInInvalidCode() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/invalidCode"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("longStringTemplateEntryInvalidCharacters.kt")
+      public void testLongStringTemplateEntryInvalidCharacters() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/invalidCode/longStringTemplateEntryInvalidCharacters.kt");
+      }
+
+      @Test
+      @TestMetadata("longStringTemplateEntryWithTwoExpressions.kt")
+      public void testLongStringTemplateEntryWithTwoExpressions() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/invalidCode/longStringTemplateEntryWithTwoExpressions.kt");
+      }
     }
   }
 }

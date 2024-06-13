@@ -7,23 +7,29 @@ package org.jetbrains.kotlin.analysis.api.symbols
 
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiMember
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.components.KtAnalysisSessionComponent
-import org.jetbrains.kotlin.analysis.api.components.KtAnalysisSessionMixIn
+import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.components.KaSessionComponent
+import org.jetbrains.kotlin.analysis.api.components.KaSessionMixIn
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 
-@KtAnalysisApiInternals
-public abstract class KtSymbolProviderByJavaPsi : KtAnalysisSessionComponent() {
-    public abstract fun getNamedClassSymbol(psiClass: PsiClass): KtNamedClassOrObjectSymbol?
+@KaAnalysisApiInternals
+public abstract class KaSymbolProviderByJavaPsi : KaSessionComponent() {
+    public abstract fun getNamedClassSymbol(psiClass: PsiClass): KaNamedClassOrObjectSymbol?
 
-    public abstract fun getCallableSymbol(callable: PsiMember): KtCallableSymbol?
+    public abstract fun getCallableSymbol(callable: PsiMember): KaCallableSymbol?
 }
 
-@KtAnalysisApiInternals
-public interface KtSymbolProviderByJavaPsiMixIn : KtAnalysisSessionMixIn {
-    public fun PsiClass.getNamedClassSymbol(): KtNamedClassOrObjectSymbol? =
+@KaAnalysisApiInternals
+public typealias KtSymbolProviderByJavaPsi = KaSymbolProviderByJavaPsi
+
+@KaAnalysisApiInternals
+public interface KaSymbolProviderByJavaPsiMixIn : KaSessionMixIn {
+    public fun PsiClass.getNamedClassSymbol(): KaNamedClassOrObjectSymbol? =
         withValidityAssertion { analysisSession.symbolProviderByJavaPsi.getNamedClassSymbol(this) }
 
-    public fun PsiMember.getCallableSymbol(): KtCallableSymbol? =
+    public fun PsiMember.getCallableSymbol(): KaCallableSymbol? =
         withValidityAssertion { analysisSession.symbolProviderByJavaPsi.getCallableSymbol(this) }
 }
+
+@KaAnalysisApiInternals
+public typealias KtSymbolProviderByJavaPsiMixIn = KaSymbolProviderByJavaPsiMixIn

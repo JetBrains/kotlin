@@ -2,6 +2,7 @@
 // TARGET_BACKEND: JVM
 
 // MODULE: separate
+
 // FILE: SeparateModuleJava1.java
 public interface SeparateModuleJava1 {
     public Object a = 0;
@@ -16,9 +17,9 @@ public interface SeparateModuleJava2 {
     public void bar(int o);
 }
 
-// MODULE: main
-// FILE: Java1.java
+// MODULE: main(separate)
 
+// FILE: Java1.java
 public interface Java1 {
     public Object a = 0;
     public Object foo();
@@ -26,7 +27,6 @@ public interface Java1 {
 }
 
 // FILE: Java2.java
-
 public interface Java2 {
     public int a = 1;
     public int foo();
@@ -34,7 +34,6 @@ public interface Java2 {
 }
 
 // FILE: Java3.java
-
 public interface Java3 {
     public Number a = 1;
     public Number foo();
@@ -43,19 +42,19 @@ public interface Java3 {
 
 // FILE: 1.kt
 
-interface A : Java1, Java2  //Kotlin ← Java1, Java2
+interface A: Java1, Java2  //Kotlin ← Java1, Java2
 
-interface B : SeparateModuleJava1, SeparateModuleJava2  //Kotlin ← Java1, Java2 (separate module)
+interface B: SeparateModuleJava1, SeparateModuleJava2  //Kotlin ← Java1, Java2 (separate module)
 
-interface C: Java1, SeparateModuleJava2 //Kotlin ← Java1, Java2 (separate module)
+interface C: Java1, SeparateModuleJava2  //Kotlin ← Java1, Java2 (separate module)
 
-interface D: Java1, KotlinInterface //Kotlin ← Java, Kotlin2
+interface D: Java1, KotlinInterface  //Kotlin ← Java, Kotlin2
 
-interface E: Java1, KotlinInterface, SeparateModuleJava1 //Kotlin ← Java1, Java2, Kotlin2
+interface E: Java1, KotlinInterface, SeparateModuleJava1  //Kotlin ← Java1, Java2, Kotlin2
 
-interface F: Java1, KotlinInterface, KotlinInterface2   //Kotlin ← Java, Kotlin1, Kotlin2
+interface F: Java1, KotlinInterface, KotlinInterface2  //Kotlin ← Java, Kotlin1, Kotlin2
 
-interface G: Java1, Java2, Java3    //Kotlin ← Java1, Java2, Java3
+interface G: Java1, Java2, Java3  //Kotlin ← Java1, Java2, Java3
 
 interface KotlinInterface {
     var a: Int

@@ -5,49 +5,49 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtDeclarationRenderer
-import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.types.Variance
 
-public interface KtTypeParametersRenderer {
+public interface KaTypeParametersRenderer {
     public fun renderTypeParameters(
-        analysisSession: KtAnalysisSession,
-        symbol: KtDeclarationSymbol,
-        declarationRenderer: KtDeclarationRenderer,
+        analysisSession: KaSession,
+        symbol: KaDeclarationSymbol,
+        declarationRenderer: KaDeclarationRenderer,
         printer: PrettyPrinter,
     )
 
     public fun renderWhereClause(
-        analysisSession: KtAnalysisSession,
-        symbol: KtDeclarationSymbol,
-        declarationRenderer: KtDeclarationRenderer,
+        analysisSession: KaSession,
+        symbol: KaDeclarationSymbol,
+        declarationRenderer: KaDeclarationRenderer,
         printer: PrettyPrinter,
     )
 
-    public object NO_TYPE_PARAMETERS : KtTypeParametersRenderer {
+    public object NO_TYPE_PARAMETERS : KaTypeParametersRenderer {
         override fun renderTypeParameters(
-            analysisSession: KtAnalysisSession,
-            symbol: KtDeclarationSymbol,
-            declarationRenderer: KtDeclarationRenderer,
+            analysisSession: KaSession,
+            symbol: KaDeclarationSymbol,
+            declarationRenderer: KaDeclarationRenderer,
             printer: PrettyPrinter,
         ) {}
 
         override fun renderWhereClause(
-            analysisSession: KtAnalysisSession,
-            symbol: KtDeclarationSymbol,
-            declarationRenderer: KtDeclarationRenderer,
+            analysisSession: KaSession,
+            symbol: KaDeclarationSymbol,
+            declarationRenderer: KaDeclarationRenderer,
             printer: PrettyPrinter,
         ) {}
     }
 
-    public object WIHTOUT_BOUNDS : KtTypeParametersRenderer {
+    public object WIHTOUT_BOUNDS : KaTypeParametersRenderer {
         override fun renderTypeParameters(
-            analysisSession: KtAnalysisSession,
-            symbol: KtDeclarationSymbol,
-            declarationRenderer: KtDeclarationRenderer,
+            analysisSession: KaSession,
+            symbol: KaDeclarationSymbol,
+            declarationRenderer: KaDeclarationRenderer,
             printer: PrettyPrinter,
         ) {
             val typeParameters = symbol.typeParameters
@@ -63,19 +63,19 @@ public interface KtTypeParametersRenderer {
         }
 
         override fun renderWhereClause(
-            analysisSession: KtAnalysisSession,
-            symbol: KtDeclarationSymbol,
-            declarationRenderer: KtDeclarationRenderer,
+            analysisSession: KaSession,
+            symbol: KaDeclarationSymbol,
+            declarationRenderer: KaDeclarationRenderer,
             printer: PrettyPrinter,
         ) {
         }
     }
 
-    public object WITH_BOUNDS_IN_WHERE_CLAUSE : KtTypeParametersRenderer {
+    public object WITH_BOUNDS_IN_WHERE_CLAUSE : KaTypeParametersRenderer {
         override fun renderTypeParameters(
-            analysisSession: KtAnalysisSession,
-            symbol: KtDeclarationSymbol,
-            declarationRenderer: KtDeclarationRenderer,
+            analysisSession: KaSession,
+            symbol: KaDeclarationSymbol,
+            declarationRenderer: KaDeclarationRenderer,
             printer: PrettyPrinter,
         ) {
             val typeParameters = symbol.typeParameters
@@ -89,17 +89,17 @@ public interface KtTypeParametersRenderer {
                 )
                 if (typeParameter.upperBounds.size == 1) {
                     append(" : ")
-                    val ktType = typeParameter.upperBounds.single()
-                    val type = declarationRenderer.declarationTypeApproximator.approximateType(analysisSession, ktType, Variance.OUT_VARIANCE)
+                    val kaType = typeParameter.upperBounds.single()
+                    val type = declarationRenderer.declarationTypeApproximator.approximateType(analysisSession, kaType, Variance.OUT_VARIANCE)
                     declarationRenderer.typeRenderer.renderType(analysisSession, type, printer)
                 }
             }
         }
 
         override fun renderWhereClause(
-            analysisSession: KtAnalysisSession,
-            symbol: KtDeclarationSymbol,
-            declarationRenderer: KtDeclarationRenderer,
+            analysisSession: KaSession,
+            symbol: KaDeclarationSymbol,
+            declarationRenderer: KaDeclarationRenderer,
             printer: PrettyPrinter,
         ) {
             printer {
@@ -135,3 +135,5 @@ public interface KtTypeParametersRenderer {
         }
     }
 }
+
+public typealias KtTypeParametersRenderer = KaTypeParametersRenderer

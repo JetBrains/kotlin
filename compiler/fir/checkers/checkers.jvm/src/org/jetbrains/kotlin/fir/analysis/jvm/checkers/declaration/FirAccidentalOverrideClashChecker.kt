@@ -42,13 +42,13 @@ object FirAccidentalOverrideClashChecker : FirSimpleFunctionChecker(MppCheckerKi
             val hiddenFir = it.fir
             if (!reported && hiddenFir.isHiddenToOvercomeSignatureClash == true && !hiddenFir.isFinal) {
                 if (declaration.computeJvmDescriptor() == hiddenFir.computeJvmDescriptor()) {
-                    val regularBase = hiddenFir.initialSignatureAttr as? FirSimpleFunction ?: return@processFunctionsByName
+                    val regularBase = hiddenFir.initialSignatureAttr ?: return@processFunctionsByName
                     val description = when {
                         mayBeRenamedBuiltIn -> "a renamed function"
                         else -> "a function with erased parameters"
                     }
                     reporter.reportOn(
-                        declaration.source, ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE, it, description, regularBase.symbol, context
+                        declaration.source, ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE, it, description, regularBase, context
                     )
                     reported = true
                 }

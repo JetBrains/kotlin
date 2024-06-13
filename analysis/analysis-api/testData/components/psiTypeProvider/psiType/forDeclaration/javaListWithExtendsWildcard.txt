@@ -1,2 +1,2 @@
-KtType: (List..List)
+KaType: (List..List)
 PsiType: List

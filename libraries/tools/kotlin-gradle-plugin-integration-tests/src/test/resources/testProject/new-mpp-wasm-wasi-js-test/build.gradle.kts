@@ -17,12 +17,6 @@ rootProject.plugins.withType<org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlu
     rootProject.the<org.jetbrains.kotlin.gradle.targets.js.d8.D8RootExtension>().version = (version as String)
 }
 
-allprojects.forEach {
-    it.tasks.withType<org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask>().configureEach {
-        args.add("--ignore-engines")
-    }
-}
-
 allprojects {
     repositories {
         mavenLocal()

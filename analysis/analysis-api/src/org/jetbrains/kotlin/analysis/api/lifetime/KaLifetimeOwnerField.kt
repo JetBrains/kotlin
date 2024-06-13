@@ -13,12 +13,14 @@ import kotlin.reflect.KProperty
  *
  * To create an instance of [KaLifetimeOwnerField] use the [validityAsserted] function.
  *
- * @see KtLifetimeOwner
+ * @see KaLifetimeOwner
  * @see validityAsserted
  */
 @JvmInline
-public value class KaLifetimeOwnerField<T>(public val value: T) : ReadOnlyProperty<KtLifetimeOwner, T> {
-    public override fun getValue(thisRef: KtLifetimeOwner, property: KProperty<*>): T {
+public value class KaLifetimeOwnerField<T>(public val value: T) : ReadOnlyProperty<KaLifetimeOwner, T> {
+    public override fun getValue(thisRef: KaLifetimeOwner, property: KProperty<*>): T {
         return thisRef.withValidityAssertion { value }
     }
 }
+
+public typealias KtLifetimeOwnerField<T> = KaLifetimeOwnerField<T>

@@ -1,6 +1,6 @@
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: kotlin/collections/Iterator
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: kotlin/collections/Iterator
   classKind: INTERFACE
   companionObject: null
   contextReceivers: []
@@ -15,14 +15,14 @@ KtNamedClassOrObjectSymbol:
   name: Iterator
   origin: LIBRARY
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: [
-    KtTypeParameterSymbol(T)
+    KaTypeParameterSymbol(T)
   ]
   visibility: Public
   getContainingFileSymbol: null

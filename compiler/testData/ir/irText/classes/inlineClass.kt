@@ -1,4 +1,4 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +InlineClasses
+// LANGUAGE: +InlineClasses
 
 inline class Test(val x: Int)

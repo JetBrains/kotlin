@@ -12,6 +12,7 @@ dependencies {
     api(project(":analysis:kt-references"))
     api(project(":compiler:resolution.common.jvm"))
     implementation(project(":compiler:backend-common"))
+    implementation(kotlinxCollectionsImmutable())
     api(intellijCore())
     implementation(project(":analysis:analysis-internal-utils"))
 
@@ -35,7 +36,8 @@ dependencies {
     testImplementation(project(":analysis:decompiled:decompiler-native"))
     testImplementation(projectTests(":analysis:analysis-test-framework"))
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    testImplementation(toolsJar())
+    testCompileOnly(toolsJarApi())
+    testRuntimeOnly(toolsJar())
 }
 
 sourceSets {
@@ -45,7 +47,7 @@ sourceSets {
 
 tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions.freeCompilerArgs.add("-Xcontext-receivers")
-    compilerOptions.optIn.add("org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals")
+    compilerOptions.optIn.add("org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals")
 }
 
 testsJar()

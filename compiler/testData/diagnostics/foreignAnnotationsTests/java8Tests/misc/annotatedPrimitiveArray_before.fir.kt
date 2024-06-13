@@ -1,6 +1,6 @@
 // SKIP_TXT
 // ISSUE: KT-54521
-// !LANGUAGE: -EnhanceNullabilityOfPrimitiveArrays
+// LANGUAGE: -EnhanceNullabilityOfPrimitiveArrays
 // FILE: J.java
 import org.jetbrains.annotations.Nullable;
 

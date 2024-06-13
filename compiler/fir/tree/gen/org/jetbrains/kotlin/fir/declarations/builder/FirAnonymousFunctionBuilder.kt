@@ -98,37 +98,3 @@ inline fun buildAnonymousFunction(init: FirAnonymousFunctionBuilder.() -> Unit):
     }
     return FirAnonymousFunctionBuilder().apply(init).build()
 }
-
-@OptIn(ExperimentalContracts::class)
-inline fun buildAnonymousFunctionCopy(original: FirAnonymousFunction, init: FirAnonymousFunctionBuilder.() -> Unit): FirAnonymousFunction {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = FirAnonymousFunctionBuilder()
-    copyBuilder.source = original.source
-    copyBuilder.resolvePhase = original.resolvePhase
-    copyBuilder.annotations.addAll(original.annotations)
-    copyBuilder.moduleData = original.moduleData
-    copyBuilder.origin = original.origin
-    copyBuilder.attributes = original.attributes.copy()
-    copyBuilder.status = original.status
-    copyBuilder.returnTypeRef = original.returnTypeRef
-    copyBuilder.receiverParameter = original.receiverParameter
-    copyBuilder.deprecationsProvider = original.deprecationsProvider
-    copyBuilder.containerSource = original.containerSource
-    copyBuilder.dispatchReceiverType = original.dispatchReceiverType
-    copyBuilder.contextReceivers.addAll(original.contextReceivers)
-    copyBuilder.controlFlowGraphReference = original.controlFlowGraphReference
-    copyBuilder.valueParameters.addAll(original.valueParameters)
-    copyBuilder.body = original.body
-    copyBuilder.contractDescription = original.contractDescription
-    copyBuilder.symbol = original.symbol
-    copyBuilder.label = original.label
-    copyBuilder.invocationKind = original.invocationKind
-    copyBuilder.inlineStatus = original.inlineStatus
-    copyBuilder.isLambda = original.isLambda
-    copyBuilder.hasExplicitParameterList = original.hasExplicitParameterList
-    copyBuilder.typeParameters.addAll(original.typeParameters)
-    copyBuilder.typeRef = original.typeRef
-    return copyBuilder.apply(init).build()
-}

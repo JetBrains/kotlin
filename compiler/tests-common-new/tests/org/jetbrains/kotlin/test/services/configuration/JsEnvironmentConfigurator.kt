@@ -66,7 +66,7 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
         }
 
         private val METADATA_CACHE by lazy {
-            (JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST).flatMap { path ->
+            listOf(StandardLibrariesPathProviderForKotlinProject.fullJsStdlib().absolutePath, StandardLibrariesPathProviderForKotlinProject.kotlinTestJsKLib().absolutePath).flatMap { path ->
                 KotlinJavascriptMetadataUtils.loadMetadata(path).map { metadata ->
                     val parts = KotlinJavascriptSerializationUtil.readModuleAsProto(metadata.body, metadata.version)
                     JsModuleDescriptor(metadata.moduleName, parts.kind, parts.importedModules, parts)
@@ -113,7 +113,14 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
             project: Project, configuration: CompilerConfiguration, compilerEnvironment: TargetEnvironment = CompilerEnvironment
         ): JsConfig {
             return JsConfig(
-                project, configuration, compilerEnvironment, METADATA_CACHE, (JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST).toSet()
+                project,
+                configuration,
+                compilerEnvironment,
+                METADATA_CACHE,
+                setOf(
+                    StandardLibrariesPathProviderForKotlinProject.fullJsStdlib().absolutePath,
+                    StandardLibrariesPathProviderForKotlinProject.kotlinTestJsKLib().absolutePath
+                )
             )
         }
 
@@ -206,9 +213,12 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
         val friends = module.friendDependencies.map { getJsModuleArtifactPath(testServices, it.moduleName) + ".meta.js" }
 
         val libraries = when (module.targetBackend) {
-            null -> JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST
+            null -> listOf(
+                testServices.standardLibrariesPathProvider.fullJsStdlib().absolutePath,
+                testServices.standardLibrariesPathProvider.kotlinTestJsKLib().absolutePath
+            )
             TargetBackend.JS_IR, TargetBackend.JS_IR_ES6 -> dependencies + friends
-            TargetBackend.JS -> JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST + dependencies + friends
+            TargetBackend.JS -> listOf(testServices.standardLibrariesPathProvider.fullJsStdlib().absolutePath, testServices.standardLibrariesPathProvider.kotlinTestJsKLib().absolutePath) + dependencies + friends
             else -> error("Unsupported target backend: ${module.targetBackend}")
         }
         configuration.put(JSConfigurationKeys.LIBRARIES, libraries)

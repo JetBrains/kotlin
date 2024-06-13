@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
-// !LANGUAGE: -ProhibitOperatorMod
-// !DIAGNOSTICS: -UNUSED_PARAMETER, -EXTENSION_SHADOWED_BY_MEMBER
+// LANGUAGE: -ProhibitOperatorMod
+// DIAGNOSTICS: -UNUSED_PARAMETER, -EXTENSION_SHADOWED_BY_MEMBER
 
 class ModAndRemAssign {
     <!DEPRECATED_BINARY_MOD!>operator<!> fun mod(x: Int) = ModAndRemAssign()

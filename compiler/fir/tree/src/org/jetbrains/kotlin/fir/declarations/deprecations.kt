@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 
 
 class DeprecationsPerUseSite(
-    val all: DeprecationInfo?,
-    val bySpecificSite: Map<AnnotationUseSiteTarget, DeprecationInfo>?
+    val all: FirDeprecationInfo?,
+    val bySpecificSite: Map<AnnotationUseSiteTarget, FirDeprecationInfo>?
 ) {
-    fun forUseSite(vararg sites: AnnotationUseSiteTarget): DeprecationInfo? {
+    fun forUseSite(vararg sites: AnnotationUseSiteTarget): FirDeprecationInfo? {
         if (bySpecificSite != null) {
             for (site in sites) {
                 bySpecificSite[site]?.let { return it }
@@ -30,4 +30,4 @@ class DeprecationsPerUseSite(
         else "org.jetbrains.kotlin.fir.declarations.DeprecationInfoForUseSites(all=$all, bySpecificSite=$bySpecificSite)"
 }
 
-val EmptyDeprecationsPerUseSite = DeprecationsPerUseSite(null, null)
+val EmptyDeprecationsPerUseSite: DeprecationsPerUseSite = DeprecationsPerUseSite(null, null)

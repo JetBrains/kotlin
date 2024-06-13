@@ -9,6 +9,6 @@ FIR FILE:
 FILE: [ResolvedTo(RAW_FIR)] middlePackageNamePartScript.kts
     package a.b.c
 
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-middlePackageNamePartScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|

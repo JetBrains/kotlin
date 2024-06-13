@@ -1,0 +1,24 @@
+//
+// Source
+// ------------------------------------------
+
+@Composable fun <T> identity(value: T): T = value
+@Composable fun Foo(x: Int = identity(20)) {
+
+}
+@Composable fun test() {
+    Foo()
+    Foo(10)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+public final class TestKt {
+  public final static identity(Ljava/lang/Object;Landroidx/compose/runtime/Composer;I)Ljava/lang/Object;
+  public final static Foo(ILandroidx/compose/runtime/Composer;II)V
+  public final static test(Landroidx/compose/runtime/Composer;I)V
+  private final static Foo%lambda%0(IIILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  private final static test%lambda%1(ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+}

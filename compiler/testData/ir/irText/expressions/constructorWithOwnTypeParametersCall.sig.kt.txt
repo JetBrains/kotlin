@@ -33,4 +33,3 @@ fun testJava(): J2<Double, Int>
 //   Public signature: /testKotlin|8698549833663124127[0]
 //   Public signature debug description: testKotlin(){}K1.K2<kotlin.String,kotlin.Int>
 fun testKotlin(): K2<String, Int>
-

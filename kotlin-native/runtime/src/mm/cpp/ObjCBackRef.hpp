@@ -12,6 +12,8 @@
 
 namespace kotlin::mm {
 
+// TODO(KT-67741): Unify different SpecialRefs
+
 // Reference from an ObjC associated object back into a Kotlin object.
 // GC automatically tracks references with refcount > 0 as roots, and invalidates references with refcount = 0 when the Kotlin object is
 // collected. Use `create` and `dispose` to create and destroy the back reference.
@@ -62,12 +64,13 @@ public:
     }
 
     // Try incrementing refcount. Will fail if the underlying object is not alive.
+    // Must be called in the runnable state.
     [[nodiscard("refcount change must be processed")]] bool tryRetain() noexcept {
+        AssertThreadState(ThreadState::kRunnable);
         // In objc export if ObjCClass is objc_setAssociatedObject with KtClass
         // calling [KtClass _tryRetain] inside [ObjCClass dealloc] will lead to
         // this->tryRetain() being called after this->dispose()
         if (!node_) return false;
-        CalledFromNativeGuard guard;
         return tryRetainIgnoreState();
     }
 

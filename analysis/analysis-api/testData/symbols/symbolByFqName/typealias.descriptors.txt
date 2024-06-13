@@ -1,23 +1,23 @@
-KtTypeAliasSymbol:
-  annotationsList: []
-  classIdIfNonLocal: kotlin/DeepRecursiveFunctionBlock
-  expandedType: KtFunctionalType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: [
+KaTypeAliasSymbol:
+  annotations: []
+  classId: kotlin/DeepRecursiveFunctionBlock
+  expandedType: KaFunctionalType:
+    annotations: []
+    typeArguments: [
+      KaUsualClassType:
+        annotations: []
+        typeArguments: [
           *
           *
         ]
         type: kotlin/DeepRecursiveScope<*, *>
-      KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/Any?
-      KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/Any?
     ]
     type: kotlin/coroutines/SuspendFunction2<kotlin/DeepRecursiveScope<*, *>, kotlin/Any?, kotlin/Any?>

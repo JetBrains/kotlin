@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.testUtils
 
 import java.io.File
 import kotlin.io.path.Path
+import kotlin.io.path.pathString
 
 val testDependencyKlibs = System.getProperty("testDependencyKlibs").orEmpty()
     .split(File.pathSeparator)
@@ -19,3 +20,24 @@ val testLibraryAKlibFile
 val testLibraryBKlibFile
     get() = testDependencyKlibs.firstOrNull { it.contains(Path("testLibraryB")) }
         ?: error("Missing 'testLibraryB' in 'testDependencyKlibs' System Property")
+
+
+val testLibraryKotlinxSerializationJson
+    get() = testDependencyKlibs.firstOrNull {
+        it.pathString.contains("serialization-json")
+    } ?: error("Missing 'kotlinx-serialization-json' in 'testDependencyKlibs' System Property")
+
+val testLibraryKotlinxSerializationCore
+    get() = testDependencyKlibs.firstOrNull {
+        it.pathString.contains("serialization-core")
+    } ?: error("Missing 'kotlinx-serialization-core' in 'testDependencyKlibs' System Property")
+
+val testLibraryKotlinxDatetime
+    get() = testDependencyKlibs.firstOrNull {
+        it.pathString.contains("datetime")
+    } ?: error("Missing 'kotlinx-datetime' in 'testDependencyKlibs' System Property")
+
+val testLibraryKotlinxCoroutines
+    get() = testDependencyKlibs.firstOrNull {
+        it.pathString.contains("coroutines")
+    } ?: error("Missing 'kotlinx-coroutines' in 'testDependencyKlibs' System Property")

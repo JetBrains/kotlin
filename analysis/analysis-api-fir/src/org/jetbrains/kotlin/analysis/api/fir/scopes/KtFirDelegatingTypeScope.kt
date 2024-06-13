@@ -5,23 +5,23 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.scopes
 
-import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.scopes.KtScopeNameFilter
-import org.jetbrains.kotlin.analysis.api.scopes.KtTypeScope
-import org.jetbrains.kotlin.analysis.api.signatures.KtCallableSignature
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.scopes.KaScopeNameFilter
+import org.jetbrains.kotlin.analysis.api.scopes.KaTypeScope
+import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.name.Name
 
-internal open class KtFirDelegatingTypeScope(
+internal open class KaFirDelegatingTypeScope(
     val firScope: FirContainingNamesAwareScope,
-    private val builder: KtSymbolByFirBuilder,
-) : KtTypeScope {
-    override val token: KtLifetimeToken get() = builder.token
+    private val builder: KaSymbolByFirBuilder,
+) : KaTypeScope {
+    override val token: KaLifetimeToken get() = builder.token
 
     private val allNamesCached by cached {
         getPossibleCallableNames() + getPossibleClassifierNames()
@@ -37,23 +37,23 @@ internal open class KtFirDelegatingTypeScope(
         firScope.getClassifierNames()
     }
 
-    override fun getCallableSignatures(nameFilter: KtScopeNameFilter): Sequence<KtCallableSignature<*>> = withValidityAssertion {
+    override fun getCallableSignatures(nameFilter: KaScopeNameFilter): Sequence<KaCallableSignature<*>> = withValidityAssertion {
         firScope.getCallableSignatures(getPossibleCallableNames().filter(nameFilter), builder)
     }
 
-    override fun getCallableSignatures(names: Collection<Name>): Sequence<KtCallableSignature<*>> = withValidityAssertion {
+    override fun getCallableSignatures(names: Collection<Name>): Sequence<KaCallableSignature<*>> = withValidityAssertion {
         firScope.getCallableSignatures(names, builder)
     }
 
-    override fun getClassifierSymbols(nameFilter: KtScopeNameFilter): Sequence<KtClassifierSymbol> = withValidityAssertion {
+    override fun getClassifierSymbols(nameFilter: KaScopeNameFilter): Sequence<KaClassifierSymbol> = withValidityAssertion {
         firScope.getClassifierSymbols(getPossibleClassifierNames().filter(nameFilter), builder)
     }
 
-    override fun getClassifierSymbols(names: Collection<Name>): Sequence<KtClassifierSymbol> = withValidityAssertion {
+    override fun getClassifierSymbols(names: Collection<Name>): Sequence<KaClassifierSymbol> = withValidityAssertion {
         firScope.getClassifierSymbols(names, builder)
     }
 
-    override fun getConstructors(): Sequence<KtConstructorSymbol> = withValidityAssertion {
+    override fun getConstructors(): Sequence<KaConstructorSymbol> = withValidityAssertion {
         firScope.getConstructors(builder)
     }
 

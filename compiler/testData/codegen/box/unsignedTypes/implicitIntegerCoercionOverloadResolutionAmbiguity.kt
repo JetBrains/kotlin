@@ -9,7 +9,7 @@
 //  relies on the ability to check exactly `kotlin.internal.ImplicitIntegerCoercion`.
 
 // ISSUE: KT-57484
-// !LANGUAGE: +ImplicitSignedToUnsignedIntegerConversion
+// LANGUAGE: +ImplicitSignedToUnsignedIntegerConversion
 // WITH_STDLIB
 
 // FILE: annotation.kt

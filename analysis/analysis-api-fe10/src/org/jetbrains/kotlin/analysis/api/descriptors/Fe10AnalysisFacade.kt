@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.analysis.api.descriptors
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -29,9 +29,9 @@ interface Fe10AnalysisFacade {
         }
     }
 
-    fun getAnalysisContext(element: KtElement, token: KtLifetimeToken): Fe10AnalysisContext
+    fun getAnalysisContext(element: KtElement, token: KaLifetimeToken): Fe10AnalysisContext
 
-    fun getAnalysisContext(ktModule: KtModule, token: KtLifetimeToken): Fe10AnalysisContext
+    fun getAnalysisContext(ktModule: KtModule, token: KaLifetimeToken): Fe10AnalysisContext
 
     fun analyze(elements: List<KtElement>, mode: AnalysisMode = AnalysisMode.FULL): BindingContext
 
@@ -39,7 +39,7 @@ interface Fe10AnalysisFacade {
         return analyze(listOf(element), mode)
     }
 
-    fun getOrigin(file: VirtualFile): KtSymbolOrigin
+    fun getOrigin(file: VirtualFile): KaSymbolOrigin
 
     enum class AnalysisMode {
         ALL_COMPILER_CHECKS,
@@ -57,7 +57,7 @@ class Fe10AnalysisContext(
     val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer,
     val overloadingConflictResolver: OverloadingConflictResolver<ResolvedCall<*>>,
     val kotlinTypeRefiner: KotlinTypeRefiner,
-    val token: KtLifetimeToken,
+    val token: KaLifetimeToken,
 ) : Fe10AnalysisFacade by facade {
     val builtIns: KotlinBuiltIns
         get() = resolveSession.moduleDescriptor.builtIns

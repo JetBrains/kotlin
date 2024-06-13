@@ -353,7 +353,7 @@ private class SchemeStringSerializationReader(private val value: String) {
         while (ch.isDigit())
             current++
         return try {
-            Integer.parseUnsignedInt(value, start, current, 10)
+            Integer.parseUnsignedInt(value.substring(start, current), 10)
         } catch (_: NumberFormatException) {
             schemeParseError()
         }

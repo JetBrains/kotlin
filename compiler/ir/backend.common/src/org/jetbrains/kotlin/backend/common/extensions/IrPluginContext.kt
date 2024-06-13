@@ -46,6 +46,7 @@ interface IrPluginContext : IrGeneratorContext {
     @FirIncompatiblePluginAPI
     val bindingContext: BindingContext
 
+    @ObsoleteDescriptorBasedAPI
     val symbolTable: ReferenceSymbolTable
 
     @ObsoleteDescriptorBasedAPI

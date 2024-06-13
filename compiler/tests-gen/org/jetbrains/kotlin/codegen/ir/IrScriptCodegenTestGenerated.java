@@ -105,6 +105,11 @@ public class IrScriptCodegenTestGenerated extends AbstractIrScriptCodegenTest {
     runTest("compiler/testData/codegen/script/localFunction.kts");
   }
 
+  @TestMetadata("MultiDollarInterpolation.kts")
+  public void testMultiDollarInterpolation() {
+    runTest("compiler/testData/codegen/script/MultiDollarInterpolation.kts");
+  }
+
   @TestMetadata("outerCapture.kts")
   public void testOuterCapture() {
     runTest("compiler/testData/codegen/script/outerCapture.kts");

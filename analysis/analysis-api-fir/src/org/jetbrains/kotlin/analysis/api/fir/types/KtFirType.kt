@@ -5,24 +5,24 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.types
 
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
-import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeNullability
 
-internal interface KtFirType : KtLifetimeOwner {
+internal interface KaFirType : KaLifetimeOwner {
     val coneType: ConeKotlinType
 }
 
-internal fun KtFirType.typeEquals(other: Any?): Boolean {
-    if (other !is KtFirType) return false
+internal fun KaFirType.typeEquals(other: Any?): Boolean {
+    if (other !is KaFirType) return false
     return this.coneType == other.coneType
 }
 
-internal fun KtFirType.typeHashcode(): Int = coneType.hashCode()
+internal fun KaFirType.typeHashcode(): Int = coneType.hashCode()
 
-internal fun ConeNullability.asKtNullability(): KtTypeNullability = when (this) {
-    ConeNullability.NULLABLE -> KtTypeNullability.NULLABLE
-    ConeNullability.UNKNOWN -> KtTypeNullability.UNKNOWN
-    ConeNullability.NOT_NULL -> KtTypeNullability.NON_NULLABLE
+internal fun ConeNullability.asKtNullability(): KaTypeNullability = when (this) {
+    ConeNullability.NULLABLE -> KaTypeNullability.NULLABLE
+    ConeNullability.UNKNOWN -> KaTypeNullability.UNKNOWN
+    ConeNullability.NOT_NULL -> KaTypeNullability.NON_NULLABLE
 }

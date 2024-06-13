@@ -42,10 +42,6 @@ where advanced options include:
   -Xir-safe-external-boolean-diagnostic={log|exception}
                              Enable runtime diagnostics when accessing external 'Boolean' properties.
   -Xoptimize-generated-js    Perform additional optimizations on the generated JS code.
-  -Xpartial-linkage-loglevel={info|warning|error}
-                             Define the compile-time log level for partial linkage.
-  -Xpartial-linkage={enable|disable}
-                             Use partial linkage mode.
   -Xplatform-arguments-in-main-function
                              JS expression that will be executed in runtime and be put as an Array<String> parameter of the main function
   -Xstrict-implicit-export-types Generate strict types for implicitly exported entities inside d.ts files. This is available in the IR backend only.
@@ -110,11 +106,16 @@ where advanced options include:
   -Xlist-phases              List backend phases.
   -Xmetadata-klib            Produce a klib that only contains the metadata of declarations.
   -Xmetadata-version         Change the metadata version of the generated binary files.
+  -Xmulti-dollar-interpolation Enable experimental multi-dollar interpolation.
   -Xmulti-platform           Enable language support for multiplatform projects.
   -Xnew-inference            Enable the new experimental generic type inference algorithm.
   -Xno-check-actual          Do not check for the presence of the 'actual' modifier in multiplatform projects.
   -Xno-inline                Disable method inlining.
   -Xklib-normalize-absolute-path Normalize absolute paths in klibs.
+  -Xpartial-linkage-loglevel={info|warning|error}
+                             Define the compile-time log level for partial linkage.
+  -Xpartial-linkage={enable|disable}
+                             Use partial linkage mode.
   -Xphases-to-dump           Dump the backend's state both before and after these phases.
   -Xphases-to-dump-after     Dump the backend's state after these phases.
   -Xphases-to-dump-before    Dump the backend's state before these phases.
@@ -134,6 +135,7 @@ where advanced options include:
   -Xself-upper-bound-inference Support inferring type arguments from the self-type upper bounds of the corresponding type parameters.
   -Xskip-metadata-version-check Allow loading classes with bad metadata versions and pre-release classes.
   -Xskip-prerelease-check    Allow loading pre-release classes.
+  -Xstdlib-compilation       Enables special features which are relevant only for stdlib compilation.
   -Xsuppress-api-version-greater-than-language-version-error
                              Suppress error about API version greater than language version.
                              Warning: This is temporary solution (see KT-63712) intended to be used only for stdlib build.
@@ -142,13 +144,15 @@ where advanced options include:
                              Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.
   -Xuse-fir-extended-checkers Use extended analysis mode based on the frontend IR.
                              Warning: This feature is not yet production-ready.
-  -Xuse-fir-fake-override-builder
-                             Generate all fake overrides via FIR2IR instead of IR, i.e. revert to behavior before KT-61514 was resolved.
   -Xuse-fir-ic               Compile using frontend IR internal incremental compilation.
                              Warning: This feature is not yet production-ready.
   -Xuse-fir-lt               Compile using the LightTree parser with the frontend IR.
   -Xuse-k2                   Compile using the experimental K2 compiler pipeline. No compatibility guarantees are provided yet.
   -Xverbose-phases           Be verbose while performing the given backend phases.
+  -Xverify-ir={none|warning|error}
+                             IR verification mode (no verification by default).
+  -Xverify-ir-visibility     Check for visibility violations in IR when validating it before running any lowerings. Only has effect if '-Xverify-ir' is not 'none'.
+  -Xwhen-guards              Enable language support for when guards.
 
 Advanced options are non-standard and may be changed or removed without any notice.
 OK

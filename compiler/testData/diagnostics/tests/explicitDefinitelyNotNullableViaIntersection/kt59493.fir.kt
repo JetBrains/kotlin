@@ -1,4 +1,4 @@
-// !LANGUAGE: +DefinitelyNonNullableTypes
+// LANGUAGE: +DefinitelyNonNullableTypes
 
 import kotlin.reflect.KProperty1
 

@@ -1,6 +1,6 @@
-// !LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface NumberOperations {
     fun Number.plus(other: Number): Number

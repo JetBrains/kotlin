@@ -36,6 +36,12 @@ public class LightClassUtilTestGenerated extends AbstractLightClassUtilTest {
   }
 
   @Test
+  @TestMetadata("primaryConstructorWithDefaultParameter.kt")
+  public void testPrimaryConstructorWithDefaultParameter() {
+    runTest("analysis/symbol-light-classes/testData/lightElements/primaryConstructorWithDefaultParameter.kt");
+  }
+
+  @Test
   @TestMetadata("propertyAccessor.kt")
   public void testPropertyAccessor() {
     runTest("analysis/symbol-light-classes/testData/lightElements/propertyAccessor.kt");

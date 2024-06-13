@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("compiler-tests-convention")
 }
 
 dependencies {
@@ -40,7 +41,8 @@ dependencies {
     testApi(intellijJavaRt()) // for FileComparisonFailure
     testApi(libs.junit4) // for ComparisonFailure
 
-    testApi(toolsJar())
+    testApi(toolsJarApi())
+    testRuntimeOnly(toolsJar())
 }
 
 optInToExperimentalCompilerApi()
@@ -54,6 +56,20 @@ sourceSets {
     }
 }
 
+compilerTests {
+    testData("../testData/diagnostics")
+    testData("../testData/codegen")
+    testData("../testData/debug")
+    testData("../testData/ir")
+    withStdlibCommon()
+    withScriptRuntime()
+    withTestJar()
+    withAnnotations()
+    withScriptingPlugin()
+    withStdlibJsRuntime()
+    withTestJsRuntime()
+}
+
 projectTest(
     jUnitMode = JUnitMode.JUnit5,
     defineJDKEnvVariables = listOf(
@@ -61,9 +77,19 @@ projectTest(
         JdkMajorVersion.JDK_21_0, // e.g. org.jetbrains.kotlin.test.runners.codegen.FirLightTreeBlackBoxModernJdkCodegenTestGenerated.TestsWithJava21
     )
 ) {
-    dependsOn(":dist")
     workingDir = rootDir
     useJUnitPlatform()
+    inputs.file(File(rootDir, "compiler/cli/cli-common/resources/META-INF/extensions/compiler.xml")).withPathSensitivity(PathSensitivity.RELATIVE)
+    inputs.file(File(rootDir, "compiler/testData/mockJDK/jre/lib/rt.jar")).withNormalizer(ClasspathNormalizer::class)
+    inputs.file(File(rootDir, "compiler/testData/mockJDK/jre/lib/annotations.jar")).withNormalizer(ClasspathNormalizer::class)
+    inputs.dir(File(rootDir, "third-party/annotations")).withPathSensitivity(PathSensitivity.RELATIVE)
+    inputs.dir(File(rootDir, "third-party/java8-annotations")).withPathSensitivity(PathSensitivity.RELATIVE)
+    inputs.dir(File(rootDir, "third-party/java9-annotations")).withPathSensitivity(PathSensitivity.RELATIVE)
+    inputs.dir(File(rootDir, "third-party/jsr305")).withPathSensitivity(PathSensitivity.RELATIVE)
+    inputs.dir(File(rootDir, "libraries/stdlib/unsigned/src/kotlin")).withPathSensitivity(PathSensitivity.RELATIVE)
+    inputs.dir(File(rootDir, "libraries/stdlib/jvm/src/kotlin")).withPathSensitivity(PathSensitivity.RELATIVE) //util/UnsignedJVM.kt
+    inputs.dir(File(rootDir, "libraries/stdlib/src/kotlin")).withPathSensitivity(PathSensitivity.RELATIVE) //ranges/Progressions.kt
+    inputs.dir(File(rootDir, "libraries/stdlib/jvm/runtime/kotlin")).withPathSensitivity(PathSensitivity.RELATIVE) //TypeAliases.kt
 }
 
 testsJar()

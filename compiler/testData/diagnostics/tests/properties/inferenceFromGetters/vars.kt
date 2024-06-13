@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 var x
     get() = 1
     set(q) {

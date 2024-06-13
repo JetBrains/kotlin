@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.sir.providers.impl
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.scopes.KtScope
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.scopes.KaScope
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 import org.jetbrains.kotlin.sir.SirDeclaration
 import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.providers.SirChildrenProvider
@@ -15,11 +15,11 @@ import org.jetbrains.kotlin.sir.providers.SirSession
 
 public class SirDeclarationChildrenProviderImpl(private val sirSession: SirSession) : SirChildrenProvider {
 
-    override fun KtScope.extractDeclarations(ktAnalysisSession: KtAnalysisSession): Sequence<SirDeclaration> =
+    override fun KaScope.extractDeclarations(ktAnalysisSession: KaSession): Sequence<SirDeclaration> =
         getAllSymbols()
             .filter {
-                with(sirSession) { (it as? KtSymbolWithVisibility)?.sirVisibility(ktAnalysisSession) == SirVisibility.PUBLIC }
+                with(sirSession) { (it as? KaSymbolWithVisibility)?.sirVisibility(ktAnalysisSession) == SirVisibility.PUBLIC }
             }
             .map { with(sirSession) { it.sirDeclaration() } }
-
+            .flatMap { with(sirSession) { listOf(it) + it.trampolineDeclarations() } }
 }

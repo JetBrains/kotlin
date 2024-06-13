@@ -71,6 +71,25 @@ fun buildDecompiledText(
     packageFqName: FqName,
     descriptors: List<DeclarationDescriptor>,
     descriptorRenderer: DescriptorRenderer,
+): DecompiledText = buildDecompiledTextImpl(
+    packageFqName,
+    descriptors,
+    descriptorRenderer.withOptions {
+        // Stub decompilation builds type stubs for expanded types instead of abbreviated types, as type aliases are transparent and
+        // need to be treated as their expanded type at use sites. If we instead decompiled to the type alias, we run the risk of an
+        // unresolved symbol, as the type alias doesn't need to be present in the dependencies of a use-site module (see KT-62889).
+        //
+        // To be consistent with stub decompilation, we need to render abbreviated types as their type expansions in decompiled text as
+        // well. We also render the abbreviated type in a comment for clarity.
+        renderTypeExpansions = true
+        renderAbbreviatedTypeComments = true
+    },
+)
+
+private fun buildDecompiledTextImpl(
+    packageFqName: FqName,
+    descriptors: List<DeclarationDescriptor>,
+    descriptorRenderer: DescriptorRenderer,
 ): DecompiledText {
     val builder = StringBuilder()
 

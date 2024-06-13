@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiMethod
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.elements.KtLightField
@@ -36,7 +36,7 @@ internal class SymbolLightClassForInlineClass : SymbolLightClassForClassOrObject
 
     private constructor(
         classOrObjectDeclaration: KtClassOrObject?,
-        classOrObjectSymbolPointer: KtSymbolPointer<KtNamedClassOrObjectSymbol>,
+        classOrObjectSymbolPointer: KaSymbolPointer<KaNamedClassOrObjectSymbol>,
         ktModule: KtModule,
         manager: PsiManager,
     ) : super(
@@ -53,7 +53,7 @@ internal class SymbolLightClassForInlineClass : SymbolLightClassForClassOrObject
             val declaredMemberScope = classOrObjectSymbol.getDeclaredMemberScope()
             val applicableDeclarations = declaredMemberScope.getCallableSymbols()
                 .filter {
-                    (it as? KtPropertySymbol)?.isOverride == true || (it as? KtFunctionSymbol)?.isOverride == true
+                    (it as? KaPropertySymbol)?.isOverride == true || (it as? KaFunctionSymbol)?.isOverride == true
                 }
                 .filterNot {
                     it.deprecationStatus?.deprecationLevel == DeprecationLevelValue.HIDDEN
@@ -68,7 +68,7 @@ internal class SymbolLightClassForInlineClass : SymbolLightClassForClassOrObject
 
             if (inlineClassParameterSymbol != null) {
                 val propertySymbol = declaredMemberScope.getCallableSymbols(inlineClassParameterSymbol.name)
-                    .singleOrNull { it is KtPropertySymbol && it.isFromPrimaryConstructor } as? KtPropertySymbol
+                    .singleOrNull { it is KaPropertySymbol && it.isFromPrimaryConstructor } as? KaPropertySymbol
 
                 if (propertySymbol != null) {
                     // (inline or) value class primary constructor must have only final read-only (val) property parameter

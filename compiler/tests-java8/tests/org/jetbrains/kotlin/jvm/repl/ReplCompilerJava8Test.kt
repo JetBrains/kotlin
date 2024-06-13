@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.jvm.repl
 
 import com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
@@ -29,6 +28,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.GenericReplCompiler
@@ -55,7 +55,7 @@ class ReplCompilerJava8Test : KtUsefulTestCase() {
         File(tmpdir, "library.kt").writeText(library)
 
         val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.FULL_JDK).apply {
-            put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false))
+            this.messageCollector = PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false)
             addKotlinSourceRoot(tmpdir.absolutePath)
             put(JVMConfigurationKeys.OUTPUT_DIRECTORY, tmpdir)
             loadScriptingPlugin(this)

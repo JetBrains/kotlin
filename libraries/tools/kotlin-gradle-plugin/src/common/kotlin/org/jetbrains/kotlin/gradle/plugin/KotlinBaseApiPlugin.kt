@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.gradle.tasks.configuration.KaptGenerateStubsConfig
 import org.jetbrains.kotlin.gradle.tasks.configuration.KaptWithoutKotlincConfig
 import org.jetbrains.kotlin.gradle.tasks.configuration.KotlinCompileConfig
-import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryNext
+import org.jetbrains.kotlin.gradle.utils.KotlinJvmCompilerOptionsDefault
 
 /** Plugin that can be used by third-party plugins to create Kotlin-specific DSL and tasks (compilation and KAPT) for JVM platform. */
 abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory {
@@ -43,9 +43,7 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
     }
 
     override fun createCompilerJvmOptions(): KotlinJvmCompilerOptions {
-        return myProject.objects
-            .newInstance(KotlinJvmCompilerOptionsDefault::class.java)
-            .configureExperimentalTryNext(myProject)
+        return myProject.objects.KotlinJvmCompilerOptionsDefault(myProject)
     }
 
     @Suppress("DEPRECATION")

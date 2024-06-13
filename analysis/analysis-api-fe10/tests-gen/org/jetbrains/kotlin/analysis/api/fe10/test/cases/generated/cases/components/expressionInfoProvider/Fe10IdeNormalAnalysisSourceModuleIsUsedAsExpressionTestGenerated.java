@@ -1384,6 +1384,12 @@ public class Fe10IdeNormalAnalysisSourceModuleIsUsedAsExpressionTestGenerated ex
   }
 
   @Test
+  @TestMetadata("propertyDelegate.kt")
+  public void testPropertyDelegate() {
+    runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/propertyDelegate.kt");
+  }
+
+  @Test
   @TestMetadata("propertyGetterBody.kt")
   public void testPropertyGetterBody() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/propertyGetterBody.kt");

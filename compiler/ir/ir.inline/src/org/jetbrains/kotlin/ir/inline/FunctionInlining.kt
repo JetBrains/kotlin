@@ -41,7 +41,7 @@ abstract class InlineFunctionResolver {
     open val allowExternalInlining: Boolean
         get() = false
 
-    private val IrFunction.needsInlining get() = this.isInline && (allowExternalInlining || !this.isExternal)
+    open fun needsInlining(function: IrFunction) = function.isInline && (allowExternalInlining || !function.isExternal)
 
     open fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         if (shouldExcludeFunctionFromInlining(symbol)) return null
@@ -51,11 +51,7 @@ abstract class InlineFunctionResolver {
     }
 
     protected open fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol): Boolean {
-        return !symbol.owner.needsInlining || Symbols.isLateinitIsInitializedPropertyGetter(symbol) || Symbols.isTypeOfIntrinsic(symbol)
-    }
-
-    companion object {
-        val TRIVIAL = object : InlineFunctionResolver() {}
+        return !needsInlining(symbol.owner) || Symbols.isLateinitIsInitializedPropertyGetter(symbol) || Symbols.isTypeOfIntrinsic(symbol)
     }
 }
 
@@ -77,7 +73,7 @@ open class InlineFunctionResolverReplacingCoroutineIntrinsics(open val context: 
 
 open class FunctionInlining(
     val context: CommonBackendContext,
-    private val inlineFunctionResolver: InlineFunctionResolver = InlineFunctionResolver.TRIVIAL,
+    private val inlineFunctionResolver: InlineFunctionResolver,
     private val innerClassesSupport: InnerClassesSupport? = null,
     private val insertAdditionalImplicitCasts: Boolean = false,
     private val regenerateInlinedAnonymousObjects: Boolean = false,

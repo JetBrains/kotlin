@@ -1,0 +1,3 @@
+KtNameReferenceExpression(7,11): 'java'
+  KtSimpleNameReference:
+    package java

@@ -27,7 +27,7 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-metadata-klib"))
-    testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
+    testImplementation(libs.kotlinx.coroutines.core) { isTransitive = false }
 
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
 }
@@ -61,7 +61,16 @@ val gcTest = nativeTest("gcTest", "gc")
 val testTags = findProperty("kotlin.native.tests.tags")?.toString()
 // Note: arbitrary JUnit tag expressions can be used in this property.
 // See https://junit.org/junit5/docs/current/user-guide/#running-tests-tag-expressions
-val test by nativeTest("test", testTags, requirePlatformLibs = true)
+val test by nativeTest("test", testTags, requirePlatformLibs = true) {
+    options {
+        // See [org.jetbrains.kotlin.konan.test.KlibCrossCompilationIdentityTest.FULL_CROSS_DIST_ENABLED_PROPERTY]
+        // See also kotlin-native/build-tools/src/main/kotlin/org/jetbrains/kotlin/nativeFullCrossDist.kt
+        systemProperty(
+            "kotlin.native.internal.fullCrossDistEnabled",
+            kotlinBuildProperties.getOrNull("kotlin.native.pathToDarwinDist") != null
+        )
+    }
+}
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateNativeTestsKt") {
     javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))

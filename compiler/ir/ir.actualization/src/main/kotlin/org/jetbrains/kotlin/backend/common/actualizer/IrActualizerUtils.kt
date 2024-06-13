@@ -9,85 +9,71 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
-import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualMatcher
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
-
-internal fun collectActualCallablesMatchingToSpecificExpect(
-    expectSymbol: IrSymbol,
-    actualSymbols: List<IrSymbol>,
-    expectToActualClassMap: Map<ClassId, IrClassSymbol>,
-    typeSystemContext: IrTypeSystemContext,
-): List<IrSymbol> {
-    val baseExpectSymbol = expectSymbol
-    val matchingActuals = mutableListOf<IrSymbol>()
-    val context = object : IrExpectActualMatchingContext(typeSystemContext, expectToActualClassMap) {
-        override fun onMatchedClasses(expectClassSymbol: IrClassSymbol, actualClassSymbol: IrClassSymbol) {
-            shouldNotBeCalled()
-        }
-
-        override fun onMatchedCallables(expectSymbol: IrSymbol, actualSymbol: IrSymbol) {
-            require(expectSymbol == baseExpectSymbol)
-            matchingActuals += actualSymbol
-        }
-    }
-    AbstractExpectActualMatcher.matchSingleExpectTopLevelDeclarationAgainstPotentialActuals(
-        expectSymbol,
-        actualSymbols,
-        context,
-    )
-    return matchingActuals
-}
 
 internal fun recordActualForExpectDeclaration(
     expectSymbol: IrSymbol,
     actualSymbol: IrSymbol,
-    destination: MutableMap<IrSymbol, IrSymbol>,
+    expectActualMap: IrExpectActualMap,
     diagnosticsReporter: IrDiagnosticReporter,
 ) {
     val expectDeclaration = expectSymbol.owner as IrDeclarationBase
     val actualDeclaration = actualSymbol.owner as IrDeclaration
-    val registeredActual = destination.put(expectSymbol, actualSymbol)
+    val registeredActual = expectActualMap.regularSymbols.put(expectSymbol, actualSymbol)
     if (registeredActual != null && registeredActual != actualSymbol) {
         diagnosticsReporter.reportAmbiguousActuals(expectDeclaration)
     }
     if (expectDeclaration is IrTypeParametersContainer) {
-        recordTypeParametersMapping(destination, expectDeclaration, actualDeclaration as IrTypeParametersContainer)
+        recordTypeParametersMapping(expectActualMap, expectDeclaration, actualDeclaration as IrTypeParametersContainer)
     }
     if (expectDeclaration is IrProperty) {
-        val actualProperty = actualDeclaration as IrProperty
-        expectDeclaration.getter!!.let {
-            val getter = actualProperty.getter!!
-            destination[it.symbol] = getter.symbol
-            recordTypeParametersMapping(destination, it, getter)
+        require(actualDeclaration is IrProperty)
+
+        expectDeclaration.getter?.let { expectGetter ->
+            val actualGetter = actualDeclaration.getter
+            if (actualGetter != null) {
+                expectActualMap.regularSymbols[expectGetter.symbol] = actualGetter.symbol
+                recordTypeParametersMapping(expectActualMap, expectGetter, actualGetter)
+            } else if (actualDeclaration.isPropertyForJavaField()) {
+                // In the case when expect property is actualized by a Java field, there is no getter.
+                // So, record it in `IrExpectActualMap.propertyAccessorsActualizedByFields`.
+                expectActualMap.propertyAccessorsActualizedByFields[expectGetter.symbol] = actualDeclaration.symbol
+            } else {
+                error("Actual property ${actualDeclaration.render()} has not getter while expect property ${expectDeclaration.render()} has it")
+            }
         }
-        expectDeclaration.setter?.symbol?.let { destination[it] = actualProperty.setter!!.symbol }
+
+        expectDeclaration.setter?.let { expectSetter ->
+            val actualSetter = actualDeclaration.setter
+            if (actualSetter != null) {
+                expectActualMap.regularSymbols[expectSetter.symbol] = actualSetter.symbol
+            } else if (actualDeclaration.isPropertyForJavaField()) {
+                // In the case when expect property is actualized by a Java field, there is no setter.
+                // So, record it in `IrExpectActualMap.propertyAccessorsActualizedByFields`.
+                expectActualMap.propertyAccessorsActualizedByFields[expectSetter.symbol] = actualDeclaration.symbol
+            } else {
+                error("Actual property ${actualDeclaration.render()} has not setter while expect property ${expectDeclaration.render()} has it")
+            }
+        }
     }
 }
 
 private fun recordTypeParametersMapping(
-    destination: MutableMap<IrSymbol, IrSymbol>,
+    expectActualMap: IrExpectActualMap,
     expectTypeParametersContainer: IrTypeParametersContainer,
     actualTypeParametersContainer: IrTypeParametersContainer
 ) {
     expectTypeParametersContainer.typeParameters
         .zip(actualTypeParametersContainer.typeParameters)
         .forEach { (expectTypeParameter, actualTypeParameter) ->
-            destination[expectTypeParameter.symbol] = actualTypeParameter.symbol
+            expectActualMap.regularSymbols[expectTypeParameter.symbol] = actualTypeParameter.symbol
         }
 }
 
@@ -174,65 +160,9 @@ internal fun IrElement.containsOptionalExpectation(): Boolean {
             this.hasAnnotation(StandardClassIds.Annotations.OptionalExpectation)
 }
 
-@Suppress("UNCHECKED_CAST")
-internal fun createFakeOverrideMember(actualMembers: List<IrDeclaration>, declaration: IrClass): IrOverridableDeclaration<*> {
-    return when (actualMembers.first()) {
-        is IrSimpleFunction -> createFakeOverrideFunction(actualMembers as List<IrSimpleFunction>, declaration)
-        is IrProperty -> createFakeOverrideProperty(actualMembers as List<IrProperty>, declaration)
-        else -> error("Only function or property can be overridden")
-    }
-}
-
-private fun createFakeOverrideProperty(actualProperties: List<IrProperty>, parent: IrClass): IrProperty {
-    val actualProperty = actualProperties.first() // TODO: Currently FIR2IR works in the similar way but it looks incorrect
-    return parent.factory.buildProperty {
-        updateFrom(actualProperty)
-        name = actualProperty.name
-        origin = IrDeclarationOrigin.FAKE_OVERRIDE
-        isFakeOverride = true
-        isExpect = false
-    }.apply {
-        this.parent = parent
-        annotations = actualProperty.annotations
-        backingField = null
-        getter = createFakeOverrideFunction(actualProperties.map { it.getter as IrSimpleFunction }, parent, symbol)
-        setter = runIf(actualProperty.setter != null) {
-            createFakeOverrideFunction(actualProperties.map { it.setter as IrSimpleFunction }, parent, symbol)
-        }
-        overriddenSymbols = actualProperties.map { it.symbol }
-    }
-}
-
-private fun createFakeOverrideFunction(
-    actualFunctions: List<IrSimpleFunction>,
-    parent: IrDeclarationParent,
-    correspondingPropertySymbol: IrPropertySymbol? = null
-): IrSimpleFunction {
-    val actualFunction = actualFunctions.first() // TODO: Currently FIR2IR works in the similar way but it looks incorrect
-
-    return actualFunction.factory.buildFun {
-        updateFrom(actualFunction)
-        name = actualFunction.name
-        returnType = actualFunction.returnType
-        origin = IrDeclarationOrigin.FAKE_OVERRIDE
-        isFakeOverride = true
-        isExpect = false
-    }.also {
-        it.parent = parent
-        it.annotations = actualFunction.annotations.map { p -> p.deepCopyWithSymbols(it) }
-        it.typeParameters = actualFunction.typeParameters.map { p -> p.deepCopyWithSymbols(it) }
-
-        fun IrValueParameter.deepCopyWithTypeParameters(): IrValueParameter = deepCopyWithSymbols(it) { _ ->
-            IrTypeParameterRemapper(actualFunction.typeParameters.zip(it.typeParameters).toMap())
-        }
-
-        it.dispatchReceiverParameter = actualFunction.dispatchReceiverParameter?.deepCopyWithTypeParameters()
-        it.extensionReceiverParameter = actualFunction.extensionReceiverParameter?.deepCopyWithTypeParameters()
-        it.valueParameters = actualFunction.valueParameters.map { p -> p.deepCopyWithTypeParameters() }
-        it.contextReceiverParametersCount = actualFunction.contextReceiverParametersCount
-        it.metadata = actualFunction.metadata
-        it.overriddenSymbols = actualFunctions.map { f -> f.symbol }
-        it.attributeOwnerId = it
-        it.correspondingPropertySymbol = correspondingPropertySymbol
-    }
+/**
+ * Properties created for Java fields have non-null backing field, but don't have accessors.
+ */
+internal fun IrProperty.isPropertyForJavaField(): Boolean {
+    return getter == null && setter == null && backingField != null
 }

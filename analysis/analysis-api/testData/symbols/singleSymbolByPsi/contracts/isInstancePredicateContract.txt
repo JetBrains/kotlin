@@ -1,22 +1,22 @@
-KtFunctionSymbol:
-  annotationsList: [
+KaFunctionSymbol:
+  annotations: [
     kotlin/OptIn(markerClass = [kotlin.contracts.ExperimentalContracts::class])
       psi: KtAnnotationEntry
   ]
-  callableIdIfNonLocal: /isInstancePredicateContract
+  callableId: /isInstancePredicateContract
   contextReceivers: []
   contractEffects: [
-    KtContractConditionalContractEffectDeclaration:
+    KaContractConditionalContractEffectDeclaration:
       effect:
-        KtContractReturnsSuccessfullyEffectDeclaration:
+        KaContractReturnsSuccessfullyEffectDeclaration:
       condition:
-        KtContractIsInstancePredicateExpression:
+        KaContractIsInstancePredicateExpression:
           argument:
-            KtContractParameterValue:
+            KaContractParameterValue:
               parameterSymbol:
-                KtValueParameterSymbol:
-                  annotationsList: []
-                  callableIdIfNonLocal: null
+                KaValueParameterSymbol:
+                  annotations: []
+                  callableId: null
                   contextReceivers: []
                   generatedPrimaryConstructorProperty: null
                   hasDefaultValue: false
@@ -28,20 +28,20 @@ KtFunctionSymbol:
                   name: value
                   origin: SOURCE
                   receiverParameter: null
-                  returnType: KtUsualClassType:
-                    annotationsList: []
-                    ownTypeArguments: []
+                  returnType: KaUsualClassType:
+                    annotations: []
+                    typeArguments: []
                     type: kotlin/Any
                   symbolKind: LOCAL
                   typeParameters: []
-                  getContainingFileSymbol: KtFileSymbol(isInstancePredicateContract.kt)
+                  getContainingFileSymbol: KaFileSymbol(isInstancePredicateContract.kt)
                   getContainingJvmClassName: IsInstancePredicateContractKt
                   getContainingModule: KtSourceModule "Sources of main"
                   deprecationStatus: null
           type:
-            KtUsualClassType:
-              annotationsList: []
-              ownTypeArguments: []
+            KaUsualClassType:
+              annotations: []
+              typeArguments: []
               type: Foo
           isNegated: false
   ]
@@ -62,16 +62,16 @@ KtFunctionSymbol:
   name: isInstancePredicateContract
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -83,19 +83,19 @@ KtFunctionSymbol:
       name: value
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/Any
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(isInstancePredicateContract.kt)
+      getContainingFileSymbol: KaFileSymbol(isInstancePredicateContract.kt)
       getContainingJvmClassName: IsInstancePredicateContractKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(isInstancePredicateContract.kt)
+  getContainingFileSymbol: KaFileSymbol(isInstancePredicateContract.kt)
   getContainingJvmClassName: IsInstancePredicateContractKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

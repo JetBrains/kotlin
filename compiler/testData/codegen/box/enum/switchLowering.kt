@@ -3,7 +3,7 @@
  * that can be found in the LICENSE file.
  */
 // JVM_ABI_K1_K2_DIFF: KT-63864
-// !LANGUAGE:-ProhibitComparisonOfIncompatibleEnums
+// LANGUAGE:-ProhibitComparisonOfIncompatibleEnums
 // WITH_STDLIB
 
 import kotlin.test.*

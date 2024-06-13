@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.backend.jvm.ir.isOptionalAnnotationClass
 import org.jetbrains.kotlin.backend.jvm.ir.isWithFlexibleNullability
+import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
 import org.jetbrains.kotlin.backend.jvm.mapping.mapClass
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
@@ -37,38 +37,26 @@ import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.TypePath
 import org.jetbrains.org.objectweb.asm.TypeReference
 import java.lang.annotation.RetentionPolicy
 
-abstract class AnnotationCodegen(
-    private val classCodegen: ClassCodegen,
-    private val skipNullabilityAnnotations: Boolean = false
-) {
+abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
     private val context = classCodegen.context
     private val typeMapper = classCodegen.typeMapper
     private val methodSignatureMapper = classCodegen.methodSignatureMapper
 
-    /**
-     * @param returnType can be null if not applicable (e.g. [annotated] is a class)
-     */
-    fun genAnnotations(
-        annotated: IrAnnotationContainer?,
-        returnType: Type?,
-        typeForTypeAnnotations: IrType?
-    ) {
-        if (annotated == null) return
+    private val annotationDescriptorsAlreadyPresent = mutableSetOf<String>()
 
-        val annotationDescriptorsAlreadyPresent = mutableSetOf<String>()
-
-        val annotations = annotated.annotations
-
-        for (annotation in annotations) {
-            val applicableTargets = annotation.applicableTargetSet()
+    fun genAnnotations(annotated: IrDeclaration) {
+        for (annotation in annotated.annotations) {
+            val applicableTargets = annotation.annotationClass.applicableTargetSet()
             if (annotated is IrSimpleFunction &&
                 annotated.origin === IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA &&
                 KotlinTarget.FUNCTION !in applicableTargets &&
@@ -81,44 +69,29 @@ abstract class AnnotationCodegen(
                 continue
             }
             if (annotated is IrClass &&
+                annotated.visibility == DescriptorVisibilities.LOCAL &&
                 KotlinTarget.CLASS !in applicableTargets &&
                 KotlinTarget.ANNOTATION_CLASS !in applicableTargets
             ) {
-                if (annotated.visibility == DescriptorVisibilities.LOCAL) {
-                    assert(KotlinTarget.EXPRESSION in applicableTargets) {
-                        "Inconsistent target list for object literal annotation: $applicableTargets on $annotated"
-                    }
-                    continue
+                assert(KotlinTarget.EXPRESSION in applicableTargets) {
+                    "Inconsistent target list for object literal annotation: $applicableTargets on $annotated"
                 }
+                continue
             }
 
             genAnnotation(annotation, null, false)?.let { descriptor ->
                 annotationDescriptorsAlreadyPresent.add(descriptor)
             }
         }
-
-        if (!skipNullabilityAnnotations && annotated is IrDeclaration && returnType != null && !AsmUtil.isPrimitive(returnType)) {
-            generateNullabilityAnnotationForCallable(annotated, annotationDescriptorsAlreadyPresent)
-        }
-
-        generateTypeAnnotations(annotated, typeForTypeAnnotations)
     }
 
     abstract fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor
 
-    open fun visitTypeAnnotation(
-        descr: String,
-        path: TypePath?,
-        visible: Boolean,
-    ): AnnotationVisitor {
+    open fun visitTypeAnnotation(descr: String, path: TypePath?, visible: Boolean): AnnotationVisitor {
         throw RuntimeException("Not implemented")
     }
 
-
-    private fun generateNullabilityAnnotationForCallable(
-        declaration: IrDeclaration, // There is no superclass that encompasses IrFunction, IrField and nothing else.
-        annotationDescriptorsAlreadyPresent: MutableSet<String>
-    ) {
+    internal fun generateNullabilityAnnotation(declaration: IrDeclaration) {
         if (isInvisibleForNullabilityAnalysis(declaration)) return
         if (declaration is IrValueParameter) {
             val parent = declaration.parent as IrDeclaration
@@ -159,19 +132,15 @@ abstract class AnnotationCodegen(
 
         val annotationClass = if (type.isNullable()) Nullable::class.java else NotNull::class.java
 
-        generateAnnotationIfNotPresent(annotationDescriptorsAlreadyPresent, annotationClass)
+        val descriptor = Type.getType(annotationClass).descriptor
+        if (descriptor !in annotationDescriptorsAlreadyPresent) {
+            visitAnnotation(descriptor, false).visitEnd()
+        }
     }
 
     private fun isMovedReceiverParameterOfStaticValueClassReplacement(parameter: IrValueParameter, parent: IrDeclaration): Boolean =
         (parent.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT || parent.origin == JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_REPLACEMENT) &&
                 parameter.origin == IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
-
-    private fun generateAnnotationIfNotPresent(annotationDescriptorsAlreadyPresent: MutableSet<String>, annotationClass: Class<*>) {
-        val descriptor = Type.getType(annotationClass).descriptor
-        if (!annotationDescriptorsAlreadyPresent.contains(descriptor)) {
-            visitAnnotation(descriptor, false).visitEnd()
-        }
-    }
 
     fun generateAnnotationDefaultValue(value: IrExpression) {
         val visitor = visitAnnotation("", false)  // Parameters are unimportant
@@ -280,7 +249,6 @@ abstract class AnnotationCodegen(
     }
 
     companion object {
-
         fun genAnnotationsOnTypeParametersAndBounds(
             context: JvmBackendContext,
             typeParameterContainer: IrTypeParametersContainer,
@@ -289,49 +257,34 @@ abstract class AnnotationCodegen(
             boundType: Int,
             visitor: (typeRef: Int, typePath: TypePath?, descriptor: String, visible: Boolean) -> AnnotationVisitor
         ) {
-            typeParameterContainer.typeParameters.forEachIndexed { index, typeParameter ->
-                object : AnnotationCodegen(classCodegen, true) {
+            for ((index, typeParameter) in typeParameterContainer.typeParameters.withIndex()) {
+                object : AnnotationCodegen(classCodegen) {
                     override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
-
-                        return visitor(
-                            TypeReference.newTypeParameterReference(referenceType, index).value,
-                            null,
-                            descr,
-                            visible
-                        )
+                        val typeReference = TypeReference.newTypeParameterReference(referenceType, index)
+                        return visitor(typeReference.value, null, descr, visible)
                     }
 
                     override fun visitTypeAnnotation(descr: String, path: TypePath?, visible: Boolean): AnnotationVisitor {
-                        throw RuntimeException(
-                            "Error during generation: type annotation shouldn't be presented on type parameter: " +
-                                    "${ir2string(typeParameter)} in ${ir2string(typeParameterContainer)}"
-                        )
+                        error("Type annotation cannot be on a type parameter: ${typeParameterContainer.render()}")
                     }
-                }.genAnnotations(typeParameter, null, null)
+                }.genAnnotations(typeParameter)
 
-                if (!context.config.emitJvmTypeAnnotations) return
+                if (!context.config.emitJvmTypeAnnotations) continue
 
                 var superInterfaceIndex = 1
-                typeParameter.superTypes.forEach { superType ->
+                for (superType in typeParameter.superTypes) {
                     val isClassOrTypeParameter = !superType.isInterface() && !superType.isAnnotation()
                     val superIndex = if (isClassOrTypeParameter) 0 else superInterfaceIndex++
-                    object : AnnotationCodegen(classCodegen, true) {
+                    object : AnnotationCodegen(classCodegen) {
                         override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
-                            throw RuntimeException(
-                                "Error during generation: only type annotations should be presented on type parameters bounds: " +
-                                        "${ir2string(typeParameter)} in ${ir2string(typeParameter)}"
-                            )
+                            error("Only type annotation can be on a type parameter bound: ${typeParameterContainer.render()}")
                         }
 
                         override fun visitTypeAnnotation(descr: String, path: TypePath?, visible: Boolean): AnnotationVisitor {
-                            return visitor(
-                                TypeReference.newTypeParameterBoundReference(boundType, index, superIndex).value,
-                                path,
-                                descr,
-                                visible
-                            )
+                            val typeReference = TypeReference.newTypeParameterBoundReference(boundType, index, superIndex)
+                            return visitor(typeReference.value, path, descr, visible)
                         }
-                    }.generateTypeAnnotations(typeParameterContainer, superType)
+                    }.generateTypeAnnotations(superType, TypeAnnotationPosition.TypeParameterBoundType)
                 }
             }
         }
@@ -342,7 +295,7 @@ abstract class AnnotationCodegen(
                 declaration.origin.isSynthetic ->
                     true
                 declaration.origin == JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD ||
-                declaration.origin == JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_GENERATED_IMPL_METHOD ||
+                        declaration.origin == JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_GENERATED_IMPL_METHOD ||
                         declaration.origin == IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION ->
                     true
                 else ->
@@ -385,23 +338,30 @@ abstract class AnnotationCodegen(
             return RetentionPolicy.RUNTIME
         }
 
-        /* Temporary? */
-        fun IrConstructorCall.applicableTargetSet() =
-            annotationClass.applicableTargetSet() ?: KotlinTarget.DEFAULT_TARGET_SET
-
-        val IrConstructorCall.annotationClass get() = symbol.owner.parentAsClass
+        val IrConstructorCall.annotationClass: IrClass get() = symbol.owner.parentAsClass
     }
 
-    internal fun generateTypeAnnotations(
-        annotated: IrAnnotationContainer,
-        type: IrType?
-    ) {
-        if ((annotated as? IrDeclaration)?.origin == IrDeclarationOrigin.SYNTHETIC_ACCESSOR ||
-            type == null || !context.config.emitJvmTypeAnnotations
-        ) {
-            return
+    internal fun generateTypeAnnotations(type: IrType, position: TypeAnnotationPosition) {
+        if (!context.config.emitJvmTypeAnnotations) return
+        val mode = when (position) {
+            is TypeAnnotationPosition.FunctionReturnType ->
+                MethodSignatureMapper.getTypeMappingModeForReturnType(context.typeSystem, position.function, position.function.returnType)
+            is TypeAnnotationPosition.ValueParameterType ->
+                MethodSignatureMapper.getTypeMappingModeForParameter(context.typeSystem, position.parameter.parent as IrDeclaration, type)
+            is TypeAnnotationPosition.FieldType ->
+                // If a field is final, its generic signature is written as if it's a function return type, otherwise as if it's a value
+                // parameter type. See `MethodSignatureMapper.mapFieldSignature`.
+                if (position.field.isFinal) {
+                    MethodSignatureMapper.getTypeMappingModeForReturnType(context.typeSystem, position.field, position.field.type)
+                } else {
+                    MethodSignatureMapper.getTypeMappingModeForParameter(context.typeSystem, position.field, position.field.type)
+                }
+            is TypeAnnotationPosition.TypeParameterBoundType ->
+                TypeMappingMode.GENERIC_ARGUMENT
+            is TypeAnnotationPosition.Supertype ->
+                TypeMappingMode.SUPER_TYPE
         }
-        for (info in IrTypeAnnotationCollector().collectTypeAnnotations(type)) {
+        for (info in IrTypeAnnotationCollector(context).collectTypeAnnotations(type, mode)) {
             for (annotation in info.annotations) {
                 genAnnotation(annotation, info.path, true)
             }
@@ -409,22 +369,22 @@ abstract class AnnotationCodegen(
     }
 }
 
+internal sealed class TypeAnnotationPosition {
+    class FunctionReturnType(val function: IrFunction) : TypeAnnotationPosition()
+    class ValueParameterType(val parameter: IrValueParameter) : TypeAnnotationPosition()
+    class FieldType(val field: IrField) : TypeAnnotationPosition()
+    data object TypeParameterBoundType : TypeAnnotationPosition()
+    data object Supertype : TypeAnnotationPosition()
+}
+
 private fun isBareTypeParameterWithNullableUpperBound(type: IrType): Boolean {
     return type.classifierOrNull?.owner is IrTypeParameter && !type.isMarkedNullable() && type.isNullable()
 }
 
-// Copied and modified from AnnotationChecker.kt
-
-private val TARGET_ALLOWED_TARGETS = Name.identifier("allowedTargets")
-
-private fun IrClass.applicableTargetSet(): Set<KotlinTarget>? {
-    val targetEntry = getAnnotation(StandardNames.FqNames.target) ?: return null
-    return loadAnnotationTargets(targetEntry)
-}
-
-private fun loadAnnotationTargets(targetEntry: IrConstructorCall): Set<KotlinTarget>? {
-    val valueArgument = targetEntry.getValueArgument(TARGET_ALLOWED_TARGETS)
-            as? IrVararg ?: return null
+private fun IrClass.applicableTargetSet(): Set<KotlinTarget> {
+    val valueArgument = getAnnotation(StandardNames.FqNames.target)
+        ?.getValueArgument(StandardClassIds.Annotations.ParameterNames.targetAllowedTargets) as? IrVararg
+        ?: return KotlinTarget.DEFAULT_TARGET_SET
     return valueArgument.elements.filterIsInstance<IrGetEnumValue>().mapNotNull {
         KotlinTarget.valueOrNull(it.symbol.owner.name.asString())
     }.toSet()

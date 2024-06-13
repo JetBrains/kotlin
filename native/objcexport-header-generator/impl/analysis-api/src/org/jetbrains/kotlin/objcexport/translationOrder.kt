@@ -37,7 +37,7 @@ internal val StableClassifierOrder: Comparator<KtClassifierSymbol> =
         if (classifier !is KtClassOrObjectSymbol) return@compareBy 0
         else 2
     }.thenComparing { classifier ->
-        if (classifier is KtClassLikeSymbol) classifier.classIdIfNonLocal?.toString().orEmpty()
+        if (classifier is KtClassLikeSymbol) classifier.classId?.toString().orEmpty()
         else ""
     }
 

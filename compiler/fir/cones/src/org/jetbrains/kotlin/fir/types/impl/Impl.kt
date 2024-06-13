@@ -18,7 +18,7 @@ class ConeClassLikeTypeImpl(
     isNullable: Boolean,
     override val attributes: ConeAttributes = ConeAttributes.Empty
 ) : ConeClassLikeType() {
-    override val typeArguments = if (typeArguments.isEmpty()) EMPTY_ARRAY else typeArguments
+    override val typeArguments: Array<out ConeTypeProjection> = if (typeArguments.isEmpty()) EMPTY_ARRAY else typeArguments
 
     override val nullability: ConeNullability = ConeNullability.create(isNullable)
 

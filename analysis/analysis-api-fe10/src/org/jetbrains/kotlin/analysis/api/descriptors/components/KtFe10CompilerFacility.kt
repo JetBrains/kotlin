@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
-import org.jetbrains.kotlin.analysis.api.components.KtCompilationResult
-import org.jetbrains.kotlin.analysis.api.components.KtCompilerFacility
-import org.jetbrains.kotlin.analysis.api.components.KtCompilerTarget
+import org.jetbrains.kotlin.analysis.api.components.KaCompilationResult
+import org.jetbrains.kotlin.analysis.api.components.KaCompilerFacility
+import org.jetbrains.kotlin.analysis.api.components.KaCompilerTarget
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
-import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
+import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.InlineFunctionAnalyzer
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.collectReachableInlineDelegatedPropertyAccessors
-import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnostic
-import org.jetbrains.kotlin.analysis.api.impl.base.util.KtCompiledFileForOutputFile
+import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
+import org.jetbrains.kotlin.analysis.api.impl.base.util.KaCompiledFileForOutputFile
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.FacadeClassSourceShimForFragmentCompilation
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
@@ -38,21 +38,21 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
  */
 val STUB_UNBOUND_IR_SYMBOLS: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey<Boolean>("stub unbound IR symbols")
 
-internal class KtFe10CompilerFacility(
-    override val analysisSession: KtFe10AnalysisSession
-) : KtCompilerFacility(), Fe10KtAnalysisSessionComponent {
+internal class KaFe10CompilerFacility(
+    override val analysisSession: KaFe10Session
+) : KaCompilerFacility(), KaFe10SessionComponent {
     override fun compile(
         file: KtFile,
         configuration: CompilerConfiguration,
-        target: KtCompilerTarget,
-        allowedErrorFilter: (KtDiagnostic) -> Boolean
-    ): KtCompilationResult {
+        target: KaCompilerTarget,
+        allowedErrorFilter: (KaDiagnostic) -> Boolean
+    ): KaCompilationResult {
         if (file is KtCodeFragment) {
             throw UnsupportedOperationException("Code fragments are not supported in K1 implementation")
         }
 
         val classBuilderFactory = when (target) {
-            is KtCompilerTarget.Jvm -> target.classBuilderFactory
+            is KaCompilerTarget.Jvm -> target.classBuilderFactory
         }
 
         val effectiveConfiguration = configuration
@@ -75,7 +75,7 @@ internal class KtFe10CompilerFacility(
 
         val frontendErrors = computeErrors(bindingContext.diagnostics, allowedErrorFilter)
         if (frontendErrors.isNotEmpty()) {
-            return KtCompilationResult.Failure(frontendErrors)
+            return KaCompilationResult.Failure(frontendErrors)
         }
 
         // The IR backend will try to regenerate object literals defined in inline functions from generated class files during inlining.
@@ -124,21 +124,21 @@ internal class KtFe10CompilerFacility(
 
             val backendErrors = computeErrors(state.collectedExtraJvmDiagnostics, allowedErrorFilter)
             if (backendErrors.isNotEmpty()) {
-                return KtCompilationResult.Failure(backendErrors)
+                return KaCompilationResult.Failure(backendErrors)
             }
 
-            val outputFiles = state.factory.asList().map(::KtCompiledFileForOutputFile)
-            return KtCompilationResult.Success(outputFiles, capturedValues = emptyList())
+            val outputFiles = state.factory.asList().map(::KaCompiledFileForOutputFile)
+            return KaCompilationResult.Success(outputFiles, capturedValues = emptyList())
         } finally {
             state.destroy()
         }
     }
 
-    private fun computeErrors(diagnostics: Diagnostics, allowedErrorFilter: (KtDiagnostic) -> Boolean): List<KtDiagnostic> {
+    private fun computeErrors(diagnostics: Diagnostics, allowedErrorFilter: (KaDiagnostic) -> Boolean): List<KaDiagnostic> {
         return buildList {
             for (diagnostic in diagnostics.all()) {
                 if (diagnostic.severity == Severity.ERROR) {
-                    val ktDiagnostic = KtFe10Diagnostic(diagnostic, token)
+                    val ktDiagnostic = KaFe10Diagnostic(diagnostic, token)
                     if (!allowedErrorFilter(ktDiagnostic)) {
                         add(ktDiagnostic)
                     }

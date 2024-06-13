@@ -127,4 +127,4 @@ private fun FirAnnotation.tryExpandClassId(session: FirSession): ClassId? {
 }
 
 private fun FirAnnotation.extractContextReceiversCount() =
-    (argumentMapping.mapping[StandardNames.CONTEXT_FUNCTION_TYPE_PARAMETER_COUNT_NAME] as? FirLiteralExpression<*>)?.value as? Int
+    (argumentMapping.mapping[StandardNames.CONTEXT_FUNCTION_TYPE_PARAMETER_COUNT_NAME] as? FirLiteralExpression)?.value as? Int

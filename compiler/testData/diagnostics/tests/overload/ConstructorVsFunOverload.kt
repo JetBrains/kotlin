@@ -1,6 +1,6 @@
 // constructor vs. fun overload
 
-// FILE: J.java
+// FILE: constructorVsFun/J.java
 package constructorVsFun;
 
 public class J {

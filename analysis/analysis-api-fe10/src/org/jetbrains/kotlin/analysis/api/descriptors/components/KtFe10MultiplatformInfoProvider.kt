@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
-import org.jetbrains.kotlin.analysis.api.components.KtMultiplatformInfoProvider
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
-import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
+import org.jetbrains.kotlin.analysis.api.components.KaMultiplatformInfoProvider
+import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.psiSafe
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -18,17 +18,17 @@ import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 import org.jetbrains.kotlin.resolve.multiplatform.isCompatibleOrWeaklyIncompatible
 
-internal class KtFe10MultiplatformInfoProvider(
-    override val analysisSession: KtFe10AnalysisSession,
-) : KtMultiplatformInfoProvider(), Fe10KtAnalysisSessionComponent {
-    override fun getExpectForActual(actual: KtDeclarationSymbol): List<KtDeclarationSymbol> {
+internal class KaFe10MultiplatformInfoProvider(
+    override val analysisSession: KaFe10Session,
+) : KaMultiplatformInfoProvider(), KaFe10SessionComponent {
+    override fun getExpectForActual(actual: KaDeclarationSymbol): List<KaDeclarationSymbol> {
         if (actual.psiSafe<KtDeclaration>()?.hasActualModifier() != true) return emptyList()
         val memberDescriptor = (getSymbolDescriptor(actual) as? MemberDescriptor)?.takeIf { it.isActual } ?: return emptyList()
 
         return ExpectedActualResolver.findExpectedForActual(memberDescriptor).orEmpty().asSequence()
             .filter { it.key.isCompatibleOrWeaklyIncompatible }
             .flatMap { it.value }
-            .map { it.toKtSymbol(analysisContext) as KtDeclarationSymbol }
+            .map { it.toKtSymbol(analysisContext) as KaDeclarationSymbol }
             .toList()
     }
 }

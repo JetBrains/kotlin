@@ -249,12 +249,11 @@ class GenerateIrRuntime {
 
     @Test
     fun runMonolithicDiskWriting() {
-        val libraryVersion = "JSIR"
         val compilerVersion = KotlinCompilerVersion.getVersion()
         val abiVersion = KotlinAbiVersion.CURRENT
         val metadataVersion = KlibMetadataVersion.INSTANCE.toString()
 
-        val versions = KotlinLibraryVersioning(libraryVersion, compilerVersion, abiVersion, metadataVersion)
+        val versions = KotlinLibraryVersioning(compilerVersion, abiVersion, metadataVersion)
         val file = createTempFile(directory = workingDir.toPath()).toFile()
         val writer = KotlinLibraryOnlyIrWriter(file.absolutePath, "", versions, BuiltInsPlatform.JS, emptyList(), false)
         val files = fullRuntimeSourceSet
@@ -270,12 +269,11 @@ class GenerateIrRuntime {
 
     @Test
     fun runPerFileDiskWriting() {
-        val libraryVersion = "JSIR"
         val compilerVersion = KotlinCompilerVersion.getVersion()
         val abiVersion = KotlinAbiVersion.CURRENT
         val metadataVersion = KlibMetadataVersion.INSTANCE.toString()
 
-        val versions = KotlinLibraryVersioning(libraryVersion, compilerVersion, abiVersion, metadataVersion)
+        val versions = KotlinLibraryVersioning(compilerVersion, abiVersion, metadataVersion)
         val file = createTempFile(directory = workingDir.toPath()).toFile()
         val writer = KotlinLibraryOnlyIrWriter(file.absolutePath, "", versions, BuiltInsPlatform.JS, emptyList(), true)
         val files = fullRuntimeSourceSet

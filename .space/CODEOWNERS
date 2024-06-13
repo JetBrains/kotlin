@@ -137,9 +137,7 @@
 /compiler/testData/codegen/defaultArguments/reflection/ "Kotlin JVM"
 /compiler/testData/codegen/helpers/ "Kotlin JVM"
 /compiler/testData/codegen/innerClassInfo/ "Kotlin JVM"
-/compiler/testData/codegen/java6/ "Kotlin JVM"
 /compiler/testData/codegen/kapt/ "Kotlin Compiler Core"
-# UNKNOWN: /compiler/testData/codegen/light-analysis/
 /compiler/testData/codegen/notNullAssertions/ "Kotlin JVM"
 /compiler/testData/codegen/outerClassInfo/ "Kotlin JVM"
 /compiler/testData/codegen/properties/ "Kotlin JVM"
@@ -343,6 +341,7 @@
 /libraries/tools/kotlin-osgi-bundle/ "Kotlin Build Tools"
 /libraries/tools/kotlin-noarg/ "Kotlin Build Tools"
 /libraries/tools/kotlin-prepush-hook/ "Kotlin Build Infrastructure"
+/libraries/tools/kotlin-privacy-manifests-plugin/ "Kotlin Apple Ecosystem"
 /libraries/tools/kotlin-power-assert/ "Kotlin Build Tools"
 /libraries/tools/kotlin-sam-with-receiver/ "Kotlin Build Tools"
 /libraries/tools/kotlin-serialization/ "Kotlin Build Tools"
@@ -359,6 +358,7 @@
 /libraries/tools/maven-archetypes/ "Kotlin Build Tools"
 /libraries/tools/mutability-annotations-compat/ "Kotlin Libraries"
 /libraries/tools/script-runtime/ "Kotlin Compiler Core"
+/libraries/tools/required-reason-finder/ "Kotlin Apple Ecosystem"
 
 /libraries/maven-settings.xml "Kotlin Build Infrastructure"
 /libraries/pom.xml "Kotlin Build Infrastructure"
@@ -400,6 +400,7 @@
 /plugins/power-assert/ Brian.Norman "Kotlin Common Backend"
 /plugins/sam-with-receiver/ "Kotlin Compiler Core"
 /plugins/scripting/ "Kotlin Compiler Core"
+/plugins/plugins-interactions-testing/ "Kotlin Compiler Core"
 
 
 /prepare/ "Kotlin Build Infrastructure"

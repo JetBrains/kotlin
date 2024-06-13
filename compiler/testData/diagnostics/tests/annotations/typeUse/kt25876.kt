@@ -1,4 +1,4 @@
-// !LANGUAGE: +ProperCheckAnnotationsTargetInTypeUsePositions
+// LANGUAGE: +ProperCheckAnnotationsTargetInTypeUsePositions
 // ISSUE: KT-25876
 
 @Target(AnnotationTarget.TYPE)

@@ -1,0 +1,20 @@
+KtCallExpression(64,75): 'ALE<String>'
+  KaErrorCallInfo:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KaFunctionLikeSignature:
+            receiverType = null
+            returnType = ALE<T>
+            symbol = <constructor>(): ALE<T>
+            valueParameters = []
+            callableId = null
+        typeArgumentsMapping = {
+          T -> (kotlin.String)
+        }
+        argumentMapping = {}
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>

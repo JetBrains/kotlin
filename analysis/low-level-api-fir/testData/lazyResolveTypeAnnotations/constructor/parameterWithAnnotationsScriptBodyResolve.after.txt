@@ -27,8 +27,8 @@
   anchor -> [FirConstructorSymbol /A.A]
 
 FILE: [ResolvedTo(IMPORTS)] parameterWithAnnotationsScriptBodyResolve.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-parameterWithAnnotationsScriptBodyResolve.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -52,3 +52,4 @@ FILE: [ResolvedTo(IMPORTS)] parameterWithAnnotationsScriptBodyResolve.kts
             }
 
         }
+

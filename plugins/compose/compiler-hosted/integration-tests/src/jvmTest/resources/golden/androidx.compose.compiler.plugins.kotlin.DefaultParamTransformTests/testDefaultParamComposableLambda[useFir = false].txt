@@ -1,0 +1,163 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+
+private interface DefaultParamInterface {
+    @Composable fun Content(
+        content: @Composable () -> Unit = @Composable { ComposedContent { Text("default") } }
+    )
+    @Composable fun ComposedContent(
+        content: @Composable () -> Unit = @Composable { Text("default") }
+    ) {
+        content()
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+private interface DefaultParamInterface {
+  @Composable
+  abstract fun Content(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int)
+  @Composable
+  @ComposableInferredTarget(scheme = "[0[0]]")
+  open fun ComposedContent(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+    %composer.startReplaceGroup(<>)
+    sourceInformation(%composer, "C(ComposedContent)<conten...>:Test.kt")
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    content(%composer, 0b1110 and %changed)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    %composer.endReplaceGroup()
+  }
+  class ComposeDefaultImpls {
+    @Composable
+    @ComposableInferredTarget(scheme = "[0[_][0]]")
+    fun ComposedContent%default(content: Function2<Composer, Int, Unit>?, %this%: DefaultParamInterface, %composer: Composer?, %changed: Int, %default: Int) {
+      %composer = %composer.startRestartGroup(<>)
+      sourceInformation(%composer, "C(ComposedContent%default):Test.kt")
+      val %dirty = %changed
+      if (%default and 0b0001 != 0) {
+        %dirty = %dirty or 0b0110
+      } else if (%changed and 0b0110 == 0) {
+        %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010
+      }
+      if (%default and 0b0010 != 0) {
+        %dirty = %dirty or 0b00110000
+      } else if (%changed and 0b00110000 == 0) {
+        %dirty = %dirty or if (if (%changed and 0b01000000 == 0) {
+          %composer.changed(%this%)
+        } else {
+          %composer.changedInstance(%this%)
+        }
+        ) 0b00100000 else 0b00010000
+      }
+      if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
+        if (%default and 0b0001 != 0) {
+          content = ComposableSingletons%TestKt.lambda-1
+        }
+        if (isTraceInProgress()) {
+          traceEventStart(<>, %dirty, -1, <>)
+        }
+        %this%.ComposedContent(content, %composer, 0b1110 and %dirty or 0b01110000 and %dirty)
+        if (isTraceInProgress()) {
+          traceEventEnd()
+        }
+      } else {
+        %composer.skipToGroupEnd()
+      }
+      %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+        ComposedContent%default(content, %this%, %composer, updateChangedFlags(%changed or 0b0001), %default)
+      }
+    }
+    @Composable
+    @ComposableInferredTarget(scheme = "[0[_][0]]")
+    fun Content%default(content: Function2<Composer, Int, Unit>?, %this%: DefaultParamInterface, %composer: Composer?, %changed: Int, %default: Int) {
+      %composer = %composer.startRestartGroup(<>)
+      sourceInformation(%composer, "C(Content%default)<{>:Test.kt")
+      val %dirty = %changed
+      if (%default and 0b0001 != 0) {
+        %dirty = %dirty or 0b0110
+      } else if (%changed and 0b0110 == 0) {
+        %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010
+      }
+      if (%default and 0b0010 != 0) {
+        %dirty = %dirty or 0b00110000
+      } else if (%changed and 0b00110000 == 0) {
+        %dirty = %dirty or if (if (%changed and 0b01000000 == 0) {
+          %composer.changed(%this%)
+        } else {
+          %composer.changedInstance(%this%)
+        }
+        ) 0b00100000 else 0b00010000
+      }
+      if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
+        if (%default and 0b0001 != 0) {
+          content = rememberComposableLambda(<>, true, { %composer: Composer?, %changed: Int ->
+            sourceInformation(%composer, "C<Compos...>:Test.kt")
+            if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+              if (isTraceInProgress()) {
+                traceEventStart(<>, %changed, -1, <>)
+              }
+              ComposedContent%default(ComposableSingletons%TestKt.lambda-2, %this%, %composer, 0b0110, 0)
+              if (isTraceInProgress()) {
+                traceEventEnd()
+              }
+            } else {
+              %composer.skipToGroupEnd()
+            }
+          }, %composer, 0b00110110)
+        }
+        if (isTraceInProgress()) {
+          traceEventStart(<>, %dirty, -1, <>)
+        }
+        %this%.Content(content, %composer, 0b1110 and %dirty or 0b01110000 and %dirty)
+        if (isTraceInProgress()) {
+          traceEventEnd()
+        }
+      } else {
+        %composer.skipToGroupEnd()
+      }
+      %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+        Content%default(content, %this%, %composer, updateChangedFlags(%changed or 0b0001), %default)
+      }
+    }
+  }
+}
+internal object ComposableSingletons%TestKt {
+  val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+    sourceInformation(%composer, "C<Text("...>:Test.kt")
+    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      Text("default", %composer, 0b0110)
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+  }
+  val lambda-2: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+    sourceInformation(%composer, "C<Text("...>:Test.kt")
+    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      Text("default", %composer, 0b0110)
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+  }
+}

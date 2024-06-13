@@ -1,0 +1,17 @@
+KtNameReferenceExpression(96,102): 'Helper'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Foo.Helper
+          symbol = <constructor>(): Foo.Helper
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false

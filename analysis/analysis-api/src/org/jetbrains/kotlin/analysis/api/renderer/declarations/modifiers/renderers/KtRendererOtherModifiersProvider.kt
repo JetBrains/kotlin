@@ -5,31 +5,31 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossibleMultiplatformSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaPossibleMultiplatformSymbol
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.types.Variance
 
-public interface KtRendererOtherModifiersProvider {
-    public fun getOtherModifiers(analysisSession: KtAnalysisSession, symbol: KtDeclarationSymbol): List<KtModifierKeywordToken>
+public interface KaRendererOtherModifiersProvider {
+    public fun getOtherModifiers(analysisSession: KaSession, symbol: KaDeclarationSymbol): List<KtModifierKeywordToken>
 
-    public infix fun and(other: KtRendererOtherModifiersProvider): KtRendererOtherModifiersProvider {
+    public infix fun and(other: KaRendererOtherModifiersProvider): KaRendererOtherModifiersProvider {
         val self = this
-        return object : KtRendererOtherModifiersProvider {
-            override fun getOtherModifiers(analysisSession: KtAnalysisSession, symbol: KtDeclarationSymbol): List<KtModifierKeywordToken> {
+        return object : KaRendererOtherModifiersProvider {
+            override fun getOtherModifiers(analysisSession: KaSession, symbol: KaDeclarationSymbol): List<KtModifierKeywordToken> {
                 return self.getOtherModifiers(analysisSession, symbol) + other.getOtherModifiers(analysisSession, symbol)
             }
         }
     }
 
     public fun onlyIf(
-        condition: KtAnalysisSession.(symbol: KtDeclarationSymbol) -> Boolean
-    ): KtRendererOtherModifiersProvider {
+        condition: KaSession.(symbol: KaDeclarationSymbol) -> Boolean
+    ): KaRendererOtherModifiersProvider {
         val self = this
-        return object : KtRendererOtherModifiersProvider {
-            override fun getOtherModifiers(analysisSession: KtAnalysisSession, symbol: KtDeclarationSymbol): List<KtModifierKeywordToken> {
+        return object : KaRendererOtherModifiersProvider {
+            override fun getOtherModifiers(analysisSession: KaSession, symbol: KaDeclarationSymbol): List<KtModifierKeywordToken> {
                 return if (condition(analysisSession, symbol)) {
                     self.getOtherModifiers(analysisSession, symbol)
                 } else {
@@ -39,15 +39,15 @@ public interface KtRendererOtherModifiersProvider {
         }
     }
 
-    public object ALL : KtRendererOtherModifiersProvider {
-        override fun getOtherModifiers(analysisSession: KtAnalysisSession, symbol: KtDeclarationSymbol): List<KtModifierKeywordToken> {
+    public object ALL : KaRendererOtherModifiersProvider {
+        override fun getOtherModifiers(analysisSession: KaSession, symbol: KaDeclarationSymbol): List<KtModifierKeywordToken> {
             return buildList {
-                if (symbol is KtPossibleMultiplatformSymbol) {
+                if (symbol is KaPossibleMultiplatformSymbol) {
                     if (symbol.isActual) add(KtTokens.ACTUAL_KEYWORD)
                     if (symbol.isExpect) add(KtTokens.EXPECT_KEYWORD)
                 }
 
-                if (symbol is KtFunctionSymbol) {
+                if (symbol is KaFunctionSymbol) {
                     if (symbol.isExternal) add(KtTokens.EXTERNAL_KEYWORD)
                     if (symbol.isOverride) add(KtTokens.OVERRIDE_KEYWORD)
                     if (symbol.isInline) add(KtTokens.INLINE_KEYWORD)
@@ -57,22 +57,22 @@ public interface KtRendererOtherModifiersProvider {
                     if (symbol.isTailRec) add(KtTokens.TAILREC_KEYWORD)
                 }
 
-                if (symbol is KtPropertySymbol) {
+                if (symbol is KaPropertySymbol) {
                     if (symbol.isOverride) add(KtTokens.OVERRIDE_KEYWORD)
                 }
 
-                if (symbol is KtValueParameterSymbol) {
+                if (symbol is KaValueParameterSymbol) {
                     if (symbol.isVararg) add(KtTokens.VARARG_KEYWORD)
                     if (symbol.isCrossinline) add(KtTokens.CROSSINLINE_KEYWORD)
                     if (symbol.isNoinline) add(KtTokens.NOINLINE_KEYWORD)
                 }
 
-                if (symbol is KtKotlinPropertySymbol) {
+                if (symbol is KaKotlinPropertySymbol) {
                     if (symbol.isConst) add(KtTokens.CONST_KEYWORD)
                     if (symbol.isLateInit) add(KtTokens.LATEINIT_KEYWORD)
                 }
 
-                if (symbol is KtNamedClassOrObjectSymbol) {
+                if (symbol is KaNamedClassOrObjectSymbol) {
                     if (symbol.isExternal) add(KtTokens.EXTERNAL_KEYWORD)
                     if (symbol.isInline) add(KtTokens.INLINE_KEYWORD)
                     if (symbol.isData) add(KtTokens.DATA_KEYWORD)
@@ -80,7 +80,7 @@ public interface KtRendererOtherModifiersProvider {
                     if (symbol.isInner) add(KtTokens.INNER_KEYWORD)
                 }
 
-                if (symbol is KtTypeParameterSymbol) {
+                if (symbol is KaTypeParameterSymbol) {
                     if (symbol.isReified) add(KtTokens.REIFIED_KEYWORD)
                     when (symbol.variance) {
                         Variance.INVARIANT -> {}
@@ -92,3 +92,5 @@ public interface KtRendererOtherModifiersProvider {
         }
     }
 }
+
+public typealias KtRendererOtherModifiersProvider = KaRendererOtherModifiersProvider

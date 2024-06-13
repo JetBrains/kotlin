@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNREACHABLE_CODE
+// DIAGNOSTICS: -UNREACHABLE_CODE
 
 fun TODO(): Nothing = throw java.lang.IllegalStateException()
 

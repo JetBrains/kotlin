@@ -11,6 +11,7 @@ class Some(val s: String)
 internal fun Some.foo(): String = s
 
 // MODULE: main(lib)
+// DISABLE_IR_VISIBILITY_CHECKS: ANY
 // FILE: main.kt
 
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")

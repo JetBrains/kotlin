@@ -351,12 +351,12 @@ FILE fqName:<root> fileName:/ArrayMap.kt
             <R>: <root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl>
             $receiver: CALL 'private final fun <get-data> (): kotlin.Array<kotlin.Any?> declared in <root>.ArrayMapImpl' type=kotlin.Array<kotlin.Any?> origin=GET_PROPERTY
               $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.entries' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
-            transform: FUN_EXPR type=kotlin.Function2<@[ParameterName(name = "index")] kotlin.Int, kotlin.Any?, <root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl>?> origin=LAMBDA
-              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (index:@[ParameterName(name = "index")] kotlin.Int, value:kotlin.Any?) returnType:<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl>?
-                VALUE_PARAMETER name:index index:0 type:@[ParameterName(name = "index")] kotlin.Int
+            transform: FUN_EXPR type=kotlin.Function2<kotlin.Int, kotlin.Any?, <root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl>?> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (index:kotlin.Int, value:kotlin.Any?) returnType:<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl>?
+                VALUE_PARAMETER name:index index:0 type:kotlin.Int
                 VALUE_PARAMETER name:value index:1 type:kotlin.Any?
                 BLOCK_BODY
-                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (index: @[ParameterName(name = "index")] kotlin.Int, value: kotlin.Any?): <root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl>? declared in <root>.ArrayMapImpl.entries'
+                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (index: kotlin.Int, value: kotlin.Any?): <root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl>? declared in <root>.ArrayMapImpl.entries'
                     WHEN type=<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl>? origin=IF
                       BRANCH
                         if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
@@ -365,7 +365,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                             arg1: CONST Null type=kotlin.Nothing? value=null
                         then: CONSTRUCTOR_CALL 'public constructor <init> (key: kotlin.Int, value: T of <root>.ArrayMapImpl.Entry) declared in <root>.ArrayMapImpl.Entry' type=<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl> origin=null
                           <class: T>: T of <root>.ArrayMapImpl
-                          key: GET_VAR 'index: @[ParameterName(name = "index")] kotlin.Int declared in <root>.ArrayMapImpl.entries.<anonymous>' type=@[ParameterName(name = "index")] kotlin.Int origin=null
+                          key: GET_VAR 'index: kotlin.Int declared in <root>.ArrayMapImpl.entries.<anonymous>' type=kotlin.Int origin=null
                           value: TYPE_OP type=T of <root>.ArrayMapImpl origin=CAST typeOperand=T of <root>.ArrayMapImpl
                             GET_VAR 'value: kotlin.Any? declared in <root>.ArrayMapImpl.entries.<anonymous>' type=kotlin.Any? origin=null
                       BRANCH

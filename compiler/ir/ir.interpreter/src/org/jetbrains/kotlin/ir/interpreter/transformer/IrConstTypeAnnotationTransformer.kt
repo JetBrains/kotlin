@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -30,7 +30,11 @@ internal class IrConstTypeAnnotationTransformer(
     suppressExceptions: Boolean,
 ) : IrConstAnnotationTransformer(
     interpreter, irFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
-), IrTypeTransformer<IrConstTransformer.Data> {
+), IrTypeTransformer<Unit, IrConstTransformer.Data> {
+
+    override fun visitElement(element: IrElement, data: Data) {
+        element.acceptChildren(this, data)
+    }
 
     override fun <Type : IrType?> transformType(container: IrElement, type: Type, data: Data): Type {
         if (type == null) return type

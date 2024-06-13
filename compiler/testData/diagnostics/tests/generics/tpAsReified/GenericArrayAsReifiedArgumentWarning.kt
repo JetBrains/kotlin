@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
-// !LANGUAGE: -ProhibitNonReifiedArraysAsReifiedTypeArguments
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: -ProhibitNonReifiedArraysAsReifiedTypeArguments
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 inline fun <reified T> foo() {}
 

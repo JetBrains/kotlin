@@ -66,10 +66,18 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
         for ((symbol, firEffect) in argumentsCalledInPlace) {
             val requiredRange = (firEffect.effect as ConeCallsEffectDeclaration).kind
             val foundRange = invocationData.getValue(graph.exitNode)[NormalPath]?.get(symbol)?.withoutMarker ?: EventOccurrencesRange.ZERO
+            val coercedFoundRange = foundRange.coerceToInvocationKind()
             if (foundRange !in requiredRange) {
-                reporter.reportOn(firEffect.source, FirErrors.WRONG_INVOCATION_KIND, symbol, requiredRange, foundRange, context)
+                reporter.reportOn(firEffect.source, FirErrors.WRONG_INVOCATION_KIND, symbol, requiredRange, coercedFoundRange, context)
             }
         }
+    }
+
+    // This maps `EventOccurrencesRange` to `InvocationKind`, as the latter has fewer and different kinds.
+    private fun EventOccurrencesRange.coerceToInvocationKind(): EventOccurrencesRange = when (this) {
+        EventOccurrencesRange.ZERO -> EventOccurrencesRange.AT_MOST_ONCE
+        EventOccurrencesRange.MORE_THAN_ONCE -> EventOccurrencesRange.AT_LEAST_ONCE
+        else -> this
     }
 
     private fun ControlFlowGraph.findNonInPlaceUsesOf(lambdaSymbols: Set<FirBasedSymbol<*>>): SetMultimap<FirBasedSymbol<*>, FirExpression> {

@@ -50,22 +50,22 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent : FirSessionCompon
     ): AnnotationsPosition?
 
     object Default : FirAnnotationsPlatformSpecificSupportComponent() {
-        override val requiredAnnotationsWithArguments = setOf(
+        override val requiredAnnotationsWithArguments: Set<ClassId> = setOf(
             StandardClassIds.Annotations.Deprecated,
             StandardClassIds.Annotations.Target,
         )
 
-        override val requiredAnnotations = requiredAnnotationsWithArguments + setOf(
+        override val requiredAnnotations: Set<ClassId> = requiredAnnotationsWithArguments + setOf(
             StandardClassIds.Annotations.DeprecatedSinceKotlin,
             StandardClassIds.Annotations.SinceKotlin,
             StandardClassIds.Annotations.WasExperimental,
         )
 
-        override val volatileAnnotations = setOf(
+        override val volatileAnnotations: Set<ClassId> = setOf(
             StandardClassIds.Annotations.Volatile,
         )
 
-        override val deprecationAnnotationsWithOverridesPropagation = mapOf(
+        override val deprecationAnnotationsWithOverridesPropagation: Map<ClassId, Boolean> = mapOf(
             StandardClassIds.Annotations.Deprecated to true,
             StandardClassIds.Annotations.SinceKotlin to true,
         )

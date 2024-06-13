@@ -2,7 +2,7 @@ foo/bar/OneSealedChild
 class OneSealedChild : foo.bar.MySealedClass()
 
 foo/bar/ThreeSealedChild
-class ThreeSealedChild : foo.bar.MySealedClass()
+class ThreeSealedChild : foo.bar.T2 /* = foo.bar.MySealedClass */()
 
 foo/bar/TwoSealedChild
-class TwoSealedChild : foo.bar.MySealedClass()
+class TwoSealedChild : foo.bar.T1 /* = foo.bar.MySealedClass */()

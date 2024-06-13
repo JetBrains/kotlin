@@ -122,14 +122,14 @@ fun FirBasedSymbol<*>.isExportedObject(session: FirSession): Boolean {
     return when {
         hasAnnotationOrInsideAnnotatedClass(JsStandardClassIds.Annotations.JsExportIgnore, session) -> false
         hasAnnotationOrInsideAnnotatedClass(JsStandardClassIds.Annotations.JsExport, session) -> true
-        else -> getContainingFile(session)?.hasAnnotation(JsStandardClassIds.Annotations.JsExport, session) == true
+        else -> getContainingFile()?.symbol?.hasAnnotation(JsStandardClassIds.Annotations.JsExport, session) ?: false
     }
 }
 
-internal fun FirBasedSymbol<*>.getContainingFile(session: FirSession): FirFile? {
+internal fun FirBasedSymbol<*>.getContainingFile(): FirFile? {
     return when (this) {
-        is FirCallableSymbol<*> -> session.firProvider.getFirCallableContainerFile(this)
-        is FirClassLikeSymbol<*> -> session.firProvider.getFirClassifierContainerFileIfAny(this)
+        is FirCallableSymbol<*> -> moduleData.session.firProvider.getFirCallableContainerFile(this)
+        is FirClassLikeSymbol<*> -> moduleData.session.firProvider.getFirClassifierContainerFileIfAny(this)
         else -> return null
     }
 }

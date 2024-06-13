@@ -5,27 +5,27 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.name.CallableId
 
-internal class KtFirTopLevelPropertySymbolPointer(callableId: CallableId, private val signature: FirCallableSignature) :
-    KtTopLevelCallableSymbolPointer<KtKotlinPropertySymbol>(callableId) {
-    override fun KtFirAnalysisSession.chooseCandidateAndCreateSymbol(
+internal class KaFirTopLevelPropertySymbolPointer(callableId: CallableId, private val signature: FirCallableSignature) :
+    KaTopLevelCallableSymbolPointer<KaKotlinPropertySymbol>(callableId) {
+    override fun KaFirSession.chooseCandidateAndCreateSymbol(
         candidates: Collection<FirCallableSymbol<*>>,
         firSession: FirSession,
-    ): KtKotlinPropertySymbol? {
+    ): KaKotlinPropertySymbol? {
         val firProperty = candidates.findDeclarationWithSignatureBySymbols<FirProperty>(signature) ?: return null
-        return firSymbolBuilder.variableLikeBuilder.buildPropertySymbol(firProperty.symbol) as? KtKotlinPropertySymbol
+        return firSymbolBuilder.variableLikeBuilder.buildPropertySymbol(firProperty.symbol) as? KaKotlinPropertySymbol
     }
 
-    override fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = this === other ||
-            other is KtFirTopLevelPropertySymbolPointer &&
+    override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||
+            other is KaFirTopLevelPropertySymbolPointer &&
             other.signature == signature &&
             hasTheSameOwner(other)
 }

@@ -7,6 +7,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.konan.target.HostManager
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.LinkOption
@@ -186,12 +187,13 @@ abstract class CompareDistributionSignatures : DefaultTask() {
         val tool = if (HostManager.hostIsMingw) "klib.bat" else "klib"
         val klibTool = File("$newDistribution/bin/$tool").absolutePath
         val args = listOf("dump-metadata-signatures", klib.absolutePath, "-signature-version", "1")
-        val output = runProcess(localExecutor(project), klibTool, args)
-        if (output.exitCode != 0) {
-            logger.error(output.stdErr)
-            error("Execution failed with exit code: ${output.exitCode}")
+        ByteArrayOutputStream().use { stdout ->
+            project.exec {
+                commandLine(klibTool, *args.toTypedArray())
+                this.standardOutput = stdout
+            }.assertNormalExitValue()
+            return stdout.toString().lines().filter { it.isNotBlank() }
         }
-        return output.stdOut.lines().filter { it.isNotBlank() }
     }
 
     private fun looksLikeKotlinNativeDistribution(directory: Path): Boolean {

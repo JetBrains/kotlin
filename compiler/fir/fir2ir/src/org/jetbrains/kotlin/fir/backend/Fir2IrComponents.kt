@@ -10,11 +10,10 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.generators.*
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
 import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.declarations.IrFactory
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.linkage.IrProvider
-import org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
 
@@ -31,8 +30,7 @@ interface Fir2IrComponents {
 
     val converter: Fir2IrConverter
 
-    val symbolTable: SymbolTable
-    val irBuiltIns: IrBuiltInsOverFir
+    val builtins: Fir2IrBuiltinSymbolsContainer
     val specialAnnotationsProvider: IrSpecialAnnotationsProvider?
     val manglers: Manglers
 
@@ -44,7 +42,6 @@ interface Fir2IrComponents {
     val declarationStorage: Fir2IrDeclarationStorage
 
     val typeConverter: Fir2IrTypeConverter
-    val signatureComposer: FirBasedSignatureComposer
     val visibilityConverter: Fir2IrVisibilityConverter
 
     val callablesGenerator: Fir2IrCallableDeclarationsGenerator
@@ -54,10 +51,8 @@ interface Fir2IrComponents {
 
     val annotationGenerator: AnnotationGenerator
     val callGenerator: CallAndReferenceGenerator
-    @FirBasedFakeOverrideGenerator
-    val fakeOverrideGenerator: FakeOverrideGenerator
+    val lazyFakeOverrideGenerator: Fir2IrLazyFakeOverrideGenerator
     val delegatedMemberGenerator: DelegatedMemberGenerator
-    val fakeOverrideBuilder: IrFakeOverrideBuilder
     val symbolsMappingForLazyClasses: Fir2IrSymbolsMappingForLazyClasses
 
     val extensions: Fir2IrExtensions
@@ -66,7 +61,7 @@ interface Fir2IrComponents {
     val annotationsFromPluginRegistrar: Fir2IrIrGeneratedDeclarationsRegistrar
 
     /**
-     * A set of FIR files serving as input for the fir2ir ([Fir2IrConverter.createIrModuleFragment] function) for conversion to IR.
+     * A set of FIR files serving as input for the fir2ir ([Fir2IrConverter.generateIrModuleFragment] function) for conversion to IR.
      *
      * We set annotations for IR objects, such as IrFunction, in two scenarios:
      *  1. For FIR declared in library or precompiled: when creating IR object from FIR

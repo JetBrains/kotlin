@@ -8,9 +8,12 @@ package org.jetbrains.kotlin.fir.backend.generators
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
+import org.jetbrains.kotlin.fir.backend.utils.*
+import org.jetbrains.kotlin.fir.backend.utils.processOverriddenFunctionSymbols
+import org.jetbrains.kotlin.fir.backend.utils.processOverriddenPropertySymbols
+import org.jetbrains.kotlin.fir.backend.utils.unwrapCallRepresentative
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isLocalClassOrAnonymousObject
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -30,8 +33,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
-import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
@@ -197,49 +198,6 @@ class DelegatedMemberGenerator(private val c: Fir2IrComponents) : Fir2IrComponen
         return result
     }
 
-    @OptIn(FirBasedFakeOverrideGenerator::class)
-    fun bindDelegatedMembersOverriddenSymbols(irClass: IrClass) {
-        if (!c.configuration.useFirBasedFakeOverrideGenerator) return
-        val superClasses by lazy(LazyThreadSafetyMode.NONE) {
-            irClass.superTypes.mapNotNullTo(mutableSetOf()) {
-                // All class symbols should be already bound at this moment
-                @OptIn(UnsafeDuringIrConstructionAPI::class)
-                it.classifierOrNull?.owner as? IrClass
-            }
-        }
-
-        require(irClass !is Fir2IrLazyClass)
-        @OptIn(UnsafeDuringIrConstructionAPI::class)
-        val declarations = irClass.declarations
-
-        for (declaration in declarations) {
-            if (declaration.origin != IrDeclarationOrigin.DELEGATED_MEMBER) continue
-            when (declaration) {
-                is IrSimpleFunction -> {
-                    val symbol = declaration.symbol
-                    declaration.overriddenSymbols = baseFunctionSymbols[declaration]?.flatMap {
-                        fakeOverrideGenerator.getOverriddenSymbolsInSupertypes(it, superClasses)
-                    }?.filter { it != symbol }.orEmpty()
-                }
-                is IrProperty -> {
-                    val symbol = declaration.symbol
-                    declaration.overriddenSymbols = basePropertySymbols[declaration]?.flatMap {
-                        fakeOverrideGenerator.getOverriddenSymbolsInSupertypes(it, superClasses)
-                    }?.filter { it != symbol }.orEmpty()
-                    declaration.getter!!.overriddenSymbols = declaration.overriddenSymbols.mapNotNull {
-                        declarationStorage.findGetterOfProperty(it)
-                    }
-                    if (declaration.isVar) {
-                        declaration.setter!!.overriddenSymbols = declaration.overriddenSymbols.mapNotNull {
-                            declarationStorage.findSetterOfProperty(it)
-                        }
-                    }
-                }
-                else -> continue
-            }
-        }
-    }
-
     private fun generateDelegatedFunction(
         subClass: IrClass,
         firSubClass: FirClass,
@@ -298,10 +256,10 @@ class DelegatedMemberGenerator(private val c: Fir2IrComponents) : Fir2IrComponen
         val callTypeCanBeNullable: Boolean
         val callReturnType = when (isSetter) {
             false -> {
-                val substitution = originalFirDeclaration.typeParameters.zip(delegatedFirDeclaration.typeParameters)
-                    .map { (original, delegated) ->
+                val substitution =
+                    originalFirDeclaration.typeParameters.zip(delegatedFirDeclaration.typeParameters).associate { (original, delegated) ->
                         original.symbol to delegated.symbol.defaultType
-                    }.toMap()
+                    }
 
                 val substitutor = substitutorByMap(substitution, session)
                 val substitutedType = substitutor.substituteOrSelf(originalFirDeclaration.returnTypeRef.coneType)
@@ -310,7 +268,7 @@ class DelegatedMemberGenerator(private val c: Fir2IrComponents) : Fir2IrComponen
             }
             true -> {
                 callTypeCanBeNullable = false
-                irBuiltIns.unitType
+                builtins.unitType
             }
         }
 
@@ -371,7 +329,7 @@ class DelegatedMemberGenerator(private val c: Fir2IrComponents) : Fir2IrComponen
         if (isSetter || originalDeclarationReturnType.isUnit || originalDeclarationReturnType.isNothing) {
             body.statements.add(irCastOrCall)
         } else {
-            val irReturn = IrReturnImpl(startOffset, endOffset, irBuiltIns.nothingType, delegatedIrFunction.symbol, irCastOrCall)
+            val irReturn = IrReturnImpl(startOffset, endOffset, builtins.nothingType, delegatedIrFunction.symbol, irCastOrCall)
             body.statements.add(irReturn)
         }
         return body

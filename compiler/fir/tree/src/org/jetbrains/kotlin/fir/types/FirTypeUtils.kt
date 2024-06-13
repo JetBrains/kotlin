@@ -86,7 +86,7 @@ val FirTypeRef.isArrayType: Boolean
                 || StandardClassIds.unsignedArrayTypeByElementType.values.any { isBuiltinType(it, false) }
 
 val FirExpression.isNullLiteral: Boolean
-    get() = this is FirLiteralExpression<*> &&
+    get() = this is FirLiteralExpression &&
             this.kind == ConstantValueKind.Null &&
             this.value == null &&
             this.source != null
@@ -135,7 +135,7 @@ fun List<FirAnnotation>.dropExtensionFunctionAnnotation(): List<FirAnnotation> {
     return filterNot { it.isExtensionFunctionAnnotationCall }
 }
 
-fun ConeClassLikeType.toConstKind(): ConstantValueKind<*>? = when (lookupTag.classId) {
+fun ConeClassLikeType.toConstKind(): ConstantValueKind? = when (lookupTag.classId) {
     StandardClassIds.Byte -> ConstantValueKind.Byte
     StandardClassIds.Short -> ConstantValueKind.Short
     StandardClassIds.Int -> ConstantValueKind.Int

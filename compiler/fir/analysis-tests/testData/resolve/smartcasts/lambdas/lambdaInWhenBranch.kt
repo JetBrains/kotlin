@@ -1,5 +1,5 @@
 // ISSUE: KT-39080
-// !DUMP_CFG
+// DUMP_CFG
 
 private sealed class Sealed
 

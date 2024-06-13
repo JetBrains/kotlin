@@ -101,7 +101,13 @@ class SignatureEnhancement(private val typeEnhancement: JavaTypeEnhancement) {
         val predefinedEnhancementInfo =
             (this as? JavaMethodDescriptor)
                 ?.run { SignatureBuildingComponents.signature(this.containingDeclaration as ClassDescriptor, this.computeJvmDescriptor()) }
-                ?.let { signature -> PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE[signature] }
+                ?.let { signature ->
+                    PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE[signature]?.let {
+                        check(it.errorsSinceLanguageVersion == null || it.errorsSinceLanguageVersion?.startsWith("2.") == true)
+                        // We only change behavior for predefined nullability with warnings for versions >= 2.0
+                        if (it.errorsSinceLanguageVersion == null) it else it.warningModeClone
+                    }
+                }
 
 
         predefinedEnhancementInfo?.let {
@@ -159,7 +165,7 @@ class SignatureEnhancement(private val typeEnhancement: JavaTypeEnhancement) {
     fun enhanceTypeParameterBounds(
         typeParameter: TypeParameterDescriptor,
         bounds: List<KotlinType>,
-        context: LazyJavaResolverContext
+        context: LazyJavaResolverContext,
     ): List<KotlinType> {
         return bounds.map { bound ->
             // TODO: would not enhancing raw type arguments be sufficient?
@@ -193,7 +199,7 @@ class SignatureEnhancement(private val typeEnhancement: JavaTypeEnhancement) {
         methodContext: LazyJavaResolverContext,
         predefined: TypeEnhancementInfo?,
         ignoreDeclarationNullabilityAnnotations: Boolean,
-        collector: (CallableMemberDescriptor) -> KotlinType
+        collector: (CallableMemberDescriptor) -> KotlinType,
     ) = enhance(
         parameterDescriptor, false,
         parameterDescriptor?.let { methodContext.copyWithNewDefaultTypeQualifiers(it.annotations) } ?: methodContext,
@@ -208,7 +214,7 @@ class SignatureEnhancement(private val typeEnhancement: JavaTypeEnhancement) {
         containerApplicabilityType: AnnotationQualifierApplicabilityType,
         predefined: TypeEnhancementInfo?,
         ignoreDeclarationNullabilityAnnotations: Boolean = false,
-        collector: (CallableMemberDescriptor) -> KotlinType
+        collector: (CallableMemberDescriptor) -> KotlinType,
     ): KotlinType? {
         return SignatureParts(typeContainer, isCovariant, containerContext, containerApplicabilityType)
             .enhance(collector(this), overriddenDescriptors.map { collector(it) }, predefined, ignoreDeclarationNullabilityAnnotations)
@@ -218,7 +224,7 @@ class SignatureEnhancement(private val typeEnhancement: JavaTypeEnhancement) {
         type: KotlinType,
         overrides: List<KotlinType>,
         predefined: TypeEnhancementInfo? = null,
-        ignoreDeclarationNullabilityAnnotations: Boolean = false
+        ignoreDeclarationNullabilityAnnotations: Boolean = false,
     ) = with(typeEnhancement) {
         type.enhance(type.computeIndexedQualifiers(overrides, predefined, ignoreDeclarationNullabilityAnnotations), skipRawTypeArguments)
     }
@@ -229,7 +235,7 @@ private class SignatureParts(
     override val isCovariant: Boolean,
     private val containerContext: LazyJavaResolverContext,
     override val containerApplicabilityType: AnnotationQualifierApplicabilityType,
-    override val skipRawTypeArguments: Boolean = false
+    override val skipRawTypeArguments: Boolean = false,
 ) : AbstractSignatureParts<AnnotationDescriptor>() {
     override val annotationTypeQualifierResolver: AnnotationTypeQualifierResolver
         get() = containerContext.components.annotationTypeQualifierResolver
@@ -281,7 +287,7 @@ private class SignatureParts(
 
     override fun getDefaultNullability(
         referencedParameterBoundsNullability: NullabilityQualifierWithMigrationStatus?,
-        defaultTypeQualifiers: JavaDefaultQualifiers?
+        defaultTypeQualifiers: JavaDefaultQualifiers?,
     ): NullabilityQualifierWithMigrationStatus? {
         return referencedParameterBoundsNullability?.copy(qualifier = NullabilityQualifier.NOT_NULL)
             ?: defaultTypeQualifiers?.nullabilityQualifier

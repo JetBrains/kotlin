@@ -36,6 +36,28 @@ import org.jetbrains.kotlin.name.Name
 import java.util.*
 import kotlin.collections.ArrayList
 
+object DevirtualizationUnfoldFactors {
+    /**
+     * Maximum unfold factor for a devirtualized call via vtable.
+     */
+    const val IR_DEVIRTUALIZED_VTABLE_CALL = 3
+
+    /**
+     * Maximum unfold factor for a devirtualized interface call.
+     */
+    const val IR_DEVIRTUALIZED_ITABLE_CALL = 3
+
+    /**
+     * Maximum unfold factor for a devirtualized call during the call graph construction.
+     */
+    const val DFG_DEVIRTUALIZED_CALL = 5
+
+    /**
+     * Maximum unfold factor for a non devirtualized call during the call graph construction.
+     */
+    const val DFG_NON_DEVIRTUALIZED_CALL = 5
+}
+
 // Devirtualization analysis is performed using Variable Type Analysis algorithm.
 // See http://web.cs.ucla.edu/~palsberg/tba/papers/sundaresan-et-al-oopsla00.pdf for details.
 internal object DevirtualizationAnalysis {
@@ -1357,11 +1379,13 @@ internal object DevirtualizationAnalysis {
             DevirtualizationAnalysisImpl(context, irModule, moduleDFG, externalModulesDFG).analyze()
 
     fun devirtualize(irModule: IrModuleFragment, context: Context, externalModulesDFG: ExternalModulesDFG,
-                     devirtualizedCallSites: Map<IrCall, DevirtualizedCallSite>) {
+                     devirtualizedCallSites: Map<IrCall, DevirtualizedCallSite>,
+                     maxVTableUnfoldFactor: Int, maxITableUnfoldFactor: Int) {
         val symbols = context.ir.symbols
         val nativePtrEqualityOperatorSymbol = symbols.areEqualByValue[PrimitiveBinaryType.POINTER]!!
         val isSubtype = symbols.isSubtype
         val optimize = context.shouldOptimize()
+        val genericSafeCasts = context.config.genericSafeCasts
 
         fun DataFlowIR.Type.resolved(): DataFlowIR.Type.Declared {
             if (this is DataFlowIR.Type.Declared) return this
@@ -1455,10 +1479,10 @@ internal object DevirtualizationAnalysis {
         }
 
         fun IrBuilderWithScope.irDevirtualizedCall(callSite: IrCall, actualType: IrType,
-                                                   actualCallee: DataFlowIR.FunctionSymbol.Declared,
+                                                   actualCallee: DataFlowIR.FunctionSymbol,
                                                    arguments: List<PossiblyCoercedValue>): IrExpression {
-            return actualCallee.bridgeTarget.let { bridgeTarget ->
-                if (bridgeTarget == null)
+            return (actualCallee as? DataFlowIR.FunctionSymbol.Declared)?.bridgeTarget.let { bridgeTarget ->
+                if (bridgeTarget == null || genericSafeCasts) // Can't easily inline bridges with casts.
                     irDevirtualizedCall(callSite, actualType,
                             actualCallee.irFunction as IrSimpleFunction,
                             arguments.map { it.getFullValue(this@irDevirtualizedCall) }
@@ -1492,7 +1516,7 @@ internal object DevirtualizationAnalysis {
                 val devirtualizedCallSite = devirtualizedCallSites[expression] ?: return expression
                 val possibleCallees = devirtualizedCallSite.possibleCallees.groupBy {
                     if (it.receiverType is DataFlowIR.Type.External) return expression
-                    it.callee as? DataFlowIR.FunctionSymbol.Declared ?: return expression
+                    it.callee
                 }.entries.map { entry ->
                     entry.key to entry.value.map { it.receiverType as DataFlowIR.Type.Declared }.distinct()
                 }
@@ -1501,9 +1525,7 @@ internal object DevirtualizationAnalysis {
                 val callee = expression.symbol.owner
                 val owner = callee.parentAsClass
                 // TODO: Think how to evaluate different unfold factors (in terms of both execution speed and code size).
-                val classMaxUnfoldFactor = 3
-                val interfaceMaxUnfoldFactor = 3
-                val maxUnfoldFactor = if (owner.isInterface) interfaceMaxUnfoldFactor else classMaxUnfoldFactor
+                val maxUnfoldFactor = if (owner.isInterface) maxITableUnfoldFactor else maxVTableUnfoldFactor
                 ++devirtualizedCallSitesCount
                 if (possibleCallees.size > maxUnfoldFactor) {
                     // Callsite too complicated to devirtualize.
@@ -1559,7 +1581,7 @@ internal object DevirtualizationAnalysis {
                              * (since the number of possible callees is small, it is ok in terms of performance).
                              */
 
-                            data class Target(val actualCallee: DataFlowIR.FunctionSymbol.Declared, val possibleReceivers: List<DataFlowIR.Type.Declared>) {
+                            data class Target(val actualCallee: DataFlowIR.FunctionSymbol, val possibleReceivers: List<DataFlowIR.Type.Declared>) {
                                 val declType = actualCallee.irFunction!!.parentAsClass
                                 val weight = when {
                                     possibleReceivers.size == 1 -> 0 // The fastest.

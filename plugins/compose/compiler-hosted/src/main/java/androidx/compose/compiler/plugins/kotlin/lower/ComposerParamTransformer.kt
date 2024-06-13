@@ -18,7 +18,8 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower
 
-import androidx.compose.compiler.plugins.kotlin.KtxNameConventions
+import androidx.compose.compiler.plugins.kotlin.ComposeNames
+import androidx.compose.compiler.plugins.kotlin.FeatureFlags
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.lower.decoys.copyWithNewTypeParams
@@ -33,13 +34,17 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.copyAttributes
+import org.jetbrains.kotlin.ir.declarations.createBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -61,14 +66,18 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.createType
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.isMarkedNullable
+import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
+import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.copyTo
 import org.jetbrains.kotlin.ir.util.copyTypeParametersFrom
+import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.explicitParameters
 import org.jetbrains.kotlin.ir.util.functions
@@ -84,6 +93,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.JvmStandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -95,8 +105,9 @@ class ComposerParamTransformer(
     stabilityInferencer: StabilityInferencer,
     private val decoysEnabled: Boolean,
     metrics: ModuleMetrics,
+    featureFlags: FeatureFlags,
 ) :
-    AbstractComposeLowering(context, symbolRemapper, metrics, stabilityInferencer),
+    AbstractComposeLowering(context, symbolRemapper, metrics, stabilityInferencer, featureFlags),
     ModuleLoweringPass {
 
     /**
@@ -424,15 +435,9 @@ class ComposerParamTransformer(
                 // anonymous parameters has an issue where it is not safe to dex, so we sanitize
                 // the names here to ensure that dex is always safe.
                 val newName = dexSafeName(param.name)
-
-                val newType = defaultParameterType(
-                    param,
-                    this.hasDefaultExpressionDefinedForValueParameter(param.index)
-                ).remapTypeParameters()
                 param.copyTo(
                     fn,
                     name = newName,
-                    type = newType,
                     isAssignable = param.defaultValue != null,
                     defaultValue = param.defaultValue?.copyWithNewTypeParams(
                         source = this, target = fn
@@ -495,7 +500,7 @@ class ComposerParamTransformer(
     }
 
     private fun IrSimpleFunction.copyWithComposerParam(): IrSimpleFunction {
-        assert(explicitParameters.lastOrNull()?.name != KtxNameConventions.COMPOSER_PARAMETER) {
+        assert(explicitParameters.lastOrNull()?.name != ComposeNames.COMPOSER_PARAMETER) {
             "Attempted to add composer param to $this, but it has already been added."
         }
         return copy().also { fn ->
@@ -539,14 +544,14 @@ class ComposerParamTransformer(
 
             // $composer
             val composerParam = fn.addValueParameter {
-                name = KtxNameConventions.COMPOSER_PARAMETER
+                name = ComposeNames.COMPOSER_PARAMETER
                 type = composerType.makeNullable()
                 origin = IrDeclarationOrigin.DEFINED
                 isAssignable = true
             }
 
             // $changed[n]
-            val changed = KtxNameConventions.CHANGED_PARAMETER.identifier
+            val changed = ComposeNames.CHANGED_PARAMETER.identifier
             for (i in 0 until changedParamCount(realParams, fn.thisParamCount)) {
                 fn.addValueParameter(
                     if (i == 0) changed else "$changed$i",
@@ -556,7 +561,7 @@ class ComposerParamTransformer(
 
             // $default[n]
             if (oldFn.requiresDefaultParameter()) {
-                val defaults = KtxNameConventions.DEFAULT_PARAMETER.identifier
+                val defaults = ComposeNames.DEFAULT_PARAMETER.identifier
                 for (i in 0 until defaultParamCount(currentParams)) {
                     fn.addValueParameter(
                         if (i == 0) defaults else "$defaults$i",
@@ -564,6 +569,25 @@ class ComposerParamTransformer(
                         IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION
                     )
                 }
+            }
+
+            fn.makeStubForDefaultValuesIfNeeded()?.also {
+                when (val parent = fn.parent) {
+                    is IrClass -> parent.addChild(it)
+                    is IrFile -> parent.addChild(it)
+                    else -> {
+                        // ignore
+                    }
+                }
+            }
+
+            // update parameter types so they are ready to accept the default values
+            fn.valueParameters.fastForEach { param ->
+                val newType = defaultParameterType(
+                    param,
+                    fn.hasDefaultExpressionDefinedForValueParameter(param.index)
+                )
+                param.type = newType
             }
 
             inlineLambdaInfo.scan(fn)
@@ -653,7 +677,7 @@ class ComposerParamTransformer(
 
     /**
      * With klibs, composable functions are always deserialized from IR instead of being restored
-     * into stubs.
+     *
      * In this case, we need to avoid transforming those functions twice (because synthetic
      * parameters are being added). We know however, that all the other modules were compiled
      * before, so if the function comes from other [IrModuleFragment], we must skip it.
@@ -664,6 +688,94 @@ class ComposerParamTransformer(
      */
     private fun IrFunction.externallyTransformed(): Boolean =
         decoysEnabled && valueParameters.firstOrNull {
-            it.name == KtxNameConventions.COMPOSER_PARAMETER
+            it.name == ComposeNames.COMPOSER_PARAMETER
         } != null
+
+    /**
+     * Creates stubs for @Composable function with value class parameters that have a default and
+     * are wrapping a non-primitive instance.
+     * Before Compose compiler 1.5.12, not specifying such parameter resulted in a nullptr exception
+     * (b/330655412) at runtime, caused by Kotlin compiler inserting checkParameterNotNull.
+     *
+     * Converting such parameters to be nullable caused a binary compatibility issue because
+     * nullability changed the value class mangle on a function signature. This stub creates a
+     * binary compatible function to support old compilers while redirecting to a new function.
+     */
+    private fun IrSimpleFunction.makeStubForDefaultValuesIfNeeded(): IrSimpleFunction? {
+        if (!visibility.isPublicAPI && !hasAnnotation(PublishedApiFqName)) {
+            return null
+        }
+
+        if (!hasComposableAnnotation()) {
+            return null
+        }
+
+        var makeStub = false
+        for (i in valueParameters.indices) {
+            val param = valueParameters[i]
+            if (
+                hasDefaultExpressionDefinedForValueParameter(i) &&
+                    param.type.isInlineClassType() &&
+                    !param.type.isNullable() &&
+                    param.type.unboxInlineClass().let {
+                        !it.isPrimitiveType() && !it.isNullable()
+                    }
+            ) {
+                makeStub = true
+                break
+            }
+        }
+
+        if (!makeStub) {
+            return null
+        }
+
+        val source = this
+        val copy = source.deepCopyWithSymbols(parent)
+        copy.valueParameters.fastForEach {
+            it.defaultValue = null
+        }
+        copy.origin = ComposeDefaultValueStubOrigin
+        copy.annotations += IrConstructorCallImpl(
+            UNDEFINED_OFFSET,
+            UNDEFINED_OFFSET,
+            jvmSyntheticIrClass.defaultType,
+            jvmSyntheticIrClass.primaryConstructor!!.symbol,
+            0,
+            0,
+            0,
+        )
+        copy.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
+            statements.add(
+                IrReturnImpl(
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    copy.returnType,
+                    copy.symbol,
+                    irCall(source).apply {
+                        dispatchReceiver = copy.dispatchReceiverParameter?.let { irGet(it) }
+                        extensionReceiver = copy.extensionReceiverParameter?.let { irGet(it) }
+                        copy.typeParameters.fastForEachIndexed { index, param ->
+                            putTypeArgument(index, param.defaultType)
+                        }
+                        copy.valueParameters.fastForEachIndexed { index, param ->
+                            putValueArgument(index, irGet(param))
+                        }
+                    }
+                )
+            )
+        }
+
+        transformedFunctions[copy] = copy
+        transformedFunctionSet += copy
+
+        return copy
+    }
+
+    private val PublishedApiFqName = StandardClassIds.Annotations.PublishedApi.asSingleFqName()
+
+    object ComposeDefaultValueStubOrigin : IrDeclarationOrigin {
+        override val name = "ComposeDefaultValueStubOrigin"
+        override val isSynthetic = true
+    }
 }

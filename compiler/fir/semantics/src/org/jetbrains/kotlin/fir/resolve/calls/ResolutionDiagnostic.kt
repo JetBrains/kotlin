@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -121,6 +122,12 @@ class ArgumentTypeMismatch(
     val actualType: ConeKotlinType,
     val argument: FirExpression,
     val isMismatchDueToNullability: Boolean,
+) : ResolutionDiagnostic(INAPPLICABLE)
+
+class UnitReturnTypeLambdaContradictsExpectedType(
+    val lambda: FirAnonymousFunction,
+    val wholeLambdaExpectedType: ConeKotlinType,
+    val sourceForFunctionExpression: KtSourceElement?
 ) : ResolutionDiagnostic(INAPPLICABLE)
 
 class NullForNotNullType(

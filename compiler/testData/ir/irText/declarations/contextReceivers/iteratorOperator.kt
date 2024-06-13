@@ -1,4 +1,4 @@
-// !LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers
 // WITH_STDLIB
 data class Counter(var i: Int = 0)
 

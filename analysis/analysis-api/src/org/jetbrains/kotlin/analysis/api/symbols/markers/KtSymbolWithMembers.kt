@@ -5,8 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols.markers
 
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 
-public interface KtSymbolWithMembers : KtSymbolWithDeclarations
+public interface KaSymbolWithMembers : KaSymbolWithDeclarations
 
-public interface KtSymbolWithDeclarations : KtSymbol
+public typealias KtSymbolWithMembers = KaSymbolWithMembers
+
+public interface KaSymbolWithDeclarations : KaSymbol
+
+public typealias KtSymbolWithDeclarations = KaSymbolWithDeclarations

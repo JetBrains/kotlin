@@ -1,8 +1,9 @@
+// TARGET_BACKEND: JVM
 // FULL_JDK
 // WITH_STDLIB
 
 // MODULE: lib
-// !JVM_DEFAULT_MODE: disable
+// JVM_DEFAULT_MODE: disable
 // FILE: 1.kt
 interface KInterface  {
     fun call(): List<String> {
@@ -11,7 +12,7 @@ interface KInterface  {
 }
 
 // MODULE: main(lib)
-// !JVM_DEFAULT_MODE: all
+// JVM_DEFAULT_MODE: all
 // JVM_TARGET: 1.8
 // FILE: main.kt
 interface KInterface2 : KInterface  {

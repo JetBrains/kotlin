@@ -5,52 +5,103 @@
 
 package org.jetbrains.kotlin.sir.providers.impl
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.providers.SirVisibilityChecker
+import org.jetbrains.kotlin.sir.providers.utils.UnsupportedDeclarationReporter
 
-public class SirVisibilityCheckerImpl : SirVisibilityChecker {
+public class SirVisibilityCheckerImpl(
+    private val unsupportedDeclarationReporter: UnsupportedDeclarationReporter,
+) : SirVisibilityChecker {
 
-    override fun KtSymbolWithVisibility.sirVisibility(ktAnalysisSession: KtAnalysisSession): SirVisibility {
+    override fun KaSymbolWithVisibility.sirVisibility(ktAnalysisSession: KaSession): SirVisibility = with(ktAnalysisSession) {
         val ktSymbol = this@sirVisibility
         val isConsumable = isPublic() && when (ktSymbol) {
-            is KtNamedClassOrObjectSymbol -> {
+            is KaNamedClassOrObjectSymbol -> {
                 ktSymbol.isConsumableBySirBuilder(ktAnalysisSession)
             }
-            is KtConstructorSymbol -> {
+            is KaConstructorSymbol -> {
                 true
             }
-            is KtFunctionSymbol -> {
-                SUPPORTED_SYMBOL_ORIGINS.contains(origin)
-                        && !ktSymbol.isSuspend
-                        && !ktSymbol.isInline
-                        && !ktSymbol.isExtension
-                        && !ktSymbol.isOperator
+            is KaFunctionSymbol -> {
+                ktSymbol.isConsumableBySirBuilder()
             }
-            is KtVariableSymbol -> {
+            is KaVariableSymbol -> {
                 true
             }
-            is KtTypeAliasSymbol -> {
-                true // FIXME: filter-out unrepresentable types
-            }
+            is KaTypeAliasSymbol -> ktSymbol.expandedType.fullyExpandedType
+                .takeIf { !it.isMarkedNullable }
+                ?.let {
+                    it.isPrimitive || it.isNothing || it.isVisible(ktAnalysisSession)
+                } ?: false
             else -> false
         }
         return if (isConsumable) SirVisibility.PUBLIC else SirVisibility.PRIVATE
     }
 
-    private fun KtNamedClassOrObjectSymbol.isConsumableBySirBuilder(ktAnalysisSession: KtAnalysisSession): Boolean =
+    private fun KaFunctionSymbol.isConsumableBySirBuilder(): Boolean {
+        if (origin !in SUPPORTED_SYMBOL_ORIGINS) {
+            unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "${origin.name.lowercase()} origin is not supported yet.")
+            return false
+        }
+        if (isSuspend) {
+            unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "suspend functions are not supported yet.")
+            return false
+        }
+        if (isExtension) {
+            unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "extension functions are not supported yet.")
+            return false
+        }
+        if (isOperator) {
+            unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "operators are not supported yet.")
+            return false
+        }
+        if (isInline) {
+            unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "inline functions are not supported yet.")
+            return false
+        }
+        return true
+    }
+
+    private fun KaNamedClassOrObjectSymbol.isConsumableBySirBuilder(ktAnalysisSession: KaSession): Boolean =
         with(ktAnalysisSession) {
-            ((classKind == KtClassKind.CLASS) || classKind == KtClassKind.OBJECT)
-                    && !isData // KT-67362
-                    && (superTypes.count() == 1 && superTypes.first().isAny) // Every class has Any as a superclass
-                    && !isInline
-                    && modality == Modality.FINAL
+            if (!((classKind == KaClassKind.CLASS) || classKind == KaClassKind.OBJECT)) {
+                unsupportedDeclarationReporter
+                    .report(this@isConsumableBySirBuilder, "${classKind.name.lowercase()} classifiers are not supported yet.")
+                return@with false
+            }
+            if (isData) {
+                unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "data classes are not supported yet.")
+                return@with false
+            }
+            if (isInner) {
+                unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "inner classes are not supported yet.")
+                return@with false
+            }
+            if (!(superTypes.count() == 1 && superTypes.first().isAny)) {
+                unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "inheritance is not supported yet.")
+                return@with false
+            }
+            if (isInline) {
+                unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "inline classes are not supported yet.")
+                return@with false
+            }
+            if (modality != Modality.FINAL) {
+                unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "non-final classes are not supported yet.")
+                return@with false
+            }
+            return true
         }
 
-    private fun KtSymbolWithVisibility.isPublic(): Boolean = visibility.isPublicAPI
+    private fun KaType.isVisible(ktAnalysisSession: KaSession): Boolean = with(ktAnalysisSession) {
+        (expandedSymbol as? KaSymbolWithVisibility)?.sirVisibility(ktAnalysisSession) == SirVisibility.PUBLIC
+    }
+
+    private fun KaSymbolWithVisibility.isPublic(): Boolean = visibility.isPublicAPI
 }
 
-private val SUPPORTED_SYMBOL_ORIGINS = setOf(KtSymbolOrigin.SOURCE, KtSymbolOrigin.LIBRARY)
+private val SUPPORTED_SYMBOL_ORIGINS = setOf(KaSymbolOrigin.SOURCE, KaSymbolOrigin.LIBRARY)

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
@@ -35,7 +36,8 @@ fun Candidate.preprocessLambdaArgument(
     returnTypeVariable: ConeTypeVariableForLambdaReturnType? = null
 ): PostponedResolvedAtom {
     if (expectedType != null && !duringCompletion && csBuilder.isTypeVariable(expectedType)) {
-        val expectedTypeVariableWithConstraints = csBuilder.currentStorage().notFixedTypeVariables[expectedType.typeConstructor(context.typeContext)]
+        val expectedTypeVariableWithConstraints =
+            csBuilder.currentStorage().notFixedTypeVariables[expectedType.typeConstructor(context.typeContext)]
 
         if (expectedTypeVariableWithConstraints != null) {
             val explicitTypeArgument = expectedTypeVariableWithConstraints.constraints.find {
@@ -44,7 +46,7 @@ fun Candidate.preprocessLambdaArgument(
 
             if (explicitTypeArgument == null || explicitTypeArgument.typeArguments.isNotEmpty()) {
                 return LambdaWithTypeVariableAsExpectedTypeAtom(argument, expectedType, this).also {
-                    this.postponedAtoms += it
+                    addPostponedAtom(it)
                 }
             }
         }
@@ -59,8 +61,12 @@ fun Candidate.preprocessLambdaArgument(
             returnTypeVariable,
             context.bodyResolveComponents,
             this,
-            duringCompletion || sink == null
-        ) ?: extractLambdaInfo(expectedType, anonymousFunction, csBuilder, context.session, this)
+            duringCompletion || sink == null,
+            sourceForFunctionExpression = argument.source,
+        ) ?: extractLambdaInfo(
+            expectedType, anonymousFunction, csBuilder, context.session, this,
+            sourceForFunctionExpression = argument.source,
+        )
 
     if (expectedType != null) {
         val parameters = resolvedArgument.parameters
@@ -101,7 +107,7 @@ fun Candidate.preprocessCallableReference(
     context: ResolutionContext
 ) {
     val lhs = context.bodyResolveComponents.doubleColonExpressionResolver.resolveDoubleColonLHS(argument)
-    postponedAtoms += ResolvedCallableReferenceAtom(argument, expectedType, lhs, context.session)
+    addPostponedAtom(ResolvedCallableReferenceAtom(argument, expectedType, lhs, context.session))
 }
 
 private fun extractLambdaInfo(
@@ -109,7 +115,8 @@ private fun extractLambdaInfo(
     argument: FirAnonymousFunction,
     csBuilder: ConstraintSystemBuilder,
     session: FirSession,
-    candidate: Candidate?
+    candidate: Candidate?,
+    sourceForFunctionExpression: KtSourceElement?,
 ): ResolvedLambdaAtom {
     require(expectedType?.lowerBoundIfFlexible()?.functionTypeKind(session) == null) {
         "Currently, we only extract lambda info from its shape when expected type is not function, but $expectedType"
@@ -147,8 +154,9 @@ private fun extractLambdaInfo(
         parameters,
         returnType,
         typeVariable.takeIf { newTypeVariableUsed },
-        coerceFirstParameterToExtensionReceiver = false
+        coerceFirstParameterToExtensionReceiver = false,
+        sourceForFunctionExpression,
     ).also {
-        candidate?.postponedAtoms?.add(it)
+        candidate?.addPostponedAtom(it)
     }
 }

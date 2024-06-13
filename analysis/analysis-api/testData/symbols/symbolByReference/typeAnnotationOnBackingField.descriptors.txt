@@ -1,14 +1,14 @@
-KtBackingFieldSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
+KaBackingFieldSymbol:
+  annotations: []
+  callableId: null
   contextReceivers: []
   isExtension: false
   name: field
   origin: PROPERTY_BACKING_FIELD
-  owningProperty: KtKotlinPropertySymbol(/foo)
+  owningProperty: KaKotlinPropertySymbol(/foo)
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: [
+  returnType: KaUsualClassType:
+    annotations: [
       Anno3()
         psi: KtAnnotationEntry
       Anno2()
@@ -16,11 +16,11 @@ KtBackingFieldSymbol:
       Anno1()
         psi: KtAnnotationEntry
     ]
-    ownTypeArguments: []
+    typeArguments: []
     type: @R|Anno3|() @R|Anno2|() @R|Anno1|()  @R|Anno3|()  SecondTypeAlias
   symbolKind: LOCAL
   typeParameters: []
-  getContainingFileSymbol: KtFileSymbol(typeAnnotationOnBackingField.kt)
+  getContainingFileSymbol: KaFileSymbol(typeAnnotationOnBackingField.kt)
   getContainingJvmClassName: TypeAnnotationOnBackingFieldKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

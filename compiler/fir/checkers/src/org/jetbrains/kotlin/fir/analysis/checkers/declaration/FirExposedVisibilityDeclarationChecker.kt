@@ -51,6 +51,7 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
         val supertypes = declaration.superTypeRefs
         val isInterface = declaration.classKind == ClassKind.INTERFACE
         for (supertypeRef in supertypes) {
+            if (supertypeRef.source?.kind == KtFakeSourceElementKind.EnumSuperTypeRef) continue
             val supertype = supertypeRef.coneTypeSafe<ConeClassLikeType>() ?: continue
             val classSymbol = supertype.toRegularClassSymbol(context.session) ?: continue
             val superIsInterface = classSymbol.classKind == ClassKind.INTERFACE
@@ -178,9 +179,12 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
     private fun checkProperty(declaration: FirProperty, reporter: DiagnosticReporter, context: CheckerContext) {
         if (declaration.fromPrimaryConstructor == true) return
         if (declaration.isLocal) return
+        if (declaration.source?.kind == KtFakeSourceElementKind.EnumGeneratedDeclaration) return
         val propertyVisibility = declaration.effectiveVisibility
 
-        if (propertyVisibility == EffectiveVisibility.Local) return
+        if (propertyVisibility == EffectiveVisibility.Local || declaration.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty) {
+            return
+        }
         declaration.returnTypeRef.coneType
             .findVisibilityExposure(context, propertyVisibility)?.let { (restricting, restrictingVisibility) ->
                 reporter.reportOn(

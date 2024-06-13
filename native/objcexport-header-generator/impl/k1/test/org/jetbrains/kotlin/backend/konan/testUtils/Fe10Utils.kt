@@ -70,7 +70,13 @@ fun createModuleDescriptor(
             languageVersionSettings = createLanguageVersionSettings(),
             storageManager = LockBasedStorageManager.NO_LOCKS,
             packageAccessHandler = null,
-        ).also { it.setDependencies(it, stdlibModuleDescriptor) }
+        )
+    }
+
+    dependencyKlibDescriptors.forEach { dependencyDescriptor ->
+        dependencyDescriptor.setDependencies(
+            dependencyKlibDescriptors + stdlibModuleDescriptor
+        )
     }
 
     val moduleDescriptor = ModuleDescriptorImpl(
@@ -124,7 +130,7 @@ private fun createCompilerConfiguration(): CompilerConfiguration {
     return configuration
 }
 
-private fun createLanguageVersionSettings() = LanguageVersionSettingsImpl(
+internal fun createLanguageVersionSettings() = LanguageVersionSettingsImpl(
     languageVersion = LanguageVersion.LATEST_STABLE,
     apiVersion = ApiVersion.LATEST_STABLE
 )

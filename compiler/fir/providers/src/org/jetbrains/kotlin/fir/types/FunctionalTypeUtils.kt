@@ -8,14 +8,17 @@ package org.jetbrains.kotlin.fir.types
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.computeTypeAttributes
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
+import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.scope
-import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.originalOrSelf
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
@@ -23,6 +26,7 @@ import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -114,12 +118,26 @@ fun ConeKotlinType.customFunctionTypeToSimpleFunctionType(session: FirSession): 
     } else {
         FunctionTypeKind.Function
     }
-    return createFunctionTypeWithNewKind(session, newKind)
+    return createFunctionTypeWithNewKind(
+        session = session,
+        kind = newKind,
+        additionalAnnotations = kind.annotationOnInvokeClassId
+            ?.takeUnless { classId -> type.attributes.customAnnotations.hasAnnotation(classId, session) }
+            ?.let { annotationClassId ->
+                listOf(buildAnnotation {
+                    argumentMapping = FirEmptyAnnotationArgumentMapping
+                    annotationTypeRef = buildResolvedTypeRef {
+                        type = annotationClassId.defaultType(emptyList())
+                    }
+                })
+            } ?: emptyList()
+    )
 }
 
 fun ConeKotlinType.createFunctionTypeWithNewKind(
     session: FirSession,
     kind: FunctionTypeKind,
+    additionalAnnotations: List<FirAnnotation> = emptyList(),
     updateTypeArguments: (Array<out ConeTypeProjection>.() -> Array<out ConeTypeProjection>)? = null,
 ): ConeClassLikeType {
     val expandedType = fullyExpandedType(session)
@@ -128,7 +146,7 @@ fun ConeKotlinType.createFunctionTypeWithNewKind(
     return functionTypeId.toLookupTag().constructClassType(
         updateTypeArguments?.let { typeArguments.updateTypeArguments() } ?: typeArguments,
         isNullable = expandedType.isNullable,
-        attributes = expandedType.attributes
+        attributes = expandedType.attributes.add(additionalAnnotations.computeTypeAttributes(session, shouldExpandTypeAliases = false)),
     )
 }
 
@@ -234,7 +252,19 @@ fun ConeKotlinType.findContributedInvokeSymbol(
                 overriddenInvoke = functionSymbol
                 ProcessorAction.STOP
             } else {
-                ProcessorAction.NEXT
+                val dispatchReceiverType = functionSymbol.originalOrSelf().dispatchReceiverType
+                val dispatchReceiverFunctionKind = (dispatchReceiverType as? ConeClassLikeType)?.functionTypeKind(session)
+                val expectedFunctionKind = expectedFunctionType.functionTypeKind(session)
+                if (dispatchReceiverFunctionKind == null || !dispatchReceiverFunctionKind.isBasicFunctionOrKFunction ||
+                    expectedFunctionKind?.isBasicFunctionOrKFunction == true ||
+                    expectedFunctionKind?.isReflectType != dispatchReceiverFunctionKind.isReflectType
+                ) {
+                    ProcessorAction.NEXT
+                } else {
+                    // Suspend (or other) conversion should be applied
+                    overriddenInvoke = functionSymbol
+                    ProcessorAction.STOP
+                }
             }
         }
     }

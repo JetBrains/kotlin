@@ -1,5 +1,5 @@
-// !LANGUAGE: +ReadDeserializedContracts +UseCallsInPlaceEffect
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
+// LANGUAGE: +ReadDeserializedContracts +UseCallsInPlaceEffect
+// DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 
 fun testRunWithUnitReturn() {
     val x: Int

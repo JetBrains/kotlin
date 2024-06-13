@@ -1,8 +1,11 @@
 // TARGET_BACKEND: JVM_IR
+// COMMENTED[LANGUAGE: +ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty] uncomment when KT-56386 is fixed
 // IGNORE_BACKEND_K1: JVM_IR
+// IGNORE_BACKEND_K2: JVM_IR
+// Reason: KT-56386 is not fixed yet
 // CHECK_BYTECODE_TEXT
-// FILE: p/PackagePrivateJavaClass.java
 
+// FILE: p/PackagePrivateJavaClass.java
 package p;
 
 class PackagePrivateJavaClass {
@@ -10,7 +13,6 @@ class PackagePrivateJavaClass {
 }
 
 // FILE: p/JavaWrapper.java
-
 package p;
 
 public class JavaWrapper {
@@ -18,7 +20,6 @@ public class JavaWrapper {
 }
 
 // FILE: test.kt
-
 import p.JavaWrapper
 
 class KotlinWrapper : JavaWrapper() {

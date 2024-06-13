@@ -2,7 +2,7 @@
 // I have no idea why the tests diverge. The test was misconfigured (it used regular dependencies instead of `dependsOn` dependencies).
 // I fixed the misconfiguration, now it turns out that it has been diverged all the time
 // LL_FIR_DIVERGENCE
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 // MODULE: m1-common
 // FILE: common.kt
 

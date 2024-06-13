@@ -23,7 +23,7 @@ object FirJsQualifierChecker : FirAnnotationCallChecker(MppCheckerKind.Common) {
             return
         }
 
-        val string = (expression.argumentMapping.mapping.values.firstOrNull() as? FirLiteralExpression<*>)?.value as? String ?: return
+        val string = (expression.argumentMapping.mapping.values.firstOrNull() as? FirLiteralExpression)?.value as? String ?: return
 
         if (!validateQualifier(string)) {
             reporter.reportOn(expression.argumentList.arguments.first().source, FirWebCommonErrors.WRONG_JS_QUALIFIER, context)

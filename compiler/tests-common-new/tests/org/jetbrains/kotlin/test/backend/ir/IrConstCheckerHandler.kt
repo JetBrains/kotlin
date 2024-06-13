@@ -1,12 +1,11 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.test.backend.ir
 
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.IrField
@@ -18,7 +17,8 @@ import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.getAllArgumentsWithIr
 import org.jetbrains.kotlin.ir.util.isAnnotation
-import org.jetbrains.kotlin.ir.visitors.IrTypeTransformer
+import org.jetbrains.kotlin.ir.visitors.IrTypeTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.test.backend.handlers.AbstractIrHandler
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
@@ -31,34 +31,36 @@ class IrConstCheckerHandler(testServices: TestServices) : AbstractIrHandler(test
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
 }
 
-private class IrConstChecker : IrTypeTransformer<Nothing?> {
-    override fun visitFile(declaration: IrFile, data: Nothing?): IrFile {
-        checkAnnotations(declaration)
-        declaration.transformChildren(this, data)
-        return declaration
+private class IrConstChecker : IrTypeTransformerVoid() {
+    override fun visitElement(element: IrElement) {
+        element.acceptChildrenVoid(this)
     }
 
-    override fun visitDeclaration(declaration: IrDeclarationBase, data: Nothing?): IrStatement {
+    override fun visitFile(declaration: IrFile) {
         checkAnnotations(declaration)
-        declaration.transformChildren(this, data)
-        return declaration
+        declaration.acceptChildrenVoid(this)
     }
 
-    override fun <Type : IrType?> transformType(container: IrElement, type: Type, data: Nothing?): Type {
+    override fun visitDeclaration(declaration: IrDeclarationBase) {
+        checkAnnotations(declaration)
+        declaration.acceptChildrenVoid(this)
+    }
+
+    override fun <Type : IrType?> transformType(container: IrElement, type: Type): Type {
         if (type == null) return type
 
         checkAnnotations(type)
         if (type is IrSimpleType) {
-            type.arguments.mapNotNull { it.typeOrNull }.forEach { transformType(container, it, data) }
+            type.arguments.mapNotNull { it.typeOrNull }.forEach { transformType(container, it) }
         }
         return type
     }
 
-    override fun visitField(declaration: IrField, data: Nothing?): IrStatement {
+    override fun visitField(declaration: IrField) {
         if (declaration.correspondingPropertySymbol?.owner?.isConst == true && declaration.initializer?.expression !is IrConst<*>) {
             error("Const field is not containing const expression. Got ${declaration.initializer?.dump()}")
         }
-        return super.visitField(declaration, data)
+        super.visitField(declaration)
     }
 
     private fun checkAnnotations(container: IrAnnotationContainer) {

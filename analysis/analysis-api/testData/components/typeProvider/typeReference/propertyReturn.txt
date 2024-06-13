@@ -1,2 +1,2 @@
-expression: Boolean
-ktType: kotlin.Boolean
+KtTypeReference: Boolean
+KaType: kotlin.Boolean

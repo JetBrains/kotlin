@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -24,7 +24,7 @@ fun CompilerConfiguration.setupCommonArguments(
     arguments: CommonCompilerArguments,
     createMetadataVersion: ((IntArray) -> BinaryVersion)? = null
 ) {
-    val messageCollector = getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+    val messageCollector = getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
     put(CommonConfigurationKeys.DISABLE_INLINE, arguments.noInline)
     put(CommonConfigurationKeys.USE_FIR_EXTENDED_CHECKERS, arguments.useFirExtendedCheckers)
@@ -34,7 +34,25 @@ fun CompilerConfiguration.setupCommonArguments(
     put(CommonConfigurationKeys.INCREMENTAL_COMPILATION, incrementalCompilationIsEnabled(arguments))
     put(CommonConfigurationKeys.ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS, arguments.allowAnyScriptsInSourceRoots)
     put(CommonConfigurationKeys.IGNORE_CONST_OPTIMIZATION_ERRORS, arguments.ignoreConstOptimizationErrors)
-    put(CommonConfigurationKeys.USE_FIR_BASED_FAKE_OVERRIDE_GENERATOR, arguments.useFirFakeOverrideBuilder)
+
+    val irVerificationMode = arguments.verifyIr?.let { verifyIrString ->
+        IrVerificationMode.resolveMode(verifyIrString).also {
+            if (it == null) {
+                messageCollector.report(CompilerMessageSeverity.ERROR, "Unsupported IR verification mode $verifyIrString")
+            }
+        }
+    } ?: IrVerificationMode.NONE
+    put(CommonConfigurationKeys.VERIFY_IR, irVerificationMode)
+
+    if (arguments.verifyIrVisibility) {
+        put(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS, true)
+        if (irVerificationMode == IrVerificationMode.NONE) {
+            messageCollector.report(
+                CompilerMessageSeverity.WARNING,
+                "'-Xverify-ir-visibility' has no effect unless '-Xverify-ir=warning' or '-Xverify-ir=error' is specified"
+            )
+        }
+    }
 
     val metadataVersionString = arguments.metadataVersion
     if (metadataVersionString != null) {
@@ -86,7 +104,7 @@ private fun switchToFallbackModeIfNecessary(arguments: CommonCompilerArguments, 
 }
 
 fun CompilerConfiguration.setupLanguageVersionSettings(arguments: CommonCompilerArguments) {
-    languageVersionSettings = arguments.toLanguageVersionSettings(getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY))
+    languageVersionSettings = arguments.toLanguageVersionSettings(getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY))
 }
 
 const val KOTLIN_HOME_PROPERTY = "kotlin.home"
@@ -167,7 +185,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
     val rawFragmentSources = arguments.fragmentSources
     val rawFragmentRefines = arguments.fragmentRefines
 
-    val messageCollector = getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+    val messageCollector = getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
     fun reportError(message: String) {
         messageCollector.report(CompilerMessageSeverity.ERROR, message)

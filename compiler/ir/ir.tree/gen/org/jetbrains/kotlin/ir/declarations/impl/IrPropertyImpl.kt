@@ -22,14 +22,15 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class IrPropertyImpl @IrImplementationDetail constructor(
-    override val startOffset: Int,
-    override val endOffset: Int,
+    override var startOffset: Int,
+    override var endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val factory: IrFactory,
     override var name: Name,
     override var isExternal: Boolean,
     override var visibility: DescriptorVisibility,
     override var modality: Modality,
+    override var isFakeOverride: Boolean,
     override val containerSource: DeserializedContainerSource?,
     override val symbol: IrPropertySymbol,
     override var isVar: Boolean,
@@ -37,7 +38,6 @@ class IrPropertyImpl @IrImplementationDetail constructor(
     override var isLateinit: Boolean,
     override var isDelegated: Boolean,
     override var isExpect: Boolean,
-    override var isFakeOverride: Boolean,
 ) : IrProperty() {
     override var annotations: List<IrConstructorCall> = emptyList()
 

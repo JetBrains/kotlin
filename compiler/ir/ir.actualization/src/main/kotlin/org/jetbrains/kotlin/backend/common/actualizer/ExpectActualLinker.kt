@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.util.SymbolRemapper
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
-internal class ActualizerSymbolRemapper(private val expectActualMap: Map<IrSymbol, IrSymbol>) : SymbolRemapper {
+internal class ActualizerSymbolRemapper(private val expectActualMap: IrExpectActualMap) : SymbolRemapper {
     override fun getDeclaredClass(symbol: IrClassSymbol) = symbol
 
     override fun getDeclaredAnonymousInitializer(symbol: IrAnonymousInitializerSymbol) = symbol
@@ -65,6 +65,8 @@ internal class ActualizerSymbolRemapper(private val expectActualMap: Map<IrSymbo
 
     override fun getReferencedValue(symbol: IrValueSymbol) = symbol.actualizeSymbol()
 
+    override fun getReferencedValueParameter(symbol: IrValueParameterSymbol) = symbol.actualizeSymbol<IrValueSymbol>()
+
     override fun getReferencedFunction(symbol: IrFunctionSymbol) = symbol.actualizeSymbol()
 
     override fun getReferencedProperty(symbol: IrPropertySymbol) = symbol.actualizeSymbol()
@@ -73,11 +75,19 @@ internal class ActualizerSymbolRemapper(private val expectActualMap: Map<IrSymbo
 
     override fun getReferencedClassifier(symbol: IrClassifierSymbol) = symbol.actualizeSymbol()
 
+    override fun getReferencedTypeParameter(symbol: IrTypeParameterSymbol) = symbol.actualizeSymbol<IrClassifierSymbol>()
+
     override fun getReferencedReturnTarget(symbol: IrReturnTargetSymbol) = symbol.actualizeSymbol()
+
+    override fun getReferencedReturnableBlock(symbol: IrReturnableBlockSymbol) = symbol.actualizeSymbol<IrReturnTargetSymbol>()
 
     override fun getReferencedTypeAlias(symbol: IrTypeAliasSymbol) = symbol.actualizeSymbol()
 
-    private inline fun <reified S : IrSymbol> S.actualizeSymbol(): S = (expectActualMap[this] as? S) ?: this
+    private inline fun <reified S : IrSymbol> S.actualizeSymbol(): S {
+        val actualSymbol = expectActualMap.regularSymbols[this] ?: return this
+        return actualSymbol as? S
+            ?: error("Unexpected type of actual symbol. Expected: ${S::class.java.simpleName}, got ${actualSymbol.javaClass.simpleName}")
+    }
 }
 
 internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper) : DeepCopyIrTreeWithSymbols(symbolRemapper) {

@@ -18,20 +18,21 @@ package androidx.compose.compiler.plugins.kotlin
 
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.backend.common.output.OutputFile
-import org.junit.Assert.assertEquals
-import org.junit.Assume.assumeFalse
+import org.junit.Rule
 
 abstract class AbstractCodegenSignatureTest(useFir: Boolean) : AbstractCodegenTest(useFir) {
     private fun OutputFile.printApi(): String {
         return printPublicApi(asText(), relativePath)
     }
 
+    @JvmField
+    @Rule
+    val goldenTransformRule = GoldenTransformRule()
+
     protected fun checkApi(
         @Language("kotlin") src: String,
-        expected: String,
         dumpClasses: Boolean = false
     ) {
-        assumeFalse(useFir) // fixme: FIR generates invokedynamic instead of classes, convert to goldens for separate expected strings
         val className = "Test_REPLACEME_${uniqueNumber++}"
         val fileName = "$className.kt"
 
@@ -50,13 +51,12 @@ abstract class AbstractCodegenSignatureTest(useFir: Boolean) : AbstractCodegenTe
             .joinToString(separator = "\n") { it.printApi() }
             .replace(className, "Test")
 
-        val expectedApiString = expected
-            .trimIndent()
-            .split("\n")
-            .filter { it.isNotBlank() }
-            .joinToString("\n")
-
-        assertEquals(expectedApiString, apiString)
+        goldenTransformRule.verifyGolden(
+            GoldenTransformTestInfo(
+                src.trimIndent().trim(),
+                apiString.trimIndent().trim()
+            )
+        )
     }
 
     protected fun codegen(

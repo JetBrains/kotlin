@@ -18,6 +18,7 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower
 
+import androidx.compose.compiler.plugins.kotlin.FeatureFlags
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
@@ -66,8 +67,14 @@ class KlibAssignableParamTransformer(
     symbolRemapper: DeepCopySymbolRemapper,
     metrics: ModuleMetrics,
     stabilityInferencer: StabilityInferencer,
-) : AbstractComposeLowering(context, symbolRemapper, metrics, stabilityInferencer),
-    ModuleLoweringPass {
+    featureFlags: FeatureFlags,
+) : AbstractComposeLowering(
+    context,
+    symbolRemapper,
+    metrics,
+    stabilityInferencer,
+    featureFlags
+), ModuleLoweringPass {
     override fun lower(module: IrModuleFragment) {
         module.transformChildrenVoid(this)
     }

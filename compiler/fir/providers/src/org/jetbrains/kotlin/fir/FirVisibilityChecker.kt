@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -215,10 +215,6 @@ abstract class FirVisibilityChecker : FirSessionComponent {
                         ownerLookupTag == null -> {
                             // Top-level: visible in file
                             provider.getContainingFile(symbol) == useSiteFile
-                        }
-                        declaration is FirConstructor && declaration.isFromSealedClass -> {
-                            // Sealed class constructor: visible in same package
-                            declaration.symbol.callableId.packageName == useSiteFile.packageFqName
                         }
                         else -> {
                             // Member: visible inside parent class, including all its member classes
@@ -564,3 +560,14 @@ val <D, S : FirBasedSymbol<D>> S.firForVisibilityChecker: D
     get() = fir.also {
         lazyResolveToPhase(FirResolvePhase.STATUS)
     }
+
+fun FirVisibilityChecker.isVisible(
+    symbol: FirCallableSymbol<*>,
+    session: FirSession,
+    useSiteFile: FirFile,
+    containingDeclarations: List<FirDeclaration>,
+    dispatchReceiver: FirExpression?,
+): Boolean {
+    symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
+    return isVisible(symbol.fir, session, useSiteFile, containingDeclarations, dispatchReceiver)
+}

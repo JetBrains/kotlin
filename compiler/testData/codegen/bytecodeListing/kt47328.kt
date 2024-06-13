@@ -1,5 +1,5 @@
 // This test can be removed as soon as the compiler stops supporting language version 1.5.
-// !LANGUAGE: -ProhibitJvmFieldOnOverrideFromInterfaceInPrimaryConstructor
+// LANGUAGE: -ProhibitJvmFieldOnOverrideFromInterfaceInPrimaryConstructor
 // WITH_STDLIB
 
 interface A { val x: Int }

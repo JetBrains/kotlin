@@ -3,26 +3,24 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(KtAnalysisApiInternals::class)
+@file:OptIn(KaAnalysisApiInternals::class)
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.KtInitializerValue
-import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
-import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.fir.utils.asKtInitializerValue
-import org.jetbrains.kotlin.analysis.api.impl.base.KtContextReceiverImpl
-import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KaInitializerValue
+import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
+import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.utils.asKaInitializerValue
+import org.jetbrains.kotlin.analysis.api.impl.base.KaContextReceiverImpl
+import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeDynamicType
 import org.jetbrains.kotlin.fir.types.create
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
@@ -38,50 +36,50 @@ internal fun FirCallableSymbol<*>.invalidModalityError(): Nothing {
     }
 }
 
-internal fun FirFunctionSymbol<*>.createKtValueParameters(builder: KtSymbolByFirBuilder): List<KtValueParameterSymbol> {
+internal fun FirFunctionSymbol<*>.createKtValueParameters(builder: KaSymbolByFirBuilder): List<KaValueParameterSymbol> {
     return fir.valueParameters.map { valueParameter ->
         builder.variableLikeBuilder.buildValueParameterSymbol(valueParameter.symbol)
     }
 }
 
 internal fun <D> FirBasedSymbol<D>.createKtTypeParameters(
-    builder: KtSymbolByFirBuilder
-): List<KtFirTypeParameterSymbol> where D : FirTypeParameterRefsOwner, D : FirDeclaration {
+    builder: KaSymbolByFirBuilder
+): List<KaFirTypeParameterSymbol> where D : FirTypeParameterRefsOwner, D : FirDeclaration {
     return fir.typeParameters.map { typeParameter ->
         builder.classifierBuilder.buildTypeParameterSymbol(typeParameter.symbol)
     }
 }
 
 internal fun <D> FirBasedSymbol<D>.createRegularKtTypeParameters(
-    builder: KtSymbolByFirBuilder,
-): List<KtFirTypeParameterSymbol> where D : FirTypeParameterRefsOwner, D : FirDeclaration {
+    builder: KaSymbolByFirBuilder,
+): List<KaFirTypeParameterSymbol> where D : FirTypeParameterRefsOwner, D : FirDeclaration {
     return fir.typeParameters.filterIsInstance<FirTypeParameter>().map { typeParameter ->
         builder.classifierBuilder.buildTypeParameterSymbol(typeParameter.symbol)
     }
 }
 
 internal fun FirCallableSymbol<*>.createContextReceivers(
-    builder: KtSymbolByFirBuilder
-): List<KtContextReceiver> {
+    builder: KaSymbolByFirBuilder
+): List<KaContextReceiver> {
     return resolvedContextReceivers.map { createContextReceiver(builder, it) }
 }
 
 internal fun FirRegularClassSymbol.createContextReceivers(
-    builder: KtSymbolByFirBuilder
-): List<KtContextReceiver> {
+    builder: KaSymbolByFirBuilder
+): List<KaContextReceiver> {
     return resolvedContextReceivers.map { createContextReceiver(builder, it) }
 }
 
 private fun createContextReceiver(
-    builder: KtSymbolByFirBuilder,
+    builder: KaSymbolByFirBuilder,
     contextReceiver: FirContextReceiver
-) = KtContextReceiverImpl(
+) = KaContextReceiverImpl(
     builder.typeBuilder.buildKtType(contextReceiver.typeRef),
     contextReceiver.customLabelName,
     builder.token
 )
 
-internal fun FirCallableSymbol<*>.getCallableIdIfNonLocal(): CallableId? {
+internal fun FirCallableSymbol<*>.getCallableId(): CallableId? {
     return when {
         origin == FirDeclarationOrigin.DynamicScope -> null
         callableId.isLocal -> null
@@ -89,12 +87,12 @@ internal fun FirCallableSymbol<*>.getCallableIdIfNonLocal(): CallableId? {
     }
 }
 
-internal fun FirClassLikeSymbol<*>.getClassIdIfNonLocal(): ClassId? =
+internal fun FirClassLikeSymbol<*>.getClassId(): ClassId? =
     classId.takeUnless { it.isLocal }
 
 internal fun FirCallableSymbol<*>.dispatchReceiverType(
-    builder: KtSymbolByFirBuilder,
-): KtType? {
+    builder: KaSymbolByFirBuilder,
+): KaType? {
     val type = if (
         origin == FirDeclarationOrigin.DynamicScope
         && (this is FirPropertySymbol || this is FirFunctionSymbol)
@@ -106,7 +104,7 @@ internal fun FirCallableSymbol<*>.dispatchReceiverType(
     return type?.let { builder.typeBuilder.buildKtType(it) }
 }
 
-internal fun FirVariableSymbol<*>.getKtConstantInitializer(builder: KtSymbolByFirBuilder): KtInitializerValue? {
+internal fun FirVariableSymbol<*>.getKtConstantInitializer(builder: KaSymbolByFirBuilder): KaInitializerValue? {
     // to avoid lazy resolve
     if (fir.initializer == null) return null
 
@@ -125,5 +123,5 @@ internal fun FirVariableSymbol<*>.getKtConstantInitializer(builder: KtSymbolByFi
         ?.toRegularClassSymbol(builder.rootSession)
         ?.classKind == ClassKind.ANNOTATION_CLASS
 
-    return firInitializer.asKtInitializerValue(builder, parentIsAnnotation)
+    return firInitializer.asKaInitializerValue(builder, parentIsAnnotation)
 }

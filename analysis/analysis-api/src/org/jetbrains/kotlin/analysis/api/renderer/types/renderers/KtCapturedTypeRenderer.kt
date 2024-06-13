@@ -5,36 +5,36 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.types.renderers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.renderer.types.KtTypeRenderer
-import org.jetbrains.kotlin.analysis.api.types.KtCapturedType
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
+import org.jetbrains.kotlin.analysis.api.types.KaCapturedType
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
 
-public interface KtCapturedTypeRenderer {
+public interface KaCapturedTypeRenderer {
     public fun renderType(
-        analysisSession: KtAnalysisSession,
-        type: KtCapturedType,
-        typeRenderer: KtTypeRenderer,
+        analysisSession: KaSession,
+        type: KaCapturedType,
+        typeRenderer: KaTypeRenderer,
         printer: PrettyPrinter,
     )
 
-    public object AS_PROJECTION : KtCapturedTypeRenderer {
+    public object AS_PROJECTION : KaCapturedTypeRenderer {
         override fun renderType(
-            analysisSession: KtAnalysisSession,
-            type: KtCapturedType,
-            typeRenderer: KtTypeRenderer,
+            analysisSession: KaSession,
+            type: KaCapturedType,
+            typeRenderer: KaTypeRenderer,
             printer: PrettyPrinter,
         ) {
             typeRenderer.typeProjectionRenderer.renderTypeProjection(analysisSession, type.projection, typeRenderer, printer)
         }
     }
 
-    public object AS_CAPTURED_TYPE_WITH_PROJECTION : KtCapturedTypeRenderer {
+    public object AS_CAPTURED_TYPE_WITH_PROJECTION : KaCapturedTypeRenderer {
         override fun renderType(
-            analysisSession: KtAnalysisSession,
-            type: KtCapturedType,
-            typeRenderer: KtTypeRenderer,
+            analysisSession: KaSession,
+            type: KaCapturedType,
+            typeRenderer: KaTypeRenderer,
             printer: PrettyPrinter,
         ) {
             printer.append("CapturedType(")
@@ -43,3 +43,5 @@ public interface KtCapturedTypeRenderer {
         }
     }
 }
+
+public typealias KtCapturedTypeRenderer = KaCapturedTypeRenderer

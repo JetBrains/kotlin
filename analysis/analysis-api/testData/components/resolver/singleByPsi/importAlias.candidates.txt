@@ -1,0 +1,17 @@
+KtNameReferenceExpression(99,104): 'coreR'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = test.pkg.R.string
+          symbol = <constructor>(): test.pkg.R.string
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false

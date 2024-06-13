@@ -1,4 +1,4 @@
-//!DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 @Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
 fun <T, U: T> List<@kotlin.internal.Exact T>.firstTyped(): U = throw Exception()

@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.objcexport.tests
 
 import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.components.buildClassType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.objcexport.objCReceiverType
 import org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.objcexport.testUtils.getClassOrFail
@@ -15,7 +17,6 @@ import org.jetbrains.kotlin.objcexport.testUtils.getFunctionOrFail
 import org.jetbrains.kotlin.objcexport.testUtils.getPropertyOrFail
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
 
 class ObjCReceiverTypeTest(
     private val inlineSourceCodeAnalysis: InlineSourceCodeAnalysis,
@@ -38,8 +39,8 @@ class ObjCReceiverTypeTest(
             val innerClassConstructor = innerClass.getMemberScope().getConstructors().first()
 
             assertEquals(
-                innerClassConstructor.objCReceiverType?.expandedClassSymbol?.classIdIfNonLocal,
-                outerClass.classIdIfNonLocal
+                innerClassConstructor.objCReceiverType?.expandedSymbol?.classId,
+                outerClass.classId
             )
         }
     }
@@ -64,7 +65,7 @@ class ObjCReceiverTypeTest(
 
             assertEquals(
                 ClassId.topLevel(StandardNames.FqNames.string.toSafe()),
-                foo.objCReceiverType?.expandedClassSymbol?.classIdIfNonLocal
+                foo.objCReceiverType?.expandedSymbol?.classId
             )
         }
     }
@@ -90,7 +91,7 @@ class ObjCReceiverTypeTest(
 
             assertEquals(
                 ClassId.topLevel(StandardNames.FqNames._boolean.toSafe()),
-                getter?.objCReceiverType?.expandedClassSymbol?.classIdIfNonLocal
+                getter?.objCReceiverType?.expandedSymbol?.classId
             )
         }
     }
@@ -117,7 +118,7 @@ class ObjCReceiverTypeTest(
 
             assertEquals(
                 ClassId.topLevel(StandardNames.FqNames.string.toSafe()),
-                setter?.objCReceiverType?.expandedClassSymbol?.classIdIfNonLocal
+                setter?.objCReceiverType?.expandedSymbol?.classId
             )
         }
     }
@@ -127,9 +128,9 @@ class ObjCReceiverTypeTest(
         val file = inlineSourceCodeAnalysis.createKtFile(
             """
                 class Foo {
-                
+
                     fun Boolean.foo() = Unit
-                
+
                     var String.prop: Int
                         get() = 42
                         set(value) {}
@@ -144,9 +145,9 @@ class ObjCReceiverTypeTest(
             val setter = fooClass.getMemberScope().getPropertyOrFail("prop").setter
             val getter = fooClass.getMemberScope().getPropertyOrFail("prop").getter
 
-            assertNull(foo.objCReceiverType)
-            assertNull(setter?.objCReceiverType)
-            assertNull(getter?.objCReceiverType)
+            assertEquals(buildClassType(StandardClassIds.Boolean), foo.objCReceiverType)
+            assertEquals(buildClassType(StandardClassIds.String), setter?.objCReceiverType)
+            assertEquals(buildClassType(StandardClassIds.String), getter?.objCReceiverType)
         }
     }
 }

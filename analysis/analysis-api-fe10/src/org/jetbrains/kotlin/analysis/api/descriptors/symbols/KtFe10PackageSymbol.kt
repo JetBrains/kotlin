@@ -9,19 +9,19 @@ import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiUtilCore
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10PackageSymbolPointer
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KaFe10Symbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10PackageSymbolPointer
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.name.FqName
 
-internal class KtFe10PackageSymbol(
+internal class KaFe10PackageSymbol(
     private val packageName: FqName,
     override val analysisContext: Fe10AnalysisContext
-) : KtPackageSymbol(), KtFe10Symbol {
+) : KaPackageSymbol(), KaFe10Symbol {
     override val fqName: FqName
         get() = withValidityAssertion { packageName }
 
@@ -30,17 +30,17 @@ internal class KtFe10PackageSymbol(
         JavaPsiFacade.getInstance(project).findPackage(fqName.asString())
     }
 
-    override fun createPointer(): KtSymbolPointer<KtPackageSymbol> = withValidityAssertion {
-        KtFe10PackageSymbolPointer(fqName)
+    override fun createPointer(): KaSymbolPointer<KaPackageSymbol> = withValidityAssertion {
+        KaFe10PackageSymbolPointer(fqName)
     }
 
-    override val origin: KtSymbolOrigin
+    override val origin: KaSymbolOrigin
         get() = withValidityAssertion {
             val virtualFile = PsiUtilCore.getVirtualFile(psi)
             return if (virtualFile != null) {
                 analysisContext.getOrigin(virtualFile)
             } else {
-                KtSymbolOrigin.LIBRARY
+                KaSymbolOrigin.LIBRARY
             }
         }
 
@@ -49,6 +49,6 @@ internal class KtFe10PackageSymbol(
     }
 
     override fun equals(other: Any?): Boolean {
-        return packageName == (other as? KtFe10PackageSymbol)?.fqName
+        return packageName == (other as? KaFe10PackageSymbol)?.fqName
     }
 }

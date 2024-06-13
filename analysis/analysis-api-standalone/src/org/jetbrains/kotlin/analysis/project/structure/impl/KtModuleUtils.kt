@@ -10,7 +10,6 @@ import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtStaticProjectStructureProvider
 import org.jetbrains.kotlin.analysis.project.structure.builder.*
-import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.javaSourceRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
@@ -19,39 +18,13 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
-import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.isCommon
-import org.jetbrains.kotlin.platform.isJs
-import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.platform.konan.isNative
-import org.jetbrains.kotlin.platform.wasm.isWasmJs
-import org.jetbrains.kotlin.platform.wasm.isWasmWasi
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
-import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerServices
-import org.jetbrains.kotlin.wasm.resolve.WasmJsPlatformAnalyzerServices
-import org.jetbrains.kotlin.wasm.resolve.WasmWasiPlatformAnalyzerServices
 import java.io.IOException
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
 import kotlin.io.path.extension
-
-internal fun TargetPlatform.getAnalyzerServices(): PlatformDependentAnalyzerServices {
-    return when {
-        isJvm() -> JvmPlatformAnalyzerServices
-        isJs() -> JsPlatformAnalyzerServices
-        isWasmJs() -> WasmJsPlatformAnalyzerServices
-        isWasmWasi() -> WasmWasiPlatformAnalyzerServices
-        isNative() -> NativePlatformAnalyzerServices
-        isCommon() -> CommonPlatformAnalyzerServices
-        else -> error("Unknown target platform: $this")
-    }
-}
 
 /**
  * Collect source file path as [String] from the given source roots in [compilerConfig].
@@ -139,7 +112,7 @@ internal inline fun <reified T : PsiFileSystemItem> getPsiFilesFromPaths(
     val psiManager = PsiManager.getInstance(kotlinCoreProjectEnvironment.project)
     return buildList {
         for (path in paths) {
-            val vFile = fs.findFileByPath(path.toString()) ?: continue
+            val vFile = fs.findFileByNioFile(path.toAbsolutePath()) ?: continue
             val psiFileSystemItem =
                 if (vFile.isDirectory)
                     psiManager.findDirectory(vFile) as? T

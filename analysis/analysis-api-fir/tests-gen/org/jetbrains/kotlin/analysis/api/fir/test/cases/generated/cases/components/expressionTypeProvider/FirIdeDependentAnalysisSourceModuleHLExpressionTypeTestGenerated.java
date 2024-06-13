@@ -53,6 +53,12 @@ public class FirIdeDependentAnalysisSourceModuleHLExpressionTypeTestGenerated ex
   }
 
   @Test
+  @TestMetadata("approximatedCapturedFlexible.kt")
+  public void testApproximatedCapturedFlexible() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/approximatedCapturedFlexible.kt");
+  }
+
+  @Test
   @TestMetadata("arrayElement_arrayOfNulls.kt")
   public void testArrayElement_arrayOfNulls() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/arrayElement_arrayOfNulls.kt");
@@ -173,6 +179,18 @@ public class FirIdeDependentAnalysisSourceModuleHLExpressionTypeTestGenerated ex
   }
 
   @Test
+  @TestMetadata("methodReference_instance_convertedTo_Runnable.kt")
+  public void testMethodReference_instance_convertedTo_Runnable() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/methodReference_instance_convertedTo_Runnable.kt");
+  }
+
+  @Test
+  @TestMetadata("methodReference_instance_convertedTo_Supplier.kt")
+  public void testMethodReference_instance_convertedTo_Supplier() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/methodReference_instance_convertedTo_Supplier.kt");
+  }
+
+  @Test
   @TestMetadata("nameReference.kt")
   public void testNameReference() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference.kt");
@@ -290,6 +308,52 @@ public class FirIdeDependentAnalysisSourceModuleHLExpressionTypeTestGenerated ex
   @TestMetadata("whileExpression.kt")
   public void testWhileExpression() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/whileExpression.kt");
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/approximatedLocalClasses")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ApproximatedLocalClasses {
+    @Test
+    @TestMetadata("accessibleLocalType.kt")
+    public void testAccessibleLocalType() {
+      runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/approximatedLocalClasses/accessibleLocalType.kt");
+    }
+
+    @Test
+    public void testAllFilesPresentInApproximatedLocalClasses() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/approximatedLocalClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("deeperHierarchy1.kt")
+    public void testDeeperHierarchy1() {
+      runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/approximatedLocalClasses/deeperHierarchy1.kt");
+    }
+
+    @Test
+    @TestMetadata("deeperHierarchy2.kt")
+    public void testDeeperHierarchy2() {
+      runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/approximatedLocalClasses/deeperHierarchy2.kt");
+    }
+
+    @Test
+    @TestMetadata("deeperHierarchy3.kt")
+    public void testDeeperHierarchy3() {
+      runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/approximatedLocalClasses/deeperHierarchy3.kt");
+    }
+
+    @Test
+    @TestMetadata("deeperHierarchy4.kt")
+    public void testDeeperHierarchy4() {
+      runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/approximatedLocalClasses/deeperHierarchy4.kt");
+    }
+
+    @Test
+    @TestMetadata("simple.kt")
+    public void testSimple() {
+      runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/approximatedLocalClasses/simple.kt");
+    }
   }
 
   @Nested

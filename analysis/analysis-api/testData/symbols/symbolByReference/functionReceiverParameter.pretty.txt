@@ -1,14 +1,14 @@
-KtReceiverParameterSymbol:
-  annotationsList: [
+KaReceiverParameterSymbol:
+  annotations: [
     ReceiverAnnotation()
       psi: KtAnnotationEntry
   ]
   origin: SOURCE
-  owningCallableSymbol: KtFunctionSymbol(/foo)
-  type: KtUsualClassType:
-    annotationsList: [
+  owningCallableSymbol: KaFunctionSymbol(/foo)
+  type: KaUsualClassType:
+    annotations: [
       ReceiverTypeAnnotation()
         psi: KtAnnotationEntry
     ]
-    ownTypeArguments: []
+    typeArguments: []
     type: @R|ReceiverTypeAnnotation|()  kotlin/Int

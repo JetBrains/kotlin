@@ -1,6 +1,6 @@
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /JavaClass.hello
+KaFunctionSymbol:
+  annotations: []
+  callableId: /JavaClass.hello
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -18,28 +18,28 @@ KtFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: hello
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: JavaClass
   getContainingFileSymbol: null
   getContainingJvmClassName: JavaClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: JavaClass.InnerClass
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: JavaClass.InnerClass
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -52,11 +52,11 @@ KtNamedClassOrObjectSymbol:
   isInner: true
   modality: OPEN
   name: InnerClass
-  origin: JAVA
+  origin: JAVA_SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: CLASS_MEMBER
@@ -67,21 +67,21 @@ KtNamedClassOrObjectSymbol:
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtConstructorSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
-  containingClassIdIfNonLocal: JavaClass
+KaConstructorSymbol:
+  annotations: []
+  callableId: null
+  containingClassId: JavaClass
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
   isExpect: false
   isExtension: false
   isPrimary: true
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: JavaClass
   symbolKind: CLASS_MEMBER
   typeParameters: []

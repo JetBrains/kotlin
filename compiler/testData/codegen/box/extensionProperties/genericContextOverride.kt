@@ -1,4 +1,4 @@
-// !LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers
 // MODULE: m1
 // FILE: Base.kt
 abstract class Base<T> {

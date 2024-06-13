@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.mpp.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
@@ -145,6 +146,7 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
     val CallableSymbolMarker.hasStableParameterNames: Boolean
 
     val CallableSymbolMarker.isJavaField: Boolean
+    val CallableSymbolMarker.canBeActualizedByJavaField: Boolean
 
     fun onMatchedMembers(
         expectSymbol: DeclarationSymbolMarker,
@@ -254,4 +256,12 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
         actualTypeRef: TypeRefMarker,
         checker: AnnotationsCheckerCallback,
     )
+
+    companion object {
+        @JvmStatic
+        val abstractMutableListModCountCallableId = CallableId(
+            ClassId(FqName("kotlin.collections"), Name.identifier("AbstractMutableList")),
+            Name.identifier("modCount")
+        )
+    }
 }

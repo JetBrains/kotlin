@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -197,12 +197,12 @@ class FirCallResolver(
             resolutionMode = resolutionMode,
         )
         towerResolver.reset()
-        val result = towerResolver.runResolver(info, resolutionContext, collector)
 
-        var (reducedCandidates, newApplicability) = reduceCandidates(result, explicitReceiver, resolutionContext)
+        val result = towerResolver.runResolver(info, resolutionContext, collector)
+        var (reducedCandidates, applicability) = reduceCandidates(result, explicitReceiver, resolutionContext)
         reducedCandidates = overloadByLambdaReturnTypeResolver.reduceCandidates(qualifiedAccess, reducedCandidates, reducedCandidates)
 
-        return ResolutionResult(info, newApplicability ?: result.currentApplicability, reducedCandidates)
+        return ResolutionResult(info, applicability, reducedCandidates)
     }
 
     /**
@@ -212,7 +212,7 @@ class FirCallResolver(
         collector: CandidateCollector,
         explicitReceiver: FirExpression? = null,
         resolutionContext: ResolutionContext = transformer.resolutionContext,
-    ): Pair<Set<Candidate>, CandidateApplicability?> {
+    ): Pair<Set<Candidate>, CandidateApplicability> {
         fun chooseMostSpecific(list: List<Candidate>): Set<Candidate> {
             val onSuperReference = (explicitReceiver as? FirQualifiedAccessExpression)?.calleeReference is FirSuperReference
             return conflictResolver.chooseMaximallySpecificCandidates(list, discriminateAbstracts = onSuperReference)
@@ -221,7 +221,7 @@ class FirCallResolver(
         val candidates = collector.bestCandidates()
 
         if (collector.isSuccess) {
-            return chooseMostSpecific(candidates) to null
+            return chooseMostSpecific(candidates) to collector.currentApplicability
         }
 
         if (candidates.size > 1) {
@@ -237,7 +237,7 @@ class FirCallResolver(
             }
         }
 
-        return candidates.toSet() to null
+        return candidates.toSet() to collector.currentApplicability
     }
 
     fun resolveVariableAccessAndSelectCandidate(
@@ -430,9 +430,8 @@ class FirCallResolver(
             )
         }
 
-        val (reducedCandidates, newApplicability) = reduceCandidates(result, callableReferenceAccess.explicitReceiver)
+        val (reducedCandidates, applicability) = reduceCandidates(result, callableReferenceAccess.explicitReceiver)
         val nonEmptyAndAllSuccessful = reducedCandidates.isNotEmpty() && reducedCandidates.all { it.isSuccessful }
-        val applicability = newApplicability ?: result.currentApplicability
 
         (callableReferenceAccess.explicitReceiver as? FirResolvedQualifier)?.replaceResolvedToCompanionObject(
             reducedCandidates.isNotEmpty() && reducedCandidates.all { it.isFromCompanionObjectTypeScope }
@@ -496,11 +495,10 @@ class FirCallResolver(
         return@runCallableReferenceResolution applicability to true
     }
 
-    fun resolveDelegatingConstructorCall(
+    fun callInfoForDelegatingConstructorCall(
         delegatedConstructorCall: FirDelegatedConstructorCall,
-        constructedType: ConeClassLikeType?,
-        derivedClassLookupTag: ConeClassLikeLookupTag
-    ): FirDelegatedConstructorCall {
+        constructedType: ConeClassLikeType?
+    ): CallInfo {
         val name = SpecialNames.INIT
         val symbol = constructedType?.lookupTag?.toSymbol(components.session)
         val typeArguments = constructedType?.typeArguments
@@ -508,7 +506,7 @@ class FirCallResolver(
             ?.map { it.toFirTypeProjection() }
             ?: emptyList()
 
-        val callInfo = CallInfo(
+        return CallInfo(
             delegatedConstructorCall,
             CallKind.DelegatingConstructorCall,
             name,
@@ -522,6 +520,14 @@ class FirCallResolver(
             components.containingDeclarations,
             resolutionMode = ResolutionMode.ContextIndependent,
         )
+    }
+
+    fun resolveDelegatingConstructorCall(
+        delegatedConstructorCall: FirDelegatedConstructorCall,
+        constructedType: ConeClassLikeType?,
+        derivedClassLookupTag: ConeClassLikeLookupTag
+    ): FirDelegatedConstructorCall {
+        val callInfo = callInfoForDelegatingConstructorCall(delegatedConstructorCall, constructedType)
         towerResolver.reset()
 
         if (constructedType == null) {
@@ -544,7 +550,7 @@ class FirCallResolver(
             transformer.resolutionContext
         )
 
-        return selectDelegatingConstructorCall(delegatedConstructorCall, name, result, callInfo)
+        return selectDelegatingConstructorCall(delegatedConstructorCall, callInfo.name, result, callInfo)
     }
 
     private fun ConeTypeProjection.toFirTypeProjection(): FirTypeProjection = when (this) {
@@ -705,14 +711,14 @@ class FirCallResolver(
     private fun selectDelegatingConstructorCall(
         call: FirDelegatedConstructorCall, name: Name, result: CandidateCollector, callInfo: CallInfo
     ): FirDelegatedConstructorCall {
-        val (reducedCandidates, newApplicability) = reduceCandidates(result)
+        val (reducedCandidates, applicability) = reduceCandidates(result)
 
         val nameReference = createResolvedNamedReference(
             call.calleeReference,
             name,
             callInfo,
             reducedCandidates,
-            newApplicability ?: result.currentApplicability,
+            applicability,
         )
 
         return call.apply {
@@ -821,7 +827,7 @@ class FirCallResolver(
 
             candidates.isEmpty() -> {
                 when {
-                    name.asString() == "invoke" && explicitReceiver is FirLiteralExpression<*> ->
+                    name.asString() == "invoke" && explicitReceiver is FirLiteralExpression ->
                         ConeFunctionExpectedError(
                             explicitReceiver.value?.toString() ?: "",
                             explicitReceiver.resolvedType,

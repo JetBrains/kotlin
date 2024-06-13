@@ -1,8 +1,0 @@
-builtins_platform=NATIVE
-unique_name=kt51302_dependency
-compiler_version=1.6.10
-depends=stdlib
-abi_version=1.6.0
-native_targets=macos_x64 linux_x64 mingw_x64 macos_arm64
-metadata_version=1.4.1
-ir_version=1.0.0

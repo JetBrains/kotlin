@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.lombok
 
+import org.jetbrains.kotlin.lombok.LombokDirectives.ENABLE_LOMBOK
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.runners.AbstractDiagnosticTest
 import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTest
@@ -56,6 +57,9 @@ open class AbstractFirPsiDiagnosticTestForLombok : AbstractFirPsiDiagnosticTest(
 // ---------------------------- configuration ----------------------------
 
 fun TestConfigurationBuilder.enableLombok() {
+    defaultDirectives {
+        +ENABLE_LOMBOK
+    }
     useConfigurators(::LombokEnvironmentConfigurator)
     useAdditionalSourceProviders(::LombokAdditionalSourceFileProvider)
     useCustomRuntimeClasspathProviders(::LombokRuntimeClassPathProvider)

@@ -9,6 +9,9 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiLibraryBaseTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.standalone.StandaloneSessionServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.AnalysisApiServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.FirStandaloneServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AnalysisApiFirTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.configureOptionalTestCompilerPlugin
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibraryBinaryDecompiledTestModuleFactory
@@ -21,7 +24,6 @@ import org.jetbrains.kotlin.analysis.test.framework.services.libraries.Dispatchi
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompiler
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleDecompiler
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleDecompilerJar
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.preprocessors.ExternalAnnotationsSourcePreprocessor
@@ -49,11 +51,13 @@ abstract class StandaloneModeBinaryTestConfigurator : StandaloneModeConfigurator
         }
     }
 
-    override val serviceRegistrars: List<AnalysisApiTestServiceRegistrar>
+    override val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
         get() = listOf(
             AnalysisApiBaseTestServiceRegistrar,
+            FirStandaloneServiceRegistrar,
             AnalysisApiFirTestServiceRegistrar,
             AnalysisApiLibraryBaseTestServiceRegistrar,
+            StandaloneSessionServiceRegistrar,
             StandaloneModeTestServiceRegistrar,
         )
 

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.utils.detachedResolvable
 import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 import org.jetbrains.kotlin.gradle.utils.setAttribute
+import java.io.File
 
 internal typealias KotlinCompileConfig = BaseKotlinCompileConfig<KotlinCompile>
 
@@ -121,6 +122,7 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
         private const val DIRECTORY_ARTIFACT_TYPE = "directory"
         private const val JAR_ARTIFACT_TYPE = "jar"
         const val CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE = "classpath-entry-snapshot"
+        const val READONLY_CACHE_ENV_VAR = "GRADLE_RO_DEP_CACHE"
     }
 
     private fun registerTransformsOnce(
@@ -145,6 +147,10 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
         suppressVersionInconsistencyChecks: Boolean,
     ) {
         parameters.gradleUserHomeDir.set(project.gradle.gradleUserHomeDir)
+        val roDepCachePath = System.getenv(READONLY_CACHE_ENV_VAR)
+        if (!roDepCachePath.isNullOrEmpty()) {
+            parameters.gradleReadOnlyDependenciesCacheDir.set(File(roDepCachePath).absoluteFile)
+        }
         parameters.classLoadersCachingService.set(classLoadersCachingService)
         parameters.classpath.from(classpath)
         // add some tools.jar in order to reuse some of the classloaders required for compilation

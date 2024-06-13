@@ -11,21 +11,21 @@ scopes:
     packages: 0
     classifiers: 0
     callables: 1
-      KtLocalVariableSymbol:
-        annotationsList: []
-        callableIdIfNonLocal: null
+      KaLocalVariableSymbol:
+        annotations: []
+        callableId: null
         contextReceivers: []
         isExtension: false
         isVal: true
         name: <iterator>
         origin: SOURCE
         receiverParameter: null
-        returnType: KtUsualClassType:
-          annotationsList: []
-          ownTypeArguments: [
-            KtUsualClassType:
-              annotationsList: []
-              ownTypeArguments: []
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: [
+            KaUsualClassType:
+              annotations: []
+              typeArguments: []
               type: kotlin/Int
           ]
           type: kotlin/collections/Iterator<kotlin/Int>
@@ -43,9 +43,9 @@ scopes:
     packages: 0
     classifiers: 0
     callables: 1
-      KtValueParameterSymbol:
-        annotationsList: []
-        callableIdIfNonLocal: null
+      KaValueParameterSymbol:
+        annotations: []
+        callableId: null
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDefaultValue: false
@@ -57,12 +57,12 @@ scopes:
         name: list
         origin: SOURCE
         receiverParameter: null
-        returnType: KtUsualClassType:
-          annotationsList: []
-          ownTypeArguments: [
-            KtUsualClassType:
-              annotationsList: []
-              ownTypeArguments: []
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: [
+            KaUsualClassType:
+              annotations: []
+              typeArguments: []
               type: kotlin/Int
           ]
           type: kotlin/collections/List<kotlin/Int>
@@ -80,9 +80,9 @@ scopes:
     packages: 0
     classifiers: 0
     callables: 1
-      KtFunctionSymbol:
-        annotationsList: []
-        callableIdIfNonLocal: test/usage
+      KaFunctionSymbol:
+        annotations: []
+        callableId: test/usage
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -102,16 +102,16 @@ scopes:
         name: usage
         origin: SOURCE
         receiverParameter: null
-        returnType: KtUsualClassType:
-          annotationsList: []
-          ownTypeArguments: []
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
           type: kotlin/Unit
         symbolKind: TOP_LEVEL
         typeParameters: []
         valueParameters: [
-          KtValueParameterSymbol:
-            annotationsList: []
-            callableIdIfNonLocal: null
+          KaValueParameterSymbol:
+            annotations: []
+            callableId: null
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
             hasDefaultValue: false
@@ -123,12 +123,12 @@ scopes:
             name: list
             origin: SOURCE
             receiverParameter: null
-            returnType: KtUsualClassType:
-              annotationsList: []
-              ownTypeArguments: [
-                KtUsualClassType:
-                  annotationsList: []
-                  ownTypeArguments: []
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: [
+                KaUsualClassType:
+                  annotations: []
+                  typeArguments: []
                   type: kotlin/Int
               ]
               type: kotlin/collections/List<kotlin/Int>

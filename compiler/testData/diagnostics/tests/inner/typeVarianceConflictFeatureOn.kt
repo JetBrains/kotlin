@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +ReportTypeVarianceConflictOnQualifierArguments
+// LANGUAGE: +ReportTypeVarianceConflictOnQualifierArguments
 
 class Bar<K> {
     inner class Inner

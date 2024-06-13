@@ -1,4 +1,4 @@
-// !LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers
 // WITH_STDLIB
 
 import kotlin.reflect.KProperty

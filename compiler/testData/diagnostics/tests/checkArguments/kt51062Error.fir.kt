@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // FULL_JDK
-// !LANGUAGE: +ProgressionsChangingResolve -DisableCheckingChangedProgressionsResolve
+// LANGUAGE: +ProgressionsChangingResolve -DisableCheckingChangedProgressionsResolve
 // This test is not K1/K2 identical due to KT-58789 not implemented yet
 
 // FILE: JavaSmartList.java

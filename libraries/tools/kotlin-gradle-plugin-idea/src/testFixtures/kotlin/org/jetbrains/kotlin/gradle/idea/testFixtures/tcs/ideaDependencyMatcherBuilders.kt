@@ -9,8 +9,12 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.component.BuildIdentifier
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.internal.build.BuildState
-import org.jetbrains.kotlin.gradle.idea.tcs.*
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.sourcesClasspath
+import kotlin.test.fail
 
 fun buildIdeaKotlinDependencyMatchers(notation: Any?): List<IdeaKotlinDependencyMatcher> {
     return when (notation) {
@@ -107,3 +111,10 @@ fun IdeaKotlinDependencyMatcher.withResolvedSourcesFile(endsWith: String) =
         upstreamMatcher = this,
         filePattern = Regex(".*$endsWith")
     )
+
+fun IdeaKotlinDependency.assertNoSourcesResolved(): IdeaKotlinDependency {
+    if (this !is IdeaKotlinBinaryDependency) fail("Dependency $this is not a binary dependency")
+    if (sourcesClasspath.isNotEmpty()) fail("Expected that $this has no resolved sources")
+
+    return this
+}

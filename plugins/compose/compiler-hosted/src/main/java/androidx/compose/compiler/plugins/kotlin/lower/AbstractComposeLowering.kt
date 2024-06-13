@@ -21,8 +21,10 @@ package androidx.compose.compiler.plugins.kotlin.lower
 import androidx.compose.compiler.plugins.kotlin.ComposeCallableIds
 import androidx.compose.compiler.plugins.kotlin.ComposeClassIds
 import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
+import androidx.compose.compiler.plugins.kotlin.ComposeNames
+import androidx.compose.compiler.plugins.kotlin.FeatureFlag
+import androidx.compose.compiler.plugins.kotlin.FeatureFlags
 import androidx.compose.compiler.plugins.kotlin.FunctionMetrics
-import androidx.compose.compiler.plugins.kotlin.KtxNameConventions
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.compiler.plugins.kotlin.analysis.KnownStableConstructs
@@ -32,6 +34,7 @@ import androidx.compose.compiler.plugins.kotlin.analysis.isUncertain
 import androidx.compose.compiler.plugins.kotlin.analysis.knownStable
 import androidx.compose.compiler.plugins.kotlin.analysis.knownUnstable
 import androidx.compose.compiler.plugins.kotlin.irTrace
+import androidx.compose.compiler.plugins.kotlin.lower.decoys.copyWithNewTypeParams
 import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
@@ -71,6 +74,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.expressions.IrGetField
@@ -128,7 +132,10 @@ import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.addChild
+import org.jetbrains.kotlin.ir.util.copyTo
+import org.jetbrains.kotlin.ir.util.copyTypeParametersFrom
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
@@ -141,14 +148,17 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.properties
+import org.jetbrains.kotlin.ir.util.remapTypeParameters
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -158,7 +168,8 @@ abstract class AbstractComposeLowering(
     val context: IrPluginContext,
     val symbolRemapper: DeepCopySymbolRemapper,
     val metrics: ModuleMetrics,
-    val stabilityInferencer: StabilityInferencer
+    val stabilityInferencer: StabilityInferencer,
+    private val featureFlags: FeatureFlags,
 ) : IrElementTransformerVoid(), ModuleLoweringPass {
     protected val builtIns = context.irBuiltIns
 
@@ -178,6 +189,12 @@ abstract class AbstractComposeLowering(
 
     protected val composableIrClass: IrClass
         get() = symbolRemapper.getReferencedClass(_composableIrClass.symbol).owner
+
+    protected val jvmSyntheticIrClass by guardedLazy {
+        context.referenceClass(
+            ClassId(StandardClassIds.BASE_JVM_PACKAGE, Name.identifier("JvmSynthetic"))
+        )!!.owner
+    }
 
     fun referenceFunction(symbol: IrFunctionSymbol): IrFunctionSymbol {
         return symbolRemapper.getReferencedFunction(symbol)
@@ -220,6 +237,8 @@ abstract class AbstractComposeLowering(
             propertySymbol.owner.getter!!.symbol
         )
     }
+
+    val FeatureFlag.enabled get() = featureFlags.isEnabled(this)
 
     fun metricsFor(function: IrFunction): FunctionMetrics =
         (function as? IrAttributeContainer)?.let {
@@ -884,11 +903,11 @@ abstract class AbstractComposeLowering(
     }
 
     private fun IrClass.uniqueStabilityFieldName(): Name = Name.identifier(
-        kotlinFqName.asString().replace(".", "_") + KtxNameConventions.STABILITY_FLAG
+        kotlinFqName.asString().replace(".", "_") + ComposeNames.STABILITY_FLAG
     )
 
     private fun IrClass.uniqueStabilityPropertyName(): Name = Name.identifier(
-        kotlinFqName.asString().replace(".", "_") + KtxNameConventions.STABILITY_PROP_FLAG
+        kotlinFqName.asString().replace(".", "_") + ComposeNames.STABILITY_PROP_FLAG
     )
 
     fun IrClass.makeStabilityField(): IrField {
@@ -903,7 +922,7 @@ abstract class AbstractComposeLowering(
         return context.irFactory.buildField {
             startOffset = SYNTHETIC_OFFSET
             endOffset = SYNTHETIC_OFFSET
-            name = KtxNameConventions.STABILITY_FLAG
+            name = ComposeNames.STABILITY_FLAG
             isStatic = true
             isFinal = true
             type = context.irBuiltIns.intType
@@ -1435,6 +1454,94 @@ abstract class AbstractComposeLowering(
             symbol.owner.valueParameters.size
         )
     }
+
+    internal fun IrFunction.copyParametersFrom(original: IrFunction) {
+        val newFunction = this
+        // here generic value parameters will be applied
+        newFunction.copyTypeParametersFrom(original)
+
+        // ..but we need to remap the return type as well
+        newFunction.returnType = newFunction.returnType.remapTypeParameters(
+            source = original,
+            target = newFunction
+        )
+        newFunction.valueParameters = original.valueParameters.map {
+            val name = dexSafeName(it.name)
+            it.copyTo(
+                newFunction,
+                name = name,
+                type = it.type.remapTypeParameters(original, newFunction),
+                // remapping the type parameters explicitly
+                defaultValue = it.defaultValue?.copyWithNewTypeParams(original, newFunction)
+            )
+        }
+        newFunction.dispatchReceiverParameter =
+            original.dispatchReceiverParameter?.copyTo(newFunction)
+        newFunction.extensionReceiverParameter =
+            original.extensionReceiverParameter?.copyWithNewTypeParams(original, newFunction)
+
+        newFunction.valueParameters.forEach {
+            it.defaultValue?.transformDefaultValue(
+                originalFunction = original,
+                newFunction = newFunction
+            )
+        }
+    }
+
+    /**
+     *  Expressions for default values can use other parameters.
+     *  In such cases we need to ensure that default values expressions use parameters of the new
+     *  function (new/copied value parameters).
+     *
+     *  Example:
+     *  fun Foo(a: String, b: String = a) {...}
+     */
+    private fun IrExpressionBody.transformDefaultValue(
+        originalFunction: IrFunction,
+        newFunction: IrFunction
+    ) {
+        transformChildrenVoid(object : IrElementTransformerVoid() {
+            override fun visitGetValue(expression: IrGetValue): IrExpression {
+                val original = super.visitGetValue(expression)
+                val valueParameter =
+                    (expression.symbol.owner as? IrValueParameter) ?: return original
+
+                val parameterIndex = valueParameter.index
+                if (valueParameter.parent != originalFunction) {
+                    return super.visitGetValue(expression)
+                }
+                if (parameterIndex < 0) {
+                    when (valueParameter) {
+                        originalFunction.dispatchReceiverParameter -> {
+                            return IrGetValueImpl(
+                                expression.startOffset,
+                                expression.endOffset,
+                                newFunction.dispatchReceiverParameter!!.symbol,
+                                expression.origin
+                            )
+                        }
+                        originalFunction.extensionReceiverParameter -> {
+                            return IrGetValueImpl(
+                                expression.startOffset,
+                                expression.endOffset,
+                                newFunction.extensionReceiverParameter!!.symbol,
+                                expression.origin
+                            )
+                        }
+                        else -> {
+                            error("Cannot copy parameter: ${valueParameter.dump()}")
+                        }
+                    }
+                }
+                return IrGetValueImpl(
+                    expression.startOffset,
+                    expression.endOffset,
+                    newFunction.valueParameters[parameterIndex].symbol,
+                    expression.origin
+                )
+            }
+        })
+    }
 }
 
 private val unsafeSymbolsRegex = "[ <>]".toRegex()
@@ -1448,7 +1555,7 @@ fun IrFunction.composerParam(): IrValueParameter? {
 }
 
 fun IrValueParameter.isComposerParam(): Boolean =
-    name == KtxNameConventions.COMPOSER_PARAMETER && type.classFqName == ComposeFqNames.Composer
+    name == ComposeNames.COMPOSER_PARAMETER && type.classFqName == ComposeFqNames.Composer
 
 // FIXME: There is a `functionN` factory in `IrBuiltIns`, but it currently produces unbound symbols.
 //        We can switch to this and remove this function once KT-54230 is fixed.

@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.parsing.*
@@ -50,10 +51,10 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
 
     abstract fun T.toFirSourceElement(kind: KtFakeSourceElementKind? = null): KtSourceElement
 
-    protected val implicitUnitType = baseSession.builtinTypes.unitType
-    protected val implicitAnyType = baseSession.builtinTypes.anyType
-    protected val implicitEnumType = baseSession.builtinTypes.enumType
-    protected val implicitAnnotationType = baseSession.builtinTypes.annotationType
+    protected val implicitUnitType: FirImplicitBuiltinTypeRef = baseSession.builtinTypes.unitType
+    protected val implicitAnyType: FirImplicitBuiltinTypeRef = baseSession.builtinTypes.anyType
+    protected val implicitEnumType: FirImplicitBuiltinTypeRef = baseSession.builtinTypes.enumType
+    protected val implicitAnnotationType: FirImplicitBuiltinTypeRef = baseSession.builtinTypes.annotationType
 
     abstract val T.elementType: IElementType
     abstract val T.asText: String
@@ -76,7 +77,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         isExpect: Boolean,
         forceLocalContext: Boolean = false,
         l: () -> T,
-    ) = when {
+    ): T = when {
         forceLocalContext -> withForcedLocalContext {
             withChildClassNameRegardlessLocalContext(name, isExpect, l)
         }
@@ -179,7 +180,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         context.pushFirTypeParameters(status, currentFirTypeParameters)
     }
 
-    fun callableIdForName(name: Name) =
+    fun callableIdForName(name: Name): CallableId =
         when {
             context.className.shortNameOrSpecial() == SpecialNames.ANONYMOUS -> CallableId(
                 ClassId(context.packageFqName, SpecialNames.ANONYMOUS_FQ_NAME, isLocal = true), name
@@ -313,7 +314,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         }
     }
 
-    fun createErrorConstructorBuilder(diagnostic: ConeDiagnostic) =
+    fun createErrorConstructorBuilder(diagnostic: ConeDiagnostic): FirErrorPrimaryConstructorBuilder =
         FirErrorPrimaryConstructorBuilder().apply { this.diagnostic = diagnostic }
 
     fun FirLoopBuilder.prepareTarget(firLabelUser: Any): FirLoopTarget = prepareTarget(context.getLastLabel(firLabelUser))
@@ -503,7 +504,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         receiver: FirExpression,
         operationToken: IElementType,
     ): FirExpression? {
-        if (receiver !is FirLiteralExpression<*>) return null
+        if (receiver !is FirLiteralExpression) return null
         if (receiver.kind != ConstantValueKind.IntegerLiteral) return null
         if (operationToken != PLUS && operationToken != MINUS) return null
 
@@ -525,7 +526,8 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
     fun Array<out T?>.toInterpolatingCall(
         base: T,
         getElementType: (T) -> IElementType = { it.elementType },
-        convertTemplateEntry: T?.(String) -> FirExpression,
+        convertTemplateEntry: T?.(String) -> Collection<FirExpression>,
+        prefix: () -> String,
     ): FirExpression {
         return buildStringConcatenationCall {
             val sb = StringBuilder()
@@ -533,18 +535,18 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
             argumentList = buildArgumentList {
                 L@ for (entry in this@toInterpolatingCall) {
                     if (entry == null) continue
-                    arguments += when (getElementType(entry)) {
-                        OPEN_QUOTE, CLOSING_QUOTE -> continue@L
+                    when (getElementType(entry)) {
+                        INTERPOLATION_PREFIX, OPEN_QUOTE, CLOSING_QUOTE -> continue@L
                         LITERAL_STRING_TEMPLATE_ENTRY -> {
                             sb.append(entry.asText)
-                            buildLiteralExpression(
+                            arguments += buildLiteralExpression(
                                 entry.toFirSourceElement(), ConstantValueKind.String, entry.asText, setType = false
                             )
                         }
                         ESCAPE_STRING_TEMPLATE_ENTRY -> {
                             sb.append(entry.unescapedValue)
                             val characterWithDiagnostic = escapedStringToCharacter(entry.asText)
-                            buildConstOrErrorExpression(
+                            arguments += buildConstOrErrorExpression(
                                 entry.toFirSourceElement(),
                                 ConstantValueKind.Char,
                                 characterWithDiagnostic.value,
@@ -556,11 +558,19 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                         }
                         SHORT_STRING_TEMPLATE_ENTRY, LONG_STRING_TEMPLATE_ENTRY -> {
                             hasExpressions = true
-                            entry.convertTemplateEntry("Incorrect template argument")
+                            val expressions = entry.convertTemplateEntry("Incorrect template argument")
+                            if (expressions.isNotEmpty()) {
+                                arguments += expressions
+                            } else {
+                                arguments += buildErrorExpression {
+                                    source = entry.toFirSourceElement()
+                                    diagnostic = ConeSyntaxDiagnostic("Incorrect template argument")
+                                }
+                            }
                         }
                         else -> {
                             hasExpressions = true
-                            buildErrorExpression {
+                            arguments += buildErrorExpression {
                                 source = entry.toFirSourceElement()
                                 diagnostic = ConeSyntaxDiagnostic("Incorrect template entry: ${entry.asText}")
                             }
@@ -569,6 +579,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                 }
             }
             source = base?.toFirSourceElement()
+            interpolationPrefix = prefix()
             // Fast-pass if there is no errors and non-const string expressions
             if (!hasExpressions && !argumentList.arguments.any { it is FirErrorExpression })
                 return buildLiteralExpression(source, ConstantValueKind.String, sb.toString(), setType = false)
@@ -1134,7 +1145,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         }
     }
 
-    protected fun buildErrorTopLevelDestructuringDeclaration(source: KtSourceElement) = buildErrorProperty {
+    protected fun buildErrorTopLevelDestructuringDeclaration(source: KtSourceElement): FirErrorProperty = buildErrorProperty {
         this.source = source
         moduleData = baseModuleData
         origin = FirDeclarationOrigin.Source

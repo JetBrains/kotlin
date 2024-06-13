@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 
-class K2JSCompilerArguments : CommonCompilerArguments() {
+class K2JSCompilerArguments : CommonKlibBasedCompilerArguments() {
     companion object {
         @JvmStatic private val serialVersionUID = 0L
     }
@@ -556,20 +556,6 @@ In combination with '-meta-info', this generates both IR and pre-IR versions of 
     @Argument(value = "-Xerror-tolerance-policy", description = "Set up an error tolerance policy (NONE, SEMANTIC, SYNTAX, ALL). " +
             "Deprecated, will be removed in next compiler version.")
     var errorTolerancePolicy: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(value = "-Xpartial-linkage", valueDescription = "{enable|disable}", description = "Use partial linkage mode.")
-    var partialLinkageMode: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(value = "-Xpartial-linkage-loglevel", valueDescription = "{info|warning|error}", description = "Define the compile-time log level for partial linkage.")
-    var partialLinkageLogLevel: String? = null
         set(value) {
             checkFrozen()
             field = if (value.isNullOrEmpty()) null else value

@@ -11,7 +11,6 @@ import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
-import org.jetbrains.kotlin.gradle.targets.js.addWasmExperimentalArguments
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
@@ -59,7 +58,6 @@ internal class KotlinWasmD8(kotlinJsTest: KotlinJsTest) : KotlinJsTestFramework 
 
         val args = mutableListOf<String>()
         with(args) {
-            addWasmExperimentalArguments()
             add(testRunnerFile.absolutePath)
             add("--")
             addAll(cliArgs.toList())

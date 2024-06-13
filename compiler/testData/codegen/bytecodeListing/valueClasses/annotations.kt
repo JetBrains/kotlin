@@ -1,4 +1,4 @@
-// !LANGUAGE: +ValueClasses
+// LANGUAGE: +ValueClasses
 // WITH_STDLIB
 // FIR_IDENTICAL
 // TARGET_BACKEND: JVM_IR

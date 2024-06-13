@@ -1,5 +1,5 @@
-// !RENDER_DIAGNOSTICS_FULL_TEXT
-// !LANGUAGE: -ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound
+// RENDER_DIAGNOSTICS_FULL_TEXT
+// LANGUAGE: -ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound
 class Foo<K>
 
 fun <K> buildFoo(builderAction: Foo<K>.() -> Unit): Foo<K> = Foo()

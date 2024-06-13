@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols.pointers
 
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
 import kotlin.reflect.KClass
 
 public class CanNotCreateSymbolPointerForLocalLibraryDeclarationException(identifier: String) :
@@ -13,8 +13,8 @@ public class CanNotCreateSymbolPointerForLocalLibraryDeclarationException(identi
     public constructor(klass: KClass<*>) : this(klass.java.simpleName)
 }
 
-public class UnsupportedSymbolKind(identifier: String, kind: KtSymbolKind) : IllegalStateException(
-    "For symbol with kind = KtSymbolKind.${kind.name} was $identifier"
+public class UnsupportedSymbolKind(identifier: String, kind: KaSymbolKind) : IllegalStateException(
+    "For symbol with kind = KaSymbolKind.${kind.name} was $identifier"
 ) {
-    public constructor(clazz: KClass<*>, kind: KtSymbolKind) : this(clazz.java.simpleName, kind)
+    public constructor(clazz: KClass<*>, kind: KaSymbolKind) : this(clazz.java.simpleName, kind)
 }

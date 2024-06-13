@@ -14,12 +14,12 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -36,15 +36,15 @@ import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
-abstract class SymbolLightClassForClassLike<SType : KtClassOrObjectSymbol> protected constructor(
+abstract class SymbolLightClassForClassLike<SType : KaClassOrObjectSymbol> protected constructor(
     internal val classOrObjectDeclaration: KtClassOrObject?,
-    internal val classOrObjectSymbolPointer: KtSymbolPointer<SType>,
+    internal val classOrObjectSymbolPointer: KaSymbolPointer<SType>,
     ktModule: KtModule,
     manager: PsiManager,
 ) : SymbolLightClassBase(ktModule, manager),
     StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
     constructor(
-        ktAnalysisSession: KtAnalysisSession,
+        ktAnalysisSession: KaSession,
         ktModule: KtModule,
         classOrObjectSymbol: SType,
         manager: PsiManager,
@@ -52,7 +52,7 @@ abstract class SymbolLightClassForClassLike<SType : KtClassOrObjectSymbol> prote
         classOrObjectDeclaration = classOrObjectSymbol.sourcePsiSafe(),
         classOrObjectSymbolPointer = with(ktAnalysisSession) {
             @Suppress("UNCHECKED_CAST")
-            classOrObjectSymbol.createPointer() as KtSymbolPointer<SType>
+            classOrObjectSymbol.createPointer() as KaSymbolPointer<SType>
         },
         ktModule = ktModule,
         manager = manager,
@@ -64,11 +64,11 @@ abstract class SymbolLightClassForClassLike<SType : KtClassOrObjectSymbol> prote
 
     override val kotlinOrigin: KtClassOrObject? get() = classOrObjectDeclaration
 
-    internal inline fun <T> withClassOrObjectSymbol(crossinline action: KtAnalysisSession.(SType) -> T): T =
+    internal inline fun <T> withClassOrObjectSymbol(crossinline action: KaSession.(SType) -> T): T =
         classOrObjectSymbolPointer.withSymbol(ktModule, action)
 
     override val isTopLevel: Boolean by lazyPub {
-        classOrObjectDeclaration?.isTopLevel() ?: withClassOrObjectSymbol { it.symbolKind == KtSymbolKind.TOP_LEVEL }
+        classOrObjectDeclaration?.isTopLevel() ?: withClassOrObjectSymbol { it.symbolKind == KaSymbolKind.TOP_LEVEL }
     }
 
     private val _isDeprecated: Boolean by lazyPub {
@@ -143,10 +143,10 @@ abstract class SymbolLightClassForClassLike<SType : KtClassOrObjectSymbol> prote
 
     override fun hasModifierProperty(@NonNls name: String): Boolean = modifierList?.hasModifierProperty(name) ?: false
 
-    abstract fun classKind(): KtClassKind
-    override fun isInterface(): Boolean = classKind().let { it == KtClassKind.INTERFACE || it == KtClassKind.ANNOTATION_CLASS }
-    override fun isAnnotationType(): Boolean = classKind() == KtClassKind.ANNOTATION_CLASS
-    override fun isEnum(): Boolean = classKind() == KtClassKind.ENUM_CLASS
+    abstract fun classKind(): KaClassKind
+    override fun isInterface(): Boolean = classKind().let { it == KaClassKind.INTERFACE || it == KaClassKind.ANNOTATION_CLASS }
+    override fun isAnnotationType(): Boolean = classKind() == KaClassKind.ANNOTATION_CLASS
+    override fun isEnum(): Boolean = classKind() == KaClassKind.ENUM_CLASS
 
     override fun isValid(): Boolean = classOrObjectDeclaration?.isValid ?: classOrObjectSymbolPointer.isValid(ktModule)
 
@@ -160,7 +160,7 @@ abstract class SymbolLightClassForClassLike<SType : KtClassOrObjectSymbol> prote
 
     override fun getQualifiedName(): String? {
         val classOrObjectFqName = classOrObjectDeclaration?.fqName
-            ?: withClassOrObjectSymbol { s -> s.classIdIfNonLocal?.asSingleFqName() }
+            ?: withClassOrObjectSymbol { s -> s.classId?.asSingleFqName() }
 
         return classOrObjectFqName?.toString()
     }
@@ -176,7 +176,7 @@ abstract class SymbolLightClassForClassLike<SType : KtClassOrObjectSymbol> prote
             is KtClassOrObject -> parent.toLightClass()
             is KtScript -> parent.toLightClass()
             null -> withClassOrObjectSymbol { s ->
-                (s.getContainingSymbol() as? KtNamedClassOrObjectSymbol)?.let { createLightClassNoCache(it, ktModule, manager) }
+                (s.getContainingSymbol() as? KaNamedClassOrObjectSymbol)?.let { createLightClassNoCache(it, ktModule, manager) }
             }
             else -> null
         }
@@ -193,8 +193,8 @@ abstract class SymbolLightClassForClassLike<SType : KtClassOrObjectSymbol> prote
     abstract override fun getParent(): PsiElement?
     override fun getScope(): PsiElement? = parent
 
-    override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean =
-        baseClass?.let { InheritanceImplUtil.isInheritorDeep(this, it, classToByPass) } ?: false
+    override fun isInheritorDeep(baseClass: PsiClass, classToByPass: PsiClass?): Boolean =
+        InheritanceImplUtil.isInheritorDeep(this, baseClass, classToByPass)
 
     abstract override fun copy(): SymbolLightClassForClassLike<*>
 }

@@ -1,0 +1,38 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable
+fun Test() {
+    ReceiveValue(if (state && getCondition()) 0 else 1)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Test(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)<Receiv...>:Test.kt")
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    ReceiveValue(if (%composer.startReplaceGroup(<>)
+    sourceInformation(%composer, "<getCon...>")
+    val tmp0_group = state && getCondition(%composer, 0)
+    %composer.endReplaceGroup()
+    tmp0_group) 0 else 1, %composer, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

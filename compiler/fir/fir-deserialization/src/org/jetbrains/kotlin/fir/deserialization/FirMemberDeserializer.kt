@@ -88,7 +88,8 @@ class FirDeserializationContext(
     )
 
     val memberDeserializer: FirMemberDeserializer = FirMemberDeserializer(this)
-    val dispatchReceiver = relativeClassName?.let { ClassId(packageFqName, it, isLocal = false).defaultType(allTypeParameters) }
+    val dispatchReceiver: ConeClassLikeType? =
+        relativeClassName?.let { ClassId(packageFqName, it, isLocal = false).defaultType(allTypeParameters) }
 
     companion object {
         fun createForPackage(
@@ -219,7 +220,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
 
             annotations += c.annotationDeserializer.loadTypeAliasAnnotations(proto, local.nameResolver)
             this.symbol = symbol
-            expandedTypeRef = proto.underlyingType(c.typeTable).toTypeRef(local)
+            expandedTypeRef = proto.expandedType(c.typeTable).toTypeRef(local)
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.fir }
             deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false, versionRequirements)

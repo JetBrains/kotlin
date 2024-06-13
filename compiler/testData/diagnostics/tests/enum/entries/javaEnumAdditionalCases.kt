@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +EnumEntries +PrioritizedEnumEntries
+// LANGUAGE: +EnumEntries +PrioritizedEnumEntries
 // WITH_STDLIB
 // FIR_DUMP
 // ISSUE: KT-56623
@@ -9,17 +9,16 @@ public enum JavaEnum {
     public static String entries =  "entries";
 }
 
-// FILE: JavaEnum01.java
-
-interface I01 {
+// FILE: I.java
+interface I {
     String entries = "entries";
 }
 
-public enum JavaEnum01 implements I01 {
-}
+// FILE: JavaEnumI.java
+public enum JavaEnumI implements I {}
 
 // FILE: Main.kt
 fun main() {
     println(JavaEnum.entries)
-    println(JavaEnum01.entries)
+    println(JavaEnumI.entries)
 }

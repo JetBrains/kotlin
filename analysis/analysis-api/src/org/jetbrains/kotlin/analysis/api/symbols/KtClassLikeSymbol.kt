@@ -5,78 +5,96 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
-import org.jetbrains.kotlin.analysis.api.base.KtContextReceiversOwner
+import org.jetbrains.kotlin.analysis.api.base.KaContextReceiversOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
 
-public sealed class KtClassifierSymbol : KtSymbol, KtPossiblyNamedSymbol, KtDeclarationSymbol
+public sealed class KaClassifierSymbol : KaSymbol, KaPossiblyNamedSymbol, KaDeclarationSymbol
 
-public val KtClassifierSymbol.nameOrAnonymous: Name
+public typealias KtClassifierSymbol = KaClassifierSymbol
+
+public val KaClassifierSymbol.nameOrAnonymous: Name
     get() = name ?: SpecialNames.ANONYMOUS
 
-public abstract class KtTypeParameterSymbol : KtClassifierSymbol(), KtNamedSymbol {
-    abstract override fun createPointer(): KtSymbolPointer<KtTypeParameterSymbol>
+public abstract class KaTypeParameterSymbol : KaClassifierSymbol(), KaNamedSymbol {
+    abstract override fun createPointer(): KaSymbolPointer<KaTypeParameterSymbol>
 
-    final override val typeParameters: List<KtTypeParameterSymbol>
+    final override val typeParameters: List<KaTypeParameterSymbol>
         get() = withValidityAssertion { emptyList() }
 
-    public abstract val upperBounds: List<KtType>
+    public abstract val upperBounds: List<KaType>
     public abstract val variance: Variance
     public abstract val isReified: Boolean
 }
 
-public sealed class KtClassLikeSymbol : KtClassifierSymbol(), KtSymbolWithKind, KtPossibleMemberSymbol, KtPossibleMultiplatformSymbol {
-    public abstract val classIdIfNonLocal: ClassId?
+public typealias KtTypeParameterSymbol = KaTypeParameterSymbol
 
-    abstract override fun createPointer(): KtSymbolPointer<KtClassLikeSymbol>
+public sealed class KaClassLikeSymbol : KaClassifierSymbol(), KaSymbolWithKind, KaPossibleMemberSymbol, KaPossibleMultiplatformSymbol {
+    /**
+     * The [ClassId] of this class, or `null` if this class is local.
+     */
+    public abstract val classId: ClassId?
+
+    @Deprecated("Use `classId` instead.", ReplaceWith("classId"))
+    public val classIdIfNonLocal: ClassId? get() = classId
+
+    abstract override fun createPointer(): KaSymbolPointer<KaClassLikeSymbol>
 }
 
-public abstract class KtTypeAliasSymbol : KtClassLikeSymbol(),
-    KtSymbolWithVisibility,
-    KtNamedSymbol {
+public typealias KtClassLikeSymbol = KaClassLikeSymbol
+
+public abstract class KaTypeAliasSymbol : KaClassLikeSymbol(),
+    KaSymbolWithVisibility,
+    KaNamedSymbol {
 
     /**
      * Returns type from right-hand site of type alias
      * If type alias has type parameters, then those type parameters will be present in result type
      */
-    public abstract val expandedType: KtType
+    public abstract val expandedType: KaType
 
-    abstract override fun createPointer(): KtSymbolPointer<KtTypeAliasSymbol>
+    abstract override fun createPointer(): KaSymbolPointer<KaTypeAliasSymbol>
 }
 
-public sealed class KtClassOrObjectSymbol : KtClassLikeSymbol(), KtSymbolWithMembers {
+public typealias KtTypeAliasSymbol = KaTypeAliasSymbol
 
-    public abstract val classKind: KtClassKind
-    public abstract val superTypes: List<KtType>
+public sealed class KaClassOrObjectSymbol : KaClassLikeSymbol(), KaSymbolWithMembers {
 
-    abstract override fun createPointer(): KtSymbolPointer<KtClassOrObjectSymbol>
+    public abstract val classKind: KaClassKind
+    public abstract val superTypes: List<KaType>
+
+    abstract override fun createPointer(): KaSymbolPointer<KaClassOrObjectSymbol>
 }
 
-public abstract class KtAnonymousObjectSymbol : KtClassOrObjectSymbol() {
-    final override val classKind: KtClassKind get() = withValidityAssertion { KtClassKind.ANONYMOUS_OBJECT }
-    final override val classIdIfNonLocal: ClassId? get() = withValidityAssertion { null }
-    final override val symbolKind: KtSymbolKind get() = withValidityAssertion { KtSymbolKind.LOCAL }
+public typealias KtClassOrObjectSymbol = KaClassOrObjectSymbol
+
+public abstract class KaAnonymousObjectSymbol : KaClassOrObjectSymbol() {
+    final override val classKind: KaClassKind get() = withValidityAssertion { KaClassKind.ANONYMOUS_OBJECT }
+    final override val classId: ClassId? get() = withValidityAssertion { null }
+    final override val symbolKind: KaSymbolKind get() = withValidityAssertion { KaSymbolKind.LOCAL }
     final override val name: Name? get() = withValidityAssertion { null }
     final override val isActual: Boolean get() = withValidityAssertion { false }
     final override val isExpect: Boolean get() = withValidityAssertion { false }
 
-    final override val typeParameters: List<KtTypeParameterSymbol>
+    final override val typeParameters: List<KaTypeParameterSymbol>
         get() = withValidityAssertion { emptyList() }
 
-    abstract override fun createPointer(): KtSymbolPointer<KtAnonymousObjectSymbol>
+    abstract override fun createPointer(): KaSymbolPointer<KaAnonymousObjectSymbol>
 }
 
-public abstract class KtNamedClassOrObjectSymbol : KtClassOrObjectSymbol(),
-    KtSymbolWithModality,
-    KtSymbolWithVisibility,
-    KtNamedSymbol,
-    KtContextReceiversOwner {
+public typealias KtAnonymousObjectSymbol = KaAnonymousObjectSymbol
+
+public abstract class KaNamedClassOrObjectSymbol : KaClassOrObjectSymbol(),
+    KaSymbolWithModality,
+    KaSymbolWithVisibility,
+    KaNamedSymbol,
+    KaContextReceiversOwner {
 
     public abstract val isInner: Boolean
     public abstract val isData: Boolean
@@ -85,12 +103,14 @@ public abstract class KtNamedClassOrObjectSymbol : KtClassOrObjectSymbol(),
 
     public abstract val isExternal: Boolean
 
-    public abstract val companionObject: KtNamedClassOrObjectSymbol?
+    public abstract val companionObject: KaNamedClassOrObjectSymbol?
 
-    abstract override fun createPointer(): KtSymbolPointer<KtNamedClassOrObjectSymbol>
+    abstract override fun createPointer(): KaSymbolPointer<KaNamedClassOrObjectSymbol>
 }
 
-public enum class KtClassKind {
+public typealias KtNamedClassOrObjectSymbol = KaNamedClassOrObjectSymbol
+
+public enum class KaClassKind {
     CLASS,
     ENUM_CLASS,
     ANNOTATION_CLASS,
@@ -102,3 +122,5 @@ public enum class KtClassKind {
     public val isObject: Boolean get() = this == OBJECT || this == COMPANION_OBJECT || this == ANONYMOUS_OBJECT
     public val isClass: Boolean get() = this == CLASS || this == ANNOTATION_CLASS || this == ENUM_CLASS
 }
+
+public typealias KtClassKind = KaClassKind

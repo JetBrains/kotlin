@@ -7,6 +7,7 @@ package org.jetbrains.sir.printer
 
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.util.Comparators
+import org.jetbrains.kotlin.sir.util.swiftName
 import org.jetbrains.kotlin.utils.IndentingPrinter
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
@@ -15,14 +16,26 @@ public class SirAsSwiftSourcesPrinter(
     private val printer: SmartPrinter,
     private val stableDeclarationsOrder: Boolean,
     private val renderDocComments: Boolean,
+    private val emptyBodyStub: SirFunctionBody
 ) : IndentingPrinter by printer {
 
     public companion object {
-        public fun print(module: SirModule, stableDeclarationsOrder: Boolean, renderDocComments: Boolean): String {
+
+        public val fatalErrorBodyStub: SirFunctionBody = SirFunctionBody(
+            listOf("fatalError()")
+        )
+
+        public fun print(
+            module: SirModule,
+            stableDeclarationsOrder: Boolean,
+            renderDocComments: Boolean,
+            emptyBodyStub: SirFunctionBody = fatalErrorBodyStub
+        ): String {
             val childrenPrinter = SirAsSwiftSourcesPrinter(
                 SmartPrinter(StringBuilder()),
                 stableDeclarationsOrder = stableDeclarationsOrder,
                 renderDocComments = renderDocComments,
+                emptyBodyStub = emptyBodyStub,
             )
             val declarationsString = with(childrenPrinter) {
                 module.printChildren()
@@ -34,6 +47,7 @@ public class SirAsSwiftSourcesPrinter(
                     SmartPrinter(StringBuilder()),
                     stableDeclarationsOrder = stableDeclarationsOrder,
                     renderDocComments = renderDocComments,
+                    emptyBodyStub = emptyBodyStub,
                 )
                 with(importsPrinter) {
                     module.printImports()
@@ -61,7 +75,7 @@ public class SirAsSwiftSourcesPrinter(
         print("typealias ")
         printName()
         print(" = ")
-        println(type.swift)
+        println(type.swiftName)
     }
 
     private fun SirDeclarationContainer.print() {
@@ -121,7 +135,7 @@ public class SirAsSwiftSourcesPrinter(
             "var ",
             name.swiftIdentifier,
             ": ",
-            type.swift,
+            type.swiftName,
         )
         println(" {")
         withIndent {
@@ -138,9 +152,13 @@ public class SirAsSwiftSourcesPrinter(
         printPreNameKeywords()
         printName()
         printPostNameKeywords()
-        if (this !is SirAccessor) { print("(") }
+        if (this !is SirAccessor) {
+            print("(")
+        }
         collectParameters().print()
-        if (this !is SirAccessor) { print(")") }
+        if (this !is SirAccessor) {
+            print(")")
+        }
         printReturnType()
         println(" {")
         withIndent {
@@ -160,7 +178,7 @@ public class SirAsSwiftSourcesPrinter(
         documentation?.lines()?.forEach { println(it.trimIndent()) }
     }
 
-    private fun SirImport.print() = println("import $moduleName")
+    private fun SirImport.print() = println("${if (isExported) "@_exported " else ""}import $moduleName")
 
     private fun SirDeclarationContainer.printContainerKeyword() = print(
         when (this@printContainerKeyword) {
@@ -173,13 +191,13 @@ public class SirAsSwiftSourcesPrinter(
     )
 
     private fun SirClass.printSuperClass() = print(
-        superClass?.let { ": ${it.swift} " } ?: ""
+        superClass?.let { ": ${it.swiftName} " } ?: ""
     )
 
-    private fun SirElement.printName() =print(
+    private fun SirElement.printName() = print(
         when (this@printName) {
             is SirNamed -> name
-            is SirExtension -> extendedType.swift
+            is SirExtension -> extendedType.swiftName
             else -> error("There is no printable name for SirElement: ${this@printName}")
         }
     )
@@ -204,7 +222,7 @@ public class SirAsSwiftSourcesPrinter(
             is SirInit -> "init"
             is SirFunction -> "func $name"
             is SirGetter,
-            is SirSetter
+            is SirSetter,
             -> ""
         }
     )
@@ -213,7 +231,7 @@ public class SirAsSwiftSourcesPrinter(
         is SirInit -> "?".takeIf { isFailable }?.let { print(it) }
         is SirFunction,
         is SirGetter,
-        is SirSetter
+        is SirSetter,
         -> print("")
     }
 
@@ -226,10 +244,10 @@ public class SirAsSwiftSourcesPrinter(
 
     private fun SirCallable.printReturnType() = print(
         when (this) {
-            is SirFunction -> " -> ${returnType.swift}"
+            is SirFunction -> " -> ${returnType.swiftName}"
             is SirInit,
             is SirGetter,
-            is SirSetter
+            is SirSetter,
             -> ""
         }
     )
@@ -248,7 +266,7 @@ public class SirAsSwiftSourcesPrinter(
                 println()
                 withIndent {
                     this.forEachIndexed { index, sirParameter ->
-                        print(sirParameter.swift)
+                        print(sirParameter.swiftName)
                         if (index != lastIndex) {
                             println(",")
                         } else {
@@ -258,12 +276,13 @@ public class SirAsSwiftSourcesPrinter(
                 }
             }
 
-    private fun SirFunctionBody?.print() = (this?.statements ?: listOf("fatalError()"))
+    private fun SirFunctionBody?.print() = (this ?: emptyBodyStub)
+        .statements
         .forEach {
             println(it)
         }
 
-    private fun SirCallableKind.print() =print(
+    private fun SirCallableKind.print() = print(
         when (this) {
             SirCallableKind.FUNCTION -> ""
             SirCallableKind.INSTANCE_METHOD -> ""
@@ -282,24 +301,13 @@ private val SirVisibility.swift
         SirVisibility.PACKAGE -> "package"
     }
 
-private val SirParameter.swift get(): String = (argumentName ?: "_") + (parameterName?.let { " $it" } ?: "") + ": " + type.swift
-
-private val SirType.swift
-    get(): String = when (this) {
-        is SirExistentialType -> "Any"
-        is SirNominalType -> type.swiftFqName
-        is SirErrorType -> "ERROR_TYPE"
-        is SirUnsupportedType -> "UNSUPPORTED_TYPE"
-    }
-
-private val SirNamedDeclaration.swiftFqName: String
-    get() {
-        val parentName = (parent as? SirNamedDeclaration)?.swiftFqName
-            ?: ((parent as? SirNamed)?.name)
-            ?: ((parent as? SirExtension)?.extendedType?.swift)
-        return parentName?.let { "$it.$name" } ?: name
-    }
+private val SirParameter.swift get(): String = (argumentName ?: "_") + (parameterName?.let { " $it" } ?: "") + ": " + type.swiftName
 
 private val simpleIdentifierRegex = Regex("[_a-zA-Z][_a-zA-Z0-9]*")
 
 private val String.swiftIdentifier get() = if (simpleIdentifierRegex.matches(this)) this else "`$this`"
+
+private val SirParameter.swiftName
+    get(): String = (argumentName ?: "_") +
+            (parameterName?.let { " $it" } ?: "") + ": " +
+            type.swiftName

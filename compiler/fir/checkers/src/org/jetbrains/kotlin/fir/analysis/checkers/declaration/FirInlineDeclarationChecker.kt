@@ -16,12 +16,8 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.* import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getDirectOverriddenSymbols
-import org.jetbrains.kotlin.fir.analysis.checkers.inlineCheckerExtension
-import org.jetbrains.kotlin.fir.analysis.checkers.isInlineOnly
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -94,9 +90,9 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
             ) {
                 reporter.reportOn(
                     source,
-                    getNonPublicCallFromPublicInlineFactory(accessExpression, source, context),
-                    inlineFunction.symbol,
+                    getNonPublicCallFromPublicInlineFactory(accessExpression, accessedSymbol, source, context),
                     accessedSymbol,
+                    inlineFunction.symbol,
                     context
                 )
             } else {
@@ -111,6 +107,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
         private fun getNonPublicCallFromPublicInlineFactory(
             accessExpression: FirStatement,
+            accessedSymbol: FirBasedSymbol<*>,
             source: KtSourceElement,
             context: CheckerContext,
         ): KtDiagnosticFactory2<FirBasedSymbol<*>, FirBasedSymbol<*>> {
@@ -122,6 +119,10 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
                 if (isDelegatedPropertyAccessor || isForLoopButNotIteratorCall) {
                     return FirErrors.NON_PUBLIC_CALL_FROM_PUBLIC_INLINE_DEPRECATION
                 }
+            }
+
+            if (accessedSymbol is FirCallableSymbol && accessedSymbol.isInline) {
+                return FirErrors.NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE
             }
 
             return FirErrors.NON_PUBLIC_CALL_FROM_PUBLIC_INLINE
@@ -258,14 +259,14 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
         private fun checkVisibilityAndAccess(
             accessExpression: FirStatement,
-            calledDeclaration: FirCallableSymbol<*>?,
+            calledDeclaration: FirCallableSymbol<*>,
             source: KtSourceElement,
             context: CheckerContext,
             reporter: DiagnosticReporter,
         ) {
-            if (calledDeclaration == null ||
+            if (// Access of backing field (e.g. from getter) is not important, see inline/property/propertyWithBackingField.kt
                 calledDeclaration.callableId.callableName == BACKING_FIELD ||
-                calledDeclaration is FirPropertySymbol && calledDeclaration.isConst &&
+                // Any annotations do not rely to visibility problems
                 context.callsOrAssignments.any { it is FirAnnotationCall }
             ) {
                 return
@@ -485,7 +486,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
         expression is FirCallableReferenceAccess ||
                 expression is FirFunctionCall ||
                 expression is FirAnonymousFunctionExpression ||
-                (expression is FirLiteralExpression<*> && expression.value == null) //this will be reported separately
+                (expression is FirLiteralExpression && expression.value == null) //this will be reported separately
 
     fun checkCallableDeclaration(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration is FirPropertyAccessor) return

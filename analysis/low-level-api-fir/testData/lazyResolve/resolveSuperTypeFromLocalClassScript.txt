@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] resolveSuperTypeFromLocalClassScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-resolveSuperTypeFromLocalClassScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -22,8 +22,8 @@ FILE: [ResolvedTo(RAW_FIR)] resolveSuperTypeFromLocalClassScript.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-resolveSuperTypeFromLocalClassScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -44,8 +44,8 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-resolveSuperTypeFromLocalClassScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -66,8 +66,8 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-resolveSuperTypeFromLocalClassScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -88,8 +88,8 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-resolveSuperTypeFromLocalClassScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -110,8 +110,8 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-resolveSuperTypeFromLocalClassScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -132,8 +132,8 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-resolveSuperTypeFromLocalClassScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -154,8 +154,8 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-resolveSuperTypeFromLocalClassScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -176,8 +176,8 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-resolveSuperTypeFromLocalClassScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -206,8 +206,8 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-resolveSuperTypeFromLocalClassScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -236,8 +236,8 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-resolveSuperTypeFromLocalClassScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -266,8 +266,8 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-resolveSuperTypeFromLocalClassScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -296,8 +296,8 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-resolveSuperTypeFromLocalClassScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -326,8 +326,8 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] resolveSuperTypeFromLocalClassScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-resolveSuperTypeFromLocalClassScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] class UnusedClass : R|kotlin/Any| {
@@ -352,3 +352,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] resolveSuperTypeFromLocalClassScript.kts
             }
 
         }
+

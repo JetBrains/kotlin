@@ -294,7 +294,6 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
 
     put(JVMConfigurationKeys.SERIALIZE_IR, JvmSerializeIrMode.fromString(arguments.serializeIr))
 
-    put(JVMConfigurationKeys.VALIDATE_IR, arguments.validateIr)
     put(JVMConfigurationKeys.VALIDATE_BYTECODE, arguments.validateBytecode)
 
     put(JVMConfigurationKeys.LINK_VIA_SIGNATURES, arguments.linkViaSignatures)
@@ -361,9 +360,6 @@ fun CompilerConfiguration.configureKlibPaths(arguments: K2JVMCompilerArguments) 
     val libraries = arguments.klibLibraries ?: return
     put(JVMConfigurationKeys.KLIB_PATHS, libraries.split(File.pathSeparator.toRegex()).filterNot(String::isEmpty))
 }
-
-private val CompilerConfiguration.messageCollector: MessageCollector
-    get() = getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
 private fun getJavaVersion(): Int =
     System.getProperty("java.specification.version")?.substringAfter('.')?.toIntOrNull() ?: 6

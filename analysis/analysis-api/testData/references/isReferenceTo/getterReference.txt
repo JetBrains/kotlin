@@ -1,0 +1,2 @@
+Resolved to:
+    (in DeclSite) (psi: val x = 0)

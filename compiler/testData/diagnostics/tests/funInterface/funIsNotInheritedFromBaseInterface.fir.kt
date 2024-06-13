@@ -1,5 +1,5 @@
-// !LANGUAGE: +FunctionalInterfaceConversion +SamConversionPerArgument +SamConversionForKotlinFunctions
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +FunctionalInterfaceConversion +SamConversionPerArgument +SamConversionForKotlinFunctions
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun interface Base {
     fun invoke()

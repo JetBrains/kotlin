@@ -18,7 +18,7 @@ object KtDiagnosticClassRenderer : AbstractDiagnosticsDataClassRenderer() {
     }
 
     private fun SmartPrinter.printDiagnosticClasses(diagnosticList: HLDiagnosticList) {
-        inBracketsWithIndent("sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI>") {
+        inBracketsWithIndent("sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI>") {
             for (diagnostic in diagnosticList.diagnostics) {
                 printDiagnosticClass(diagnostic, diagnosticList)
                 println()
@@ -27,7 +27,7 @@ object KtDiagnosticClassRenderer : AbstractDiagnosticsDataClassRenderer() {
     }
 
     private fun SmartPrinter.printDiagnosticClass(diagnostic: HLDiagnostic, diagnosticList: HLDiagnosticList) {
-        print("interface ${diagnostic.className} : KtFirDiagnostic<")
+        print("interface ${diagnostic.className} : KaFirDiagnostic<")
         printTypeWithShortNames(diagnostic.original.psiType)
         print(">")
         inBracketsWithIndent {
@@ -51,7 +51,7 @@ object KtDiagnosticClassRenderer : AbstractDiagnosticsDataClassRenderer() {
     }
 
     override val defaultImports = listOf(
-        "org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnosticWithPsi",
+        "org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi",
         "com.intellij.psi.PsiElement",
     )
 }

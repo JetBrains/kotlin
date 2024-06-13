@@ -6,25 +6,24 @@
 package org.jetbrains.kotlin.objcexport.analysisApiUtils
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtClassType
-import org.jetbrains.kotlin.analysis.api.types.KtClassTypeQualifier.KtResolvedClassTypeQualifier
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.name.NativeStandardInteropNames
-import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 context(KtAnalysisSession)
 internal fun KtType.isObjCObjectType(): Boolean {
-    /* Check if this type represents 'ObjCObject' */
-    (this as? KtClassType)?.qualifiers.orEmpty()
-        .filterIsInstance<KtResolvedClassTypeQualifier>()
-        .asSequence()
-        .map { qualifier -> qualifier.symbol }
-        .filterIsInstance<KtNamedClassOrObjectSymbol>()
-        .any { symbol -> symbol.classIdIfNonLocal == NativeStandardInteropNames.objCObjectClassId }
-        .ifTrue { return true }
+    val symbol = this.symbol
 
+    if (symbol != null) {
+        if (symbol.classId == NativeStandardInteropNames.objCObjectClassId) {
+            return true
+        }
 
-    /* Check super types */
-    return this.getDirectSuperTypes().any { superType -> superType.isObjCObjectType() }
+        if (symbol is KaClassOrObjectSymbol) {
+            return symbol.superTypes.any { it.isObjCObjectType() }
+        }
+    }
+
+    return false
 }

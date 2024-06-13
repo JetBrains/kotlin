@@ -7,20 +7,20 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.analysis.api.KtInitializerValue
-import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
+import org.jetbrains.kotlin.analysis.api.KaInitializerValue
+import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.*
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.UnsupportedSymbolKind
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.containingClassLookupTag
@@ -35,10 +35,10 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 
-internal class KtFirKotlinPropertySymbol(
+internal class KaFirKotlinPropertySymbol(
     override val firSymbol: FirPropertySymbol,
-    override val analysisSession: KtFirAnalysisSession,
-) : KtKotlinPropertySymbol(), KtFirSymbol<FirPropertySymbol> {
+    override val analysisSession: KaFirSession,
+) : KaKotlinPropertySymbol(), KaFirSymbol<FirPropertySymbol> {
     init {
         assert(!firSymbol.isLocal)
         check(firSymbol !is FirSyntheticPropertySymbol)
@@ -53,47 +53,47 @@ internal class KtFirKotlinPropertySymbol(
     override val isVal: Boolean get() = withValidityAssertion { firSymbol.isVal }
     override val name: Name get() = withValidityAssertion { firSymbol.name }
 
-    override val returnType: KtType get() = withValidityAssertion { firSymbol.returnType(builder) }
-    override val receiverParameter: KtReceiverParameterSymbol? get() = withValidityAssertion { firSymbol.receiver(builder) }
+    override val returnType: KaType get() = withValidityAssertion { firSymbol.returnType(builder) }
+    override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { firSymbol.receiver(builder) }
 
-    override val contextReceivers: List<KtContextReceiver> by cached { firSymbol.createContextReceivers(builder) }
+    override val contextReceivers: List<KaContextReceiver> by cached { firSymbol.createContextReceivers(builder) }
 
     override val isExtension: Boolean get() = withValidityAssertion { firSymbol.isExtension }
-    override val initializer: KtInitializerValue? by cached { firSymbol.getKtConstantInitializer(builder) }
+    override val initializer: KaInitializerValue? by cached { firSymbol.getKtConstantInitializer(builder) }
 
-    override val symbolKind: KtSymbolKind
+    override val symbolKind: KaSymbolKind
         get() = withValidityAssertion {
             if (firSymbol.origin == FirDeclarationOrigin.DynamicScope) {
-                return@withValidityAssertion KtSymbolKind.CLASS_MEMBER
+                return@withValidityAssertion KaSymbolKind.CLASS_MEMBER
             }
             when (firSymbol.containingClassLookupTag()?.classId) {
-                null -> KtSymbolKind.TOP_LEVEL
-                else -> KtSymbolKind.CLASS_MEMBER
+                null -> KaSymbolKind.TOP_LEVEL
+                else -> KaSymbolKind.CLASS_MEMBER
             }
         }
 
     override val modality: Modality get() = withValidityAssertion { firSymbol.modality }
     override val visibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
 
-    override val annotationsList by cached {
-        KtFirAnnotationListForDeclaration.create(firSymbol, builder)
+    override val annotations by cached {
+        KaFirAnnotationListForDeclaration.create(firSymbol, builder)
     }
 
-    override val callableIdIfNonLocal: CallableId? get() = withValidityAssertion { firSymbol.getCallableIdIfNonLocal() }
+    override val callableId: CallableId? get() = withValidityAssertion { firSymbol.getCallableId() }
 
-    override val typeParameters: List<KtTypeParameterSymbol>
+    override val typeParameters: List<KaTypeParameterSymbol>
         get() = withValidityAssertion { firSymbol.createKtTypeParameters(builder) }
 
-    override val getter: KtPropertyGetterSymbol?
+    override val getter: KaPropertyGetterSymbol?
         get() = withValidityAssertion {
-            firSymbol.getterSymbol?.let { builder.callableBuilder.buildPropertyAccessorSymbol(it) } as? KtPropertyGetterSymbol
+            firSymbol.getterSymbol?.let { builder.callableBuilder.buildPropertyAccessorSymbol(it) } as? KaPropertyGetterSymbol
         }
 
-    override val setter: KtPropertySetterSymbol?
+    override val setter: KaPropertySetterSymbol?
         get() = withValidityAssertion {
-            firSymbol.setterSymbol?.let { builder.callableBuilder.buildPropertyAccessorSymbol(it) } as? KtPropertySetterSymbol
+            firSymbol.setterSymbol?.let { builder.callableBuilder.buildPropertyAccessorSymbol(it) } as? KaPropertySetterSymbol
         }
-    override val backingFieldSymbol: KtBackingFieldSymbol?
+    override val backingFieldSymbol: KaBackingFieldSymbol?
         get() = withValidityAssertion {
             firSymbol.backingFieldSymbol?.let { builder.callableBuilder.buildBackingFieldSymbol(it) }
         }
@@ -122,25 +122,25 @@ internal class KtFirKotlinPropertySymbol(
     override val hasGetter: Boolean get() = withValidityAssertion { firSymbol.getterSymbol != null }
     override val hasSetter: Boolean get() = withValidityAssertion { firSymbol.setterSymbol != null }
 
-    override fun createPointer(): KtSymbolPointer<KtKotlinPropertySymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtVariableLikeSymbol>(this)?.let { psiPointer ->
-            return KtFirPsiBasedPropertySymbolPointer(psiPointer)
+    override fun createPointer(): KaSymbolPointer<KaKotlinPropertySymbol> = withValidityAssertion {
+        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaVariableLikeSymbol>(this)?.let { psiPointer ->
+            return KaFirPsiBasedPropertySymbolPointer(psiPointer)
         }
 
         return when (val kind = symbolKind) {
-            KtSymbolKind.TOP_LEVEL -> {
+            KaSymbolKind.TOP_LEVEL -> {
                 if (firSymbol.fir.origin is FirDeclarationOrigin.ScriptCustomization.ResultProperty) {
-                    KtFirResultPropertySymbolPointer(analysisSession.createOwnerPointer(this))
+                    KaFirResultPropertySymbolPointer(analysisSession.createOwnerPointer(this))
                 } else {
-                    KtFirTopLevelPropertySymbolPointer(
+                    KaFirTopLevelPropertySymbolPointer(
                         firSymbol.callableId,
                         FirCallableSignature.createSignature(firSymbol),
                     )
                 }
             }
 
-            KtSymbolKind.CLASS_MEMBER ->
-                KtFirMemberPropertySymbolPointer(
+            KaSymbolKind.CLASS_MEMBER ->
+                KaFirMemberPropertySymbolPointer(
                     ownerPointer = analysisSession.createOwnerPointer(this),
                     name = firSymbol.name,
                     signature = FirCallableSignature.createSignature(firSymbol),

@@ -1,6 +1,6 @@
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: one/ValueClass.hashCode
+KaFunctionSymbol:
+  annotations: []
+  callableId: one/ValueClass.hashCode
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -20,17 +20,17 @@ KtFunctionSymbol:
   name: hashCode
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: one/ValueClass
   getContainingFileSymbol: null
   getContainingJvmClassName: one.ValueClass

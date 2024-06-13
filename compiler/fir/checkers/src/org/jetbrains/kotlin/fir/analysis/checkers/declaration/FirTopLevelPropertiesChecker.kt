@@ -13,10 +13,11 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.cfa.checkPropertyAccesses
+import org.jetbrains.kotlin.fir.analysis.cfa.PropertyInitializationCheckProcessor
 import org.jetbrains.kotlin.fir.analysis.cfa.requiresInitialization
-import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfo
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoData
+import org.jetbrains.kotlin.fir.analysis.cfa.util.VariableInitializationInfo
+import org.jetbrains.kotlin.fir.analysis.cfa.util.VariableInitializationInfoData
 import org.jetbrains.kotlin.fir.analysis.checkers.FirModifierList
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.contains
@@ -65,7 +66,7 @@ private fun FirDeclaration.collectionInitializationInfo(
     topLevelProperties: List<FirProperty>,
     context: CheckerContext,
     reporter: DiagnosticReporter,
-): PropertyInitializationInfo? {
+): VariableInitializationInfo? {
     val graph = (this as? FirControlFlowGraphOwner)?.controlFlowGraphReference?.controlFlowGraph ?: return null
 
     val propertySymbols = topLevelProperties.mapNotNullTo(mutableSetOf()) { declaration ->
@@ -75,7 +76,7 @@ private fun FirDeclaration.collectionInitializationInfo(
 
     // TODO, KT-59803: merge with `FirPropertyInitializationAnalyzer` for fewer passes.
     val data = PropertyInitializationInfoData(propertySymbols, conditionallyInitializedProperties = emptySet(), receiver = null, graph)
-    data.checkPropertyAccesses(isForInitialization = true, context, reporter)
+    PropertyInitializationCheckProcessor.check(data, isForInitialization = true, context, reporter)
     return data.getValue(graph.exitNode)[NormalPath]
 }
 

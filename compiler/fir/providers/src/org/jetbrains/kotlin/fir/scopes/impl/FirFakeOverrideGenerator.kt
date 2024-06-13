@@ -513,6 +513,7 @@ object FirFakeOverrideGenerator {
             modality = modality ?: Modality.FINAL,
             effectiveVisibility = effectiveVisibility,
             resolvePhase = origin.resolvePhaseForCopy,
+            parameterSource = valueParameters.first().source
         ).apply {
             replaceAnnotations(this@buildCopy.annotations)
         }
@@ -701,7 +702,8 @@ object FirFakeOverrideGenerator {
         session: FirSession,
         baseField: FirField,
         derivedClassLookupTag: ConeClassLikeLookupTag,
-        newReturnType: ConeKotlinType?,
+        newReturnType: ConeKotlinType? = null,
+        newDispatchReceiverType: ConeSimpleKotlinType?,
         origin: FirDeclarationOrigin.SubstitutionOverride,
     ): FirFieldSymbol = buildField {
         val symbol = FirFieldSymbol(CallableId(derivedClassLookupTag.classId, baseField.name))
@@ -717,7 +719,7 @@ object FirFakeOverrideGenerator {
         resolvePhase = origin.resolvePhaseForCopy
         annotations += baseField.annotations
         attributes = baseField.attributes.copy()
-        dispatchReceiverType = baseField.dispatchReceiverType
+        dispatchReceiverType = newDispatchReceiverType
     }.apply {
         originalForSubstitutionOverrideAttr = baseField
         containingClassForStaticMemberAttr = derivedClassLookupTag.takeIf { shouldOverrideSetContainingClass(baseField) }

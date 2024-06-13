@@ -1,4 +1,4 @@
-// !DUMP_CFG
+// DUMP_CFG
 
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty

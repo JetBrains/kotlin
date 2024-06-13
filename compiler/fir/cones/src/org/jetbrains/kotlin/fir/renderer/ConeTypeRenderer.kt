@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 open class ConeTypeRenderer(
@@ -69,41 +72,9 @@ open class ConeTypeRenderer(
             type.renderAttributes()
         }
         when (type) {
-            is ConeTypeVariableType -> {
-                builder.append("TypeVariable(")
-                builder.append(type.typeConstructor.name)
-                builder.append(")")
-            }
-
             is ConeDefinitelyNotNullType -> {
                 render(type.original)
                 builder.append(" & Any")
-            }
-
-            is ConeErrorType -> {
-                builder.append("ERROR CLASS: ${type.diagnostic.reason}")
-            }
-
-            is ConeCapturedType -> {
-                builder.append("CapturedType(")
-                type.constructor.projection.render()
-                builder.append(")")
-            }
-
-            is ConeClassLikeType -> {
-                type.render()
-            }
-
-            is ConeLookupTagBasedType -> {
-                builder.append(type.lookupTag.name.asString())
-            }
-
-            is ConeDynamicType -> {
-                builder.append("dynamic")
-            }
-
-            is ConeFlexibleType -> {
-                render(type)
             }
 
             is ConeIntersectionType -> {
@@ -117,12 +88,21 @@ open class ConeTypeRenderer(
                 builder.append(")")
             }
 
-            is ConeStubType -> {
-                builder.append("Stub (subtyping): ${type.constructor.variable}")
+            is ConeDynamicType -> {
+                builder.append("dynamic")
             }
 
-            is ConeIntegerLiteralType -> {
+            is ConeFlexibleType -> {
                 render(type)
+            }
+
+            is ConeErrorType -> builder.append("ERROR CLASS: ${type.diagnostic.reason}")
+
+            is ConeSimpleKotlinType -> {
+                renderConstructor(type.getConstructor())
+                if (type is ConeClassLikeType) {
+                    type.renderTypeArguments()
+                }
             }
         }
         if (type !is ConeFlexibleType && type !is ConeErrorType) {
@@ -130,8 +110,34 @@ open class ConeTypeRenderer(
         }
     }
 
-    private fun ConeClassLikeType.render() {
-        idRenderer.renderClassId(lookupTag.classId)
+    open fun renderConstructor(constructor: TypeConstructorMarker) {
+        when (constructor) {
+            is ConeTypeVariableTypeConstructor -> {
+                builder.append("TypeVariable(")
+                builder.append(constructor.name)
+                builder.append(")")
+            }
+
+            is ConeCapturedTypeConstructor -> {
+                builder.append("CapturedType(")
+                constructor.projection.render()
+                builder.append(")")
+            }
+
+            is ConeClassLikeLookupTag -> idRenderer.renderClassId(constructor.classId)
+            is ConeClassifierLookupTag -> builder.append(constructor.name.asString())
+
+            is ConeStubTypeConstructor -> builder.append("Stub (subtyping): ${constructor.variable}")
+            is ConeIntegerLiteralType -> render(constructor)
+
+            is ConeIntersectionType -> error(
+                "`renderConstructor` mustn't be called with an intersection type argument. " +
+                        "Call `render` to simply render the type or filter out intersection types on the call-site."
+            )
+        }
+    }
+
+    private fun ConeClassLikeType.renderTypeArguments() {
         if (typeArguments.isEmpty()) return
         builder.append("<")
         for ((index, typeArgument) in typeArguments.withIndex()) {

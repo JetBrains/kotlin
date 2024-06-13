@@ -22,6 +22,7 @@ object CommonTypeCheckers : TypeCheckers() {
         FirOptionalExpectationTypeChecker,
         FirIncompatibleClassTypeChecker,
         FirContextReceiversTypeChecker,
+        FirProjectionRelationChecker,
         FirArrayOfNothingTypeChecker,
     )
 }

@@ -11,11 +11,9 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.plugin.DeprecatedHasCompilerOptions
-import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryNext
+import org.jetbrains.kotlin.gradle.utils.KotlinNativeCompilerOptionsDefault
 
 class NativeCompilerOptions(project: Project) : DeprecatedHasCompilerOptions<KotlinNativeCompilerOptions> {
 
-    override val options: KotlinNativeCompilerOptions = project.objects
-        .newInstance(KotlinNativeCompilerOptionsDefault::class.java)
-        .configureExperimentalTryNext(project)
+    override val options: KotlinNativeCompilerOptions = project.objects.KotlinNativeCompilerOptionsDefault(project)
 }

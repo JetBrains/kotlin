@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // WITH_STDLIB
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun <T, R> foo(x: kotlin.reflect.KFunction1<T, R>) {}
 fun <T, R> foo(x: kotlin.reflect.KProperty1<T, R>) {}

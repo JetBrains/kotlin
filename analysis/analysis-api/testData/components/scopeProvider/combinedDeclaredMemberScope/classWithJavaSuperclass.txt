@@ -1,6 +1,6 @@
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: test/KotlinClass.foo
+KaFunctionSymbol:
+  annotations: []
+  callableId: test/KotlinClass.foo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -20,49 +20,49 @@ KtFunctionSymbol:
   name: foo
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: test/KotlinClass
-  getContainingFileSymbol: KtFileSymbol(KotlinClass.kt)
+  getContainingFileSymbol: KaFileSymbol(KotlinClass.kt)
   getContainingJvmClassName: test.KotlinClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtKotlinPropertySymbol:
-  annotationsList: []
-  backingFieldSymbol: KtBackingFieldSymbol:
-    annotationsList: []
-    callableIdIfNonLocal: null
+KaKotlinPropertySymbol:
+  annotations: []
+  backingFieldSymbol: KaBackingFieldSymbol:
+    annotations: []
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
     origin: PROPERTY_BACKING_FIELD
-    owningProperty: KtKotlinPropertySymbol(test/KotlinClass.bar)
+    owningProperty: KaKotlinPropertySymbol(test/KotlinClass.bar)
     receiverParameter: null
-    returnType: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/String
     symbolKind: LOCAL
     typeParameters: []
-    getContainingFileSymbol: KtFileSymbol(KotlinClass.kt)
+    getContainingFileSymbol: KaFileSymbol(KotlinClass.kt)
     getContainingJvmClassName: test.KotlinClass
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  callableIdIfNonLocal: test/KotlinClass.bar
+  callableId: test/KotlinClass.bar
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
-    annotationsList: []
-    callableIdIfNonLocal: null
+  getter: KaPropertyGetterSymbol:
+    annotations: []
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -73,19 +73,19 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
-    returnType: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/String
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
-    getDispatchReceiver(): KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: test/KotlinClass
-    getContainingFileSymbol: KtFileSymbol(KotlinClass.kt)
+    getContainingFileSymbol: KaFileSymbol(KotlinClass.kt)
     getContainingJvmClassName: test.KotlinClass
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
@@ -107,19 +107,19 @@ KtKotlinPropertySymbol:
   name: bar
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/String
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: test/KotlinClass
-  getContainingFileSymbol: KtFileSymbol(KotlinClass.kt)
+  getContainingFileSymbol: KaFileSymbol(KotlinClass.kt)
   getContainingJvmClassName: test.KotlinClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
@@ -128,9 +128,9 @@ KtKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: test/KotlinClass.C2
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: test/KotlinClass.C2
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -145,22 +145,22 @@ KtNamedClassOrObjectSymbol:
   name: C2
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(KotlinClass.kt)
+  getContainingFileSymbol: KaFileSymbol(KotlinClass.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: test/KotlinClass.O2
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: test/KotlinClass.O2
   classKind: OBJECT
   companionObject: null
   contextReceivers: []
@@ -175,22 +175,22 @@ KtNamedClassOrObjectSymbol:
   name: O2
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(KotlinClass.kt)
+  getContainingFileSymbol: KaFileSymbol(KotlinClass.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: test/KotlinClass.Companion
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: test/KotlinClass.Companion
   classKind: COMPANION_OBJECT
   companionObject: null
   contextReceivers: []
@@ -205,23 +205,23 @@ KtNamedClassOrObjectSymbol:
   name: Companion
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(KotlinClass.kt)
+  getContainingFileSymbol: KaFileSymbol(KotlinClass.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtConstructorSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
-  containingClassIdIfNonLocal: test/KotlinClass
+KaConstructorSymbol:
+  annotations: []
+  callableId: null
+  containingClassId: test/KotlinClass
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -230,15 +230,15 @@ KtConstructorSymbol:
   isPrimary: true
   origin: SOURCE_MEMBER_GENERATED
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: test/KotlinClass
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(KotlinClass.kt)
+  getContainingFileSymbol: KaFileSymbol(KotlinClass.kt)
   getContainingJvmClassName: test.KotlinClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

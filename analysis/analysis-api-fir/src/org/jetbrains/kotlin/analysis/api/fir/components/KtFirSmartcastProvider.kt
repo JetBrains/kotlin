@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.components.KtImplicitReceiverSmartCast
-import org.jetbrains.kotlin.analysis.api.components.KtImplicitReceiverSmartCastKind
-import org.jetbrains.kotlin.analysis.api.components.KtSmartCastInfo
-import org.jetbrains.kotlin.analysis.api.components.KtSmartCastProvider
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.components.KaImplicitReceiverSmartCast
+import org.jetbrains.kotlin.analysis.api.components.KaImplicitReceiverSmartCastKind
+import org.jetbrains.kotlin.analysis.api.components.KaSmartCastInfo
+import org.jetbrains.kotlin.analysis.api.components.KaSmartCastProvider
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -21,10 +21,10 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 
-internal class KtFirSmartcastProvider(
-    override val analysisSession: KtFirAnalysisSession,
-    override val token: KtLifetimeToken,
-) : KtSmartCastProvider(), KtFirAnalysisSessionComponent {
+internal class KaFirSmartcastProvider(
+    override val analysisSession: KaFirSession,
+    override val token: KaLifetimeToken,
+) : KaSmartCastProvider(), KaFirSessionComponent {
 
     private val KtExpression.isExplicitSmartCastInfoTarget: Boolean
         get() {
@@ -56,14 +56,14 @@ internal class KtFirSmartcastProvider(
         }
     }
 
-    override fun getSmartCastedInfo(expression: KtExpression): KtSmartCastInfo? {
+    override fun getSmartCastedInfo(expression: KtExpression): KaSmartCastInfo? {
         val firSmartCastExpression = getMatchingFirExpressionWithSmartCast(expression) ?: return null
         return getSmartCastedInfo(firSmartCastExpression)
     }
 
-    private fun getSmartCastedInfo(expression: FirSmartCastExpression): KtSmartCastInfo? {
+    private fun getSmartCastedInfo(expression: FirSmartCastExpression): KaSmartCastInfo? {
         val type = expression.smartcastType.coneTypeSafe<ConeKotlinType>()?.asKtType() ?: return null
-        return KtSmartCastInfo(type, expression.isStable, token)
+        return KaSmartCastInfo(type, expression.isStable, token)
     }
 
     private val KtExpression.isImplicitSmartCastInfoTarget: Boolean
@@ -85,29 +85,29 @@ internal class KtFirSmartcastProvider(
         }
     }
 
-    override fun getImplicitReceiverSmartCast(expression: KtExpression): Collection<KtImplicitReceiverSmartCast> {
+    override fun getImplicitReceiverSmartCast(expression: KtExpression): Collection<KaImplicitReceiverSmartCast> {
         val firQualifiedExpression = getMatchingFirQualifiedAccessExpression(expression) ?: return emptyList()
 
         return listOfNotNull(
-            smartCastedImplicitReceiver(firQualifiedExpression, KtImplicitReceiverSmartCastKind.DISPATCH),
-            smartCastedImplicitReceiver(firQualifiedExpression, KtImplicitReceiverSmartCastKind.EXTENSION),
+            smartCastedImplicitReceiver(firQualifiedExpression, KaImplicitReceiverSmartCastKind.DISPATCH),
+            smartCastedImplicitReceiver(firQualifiedExpression, KaImplicitReceiverSmartCastKind.EXTENSION),
         )
     }
 
     private fun smartCastedImplicitReceiver(
         firExpression: FirQualifiedAccessExpression,
-        kind: KtImplicitReceiverSmartCastKind,
-    ): KtImplicitReceiverSmartCast? {
+        kind: KaImplicitReceiverSmartCastKind,
+    ): KaImplicitReceiverSmartCast? {
         val receiver = when (kind) {
-            KtImplicitReceiverSmartCastKind.DISPATCH -> firExpression.dispatchReceiver
-            KtImplicitReceiverSmartCastKind.EXTENSION -> firExpression.extensionReceiver
+            KaImplicitReceiverSmartCastKind.DISPATCH -> firExpression.dispatchReceiver
+            KaImplicitReceiverSmartCastKind.EXTENSION -> firExpression.extensionReceiver
         }
 
         if (receiver == null || receiver == firExpression.explicitReceiver) return null
         if (!receiver.isStableSmartcast()) return null
 
         val type = receiver.resolvedType.asKtType()
-        return KtImplicitReceiverSmartCast(type, kind, token)
+        return KaImplicitReceiverSmartCast(type, kind, token)
     }
 }
 

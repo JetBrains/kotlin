@@ -1,6 +1,6 @@
-KtValueParameterSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
+KaValueParameterSymbol:
+  annotations: []
+  callableId: null
   contextReceivers: []
   generatedPrimaryConstructorProperty: null
   hasDefaultValue: false
@@ -12,13 +12,13 @@ KtValueParameterSymbol:
   name: it
   origin: SOURCE_MEMBER_GENERATED
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
-  getContainingFileSymbol: KtFileSymbol(implicitLambdaParameter.kt)
+  getContainingFileSymbol: KaFileSymbol(implicitLambdaParameter.kt)
   getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

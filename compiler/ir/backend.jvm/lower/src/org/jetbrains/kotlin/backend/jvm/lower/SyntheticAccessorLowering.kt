@@ -10,10 +10,12 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineScopeResolver
 import org.jetbrains.kotlin.backend.jvm.ir.findInlineCallSites
 import org.jetbrains.kotlin.backend.jvm.ir.isAssertionsDisabledField
 import org.jetbrains.kotlin.backend.jvm.ir.receiverAndArgs
+import org.jetbrains.kotlin.backend.jvm.lower.SyntheticAccessorLowering.Companion.isAccessible
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
@@ -156,6 +158,7 @@ private class SyntheticAccessorTransformer(
 
         val callee = expression.symbol.owner
         val withSuper = (expression as? IrCall)?.superQualifierSymbol != null
+        val generateReflectiveAccess = shouldGenerateReflectiveAccess(expression, withSuper)
         val thisSymbol = (expression as? IrCall)?.dispatchReceiver?.type?.classifierOrNull as? IrClassSymbol
 
         if (expression is IrCall && callee.symbol == context.ir.symbols.indyLambdaMetafactoryIntrinsic) {
@@ -163,6 +166,7 @@ private class SyntheticAccessorTransformer(
         }
 
         val accessor = when {
+            generateReflectiveAccess -> return super.visitFunctionAccess(expression)
             callee is IrConstructor && accessorGenerator.isOrShouldBeHiddenAsSealedClassConstructor(callee) ->
                 accessorGenerator.getSyntheticConstructorOfSealedClass(callee).symbol
             callee is IrConstructor && accessorGenerator.isOrShouldBeHiddenSinceHasMangledParams(callee) ->
@@ -175,6 +179,24 @@ private class SyntheticAccessorTransformer(
         }
         return super.visitExpression(modifyFunctionAccessExpression(expression, accessor))
     }
+
+    private fun shouldGenerateReflectiveAccess(expression: IrFunctionAccessExpression, withSuper: Boolean) =
+        when {
+            context.evaluatorData == null -> false
+            expression is IrCall -> {
+                val inJvmStaticWrapper = (currentFunction?.irElement as? IrFunction)?.origin == JVM_STATIC_WRAPPER
+                !inJvmStaticWrapper && !expression.symbol.isAccessibleWithoutReflection(withSuper)
+            }
+            expression is IrConstructorCall -> !expression.symbol.isAccessibleWithoutReflection(false)
+            else -> false
+        }
+
+    private fun shouldGenerateReflectiveAccess(symbol: IrSymbol): Boolean {
+        return context.evaluatorData != null && !symbol.isAccessibleWithoutReflection(withSuper = false)
+    }
+
+    private fun IrSymbol.isAccessibleWithoutReflection(withSuper: Boolean) =
+        isAccessible(context, currentScope, inlineScopeResolver, withSuper, null, fromOtherClassLoader = true)
 
     private fun handleLambdaMetafactoryIntrinsic(call: IrCall, thisSymbol: IrClassSymbol?): IrExpression {
         val implFunRef = call.getValueArgument(1) as? IrFunctionReference
@@ -239,6 +261,10 @@ private class SyntheticAccessorTransformer(
             return super.visitExpression(expression)
         }
 
+        if (shouldGenerateReflectiveAccess(expression.symbol)) {
+            return super.visitExpression(expression)
+        }
+
         return super.visitExpression(
             modifyGetterExpression(
                 expression, accessorGenerator.getSyntheticGetter(expression, allScopes).save()
@@ -252,6 +278,10 @@ private class SyntheticAccessorTransformer(
         // Assume that 'val' property with a backing field can never be initialized from a context that requires synthetic accessor.
         val correspondingProperty = expression.symbol.owner.correspondingPropertySymbol?.owner
         if (correspondingProperty != null && !correspondingProperty.isVar) {
+            return super.visitExpression(expression)
+        }
+
+        if (shouldGenerateReflectiveAccess(expression.symbol)) {
             return super.visitExpression(expression)
         }
 

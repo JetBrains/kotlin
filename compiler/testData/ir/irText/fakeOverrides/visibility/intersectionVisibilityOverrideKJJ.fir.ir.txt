@@ -104,6 +104,9 @@ FILE fqName:<root> fileName:/test.kt
         protected/*protected and package*/ open fun foo (): kotlin.Unit declared in <root>.JavaProtected
       $this: VALUE_PARAMETER name:<this> type:<root>.C
       BLOCK_BODY
+    PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final a: kotlin.Int declared in <root>.JavaProtected
   CLASS CLASS name:D modality:ABSTRACT visibility:public superTypes:[<root>.JavaPublic; <root>.JavaPrivate]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.D
     CONSTRUCTOR visibility:public <> () returnType:<root>.D [primary]
@@ -207,6 +210,9 @@ FILE fqName:<root> fileName:/test.kt
         public abstract fun foo (): kotlin.Unit declared in <root>.JavaDefault
       $this: VALUE_PARAMETER name:<this> type:<root>.F
       BLOCK_BODY
+    PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final a: kotlin.Int declared in <root>.JavaProtected
   CLASS CLASS name:G modality:ABSTRACT visibility:public superTypes:[<root>.JavaPrivate; <root>.JavaDefault]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.G
     CONSTRUCTOR visibility:public <> () returnType:<root>.G [primary]

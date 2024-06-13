@@ -1,11 +1,10 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.test.services.configuration
 
-import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.psi.PsiJavaModule.MODULE_INFO_FILE
 import com.intellij.util.lang.JavaVersion
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
@@ -18,30 +17,27 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.MockLibraryUtil.compileJavaFilesLibraryToJar
-import org.jetbrains.kotlin.test.TestJavacVersion
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.backend.handlers.PhasedIrDumpHandler
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ALL_JAVA_AS_BINARY
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ASSERTIONS_MODE
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.COMPILE_JAVA_USING
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ENABLE_DEBUG_MODE
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.INCLUDE_JAVA_AS_BINARY
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JVM_TARGET
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.LAMBDAS
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.PROVIDE_JAVA_AS_BINARIES
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.SAM_CONVERSIONS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.SERIALIZE_IR
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.STRING_CONCAT
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.DISABLE_CALL_ASSERTIONS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.DISABLE_PARAM_ASSERTIONS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.EMIT_JVM_TYPE_ANNOTATIONS
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.USE_INLINE_SCOPES_NUMBERS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ENABLE_JVM_IR_INLINER
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ENABLE_JVM_PREVIEW
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.JDK_RELEASE
@@ -51,6 +47,7 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.NO_OPTIMI
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.NO_UNIFIED_NULL_CHECKS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OLD_INNER_CLASSES_LOGIC
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.PARAMETERS_METADATA
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.USE_INLINE_SCOPES_NUMBERS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.USE_TYPE_TABLE
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -133,7 +130,6 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         fun getJdkHome(jdkKindTestJdkKind: TestJdkKind): File? = when (jdkKindTestJdkKind) {
             TestJdkKind.MOCK_JDK -> null
             TestJdkKind.MODIFIED_MOCK_JDK -> null
-            TestJdkKind.FULL_JDK_6 -> File(System.getenv("JDK_16") ?: error("Environment variable JDK_16 is not set"))
             TestJdkKind.FULL_JDK_11 -> KtTestUtil.getJdk11Home()
             TestJdkKind.FULL_JDK_17 -> KtTestUtil.getJdk17Home()
             TestJdkKind.FULL_JDK_21 -> KtTestUtil.getJdk21Home()
@@ -145,7 +141,6 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
             TestJdkKind.MOCK_JDK -> KtTestUtil.findMockJdkRtJar()
             TestJdkKind.MODIFIED_MOCK_JDK -> KtTestUtil.findMockJdkRtModified()
             TestJdkKind.ANDROID_API -> KtTestUtil.findAndroidApiJar()
-            TestJdkKind.FULL_JDK_6 -> null
             TestJdkKind.FULL_JDK_11 -> null
             TestJdkKind.FULL_JDK_17 -> null
             TestJdkKind.FULL_JDK_21 -> null
@@ -182,6 +177,8 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         register(LINK_VIA_SIGNATURES_K1, JVMConfigurationKeys.LINK_VIA_SIGNATURES)
         register(ENABLE_JVM_IR_INLINER, JVMConfigurationKeys.ENABLE_IR_INLINER)
         register(USE_INLINE_SCOPES_NUMBERS, JVMConfigurationKeys.USE_INLINE_SCOPES_NUMBERS)
+        register(USE_PSI_CLASS_FILES_READING, JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING)
+        register(ALLOW_KOTLIN_PACKAGE, CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE)
     }
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
@@ -198,7 +195,6 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
                 configuration.put(JVMConfigurationKeys.NO_JDK, true)
             }
 
-            TestJdkKind.FULL_JDK_6 -> {}
             TestJdkKind.FULL_JDK_11 -> {}
             TestJdkKind.FULL_JDK_17 -> {}
             TestJdkKind.FULL_JDK_21 -> {}
@@ -208,13 +204,6 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         val configurationKind = extractConfigurationKind(registeredDirectives).also {
             configuration.put(TEST_CONFIGURATION_KIND_KEY, it)
         }
-
-        val javaVersionToCompile = registeredDirectives[COMPILE_JAVA_USING].singleOrNull()
-        val javaBinaryFiles = if (ALL_JAVA_AS_BINARY !in registeredDirectives) {
-            module.javaFiles.filter { INCLUDE_JAVA_AS_BINARY in it.directives }
-        } else module.javaFiles
-
-        val useJava11ToCompileIncludedJavaFiles = javaVersionToCompile == TestJavacVersion.JAVAC_11
 
         if (configurationKind.withRuntime) {
             configuration.configureStandardLibs(
@@ -228,164 +217,96 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         configuration.put(JVMConfigurationKeys.IR, isIr)
         configuration.putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create())
 
-        val javaSourceFiles = module.javaFiles.filter { INCLUDE_JAVA_AS_BINARY !in it.directives }
-
-        if (javaSourceFiles.isNotEmpty() &&
-            JvmEnvironmentConfigurationDirectives.SKIP_JAVA_SOURCES !in module.directives &&
-            ALL_JAVA_AS_BINARY !in registeredDirectives
-        ) {
-            // NB: [getRealFileForSourceFile] is misleading, since it actually creates a real file from the given test file as well.
-            val realSourceFileMap = javaSourceFiles.associateWith { testServices.sourceFileProvider.getRealFileForSourceFile(it) }
-
-            // TODO: temporary hack to provide java 9 modules in the source mode properly (see comment on ClasspathRootsResolved::addModularRoots)
-            addJavaCompiledModulesFromDependentKotlinModules(configuration, configurationKind, module, bySources = true)
-
-            val (moduleInfoFiles, sourceFiles) = javaSourceFiles.partition { it.name == MODULE_INFO_FILE }
-            if (moduleInfoFiles.isNotEmpty()) {
-                addJavaSourceRootsByJavaModules(configuration, moduleInfoFiles)
-            } else {
-                sourceFiles.forEach l@{ testFile ->
-                    val file = realSourceFileMap[testFile] ?: return@l
-                    if (JvmEnvironmentConfigurationDirectives.USE_JAVAC !in module.directives &&
-                        !file.isDirectory &&
-                        file.extension == JavaFileType.DEFAULT_EXTENSION
-                    ) {
-                        configuration.addJavaSourceRoot(file)
-                    }
-                }
-                configuration.addJavaSourceRoot(testServices.sourceFileProvider.javaSourceDirectory)
-            }
-
-            // We add that as a part of the classpath only when Java files are being analyzed as sources, so the relevant annotations
-            // are being resolved classes are being resolved properly.
-            configuration.addJvmClasspathRoots(
-                testServices.additionalClassPathForJavaCompilationOrAnalysis?.classPath?.map(::File).orEmpty()
-            )
-        }
-
-        if (javaBinaryFiles.isNotEmpty()) {
-            javaBinaryFiles.forEach { testServices.sourceFileProvider.getRealFileForBinaryFile(it) }
-
-            addJavaCompiledModulesFromDependentKotlinModules(configuration, configurationKind, module, bySources = false)
-
-            val moduleInfoFiles = javaBinaryFiles.filter { it.name == MODULE_INFO_FILE }
-
-            // TODO: Use module graph to build proper modulepath for each module according cross-module dependencies
-            if (moduleInfoFiles.isNotEmpty()) {
-                addJavaBinaryRootsByJavaModules(configuration, configurationKind, moduleInfoFiles)
-            } else {
-                configuration.addJvmClasspathRoot(
-                    compileJavaFilesLibraryToJar(
-                        testServices.sourceFileProvider.javaBinaryDirectory.path,
-                        JAVA_BINARIES_JAR_NAME,
-                        extraClasspath =
-                        configuration.jvmClasspathRoots.map { it.absolutePath } +
-                                testServices.additionalClassPathForJavaCompilationOrAnalysis?.classPath.orEmpty(),
-                        assertions = JUnit5Assertions,
-                        useJava11 = useJava11ToCompileIncludedJavaFiles
-                    )
-                )
-            }
-        }
-
-        configuration.registerModuleDependencies(module)
-
-        if (JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING in module.directives) {
-            configuration.put(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING, true)
-        }
-
-        if (LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE in module.directives) {
-            configuration.put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, true)
-        }
-
         if (CodegenTestDirectives.DUMP_IR_FOR_GIVEN_PHASES in module.directives) {
             configuration.putCustomPhaseConfigWithEnabledDump(module)
         }
 
-        configuration.put(JVMConfigurationKeys.VALIDATE_IR, true)
         configuration.put(JVMConfigurationKeys.VALIDATE_BYTECODE, true)
         configuration.configureJdkClasspathRoots()
-    }
 
-    private fun addJavaSourceRootsByJavaModules(configuration: CompilerConfiguration, moduleInfoFiles: List<TestFile>) {
-        val javaSourceDirectory = testServices.sourceFileProvider.javaSourceDirectory
-        for (moduleInfoFile in moduleInfoFiles) {
-            val moduleName = moduleInfoFile.relativePath.substringBefore('/')
-            val moduleDir = File("${javaSourceDirectory.path}/$moduleName").also { it.mkdir() }
-            configuration.addJavaSourceRoot(moduleDir)
-        }
-    }
+        configuration.registerModuleDependencies(module)
 
-    private fun addJavaBinaryRootsByJavaModules(
-        configuration: CompilerConfiguration,
-        configurationKind: ConfigurationKind,
-        moduleInfoFiles: List<TestFile>
-    ) {
-        val javaBinaryDirectory = testServices.sourceFileProvider.javaBinaryDirectory
-        for (moduleInfoFile in moduleInfoFiles) {
-            val moduleName = moduleInfoFile.relativePath.substringBefore('/')
-            addJavaCompiledModule(configuration, configurationKind, moduleName, bySources = true, targetDir = javaBinaryDirectory)
-        }
-    }
+        configuration.addJavaBinaryRootsByCompiledJavaModulesFromModuleDependencies(configurationKind, module)
 
-    private fun addJavaCompiledModulesFromDependentKotlinModules(
-        configuration: CompilerConfiguration,
-        configurationKind: ConfigurationKind,
-        module: TestModule,
-        bySources: Boolean
-    ) {
-        val moduleDependencies = module.allDependencies.map { testServices.dependencyProvider.getTestModule(it.moduleName) }
-        val filterJavaModuleInfoFiles = { testFile: TestFile ->
-            val binaryFilesFilter = INCLUDE_JAVA_AS_BINARY in testFile.directives || ALL_JAVA_AS_BINARY in module.directives
-            val includeOrExcludeBinaryFilesFilter = (bySources && !binaryFilesFilter) || (!bySources && binaryFilesFilter)
-            includeOrExcludeBinaryFilesFilter && testFile.name == MODULE_INFO_FILE
-        }
-        val moduleInfoFilesFromDependencies = moduleDependencies.mapNotNull { it.javaFiles.singleOrNull(filterJavaModuleInfoFiles) }
+        val javaFiles = module.javaFiles.ifEmpty { return }
+        javaFiles.forEach { testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(it) }
+        val javaModuleInfoFiles = javaFiles.filter { it.name == MODULE_INFO_FILE }
 
-        for (dependentModuleInfoFile in moduleInfoFilesFromDependencies) {
-            val moduleName = dependentModuleInfoFile.relativePath.substringBefore('/')
-            addJavaCompiledModule(configuration, configurationKind, moduleName, bySources)
-        }
-    }
+        if (PROVIDE_JAVA_AS_BINARIES !in registeredDirectives) {
+            if (javaModuleInfoFiles.isNotEmpty()) {
+                configuration.addJavaSourceRootsByJavaModules(javaModuleInfoFiles)
+            } else {
+                configuration.addJavaSourceRoot(testServices.sourceFileProvider.getJavaSourceDirectoryForModule(module))
+            }
 
-    private fun addJavaCompiledModule(
-        configuration: CompilerConfiguration,
-        configurationKind: ConfigurationKind,
-        moduleName: String,
-        bySources: Boolean,
-        targetDir: File = testServices.sourceFileProvider.run { if (bySources) javaSourceDirectory else javaBinaryDirectory }
-    ) {
-        val moduleDir = File("${targetDir.path}/$moduleName")
-        val javaBinaries = if (bySources) {
-            compileJavaFilesToModularJar(configuration, configurationKind, moduleDir)
+            // we add this as a part of the classpath only when Java files are being analyzed as sources,
+            // so that relevant annotations & classes are resolved properly
+            configuration.addJvmClasspathRoots(
+                testServices.additionalClassPathForJavaCompilationOrAnalysis?.classPath?.map(::File).orEmpty()
+            )
         } else {
-            File("${moduleDir.path}/$JAVA_BINARIES_JAR_NAME.jar")
+            if (javaModuleInfoFiles.isNotEmpty()) {
+                configuration.addJavaBinaryRootsByJavaModules(configurationKind, javaModuleInfoFiles)
+            } else {
+                val jvmClasspathRoots = configuration.jvmClasspathRoots.map { it.absolutePath }
+                val additionalClassPath = testServices.additionalClassPathForJavaCompilationOrAnalysis?.classPath.orEmpty()
+                configuration.addJvmClasspathRoot(
+                    compileJavaFilesLibraryToJar(
+                        testServices.sourceFileProvider.getJavaSourceDirectoryForModule(module).path,
+                        "${module.name}-$JAVA_BINARIES_JAR_NAME",
+                        extraClasspath = jvmClasspathRoots + additionalClassPath,
+                        assertions = JUnit5Assertions,
+                        useJava11 = registeredDirectives[JDK_KIND].singleOrNull() == TestJdkKind.FULL_JDK_11,
+                    )
+                )
+            }
         }
-
-        configuration.addModularRootIfNotNull(isModularJava = true, moduleName, javaBinaries)
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
-    private fun compileJavaFilesToModularJar(
-        configuration: CompilerConfiguration,
+    private fun CompilerConfiguration.addJavaSourceRootsByJavaModules(
+        javaModuleInfoFiles: List<TestFile>
+    ) {
+        for (javaModuleInfoFile in javaModuleInfoFiles) {
+            val javaModuleDir = testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(javaModuleInfoFile).parentFile
+            addJavaSourceRoot(javaModuleDir)
+        }
+    }
+
+    private fun CompilerConfiguration.addJavaBinaryRootsByJavaModules(
         configurationKind: ConfigurationKind,
-        sourcesDir: File
-    ): File {
+        javaModuleInfoFiles: List<TestFile>
+    ) {
+        val classPath = jvmClasspathRoots.map(File::getAbsolutePath)
         val modulePath = buildList {
-            addAll(configuration.jvmModularRoots.map { it.absolutePath })
+            addAll(jvmModularRoots.map(File::getAbsolutePath))
             if (configurationKind.withRuntime) {
                 add(testServices.standardLibrariesPathProvider.runtimeJarForTests().path)
             }
         }
-        return MockLibraryUtil.compileLibraryToJar(
-            sourcesDir.path,
-            sourcesDir,
-            JAVA_BINARIES_JAR_NAME,
-            extraClasspath = configuration.jvmClasspathRoots.map { it.absolutePath },
-            extraModulepath = modulePath,
-            assertions = JUnit5Assertions,
-            useJava11 = true
-        )
+        for (javaModuleInfoFile in javaModuleInfoFiles) {
+            val javaModuleDir = testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(javaModuleInfoFile).parentFile
+            val javaModuleName = javaModuleInfoFile.relativePath.substringBefore('/')
+            val javaModuleBinary = compileJavaFilesLibraryToJar(
+                javaModuleDir.path,
+                "$javaModuleName-$JAVA_BINARIES_JAR_NAME",
+                extraClasspath = classPath,
+                extraModulepath = modulePath,
+                assertions = JUnit5Assertions,
+                useJava11 = true
+            )
+            addModularRootIfNotNull(isModularJava = true, javaModuleName, javaModuleBinary)
+        }
+    }
+
+    private fun CompilerConfiguration.addJavaBinaryRootsByCompiledJavaModulesFromModuleDependencies(
+        configurationKind: ConfigurationKind,
+        module: TestModule
+    ) {
+        val moduleDependencies = module.allDependencies.map { testServices.dependencyProvider.getTestModule(it.moduleName) }
+        val javaModuleInfoFilesFromModuleDependencies = moduleDependencies.mapNotNull { moduleDependency ->
+            moduleDependency.javaFiles.singleOrNull { javaFile -> javaFile.name == MODULE_INFO_FILE }
+        }
+        addJavaBinaryRootsByJavaModules(configurationKind, javaModuleInfoFilesFromModuleDependencies)
     }
 
     private fun configureDefaultJvmTarget(configuration: CompilerConfiguration) {
@@ -423,6 +344,14 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
     private fun CompilerConfiguration.registerModuleDependencies(module: TestModule) {
         addJvmClasspathRoots(module.allDependencies.filter { it.kind == DependencyKind.Binary }.toFileList())
 
+        val isJava9Module = module.files.any(TestFile::isModuleInfoJavaFile)
+        for (dependency in module.allDependencies.filter { it.kind == DependencyKind.Binary }.toFileList()) {
+            if (isJava9Module) {
+                add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(dependency))
+            }
+            addJvmClasspathRoot(dependency)
+        }
+
         val binaryFriends = module.friendDependencies.filter { it.kind == DependencyKind.Binary }
         if (binaryFriends.isNotEmpty()) {
             put(JVMConfigurationKeys.FRIEND_PATHS, binaryFriends.toFileList().map { it.absolutePath })
@@ -433,10 +362,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
 
     protected open fun convertDependencyToFileList(dependency: DependencyDescription): List<File> {
         val friendModule = testServices.dependencyProvider.getTestModule(dependency.moduleName)
-        return listOfNotNull(
-            testServices.compiledClassesManager.getCompiledKotlinDirForModule(friendModule),
-            testServices.compiledClassesManager.getCompiledJavaDirForModule(friendModule)
-        )
+        return listOf(testServices.compiledClassesManager.compileKotlinToDiskAndGetOutputDir(friendModule, classFileFactory = null))
     }
 }
 

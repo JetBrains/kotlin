@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithMembers
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -18,13 +18,13 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 
-internal abstract class KtFirMemberSymbolPointer<S : KtSymbol>(
-    private val ownerPointer: KtSymbolPointer<KtSymbolWithMembers>,
+internal abstract class KaFirMemberSymbolPointer<S : KaSymbol>(
+    private val ownerPointer: KaSymbolPointer<KaSymbolWithMembers>,
     private val isStatic: Boolean = false,
-) : KtSymbolPointer<S>() {
-    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
-    final override fun restoreSymbol(analysisSession: KtAnalysisSession): S? {
-        require(analysisSession is KtFirAnalysisSession)
+) : KaSymbolPointer<S>() {
+    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KaSession.restoreSymbol")
+    final override fun restoreSymbol(analysisSession: KaSession): S? {
+        require(analysisSession is KaFirSession)
         val scope = with(analysisSession) {
             val ownerSymbol = ownerPointer.restoreSymbol() ?: return null
             val owner = ownerSymbol.firSymbol as? FirClassSymbol ?: return null
@@ -34,14 +34,14 @@ internal abstract class KtFirMemberSymbolPointer<S : KtSymbol>(
         return analysisSession.chooseCandidateAndCreateSymbol(scope, analysisSession.useSiteSession)
     }
 
-    protected abstract fun KtFirAnalysisSession.chooseCandidateAndCreateSymbol(candidates: FirScope, firSession: FirSession): S?
+    protected abstract fun KaFirSession.chooseCandidateAndCreateSymbol(candidates: FirScope, firSession: FirSession): S?
 
-    protected open fun getSearchScope(analysisSession: KtFirAnalysisSession, owner: FirClassSymbol<*>): FirScope? {
+    protected open fun getSearchScope(analysisSession: KaFirSession, owner: FirClassSymbol<*>): FirScope? {
         val firSession = analysisSession.useSiteSession
         val scopeSession = analysisSession.getScopeSessionFor(firSession)
         return if (isStatic) {
             val firClass = owner.fir
-            firClass.scopeProvider.getStaticMemberScopeForCallables(firClass, firSession, scopeSession)
+            firClass.scopeProvider.getStaticCallableMemberScope(firClass, firSession, scopeSession)
         } else {
             owner.unsubstitutedScope(
                 useSiteSession = firSession,
@@ -52,17 +52,17 @@ internal abstract class KtFirMemberSymbolPointer<S : KtSymbol>(
         }
     }
 
-    abstract override fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean
-    protected fun hasTheSameOwner(other: KtFirMemberSymbolPointer<*>): Boolean =
+    abstract override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean
+    protected fun hasTheSameOwner(other: KaFirMemberSymbolPointer<*>): Boolean =
         other.isStatic == isStatic && other.ownerPointer.pointsToTheSameSymbolAs(ownerPointer)
 }
 
-internal inline fun <reified T : KtSymbol> KtAnalysisSession.createOwnerPointer(symbol: KtSymbol): KtSymbolPointer<T> {
+internal inline fun <reified T : KaSymbol> KaSession.createOwnerPointer(symbol: KaSymbol): KaSymbolPointer<T> {
     val containingSymbol = symbol.getContainingSymbol()
         ?: error("Non-null symbol is expected for a member declaration")
 
     requireIsInstance<T>(containingSymbol)
 
     @Suppress("UNCHECKED_CAST")
-    return containingSymbol.createPointer() as KtSymbolPointer<T>
+    return containingSymbol.createPointer() as KaSymbolPointer<T>
 }

@@ -1,4 +1,4 @@
-// !LANGUAGE: +PreferJavaFieldOverload
+// LANGUAGE: +PreferJavaFieldOverload
 
 // FILE: B.java
 

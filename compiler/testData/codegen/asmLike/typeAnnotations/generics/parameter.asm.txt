@@ -1,0 +1,282 @@
+public abstract interface foo/Ann : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+<U:Ljava/lang/Object;>Ljava/lang/Object;
+public abstract interface foo/In : java/lang/Object {
+
+}
+
+<T:Ljava/lang/Object;>Ljava/lang/Object;
+public abstract interface foo/Inv : java/lang/Object {
+
+}
+
+<V:Ljava/lang/Object;>Ljava/lang/Object;
+public abstract interface foo/Out : java/lang/Object {
+
+}
+
+public final class foo/ParameterKt : java/lang/Object {
+    (Lfoo/Inv<Ljava/lang/Number;>;)V
+    public final static void f01(foo.Inv p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/In<-Ljava/lang/Number;>;)V
+    public final static void f02(foo.In p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;*
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Out<+Ljava/lang/Number;>;)V
+    public final static void f03(foo.Out p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;*
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Inv<Lfoo/Inv<Ljava/lang/Number;>;>;)V
+    public final static void f04(foo.Inv p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;0;
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Inv<Lfoo/In<Ljava/lang/Number;>;>;)V
+    public final static void f05(foo.Inv p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;0;
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Inv<Lfoo/Out<Ljava/lang/Number;>;>;)V
+    public final static void f06(foo.Inv p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;0;
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/In<-Lfoo/Inv<Ljava/lang/Number;>;>;)V
+    public final static void f07(foo.In p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;*0;
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/In<-Lfoo/In<-Ljava/lang/Number;>;>;)V
+    public final static void f08(foo.In p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;*0;*
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/In<-Lfoo/Out<+Ljava/lang/Number;>;>;)V
+    public final static void f09(foo.In p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;*0;*
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Out<+Lfoo/Inv<Ljava/lang/Number;>;>;)V
+    public final static void f10(foo.Out p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;*0;
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Out<+Lfoo/In<-Ljava/lang/Number;>;>;)V
+    public final static void f11(foo.Out p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;*0;*
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Out<+Lfoo/Out<+Ljava/lang/Number;>;>;)V
+    public final static void f12(foo.Out p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;*0;*
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Inv<-Ljava/lang/Number;>;)V
+    public final static void f13(foo.Inv p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;*
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Inv<+Ljava/lang/Number;>;)V
+    public final static void f14(foo.Inv p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;*
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/In<-Ljava/lang/Number;>;)V
+    public final static void f15(foo.In p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;*
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Out<+Ljava/lang/Number;>;)V
+    public final static void f16(foo.Out p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;*
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Inv<-Lfoo/Inv<Ljava/lang/Number;>;>;)V
+    public final static void f17(foo.Inv p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;*0;
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Inv<-Lfoo/In<-Ljava/lang/Number;>;>;)V
+    public final static void f18(foo.Inv p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;*0;*
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Inv<-Lfoo/Out<+Ljava/lang/Number;>;>;)V
+    public final static void f19(foo.Inv p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;*0;*
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Inv<+Lfoo/Inv<Ljava/lang/Number;>;>;)V
+    public final static void f20(foo.Inv p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;*0;
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Inv<+Lfoo/In<-Ljava/lang/Number;>;>;)V
+    public final static void f21(foo.Inv p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;*0;*
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Inv<+Lfoo/Out<+Ljava/lang/Number;>;>;)V
+    public final static void f22(foo.Inv p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;*0;*
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Inv<-Lfoo/Inv<-Ljava/lang/Number;>;>;)V
+    public final static void f23(foo.Inv p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;*0;*
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Inv<-Lfoo/In<-Ljava/lang/Number;>;>;)V
+    public final static void f24(foo.Inv p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;*0;*
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Inv<-Lfoo/Out<+Ljava/lang/Number;>;>;)V
+    public final static void f25(foo.Inv p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;*0;*
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Inv<+Lfoo/Inv<+Ljava/lang/Number;>;>;)V
+    public final static void f26(foo.Inv p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;*0;*
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Inv<+Lfoo/In<-Ljava/lang/Number;>;>;)V
+    public final static void f27(foo.Inv p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;*0;*
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Inv<+Lfoo/Out<+Ljava/lang/Number;>;>;)V
+    public final static void f28(foo.Inv p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;*0;*
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Inv<Ljava/lang/Number;>;)V
+    public final static void f29(foo.Inv p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;
+      @Lkotlin/jvm/JvmSuppressWildcards;([]) : METHOD_FORMAL_PARAMETER 0, 0; // invisible
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/In<Ljava/lang/Number;>;)V
+    public final static void f30(foo.In p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;
+      @Lkotlin/jvm/JvmSuppressWildcards;([]) : METHOD_FORMAL_PARAMETER 0, 0; // invisible
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Out<Ljava/lang/Number;>;)V
+    public final static void f31(foo.Out p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;
+      @Lkotlin/jvm/JvmSuppressWildcards;([]) : METHOD_FORMAL_PARAMETER 0, 0; // invisible
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Inv<Ljava/lang/Number;>;)V
+    public final static void f32(foo.Inv p)
+      @Lkotlin/jvm/JvmSuppressWildcards;([]) // invisible
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/In<Ljava/lang/Number;>;)V
+    public final static void f33(foo.In p)
+      @Lkotlin/jvm/JvmSuppressWildcards;([]) // invisible
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Out<Ljava/lang/Number;>;)V
+    public final static void f34(foo.Out p)
+      @Lkotlin/jvm/JvmSuppressWildcards;([]) // invisible
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Inv<Ljava/lang/Number;>;)V
+    public final static void f35(foo.Inv p)
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=true]) // invisible
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=false]) : METHOD_FORMAL_PARAMETER 0, null // invisible
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/In<-Ljava/lang/Number;>;)V
+    public final static void f36(foo.In p)
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=true]) // invisible
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;*
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=false]) : METHOD_FORMAL_PARAMETER 0, null // invisible
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Out<+Ljava/lang/Number;>;)V
+    public final static void f37(foo.Out p)
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=true]) // invisible
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;*
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=false]) : METHOD_FORMAL_PARAMETER 0, null // invisible
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Inv<Ljava/lang/Number;>;)V
+    public final static void f38(foo.Inv p)
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=false]) // invisible
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=true]) : METHOD_FORMAL_PARAMETER 0, null // invisible
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/In<Ljava/lang/Number;>;)V
+    public final static void f39(foo.In p)
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=false]) // invisible
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=true]) : METHOD_FORMAL_PARAMETER 0, null // invisible
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Out<Ljava/lang/Number;>;)V
+    public final static void f40(foo.Out p)
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=false]) // invisible
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=true]) : METHOD_FORMAL_PARAMETER 0, null // invisible
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Inv<Ljava/lang/Number;>;)V
+    public final static void f41(foo.Inv p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;
+      @Lkotlin/jvm/JvmWildcard;([]) : METHOD_FORMAL_PARAMETER 0, 0; // invisible
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/In<-Ljava/lang/Number;>;)V
+    public final static void f42(foo.In p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;*
+      @Lkotlin/jvm/JvmWildcard;([]) : METHOD_FORMAL_PARAMETER 0, 0;* // invisible
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Out<+Ljava/lang/Number;>;)V
+    public final static void f43(foo.Out p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;*
+      @Lkotlin/jvm/JvmWildcard;([]) : METHOD_FORMAL_PARAMETER 0, 0;* // invisible
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Inv<Lfoo/In<-Ljava/lang/Number;>;>;)V
+    public final static void f44(foo.Inv p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;0;*
+      @Lkotlin/jvm/JvmWildcard;([]) : METHOD_FORMAL_PARAMETER 0, 0;0;* // invisible
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Inv<Lfoo/Out<+Ljava/lang/Number;>;>;)V
+    public final static void f45(foo.Inv p)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;0;*
+      @Lkotlin/jvm/JvmWildcard;([]) : METHOD_FORMAL_PARAMETER 0, 0;0;* // invisible
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Inv<Lfoo/In<-Ljava/lang/Number;>;>;)V
+    public final static void f46(foo.Inv p)
+      @Lkotlin/jvm/JvmSuppressWildcards;([]) // invisible
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;0;*
+      @Lkotlin/jvm/JvmWildcard;([]) : METHOD_FORMAL_PARAMETER 0, 0;0;* // invisible
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/Inv<Lfoo/Out<+Ljava/lang/Number;>;>;)V
+    public final static void f47(foo.Inv p)
+      @Lkotlin/jvm/JvmSuppressWildcards;([]) // invisible
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, 0;0;*
+      @Lkotlin/jvm/JvmWildcard;([]) : METHOD_FORMAL_PARAMETER 0, 0;0;* // invisible
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+}

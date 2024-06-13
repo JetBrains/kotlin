@@ -1,4 +1,4 @@
-// !DUMP_CFG
+// DUMP_CFG
 class B(p0: String) {
     val p1 = p0
     val p2: Int = p0.length

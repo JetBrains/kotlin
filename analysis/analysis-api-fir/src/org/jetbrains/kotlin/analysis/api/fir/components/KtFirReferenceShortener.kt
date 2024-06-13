@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,16 +10,16 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.components.*
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.components.ElementsToShortenCollector.PartialOrderOfScope.Companion.toPartialOrder
 import org.jetbrains.kotlin.analysis.api.fir.isImplicitDispatchReceiver
 import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver
 import org.jetbrains.kotlin.analysis.api.fir.utils.computeImportableName
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
@@ -41,8 +41,8 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
-import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.FirSamResolver
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsError
@@ -59,24 +59,25 @@ import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.resolve.ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
-internal class KtFirReferenceShortener(
-    override val analysisSession: KtFirAnalysisSession,
-    override val token: KtLifetimeToken,
+internal class KaFirReferenceShortener(
+    override val analysisSession: KaFirSession,
+    override val token: KaLifetimeToken,
     override val firResolveSession: LLFirResolveSession,
-) : KtReferenceShortener(), KtFirAnalysisSessionComponent {
+) : KaReferenceShortener(), KaFirSessionComponent {
     private val context = FirShorteningContext(analysisSession)
 
     override fun collectShortenings(
         file: KtFile,
         selection: TextRange,
         shortenOptions: ShortenOptions,
-        classShortenStrategy: (KtClassLikeSymbol) -> ShortenStrategy,
-        callableShortenStrategy: (KtCallableSymbol) -> ShortenStrategy
+        classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy,
+        callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy
     ): ShortenCommand {
         require(!file.isCompiled) { "No sense to collect references for shortening in compiled file $file" }
 
@@ -104,8 +105,8 @@ internal class KtFirReferenceShortener(
             towerContext,
             file,
             selection,
-            classShortenStrategy = { classShortenStrategy(buildSymbol(it) as KtClassLikeSymbol) },
-            callableShortenStrategy = { callableShortenStrategy(buildSymbol(it) as KtCallableSymbol) },
+            classShortenStrategy = { classShortenStrategy(buildSymbol(it) as KaClassLikeSymbol) },
+            callableShortenStrategy = { callableShortenStrategy(buildSymbol(it) as KaCallableSymbol) },
             firResolveSession,
         )
         firDeclaration.accept(CollectingVisitor(collector))
@@ -120,10 +121,10 @@ internal class KtFirReferenceShortener(
             selection,
             additionalImports,
             classShortenStrategy = {
-                minOf(classShortenStrategy(buildSymbol(it) as KtClassLikeSymbol), ShortenStrategy.SHORTEN_IF_ALREADY_IMPORTED)
+                minOf(classShortenStrategy(buildSymbol(it) as KaClassLikeSymbol), ShortenStrategy.SHORTEN_IF_ALREADY_IMPORTED)
             },
             callableShortenStrategy = {
-                minOf(callableShortenStrategy(buildSymbol(it) as KtCallableSymbol), ShortenStrategy.SHORTEN_IF_ALREADY_IMPORTED)
+                minOf(callableShortenStrategy(buildSymbol(it) as KaCallableSymbol), ShortenStrategy.SHORTEN_IF_ALREADY_IMPORTED)
             },
         )
         kDocCollector.visitElement(declarationToVisit)
@@ -153,7 +154,7 @@ internal class KtFirReferenceShortener(
         }
     }
 
-    private fun buildSymbol(firSymbol: FirBasedSymbol<*>): KtSymbol = analysisSession.firSymbolBuilder.buildSymbol(firSymbol)
+    private fun buildSymbol(firSymbol: FirBasedSymbol<*>): KaSymbol = analysisSession.firSymbolBuilder.buildSymbol(firSymbol)
 }
 
 private class FirTowerDataContextProvider private constructor(
@@ -257,7 +258,7 @@ private data class AvailableSymbol<out T>(
     val importKind: ImportKind,
 )
 
-private class FirShorteningContext(val analysisSession: KtFirAnalysisSession) {
+private class FirShorteningContext(val analysisSession: KaFirSession) {
     private val firResolveSession = analysisSession.firResolveSession
 
     private val firSession: FirSession
@@ -522,7 +523,7 @@ private class ElementsToShortenCollector(
         val typeElement = resolvedTypeRef.correspondingTypePsi ?: return
         if (typeElement.qualifier == null) return
 
-        val classifierId = resolvedTypeRef.type.lowerBoundIfFlexible().candidateClassId ?: return
+        val classifierId = resolvedTypeRef.type.abbreviatedTypeOrSelf.lowerBoundIfFlexible().candidateClassId ?: return
 
         findClassifierQualifierToShorten(classifierId, typeElement)?.let(::addElementToShorten)
     }
@@ -1478,7 +1479,7 @@ private class ElementsToShortenCollector(
 }
 
 private class KDocQualifiersToShortenCollector(
-    private val analysisSession: KtFirAnalysisSession,
+    private val analysisSession: KaFirSession,
     private val selection: TextRange,
     private val additionalImports: AdditionalImports,
     private val classShortenStrategy: (FirClassLikeSymbol<*>) -> ShortenStrategy,
@@ -1531,11 +1532,11 @@ private class KDocQualifiersToShortenCollector(
             KDocReferenceResolver.resolveKdocFqName(analysisSession, shortFqName, shortFqName, contextElement)
         }
 
-        resolvedSymbols.firstIsInstanceOrNull<KtCallableSymbol>()?.firSymbol?.let { availableCallable ->
+        resolvedSymbols.firstIsInstanceOrNull<KaCallableSymbol>()?.firSymbol?.let { availableCallable ->
             return canShorten(fqName, availableCallable.callableId.asSingleFqName()) { callableShortenStrategy(availableCallable) }
         }
 
-        resolvedSymbols.firstIsInstanceOrNull<KtClassLikeSymbol>()?.firSymbol?.let { availableClassifier ->
+        resolvedSymbols.firstIsInstanceOrNull<KaClassLikeSymbol>()?.firSymbol?.let { availableClassifier ->
             return canShorten(fqName, availableClassifier.classId.asSingleFqName()) { classShortenStrategy(availableClassifier) }
         }
 

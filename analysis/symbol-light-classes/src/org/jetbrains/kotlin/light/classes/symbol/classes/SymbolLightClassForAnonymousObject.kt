@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.analysis.api.symbols.KtAnonymousObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.getParentForLocalDeclaration
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
-internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike<KtAnonymousObjectSymbol>, PsiAnonymousClass {
+internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike<KaAnonymousObjectSymbol>, PsiAnonymousClass {
     constructor(
         anonymousObjectDeclaration: KtClassOrObject,
         ktModule: KtModule,
@@ -34,7 +34,7 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
 
     private constructor(
         classOrObjectDeclaration: KtClassOrObject?,
-        classOrObjectSymbolPointer: KtSymbolPointer<KtAnonymousObjectSymbol>,
+        classOrObjectSymbolPointer: KaSymbolPointer<KaAnonymousObjectSymbol>,
         ktModule: KtModule,
         manager: PsiManager,
     ) : super(classOrObjectDeclaration, classOrObjectSymbolPointer, ktModule, manager)
@@ -82,7 +82,7 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
 
         withClassOrObjectSymbol {
             it.getDeclaredMemberScope().getCallableSymbols()
-                .filterIsInstance<KtPropertySymbol>()
+                .filterIsInstance<KaPropertySymbol>()
                 .forEach { propertySymbol ->
                     createField(
                         propertySymbol,
@@ -104,7 +104,7 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
     override fun getModifierList(): PsiModifierList? = null
     override fun hasModifierProperty(name: String): Boolean = name == PsiModifier.FINAL
 
-    override fun classKind(): KtClassKind = KtClassKind.ANONYMOUS_OBJECT
+    override fun classKind(): KaClassKind = KaClassKind.ANONYMOUS_OBJECT
 
     override fun getContainingClass(): PsiClass? = null
     override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY

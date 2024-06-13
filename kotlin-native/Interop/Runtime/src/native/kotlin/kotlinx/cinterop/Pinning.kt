@@ -9,24 +9,24 @@ import kotlin.native.*
 import kotlin.native.internal.GCUnsafeCall
 
 @ExperimentalForeignApi
-public data class Pinned<out T : Any> internal constructor(private val stablePtr: COpaquePointer) {
+public class Pinned<T : Any> @PublishedApi internal constructor(obj: T) {
+    private var obj: T? = obj
 
     /**
      * Disposes the handle. It must not be [used][get] after that.
      */
     public fun unpin() {
-        disposeStablePointer(this.stablePtr)
+        obj = null
     }
 
     /**
      * Returns the underlying pinned object.
      */
-    public fun get(): T = @Suppress("UNCHECKED_CAST") (derefStablePointer(stablePtr) as T)
-
+    public fun get(): T = obj!!
 }
 
 @ExperimentalForeignApi
-public fun <T : Any> T.pin(): Pinned<T> = Pinned<T>(createStablePointer(this))
+public inline fun <T : Any> T.pin(): Pinned<T> = Pinned(this)
 
 @ExperimentalForeignApi
 public inline fun <T : Any, R> T.usePinned(block: (Pinned<T>) -> R): R {

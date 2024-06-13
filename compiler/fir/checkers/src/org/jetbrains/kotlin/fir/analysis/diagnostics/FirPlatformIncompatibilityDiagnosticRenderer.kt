@@ -38,7 +38,8 @@ class FirPlatformIncompatibilityDiagnosticRenderer(
 
     companion object {
         @JvmField
-        val TEXT = FirPlatformIncompatibilityDiagnosticRenderer(MultiplatformDiagnosticRenderingMode())
+        val TEXT: FirPlatformIncompatibilityDiagnosticRenderer =
+            FirPlatformIncompatibilityDiagnosticRenderer(MultiplatformDiagnosticRenderingMode())
     }
 }
 
@@ -58,7 +59,8 @@ class FirIncompatibleExpectedActualClassScopesRenderer(
 
     companion object {
         @JvmField
-        val TEXT = FirIncompatibleExpectedActualClassScopesRenderer(MultiplatformDiagnosticRenderingMode())
+        val TEXT: FirIncompatibleExpectedActualClassScopesRenderer =
+            FirIncompatibleExpectedActualClassScopesRenderer(MultiplatformDiagnosticRenderingMode())
     }
 }
 

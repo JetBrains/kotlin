@@ -5,28 +5,28 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.base.annotations
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotated
-import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.renderers.KtAnnotationArgumentsRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.renderers.KtAnnotationListRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.renderers.KtAnnotationQualifierRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.renderers.KtAnnotationUseSiteTargetRenderer
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
+import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.renderers.KaAnnotationArgumentsRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.renderers.KaAnnotationListRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.renderers.KaAnnotationQualifierRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.renderers.KaAnnotationUseSiteTargetRenderer
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
-public class KtAnnotationRenderer internal constructor(
-    public val annotationListRenderer: KtAnnotationListRenderer,
-    public val annotationFilter: KtRendererAnnotationsFilter,
-    public val annotationsQualifiedNameRenderer: KtAnnotationQualifierRenderer,
-    public val annotationUseSiteTargetRenderer: KtAnnotationUseSiteTargetRenderer,
-    public val annotationArgumentsRenderer: KtAnnotationArgumentsRenderer,
+public class KaAnnotationRenderer internal constructor(
+    public val annotationListRenderer: KaAnnotationListRenderer,
+    public val annotationFilter: KaRendererAnnotationsFilter,
+    public val annotationsQualifiedNameRenderer: KaAnnotationQualifierRenderer,
+    public val annotationUseSiteTargetRenderer: KaAnnotationUseSiteTargetRenderer,
+    public val annotationArgumentsRenderer: KaAnnotationArgumentsRenderer,
 ) {
-    public fun renderAnnotations(analysisSession: KtAnalysisSession, owner: KtAnnotated, printer: PrettyPrinter) {
+    public fun renderAnnotations(analysisSession: KaSession, owner: KaAnnotated, printer: PrettyPrinter) {
         annotationListRenderer.renderAnnotations(analysisSession, owner, this, printer)
     }
 
-    public inline fun with(action: Builder.() -> Unit): KtAnnotationRenderer {
+    public inline fun with(action: Builder.() -> Unit): KaAnnotationRenderer {
         val renderer = this
-        return KtAnnotationRenderer {
+        return KaAnnotationRenderer {
             this.annotationListRenderer = renderer.annotationListRenderer
             this.annotationFilter = renderer.annotationFilter
             this.annotationsQualifiedNameRenderer = renderer.annotationsQualifiedNameRenderer
@@ -38,14 +38,14 @@ public class KtAnnotationRenderer internal constructor(
     }
 
     public class Builder {
-        public lateinit var annotationListRenderer: KtAnnotationListRenderer
-        public lateinit var annotationFilter: KtRendererAnnotationsFilter
-        public lateinit var annotationsQualifiedNameRenderer: KtAnnotationQualifierRenderer
-        public lateinit var annotationUseSiteTargetRenderer: KtAnnotationUseSiteTargetRenderer
-        public lateinit var annotationArgumentsRenderer: KtAnnotationArgumentsRenderer
+        public lateinit var annotationListRenderer: KaAnnotationListRenderer
+        public lateinit var annotationFilter: KaRendererAnnotationsFilter
+        public lateinit var annotationsQualifiedNameRenderer: KaAnnotationQualifierRenderer
+        public lateinit var annotationUseSiteTargetRenderer: KaAnnotationUseSiteTargetRenderer
+        public lateinit var annotationArgumentsRenderer: KaAnnotationArgumentsRenderer
 
 
-        public fun build(): KtAnnotationRenderer = KtAnnotationRenderer(
+        public fun build(): KaAnnotationRenderer = KaAnnotationRenderer(
             annotationListRenderer,
             annotationFilter,
             annotationsQualifiedNameRenderer,
@@ -56,7 +56,9 @@ public class KtAnnotationRenderer internal constructor(
     }
 
     public companion object {
-        public inline operator fun invoke(action: Builder.() -> Unit): KtAnnotationRenderer =
+        public inline operator fun invoke(action: Builder.() -> Unit): KaAnnotationRenderer =
             Builder().apply(action).build()
     }
 }
+
+public typealias KtAnnotationRenderer = KaAnnotationRenderer

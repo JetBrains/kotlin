@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
-import org.jetbrains.kotlin.analysis.api.descriptors.types.KtFe10ClassErrorType
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KaFe10Symbol
+import org.jetbrains.kotlin.analysis.api.descriptors.types.KaFe10ClassErrorType
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.cfg.getElementParentDeclaration
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
 import org.jetbrains.kotlin.descriptors.Modality
@@ -57,32 +57,32 @@ internal val KtDeclaration.ktModality: Modality?
         else -> null
     }
 
-internal val KtElement.ktSymbolKind: KtSymbolKind
+internal val KtElement.ktSymbolKind: KaSymbolKind
     get() {
         if (this is KtPropertyAccessor) {
-            return KtSymbolKind.ACCESSOR
+            return KaSymbolKind.ACCESSOR
         }
 
         if (this is KtDeclaration) {
             return when (this.getParentOfType<KtDeclaration>(strict = true)) {
-                null -> KtSymbolKind.TOP_LEVEL
-                is KtCallableDeclaration, is KtPropertyAccessor -> KtSymbolKind.LOCAL
-                else -> KtSymbolKind.CLASS_MEMBER
+                null -> KaSymbolKind.TOP_LEVEL
+                is KtCallableDeclaration, is KtPropertyAccessor -> KaSymbolKind.LOCAL
+                else -> KaSymbolKind.CLASS_MEMBER
             }
         }
 
-        return KtSymbolKind.LOCAL
+        return KaSymbolKind.LOCAL
     }
 
-internal val KtDeclaration.callableIdIfNonLocal: CallableId?
+internal val KtDeclaration.callableId: CallableId?
     get() = calculateCallableId(allowLocal = false)
 
-internal val KtElement.ktSymbolOrigin: KtSymbolOrigin
+internal val KtElement.kaSymbolOrigin: KaSymbolOrigin
     get() {
         return if (containingKtFile.isCompiled) {
-            KtSymbolOrigin.LIBRARY
+            KaSymbolOrigin.LIBRARY
         } else {
-            KtSymbolOrigin.SOURCE
+            KaSymbolOrigin.SOURCE
         }
     }
 
@@ -144,7 +144,7 @@ internal fun PsiElement.getResolutionScope(bindingContext: BindingContext): Lexi
 }
 
 
-internal fun KtFe10Symbol.createErrorType(): KtType {
+internal fun KaFe10Symbol.createErrorType(): KaType {
     val type = ErrorUtils.createErrorType(ErrorTypeKind.UNAVAILABLE_TYPE_FOR_DECLARATION, psi.toString())
-    return KtFe10ClassErrorType(type, analysisContext)
+    return KaFe10ClassErrorType(type, analysisContext)
 }

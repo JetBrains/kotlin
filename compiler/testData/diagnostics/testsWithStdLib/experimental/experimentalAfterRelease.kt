@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +OptInRelease
+// LANGUAGE: +OptInRelease
 
 @RequiresOptIn
 @Retention(AnnotationRetention.BINARY)

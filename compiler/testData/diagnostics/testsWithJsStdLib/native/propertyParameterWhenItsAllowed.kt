@@ -1,4 +1,4 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +JsExternalPropertyParameters
+// LANGUAGE: +JsExternalPropertyParameters
 
 external class C(x: Int, val y: String)

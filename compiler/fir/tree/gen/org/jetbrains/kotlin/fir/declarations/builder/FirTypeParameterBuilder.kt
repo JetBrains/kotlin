@@ -79,7 +79,6 @@ inline fun buildTypeParameterCopy(original: FirTypeParameter, init: FirTypeParam
     copyBuilder.origin = original.origin
     copyBuilder.attributes = original.attributes.copy()
     copyBuilder.name = original.name
-    copyBuilder.symbol = original.symbol
     copyBuilder.containingDeclarationSymbol = original.containingDeclarationSymbol
     copyBuilder.variance = original.variance
     copyBuilder.isReified = original.isReified

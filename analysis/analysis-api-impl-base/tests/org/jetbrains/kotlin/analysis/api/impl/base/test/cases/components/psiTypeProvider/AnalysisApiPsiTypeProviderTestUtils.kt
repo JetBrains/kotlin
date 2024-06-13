@@ -10,8 +10,8 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiType
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.PsiClassRenderer
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 object AnalysisApiPsiTypeProviderTestUtils {
     fun render(
-        analysisSession: KtAnalysisSession,
-        type: KtType?,
+        analysisSession: KaSession,
+        type: KaType?,
         variance: Variance = Variance.INVARIANT,
     ): String? {
         with(analysisSession) {

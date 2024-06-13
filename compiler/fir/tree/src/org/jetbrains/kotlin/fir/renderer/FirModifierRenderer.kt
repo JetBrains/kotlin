@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 abstract class FirModifierRenderer {
     internal lateinit var components: FirRendererComponents
-    protected val printer get() = components.printer
+    protected val printer: FirPrinter get() = components.printer
 
     abstract fun renderModifiers(memberDeclaration: FirMemberDeclaration)
     abstract fun renderModifiers(backingField: FirBackingField)

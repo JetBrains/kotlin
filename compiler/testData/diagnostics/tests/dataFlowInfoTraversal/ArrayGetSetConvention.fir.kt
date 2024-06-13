@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 
 interface G {
     operator fun get(x: Int, y: Int): Int = x + y

@@ -11,15 +11,15 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 
 /**
  * A Kotlin constant value. This value amy be used as `const val` initializer or annotation argument.
- * Also, may represent evaluated constant value. So, `1 + 2` will be represented as `KtIntConstantValue(3)`
+ * Also, may represent evaluated constant value. So, `1 + 2` will be represented as `KaIntConstantValue(3)`
  *
  * For more info about constant values please see [official Kotlin documentation](https://kotlinlang.org/docs/properties.html#compile-time-constants])
  */
-public sealed class KtConstantValue(public val constantValueKind: ConstantValueKind<*>) {
+public sealed class KaConstantValue(public val constantValueKind: ConstantValueKind) {
     /**
-     * The constant value. The type of this value is always the type specified in its name, i.e, it is `Boolean` for [KtBooleanConstantValue]
+     * The constant value. The type of this value is always the type specified in its name, i.e, it is `Boolean` for [KaBooleanConstantValue]
      *
-     * It is null only for [KtNullConstantValue]
+     * It is null only for [KaNullConstantValue]
      */
     public abstract val value: Any?
 
@@ -33,114 +33,116 @@ public sealed class KtConstantValue(public val constantValueKind: ConstantValueK
      */
     public abstract fun renderAsKotlinConstant(): String
 
-    public class KtNullConstantValue(override val sourcePsi: KtElement?) : KtConstantValue(ConstantValueKind.Null) {
+    public class KaNullConstantValue(override val sourcePsi: KtElement?) : KaConstantValue(ConstantValueKind.Null) {
         override val value: Nothing? get() = null
         override fun renderAsKotlinConstant(): String = "null"
     }
 
-    public class KtBooleanConstantValue(
+    public class KaBooleanConstantValue(
         override val value: Boolean,
         override val sourcePsi: KtElement?
-    ) : KtConstantValue(ConstantValueKind.Boolean) {
+    ) : KaConstantValue(ConstantValueKind.Boolean) {
         override fun renderAsKotlinConstant(): String = value.toString()
     }
 
-    public class KtCharConstantValue(
+    public class KaCharConstantValue(
         override val value: Char,
         override val sourcePsi: KtElement?
-    ) : KtConstantValue(ConstantValueKind.Char) {
+    ) : KaConstantValue(ConstantValueKind.Char) {
         override fun renderAsKotlinConstant(): String = "`$value`"
     }
 
-    public class KtByteConstantValue(
+    public class KaByteConstantValue(
         override val value: Byte,
         override val sourcePsi: KtElement?
-    ) : KtConstantValue(ConstantValueKind.Byte) {
+    ) : KaConstantValue(ConstantValueKind.Byte) {
         override fun renderAsKotlinConstant(): String = value.toString()
     }
 
-    public class KtUnsignedByteConstantValue(
+    public class KaUnsignedByteConstantValue(
         override val value: UByte,
         override val sourcePsi: KtElement?
-    ) : KtConstantValue(ConstantValueKind.UnsignedByte) {
+    ) : KaConstantValue(ConstantValueKind.UnsignedByte) {
         override fun renderAsKotlinConstant(): String = "${value}u"
     }
 
-    public class KtShortConstantValue(
+    public class KaShortConstantValue(
         override val value: Short,
         override val sourcePsi: KtElement?
-    ) : KtConstantValue(ConstantValueKind.Short) {
+    ) : KaConstantValue(ConstantValueKind.Short) {
         override fun renderAsKotlinConstant(): String = value.toString()
     }
 
-    public class KtUnsignedShortConstantValue(
+    public class KaUnsignedShortConstantValue(
         override val value: UShort,
         override val sourcePsi: KtElement?
-    ) : KtConstantValue(ConstantValueKind.UnsignedShort) {
+    ) : KaConstantValue(ConstantValueKind.UnsignedShort) {
         override fun renderAsKotlinConstant(): String = "${value}u"
     }
 
-    public class KtIntConstantValue(
+    public class KaIntConstantValue(
         override val value: Int,
         override val sourcePsi: KtElement?
-    ) : KtConstantValue(ConstantValueKind.Int) {
+    ) : KaConstantValue(ConstantValueKind.Int) {
         override fun renderAsKotlinConstant(): String = value.toString()
     }
 
-    public class KtUnsignedIntConstantValue(
+    public class KaUnsignedIntConstantValue(
         override val value: UInt,
         override val sourcePsi: KtElement?
-    ) : KtConstantValue(ConstantValueKind.UnsignedInt) {
+    ) : KaConstantValue(ConstantValueKind.UnsignedInt) {
         override fun renderAsKotlinConstant(): String = "${value}u"
     }
 
-    public class KtLongConstantValue(
+    public class KaLongConstantValue(
         override val value: Long,
         override val sourcePsi: KtElement?
-    ) : KtConstantValue(ConstantValueKind.Long) {
+    ) : KaConstantValue(ConstantValueKind.Long) {
         override fun renderAsKotlinConstant(): String = value.toString()
     }
 
-    public class KtUnsignedLongConstantValue(
+    public class KaUnsignedLongConstantValue(
         override val value: ULong,
         override val sourcePsi: KtElement?
-    ) : KtConstantValue(ConstantValueKind.UnsignedLong) {
+    ) : KaConstantValue(ConstantValueKind.UnsignedLong) {
         override fun renderAsKotlinConstant(): String = "${value}uL"
     }
 
-    public class KtStringConstantValue(
+    public class KaStringConstantValue(
         override val value: String,
         override val sourcePsi: KtElement?
-    ) : KtConstantValue(ConstantValueKind.String) {
+    ) : KaConstantValue(ConstantValueKind.String) {
         override fun renderAsKotlinConstant(): String = "\"${value}\""
     }
 
-    public class KtFloatConstantValue(
+    public class KaFloatConstantValue(
         override val value: Float,
         override val sourcePsi: KtElement?
-    ) : KtConstantValue(ConstantValueKind.Float) {
+    ) : KaConstantValue(ConstantValueKind.Float) {
         override fun renderAsKotlinConstant(): String = "${value}f"
     }
 
-    public class KtDoubleConstantValue(
+    public class KaDoubleConstantValue(
         override val value: Double,
         override val sourcePsi: KtElement?
-    ) : KtConstantValue(ConstantValueKind.Double) {
+    ) : KaConstantValue(ConstantValueKind.Double) {
         override fun renderAsKotlinConstant(): String = value.toString()
     }
 
     /**
      * Value which is not cosntant or there was an error (e.g, division by 0) bug during value evaluation
      */
-    public class KtErrorConstantValue(
+    public class KaErrorConstantValue(
         public val errorMessage: String,
         override val sourcePsi: KtElement?,
-    ) : KtConstantValue(ConstantValueKind.Error) {
+    ) : KaConstantValue(ConstantValueKind.Error) {
         override val value: Nothing
-            get() = error("Cannot get value for KtErrorConstantValue")
+            get() = error("Cannot get value for KaErrorConstantValue")
 
         override fun renderAsKotlinConstant(): String {
             return "error(\"$errorMessage\")"
         }
     }
 }
+
+public typealias KtConstantValue = KaConstantValue

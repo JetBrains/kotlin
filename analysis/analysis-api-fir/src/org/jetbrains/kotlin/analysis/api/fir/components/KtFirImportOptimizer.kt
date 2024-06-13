@@ -8,18 +8,19 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
-import org.jetbrains.kotlin.analysis.api.components.KtImportOptimizer
-import org.jetbrains.kotlin.analysis.api.components.KtImportOptimizerResult
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.components.KaImportOptimizer
+import org.jetbrains.kotlin.analysis.api.components.KaImportOptimizerResult
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
 import org.jetbrains.kotlin.analysis.api.fir.isImplicitDispatchReceiver
 import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver
 import org.jetbrains.kotlin.analysis.api.fir.utils.computeImportableName
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
+import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaNonErrorClassType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.fir.FirElement
@@ -38,9 +39,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedTypeQualifierE
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
-import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
@@ -55,21 +54,27 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
-internal class KtFirImportOptimizer(
-    private val analysisSession: KtFirAnalysisSession,
-    override val token: KtLifetimeToken,
+internal class KaFirImportOptimizer(
+    private val analysisSession: KaFirSession,
+    override val token: KaLifetimeToken,
     private val firResolveSession: LLFirResolveSession
-) : KtImportOptimizer() {
+) : KaImportOptimizer() {
     private val firSession: FirSession
         get() = firResolveSession.useSiteFirSession
 
-    override fun analyseImports(file: KtFile): KtImportOptimizerResult {
+    override fun analyseImports(file: KtFile): KaImportOptimizerResult {
         val existingImports = file.importDirectives
-        if (existingImports.isEmpty()) return KtImportOptimizerResult()
+        if (existingImports.isEmpty()) return KaImportOptimizerResult()
 
         val (usedDeclarations, unresolvedNames) = collectReferencedEntities(file)
 
-        return KtImportOptimizerResult(usedDeclarations, unresolvedNames)
+        return KaImportOptimizerResult(usedDeclarations, unresolvedNames)
+    }
+
+    override fun getImportableName(symbol: KaSymbol): FqName? = when (symbol) {
+        is KaClassLikeSymbol -> symbol.classId?.asSingleFqName()
+        is KaCallableSymbol -> symbol.firSymbol.computeImportableName(firSession)
+        else -> null
     }
 
     private data class ReferencedEntitiesResult(
@@ -289,11 +294,11 @@ internal class KtFirImportOptimizer(
                 }
             }
 
-            private fun toImportableFqNames(symbol: KtSymbol, qualifiedNameAsFqName: FqName): List<FqName> =
+            private fun toImportableFqNames(symbol: KaSymbol, qualifiedNameAsFqName: FqName): List<FqName> =
                 buildList {
                     when (symbol) {
-                        is KtCallableSymbol -> {
-                            val callableId = symbol.callableIdIfNonLocal ?: return emptyList()
+                        is KaCallableSymbol -> {
+                            val callableId = symbol.callableId ?: return emptyList()
                             val fqName = callableId.asSingleFqName()
                             val classFqName = callableId.classId?.asSingleFqName()
                             // either it is a member declaration
@@ -304,7 +309,7 @@ internal class KtFirImportOptimizer(
                             } else if (fqName != qualifiedNameAsFqName) {
                                 // or some kind of top level declaration with potential receiver
                                 this += fqName
-                                val receiverClassType = symbol.receiverParameter?.type as? KtNonErrorClassType
+                                val receiverClassType = symbol.receiverParameter?.type as? KaNonErrorClassType
                                 val receiverFqName = receiverClassType?.classId?.asSingleFqName()
                                 // import has no receiver for receiver kdoc declaration:
                                 // for receiver case kdoc like `[Foo.bar]`
@@ -314,8 +319,8 @@ internal class KtFirImportOptimizer(
                                 }
                             }
                         }
-                        is KtClassLikeSymbol -> {
-                            val fqName = symbol.classIdIfNonLocal?.asSingleFqName()
+                        is KaClassLikeSymbol -> {
+                            val fqName = symbol.classId?.asSingleFqName()
                             if (fqName != null && fqName != qualifiedNameAsFqName) {
                                 this += fqName
                             }
@@ -400,7 +405,11 @@ private val FirQualifiedAccessExpression.referencedCallableSymbol: FirCallableSy
  */
 private val FirResolvedTypeRef.resolvedClassId: ClassId?
     get() {
-        if (this !is FirErrorTypeRef) return type.classId
+        if (this !is FirErrorTypeRef) {
+            // When you call a method from Java with type arguments, in FIR they are currently represented as flexible types.
+            // TODO Consider handling other non-ConeLookupTagBasedType types here (see KT-66418)
+            return type.abbreviatedTypeOrSelf.lowerBoundIfFlexible().classId
+        }
 
         val candidateSymbols = diagnostic.getCandidateSymbols()
         val singleClassSymbol = candidateSymbols.singleOrNull() as? FirClassLikeSymbol

@@ -66,6 +66,11 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationOnSuperTypeCall.kt");
     }
 
+    @TestMetadata("annotationOnTypeParameterInWhereClause.kt")
+    public void testAnnotationOnTypeParameterInWhereClause() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationOnTypeParameterInWhereClause.kt");
+    }
+
     @TestMetadata("annotationsOnNullableParenthesizedTypes.kt")
     public void testAnnotationsOnNullableParenthesizedTypes() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationsOnNullableParenthesizedTypes.kt");
@@ -455,6 +460,24 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
       }
     }
 
+    @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class InvalidCode extends AbstractLightTree2FirConverterTestCase {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+      }
+
+      public void testAllFilesPresentInInvalidCode() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @TestMetadata("setterWithNoBodyAndDifferentValueParameterType.kt")
+      public void testSetterWithNoBodyAndDifferentValueParameterType() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/setterWithNoBodyAndDifferentValueParameterType.kt");
+      }
+    }
+
     @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -716,9 +739,37 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/variables.kt");
     }
 
+    @TestMetadata("whenGuards.kt")
+    public void testWhenGuards() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/whenGuards.kt");
+    }
+
     @TestMetadata("while.kt")
     public void testWhile() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/while.kt");
+    }
+
+    @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/invalidCode")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class InvalidCode extends AbstractLightTree2FirConverterTestCase {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+      }
+
+      public void testAllFilesPresentInInvalidCode() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/invalidCode"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @TestMetadata("longStringTemplateEntryInvalidCharacters.kt")
+      public void testLongStringTemplateEntryInvalidCharacters() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/invalidCode/longStringTemplateEntryInvalidCharacters.kt");
+      }
+
+      @TestMetadata("longStringTemplateEntryWithTwoExpressions.kt")
+      public void testLongStringTemplateEntryWithTwoExpressions() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/invalidCode/longStringTemplateEntryWithTwoExpressions.kt");
+      }
     }
   }
 }

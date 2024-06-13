@@ -1,5 +1,0 @@
-<caret_1> resolved to:
-Nothing (Unresolved reference)
-
-<caret_2> resolved to:
-0: (in kotlin.String) open val length: kotlin.Int

@@ -1,0 +1,64 @@
+FILE: unusedAnonymLambdaParam.kt
+    public final fun foo(a: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    public final fun foo(a: R|(kotlin/Int, kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    public final fun baz(): R|kotlin/Unit| {
+    }
+    public final fun baz(p1: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final fun bar1(): R|kotlin/Unit| {
+        R|/foo|(<L> = foo@fun <anonymous>(p1: R|kotlin/Int|): R|kotlin/Unit| <inline=NoInline>  {
+            R|/baz|()
+        }
+        )
+    }
+    public final fun bar2(): R|kotlin/Unit| {
+        R|/foo|(<L> = foo@fun <anonymous>(p1: R|kotlin/Int|): R|kotlin/Unit| <inline=NoInline>  {
+            R|/baz|(R|<local>/p1|)
+        }
+        )
+    }
+    public final fun bar3(): R|kotlin/Unit| {
+        R|/foo|(<L> = foo@fun <anonymous>(p1: R|kotlin/Int|, p2: R|kotlin/Int|): R|kotlin/Unit| <inline=NoInline>  {
+            R|/baz|(R|<local>/p1|)
+        }
+        )
+    }
+    public final fun bar4(): R|kotlin/Unit| {
+        R|/foo|(<L> = foo@fun <anonymous>(p1: R|kotlin/Int|, p2: R|kotlin/Int|): R|kotlin/Unit| <inline=NoInline>  {
+            R|/baz|()
+        }
+        )
+    }
+    public final fun bar5(): R|kotlin/Unit| {
+        R|/foo|(<L> = foo@fun <anonymous>(p1: R|kotlin/Int|, p2: R|kotlin/Int|): R|kotlin/Unit| <inline=NoInline>  {
+            R|/baz|(R|<local>/p1|)
+            R|/baz|(R|<local>/p1|)
+            R|/baz|(R|<local>/p2|)
+        }
+        )
+    }
+    public final fun bar6(): R|kotlin/Unit| {
+        R|/foo|(<L> = foo@fun <anonymous>(a: R|kotlin/Int|): R|kotlin/Unit| <inline=NoInline>  {
+            R|/foo|(<L> = foo@fun <anonymous>(b: R|kotlin/Int|): R|kotlin/Unit| <inline=NoInline>  {
+                R|/foo|(<L> = foo@fun <anonymous>(c: R|kotlin/Int|): R|kotlin/Unit| <inline=NoInline>  {
+                    R|/baz|(R|<local>/a|)
+                    R|/baz|(R|<local>/c|)
+                }
+                )
+            }
+            )
+        }
+        )
+    }
+    public final fun bar7(): R|kotlin/Unit| {
+        R|/foo|(<L> = foo@fun <anonymous>(a: R|kotlin/Int|): R|kotlin/Unit| <inline=NoInline>  {
+            lval b: R|() -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                R|/baz|(R|<local>/a|)
+            }
+
+            R|<local>/b|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+        }
+        )
+    }

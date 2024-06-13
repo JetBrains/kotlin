@@ -1,6 +1,6 @@
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: A
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: A
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -15,22 +15,22 @@ KtNamedClassOrObjectSymbol:
   name: A
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(similarSignatures.kt)
+  getContainingFileSymbol: KaFileSymbol(similarSignatures.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: B
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: B
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -45,28 +45,28 @@ KtNamedClassOrObjectSymbol:
   name: B
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(similarSignatures.kt)
+  getContainingFileSymbol: KaFileSymbol(similarSignatures.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /tooo
+KaFunctionSymbol:
+  annotations: []
+  callableId: /tooo
   contextReceivers: [
     KtContextReceiver:
       label: null
-      type: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      type: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: A
   ]
   contractEffects: []
@@ -87,28 +87,28 @@ KtFunctionSymbol:
   name: tooo
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(similarSignatures.kt)
+  getContainingFileSymbol: KaFileSymbol(similarSignatures.kt)
   getContainingJvmClassName: SimilarSignaturesKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /tooo
+KaFunctionSymbol:
+  annotations: []
+  callableId: /tooo
   contextReceivers: [
     KtContextReceiver:
       label: null
-      type: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      type: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: B
   ]
   contractEffects: []
@@ -129,34 +129,34 @@ KtFunctionSymbol:
   name: tooo
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(similarSignatures.kt)
+  getContainingFileSymbol: KaFileSymbol(similarSignatures.kt)
   getContainingJvmClassName: SimilarSignaturesKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /tooo
+KaFunctionSymbol:
+  annotations: []
+  callableId: /tooo
   contextReceivers: [
     KtContextReceiver:
       label: null
-      type: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      type: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: A
     KtContextReceiver:
       label: null
-      type: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      type: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: B
   ]
   contractEffects: []
@@ -177,34 +177,34 @@ KtFunctionSymbol:
   name: tooo
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(similarSignatures.kt)
+  getContainingFileSymbol: KaFileSymbol(similarSignatures.kt)
   getContainingJvmClassName: SimilarSignaturesKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /tooo
+KaFunctionSymbol:
+  annotations: []
+  callableId: /tooo
   contextReceivers: [
     KtContextReceiver:
       label: null
-      type: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      type: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: B
     KtContextReceiver:
       label: null
-      type: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      type: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: A
   ]
   contractEffects: []
@@ -225,15 +225,15 @@ KtFunctionSymbol:
   name: tooo
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(similarSignatures.kt)
+  getContainingFileSymbol: KaFileSymbol(similarSignatures.kt)
   getContainingJvmClassName: SimilarSignaturesKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

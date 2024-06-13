@@ -9,15 +9,29 @@ import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.objcexport.*
 
 /**
- * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapperKt.bridgeMethodImpl]
+ * This method is tightly bound with [valueParametersAssociated] and order in [MethodBridge.valueParameters] matters.
+ * K1 function descriptor has property [allParameters], but analysis API doesn't so we need to combine manually in exact order:
+ * [KtFunctionLikeSymbol.receiverParameter], [KtFunctionLikeSymbol.valueParameters] and inner class edge case.
+ * Then [valueParametersAssociated] associates parameters according the order.
+ *
+ * See K1 implementation [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapperKt.bridgeMethodImpl]
  */
 context(KtAnalysisSession, KtObjCExportSession)
 internal fun KtFunctionLikeSymbol.getFunctionMethodBridge(): MethodBridge {
 
     val valueParameters = mutableListOf<MethodBridgeValueParameter>()
+    val isInner = (this.getContainingSymbol() as? KtNamedClassOrObjectSymbol)?.isInner ?: false
+
+    this.receiverParameter?.apply {
+        valueParameters += bridgeParameter(this.type)
+    }
 
     this.valueParameters.forEach {
         valueParameters += bridgeParameter(it.returnType)
+    }
+
+    if (isInner) {
+        valueParameters += bridgeParameter(this.returnType)
     }
 
     if (isSuspend) {
@@ -32,27 +46,17 @@ internal fun KtFunctionLikeSymbol.getFunctionMethodBridge(): MethodBridge {
 
     return MethodBridge(
         bridgeReturnType(),
-        receiverType,
+        bridgeReceiverType,
         valueParameters
     )
 }
 
-context(KtAnalysisSession, KtObjCExportSession)
-internal fun KtVariableLikeSymbol.getPropertyMethodBridge(): MethodBridge {
-    return MethodBridge(
-        bridgeReturnType(),
-        receiverType,
-        emptyList()
-    )
-}
-
 context(KtAnalysisSession)
-private val KtCallableSymbol.receiverType: MethodBridgeReceiver
+internal val KtCallableSymbol.bridgeReceiverType: MethodBridgeReceiver
     get() {
-        val isProperty = getContainingSymbol() as? KtPropertySymbol != null
         return if (isArrayConstructor) {
             MethodBridgeReceiver.Factory
-        } else if (!isConstructor && isTopLevel && !isExtension && !isProperty) {
+        } else if (!isConstructor && isTopLevel && !isExtension) {
             MethodBridgeReceiver.Static
         } else {
             MethodBridgeReceiver.Instance
@@ -87,6 +91,8 @@ private fun bridgeType(
         type.isUShort -> ObjCValueType.UNSIGNED_SHORT
         type.isUInt -> ObjCValueType.UNSIGNED_INT
         type.isULong -> ObjCValueType.UNSIGNED_LONG_LONG
+        type.isClassTypeWithClassId(KonanPrimitiveType.VECTOR128.classId) && !type.isMarkedNullable ->
+            ObjCValueType.VECTOR_FLOAT_128
         type.isClassTypeWithClassId(KonanPrimitiveType.NON_NULL_NATIVE_PTR.classId) -> ObjCValueType.POINTER
         else -> null
     }
@@ -151,14 +157,13 @@ private fun KtCallableSymbol.bridgeReturnType(): MethodBridge.ReturnValue {
         return MethodBridge.ReturnValue.HashCode
     }
 
-    if (returnType.isUnit || returnType.isNothing) {
-        return if (hasThrowsAnnotation) {
-            MethodBridge.ReturnValue.WithError.Success
-        } else {
-            MethodBridge.ReturnValue.Void
-        }
+    if (returnType.isUnit) {
+        return successOrVoidReturnValue
     }
 
+    if (returnType.isObjCNothing && this !is KaPropertyAccessorSymbol) {
+        return successOrVoidReturnValue
+    }
 
     val returnTypeBridge = bridgeType(returnType)
     val successReturnValueBridge = MethodBridge.ReturnValue.Mapped(returnTypeBridge)
@@ -190,3 +195,9 @@ private fun MethodBridgeValueParameter.isBlockPointer(): Boolean = when (this) {
     MethodBridgeValueParameter.ErrorOutParameter -> false
     is MethodBridgeValueParameter.SuspendCompletion -> true
 }
+
+private val KtCallableSymbol.successOrVoidReturnValue: MethodBridge.ReturnValue
+    get() {
+        return if (hasThrowsAnnotation) MethodBridge.ReturnValue.WithError.Success
+        else MethodBridge.ReturnValue.Void
+    }

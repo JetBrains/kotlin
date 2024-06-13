@@ -5,27 +5,27 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callables
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtDeclarationRenderer
-import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
+import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.renderer.render
 
-public interface KtConstructorSymbolRenderer {
+public interface KaConstructorSymbolRenderer {
     public fun renderSymbol(
-        analysisSession: KtAnalysisSession,
-        symbol: KtConstructorSymbol,
-        declarationRenderer: KtDeclarationRenderer,
+        analysisSession: KaSession,
+        symbol: KaConstructorSymbol,
+        declarationRenderer: KaDeclarationRenderer,
         printer: PrettyPrinter,
     )
 
-    public object AS_SOURCE : KtConstructorSymbolRenderer {
+    public object AS_SOURCE : KaConstructorSymbolRenderer {
         override fun renderSymbol(
-            analysisSession: KtAnalysisSession,
-            symbol: KtConstructorSymbol,
-            declarationRenderer: KtDeclarationRenderer,
+            analysisSession: KaSession,
+            symbol: KaConstructorSymbol,
+            declarationRenderer: KaDeclarationRenderer,
             printer: PrettyPrinter,
         ) {
             declarationRenderer.callableSignatureRenderer
@@ -35,11 +35,11 @@ public interface KtConstructorSymbolRenderer {
         }
     }
 
-    public object AS_RAW_SIGNATURE : KtConstructorSymbolRenderer {
+    public object AS_RAW_SIGNATURE : KaConstructorSymbolRenderer {
         override fun renderSymbol(
-            analysisSession: KtAnalysisSession,
-            symbol: KtConstructorSymbol,
-            declarationRenderer: KtDeclarationRenderer,
+            analysisSession: KaSession,
+            symbol: KaConstructorSymbol,
+            declarationRenderer: KaDeclarationRenderer,
             printer: PrettyPrinter,
         ) {
             with(analysisSession) {
@@ -50,7 +50,7 @@ public interface KtConstructorSymbolRenderer {
                                 .renderKeyword(analysisSession, KtTokens.CONSTRUCTOR_KEYWORD, symbol, printer)
                         },
                         {
-                            (symbol.getContainingSymbol() as? KtNamedSymbol)?.name?.let { printer.append(it.render()) }
+                            (symbol.getContainingSymbol() as? KaNamedSymbol)?.name?.let { printer.append(it.render()) }
                             printer.printCollection(symbol.valueParameters, prefix = "(", postfix = ")") {
                                 declarationRenderer.typeRenderer.renderType(analysisSession, it.returnType, printer)
                             }
@@ -61,3 +61,5 @@ public interface KtConstructorSymbolRenderer {
         }
     }
 }
+
+public typealias KtConstructorSymbolRenderer = KaConstructorSymbolRenderer

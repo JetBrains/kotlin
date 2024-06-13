@@ -1,2 +1,2 @@
-KtType: java.lang.Runnable
+KaType: java.lang.Runnable
 PsiType: @org.jetbrains.annotations.NotNull() java.lang.Runnable

@@ -180,17 +180,8 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
             return typeMapper.mapType(returnType, TypeMappingMode.getModeForReturnTypeNoGeneric(isAnnotationMethod), sw, materialized)
         }
 
-        val typeMappingModeFromAnnotation =
-            typeSystem.extractTypeMappingModeFromAnnotation(
-                declaration.suppressWildcardsMode(), returnType, isAnnotationMethod, mapTypeAliases = false
-            )
-        if (typeMappingModeFromAnnotation != null) {
-            return typeMapper.mapType(returnType, typeMappingModeFromAnnotation, sw, materialized)
-        }
-
-        val mappingMode = typeSystem.getOptimalModeForReturnType(returnType, isAnnotationMethod)
-
-        return typeMapper.mapType(returnType, mappingMode, sw, materialized)
+        val mode = getTypeMappingModeForReturnType(typeSystem, declaration, returnType)
+        return typeMapper.mapType(returnType, mode, sw, materialized)
     }
 
     private fun hasVoidReturnType(function: IrFunction): Boolean =
@@ -330,6 +321,51 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
             if (!valueParameterType.unboxInlineClass().isInt()) return false
             return irFunction.allOverridden(false).any { it.parent.kotlinFqName == StandardNames.FqNames.mutableCollection }
         }
+
+        fun getTypeMappingModeForReturnType(
+            typeSystem: IrTypeSystemContext, declaration: IrDeclaration, returnType: IrType
+        ): TypeMappingMode = with(typeSystem) {
+            val isAnnotationMethod = declaration.parent.let { it is IrClass && it.isAnnotationClass }
+            extractTypeMappingModeFromAnnotation(
+                declaration.suppressWildcardsMode(), returnType, isAnnotationMethod, mapTypeAliases = false
+            ) ?: getOptimalModeForReturnType(returnType, isAnnotationMethod)
+        }
+
+        fun getTypeMappingModeForParameter(
+            typeSystem: IrTypeSystemContext, declaration: IrDeclaration, type: IrType
+        ): TypeMappingMode = with(typeSystem) {
+            extractTypeMappingModeFromAnnotation(
+                declaration.suppressWildcardsMode(), type, isForAnnotationParameter = false, mapTypeAliases = false
+            )
+                ?: if (declaration.isMethodWithDeclarationSiteWildcards && !declaration.isStaticInlineClassReplacement && type.argumentsCount() != 0) {
+                    TypeMappingMode.GENERIC_ARGUMENT // Render all wildcards
+                } else {
+                    getOptimalModeForValueParameter(type)
+                }
+        }
+
+        private val IrDeclaration.isMethodWithDeclarationSiteWildcards: Boolean
+            get() = this is IrSimpleFunction && allOverridden().any {
+                it.fqNameWhenAvailable.isMethodWithDeclarationSiteWildcardsFqName
+            }
+
+        private fun IrDeclaration.suppressWildcardsMode(): Boolean? =
+            parentsWithSelf.mapNotNull { declaration ->
+                when (declaration) {
+                    is IrField -> {
+                        // Annotations on properties (JvmSuppressWildcards has PROPERTY, not FIELD, in its targets) have been moved
+                        // to the synthetic "$annotations" method, but the copy can still be found via the property symbol.
+                        declaration.correspondingPropertySymbol?.owner?.getSuppressWildcardsAnnotationValue()
+                    }
+                    is IrAnnotationContainer -> declaration.getSuppressWildcardsAnnotationValue()
+                    else -> null
+                }
+            }.firstOrNull()
+
+        private fun IrAnnotationContainer.getSuppressWildcardsAnnotationValue(): Boolean? =
+            getAnnotation(JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME)?.run {
+                if (valueArgumentsCount > 0) (getValueArgument(0) as? IrConst<*>)?.value as? Boolean ?: true else null
+            }
     }
 
     private fun writeParameter(
@@ -354,42 +390,9 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
             return
         }
 
-        val mode = with(typeSystem) {
-            extractTypeMappingModeFromAnnotation(
-                declaration.suppressWildcardsMode(), type, isForAnnotationParameter = false, mapTypeAliases = false
-            )
-                ?: if (declaration.isMethodWithDeclarationSiteWildcards && !declaration.isStaticInlineClassReplacement && type.argumentsCount() != 0) {
-                    TypeMappingMode.GENERIC_ARGUMENT // Render all wildcards
-                } else {
-                    typeSystem.getOptimalModeForValueParameter(type)
-                }
-        }
-
+        val mode = getTypeMappingModeForParameter(typeSystem, declaration, type)
         typeMapper.mapType(type, mode, sw, materialized)
     }
-
-    private val IrDeclaration.isMethodWithDeclarationSiteWildcards: Boolean
-        get() = this is IrSimpleFunction && allOverridden().any {
-            it.fqNameWhenAvailable.isMethodWithDeclarationSiteWildcardsFqName
-        }
-
-    private fun IrDeclaration.suppressWildcardsMode(): Boolean? =
-        parentsWithSelf.mapNotNull { declaration ->
-            when (declaration) {
-                is IrField -> {
-                    // Annotations on properties (JvmSuppressWildcards has PROPERTY, not FIELD, in its targets) have been moved
-                    // to the synthetic "$annotations" method, but the copy can still be found via the property symbol.
-                    declaration.correspondingPropertySymbol?.owner?.getSuppressWildcardsAnnotationValue()
-                }
-                is IrAnnotationContainer -> declaration.getSuppressWildcardsAnnotationValue()
-                else -> null
-            }
-        }.firstOrNull()
-
-    private fun IrAnnotationContainer.getSuppressWildcardsAnnotationValue(): Boolean? =
-        getAnnotation(JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME)?.run {
-            if (valueArgumentsCount > 0) (getValueArgument(0) as? IrConst<*>)?.value as? Boolean ?: true else null
-        }
 
     // TODO get rid of 'caller' argument
     fun mapToCallableMethod(expression: IrCall, caller: IrFunction?): IrCallableMethod {

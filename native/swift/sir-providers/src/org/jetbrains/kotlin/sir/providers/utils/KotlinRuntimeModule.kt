@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildClass
 import org.jetbrains.kotlin.sir.builder.buildInit
 import org.jetbrains.kotlin.sir.providers.source.KotlinRuntimeElement
+import org.jetbrains.kotlin.sir.util.SirSwiftModule
 
 /**
  * Models `KotlinRuntime` module which contains declarations that are
@@ -36,6 +37,14 @@ public object KotlinRuntimeModule : SirModule() {
                 isFailable = false
                 initKind = SirInitializerKind.ORDINARY
                 isOverride = false
+            }
+            declarations += buildInit {
+                origin = KotlinRuntimeElement()
+                kind = SirCallableKind.CLASS_METHOD
+                isFailable = false
+                initKind = SirInitializerKind.ORDINARY
+                isOverride = false
+                parameters.add(SirParameter(argumentName = "__externalRCRef", type = SirNominalType(SirSwiftModule.uint)))
             }
         }.also { klass ->
             klass.parent = KotlinRuntimeModule

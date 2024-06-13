@@ -1,4 +1,4 @@
-// !LANGUAGE: +SafeCastCheckBoundSmartCasts
+// LANGUAGE: +SafeCastCheckBoundSmartCasts
 // See KT-19007
 
 // Stub

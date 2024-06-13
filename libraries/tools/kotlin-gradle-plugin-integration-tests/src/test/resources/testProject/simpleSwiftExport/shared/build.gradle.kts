@@ -12,8 +12,4 @@ kotlin {
             baseName = "Shared"
         }
     }
-
-    sourceSets {
-        val commonMain by getting
-    }
 }

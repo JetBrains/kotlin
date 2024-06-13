@@ -1,2 +1,0 @@
-Resolved to:
-PsiField:Inner.varFlag: PsiType:Flag<?>

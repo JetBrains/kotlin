@@ -1,4 +1,4 @@
-// !LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers
 // MODULE: value_parameters_library
 
 package value_parameters.test

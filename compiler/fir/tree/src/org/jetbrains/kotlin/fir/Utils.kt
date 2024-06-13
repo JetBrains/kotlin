@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusWithAlteredDefaults
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusWithAlteredDefaults
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.*
@@ -122,27 +124,97 @@ fun FirDeclarationStatus.copy(
     } else {
         FirDeclarationStatusImpl(newVisibility, newModality)
     }
-    return newStatus.apply {
-        this.isExpect = isExpect
-        this.isActual = isActual
-        this.isOverride = isOverride
-        this.isOperator = isOperator
-        this.isInfix = isInfix
-        this.isInline = isInline
-        this.isTailRec = isTailRec
-        this.isExternal = isExternal
-        this.isConst = isConst
-        this.isLateInit = isLateInit
-        this.isInner = isInner
-        this.isCompanion = isCompanion
-        this.isData = isData
-        this.isSuspend = isSuspend
-        this.isStatic = isStatic
-        this.isFromSealedClass = isFromSealedClass
-        this.isFromEnumClass = isFromEnumClass
-        this.isFun = isFun
-        this.hasStableParameterNames = hasStableParameterNames
+    copyStatusAttributes(
+        from = this,
+        to = newStatus,
+        isExpect = isExpect,
+        isActual = isActual,
+        isOverride = isOverride,
+        isOperator = isOperator,
+        isInfix = isInfix,
+        isInline = isInline,
+        isTailRec = isTailRec,
+        isExternal = isExternal,
+        isConst = isConst,
+        isLateInit = isLateInit,
+        isInner = isInner,
+        isCompanion = isCompanion,
+        isData = isData,
+        isSuspend = isSuspend,
+        isStatic = isStatic,
+        isFromSealedClass = isFromSealedClass,
+        isFromEnumClass = isFromEnumClass,
+        isFun = isFun,
+        hasStableParameterNames = hasStableParameterNames,
+    )
+    return newStatus
+}
+
+fun FirDeclarationStatus.copyWithNewDefaults(
+    visibility: Visibility? = this.visibility,
+    modality: Modality? = this.modality,
+    defaultVisibility: Visibility = this.defaultVisibility,
+    defaultModality: Modality = this.defaultModality,
+): FirDeclarationStatus {
+    val newVisibility = visibility ?: this.visibility
+    val newModality = modality ?: this.modality
+
+    val newStatus = when (this) {
+        is FirResolvedDeclarationStatus -> FirResolvedDeclarationStatusWithAlteredDefaults(
+            newVisibility, newModality!!,
+            defaultVisibility, defaultModality,
+            effectiveVisibility
+        )
+        else -> FirDeclarationStatusWithAlteredDefaults(newVisibility, newModality, defaultVisibility, defaultModality)
     }
+
+    copyStatusAttributes(from = this, to = newStatus)
+
+    return newStatus
+}
+
+private fun copyStatusAttributes(
+    from: FirDeclarationStatus,
+    to: FirDeclarationStatusImpl,
+    isExpect: Boolean = from.isExpect,
+    isActual: Boolean = from.isActual,
+    isOverride: Boolean = from.isOverride,
+    isOperator: Boolean = from.isOperator,
+    isInfix: Boolean = from.isInfix,
+    isInline: Boolean = from.isInline,
+    isTailRec: Boolean = from.isTailRec,
+    isExternal: Boolean = from.isExternal,
+    isConst: Boolean = from.isConst,
+    isLateInit: Boolean = from.isLateInit,
+    isInner: Boolean = from.isInner,
+    isCompanion: Boolean = from.isCompanion,
+    isData: Boolean = from.isData,
+    isSuspend: Boolean = from.isSuspend,
+    isStatic: Boolean = from.isStatic,
+    isFromSealedClass: Boolean = from.isFromSealedClass,
+    isFromEnumClass: Boolean = from.isFromEnumClass,
+    isFun: Boolean = from.isFun,
+    hasStableParameterNames: Boolean = from.hasStableParameterNames,
+) {
+    to.isExpect = isExpect
+    to.isActual = isActual
+    to.isOverride = isOverride
+    to.isOperator = isOperator
+    to.isInfix = isInfix
+    to.isInline = isInline
+    to.isTailRec = isTailRec
+    to.isExternal = isExternal
+    to.isConst = isConst
+    to.isLateInit = isLateInit
+    to.isInner = isInner
+    to.isCompanion = isCompanion
+    to.isData = isData
+    to.isSuspend = isSuspend
+    to.isStatic = isStatic
+    to.isFromSealedClass = isFromSealedClass
+    to.isFromEnumClass = isFromEnumClass
+    to.isFun = isFun
+    to.hasStableParameterNames = hasStableParameterNames
 }
 
 inline fun <R> whileAnalysing(session: FirSession, element: FirElement, block: () -> R): R {
@@ -295,4 +367,24 @@ fun FirOperation.toAugmentedAssignSourceKind() = when (this) {
     FirOperation.DIV_ASSIGN -> KtFakeSourceElementKind.DesugaredDivAssign
     FirOperation.REM_ASSIGN -> KtFakeSourceElementKind.DesugaredRemAssign
     else -> error("Unexpected operator: $name")
+}
+
+fun ConeKotlinType.toFirResolvedTypeRef(
+    source: KtSourceElement? = null,
+    delegatedTypeRef: FirTypeRef? = null
+): FirResolvedTypeRef {
+    return if (this is ConeErrorType) {
+        buildErrorTypeRef {
+            this.source = source
+            diagnostic = this@toFirResolvedTypeRef.diagnostic
+            type = this@toFirResolvedTypeRef
+            this.delegatedTypeRef = delegatedTypeRef
+        }
+    } else {
+        buildResolvedTypeRef {
+            this.source = source
+            type = this@toFirResolvedTypeRef
+            this.delegatedTypeRef = delegatedTypeRef
+        }
+    }
 }

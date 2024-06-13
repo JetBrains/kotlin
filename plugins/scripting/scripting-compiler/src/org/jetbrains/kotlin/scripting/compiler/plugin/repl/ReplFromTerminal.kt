@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.repl
 
 import com.intellij.core.JavaCoreProjectEnvironment
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
 import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
 import org.jetbrains.kotlin.cli.common.repl.replUnescapeLineBreaks
@@ -39,7 +38,7 @@ class ReplFromTerminal(
 
     private val writer get() = replConfiguration.writer
 
-    private val messageCollector = compilerConfiguration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+    private val messageCollector = compilerConfiguration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
     private fun doRun() {
         try {

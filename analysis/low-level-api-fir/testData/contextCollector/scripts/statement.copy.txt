@@ -29,11 +29,11 @@ Tower Data Context:
     Element 9
         Scope: FirLocalScope
     Element 10
-        Context receivers:
-            FirScriptSymbol context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-            SCRIPT: <script-statement.kts>
+        Implicit receiver:
+            FirScriptSymbol SCRIPT: <script-statement.kts>
+                <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
                 lval args: R|kotlin/Array<kotlin/String>|
-
+            
                 public final? class ScriptClass : R|kotlin/Any|
                 public final fun scriptFunction(): R|kotlin/Int|
                 public? final? fun unusedScriptFunction(p: String): <implicit>
@@ -42,15 +42,14 @@ Tower Data Context:
                 public final val $$result: R|kotlin/Unit|
                     public get(): R|kotlin/Unit|
                 Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
-                Label: <script>
     Element 11
         Scope: FirLocalScope
     Element 12
         Scope: FirLocalScope
 
 FILE: [ResolvedTo(IMPORTS)] statement.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-statement.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class ScriptClass : R|kotlin/Any| {

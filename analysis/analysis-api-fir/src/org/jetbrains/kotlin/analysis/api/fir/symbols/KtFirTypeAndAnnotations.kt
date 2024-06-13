@@ -5,28 +5,28 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
-import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.symbols.KtReceiverParameterSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
-internal fun FirClassSymbol<*>.superTypesList(builder: KtSymbolByFirBuilder): List<KtType> = resolvedSuperTypeRefs.mapToKtType(builder)
+internal fun FirClassSymbol<*>.superTypesList(builder: KaSymbolByFirBuilder): List<KaType> = resolvedSuperTypeRefs.mapToKtType(builder)
 
 private fun List<FirTypeRef>.mapToKtType(
-    builder: KtSymbolByFirBuilder,
-): List<KtType> = map { typeRef ->
+    builder: KaSymbolByFirBuilder,
+): List<KaType> = map { typeRef ->
     builder.typeBuilder.buildKtType(typeRef)
 }
 
-internal fun FirCallableSymbol<*>.returnType(builder: KtSymbolByFirBuilder): KtType =
+internal fun FirCallableSymbol<*>.returnType(builder: KaSymbolByFirBuilder): KaType =
     builder.typeBuilder.buildKtType(resolvedReturnType)
 
-internal fun FirCallableSymbol<*>.receiver(builder: KtSymbolByFirBuilder): KtReceiverParameterSymbol? =
+internal fun FirCallableSymbol<*>.receiver(builder: KaSymbolByFirBuilder): KaReceiverParameterSymbol? =
     builder.callableBuilder.buildExtensionReceiverSymbol(this)
 
-internal fun FirCallableSymbol<*>.receiverType(builder: KtSymbolByFirBuilder): KtType? =
+internal fun FirCallableSymbol<*>.receiverType(builder: KaSymbolByFirBuilder): KaType? =
     resolvedReceiverTypeRef?.let { receiver ->
         builder.typeBuilder.buildKtType(receiver)
     }

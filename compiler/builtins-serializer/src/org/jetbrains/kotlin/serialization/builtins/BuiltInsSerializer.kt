@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.cli.metadata.MetadataSerializer
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
@@ -51,7 +52,7 @@ class BuiltInsSerializer(
             val performanceManager = object : CommonCompilerPerformanceManager(presentableName = "test") {}
             try {
                 val configuration = CompilerConfiguration().apply {
-                    put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
+                    this.messageCollector = messageCollector
 
                     addKotlinSourceRoots(srcDirs.map { it.path })
                     addJvmClasspathRoots(extraClassPath)

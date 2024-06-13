@@ -1,0 +1,38 @@
+//
+// Source
+// ------------------------------------------
+
+abstract class BaseFoo {
+    @Composable abstract fun bar()
+}
+
+class FooImpl : BaseFoo() {
+    @Composable override fun bar() {}
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+public abstract class BaseFoo {
+  public <init>()V
+  public abstract bar(Landroidx/compose/runtime/Composer;I)V
+  static <clinit>()V
+  public final static I %stable
+}
+public final class FooImpl extends BaseFoo {
+  public <init>()V
+  public bar(Landroidx/compose/runtime/Composer;I)V
+  static <clinit>()V
+  public final static I %stable
+  final static INNERCLASS FooImpl%bar%1 null null
+}
+final class FooImpl%bar%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
+  <init>(LFooImpl;I)V
+  public final invoke(Landroidx/compose/runtime/Composer;I)V
+  public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+  final synthetic LFooImpl; %tmp0_rcvr
+  final synthetic I %%changed
+  OUTERCLASS FooImpl bar (Landroidx/compose/runtime/Composer;I)V
+  final static INNERCLASS FooImpl%bar%1 null null
+}

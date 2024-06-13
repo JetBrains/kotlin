@@ -5,32 +5,32 @@
 
 package org.jetbrains.kotlin.analysis.test.framework.services
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.buildClassType
 import org.jetbrains.kotlin.analysis.api.components.buildTypeParameterType
-import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 
 object TypeParser {
-    context (KtAnalysisSession)
+    context (KaSession)
     fun parseTypeFromString(
         stringType: String,
         contextElement: KtElement,
         scopeForTypeParameters: KtElement,
-    ): KtType {
+    ): KaType {
         val type = KtPsiFactory(contextElement.project).createType(stringType)
         return convertType(type.typeElement ?: incorrectType(type), scopeForTypeParameters)
     }
 
-    context (KtAnalysisSession)
-    private fun convertType(type: KtTypeElement, scopeForTypeParameters: KtElement): KtType =
+    context (KaSession)
+    private fun convertType(type: KtTypeElement, scopeForTypeParameters: KtElement): KaType =
         when (type) {
             is KtUserType -> {
                 val qualifier = fullQualifier(type)
-                when (val typeParameter = getSymbolByNameSafe<KtTypeParameterSymbol>(scopeForTypeParameters, qualifier)) {
+                when (val typeParameter = getSymbolByNameSafe<KaTypeParameterSymbol>(scopeForTypeParameters, qualifier)) {
                     null -> {
                         buildClassType(ClassId.topLevel(FqName(qualifier))) {
                             type.typeArguments.forEach { argument ->

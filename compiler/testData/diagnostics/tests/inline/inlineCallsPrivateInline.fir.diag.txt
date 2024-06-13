@@ -1,0 +1,3 @@
+/inlineCallsPrivateInline.fir.kt:(94,111): error: Public-API inline declaration cannot access non-public-API inline declaration 'fun localDeclarations(): Boolean' as it could transitively access non-public-API declarations.
+
+/inlineCallsPrivateInline.fir.kt:(133,139): warning: Expected performance impact from inlining is insignificant. Inlining works best for functions with parameters of function types.

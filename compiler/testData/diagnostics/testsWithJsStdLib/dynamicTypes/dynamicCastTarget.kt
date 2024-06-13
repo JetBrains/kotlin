@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -REDUNDANT_NULLABLE
+// DIAGNOSTICS: -REDUNDANT_NULLABLE
 
 fun test(d: Any, dl: Collection<dynamic>) {
     d as <!DYNAMIC_NOT_ALLOWED!>dynamic<!>

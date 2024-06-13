@@ -6,28 +6,28 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
-import org.jetbrains.kotlin.analysis.api.contracts.description.KtContractEffectDeclaration
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
+import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
+import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractEffectDeclaration
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.contracts.coneEffectDeclarationToAnalysisApi
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.FirCallableSignature
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirMemberFunctionSymbolPointer
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirTopLevelFunctionSymbolPointer
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirMemberFunctionSymbolPointer
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirTopLevelFunctionSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.impl.base.util.kotlinFunctionInvokeCallableIds
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtReceiverParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.UnsupportedSymbolKind
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.containingClassLookupTag
@@ -39,35 +39,35 @@ import org.jetbrains.kotlin.fir.symbols.impl.isExtension
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 
-internal class KtFirFunctionSymbol(
+internal class KaFirFunctionSymbol(
     override val firSymbol: FirNamedFunctionSymbol,
-    override val analysisSession: KtFirAnalysisSession,
-) : KtFunctionSymbol(), KtFirSymbol<FirNamedFunctionSymbol> {
+    override val analysisSession: KaFirSession,
+) : KaFunctionSymbol(), KaFirSymbol<FirNamedFunctionSymbol> {
     override val psi: PsiElement? by cached { firSymbol.findPsi() }
     override val name: Name get() = withValidityAssertion { firSymbol.name }
 
     override val isBuiltinFunctionInvoke: Boolean
-        get() = withValidityAssertion { callableIdIfNonLocal in kotlinFunctionInvokeCallableIds }
+        get() = withValidityAssertion { callableId in kotlinFunctionInvokeCallableIds }
 
-    override val contractEffects: List<KtContractEffectDeclaration> by cached {
+    override val contractEffects: List<KaContractEffectDeclaration> by cached {
         firSymbol.resolvedContractDescription?.effects
             ?.map(FirEffectDeclaration::effect)
             ?.map { it.coneEffectDeclarationToAnalysisApi(builder, this) }
             .orEmpty()
     }
 
-    override val returnType: KtType get() = withValidityAssertion { firSymbol.returnType(builder) }
-    override val receiverParameter: KtReceiverParameterSymbol? get() = withValidityAssertion { firSymbol.receiver(builder) }
-    override val contextReceivers: List<KtContextReceiver> by cached { firSymbol.createContextReceivers(builder) }
+    override val returnType: KaType get() = withValidityAssertion { firSymbol.returnType(builder) }
+    override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { firSymbol.receiver(builder) }
+    override val contextReceivers: List<KaContextReceiver> by cached { firSymbol.createContextReceivers(builder) }
 
     override val typeParameters by cached { firSymbol.createKtTypeParameters(builder) }
-    override val valueParameters: List<KtValueParameterSymbol> by cached { firSymbol.createKtValueParameters(builder) }
+    override val valueParameters: List<KaValueParameterSymbol> by cached { firSymbol.createKtValueParameters(builder) }
 
     override val hasStableParameterNames: Boolean
         get() = withValidityAssertion { firSymbol.fir.hasStableParameterNames }
 
-    override val annotationsList by cached {
-        KtFirAnnotationListForDeclaration.create(firSymbol, builder)
+    override val annotations by cached {
+        KaFirAnnotationListForDeclaration.create(firSymbol, builder)
     }
 
     override val isSuspend: Boolean get() = withValidityAssertion { firSymbol.isSuspend }
@@ -82,39 +82,39 @@ internal class KtFirFunctionSymbol(
     override val isActual: Boolean get() = withValidityAssertion { firSymbol.isActual }
     override val isExpect: Boolean get() = withValidityAssertion { firSymbol.isExpect }
 
-    override val callableIdIfNonLocal: CallableId? get() = withValidityAssertion { firSymbol.getCallableIdIfNonLocal() }
+    override val callableId: CallableId? get() = withValidityAssertion { firSymbol.getCallableId() }
 
-    override val symbolKind: KtSymbolKind
+    override val symbolKind: KaSymbolKind
         get() = withValidityAssertion {
             when {
-                firSymbol.origin == FirDeclarationOrigin.DynamicScope -> KtSymbolKind.CLASS_MEMBER
-                firSymbol.isLocal -> KtSymbolKind.LOCAL
-                firSymbol.containingClassLookupTag()?.classId == null -> KtSymbolKind.TOP_LEVEL
-                else -> KtSymbolKind.CLASS_MEMBER
+                firSymbol.origin == FirDeclarationOrigin.DynamicScope -> KaSymbolKind.CLASS_MEMBER
+                firSymbol.isLocal -> KaSymbolKind.LOCAL
+                firSymbol.containingClassLookupTag()?.classId == null -> KaSymbolKind.TOP_LEVEL
+                else -> KaSymbolKind.CLASS_MEMBER
             }
         }
 
     override val modality: Modality get() = withValidityAssertion { firSymbol.modality }
     override val visibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
 
-    override fun createPointer(): KtSymbolPointer<KtFunctionSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtFunctionSymbol>(this)?.let { return it }
+    override fun createPointer(): KaSymbolPointer<KaFunctionSymbol> = withValidityAssertion {
+        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaFunctionSymbol>(this)?.let { return it }
 
         return when (val kind = symbolKind) {
-            KtSymbolKind.TOP_LEVEL -> KtFirTopLevelFunctionSymbolPointer(
+            KaSymbolKind.TOP_LEVEL -> KaFirTopLevelFunctionSymbolPointer(
                 firSymbol.callableId,
                 FirCallableSignature.createSignature(firSymbol),
             )
 
-            KtSymbolKind.CLASS_MEMBER -> KtFirMemberFunctionSymbolPointer(
+            KaSymbolKind.CLASS_MEMBER -> KaFirMemberFunctionSymbolPointer(
                 analysisSession.createOwnerPointer(this),
                 firSymbol.name,
                 FirCallableSignature.createSignature(firSymbol),
                 isStatic = firSymbol.isStatic,
             )
 
-            KtSymbolKind.LOCAL -> throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(
-                callableIdIfNonLocal?.toString() ?: name.asString()
+            KaSymbolKind.LOCAL -> throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(
+                callableId?.toString() ?: name.asString()
             )
 
             else -> throw UnsupportedSymbolKind(this::class, kind)

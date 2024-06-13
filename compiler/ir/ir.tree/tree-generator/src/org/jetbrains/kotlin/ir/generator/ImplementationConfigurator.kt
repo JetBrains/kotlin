@@ -5,15 +5,21 @@
 
 package org.jetbrains.kotlin.ir.generator
 
-import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.generators.tree.ImplementationKind
+import org.jetbrains.kotlin.generators.tree.StandardTypes
+import org.jetbrains.kotlin.generators.tree.Visibility
 import org.jetbrains.kotlin.generators.tree.imports.ArbitraryImportable
+import org.jetbrains.kotlin.generators.tree.isSubclassOf
 import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
 import org.jetbrains.kotlin.generators.tree.printer.VariableKind
 import org.jetbrains.kotlin.generators.tree.printer.printFunctionWithBlockBody
 import org.jetbrains.kotlin.generators.tree.printer.printPropertyDeclaration
+import org.jetbrains.kotlin.ir.generator.IrSymbolTree.propertySymbol
+import org.jetbrains.kotlin.ir.generator.IrSymbolTree.simpleFunctionSymbol
 import org.jetbrains.kotlin.ir.generator.config.AbstractIrTreeImplementationConfigurator
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.ListField
+import org.jetbrains.kotlin.ir.generator.model.symbol.Symbol
 import org.jetbrains.kotlin.utils.withIndent
 
 object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
@@ -65,7 +71,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         impl(simpleFunction, "IrFunctionImpl")
 
         impl(functionWithLateBinding) {
-            configureDeclarationWithLateBindinig(simpleFunctionSymbolType)
+            configureDeclarationWithLateBindinig(simpleFunctionSymbol)
         }
 
         impl(field) {
@@ -79,7 +85,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         impl(property)
 
         impl(propertyWithLateBinding) {
-            configureDeclarationWithLateBindinig(propertySymbolType)
+            configureDeclarationWithLateBindinig(propertySymbol)
         }
 
         impl(localDelegatedProperty) {
@@ -96,9 +102,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         }
 
         impl(variable) {
-            implementation.putImplementationOptInInConstructor = false
-            implementation.constructorParameterOrderOverride =
-                listOf("startOffset", "endOffset", "origin", "symbol", "name", "type", "isVar", "isConst", "isLateinit")
+            implementation.isConstructorPublic = false
             defaultNull("initializer")
             default("factory") {
                 value = "error(\"Create IrVariableImpl directly\")"
@@ -133,6 +137,9 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             default("startOffset", undefinedOffset(), withGetter = true)
             default("endOffset", undefinedOffset(), withGetter = true)
             default("name", "descriptor.name", withGetter = true)
+        }.apply {
+            // TODO: should be generated again after KT-68314 is fixed
+            doPrint = false
         }
 
         impl(errorDeclaration) {
@@ -305,7 +312,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         }
     }
 
-    private fun ImplementationContext.configureDeclarationWithLateBindinig(symbolType: ClassRef<*>) {
+    private fun ImplementationContext.configureDeclarationWithLateBindinig(symbolType: Symbol) {
         implementation.bindOwnedSymbol = false
         default("isBound") {
             value = "_symbol != null"
@@ -357,7 +364,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         for (element in model.elements) {
             for (implementation in element.implementations) {
                 // Generation of implementation classes of IrMemberAccessExpression are left out for subsequent MR, as a part of KT-65773.
-                if (element == IrTree.const || element.elementAncestorsAndSelfDepthFirst().any { it == IrTree.memberAccessExpression }) {
+                if (element == IrTree.const || element.isSubclassOf(IrTree.memberAccessExpression)) {
                     implementation.doPrint = false
                 }
 

@@ -9,28 +9,27 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.SmartPointerManager
 import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.analysis.api.components.*
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
-import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtThisExpression
 
-internal class KtFe10ReferenceShortener(
-    override val analysisSession: KtFe10AnalysisSession,
-) : KtReferenceShortener(), Fe10KtAnalysisSessionComponent {
-    override val token: KtLifetimeToken
+internal class KaFe10ReferenceShortener(
+    override val analysisSession: KaFe10Session,
+) : KaReferenceShortener(), KaFe10SessionComponent {
+    override val token: KaLifetimeToken
         get() = analysisSession.token
 
     override fun collectShortenings(
         file: KtFile,
         selection: TextRange,
         shortenOptions: ShortenOptions,
-        classShortenStrategy: (KtClassLikeSymbol) -> ShortenStrategy,
-        callableShortenStrategy: (KtCallableSymbol) -> ShortenStrategy,
+        classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy,
+        callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy,
     ): ShortenCommand {
         // Compiler implementation does nothing.
         // Descriptor-based shortening is implemented on the IDE plugin side.

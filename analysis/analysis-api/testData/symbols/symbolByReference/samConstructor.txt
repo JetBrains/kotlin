@@ -1,22 +1,22 @@
-KtSamConstructorSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: java/lang/Runnable
+KaSamConstructorSymbol:
+  annotations: []
+  callableId: java/lang/Runnable
   contextReceivers: []
   hasStableParameterNames: true
   isExtension: false
   name: Runnable
   origin: SAM_CONSTRUCTOR
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: java/lang/Runnable
   symbolKind: SAM_CONSTRUCTOR
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -28,12 +28,12 @@ KtSamConstructorSymbol:
       name: function
       origin: SAM_CONSTRUCTOR
       receiverParameter: null
-      returnType: KtFunctionalType:
-        annotationsList: []
-        ownTypeArguments: [
-          KtUsualClassType:
-            annotationsList: []
-            ownTypeArguments: []
+      returnType: KaFunctionalType:
+        annotations: []
+        typeArguments: [
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
             type: kotlin/Unit
         ]
         type: kotlin/Function0<kotlin/Unit>

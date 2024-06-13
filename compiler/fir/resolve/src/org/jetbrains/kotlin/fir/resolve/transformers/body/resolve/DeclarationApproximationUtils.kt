@@ -29,7 +29,7 @@ fun <T> T.approximateDeclarationType(
         }
     }
 
-    val preparedType = if (isLocal) baseType else baseType.substituteAlternativesInPublicType(session)
+    val preparedType = if (isLocal) baseType else baseType.substituteIntersectionTypesToUpperBoundsOrSelf(session)
     var approximatedType = session.typeApproximator.approximateToSuperType(preparedType, configuration) ?: preparedType
     if (approximatedType.contains { type -> type.attributes.any { !it.keepInInferredDeclarationType } }) {
         approximatedType = UnnecessaryAttributesRemover(session).substituteOrSelf(approximatedType)
@@ -46,11 +46,11 @@ private class UnnecessaryAttributesRemover(session: FirSession) : AbstractConeSu
     }
 }
 
-private fun ConeKotlinType.substituteAlternativesInPublicType(session: FirSession): ConeKotlinType {
+fun ConeKotlinType.substituteIntersectionTypesToUpperBoundsOrSelf(session: FirSession): ConeKotlinType {
     val substitutor = object : AbstractConeSubstitutor(session.typeContext) {
         override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
             if (type !is ConeIntersectionType) return null
-            val alternativeType = type.alternativeType ?: return null
+            val alternativeType = type.upperBoundForApproximation ?: return null
             return substituteOrSelf(alternativeType)
         }
     }

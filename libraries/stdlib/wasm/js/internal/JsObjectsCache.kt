@@ -5,13 +5,7 @@
 
 package kotlin.wasm.internal
 
-//Rename to getCachedJsObject after bootstrap (KT-65322)
-private external fun tryGetOrSetExternrefBox(
+internal external fun getCachedJsObject(
     ref: JsAny,
     ifNotCached: JsAny
 ): JsAny?
-
-internal fun getCachedJsObject(
-    ref: JsAny,
-    ifNotCached: JsAny
-): JsAny? = tryGetOrSetExternrefBox(ref, ifNotCached)

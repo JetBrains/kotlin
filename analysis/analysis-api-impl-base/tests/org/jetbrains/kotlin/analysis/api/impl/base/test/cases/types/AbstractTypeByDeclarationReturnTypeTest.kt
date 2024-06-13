@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -14,10 +14,10 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractTypeByDeclarationReturnTypeTest : AbstractTypeTest() {
-    override fun getType(analysisSession: KtAnalysisSession, ktFile: KtFile, module: KtTestModule, testServices: TestServices): KtType {
+    override fun getType(analysisSession: KaSession, ktFile: KtFile, module: KtTestModule, testServices: TestServices): KaType {
         with(analysisSession) {
             val declarationAtCaret = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtDeclaration>(ktFile)
-            return declarationAtCaret.getReturnKtType()
+            return declarationAtCaret.getReturnKaType()
         }
     }
 }

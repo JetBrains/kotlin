@@ -1,5 +1,5 @@
-// !OPT_IN: kotlin.js.ExperimentalJsExport
-// !RENDER_DIAGNOSTICS_MESSAGES
+// OPT_IN: kotlin.js.ExperimentalJsExport
+// RENDER_DIAGNOSTICS_MESSAGES
 
 package foo
 

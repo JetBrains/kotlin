@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.config.LanguageFeature.ProperUninitializedEnumEntryAccessAnalysis
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
+import org.jetbrains.kotlin.fir.declarations.utils.isNonLocal
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
@@ -71,6 +73,8 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker(MppChec
     // https://youtrack.jetbrains.com/issue/KT-6054
     // https://youtrack.jetbrains.com/issue/KT-11769
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+        // If the feature for proper analysis is enabled, FirEnumEntryInitializationChecker will report all errors
+        if (context.languageVersionSettings.supportsFeature(ProperUninitializedEnumEntryAccessAnalysis)) return
         val source = expression.source ?: return
         if (source.kind is KtFakeSourceElementKind) return
 
@@ -129,11 +133,16 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker(MppChec
         //     }
         //   }
         val containingDeclarationForAccess = context.containingDeclarations.lastOrNull {
-            !(it is FirAnonymousFunction && it.invocationKind != null)
+            when (it) {
+                // for members of local classes `isNonLocal` returns `false`
+                is FirCallableDeclaration -> it.isNonLocal || it.dispatchReceiverType != null
+                else -> false
+            }
         }
+
         if (accessedContext in enumMemberProperties) {
             val lazyDelegation = (accessedContext as FirPropertySymbol).lazyDelegation
-            if (lazyDelegation != null && lazyDelegation == containingDeclarationForAccess) {
+            if (lazyDelegation != null) {
                 return
             }
         }

@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols.markers
 
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 
 
-public interface KtSymbolWithKind : KtSymbol {
-    public val symbolKind: KtSymbolKind
+public interface KaSymbolWithKind : KaSymbol {
+    public val symbolKind: KaSymbolKind
 }
 
-public enum class KtSymbolKind {
+public typealias KtSymbolWithKind = KaSymbolWithKind
+
+public enum class KaSymbolKind {
     TOP_LEVEL,
     CLASS_MEMBER,
     LOCAL,
@@ -22,3 +22,4 @@ public enum class KtSymbolKind {
     SAM_CONSTRUCTOR,
 }
 
+public typealias KtSymbolKind = KaSymbolKind

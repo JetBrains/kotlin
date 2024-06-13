@@ -21,6 +21,10 @@ fun MethodBridge.valueParametersAssociated(
         MethodBridgeReceiver.Factory, MethodBridgeReceiver.Instance -> true
     }
     if (skipFirstKotlinParameter) {
+        /**
+         * Skip logic is bound to [this.valueParameters] array construction
+         * at [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapper.bridgeMethodImpl]
+         */
         kotlinParameters.next()
     }
 

@@ -1,4 +1,4 @@
-// !DUMP_CFG
+// DUMP_CFG
 
 open class Base
 class Sub(val data: Base): Base()

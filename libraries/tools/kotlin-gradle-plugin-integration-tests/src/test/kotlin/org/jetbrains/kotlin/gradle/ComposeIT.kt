@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
@@ -20,6 +21,7 @@ class ComposeIT : KGPBaseTest() {
     @DisplayName("Should not affect Android project where compose is not enabled")
     @AndroidGradlePluginTests
     @GradleAndroidTest
+    @TestMetadata("AndroidSimpleApp")
     fun testAndroidDisabledCompose(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -51,11 +53,12 @@ class ComposeIT : KGPBaseTest() {
 
             build("assembleDebug") {
                 assertOutputDoesNotContain("Detected Android Gradle Plugin compose compiler configuration")
+                assertOutputDoesNotContain(APPLY_COMPOSE_SUGGESTION)
                 assertCompilerArgument(
                     ":compileDebugKotlin",
                     "-P plugin:androidx.compose.compiler.plugins.kotlin:generateFunctionKeyMetaClasses=false," +
                             "plugin:androidx.compose.compiler.plugins.kotlin:sourceInformation=false," +
-                            "plugin:androidx.compose.compiler.plugins.kotlin:intrinsicRemember=false," +
+                            "plugin:androidx.compose.compiler.plugins.kotlin:intrinsicRemember=true," +
                             "plugin:androidx.compose.compiler.plugins.kotlin:nonSkippingGroupOptimization=false," +
                             "plugin:androidx.compose.compiler.plugins.kotlin:strongSkipping=false," +
                             "plugin:androidx.compose.compiler.plugins.kotlin:traceMarkersEnabled=false",
@@ -68,6 +71,7 @@ class ComposeIT : KGPBaseTest() {
     @DisplayName("Should work correctly when compose in Android is enabled")
     @AndroidGradlePluginTests
     @GradleAndroidTest
+    @TestMetadata("AndroidSimpleComposeApp")
     fun testAndroidWithCompose(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -81,6 +85,7 @@ class ComposeIT : KGPBaseTest() {
         ) {
             build("assembleDebug") {
                 assertOutputContains("Detected Android Gradle Plugin compose compiler configuration")
+                assertOutputDoesNotContain(APPLY_COMPOSE_SUGGESTION)
             }
         }
     }
@@ -88,6 +93,7 @@ class ComposeIT : KGPBaseTest() {
     @DisplayName("Should not break build cache relocation")
     @AndroidGradlePluginTests
     @GradleAndroidTest
+    @TestMetadata("AndroidSimpleComposeApp")
     fun testAndroidBuildCacheRelocation(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -114,6 +120,64 @@ class ComposeIT : KGPBaseTest() {
 
         project2.build("assembleDebug") {
             assertTasksFromCache(":compileDebugKotlin")
+        }
+    }
+
+    @DisplayName("Should work with JB Compose plugin")
+    @AndroidGradlePluginTests
+    @GradleAndroidTest
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_80)
+    @TestMetadata("JBComposeApp")
+    fun testJBCompose(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        providedJdk: JdkVersions.ProvidedJdk,
+    ) {
+        project(
+            projectName = "JBComposeApp",
+            gradleVersion = gradleVersion,
+            buildJdk = providedJdk.location,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion)
+                .suppressDeprecationWarningsOn(
+                    "JB Compose produces deprecation warning: https://github.com/JetBrains/compose-multiplatform/issues/3945"
+                ) {
+                    gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_7)
+                }
+        ) {
+            build(":composeApp:assembleDebug") {
+                assertOutputDoesNotContain("Detected Android Gradle Plugin compose compiler configuration")
+                assertOutputDoesNotContain(APPLY_COMPOSE_SUGGESTION)
+            }
+
+            build(":composeApp:desktopJar") {
+                assertOutputDoesNotContain(APPLY_COMPOSE_SUGGESTION)
+            }
+        }
+    }
+
+    @DisplayName("Should not suggest apply Kotlin compose plugin in JB Compose plugin")
+    @AndroidGradlePluginTests
+    @GradleAndroidTest
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_80)
+    @TestMetadata("JBComposeApp")
+    fun testAndroidJBComposeNoSuggestion(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        providedJdk: JdkVersions.ProvidedJdk,
+    ) {
+        project(
+            projectName = "JBComposeApp",
+            gradleVersion = gradleVersion,
+            buildJdk = providedJdk.location,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion)
+        ) {
+            subProject("composeApp").buildGradleKts.modify {
+                it.replace("kotlin(\"plugin.compose\")", "")
+            }
+
+            buildAndFail(":composeApp:assembleDebug") {
+                assertOutputDoesNotContain(APPLY_COMPOSE_SUGGESTION)
+            }
         }
     }
 
@@ -153,5 +217,10 @@ class ComposeIT : KGPBaseTest() {
 
             enableLocalBuildCache(localCacheDir)
         }
+    }
+
+    companion object {
+        private const val APPLY_COMPOSE_SUGGESTION =
+            "The Compose compiler plugin is now a part of Kotlin, please apply the 'org.jetbrains.kotlin.plugin.compose' Gradle plugin to enable it."
     }
 }

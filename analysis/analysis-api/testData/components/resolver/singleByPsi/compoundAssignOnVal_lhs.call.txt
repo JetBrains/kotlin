@@ -1,0 +1,14 @@
+KtNameReferenceExpression(73,74): 'l'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = l
+          receiverType = null
+          returnType = A
+          symbol = l: A
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}

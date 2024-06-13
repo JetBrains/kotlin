@@ -18,6 +18,7 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower.decoys
 
+import androidx.compose.compiler.plugins.kotlin.FeatureFlags
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.lower.ModuleLoweringPass
@@ -38,22 +39,14 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
-import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.copyTo
-import org.jetbrains.kotlin.ir.util.copyTypeParametersFrom
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.hasDefaultValue
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
-import org.jetbrains.kotlin.ir.util.remapTypeParameters
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
@@ -87,12 +80,14 @@ class CreateDecoysTransformer(
     signatureBuilder: IdSignatureFactory,
     stabilityInferencer: StabilityInferencer,
     metrics: ModuleMetrics,
+    featureFlags: FeatureFlags,
 ) : AbstractDecoysLowering(
     pluginContext = pluginContext,
     symbolRemapper = symbolRemapper,
     metrics = metrics,
     stabilityInferencer = stabilityInferencer,
-    signatureBuilder = signatureBuilder
+    signatureBuilder = signatureBuilder,
+    featureFlags = featureFlags
 ), ModuleLoweringPass {
 
     private val originalFunctions: MutableMap<IrFunction, IrDeclarationParent> = mutableMapOf()
@@ -205,70 +200,13 @@ class CreateDecoysTransformer(
         }
         newFunction.origin = original.origin
 
-        // here generic value parameters will be applied
-        newFunction.copyTypeParametersFrom(original)
-
-        // ..but we need to remap the return type as well
-        newFunction.returnType = newFunction.returnType.remapTypeParameters(
-            source = original,
-            target = newFunction
-        )
-        newFunction.valueParameters = original.valueParameters.map {
-            val name = dexSafeName(it.name).asString()
-            it.copyTo(
-                newFunction,
-                // remove leading $ in params to avoid confusing other transforms
-                name = Name.identifier(name.dropWhile { it == '$' }),
-                type = it.type.remapTypeParameters(original, newFunction),
-                // remapping the type parameters explicitly
-                defaultValue = it.defaultValue?.copyWithNewTypeParams(original, newFunction)
-            )
-        }
-        newFunction.dispatchReceiverParameter =
-            original.dispatchReceiverParameter?.copyTo(newFunction)
-        newFunction.extensionReceiverParameter =
-            original.extensionReceiverParameter?.copyWithNewTypeParams(original, newFunction)
+        newFunction.addDecoyImplementationAnnotation(newName.asString(), original.getSignatureId())
+        newFunction.copyParametersFrom(original)
 
         newFunction.body = original.moveBodyTo(newFunction)
             ?.copyWithNewTypeParams(original, newFunction)
 
-        newFunction.addDecoyImplementationAnnotation(newName.asString(), original.getSignatureId())
-
-        newFunction.valueParameters.forEach {
-            it.defaultValue?.transformDefaultValue(
-                originalFunction = original,
-                newFunction = newFunction
-            )
-        }
-
         return newFunction
-    }
-
-    /**
-     *  Expressions for default values can use other parameters.
-     *  In such cases we need to ensure that default values expressions use parameters of the new
-     *  function (new/copied value parameters).
-     *
-     *  Example:
-     *  fun Foo(a: String, b: String = a) {...}
-     */
-    private fun IrExpressionBody.transformDefaultValue(
-        originalFunction: IrFunction,
-        newFunction: IrFunction
-    ) {
-        transformChildrenVoid(object : IrElementTransformerVoid() {
-            override fun visitGetValue(expression: IrGetValue): IrExpression {
-                val original = super.visitGetValue(expression)
-                val valueParameter =
-                    (expression.symbol.owner as? IrValueParameter) ?: return original
-
-                val parameterIndex = valueParameter.index
-                if (parameterIndex < 0 || valueParameter.parent != originalFunction) {
-                    return super.visitGetValue(expression)
-                }
-                return irGet(newFunction.valueParameters[parameterIndex])
-            }
-        })
     }
 
     private fun IrFunction.stubBody() {

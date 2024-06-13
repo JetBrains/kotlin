@@ -11,6 +11,7 @@ import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
@@ -20,10 +21,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPub
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.overriddenGradleVersionForTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.KotlinTargetResourcesResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.util.*
-import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
-import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertEquals

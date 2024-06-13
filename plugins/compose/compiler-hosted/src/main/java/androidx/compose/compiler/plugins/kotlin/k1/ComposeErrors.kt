@@ -72,12 +72,6 @@ object ComposeErrors {
         )
 
     @JvmField
-    val ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE =
-        DiagnosticFactory0.create<PsiElement>(
-            Severity.ERROR
-        )
-
-    @JvmField
     val COMPOSABLE_FUN_MAIN =
         DiagnosticFactory0.create<PsiElement>(
             Severity.ERROR
@@ -86,12 +80,6 @@ object ComposeErrors {
     @JvmField
     val CAPTURED_COMPOSABLE_INVOCATION =
         DiagnosticFactory2.create<PsiElement, DeclarationDescriptor, DeclarationDescriptor>(
-            Severity.ERROR
-        )
-
-    @JvmField
-    val CALLED_IN_INCORRECT_CONTEXT =
-        DiagnosticFactory1.create<PsiElement, String>(
             Severity.ERROR
         )
 

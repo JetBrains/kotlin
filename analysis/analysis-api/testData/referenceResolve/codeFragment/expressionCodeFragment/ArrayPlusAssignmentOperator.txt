@@ -1,2 +1,0 @@
-Resolved to:
-0: (in MyList) operator fun set(index: kotlin.Int, value: kotlin.String)

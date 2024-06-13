@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 // ISSUE: KT-64840
 
 class Controller<T> {

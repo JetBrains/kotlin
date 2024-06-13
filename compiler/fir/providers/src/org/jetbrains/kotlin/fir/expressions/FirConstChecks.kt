@@ -185,7 +185,7 @@ private class FirConstCheckVisitor(
         return if (intrinsicConstEvaluation) ConstantArgumentKind.VALID_CONST else ConstantArgumentKind.NOT_CONST
     }
 
-    override fun <T> visitLiteralExpression(literalExpression: FirLiteralExpression<T>, data: Nothing?): ConstantArgumentKind {
+    override fun visitLiteralExpression(literalExpression: FirLiteralExpression, data: Nothing?): ConstantArgumentKind {
         return ConstantArgumentKind.VALID_CONST
     }
 
@@ -195,7 +195,7 @@ private class FirConstCheckVisitor(
 
     override fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: Nothing?): ConstantArgumentKind {
         for (exp in stringConcatenationCall.arguments) {
-            if (exp is FirLiteralExpression<*> && exp.value == null) {
+            if (exp is FirLiteralExpression && exp.value == null) {
                 // `null` is allowed
                 continue
             }
@@ -214,7 +214,7 @@ private class FirConstCheckVisitor(
         }
 
         for (exp in equalityOperatorCall.arguments) {
-            if (exp is FirLiteralExpression<*> && exp.value == null) {
+            if (exp is FirLiteralExpression && exp.value == null) {
                 return ConstantArgumentKind.NOT_CONST
             }
 
@@ -323,7 +323,7 @@ private class FirConstCheckVisitor(
                     // if it called at checkers stage it's safe to call resolvedInitializer
                     // even if it will trigger BODY_RESOLVE phase, we don't violate phase contracts
                     calledOnCheckerStage -> when (propertySymbol.resolvedInitializer) {
-                        is FirLiteralExpression<*> -> when {
+                        is FirLiteralExpression -> when {
                             propertySymbol.isVal -> ConstantArgumentKind.NOT_CONST_VAL_IN_CONST_EXPRESSION
                             else -> ConstantArgumentKind.NOT_CONST
                         }

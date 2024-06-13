@@ -51,8 +51,8 @@ import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.cli.common.output.OutputUtilsKt.writeAllTo;
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.*;
-import static org.jetbrains.kotlin.codegen.TestUtilsKt.extractUrls;
 import static org.jetbrains.kotlin.codegen.CodegenTestUtilsKt.*;
+import static org.jetbrains.kotlin.codegen.TestUtilsKt.extractUrls;
 import static org.jetbrains.kotlin.test.util.KtTestUtil.getAnnotationsJar;
 
 public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.TestFile> {
@@ -189,7 +189,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
 
         initializedClassLoader = createClassLoader();
 
-        if (!CodegenTestUtil.verifyAllFilesWithAsm(generateClassesInFile(reportProblems), initializedClassLoader, reportProblems)) {
+        if (!CodegenTestUtil.verifyAllFilesWithAsm(generateClassesInFile(reportProblems), reportProblems)) {
             fail("Verification failed: see exceptions above");
         }
 
@@ -451,7 +451,8 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
                     configuration.get(JVMConfigurationKeys.JVM_TARGET),
                     configuration.getBoolean(JVMConfigurationKeys.ENABLE_JVM_PREVIEW)
             );
-            List<String> finalJavacOptions = prepareJavacOptions(javaClasspath, javacOptions, javaClassesOutputDirectory);
+            boolean isJava9Module = false; // No Java modules in legacy tests
+            List<String> finalJavacOptions = prepareJavacOptions(javaClasspath, javacOptions, javaClassesOutputDirectory, isJava9Module);
 
             try {
                 runJavacTask(
@@ -489,20 +490,19 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
             javacOptions.addAll(InTextDirectivesUtils.findListWithPrefixes(file.content, "// JAVAC_OPTIONS:"));
         }
 
-        if (kotlinTarget != null && isJvmPreviewEnabled) {
-            javacOptions.add("--release");
-            javacOptions.add(kotlinTarget.getDescription());
-            javacOptions.add("--enable-preview");
-            return javacOptions;
+        if (kotlinTarget != null) {
+            if (isJvmPreviewEnabled) {
+                javacOptions.add("--release");
+                javacOptions.add(kotlinTarget.getDescription());
+                javacOptions.add("--enable-preview");
+            } else {
+                javacOptions.add("-source");
+                javacOptions.add(kotlinTarget.getDescription());
+                javacOptions.add("-target");
+                javacOptions.add(kotlinTarget.getDescription());
+            }
         }
 
-        String javaTarget = CodegenTestUtil.computeJavaTarget(javacOptions, kotlinTarget);
-        if (javaTarget != null) {
-            javacOptions.add("-source");
-            javacOptions.add(javaTarget);
-            javacOptions.add("-target");
-            javacOptions.add(javaTarget);
-        }
         return javacOptions;
     }
 

@@ -1,0 +1,3 @@
+KtOperationReferenceExpression(69,72): '!in'
+  KtSimpleNameReference:
+    (in Foo) operator fun contains(v: kotlin.Int): kotlin.Boolean

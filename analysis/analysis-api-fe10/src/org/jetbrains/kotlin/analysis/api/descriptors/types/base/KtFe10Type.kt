@@ -5,41 +5,41 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.types.base
 
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotated
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
-import org.jetbrains.kotlin.analysis.api.descriptors.annotations.KtFe10AnnotationsList
-import org.jetbrains.kotlin.analysis.api.descriptors.utils.KtFe10DebugTypeRenderer
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.descriptors.annotations.KaFe10AnnotationList
+import org.jetbrains.kotlin.analysis.api.descriptors.utils.KaFe10DebugTypeRenderer
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
 
-internal interface KtFe10Type : KtLifetimeOwner, KtAnnotated {
+internal interface KaFe10Type : KaLifetimeOwner, KaAnnotated {
     val fe10Type: UnwrappedType
 
     val analysisContext: Fe10AnalysisContext
 
-    override val annotationsList: KtAnnotationsList
+    override val annotations: KaAnnotationList
         get() = withValidityAssertion {
-            KtFe10AnnotationsList.create(
+            KaFe10AnnotationList.create(
                 fe10Type.annotations,
                 analysisContext,
-                ignoreAnnotations = setOf(
+                ignoredAnnotations = setOf(
                     StandardClassIds.Annotations.ExtensionFunctionType,
                     StandardClassIds.Annotations.ContextFunctionTypeParams,
                 )
             )
         }
 
-    override val token: KtLifetimeToken
+    override val token: KaLifetimeToken
         get() = analysisContext.token
 }
 
-internal fun KotlinType.asStringForDebugging(analysisContext: Fe10AnalysisContext): String {
-    val renderer = KtFe10DebugTypeRenderer()
-    return prettyPrint { renderer.render(analysisContext, this@asStringForDebugging, this@prettyPrint) }
+internal fun KotlinType.renderForDebugging(analysisContext: Fe10AnalysisContext): String {
+    val renderer = KaFe10DebugTypeRenderer()
+    return prettyPrint { renderer.render(analysisContext, this@renderForDebugging, this@prettyPrint) }
 }

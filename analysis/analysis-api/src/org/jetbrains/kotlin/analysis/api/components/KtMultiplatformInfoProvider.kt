@@ -6,19 +6,23 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 
-public abstract class KtMultiplatformInfoProvider : KtAnalysisSessionComponent() {
-    public abstract fun getExpectForActual(actual: KtDeclarationSymbol): List<KtDeclarationSymbol>
+public abstract class KaMultiplatformInfoProvider : KaSessionComponent() {
+    public abstract fun getExpectForActual(actual: KaDeclarationSymbol): List<KaDeclarationSymbol>
 }
 
-public interface KtMultiplatformInfoProviderMixin : KtAnalysisSessionMixIn {
+public typealias KtMultiplatformInfoProvider = KaMultiplatformInfoProvider
+
+public interface KaMultiplatformInfoProviderMixin : KaSessionMixIn {
 
     /**
      * Gives expect symbol for the actual one if it is available.
      *
-     * @return a single expect declaration corresponds to the [KtDeclarationSymbol] on valid code or multiple expects in a case of erroneous code with multiple expects.
+     * @return a single expect declaration corresponds to the [KaDeclarationSymbol] on valid code or multiple expects in a case of erroneous code with multiple expects.
      **/
-    public fun KtDeclarationSymbol.getExpectsForActual(): List<KtDeclarationSymbol> =
+    public fun KaDeclarationSymbol.getExpectsForActual(): List<KaDeclarationSymbol> =
         withValidityAssertion { analysisSession.multiplatformInfoProvider.getExpectForActual(this) }
 }
+
+public typealias KtMultiplatformInfoProviderMixin = KaMultiplatformInfoProviderMixin

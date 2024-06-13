@@ -7,23 +7,23 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.components.KtResolveExtensionInfoProvider
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
-import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
-import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KtEmptyScope
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.scopes.KtScope
+import org.jetbrains.kotlin.analysis.api.components.KaResolveExtensionInfoProvider
+import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaEmptyScope
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.psi.KtElement
 
 // Resolve extensions are not supported on FE1.0, so return empty results.
-internal class KtFe10ResolveExtensionInfoProvider(
-    override val analysisSession: KtFe10AnalysisSession,
-) : KtResolveExtensionInfoProvider(), Fe10KtAnalysisSessionComponent {
-    override val token: KtLifetimeToken
+internal class KaFe10ResolveExtensionInfoProvider(
+    override val analysisSession: KaFe10Session,
+) : KaResolveExtensionInfoProvider(), KaFe10SessionComponent {
+    override val token: KaLifetimeToken
         get() = analysisSession.token
 
-    override fun getResolveExtensionScopeWithTopLevelDeclarations(): KtScope {
-        return KtEmptyScope(token)
+    override fun getResolveExtensionScopeWithTopLevelDeclarations(): KaScope {
+        return KaEmptyScope(token)
     }
 
     override fun isResolveExtensionFile(file: VirtualFile): Boolean = false

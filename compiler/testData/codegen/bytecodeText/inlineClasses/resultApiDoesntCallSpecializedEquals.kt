@@ -1,4 +1,4 @@
-// !API_VERSION: 1.3
+// API_VERSION: 1.3
 // WITH_STDLIB
 // FILE: test.kt
 fun test() {

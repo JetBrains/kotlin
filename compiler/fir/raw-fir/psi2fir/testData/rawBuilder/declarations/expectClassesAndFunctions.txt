@@ -14,13 +14,20 @@ FILE: expectClassesAndFunctions.kt
 
     }
     public final? expect class D : B {
-        public? expect [ContainingClassKey=D] error_constructor(): R|D|
+        public? expect [ContainingClassKey=D] error_constructor(): R|D| {
+            super<B>()
+        }
 
     }
     public final? expect class E : B, C {
-        public? expect [ContainingClassKey=E] error_constructor(): R|E|
+        public? expect [ContainingClassKey=E] error_constructor(): R|E| {
+            super<B>()
+            super<C>()
+        }
 
     }
     public? final? expect fun f(): R|kotlin/Unit|
     public final? expect annotation class G : R|kotlin/Annotation| {
+    }
+    public final? expect class H : E {
     }

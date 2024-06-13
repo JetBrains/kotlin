@@ -1,0 +1,7 @@
+compiler/testData/compileKotlinAgainstCustomBinaries/annotationsFromBinariesWithNonTrivialJvmDefaultConfiguration/source.kt:2:19: error: this declaration needs opt-in. Its usage must be marked with '@ObsoleteDescriptorBasedAPI' or '@OptIn(ObsoleteDescriptorBasedAPI::class)'
+    pluginContext.optInModuleDescriptor
+                  ^^^^^^^^^^^^^^^^^^^^^
+compiler/testData/compileKotlinAgainstCustomBinaries/annotationsFromBinariesWithNonTrivialJvmDefaultConfiguration/source.kt:3:19: error: '@property:Deprecated(...) val deprecatedModuleDescriptor: Any' is deprecated.
+    pluginContext.deprecatedModuleDescriptor
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+COMPILATION_ERROR

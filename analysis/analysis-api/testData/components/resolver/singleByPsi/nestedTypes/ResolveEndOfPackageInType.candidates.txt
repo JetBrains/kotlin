@@ -1,0 +1,2 @@
+KtNameReferenceExpression(97,100): 'baz'
+  NO_CANDIDATES

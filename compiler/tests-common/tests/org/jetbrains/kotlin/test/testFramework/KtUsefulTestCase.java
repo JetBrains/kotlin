@@ -42,15 +42,15 @@ import org.opentest4j.FileInfo;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Supplier;
+
+import static org.jetbrains.kotlin.test.testFramework.Cleanup.cleanupSwingDataStructures;
 
 @SuppressWarnings("ALL")
 public abstract class KtUsefulTestCase extends TestCase {
@@ -248,15 +248,6 @@ public abstract class KtUsefulTestCase extends TestCase {
                 }
             }
         }
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    private static void cleanupSwingDataStructures() throws Exception {
-        Object manager = ReflectionUtil.getDeclaredMethod(Class.forName("javax.swing.KeyboardManager"), "getCurrentManager").invoke(null);
-        Map<?, ?> componentKeyStrokeMap = ReflectionUtil.getField(manager.getClass(), manager, Hashtable.class, "componentKeyStrokeMap");
-        componentKeyStrokeMap.clear();
-        Map<?, ?> containerMap = ReflectionUtil.getField(manager.getClass(), manager, Hashtable.class, "containerMap");
-        containerMap.clear();
     }
 
     @NotNull
@@ -558,7 +549,7 @@ public abstract class KtUsefulTestCase extends TestCase {
 
     @NotNull
     public static String toString(@NotNull Collection<?> collection, @NotNull String separator) {
-        List<String> list = ContainerUtil.map2List(collection, String::valueOf);
+        List<String> list = ContainerUtil.map(collection, String::valueOf);
         Collections.sort(list);
         StringBuilder builder = new StringBuilder();
         boolean flag = false;
@@ -601,7 +592,7 @@ public abstract class KtUsefulTestCase extends TestCase {
         if (collection.size() != checkers.length) {
             Assert.fail(toString(collection));
         }
-        Set<Consumer<T>> checkerSet = ContainerUtil.set(checkers);
+        Set<Consumer<T>> checkerSet = ContainerUtil.newHashSet(checkers);
         int i = 0;
         Throwable lastError = null;
         for (final T actual : collection) {
@@ -863,24 +854,6 @@ public abstract class KtUsefulTestCase extends TestCase {
             throwableName = thr.getClass().getName();
         }
         assertNull(throwableName);
-    }
-
-    protected boolean annotatedWith(@NotNull Class<? extends Annotation> annotationClass) {
-        Class<?> aClass = getClass();
-        String methodName = "test" + getTestName(false);
-        boolean methodChecked = false;
-        while (aClass != null && aClass != Object.class) {
-            if (aClass.getAnnotation(annotationClass) != null) return true;
-            if (!methodChecked) {
-                Method method = ReflectionUtil.getDeclaredMethod(aClass, methodName);
-                if (method != null) {
-                    if (method.getAnnotation(annotationClass) != null) return true;
-                    methodChecked = true;
-                }
-            }
-            aClass = aClass.getSuperclass();
-        }
-        return false;
     }
 
     @NotNull

@@ -5,27 +5,27 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.types.renderers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.renderer.types.KtTypeRenderer
-import org.jetbrains.kotlin.analysis.api.types.KtFunctionalType
-import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
+import org.jetbrains.kotlin.analysis.api.types.KaFunctionalType
+import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtTokens
 
 
-public interface KtFunctionalTypeRenderer {
+public interface KaFunctionalTypeRenderer {
     public fun renderType(
-        analysisSession: KtAnalysisSession,
-        type: KtFunctionalType,
-        typeRenderer: KtTypeRenderer,
+        analysisSession: KaSession,
+        type: KaFunctionalType,
+        typeRenderer: KaTypeRenderer,
         printer: PrettyPrinter,
     )
 
-    public object AS_FUNCTIONAL_TYPE : KtFunctionalTypeRenderer {
+    public object AS_FUNCTIONAL_TYPE : KaFunctionalTypeRenderer {
         override fun renderType(
-            analysisSession: KtAnalysisSession,
-            type: KtFunctionalType,
-            typeRenderer: KtTypeRenderer,
+            analysisSession: KaSession,
+            type: KaFunctionalType,
+            typeRenderer: KaTypeRenderer,
             printer: PrettyPrinter,
         ) {
             printer {
@@ -34,7 +34,7 @@ public interface KtFunctionalTypeRenderer {
                 }
 
                 if (annotationsRendered) printer.append(" ")
-                if (annotationsRendered || type.nullability == KtTypeNullability.NULLABLE) append("(")
+                if (annotationsRendered || type.nullability == KaTypeNullability.NULLABLE) append("(")
                 " ".separated(
                     {
                         if (type.isSuspend) {
@@ -47,7 +47,12 @@ public interface KtFunctionalTypeRenderer {
                         }
                     },
                     {
-                        type.receiverType?.let { typeRenderer.renderType(analysisSession, it, printer); printer.append('.') }
+                        type.receiverType?.let {
+                            if (it is KaFunctionalType) printer.append("(")
+                            typeRenderer.renderType(analysisSession, it, printer)
+                            if (it is KaFunctionalType) printer.append(")")
+                            printer.append('.')
+                        }
                         printCollection(type.parameterTypes, prefix = "(", postfix = ")") {
                             typeRenderer.renderType(analysisSession, it, this)
                         }
@@ -55,24 +60,24 @@ public interface KtFunctionalTypeRenderer {
                         typeRenderer.renderType(analysisSession, type.returnType, printer)
                     },
                 )
-                if (annotationsRendered || type.nullability == KtTypeNullability.NULLABLE) append(")")
-                if (type.nullability == KtTypeNullability.NULLABLE) append("?")
+                if (annotationsRendered || type.nullability == KaTypeNullability.NULLABLE) append(")")
+                if (type.nullability == KaTypeNullability.NULLABLE) append("?")
             }
         }
     }
 
-    public object AS_CLASS_TYPE : KtFunctionalTypeRenderer {
+    public object AS_CLASS_TYPE : KaFunctionalTypeRenderer {
         override fun renderType(
-            analysisSession: KtAnalysisSession,
-            type: KtFunctionalType,
-            typeRenderer: KtTypeRenderer,
+            analysisSession: KaSession,
+            type: KaFunctionalType,
+            typeRenderer: KaTypeRenderer,
             printer: PrettyPrinter,
         ): Unit = printer {
             " ".separated(
                 { typeRenderer.annotationsRenderer.renderAnnotations(analysisSession, type, printer) },
                 {
-                    typeRenderer.classIdRenderer.renderClassTypeQualifier(analysisSession, type, typeRenderer, printer)
-                    if (type.nullability == KtTypeNullability.NULLABLE) {
+                    typeRenderer.classIdRenderer.renderClassTypeQualifier(analysisSession, type, type.qualifiers, typeRenderer, printer)
+                    if (type.nullability == KaTypeNullability.NULLABLE) {
                         append('?')
                     }
                 },
@@ -80,34 +85,17 @@ public interface KtFunctionalTypeRenderer {
         }
     }
 
-    public object AS_CLASS_TYPE_FOR_REFLECTION_TYPES : KtFunctionalTypeRenderer {
+    public object AS_CLASS_TYPE_FOR_REFLECTION_TYPES : KaFunctionalTypeRenderer {
         override fun renderType(
-            analysisSession: KtAnalysisSession,
-            type: KtFunctionalType,
-            typeRenderer: KtTypeRenderer,
+            analysisSession: KaSession,
+            type: KaFunctionalType,
+            typeRenderer: KaTypeRenderer,
             printer: PrettyPrinter,
         ) {
             val renderer = if (type.isReflectType) AS_CLASS_TYPE else AS_FUNCTIONAL_TYPE
             renderer.renderType(analysisSession, type, typeRenderer, printer)
         }
     }
-
-    public object AS_FULLY_EXPANDED_CLASS_TYPE_FOR_REFELCTION_TYPES : KtFunctionalTypeRenderer {
-        override fun renderType(
-            analysisSession: KtAnalysisSession,
-            type: KtFunctionalType,
-            typeRenderer: KtTypeRenderer,
-            printer: PrettyPrinter,
-        ) {
-            with(analysisSession) {
-                val fullyExpandedType = type.fullyExpandedType
-                if (fullyExpandedType is KtFunctionalType) {
-                    val renderer = if (fullyExpandedType.isReflectType) AS_CLASS_TYPE else AS_FUNCTIONAL_TYPE
-                    renderer.renderType(analysisSession, fullyExpandedType, typeRenderer, printer)
-                } else {
-                    typeRenderer.renderType(analysisSession, fullyExpandedType, printer)
-                }
-            }
-        }
-    }
 }
+
+public typealias KtFunctionalTypeRenderer = KaFunctionalTypeRenderer

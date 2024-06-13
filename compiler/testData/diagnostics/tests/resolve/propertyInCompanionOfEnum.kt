@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 // SKIP_TXT
 
 // FILE: test.kt

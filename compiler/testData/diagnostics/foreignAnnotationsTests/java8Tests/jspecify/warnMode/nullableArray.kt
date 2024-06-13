@@ -1,7 +1,8 @@
 // FIR_IDENTICAL
 // ISSUE: KT-57996
 // JSPECIFY_STATE: warn
-// FILE: J.java
+
+// FILE: p/J.java
 package p;
 
 import org.jspecify.annotations.Nullable;

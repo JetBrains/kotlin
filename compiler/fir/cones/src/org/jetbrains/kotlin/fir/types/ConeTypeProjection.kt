@@ -16,7 +16,7 @@ sealed class ConeTypeProjection : TypeArgumentMarker {
     abstract val kind: ProjectionKind
 
     companion object {
-        val EMPTY_ARRAY = arrayOf<ConeTypeProjection>()
+        val EMPTY_ARRAY: Array<ConeTypeProjection> = arrayOf()
     }
 }
 

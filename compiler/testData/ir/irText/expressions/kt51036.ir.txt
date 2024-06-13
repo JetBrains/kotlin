@@ -55,4 +55,4 @@ FILE fqName:<root> fileName:/kt51036.kt
       $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun invoke (): kotlin.Unit declared in <root>.A'
-          GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+          GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit

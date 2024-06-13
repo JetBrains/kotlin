@@ -104,6 +104,9 @@ abstract class FirVisitor<out R, in D> {
     open fun visitReceiverParameter(receiverParameter: FirReceiverParameter, data: D): R =
         visitElement(receiverParameter, data)
 
+    open fun visitScriptReceiverParameter(scriptReceiverParameter: FirScriptReceiverParameter, data: D): R =
+        visitElement(scriptReceiverParameter, data)
+
     open fun visitProperty(property: FirProperty, data: D): R =
         visitElement(property, data)
 
@@ -218,7 +221,7 @@ abstract class FirVisitor<out R, in D> {
     open fun visitTryExpression(tryExpression: FirTryExpression, data: D): R =
         visitElement(tryExpression, data)
 
-    open fun <T> visitLiteralExpression(literalExpression: FirLiteralExpression<T>, data: D): R =
+    open fun visitLiteralExpression(literalExpression: FirLiteralExpression, data: D): R =
         visitElement(literalExpression, data)
 
     open fun visitTypeProjection(typeProjection: FirTypeProjection, data: D): R =

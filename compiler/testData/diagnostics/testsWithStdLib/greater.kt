@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: -ForbidInferringTypeVariablesIntoEmptyIntersection
+// LANGUAGE: -ForbidInferringTypeVariablesIntoEmptyIntersection
 // ISSUES: KT-51357, KT-67146, KT-67335
 class Expression<T>(val x: T)
 

@@ -1,0 +1,73 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final data class TwoValues : R|kotlin/Any|
+            Properties:
+                FirPropertySymbol public final val one: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+                FirPropertySymbol public final val two: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+    Element 9
+        Scope: FirLocalScope
+    Element 10
+        Implicit receiver:
+            FirScriptSymbol SCRIPT: <script-topLevelDestructuring_initializer.kts>
+                <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                lval args: R|kotlin/Array<kotlin/String>|
+            
+                public final data class TwoValues : R|kotlin/Any|
+                lval <destruct>: R|TwoValues|
+                public final val one: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+            
+                public final val two: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+
+FILE: [ResolvedTo(IMPORTS)] topLevelDestructuring_initializer.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-topLevelDestructuring_initializer.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? data [ResolvedTo(RAW_FIR)] class TwoValues : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] constructor([ResolvedTo(RAW_FIR)] first: Int, [ResolvedTo(RAW_FIR)] second: Int): R|TwoValues| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] val first: Int = R|<local>/first|
+                public? [ResolvedTo(RAW_FIR)] get(): Int
+
+            public? final? [ResolvedTo(RAW_FIR)] val second: Int = R|<local>/second|
+                public? [ResolvedTo(RAW_FIR)] get(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] first: Int = this@R|/TwoValues|.R|/TwoValues.first|, [ResolvedTo(RAW_FIR)] second: Int = this@R|/TwoValues|.R|/TwoValues.second|): R|TwoValues|
+
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] lval <destruct>: R|TwoValues| = R|/TwoValues.TwoValues|(Int(1), Int(2))
+        public final [ResolvedTo(RAW_FIR)] val one: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] val two: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>

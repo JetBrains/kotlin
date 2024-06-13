@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import com.intellij.openapi.progress.ProcessCanceledException
-import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnostic
+import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.compile.CodeFragmentCapturedValue
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
@@ -18,12 +18,12 @@ import org.jetbrains.kotlin.psi.KtCodeFragment
 import java.io.File
 
 /**
- * In-memory compilation result returned from [KtCompilerFacility].
+ * In-memory compilation result returned from [KaCompilerFacility].
  *
  * Compilation fails if there are critical errors reported either on the frontend or on the backend side.
- * Keep in mind that [KtCompilationResult] is a part of Analysis API, so it should only be used inside an analysis block.
+ * Keep in mind that [KaCompilationResult] is a part of Analysis API, so it should only be used inside an analysis block.
  */
-public sealed class KtCompilationResult {
+public sealed class KaCompilationResult {
     /**
      * Successful compilation result.
      *
@@ -31,19 +31,21 @@ public sealed class KtCompilationResult {
      * @property capturedValues Context values captured by a [KtCodeFragment]. Empty for an ordinary [KtFile].
      */
     public class Success(
-        public val output: List<KtCompiledFile>,
+        public val output: List<KaCompiledFile>,
         public val capturedValues: List<CodeFragmentCapturedValue>
-    ) : KtCompilationResult()
+    ) : KaCompilationResult()
 
     /**
      * Failed compilation result.
      *
      * @property errors Non-recoverable errors either during code analysis, or during code generation.
      */
-    public class Failure(public val errors: List<KtDiagnostic>) : KtCompilationResult()
+    public class Failure(public val errors: List<KaDiagnostic>) : KaCompilationResult()
 }
 
-public interface KtCompiledFile {
+public typealias KtCompilationResult = KaCompilationResult
+
+public interface KaCompiledFile {
     /**
      * Path of the compiled file relative to the root of the output directory.
      */
@@ -60,21 +62,25 @@ public interface KtCompiledFile {
     public val content: ByteArray
 }
 
+public typealias KtCompiledFile = KaCompiledFile
+
 /**
  * `true` if the compiled file is a Java class file.
  */
-public val KtCompiledFile.isClassFile: Boolean
+public val KaCompiledFile.isClassFile: Boolean
     get() = path.endsWith(".class", ignoreCase = true)
 
 /**
  * Compilation target platform.
  */
-public sealed class KtCompilerTarget {
+public sealed class KaCompilerTarget {
     /** JVM target (produces '.class' files). */
-    public class Jvm(public val classBuilderFactory: ClassBuilderFactory) : KtCompilerTarget()
+    public class Jvm(public val classBuilderFactory: ClassBuilderFactory) : KaCompilerTarget()
 }
 
-public abstract class KtCompilerFacility : KtAnalysisSessionComponent() {
+public typealias KtCompilerTarget = KaCompilerTarget
+
+public abstract class KaCompilerFacility : KaSessionComponent() {
     public companion object {
         /** Simple class name for the code fragment facade class. */
         public val CODE_FRAGMENT_CLASS_NAME: CompilerConfigurationKey<String> =
@@ -88,12 +94,14 @@ public abstract class KtCompilerFacility : KtAnalysisSessionComponent() {
     public abstract fun compile(
         file: KtFile,
         configuration: CompilerConfiguration,
-        target: KtCompilerTarget,
-        allowedErrorFilter: (KtDiagnostic) -> Boolean,
-    ): KtCompilationResult
+        target: KaCompilerTarget,
+        allowedErrorFilter: (KaDiagnostic) -> Boolean,
+    ): KaCompilationResult
 }
 
-public interface KtCompilerFacilityMixIn : KtAnalysisSessionMixIn {
+public typealias KtCompilerFacility = KaCompilerFacility
+
+public interface KaCompilerFacilityMixIn : KaSessionMixIn {
     /**
      * Compile the given [file] in-memory (without dumping the compiled binaries to a disk).
      *
@@ -112,29 +120,31 @@ public interface KtCompilerFacilityMixIn : KtAnalysisSessionMixIn {
      *
      * @return Compilation result.
      *
-     * The function rethrows exceptions from the compiler, wrapped in [KtCodeCompilationException].
+     * The function rethrows exceptions from the compiler, wrapped in [KaCodeCompilationException].
      * The implementation should wrap the `compile()` call into a `try`/`catch` block when necessary.
      */
-    @Throws(KtCodeCompilationException::class)
+    @Throws(KaCodeCompilationException::class)
     public fun compile(
         file: KtFile,
         configuration: CompilerConfiguration,
-        target: KtCompilerTarget,
-        allowedErrorFilter: (KtDiagnostic) -> Boolean
-    ): KtCompilationResult {
+        target: KaCompilerTarget,
+        allowedErrorFilter: (KaDiagnostic) -> Boolean
+    ): KaCompilationResult {
         return withValidityAssertion {
             try {
                 analysisSession.compilerFacility.compile(file, configuration, target, allowedErrorFilter)
             } catch (e: ProcessCanceledException) {
                 throw e
             } catch (e: Throwable) {
-                throw KtCodeCompilationException(e)
+                throw KaCodeCompilationException(e)
             }
         }
     }
 }
 
+public typealias KtCompilerFacilityMixIn = KaCompilerFacilityMixIn
+
 /**
  * Thrown when an exception occurred on analyzing the code to be compiled, or during target platform code generation.
  */
-public class KtCodeCompilationException(cause: Throwable) : RuntimeException(cause)
+public class KaCodeCompilationException(cause: Throwable) : RuntimeException(cause)

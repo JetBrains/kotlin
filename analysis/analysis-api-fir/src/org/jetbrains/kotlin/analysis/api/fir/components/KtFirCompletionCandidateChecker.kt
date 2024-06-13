@@ -5,16 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.components.KtCompletionCandidateChecker
-import org.jetbrains.kotlin.analysis.api.components.KtExtensionApplicabilityResult
-import org.jetbrains.kotlin.analysis.api.components.KtCompletionExtensionCandidateChecker
-import org.jetbrains.kotlin.analysis.api.components.KtExtensionApplicabilityResult.*
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.components.KaCompletionCandidateChecker
+import org.jetbrains.kotlin.analysis.api.components.KaExtensionApplicabilityResult
+import org.jetbrains.kotlin.analysis.api.components.KaCompletionExtensionCandidateChecker
+import org.jetbrains.kotlin.analysis.api.components.KaExtensionApplicabilityResult.*
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.ResolutionParameters
@@ -43,43 +42,43 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForReceiver
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
-internal class KtFirCompletionCandidateChecker(
-    override val analysisSession: KtFirAnalysisSession,
-    override val token: KtLifetimeToken,
-) : KtCompletionCandidateChecker(), KtFirAnalysisSessionComponent {
+internal class KaFirCompletionCandidateChecker(
+    override val analysisSession: KaFirSession,
+    override val token: KaLifetimeToken,
+) : KaCompletionCandidateChecker(), KaFirSessionComponent {
     override fun createExtensionCandidateChecker(
         originalFile: KtFile,
         nameExpression: KtSimpleNameExpression,
         explicitReceiver: KtExpression?
-    ): KtCompletionExtensionCandidateChecker = analysisSession.withValidityAssertion {
-        return LazyKtCompletionExtensionCandidateChecker {
+    ): KaCompletionExtensionCandidateChecker = analysisSession.withValidityAssertion {
+        return KaLazyCompletionExtensionCandidateChecker {
             // Double validity check is needed, as the checker may be requested some time later
             analysisSession.withValidityAssertion {
-                KtFirCompletionExtensionCandidateChecker(analysisSession, nameExpression, explicitReceiver, originalFile)
+                KaFirCompletionExtensionCandidateChecker(analysisSession, nameExpression, explicitReceiver, originalFile)
             }
         }
     }
 
     @Suppress("OVERRIDE_DEPRECATION")
     override fun checkExtensionFitsCandidate(
-        firSymbolForCandidate: KtCallableSymbol,
+        firSymbolForCandidate: KaCallableSymbol,
         originalFile: KtFile,
         nameExpression: KtSimpleNameExpression,
         possibleExplicitReceiver: KtExpression?,
-    ): KtExtensionApplicabilityResult = analysisSession.withValidityAssertion {
-        val checker = KtFirCompletionExtensionCandidateChecker(analysisSession, nameExpression, possibleExplicitReceiver, originalFile)
+    ): KaExtensionApplicabilityResult = analysisSession.withValidityAssertion {
+        val checker = KaFirCompletionExtensionCandidateChecker(analysisSession, nameExpression, possibleExplicitReceiver, originalFile)
         return with(analysisSession) {
             checker.computeApplicability(firSymbolForCandidate)
         }
     }
 }
 
-private class KtFirCompletionExtensionCandidateChecker(
-    override val analysisSession: KtFirAnalysisSession,
+private class KaFirCompletionExtensionCandidateChecker(
+    override val analysisSession: KaFirSession,
     private val nameExpression: KtSimpleNameExpression,
     explicitReceiver: KtExpression?,
     originalFile: KtFile,
-) : KtCompletionExtensionCandidateChecker, KtFirAnalysisSessionComponent {
+) : KaCompletionExtensionCandidateChecker, KaFirSessionComponent {
     private val implicitReceivers: List<ImplicitReceiverValue<*>>
     private val firCallSiteSession: FirSession
     private val firOriginalFile: FirFile
@@ -95,8 +94,8 @@ private class KtFirCompletionExtensionCandidateChecker(
         firExplicitReceiver = explicitReceiver?.let(::findReceiverFirExpression)
     }
 
-    override fun computeApplicability(candidate: KtCallableSymbol): KtExtensionApplicabilityResult {
-        require(candidate is KtFirSymbol<*>)
+    override fun computeApplicability(candidate: KaCallableSymbol): KaExtensionApplicabilityResult {
+        require(candidate is KaFirSymbol<*>)
 
         analysisSession.withValidityAssertion {
             val firSymbol = candidate.firSymbol as FirCallableSymbol<*>
@@ -105,7 +104,7 @@ private class KtFirCompletionExtensionCandidateChecker(
             val resolver = SingleCandidateResolver(firCallSiteSession, firOriginalFile)
             val token = analysisSession.token
 
-            fun processReceiver(implicitReceiverValue: ImplicitReceiverValue<*>?): KtExtensionApplicabilityResult? {
+            fun processReceiver(implicitReceiverValue: ImplicitReceiverValue<*>?): KaExtensionApplicabilityResult? {
                 val resolutionParameters = ResolutionParameters(
                     singleCandidateResolutionMode = SingleCandidateResolutionMode.CHECK_EXTENSION_FOR_COMPLETION,
                     callableSymbol = firSymbol,
@@ -180,12 +179,12 @@ private class KtFirCompletionExtensionCandidateChecker(
     }
 }
 
-private class LazyKtCompletionExtensionCandidateChecker(
-    delegateFactory: () -> KtCompletionExtensionCandidateChecker
-) : KtCompletionExtensionCandidateChecker {
-    private val delegate: KtCompletionExtensionCandidateChecker by lazy(delegateFactory)
+private class KaLazyCompletionExtensionCandidateChecker(
+    delegateFactory: () -> KaCompletionExtensionCandidateChecker
+) : KaCompletionExtensionCandidateChecker {
+    private val delegate: KaCompletionExtensionCandidateChecker by lazy(delegateFactory)
 
-    override fun computeApplicability(candidate: KtCallableSymbol): KtExtensionApplicabilityResult {
+    override fun computeApplicability(candidate: KaCallableSymbol): KaExtensionApplicabilityResult {
         return delegate.computeApplicability(candidate)
     }
 }

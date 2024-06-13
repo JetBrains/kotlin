@@ -4,7 +4,7 @@
 // WITH_STDLIB
 
 // MODULE: lib
-// !LANGUAGE: -EnumEntries
+// LANGUAGE: -EnumEntries
 // FILE: MyEnum.kt
 
 package test
@@ -19,7 +19,7 @@ inline fun test(block: () -> String): String {
 }
 
 // MODULE: caller(lib)
-// !LANGUAGE: +EnumEntries
+// LANGUAGE: +EnumEntries
 
 // FILE: 2.kt
 

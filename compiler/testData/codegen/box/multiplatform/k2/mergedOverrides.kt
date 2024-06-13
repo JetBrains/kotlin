@@ -1,6 +1,5 @@
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 // IGNORE_BACKEND_K1: ANY
-// IGNORE_CODEGEN_WITH_FIR2IR_FAKE_OVERRIDE_GENERATION: JVM_IR
 // DUMP_IR
 
 // MODULE: common

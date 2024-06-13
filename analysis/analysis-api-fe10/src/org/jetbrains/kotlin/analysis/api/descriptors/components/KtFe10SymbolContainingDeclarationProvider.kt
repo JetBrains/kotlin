@@ -8,77 +8,74 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
-import org.jetbrains.kotlin.analysis.api.components.KtSymbolContainingDeclarationProvider
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
-import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DynamicFunctionDescValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.components.KaSymbolContainingDeclarationProvider
+import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DynamicFunctionDescValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getDescriptor
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtSymbol
 import org.jetbrains.kotlin.analysis.api.getModule
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithKind
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.load.kotlin.*
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.has
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.descriptorUtil.platform
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import java.nio.file.Path
 import java.nio.file.Paths
 
-internal class KtFe10SymbolContainingDeclarationProvider(
-    override val analysisSession: KtFe10AnalysisSession
-) : KtSymbolContainingDeclarationProvider(), Fe10KtAnalysisSessionComponent {
-    override val token: KtLifetimeToken
+internal class KaFe10SymbolContainingDeclarationProvider(
+    override val analysisSession: KaFe10Session
+) : KaSymbolContainingDeclarationProvider(), KaFe10SessionComponent {
+    override val token: KaLifetimeToken
         get() = analysisSession.token
 
-    override fun getContainingDeclaration(symbol: KtSymbol): KtDeclarationSymbol? {
-        if (symbol is KtSymbolWithKind && symbol.symbolKind == KtSymbolKind.TOP_LEVEL) {
+    override fun getContainingDeclaration(symbol: KaSymbol): KaDeclarationSymbol? {
+        if (symbol is KaSymbolWithKind && symbol.symbolKind == KaSymbolKind.TOP_LEVEL) {
             return null
         }
 
         return when (symbol) {
-            is KtBackingFieldSymbol -> symbol.owningProperty
-            is KtPropertyAccessorSymbol -> {
+            is KaBackingFieldSymbol -> symbol.owningProperty
+            is KaPropertyAccessorSymbol -> {
                 (symbol.getDescriptor() as? PropertyAccessorDescriptor)?.correspondingProperty
-                    ?.toKtSymbol(analysisContext) as? KtDeclarationSymbol
+                    ?.toKtSymbol(analysisContext) as? KaDeclarationSymbol
             }
             else -> {
                 symbol.getDescriptor()?.containingDeclaration
-                    ?.toKtSymbol(analysisContext) as? KtDeclarationSymbol
+                    ?.toKtSymbol(analysisContext) as? KaDeclarationSymbol
             }
         }
     }
 
-    private val KtSymbol.containingSymbolOrSelf: KtSymbol
+    private val KaSymbol.containingSymbolOrSelf: KaSymbol
         get() {
             return when (this) {
-                is KtValueParameterSymbol -> {
-                    getContainingDeclaration(this) as? KtFunctionLikeSymbol ?: this
+                is KaValueParameterSymbol -> {
+                    getContainingDeclaration(this) as? KaFunctionLikeSymbol ?: this
                 }
-                is KtPropertyAccessorSymbol -> {
-                    getContainingDeclaration(this) as? KtPropertySymbol ?: this
+                is KaPropertyAccessorSymbol -> {
+                    getContainingDeclaration(this) as? KaPropertySymbol ?: this
                 }
-                is KtBackingFieldSymbol -> this.owningProperty
+                is KaBackingFieldSymbol -> this.owningProperty
                 else -> this
             }
         }
 
-    override fun getContainingFileSymbol(symbol: KtSymbol): KtFileSymbol? {
-        if (symbol is KtFileSymbol) return null
+    override fun getContainingFileSymbol(symbol: KaSymbol): KaFileSymbol? {
+        if (symbol is KaFileSymbol) return null
         // psiBased
         (symbol.psi?.containingFile as? KtFile)?.let { ktFile ->
             with(analysisSession) {
@@ -93,11 +90,11 @@ internal class KtFe10SymbolContainingDeclarationProvider(
         }
     }
 
-    override fun getContainingJvmClassName(symbol: KtCallableSymbol): String? {
+    override fun getContainingJvmClassName(symbol: KaCallableSymbol): String? {
         val platform = getContainingModule(symbol).platform
         if (!platform.has<JvmPlatform>()) return null
 
-        val containingSymbolOrSelf = symbol.containingSymbolOrSelf as KtSymbolWithKind
+        val containingSymbolOrSelf = symbol.containingSymbolOrSelf as KaSymbolWithKind
         return when (val descriptor = containingSymbolOrSelf.getDescriptor()) {
             is DescriptorWithContainerSource -> {
                 when (val containerSource = descriptor.containerSource) {
@@ -107,13 +104,13 @@ internal class KtFe10SymbolContainingDeclarationProvider(
                 }?.fqNameForClassNameWithoutDollars?.asString()
             }
             else -> {
-                return if (containingSymbolOrSelf.symbolKind == KtSymbolKind.TOP_LEVEL) {
+                return if (containingSymbolOrSelf.symbolKind == KaSymbolKind.TOP_LEVEL) {
                     descriptor?.let(DescriptorToSourceUtils::getContainingFile)
                         ?.takeUnless { it.isScript() }
                         ?.javaFileFacadeFqName?.asString()
                 } else {
-                    val classId = (containingSymbolOrSelf as? KtConstructorSymbol)?.containingClassIdIfNonLocal
-                        ?: (containingSymbolOrSelf as? KtCallableSymbol)?.callableIdIfNonLocal?.classId
+                    val classId = (containingSymbolOrSelf as? KaConstructorSymbol)?.containingClassId
+                        ?: (containingSymbolOrSelf as? KaCallableSymbol)?.callableId?.classId
                     classId?.takeUnless { it.shortClassName.isSpecial }
                         ?.asFqNameString()
                 }
@@ -122,13 +119,13 @@ internal class KtFe10SymbolContainingDeclarationProvider(
     }
 
     // TODO this is a dummy and incorrect implementation just to satisfy some tests
-    override fun getContainingModule(symbol: KtSymbol): KtModule {
+    override fun getContainingModule(symbol: KaSymbol): KtModule {
         val descriptor = when (symbol) {
-            is KtValueParameterSymbol -> {
+            is KaValueParameterSymbol -> {
                 val paramDescriptor = symbol.getDescriptor()
                 (paramDescriptor as? ValueParameterDescriptor)?.containingDeclaration ?: paramDescriptor
             }
-            is KtPropertyAccessorSymbol -> {
+            is KaPropertyAccessorSymbol -> {
                 val accessorDescriptor = symbol.getDescriptor()
                 (accessorDescriptor as? PropertyAccessorDescriptor)?.correspondingProperty ?: accessorDescriptor
             }
@@ -145,11 +142,11 @@ internal class KtFe10SymbolContainingDeclarationProvider(
             return getFakeContainingKtModule(descriptor)
         }
 
-        if (symbol is KtBackingFieldSymbol) {
+        if (symbol is KaBackingFieldSymbol) {
             return getContainingModule(symbol.owningProperty)
         }
 
-        if (symbol is KtFe10DynamicFunctionDescValueParameterSymbol) {
+        if (symbol is KaFe10DynamicFunctionDescValueParameterSymbol) {
             return getContainingModule(symbol.owner)
         }
 
@@ -186,8 +183,6 @@ internal class KtFe10SymbolContainingDeclarationProvider(
             override val contentScope: GlobalSearchScope = ProjectScope.getLibrariesScope(project)
             override val platform: TargetPlatform
                 get() = descriptor.platform!!
-            override val analyzerServices: PlatformDependentAnalyzerServices
-                get() = JvmPlatformAnalyzerServices
             override val project: Project
                 get() = analysisSession.analysisContext.resolveSession.project
 

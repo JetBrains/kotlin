@@ -1,4 +1,4 @@
-// !LANGUAGE: -AllowSealedInheritorsInDifferentFilesOfSamePackage
+// LANGUAGE: -AllowSealedInheritorsInDifferentFilesOfSamePackage
 
 // IGNORE_BACKEND_K2: JVM_IR
 // FIR status: don't support legacy feature

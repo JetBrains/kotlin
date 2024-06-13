@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,7 +12,6 @@ import com.intellij.openapi.util.io.FileUtilRt
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.codegen.CodegenTestFiles
 import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
@@ -26,12 +25,12 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIXES
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
-import org.jetbrains.kotlin.test.utils.TransformersFunctions.Android
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
@@ -40,6 +39,7 @@ import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsS
 import org.jetbrains.kotlin.test.services.sourceProviders.CodegenHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.jetbrains.kotlin.test.utils.TransformersFunctions.Android
 import org.junit.Assert
 import java.io.File
 import java.io.FileWriter
@@ -370,6 +370,11 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                     val jdkKind = JvmEnvironmentConfigurator.extractJdkKind(module.directives)
 
                     keyConfiguration.languageVersionSettings = module.languageVersionSettings
+                    keyConfiguration.put(
+                        CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS,
+                        module.targetBackend !in module.directives[CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS] &&
+                                TargetBackend.ANY !in module.directives[CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS],
+                    )
 
                     val key = ConfigurationKey(kind, jdkKind, keyConfiguration.toString())
                     val compiler = if (kind.withReflection) reflectionFlavor else commmonFlavor

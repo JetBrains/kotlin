@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +SoundSmartCastsAfterTry
+// LANGUAGE: +SoundSmartCastsAfterTry
 
 fun bar() {}
 

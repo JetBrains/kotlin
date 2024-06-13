@@ -5,17 +5,17 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
-import org.jetbrains.kotlin.analysis.api.components.KtScopeSubstitution
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
-import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
-import org.jetbrains.kotlin.analysis.api.scopes.KtScope
-import org.jetbrains.kotlin.analysis.api.scopes.KtTypeScope
+import org.jetbrains.kotlin.analysis.api.components.KaScopeSubstitution
+import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
+import org.jetbrains.kotlin.analysis.api.scopes.KaScope
+import org.jetbrains.kotlin.analysis.api.scopes.KaTypeScope
 
-internal class KtFe10ScopeSubstitution(
-    override val analysisSession: KtFe10AnalysisSession,
-) : KtScopeSubstitution(), Fe10KtAnalysisSessionComponent {
+internal class KaFe10ScopeSubstitution(
+    override val analysisSession: KaFe10Session,
+) : KaScopeSubstitution(), KaFe10SessionComponent {
 
-    override fun getDeclarationScope(scope: KtTypeScope): KtScope {
+    override fun getDeclarationScope(scope: KaTypeScope): KaScope {
         TODO()
     }
 }

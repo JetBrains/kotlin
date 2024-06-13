@@ -20,7 +20,7 @@ class FirConstantEvaluationProcessor(
     session: FirSession,
     scopeSession: ScopeSession
 ) : FirTransformerBasedResolveProcessor(session, scopeSession, FirResolvePhase.CONSTANT_EVALUATION) {
-    override val transformer = FirConstantEvaluationTransformerAdapter(session)
+    override val transformer: FirConstantEvaluationTransformerAdapter = FirConstantEvaluationTransformerAdapter(session)
 }
 
 @AdapterForResolveProcessor

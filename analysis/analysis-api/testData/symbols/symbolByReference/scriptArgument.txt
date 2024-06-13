@@ -1,20 +1,20 @@
-KtKotlinPropertySymbol:
-  annotationsList: []
-  backingFieldSymbol: KtBackingFieldSymbol:
-    annotationsList: []
-    callableIdIfNonLocal: null
+KaKotlinPropertySymbol:
+  annotations: []
+  backingFieldSymbol: KaBackingFieldSymbol:
+    annotations: []
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
     origin: PROPERTY_BACKING_FIELD
-    owningProperty: KtKotlinPropertySymbol(kotlin/script/templates/standard/ScriptTemplateWithArgs.args)
+    owningProperty: KaKotlinPropertySymbol(kotlin/script/templates/standard/ScriptTemplateWithArgs.args)
     receiverParameter: null
-    returnType: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: [
-        KtUsualClassType:
-          annotationsList: []
-          ownTypeArguments: []
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: [
+        KaUsualClassType:
+          annotations: []
+          typeArguments: []
           type: kotlin/String
       ]
       type: kotlin/Array<kotlin/String>
@@ -24,11 +24,11 @@ KtKotlinPropertySymbol:
     getContainingJvmClassName: kotlin.script.templates.standard.ScriptTemplateWithArgs
     getContainingModule: KtLibraryModule "Library kotlin-script-runtime"
     deprecationStatus: null
-  callableIdIfNonLocal: kotlin/script/templates/standard/ScriptTemplateWithArgs.args
+  callableId: kotlin/script/templates/standard/ScriptTemplateWithArgs.args
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
-    annotationsList: []
-    callableIdIfNonLocal: null
+  getter: KaPropertyGetterSymbol:
+    annotations: []
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -39,12 +39,12 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: LIBRARY
     receiverParameter: null
-    returnType: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: [
-        KtUsualClassType:
-          annotationsList: []
-          ownTypeArguments: []
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: [
+        KaUsualClassType:
+          annotations: []
+          typeArguments: []
           type: kotlin/String
       ]
       type: kotlin/Array<kotlin/String>
@@ -52,9 +52,9 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
-    getDispatchReceiver(): KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/script/templates/standard/ScriptTemplateWithArgs
     getContainingFileSymbol: null
     getContainingJvmClassName: kotlin.script.templates.standard.ScriptTemplateWithArgs
@@ -78,12 +78,12 @@ KtKotlinPropertySymbol:
   name: args
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/String
     ]
     type: kotlin/Array<kotlin/String>
@@ -91,9 +91,9 @@ KtKotlinPropertySymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/script/templates/standard/ScriptTemplateWithArgs
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.script.templates.standard.ScriptTemplateWithArgs

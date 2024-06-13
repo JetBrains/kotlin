@@ -4,7 +4,7 @@
  */
 
 // WITH_STDLIB
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 // TARGET_BACKEND: JVM
 // MODULE: common
 // TARGET_PLATFORM: Common

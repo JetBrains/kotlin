@@ -1,5 +1,5 @@
 // one.MyEnumClass
-// !LANGUAGE: +EnumEntries
+// LANGUAGE: +EnumEntries
 
 package one
 

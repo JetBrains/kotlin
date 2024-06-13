@@ -6,18 +6,21 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSamConstructorSymbol
-import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSamConstructorSymbol
 
-public abstract class KtSamResolver : KtAnalysisSessionComponent() {
-    public abstract fun getSamConstructor(ktClassLikeSymbol: KtClassLikeSymbol): KtSamConstructorSymbol?
+public abstract class KaSamResolver : KaSessionComponent() {
+    public abstract fun getSamConstructor(symbol: KaClassLikeSymbol): KaSamConstructorSymbol?
 }
 
-public interface KtSamResolverMixIn : KtAnalysisSessionMixIn {
+public typealias KtSamResolver = KaSamResolver
+
+public interface KaSamResolverMixIn : KaSessionMixIn {
     /**
-     * Returns [KtSamConstructorSymbol] if the given [KtClassLikeSymbol] is a functional interface type, a.k.a. SAM.
+     * Returns [KaSamConstructorSymbol] if the given [KaClassLikeSymbol] is a functional interface type, a.k.a. SAM.
      */
-    public fun KtClassLikeSymbol.getSamConstructor(): KtSamConstructorSymbol? =
+    public fun KaClassLikeSymbol.getSamConstructor(): KaSamConstructorSymbol? =
         withValidityAssertion { analysisSession.samResolver.getSamConstructor(this) }
 }
+
+public typealias KtSamResolverMixIn = KaSamResolverMixIn

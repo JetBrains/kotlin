@@ -1,6 +1,6 @@
 FILE: [ResolvedTo(BODY_RESOLVE)] memberTypeAliasScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-memberTypeAliasScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
@@ -11,3 +11,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] memberTypeAliasScript.kts
             public final [ResolvedTo(BODY_RESOLVE)] typealias X = R|kotlin/Int|
 
         }
+

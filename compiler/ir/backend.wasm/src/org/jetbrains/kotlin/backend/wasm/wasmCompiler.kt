@@ -257,20 +257,18 @@ fun WasmCompiledModuleFragment.generateAsyncJsWrapper(
             }
         }.sorted()
         .joinToString("\n")
-    //TODO: Rename tryGetOrSetExternrefBox to getCachedJsObject after bootstrap (KT-65322)
     //language=js
     return """
 export async function instantiate(imports={}, runInitializer=true) {
     const cachedJsObjects = new WeakMap();
     // ref must be non-null
-    function tryGetOrSetExternrefBox(ref, ifNotCached) {
+    function getCachedJsObject(ref, ifNotCached) {
         if (typeof ref !== 'object' && typeof ref !== 'function') return ifNotCached;
         const cached = cachedJsObjects.get(ref);
         if (cached !== void 0) return cached;
         cachedJsObjects.set(ref, ifNotCached);
         return ifNotCached;
     }
-    const getCachedJsObject = tryGetOrSetExternrefBox;
 
 $referencesToQualifiedAndImportedDeclarations
     
@@ -291,7 +289,7 @@ $jsCodeBodyIndented
             || typeof inIon !== 'undefined' // SpiderMonkey
             || typeof jscOptions !== 'undefined' // JavaScriptCore
         );
-    const isBrowser = !isNodeJs && !isDeno && !isStandaloneJsVM && (typeof window !== 'undefined');
+    const isBrowser = !isNodeJs && !isDeno && !isStandaloneJsVM && (typeof window !== 'undefined' || typeof self !== 'undefined');
     
     if (!isNodeJs && !isDeno && !isStandaloneJsVM && !isBrowser) {
       throw "Supported JS engine not detected";

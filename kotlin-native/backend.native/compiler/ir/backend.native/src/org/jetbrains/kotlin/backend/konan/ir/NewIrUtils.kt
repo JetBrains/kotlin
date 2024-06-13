@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.backend.konan.ir
 
 import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
 import org.jetbrains.kotlin.backend.konan.llvm.KonanMetadata
+import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
-import org.jetbrains.kotlin.library.metadata.isInteropLibrary
 import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
 import org.jetbrains.kotlin.utils.atMostOne
 
@@ -83,7 +82,6 @@ private fun IrClass.getOverridingOf(function: IrFunction) = (function as? IrSimp
 
 val ModuleDescriptor.konanLibrary get() = (this.klibModuleOrigin as? DeserializedKlibModuleOrigin)?.library
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 val IrPackageFragment.konanLibrary: KotlinLibrary?
     get() {
         if (this is IrFile) {
@@ -105,5 +103,16 @@ val IrDeclaration.konanLibrary: KotlinLibrary?
         }
     }
 
-fun IrDeclaration.isFromInteropLibrary() = konanLibrary?.isInteropLibrary() == true
-fun IrPackageFragment.isFromInteropLibrary() = konanLibrary?.isInteropLibrary() == true
+@Deprecated(
+        "Use isFromCInteropLibrary() instead",
+        ReplaceWith("isFromCInteropLibrary()", "org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary"),
+        DeprecationLevel.ERROR
+)
+fun IrDeclaration.isFromInteropLibrary() = isFromCInteropLibrary()
+
+@Deprecated(
+        "Use isFromCInteropLibrary() instead",
+        ReplaceWith("moduleDescriptor.isFromCInteropLibrary()", "org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary"),
+        DeprecationLevel.ERROR
+)
+fun IrPackageFragment.isFromInteropLibrary() = moduleDescriptor.isFromCInteropLibrary()

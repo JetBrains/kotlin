@@ -126,7 +126,13 @@ class KonanDriver(
             konanConfig.cacheSupport.checkConsistency()
         }
 
-        DynamicCompilerDriver().run(konanConfig, environment)
+        val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
+        val sourcesFiles = environment.getSourceFiles()
+        performanceManager?.notifyCompilerInitialized(
+                sourcesFiles.size, environment.countLinesOfCode(sourcesFiles), "${konanConfig.moduleId}-${konanConfig.produce}"
+        )
+
+        DynamicCompilerDriver(performanceManager).run(konanConfig, environment)
     }
 
     private fun ensureModuleName(config: KonanConfig) {
@@ -183,7 +189,6 @@ class KonanDriver(
             copy(BinaryOptions.objcExportDisableSwiftMemberNameMangling)
             copy(BinaryOptions.objcExportIgnoreInterfaceMethodCollisions)
             copy(KonanConfigKeys.OBJC_GENERICS)
-            copy(CommonConfigurationKeys.USE_FIR_BASED_FAKE_OVERRIDE_GENERATOR)
         }
 
         // For the second stage, remove already compiled source files from the configuration.

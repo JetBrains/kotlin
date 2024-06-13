@@ -1,0 +1,22 @@
+FILE: nestedClassesWithSupertypesDependantOnAnnotationArgument.kt
+    public abstract interface A : R|kotlin/Any| {
+        public open fun test(): R|kotlin/String| {
+            ^test String(OK)
+        }
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/AddNestedClassesBasedOnArgument|(kClass = <getClass>(Q|A|)) public abstract interface Some : R|kotlin/Any| {
+        public abstract interface Generated : R|A| {
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval x: R|<anonymous>| = object : R|Some.Generated| {
+            private constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        ^box R|<local>/x|.R|/A.test|()
+    }

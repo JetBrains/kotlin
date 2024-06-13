@@ -1,6 +1,6 @@
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: test/TopLevel.Base.withOuter
+KaFunctionSymbol:
+  annotations: []
+  callableId: test/TopLevel.Base.withOuter
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -20,22 +20,22 @@ KtFunctionSymbol:
   name: withOuter
   origin: SOURCE
   receiverParameter: null
-  returnType: KtTypeParameterType:
-    annotationsList: []
+  returnType: KaTypeParameterType:
+    annotations: []
     type: Outer?
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: T
     ]
     type: test/TopLevel.Base<T, Outer>
-  getContainingFileSymbol: KtFileSymbol(genericFromOuterClassInInnerClass.kt)
+  getContainingFileSymbol: KaFileSymbol(genericFromOuterClassInInnerClass.kt)
   getContainingJvmClassName: test.TopLevel.Base
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirEvaluatorResult
@@ -57,7 +58,7 @@ private val sourceName: Name = Name.identifier("SOURCE")
 fun List<FirAnnotation>.nonSourceAnnotations(session: FirSession): List<FirAnnotation> =
     this.filter { annotation ->
         val firAnnotationClass = annotation.toAnnotationClass(session)
-        firAnnotationClass != null && firAnnotationClass.annotations.none { meta ->
+        firAnnotationClass != null && firAnnotationClass.symbol.resolvedAnnotationsWithClassIds.none { meta ->
             meta.toAnnotationClassId(session) == StandardClassIds.Annotations.Retention &&
                     meta.findArgumentByName(StandardClassIds.Annotations.ParameterNames.retentionValue)
                         ?.extractEnumValueArgumentInfo()?.enumEntryName == sourceName
@@ -102,8 +103,14 @@ fun FirAnnotationContainer.getAnnotationByClassId(classId: ClassId, session: Fir
     return annotations.getAnnotationByClassId(classId, session)
 }
 
+/**
+ * Returns the first annotation with the matching [classId], but if there are
+ * multiple matching annotations, some of which are Java annotations mapped to
+ * Kotlin counterparts and some are already Kotlin ones, then the function
+ * returns the first Kotlin matching annotation.
+ */
 fun List<FirAnnotation>.getAnnotationByClassId(classId: ClassId, session: FirSession): FirAnnotation? {
-    return getAnnotationsByClassId(classId, session).firstOrNull()
+    return getAnnotationsByClassId(classId, session).firstOrNullButPrioritizeKotlin()
 }
 
 fun FirAnnotationContainer.getAnnotationsByClassId(classId: ClassId, session: FirSession): List<FirAnnotation> =
@@ -111,15 +118,51 @@ fun FirAnnotationContainer.getAnnotationsByClassId(classId: ClassId, session: Fi
 
 fun List<FirAnnotation>.getAnnotationsByClassId(classId: ClassId, session: FirSession): List<FirAnnotation> {
     return filter {
-        it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session)?.lookupTag?.classId == classId
+        it.doesMatchesClassId(classId, session)
     }
 }
 
+private fun FirAnnotation.doesMatchesClassId(
+    classId: ClassId,
+    session: FirSession,
+): Boolean = annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session)?.lookupTag?.classId == classId
+
+fun List<FirAnnotation>.filterOutAnnotationsByClassId(classId: ClassId, session: FirSession): List<FirAnnotation> {
+    return filterNot {
+        it.doesMatchesClassId(classId, session)
+    }
+}
+
+/**
+ * Returns the first annotation that matches the [classIds], but if there are
+ * multiple matching annotations, some of which are Java annotations mapped to
+ * Kotlin counterparts and some are already Kotlin ones, then the function
+ * returns the first Kotlin matching annotation.
+ */
 fun List<FirAnnotation>.getAnnotationByClassIds(classIds: Collection<ClassId>, session: FirSession): FirAnnotation? {
-    return firstOrNull {
+    return firstOrNullButPrioritizeKotlin {
         it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session)?.lookupTag?.classId in classIds
     }
 }
+
+private inline fun List<FirAnnotation>.firstOrNullButPrioritizeKotlin(
+    predicate: (FirAnnotation) -> Boolean = { true },
+): FirAnnotation? {
+    var firstNonKotlin: FirAnnotation? = null
+
+    for (element in this) {
+        when {
+            !predicate(element) -> continue
+            element.isKotlinAnnotation -> return element
+            firstNonKotlin == null -> firstNonKotlin = element
+        }
+    }
+
+    return firstNonKotlin
+}
+
+private val FirAnnotation.isKotlinAnnotation: Boolean
+    get() = annotationTypeRef.source?.kind !is KtFakeSourceElementKind.JavaAnnotationMappedToKotlin
 
 // --------------------------- evaluated arguments ---------------------------
 
@@ -145,14 +188,14 @@ fun FirAnnotation.getStringArgument(name: Name, session: FirSession): String? = 
 
 private inline fun <reified T> FirAnnotation.getPrimitiveArgumentValue(name: Name, session: FirSession): T? {
     val argument = findArgumentByName(name) ?: return null
-    val literal = argument.evaluateAs<FirLiteralExpression<*>>(session) ?: return null
+    val literal = argument.evaluateAs<FirLiteralExpression>(session) ?: return null
     return literal.value as? T
 }
 
 fun FirAnnotation.getStringArrayArgument(name: Name, session: FirSession): List<String>? {
     val argument = findArgumentByName(name) ?: return null
     val arrayLiteral = argument.evaluateAs<FirArrayLiteral>(session) ?: return null
-    return arrayLiteral.arguments.mapNotNull { (it as? FirLiteralExpression<*>)?.value as? String }
+    return arrayLiteral.arguments.mapNotNull { (it as? FirLiteralExpression)?.value as? String }
 }
 
 fun FirAnnotation.getKClassArgument(name: Name, session: FirSession): ConeKotlinType? {

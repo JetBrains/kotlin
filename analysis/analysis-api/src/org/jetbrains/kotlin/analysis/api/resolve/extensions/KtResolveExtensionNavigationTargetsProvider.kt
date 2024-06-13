@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.analysis.api.resolve.extensions
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.psi.KtElement
 
-public abstract class KtResolveExtensionNavigationTargetsProvider {
+public abstract class KaResolveExtensionNavigationTargetsProvider {
     /**
      * Provides a [PsiElement] which will be opened on a navigation request for [element].
      *
@@ -18,5 +18,7 @@ public abstract class KtResolveExtensionNavigationTargetsProvider {
      *
      * Returned [PsiElement] will be used as a navigation target inside the IDE.
      */
-    public abstract fun KtAnalysisSession.getNavigationTargets(element: KtElement): Collection<PsiElement>
+    public abstract fun KaSession.getNavigationTargets(element: KtElement): Collection<PsiElement>
 }
+
+public typealias KtResolveExtensionNavigationTargetsProvider = KaResolveExtensionNavigationTargetsProvider

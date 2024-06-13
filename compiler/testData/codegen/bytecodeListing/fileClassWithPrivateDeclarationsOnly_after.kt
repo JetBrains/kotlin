@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// !LANGUAGE: +PackagePrivateFileClassesWithAllPrivateMembers
+// LANGUAGE: +PackagePrivateFileClassesWithAllPrivateMembers
 
 private fun f() {
 }

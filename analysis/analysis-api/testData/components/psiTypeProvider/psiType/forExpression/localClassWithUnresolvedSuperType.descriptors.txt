@@ -1,4 +1,4 @@
-KtType: Foo.Bar
+KaType: Foo.Bar
 asPsiType(allowErrorTypes=false, mode=DEFAULT, isAnnotationMethod=false):
   PsiType: @org.jetbrains.annotations.NotNull() Foo.Bar
 

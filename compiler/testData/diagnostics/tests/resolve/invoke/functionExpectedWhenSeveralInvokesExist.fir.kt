@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun Int.invoke(a: Int) {}
 fun Int.invoke(a: Int, b: Int) {}

@@ -8,19 +8,21 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.kotlin.dsl.provideDelegate
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformSourceSetConventionsImpl.jvmMain
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformSourceSetConventionsImpl.jvmTest
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.jvmMain
+import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.jvmTest
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.configurationResult
-import org.jetbrains.kotlin.gradle.plugin.sources.internal
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.util.assertContainsDependencies
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
 import org.jetbrains.kotlin.tooling.core.extrasReadWriteProperty
+import org.jetbrains.kotlin.util.assertDoesNotThrow
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 
 class KotlinMultiplatformSourceSetConventionsTest {
@@ -82,7 +84,6 @@ class KotlinMultiplatformSourceSetConventionsTest {
                 sourceSets.jvmTest.languageSettings {
                     this.optIn("jvmTest.optIn")
                 }
-
             }
         }
 
@@ -121,4 +122,218 @@ class KotlinMultiplatformSourceSetConventionsTest {
         }
     }
 
+    @Test
+    fun `test - KMP default SourceSets dsl`() {
+        val project = buildProjectWithMPP {
+            with(multiplatformExtension) {
+                jvm("jvm6")
+
+                js("nodeJs") {
+                    nodejs()
+                }
+                @OptIn(ExperimentalWasmDsl::class)
+                wasmJs {
+                    nodejs()
+                }
+
+                linuxX64("linux64")
+                mingwX64("mingw64")
+                macosX64("macos64")
+                macosArm64("macosArm64")
+
+                applyDefaultHierarchyTemplate()
+            }
+        }
+
+        data class SourceSetDetails(
+            val target: String,
+            val compilation: String,
+            val sourceSet: String,
+        ) : Comparable<SourceSetDetails> {
+            override fun toString(): String =
+                """
+                target      : $target
+                compilation : $compilation
+                sourceSet   : $sourceSet
+                """.trimIndent()
+
+            override fun compareTo(other: SourceSetDetails): Int = toString().compareTo(other.toString())
+        }
+
+        fun getCompilationDetails(): List<SourceSetDetails> =
+            project.multiplatformExtension.targets
+                .flatMap { target ->
+                    target.compilations.map { compilation ->
+                        SourceSetDetails(
+                            target = compilation.target.name,
+                            compilation = compilation.name,
+                            sourceSet = compilation.defaultSourceSet.name,
+                        )
+                    }
+                }
+
+        val actualDetailsBeforeEvaluate = getCompilationDetails()
+        val expectedDetailsBeforeEvaluate: List<SourceSetDetails> =
+            mutableListOf<SourceSetDetails>().apply {
+                add(SourceSetDetails("metadata", "main", "commonMain"))
+                listOf(
+                    "jvm6", "nodeJs", "mingw64", "linux64", "macos64", "macosArm64", "wasmJs"
+                ).forEach { target ->
+                    add(SourceSetDetails(target, "main", "${target}Main"))
+                    add(SourceSetDetails(target, "test", "${target}Test"))
+                }
+            }
+
+        assertEquals(
+            expectedDetailsBeforeEvaluate.sorted(),
+            actualDetailsBeforeEvaluate.sorted(),
+        )
+
+        project.evaluate()
+
+        val compilationDetailsAfterEvaluate = getCompilationDetails()
+        val expectedDetailsAfterEvaluate: List<SourceSetDetails> =
+            mutableListOf<SourceSetDetails>().apply {
+                addAll(expectedDetailsBeforeEvaluate)
+                listOf(
+                    "commonMain", "appleMain", "macosMain", "nativeMain"
+                ).forEach { target ->
+                    add(SourceSetDetails("metadata", target, target))
+                }
+            }
+
+        assertEquals(
+            compilationDetailsAfterEvaluate.sorted(),
+            expectedDetailsAfterEvaluate.sorted(),
+        )
+    }
+
+    @Test
+    fun `test - register new source set and access convention one from configure block - commonMain`() {
+        val project = buildProjectWithMPP()
+        project.multiplatformExtension.apply {
+            jvm()
+            linuxX64()
+
+            assertDoesNotThrow {
+                sourceSets.register("fooBar") {
+                    it.dependsOn(sourceSets.commonMain.get())
+                }
+            }
+        }
+
+        project.evaluate()
+    }
+
+    @Test
+    fun `test - register new source set and access convention one from configure block - linuxMain before creation`() {
+        val project = buildProjectWithMPP()
+        project.multiplatformExtension.apply {
+            val error = assertFailsWith<IllegalStateException> {
+                sourceSets.register("fooBar") {
+                    it.dependsOn(sourceSets.linuxMain.get())
+                }
+            }
+            assertEquals(
+                "Could not create domain object 'fooBar' (KotlinSourceSet)",
+                error.message
+            )
+
+            assertEquals(
+                "Kotlin Source Set 'linuxMain' was attempted to be created during registration or configuration of another source set. " +
+                        "Please ensure Kotlin Source Set 'linuxMain' is first accessed outside configuration code block.",
+                error.cause!!.message
+            )
+
+            jvm()
+            linuxX64()
+            linuxArm64()
+        }
+
+        project.evaluate()
+    }
+
+    @Test
+    fun `test - create new source set and access convention one from configure block - linuxMain before creation`() {
+        val project = buildProjectWithMPP()
+        project.multiplatformExtension.apply {
+            assertDoesNotThrow {
+                sourceSets.create("fooBar") {
+                    it.dependsOn(sourceSets.linuxMain.get())
+                }
+            }
+
+            jvm()
+            linuxX64()
+            linuxArm64()
+        }
+
+        project.evaluate()
+    }
+
+    @Test
+    fun `test - register new source set and access convention one from configure block - linuxMain after creation`() {
+        val project = buildProjectWithMPP()
+        project.multiplatformExtension.apply {
+            jvm()
+            linuxX64()
+            linuxArm64()
+
+            assertDoesNotThrow {
+                sourceSets.linuxMain.get()
+                sourceSets.register("fooBar") {
+                    it.dependsOn(sourceSets.linuxMain.get())
+                }
+            }
+        }
+
+        project.evaluate()
+    }
+
+    @Test
+    fun `test - configure source set and access convention one from configure block - linuxMain after creation`() {
+        val project = buildProjectWithMPP()
+        project.multiplatformExtension.apply {
+            jvm()
+            linuxX64()
+            linuxArm64()
+
+            val fooBar = sourceSets.register("fooBar")
+
+            assertFailsWith<IllegalStateException> {
+                fooBar.configure {
+                    it.dependsOn(sourceSets.linuxMain.get())
+                }
+            }
+
+            sourceSets.linuxMain.get()
+            assertDoesNotThrow {
+                fooBar.configure {
+                    it.dependsOn(sourceSets.linuxMain.get())
+                }
+            }
+        }
+
+        project.evaluate()
+    }
+
+
+    @Test
+    fun `test - register new source set and access convention one from configure block - linuxMain after creation but before targets initialization`() {
+        val project = buildProjectWithMPP()
+        project.multiplatformExtension.apply {
+            assertDoesNotThrow {
+                sourceSets.linuxMain.get()
+                sourceSets.register("fooBar") {
+                    it.dependsOn(sourceSets.linuxMain.get())
+                }
+            }
+
+            jvm()
+            linuxX64()
+            linuxArm64()
+        }
+
+        project.evaluate()
+    }
 }

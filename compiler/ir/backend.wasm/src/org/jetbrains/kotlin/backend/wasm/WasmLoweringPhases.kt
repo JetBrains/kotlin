@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -26,13 +26,19 @@ private fun List<CompilerPhase<WasmBackendContext, IrModuleFragment, IrModuleFra
     reduce { acc, lowering -> acc.then(lowering) }
 
 private val validateIrBeforeLowering = makeIrModulePhase(
-    ::IrValidationPhase,
+    ::IrValidationBeforeLoweringPhase,
     name = "ValidateIrBeforeLowering",
     description = "Validate IR before lowering"
 )
 
+private val validateIrAfterInliningPhase = makeIrModulePhase(
+    ::IrValidationAfterInliningPhase,
+    name = "IrValidationAfterInliningPhase",
+    description = "Validate IR after inlining",
+)
+
 private val validateIrAfterLowering = makeIrModulePhase(
-    ::IrValidationPhase,
+    ::IrValidationAfterLoweringPhase,
     name = "ValidateIrAfterLowering",
     description = "Validate IR after lowering"
 )
@@ -653,6 +659,7 @@ val loweringList = listOf(
     wrapInlineDeclarationsWithReifiedTypeParametersPhase,
 
     functionInliningPhase,
+    validateIrAfterInliningPhase,
     constEvaluationPhase,
     removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase,
 
@@ -763,7 +770,7 @@ val wasmPhases = SameTypeNamedCompilerPhase(
     name = "IrModuleLowering",
     description = "IR module lowering",
     lower = loweringList.toCompilerPhase(),
-    actions = setOf(defaultDumper, validationAction),
+    actions = DEFAULT_IR_ACTIONS,
     nlevels = 1
 )
 

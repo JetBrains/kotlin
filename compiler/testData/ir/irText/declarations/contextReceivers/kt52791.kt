@@ -1,4 +1,4 @@
-// !LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers
 // FIR_IDENTICAL
 
 context(Unit, Int)

@@ -10,14 +10,25 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.impl.PsiElementFinderImpl
-import org.jetbrains.kotlin.analysis.api.KtAnalysisNonPublicApi
+import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 
-@OptIn(KtAnalysisNonPublicApi::class)
-object FirStandaloneServiceRegistrar : AnalysisApiStandaloneServiceRegistrar {
+@OptIn(KaAnalysisNonPublicApi::class)
+object FirStandaloneServiceRegistrar : AnalysisApiSimpleServiceRegistrar() {
     private const val PLUGIN_RELATIVE_PATH = "/META-INF/analysis-api/analysis-api-fir-standalone-base.xml"
 
-    override fun registerApplicationServices(application: MockApplication) {}
+    override fun registerApplicationServices(application: MockApplication) {
+        PluginStructureProvider.registerApplicationServices(application, PLUGIN_RELATIVE_PATH)
+    }
+
+    /**
+     * TODO (KT-68186): This is a workaround for [KT-68186](https://youtrack.jetbrains.com/issue/KT-68186).
+     *
+     * @see PluginStructureProvider.registerApplicationServices
+     */
+    fun registerApplicationServicesWithCustomClassLoader(application: MockApplication, classLoader: ClassLoader) {
+        PluginStructureProvider.registerApplicationServices(application, PLUGIN_RELATIVE_PATH, classLoader)
+    }
 
     override fun registerProjectExtensionPoints(project: MockProject) {
         PluginStructureProvider.registerProjectExtensionPoints(project, PLUGIN_RELATIVE_PATH)

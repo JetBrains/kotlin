@@ -8,14 +8,15 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.getSingleMatchedExpectForActualOrNull
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
+import org.jetbrains.kotlin.fir.expressions.unwrapArgument
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.ResolvedCallableReferenceAtom
@@ -26,33 +27,36 @@ import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds.Byte
+import org.jetbrains.kotlin.name.StandardClassIds.Double
+import org.jetbrains.kotlin.name.StandardClassIds.Float
+import org.jetbrains.kotlin.name.StandardClassIds.Int
+import org.jetbrains.kotlin.name.StandardClassIds.Long
+import org.jetbrains.kotlin.name.StandardClassIds.Short
+import org.jetbrains.kotlin.name.StandardClassIds.UByte
+import org.jetbrains.kotlin.name.StandardClassIds.UInt
+import org.jetbrains.kotlin.name.StandardClassIds.ULong
+import org.jetbrains.kotlin.name.StandardClassIds.UShort
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.results.FlatSignature
-import org.jetbrains.kotlin.resolve.calls.results.SimpleConstraintSystem
-import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.TypeParameterMarker
-import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
-import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
+import org.jetbrains.kotlin.resolve.calls.results.*
+import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 typealias CandidateSignature = FlatSignature<Candidate>
 
 class ConeOverloadConflictResolver(
-    specificityComparator: TypeSpecificityComparator,
-    inferenceComponents: InferenceComponents,
-    transformerComponents: BodyResolveComponents,
-) : AbstractConeCallConflictResolver(
-    specificityComparator,
-    inferenceComponents,
-    transformerComponents,
-    considerMissingArgumentsInSignatures = false,
-) {
+    private val specificityComparator: TypeSpecificityComparator,
+    private val inferenceComponents: InferenceComponents,
+    private val transformerComponents: BodyResolveComponents,
+) : ConeCallConflictResolver() {
 
     override fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
@@ -369,10 +373,235 @@ class ConeOverloadConflictResolver(
 
         return true
     }
+
+    /**
+     * Returns `true` if [call1] is definitely more or equally specific [call2],
+     * `false` otherwise.
+     */
+    private fun compareCallsByUsedArguments(
+        call1: FlatSignature<Candidate>,
+        call2: FlatSignature<Candidate>,
+        discriminateGenerics: Boolean,
+        useOriginalSamTypes: Boolean
+    ): Boolean {
+        if (discriminateGenerics) {
+            val isGeneric1 = call1.isGeneric
+            val isGeneric2 = call2.isGeneric
+
+            when {
+                // non-generic wins over generic
+                !isGeneric1 && isGeneric2 -> return true
+                // generic loses to non-generic and incomparable with another generic,
+                // thus doesn't matter what is `isGeneric2`
+                isGeneric1 -> return false
+                // !isGeneric1 && !isGeneric2 -> continue as usual
+                else -> {}
+            }
+        }
+
+        if (call1.contextReceiverCount > call2.contextReceiverCount) return true
+        if (call1.contextReceiverCount < call2.contextReceiverCount) return false
+
+        return createEmptyConstraintSystem().isSignatureNotLessSpecific(
+            call1,
+            call2,
+            SpecificityComparisonWithNumerics,
+            specificityComparator,
+            useOriginalSamTypes
+        )
+    }
+
+    @Suppress("PrivatePropertyName")
+    private val SpecificityComparisonWithNumerics = object : SpecificityComparisonCallbacks {
+        override fun isNonSubtypeNotLessSpecific(specific: KotlinTypeMarker, general: KotlinTypeMarker): Boolean {
+            requireOrDescribe(specific is ConeKotlinType, specific)
+            requireOrDescribe(general is ConeKotlinType, general)
+
+            val specificClassId = specific.lowerBoundIfFlexible().classId ?: return false
+            val generalClassId = general.upperBoundIfFlexible().classId ?: return false
+
+            // any signed >= any unsigned
+
+            if (specificClassId.isSignedIntegerType && generalClassId.isUnsigned) {
+                return true
+            }
+
+            // int >= long, int >= short, short >= byte
+
+            if (specificClassId == Int) {
+                return generalClassId == Long || generalClassId == Short || generalClassId == Byte
+            } else if (specificClassId == Short && generalClassId == Byte) {
+                return true
+            }
+
+            // uint >= ulong, uint >= ushort, ushort >= ubyte
+
+            if (specificClassId == UInt) {
+                return generalClassId == ULong || generalClassId == UShort || generalClassId == UByte
+            } else if (specificClassId == UShort && generalClassId == UByte) {
+                return true
+            }
+
+            // double >= float
+
+            return specificClassId == Double && generalClassId == Float
+        }
+
+        private val ClassId.isUnsigned: Boolean get() = this in StandardClassIds.unsignedTypes
+
+        private val useCorrectSignedCheck: Boolean =
+            inferenceComponents.session.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSpecificityCheckForSignedAndUnsigned)
+
+        private val ClassId.isSignedIntegerType: Boolean
+            get() = if (useCorrectSignedCheck) {
+                this in StandardClassIds.signedIntegerTypes
+            } else {
+                !isUnsigned
+            }
+    }
+
+    private fun createFlatSignature(call: Candidate): FlatSignature<Candidate> {
+        return when (val declaration = call.symbol.fir) {
+            is FirSimpleFunction -> createFlatSignature(call, declaration)
+            is FirConstructor -> createFlatSignature(call, declaration)
+            is FirVariable -> createFlatSignature(call, declaration)
+            is FirClass -> createFlatSignature(call, declaration)
+            is FirTypeAlias -> createFlatSignature(call, declaration)
+            else -> errorWithAttachment("Not supported: ${declaration::class.java}") {
+                withFirEntry("declaration", declaration)
+            }
+        }
+    }
+
+    private fun createFlatSignature(call: Candidate, variable: FirVariable): FlatSignature<Candidate> {
+        return FlatSignature(
+            origin = call,
+            typeParameters = (variable as? FirProperty)?.typeParameters?.map { it.symbol.toLookupTag() }.orEmpty(),
+            valueParameterTypes = computeSignatureTypes(call, variable),
+            hasExtensionReceiver = variable.receiverParameter != null,
+            contextReceiverCount = variable.contextReceivers.size,
+            hasVarargs = false,
+            numDefaults = 0,
+            isExpect = (variable as? FirProperty)?.isExpect == true,
+            isSyntheticMember = false
+        )
+    }
+
+    private fun createFlatSignature(call: Candidate, constructor: FirConstructor): FlatSignature<Candidate> {
+        return FlatSignature(
+            origin = call,
+            typeParameters = constructor.typeParameters.map { it.symbol.toLookupTag() },
+            valueParameterTypes = computeSignatureTypes(call, constructor),
+            //constructor.receiverParameter != null,
+            hasExtensionReceiver = false,
+            contextReceiverCount = constructor.contextReceivers.size,
+            hasVarargs = constructor.valueParameters.any { it.isVararg },
+            numDefaults = call.numDefaults,
+            isExpect = constructor.isExpect,
+            isSyntheticMember = false
+        )
+    }
+
+    private fun createFlatSignature(call: Candidate, function: FirSimpleFunction): FlatSignature<Candidate> {
+        return FlatSignature(
+            origin = call,
+            typeParameters = function.typeParameters.map { it.symbol.toLookupTag() },
+            valueParameterTypes = computeSignatureTypes(call, function),
+            hasExtensionReceiver = function.receiverParameter != null,
+            contextReceiverCount = function.contextReceivers.size,
+            hasVarargs = function.valueParameters.any { it.isVararg },
+            numDefaults = call.numDefaults,
+            isExpect = function.isExpect,
+            isSyntheticMember = false
+        )
+    }
+
+    private fun FirValueParameter.argumentType(): ConeKotlinType {
+        val type = returnTypeRef.coneType
+        if (isVararg) return type.arrayElementType()!!
+        return type
+    }
+
+    private fun computeSignatureTypes(
+        call: Candidate,
+        called: FirCallableDeclaration
+    ): List<TypeWithConversion> {
+        return buildList {
+            val session = inferenceComponents.session
+            addIfNotNull(called.receiverParameter?.typeRef?.coneType?.prepareType(session, call)?.let { TypeWithConversion(it) })
+            val typeForCallableReference = call.resultingTypeForCallableReference
+            if (typeForCallableReference != null) {
+                // Return type isn't needed here       v
+                typeForCallableReference.typeArguments.dropLast(1)
+                    .mapTo(this) {
+                        TypeWithConversion((it as ConeKotlinType).prepareType(session, call).removeTypeVariableTypes(session.typeContext))
+                    }
+            } else {
+                called.contextReceivers.mapTo(this) { TypeWithConversion(it.typeRef.coneType.prepareType(session, call)) }
+                call.argumentMapping?.mapTo(this) { (_, parameter) ->
+                    parameter.toTypeWithConversion(session, call)
+                }
+            }
+        }
+    }
+
+    private fun FirValueParameter.toTypeWithConversion(session: FirSession, call: Candidate): TypeWithConversion {
+        val argumentType = argumentType().prepareType(session, call)
+        val functionTypeForSam = toFunctionTypeForSamOrNull(call)
+        return if (functionTypeForSam == null) {
+            TypeWithConversion(argumentType)
+        } else {
+            TypeWithConversion(functionTypeForSam, argumentType)
+        }
+    }
+
+    private fun ConeKotlinType.prepareType(session: FirSession, candidate: Candidate): ConeKotlinType {
+        val expanded = fullyExpandedType(session)
+        if (!candidate.system.usesOuterCs) return expanded
+        // For resolving overloads in PCLA of the following form:
+        //  fun foo(vararg values: Tv)
+        //  fun foo(x: A<Tv>)
+        // In K1, all Tv variables have been replaced with relevant stub types
+        // Thus, both of the overloads were considered as not less specific than other (stubTypesAreEqualToAnything=true)
+        // And after that the one with A<Tv> is chosen because it was discriminated via [ConeOverloadConflictResolver.exactMaxWith]
+        // as not containing varargs.
+        // Thus we reproduce K1 behavior with stub types (even though we don't like then much, but it's very local)
+        //
+        // But this behavior looks quite hacky because it seems that the second overload should win even without varargs
+        // on the first one.
+        // TODO: Get rid of hacky K1 behavior (KT-67947)
+        return candidate.system.buildNotFixedVariablesToStubTypesSubstitutor()
+            .safeSubstitute(session.typeContext, expanded) as ConeKotlinType
+    }
+
+    private fun FirValueParameter.toFunctionTypeForSamOrNull(call: Candidate): ConeKotlinType? {
+        val functionTypesOfSamConversions = call.functionTypesOfSamConversions ?: return null
+        return call.argumentMapping?.entries?.firstNotNullOfOrNull {
+            runIf(it.value == this) { functionTypesOfSamConversions[it.key.unwrapArgument()]?.functionalType }
+        }
+    }
+
+    private fun createFlatSignature(call: Candidate, klass: FirClassLikeDeclaration): FlatSignature<Candidate> {
+        return FlatSignature(
+            call,
+            (klass as? FirTypeParameterRefsOwner)?.typeParameters?.map { it.symbol.toLookupTag() }.orEmpty(),
+            emptyList(),
+            hasExtensionReceiver = false,
+            0,
+            hasVarargs = false,
+            numDefaults = 0,
+            isExpect = (klass as? FirRegularClass)?.isExpect == true,
+            isSyntheticMember = false
+        )
+    }
+
+    private fun createEmptyConstraintSystem(): SimpleConstraintSystem {
+        return ConeSimpleConstraintSystemImpl(inferenceComponents.createConstraintSystem(), inferenceComponents.session)
+    }
 }
 
 class ConeSimpleConstraintSystemImpl(val system: NewConstraintSystemImpl, val session: FirSession) : SimpleConstraintSystem {
-    override fun registerTypeVariables(typeParameters: Collection<TypeParameterMarker>): TypeSubstitutorMarker = with(context) {
+    override fun registerTypeVariables(typeParameters: Collection<TypeParameterMarker>): TypeSubstitutorMarker {
         val csBuilder = system.getBuilder()
         val substitutionMap = typeParameters.associateBy({ (it as ConeTypeParameterLookupTag).typeParameterSymbol }) {
             require(it is ConeTypeParameterLookupTag)

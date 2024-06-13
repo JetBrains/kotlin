@@ -7,32 +7,32 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.analysis.api.components.*
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
-import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
-import org.jetbrains.kotlin.analysis.api.descriptors.scopes.KtFe10FileScope
-import org.jetbrains.kotlin.analysis.api.descriptors.scopes.KtFe10PackageScope
-import org.jetbrains.kotlin.analysis.api.descriptors.scopes.KtFe10ScopeLexical
-import org.jetbrains.kotlin.analysis.api.descriptors.scopes.KtFe10ScopeMember
-import org.jetbrains.kotlin.analysis.api.descriptors.scopes.KtFe10ScopeNonStaticMember
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.KtFe10FileSymbol
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.KtFe10PackageSymbol
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.KtFe10DescSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
+import org.jetbrains.kotlin.analysis.api.descriptors.scopes.KaFe10FileScope
+import org.jetbrains.kotlin.analysis.api.descriptors.scopes.KaFe10PackageScope
+import org.jetbrains.kotlin.analysis.api.descriptors.scopes.KaFe10ScopeLexical
+import org.jetbrains.kotlin.analysis.api.descriptors.scopes.KaFe10ScopeMember
+import org.jetbrains.kotlin.analysis.api.descriptors.scopes.KaFe10ScopeNonStaticMember
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.KaFe10FileSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.KaFe10PackageSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KaFe10Symbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.KaFe10DescSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KtFe10PsiSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KaFe10PsiSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.getResolutionScope
-import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
-import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KtCompositeScope
-import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KtEmptyScope
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.scopes.KtScope
-import org.jetbrains.kotlin.analysis.api.scopes.KtTypeScope
-import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
+import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaCompositeScope
+import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaEmptyScope
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.scopes.KaScope
+import org.jetbrains.kotlin.analysis.api.scopes.KaTypeScope
+import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithMembers
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -47,58 +47,58 @@ import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.util.containingNonLocalDeclaration
 import org.jetbrains.kotlin.utils.Printer
 
-internal class KtFe10ScopeProvider(
-    override val analysisSession: KtFe10AnalysisSession
-) : KtScopeProvider(), Fe10KtAnalysisSessionComponent {
+internal class KaFe10ScopeProvider(
+    override val analysisSession: KaFe10Session
+) : KaScopeProvider(), KaFe10SessionComponent {
     private companion object {
-        val LOG = Logger.getInstance(KtFe10ScopeProvider::class.java)
+        val LOG = Logger.getInstance(KaFe10ScopeProvider::class.java)
     }
 
-    override val token: KtLifetimeToken
+    override val token: KaLifetimeToken
         get() = analysisSession.token
 
-    override fun getMemberScope(classSymbol: KtSymbolWithMembers): KtScope {
+    override fun getMemberScope(classSymbol: KaSymbolWithMembers): KaScope {
         val descriptor = getDescriptor<ClassDescriptor>(classSymbol)
             ?: return getEmptyScope()
 
-        return KtFe10ScopeMember(descriptor.unsubstitutedMemberScope, descriptor.constructors, analysisContext)
+        return KaFe10ScopeMember(descriptor.unsubstitutedMemberScope, descriptor.constructors, analysisContext)
     }
 
-    override fun getStaticMemberScope(symbol: KtSymbolWithMembers): KtScope {
+    override fun getStaticMemberScope(symbol: KaSymbolWithMembers): KaScope {
         val descriptor = getDescriptor<ClassDescriptor>(symbol) ?: return getEmptyScope()
-        return KtFe10ScopeMember(descriptor.staticScope, emptyList(), analysisContext)
+        return KaFe10ScopeMember(descriptor.staticScope, emptyList(), analysisContext)
     }
 
-    override fun getDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtScope {
+    override fun getDeclaredMemberScope(classSymbol: KaSymbolWithMembers): KaScope {
         val descriptor = getDescriptor<ClassDescriptor>(classSymbol)
             ?: return getEmptyScope()
 
-        return KtFe10ScopeNonStaticMember(DeclaredMemberScope(descriptor), descriptor.constructors, analysisContext)
+        return KaFe10ScopeNonStaticMember(DeclaredMemberScope(descriptor), descriptor.constructors, analysisContext)
     }
 
-    override fun getStaticDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtScope {
+    override fun getStaticDeclaredMemberScope(classSymbol: KaSymbolWithMembers): KaScope {
         val descriptor = getDescriptor<ClassDescriptor>(classSymbol)
             ?: return getEmptyScope()
 
-        return KtFe10ScopeMember(
+        return KaFe10ScopeMember(
             DeclaredMemberScope(descriptor.staticScope, descriptor, forDelegatedMembersOnly = false),
             emptyList(),
             analysisContext,
         )
     }
 
-    override fun getCombinedDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtScope {
+    override fun getCombinedDeclaredMemberScope(classSymbol: KaSymbolWithMembers): KaScope {
         val descriptor = getDescriptor<ClassDescriptor>(classSymbol)
             ?: return getEmptyScope()
 
-        return KtFe10ScopeMember(DeclaredMemberScope(descriptor), descriptor.constructors, analysisContext)
+        return KaFe10ScopeMember(DeclaredMemberScope(descriptor), descriptor.constructors, analysisContext)
     }
 
-    override fun getDelegatedMemberScope(classSymbol: KtSymbolWithMembers): KtScope {
+    override fun getDelegatedMemberScope(classSymbol: KaSymbolWithMembers): KaScope {
         val descriptor = getDescriptor<ClassDescriptor>(classSymbol)
             ?: return getEmptyScope()
 
-        return KtFe10ScopeMember(DeclaredMemberScope(descriptor, forDelegatedMembersOnly = true), emptyList(), analysisContext)
+        return KaFe10ScopeMember(DeclaredMemberScope(descriptor, forDelegatedMembersOnly = true), emptyList(), analysisContext)
     }
 
     private class DeclaredMemberScope(
@@ -181,73 +181,73 @@ internal class KtFe10ScopeProvider(
         }
     }
 
-    override fun getEmptyScope(): KtScope {
-        return KtEmptyScope(token)
+    override fun getEmptyScope(): KaScope {
+        return KaEmptyScope(token)
     }
 
-    override fun getFileScope(fileSymbol: KtFileSymbol): KtScope {
-        require(fileSymbol is KtFe10FileSymbol)
-        return KtFe10FileScope(fileSymbol.psi, analysisContext, token)
+    override fun getFileScope(fileSymbol: KaFileSymbol): KaScope {
+        require(fileSymbol is KaFe10FileSymbol)
+        return KaFe10FileScope(fileSymbol.psi, analysisContext, token)
     }
 
-    override fun getPackageScope(packageSymbol: KtPackageSymbol): KtScope {
-        require(packageSymbol is KtFe10PackageSymbol)
+    override fun getPackageScope(packageSymbol: KaPackageSymbol): KaScope {
+        require(packageSymbol is KaFe10PackageSymbol)
         val packageFragments = analysisContext.resolveSession.packageFragmentProvider.packageFragments(packageSymbol.fqName)
         val scopeDescription = "Compound scope for package \"${packageSymbol.fqName}\""
         val chainedScope = ChainedMemberScope.create(scopeDescription, packageFragments.map { it.getMemberScope() })
-        return KtFe10PackageScope(chainedScope, packageSymbol, analysisContext)
+        return KaFe10PackageScope(chainedScope, packageSymbol, analysisContext)
     }
 
-    override fun getCompositeScope(subScopes: List<KtScope>): KtScope {
-        return KtCompositeScope.create(subScopes, token)
+    override fun getCompositeScope(subScopes: List<KaScope>): KaScope {
+        return KaCompositeScope.create(subScopes, token)
     }
 
-    override fun getTypeScope(type: KtType): KtTypeScope {
-        require(type is KtFe10Type)
+    override fun getTypeScope(type: KaType): KaTypeScope {
+        require(type is KaFe10Type)
         TODO()
     }
 
-    override fun getSyntheticJavaPropertiesScope(type: KtType): KtTypeScope {
-        require(type is KtFe10Type)
+    override fun getSyntheticJavaPropertiesScope(type: KaType): KaTypeScope {
+        require(type is KaFe10Type)
         TODO()
     }
 
-    override fun getScopeContextForPosition(originalFile: KtFile, positionInFakeFile: KtElement): KtScopeContext {
+    override fun getScopeContextForPosition(originalFile: KtFile, positionInFakeFile: KtElement): KaScopeContext {
         val elementToAnalyze = positionInFakeFile.containingNonLocalDeclaration() ?: originalFile
         val bindingContext = analysisContext.analyze(elementToAnalyze)
 
-        val scopeKind = KtScopeKind.LocalScope(0) // TODO
+        val scopeKind = KaScopeKind.LocalScope(0) // TODO
         val lexicalScope = positionInFakeFile.getResolutionScope(bindingContext)
         if (lexicalScope != null) {
-            val compositeScope = KtCompositeScope.create(listOf(KtFe10ScopeLexical(lexicalScope, analysisContext)), token)
-            return KtScopeContext(listOf(KtScopeWithKind(compositeScope, scopeKind, token)), collectImplicitReceivers(lexicalScope), token)
+            val compositeScope = KaCompositeScope.create(listOf(KaFe10ScopeLexical(lexicalScope, analysisContext)), token)
+            return KaScopeContext(listOf(KaScopeWithKind(compositeScope, scopeKind, token)), collectImplicitReceivers(lexicalScope), token)
         }
 
         val fileScope = analysisContext.resolveSession.fileScopeProvider.getFileResolutionScope(originalFile)
-        val compositeScope = KtCompositeScope.create(listOf(KtFe10ScopeLexical(fileScope, analysisContext)), token)
-        return KtScopeContext(listOf(KtScopeWithKind(compositeScope, scopeKind, token)), collectImplicitReceivers(fileScope), token)
+        val compositeScope = KaCompositeScope.create(listOf(KaFe10ScopeLexical(fileScope, analysisContext)), token)
+        return KaScopeContext(listOf(KaScopeWithKind(compositeScope, scopeKind, token)), collectImplicitReceivers(fileScope), token)
     }
 
-    override fun getImportingScopeContext(file: KtFile): KtScopeContext {
+    override fun getImportingScopeContext(file: KtFile): KaScopeContext {
         val importingScopes = getScopeContextForPosition(originalFile = file, positionInFakeFile = file)
             .scopes
-            .filter { it.kind is KtScopeKind.ImportingScope }
-        return KtScopeContext(importingScopes, implicitReceivers = emptyList(), token)
+            .filter { it.kind is KaScopeKind.ImportingScope }
+        return KaScopeContext(importingScopes, implicitReceivers = emptyList(), token)
     }
 
-    private inline fun <reified T : DeclarationDescriptor> getDescriptor(symbol: KtSymbol): T? {
+    private inline fun <reified T : DeclarationDescriptor> getDescriptor(symbol: KaSymbol): T? {
         return when (symbol) {
-            is KtFe10DescSymbol<*> -> symbol.descriptor as? T
-            is KtFe10PsiSymbol<*, *> -> symbol.descriptor as? T
+            is KaFe10DescSymbol<*> -> symbol.descriptor as? T
+            is KaFe10PsiSymbol<*, *> -> symbol.descriptor as? T
             else -> {
-                require(symbol is KtFe10Symbol) { "Unrecognized symbol implementation found" }
+                require(symbol is KaFe10Symbol) { "Unrecognized symbol implementation found" }
                 null
             }
         }
     }
 
-    private fun collectImplicitReceivers(scope: LexicalScope): MutableList<KtImplicitReceiver> {
-        val result = mutableListOf<KtImplicitReceiver>()
+    private fun collectImplicitReceivers(scope: LexicalScope): MutableList<KaImplicitReceiver> {
+        val result = mutableListOf<KaImplicitReceiver>()
 
         for ((index, implicitReceiver) in scope.getImplicitReceiversHierarchy().withIndex()) {
             val type = implicitReceiver.type.toKtType(analysisContext)
@@ -259,7 +259,7 @@ internal class KtFe10ScopeProvider(
                 continue
             }
 
-            result += KtImplicitReceiver(token, type, owner, index)
+            result += KaImplicitReceiver(token, type, owner, index)
         }
 
         return result

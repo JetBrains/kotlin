@@ -1,6 +1,9 @@
 // WITH_STDLIB
 // WASM_MUTE_REASON: REFLECTION
 
+// DISABLE_IR_VISIBILITY_CHECKS: NATIVE, WASM
+// ^ UninitializedPropertyAccessException is internal on Native and Wasm
+
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 
 import kotlin.UninitializedPropertyAccessException

@@ -5,39 +5,50 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
-import org.jetbrains.kotlin.analysis.api.base.KtContextReceiversOwner
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossibleMemberSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.base.KaContextReceiversOwner
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaPossibleMemberSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithKind
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.CallableId
 
-public sealed class KtCallableSymbol : KtSymbolWithKind, KtPossibleMemberSymbol, KtDeclarationSymbol, KtContextReceiversOwner {
-    public abstract val callableIdIfNonLocal: CallableId?
-    public abstract val returnType: KtType
+public sealed class KaCallableSymbol : KaSymbolWithKind, KaPossibleMemberSymbol, KaDeclarationSymbol, KaContextReceiversOwner {
+    /**
+     * The callable's [CallableId] if it exists, or `null` otherwise (e.g. when the callable is local).
+     */
+    public abstract val callableId: CallableId?
 
-    public abstract val receiverParameter: KtReceiverParameterSymbol?
+    @Deprecated("Use `callableId` instead.", ReplaceWith("callableId"))
+    public val callableIdIfNonLocal: CallableId? get() = callableId
+
+    public abstract val returnType: KaType
+
+    public abstract val receiverParameter: KaReceiverParameterSymbol?
     public abstract val isExtension: Boolean
 
-    abstract override fun createPointer(): KtSymbolPointer<KtCallableSymbol>
+    abstract override fun createPointer(): KaSymbolPointer<KaCallableSymbol>
 }
 
-public val KtCallableSymbol.receiverType: KtType?
+public typealias KtCallableSymbol = KaCallableSymbol
+
+public val KaCallableSymbol.receiverType: KaType?
     get() = receiverParameter?.type
 
 /**
  * Symbol for a receiver parameter of a function or property. For example, consider code `fun String.foo() {...}`, the declaration of
  * `String` receiver parameter is such a symbol.
  */
-public abstract class KtReceiverParameterSymbol : KtAnnotatedSymbol, KtParameterSymbol {
-    public abstract val type: KtType
+public abstract class KaReceiverParameterSymbol : KaAnnotatedSymbol, KaParameterSymbol {
+    public abstract val type: KaType
 
     /**
      * Link to the corresponding function or property.
      * In terms of the example above -- this is link to the function foo.
      */
-    public abstract val owningCallableSymbol: KtCallableSymbol
+    public abstract val owningCallableSymbol: KaCallableSymbol
 
-    abstract override fun createPointer(): KtSymbolPointer<KtReceiverParameterSymbol>
+    abstract override fun createPointer(): KaSymbolPointer<KaReceiverParameterSymbol>
 }
+
+public typealias KtReceiverParameterSymbol = KaReceiverParameterSymbol

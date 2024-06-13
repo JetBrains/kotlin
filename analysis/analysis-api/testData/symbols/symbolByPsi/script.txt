@@ -1,6 +1,6 @@
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /foo
+KaFunctionSymbol:
+  annotations: []
+  callableId: /foo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -20,45 +20,45 @@ KtFunctionSymbol:
   name: foo
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(script.kts)
+  getContainingFileSymbol: KaFileSymbol(script.kts)
   getContainingJvmClassName: null
   getContainingModule: KtScriptModule "Script script.kts"
   deprecationStatus: null
 
-KtKotlinPropertySymbol:
-  annotationsList: []
-  backingFieldSymbol: KtBackingFieldSymbol:
-    annotationsList: []
-    callableIdIfNonLocal: null
+KaKotlinPropertySymbol:
+  annotations: []
+  backingFieldSymbol: KaBackingFieldSymbol:
+    annotations: []
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
     origin: PROPERTY_BACKING_FIELD
-    owningProperty: KtKotlinPropertySymbol(/b)
+    owningProperty: KaKotlinPropertySymbol(/b)
     receiverParameter: null
-    returnType: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Int
     symbolKind: LOCAL
     typeParameters: []
-    getContainingFileSymbol: KtFileSymbol(script.kts)
+    getContainingFileSymbol: KaFileSymbol(script.kts)
     getContainingJvmClassName: null
     getContainingModule: KtScriptModule "Script script.kts"
     deprecationStatus: null
-  callableIdIfNonLocal: /b
+  callableId: /b
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
-    annotationsList: []
-    callableIdIfNonLocal: null
+  getter: KaPropertyGetterSymbol:
+    annotations: []
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -69,15 +69,15 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
-    returnType: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
-    getContainingFileSymbol: KtFileSymbol(script.kts)
+    getContainingFileSymbol: KaFileSymbol(script.kts)
     getContainingJvmClassName: null
     getContainingModule: KtScriptModule "Script script.kts"
     deprecationStatus: null
@@ -99,15 +99,15 @@ KtKotlinPropertySymbol:
   name: b
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Int
   setter: null
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(script.kts)
+  getContainingFileSymbol: KaFileSymbol(script.kts)
   getContainingJvmClassName: null
   getContainingModule: KtScriptModule "Script script.kts"
   deprecationStatus: null
@@ -116,9 +116,9 @@ KtKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
 
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /C.member
+KaFunctionSymbol:
+  annotations: []
+  callableId: /C.member
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -138,49 +138,49 @@ KtFunctionSymbol:
   name: member
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: C
-  getContainingFileSymbol: KtFileSymbol(script.kts)
+  getContainingFileSymbol: KaFileSymbol(script.kts)
   getContainingJvmClassName: C
   getContainingModule: KtScriptModule "Script script.kts"
   deprecationStatus: null
 
-KtKotlinPropertySymbol:
-  annotationsList: []
-  backingFieldSymbol: KtBackingFieldSymbol:
-    annotationsList: []
-    callableIdIfNonLocal: null
+KaKotlinPropertySymbol:
+  annotations: []
+  backingFieldSymbol: KaBackingFieldSymbol:
+    annotations: []
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
     origin: PROPERTY_BACKING_FIELD
-    owningProperty: KtKotlinPropertySymbol(/C.prop)
+    owningProperty: KaKotlinPropertySymbol(/C.prop)
     receiverParameter: null
-    returnType: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Unit
     symbolKind: LOCAL
     typeParameters: []
-    getContainingFileSymbol: KtFileSymbol(script.kts)
+    getContainingFileSymbol: KaFileSymbol(script.kts)
     getContainingJvmClassName: C
     getContainingModule: KtScriptModule "Script script.kts"
     deprecationStatus: null
-  callableIdIfNonLocal: /C.prop
+  callableId: /C.prop
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
-    annotationsList: []
-    callableIdIfNonLocal: null
+  getter: KaPropertyGetterSymbol:
+    annotations: []
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -191,19 +191,19 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
-    returnType: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Unit
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
-    getDispatchReceiver(): KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: C
-    getContainingFileSymbol: KtFileSymbol(script.kts)
+    getContainingFileSymbol: KaFileSymbol(script.kts)
     getContainingJvmClassName: C
     getContainingModule: KtScriptModule "Script script.kts"
     deprecationStatus: null
@@ -225,19 +225,19 @@ KtKotlinPropertySymbol:
   name: prop
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Unit
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: C
-  getContainingFileSymbol: KtFileSymbol(script.kts)
+  getContainingFileSymbol: KaFileSymbol(script.kts)
   getContainingJvmClassName: C
   getContainingModule: KtScriptModule "Script script.kts"
   deprecationStatus: null
@@ -246,9 +246,9 @@ KtKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: C
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: C
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -263,24 +263,24 @@ KtNamedClassOrObjectSymbol:
   name: C
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(script.kts)
+  getContainingFileSymbol: KaFileSymbol(script.kts)
   getContainingModule: KtScriptModule "Script script.kts"
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtScriptSymbol:
-  annotationsList: []
+KaScriptSymbol:
+  annotations: []
   name: <script-script.kts>
   origin: SOURCE
   typeParameters: []
-  getContainingFileSymbol: KtFileSymbol(script.kts)
+  getContainingFileSymbol: KaFileSymbol(script.kts)
   getContainingModule: KtScriptModule "Script script.kts"
   deprecationStatus: null

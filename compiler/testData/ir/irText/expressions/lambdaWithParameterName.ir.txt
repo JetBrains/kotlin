@@ -1,0 +1,114 @@
+FILE fqName:<root> fileName:/lambdaWithParameterName.kt
+  PROPERTY name:x1 visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:x1 type:kotlin.String visibility:private [final,static]
+      EXPRESSION_BODY
+        CALL 'public final fun foo <T, R> (t: T of <root>.foo, block: kotlin.Function1<@[ParameterName(name = "something")] T of <root>.foo, R of <root>.foo>): R of <root>.foo declared in <root>' type=kotlin.String origin=null
+          <T>: kotlin.String
+          <R>: kotlin.String
+          t: CONST String type=kotlin.String value=""
+          block: FUN_EXPR type=kotlin.Function1<@[ParameterName(name = "something")] kotlin.String, kotlin.String> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (x:kotlin.String) returnType:kotlin.String
+              VALUE_PARAMETER name:x index:0 type:kotlin.String
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (x: kotlin.String): kotlin.String declared in <root>.x1'
+                  GET_VAR 'x: kotlin.String declared in <root>.x1.<anonymous>' type=kotlin.String origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x1> visibility:public modality:FINAL <> () returnType:kotlin.String
+      correspondingProperty: PROPERTY name:x1 visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-x1> (): kotlin.String declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x1 type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null
+  PROPERTY name:x2 visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:x2 type:kotlin.String visibility:private [final,static]
+      EXPRESSION_BODY
+        CALL 'public final fun foo <T, R> (t: T of <root>.foo, block: kotlin.Function1<@[ParameterName(name = "something")] T of <root>.foo, R of <root>.foo>): R of <root>.foo declared in <root>' type=kotlin.String origin=null
+          <T>: kotlin.String
+          <R>: kotlin.String
+          t: CONST String type=kotlin.String value=""
+          block: FUN_EXPR type=kotlin.Function1<@[ParameterName(name = "something")] kotlin.String, kotlin.String> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.String) returnType:kotlin.String
+              VALUE_PARAMETER name:it index:0 type:kotlin.String
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.String): kotlin.String declared in <root>.x2'
+                  GET_VAR 'it: kotlin.String declared in <root>.x2.<anonymous>' type=kotlin.String origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x2> visibility:public modality:FINAL <> () returnType:kotlin.String
+      correspondingProperty: PROPERTY name:x2 visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-x2> (): kotlin.String declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x2 type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null
+  PROPERTY name:expectedType1 visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:expectedType1 type:kotlin.Function1<@[ParameterName(name = "s")] kotlin.String, kotlin.Int> visibility:private [final,static]
+      EXPRESSION_BODY
+        FUN_EXPR type=kotlin.Function1<kotlin.String, kotlin.Int> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.String) returnType:kotlin.Int
+            VALUE_PARAMETER name:it index:0 type:kotlin.String
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.String): kotlin.Int declared in <root>.expectedType1'
+                CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=GET_PROPERTY
+                  $this: GET_VAR 'it: kotlin.String declared in <root>.expectedType1.<anonymous>' type=kotlin.String origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-expectedType1> visibility:public modality:FINAL <> () returnType:kotlin.Function1<@[ParameterName(name = "s")] kotlin.String, kotlin.Int>
+      correspondingProperty: PROPERTY name:expectedType1 visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-expectedType1> (): kotlin.Function1<@[ParameterName(name = "s")] kotlin.String, kotlin.Int> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:expectedType1 type:kotlin.Function1<@[ParameterName(name = "s")] kotlin.String, kotlin.Int> visibility:private [final,static]' type=kotlin.Function1<@[ParameterName(name = "s")] kotlin.String, kotlin.Int> origin=null
+  PROPERTY name:expectedType2 visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:expectedType2 type:kotlin.Function1<@[ParameterName(name = "s")] kotlin.String, kotlin.Int> visibility:private [final,static]
+      EXPRESSION_BODY
+        FUN_EXPR type=kotlin.Function1<kotlin.String, kotlin.Int> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (x:kotlin.String) returnType:kotlin.Int
+            VALUE_PARAMETER name:x index:0 type:kotlin.String
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (x: kotlin.String): kotlin.Int declared in <root>.expectedType2'
+                CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=GET_PROPERTY
+                  $this: GET_VAR 'x: kotlin.String declared in <root>.expectedType2.<anonymous>' type=kotlin.String origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-expectedType2> visibility:public modality:FINAL <> () returnType:kotlin.Function1<@[ParameterName(name = "s")] kotlin.String, kotlin.Int>
+      correspondingProperty: PROPERTY name:expectedType2 visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-expectedType2> (): kotlin.Function1<@[ParameterName(name = "s")] kotlin.String, kotlin.Int> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:expectedType2 type:kotlin.Function1<@[ParameterName(name = "s")] kotlin.String, kotlin.Int> visibility:private [final,static]' type=kotlin.Function1<@[ParameterName(name = "s")] kotlin.String, kotlin.Int> origin=null
+  FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun bar (): kotlin.String declared in <root>'
+        CALL 'public final fun foo <T, R> (t: T of <root>.foo, block: kotlin.Function1<@[ParameterName(name = "something")] T of <root>.foo, R of <root>.foo>): R of <root>.foo declared in <root>' type=kotlin.String origin=null
+          <T>: kotlin.String
+          <R>: kotlin.String
+          t: CONST String type=kotlin.String value=""
+          block: FUN_EXPR type=kotlin.Function1<@[ParameterName(name = "something")] kotlin.String, kotlin.String> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (x:kotlin.String) returnType:kotlin.String
+              VALUE_PARAMETER name:x index:0 type:kotlin.String
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (x: kotlin.String): kotlin.String declared in <root>.bar'
+                  GET_VAR 'x: kotlin.String declared in <root>.bar.<anonymous>' type=kotlin.String origin=null
+  FUN name:foo visibility:public modality:FINAL <T, R> (t:T of <root>.foo, block:kotlin.Function1<@[ParameterName(name = "something")] T of <root>.foo, R of <root>.foo>) returnType:R of <root>.foo
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    TYPE_PARAMETER name:R index:1 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER name:t index:0 type:T of <root>.foo
+    VALUE_PARAMETER name:block index:1 type:kotlin.Function1<@[ParameterName(name = "something")] T of <root>.foo, R of <root>.foo>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun foo <T, R> (t: T of <root>.foo, block: kotlin.Function1<@[ParameterName(name = "something")] T of <root>.foo, R of <root>.foo>): R of <root>.foo declared in <root>'
+        CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
+  FUN name:myMain visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      VAR name:y type:kotlin.String [val]
+        CALL 'public final fun foo <T, R> (t: T of <root>.foo, block: kotlin.Function1<@[ParameterName(name = "something")] T of <root>.foo, R of <root>.foo>): R of <root>.foo declared in <root>' type=kotlin.String origin=null
+          <T>: kotlin.String
+          <R>: kotlin.String
+          t: CONST String type=kotlin.String value=""
+          block: FUN_EXPR type=kotlin.Function1<@[ParameterName(name = "something")] kotlin.String, kotlin.String> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (x:kotlin.String) returnType:kotlin.String
+              VALUE_PARAMETER name:x index:0 type:kotlin.String
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (x: kotlin.String): kotlin.String declared in <root>.myMain'
+                  GET_VAR 'x: kotlin.String declared in <root>.myMain.<anonymous>' type=kotlin.String origin=null
+      FUN LOCAL_FUNCTION name:baz visibility:local modality:FINAL <> () returnType:kotlin.String
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='local final fun baz (): kotlin.String declared in <root>.myMain'
+            CALL 'public final fun foo <T, R> (t: T of <root>.foo, block: kotlin.Function1<@[ParameterName(name = "something")] T of <root>.foo, R of <root>.foo>): R of <root>.foo declared in <root>' type=kotlin.String origin=null
+              <T>: kotlin.String
+              <R>: kotlin.String
+              t: CONST String type=kotlin.String value=""
+              block: FUN_EXPR type=kotlin.Function1<@[ParameterName(name = "something")] kotlin.String, kotlin.String> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (x:kotlin.String) returnType:kotlin.String
+                  VALUE_PARAMETER name:x index:0 type:kotlin.String
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='local final fun <anonymous> (x: kotlin.String): kotlin.String declared in <root>.myMain.baz'
+                      GET_VAR 'x: kotlin.String declared in <root>.myMain.baz.<anonymous>' type=kotlin.String origin=null

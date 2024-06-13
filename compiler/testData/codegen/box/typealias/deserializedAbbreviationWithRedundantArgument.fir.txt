@@ -6,8 +6,8 @@ FILE: a.kt
             super<R|kotlin/Any|>()
         }
 
-        public final val foo: R|Foo<T>?| = Null(null)
-            public get(): R|Foo<T>?|
+        public final val foo: R|{Foo<T>?=} kotlin/collections/List<kotlin/String>?| = Null(null)
+            public get(): R|{Foo<T>?=} kotlin/collections/List<kotlin/String>?|
 
     }
 Module: b

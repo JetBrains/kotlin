@@ -1,7 +1,7 @@
 element: ::value
 implicit receivers:
   type: test.Child
-  owner symbol: KtFirNamedClassOrObjectSymbol
+  owner symbol: KaFirNamedClassOrObjectSymbol
 
 scopes:
   LocalScope, index = 0

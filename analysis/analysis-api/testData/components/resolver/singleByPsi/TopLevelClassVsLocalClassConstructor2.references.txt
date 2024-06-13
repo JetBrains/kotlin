@@ -1,0 +1,3 @@
+KtNameReferenceExpression(75,83): 'Conflict'
+  KtSimpleNameReference:
+    (in test.Conflict) constructor()

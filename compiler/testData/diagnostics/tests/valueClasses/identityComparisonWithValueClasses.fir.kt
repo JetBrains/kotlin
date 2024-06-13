@@ -1,7 +1,7 @@
-// !SKIP_JAVAC
-// !LANGUAGE: +InlineClasses
+// SKIP_JAVAC
+// LANGUAGE: +InlineClasses
 // ALLOW_KOTLIN_PACKAGE
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 package kotlin.jvm
 

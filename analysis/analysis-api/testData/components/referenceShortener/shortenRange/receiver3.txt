@@ -1,8 +1,6 @@
 Before shortening: Receiver.foo(1, false, "bar")
+with default settings:
 with DO_NOT_SHORTEN:
 with SHORTEN_IF_ALREADY_IMPORTED:
-[qualifier] Receiver.foo(1, false, "bar")
 with SHORTEN_AND_IMPORT:
-[qualifier] Receiver.foo(1, false, "bar")
 with SHORTEN_AND_STAR_IMPORT:
-[qualifier] Receiver.foo(1, false, "bar")

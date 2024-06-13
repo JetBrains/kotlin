@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.PRESETS_API_IS_DEPRECATED_MESSAGE
-import org.jetbrains.kotlin.gradle.internal.syncCommonOptions
+import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl
+import org.jetbrains.kotlin.gradle.internal.syncCommonMultiplatformOptions
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
@@ -23,8 +24,7 @@ import org.jetbrains.kotlin.gradle.plugin.hierarchy.redundantDependsOnEdgesTrack
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.targets.android.internal.internal
-import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryNext
-import org.jetbrains.kotlin.gradle.utils.newInstance
+import org.jetbrains.kotlin.gradle.utils.KotlinCommonCompilerOptionsDefault
 import javax.inject.Inject
 
 @Suppress("DEPRECATION")
@@ -246,12 +246,11 @@ abstract class KotlinMultiplatformExtension
     }
 
     @ExperimentalKotlinGradlePluginApi
-    override val compilerOptions: KotlinCommonCompilerOptions = project.objects
-        .newInstance<KotlinCommonCompilerOptionsDefault>()
-        .configureExperimentalTryNext(project)
-        .also {
-            syncCommonOptions(it)
-        }
+    override val compilerOptions: KotlinCommonCompilerOptions =
+        project.objects.KotlinCommonCompilerOptionsDefault(project)
+            .also {
+                syncCommonMultiplatformOptions(it)
+            }
 }
 
 @DeprecatedTargetPresetApi

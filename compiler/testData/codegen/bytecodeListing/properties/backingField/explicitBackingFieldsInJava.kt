@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM_IR
 // IGNORE_BACKEND_K1: JVM_IR
-// !LANGUAGE: +ExplicitBackingFields
+// LANGUAGE: +ExplicitBackingFields
 // MODULE: ModuleA
 // FILE: AI.kt
 

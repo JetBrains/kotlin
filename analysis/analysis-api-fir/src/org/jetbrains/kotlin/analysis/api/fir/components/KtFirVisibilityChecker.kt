@@ -6,15 +6,15 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.components.KtVisibilityChecker
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirFileSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirPsiJavaClassSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
+import org.jetbrains.kotlin.analysis.api.components.KaVisibilityChecker
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirFileSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaClassSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.collectUseSiteContainers
@@ -32,25 +32,25 @@ import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
-internal class KtFirVisibilityChecker(
-    override val analysisSession: KtFirAnalysisSession,
-    override val token: KtLifetimeToken
-) : KtVisibilityChecker(), KtFirAnalysisSessionComponent {
+internal class KaFirVisibilityChecker(
+    override val analysisSession: KaFirSession,
+    override val token: KaLifetimeToken
+) : KaVisibilityChecker(), KaFirSessionComponent {
 
     override fun isVisible(
-        candidateSymbol: KtSymbolWithVisibility,
-        useSiteFile: KtFileSymbol,
+        candidateSymbol: KaSymbolWithVisibility,
+        useSiteFile: KaFileSymbol,
         position: PsiElement,
         receiverExpression: KtExpression?
     ): Boolean {
-        require(candidateSymbol is KtFirSymbol<*>)
-        require(useSiteFile is KtFirFileSymbol)
+        require(candidateSymbol is KaFirSymbol<*>)
+        require(useSiteFile is KaFirFileSymbol)
 
-        if (candidateSymbol is KtFirPsiJavaClassSymbol) {
+        if (candidateSymbol is KaFirPsiJavaClassSymbol) {
             candidateSymbol.isVisibleByPsi(useSiteFile)?.let { return it }
         }
 
-        val dispatchReceiverCanBeExplicit = candidateSymbol is KtCallableSymbol && !candidateSymbol.isExtension
+        val dispatchReceiverCanBeExplicit = candidateSymbol is KaCallableSymbol && !candidateSymbol.isExtension
         val explicitDispatchReceiver = runIf(dispatchReceiverCanBeExplicit) {
             receiverExpression?.getOrBuildFirSafe<FirExpression>(analysisSession.firResolveSession)
         }
@@ -80,14 +80,14 @@ internal class KtFirVisibilityChecker(
     }
 
     /**
-     * [isVisibleByPsi] is a heuristic that decides visibility for most [KtFirPsiJavaClassSymbol]s without deferring to its FIR symbol,
+     * [isVisibleByPsi] is a heuristic that decides visibility for most [KaFirPsiJavaClassSymbol]s without deferring to its FIR symbol,
      * thereby avoiding lazy construction of the FIR class. The visibility rules are tailored specifically for Java classes accessed from
      * Kotlin. They cover the most popular visibilities `private`, `public`, and default (package) visibility for top-level and nested
      * classes.
      *
      * Returns `null` if visibility cannot be decided by the heuristic.
      */
-    private fun KtFirPsiJavaClassSymbol.isVisibleByPsi(useSiteFile: KtFirFileSymbol): Boolean? {
+    private fun KaFirPsiJavaClassSymbol.isVisibleByPsi(useSiteFile: KaFirFileSymbol): Boolean? {
         when (visibility) {
             Visibilities.Private ->
                 // Private classes from Java cannot be accessed from Kotlin.
@@ -100,7 +100,7 @@ internal class KtFirVisibilityChecker(
                 }
 
             JavaVisibilities.PackageVisibility -> {
-                val isSamePackage = classIdIfNonLocal.packageFqName == useSiteFile.firSymbol.fir.packageFqName
+                val isSamePackage = classId.packageFqName == useSiteFile.firSymbol.fir.packageFqName
                 if (!isSamePackage) return false
 
                 return when (val outerClass = this.outerClass) {
@@ -113,8 +113,8 @@ internal class KtFirVisibilityChecker(
         return null
     }
 
-    override fun isPublicApi(symbol: KtSymbolWithVisibility): Boolean {
-        require(symbol is KtFirSymbol<*>)
+    override fun isPublicApi(symbol: KaSymbolWithVisibility): Boolean {
+        require(symbol is KaFirSymbol<*>)
         val declaration = symbol.firSymbol.fir as? FirMemberDeclaration ?: return false
 
         // Inspecting visibility requires resolving to status

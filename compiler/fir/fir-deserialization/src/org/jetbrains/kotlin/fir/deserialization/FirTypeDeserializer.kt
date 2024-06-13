@@ -104,7 +104,7 @@ class FirTypeDeserializer(
         nameResolver: NameResolver,
         typeTable: TypeTable,
         annotationDeserializer: AbstractAnnotationDeserializer,
-    ) = FirTypeDeserializer(
+    ): FirTypeDeserializer = FirTypeDeserializer(
         moduleData,
         nameResolver,
         typeTable,
@@ -174,7 +174,7 @@ class FirTypeDeserializer(
                 proto: Type,
                 lowerBound: ConeSimpleKotlinType,
                 upperBound: ConeSimpleKotlinType,
-            ) = ConeFlexibleType(lowerBound, upperBound)
+            ): ConeFlexibleType = ConeFlexibleType(lowerBound, upperBound)
         }
     }
 

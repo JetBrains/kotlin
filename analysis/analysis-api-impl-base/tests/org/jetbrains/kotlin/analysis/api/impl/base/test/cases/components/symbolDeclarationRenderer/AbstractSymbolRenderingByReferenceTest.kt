@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationRenderer
 
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KtDeclarationRendererForDebug.WITH_QUALIFIED_NAMES_DENOTABLE
-import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug.WITH_QUALIFIED_NAMES_DENOTABLE
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -24,8 +24,8 @@ abstract class AbstractSymbolRenderingByReferenceTest : AbstractAnalysisApiBased
                 val referenceExpression = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtReferenceExpression>(mainFile)
                 val ktSymbol = referenceExpression.mainReference.resolveToSymbol()
                 testServices.assertions.assertNotNull(ktSymbol)
-                testServices.assertions.assertTrue(ktSymbol is KtDeclarationSymbol)
-                (ktSymbol as KtDeclarationSymbol).render(WITH_QUALIFIED_NAMES_DENOTABLE)
+                testServices.assertions.assertTrue(ktSymbol is KaDeclarationSymbol)
+                (ktSymbol as KaDeclarationSymbol).render(WITH_QUALIFIED_NAMES_DENOTABLE)
             }
         }
 

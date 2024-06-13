@@ -1,5 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !LANGUAGE: +ProhibitRepeatedUseSiteTargetAnnotations
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +ProhibitRepeatedUseSiteTargetAnnotations
 
 // Ann is not repeatable
 annotation class Ann(val x: Int)

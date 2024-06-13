@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: -EnumEntries
+// LANGUAGE: -EnumEntries
 // WITH_STDLIB
 
 enum class E {

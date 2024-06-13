@@ -19,13 +19,26 @@ val Settings.executor: Executor
     get() = with(get<KotlinNativeTargets>()) {
         executorCache.computeIfAbsent(testTarget) {
             val configurables = configurables
-            when {
-                configurables.target == hostTarget -> HostExecutor()
-                configurables is ConfigurablesWithEmulator -> EmulatorExecutor(configurables)
-                configurables is AppleConfigurables && configurables.targetTriple.isSimulator ->
-                    XcodeSimulatorExecutor(configurables)
-                configurables is AppleConfigurables && RosettaExecutor.availableFor(configurables) -> RosettaExecutor(configurables)
-                else -> JUnit5Assertions.fail { "Running tests for $testTarget on $hostTarget is not supported yet." }
+            if (get<XCTestRunner>().isEnabled) {
+                // Forcibly run tests with XCTest
+                check(configurables is AppleConfigurables) {
+                    "Running tests with XCTest is not supported on non-Apple $configurables"
+                }
+                when (configurables.target) {
+                    hostTarget -> XCTestHostExecutor(configurables)
+                    is KonanTarget.IOS_ARM64 -> FirebaseCloudXCTestExecutor(configurables)
+                    is KonanTarget.IOS_X64, KonanTarget.IOS_SIMULATOR_ARM64 -> XCTestSimulatorExecutor(configurables)
+                    else -> JUnit5Assertions.fail { "Running tests for $testTarget on $hostTarget with XCTest is not supported yet." }
+                }
+            } else {
+                when {
+                    configurables.target == hostTarget -> HostExecutor()
+                    configurables is ConfigurablesWithEmulator -> EmulatorExecutor(configurables)
+                    configurables is AppleConfigurables && configurables.targetTriple.isSimulator ->
+                        XcodeSimulatorExecutor(configurables)
+                    configurables is AppleConfigurables && RosettaExecutor.availableFor(configurables) -> RosettaExecutor(configurables)
+                    else -> JUnit5Assertions.fail { "Running tests for $testTarget on $hostTarget is not supported yet." }
+                }
             }
         }
     }

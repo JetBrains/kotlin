@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers
 
 data class MyContainer(var s: String)
 

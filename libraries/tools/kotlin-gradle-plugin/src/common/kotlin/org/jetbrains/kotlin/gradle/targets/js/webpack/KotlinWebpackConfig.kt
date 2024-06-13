@@ -223,9 +223,10 @@ data class KotlinWebpackConfig(
                         enforce: "pre"
                 });
                 config.devtool = ${devtool?.let { "'$it'" } ?: false};
-            ${
-                "config.ignoreWarnings = [/Failed to parse source map/]"
-            }
+                config.ignoreWarnings = [
+                    /Failed to parse source map/,
+                    /Accessing import\.meta directly is unsupported \(only property access or destructuring is supported\)/
+                ]
                 
             """.trimIndent()
         )

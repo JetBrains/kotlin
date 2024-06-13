@@ -5,17 +5,17 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
-import org.jetbrains.kotlin.analysis.api.KtInitializerValue
+import org.jetbrains.kotlin.analysis.api.KaInitializerValue
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.*
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.isEqualTo
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10NeverRestoringSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaForKotlinOverridePropertyDescriptor
 import org.jetbrains.kotlin.name.CallableId
@@ -24,10 +24,10 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 
-internal class KtFe10DescSyntheticJavaPropertySymbolForOverride(
+internal class KaFe10DescSyntheticJavaPropertySymbolForOverride(
     override val descriptor: JavaForKotlinOverridePropertyDescriptor,
     override val analysisContext: Fe10AnalysisContext
-) : KtSyntheticJavaPropertySymbol(), KtFe10DescMemberSymbol<JavaForKotlinOverridePropertyDescriptor> {
+) : KaSyntheticJavaPropertySymbol(), KaFe10DescMemberSymbol<JavaForKotlinOverridePropertyDescriptor> {
     override val name: Name
         get() = withValidityAssertion { descriptor.name }
 
@@ -46,54 +46,54 @@ internal class KtFe10DescSyntheticJavaPropertySymbolForOverride(
     override val isExtension: Boolean
         get() = withValidityAssertion { descriptor.isExtension }
 
-    override val getter: KtPropertyGetterSymbol
+    override val getter: KaPropertyGetterSymbol
         get() = withValidityAssertion {
-            val getter = descriptor.getter ?: return KtFe10DescDefaultPropertyGetterSymbol(descriptor, analysisContext)
-            return KtFe10DescPropertyGetterSymbol(getter, analysisContext)
+            val getter = descriptor.getter ?: return KaFe10DescDefaultPropertyGetterSymbol(descriptor, analysisContext)
+            return KaFe10DescPropertyGetterSymbol(getter, analysisContext)
         }
 
-    override val javaGetterSymbol: KtFunctionSymbol
-        get() = withValidityAssertion { KtFe10DescFunctionSymbol.build(descriptor.getterMethod, analysisContext) }
+    override val javaGetterSymbol: KaFunctionSymbol
+        get() = withValidityAssertion { KaFe10DescFunctionSymbol.build(descriptor.getterMethod, analysisContext) }
 
-    override val javaSetterSymbol: KtFunctionSymbol?
+    override val javaSetterSymbol: KaFunctionSymbol?
         get() = withValidityAssertion {
             val setMethod = descriptor.setterMethod ?: return null
-            return KtFe10DescFunctionSymbol.build(setMethod, analysisContext)
+            return KaFe10DescFunctionSymbol.build(setMethod, analysisContext)
         }
 
     override val hasSetter: Boolean
         get() = withValidityAssertion { descriptor.setter != null }
 
-    override val setter: KtPropertySetterSymbol?
+    override val setter: KaPropertySetterSymbol?
         get() = withValidityAssertion {
             if (!descriptor.isVar) {
                 return null
             }
 
-            val setter = descriptor.setter ?: return KtFe10DescDefaultPropertySetterSymbol(descriptor, analysisContext)
-            KtFe10DescPropertySetterSymbol(setter, analysisContext)
+            val setter = descriptor.setter ?: return KaFe10DescDefaultPropertySetterSymbol(descriptor, analysisContext)
+            KaFe10DescPropertySetterSymbol(setter, analysisContext)
         }
 
-    override val backingFieldSymbol: KtBackingFieldSymbol?
+    override val backingFieldSymbol: KaBackingFieldSymbol?
         get() = withValidityAssertion { null }
 
-    override val initializer: KtInitializerValue?
+    override val initializer: KaInitializerValue?
         get() = withValidityAssertion { createKtInitializerValue((psi as? KtProperty)?.initializer, descriptor, analysisContext) }
 
-    override val callableIdIfNonLocal: CallableId?
+    override val callableId: CallableId?
         get() = withValidityAssertion { descriptor.callableIdIfNotLocal }
 
-    override val returnType: KtType
+    override val returnType: KaType
         get() = withValidityAssertion { descriptor.type.toKtType(analysisContext) }
 
-    override val receiverParameter: KtReceiverParameterSymbol?
+    override val receiverParameter: KaReceiverParameterSymbol?
         get() = withValidityAssertion { descriptor.extensionReceiverParameter?.toKtReceiverParameterSymbol(analysisContext) }
 
-    override val typeParameters: List<KtTypeParameterSymbol>
+    override val typeParameters: List<KaTypeParameterSymbol>
         get() = withValidityAssertion { descriptor.typeParameters.map { it.toKtTypeParameter(analysisContext) } }
 
-    override fun createPointer(): KtSymbolPointer<KtSyntheticJavaPropertySymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtSyntheticJavaPropertySymbol>(this) ?: KtFe10NeverRestoringSymbolPointer()
+    override fun createPointer(): KaSymbolPointer<KaSyntheticJavaPropertySymbol> = withValidityAssertion {
+        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaSyntheticJavaPropertySymbol>(this) ?: KaFe10NeverRestoringSymbolPointer()
     }
 
     override fun equals(other: Any?): Boolean = isEqualTo(other)

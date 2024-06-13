@@ -1,0 +1,15 @@
+KtAnnotationEntry(23,37): '@property:Anno'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(): Anno
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true

@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] parameterOfNonLocalSetterScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-parameterOfNonLocalSetterScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
@@ -18,8 +18,8 @@ FILE: [ResolvedTo(RAW_FIR)] parameterOfNonLocalSetterScript.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-parameterOfNonLocalSetterScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
@@ -36,8 +36,8 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-parameterOfNonLocalSetterScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
@@ -54,8 +54,8 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-parameterOfNonLocalSetterScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
@@ -72,8 +72,8 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-parameterOfNonLocalSetterScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(SUPER_TYPES)] class X : R|kotlin/Any| {
@@ -90,8 +90,8 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-parameterOfNonLocalSetterScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(TYPES)] class X : R|kotlin/Any| {
@@ -108,8 +108,8 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-parameterOfNonLocalSetterScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
@@ -126,8 +126,8 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-parameterOfNonLocalSetterScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
@@ -144,8 +144,8 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-parameterOfNonLocalSetterScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
@@ -164,8 +164,8 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-parameterOfNonLocalSetterScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
@@ -184,8 +184,8 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-parameterOfNonLocalSetterScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
@@ -204,8 +204,8 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-parameterOfNonLocalSetterScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
@@ -224,8 +224,8 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-parameterOfNonLocalSetterScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
@@ -244,8 +244,8 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] parameterOfNonLocalSetterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-parameterOfNonLocalSetterScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
@@ -260,3 +260,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] parameterOfNonLocalSetterScript.kts
                 }
 
         }
+

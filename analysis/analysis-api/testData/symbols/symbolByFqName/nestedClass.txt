@@ -1,6 +1,6 @@
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: kotlin/collections/MutableMap.MutableEntry
+KaNamedClassOrObjectSymbol:
+  annotations: []
+  classId: kotlin/collections/MutableMap.MutableEntry
   classKind: INTERFACE
   companionObject: null
   contextReceivers: []
@@ -15,22 +15,22 @@ KtNamedClassOrObjectSymbol:
   name: MutableEntry
   origin: LIBRARY
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: [
-        KtTypeParameterType:
-          annotationsList: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: [
+        KaTypeParameterType:
+          annotations: []
           type: K
-        KtTypeParameterType:
-          annotationsList: []
+        KaTypeParameterType:
+          annotations: []
           type: V
       ]
       type: kotlin/collections/Map.Entry<K, V>
   ]
   symbolKind: CLASS_MEMBER
   typeParameters: [
-    KtTypeParameterSymbol(K)
-    KtTypeParameterSymbol(V)
+    KaTypeParameterSymbol(K)
+    KaTypeParameterSymbol(V)
   ]
   visibility: Public
   getContainingFileSymbol: null

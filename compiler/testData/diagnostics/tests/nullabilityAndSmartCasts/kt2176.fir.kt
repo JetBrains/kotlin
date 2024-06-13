@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 
 //KT-2176 non-nullability is not inferred after !! or "as"
 package kt2176

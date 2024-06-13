@@ -1,11 +1,11 @@
 expression: {
             s: String -> 0
     }
-expected type: KtUsualClassType:
-  annotationsList: []
-  ownTypeArguments: [
-    KtTypeParameterType:
-      annotationsList: []
+expected type: KaUsualClassType:
+  annotations: []
+  typeArguments: [
+    KaTypeParameterType:
+      annotations: []
       type: T
   ]
   type: java/lang/Comparable<T>

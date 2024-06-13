@@ -12,5 +12,5 @@ private val ExportForCompilerAnnotationClassId = ClassId.topLevel(FqName("kotlin
  */
 internal val KtAnnotated.hasExportForCompilerAnnotation: Boolean
     get() {
-        return this.hasAnnotation(ExportForCompilerAnnotationClassId)
+        return ExportForCompilerAnnotationClassId in annotations
     }

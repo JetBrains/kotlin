@@ -16,11 +16,13 @@ import org.jetbrains.kotlin.fir.builder.FirScriptConfiguratorExtension
 import org.jetbrains.kotlin.fir.builder.FirScriptConfiguratorExtension.Factory
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.builder.*
+import org.jetbrains.kotlin.fir.declarations.builder.FirFileBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.FirScriptBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
+import org.jetbrains.kotlin.fir.declarations.builder.buildScriptReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
-import org.jetbrains.kotlin.fir.declarations.utils.SCRIPT_SPECIAL_NAME_STRING
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.moduleData
@@ -32,7 +34,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildUserTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
-import org.jetbrains.kotlin.fir.types.toFirResolvedTypeRef
+import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -50,7 +52,7 @@ import kotlin.script.experimental.host.StringScriptSource
 class FirScriptConfiguratorExtensionImpl(
     session: FirSession,
     // TODO: left here because it seems it will be needed soon, remove supression if used or remove the param if it is not the case
-    @Suppress("UNUSED_PARAMETER") hostConfiguration: ScriptingHostConfiguration,
+    @Suppress("UNUSED_PARAMETER", "unused") hostConfiguration: ScriptingHostConfiguration,
 ) : FirScriptConfiguratorExtension(session) {
 
     override fun FirScriptBuilder.configureContainingFile(fileBuilder: FirFileBuilder) {
@@ -66,7 +68,7 @@ class FirScriptConfiguratorExtensionImpl(
         // TODO: rewrite/extract decision logic for clarity
         configuration.getNoDefault(ScriptCompilationConfiguration.baseClass)?.let { baseClass ->
             val baseClassFqn = FqName.fromSegments(baseClass.typeName.split("."))
-            contextReceivers.add(buildContextReceiverWithFqName(baseClassFqn, Name.special(SCRIPT_SPECIAL_NAME_STRING)))
+            receivers.add(buildImplicitReceiverWithFqName(baseClassFqn, isBaseClassReceiver = true))
 
             val baseClassSymbol =
                 session.dependenciesSymbolProvider.getClassLikeSymbolByClassId(ClassId(baseClassFqn.parent(), baseClassFqn.shortName()))
@@ -93,7 +95,12 @@ class FirScriptConfiguratorExtensionImpl(
         }
 
         configuration[ScriptCompilationConfiguration.implicitReceivers]?.forEach { implicitReceiver ->
-            contextReceivers.add(buildContextReceiverWithFqName(FqName.fromSegments(implicitReceiver.typeName.split("."))))
+            receivers.add(
+                buildImplicitReceiverWithFqName(
+                    FqName.fromSegments(implicitReceiver.typeName.split(".")),
+                    isBaseClassReceiver = false
+                )
+            )
         }
 
         configuration[ScriptCompilationConfiguration.providedProperties]?.forEach { (propertyName, propertyType) ->
@@ -179,8 +186,8 @@ class FirScriptConfiguratorExtensionImpl(
         return configuration
     }
 
-    private fun buildContextReceiverWithFqName(classFqn: FqName, customName: Name? = null) =
-        buildContextReceiver {
+    private fun buildImplicitReceiverWithFqName(classFqn: FqName, isBaseClassReceiver: Boolean) =
+        buildScriptReceiverParameter {
             val userTypeRef = buildUserTypeRef {
                 isMarkedNullable = false
                 qualifier.addAll(
@@ -190,8 +197,7 @@ class FirScriptConfiguratorExtensionImpl(
                 )
             }
             typeRef = userTypeRef
-            labelNameFromTypeRef = userTypeRef.qualifier.lastOrNull()?.name
-            customLabelName = customName
+            this.isBaseClassReceiver = isBaseClassReceiver
         }
 
     private val _knownAnnotationsForSamWithReceiver = hashSetOf<String>()

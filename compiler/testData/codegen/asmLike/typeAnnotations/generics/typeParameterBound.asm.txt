@@ -1,0 +1,235 @@
+public abstract interface foo/Ann : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+<U:Ljava/lang/Object;>Ljava/lang/Object;
+public abstract interface foo/In : java/lang/Object {
+
+}
+
+<T:Ljava/lang/Object;>Ljava/lang/Object;
+public abstract interface foo/Inv : java/lang/Object {
+
+}
+
+<V:Ljava/lang/Object;>Ljava/lang/Object;
+public abstract interface foo/Out : java/lang/Object {
+
+}
+
+public final class foo/TypeParameterBoundKt : java/lang/Object {
+    <T01::Lfoo/Inv<Ljava/lang/Number;>;>()V
+    public final static void f01()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;
+
+    <T02::Lfoo/In<-Ljava/lang/Number;>;>()V
+    public final static void f02()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;*
+
+    <T03::Lfoo/Out<+Ljava/lang/Number;>;>()V
+    public final static void f03()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;*
+
+    <T04::Lfoo/Inv<Lfoo/Inv<Ljava/lang/Number;>;>;>()V
+    public final static void f04()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;0;
+
+    <T05::Lfoo/Inv<Lfoo/In<-Ljava/lang/Number;>;>;>()V
+    public final static void f05()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;0;*
+
+    <T06::Lfoo/Inv<Lfoo/Out<+Ljava/lang/Number;>;>;>()V
+    public final static void f06()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;0;*
+
+    <T07::Lfoo/In<-Lfoo/Inv<Ljava/lang/Number;>;>;>()V
+    public final static void f07()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;*0;
+
+    <T08::Lfoo/In<-Lfoo/In<-Ljava/lang/Number;>;>;>()V
+    public final static void f08()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;*0;*
+
+    <T09::Lfoo/In<-Lfoo/Out<+Ljava/lang/Number;>;>;>()V
+    public final static void f09()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;*0;*
+
+    <T10::Lfoo/Out<+Lfoo/Inv<Ljava/lang/Number;>;>;>()V
+    public final static void f10()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;*0;
+
+    <T11::Lfoo/Out<+Lfoo/In<-Ljava/lang/Number;>;>;>()V
+    public final static void f11()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;*0;*
+
+    <T12::Lfoo/Out<+Lfoo/Out<+Ljava/lang/Number;>;>;>()V
+    public final static void f12()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;*0;*
+
+    <T13::Lfoo/Inv<-Ljava/lang/Number;>;>()V
+    public final static void f13()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;*
+
+    <T14::Lfoo/Inv<+Ljava/lang/Number;>;>()V
+    public final static void f14()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;*
+
+    <T15::Lfoo/In<-Ljava/lang/Number;>;>()V
+    public final static void f15()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;*
+
+    <T16::Lfoo/Out<+Ljava/lang/Number;>;>()V
+    public final static void f16()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;*
+
+    <T17::Lfoo/Inv<-Lfoo/Inv<Ljava/lang/Number;>;>;>()V
+    public final static void f17()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;*0;
+
+    <T18::Lfoo/Inv<-Lfoo/In<-Ljava/lang/Number;>;>;>()V
+    public final static void f18()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;*0;*
+
+    <T19::Lfoo/Inv<-Lfoo/Out<+Ljava/lang/Number;>;>;>()V
+    public final static void f19()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;*0;*
+
+    <T20::Lfoo/Inv<+Lfoo/Inv<Ljava/lang/Number;>;>;>()V
+    public final static void f20()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;*0;
+
+    <T21::Lfoo/Inv<+Lfoo/In<-Ljava/lang/Number;>;>;>()V
+    public final static void f21()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;*0;*
+
+    <T22::Lfoo/Inv<+Lfoo/Out<+Ljava/lang/Number;>;>;>()V
+    public final static void f22()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;*0;*
+
+    <T23::Lfoo/Inv<-Lfoo/Inv<-Ljava/lang/Number;>;>;>()V
+    public final static void f23()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;*0;*
+
+    <T24::Lfoo/Inv<-Lfoo/In<-Ljava/lang/Number;>;>;>()V
+    public final static void f24()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;*0;*
+
+    <T25::Lfoo/Inv<-Lfoo/Out<+Ljava/lang/Number;>;>;>()V
+    public final static void f25()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;*0;*
+
+    <T26::Lfoo/Inv<+Lfoo/Inv<+Ljava/lang/Number;>;>;>()V
+    public final static void f26()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;*0;*
+
+    <T27::Lfoo/Inv<+Lfoo/In<-Ljava/lang/Number;>;>;>()V
+    public final static void f27()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;*0;*
+
+    <T28::Lfoo/Inv<+Lfoo/Out<+Ljava/lang/Number;>;>;>()V
+    public final static void f28()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;*0;*
+
+    <T29::Lfoo/Inv<Ljava/lang/Number;>;>()V
+    public final static void f29()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;
+      @Lkotlin/jvm/JvmSuppressWildcards;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0; // invisible
+
+    <T30::Lfoo/In<Ljava/lang/Number;>;>()V
+    public final static void f30()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;
+      @Lkotlin/jvm/JvmSuppressWildcards;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0; // invisible
+
+    <T31::Lfoo/Out<Ljava/lang/Number;>;>()V
+    public final static void f31()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;
+      @Lkotlin/jvm/JvmSuppressWildcards;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0; // invisible
+
+    <T32::Lfoo/Inv<Ljava/lang/Number;>;>()V
+    public final static void f32()
+      @Lkotlin/jvm/JvmSuppressWildcards;([]) // invisible
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;
+
+    <T33::Lfoo/In<-Ljava/lang/Number;>;>()V
+    public final static void f33()
+      @Lkotlin/jvm/JvmSuppressWildcards;([]) // invisible
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;*
+
+    <T34::Lfoo/Out<+Ljava/lang/Number;>;>()V
+    public final static void f34()
+      @Lkotlin/jvm/JvmSuppressWildcards;([]) // invisible
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;*
+
+    <T35::Lfoo/Inv<Ljava/lang/Number;>;>()V
+    public final static void f35()
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=true]) // invisible
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=false]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, null // invisible
+
+    <T36::Lfoo/In<-Ljava/lang/Number;>;>()V
+    public final static void f36()
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=true]) // invisible
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;*
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=false]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, null // invisible
+
+    <T37::Lfoo/Out<+Ljava/lang/Number;>;>()V
+    public final static void f37()
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=true]) // invisible
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;*
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=false]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, null // invisible
+
+    <T38::Lfoo/Inv<Ljava/lang/Number;>;>()V
+    public final static void f38()
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=false]) // invisible
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=true]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, null // invisible
+
+    <T39::Lfoo/In<-Ljava/lang/Number;>;>()V
+    public final static void f39()
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=false]) // invisible
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;*
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=true]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, null // invisible
+
+    <T40::Lfoo/Out<+Ljava/lang/Number;>;>()V
+    public final static void f40()
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=false]) // invisible
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;*
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=true]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, null // invisible
+
+    <T41::Lfoo/Inv<Ljava/lang/Number;>;>()V
+    public final static void f41()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;
+      @Lkotlin/jvm/JvmWildcard;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0; // invisible
+
+    <T42::Lfoo/In<-Ljava/lang/Number;>;>()V
+    public final static void f42()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;*
+      @Lkotlin/jvm/JvmWildcard;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;* // invisible
+
+    <T43::Lfoo/Out<+Ljava/lang/Number;>;>()V
+    public final static void f43()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;*
+      @Lkotlin/jvm/JvmWildcard;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;* // invisible
+
+    <T44::Lfoo/Inv<Lfoo/In<-Ljava/lang/Number;>;>;>()V
+    public final static void f44()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;0;*
+      @Lkotlin/jvm/JvmWildcard;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;0;* // invisible
+
+    <T45::Lfoo/Inv<Lfoo/Out<+Ljava/lang/Number;>;>;>()V
+    public final static void f45()
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;0;*
+      @Lkotlin/jvm/JvmWildcard;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;0;* // invisible
+
+    <T46::Lfoo/Inv<Lfoo/In<-Ljava/lang/Number;>;>;>()V
+    public final static void f46()
+      @Lkotlin/jvm/JvmSuppressWildcards;([]) // invisible
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;0;*
+      @Lkotlin/jvm/JvmWildcard;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;0;* // invisible
+
+    <T47::Lfoo/Inv<Lfoo/Out<+Ljava/lang/Number;>;>;>()V
+    public final static void f47()
+      @Lkotlin/jvm/JvmSuppressWildcards;([]) // invisible
+      @Lfoo/Ann;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;0;*
+      @Lkotlin/jvm/JvmWildcard;([]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;0;* // invisible
+}

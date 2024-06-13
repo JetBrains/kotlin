@@ -1,4 +1,4 @@
-KtTypeScope:
+KaTypeScope:
 fun component1(): kotlin.Int
 fun component2(): kotlin.Int
 fun copy(first: kotlin.Int, second: kotlin.Int): kotlin.Pair<kotlin.Int, kotlin.Int>
@@ -18,3 +18,4 @@ fun hashCode(): kotlin.Int
 fun toString(): kotlin.String
 val first: A
 val second: B
+

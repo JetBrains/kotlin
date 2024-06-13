@@ -1,4 +1,4 @@
-// !LANGUAGE: +RestrictReturnStatementTarget
+// LANGUAGE: +RestrictReturnStatementTarget
 
 @Target(AnnotationTarget.EXPRESSION)
 @Retention(AnnotationRetention.SOURCE)

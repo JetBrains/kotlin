@@ -11,7 +11,7 @@ dependencies {
     implementation(project(":core:compiler.common"))
     implementation(project(":analysis:light-classes-base"))
     implementation(project(":compiler:backend.common.jvm"))
-    implementation(project(":analysis:analysis-api-providers"))
+    implementation(project(":analysis:analysis-api-platform-interface"))
     implementation(project(":analysis:analysis-api"))
     implementation(project(":analysis:analysis-internal-utils"))
     implementation(project(":analysis:project-structure"))
@@ -43,7 +43,7 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
 
 tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions.freeCompilerArgs.add("-Xcontext-receivers")
-    compilerOptions.optIn.add("org.jetbrains.kotlin.analysis.api.lifetime.KtAllowProhibitedAnalyzeFromWriteAction")
+    compilerOptions.optIn.add("org.jetbrains.kotlin.analysis.api.permissions.KaAllowProhibitedAnalyzeFromWriteAction")
 }
 
 

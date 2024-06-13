@@ -5,18 +5,18 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
-import org.jetbrains.kotlin.analysis.api.components.KtSubstitutorBuilder
-import org.jetbrains.kotlin.analysis.api.components.KtSubstitutorFactory
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
-import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
-import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
+import org.jetbrains.kotlin.analysis.api.components.KaSubstitutorBuilder
+import org.jetbrains.kotlin.analysis.api.components.KaSubstitutorFactory
+import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
+import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 
-internal class KtFe10SubstitutorFactory(
-    override val analysisSession: KtFe10AnalysisSession
-) : KtSubstitutorFactory(), Fe10KtAnalysisSessionComponent {
+internal class KaFe10SubstitutorFactory(
+    override val analysisSession: KaFe10Session
+) : KaSubstitutorFactory(), KaFe10SessionComponent {
 
-    override fun buildSubstitutor(builder: KtSubstitutorBuilder): KtSubstitutor {
-        if (builder.mappings.isEmpty()) return KtSubstitutor.Empty(token)
+    override fun buildSubstitutor(builder: KaSubstitutorBuilder): KaSubstitutor {
+        if (builder.mappings.isEmpty()) return KaSubstitutor.Empty(token)
         TODO()
     }
 }

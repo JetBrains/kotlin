@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ProjectionKind
 import org.jetbrains.kotlin.fir.types.coneType
@@ -88,6 +90,7 @@ fun FirCallableSymbol<*>.isReadOnlyComposable(session: FirSession): Boolean =
 @OptIn(SymbolInternals::class)
 private fun FirPropertyAccessorSymbol.isComposableDelegate(session: FirSession): Boolean {
     if (!propertySymbol.hasDelegate) return false
+    fir.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
     return ((fir
         .body
         ?.statements

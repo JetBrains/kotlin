@@ -1,0 +1,47 @@
+KtConstructorDelegationReferenceExpression(38,42): 'this'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
+    candidate = KaDelegatedConstructorCall:
+      kind = THIS_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = A
+          symbol = <constructor>(): A
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      kind = THIS_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = A
+          symbol = <constructor>(a: kotlin.Int): A
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = a
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = a: kotlin.Int
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        2 -> (KaVariableLikeSignature:
+          name = a
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = a: kotlin.Int
+          callableId = null)
+      }
+    isInBestCandidates = true

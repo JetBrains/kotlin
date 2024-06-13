@@ -1,0 +1,1 @@
+/lambdaAgainstSimpleTypeMismatch.fir.kt:(71,90): error: Argument type mismatch: actual type is 'kotlin.Function1<kotlin.String, kotlin.Int>', but 'kotlin.Int' was expected.

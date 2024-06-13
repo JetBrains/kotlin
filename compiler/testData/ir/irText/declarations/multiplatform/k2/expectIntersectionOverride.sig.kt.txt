@@ -1,3 +1,42 @@
+// FILE: platform.kt
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C : I1, I2 {
+  // CHECK:
+  //   Mangled name: C{}p
+  //   Public signature: /C.p|6715504260787941082[0]
+  //   Public signature debug description: {}p
+  override val p: Int
+    // CHECK JVM_IR:
+    //   Mangled name: C#<get-p>(){}kotlin.Int
+    //   Public signature: /C.p.<get-p>|5329635969197638839[0]
+    //   Public signature debug description: <get-p>(){}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: C#<get-p>(){}
+    //   Public signature: /C.p.<get-p>|-1162552463316289847[0]
+    //   Public signature debug description: <get-p>(){}
+    override get
+
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#f(){}kotlin.String
+  //   Public signature: /C.f|9098388873611041001[0]
+  //   Public signature debug description: f(){}kotlin.String
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: C#f(){}
+  //   Public signature: /C.f|5316533450599009716[0]
+  //   Public signature debug description: f(){}
+  override fun f(): String
+
+}
+
 // FILE: common.kt
 
 // CHECK:
@@ -61,43 +100,3 @@ interface I2 {
     abstract get
 
 }
-
-// FILE: platform.kt
-
-// CHECK:
-//   Mangled name: C
-//   Public signature: /C|null[0]
-class C : I1, I2 {
-  // CHECK:
-  //   Mangled name: C{}p
-  //   Public signature: /C.p|6715504260787941082[0]
-  //   Public signature debug description: {}p
-  override val p: Int
-    // CHECK JVM_IR:
-    //   Mangled name: C#<get-p>(){}kotlin.Int
-    //   Public signature: /C.p.<get-p>|5329635969197638839[0]
-    //   Public signature debug description: <get-p>(){}kotlin.Int
-    // CHECK JS_IR NATIVE:
-    //   Mangled name: C#<get-p>(){}
-    //   Public signature: /C.p.<get-p>|-1162552463316289847[0]
-    //   Public signature debug description: <get-p>(){}
-    override get
-
-  // CHECK:
-  //   Mangled name: C#<init>(){}
-  //   Public signature: /C.<init>|-5645683436151566731[0]
-  //   Public signature debug description: <init>(){}
-  constructor() /* primary */
-
-  // CHECK JVM_IR:
-  //   Mangled name: C#f(){}kotlin.String
-  //   Public signature: /C.f|9098388873611041001[0]
-  //   Public signature debug description: f(){}kotlin.String
-  // CHECK JS_IR NATIVE:
-  //   Mangled name: C#f(){}
-  //   Public signature: /C.f|5316533450599009716[0]
-  //   Public signature debug description: f(){}
-  override fun f(): String
-
-}
-

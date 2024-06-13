@@ -54,7 +54,7 @@ public abstract class JavaMemberImpl<Psi extends PsiMember> extends JavaElementI
 
     @Override
     public final boolean isFromSource() {
-        return true;
+        return !JavaPsiUtilsKt.isCompiledElement(getPsi());
     }
 
     @NotNull

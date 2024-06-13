@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.library.metadata.KlibMetadataClassDataFinder
 import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
@@ -28,6 +27,7 @@ internal class KlibMetadataDeserializerForDecompiler(
     packageFqName: FqName,
     private val proto: ProtoBuf.PackageFragment,
     private val nameResolver: NameResolver,
+    classDataFinder: ClassDataFinder,
     serializerProtocol: SerializerExtensionProtocol,
     flexibleTypeDeserializer: FlexibleTypeDeserializer,
     deserializationConfiguration: DeserializationConfiguration = DeserializationConfiguration.Default,
@@ -40,8 +40,7 @@ internal class KlibMetadataDeserializerForDecompiler(
         val notFoundClasses = NotFoundClasses(storageManager, moduleDescriptor)
 
         deserializationComponents = DeserializationComponents(
-            storageManager, moduleDescriptor, deserializationConfiguration,
-            KlibMetadataClassDataFinder(proto, nameResolver),
+            storageManager, moduleDescriptor, deserializationConfiguration, classDataFinder,
             AnnotationAndConstantLoaderImpl(moduleDescriptor, notFoundClasses, serializerProtocol), packageFragmentProvider,
             ResolveEverythingToKotlinAnyLocalClassifierResolver(builtIns), LoggingErrorReporter(LOG),
             LookupTracker.DO_NOTHING, flexibleTypeDeserializer, emptyList(), notFoundClasses, ContractDeserializer.DEFAULT,

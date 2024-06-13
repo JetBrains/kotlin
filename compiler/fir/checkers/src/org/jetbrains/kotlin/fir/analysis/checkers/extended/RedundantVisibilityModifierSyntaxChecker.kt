@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.checkers.findClosestClassOrObject
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.analysis.checkers.resolvedStatus
 import org.jetbrains.kotlin.fir.analysis.checkers.syntax.FirDeclarationSyntaxChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.toVisibilityOrNull
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -50,7 +51,10 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
 
         when (element) {
             is FirProperty -> checkPropertyAndReport(element, context, reporter)
-            else -> checkElementAndReport(element, context, reporter)
+            else -> {
+                val defaultVisibility = element.symbol.resolvedStatus?.defaultVisibility ?: Visibilities.DEFAULT_VISIBILITY
+                checkElementAndReport(element, defaultVisibility, context, reporter)
+            }
         }
     }
 
@@ -62,32 +66,35 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
         var setterImplicitVisibility: Visibility? = null
 
         property.setter?.let { setter ->
-            val visibility = setter.implicitVisibility(context)
+            val defaultVisibility = setter.symbol.resolvedStatus.defaultVisibility
+            val visibility = setter.implicitVisibility(context, defaultVisibility)
             setterImplicitVisibility = visibility
             checkElementAndReport(setter, visibility, property, context, reporter)
         }
 
         property.getter?.let { getter ->
-            checkElementAndReport(getter, property, context, reporter)
+            checkElementAndReport(getter, getter.symbol.resolvedStatus.defaultVisibility, property, context, reporter)
         }
 
         property.backingField?.let { field ->
-            checkElementAndReport(field, property, context, reporter)
+            checkElementAndReport(field, field.symbol.resolvedStatus.defaultVisibility, property, context, reporter)
         }
 
         if (property.canMakeSetterMoreAccessible(setterImplicitVisibility)) {
             return
         }
 
-        checkElementAndReport(property, context, reporter)
+        checkElementAndReport(property, property.symbol.resolvedStatus.defaultVisibility, context, reporter)
     }
 
     private fun checkElementAndReport(
         element: FirDeclaration,
+        defaultVisibility: Visibility,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) = checkElementAndReport(
         element,
+        defaultVisibility,
         context.findClosest(),
         context,
         reporter
@@ -95,18 +102,19 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
 
     private fun checkElementAndReport(
         element: FirDeclaration,
+        defaultVisibility: Visibility,
         containingMemberDeclaration: FirMemberDeclaration?,
         context: CheckerContext,
         reporter: DiagnosticReporter
-    ) = checkElementAndReport(
+    ) = checkElementWithImplicitVisibilityAndReport(
         element,
-        element.implicitVisibility(context),
+        element.implicitVisibility(context, defaultVisibility),
         containingMemberDeclaration,
         context,
         reporter
     )
 
-    private fun checkElementAndReport(
+    private fun checkElementWithImplicitVisibilityAndReport(
         element: FirDeclaration,
         implicitVisibility: Visibility,
         containingMemberDeclaration: FirMemberDeclaration?,
@@ -171,12 +179,6 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
             return theSource.explicitVisibility == null
         }
 
-    private val KtSourceElement.explicitVisibility: Visibility?
-        get() {
-            val visibilityModifier = treeStructure.visibilityModifier(lighterASTNode)
-            return (visibilityModifier?.tokenType as? KtModifierKeywordToken)?.toVisibilityOrNull()
-        }
-
     private fun Visibility?.isEffectivelyHiddenBy(declaration: FirMemberDeclaration?): Boolean {
         val containerVisibility = declaration?.effectiveVisibility?.toVisibility() ?: return false
 
@@ -188,7 +190,7 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
         return difference > 0
     }
 
-    private fun FirDeclaration.implicitVisibility(context: CheckerContext): Visibility {
+    private fun FirDeclaration.implicitVisibility(context: CheckerContext, defaultVisibility: Visibility): Visibility {
         return when {
             this is FirPropertyAccessor
                     && isSetter
@@ -205,7 +207,7 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
                 ) {
                     Visibilities.Private
                 } else {
-                    Visibilities.DEFAULT_VISIBILITY
+                    defaultVisibility
                 }
             }
 
@@ -217,7 +219,7 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
                     && context.containingDeclarations.last() is FirClass
                     && this.isOverride -> findPropertyVisibility(this, context)
 
-            else -> Visibilities.DEFAULT_VISIBILITY
+            else -> defaultVisibility
         }
     }
 
@@ -291,3 +293,9 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
         }
     }
 }
+
+val KtSourceElement.explicitVisibility: Visibility?
+    get() {
+        val visibilityModifier = treeStructure.visibilityModifier(lighterASTNode)
+        return (visibilityModifier?.tokenType as? KtModifierKeywordToken)?.toVisibilityOrNull()
+    }

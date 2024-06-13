@@ -286,17 +286,23 @@ class LLStandaloneFirElementByPsiElementChooser : LLFirElementByPsiElementChoose
             memberRequiredPhase: FirResolvePhase?,
         ): FirTypeScope = shouldNotBeCalled()
 
-        override fun getStaticMemberScopeForCallables(
+        override fun getStaticCallableMemberScope(
             klass: FirClass,
             useSiteSession: FirSession,
             scopeSession: ScopeSession
-        ): FirContainingNamesAwareScope? = shouldNotBeCalled()
+        ): FirContainingNamesAwareScope = shouldNotBeCalled()
+
+        override fun getStaticCallableMemberScopeForBackend(
+            klass: FirClass,
+            useSiteSession: FirSession,
+            scopeSession: ScopeSession,
+        ): FirContainingNamesAwareScope = shouldNotBeCalled()
 
         override fun getNestedClassifierScope(
             klass: FirClass,
             useSiteSession: FirSession,
             scopeSession: ScopeSession
-        ): FirContainingNamesAwareScope? = shouldNotBeCalled()
+        ): FirContainingNamesAwareScope = shouldNotBeCalled()
 
         private fun shouldNotBeCalled(): Nothing = error("Should not be called in RawFirBuilder while converting KtTypeReference")
     }

@@ -6,40 +6,40 @@
 package org.jetbrains.kotlin.analysis.api.fir.diagnostics
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.diagnostics.*
 
-internal class KtCompilerPluginDiagnostic0Impl(
+internal class KaCompilerPluginDiagnostic0Impl(
     firDiagnostic: KtPsiSimpleDiagnostic,
-    token: KtLifetimeToken
-) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtCompilerPluginDiagnostic0
+    token: KaLifetimeToken
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaCompilerPluginDiagnostic0
 
-internal class KtCompilerPluginDiagnostic1Impl(
+internal class KaCompilerPluginDiagnostic1Impl(
     firDiagnostic: KtPsiDiagnosticWithParameters1<*>,
-    token: KtLifetimeToken,
+    token: KaLifetimeToken,
     override val parameter1: Any?
-) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtCompilerPluginDiagnostic1
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaCompilerPluginDiagnostic1
 
-internal class KtCompilerPluginDiagnostic2Impl(
+internal class KaCompilerPluginDiagnostic2Impl(
     firDiagnostic: KtPsiDiagnosticWithParameters2<*, *>,
-    token: KtLifetimeToken,
+    token: KaLifetimeToken,
     override val parameter1: Any?,
     override val parameter2: Any?
-) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtCompilerPluginDiagnostic2
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaCompilerPluginDiagnostic2
 
-internal class KtCompilerPluginDiagnostic3Impl(
+internal class KaCompilerPluginDiagnostic3Impl(
     firDiagnostic: KtPsiDiagnosticWithParameters3<*, *, *>,
-    token: KtLifetimeToken,
+    token: KaLifetimeToken,
     override val parameter1: Any?,
     override val parameter2: Any?,
     override val parameter3: Any?
-) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtCompilerPluginDiagnostic3
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaCompilerPluginDiagnostic3
 
-internal class KtCompilerPluginDiagnostic4Impl(
+internal class KaCompilerPluginDiagnostic4Impl(
     firDiagnostic: KtPsiDiagnosticWithParameters4<*, *, *, *>,
-    token: KtLifetimeToken,
+    token: KaLifetimeToken,
     override val parameter1: Any?,
     override val parameter2: Any?,
     override val parameter3: Any?,
     override val parameter4: Any?
-) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtCompilerPluginDiagnostic4
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaCompilerPluginDiagnostic4

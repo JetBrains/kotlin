@@ -60,8 +60,8 @@ class InterfaceAndAbstractClassConfigurator(val elements: List<ImplementationKin
             if (element is AbstractElement<*, *, *>) {
                 if (element.isSealed) {
                     element.kind = when (element.kind) {
-                        ImplementationKind.AbstractClass -> ImplementationKind.SealedClass
-                        ImplementationKind.Interface -> ImplementationKind.SealedInterface
+                        ImplementationKind.AbstractClass, ImplementationKind.SealedClass -> ImplementationKind.SealedClass
+                        ImplementationKind.Interface, ImplementationKind.SealedInterface -> ImplementationKind.SealedInterface
                         else -> error("element $element with kind ${element.kind} can not be sealed")
                     }
                 }

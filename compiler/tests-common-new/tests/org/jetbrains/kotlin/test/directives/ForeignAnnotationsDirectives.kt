@@ -10,8 +10,13 @@ import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.configuration.JavaForeignAnnotationType
 import org.jetbrains.kotlin.load.java.ReportLevel
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.test.services.configuration.JvmForeignAnnotationsConfigurator
 
 object ForeignAnnotationsDirectives : SimpleDirectivesContainer() {
+    val ENABLE_FOREIGN_ANNOTATIONS by directive(
+        description = "Enables ${JvmForeignAnnotationsConfigurator::class}"
+    )
+
     val JSR305_GLOBAL_REPORT by enumDirective(
         description = "Global report level",
         additionalParser = ReportLevel.Companion::findByDescription

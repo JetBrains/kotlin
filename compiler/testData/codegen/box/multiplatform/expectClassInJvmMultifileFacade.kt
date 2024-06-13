@@ -1,4 +1,4 @@
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 // FIR status: expect/actual in the same module (ACTUAL_WITHOUT_EXPECT)
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_K2: ANY

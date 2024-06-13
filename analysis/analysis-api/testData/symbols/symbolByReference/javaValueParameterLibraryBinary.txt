@@ -1,0 +1,24 @@
+KaValueParameterSymbol:
+  annotations: []
+  callableId: null
+  contextReceivers: []
+  generatedPrimaryConstructorProperty: null
+  hasDefaultValue: false
+  isCrossinline: false
+  isExtension: false
+  isImplicitLambdaParameter: false
+  isNoinline: false
+  isVararg: false
+  name: name
+  origin: JAVA_LIBRARY
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/String
+  symbolKind: LOCAL
+  typeParameters: []
+  getContainingFileSymbol: null
+  getContainingJvmClassName: JavaAnnotation
+  getContainingModule: KtLibraryModule "Library dependency"
+  deprecationStatus: null

@@ -22,7 +22,7 @@ public? open override [ResolvedTo(BODY_RESOLVE)] [IntersectionOverrideOriginalKe
 
 
 
-public? open override [ResolvedTo(BODY_RESOLVE)] [IntersectionOverrideOriginalKey=second/B.bar, SubstitutedOverrideOriginalKey=second/C.bar] var bar: R|T & Any|
+public? open override [ResolvedTo(BODY_RESOLVE)] [IntersectionOverrideOriginalKey=second/B.bar, SubstitutedOverrideOriginalKey=second/C.bar] var bar: R|T|
 
 
 

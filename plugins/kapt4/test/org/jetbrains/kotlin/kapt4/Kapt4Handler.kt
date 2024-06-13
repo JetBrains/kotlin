@@ -50,7 +50,7 @@ internal class Kapt4Handler(testServices: TestServices) : AnalysisHandler<Kapt4C
         val validate = KaptTestDirectives.NO_VALIDATION !in module.directives
         if (validate) {
             val (kaptContext) = info
-            val convertedFiles = getJavaFiles(info)
+            val convertedFiles = module.getJavaFiles(info)
             kaptContext.javaLog.interceptorData.files = convertedFiles.associateBy { it.sourceFile }
             kaptContext.compiler.enterTrees(convertedFiles)
         }
@@ -106,7 +106,7 @@ internal class Kapt4Handler(testServices: TestServices) : AnalysisHandler<Kapt4C
         }
     }
 
-    private fun getJavaFiles(
+    private fun TestModule.getJavaFiles(
         info: Kapt4ContextBinaryArtifact
     ): List<JCTree.JCCompilationUnit> {
         val (kaptContext, kaptStubs) = info
@@ -140,8 +140,8 @@ internal class Kapt4Handler(testServices: TestServices) : AnalysisHandler<Kapt4C
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
 
-    private fun createTempJavaFile(name: String, text: String): File {
-        return testServices.sourceFileProvider.javaSourceDirectory.resolve(name).also {
+    private fun TestModule.createTempJavaFile(name: String, text: String): File {
+        return testServices.sourceFileProvider.getJavaSourceDirectoryForModule(this).resolve(name).also {
             it.writeText(text)
         }
     }

@@ -5,28 +5,28 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.signatures.KtFirFunctionLikeDummySignature
-import org.jetbrains.kotlin.analysis.api.fir.signatures.KtFirVariableLikeDummySignature
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
-import org.jetbrains.kotlin.analysis.api.impl.base.components.AbstractKtSignatureSubstitutor
-import org.jetbrains.kotlin.analysis.api.signatures.KtFunctionLikeSignature
-import org.jetbrains.kotlin.analysis.api.signatures.KtVariableLikeSignature
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtVariableLikeSymbol
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.signatures.KaFirFunctionLikeDummySignature
+import org.jetbrains.kotlin.analysis.api.fir.signatures.KaFirVariableLikeDummySignature
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAbstractSignatureSubstitutor
+import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionLikeSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaVariableLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 
-internal class KtFirSignatureSubstitutor(
-    override val analysisSession: KtFirAnalysisSession
-) : AbstractKtSignatureSubstitutor(), KtFirAnalysisSessionComponent {
-    override fun <S : KtFunctionLikeSymbol> asSignature(symbol: S): KtFunctionLikeSignature<S> {
-        val firSymbol = (symbol as KtFirSymbol<*>).firSymbol as FirFunctionSymbol<*>
-        return KtFirFunctionLikeDummySignature<S>(analysisSession.token, firSymbol, analysisSession.firSymbolBuilder)
+internal class KaFirSignatureSubstitutor(
+    override val analysisSession: KaFirSession
+) : KaAbstractSignatureSubstitutor(), KaFirSessionComponent {
+    override fun <S : KaFunctionLikeSymbol> asSignature(symbol: S): KaFunctionLikeSignature<S> {
+        val firSymbol = (symbol as KaFirSymbol<*>).firSymbol as FirFunctionSymbol<*>
+        return KaFirFunctionLikeDummySignature<S>(analysisSession.token, firSymbol, analysisSession.firSymbolBuilder)
     }
 
-    override fun <S : KtVariableLikeSymbol> asSignature(symbol: S): KtVariableLikeSignature<S> {
-        val firSymbol = (symbol as KtFirSymbol<*>).firSymbol as FirVariableSymbol<*>
-        return KtFirVariableLikeDummySignature<S>(analysisSession.token, firSymbol, analysisSession.firSymbolBuilder)
+    override fun <S : KaVariableLikeSymbol> asSignature(symbol: S): KaVariableLikeSignature<S> {
+        val firSymbol = (symbol as KaFirSymbol<*>).firSymbol as FirVariableSymbol<*>
+        return KaFirVariableLikeDummySignature<S>(analysisSession.token, firSymbol, analysisSession.firSymbolBuilder)
     }
 }

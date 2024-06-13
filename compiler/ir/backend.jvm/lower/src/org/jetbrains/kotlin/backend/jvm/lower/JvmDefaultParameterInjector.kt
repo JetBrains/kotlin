@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.util.render
 @PhaseDescription(
     name = "DefaultParameterInjector",
     description = "Transform calls with default arguments into calls to stubs",
-    prerequisite = [FunctionReferenceLowering::class, InlineCallableReferenceToLambdaPhase::class]
+    prerequisite = [FunctionReferenceLowering::class, JvmInlineCallableReferenceToLambdaPhase::class]
 )
 internal class JvmDefaultParameterInjector(context: JvmBackendContext) : DefaultParameterInjector<JvmBackendContext>(
     context = context,

@@ -1,4 +1,4 @@
-// !LANGUAGE: -ProhibitNonConstValuesAsVarargsInAnnotations
+// LANGUAGE: -ProhibitNonConstValuesAsVarargsInAnnotations
 
 annotation class AnnE(val i: MyEnum)
 

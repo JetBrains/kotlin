@@ -1,4 +1,4 @@
-// !LANGUAGE: +EnumEntries -PrioritizedEnumEntries
+// LANGUAGE: +EnumEntries -PrioritizedEnumEntries
 // KT-59611
 // IGNORE_BACKEND: JS, JVM
 // WITH_STDLIB

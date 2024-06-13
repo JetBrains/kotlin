@@ -1,4 +1,4 @@
-// FILE: A.java
+// FILE: MyHelpers.java
 
 class MyHelpers {
     public static <T> T id(T it) {

@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.objcexport.testUtils
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
-import org.jetbrains.kotlin.analysis.api.standalone.KtAlwaysAccessibleLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
@@ -54,9 +51,6 @@ fun createStandaloneAnalysisApiSession(
     val currentArchitectureTarget = HostManager.host
     val nativePlatform = NativePlatforms.nativePlatformByTargets(listOf(currentArchitectureTarget))
     return buildStandaloneAnalysisAPISession {
-        @OptIn(KtAnalysisApiInternals::class)
-        registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
-
         buildKtModuleProvider {
             platform = nativePlatform
             val stdlibModule = addModule(

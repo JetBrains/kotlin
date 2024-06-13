@@ -10,8 +10,8 @@ R|kotlin/lazy|<R|kotlin/Int|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParamete
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] propertyDelegateScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-propertyDelegateScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Int|by R|kotlin/lazy|<R|kotlin/Int|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {

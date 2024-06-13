@@ -1,6 +1,6 @@
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 // WITH_STDLIB
-// IGNORE_BACKEND: NATIVE
+// IGNORE_BACKEND_K1: NATIVE
 // IGNORE_BACKEND_K2: ANY
 // FIR status: outdated code (expect and actual in the same module)
 

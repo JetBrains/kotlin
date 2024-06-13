@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
+import org.jetbrains.kotlin.gradle.KOTLIN_VERSION
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.runProcess
@@ -13,7 +14,7 @@ import kotlin.io.path.exists
 import kotlin.test.assertEquals
 
 internal enum class XcodeBuildMode {
-    NORMAL,
+    BUILD,
     TEST
 }
 
@@ -23,8 +24,10 @@ internal fun TestProject.buildXcodeProject(
     configuration: String = "Debug",
     destination: String = "generic/platform=iOS Simulator",
     sdk: String = "iphonesimulator",
-    buildMode: XcodeBuildMode = XcodeBuildMode.NORMAL,
-    extraArguments: Map<String, Any> = emptyMap(),
+    buildMode: XcodeBuildMode = XcodeBuildMode.BUILD,
+    testRunEnvironment: Map<String, String> = emptyMap(),
+    buildSettingOverrides: Map<String, String> = emptyMap(),
+    expectedExitCode: Int = 0,
 ) {
     prepareForXcodebuild()
 
@@ -35,7 +38,9 @@ internal fun TestProject.buildXcodeProject(
         sdk = sdk,
         destination = destination,
         buildMode = buildMode,
-        extraArguments = extraArguments
+        buildSettingOverrides = buildSettingOverrides,
+        testRunEnvironment = testRunEnvironment,
+        expectedExitCode = expectedExitCode,
     )
 }
 
@@ -48,12 +53,14 @@ internal fun TestProject.xcodebuild(
     sdk: String? = null,
     arch: String? = null,
     destination: String? = null,
-    buildMode: XcodeBuildMode = XcodeBuildMode.NORMAL,
-    extraArguments: Map<String, Any> = emptyMap(),
+    buildMode: XcodeBuildMode = XcodeBuildMode.BUILD,
+    testRunEnvironment: Map<String, String> = emptyMap(),
+    buildSettingOverrides: Map<String, String> = emptyMap(),
     derivedDataPath: Path? = projectPath.resolve("xcodeDerivedData"),
+    expectedExitCode: Int = 0,
 ) {
     xcodebuild(
-        buildList {
+        cmd = buildList {
             infix fun String.set(value: Any?) {
                 if (value != null) {
                     add(this)
@@ -77,15 +84,20 @@ internal fun TestProject.xcodebuild(
             "-destination" set destination
             "-derivedDataPath" set derivedDataPath
 
-            extraArguments.forEach {
+            buildSettingOverrides.forEach {
                 it.key eq it.value
             }
 
             if (buildMode == XcodeBuildMode.TEST) {
+                // Disable parallel testing to output stdout/stderr from tests to xcodebuild
+                add("-parallel-testing-enabled")
+                add("NO")
                 add("test")
             }
         },
-        workingDir,
+        workingDir = workingDir,
+        testRunEnvironment = testRunEnvironment,
+        expectedExitCode = expectedExitCode,
     )
 }
 
@@ -96,7 +108,7 @@ internal fun TestProject.prepareForXcodebuild() {
         .takeIf(Path::exists)
         ?.let {
             it.append("kotlin_version=${buildOptions.kotlinVersion}")
-            it.append("test_fixes_version=${buildOptions.kotlinVersion}")
+            it.append("test_fixes_version=${KOTLIN_VERSION}")
             buildOptions.konanDataDir?.let { konanDataDir ->
                 it.append("konan.data.dir=${konanDataDir.toAbsolutePath().normalize()}")
             }
@@ -105,14 +117,22 @@ internal fun TestProject.prepareForXcodebuild() {
     build(":wrapper")
 }
 
-private fun TestProject.xcodebuild(cmd: List<String>, workingDir: Path) {
+private fun TestProject.xcodebuild(
+    cmd: List<String>,
+    workingDir: Path,
+    testRunEnvironment: Map<String, String>,
+    expectedExitCode: Int,
+) {
     val xcodebuildResult = runProcess(
         cmd = cmd,
-        environmentVariables = environmentVariables.environmentalVariables,
+        environmentVariables = environmentVariables.environmentalVariables + testRunEnvironment.mapKeys {
+            // e.g. TEST_RUNNER_FOO prefixed env gets passed to tests in "xcodebuild test" as FOO env
+            "TEST_RUNNER_" + it.key
+        },
         workingDir = workingDir.toFile(),
     )
     assertProcessRunResult(xcodebuildResult) {
-        assertEquals(0, exitCode, "Exit code mismatch for `xcodebuild`.")
+        assertEquals(expectedExitCode, exitCode, "Exit code mismatch for `xcodebuild`.")
     }
 }
 

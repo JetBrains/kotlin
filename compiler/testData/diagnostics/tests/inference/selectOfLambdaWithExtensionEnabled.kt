@@ -1,4 +1,4 @@
-// !LANGUAGE: +ConsiderExtensionReceiverFromConstrainsInLambda
+// LANGUAGE: +ConsiderExtensionReceiverFromConstrainsInLambda
 // FIR_IDENTICAL
 // SKIP_TXT
 

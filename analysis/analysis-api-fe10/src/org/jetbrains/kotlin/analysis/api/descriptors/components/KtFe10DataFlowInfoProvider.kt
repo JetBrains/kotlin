@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisNonPublicApi
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.components.KtDataFlowExitPointSnapshot
-import org.jetbrains.kotlin.analysis.api.components.KtDataFlowInfoProvider
+import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.KaDataFlowExitPointSnapshot
+import org.jetbrains.kotlin.analysis.api.components.KaDataFlowInfoProvider
 import org.jetbrains.kotlin.psi.KtExpression
 
-@OptIn(KtAnalysisNonPublicApi::class)
-internal class KtFe10DataFlowInfoProvider(override val analysisSession: KtAnalysisSession) : KtDataFlowInfoProvider() {
-    override fun getExitPointSnapshot(statements: List<KtExpression>): KtDataFlowExitPointSnapshot {
+@OptIn(KaAnalysisNonPublicApi::class)
+internal class KaFe10DataFlowInfoProvider(override val analysisSession: KaSession) : KaDataFlowInfoProvider() {
+    override fun getExitPointSnapshot(statements: List<KtExpression>): KaDataFlowExitPointSnapshot {
         throw NotImplementedError("Method is not implemented for FE 1.0")
     }
 }

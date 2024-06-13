@@ -36,6 +36,9 @@ FILE fqName:<root> fileName:/1.kt
         public open fun toString (): kotlin.String declared in <root>.Java1
         public open fun toString (): kotlin.String declared in <root>.Java3
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: @[FlexibleNullability] T of <root>.Java3? declared in <root>.Java3
   CLASS CLASS name:E modality:FINAL visibility:public superTypes:[<root>.Java1<R of <root>.E>; <root>.Java2<R of <root>.E>; <root>.Java3<R of <root>.E>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.E<R of <root>.E>
     TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false
@@ -76,6 +79,9 @@ FILE fqName:<root> fileName:/1.kt
         public open fun toString (): kotlin.String declared in <root>.Java2
         public open fun toString (): kotlin.String declared in <root>.Java3
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: @[FlexibleNullability] T of <root>.Java3? declared in <root>.Java3
   CLASS INTERFACE name:A modality:ABSTRACT visibility:public superTypes:[<root>.Java1<R of <root>.A>; <root>.Java2<R of <root>.A>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A<R of <root>.A>
     TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false
@@ -327,9 +333,9 @@ FILE fqName:<root> fileName:/1.kt
           o: CONST Int type=kotlin.Int value=2
       VAR name:k3 type:kotlin.String [val]
         TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] T of <root>.Java3? visibility:public declared in <root>.Java3' type=@[FlexibleNullability] kotlin.String? origin=null
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] T of <root>.Java3? visibility:public declared in <root>.Java3' type=@[FlexibleNullability] kotlin.String? superQualifierSymbol=<root>.B origin=null
             receiver: GET_VAR 'b: <root>.B<kotlin.String> declared in <root>.test' type=<root>.B<kotlin.String> origin=null
-      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] T of <root>.Java3? visibility:public declared in <root>.Java3' type=kotlin.Unit origin=EQ
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] T of <root>.Java3? visibility:public declared in <root>.Java3' type=kotlin.Unit superQualifierSymbol=<root>.B origin=EQ
         receiver: GET_VAR 'b: <root>.B<kotlin.String> declared in <root>.test' type=<root>.B<kotlin.String> origin=null
         value: CONST String type=kotlin.String value="1"
       VAR name:k4 type:kotlin.String [val]
@@ -380,9 +386,9 @@ FILE fqName:<root> fileName:/1.kt
           o: CONST Null type=kotlin.Nothing? value=null
       VAR name:k15 type:kotlin.Int [val]
         TYPE_OP type=kotlin.Int origin=IMPLICIT_NOTNULL typeOperand=kotlin.Int
-          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] T of <root>.Java3? visibility:public declared in <root>.Java3' type=@[FlexibleNullability] kotlin.Int? origin=null
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] T of <root>.Java3? visibility:public declared in <root>.Java3' type=@[FlexibleNullability] kotlin.Int? superQualifierSymbol=<root>.E origin=null
             receiver: GET_VAR 'e: <root>.E<kotlin.Int> declared in <root>.test' type=<root>.E<kotlin.Int> origin=null
-      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] T of <root>.Java3? visibility:public declared in <root>.Java3' type=kotlin.Unit origin=EQ
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] T of <root>.Java3? visibility:public declared in <root>.Java3' type=kotlin.Unit superQualifierSymbol=<root>.E origin=EQ
         receiver: GET_VAR 'e: <root>.E<kotlin.Int> declared in <root>.test' type=<root>.E<kotlin.Int> origin=null
         value: CONST Int type=kotlin.Int value=1
       VAR name:k16 type:kotlin.Int [val]

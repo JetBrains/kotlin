@@ -1,6 +1,5 @@
-// !LANGUAGE: +InlineClasses
+// LANGUAGE: +InlineClasses
 // ALLOW_KOTLIN_PACKAGE
-// JVM_ABI_K1_K2_DIFF: KT-62750
 
 // FILE: uint.kt
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")

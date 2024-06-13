@@ -109,7 +109,7 @@ publishing {
             artifact(jar)
             artifact(sourcesJar)
             artifact(javadocJar)
-            plugins.KotlinBuildPublishingPluginKt.configureKotlinPomAttributes(it, project, "Kotlin Common Standard Library (legacy, use kotlin-stdlib instead)", "jar")
+            plugins.KotlinBuildPublishingPluginKt.configureKotlinPomAttributes(it, project, "Kotlin Common Standard Library (legacy, use kotlin-stdlib instead)", "jar", null)
         }
         SbomKt.configureSbom(project, "Main", "kotlin-stdlib-common", ["compileClasspath"], mainPublication)
     }

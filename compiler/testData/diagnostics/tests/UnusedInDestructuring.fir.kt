@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: +UNUSED_VARIABLE
+// DIAGNOSTICS: +UNUSED_VARIABLE
 
 data class D(val x: Int, val y: Int, val z: Int)
 fun foo(): Int {

@@ -1,24 +1,24 @@
-KtJavaFieldSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /JavaClass.field
+KaJavaFieldSymbol:
+  annotations: []
+  callableId: /JavaClass.field
   contextReceivers: []
   isExtension: false
   isStatic: false
   isVal: false
   modality: FINAL
   name: field
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: JavaClass
   getContainingFileSymbol: null
   getContainingJvmClassName: JavaClass

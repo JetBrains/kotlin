@@ -9,8 +9,8 @@ public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] getterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-getterScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/String|

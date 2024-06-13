@@ -28,7 +28,7 @@ fun FirAnnotation.getAccessLevel(session: FirSession): AccessLevel {
 private fun FirAnnotation.getArgumentAsString(field: Name, session: FirSession): String? {
     val argument = findArgumentByName(field)?.evaluateAs<FirExpression>(session) ?: return null
     return when (argument) {
-        is FirLiteralExpression<*> -> argument.value as? String
+        is FirLiteralExpression -> argument.value as? String
         is FirEnumEntryDeserializedAccessExpression -> argument.enumEntryName.identifier
         is FirQualifiedAccessExpression -> {
             @OptIn(UnsafeExpressionUtility::class)

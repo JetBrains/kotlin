@@ -4,12 +4,9 @@
  */
 package org.jetbrains.kotlin.native.interop.gen.jvm
 
+import kotlinx.metadata.klib.*
 import kotlin.metadata.*
 import kotlin.metadata.internal.common.KmModuleFragment
-import kotlinx.metadata.klib.KlibModuleFragmentWriteStrategy
-import kotlinx.metadata.klib.KlibModuleMetadata
-import kotlinx.metadata.klib.className
-import kotlinx.metadata.klib.fqName
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.impl.KonanLibraryLayoutForWriter
@@ -27,7 +24,6 @@ fun createInteropLibrary(
     metadata: KlibModuleMetadata,
     outputPath: String,
     moduleName: String,
-    libraryVersion: String,
     nativeBitcodeFiles: List<String>,
     target: KonanTarget,
     manifest: Properties,
@@ -37,7 +33,6 @@ fun createInteropLibrary(
     staticLibraries: List<String>
 ) {
     val version = KotlinLibraryVersioning(
-            libraryVersion = libraryVersion,
             abiVersion = KotlinAbiVersion.CURRENT,
             compilerVersion = KotlinCompilerVersion.VERSION,
             metadataVersion = KlibMetadataVersion.INSTANCE.toString(),
@@ -54,55 +49,12 @@ fun createInteropLibrary(
             shortName = shortName,
             layout = layout
     ).apply {
-        val serializedMetadata = metadata.write(ChunkingWriteStrategy())
+        val serializedMetadata = metadata.write(ChunkedKlibModuleFragmentWriteStrategy(topLevelClassifierDeclarationsPerFile = 128))
         addMetadata(SerializedMetadata(serializedMetadata.header, serializedMetadata.fragments, serializedMetadata.fragmentNames))
         nativeBitcodeFiles.forEach(this::addNativeBitcode)
         addManifestAddend(manifest)
         addLinkDependencies(dependencies)
         staticLibraries.forEach(this::addIncludedBinary)
         commit()
-    }
-}
-
-// TODO: Consider adding it to kotlinx-metadata-klib.
-class ChunkingWriteStrategy(
-        private val classesChunkSize: Int = 128,
-        private val packagesChunkSize: Int = 128
-) : KlibModuleFragmentWriteStrategy {
-
-    override fun processPackageParts(parts: List<KmModuleFragment>): List<KmModuleFragment> {
-        if (parts.isEmpty()) return emptyList()
-        val fqName = parts.first().fqName
-                ?: error("KmModuleFragment should have a not-null fqName!")
-        val classFragments = parts.flatMap(KmModuleFragment::classes)
-                .chunked(classesChunkSize) { chunk ->
-                    KmModuleFragment().also { fragment ->
-                        fragment.fqName = fqName
-                        fragment.classes += chunk
-                        chunk.mapTo(fragment.className, KmClass::name)
-                    }
-                }
-        val packageFragments = parts.mapNotNull(KmModuleFragment::pkg)
-                .flatMap { it.functions + it.typeAliases + it.properties }
-                .chunked(packagesChunkSize) { chunk ->
-                    KmModuleFragment().also { fragment ->
-                        fragment.fqName = fqName
-                        fragment.pkg = KmPackage().also { pkg ->
-                            pkg.fqName = fqName
-                            pkg.properties += chunk.filterIsInstance<KmProperty>()
-                            pkg.functions += chunk.filterIsInstance<KmFunction>()
-                            pkg.typeAliases += chunk.filterIsInstance<KmTypeAlias>()
-                        }
-                    }
-                }
-        val result = classFragments + packageFragments
-        return if (result.isEmpty()) {
-            // We still need to emit empty packages because they may
-            // represent parts of package declaration (e.g. platform.[]).
-            // Tooling (e.g. `klib contents`) expects this kind of behavior.
-            parts
-        } else {
-            result
-        }
     }
 }

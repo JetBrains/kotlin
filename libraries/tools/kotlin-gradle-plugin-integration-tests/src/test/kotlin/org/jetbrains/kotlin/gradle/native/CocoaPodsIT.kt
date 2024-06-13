@@ -28,7 +28,6 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsSource
 import java.nio.file.Path
 import java.util.stream.Stream
-import java.util.zip.ZipFile
 import kotlin.io.path.*
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
@@ -736,12 +735,13 @@ class CocoaPodsIT : KGPBaseTest() {
         nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
             buildGradleKts.addPod("AFNetworking")
             buildWithCocoapodsWrapper("cinteropAFNetworkingIOS") {
-                val cinteropKlib = projectPath.resolve("build/classes/kotlin/iOS/main/cinterop/cocoapods-cinterop-AFNetworking.klib")
-                val manifestLines = ZipFile(cinteropKlib.toFile()).use { zip ->
-                    zip.getInputStream(zip.getEntry("default/manifest")).bufferedReader().use { it.readLines() }
-                }
+                val cinteropManifest = projectPath.resolve("build/classes/kotlin/iOS/main/cinterop/cocoapods-cinterop-AFNetworking.klib")
+                    .useAsZipFile { zipFile ->
+                        zipFile.readKLibManifest()
+                    }
 
-                assertContains(manifestLines, "linkerOpts=-framework AFNetworking")
+                assertContains(cinteropManifest, "linkerOpts")
+                assertEquals(cinteropManifest["linkerOpts"], "-framework AFNetworking")
             }
         }
     }
@@ -1064,6 +1064,30 @@ class CocoaPodsIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Build succeeded when embedAndSign task is used with pod-dependencies and diagnostic supressed with property")
+    @GradleTest
+    fun testEmbedAndSignNotUsedWithPodDepsDiagnosticDisabled(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            gradleVersion = gradleVersion,
+            environmentVariables = EnvironmentalVariables(
+                "CONFIGURATION" to "debug",
+                "SDK_NAME" to "iphoneos123",
+                "ARCHS" to "arm64",
+                "TARGET_BUILD_DIR" to tempDir.absolutePathString(),
+                "FRAMEWORKS_FOLDER_PATH" to "frameworks",
+                "BUILT_PRODUCTS_DIR" to tempDir.absolutePathString(),
+            )
+        ) {
+
+            buildGradleKts.addKotlinBlock("iosArm64()")
+            buildGradleKts.addCocoapodsBlock("""pod("Base64", version="1.1.2")""")
+
+            build(":embedAndSignPodAppleFrameworkForXcode", "-Pkotlin.apple.deprecated.allowUsingEmbedAndSignWithCocoaPodsDependencies=true") {
+                assertNoDiagnostic(CocoapodsPluginDiagnostics.EmbedAndSignUsedWithPodDependencies)
+            }
+        }
+    }
+
     internal class GradleAndIsStaticArgumentsProvider : GradleArgumentsProvider() {
         override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
             return super.provideArguments(context).flatMap { arguments ->
@@ -1091,7 +1115,8 @@ class CocoaPodsIT : KGPBaseTest() {
             )
         ) {
 
-            buildGradleKts.addKotlinBlock("""
+            buildGradleKts.addKotlinBlock(
+                """
                 iosArm64()
                 
                 targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget>().configureEach {
@@ -1099,7 +1124,8 @@ class CocoaPodsIT : KGPBaseTest() {
                        isStatic = $isStatic
                    }
                }
-            """.trimIndent())
+            """.trimIndent()
+            )
 
             buildGradleKts.addCocoapodsBlock("""pod("Base64", version="1.1.2")""")
 

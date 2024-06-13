@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +SuspendConversion
+// LANGUAGE: +SuspendConversion
 
 fun useSuspend(fn: suspend () -> Unit) {}
 fun useSuspendNullable(fn: (suspend () -> Unit)?) {}

@@ -35,6 +35,27 @@ fun <Element : AbstractElement<Element, *, *>> Element.elementAncestorsAndSelfBr
     }
 
 /**
+ * Returns a top-down hierarchy of inheritance, from this element's descendants to the leaf elements, recursively,
+ * in a depth first manner.
+ */
+fun <Element : AbstractElement<Element, *, *>> Element.elementDescendantsDepthFirst(): Sequence<Element> = sequence {
+    for (descendant in subElements) {
+        yield(descendant)
+        yieldAll(descendant.elementDescendantsDepthFirst())
+    }
+}
+
+/**
+ * Returns a top-down hierarchy of inheritance, from this element to its leaf elements, recursively,
+ * in a depth first manner.
+ */
+fun <Element : AbstractElement<Element, *, *>> Element.elementDescendantsAndSelfDepthFirst(): Sequence<Element> =
+    sequenceOf(this) + elementDescendantsDepthFirst()
+
+fun <Element : AbstractElement<Element, *, *>> Element.isSubclassOf(other: Element): Boolean =
+    elementAncestorsAndSelfDepthFirst().any { it == other }
+
+/**
  * For each tree element, sets its [AbstractElement.baseTransformerType] to one of its parents if that parent type is used at least once as
  * a type of a field, except when that field is explicitly opted out of it via
  * [AbstractField.useInBaseTransformerDetection].

@@ -1,4 +1,4 @@
-// !LANGUAGE: +KotlinFunInterfaceConstructorReference
+// LANGUAGE: +KotlinFunInterfaceConstructorReference
 
 // DONT_TARGET_EXACT_BACKEND: JVM
 //  ^ old JVM BE generates bogus code

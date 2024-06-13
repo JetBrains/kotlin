@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.backend.utils.InjectedValue
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrMemberWithContainerSource
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
 import org.jetbrains.kotlin.ir.util.SymbolTable
 
@@ -25,9 +26,7 @@ interface Fir2IrExtensions {
 
     val externalOverridabilityConditions: List<IrExternalOverridabilityCondition>
 
-    fun generateOrGetFacadeClass(declaration: IrMemberWithContainerSource, components: Fir2IrComponents): IrClass?
     fun deserializeToplevelClass(irClass: IrClass, components: Fir2IrComponents): Boolean
-    fun registerDeclarations(symbolTable: SymbolTable)
     fun findInjectedValue(calleeReference: FirReference, conversionScope: Fir2IrConversionScope): InjectedValue?
 
     /**
@@ -45,6 +44,8 @@ interface Fir2IrExtensions {
      */
     fun isTrueStatic(declaration: FirCallableDeclaration, session: FirSession): Boolean
 
+    fun initializeIrBuiltInsAndSymbolTable(irBuiltIns: IrBuiltIns, symbolTable: SymbolTable)
+
     object Default : Fir2IrExtensions {
         override val irNeedsDeserialization: Boolean
             get() = false
@@ -53,11 +54,10 @@ interface Fir2IrExtensions {
             get() = false
 
         override val externalOverridabilityConditions: List<IrExternalOverridabilityCondition> = emptyList()
-        override fun generateOrGetFacadeClass(declaration: IrMemberWithContainerSource, components: Fir2IrComponents): IrClass? = null
         override fun deserializeToplevelClass(irClass: IrClass, components: Fir2IrComponents): Boolean = false
-        override fun registerDeclarations(symbolTable: SymbolTable) {}
-        override fun findInjectedValue(calleeReference: FirReference, conversionScope: Fir2IrConversionScope) = null
+        override fun findInjectedValue(calleeReference: FirReference, conversionScope: Fir2IrConversionScope): Nothing? = null
         override fun hasBackingField(property: FirProperty, session: FirSession): Boolean = property.hasBackingField
         override fun isTrueStatic(declaration: FirCallableDeclaration, session: FirSession): Boolean = false
+        override fun initializeIrBuiltInsAndSymbolTable(irBuiltIns: IrBuiltIns, symbolTable: SymbolTable) {}
     }
 }

@@ -105,7 +105,6 @@ inline fun buildSimpleFunctionCopy(original: FirSimpleFunction, init: FirSimpleF
     copyBuilder.body = original.body
     copyBuilder.contractDescription = original.contractDescription
     copyBuilder.name = original.name
-    copyBuilder.symbol = original.symbol
     copyBuilder.annotations.addAll(original.annotations)
     copyBuilder.typeParameters.addAll(original.typeParameters)
     return copyBuilder.apply(init).build()

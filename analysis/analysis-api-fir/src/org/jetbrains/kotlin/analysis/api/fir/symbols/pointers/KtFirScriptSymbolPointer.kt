@@ -5,20 +5,20 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtScriptSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaScriptSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirScript
 
-internal class KtFirScriptSymbolPointer(private val filePointer: KtSymbolPointer<KtFileSymbol>) : KtSymbolPointer<KtScriptSymbol>() {
-    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
-    override fun restoreSymbol(analysisSession: KtAnalysisSession): KtScriptSymbol? {
-        require(analysisSession is KtFirAnalysisSession)
+internal class KaFirScriptSymbolPointer(private val filePointer: KaSymbolPointer<KaFileSymbol>) : KaSymbolPointer<KaScriptSymbol>() {
+    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KaSession.restoreSymbol")
+    override fun restoreSymbol(analysisSession: KaSession): KaScriptSymbol? {
+        require(analysisSession is KaFirSession)
         val file = with(analysisSession) {
             filePointer.restoreSymbol()?.firSymbol?.fir as? FirFile
         } ?: return null
@@ -27,7 +27,7 @@ internal class KtFirScriptSymbolPointer(private val filePointer: KtSymbolPointer
         return analysisSession.firSymbolBuilder.buildScriptSymbol(script.symbol)
     }
 
-    override fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = this === other ||
-            other is KtFirScriptSymbolPointer &&
+    override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||
+            other is KaFirScriptSymbolPointer &&
             other.filePointer.pointsToTheSameSymbolAs(filePointer)
 }

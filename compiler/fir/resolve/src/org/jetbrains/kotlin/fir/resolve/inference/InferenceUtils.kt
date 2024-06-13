@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferValueParameterType
-import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
-import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
+import org.jetbrains.kotlin.fir.resolve.removeParameterNameAnnotation
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -25,6 +25,7 @@ fun extractLambdaInfoFromFunctionType(
     components: BodyResolveComponents,
     candidate: Candidate?,
     allowCoercionToExtensionReceiver: Boolean,
+    sourceForFunctionExpression: KtSourceElement?,
 ): ResolvedLambdaAtom? {
     val session = components.session
     if (expectedType == null) return null
@@ -36,6 +37,7 @@ fun extractLambdaInfoFromFunctionType(
             components,
             candidate,
             allowCoercionToExtensionReceiver,
+            sourceForFunctionExpression,
         )
     }
     val expectedFunctionKind = expectedType.functionTypeKind(session) ?: return null
@@ -47,13 +49,6 @@ fun extractLambdaInfoFromFunctionType(
             FunctionTypeKind.Function
         }
 
-    val singleStatement = argument.body?.statements?.singleOrNull() as? FirReturnExpression
-    if (argument.returnType == null && singleStatement != null &&
-        singleStatement.target.labeledElement == argument && singleStatement.result is FirUnitExpression
-    ) {
-        // Simply { }, i.e., function literals without body. Raw FIR added an implicit return with an implicit unit type ref.
-        argument.replaceReturnTypeRef(session.builtinTypes.unitType)
-    }
     val returnType = argument.returnType ?: expectedType.returnType(session)
 
     // `fun (x: T) = ...` and `fun T.() = ...` are both instances of `T.() -> V` and `(T) -> V`; `fun () = ...` is not.
@@ -70,6 +65,11 @@ fun extractLambdaInfoFromFunctionType(
         val toDrop = forExtension + contextReceiversNumber
 
         if (toDrop > 0) it.drop(toDrop) else it
+    }.map {
+        // @ParameterName is assumed to be used for Ctrl+P on the call site of a property with a function type.
+        // Propagating it further may affect further inference might work weirdly, and for sure,
+        // it's not expected to leak in implicitly typed declarations.
+        it.removeParameterNameAnnotation(session)
     }
 
     var coerceFirstParameterToExtensionReceiver = false
@@ -117,8 +117,9 @@ fun extractLambdaInfoFromFunctionType(
         parameters,
         returnType,
         typeVariableForLambdaReturnType = returnTypeVariable,
-        coerceFirstParameterToExtensionReceiver
+        coerceFirstParameterToExtensionReceiver,
+        sourceForFunctionExpression,
     ).also {
-        candidate?.postponedAtoms?.add(it)
+        candidate?.addPostponedAtom(it)
     }
 }

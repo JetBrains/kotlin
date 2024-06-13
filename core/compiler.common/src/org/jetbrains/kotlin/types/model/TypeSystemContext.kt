@@ -156,7 +156,7 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
     fun TypeConstructorMarker.isUnitTypeConstructor(): Boolean
 
-    fun TypeConstructorMarker.getApproximatedIntegerLiteralType(): KotlinTypeMarker
+    fun TypeConstructorMarker.getApproximatedIntegerLiteralType(expectedType: KotlinTypeMarker?): KotlinTypeMarker
 
     fun TypeConstructorMarker.isCapturedTypeConstructor(): Boolean
 
@@ -236,10 +236,15 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
     fun TypeVariableMarker.defaultType(): SimpleTypeMarker
 
-    fun createTypeWithAlternativeForIntersectionResult(
+    fun createTypeWithUpperBoundForIntersectionResult(
         firstCandidate: KotlinTypeMarker,
         secondCandidate: KotlinTypeMarker
     ): KotlinTypeMarker
+
+    /**
+     * Only for K2
+     */
+    fun KotlinTypeMarker.getUpperBoundForApproximationOfIntersectionType() : KotlinTypeMarker? = null
 
     fun KotlinTypeMarker.isSpecial(): Boolean
 
@@ -302,13 +307,14 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
      * In K1, in case nullable it was just Foo?, so constraint was Foo? <: T
      * But it's not 100% correct because prevent having not-nullable upper constraint on T while initial (Foo? <: (T..T?)) is not violated
      *
-     * In FIR, we try to have a correct one: (Foo & Any..Foo?) <: T
+     * In K2 (with +JavaTypeParameterDefaultRepresentationWithDNN), we try to have a correct one: (Foo & Any..Foo?) <: T
      *
      * The same logic applies for T! <: UpperConstraint, as well
      * In K1, it was reduced to T <: UpperConstraint..UpperConstraint?
-     * In FIR, we use UpperConstraint & Any..UpperConstraint?
+     * In K2 (with +JavaTypeParameterDefaultRepresentationWithDNN), we use UpperConstraint & Any..UpperConstraint?
      *
-     * In future once we have only FIR (or FE 1.0 behavior is fixed) this method should be inlined to the use-site
+     * In future once we have only K2 (or FE 1.0 behavior is fixed) this method should be inlined to the use-site
+     * TODO: Get rid of this function once KT-59138 is fixed and the relevant feature for disabling it will be removed
      */
     fun useRefinedBoundsForTypeVariableInFlexiblePosition(): Boolean
 
@@ -378,7 +384,8 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
 
     fun SimpleTypeMarker.originalIfDefinitelyNotNullable(): SimpleTypeMarker = asDefinitelyNotNullType()?.original() ?: this
 
-    fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(): KotlinTypeMarker
+    fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(): KotlinTypeMarker = makeDefinitelyNotNullOrNotNull(preserveAttributes = false)
+    fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(preserveAttributes: Boolean): KotlinTypeMarker
     fun SimpleTypeMarker.makeSimpleTypeDefinitelyNotNullOrNotNull(): SimpleTypeMarker
     fun SimpleTypeMarker.isMarkedNullable(): Boolean
     fun KotlinTypeMarker.isMarkedNullable(): Boolean =
@@ -552,10 +559,6 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun SimpleTypeMarker.isPrimitiveType(): Boolean
 
     fun KotlinTypeMarker.getAttributes(): List<AnnotationMarker>
-
-    fun KotlinTypeMarker.hasCustomAttributes(): Boolean
-
-    fun KotlinTypeMarker.getCustomAttributes(): List<AnnotationMarker>
 
     fun substitutionSupertypePolicy(type: SimpleTypeMarker): TypeCheckerState.SupertypesPolicy
 

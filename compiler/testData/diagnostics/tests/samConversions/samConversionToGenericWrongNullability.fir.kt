@@ -14,7 +14,7 @@ public interface StringSupplier {
     String get();
 }
 
-// FILE: JavaTestValueProvider.java
+// FILE: TestValueProvider.java
 import org.jetbrains.annotations.Nullable;
 
 public class TestValueProvider {
@@ -44,7 +44,11 @@ fun main() {
         <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>TestValueProvider.getNullableString()<!>
     }
 
-    Supplier<String>  {
+    val sam: Supplier<String> = Supplier{
+        <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>TestValueProvider.getNullableString()<!>
+    }
+
+    Supplier<String> {
         val x = 1
         <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>when(x) {
             1 -> returnNullableString()
@@ -64,11 +68,11 @@ fun main() {
         ""
     }
 
-    val sam: Supplier<String> = Supplier {
-        <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>returnNullableString()<!>
+    Supplier<String?> {
+        returnNullableString()
     }
 
-    Supplier<String?> {
+    val sam2: Supplier<String?> = Supplier {
         returnNullableString()
     }
 
@@ -80,6 +84,10 @@ fun main() {
         returnNullableString()
     }
 
+    val sam3: Supplier<String> = Supplier{
+        <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>returnNullableString()<!>
+    }
+
     Supplier<String>(
         fun(): String {
             if (true) return <!ARGUMENT_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>returnNullableString()<!>
@@ -87,12 +95,26 @@ fun main() {
         }
     )
 
+    val sam4: Supplier<String> = Supplier {
+        <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>fun(): String {
+            if (true) return <!RETURN_TYPE_MISMATCH!>returnNullableString()<!>
+            return ""
+        }<!>
+    }
+
     Supplier<String>(
         fun(): String? {
-        if (true) return <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>returnNullableString()<!>
-        return ""
-    }
+            if (true) return <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>returnNullableString()<!>
+            return ""
+        }
     )
+
+    val sam5: Supplier<String> = Supplier {
+        <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>fun(): String? {
+            if (true) return returnNullableString()
+            return ""
+        }<!>
+    }
 
     Supplier<String> {
         if (true) return@Supplier <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>returnNullableString()<!>
@@ -108,6 +130,10 @@ fun main() {
     }
 
     MySupplier<String> {
+        returnNullableString()
+    }
+
+    val mySam: MySupplier<String> = MySupplier{
         returnNullableString()
     }
 
@@ -140,26 +166,26 @@ import java.util.function.Supplier
 fun scopes () {
     Supplier<String> {
         <!ARGUMENT_TYPE_MISMATCH!>run {
-        returnNullableString()
-    }<!>
+            returnNullableString()
+        }<!>
     }
 
     Supplier<String> {
         <!ARGUMENT_TYPE_MISMATCH!>run {
-        return@run <!ARGUMENT_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>returnNullableString()<!>
-    }<!>
+            return@run <!ARGUMENT_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>returnNullableString()<!>
+        }<!>
     }
 
     Supplier<String> {
         <!ARGUMENT_TYPE_MISMATCH!>run run@ {
-        return@run <!ARGUMENT_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>returnNullableString()<!>
-    }<!>
+            return@run <!ARGUMENT_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>returnNullableString()<!>
+        }<!>
     }
 
     Supplier<String> lambda@ {
         <!ARGUMENT_TYPE_MISMATCH!>run {
-        return@lambda returnNullableString()
-    }<!>
+            return@lambda returnNullableString()
+        }<!>
     }
 }
 

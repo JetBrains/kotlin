@@ -6,23 +6,26 @@
 package org.jetbrains.kotlin.analysis.api.symbols
 
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithKind
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 
 /**
- *  A [KtSymbol] created from a [destructuring declaration][org.jetbrains.kotlin.psi.KtDestructuringDeclaration] (possibly from a lambda parameter).
+ *  A [KaSymbol] created from a [destructuring declaration][org.jetbrains.kotlin.psi.KtDestructuringDeclaration] (possibly from a lambda parameter).
  *
  * Examples:
- * - `val (a, _) = Pair(1, 2)` leads to `KtDestructuringDeclarationSymbol(entries = [a, _])`
- * - `Pair(1, _).let { (a, b) -> }` leads to `KtDestructuringDeclarationSymbol(entries = [a, _])`
+ * - `val (a, _) = Pair(1, 2)` leads to `KaDestructuringDeclarationSymbol(entries = [a, _])`
+ * - `Pair(1, _).let { (a, b) -> }` leads to `KaDestructuringDeclarationSymbol(entries = [a, _])`
  */
-public abstract class KtDestructuringDeclarationSymbol : KtDeclarationSymbol, KtSymbolWithKind {
-    final override val symbolKind: KtSymbolKind get() = withValidityAssertion { KtSymbolKind.LOCAL }
-    final override val typeParameters: List<KtTypeParameterSymbol> get() = withValidityAssertion { emptyList() }
+public abstract class KaDestructuringDeclarationSymbol : KaDeclarationSymbol, KaSymbolWithKind {
+    final override val symbolKind: KaSymbolKind get() = withValidityAssertion { KaSymbolKind.LOCAL }
+    final override val typeParameters: List<KaTypeParameterSymbol> get() = withValidityAssertion { emptyList() }
 
     /**
-     * A list of [KtLocalVariableSymbol]s which were created from this destructuring declaration.
+     * A list of [KaVariableSymbol]s which were created from this destructuring declaration.
+     *
+     * The entries are usually [KaLocalVariableSymbol]s. However, for top-level destructuring declarations in scripts, the entries are
+     * [KaPropertySymbol]s instead.
      *
      * E.g., for the following code:
      * ```
@@ -38,7 +41,9 @@ public abstract class KtDestructuringDeclarationSymbol : KtDeclarationSymbol, Kt
      * val _: String
      * ```
      */
-    public abstract val entries: List<KtLocalVariableSymbol>
+    public abstract val entries: List<KaVariableSymbol>
 
-    abstract override fun createPointer(): KtSymbolPointer<KtDestructuringDeclarationSymbol>
+    abstract override fun createPointer(): KaSymbolPointer<KaDestructuringDeclarationSymbol>
 }
+
+public typealias KtDestructuringDeclarationSymbol = KaDestructuringDeclarationSymbol

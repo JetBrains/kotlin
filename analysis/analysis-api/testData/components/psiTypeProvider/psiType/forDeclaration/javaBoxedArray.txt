@@ -1,2 +1,2 @@
-KtType: kotlin.Array<kotlin.Int!>!
+KaType: kotlin.Array<kotlin.Int!>!
 PsiType: java.lang.Integer[]

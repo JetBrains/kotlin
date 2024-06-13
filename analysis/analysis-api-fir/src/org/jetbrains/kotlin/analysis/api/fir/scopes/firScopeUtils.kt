@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.scopes
 
-import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.signatures.KtCallableSignature
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.name.Name
@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.name.Name
 
 internal fun FirScope.getCallableSymbols(
     callableNames: Collection<Name>,
-    builder: KtSymbolByFirBuilder
-): Sequence<KtCallableSymbol> = sequence {
+    builder: KaSymbolByFirBuilder
+): Sequence<KaCallableSymbol> = sequence {
     callableNames.forEach { name ->
         yieldList {
             processFunctionsByName(name) { firSymbol ->
@@ -35,8 +35,8 @@ internal fun FirScope.getCallableSymbols(
 
 internal fun FirScope.getCallableSignatures(
     callableNames: Collection<Name>,
-    builder: KtSymbolByFirBuilder
-): Sequence<KtCallableSignature<*>> = sequence {
+    builder: KaSymbolByFirBuilder
+): Sequence<KaCallableSignature<*>> = sequence {
     callableNames.forEach { name ->
         yieldList {
             processFunctionsByName(name) { firSymbol ->
@@ -51,7 +51,7 @@ internal fun FirScope.getCallableSignatures(
     }
 }
 
-internal fun FirScope.getClassifierSymbols(classLikeNames: Collection<Name>, builder: KtSymbolByFirBuilder): Sequence<KtClassifierSymbol> =
+internal fun FirScope.getClassifierSymbols(classLikeNames: Collection<Name>, builder: KaSymbolByFirBuilder): Sequence<KaClassifierSymbol> =
     sequence {
         classLikeNames.forEach { name ->
             yieldList {
@@ -62,7 +62,7 @@ internal fun FirScope.getClassifierSymbols(classLikeNames: Collection<Name>, bui
         }
     }
 
-internal fun FirScope.getConstructors(builder: KtSymbolByFirBuilder): Sequence<KtConstructorSymbol> =
+internal fun FirScope.getConstructors(builder: KaSymbolByFirBuilder): Sequence<KaConstructorSymbol> =
     sequence {
         yieldList {
             processDeclaredConstructors { firSymbol ->

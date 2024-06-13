@@ -21,7 +21,7 @@ open class CandidateCollector(
     private val groupNumbers = mutableListOf<TowerGroup>()
     private val candidates = mutableListOf<Candidate>()
 
-    var currentApplicability = CandidateApplicability.HIDDEN
+    var currentApplicability: CandidateApplicability = CandidateApplicability.HIDDEN
         private set
 
     private var bestGroup = TowerGroup.Last

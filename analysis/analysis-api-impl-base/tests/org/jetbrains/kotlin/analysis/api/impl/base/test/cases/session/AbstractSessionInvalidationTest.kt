@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session
 
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEventKind
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.directives.ModificationEventKind
 import org.jetbrains.kotlin.analysis.test.framework.directives.publishWildcardModificationEventsByDirective
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.test.services.assertions
  * of [modificationEventKind]. This allows [AbstractSessionInvalidationTest] to check all modification event kinds with the same original
  * test data.
  *
- * [AbstractSessionInvalidationTest] is a base class for invalidation tests of `KtAnalysisSession` and `LLFirSession`, which share the test
+ * [AbstractSessionInvalidationTest] is a base class for invalidation tests of `KaSession` and `LLFirSession`, which share the test
  * data but not necessarily the result data (see also [resultFileSuffix]).
  */
 abstract class AbstractSessionInvalidationTest<SESSION> : AbstractAnalysisApiBasedTest() {
@@ -26,7 +26,7 @@ abstract class AbstractSessionInvalidationTest<SESSION> : AbstractAnalysisApiBas
      * The kind of modification event to be published for the invalidation. Each modification event is tested separately and has its own
      * associated result file.
      */
-    protected abstract val modificationEventKind: ModificationEventKind
+    protected abstract val modificationEventKind: KotlinModificationEventKind
 
     /**
      * A suffix for the result file to distinguish it from the results of other session invalidation tests if the results are different.

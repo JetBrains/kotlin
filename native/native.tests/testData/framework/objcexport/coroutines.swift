@@ -57,7 +57,7 @@ private func testUnitCallNonMainDispatcher() throws {
 
     let group = DispatchGroup()
 
-#if ALLOW_SUSPEND_ANY_THREAD
+#if !DISALLOW_SUSPEND_ANY_THREAD
 #if LEGACY_SUSPEND_UNIT_FUNCTION_EXPORT
     DispatchQueue.global().async(group: group) {
         CoroutinesKt.unitSuspendFun { _result, _error in
@@ -74,12 +74,10 @@ private func testUnitCallNonMainDispatcher() throws {
         }
     }
 #endif
-#endif
 
-#if ALLOW_SUSPEND_ANY_THREAD
     group.wait()
     try assertEquals(actual: completionCalled, expected: 1)
-#endif
+#endif // !DISALLOW_SUSPEND_ANY_THREAD
 }
 
 

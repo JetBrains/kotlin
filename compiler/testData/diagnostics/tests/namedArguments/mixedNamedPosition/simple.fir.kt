@@ -1,5 +1,5 @@
-// !LANGUAGE: +MixedNamedArgumentsInTheirOwnPosition
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +MixedNamedArgumentsInTheirOwnPosition
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // SKIP_TXT
 
 fun foo(

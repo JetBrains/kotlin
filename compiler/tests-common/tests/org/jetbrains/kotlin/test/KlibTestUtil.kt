@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
@@ -63,12 +63,10 @@ object KlibTestUtil {
         require(!Name.guessByFirstCharacter(libraryName).isSpecial) { "Invalid library name: $libraryName" }
 
         val configuration = KotlinTestUtils.newConfiguration()
-        configuration.put(
-            CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY,
+        configuration.messageCollector =
             FilteringMessageCollector(
                 PrintingMessageCollector(System.err, MessageRenderer.PLAIN_RELATIVE_PATHS, false)
             ) /* decline = */ { !it.isError }
-        )
         configuration.put(CommonConfigurationKeys.MODULE_NAME, libraryName)
         configuration.addKotlinSourceRoots(sourceFiles.map { it.absolutePath })
         val stdlibFile = ForTestCompileRuntime.stdlibCommonForTests()
@@ -87,7 +85,7 @@ object KlibTestUtil {
             val projectContext = ProjectContext(environment.project, "Compile common sources to KLIB metadata")
 
             val analyzer = AnalyzerWithCompilerReport(
-                configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY),
+                configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY),
                 configuration.languageVersionSettings,
                 renderDiagnosticName = true,
             )
@@ -142,7 +140,6 @@ object KlibTestUtil {
         val library = KotlinLibraryWriterImpl(
             moduleName = libraryName,
             versions = KotlinLibraryVersioning(
-                libraryVersion = null,
                 compilerVersion = null,
                 abiVersion = null,
                 metadataVersion = KlibMetadataVersion.INSTANCE.toString(),

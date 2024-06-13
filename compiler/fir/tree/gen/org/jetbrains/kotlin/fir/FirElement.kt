@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder.Companion.baseFirElement]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.baseFirElement]
  */
 interface FirElement {
     val source: KtSourceElement?
@@ -45,7 +45,9 @@ interface FirElement {
      *
      * @param visitor The visitor to accept.
      */
-    fun accept(visitor: FirVisitorVoid) = accept(visitor, null)
+    fun accept(visitor: FirVisitorVoid) {
+        accept(visitor, null)
+    }
 
     /**
      * Runs the provided [visitor] on subtrees with roots in this node's children.
@@ -68,7 +70,9 @@ interface FirElement {
      *
      * @param visitor The visitor for children to accept.
      */
-    fun acceptChildren(visitor: FirVisitorVoid) = acceptChildren(visitor, null)
+    fun acceptChildren(visitor: FirVisitorVoid) {
+        acceptChildren(visitor, null)
+    }
 
     /**
      * Recursively transforms this node's children *in place* using [transformer].

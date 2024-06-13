@@ -3,9 +3,9 @@ Symbol:
 val foo: kotlin.Int
 
 Signature:
-KtVariableLikeSignature:
+KaVariableLikeSignature:
   name = foo
   receiverType = null
   returnType = kotlin.Int
   symbol = val foo: kotlin.Int
-  callableIdIfNonLocal = /foo
+  callableId = /foo

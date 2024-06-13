@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -41,7 +42,7 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 
 public final class JsDescriptorUtils {
     // TODO: maybe we should use external annotations or something else.
-    private static final Set<String> FAKE_CLASSES = ContainerUtil.immutableSet(
+    private static final Set<String> FAKE_CLASSES = Collections.singleton(
             StandardNames.FqNames.any.asString()
     );
 

@@ -33,67 +33,67 @@ The implementor of the Analysis API has to register such definitions on its side
 - For FE1.0-based implementation it is `/META-INF/analysis-api/analysis-api-fe10.xml` file.
 - For FIR-based implementation it is `/META-INF/analysis-api/analysis-api-fir.xml` file.
 
-## KtAnalysisSession
+## KaSession
 
-`KtAnalysisSession` is a view to the project modules and libraries from some fixed module, so called use-site module. From
-analysis `KtAnalysisSession` we can see only modules and libraries which are transitive dependencies of the use-site module.
-`KtAnalysisSession` contains set of functions to interact with **Analysis API** and it is the only way to interact with it.
+`KaSession` is a view to the project modules and libraries from some fixed module, so called use-site module. From
+analysis `KaSession` we can see only modules and libraries which are transitive dependencies of the use-site module.
+`KaSession` contains set of functions to interact with **Analysis API** and it is the only way to interact with it.
 
-`KtAnalysisSession` has the following contracts:
+`KaSession` has the following contracts:
 
-* **Lifecycle Owners** created in **KtAnalysisSession Scope** should not be leaked outside that scope
-* `KtAnalysisSession` receiver parameter should not be written to a variable or used as a function parameter. For decomposing analysis code
-  which should happen in **KtAnalysisSession Scope** consider passing `KtAnalysisSession` as function receiver parameter.
-* If function accept * **Lifecycle Owner** as parameter, it should always have `KtAnalysisSession` extension
-  receiver: `fun KtAnalysisSession.doSmthWithSymbol(symbol: KtSymbol) {...}`
+* **Lifecycle Owners** created in **KaSession Scope** should not be leaked outside that scope
+* `KaSession` receiver parameter should not be written to a variable or used as a function parameter. For decomposing analysis code
+  which should happen in **KaSession Scope** consider passing `KaSession` as function receiver parameter.
+* If function accept * **Lifecycle Owner** as parameter, it should always have `KaSession` extension
+  receiver: `fun KaSession.doSmthWithSymbol(symbol: KaSymbol) {...}`
 
-## KtAnalysisSession Scope
+## KaSession Scope
 
-All interaction with the Analysis API should be performed **only** in **KtAnalysisSession Scope**. To enter such scope `analyse`
+All interaction with the Analysis API should be performed **only** in **KaSession Scope**. To enter such scope `analyse`
 function should be used:
 
 ```kotlin
-fun <R> analyse(contextElement: KtElement, action: KtAnalysisSession.() -> R): R
+fun <R> analyse(contextElement: KtElement, action: KaSession.() -> R): R
 ```
 
-Where `action` lambda represents the **KtAnalysisSession Scope**.
+Where `action` lambda represents the **KaSession Scope**.
 
 ## Lifecycle Owners
 
-Every Lifecycle Owner has its lifecycle which is defined by corresponding `KtLifetimeToken`. There is a special
+Every Lifecycle Owner has its lifecycle which is defined by corresponding `KaLifetimeToken`. There is a special
 function `analyseWithCustomToken` which allows specifying needed behaviour. There are also analyse function which is made for the IDE which
-analyses with `KtReadActionConfinementLifetimeToken`
+analyses with `KaReadActionConfinementLifetimeToken`
 
-`KtReadActionConfinementLifetimeToken` has the following contracts:
+`KaReadActionConfinementLifetimeToken` has the following contracts:
 
 * Accessibility contracts
     * Analysis should not be called from **EDT Thread**
         * If you have no choice consider using `analyseInModalWindow` function instead (but it may be rather slow and also shows a modal
           window, so use it with caution)
     * Analysis should be called from a **read action**
-    * Analysis should not be called outside **KtAnalysisSession Scope** (i.e, outside `analyse(context) { ... }` lambda
+    * Analysis should not be called outside **KaSession Scope** (i.e, outside `analyse(context) { ... }` lambda
 * Validity contracts:
     * Lifecycle Owner is valid only inside Analysis Context it was created in.
 
-## KtSymbol
+## KaSymbol
 
-`KtSymbol`is an **Lifecycle Owner** that describes Kotlin or Java (as Kotlin sees it) declaration. `KtSymbol`represents:
+`KaSymbol`is an **Lifecycle Owner** that describes Kotlin or Java (as Kotlin sees it) declaration. `KaSymbol`represents:
 
 * Source Kotlin/Java declarations
 * Decompiled Kotlin/Java declarations
 * Synthetic Kotlin declarations (e.g, copy method of data class)
 
-Consider you want to take a symbol you got in one **KtAnalysisSession Scope** and use in another. It cannot be done directly as `KtSymbol`
-can not be leaked outside **KtAnalysisSession Scope**. But there is such thing as `
-KtSymbolPointer`. For every `KtSymbol`corresponding `KtSymbolPointer` can be created in one analysis session and symbol can be restored by
+Consider you want to take a symbol you got in one **KaSession Scope** and use in another. It cannot be done directly as `KaSymbol`
+can not be leaked outside **KaSession Scope**. But there is such thing as `
+KaSymbolPointer`. For every `KaSymbol`corresponding `KaSymbolPointer` can be created in one analysis session and symbol can be restored by
 using it in another. If between creating a symbol and restoring it, corresponding declaration changed then the symbol will not be restored
-and `KtSymbolPointer.restore` call will return the null value.
+and `KaSymbolPointer.restore` call will return the null value.
 
-## KtType
+## KaType
 
-`KtType` is an **Lifecycle Owner** that represents a Kotlin type in compiler-independent way.
+`KaType` is an **Lifecycle Owner** that represents a Kotlin type in compiler-independent way.
 
-## KtScope
+## KaScope
 
 The **Lifecycle Owner** which can answer the following queries:
 
@@ -102,8 +102,8 @@ The **Lifecycle Owner** which can answer the following queries:
 
 For now the following scopes available:
 
-* **KtMemberScope** — contains members of the class with all members from super types,
-* **KtDeclaredMemberScope** — contains members of class which are directly declared in the class,
-* **KtPackageMemberScope** — contains all top-level declarations contained in the package,
-* **KtTypeScope** — contains all members which can be called on expression of some type. 
+* **KaMemberScope** — contains members of the class with all members from super types,
+* **KaDeclaredMemberScope** — contains members of class which are directly declared in the class,
+* **KaPackageMemberScope** — contains all top-level declarations contained in the package,
+* **KaTypeScope** — contains all members which can be called on expression of some type. 
 

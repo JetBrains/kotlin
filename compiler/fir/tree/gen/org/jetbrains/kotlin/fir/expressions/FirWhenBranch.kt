@@ -21,6 +21,7 @@ abstract class FirWhenBranch : FirPureAbstractElement(), FirElement {
     abstract override val source: KtSourceElement?
     abstract val condition: FirExpression
     abstract val result: FirBlock
+    abstract val hasGuard: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitWhenBranch(this, data)

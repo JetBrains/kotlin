@@ -6,36 +6,36 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols
 
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10AnnotatedSymbol
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KaFe10AnnotatedSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10NeverRestoringSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithDeclarations
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithDeclarations
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.psi.KtFile
 
-internal class KtFe10FileSymbol(
+internal class KaFe10FileSymbol(
     private val file: KtFile,
     override val analysisContext: Fe10AnalysisContext
-) : KtFileSymbol(), KtSymbolWithDeclarations, KtFe10AnnotatedSymbol {
+) : KaFileSymbol(), KaSymbolWithDeclarations, KaFe10AnnotatedSymbol {
     override val psi: KtFile
         get() = withValidityAssertion { file }
 
     override val annotationsObject: Annotations
         get() = withValidityAssertion { analysisContext.resolveSession.getFileAnnotations(file) }
 
-    override val origin: KtSymbolOrigin
-        get() = withValidityAssertion { if (file.isCompiled) KtSymbolOrigin.LIBRARY else KtSymbolOrigin.SOURCE }
+    override val origin: KaSymbolOrigin
+        get() = withValidityAssertion { if (file.isCompiled) KaSymbolOrigin.LIBRARY else KaSymbolOrigin.SOURCE }
 
-    override fun createPointer(): KtSymbolPointer<KtFileSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtFileSymbol>(this) ?: KtFe10NeverRestoringSymbolPointer()
+    override fun createPointer(): KaSymbolPointer<KaFileSymbol> = withValidityAssertion {
+        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaFileSymbol>(this) ?: KaFe10NeverRestoringSymbolPointer()
     }
 
     override fun equals(other: Any?): Boolean {
-        return this.file == (other as? KtFe10FileSymbol)?.file
+        return this.file == (other as? KaFe10FileSymbol)?.file
     }
 
     override fun hashCode(): Int {

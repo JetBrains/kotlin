@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
+import org.jetbrains.kotlin.gradle.internal.properties.propertiesService
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.registerMinimalVariantImplementationFactoriesForTests
@@ -80,5 +81,164 @@ class PropertiesBuildServiceTest {
 
         rootProject.extraProperties.set("a", "non-root")
         assertEquals("root", properties.property("a", rootProject).get())
+    }
+
+    private fun testLoadingGradleProperty(
+        configuredPropValue: Any?,
+        expected: Any?,
+        property: PropertiesBuildService.GradleProperty<*>
+    ) {
+        val project = buildProject()
+        project.gradle.registerMinimalVariantImplementationFactoriesForTests()
+        val properties = project.propertiesService.get()
+
+        if (configuredPropValue != null) project.extraProperties.set(property.name, configuredPropValue)
+
+        assertEquals(
+            expected,
+            when (property) {
+                is PropertiesBuildService.BooleanGradleProperty -> properties.property(property, project).get()
+                is PropertiesBuildService.StringGradleProperty -> properties.property(property, project).get()
+                is PropertiesBuildService.NullableStringGradleProperty -> properties.property(property, project).orNull
+                is PropertiesBuildService.IntGradleProperty -> properties.property(property, project).get()
+                is PropertiesBuildService.NullableBooleanGradleProperty -> properties.property(property, project).orNull
+                else -> error("Unexpected property type ${property::class}")
+            }
+        )
+    }
+
+    @Test
+    fun testLoadingBooleanTrueString() {
+        testLoadingGradleProperty(
+            "TrUe",
+            true,
+            PropertiesBuildService.BooleanGradleProperty("some.prop", false)
+        )
+    }
+
+    @Test
+    fun testLoadingBooleanFalseString() {
+        testLoadingGradleProperty(
+            "FaLsE",
+            false,
+            PropertiesBuildService.BooleanGradleProperty("some.prop", true)
+        )
+    }
+
+    @Test
+    fun testLoadingBooleanDefaultValue() {
+        testLoadingGradleProperty(
+            null,
+            false,
+            PropertiesBuildService.BooleanGradleProperty("some.prop", false)
+        )
+    }
+
+    @Test
+    fun testNonBooleanFallbackToDefaultValue() {
+        testLoadingGradleProperty(
+            "Kodee!",
+            false,
+            PropertiesBuildService.BooleanGradleProperty("some.prop", false)
+        )
+    }
+
+    @Test
+    fun testLoadingTrueAsNullableBooleanValue() {
+        testLoadingGradleProperty(
+            "true",
+            true,
+            PropertiesBuildService.NullableBooleanGradleProperty("some.prop")
+        )
+    }
+
+    @Test
+    fun testLoadingFalseAsNullableBooleanValue() {
+        testLoadingGradleProperty(
+            "false",
+            false,
+            PropertiesBuildService.NullableBooleanGradleProperty("some.prop")
+        )
+    }
+
+    @Test
+    fun testLoadingIncorrectValueAsNullableBooleanValue() {
+        testLoadingGradleProperty(
+            "Kodee!",
+            null,
+            PropertiesBuildService.NullableBooleanGradleProperty("some.prop")
+        )
+    }
+
+    @Test
+    fun testLoadingNotConfiguredNullableBooleanValue() {
+        testLoadingGradleProperty(
+            null,
+            null,
+            PropertiesBuildService.NullableBooleanGradleProperty("some.prop")
+        )
+    }
+
+    @Test
+    fun testLoadingStringDefaultValue() {
+        testLoadingGradleProperty(
+            null,
+            "Kodee!",
+            PropertiesBuildService.StringGradleProperty("some.prop", "Kodee!"),
+        )
+    }
+
+    @Test
+    fun testLoadingStringValue() {
+        testLoadingGradleProperty(
+            "Happy",
+            "Happy",
+            PropertiesBuildService.StringGradleProperty("some.prop", "Kodee!"),
+        )
+    }
+
+    @Test
+    fun testLoadingNullableStringValue() {
+        testLoadingGradleProperty(
+            "Kodee!",
+            "Kodee!",
+            PropertiesBuildService.NullableStringGradleProperty("some.prop")
+        )
+    }
+
+    @Test
+    fun testLoadingNullableStringValueDefault() {
+        testLoadingGradleProperty(
+            null,
+            null,
+            PropertiesBuildService.NullableStringGradleProperty("some.prop")
+        )
+    }
+
+    @Test
+    fun testLoadingIntValue() {
+        testLoadingGradleProperty(
+            "2",
+            2,
+            PropertiesBuildService.IntGradleProperty("some.prop", 10)
+        )
+    }
+
+    @Test
+    fun testLoadingInvalidIntValue() {
+        testLoadingGradleProperty(
+            "Kodee!",
+            10,
+            PropertiesBuildService.IntGradleProperty("some.prop", 10)
+        )
+    }
+
+    @Test
+    fun testLoadingDefaultIntValue() {
+        testLoadingGradleProperty(
+            null,
+            10,
+            PropertiesBuildService.IntGradleProperty("some.prop", 10)
+        )
     }
 }

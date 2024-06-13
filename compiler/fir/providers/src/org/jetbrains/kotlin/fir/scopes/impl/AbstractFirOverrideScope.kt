@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -21,7 +19,7 @@ abstract class AbstractFirOverrideScope(
     protected val overrideChecker: FirOverrideChecker
 ) : FirTypeScope() {
     //base symbol as key, overridden as value
-    val overrideByBase = mutableMapOf<FirCallableSymbol<*>, FirCallableSymbol<*>?>()
+    val overrideByBase: MutableMap<FirCallableSymbol<*>, FirCallableSymbol<*>?> = mutableMapOf()
 
     // Receiver is super-type function here
     protected open fun FirCallableSymbol<*>.getOverridden(overrideCandidates: Set<FirCallableSymbol<*>>): FirCallableSymbol<*>? {

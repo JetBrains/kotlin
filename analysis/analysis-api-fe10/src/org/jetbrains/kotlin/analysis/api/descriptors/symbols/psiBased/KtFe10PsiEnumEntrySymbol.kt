@@ -10,45 +10,37 @@ import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.Analysis
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.isEqualTo
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KtFe10PsiSymbol
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.callableIdIfNonLocal
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10NeverRestoringSymbolPointer
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KaFe10PsiSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.callableId
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.createErrorType
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntryInitializerSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntryInitializerSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtEnumEntry
-import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.resolve.BindingContext
 
-internal class KtFe10PsiEnumEntrySymbol(
+internal class KaFe10PsiEnumEntrySymbol(
     override val psi: KtEnumEntry,
     override val analysisContext: Fe10AnalysisContext
-) : KtEnumEntrySymbol(), KtEnumEntryInitializerSymbol, KtFe10PsiSymbol<KtEnumEntry, ClassDescriptor> {
+) : KaEnumEntrySymbol(), KaEnumEntryInitializerSymbol, KaFe10PsiSymbol<KtEnumEntry, ClassDescriptor> {
     override val descriptor: ClassDescriptor? by cached {
         val bindingContext = analysisContext.analyze(psi, AnalysisMode.PARTIAL)
         bindingContext[BindingContext.CLASS, psi]
     }
 
-    override val containingEnumClassIdIfNonLocal: ClassId?
-        get() = withValidityAssertion {
-            val containingClass = psi.containingClass()?.takeIf { it.isEnum() } ?: return null
-            return containingClass.getClassId()
-        }
+    override val callableId: CallableId?
+        get() = withValidityAssertion { psi.callableId }
 
-    override val callableIdIfNonLocal: CallableId?
-        get() = withValidityAssertion { psi.callableIdIfNonLocal }
-
-    override val returnType: KtType
+    override val returnType: KaType
         get() = withValidityAssertion {
             val containingDescriptor = descriptor?.containingDeclaration
             if (containingDescriptor is ClassDescriptor && containingDescriptor.kind == ClassKind.ENUM_CLASS) {
@@ -61,11 +53,11 @@ internal class KtFe10PsiEnumEntrySymbol(
     override val name: Name
         get() = withValidityAssertion { psi.nameAsSafeName }
 
-    override val enumEntryInitializer: KtEnumEntryInitializerSymbol?
+    override val enumEntryInitializer: KaEnumEntryInitializerSymbol?
         get() = this.takeIf { psi.body != null }
 
-    override fun createPointer(): KtSymbolPointer<KtEnumEntrySymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtEnumEntrySymbol>(this) ?: KtFe10NeverRestoringSymbolPointer()
+    override fun createPointer(): KaSymbolPointer<KaEnumEntrySymbol> = withValidityAssertion {
+        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaEnumEntrySymbol>(this) ?: KaFe10NeverRestoringSymbolPointer()
     }
 
 

@@ -1,2 +1,0 @@
-Resolved to:
-0: (in foo.Foo.Inner) val foo: kotlin.Int

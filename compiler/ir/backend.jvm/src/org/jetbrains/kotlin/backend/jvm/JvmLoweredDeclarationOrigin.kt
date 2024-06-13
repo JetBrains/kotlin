@@ -51,7 +51,6 @@ object JvmLoweredDeclarationOrigin {
     val FIELD_FOR_STATIC_CALLABLE_REFERENCE_INSTANCE by IrDeclarationOriginImpl
     val ABSTRACT_BRIDGE_STUB by IrDeclarationOriginImpl
     val INVOKEDYNAMIC_CALL_TARGET by IrDeclarationOriginImpl
-    val INLINE_LAMBDA by IrDeclarationOriginImpl
     val PROXY_FUN_FOR_METAFACTORY by IrDeclarationOriginImpl
     val SYNTHETIC_PROXY_FUN_FOR_METAFACTORY by IrDeclarationOriginImpl.Synthetic
     val DESERIALIZE_LAMBDA_FUN by IrDeclarationOriginImpl.Synthetic

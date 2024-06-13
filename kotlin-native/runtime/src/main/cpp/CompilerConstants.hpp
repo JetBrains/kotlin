@@ -117,6 +117,7 @@ bool objcDisposeOnMain() noexcept;
 bool objcDisposeWithRunLoop() noexcept;
 bool enableSafepointSignposts() noexcept;
 bool globalDataLazyInit() noexcept;
+bool swiftExport() noexcept;
 
 #ifdef KONAN_ANDROID
 bool printToAndroidLogcat() noexcept;

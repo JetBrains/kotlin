@@ -54,7 +54,7 @@ object FirNativeObjCNameChecker : FirBasicDeclarationChecker(MppCheckerKind.Plat
     private fun checkObjCName(objCName: ObjCName, declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         val annotationSource = objCName.annotation.source
         for ((_, argument) in objCName.annotation.argumentMapping.mapping) {
-            if (argument is FirLiteralExpression<*>) continue
+            if (argument is FirLiteralExpression) continue
             reporter.reportOn(argument.source, NON_LITERAL_OBJC_NAME_ARG, context)
         }
         if (objCName.name == null && objCName.swiftName == null) {

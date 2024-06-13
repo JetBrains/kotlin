@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.test.services.TestServices
 class AnalysisApiIndexingConfiguration(val binaryLibraryIndexingMode: AnalysisApiBinaryLibraryIndexingMode) : TestService
 
 /**
- * Specifies the indexing behavior of [org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider] for *test module* binary
- * libraries.
+ * Specifies the indexing behavior of [KotlinDeclarationProvider][org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider]
+ * for *test module* binary libraries.
  */
 enum class AnalysisApiBinaryLibraryIndexingMode {
     /**

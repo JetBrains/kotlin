@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone
 
+import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.Application
@@ -12,6 +13,27 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinAnnotationsResolverFactory
+import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProviderFactory
+import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProviderMerger
+import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinAlwaysAccessibleLifetimeTokenProvider
+import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinLifetimeTokenProvider
+import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalModificationService
+import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTrackerFactory
+import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackagePartProviderFactory
+import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProviderFactory
+import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProviderMerger
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinByModulesResolutionScopeProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinResolutionScopeProvider
+import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneAnnotationsResolverFactory
+import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneDeclarationProviderFactory
+import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneDeclarationProviderMerger
+import org.jetbrains.kotlin.analysis.api.standalone.base.modification.KotlinStandaloneGlobalModificationService
+import org.jetbrains.kotlin.analysis.api.standalone.base.modification.KotlinStandaloneModificationTrackerFactory
+import org.jetbrains.kotlin.analysis.api.standalone.base.packages.KotlinStandalonePackageProviderFactory
+import org.jetbrains.kotlin.analysis.api.standalone.base.packages.KotlinStandalonePackageProviderMerger
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.AnalysisApiSimpleServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.ApplicationServiceRegistration
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.FirStandaloneServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtStaticProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.LLFirStandaloneLibrarySymbolProviderFactory
@@ -26,8 +48,6 @@ import org.jetbrains.kotlin.analysis.project.structure.impl.KtSourceModuleImpl
 import org.jetbrains.kotlin.analysis.project.structure.impl.buildKtModuleProviderByCompilerConfiguration
 import org.jetbrains.kotlin.analysis.project.structure.impl.getPsiFilesFromPaths
 import org.jetbrains.kotlin.analysis.project.structure.impl.getSourceFilePaths
-import org.jetbrains.kotlin.analysis.providers.*
-import org.jetbrains.kotlin.analysis.providers.impl.*
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironmentMode
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
@@ -60,8 +80,18 @@ public class StandaloneAnalysisAPISessionBuilder(
             classLoader = classLoader
         )
 
+    private val serviceRegistrars = listOf(FirStandaloneServiceRegistrar, StandaloneSessionServiceRegistrar)
+
     init {
-        FirStandaloneServiceRegistrar.registerApplicationServices(kotlinCoreProjectEnvironment.environment.application)
+        val application = kotlinCoreProjectEnvironment.environment.application
+        ApplicationServiceRegistration.registerWithCustomRegistration(application, serviceRegistrars) {
+            // TODO (KT-68186): Passing the class loader explicitly is a workaround for KT-68186.
+            if (this is FirStandaloneServiceRegistrar) {
+                registerApplicationServicesWithCustomClassLoader(application, classLoader)
+            } else {
+                registerApplicationServices(application, data = Unit)
+            }
+        }
     }
 
     public val application: Application = kotlinCoreProjectEnvironment.environment.application
@@ -110,16 +140,16 @@ public class StandaloneAnalysisAPISessionBuilder(
     ) {
         val project = kotlinCoreProjectEnvironment.project
         project.apply {
-            FirStandaloneServiceRegistrar.registerProjectServices(project)
-            FirStandaloneServiceRegistrar.registerProjectExtensionPoints(project)
-            FirStandaloneServiceRegistrar.registerProjectModelServices(project, kotlinCoreProjectEnvironment.parentDisposable)
+            serviceRegistrars.forEach { it.registerProjectServices(project) }
+            serviceRegistrars.forEach { it.registerProjectExtensionPoints(project) }
+            serviceRegistrars.forEach { it.registerProjectModelServices(project, kotlinCoreProjectEnvironment.parentDisposable) }
 
-            registerService(KotlinModificationTrackerFactory::class.java, KotlinStaticModificationTrackerFactory::class.java)
-            registerService(KotlinGlobalModificationService::class.java, KotlinStaticGlobalModificationService::class.java)
+            registerService(KotlinModificationTrackerFactory::class.java, KotlinStandaloneModificationTrackerFactory::class.java)
+            registerService(KotlinGlobalModificationService::class.java, KotlinStandaloneGlobalModificationService::class.java)
 
-            registerService(KotlinAnnotationsResolverFactory::class.java, KotlinStaticAnnotationsResolverFactory(this, sourceKtFiles))
+            registerService(KotlinAnnotationsResolverFactory::class.java, KotlinStandaloneAnnotationsResolverFactory(this, sourceKtFiles))
             registerService(KotlinResolutionScopeProvider::class.java, KotlinByModulesResolutionScopeProvider::class.java)
-            val declarationProviderFactory = KotlinStaticDeclarationProviderFactory(
+            val declarationProviderFactory = KotlinStandaloneDeclarationProviderFactory(
                 this,
                 sourceKtFiles,
             )
@@ -127,28 +157,16 @@ public class StandaloneAnalysisAPISessionBuilder(
                 KotlinDeclarationProviderFactory::class.java,
                 declarationProviderFactory
             )
-            registerService(KotlinDeclarationProviderMerger::class.java, KotlinStaticDeclarationProviderMerger(this))
+            registerService(KotlinDeclarationProviderMerger::class.java, KotlinStandaloneDeclarationProviderMerger(this))
             registerService(
                 KotlinPackageProviderFactory::class.java,
-                KotlinStaticPackageProviderFactory(project, sourceKtFiles + declarationProviderFactory.getAdditionalCreatedKtFiles())
+                KotlinStandalonePackageProviderFactory(project, sourceKtFiles + declarationProviderFactory.getAdditionalCreatedKtFiles())
             )
-            registerService(KotlinPackageProviderMerger::class.java, KotlinStaticPackageProviderMerger(this))
+            registerService(KotlinPackageProviderMerger::class.java, KotlinStandalonePackageProviderMerger(this))
 
             registerService(
-                PackagePartProviderFactory::class.java,
+                KotlinPackagePartProviderFactory::class.java,
                 KotlinStaticPackagePartProviderFactory(packagePartProvider)
-            )
-
-            registerService(LLFirLibrarySymbolProviderFactory::class.java, LLFirStandaloneLibrarySymbolProviderFactory::class.java)
-            registerService(LLFirElementByPsiElementChooser::class.java, LLStandaloneFirElementByPsiElementChooser::class.java)
-        }
-    }
-
-    private fun registerPsiDeclarationFromBinaryModuleProvider() {
-        kotlinCoreProjectEnvironment.project.apply {
-            registerService(
-                KotlinPsiDeclarationProviderFactory::class.java,
-                KotlinStaticPsiDeclarationProviderFactory::class.java
             )
         }
     }
@@ -165,34 +183,22 @@ public class StandaloneAnalysisAPISessionBuilder(
         }
     }
 
-    public fun build(
-        withPsiDeclarationFromBinaryModuleProvider: Boolean = false,
-    ): StandaloneAnalysisAPISession {
+    public fun build(): StandaloneAnalysisAPISession {
         StandaloneProjectFactory.registerServicesForProjectEnvironment(
             kotlinCoreProjectEnvironment,
             projectStructureProvider,
         )
+
         val sourceKtFiles = projectStructureProvider.allSourceFiles.filterIsInstance<KtFile>()
         val libraryRoots = StandaloneProjectFactory.getAllBinaryRoots(
             projectStructureProvider.allKtModules,
             kotlinCoreProjectEnvironment,
         )
-        val createPackagePartProvider =
-            StandaloneProjectFactory.createPackagePartsProvider(
-                libraryRoots,
-            )
-        registerProjectServices(
-            sourceKtFiles,
-            createPackagePartProvider,
-        )
-        if (withPsiDeclarationFromBinaryModuleProvider) {
-            registerPsiDeclarationFromBinaryModuleProvider()
-        }
 
-        return StandaloneAnalysisAPISession(
-            kotlinCoreProjectEnvironment,
-            createPackagePartProvider,
-        ) {
+        val createPackagePartProvider = StandaloneProjectFactory.createPackagePartsProvider(libraryRoots)
+        registerProjectServices(sourceKtFiles, createPackagePartProvider)
+
+        return StandaloneAnalysisAPISession(kotlinCoreProjectEnvironment) {
             projectStructureProvider.allKtModules.mapNotNull { ktModule ->
                 if (ktModule !is KtSourceModule) return@mapNotNull null
                 check(ktModule is KtSourceModuleImpl)
@@ -202,11 +208,35 @@ public class StandaloneAnalysisAPISessionBuilder(
     }
 }
 
+/**
+ * Registers services which are not covered by [FirStandaloneServiceRegistrar]. In general, this concerns services which need to be
+ * registered for production Standalone and Standalone test usages, but *not* for IDE mode Analysis API tests, which rely on
+ * [FirStandaloneServiceRegistrar] as a basis.
+ *
+ * When using this service registrar in tests, make sure that `AnalysisApiIdeModeTestServiceRegistrar` isn't configured at the same time.
+ */
+internal object StandaloneSessionServiceRegistrar : AnalysisApiSimpleServiceRegistrar() {
+    override fun registerApplicationServices(application: MockApplication) {
+        application.apply {
+            // TODO (KT-68386): Re-enable once KT-68386 is fixed.
+            //registerService(KotlinAnalysisPermissionOptions::class.java, KotlinStandaloneAnalysisPermissionOptions::class.java)
+        }
+    }
+
+    override fun registerProjectServices(project: MockProject) {
+        project.apply {
+            registerService(KotlinLifetimeTokenProvider::class.java, KotlinAlwaysAccessibleLifetimeTokenProvider::class.java)
+
+            registerService(LLFirLibrarySymbolProviderFactory::class.java, LLFirStandaloneLibrarySymbolProviderFactory::class.java)
+            registerService(LLFirElementByPsiElementChooser::class.java, LLStandaloneFirElementByPsiElementChooser::class.java)
+        }
+    }
+}
+
 @OptIn(ExperimentalContracts::class)
 public inline fun buildStandaloneAnalysisAPISession(
     projectDisposable: Disposable = Disposer.newDisposable("StandaloneAnalysisAPISession.project"),
     unitTestMode: Boolean = false,
-    withPsiDeclarationFromBinaryModuleProvider: Boolean = false,
     classLoader: ClassLoader = MockProject::class.java.classLoader,
     init: StandaloneAnalysisAPISessionBuilder.() -> Unit,
 ): StandaloneAnalysisAPISession {
@@ -217,7 +247,5 @@ public inline fun buildStandaloneAnalysisAPISession(
         projectDisposable,
         unitTestMode,
         classLoader
-    ).apply(init).build(
-        withPsiDeclarationFromBinaryModuleProvider,
-    )
+    ).apply(init).build()
 }

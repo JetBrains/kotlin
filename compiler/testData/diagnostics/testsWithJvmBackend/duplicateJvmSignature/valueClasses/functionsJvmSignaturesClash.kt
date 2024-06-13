@@ -1,7 +1,7 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +InlineClasses
+// LANGUAGE: +InlineClasses
 // ALLOW_KOTLIN_PACKAGE
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 package kotlin.jvm
 

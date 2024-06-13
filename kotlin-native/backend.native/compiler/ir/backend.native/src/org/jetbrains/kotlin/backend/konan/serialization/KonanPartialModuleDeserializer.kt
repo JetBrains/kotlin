@@ -226,7 +226,6 @@ internal class KonanPartialModuleDeserializer(
         }
 
         val outerThisIndex = fields.indexOfFirst { it.irField?.origin == IrDeclarationOrigin.FIELD_FOR_OUTER_THIS }
-        val compatibleMode = CompatibilityMode(libraryAbiVersion).oldSignatures
         return SerializedClassFields(
                 SerializedFileReference(fileDeserializationState.file),
                 signature,

@@ -10,12 +10,14 @@ class X<B extends I<P>, P, A extends I<P>> {
     }
 }
 
+// FILE: E.java
 class E<T> {
     T getT() {
         return null;
     }
 }
 
+// FILE: I.java
 interface I<P> {}
 
 // FILE: test.kt

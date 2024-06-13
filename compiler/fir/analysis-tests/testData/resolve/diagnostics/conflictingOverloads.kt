@@ -6,17 +6,17 @@ fun test() {}
 
 fun test(z: Int, c: Char) {}
 
-open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!> {
+open class <!CLASSIFIER_REDECLARATION!>A<!> {
     open fun rest(s: String) {}
 
     open val u = 20
 }
 
-class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!> {
+class <!CLASSIFIER_REDECLARATION!>A<!> {
 
 }
 
-class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!> : <!SUPERTYPE_NOT_INITIALIZED!>A<!> {
+class <!CLASSIFIER_REDECLARATION!>B<!> : <!SUPERTYPE_NOT_INITIALIZED!>A<!> {
     <!CONFLICTING_OVERLOADS!>override fun rest(s: String)<!> {}
 
     <!CONFLICTING_OVERLOADS!>fun <!VIRTUAL_MEMBER_HIDDEN!>rest<!>(s: String)<!> {}
@@ -26,9 +26,9 @@ class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!> : <!SUPERTYPE_NOT_INITIALIZED!
     override val u = 310
 }
 
-interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!>
+interface <!CLASSIFIER_REDECLARATION!>B<!>
 
-enum class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!>
+enum class <!CLASSIFIER_REDECLARATION!>B<!>
 
 val <!REDECLARATION!>u<!> = 10
 val <!REDECLARATION!>u<!> = 20
@@ -36,8 +36,8 @@ val <!REDECLARATION!>u<!> = 20
 val <!SYNTAX!>(a,b)<!> = 30 to 40
 val <!SYNTAX!>(c,d)<!> = 50 to 60
 
-typealias <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>TA<!> = A
-typealias <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>TA<!> = B
+typealias <!CLASSIFIER_REDECLARATION!>TA<!> = A
+typealias <!CLASSIFIER_REDECLARATION!>TA<!> = B
 
 typealias BA = A
 

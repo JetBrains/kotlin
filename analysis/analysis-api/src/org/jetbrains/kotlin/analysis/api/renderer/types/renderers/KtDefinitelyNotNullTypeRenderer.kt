@@ -5,35 +5,36 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.types.renderers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.renderer.types.KtTypeRenderer
-import org.jetbrains.kotlin.analysis.api.types.KtDefinitelyNotNullType
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
+import org.jetbrains.kotlin.analysis.api.types.KaDefinitelyNotNullType
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
 
-public interface KtDefinitelyNotNullTypeRenderer {
+public interface KaDefinitelyNotNullTypeRenderer {
     public fun renderType(
-        analysisSession: KtAnalysisSession,
-        type: KtDefinitelyNotNullType,
-        typeRenderer: KtTypeRenderer,
+        analysisSession: KaSession,
+        type: KaDefinitelyNotNullType,
+        typeRenderer: KaTypeRenderer,
         printer: PrettyPrinter,
     )
 
-    public object AS_TYPE_INTERSECTION : KtDefinitelyNotNullTypeRenderer {
+    public object AS_TYPE_INTERSECTION : KaDefinitelyNotNullTypeRenderer {
         override fun renderType(
-            analysisSession: KtAnalysisSession,
-            type: KtDefinitelyNotNullType,
-            typeRenderer: KtTypeRenderer,
+            analysisSession: KaSession,
+            type: KaDefinitelyNotNullType,
+            typeRenderer: KaTypeRenderer,
             printer: PrettyPrinter,
         ) {
             with(analysisSession) {
                 printer {
                     typeRenderer.renderType(analysisSession, type.original, printer)
                     printer.append(" & ")
-                    typeRenderer.renderType(analysisSession, builtinTypes.ANY, printer)
+                    typeRenderer.renderType(analysisSession, builtinTypes.any, printer)
                 }
             }
         }
     }
-
 }
+
+public typealias KtDefinitelyNotNullTypeRenderer = KaDefinitelyNotNullTypeRenderer

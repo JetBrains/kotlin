@@ -8,13 +8,12 @@ package org.jetbrains.kotlin.analysis.project.structure.impl
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.project.structure.DanglingFileResolutionMode
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
-import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import java.util.Objects
 
 public class KtDanglingFileModuleImpl(
@@ -45,9 +44,6 @@ public class KtDanglingFileModuleImpl(
 
     override val platform: TargetPlatform
         get() = contextModule.platform
-
-    override val analyzerServices: PlatformDependentAnalyzerServices
-        get() = contextModule.analyzerServices
 
     override val contentScope: GlobalSearchScope
         get() = GlobalSearchScope.fileScope(file)

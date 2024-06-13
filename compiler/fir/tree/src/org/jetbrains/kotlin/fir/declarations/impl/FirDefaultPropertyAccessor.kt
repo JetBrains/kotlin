@@ -84,13 +84,15 @@ abstract class FirDefaultPropertyAccessor(
             propertySymbol: FirPropertySymbol,
             isGetter: Boolean,
             parameterAnnotations: List<FirAnnotation> = emptyList(),
+            parameterSource: KtSourceElement? = null,
         ): FirDefaultPropertyAccessor {
             return if (isGetter) {
                 FirDefaultPropertyGetter(source, moduleData, origin, propertyTypeRef, visibility, propertySymbol, Modality.FINAL)
             } else {
                 FirDefaultPropertySetter(
                     source, moduleData, origin, propertyTypeRef, visibility, propertySymbol, Modality.FINAL,
-                    parameterAnnotations = parameterAnnotations
+                    parameterAnnotations = parameterAnnotations,
+                    parameterSource = parameterSource,
                 )
             }
         }
@@ -125,6 +127,10 @@ class FirDefaultPropertyGetter(
     resolvePhase = resolvePhase,
 )
 
+/**
+ * @param [parameterSource] Should be specified only in the case of invalid code,
+ * when default setter has an explicitly written value parameter, and thus it will have its own source
+ */
 class FirDefaultPropertySetter(
     source: KtSourceElement?,
     moduleData: FirModuleData,
@@ -136,6 +142,7 @@ class FirDefaultPropertySetter(
     effectiveVisibility: EffectiveVisibility? = null,
     isInline: Boolean = false,
     propertyAccessorSymbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol(),
+    parameterSource: KtSourceElement? = null,
     parameterAnnotations: List<FirAnnotation> = emptyList(),
     resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
 ) : FirDefaultPropertyAccessor(
@@ -146,7 +153,7 @@ class FirDefaultPropertySetter(
     valueParameters = mutableListOf(
         buildDefaultSetterValueParameter builder@{
             this@builder.resolvePhase = resolvePhase
-            this@builder.source = source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor)
+            this@builder.source = (parameterSource ?: source)?.fakeElement(KtFakeSourceElementKind.DefaultAccessor)
             this@builder.containingFunctionSymbol = propertyAccessorSymbol
             this@builder.moduleData = moduleData
             this@builder.origin = origin

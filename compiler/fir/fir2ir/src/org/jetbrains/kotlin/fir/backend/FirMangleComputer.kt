@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.signaturer.irName
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -25,6 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
 /**
@@ -47,7 +47,7 @@ open class FirMangleComputer(
     override fun copy(newMode: MangleMode): FirMangleComputer =
         FirMangleComputer(builder, newMode)
 
-    override fun getTypeSystemContext(session: FirSession) = object : ConeInferenceContext {
+    override fun getTypeSystemContext(session: FirSession): ConeInferenceContext = object : ConeInferenceContext {
         override val session: FirSession
             get() = session
     }
@@ -104,7 +104,7 @@ open class FirMangleComputer(
             .map { it.symbol.toLookupTag() }
             .withIndex()
 
-    override fun isUnit(type: ConeKotlinType) = type.isUnit
+    override fun isUnit(type: ConeKotlinType): Boolean = type.isUnit
 
     @OptIn(SymbolInternals::class)
     override fun getEffectiveParent(typeParameter: ConeTypeParameterLookupTag): FirMemberDeclaration =
@@ -120,16 +120,16 @@ open class FirMangleComputer(
         }
     }
 
-    override fun renderDeclaration(declaration: FirDeclaration) = declaration.render()
+    override fun renderDeclaration(declaration: FirDeclaration): String = declaration.render()
 
-    override fun getTypeParameterName(typeParameter: ConeTypeParameterLookupTag) = typeParameter.name.asString()
+    override fun getTypeParameterName(typeParameter: ConeTypeParameterLookupTag): String = typeParameter.name.asString()
 
-    override fun isVararg(valueParameter: FirValueParameter) = valueParameter.isVararg
+    override fun isVararg(valueParameter: FirValueParameter): Boolean = valueParameter.isVararg
 
     override fun getValueParameterType(valueParameter: FirValueParameter): ConeKotlinType =
         valueParameter.returnTypeRef.coneType
 
-    override fun getIndexOfTypeParameter(typeParameter: ConeTypeParameterLookupTag, container: FirMemberDeclaration) =
+    override fun getIndexOfTypeParameter(typeParameter: ConeTypeParameterLookupTag, container: FirMemberDeclaration): Int =
         container.typeParameters.indexOf(typeParameter.symbol.fir)
 
     override fun mangleType(tBuilder: StringBuilder, type: ConeKotlinType, declarationSiteSession: FirSession) {
@@ -208,7 +208,7 @@ open class FirMangleComputer(
 
     protected open inner class Visitor : FirVisitorVoid() {
 
-        override fun visitElement(element: FirElement) = error("unexpected element ${element.render()}")
+        override fun visitElement(element: FirElement): Nothing = error("unexpected element ${element.render()}")
 
         override fun visitRegularClass(regularClass: FirRegularClass) {
             typeParameterContainers.add(regularClass)
@@ -253,8 +253,9 @@ open class FirMangleComputer(
             enumEntry.mangleSimpleDeclaration(enumEntry.name.asString())
         }
 
-        override fun visitTypeAlias(typeAlias: FirTypeAlias) =
+        override fun visitTypeAlias(typeAlias: FirTypeAlias) {
             typeAlias.mangleSimpleDeclaration(typeAlias.name.asString())
+        }
 
         override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
             simpleFunction.mangleFunction(
@@ -292,3 +293,18 @@ open class FirMangleComputer(
         }
     }
 }
+
+/**
+ * The name that an IR node generated from this [FirPropertyAccessor] will have.
+ *
+ * If the corresponding property has name `foo`, this will return `<get-foo>` or `<set-foo>`.
+ */
+private val FirPropertyAccessor.irName: Name
+    get() {
+        val prefix = when {
+            isGetter -> "<get-"
+            isSetter -> "<set-"
+            else -> error("unknown property accessor kind $this")
+        }
+        return Name.special(prefix + propertySymbol.fir.name + ">")
+    }

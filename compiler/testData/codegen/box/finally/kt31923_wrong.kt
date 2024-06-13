@@ -1,4 +1,4 @@
-// !LANGUAGE: -ProperFinally
+// LANGUAGE: -ProperFinally
 // TARGET_BACKEND: JVM
 var result = ""
 

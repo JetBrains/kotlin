@@ -1,5 +1,5 @@
-// !LANGUAGE: -JvmStaticInInterface
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// LANGUAGE: -JvmStaticInInterface
+// DIAGNOSTICS: -UNUSED_VARIABLE
 interface B {
     companion object {
         <!JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION!>@JvmStatic fun a1()<!> {

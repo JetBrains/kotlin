@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +IntrinsicConstEvaluation
+// LANGUAGE: +IntrinsicConstEvaluation
 
 // FILE: CompressionType.java
 public enum CompressionType {

@@ -7,33 +7,33 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.psi.*
 import com.intellij.psi.impl.compiled.ClsElementImpl
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirPsiJavaClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolProviderByJavaPsi
+import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolProviderByJavaPsi
 import org.jetbrains.kotlin.asJava.KtLightClassMarker
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.Name
 
-@OptIn(KtAnalysisApiInternals::class)
-internal class KtFirSymbolProviderByJavaPsi(
-    override val analysisSession: KtFirAnalysisSession,
-) : KtSymbolProviderByJavaPsi(), KtFirAnalysisSessionComponent {
-    override fun getNamedClassSymbol(psiClass: PsiClass): KtNamedClassOrObjectSymbol? {
+@OptIn(KaAnalysisApiInternals::class)
+internal class KaFirSymbolProviderByJavaPsi(
+    override val analysisSession: KaFirSession,
+) : KaSymbolProviderByJavaPsi(), KaFirSessionComponent {
+    override fun getNamedClassSymbol(psiClass: PsiClass): KaNamedClassOrObjectSymbol? {
         if (psiClass.qualifiedName == null) return null
         if (psiClass is PsiTypeParameter) return null
         if (psiClass is KtLightClassMarker) return null
         if (psiClass.isKotlinCompiledClass()) return null
 
-        return KtFirPsiJavaClassSymbol(psiClass, analysisSession)
+        return KaFirPsiJavaClassSymbol(psiClass, analysisSession)
     }
 
     private fun PsiClass.isKotlinCompiledClass() =
         this is ClsElementImpl && hasAnnotation(JvmAnnotationNames.METADATA_FQ_NAME.asString())
 
-    override fun getCallableSymbol(callable: PsiMember): KtCallableSymbol? {
+    override fun getCallableSymbol(callable: PsiMember): KaCallableSymbol? {
         if (callable !is PsiMethod && callable !is PsiField) return null
         val name = callable.name?.let(Name::identifier) ?: return null
         val containingClass = callable.containingClass ?: return null

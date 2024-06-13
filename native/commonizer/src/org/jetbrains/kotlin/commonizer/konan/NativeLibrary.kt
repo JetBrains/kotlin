@@ -58,17 +58,17 @@ internal class CommonNativeManifestDataProvider(
         val rawManifests = manifests[libraryName] ?: error("Missing manifests for $libraryName")
         check(rawManifests.isNotEmpty()) { "No manifests for $libraryName" }
 
-        val isInterop = rawManifests.all { it.isInterop }
+        val isCInterop = rawManifests.all { it.isCInterop }
 
         return NativeSensitiveManifestData(
             uniqueName = libraryName,
             versions = rawManifests.first().versions,
             dependencies = rawManifests.map { it.dependencies }.reduce { acc, list -> acc.intersect(list).toList() },
-            isInterop = isInterop,
+            isCInterop = isCInterop,
             packageFqName = rawManifests.first().packageFqName,
-            exportForwardDeclarations = if (isInterop) rawManifests.map { it.exportForwardDeclarations }
+            exportForwardDeclarations = if (isCInterop) rawManifests.map { it.exportForwardDeclarations }
                 .reduce { acc, list -> acc.intersect(list).toList() } else emptyList(),
-            includedForwardDeclarations = if (isInterop) rawManifests.map { it.includedForwardDeclarations }
+            includedForwardDeclarations = if (isCInterop) rawManifests.map { it.includedForwardDeclarations }
                 .reduce { acc, list -> acc.intersect(list).toList() } else emptyList(),
             nativeTargets = rawManifests.flatMapTo(mutableSetOf()) { it.nativeTargets },
             shortName = rawManifests.first().shortName,

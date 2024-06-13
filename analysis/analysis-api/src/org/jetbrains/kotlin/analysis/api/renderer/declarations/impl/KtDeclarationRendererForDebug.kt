@@ -5,25 +5,32 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.impl
 
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtDeclarationRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtRendererTypeApproximator
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callables.KtSamConstructorSymbolRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.classifiers.KtSingleTypeParameterSymbolRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KtTypeRendererForDebug
+import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KaAnnotationRendererForSource
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaRendererTypeApproximator
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callables.KaSamConstructorSymbolRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.classifiers.KaSingleTypeParameterSymbolRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KaTypeRendererForDebug
 
-public object KtDeclarationRendererForDebug {
-    public val WITH_QUALIFIED_NAMES: KtDeclarationRenderer = KtDeclarationRendererForSource.WITH_QUALIFIED_NAMES.with {
-        singleTypeParameterRenderer = KtSingleTypeParameterSymbolRenderer.WITHOUT_BOUNDS
-        samConstructorRenderer = KtSamConstructorSymbolRenderer.AS_FUNCTION
-        typeRenderer = KtTypeRendererForDebug.WITH_QUALIFIED_NAMES
-        declarationTypeApproximator = KtRendererTypeApproximator.NO_APPROXIMATION
+public object KaDeclarationRendererForDebug {
+    public val WITH_QUALIFIED_NAMES: KaDeclarationRenderer = KaDeclarationRendererForSource.WITH_QUALIFIED_NAMES.with {
+        singleTypeParameterRenderer = KaSingleTypeParameterSymbolRenderer.WITHOUT_BOUNDS
+        samConstructorRenderer = KaSamConstructorSymbolRenderer.AS_FUNCTION
+        typeRenderer = KaTypeRendererForDebug.WITH_QUALIFIED_NAMES
+        declarationTypeApproximator = KaRendererTypeApproximator.NO_APPROXIMATION
     }
 
-    public val WITH_QUALIFIED_NAMES_DENOTABLE: KtDeclarationRenderer = KtDeclarationRendererForSource.WITH_QUALIFIED_NAMES.with {
-        singleTypeParameterRenderer = KtSingleTypeParameterSymbolRenderer.WITHOUT_BOUNDS
-        samConstructorRenderer = KtSamConstructorSymbolRenderer.AS_FUNCTION
-        typeRenderer = KtTypeRendererForDebug.WITH_QUALIFIED_NAMES
-        declarationTypeApproximator = KtRendererTypeApproximator.TO_DENOTABLE
+    public val WITH_QUALIFIED_NAMES_DENOTABLE: KaDeclarationRenderer = KaDeclarationRendererForSource.WITH_QUALIFIED_NAMES.with {
+        singleTypeParameterRenderer = KaSingleTypeParameterSymbolRenderer.WITHOUT_BOUNDS
+        samConstructorRenderer = KaSamConstructorSymbolRenderer.AS_FUNCTION
+        typeRenderer = KaTypeRendererForDebug.WITH_QUALIFIED_NAMES
+        declarationTypeApproximator = KaRendererTypeApproximator.TO_DENOTABLE
+    }
+
+    public val WITH_SHORT_NAMES: KaDeclarationRenderer = WITH_QUALIFIED_NAMES.with {
+        annotationRenderer = KaAnnotationRendererForSource.WITH_SHORT_NAMES
+        typeRenderer = KaTypeRendererForDebug.WITH_SHORT_NAMES
     }
 }
 
+public typealias KtDeclarationRendererForDebug = KaDeclarationRendererForDebug

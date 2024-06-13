@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.fields
 
 import com.intellij.lang.Language
 import com.intellij.psi.*
-import com.intellij.psi.impl.ElementPresentationUtil
-import com.intellij.ui.IconManager
 import com.intellij.util.IncorrectOperationException
-import com.intellij.util.PlatformIcons
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.cannotModify
@@ -57,16 +54,7 @@ internal abstract class SymbolLightField protected constructor(
 
     override fun isVisibilitySupported(): Boolean = true
 
-    override fun getElementIcon(flags: Int): Icon? {
-        val baseIcon = IconManager.getInstance().createLayeredIcon(
-            this,
-            PlatformIcons.VARIABLE_ICON, ElementPresentationUtil.getFlags(
-                this,
-                false
-            )
-        )
-        return ElementPresentationUtil.addVisibilityIcon(this, flags, baseIcon)
-    }
+    override fun getElementIcon(flags: Int): Icon? = throw UnsupportedOperationException("This should be done by KotlinIconProvider")
 
     abstract override fun equals(other: Any?): Boolean
 

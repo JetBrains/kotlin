@@ -5,10 +5,12 @@
 package org.jetbrains.kotlin.analysis.decompiler.konan
 
 import com.intellij.openapi.fileTypes.FileType
+import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.analysis.decompiler.psi.text.DecompiledText
 import org.jetbrains.kotlin.analysis.decompiler.psi.text.buildDecompiledText
 import org.jetbrains.kotlin.analysis.decompiler.psi.text.defaultDecompilerRendererOptions
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.library.metadata.KlibMetadataClassDataFinder
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
@@ -40,11 +42,12 @@ abstract class Fe10KlibMetadataDecompiler<out V : BinaryVersion>(
     }
 
     override fun getDecompiledText(
-        file: FileWithMetadata.Compatible,
+        fileWithMetadata: FileWithMetadata.Compatible,
+        virtualFile: VirtualFile,
         serializerProtocol: SerializerExtensionProtocol,
         flexibleTypeDeserializer: FlexibleTypeDeserializer
     ): DecompiledText {
-        return decompiledText(file, serializerProtocol, flexibleTypeDeserializer, renderer)
+        return decompiledText(fileWithMetadata, virtualFile, serializerProtocol, ::readFileSafely, flexibleTypeDeserializer, renderer)
     }
 }
 
@@ -55,22 +58,26 @@ abstract class Fe10KlibMetadataDecompiler<out V : BinaryVersion>(
  * That's why in K2 it is important to preserve declaration order during deserialization to not get PSI vs. stubs mismatch.
  */
 internal fun decompiledText(
-    file: FileWithMetadata.Compatible,
+    fileWithMetadata: FileWithMetadata.Compatible,
+    virtualFile: VirtualFile,
     serializerProtocol: SerializerExtensionProtocol,
+    readFile: (VirtualFile) -> FileWithMetadata?,
     flexibleTypeDeserializer: FlexibleTypeDeserializer,
     renderer: DescriptorRenderer,
     deserializationConfiguration: DeserializationConfiguration = DeserializationConfiguration.Default
 ): DecompiledText {
-    val packageFqName = file.packageFqName
+    val packageFqName = fileWithMetadata.packageFqName
+    val mainClassDataFinder = KlibMetadataClassDataFinder(fileWithMetadata.proto, fileWithMetadata.nameResolver)
     val resolver = KlibMetadataDeserializerForDecompiler(
-        packageFqName, file.proto, file.nameResolver,
+        packageFqName, fileWithMetadata.proto, fileWithMetadata.nameResolver,
+        NearFileClassDataFinder.wrapIfNeeded(mainClassDataFinder, virtualFile, readFile),
         serializerProtocol, flexibleTypeDeserializer,
         deserializationConfiguration,
     )
     val declarations = arrayListOf<DeclarationDescriptor>()
     declarations.addAll(resolver.resolveDeclarationsInFacade(packageFqName))
-    for (classProto in file.classesToDecompile) {
-        val classId = file.nameResolver.getClassId(classProto.fqName)
+    for (classProto in fileWithMetadata.classesToDecompile) {
+        val classId = fileWithMetadata.nameResolver.getClassId(classProto.fqName)
         declarations.addIfNotNull(resolver.resolveTopLevelClass(classId))
     }
     return buildDecompiledText(packageFqName, declarations, renderer)

@@ -49,7 +49,7 @@ FILE fqName:<root> fileName:/reassignDestructured.kt
                 arg0: GET_VAR 'val i2: kotlin.Int? declared in <root>.test2' type=kotlin.Int? origin=null
                 arg1: CONST Null type=kotlin.Nothing? value=null
           then: RETURN type=kotlin.Nothing from='public final fun test2 (): kotlin.Unit declared in <root>'
-            GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+            GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
       VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Pair<kotlin.Int, kotlin.Int> [val]
         CALL 'public final fun to <A, B> (that: B of kotlin.to): kotlin.Pair<A of kotlin.to, B of kotlin.to> declared in kotlin' type=kotlin.Pair<kotlin.Int, kotlin.Int> origin=null
           <A>: kotlin.Int

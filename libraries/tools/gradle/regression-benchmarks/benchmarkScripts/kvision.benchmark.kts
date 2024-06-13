@@ -9,8 +9,8 @@
 @file:BenchmarkProject(
     name = "kvision",
     gitUrl = "https://github.com/rjaros/kvision.git",
-    gitCommitSha = "4291d5a7be360d304b58a8727df3c09b22bc0ed0",
-    stableKotlinVersion = "1.9.23",
+    gitCommitSha = "8f2b3c96dcc9ad594995367ad138a37328244bb9",
+    stableKotlinVersion = "2.0.0",
 )
 
 import java.io.File

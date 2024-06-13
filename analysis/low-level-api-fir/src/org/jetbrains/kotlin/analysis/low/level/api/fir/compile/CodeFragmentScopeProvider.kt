@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.compile
 import com.intellij.psi.impl.compiled.ClsTypeElementImpl
 import com.intellij.psi.impl.compiled.SignatureParsing
 import com.intellij.psi.impl.compiled.StubBuildingVisitor
-import org.jetbrains.kotlin.analysis.providers.ForeignValueProviderService
+import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinForeignValueProviderService
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFac
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.org.objectweb.asm.Type
-import java.text.StringCharacterIterator
 
 val FirSession.codeFragmentScopeProvider: CodeFragmentScopeProvider by FirSession.sessionComponentAccessor()
 
@@ -42,7 +41,7 @@ val FirPropertySymbol.isForeignValue: Boolean
     get() = fir.foreignValueMarker == true
 
 class CodeFragmentScopeProvider(private val session: FirSession) : FirSessionComponent {
-    private val foreignValueProvider = ForeignValueProviderService.getInstance()
+    private val foreignValueProvider = KotlinForeignValueProviderService.getInstance()
 
     private val typeCache = session.firCachesFactory.createCache<String, FirTypeRef, KtCodeFragment> { typeDescriptor, ktCodeFragment ->
         getPrimitiveType(typeDescriptor, session)?.let { return@createCache it }
@@ -50,9 +49,9 @@ class CodeFragmentScopeProvider(private val session: FirSession) : FirSessionCom
         val project = ktCodeFragment.project
         val javaElementSourceFactory = JavaElementSourceFactory.getInstance(project)
 
-        val signatureIterator = StringCharacterIterator(typeDescriptor)
-        val typeString = SignatureParsing.parseTypeString(signatureIterator, StubBuildingVisitor.GUESSING_MAPPER)
-        val psiType = ClsTypeElementImpl(ktCodeFragment, typeString, '\u0000').type
+        val signatureIterator = SignatureParsing.CharIterator(typeDescriptor)
+        val typeInfo = SignatureParsing.parseTypeStringToTypeInfo(signatureIterator, StubBuildingVisitor.GUESSING_PROVIDER)
+        val psiType = ClsTypeElementImpl(ktCodeFragment, typeInfo.text(), '\u0000').type
         val javaType = JavaTypeImpl.create(psiType, javaElementSourceFactory.createTypeSource(psiType))
 
         val javaTypeRef = buildJavaTypeRef {

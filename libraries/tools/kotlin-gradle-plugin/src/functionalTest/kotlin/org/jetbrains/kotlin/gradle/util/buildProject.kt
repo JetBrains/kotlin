@@ -10,6 +10,7 @@ import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Project
 import org.gradle.api.artifacts.verification.DependencyVerificationMode
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -22,8 +23,8 @@ import org.jetbrains.kotlin.gradle.plugin.getExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.KotlinTargetResourcesResolutionStrategy
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.KotlinArtifactsExtensionImpl
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.kotlinArtifactsExtension
+import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
 import org.jetbrains.kotlin.gradle.utils.getFile
-import org.jetbrains.kotlin.konan.target.Xcode
 import org.jetbrains.kotlin.konan.target.XcodeVersion
 
 fun buildProject(
@@ -33,8 +34,6 @@ fun buildProject(
     .builder()
     .apply(projectBuilder)
     .build()
-    //temporary solution for BuildEventsListenerRegistry
-    .also { addBuildEventsListenerRegistryMock(it) }
     .also { disableDownloadingKonanFromMavenCentral(it) }
     .apply(configureProject)
     .let { it as ProjectInternal }
@@ -61,6 +60,7 @@ fun buildProjectWithJvm(
 }
 
 fun buildProjectWithCocoapods(projectBuilder: ProjectBuilder.() -> Unit = {}, code: Project.() -> Unit = {}) = buildProject(projectBuilder) {
+    project.applyMultiplatformPlugin()
     project.applyCocoapodsPlugin()
     code()
 }
@@ -96,18 +96,18 @@ fun Project.androidApplication(code: ApplicationExtension.() -> Unit) {
 }
 
 fun Project.applyMultiplatformPlugin(): KotlinMultiplatformExtension {
-    addBuildEventsListenerRegistryMock(this)
     disableLegacyWarning(project)
     plugins.apply("kotlin-multiplatform")
     return extensions.getByName("kotlin") as KotlinMultiplatformExtension
 }
 
-fun Project.applyCocoapodsPlugin(): CocoapodsExtension {
-    val kotlinExtension = applyMultiplatformPlugin()
+fun Project.applyCocoapodsPlugin() {
     plugins.apply("org.jetbrains.kotlin.native.cocoapods")
-    return kotlinExtension.getExtension<CocoapodsExtension>("cocoapods")!!.also {
-        it.version = "1.0"
-    }
+    kotlin { cocoapods { version = "1.0" } }
+}
+
+fun KotlinMultiplatformExtension.cocoapods(code: CocoapodsExtension.() -> Unit) {
+    getExtension<CocoapodsExtension>("cocoapods")!!.apply(code)
 }
 
 val Project.propertiesExtension: ExtraPropertiesExtension
@@ -131,6 +131,10 @@ fun Project.enableIntransitiveMetadataConfiguration(enabled: Boolean = true) {
 
 fun Project.enableDefaultStdlibDependency(enabled: Boolean = true) {
     project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_STDLIB_DEFAULT_DEPENDENCY, enabled.toString())
+}
+
+fun Project.enableSwiftExport(enabled: Boolean = true) {
+    project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_SWIFT_EXPORT_ENABLED, enabled.toString())
 }
 
 fun Project.setMultiplatformAndroidSourceSetLayoutVersion(version: Int) {

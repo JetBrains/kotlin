@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun foo1(i: (Int) -> Unit) {}
 fun foo2(i: (Int, Int) -> Unit) {}

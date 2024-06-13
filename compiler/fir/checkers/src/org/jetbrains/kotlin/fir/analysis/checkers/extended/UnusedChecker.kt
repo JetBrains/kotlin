@@ -29,11 +29,13 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.SpecialNames
 
 object UnusedChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.Common) {
-    override fun analyze(data: PropertyInitializationInfoData, reporter: DiagnosticReporter, context: CheckerContext) {
-        val ownData = Data(data.properties)
+    override fun analyze(data: VariableInitializationInfoData, reporter: DiagnosticReporter, context: CheckerContext) {
+        @Suppress("UNCHECKED_CAST")
+        val properties = data.properties as Set<FirPropertySymbol>
+        val ownData = Data(properties)
         data.graph.traverse(AddAllWrites(), ownData)
         if (ownData.unreadWrites.isNotEmpty()) {
-            ownData.writesByNode = data.graph.traverseToFixedPoint(FindVisibleWrites(data.properties))
+            ownData.writesByNode = data.graph.traverseToFixedPoint(FindVisibleWrites(properties))
         }
         data.graph.traverse(RemoveVisibleWrites(), ownData)
 
@@ -62,6 +64,10 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.C
     private val FirPropertySymbol.ignoreWarnings: Boolean
         get() = name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR ||
                 source == null ||
+                // if <receiver> variable is reported as unused,
+                // then the assignment itself is a dead code because of its RHS expression,
+                // which will be eventually reported
+                source?.kind is KtFakeSourceElementKind.DesugaredAugmentedAssign ||
                 source?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION ||
                 initializerSource?.kind == KtFakeSourceElementKind.DesugaredForLoop
 

@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 open class Outer<E> {
     inner open class Inner<F> {
         inner class Inner2<D> {

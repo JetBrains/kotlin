@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
+// DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
 package a
 
 import java.util.Date

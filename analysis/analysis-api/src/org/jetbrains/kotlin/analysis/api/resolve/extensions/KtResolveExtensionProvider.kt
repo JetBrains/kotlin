@@ -15,24 +15,26 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModule
  *
  * All member implementations should consider caching the results for subsequent invocations.
  */
-public abstract class KtResolveExtensionProvider {
+public abstract class KaResolveExtensionProvider {
     /**
-     * Provides a list of [KtResolveExtension]s for a given [KtModule].
+     * Provides a list of [KaResolveExtension]s for a given [KtModule].
      *
-     * Should not perform any heavy analysis and the generation of the actual files. All file generation should be performed only in [KtResolveExtensionFile.buildFileText].
+     * Should not perform any heavy analysis and the generation of the actual files. All file generation should be performed only in [KaResolveExtensionFile.buildFileText].
      *
      * Implementations should consider caching the results, so the subsequent invocations should be performed instantly.
      *
      * Implementation cannot use the Kotlin resolve inside, as this function is called during session initialization, so Analysis API access is forbidden.
      */
-    public abstract fun provideExtensionsFor(module: KtModule): List<KtResolveExtension>
+    public abstract fun provideExtensionsFor(module: KtModule): List<KaResolveExtension>
 
     public companion object {
-        public val EP_NAME: ExtensionPointName<KtResolveExtensionProvider> =
-            ExtensionPointName<KtResolveExtensionProvider>("org.jetbrains.kotlin.ktResolveExtensionProvider")
+        public val EP_NAME: ExtensionPointName<KaResolveExtensionProvider> =
+            ExtensionPointName<KaResolveExtensionProvider>("org.jetbrains.kotlin.kaResolveExtensionProvider")
 
-        public fun provideExtensionsFor(module: KtModule): List<KtResolveExtension> {
+        public fun provideExtensionsFor(module: KtModule): List<KaResolveExtension> {
             return EP_NAME.getExtensionList(module.project).flatMap { it.provideExtensionsFor(module) }
         }
     }
 }
+
+public typealias KtResolveExtensionProvider = KaResolveExtensionProvider

@@ -3,16 +3,16 @@ Symbol:
 set(value: kotlin.Int)
 
 Signature:
-KtFunctionLikeSignature:
+KaFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.Unit
   symbol = <setter>(value: kotlin.Int): kotlin.Unit
   valueParameters = [
-    KtVariableLikeSignature:
+    KaVariableLikeSignature:
       name = value
       receiverType = null
       returnType = kotlin.Int
       symbol = value: kotlin.Int
-      callableIdIfNonLocal = null
+      callableId = null
   ]
-  callableIdIfNonLocal = null
+  callableId = null

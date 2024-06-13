@@ -31,7 +31,6 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
 
     @GradleTest
     @TestMetadata("klibCrossCompilationWithGradlePropertyEnabled")
-    @Disabled("For now, fails with an error from klib resolver about mismatched stdlib targets; needs KT-66967")
     @OsCondition(supportedOn = [OS.LINUX, OS.WINDOWS], enabledOnCI = [OS.LINUX, OS.WINDOWS])
     fun compileIosTargetOnNonDarwinHostWithGradlePropertyEnabled(gradleVersion: GradleVersion) {
         nativeProject("klibCrossCompilationWithGradlePropertyEnabled", gradleVersion) {
@@ -46,7 +45,11 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
                 KotlinTestUtils.assertEqualsToFile(
                     projectPath.resolve("diagnostics-linkIosArm64.txt"), extractProjectsAndTheirDiagnostics()
                 )
-                assertTasksSkipped(":linkIosArm64")
+                // Do not assert :linkIosArm64, because it's a plain umbrella-like `org.gradle.DefaultTask` instance,
+                // and it doesn't get disabled even on linuxes (see [KotlinNativeConfigureBinariesSideEffect])
+                assertTasksSkipped(":linkDebugTestIosArm64")
+                assertTasksSkipped(":linkReleaseExecutableIosArm64")
+                assertTasksSkipped(":linkDebugExecutableIosArm64")
             }
         }
     }

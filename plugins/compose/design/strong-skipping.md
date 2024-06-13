@@ -95,7 +95,7 @@ To strong skipping for a gradle module, include:
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>() {
     compilerOptions.freeCompilerArgs.addAll(
         "-P",
-        "plugin:androidx.compose.compiler.plugins.kotlin:experimentalStrongSkipping=true",
+        "plugin:androidx.compose.compiler.plugins.kotlin:featureFlag=StrongSkipping",
     )
 }
 ```

@@ -1,7 +1,7 @@
-// !LANGUAGE: +TypeEnhancementImprovementsInStrictMode +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
-// !DIAGNOSTICS: -UNUSED_PARAMETER -CAST_NEVER_SUCCEEDS
+// DIAGNOSTICS: -UNUSED_PARAMETER -CAST_NEVER_SUCCEEDS
 // SKIP_TXT
 // MUTE_FOR_PSI_CLASS_FILES_READING
+// ^ KT-68389
 
 // FILE: ValueParameter.java
 
@@ -31,32 +31,32 @@ fun getArrayOfNullableString() = null as Array<String?>
 fun <K: Any> getArrayOfNotNullK() = null as Array<K>
 fun <K> getArrayOfNullableK() = null as Array<K?>
 
-fun <R> main(a: ValueParameter<R>) {
-    a.foo1(<!ARGUMENT_TYPE_MISMATCH!><!CANNOT_INFER_PARAMETER_TYPE!>getNotNullStringAndKNullable<!>()<!>)
-    a.foo1(getNullableStringAndKNullable())
-    a.foo1(<!ARGUMENT_TYPE_MISMATCH!><!CANNOT_INFER_PARAMETER_TYPE!>getNotNullStringAndNotNullK<!>()<!>)
-    a.foo1(<!ARGUMENT_TYPE_MISMATCH!><!CANNOT_INFER_PARAMETER_TYPE!>getNullableStringAndNotNullK<!>()<!>)
+fun <R> main(vp: ValueParameter<R>) {
+    vp.foo1(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<@Nullable() kotlin.String?, @Nullable() R?>!; ValueParameter.A<kotlin.String, K?>")!><!CANNOT_INFER_PARAMETER_TYPE!>getNotNullStringAndKNullable<!>()<!>)
+    vp.foo1(getNullableStringAndKNullable())
+    vp.foo1(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<@Nullable() kotlin.String?, @Nullable() R?>!; ValueParameter.A<kotlin.String, K>")!><!CANNOT_INFER_PARAMETER_TYPE!>getNotNullStringAndNotNullK<!>()<!>)
+    vp.foo1(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<@Nullable() kotlin.String?, @Nullable() R?>!; ValueParameter.A<kotlin.String?, K>")!><!CANNOT_INFER_PARAMETER_TYPE!>getNullableStringAndNotNullK<!>()<!>)
 
-    a.foo2(<!ARGUMENT_TYPE_MISMATCH!><!CANNOT_INFER_PARAMETER_TYPE!>getNotNullStringAndKNullable<!>()<!>)
-    a.foo2(<!ARGUMENT_TYPE_MISMATCH!><!CANNOT_INFER_PARAMETER_TYPE!>getNullableStringAndKNullable<!>()<!>)
-    a.foo2(<!ARGUMENT_TYPE_MISMATCH!><!CANNOT_INFER_PARAMETER_TYPE!>getNotNullStringAndNotNullK<!>()<!>)
-    a.foo2(getNullableStringAndNotNullK())
+    vp.foo2(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<@Nullable() kotlin.String?, @NotNull() R & Any>!; ValueParameter.A<kotlin.String, K?>")!><!CANNOT_INFER_PARAMETER_TYPE!>getNotNullStringAndKNullable<!>()<!>)
+    vp.foo2(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<@Nullable() kotlin.String?, @NotNull() R & Any>!; ValueParameter.A<kotlin.String?, K?>")!><!CANNOT_INFER_PARAMETER_TYPE!>getNullableStringAndKNullable<!>()<!>)
+    vp.foo2(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<@Nullable() kotlin.String?, @NotNull() R & Any>!; ValueParameter.A<kotlin.String, K>")!><!CANNOT_INFER_PARAMETER_TYPE!>getNotNullStringAndNotNullK<!>()<!>)
+    vp.foo2(getNullableStringAndNotNullK())
 
-    a.foo3(<!ARGUMENT_TYPE_MISMATCH!><!CANNOT_INFER_PARAMETER_TYPE!>getNotNullStringAndKNullable<!>()<!>)
-    a.foo3(<!ARGUMENT_TYPE_MISMATCH!><!CANNOT_INFER_PARAMETER_TYPE!>getNullableStringAndKNullable<!>()<!>)
-    a.foo3(getNotNullStringAndNotNullK())
-    a.foo3(<!ARGUMENT_TYPE_MISMATCH!><!CANNOT_INFER_PARAMETER_TYPE!>getNullableStringAndNotNullK<!>()<!>)
+    vp.foo3(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<@NotNull() kotlin.String, @NotNull() R & Any>!; ValueParameter.A<kotlin.String, K?>")!><!CANNOT_INFER_PARAMETER_TYPE!>getNotNullStringAndKNullable<!>()<!>)
+    vp.foo3(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<@NotNull() kotlin.String, @NotNull() R & Any>!; ValueParameter.A<kotlin.String?, K?>")!><!CANNOT_INFER_PARAMETER_TYPE!>getNullableStringAndKNullable<!>()<!>)
+    vp.foo3(getNotNullStringAndNotNullK())
+    vp.foo3(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<@NotNull() kotlin.String, @NotNull() R & Any>!; ValueParameter.A<kotlin.String?, K>")!><!CANNOT_INFER_PARAMETER_TYPE!>getNullableStringAndNotNullK<!>()<!>)
 
-    a.foo4(<!ARGUMENT_TYPE_MISMATCH!>getArrayOfNotNullString()<!>)
-    a.foo4(<!ARGUMENT_TYPE_MISMATCH!>getArrayOfNullableString()<!>)
-    a.foo4(getArrayOfNotNullK())
-    a.foo4(<!ARGUMENT_TYPE_MISMATCH!><!CANNOT_INFER_PARAMETER_TYPE!>getArrayOfNullableK<!>()<!>)
+    vp.foo4(<!ARGUMENT_TYPE_MISMATCH("kotlin.Array<(out) @NotNull() R & Any>!; kotlin.Array<kotlin.String>")!>getArrayOfNotNullString()<!>)
+    vp.foo4(<!ARGUMENT_TYPE_MISMATCH("kotlin.Array<(out) @NotNull() R & Any>!; kotlin.Array<kotlin.String?>")!>getArrayOfNullableString()<!>)
+    vp.foo4(getArrayOfNotNullK())
+    vp.foo4(<!ARGUMENT_TYPE_MISMATCH("kotlin.Array<(out) @NotNull() R & Any>!; kotlin.Array<K?>")!><!CANNOT_INFER_PARAMETER_TYPE!>getArrayOfNullableK<!>()<!>)
 
-    a.foo5(getArrayOfNotNullString())
-    a.foo5(getArrayOfNullableString())
-    a.foo5(getArrayOfNotNullK())
-    a.foo5(getArrayOfNullableK())
+    vp.foo5(getArrayOfNotNullString())
+    vp.foo5(getArrayOfNullableString())
+    vp.foo5(getArrayOfNotNullK())
+    vp.foo5(getArrayOfNullableK())
 
-    a.foo41(getNotNullString())
-    a.foo411(<!ARGUMENT_TYPE_MISMATCH!>getNotNullString()<!>)
+    vp.foo41(getNotNullString())
+    vp.foo411(<!ARGUMENT_TYPE_MISMATCH("R!; kotlin.String")!>getNotNullString()<!>)
 }

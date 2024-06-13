@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.gradle.utils.currentBuildId
 import org.jetbrains.kotlin.gradle.utils.buildNameCompat
 import org.jetbrains.kotlin.gradle.utils.buildPathCompat
 import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
+import org.jetbrains.kotlin.library.metadata.isCommonizedCInteropLibrary
 
 
 internal fun IdeaKotlinProjectCoordinates(identifier: ProjectComponentIdentifier): IdeaKotlinProjectCoordinates {
@@ -84,6 +86,6 @@ internal fun KlibExtra(library: KotlinLibrary): KlibExtra {
         nativeTargets = library.nativeTargets,
         commonizerNativeTargets = library.commonizerNativeTargets,
         commonizerTarget = library.commonizerTarget,
-        isInterop = library.isInterop
+        isInterop = library.isCInteropLibrary() || library.isCommonizedCInteropLibrary()
     )
 }

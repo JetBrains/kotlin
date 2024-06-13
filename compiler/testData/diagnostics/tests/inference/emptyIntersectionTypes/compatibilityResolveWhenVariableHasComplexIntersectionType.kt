@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
-// !LANGUAGE: -ForbidInferringTypeVariablesIntoEmptyIntersection
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// LANGUAGE: -ForbidInferringTypeVariablesIntoEmptyIntersection
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 abstract class Foo<T>
 

@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.isStable
-import org.jetbrains.kotlin.analysis.providers.analysisMessageBus
+import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
 
 /**
  * [LLFirSessionInvalidationEventPublisher] publishes [session invalidation events][LLFirSessionInvalidationTopics] after session

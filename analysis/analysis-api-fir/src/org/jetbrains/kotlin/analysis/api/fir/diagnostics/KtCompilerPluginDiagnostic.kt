@@ -7,41 +7,51 @@ package org.jetbrains.kotlin.analysis.api.fir.diagnostics
 
 import com.intellij.psi.PsiElement
 
-interface KtCompilerPluginDiagnostic0 : KtFirDiagnostic<PsiElement> {
+interface KaCompilerPluginDiagnostic0 : KaFirDiagnostic<PsiElement> {
     override val diagnosticClass
-        get() = KtCompilerPluginDiagnostic0::class
+        get() = KaCompilerPluginDiagnostic0::class
 }
 
-interface KtCompilerPluginDiagnostic1 : KtFirDiagnostic<PsiElement> {
+typealias KtCompilerPluginDiagnostic0 = KaCompilerPluginDiagnostic0
+
+interface KaCompilerPluginDiagnostic1 : KaFirDiagnostic<PsiElement> {
     val parameter1: Any?
 
     override val diagnosticClass
-        get() = KtCompilerPluginDiagnostic1::class
+        get() = KaCompilerPluginDiagnostic1::class
 }
 
-interface KtCompilerPluginDiagnostic2 : KtFirDiagnostic<PsiElement> {
+typealias KtCompilerPluginDiagnostic1 = KaCompilerPluginDiagnostic1
+
+interface KaCompilerPluginDiagnostic2 : KaFirDiagnostic<PsiElement> {
     val parameter1: Any?
     val parameter2: Any?
 
     override val diagnosticClass
-        get() = KtCompilerPluginDiagnostic2::class
+        get() = KaCompilerPluginDiagnostic2::class
 }
 
-interface KtCompilerPluginDiagnostic3 : KtFirDiagnostic<PsiElement> {
+typealias KtCompilerPluginDiagnostic2 = KaCompilerPluginDiagnostic2
+
+interface KaCompilerPluginDiagnostic3 : KaFirDiagnostic<PsiElement> {
     val parameter1: Any?
     val parameter2: Any?
     val parameter3: Any?
 
     override val diagnosticClass
-        get() = KtCompilerPluginDiagnostic3::class
+        get() = KaCompilerPluginDiagnostic3::class
 }
 
-interface KtCompilerPluginDiagnostic4 : KtFirDiagnostic<PsiElement> {
+typealias KtCompilerPluginDiagnostic3 = KaCompilerPluginDiagnostic3
+
+interface KaCompilerPluginDiagnostic4 : KaFirDiagnostic<PsiElement> {
     val parameter1: Any?
     val parameter2: Any?
     val parameter3: Any?
     val parameter4: Any?
 
     override val diagnosticClass
-        get() = KtCompilerPluginDiagnostic4::class
+        get() = KaCompilerPluginDiagnostic4::class
 }
+
+typealias KtCompilerPluginDiagnostic4 = KaCompilerPluginDiagnostic4

@@ -5,12 +5,8 @@
 
 package org.jetbrains.kotlin.kapt4
 
-import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
-import kotlin.metadata.jvm.KotlinClassMetadata
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
-import org.jetbrains.kotlin.analysis.api.lifetime.KtReadActionConfinementLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -30,6 +26,7 @@ import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import java.io.File
 import java.io.PrintWriter
+import kotlin.metadata.jvm.KotlinClassMetadata
 
 internal class Kapt4Facade(private val testServices: TestServices) :
     AbstractTestFacade<ResultingArtifact.Source, Kapt4ContextBinaryArtifact>() {
@@ -56,7 +53,7 @@ internal class Kapt4Facade(private val testServices: TestServices) :
     }
 
     private fun TestFile.realFile(): File {
-        return testServices.sourceFileProvider.getRealFileForSourceFile(this)
+        return testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(this)
     }
 
     override fun shouldRunAnalysis(module: TestModule): Boolean {
@@ -71,10 +68,6 @@ private fun run(
     projectDisposable: Disposable,
 ): Pair<KaptContext, List<KaptStub>> {
     val standaloneAnalysisAPISession = buildStandaloneAnalysisAPISession(projectDisposable) {
-        (project as MockProject).registerService(
-            KtLifetimeTokenProvider::class.java,
-            KtReadActionConfinementLifetimeTokenProvider::class.java
-        )
         @Suppress("DEPRECATION")
         buildKtModuleProviderByCompilerConfiguration(configuration)
     }

@@ -2,7 +2,7 @@
 // ^^^ K1 as well as K1-based test infra do not support "fragment refinement".
 
 // FIR_IDENTICAL
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 
 // MODULE: lib
 // FILE: lib.kt

@@ -175,8 +175,11 @@ internal fun checkContextReceiverTypeRefIsResolved(declaration: FirRegularClass,
     checkContextReceiverTypeRefIsResolved(declaration.contextReceivers, declaration, acceptImplicitTypeRef)
 }
 
-internal fun checkContextReceiverTypeRefIsResolved(declaration: FirScript, acceptImplicitTypeRef: Boolean = false) {
-    checkContextReceiverTypeRefIsResolved(declaration.contextReceivers, declaration, acceptImplicitTypeRef)
+internal fun checkImplicitReceiverTypeRefIsResolved(declaration: FirScript, acceptImplicitTypeRef: Boolean = false) {
+    for (implicitReceiver in declaration.receivers) {
+        val receiverTypeRef = implicitReceiver.typeRef
+        checkTypeRefIsResolved(receiverTypeRef, typeRefName = "implicit receiver type", declaration, acceptImplicitTypeRef)
+    }
 }
 
 private fun checkContextReceiverTypeRefIsResolved(

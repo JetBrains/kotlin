@@ -69,13 +69,21 @@ class TestExceptionsComparator(wholeFile: File) {
         }
     }
 
-    fun run(expectedException: TestsExceptionType?, runnable: () -> Unit) =
-        run(expectedException, mapOf(), null, runnable)
+    fun run(expectedException: TestsExceptionType?, printExceptionsToConsole: Boolean = false, runnable: () -> Unit) {
+        run(
+            expectedException,
+            mapOf(),
+            computeExceptionPoint = null,
+            printExceptionsToConsole,
+            runnable
+        )
+    }
 
     fun run(
         expectedException: TestsExceptionType?,
         exceptionByCases: Map<Int, TestsExceptionType?>,
         computeExceptionPoint: ((Matcher?) -> Set<Int>?)?,
+        printExceptionsToConsole: Boolean = false,
         runnable: () -> Unit
     ) {
         try {
@@ -97,8 +105,9 @@ class TestExceptionsComparator(wholeFile: File) {
                 e.original.printStackTrace()
                 throw t
             }
-
-            e.original.printStackTrace()
+            if (printExceptionsToConsole) {
+                e.original.printStackTrace()
+            }
             validateExistingExceptionFiles(e)
             return
         }

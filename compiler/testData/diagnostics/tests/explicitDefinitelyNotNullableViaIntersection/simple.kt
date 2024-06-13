@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +DefinitelyNonNullableTypes
+// LANGUAGE: +DefinitelyNonNullableTypes
 
 fun <T> foo(x: T, y: T & Any): T & Any = x ?: y
 

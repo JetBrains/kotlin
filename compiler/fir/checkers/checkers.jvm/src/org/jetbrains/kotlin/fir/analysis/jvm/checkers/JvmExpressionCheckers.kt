@@ -27,11 +27,13 @@ object JvmExpressionCheckers : ExpressionCheckers() {
     override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker>
         get() = setOf(
             FirSyntheticPropertyWithoutJavaOriginChecker,
+            FirFieldAccessShadowedByInvisibleKotlinProperty,
         )
 
     override val callableReferenceAccessCheckers: Set<FirCallableReferenceAccessChecker>
         get() = setOf(
             FirUnsupportedSyntheticCallableReferenceChecker,
+            FirFieldReferenceShadowedByInvisibleKotlinProperty,
         )
 
     override val functionCallCheckers: Set<FirFunctionCallChecker>

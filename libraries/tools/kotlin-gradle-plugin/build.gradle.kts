@@ -78,6 +78,7 @@ dependencies {
     commonCompileOnly(project(":kotlin-compiler-runner-unshaded"))
     commonCompileOnly(project(":kotlin-gradle-statistics"))
     commonCompileOnly(project(":kotlin-gradle-build-metrics"))
+    commonCompileOnly(project(":compiler:build-tools:kotlin-build-tools-jdk-utils"))
     commonCompileOnly(libs.android.gradle.plugin.gradle.api) { isTransitive = false }
     commonCompileOnly(libs.android.gradle.plugin.gradle) { isTransitive = false }
     commonCompileOnly(libs.android.gradle.plugin.builder) { isTransitive = false }
@@ -320,6 +321,7 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
             exclude(group = "*")
         }
         implementation("org.reflections:reflections:0.10.2")
+        implementation(project(":compose-compiler-gradle-plugin"))
     }
 
     tasks.named("check") {

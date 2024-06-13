@@ -1,11 +1,11 @@
-KtSyntheticJavaPropertySymbol:
-  annotationsList: []
+KaSyntheticJavaPropertySymbol:
+  annotations: []
   backingFieldSymbol: null
-  callableIdIfNonLocal: /JavaClass.foo
+  callableId: /JavaClass.foo
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
-    annotationsList: []
-    callableIdIfNonLocal: /JavaClass.getFoo
+  getter: KaPropertyGetterSymbol:
+    annotations: []
+    callableId: /JavaClass.getFoo
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -16,17 +16,17 @@ KtSyntheticJavaPropertySymbol:
     modality: OPEN
     origin: JAVA_SYNTHETIC_PROPERTY
     receiverParameter: null
-    returnType: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
-    getDispatchReceiver(): KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: JavaClass
     getContainingFileSymbol: null
     getContainingJvmClassName: JavaClass
@@ -42,23 +42,23 @@ KtSyntheticJavaPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
-  javaGetterSymbol: KtFunctionSymbol(/JavaClass.getFoo)
+  javaGetterSymbol: KaFunctionSymbol(/JavaClass.getFoo)
   javaSetterSymbol: null
   modality: OPEN
   name: foo
   origin: JAVA_SYNTHETIC_PROPERTY
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: JavaClass
   getContainingFileSymbol: null
   getContainingJvmClassName: JavaClass

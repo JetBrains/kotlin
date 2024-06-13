@@ -5,14 +5,15 @@
 
 package org.jetbrains.sir.lightclasses.utils
 
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionLikeSymbol
 import org.jetbrains.kotlin.sir.*
+import org.jetbrains.kotlin.sir.providers.source.KotlinParameterOrigin
 import org.jetbrains.kotlin.sir.providers.utils.updateImports
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.withSessions
 
-internal inline fun <reified T : KtCallableSymbol> SirFromKtSymbol<T>.translateReturnType(): SirType {
+internal inline fun <reified T : KaCallableSymbol> SirFromKtSymbol<T>.translateReturnType(): SirType {
     return withSessions {
         this@translateReturnType.ktSymbol.returnType.translateType(
             analysisSession,
@@ -23,7 +24,7 @@ internal inline fun <reified T : KtCallableSymbol> SirFromKtSymbol<T>.translateR
     }
 }
 
-internal inline fun <reified T : KtFunctionLikeSymbol> SirFromKtSymbol<T>.translateParameters(): List<SirParameter> {
+internal inline fun <reified T : KaFunctionLikeSymbol> SirFromKtSymbol<T>.translateParameters(): List<SirParameter> {
     return withSessions {
         this@translateParameters.ktSymbol.valueParameters.map { parameter ->
             val sirType = parameter.returnType.translateType(
@@ -32,7 +33,7 @@ internal inline fun <reified T : KtFunctionLikeSymbol> SirFromKtSymbol<T>.transl
                 reportUnsupportedType = { error("Can't translate parameter ${parameter.render()} type in ${ktSymbol.render()}: type is not supported") },
                 processTypeImports = this@translateParameters.ktSymbol.getContainingModule().sirModule()::updateImports
             )
-            SirParameter(argumentName = parameter.name.asString(), type = sirType)
+            SirParameter(argumentName = parameter.name.asString(), type = sirType, origin = KotlinParameterOrigin.ValueParameter(parameter))
         }
     }
 }

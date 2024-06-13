@@ -135,7 +135,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
         return exitCode == null ? normalizedOutputWithoutExitCode : (normalizedOutputWithoutExitCode + exitCode + "\n");
     }
 
-    private void doTest(@NotNull String fileName, @NotNull CLITool<?> compiler) {
+    protected void doTest(@NotNull String fileName, @NotNull CLITool<?> compiler) {
         System.setProperty("java.awt.headless", "true");
 
         File environmentTestConfig = new File(fileName.replaceFirst("\\.args$", ".env"));

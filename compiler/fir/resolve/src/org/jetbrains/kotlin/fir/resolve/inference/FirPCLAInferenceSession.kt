@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstrai
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeSemiFixVariableConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
@@ -31,14 +32,13 @@ import org.jetbrains.kotlin.types.model.defaultType
 class FirPCLAInferenceSession(
     private val outerCandidate: Candidate,
     private val inferenceComponents: InferenceComponents,
-    private val returnTypeCalculator: ReturnTypeCalculator,
 ) : FirInferenceSession() {
 
-    var currentCommonSystem = prepareSharedBaseSystem(outerCandidate.system, inferenceComponents)
+    var currentCommonSystem: NewConstraintSystemImpl = prepareSharedBaseSystem(outerCandidate.system, inferenceComponents)
         private set
 
-    override fun baseConstraintStorageForCandidate(candidate: Candidate): ConstraintStorage? {
-        if (candidate.mightBeAnalyzedAndCompletedIndependently()) return null
+    override fun baseConstraintStorageForCandidate(candidate: Candidate, bodyResolveContext: BodyResolveContext): ConstraintStorage? {
+        if (candidate.mightBeAnalyzedAndCompletedIndependently(bodyResolveContext.returnTypeCalculator)) return null
 
         return currentCommonSystem.currentStorage()
     }
@@ -207,7 +207,7 @@ class FirPCLAInferenceSession(
      * TODO: Currently, making it always returning "false" leads to few test failures
      * TODO: due to some corner cases like annotations calls (KT-65465)
      */
-    private fun Candidate.mightBeAnalyzedAndCompletedIndependently(): Boolean {
+    private fun Candidate.mightBeAnalyzedAndCompletedIndependently(returnTypeCalculator: ReturnTypeCalculator): Boolean {
         when (callInfo.resolutionMode) {
             // Currently, we handle delegates specifically, not completing them even if they are trivial function calls
             // Thus they are being resolved in the context of outer CS
@@ -283,7 +283,7 @@ class FirPCLAInferenceSession(
             is FirSafeCallExpression -> receiver.isTrivialArgument() && (selector as? FirExpression)?.isTrivialArgument() == true
             is FirVarargArgumentsExpression -> arguments.all { it.isTrivialArgument() }
 
-            is FirLiteralExpression<*>, is FirResolvedQualifier, is FirResolvedReifiedParameterReference -> true
+            is FirLiteralExpression, is FirResolvedQualifier, is FirResolvedReifiedParameterReference -> true
 
             // Be default, we consider all the unknown cases as unsafe to resolve independently
             else -> false
@@ -322,10 +322,8 @@ class FirTypeVariablesAfterPCLATransformer(private val substitutor: ConeSubstitu
         // FirAnonymousFunctionExpression doesn't support replacing the type
         // since it delegates the getter to the underlying FirAnonymousFunction.
         if (element is FirExpression && element !is FirAnonymousFunctionExpression) {
-            // TODO Check why some expressions have unresolved type in builder inference session KT-61835
-            @OptIn(UnresolvedExpressionTypeAccess::class)
-            element.coneTypeOrNull
-                ?.let(substitutor::substituteOrNull)
+            element.resolvedType
+                .let(substitutor::substituteOrNull)
                 ?.let { element.replaceConeTypeOrNull(it) }
         }
 

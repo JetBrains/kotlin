@@ -179,6 +179,9 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun trimToSize (): kotlin.Unit declared in <root>.Java1
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<@[FlexibleNullability] kotlin.Int?>
+    PROPERTY FAKE_OVERRIDE name:modCount visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final modCount: kotlin.Int declared in <root>.Java1
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
       overridden:
         public open size: kotlin.Int declared in <root>.Java1
@@ -373,6 +376,9 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun removeAt (index: kotlin.Int): kotlin.Int declared in <root>.B'
           CONST Int type=kotlin.Int value=1
+    PROPERTY FAKE_OVERRIDE name:modCount visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final modCount: kotlin.Int declared in <root>.Java1
     PROPERTY name:size visibility:public modality:OPEN [val]
       overridden:
         public open size: kotlin.Int declared in <root>.Java1

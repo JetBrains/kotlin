@@ -36,13 +36,14 @@ internal fun KotlinCompilation<*>.registerAssembleHierarchicalResourcesTaskProvi
     }
 
     return project.registerTask<AssembleHierarchicalResourcesTask>(taskName) { assembleResources ->
+        val outputDirectory = project.layout.buildDirectory.dir(
+            "${KotlinTargetResourcesPublicationImpl.MULTIPLATFORM_RESOURCES_DIRECTORY}/assemble-hierarchically/${targetNamePrefix}"
+        )
+        assembleResources.outputDirectory.set(outputDirectory)
         project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseRefinesEdges) {
             val resourceDirectoriesByLevel = splitResourceDirectoriesBySourceSetLevel(
                 resources = resources,
                 rootSourceSets = kotlinSourceSets.sortedBy { it.name },
-            )
-            val outputDirectory = project.layout.buildDirectory.dir(
-                "${KotlinTargetResourcesPublicationImpl.MULTIPLATFORM_RESOURCES_DIRECTORY}/assemble-hierarchically/${targetNamePrefix}"
             )
 
             resourceDirectoriesByLevel.forEach { level ->
@@ -58,7 +59,6 @@ internal fun KotlinCompilation<*>.registerAssembleHierarchicalResourcesTaskProvi
                 )
             }
             assembleResources.relativeResourcePlacement.set(resources.relativeResourcePlacement)
-            assembleResources.outputDirectory.set(outputDirectory)
         }
     }
 }

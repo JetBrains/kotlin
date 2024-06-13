@@ -1,2 +1,0 @@
-Resolved to:
-0: (in Baz) val foo: kotlin.Int

@@ -183,17 +183,29 @@ class WorkerTest {
     fun executeAfterCancelled() {
         val worker = Worker.start()
 
-        val future = worker.execute(TransferMode.SAFE, {}) {
+        val stage = AtomicInt(0)
+
+        val future = worker.execute(TransferMode.SAFE, { stage }) { stage ->
+            // Wait until termination request is definitely in the job queue.
+            while (stage.value == 0) {}
             // Here we processed termination request.
             assertEquals(false, Worker.current.processQueue())
+            // Now wait until the worker is fully terminated
+            while (stage.value == 1) {}
         }
 
         worker.executeAfter(1_000_000_000L) { error("FAILURE") }
 
-        // Request worker to terminate and wait for the request to be processed.
-        worker.requestTermination(processScheduledJobs = false).result
-        // Now wait for the worker to complete termination, cleaning up after itself.
+        // Request worker to terminate.
+        val terminationRequest = worker.requestTermination(processScheduledJobs = false)
+        // Allow `execute` above to `processQueue`.
+        stage.value = 1
+        // Now wait until `processQueue` processes termination request.
+        terminationRequest.result
+        // And now wait for the worker to complete termination, cleaning up after itself.
         waitWorkerTermination(worker)
+        // And finally allow `execute` to complete.
+        stage.value = 2
 
         // `future` is bound to terminated `worker` and so it's not available anymore.
         assertFailsWith<IllegalStateException> { future.result }

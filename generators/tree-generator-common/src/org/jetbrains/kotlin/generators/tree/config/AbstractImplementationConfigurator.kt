@@ -102,7 +102,7 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Eleme
                                 .mapNotNull { it.implementationDefaultStrategy }
                             if (inheritedDefaults.isNotEmpty()) {
                                 field.implementationDefaultStrategy = inheritedDefaults.singleOrNull()
-                                    ?: error("Field $field has ambitious default value, please specify it explicitly for the ${element.name} element")
+                                    ?: error("Field $field has ambiguous default value, please specify it explicitly for the ${element.name} element")
                                 break
                             }
                         }

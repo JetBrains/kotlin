@@ -3,28 +3,28 @@ Symbol:
 fun <T> foo(x: kotlin.collections.List<T>, y: kotlin.collections.Map<T, kotlin.String>, k: kotlin.String): kotlin.Int
 
 Signature:
-KtFunctionLikeSignature:
+KaFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.Int
   symbol = /foo(x: kotlin.collections.List<T>, y: kotlin.collections.Map<T, kotlin.String>, k: kotlin.String): kotlin.Int
   valueParameters = [
-    KtVariableLikeSignature:
+    KaVariableLikeSignature:
       name = x
       receiverType = null
       returnType = kotlin.collections.List<T>
       symbol = x: kotlin.collections.List<T>
-      callableIdIfNonLocal = null,
-    KtVariableLikeSignature:
+      callableId = null,
+    KaVariableLikeSignature:
       name = y
       receiverType = null
       returnType = kotlin.collections.Map<T, kotlin.String>
       symbol = y: kotlin.collections.Map<T, kotlin.String>
-      callableIdIfNonLocal = null,
-    KtVariableLikeSignature:
+      callableId = null,
+    KaVariableLikeSignature:
       name = k
       receiverType = null
       returnType = kotlin.String
       symbol = k: kotlin.String
-      callableIdIfNonLocal = null
+      callableId = null
   ]
-  callableIdIfNonLocal = /foo
+  callableId = /foo

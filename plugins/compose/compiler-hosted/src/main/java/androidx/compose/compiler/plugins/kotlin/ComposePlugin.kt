@@ -19,30 +19,16 @@ package androidx.compose.compiler.plugins.kotlin
 import androidx.compose.compiler.plugins.kotlin.analysis.FqNameMatcher
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityConfigParser
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
-import androidx.compose.compiler.plugins.kotlin.k1.ComposableCallChecker
-import androidx.compose.compiler.plugins.kotlin.k1.ComposableDeclarationChecker
-import androidx.compose.compiler.plugins.kotlin.k1.ComposableTargetChecker
-import androidx.compose.compiler.plugins.kotlin.k1.ComposeDescriptorSerializerContext
-import androidx.compose.compiler.plugins.kotlin.k1.ComposeDiagnosticSuppressor
-import androidx.compose.compiler.plugins.kotlin.k1.ComposeTypeResolutionInterceptorExtension
+import androidx.compose.compiler.plugins.kotlin.k1.*
 import androidx.compose.compiler.plugins.kotlin.k2.ComposeFirExtensionRegistrar
 import androidx.compose.compiler.plugins.kotlin.lower.ClassStabilityFieldSerializationPlugin
 import androidx.compose.compiler.plugins.kotlin.lower.hiddenfromobjc.AddHiddenFromObjCSerializationPlugin
 import com.intellij.mock.MockProject
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
-import org.jetbrains.kotlin.compiler.plugin.CliOption
-import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
-import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
-import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.compiler.plugin.*
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptor
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
@@ -89,6 +75,12 @@ object ComposeConfiguration {
         )
     val TRACE_MARKERS_ENABLED_KEY =
         CompilerConfigurationKey<Boolean>("Include composition trace markers in generated code")
+    val FEATURE_FLAGS =
+        CompilerConfigurationKey<List<String>>(
+            "A list of features to enable."
+        )
+    val SKIP_IR_LOWERING_IF_RUNTIME_NOT_FOUND_KEY =
+        CompilerConfigurationKey<Boolean>("Skip IR lowering transformation when finding Compose runtime fails")
 }
 
 @OptIn(ExperimentalCompilerApi::class)
@@ -138,17 +130,29 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             required = false,
             allowMultipleOccurrences = false
         )
+        val FEATURE_FLAG_OPTION = CliOption(
+            "featureFlag",
+            "<feature name>",
+            "The name of the feature to enable",
+            required = false,
+            allowMultipleOccurrences = true
+        )
         val INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_OPTION = CliOption(
             "intrinsicRemember",
             "<true|false>",
-            "Include source information in generated code",
+            "Include source information in generated code. Deprecated. Use ${
+                useFeatureFlagInsteadMessage(FeatureFlag.IntrinsicRemember)
+            }",
             required = false,
             allowMultipleOccurrences = false
         )
         val NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_OPTION = CliOption(
             optionName = "nonSkippingGroupOptimization",
             valueDescription = "<true|false>",
-            description = "Remove groups around non-skipping composable functions",
+            description = "Remove groups around non-skipping composable functions. " +
+                "Deprecated. ${
+                    useFeatureFlagInsteadMessage(FeatureFlag.OptimizeNonSkippingGroups)
+                }",
             required = false,
             allowMultipleOccurrences = false
         )
@@ -169,14 +173,17 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
         val STRONG_SKIPPING_OPTION = CliOption(
             "strongSkipping",
             "<true|false>",
-            "Enable strong skipping mode",
+            "Enable strong skipping mode. " +
+                "Deprecated. ${useFeatureFlagInsteadMessage(FeatureFlag.StrongSkipping)}",
             required = false,
             allowMultipleOccurrences = false
         )
         val EXPERIMENTAL_STRONG_SKIPPING_OPTION = CliOption(
             "experimentalStrongSkipping",
             "<true|false>",
-            "Deprecated - Use strongSkipping instead",
+            "Deprecated. ${
+                useFeatureFlagInsteadMessage(FeatureFlag.StrongSkipping)
+            }",
             required = false,
             allowMultipleOccurrences = false
         )
@@ -191,6 +198,13 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             "traceMarkersEnabled",
             "<true|false>",
             "Include composition trace markers in generate code",
+            required = false,
+            allowMultipleOccurrences = false
+        )
+        val SKIP_IR_LOWERING_IF_RUNTIME_NOT_FOUND_OPTION = CliOption(
+            "skipIrLoweringIfRuntimeNotFound",
+            "<true|false>",
+            "Skip IR lowering transformation when finding Compose runtime fails",
             required = false,
             allowMultipleOccurrences = false
         )
@@ -212,6 +226,8 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
         STRONG_SKIPPING_OPTION,
         STABLE_CONFIG_PATH_OPTION,
         TRACE_MARKERS_OPTION,
+        FEATURE_FLAG_OPTION,
+        SKIP_IR_LOWERING_IF_RUNTIME_NOT_FOUND_OPTION,
     )
 
     override fun processOption(
@@ -243,14 +259,28 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             ComposeConfiguration.REPORTS_DESTINATION_KEY,
             value
         )
-        INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_OPTION -> configuration.put(
-            ComposeConfiguration.INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_KEY,
-            value == "true"
-        )
-        NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_OPTION -> configuration.put(
-            ComposeConfiguration.NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_KEY,
-            value == "true"
-        )
+        INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_OPTION -> {
+            oldOptionDeprecationWarning(
+                configuration,
+                INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_OPTION,
+                FeatureFlag.IntrinsicRemember
+            )
+            configuration.put(
+                ComposeConfiguration.INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_KEY,
+                value == "true"
+            )
+        }
+        NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_OPTION -> {
+            oldOptionDeprecationWarning(
+                configuration,
+                NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_OPTION,
+                FeatureFlag.OptimizeNonSkippingGroups
+            )
+            configuration.put(
+                ComposeConfiguration.NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_KEY,
+                value == "true"
+            )
+        }
         SUPPRESS_KOTLIN_VERSION_CHECK_ENABLED_OPTION -> configuration.put(
             ComposeConfiguration.SUPPRESS_KOTLIN_VERSION_COMPATIBILITY_CHECK,
             value
@@ -260,21 +290,27 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             value == "true"
         )
         EXPERIMENTAL_STRONG_SKIPPING_OPTION -> {
-            val msgCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-            msgCollector?.report(
-                CompilerMessageSeverity.WARNING,
-                "${EXPERIMENTAL_STRONG_SKIPPING_OPTION.optionName} is deprecated." +
-                    " Use ${STRONG_SKIPPING_OPTION.optionName} instead."
+            oldOptionDeprecationWarning(
+                configuration,
+                EXPERIMENTAL_STRONG_SKIPPING_OPTION,
+                FeatureFlag.StrongSkipping
             )
             configuration.put(
                 ComposeConfiguration.STRONG_SKIPPING_ENABLED_KEY,
                 value == "true"
             )
         }
-        STRONG_SKIPPING_OPTION -> configuration.put(
-            ComposeConfiguration.STRONG_SKIPPING_ENABLED_KEY,
-            value == "true"
-        )
+        STRONG_SKIPPING_OPTION -> {
+            oldOptionDeprecationWarning(
+                configuration,
+                EXPERIMENTAL_STRONG_SKIPPING_OPTION,
+                FeatureFlag.StrongSkipping
+            )
+            configuration.put(
+                ComposeConfiguration.STRONG_SKIPPING_ENABLED_KEY,
+                value == "true"
+            )
+        }
         STABLE_CONFIG_PATH_OPTION -> configuration.appendList(
             ComposeConfiguration.STABILITY_CONFIG_PATH_KEY,
             value
@@ -283,7 +319,210 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             ComposeConfiguration.TRACE_MARKERS_ENABLED_KEY,
             value == "true"
         )
+        FEATURE_FLAG_OPTION -> {
+            validateFeatureFlag(configuration, value)
+            configuration.appendList(
+                ComposeConfiguration.FEATURE_FLAGS,
+                value
+            )
+        }
+        SKIP_IR_LOWERING_IF_RUNTIME_NOT_FOUND_OPTION -> configuration.put(
+            ComposeConfiguration.SKIP_IR_LOWERING_IF_RUNTIME_NOT_FOUND_KEY,
+            value == "true"
+        )
         else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
+    }
+}
+
+/**
+ * A list of features that can be enabled through the "featureFlags" option.
+ *
+ * Features should be added to this list if they are intended to eventually become the default
+ * behavior of the compiler. This is intended to allow progressive roll-out of a feature to
+ * facilitate coordinating the runtime and compiler changes. New features should be disabled
+ * by default until it is validated to be ready for production after testing with the corresponding
+ * changes needed in the runtime. Using this technique does not remove the need to feature detect
+ * for the version of runtime and is only intended to disable the feature even if the feature is
+ * detected in the runtime.
+ *
+ * If a feature default is `true` the feature is reported as known by the command-line processor
+ * but will generate a warning that the option is no longer necessary as it is the default. If
+ * the feature is not in this list a warning is produced instead of an error to facilitate moving
+ * compiler versions without having to always remove features unknown to older versions of the
+ * plugin.
+ *
+ * A feature flag enum value can be used in the transformers that derive from
+ * AbstractComposeLowering by using the FeatureFlag.enabled extension property. For example
+ * testing if StrongSkipping is enabled can be checked by checking
+ *
+ *   FeatureFlag.StrongSkipping.enabled
+ *
+ * The `default` field is the source of truth for the default of the property. Turning it
+ * to `true` here will make it default on even if the value was previous enabled through
+ * a deprecated explicit option.
+ *
+ * A feature can be explicitly disabled by prefixing the feature name with "-" even if
+ * the feature is enabled by default.
+ *
+ * @param featureName The name of the feature that is used with featureFlags to enable or disable
+ *   the feature.
+ * @param default True if the feature is enabled by default or false if it is not.
+ */
+enum class FeatureFlag(val featureName: String, val default: Boolean) {
+    StrongSkipping("StrongSkipping", default = false),
+    IntrinsicRemember("IntrinsicRemember", default = true),
+    OptimizeNonSkippingGroups("OptimizeNonSkippingGroups", default = false);
+
+    val disabledName get() = "-$featureName"
+    fun name(enabled: Boolean) = if (enabled) featureName else disabledName
+
+    companion object {
+        fun fromString(featureName: String): Pair<FeatureFlag?, Boolean> {
+            val (featureToSearch, enabled) = when {
+                featureName.startsWith("+") -> featureName.substring(1) to true
+                featureName.startsWith("-") -> featureName.substring(1) to false
+                else -> featureName to true
+            }
+            return FeatureFlag.values().firstOrNull {
+                featureToSearch.trim().compareTo(it.featureName, ignoreCase = true) == 0
+            } to enabled
+        }
+    }
+}
+
+class FeatureFlags(featureConfiguration: List<String> = emptyList()) {
+    private val setForCompatibility = mutableSetOf<FeatureFlag>()
+    private val duplicate = mutableSetOf<FeatureFlag>()
+    private val enabledFeatures = mutableSetOf<FeatureFlag>()
+    private val disabledFeatures = mutableSetOf<FeatureFlag>()
+
+    init {
+        processConfigurationList(featureConfiguration)
+    }
+
+    private fun enableFeature(feature: FeatureFlag) {
+        if (feature in disabledFeatures) {
+            duplicate.add(feature)
+            disabledFeatures.remove(feature)
+        }
+        enabledFeatures.add(feature)
+    }
+
+    private fun disableFeature(feature: FeatureFlag) {
+        if (feature in enabledFeatures) {
+            duplicate.add(feature)
+            enabledFeatures.remove(feature)
+        }
+        disabledFeatures.add(feature)
+    }
+
+    fun setFeature(feature: FeatureFlag, value: Boolean) {
+        if (feature.default != value) {
+            setForCompatibility.add(feature)
+            if (value) enableFeature(feature) else disableFeature(feature)
+        }
+    }
+
+    fun isEnabled(feature: FeatureFlag) = feature in enabledFeatures || (feature.default &&
+        feature !in disabledFeatures)
+
+    private fun processConfigurationList(featuresNames: List<String>) {
+        for (featureName in featuresNames) {
+            val (feature, enabled) = FeatureFlag.fromString(featureName)
+            if (feature != null) {
+                if (enabled) enableFeature(feature) else disableFeature(feature)
+            }
+        }
+    }
+
+    fun validateFeatureFlags(configuration: CompilerConfiguration) {
+        val msgCollector = configuration.get(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        if (msgCollector != null) {
+            val reported = mutableSetOf<FeatureFlag>()
+            fun report(feature: FeatureFlag, message: String) {
+                if (feature !in reported) {
+                    reported.add(feature)
+                    msgCollector.report(
+                        CompilerMessageSeverity.WARNING,
+                        message
+                    )
+                }
+            }
+            val configured = enabledFeatures + disabledFeatures
+            val oldAndNewSet = setForCompatibility.intersect(configured)
+            for (feature in oldAndNewSet) {
+                report(
+                    feature,
+                    "Feature ${featureFlagName()}=${feature.featureName} is using featureFlags " +
+                        "and is set using the deprecated option. It is recommended to only use " +
+                        "featureFlag. ${currentState(feature)}"
+                )
+            }
+            for (feature in duplicate) {
+                if (feature !in reported) {
+                    report(
+                        feature,
+                        "Feature ${featureFlagName()}=${feature.featureName} was both enabled " +
+                            "and disabled. ${currentState(feature)}"
+                    )
+                }
+            }
+            for (feature in disabledFeatures) {
+                if (!feature.default) {
+                    report(
+                        feature,
+                        "The feature ${featureFlagName()}=${feature.featureName} is disabled " +
+                        "by default and specifying this option explicitly is not necessary."
+                    )
+                }
+            }
+            for (feature in enabledFeatures) {
+                if (feature.default) {
+                    report(
+                        feature,
+                        "The feature ${featureFlagName()}=${feature.featureName} is enabled " +
+                        "by default and specifying this option explicitly is not necessary."
+                    )
+                }
+            }
+        }
+    }
+
+    private fun currentState(feature: FeatureFlag): String =
+        "With the given options set, the feature is ${
+            if (isEnabled(feature)) "enabled" else "disabled"
+        }"
+}
+
+fun featureFlagName() =
+    "plugin:${ComposeCommandLineProcessor.PLUGIN_ID}:${
+        ComposeCommandLineProcessor.FEATURE_FLAG_OPTION.optionName
+    }"
+
+fun useFeatureFlagInsteadMessage(feature: FeatureFlag) = "Use " +
+    "${featureFlagName()}=${feature.featureName} instead"
+
+fun oldOptionDeprecationWarning(
+    configuration: CompilerConfiguration,
+    oldOption: AbstractCliOption,
+    feature: FeatureFlag
+) {
+    configuration.messageCollector.report(
+        CompilerMessageSeverity.WARNING,
+        "${oldOption.optionName} is deprecated. ${useFeatureFlagInsteadMessage(feature)}"
+    )
+}
+
+fun validateFeatureFlag(
+    configuration: CompilerConfiguration,
+    value: String
+) {
+    val (feature, _) = FeatureFlag.fromString(value)
+    if (feature == null) {
+        configuration.messageCollector.report(
+            CompilerMessageSeverity.WARNING,
+            "${featureFlagName()} contains an unrecognized feature name: $value."
+        )
     }
 }
 
@@ -322,10 +561,10 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
 
     companion object {
         fun checkCompilerVersion(configuration: CompilerConfiguration): Boolean {
-            val msgCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+            val msgCollector = configuration.messageCollector
             val suppressKotlinVersionCheck = configuration.get(ComposeConfiguration.SUPPRESS_KOTLIN_VERSION_COMPATIBILITY_CHECK)
             if (suppressKotlinVersionCheck != null) {
-                msgCollector?.report(
+                msgCollector.report(
                     CompilerMessageSeverity.WARNING,
                     "suppressKotlinVersionCompatibilityCheck flag is deprecated for Compose compiler bundled with Kotlin releases."
                 )
@@ -334,7 +573,7 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
             val decoysEnabled =
                 configuration.get(ComposeConfiguration.DECOYS_ENABLED_KEY, false)
             if (decoysEnabled) {
-                msgCollector?.report(
+                msgCollector.report(
                     CompilerMessageSeverity.ERROR,
                     "Decoys generation should be disabled for Compose Multiplatform projects"
                 )
@@ -405,11 +644,11 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
             )
             val intrinsicRememberEnabled = configuration.get(
                 ComposeConfiguration.INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_KEY,
-                true
+                FeatureFlag.IntrinsicRemember.default
             )
             val nonSkippingGroupOptimizationEnabled = configuration.get(
                 ComposeConfiguration.NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_KEY,
-                false
+                FeatureFlag.OptimizeNonSkippingGroups.default
             )
             val decoysEnabled = configuration.getBoolean(
                 ComposeConfiguration.DECOYS_ENABLED_KEY,
@@ -422,15 +661,13 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
                 ComposeConfiguration.REPORTS_DESTINATION_KEY,
                 ""
             ).ifBlank { null }
-            val validateIr = configuration.getBoolean(
-                JVMConfigurationKeys.VALIDATE_IR
-            )
+            val irVerificationMode = configuration.get(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.NONE)
 
             val useK2 = configuration.languageVersionSettings.languageVersion.usesK2
 
             val strongSkippingEnabled = configuration.get(
                 ComposeConfiguration.STRONG_SKIPPING_ENABLED_KEY,
-                false
+                FeatureFlag.StrongSkipping.default
             )
 
             val stabilityConfigPaths = configuration.getList(
@@ -441,7 +678,25 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
                 true
             )
 
-            val msgCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+            val skipIrLoweringIfRuntimeNotFound = configuration.getBoolean(
+                ComposeConfiguration.SKIP_IR_LOWERING_IF_RUNTIME_NOT_FOUND_KEY,
+            )
+
+            val featureFlags = FeatureFlags(
+                configuration.get(
+                    ComposeConfiguration.FEATURE_FLAGS, emptyList()
+                )
+            )
+            featureFlags.validateFeatureFlags(configuration)
+
+            // Compatibility with older features configuration options
+            // New features should not create a explicit option
+            featureFlags.setFeature(FeatureFlag.IntrinsicRemember, intrinsicRememberEnabled)
+            featureFlags.setFeature(FeatureFlag.StrongSkipping, strongSkippingEnabled)
+            featureFlags.setFeature(
+                FeatureFlag.OptimizeNonSkippingGroups,
+                nonSkippingGroupOptimizationEnabled
+            )
 
             val stableTypeMatchers = mutableSetOf<FqNameMatcher>()
             for (i in stabilityConfigPaths.indices) {
@@ -449,7 +704,7 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
                 val matchers = try {
                     StabilityConfigParser.fromFile(path).stableTypeMatchers
                 } catch (e: Exception) {
-                    msgCollector?.report(
+                    configuration.messageCollector.report(
                         CompilerMessageSeverity.ERROR,
                         e.message ?: "Error parsing stability configuration at $path"
                     )
@@ -468,17 +723,17 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
                 generateFunctionKeyMetaClasses = generateFunctionKeyMetaClasses,
                 sourceInformationEnabled = sourceInformationEnabled,
                 traceMarkersEnabled = traceMarkersEnabled,
-                intrinsicRememberEnabled = intrinsicRememberEnabled,
-                nonSkippingGroupOptimizationEnabled = nonSkippingGroupOptimizationEnabled,
                 decoysEnabled = decoysEnabled,
                 metricsDestination = metricsDestination,
                 reportsDestination = reportsDestination,
-                validateIr = validateIr,
+                irVerificationMode = irVerificationMode,
                 useK2 = useK2,
-                strongSkippingEnabled = strongSkippingEnabled,
                 stableTypeMatchers = stableTypeMatchers,
                 moduleMetricsFactory = moduleMetricsFactory,
                 descriptorSerializerContext = descriptorSerializerContext,
+                featureFlags = featureFlags,
+                skipIfRuntimeNotFound = skipIrLoweringIfRuntimeNotFound,
+                messageCollector = configuration.messageCollector,
             )
         }
     }

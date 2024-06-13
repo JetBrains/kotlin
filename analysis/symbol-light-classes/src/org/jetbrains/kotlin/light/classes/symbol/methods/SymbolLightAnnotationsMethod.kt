@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.light.classes.symbol.methods
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_ANNOTATIONS
@@ -33,15 +33,15 @@ internal class SymbolLightAnnotationsMethod private constructor(
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassBase,
     private val containingPropertyDeclaration: KtCallableDeclaration?,
-    private val containingPropertySymbolPointer: KtSymbolPointer<KtPropertySymbol>,
+    private val containingPropertySymbolPointer: KaSymbolPointer<KaPropertySymbol>,
 ) : SymbolLightMethodBase(
     lightMemberOrigin,
     containingClass,
     METHOD_INDEX_FOR_ANNOTATIONS,
 ) {
     internal constructor(
-        ktAnalysisSession: KtAnalysisSession,
-        containingPropertySymbol: KtPropertySymbol,
+        ktAnalysisSession: KaSession,
+        containingPropertySymbol: KaPropertySymbol,
         lightMemberOrigin: LightMemberOrigin?,
         containingClass: SymbolLightClassBase,
     ) : this(
@@ -51,8 +51,8 @@ internal class SymbolLightAnnotationsMethod private constructor(
         containingPropertySymbolPointer = with(ktAnalysisSession) { containingPropertySymbol.createPointer() },
     )
 
-    context(KtAnalysisSession)
-    private fun propertySymbol(): KtPropertySymbol {
+    context(KaSession)
+    private fun propertySymbol(): KaPropertySymbol {
         return containingPropertySymbolPointer.restoreSymbolOrThrowIfDisposed()
     }
 
@@ -115,7 +115,7 @@ internal class SymbolLightAnnotationsMethod private constructor(
 
     override fun getNameIdentifier(): PsiIdentifier = _identifier
 
-    override fun getReturnType(): PsiType = PsiType.VOID
+    override fun getReturnType(): PsiType = PsiTypes.voidType()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

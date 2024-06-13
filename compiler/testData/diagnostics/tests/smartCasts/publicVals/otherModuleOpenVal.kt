@@ -1,4 +1,4 @@
-// !SKIP_TXT
+// SKIP_TXT
 // FIR_IDENTICAL
 // MODULE: m1
 // FILE: a.kt

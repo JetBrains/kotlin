@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
-import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
+import org.jetbrains.kotlin.fir.backend.utils.declareThisReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -25,18 +25,24 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isFacadeClass
 import org.jetbrains.kotlin.ir.util.isObject
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import kotlin.properties.ReadWriteProperty
 
 abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
     protected val c: Fir2IrComponents,
-    override val startOffset: Int,
-    override val endOffset: Int,
+    startOffset: Int,
+    endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val symbol: IrSimpleFunctionSymbol,
     parent: IrDeclarationParent,
     override var isFakeOverride: Boolean,
 ) : AbstractIrLazyFunction(), AbstractFir2IrLazyDeclaration<F>, Fir2IrTypeParametersContainer, IrLazyFunctionBase,
     Fir2IrComponents by c {
+
+    final override var startOffset: Int = startOffset
+        set(_) = shouldNotBeCalled()
+    final override var endOffset: Int = endOffset
+        set(_) = shouldNotBeCalled()
 
     init {
         this.parent = parent
@@ -76,10 +82,12 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
         get() = fir.isExpect
         set(_) = mutationNotSupported()
 
+    @Suppress("LeakingThis")
     override var body: IrBody? by lazyVar(lock) {
         if (tryLoadIr()) body else null
     }
 
+    @Suppress("LeakingThis")
     override var visibility: DescriptorVisibility by lazyVar(lock) {
         c.visibilityConverter.convertToDescriptorVisibility(fir.visibility)
     }
@@ -90,6 +98,7 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
 
     override var correspondingPropertySymbol: IrPropertySymbol? = null
 
+    @Suppress("LeakingThis")
     override var attributeOwnerId: IrAttributeContainer = this
     override var originalBeforeInline: IrAttributeContainer? = null
 

@@ -1,4 +1,4 @@
-// !LANGUAGE: +UnrestrictedBuilderInference +ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound
+// LANGUAGE: +UnrestrictedBuilderInference +ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound
 // ISSUE: KT-56169
 
 internal class TowerDataElementsForName() {

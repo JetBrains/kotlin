@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers
 
-import org.gradle.api.provider.Property
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
-import java.io.File
 
 
 /**
@@ -37,20 +36,20 @@ internal object OverriddenKotlinNativeHomeChecker : KotlinGradleProjectChecker {
     private fun KotlinGradleProjectCheckerContext.allKonanMainSubdirectoriesExist() =
         // we need to wrap this check in ValueSource to prevent Gradle from monitoring the stdlib folder as a build configuration input
         project.providers.of(StdlibExistenceCheckerValueSource::class.java) {
-            it.parameters.overriddenKotlinNativeHome.set(kotlinPropertiesProvider.nativeHome)
+            it.parameters.overriddenKotlinNativeHome.set(kotlinPropertiesProvider.nativeHome?.let { nativeHome -> project.file(nativeHome) })
         }.usedAtConfigurationTime(project.configurationTimePropertiesAccessor)
 
     internal abstract class StdlibExistenceCheckerValueSource :
         ValueSource<Boolean, StdlibExistenceCheckerValueSource.Params> {
 
         interface Params : ValueSourceParameters {
-            val overriddenKotlinNativeHome: Property<String>
+            val overriddenKotlinNativeHome: DirectoryProperty
         }
 
         override fun obtain(): Boolean {
             return !parameters.overriddenKotlinNativeHome.isPresent || // when `kotlin.native.home` was not provided, we don't need to make this diagnostic
                     REQUIRED_SUBDIRECTORIES.all { subdir ->
-                        File(parameters.overriddenKotlinNativeHome.get()).resolve(subdir).exists()
+                        parameters.overriddenKotlinNativeHome.asFile.get().resolve(subdir).exists()
                     }
 
         }

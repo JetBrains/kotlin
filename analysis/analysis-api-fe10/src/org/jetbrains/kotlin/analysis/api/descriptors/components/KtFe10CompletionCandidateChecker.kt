@@ -5,38 +5,38 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
-import org.jetbrains.kotlin.analysis.api.components.KtCompletionCandidateChecker
-import org.jetbrains.kotlin.analysis.api.components.KtExtensionApplicabilityResult
-import org.jetbrains.kotlin.analysis.api.components.KtCompletionExtensionCandidateChecker
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
-import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.components.KaCompletionCandidateChecker
+import org.jetbrains.kotlin.analysis.api.components.KaExtensionApplicabilityResult
+import org.jetbrains.kotlin.analysis.api.components.KaCompletionExtensionCandidateChecker
+import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
-internal class KtFe10CompletionCandidateChecker(
-    override val analysisSession: KtFe10AnalysisSession
-) : KtCompletionCandidateChecker(), Fe10KtAnalysisSessionComponent {
-    override val token: KtLifetimeToken
+internal class KaFe10CompletionCandidateChecker(
+    override val analysisSession: KaFe10Session
+) : KaCompletionCandidateChecker(), KaFe10SessionComponent {
+    override val token: KaLifetimeToken
         get() = analysisSession.token
 
     override fun createExtensionCandidateChecker(
         originalFile: KtFile,
         nameExpression: KtSimpleNameExpression,
         explicitReceiver: KtExpression?
-    ): KtCompletionExtensionCandidateChecker {
+    ): KaCompletionExtensionCandidateChecker {
         throw NotImplementedError("Method is not implemented for FE 1.0")
     }
 
     @Suppress("OVERRIDE_DEPRECATION")
     override fun checkExtensionFitsCandidate(
-        firSymbolForCandidate: KtCallableSymbol,
+        firSymbolForCandidate: KaCallableSymbol,
         originalFile: KtFile,
         nameExpression: KtSimpleNameExpression,
         possibleExplicitReceiver: KtExpression?
-    ): KtExtensionApplicabilityResult {
+    ): KaExtensionApplicabilityResult {
         throw NotImplementedError("Method is not implemented for FE 1.0")
     }
 }

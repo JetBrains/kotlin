@@ -9,17 +9,15 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.arrayTypes
 import org.jetbrains.kotlin.backend.konan.descriptors.arraysWithFixedSizeItems
 import org.jetbrains.kotlin.backend.konan.llvm.isVoidAsReturnType
-import org.jetbrains.kotlin.backend.konan.lower.erasedUpperBound
+import org.jetbrains.kotlin.backend.konan.lower.erasure
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 
 /**
@@ -53,15 +51,20 @@ private enum class TypeKind {
     ABSENT,
     VOID,
     VALUE_TYPE,
-    REFERENCE
+    REFERENCE,
+    GENERIC
 }
 
-private data class TypeWithKind(val irType: IrType?, val kind: TypeKind) {
+private data class TypeWithKind(val erasedType: IrType?, val kind: TypeKind) {
     companion object {
-        fun fromType(irType: IrType?) = when {
-            irType == null -> TypeWithKind(null, TypeKind.ABSENT)
-            irType.isInlinedNative() -> TypeWithKind(irType, TypeKind.VALUE_TYPE)
-            else -> TypeWithKind(irType, TypeKind.REFERENCE)
+        fun fromType(irType: IrType?): TypeWithKind {
+            val erasedType = irType?.erasure()
+            return when {
+                irType == null -> TypeWithKind(null, TypeKind.ABSENT)
+                irType.isInlinedNative() -> TypeWithKind(erasedType, TypeKind.VALUE_TYPE)
+                irType.classifierOrFail is IrTypeParameterSymbol -> TypeWithKind(erasedType, TypeKind.GENERIC)
+                else -> TypeWithKind(erasedType, TypeKind.REFERENCE)
+            }
         }
     }
 }
@@ -77,8 +80,8 @@ private fun IrFunction.typeWithKindAt(index: ParameterIndex) = when (index) {
     else -> TypeWithKind.fromType(this.valueParameters[index.unmap()].type)
 }
 
-private fun IrFunction.needBridgeToAt(target: IrFunction, index: ParameterIndex)
-        = bridgeDirectionToAt(target, index).kind != BridgeDirectionKind.NONE
+private fun IrFunction.needBridgeToAt(target: IrFunction, index: ParameterIndex, policy: BridgesPolicy) =
+        bridgeDirectionToAt(target, index, policy).kind != BridgeDirectionKind.NONE
 
 @JvmInline
 private value class ParameterIndex(val index: Int) {
@@ -98,43 +101,102 @@ private value class ParameterIndex(val index: Int) {
     fun unmap() = index - 3
 }
 
-internal fun IrFunction.needBridgeTo(target: IrFunction): Boolean {
+internal fun IrFunction.needBridgeTo(target: IrFunction, policy: BridgesPolicy): Boolean {
     ParameterIndex.forEachIndex(this) {
-        if (needBridgeToAt(target, it)) return true
+        if (needBridgeToAt(target, it, policy)) return true
     }
     return false
+}
+
+internal enum class BridgesPolicy {
+    BOX_UNBOX_ONLY,
+    BOX_UNBOX_CASTS
 }
 
 internal enum class BridgeDirectionKind {
     NONE,
     BOX,
-    UNBOX
+    UNBOX,
+    DROP, // This is needed when return type changes to Unit.
+    CAST
 }
 
-internal data class BridgeDirection(val irClass: IrClass?, val kind: BridgeDirectionKind) {
+internal data class BridgeDirection(val erasedType: IrType?, val kind: BridgeDirectionKind) {
     companion object {
         val NONE = BridgeDirection(null, BridgeDirectionKind.NONE)
+        val UNBOX = BridgeDirection(null, BridgeDirectionKind.UNBOX)
     }
 }
 
-private fun IrFunction.bridgeDirectionToAt(overriddenFunction: IrFunction, index: ParameterIndex): BridgeDirection {
-    val kind = typeWithKindAt(index).kind
-    val (irClass, otherKind) = overriddenFunction.typeWithKindAt(index)
-    return if (otherKind == kind)
+/*
+ *   left to right : overridden
+ *   up to down    : function
+ *   ⊥ = ABSENT, () = VOID, VAL = erasure is a value class, <T> = generic type, REF - otherwise
+ *   N (none) - no bridge is required
+ *   E (error) - impossible combination
+ *   D (drop) - the bridge should drop the value
+ *   B (box) - the bridge should box the value
+ *   U (unbox) - the bridge should unbox the value
+ *   C (cast) - the bridge should perform a type check on the value
+ *   C^N (cast or none) - depending on actual types, either a cast bridge or no bridge is needed
+ *  +-----+-----+-----+-----+-----+-----+
+ *  |  \  |  ⊥  |  () | VAL | REF | <T> |
+ *  +-----+-----+-----+-----+-----+-----+
+ *  |  ⊥  |  N  |  E  |  E  |  E  |  E  |
+ *  +-----+-----+-----+-----+-----+-----+
+ *  |  () |  E  |  N  |  D  |  D  |  D  |
+ *  +-----+-----+-----+-----+-----+-----+
+ *  | VAL |  E  |  D  |  N  |  U  |  U  |
+ *  +-----+-----+-----+-----+-----+-----+
+ *  | REF |  E  |  D  |  B  |  N  | C^N |
+ *  +-----+-----+-----+-----+-----+-----+
+ *  | <T> |  E  |  D  |  B  | C^N | C^N |
+ *  +-----+-----+-----+-----+-----+-----+
+ */
+
+private typealias BridgeDirectionBuilder = (ParameterIndex, IrType?, IrType?) -> BridgeDirection
+
+private val None: BridgeDirectionBuilder = { _, _, _ -> BridgeDirection.NONE }
+private val Drop: BridgeDirectionBuilder = { _, _, to -> BridgeDirection(to, BridgeDirectionKind.DROP) }
+private val Box: BridgeDirectionBuilder = { _, _, to -> BridgeDirection(to, BridgeDirectionKind.BOX) }
+private val Unbox: BridgeDirectionBuilder = { _, _, _ -> BridgeDirection.UNBOX }
+private val Cast: BridgeDirectionBuilder = { index, from, to ->
+    if (from == null || to == null) {
         BridgeDirection.NONE
-    else when (kind) {
-        TypeKind.VOID, TypeKind.REFERENCE -> BridgeDirection(irClass?.erasedUpperBound, BridgeDirectionKind.UNBOX)
-        TypeKind.VALUE_TYPE -> BridgeDirection(
-                irClass?.erasedUpperBound.takeIf { otherKind == TypeKind.VOID } /* Otherwise erase to [Any?] */,
-                BridgeDirectionKind.BOX)
-        TypeKind.ABSENT -> error("TypeKind.ABSENT should be on both sides")
+    } else {
+        val (superClass, subType) =
+                if (index == ParameterIndex.RETURN_INDEX)
+                    Pair(to.classOrFail, from) // <from> as <to>
+                else Pair(from.classOrFail, to) // <to> as <from>
+        if (subType.isSubtypeOfClass(superClass))
+            BridgeDirection.NONE
+        else
+            BridgeDirection(to, BridgeDirectionKind.CAST)
     }
+}
+
+private val bridgeDirectionBuilders = arrayOf(
+        arrayOf(None, null, null, null, null),
+        arrayOf(null, None, Drop, Drop, Drop),
+        arrayOf(null, Drop, None, Unbox, Unbox),
+        arrayOf(null, Drop, Box, None, Cast),
+        arrayOf(null, Drop, Box, Cast, Cast),
+)
+
+private fun IrFunction.bridgeDirectionToAt(overriddenFunction: IrFunction, index: ParameterIndex, policy: BridgesPolicy): BridgeDirection {
+    val (fromErasedType, fromKind) = typeWithKindAt(index)
+    val (toErasedType, toKind) = overriddenFunction.typeWithKindAt(index)
+    val bridgeDirectionsBuilder = bridgeDirectionBuilders[fromKind.ordinal][toKind.ordinal]
+            ?: error("Invalid combination of (fromKind, toKind): ($fromKind, $toKind)\n" +
+                    "from = ${render()}\nto = ${overriddenFunction.render()}")
+    val result = bridgeDirectionsBuilder(index, fromErasedType, toErasedType)
+    return if ((policy == BridgesPolicy.BOX_UNBOX_CASTS) || result.kind != BridgeDirectionKind.CAST) result else BridgeDirection.NONE
 }
 
 internal class BridgeDirections(private val array: Array<BridgeDirection>) {
-    constructor(irFunction: IrSimpleFunction, overriddenFunction: IrSimpleFunction)
+    constructor(irFunction: IrSimpleFunction, overriddenFunction: IrSimpleFunction, policy: BridgesPolicy)
             : this(Array<BridgeDirection>(ParameterIndex.allParametersCount(irFunction)) {
-        irFunction.bridgeDirectionToAt(overriddenFunction, ParameterIndex(it))
+        irFunction.bridgeDirectionToAt(overriddenFunction, ParameterIndex(it), policy)
     })
 
     fun allNotNeeded(): Boolean = array.all { it.kind == BridgeDirectionKind.NONE }
@@ -152,6 +214,8 @@ internal class BridgeDirections(private val array: Array<BridgeDirection>) {
             result.append(when (it.kind) {
                 BridgeDirectionKind.BOX -> 'B'
                 BridgeDirectionKind.UNBOX -> 'U'
+                BridgeDirectionKind.DROP -> 'D'
+                BridgeDirectionKind.CAST -> 'C'
                 BridgeDirectionKind.NONE -> 'N'
             })
         }
@@ -173,7 +237,7 @@ internal class BridgeDirections(private val array: Array<BridgeDirection>) {
     }
 
     companion object {
-        fun none(irFunction: IrSimpleFunction) = BridgeDirections(irFunction, irFunction)
+        fun none(irFunction: IrSimpleFunction) = BridgeDirections(irFunction, irFunction, BridgesPolicy.BOX_UNBOX_ONLY)
     }
 }
 
@@ -192,13 +256,13 @@ val IrSimpleFunction.allOverriddenFunctions: Set<IrSimpleFunction>
         return result
     }
 
-internal fun IrSimpleFunction.bridgeDirectionsTo(overriddenFunction: IrSimpleFunction): BridgeDirections {
-    val ourDirections = BridgeDirections(this, overriddenFunction)
+internal fun IrSimpleFunction.bridgeDirectionsTo(overriddenFunction: IrSimpleFunction, policy: BridgesPolicy): BridgeDirections {
+    val ourDirections = BridgeDirections(this, overriddenFunction, policy)
 
     val target = this.target
     if (!this.isReal && modality != Modality.ABSTRACT
             && target.overrides(overriddenFunction)
-            && ourDirections == target.bridgeDirectionsTo(overriddenFunction)) {
+            && ourDirections == target.bridgeDirectionsTo(overriddenFunction, policy)) {
         // Bridge is inherited from superclass.
         return BridgeDirections.none(this)
     }

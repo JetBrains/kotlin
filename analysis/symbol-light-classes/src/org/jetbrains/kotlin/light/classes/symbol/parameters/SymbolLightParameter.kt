@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.light.classes.symbol.parameters
 
 import com.intellij.psi.PsiModifierList
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassM
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 internal class SymbolLightParameter(
-    ktAnalysisSession: KtAnalysisSession,
-    parameterSymbol: KtValueParameterSymbol,
+    ktAnalysisSession: KaSession,
+    parameterSymbol: KaValueParameterSymbol,
     containingMethod: SymbolLightMethodBase
 ) : SymbolLightParameterCommon(ktAnalysisSession, parameterSymbol, containingMethod) {
     private val isConstructorParameterSymbol = containingMethod.isConstructor

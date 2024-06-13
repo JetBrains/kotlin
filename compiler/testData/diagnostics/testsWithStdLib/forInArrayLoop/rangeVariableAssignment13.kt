@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +ProperForInArrayLoopRangeVariableAssignmentSemantic
-// !DIAGNOSTICS: -UNUSED_VALUE
+// LANGUAGE: +ProperForInArrayLoopRangeVariableAssignmentSemantic
+// DIAGNOSTICS: -UNUSED_VALUE
 // SKIP_TXT
 
 fun testObjectArray() {

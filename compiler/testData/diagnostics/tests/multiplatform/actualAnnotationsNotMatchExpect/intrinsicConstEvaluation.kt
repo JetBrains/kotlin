@@ -1,4 +1,4 @@
-// !LANGUAGE: +IntrinsicConstEvaluation
+// LANGUAGE: +IntrinsicConstEvaluation
 // MODULE: m1-common
 // FILE: common.kt
 enum class MyEnum {

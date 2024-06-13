@@ -5,19 +5,19 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
-import org.jetbrains.kotlin.analysis.api.KtInitializerValue
-import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
+import org.jetbrains.kotlin.analysis.api.KaInitializerValue
+import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.*
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.isEqualTo
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10NeverRestoringSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.name.CallableId
@@ -29,17 +29,17 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 
-internal class KtFe10DescKotlinPropertySymbol(
+internal class KaFe10DescKotlinPropertySymbol(
     override val descriptor: PropertyDescriptorImpl,
     override val analysisContext: Fe10AnalysisContext
-) : KtKotlinPropertySymbol(), KtFe10DescMemberSymbol<PropertyDescriptorImpl> {
+) : KaKotlinPropertySymbol(), KaFe10DescMemberSymbol<PropertyDescriptorImpl> {
     override val name: Name
         get() = withValidityAssertion { descriptor.name }
 
-    override val symbolKind: KtSymbolKind
+    override val symbolKind: KaSymbolKind
         get() = withValidityAssertion {
             if (descriptor.isDynamic()) {
-                return@withValidityAssertion KtSymbolKind.CLASS_MEMBER
+                return@withValidityAssertion KaSymbolKind.CLASS_MEMBER
             }
             descriptor.ktSymbolKind
         }
@@ -77,10 +77,10 @@ internal class KtFe10DescKotlinPropertySymbol(
     override val hasSetter: Boolean
         get() = withValidityAssertion { !descriptor.isDynamic() && !isVal }
 
-    override val callableIdIfNonLocal: CallableId?
+    override val callableId: CallableId?
         get() = withValidityAssertion { descriptor.callableIdIfNotLocal }
 
-    override val initializer: KtInitializerValue?
+    override val initializer: KaInitializerValue?
         get() = withValidityAssertion {
             val initializer = when (val psi = psi) {
                 is KtProperty -> psi.initializer
@@ -91,40 +91,40 @@ internal class KtFe10DescKotlinPropertySymbol(
             createKtInitializerValue(initializer, descriptor, analysisContext)
         }
 
-    override val getter: KtPropertyGetterSymbol?
+    override val getter: KaPropertyGetterSymbol?
         get() = withValidityAssertion {
             if (descriptor.isDynamic()) return null
-            val getter = descriptor.getter ?: return KtFe10DescDefaultPropertyGetterSymbol(descriptor, analysisContext)
-            return KtFe10DescPropertyGetterSymbol(getter, analysisContext)
+            val getter = descriptor.getter ?: return KaFe10DescDefaultPropertyGetterSymbol(descriptor, analysisContext)
+            return KaFe10DescPropertyGetterSymbol(getter, analysisContext)
         }
 
-    override val setter: KtPropertySetterSymbol?
+    override val setter: KaPropertySetterSymbol?
         get() = withValidityAssertion {
             if (descriptor.isDynamic()) return null
             if (!descriptor.isVar) {
                 return null
             }
 
-            val setter = descriptor.setter ?: return KtFe10DescDefaultPropertySetterSymbol(descriptor, analysisContext)
-            return KtFe10DescPropertySetterSymbol(setter, analysisContext)
+            val setter = descriptor.setter ?: return KaFe10DescDefaultPropertySetterSymbol(descriptor, analysisContext)
+            return KaFe10DescPropertySetterSymbol(setter, analysisContext)
         }
 
-    override val backingFieldSymbol: KtBackingFieldSymbol?
+    override val backingFieldSymbol: KaBackingFieldSymbol?
         get() = withValidityAssertion {
             if (descriptor.containingDeclaration is FunctionDescriptor) null
-            else KtFe10DescDefaultBackingFieldSymbol(descriptor.backingField, this, analysisContext)
+            else KaFe10DescDefaultBackingFieldSymbol(descriptor.backingField, this, analysisContext)
         }
 
-    override val returnType: KtType
+    override val returnType: KaType
         get() = withValidityAssertion { descriptor.type.toKtType(analysisContext) }
 
-    override val receiverParameter: KtReceiverParameterSymbol?
+    override val receiverParameter: KaReceiverParameterSymbol?
         get() = withValidityAssertion { descriptor.extensionReceiverParameter?.toKtReceiverParameterSymbol(analysisContext) }
 
-    override val contextReceivers: List<KtContextReceiver>
+    override val contextReceivers: List<KaContextReceiver>
         get() = withValidityAssertion { descriptor.createContextReceivers(analysisContext) }
 
-    override val typeParameters: List<KtTypeParameterSymbol>
+    override val typeParameters: List<KaTypeParameterSymbol>
         get() = withValidityAssertion { descriptor.typeParameters.map { it.toKtTypeParameter(analysisContext) } }
 
     override val hasBackingField: Boolean
@@ -136,8 +136,8 @@ internal class KtFe10DescKotlinPropertySymbol(
     override val isDelegatedProperty: Boolean
         get() = withValidityAssertion { descriptor.isDelegated }
 
-    override fun createPointer(): KtSymbolPointer<KtKotlinPropertySymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtKotlinPropertySymbol>(this) ?: KtFe10NeverRestoringSymbolPointer()
+    override fun createPointer(): KaSymbolPointer<KaKotlinPropertySymbol> = withValidityAssertion {
+        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaKotlinPropertySymbol>(this) ?: KaFe10NeverRestoringSymbolPointer()
     }
 
     override fun equals(other: Any?): Boolean = isEqualTo(other)
