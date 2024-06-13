@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.caches.StubsForCollectionClass
 import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
+import org.jetbrains.kotlin.backend.jvm.overridesWithoutStubs
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
@@ -73,7 +74,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
                     // However, we still need to keep track of the original overrides
                     // so that special built-in signature mapping doesn't confuse it with a method
                     // that actually requires signature patching.
-                    context.recordOverridesWithoutStubs(it)
+                    it.overridesWithoutStubs = it.overriddenSymbols.toList()
                     it.overriddenSymbols += stub.overriddenSymbols
                 }
                 // We don't add a throwing stub if it's effectively overridden by an existing function.

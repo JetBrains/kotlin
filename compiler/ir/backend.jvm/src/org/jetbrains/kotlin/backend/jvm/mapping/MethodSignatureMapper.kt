@@ -5,11 +5,8 @@
 
 package org.jetbrains.kotlin.backend.jvm.mapping
 
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.hasSpecialBridge
+import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.*
-import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
@@ -305,7 +302,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
         private val context: JvmBackendContext
     ) : IrBasedSimpleFunctionDescriptor(owner) {
         override fun getOverriddenDescriptors(): List<FunctionDescriptor> =
-            context.getOverridesWithoutStubs(owner).map {
+            (owner.overridesWithoutStubs ?: owner.overriddenSymbols).map {
                 IrBasedSimpleFunctionDescriptorWithOriginalOverrides(it.owner, context)
             }
     }

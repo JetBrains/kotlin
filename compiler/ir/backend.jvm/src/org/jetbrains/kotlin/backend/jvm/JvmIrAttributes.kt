@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.org.objectweb.asm.Type
 
 var IrAttributeContainer.localClassType: Type? by irAttribute(followAttributeOwner = true)
@@ -20,3 +22,5 @@ var IrFunction.enclosingMethodOverride: IrFunction? by irAttribute(followAttribu
 var IrClass.localDelegatedProperties: List<IrLocalDelegatedPropertySymbol>? by irAttribute(followAttributeOwner = true)
 
 var IrFunction.hasSpecialBridge: Boolean by irFlag(followAttributeOwner = false)
+
+var IrSimpleFunction.overridesWithoutStubs: List<IrSimpleFunctionSymbol>? by irAttribute(followAttributeOwner = false)

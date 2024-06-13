@@ -141,15 +141,6 @@ class JvmBackendContext(
 
     val collectionStubComputer = CollectionStubComputer(this)
 
-    private val overridesWithoutStubs by irAttribute<IrSimpleFunction, List<IrSimpleFunctionSymbol>>(false).asMap()
-
-    fun recordOverridesWithoutStubs(function: IrSimpleFunction) {
-        overridesWithoutStubs[function] = function.overriddenSymbols.toList()
-    }
-
-    fun getOverridesWithoutStubs(function: IrSimpleFunction): List<IrSimpleFunctionSymbol> =
-        overridesWithoutStubs.getOrElse(function) { function.overriddenSymbols }
-
     val bridgeLoweringCache = BridgeLoweringCache(this)
 
     override var inVerbosePhase: Boolean = false // TODO: needs parallelizing
