@@ -15,9 +15,9 @@ open class TypeApproximatorConfiguration {
         TO_UPPER_BOUND_IF_SUPERTYPE
     }
 
-    open val keepFlexible: Boolean get() = false // simple flexible types (FlexibleTypeImpl)
-    open val keepDynamic: Boolean get() = false // DynamicType
-    open val keepRawTypes: Boolean get() = false // RawTypeImpl
+    open val approximateFlexible: Boolean get() = true // simple flexible types (FlexibleTypeImpl)
+    open val approximateDynamic: Boolean get() = true // DynamicType
+    open val approximateRawTypes: Boolean get() = true // RawTypeImpl
     open val keepErrorTypes: Boolean get() = false
 
     open val approximateIntegerLiteralConstantTypes: Boolean get() = false // IntegerLiteralTypeConstructor
@@ -54,15 +54,15 @@ open class TypeApproximatorConfiguration {
         true  // false means that this type we can leave as is
 
     abstract class AllFlexibleSameValue : TypeApproximatorConfiguration() {
-        abstract val keepAllFlexible: Boolean
+        abstract val approximateAllFlexible: Boolean
 
-        override val keepFlexible: Boolean get() = keepAllFlexible
-        override val keepDynamic: Boolean get() = keepAllFlexible
-        override val keepRawTypes: Boolean get() = keepAllFlexible
+        override val approximateFlexible: Boolean get() = approximateAllFlexible
+        override val approximateDynamic: Boolean get() = approximateAllFlexible
+        override val approximateRawTypes: Boolean get() = approximateAllFlexible
     }
 
     object LocalDeclaration : AllFlexibleSameValue() {
-        override val keepAllFlexible: Boolean get() = true
+        override val approximateAllFlexible: Boolean get() = false
         override val intersectionStrategy: IntersectionStrategy get() = IntersectionStrategy.ALLOWED
         override val keepErrorTypes: Boolean get() = true
         override val approximateIntegerLiteralConstantTypes: Boolean get() = true
@@ -73,7 +73,7 @@ open class TypeApproximatorConfiguration {
     }
 
     open class PublicDeclaration(override val approximateLocalTypes: Boolean, override val approximateAnonymous: Boolean) : AllFlexibleSameValue() {
-        override val keepAllFlexible: Boolean get() = true
+        override val approximateAllFlexible: Boolean get() = false
         override val keepErrorTypes: Boolean get() = true
         override val keepDefinitelyNotNullTypes: Boolean get() = false
         override val approximateIntegerLiteralConstantTypes: Boolean get() = true
@@ -88,7 +88,7 @@ open class TypeApproximatorConfiguration {
 
     sealed class AbstractCapturedTypesApproximation(val approximatedCapturedStatus: CaptureStatus?) :
         AllFlexibleSameValue() {
-        override val keepAllFlexible: Boolean get() = true
+        override val approximateAllFlexible: Boolean get() = false
         override val keepErrorTypes: Boolean get() = true
 
         // i.e. will be approximated only approximatedCapturedStatus captured types
@@ -105,7 +105,7 @@ open class TypeApproximatorConfiguration {
     class TopLevelIntegerLiteralTypeApproximationWithExpectedType(
         override val expectedTypeForIntegerLiteralType: KotlinTypeMarker?,
     ) : AllFlexibleSameValue() {
-        override val keepAllFlexible: Boolean get() = true
+        override val approximateAllFlexible: Boolean get() = false
         override val approximateIntegerLiteralConstantTypes: Boolean get() = true
         override val approximateIntegerConstantOperatorTypes: Boolean get() = true
     }
@@ -151,7 +151,7 @@ open class TypeApproximatorConfiguration {
 
     object IntegerLiteralsTypesApproximation : AllFlexibleSameValue() {
         override val approximateIntegerLiteralConstantTypes: Boolean get() = true
-        override val keepAllFlexible: Boolean get() = true
+        override val approximateAllFlexible: Boolean get() = false
         override val intersectionStrategy: IntersectionStrategy get() = IntersectionStrategy.ALLOWED
         override fun shouldKeepTypeVariableBasedType(marker: TypeVariableTypeConstructorMarker, isK2: Boolean): Boolean = true
         override val keepErrorTypes: Boolean get() = true
@@ -160,12 +160,12 @@ open class TypeApproximatorConfiguration {
     }
 
     object UpperBoundAwareIntersectionTypeApproximator : AllFlexibleSameValue() {
-        override val keepAllFlexible: Boolean get() = true
+        override val approximateAllFlexible: Boolean get() = false
         override val intersectionStrategy: IntersectionStrategy = IntersectionStrategy.TO_UPPER_BOUND_IF_SUPERTYPE
     }
 
     object FrontendToBackendTypesApproximation : AllFlexibleSameValue() {
-        override val keepAllFlexible: Boolean get() = true
+        override val approximateAllFlexible: Boolean get() = false
         override val keepErrorTypes: Boolean get() = true
         override val approximateIntegerLiteralConstantTypes: Boolean get() = true
         override val approximateIntegerConstantOperatorTypes: Boolean get() = true

@@ -118,9 +118,9 @@ abstract class AbstractTypeApproximator(
             is SimpleTypeMarker -> return approximateTo(type, conf, depth)
             is FlexibleTypeMarker -> {
                 if (type.isDynamic()) {
-                    return if (conf.keepDynamic) null else type.bound()
+                    return if (!conf.approximateDynamic) null else type.bound()
                 } else if (type.isRawType()) {
-                    return if (conf.keepRawTypes) null else type.bound()
+                    return if (!conf.approximateRawTypes) null else type.bound()
                 }
 
 //              TODO: Restore check
@@ -129,7 +129,7 @@ abstract class AbstractTypeApproximator(
 //                  "Unexpected subclass of FlexibleType: ${type::class.java.canonicalName}, type = $type"
 //              }
 
-                if (conf.keepFlexible) {
+                if (!conf.approximateFlexible) {
                     /**
                      * Let inputType = L_1..U_1; resultType = L_2..U_2
                      * We should create resultType such as inputType <: resultType.
@@ -748,7 +748,7 @@ abstract class AbstractTypeApproximator(
         parameter: TypeParameterMarker,
         conf: TypeApproximatorConfiguration,
     ): KotlinTypeMarker {
-        if (!isK2 || conf.keepFlexible) {
+        if (!isK2 || !conf.approximateFlexible) {
             return this
         }
 
