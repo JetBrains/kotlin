@@ -210,7 +210,6 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
             }
 
             this.metadata = function.metadata
-            context.suspendLambdaToOriginalFunctionMap[attributeOwnerId] = function
         }
 
     private fun IrClass.addInvokeSuspendForLambda(
