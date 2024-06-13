@@ -10,7 +10,7 @@ compiler/testData/cli/jvm/wrongAbiVersion.kt:4:5: error: unresolved reference 'b
 compiler/testData/cli/jvm/wrongAbiVersion.kt:6:21: error: argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.String' was expected.
     1.replaceIndent(2, 3)
                     ^
-compiler/testData/cli/jvm/wrongAbiVersion.kt:6:24: error: too many arguments for 'public final fun kotlin/String.kotlin/text/replaceIndent(newIndent: kotlin/String = STUB): kotlin/String'.
+compiler/testData/cli/jvm/wrongAbiVersion.kt:6:24: error: too many arguments for 'fun String.replaceIndent(newIndent: String = ...): String'.
     1.replaceIndent(2, 3)
                        ^
 COMPILATION_ERROR

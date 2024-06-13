@@ -1,6 +1,6 @@
 KtConstructorCalleeExpression(126,127): 'A'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'protected constructor(): A'.>
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'constructor(): A'.>
     candidate = KaDelegatedConstructorCall:
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:

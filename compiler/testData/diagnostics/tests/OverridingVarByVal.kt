@@ -1,4 +1,5 @@
 // FIR_IDENTICAL
+// RENDER_DIAGNOSTICS_FULL_TEXT
 open class Var() {
   open var v : Int = 1
 }

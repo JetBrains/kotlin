@@ -15,4 +15,4 @@ KtConstructorCalleeExpression(31,32): 'A'
         typeArgumentsMapping = {}
         argumentMapping = {}
     ]
-    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'public constructor(): A'.>
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'constructor(): A'.>

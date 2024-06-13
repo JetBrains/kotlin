@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.CALLEE_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.DECLARATION_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FOR_OPTIONAL_OPERATOR
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FQ_NAMES_IN_TYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FUNCTIONAL_TYPE_KINDS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.MODULE_DATA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.NAME_OF_CONTAINING_DECLARATION_OR_FILE
@@ -1273,7 +1272,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(VARARG_OUTSIDE_PARENTHESES, "Passing value as a vararg is allowed only inside a parenthesized argument list.")
         map.put(NAMED_ARGUMENTS_NOT_ALLOWED, "Named arguments are prohibited for {0}.", TO_STRING)
         map.put(NON_VARARG_SPREAD, "The spread operator (*foo) can only be applied in a vararg position.")
-        map.put(TOO_MANY_ARGUMENTS, "Too many arguments for ''{0}''.", FQ_NAMES_IN_TYPES)
+        map.put(TOO_MANY_ARGUMENTS, "Too many arguments for ''{0}''.", SYMBOL)
         map.put(ARGUMENT_PASSED_TWICE, "Argument already passed for this parameter.")
         map.put(NO_VALUE_FOR_PARAMETER, "No value passed for parameter ''{0}''.", DECLARATION_NAME)
         map.put(NAMED_PARAMETER_NOT_FOUND, "No parameter with name ''{0}'' found.", TO_STRING)
@@ -1701,9 +1700,9 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             CANNOT_OVERRIDE_INVISIBLE_MEMBER,
-            "''{0}'' has no access to ''{1}'', so it cannot override it.",
-            FQ_NAMES_IN_TYPES,
-            FQ_NAMES_IN_TYPES
+            "{0} has no access to {1}, so it cannot override it.",
+            SYMBOL_WITH_CONTAINING_DECLARATION,
+            SYMBOL_WITH_CONTAINING_DECLARATION
         )
 
         val multipleDefaultsMessage = "More than one function overridden by ''{0}'' declares a default value for ''{1}'': {2}"
@@ -1802,9 +1801,9 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER,
-            "''{0}'' inherits invisible abstract members: ''{1}''.",
+            "''{0}'' inherits invisible abstract member {1}.",
             DECLARATION_NAME,
-            FQ_NAMES_IN_TYPES
+            SYMBOL_WITH_CONTAINING_DECLARATION
         )
         map.put(AMBIGUOUS_ANONYMOUS_TYPE_INFERRED, "Right-hand side has an anonymous type. Please specify the type explicitly.", NOT_RENDERED)
         map.put(
@@ -1822,35 +1821,35 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             RETURN_TYPE_MISMATCH_ON_OVERRIDE,
-            "Return type of ''{0}'' is not a subtype of the return type of the overridden member ''{1}''.",
+            "Return type of ''{0}'' is not a subtype of the return type of the overridden member {1}.",
             DECLARATION_NAME,
-            SYMBOL
+            SYMBOL_WITH_CONTAINING_DECLARATION
         )
         map.put(
             PROPERTY_TYPE_MISMATCH_ON_OVERRIDE,
-            "Type of ''{0}'' is not a subtype of overridden property ''{1}''.",
+            "Type of ''{0}'' is not a subtype of overridden property {1}.",
             DECLARATION_NAME,
-            SYMBOL
+            SYMBOL_WITH_CONTAINING_DECLARATION
         )
         map.put(
             VAR_TYPE_MISMATCH_ON_OVERRIDE,
-            "Type of ''{0}'' doesn''t match the type of the overridden ''var'' property ''{1}''.",
+            "Type of ''{0}'' doesn''t match the type of the overridden ''var'' property {1}.",
             DECLARATION_NAME,
-            SYMBOL
+            SYMBOL_WITH_CONTAINING_DECLARATION
         )
 
         map.put(
             VAR_OVERRIDDEN_BY_VAL,
-            "''var'' property ''{0}'' cannot be overridden by ''val'' property ''{1}''.",
-            FQ_NAMES_IN_TYPES,
-            FQ_NAMES_IN_TYPES
+            "''var'' property {0} cannot be overridden by ''val'' property ''{1}''.",
+            SYMBOL_WITH_CONTAINING_DECLARATION,
+            SYMBOL
         )
         map.put(
             VAR_IMPLEMENTED_BY_INHERITED_VAL,
-            "{0} overrides ''var'' property ''{1}'' with inherited ''val'' property ''{2}''.",
+            "{0} overrides ''var'' property {1} with inherited ''val'' property {2}.",
             RENDER_CLASS_OR_OBJECT_QUOTED,
-            DECLARATION_NAME,
-            FQ_NAMES_IN_TYPES
+            SYMBOL_WITH_CONTAINING_DECLARATION,
+            SYMBOL_WITH_CONTAINING_DECLARATION
         )
         map.put(NON_FINAL_MEMBER_IN_FINAL_CLASS, "'open' has no effect on a final class.")
         map.put(NON_FINAL_MEMBER_IN_OBJECT, "'open' has no effect on object.")
@@ -1860,9 +1859,9 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             DATA_CLASS_OVERRIDE_CONFLICT,
-            "Function ''{0}'' generated for the data class conflicts with a member of supertype ''{1}''.",
-            FQ_NAMES_IN_TYPES,
-            FQ_NAMES_IN_TYPES
+            "Function ''{0}'' generated for the data class conflicts with the supertype member {1}.",
+            SYMBOL,
+            SYMBOL_WITH_CONTAINING_DECLARATION
         )
         map.put(
             DATA_CLASS_OVERRIDE_DEFAULT_VALUES,

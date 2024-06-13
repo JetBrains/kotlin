@@ -15,4 +15,4 @@ KtConstructorDelegationCall(103,111): 'super(1)'
         typeArgumentsMapping = {}
         argumentMapping = {}
     ]
-    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'public constructor(): kotlin/Any'.>
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'constructor(): Any'.>

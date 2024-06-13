@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 annotation class An
 
 class B : A {
-    override fun foo(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE("foo; @NotNull() @An() @MyTypeQualifier() fun foo(): @An() String")!>String?<!> = null
+    override fun foo(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE("foo; '@NotNull() @An() @MyTypeQualifier() fun foo(): @An() String' defined in '/A'")!>String?<!> = null
 }
 
 @An
@@ -41,5 +41,5 @@ public interface C {
 }
 
 class D : C {
-    override fun foo(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE("foo; @NotNull() @An() fun foo(): String")!>String?<!> = null
+    override fun foo(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE("foo; '@NotNull() @An() fun foo(): String' defined in '/C'")!>String?<!> = null
 }

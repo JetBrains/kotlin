@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.NAME
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.STRING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.DECLARATION_NAME
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FQ_NAMES_IN_TYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.OPTIONAL_SENTENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL_WITH_CONTAINING_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.formatKotlinWithVersion
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.CONCURRENT_HASH_MAP_CONTAINS_OPERATOR
@@ -135,11 +135,11 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE,
-            "This function accidentally overrides both ''{0}'' and {1} ''{2}'' from JVM point of view because of mixed Java/Kotlin hierarchy.\n" +
+            "This function accidentally overrides both {0} and {1} {2} from JVM point of view because of mixed Java/Kotlin hierarchy.\n" +
                     "This situation provokes a JVM clash and thus is forbidden. To fix it, you have to delete either this function or one of overridden functions.",
-            FQ_NAMES_IN_TYPES,
+            SYMBOL_WITH_CONTAINING_DECLARATION,
             STRING,
-            FQ_NAMES_IN_TYPES,
+            SYMBOL_WITH_CONTAINING_DECLARATION,
         )
 
         map.put(

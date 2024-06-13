@@ -1,6 +1,6 @@
 KtArrayAccessExpression(100,118): 'c[1, "foo", false]'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'public final operator fun /C.get(a: kotlin/Int, b: kotlin/String): kotlin/Boolean'.>
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun get(a: Int, b: String): Boolean'.>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:

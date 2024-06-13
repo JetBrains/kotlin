@@ -514,7 +514,7 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
         overridden: FirCallableSymbol<*>,
         context: CheckerContext
     ) {
-        reportOn(overriding.source, FirErrors.VAR_OVERRIDDEN_BY_VAL, overriding, overridden, context)
+        reportOn(overriding.source, FirErrors.VAR_OVERRIDDEN_BY_VAL, overridden, overriding, context)
     }
 
     private fun DiagnosticReporter.reportCannotWeakenAccessPrivilege(

@@ -1,6 +1,4 @@
-'internal open override val test/ClassBB1.member: kotlin/Int
-    internal get(): kotlin/Int' has no access to 'internal abstract val test/ClassB1.member: kotlin/Int
-    internal get(): kotlin/Int', so it cannot override it. at line 14, column 14
+'val member: Int' defined in 'test/ClassBB1' has no access to 'val member: Int' defined in 'test/ClassB1', so it cannot override it. at line 14, column 14
 Cannot access '@Target(...) @Retention(...) annotation class InternalClassAnnotation : Annotation': it is internal in file. at line 10, column 2
 Cannot access '@Target(...) @Retention(...) annotation class InternalTestAnnotation : Annotation': it is internal in file. at line 1, column 7
 Cannot access 'class InternalClass1 : Any': it is internal in file. at line 5, column 13

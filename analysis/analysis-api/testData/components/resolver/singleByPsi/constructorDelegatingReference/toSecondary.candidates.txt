@@ -1,6 +1,6 @@
 KtConstructorDelegationReferenceExpression(76,80): 'this'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'public constructor(): A'.>
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'constructor(): A'.>
     candidate = KaDelegatedConstructorCall:
       kind = THIS_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:

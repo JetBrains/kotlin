@@ -49,7 +49,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
     isInBestCandidates = true
   
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'public final inline fun <T, K> kotlin/collections/Iterable<T>.kotlin/collections/groupBy(keySelector: (T) -> K): kotlin/collections/Map<K, kotlin/collections/List<T>>'.>
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun <T, K> Iterable<T>.groupBy(keySelector: (T) -> K): Map<K, List<T>>'.>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:

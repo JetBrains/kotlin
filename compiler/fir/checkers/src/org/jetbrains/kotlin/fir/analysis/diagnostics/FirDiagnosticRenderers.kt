@@ -213,17 +213,6 @@ object FirDiagnosticRenderers {
     // TODO: properly implement
     val RENDER_TYPE_WITH_ANNOTATIONS = RENDER_TYPE
 
-    val FQ_NAMES_IN_TYPES = Renderer { symbol: FirBasedSymbol<*> ->
-        val idRendererCreator = { ConeIdFullRenderer() }
-        @OptIn(SymbolInternals::class)
-        FirRenderer(
-            annotationRenderer = null,
-            bodyRenderer = null,
-            idRenderer = idRendererCreator(),
-            typeRenderer = ConeTypeRendererForReadability(null, idRendererCreator)
-        ).renderElementAsString(symbol.fir, trim = true)
-    }
-
     val AMBIGUOUS_CALLS = Renderer { candidates: Collection<FirBasedSymbol<*>> ->
         candidates.joinToString(separator = "\n", prefix = "\n") { symbol ->
             SYMBOL.render(symbol)

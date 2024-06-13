@@ -1,6 +1,6 @@
 KtCallExpression(14,20): 'foo(1)'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'public final fun /foo(): kotlin/Unit'.>
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun foo(): Unit'.>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:

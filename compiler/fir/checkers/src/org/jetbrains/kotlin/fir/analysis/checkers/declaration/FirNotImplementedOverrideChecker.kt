@@ -123,11 +123,12 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
 
         varsImplementedByInheritedVal.firstOrNull()?.let { symbol ->
             val implementationVal = symbol.intersections.first { it is FirPropertySymbol && it.isVal && !it.isAbstract }
+            val abstractVar = symbol.intersections.first { it is FirPropertySymbol && it.isVar && it.isAbstract }
             reporter.reportOn(
                 source,
                 VAR_IMPLEMENTED_BY_INHERITED_VAL,
                 classSymbol,
-                symbol as FirCallableSymbol<*>,
+                abstractVar,
                 implementationVal,
                 context,
             )
