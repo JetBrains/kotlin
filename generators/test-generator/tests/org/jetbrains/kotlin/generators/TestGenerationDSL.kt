@@ -102,7 +102,7 @@ class TestGroup(
         }
 
         fun model(
-            relativeRootPath: String,
+            relativeRootPath: String = "",
             recursive: Boolean = true,
             excludeParentDirs: Boolean = false,
             extension: String? = "kt", // null string means dir (name without dot)
