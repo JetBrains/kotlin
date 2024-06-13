@@ -45,37 +45,151 @@ public class HexFormat internal constructor(
     }
 
     /**
-     * Represents hexadecimal format options for formatting and parsing `ByteArray`.
+     * Represents hexadecimal format options for formatting and parsing byte arrays.
      *
-     * When formatting one can assume that bytes are firstly separated using LF character (`'\n'`) into lines
-     * with [bytesPerLine] bytes in each line. The last line may have fewer bytes.
-     * Then each line is separated into groups using [groupSeparator] with [bytesPerGroup] bytes in each group,
-     * except the last group in the line, which may have fewer bytes.
-     * All bytes in a group are separated using [byteSeparator].
-     * Each byte is converted to its two-digit hexadecimal representation,
-     * immediately preceded by [bytePrefix] and immediately succeeded by [byteSuffix].
+     * These options are utilized by [ByteArray.toHexString] and [String.hexToByteArray] functions for formatting and
+     * parsing, respectively. The formatting and parsing functions are available for [UByteArray] as well.
      *
-     * When parsing the input string is required to be in the format described above.
-     * However, any of the char sequences CRLF, LF and CR is considered a valid line separator,
-     * and parsing is performed in case-insensitive manner.
+     * When formatting a byte array, one can assume the following steps:
+     * 1. The bytes are split into lines with [bytesPerLine] bytes in each line,
+     *    except for the last line, which may have fewer bytes.
+     * 2. Each line is split into groups with [bytesPerGroup] bytes in each group,
+     *    except for the last group in a line, which may have fewer bytes.
+     * 3. All bytes are converted to their two-digit hexadecimal representation,
+     *    each prefixed by [bytePrefix] and suffixed by [byteSuffix].
+     * 4. Adjacent formatted bytes within each group are separated by [byteSeparator].
+     * 5. Adjacent groups within each line are separated by [groupSeparator].
+     * 6. Adjacent lines are separated by the line feed (LF) character `'\n'`.
      *
-     * See [BytesHexFormat.Builder] to find out how the options are configured,
-     * and what is the default value of each option.
+     * For example, consider the snippet below:
+     * ```kotlin
+     * val byteArray = byteArrayOf(0, 1, 2, 3, 4, 5, 6, 7)
+     * val format = HexFormat {
+     *     bytes {
+     *         bytesPerLine = 6
+     *         bytesPerGroup = 4
+     *         groupSeparator = "|" // vertical bar
+     *         byteSeparator = " " // one space
+     *         bytePrefix = "0x"
+     *         byteSuffix = "" // empty string
+     *     }
+     * }
+     *
+     * println(byteArray.toHexString(format))
+     * ```
+     * Given the `byteArray` and `format`, the formatting proceeds as follows:
+     * 1. The 8 bytes are split into lines of 6 bytes each. The first line contains `0, 1, 2, 3, 4, 5`,
+     *    and the second (and last) line contains `6, 7`.
+     * 2. Each line is then divided into groups of 4 bytes. The first line forms two groups: `0, 1, 2, 3` and `4, 5`;
+     *    the second line forms one group: `6, 7`.
+     * 3. Each byte is converted to its hexadecimal representation, prefixed by `"0x"` and suffixed by an empty string.
+     * 4. Bytes within each group are separated by a single space `" "`.
+     * 5. Groups within each line are separated by a vertical bar character `"|"`.
+     * 6. Lines are separated by the LF character `'\n'`.
+     *
+     * The `byteArray.toHexString(format)` call will result in `"0x00 0x01 0x02 0x03|0x04 0x05\n0x06 0x07"`,
+     * and printing it to the console outputs:
+     * ```
+     * 0x00 0x01 0x02 0x03|0x04 0x05
+     * 0x06 0x07
+     * ```
+     *
+     * When parsing, the input string must conform to the format specified by these options.
+     * However, parsing is somewhat lenient, allowing any of the char sequences CRLF, LF, or CR to be used as the line
+     * separator. Additionally, parsing of [groupSeparator], [byteSeparator], [bytePrefix], [byteSuffix], and the
+     * hexadecimal digits is performed in a case-insensitive manner.
+     *
+     * This class is immutable and cannot be created or configured directly. To create a new format, use the
+     * `HexFormat { }` builder function and configure the options of the `bytes` property inside the braces. For example,
+     * use `val format = HexFormat { bytes.bytesPerLine = 16 }` to set the [bytesPerLine]. The `bytes` property is of
+     * type [BytesHexFormat.Builder], whose options are configurable and correspond to the options of this class.
      */
     public class BytesHexFormat internal constructor(
-        /** The maximum number of bytes per line. */
+        /**
+         * The maximum number of bytes per line, [Int.MAX_VALUE] by default.
+         *
+         * When formatting, bytes are split into lines with [bytesPerLine] bytes in each line, except for the last
+         * line, which may have fewer bytes if the total number of bytes does not divide evenly by this value. Adjacent
+         * lines are separated by the line feed (LF) character `'\n'`. Note that if this value is greater than or equal
+         * to the size of the byte array, the entire array will be formatted as a single line without any line breaks.
+         *
+         * When parsing, the input string must be split into lines accordingly, with [bytesPerLine] bytes in each line,
+         * except for the last line, which may have fewer bytes. Any of the char sequences CRLF, LF, or CR
+         * is considered a valid line separator.
+         *
+         * @sample samples.text.HexFormats.ByteArrays.bytesPerLine
+         */
         public val bytesPerLine: Int,
 
-        /** The maximum number of bytes per group. */
+        /**
+         * The maximum number of bytes per group in a line, [Int.MAX_VALUE] by default.
+         *
+         * The number of bytes in each line is determined by the [bytesPerLine] option.
+         *
+         * When formatting, each line is split into groups with [bytesPerGroup] bytes in each group, except for the
+         * last group in a line, which may have fewer bytes if the number of bytes in the line does not divide evenly
+         * by this value. Adjacent groups within each line are separated by [groupSeparator]. Note that if this value
+         * is greater than or equal to the number of bytes in a line, the bytes are not split into groups.
+         *
+         * When parsing, each line in the input string must be split into groups of [bytesPerGroup] bytes, except for
+         * the last group in a line, which may have fewer bytes. Adjacent groups within each line must be separated by
+         * [groupSeparator]. The parsing of the separator is performed in a case-insensitive manner.
+         *
+         * @sample samples.text.HexFormats.ByteArrays.bytesPerGroup
+         */
         public val bytesPerGroup: Int,
-        /** The string used to separate adjacent groups in a line. */
+
+        /**
+         * The string used to separate adjacent groups in a line, two space characters (`"  "`) by default.
+         *
+         * The number of bytes in each line and each group is determined by the [bytesPerLine] and
+         * [bytesPerGroup] options, respectively.
+         *
+         * When formatting, adjacent groups within each line are separated by this string.
+         *
+         * When parsing, adjacent groups within each line must be separated by this string.
+         * The parsing of this separator is performed in a case-insensitive manner.
+         *
+         * @sample samples.text.HexFormats.ByteArrays.bytesPerGroup
+         */
         public val groupSeparator: String,
 
-        /** The string used to separate adjacent bytes in a group. */
+        /**
+         * The string used to separate adjacent bytes within a group.
+         *
+         * The number of bytes in each group is determined by the [bytesPerGroup] option.
+         *
+         * When formatting, adjacent bytes within each group are separated by this string.
+         *
+         * When parsing, adjacent bytes within each group must be separated by this string
+         * The parsing of this separator is performed in a case-insensitive manner.
+         *
+         * @sample samples.text.HexFormats.ByteArrays.byteSeparator
+         */
         public val byteSeparator: String,
-        /** The string that immediately precedes two-digit hexadecimal representation of each byte. */
+
+        /**
+         * The string that immediately precedes the two-digit hexadecimal representation of each byte.
+         *
+         * When formatting, this string is used as a prefix for the hexadecimal representation of each byte.
+         *
+         * When parsing, the hexadecimal representation of each byte must be prefixed by this string.
+         * The parsing of this prefix is performed in a case-insensitive manner.
+         *
+         * @sample samples.text.HexFormats.ByteArrays.bytePrefix
+         */
         public val bytePrefix: String,
-        /** The string that immediately succeeds two-digit hexadecimal representation of each byte. */
+
+        /**
+         * The string that immediately follows the two-digit hexadecimal representation of each byte.
+         *
+         * When formatting, this string is used as a suffix for the hexadecimal representation of each byte.
+         *
+         * When parsing, the hexadecimal representation of each byte must be suffixed by this string.
+         * The parsing of this suffix is performed in a case-insensitive manner.
+         *
+         * @sample samples.text.HexFormats.ByteArrays.byteSuffix
+         */
         public val byteSuffix: String
     ) {
 
@@ -112,7 +226,14 @@ public class HexFormat internal constructor(
         }
 
         /**
-         * A context for building a [BytesHexFormat]. Provides API for configuring format options.
+         * Provides an API for building a [BytesHexFormat].
+         *
+         * This class is a [builder](https://en.wikipedia.org/wiki/Builder_pattern) for [BytesHexFormat], and
+         * serves as the type of the `bytes` property when creating a new format using the `HexFormat { }` builder
+         * function. Each option in this class corresponds to an option in [BytesHexFormat] and defines it in the
+         * resulting format. For example, use `val format = HexFormat { bytes.byteSeparator = true }` to set
+         * [BytesHexFormat.byteSeparator]. Refer to [BytesHexFormat] for details about how the configured
+         * format options affect formatting and parsing results.
          */
         public class Builder internal constructor() {
             /**
@@ -120,7 +241,12 @@ public class HexFormat internal constructor(
              *
              * The value must be positive.
              *
+             * Refer to [BytesHexFormat.bytesPerLine] for details about how this format option affects
+             * the formatting and parsing results.
+             *
              * @throws IllegalArgumentException if a non-positive value is assigned to this property.
+             *
+             * @sample samples.text.HexFormats.ByteArrays.bytesPerLine
              */
             public var bytesPerLine: Int = Default.bytesPerLine
                 set(value) {
@@ -134,7 +260,12 @@ public class HexFormat internal constructor(
              *
              * The value must be positive.
              *
+             * Refer to [BytesHexFormat.bytesPerGroup] for details about how this format option affects
+             * the formatting and parsing results.
+             *
              * @throws IllegalArgumentException if a non-positive value is assigned to this property.
+             *
+             * @sample samples.text.HexFormats.ByteArrays.bytesPerGroup
              */
             public var bytesPerGroup: Int = Default.bytesPerGroup
                 set(value) {
@@ -143,15 +274,27 @@ public class HexFormat internal constructor(
                     field = value
                 }
 
-            /** Defines [BytesHexFormat.groupSeparator] of the format being built, two space characters (`"  "`) by default. */
+            /**
+             * Defines [BytesHexFormat.groupSeparator] of the format being built, two space characters (`"  "`) by default.
+             *
+             * Refer to [BytesHexFormat.groupSeparator] for details about how this format option affects
+             * the formatting and parsing results.
+             *
+             * @sample samples.text.HexFormats.ByteArrays.bytesPerGroup
+             */
             public var groupSeparator: String = Default.groupSeparator
 
             /**
              * Defines [BytesHexFormat.byteSeparator] of the format being built, empty string by default.
              *
-             * The string must not contain LF and CR characters.
+             * The string must not contain line feed (LF) and carriage return (CR) characters.
+             *
+             * Refer to [BytesHexFormat.byteSeparator] for details about how this format option affects
+             * the formatting and parsing results.
              *
              * @throws IllegalArgumentException if a string containing LF or CR character is assigned to this property.
+             *
+             * @sample samples.text.HexFormats.ByteArrays.byteSeparator
              */
             public var byteSeparator: String = Default.byteSeparator
                 set(value) {
@@ -163,9 +306,14 @@ public class HexFormat internal constructor(
             /**
              * Defines [BytesHexFormat.bytePrefix] of the format being built, empty string by default.
              *
-             * The string must not contain LF and CR characters.
+             * The string must not contain line feed (LF) and carriage return (CR) characters.
+             *
+             * Refer to [BytesHexFormat.bytePrefix] for details about how this format option affects
+             * the formatting and parsing results.
              *
              * @throws IllegalArgumentException if a string containing LF or CR character is assigned to this property.
+             *
+             * @sample samples.text.HexFormats.ByteArrays.bytePrefix
              */
             public var bytePrefix: String = Default.bytePrefix
                 set(value) {
@@ -177,9 +325,14 @@ public class HexFormat internal constructor(
             /**
              * Defines [BytesHexFormat.byteSuffix] of the format being built, empty string by default.
              *
-             * The string must not contain LF and CR characters.
+             * The string must not contain line feed (LF) and carriage return (CR) characters.
+             *
+             * Refer to [BytesHexFormat.byteSuffix] for details about how this format option affects
+             * the formatting and parsing results.
              *
              * @throws IllegalArgumentException if a string containing LF or CR character is assigned to this property.
+             *
+             * @sample samples.text.HexFormats.ByteArrays.byteSuffix
              */
             public var byteSuffix: String = Default.byteSuffix
                 set(value) {

@@ -11,6 +11,164 @@ import kotlin.test.*
 @RunWith(Enclosed::class)
 class HexFormats {
 
+    class ByteArrays {
+        @Sample
+        fun bytesPerLine() {
+            val data = ByteArray(7) { it.toByte() }
+
+            // By default, bytesPerLine is set to Int.MAX_VALUE, which exceeds data.size.
+            // Therefore, all bytes are formatted as a single line without any line breaks.
+            assertPrints(data.toHexString(), "00010203040506")
+            assertTrue("00010203040506".hexToByteArray().contentEquals(data))
+
+            // Setting bytesPerLine to 3 splits the output into 3 lines with 3, 3, and 1 bytes, respectively.
+            // Each line is separated by a line feed (LF) character.
+            val threePerLineFormat = HexFormat {
+                bytes.bytesPerLine = 3
+            }
+            assertPrints(data.toHexString(threePerLineFormat), "000102\n030405\n06")
+
+            // When parsing, any of the line separators CRLF, LF, and CR are accepted.
+            assertTrue("000102\n030405\r\n06".hexToByteArray(threePerLineFormat).contentEquals(data))
+
+            // Parsing fails if the input string does not conform to specified format.
+            // In this case, lines do not consist of the expected number of bytes.
+            assertFailsWith<IllegalArgumentException> {
+                "0001\n0203\n0405\n06".hexToByteArray(threePerLineFormat)
+            }
+        }
+
+        @Sample
+        fun bytesPerGroup() {
+            val data = ByteArray(7) { it.toByte() }
+
+            // By default, both bytesPerLine and bytesPerGroup are set to Int.MAX_VALUE, which exceeds data.size.
+            // Hence, all bytes are formatted as a single line and a single group.
+            assertPrints(data.toHexString(), "00010203040506")
+            assertTrue("00010203040506".hexToByteArray().contentEquals(data))
+
+            // Setting bytesPerGroup to 2 with the default group separator, which is two spaces.
+            val twoPerGroupFormat = HexFormat {
+                bytes.bytesPerGroup = 2
+            }
+            assertPrints(data.toHexString(twoPerGroupFormat), "0001  0203  0405  06")
+            assertTrue("0001  0203  0405  06".hexToByteArray(twoPerGroupFormat).contentEquals(data))
+
+            // Specifying a custom group separator, a dot in this case.
+            val dotGroupSeparatorFormat = HexFormat {
+                bytes {
+                    bytesPerGroup = 2
+                    groupSeparator = "."
+                }
+            }
+            assertPrints(data.toHexString(dotGroupSeparatorFormat), "0001.0203.0405.06")
+            assertTrue("0001.0203.0405.06".hexToByteArray(dotGroupSeparatorFormat).contentEquals(data))
+
+            // If bytesPerLine is less than or equal to bytesPerGroup, each line is treated as a single group,
+            // hence no group separator is used.
+            val lessBytesPerLineFormat = HexFormat {
+                bytes {
+                    bytesPerLine = 3
+                    bytesPerGroup = 4
+                    groupSeparator = "|"
+                }
+            }
+            assertPrints(data.toHexString(lessBytesPerLineFormat), "000102\n030405\n06")
+            assertTrue("000102\n030405\n06".hexToByteArray(lessBytesPerLineFormat).contentEquals(data))
+
+            // When bytesPerLine is greater than bytesPerGroup, each line is split into multiple groups.
+            val moreBytesPerLineFormat = HexFormat {
+                bytes {
+                    bytesPerLine = 5
+                    bytesPerGroup = 2
+                    groupSeparator = "."
+                }
+            }
+            assertPrints(data.toHexString(moreBytesPerLineFormat), "0001.0203.04\n0506")
+            assertTrue("0001.0203.04\n0506".hexToByteArray(moreBytesPerLineFormat).contentEquals(data))
+
+            // Parsing fails due to incorrect group separator.
+            assertFailsWith<IllegalArgumentException> {
+                "0001  0203  04\n0506".hexToByteArray(moreBytesPerLineFormat)
+            }
+        }
+
+        @Sample
+        fun byteSeparator() {
+            val data = ByteArray(7) { it.toByte() }
+
+            // By default, the byteSeparator is an empty string, hence all bytes are concatenated without any separator.
+            assertPrints(data.toHexString(), "00010203040506")
+            assertTrue("00010203040506".hexToByteArray().contentEquals(data))
+
+            // Specifying a custom byte separator, a colon in this case.
+            val colonByteSeparatorFormat = HexFormat { bytes.byteSeparator = ":" }
+            assertPrints(data.toHexString(colonByteSeparatorFormat), "00:01:02:03:04:05:06")
+            assertTrue("00:01:02:03:04:05:06".hexToByteArray(colonByteSeparatorFormat).contentEquals(data))
+
+            // Only adjacent bytes within a group are separated by the byteSeparator.
+            val groupFormat = HexFormat {
+                bytes.bytesPerGroup = 3
+                bytes.byteSeparator = ":"
+            }
+            assertPrints(data.toHexString(groupFormat), "00:01:02  03:04:05  06")
+            assertTrue("00:01:02  03:04:05  06".hexToByteArray(groupFormat).contentEquals(data))
+
+            // Parsing fails due to incorrect byte separator.
+            // In this case, the input string is lacking the necessary byte separators within groups.
+            assertFailsWith<IllegalArgumentException> {
+                "000102  030405  06".hexToByteArray(groupFormat)
+            }
+        }
+
+        @Sample
+        fun bytePrefix() {
+            val data = ByteArray(4) { it.toByte() }
+
+            // By default, the bytePrefix is an empty string, so bytes are formatted without any prefix.
+            assertPrints(data.toHexString(), "00010203")
+            assertTrue("00010203".hexToByteArray().contentEquals(data))
+
+            // Specifying a custom byte prefix, "0x" in this case, to precede each byte.
+            // A space is used as a byte separator for clarity in the output.
+            val bytePrefixFormat = HexFormat {
+                bytes.bytePrefix = "0x"
+                bytes.byteSeparator = " "
+            }
+            assertPrints(data.toHexString(bytePrefixFormat), "0x00 0x01 0x02 0x03")
+            assertTrue("0x00 0x01 0x02 0x03".hexToByteArray(bytePrefixFormat).contentEquals(data))
+
+            // Parsing fails due to incorrect byte prefix.
+            // In this case, the input string is lacking the necessary byte prefixes.
+            assertFailsWith<IllegalArgumentException> {
+                "00 01 02 03".hexToByteArray(bytePrefixFormat)
+            }
+
+        }
+
+        @Sample
+        fun byteSuffix() {
+            val data = ByteArray(4) { it.toByte() }
+
+            // By default, the byteSuffix is an empty string, so bytes are formatted without any suffix.
+            assertPrints(data.toHexString(), "00010203")
+            assertTrue("00010203".hexToByteArray().contentEquals(data))
+
+            // Specifying a custom byte suffix, a semicolon in this case, to follow each byte.
+            val byteSuffixFormat = HexFormat {
+                bytes.byteSuffix = ";"
+            }
+            assertPrints(data.toHexString(byteSuffixFormat), "00;01;02;03;")
+            assertTrue("00;01;02;03;".hexToByteArray(byteSuffixFormat).contentEquals(data))
+
+            // Parsing fails due to incorrect byte suffix.
+            // In this case, the input string is lacking the necessary byte suffixes.
+            assertFailsWith<IllegalArgumentException> {
+                "00010203".hexToByteArray(byteSuffixFormat)
+            }
+        }
+    }
+
     class Numbers {
         @Sample
         fun prefix() {
