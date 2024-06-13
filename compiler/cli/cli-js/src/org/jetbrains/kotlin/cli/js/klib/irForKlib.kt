@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDe
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.backend.js.generateModuleFragmentWithPlugins
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
@@ -34,7 +35,6 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
@@ -60,12 +60,12 @@ fun generateIrForKlibSerialization(
     performanceManager?.notifyIRTranslationStarted()
 
     val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
-    val messageLogger = configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None
+    val messageCollector = configuration.messageCollector
     val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), irFactory)
     val psi2Ir = Psi2IrTranslator(
         configuration.languageVersionSettings,
         Psi2IrConfiguration(errorPolicy.allowErrors, configuration.partialLinkageConfig.isEnabled),
-        messageLogger::checkNoUnboundSymbols
+        messageCollector::checkNoUnboundSymbols
     )
     val psi2IrContext = psi2Ir.createGeneratorContext(analysisResult.moduleDescriptor, analysisResult.bindingContext, symbolTable)
     val irBuiltIns = psi2IrContext.irBuiltIns
@@ -81,14 +81,14 @@ fun generateIrForKlibSerialization(
     )
     val irLinker = JsIrLinker(
         psi2IrContext.moduleDescriptor,
-        messageLogger,
+        messageCollector,
         psi2IrContext.irBuiltIns,
         psi2IrContext.symbolTable,
         partialLinkageSupport = createPartialLinkageSupportForLinker(
             partialLinkageConfig = configuration.partialLinkageConfig,
             allowErrorTypes = errorPolicy.allowErrors,
             builtIns = psi2IrContext.irBuiltIns,
-            messageLogger = messageLogger
+            messageCollector = messageCollector
         ),
         feContext,
         ICData(icData.map { it.irData!! }, errorPolicy.allowErrors),
@@ -101,7 +101,7 @@ fun generateIrForKlibSerialization(
         project,
         files,
         irLinker,
-        messageLogger,
+        messageCollector,
         stubGenerator
     )
 

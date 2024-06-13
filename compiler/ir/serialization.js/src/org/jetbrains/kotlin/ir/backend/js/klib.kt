@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFile
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.backend.common.toLogger
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -174,7 +175,7 @@ fun loadIr(
     val configuration = depsDescriptors.compilerConfiguration
     val allDependencies = depsDescriptors.allDependencies
     val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
-    val messageLogger = configuration.irMessageLogger
+    val messageLogger = configuration.messageCollector
     val partialLinkageEnabled = configuration.partialLinkageConfig.isEnabled
 
     val signaturer = IdSignatureDescriptor(JsManglerDesc)
@@ -230,7 +231,7 @@ fun getIrModuleInfoForKlib(
     filesToLoad: Set<String>?,
     configuration: CompilerConfiguration,
     symbolTable: SymbolTable,
-    messageLogger: IrMessageLogger,
+    messageCollector: MessageCollector,
     loadFunctionInterfacesIntoStdlib: Boolean,
     mapping: (KotlinLibrary) -> ModuleDescriptor,
 ): IrModuleInfo {
@@ -241,14 +242,14 @@ fun getIrModuleInfoForKlib(
 
     val irLinker = JsIrLinker(
         currentModule = null,
-        messageLogger = messageLogger,
+        messageCollector = messageCollector,
         builtIns = irBuiltIns,
         symbolTable = symbolTable,
         partialLinkageSupport = createPartialLinkageSupportForLinker(
             partialLinkageConfig = configuration.partialLinkageConfig,
             allowErrorTypes = errorPolicy.allowErrors,
             builtIns = irBuiltIns,
-            messageLogger = messageLogger
+            messageCollector = messageCollector
         ),
         translationPluginContext = null,
         icData = null,
@@ -292,7 +293,7 @@ fun getIrModuleInfoForSourceFiles(
     allSortedDependencies: Collection<KotlinLibrary>,
     friendModules: Map<String, List<String>>,
     symbolTable: SymbolTable,
-    messageLogger: IrMessageLogger,
+    messageCollector: MessageCollector,
     loadFunctionInterfacesIntoStdlib: Boolean,
     verifySignatures: Boolean,
     mapping: (KotlinLibrary) -> ModuleDescriptor
@@ -305,14 +306,14 @@ fun getIrModuleInfoForSourceFiles(
 
     val irLinker = JsIrLinker(
         currentModule = psi2IrContext.moduleDescriptor,
-        messageLogger = messageLogger,
+        messageCollector = messageCollector,
         builtIns = irBuiltIns,
         symbolTable = symbolTable,
         partialLinkageSupport = createPartialLinkageSupportForLinker(
             partialLinkageConfig = configuration.partialLinkageConfig,
             allowErrorTypes = errorPolicy.allowErrors,
             builtIns = irBuiltIns,
-            messageLogger = messageLogger
+            messageCollector = messageCollector
         ),
         translationPluginContext = feContext,
         icData = null,
@@ -331,7 +332,7 @@ fun getIrModuleInfoForSourceFiles(
             true
         )
 
-    val (moduleFragment, _) = psi2IrContext.generateModuleFragmentWithPlugins(project, files, irLinker, messageLogger)
+    val (moduleFragment, _) = psi2IrContext.generateModuleFragmentWithPlugins(project, files, irLinker, messageCollector)
 
     // TODO: not sure whether this check should be enabled by default. Add configuration key for it.
     val mangleChecker = ManglerChecker(JsManglerIr, Ir2DescriptorManglerAdapter(JsManglerDesc))
@@ -381,10 +382,10 @@ fun GeneratorContext.generateModuleFragmentWithPlugins(
     project: Project,
     files: List<KtFile>,
     irLinker: IrDeserializer,
-    messageLogger: IrMessageLogger,
+    messageCollector: MessageCollector,
     stubGenerator: DeclarationStubGenerator? = null
 ): Pair<IrModuleFragment, IrPluginContext> {
-    val psi2Ir = Psi2IrTranslator(languageVersionSettings, configuration, messageLogger::checkNoUnboundSymbols)
+    val psi2Ir = Psi2IrTranslator(languageVersionSettings, configuration, messageCollector::checkNoUnboundSymbols)
     val extensions = IrGenerationExtension.getInstances(project)
 
     // plugin context should be instantiated before postprocessing steps
@@ -396,7 +397,7 @@ fun GeneratorContext.generateModuleFragmentWithPlugins(
         typeTranslator,
         irBuiltIns,
         linker = irLinker,
-        messageLogger
+        messageCollector
     )
     if (extensions.isNotEmpty()) {
         for (extension in extensions) {
@@ -456,7 +457,7 @@ class ModulesStructure(
 
     val allDependenciesResolution = CommonKLibResolver.resolveWithoutDependencies(
         dependencies,
-        compilerConfiguration.irMessageLogger.toLogger(),
+        compilerConfiguration.messageCollector.toLogger(),
         compilerConfiguration.get(JSConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR)
     )
 
