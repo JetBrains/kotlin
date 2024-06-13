@@ -29,9 +29,9 @@ open class TypeApproximatorConfiguration {
      * If [LanguageFeature.DefinitelyNonNullableTypes] is enabled, this property is ignored.
      */
     open val approximateDefinitelyNotNullTypes: Boolean get() = false
-    open val intersectionStrategy: IntersectionStrategy = IntersectionStrategy.TO_COMMON_SUPERTYPE
-    open val approximateIntersectionTypesInContravariantPositions = false
-    open val approximateLocalTypes = false
+    open val intersectionStrategy: IntersectionStrategy get() = IntersectionStrategy.TO_COMMON_SUPERTYPE
+    open val approximateIntersectionTypesInContravariantPositions get() = false
+    open val approximateLocalTypes get() = false
 
     /**
      * Is only expected to be true for FinalApproximationAfterResolutionAndInference
@@ -43,7 +43,7 @@ open class TypeApproximatorConfiguration {
      * Whether to approximate anonymous type. This flag does not have any effect if `localTypes` is true because all anonymous types are
      * local.
      */
-    open val approximateAnonymous = false
+    open val approximateAnonymous get() = false
 
     /**
      * This function determines the approximator behavior if a type variable based type is encountered.
@@ -164,7 +164,7 @@ open class TypeApproximatorConfiguration {
 
     object UpperBoundAwareIntersectionTypeApproximator : AllFlexibleSameValue() {
         override val approximateAllFlexible: Boolean get() = false
-        override val intersectionStrategy: IntersectionStrategy = IntersectionStrategy.TO_UPPER_BOUND_IF_SUPERTYPE
+        override val intersectionStrategy: IntersectionStrategy get() = IntersectionStrategy.TO_UPPER_BOUND_IF_SUPERTYPE
     }
 
     object FrontendToBackendTypesApproximation : AllFlexibleSameValue() {
