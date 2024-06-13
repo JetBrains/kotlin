@@ -370,6 +370,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
     }
 
     @Test
+    @TestMetadata("DisabledMultiDollarInterpolation.kt")
+    public void testDisabledMultiDollarInterpolation() {
+      runTest("compiler/testData/diagnostics/tests/DisabledMultiDollarInterpolation.kt");
+    }
+
+    @Test
     @TestMetadata("dnnAsSuperTypeTypeArgument.kt")
     public void testDnnAsSuperTypeTypeArgument() {
       runTest("compiler/testData/diagnostics/tests/dnnAsSuperTypeTypeArgument.kt");
@@ -421,6 +427,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
     @TestMetadata("EmptyThrow.kt")
     public void testEmptyThrow() {
       runTest("compiler/testData/diagnostics/tests/EmptyThrow.kt");
+    }
+
+    @Test
+    @TestMetadata("EnabledMultiDollarInterpolation.kt")
+    public void testEnabledMultiDollarInterpolation() {
+      runTest("compiler/testData/diagnostics/tests/EnabledMultiDollarInterpolation.kt");
     }
 
     @Test
@@ -619,6 +631,30 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
     @TestMetadata("IncorrectCharacterLiterals.kt")
     public void testIncorrectCharacterLiterals() {
       runTest("compiler/testData/diagnostics/tests/IncorrectCharacterLiterals.kt");
+    }
+
+    @Test
+    @TestMetadata("IncorrectMultiDollarInterpolationCodeA.kt")
+    public void testIncorrectMultiDollarInterpolationCodeA() {
+      runTest("compiler/testData/diagnostics/tests/IncorrectMultiDollarInterpolationCodeA.kt");
+    }
+
+    @Test
+    @TestMetadata("IncorrectMultiDollarInterpolationCodeB.kt")
+    public void testIncorrectMultiDollarInterpolationCodeB() {
+      runTest("compiler/testData/diagnostics/tests/IncorrectMultiDollarInterpolationCodeB.kt");
+    }
+
+    @Test
+    @TestMetadata("IncorrectPaddedMultiDollarInterpolationCodeA.kt")
+    public void testIncorrectPaddedMultiDollarInterpolationCodeA() {
+      runTest("compiler/testData/diagnostics/tests/IncorrectPaddedMultiDollarInterpolationCodeA.kt");
+    }
+
+    @Test
+    @TestMetadata("IncorrectPaddedMultiDollarInterpolationCodeB.kt")
+    public void testIncorrectPaddedMultiDollarInterpolationCodeB() {
+      runTest("compiler/testData/diagnostics/tests/IncorrectPaddedMultiDollarInterpolationCodeB.kt");
     }
 
     @Test

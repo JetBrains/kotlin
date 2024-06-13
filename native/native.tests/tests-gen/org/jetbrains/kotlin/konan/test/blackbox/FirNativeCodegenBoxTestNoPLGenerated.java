@@ -44602,6 +44602,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       }
 
       @Test
+      @TestMetadata("MultiDollarInterpolation.kt")
+      public void testMultiDollarInterpolation() {
+        runTest("compiler/testData/codegen/box/strings/MultiDollarInterpolation.kt");
+      }
+
+      @Test
       @TestMetadata("multilineStringsWithTemplates.kt")
       public void testMultilineStringsWithTemplates() {
         runTest("compiler/testData/codegen/box/strings/multilineStringsWithTemplates.kt");

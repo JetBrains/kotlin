@@ -1,0 +1,2915 @@
+KtFile: IncorrectMultiDollarInterpolationCode.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  FUN
+    PsiComment(EOL_COMMENT)('// interpolation prefix length: 0, 1, 2, 4, 8')
+    PsiWhiteSpace('\n')
+    PsiComment(EOL_COMMENT)('// interpolation kinds: of arbitrary expression')
+    PsiWhiteSpace('\n')
+    PsiComment(EOL_COMMENT)('// string literal kinds: single-line, multi-line')
+    PsiWhiteSpace('\n')
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('emptyInterpolation')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$')
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$')
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"""')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$')
+        PsiElement(OPEN_QUOTE)('"""')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$')
+        PsiElement(OPEN_QUOTE)('"""')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        PsiElement(OPEN_QUOTE)('"""')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        PsiElement(OPEN_QUOTE)('"""')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiComment(EOL_COMMENT)('// interpolation prefix length: 0, 1, 2, 4, 8')
+    PsiWhiteSpace('\n')
+    PsiComment(EOL_COMMENT)('// interpolation kinds: of arbitrary expression')
+    PsiWhiteSpace('\n')
+    PsiComment(EOL_COMMENT)('// string literal kinds: single-line, multi-line')
+    PsiWhiteSpace('\n')
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('blankInterpolation')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiWhiteSpace('    ')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$')
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiWhiteSpace('    ')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$')
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiWhiteSpace('    ')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiWhiteSpace('    ')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiWhiteSpace('    ')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"""')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiWhiteSpace('    ')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$')
+        PsiElement(OPEN_QUOTE)('"""')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiWhiteSpace('    ')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$')
+        PsiElement(OPEN_QUOTE)('"""')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiWhiteSpace('    ')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        PsiElement(OPEN_QUOTE)('"""')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiWhiteSpace('    ')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        PsiElement(OPEN_QUOTE)('"""')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiWhiteSpace('    ')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiComment(EOL_COMMENT)('// interpolation prefix length: 0, 1, 2, 4, 8')
+    PsiWhiteSpace('\n')
+    PsiComment(EOL_COMMENT)('// interpolation kinds: of arbitrary expression')
+    PsiWhiteSpace('\n')
+    PsiComment(EOL_COMMENT)('// string literal kinds: single-line, multi-line')
+    PsiWhiteSpace('\n')
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('linebreakInterpolation')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiWhiteSpace('\n    ')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$')
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiWhiteSpace('\n    ')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$')
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiWhiteSpace('\n    ')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiWhiteSpace('\n    ')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiWhiteSpace('\n    ')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"""')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiWhiteSpace('\n    ')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$')
+        PsiElement(OPEN_QUOTE)('"""')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiWhiteSpace('\n    ')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$')
+        PsiElement(OPEN_QUOTE)('"""')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiWhiteSpace('\n    ')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        PsiElement(OPEN_QUOTE)('"""')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiWhiteSpace('\n    ')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        PsiElement(OPEN_QUOTE)('"""')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiWhiteSpace('\n    ')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiComment(EOL_COMMENT)('// interpolation prefix length: 0, 1, 2, 4, 8')
+    PsiWhiteSpace('\n')
+    PsiComment(EOL_COMMENT)('// interpolation kinds: of simple identifier, of identifier in backticks, of arbitrary expression')
+    PsiWhiteSpace('\n')
+    PsiComment(EOL_COMMENT)('// string literal kinds: single-line, multi-line')
+    PsiWhiteSpace('\n')
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('interpolationOfUnresolvedReference')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('unresolved')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$')
+        PsiElement(OPEN_QUOTE)('"')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('unresolved')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$')
+        PsiElement(OPEN_QUOTE)('"')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('unresolved')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        PsiElement(OPEN_QUOTE)('"')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('unresolved')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        PsiElement(OPEN_QUOTE)('"')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$$$$$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('unresolved')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('`unresolved`')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$')
+        PsiElement(OPEN_QUOTE)('"')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('`unresolved`')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$')
+        PsiElement(OPEN_QUOTE)('"')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('`unresolved`')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        PsiElement(OPEN_QUOTE)('"')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('`unresolved`')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        PsiElement(OPEN_QUOTE)('"')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$$$$$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('`unresolved`')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('unresolved')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$')
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('unresolved')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$')
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('unresolved')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('unresolved')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('unresolved')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n\n\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"""')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('unresolved')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$')
+        PsiElement(OPEN_QUOTE)('"""')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('unresolved')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$')
+        PsiElement(OPEN_QUOTE)('"""')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('unresolved')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        PsiElement(OPEN_QUOTE)('"""')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('unresolved')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        PsiElement(OPEN_QUOTE)('"""')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$$$$$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('unresolved')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"""')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('`unresolved`')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$')
+        PsiElement(OPEN_QUOTE)('"""')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('`unresolved`')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$')
+        PsiElement(OPEN_QUOTE)('"""')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('`unresolved`')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        PsiElement(OPEN_QUOTE)('"""')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('`unresolved`')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        PsiElement(OPEN_QUOTE)('"""')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$$$$$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('`unresolved`')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"""')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('unresolved')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$')
+        PsiElement(OPEN_QUOTE)('"""')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('unresolved')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$')
+        PsiElement(OPEN_QUOTE)('"""')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('unresolved')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        PsiElement(OPEN_QUOTE)('"""')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('unresolved')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        PsiElement(OPEN_QUOTE)('"""')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('unresolved')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiComment(EOL_COMMENT)('// interpolation prefix length: 0, 1, 2, 4, 8')
+    PsiWhiteSpace('\n')
+    PsiComment(EOL_COMMENT)('// interpolation kinds: of identifier in backticks, of arbitrary expression')
+    PsiWhiteSpace('\n')
+    PsiComment(EOL_COMMENT)('// string literal kinds: single-line, multi-line')
+    PsiWhiteSpace('\n')
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('interpolationOfMisplacedDollar')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('`$`')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$')
+        PsiElement(OPEN_QUOTE)('"')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('`$`')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$')
+        PsiElement(OPEN_QUOTE)('"')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('`$`')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        PsiElement(OPEN_QUOTE)('"')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('`$`')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        PsiElement(OPEN_QUOTE)('"')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$$$$$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('`$`')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(BAD_CHARACTER)('$')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$')
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(BAD_CHARACTER)('$')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$')
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(BAD_CHARACTER)('$')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(BAD_CHARACTER)('$')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(BAD_CHARACTER)('$')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n\n\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"""')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('`$`')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$')
+        PsiElement(OPEN_QUOTE)('"""')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('`$`')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$')
+        PsiElement(OPEN_QUOTE)('"""')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('`$`')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        PsiElement(OPEN_QUOTE)('"""')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('`$`')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        PsiElement(OPEN_QUOTE)('"""')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$$$$$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('`$`')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"""')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(BAD_CHARACTER)('$')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$')
+        PsiElement(OPEN_QUOTE)('"""')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(BAD_CHARACTER)('$')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$')
+        PsiElement(OPEN_QUOTE)('"""')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(BAD_CHARACTER)('$')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        PsiElement(OPEN_QUOTE)('"""')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(BAD_CHARACTER)('$')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        PsiElement(OPEN_QUOTE)('"""')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(BAD_CHARACTER)('$')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiComment(EOL_COMMENT)('// interpolation prefix length: 0, 1, 2, 4, 8')
+    PsiWhiteSpace('\n')
+    PsiComment(EOL_COMMENT)('// interpolation kinds: of identifier in backticks, of arbitrary expression')
+    PsiWhiteSpace('\n')
+    PsiComment(EOL_COMMENT)('// string literal kinds: single-line, multi-line')
+    PsiWhiteSpace('\n')
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('interpolationOfMisplacedInterpolation')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('`$value`')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$')
+        PsiElement(OPEN_QUOTE)('"')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('`$value`')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$')
+        PsiElement(OPEN_QUOTE)('"')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('`$$value`')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        PsiElement(OPEN_QUOTE)('"')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('`$$$$value`')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        PsiElement(OPEN_QUOTE)('"')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$$$$$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('`$$$$$$$$value`')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(FIELD_IDENTIFIER)('$value')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$')
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(FIELD_IDENTIFIER)('$value')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$')
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(BAD_CHARACTER)('$')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(FIELD_IDENTIFIER)('$value')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(BAD_CHARACTER)('$')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(BAD_CHARACTER)('$')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(BAD_CHARACTER)('$')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(FIELD_IDENTIFIER)('$value')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(BAD_CHARACTER)('$')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(BAD_CHARACTER)('$')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(BAD_CHARACTER)('$')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(BAD_CHARACTER)('$')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(BAD_CHARACTER)('$')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(BAD_CHARACTER)('$')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(BAD_CHARACTER)('$')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(FIELD_IDENTIFIER)('$value')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n\n\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"""')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('`$value`')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$')
+        PsiElement(OPEN_QUOTE)('"""')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('`$value`')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$')
+        PsiElement(OPEN_QUOTE)('"""')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('`$$value`')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        PsiElement(OPEN_QUOTE)('"""')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('`$$$$value`')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        PsiElement(OPEN_QUOTE)('"""')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$$$$$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('`$$$$$$$$value`')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"""')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(FIELD_IDENTIFIER)('$value')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$')
+        PsiElement(OPEN_QUOTE)('"""')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(FIELD_IDENTIFIER)('$value')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$')
+        PsiElement(OPEN_QUOTE)('"""')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(BAD_CHARACTER)('$')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(FIELD_IDENTIFIER)('$value')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        PsiElement(OPEN_QUOTE)('"""')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(BAD_CHARACTER)('$')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(BAD_CHARACTER)('$')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(BAD_CHARACTER)('$')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(FIELD_IDENTIFIER)('$value')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        PsiElement(OPEN_QUOTE)('"""')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(BAD_CHARACTER)('$')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(BAD_CHARACTER)('$')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(BAD_CHARACTER)('$')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(BAD_CHARACTER)('$')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(BAD_CHARACTER)('$')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(BAD_CHARACTER)('$')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(BAD_CHARACTER)('$')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(FIELD_IDENTIFIER)('$value')
+          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiComment(EOL_COMMENT)('// interpolation prefix length: 0, 1, 2, 4, 8')
+    PsiWhiteSpace('\n')
+    PsiComment(EOL_COMMENT)('// interpolation kinds: of arbitrary expression')
+    PsiWhiteSpace('\n')
+    PsiComment(EOL_COMMENT)('// string literal kinds: single-line, multi-line')
+    PsiWhiteSpace('\n')
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('interpolationOfIncorrectExpression')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          BINARY_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('42')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(PLUS)('+')
+            PsiErrorElement:Expecting an element
+              <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$')
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          BINARY_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('42')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(PLUS)('+')
+            PsiErrorElement:Expecting an element
+              <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$')
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
+          BINARY_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('42')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(PLUS)('+')
+            PsiErrorElement:Expecting an element
+              <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
+          BINARY_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('42')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(PLUS)('+')
+            PsiErrorElement:Expecting an element
+              <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')
+          BINARY_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('42')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(PLUS)('+')
+            PsiErrorElement:Expecting an element
+              <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"""')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          BINARY_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('42')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(PLUS)('+')
+            PsiErrorElement:Expecting an element
+              <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$')
+        PsiElement(OPEN_QUOTE)('"""')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          BINARY_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('42')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(PLUS)('+')
+            PsiErrorElement:Expecting an element
+              <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$')
+        PsiElement(OPEN_QUOTE)('"""')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
+          BINARY_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('42')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(PLUS)('+')
+            PsiErrorElement:Expecting an element
+              <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$')
+        PsiElement(OPEN_QUOTE)('"""')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
+          BINARY_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('42')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(PLUS)('+')
+            PsiErrorElement:Expecting an element
+              <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+        PsiElement(OPEN_QUOTE)('"""')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')
+          BINARY_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('42')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(PLUS)('+')
+            PsiErrorElement:Expecting an element
+              <empty list>
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('runTimeConstant')
+    PsiWhiteSpace(' ')
+    PROPERTY_ACCESSOR
+      PsiElement(get)('get')
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('42')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    MODIFIER_LIST
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Repeatable')
+      PsiWhiteSpace(' ')
+      PsiElement(annotation)('annotation')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Annotation')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('value')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('String')
+        PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  PsiComment(EOL_COMMENT)('// interpolation prefix length: 0, 1, 2, 4, 8')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// interpolation kinds: of simple identifier, of identifier in backticks, of arbitrary expression')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// string literal kinds: single-line, multi-line')
+  PsiWhiteSpace('\n\n')
+  FUN
+    MODIFIER_LIST
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Annotation')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(OPEN_QUOTE)('"')
+              SHORT_STRING_TEMPLATE_ENTRY
+                PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('runTimeConstant')
+              PsiElement(CLOSING_QUOTE)('"')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Annotation')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(INTERPOLATION_PREFIX)('$')
+              PsiElement(OPEN_QUOTE)('"')
+              SHORT_STRING_TEMPLATE_ENTRY
+                PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('runTimeConstant')
+              PsiElement(CLOSING_QUOTE)('"')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Annotation')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(INTERPOLATION_PREFIX)('$$')
+              PsiElement(OPEN_QUOTE)('"')
+              SHORT_STRING_TEMPLATE_ENTRY
+                PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('runTimeConstant')
+              PsiElement(CLOSING_QUOTE)('"')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Annotation')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(INTERPOLATION_PREFIX)('$$$$')
+              PsiElement(OPEN_QUOTE)('"')
+              SHORT_STRING_TEMPLATE_ENTRY
+                PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('runTimeConstant')
+              PsiElement(CLOSING_QUOTE)('"')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Annotation')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+              PsiElement(OPEN_QUOTE)('"')
+              SHORT_STRING_TEMPLATE_ENTRY
+                PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$$$$$')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('runTimeConstant')
+              PsiElement(CLOSING_QUOTE)('"')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n')
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Annotation')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(OPEN_QUOTE)('"')
+              SHORT_STRING_TEMPLATE_ENTRY
+                PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('`runTimeConstant`')
+              PsiElement(CLOSING_QUOTE)('"')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Annotation')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(INTERPOLATION_PREFIX)('$')
+              PsiElement(OPEN_QUOTE)('"')
+              SHORT_STRING_TEMPLATE_ENTRY
+                PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('`runTimeConstant`')
+              PsiElement(CLOSING_QUOTE)('"')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Annotation')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(INTERPOLATION_PREFIX)('$$')
+              PsiElement(OPEN_QUOTE)('"')
+              SHORT_STRING_TEMPLATE_ENTRY
+                PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('`runTimeConstant`')
+              PsiElement(CLOSING_QUOTE)('"')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Annotation')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(INTERPOLATION_PREFIX)('$$$$')
+              PsiElement(OPEN_QUOTE)('"')
+              SHORT_STRING_TEMPLATE_ENTRY
+                PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('`runTimeConstant`')
+              PsiElement(CLOSING_QUOTE)('"')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Annotation')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+              PsiElement(OPEN_QUOTE)('"')
+              SHORT_STRING_TEMPLATE_ENTRY
+                PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$$$$$')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('`runTimeConstant`')
+              PsiElement(CLOSING_QUOTE)('"')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n')
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Annotation')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(OPEN_QUOTE)('"')
+              LONG_STRING_TEMPLATE_ENTRY
+                PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+                BINARY_EXPRESSION
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('0')
+                  PsiWhiteSpace(' ')
+                  OPERATION_REFERENCE
+                    PsiElement(PLUS)('+')
+                  PsiWhiteSpace(' ')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('runTimeConstant')
+                PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+              PsiElement(CLOSING_QUOTE)('"')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Annotation')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(INTERPOLATION_PREFIX)('$')
+              PsiElement(OPEN_QUOTE)('"')
+              LONG_STRING_TEMPLATE_ENTRY
+                PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+                BINARY_EXPRESSION
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('0')
+                  PsiWhiteSpace(' ')
+                  OPERATION_REFERENCE
+                    PsiElement(PLUS)('+')
+                  PsiWhiteSpace(' ')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('runTimeConstant')
+                PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+              PsiElement(CLOSING_QUOTE)('"')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Annotation')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(INTERPOLATION_PREFIX)('$$')
+              PsiElement(OPEN_QUOTE)('"')
+              LONG_STRING_TEMPLATE_ENTRY
+                PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
+                BINARY_EXPRESSION
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('0')
+                  PsiWhiteSpace(' ')
+                  OPERATION_REFERENCE
+                    PsiElement(PLUS)('+')
+                  PsiWhiteSpace(' ')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('runTimeConstant')
+                PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+              PsiElement(CLOSING_QUOTE)('"')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Annotation')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(INTERPOLATION_PREFIX)('$$$$')
+              PsiElement(OPEN_QUOTE)('"')
+              LONG_STRING_TEMPLATE_ENTRY
+                PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
+                BINARY_EXPRESSION
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('0')
+                  PsiWhiteSpace(' ')
+                  OPERATION_REFERENCE
+                    PsiElement(PLUS)('+')
+                  PsiWhiteSpace(' ')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('runTimeConstant')
+                PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+              PsiElement(CLOSING_QUOTE)('"')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Annotation')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+              PsiElement(OPEN_QUOTE)('"')
+              LONG_STRING_TEMPLATE_ENTRY
+                PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')
+                BINARY_EXPRESSION
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('0')
+                  PsiWhiteSpace(' ')
+                  OPERATION_REFERENCE
+                    PsiElement(PLUS)('+')
+                  PsiWhiteSpace(' ')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('runTimeConstant')
+                PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+              PsiElement(CLOSING_QUOTE)('"')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n\n')
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Annotation')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(OPEN_QUOTE)('"""')
+              SHORT_STRING_TEMPLATE_ENTRY
+                PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('runTimeConstant')
+              PsiElement(CLOSING_QUOTE)('"""')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Annotation')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(INTERPOLATION_PREFIX)('$')
+              PsiElement(OPEN_QUOTE)('"""')
+              SHORT_STRING_TEMPLATE_ENTRY
+                PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('runTimeConstant')
+              PsiElement(CLOSING_QUOTE)('"""')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Annotation')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(INTERPOLATION_PREFIX)('$$')
+              PsiElement(OPEN_QUOTE)('"""')
+              SHORT_STRING_TEMPLATE_ENTRY
+                PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('runTimeConstant')
+              PsiElement(CLOSING_QUOTE)('"""')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Annotation')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(INTERPOLATION_PREFIX)('$$$$')
+              PsiElement(OPEN_QUOTE)('"""')
+              SHORT_STRING_TEMPLATE_ENTRY
+                PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('runTimeConstant')
+              PsiElement(CLOSING_QUOTE)('"""')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Annotation')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+              PsiElement(OPEN_QUOTE)('"""')
+              SHORT_STRING_TEMPLATE_ENTRY
+                PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$$$$$')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('runTimeConstant')
+              PsiElement(CLOSING_QUOTE)('"""')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n')
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Annotation')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(OPEN_QUOTE)('"""')
+              SHORT_STRING_TEMPLATE_ENTRY
+                PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('`runTimeConstant`')
+              PsiElement(CLOSING_QUOTE)('"""')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Annotation')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(INTERPOLATION_PREFIX)('$')
+              PsiElement(OPEN_QUOTE)('"""')
+              SHORT_STRING_TEMPLATE_ENTRY
+                PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('`runTimeConstant`')
+              PsiElement(CLOSING_QUOTE)('"""')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Annotation')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(INTERPOLATION_PREFIX)('$$')
+              PsiElement(OPEN_QUOTE)('"""')
+              SHORT_STRING_TEMPLATE_ENTRY
+                PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('`runTimeConstant`')
+              PsiElement(CLOSING_QUOTE)('"""')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Annotation')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(INTERPOLATION_PREFIX)('$$$$')
+              PsiElement(OPEN_QUOTE)('"""')
+              SHORT_STRING_TEMPLATE_ENTRY
+                PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('`runTimeConstant`')
+              PsiElement(CLOSING_QUOTE)('"""')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Annotation')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+              PsiElement(OPEN_QUOTE)('"""')
+              SHORT_STRING_TEMPLATE_ENTRY
+                PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$$$$$')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('`runTimeConstant`')
+              PsiElement(CLOSING_QUOTE)('"""')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n')
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Annotation')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(OPEN_QUOTE)('"""')
+              LONG_STRING_TEMPLATE_ENTRY
+                PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+                BINARY_EXPRESSION
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('0')
+                  PsiWhiteSpace(' ')
+                  OPERATION_REFERENCE
+                    PsiElement(PLUS)('+')
+                  PsiWhiteSpace(' ')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('runTimeConstant')
+                PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+              PsiElement(CLOSING_QUOTE)('"""')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Annotation')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(INTERPOLATION_PREFIX)('$')
+              PsiElement(OPEN_QUOTE)('"""')
+              LONG_STRING_TEMPLATE_ENTRY
+                PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+                BINARY_EXPRESSION
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('0')
+                  PsiWhiteSpace(' ')
+                  OPERATION_REFERENCE
+                    PsiElement(PLUS)('+')
+                  PsiWhiteSpace(' ')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('runTimeConstant')
+                PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+              PsiElement(CLOSING_QUOTE)('"""')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Annotation')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(INTERPOLATION_PREFIX)('$$')
+              PsiElement(OPEN_QUOTE)('"""')
+              LONG_STRING_TEMPLATE_ENTRY
+                PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
+                BINARY_EXPRESSION
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('0')
+                  PsiWhiteSpace(' ')
+                  OPERATION_REFERENCE
+                    PsiElement(PLUS)('+')
+                  PsiWhiteSpace(' ')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('runTimeConstant')
+                PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+              PsiElement(CLOSING_QUOTE)('"""')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Annotation')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(INTERPOLATION_PREFIX)('$$$$')
+              PsiElement(OPEN_QUOTE)('"""')
+              LONG_STRING_TEMPLATE_ENTRY
+                PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
+                BINARY_EXPRESSION
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('0')
+                  PsiWhiteSpace(' ')
+                  OPERATION_REFERENCE
+                    PsiElement(PLUS)('+')
+                  PsiWhiteSpace(' ')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('runTimeConstant')
+                PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+              PsiElement(CLOSING_QUOTE)('"""')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Annotation')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+              PsiElement(OPEN_QUOTE)('"""')
+              LONG_STRING_TEMPLATE_ENTRY
+                PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')
+                BINARY_EXPRESSION
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('0')
+                  PsiWhiteSpace(' ')
+                  OPERATION_REFERENCE
+                    PsiElement(PLUS)('+')
+                  PsiWhiteSpace(' ')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('runTimeConstant')
+                PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+              PsiElement(CLOSING_QUOTE)('"""')
+          PsiElement(RPAR)(')')
+    PsiWhiteSpace('\n\n')
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('stringsWithInterpolationAsInvalidAnnotationArguments')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  PsiComment(EOL_COMMENT)('// interpolation prefix length: 0, 1, 2, 4, 8')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// interpolation kinds: of simple identifier, of identifier in backticks, of arbitrary expression')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// string literal kinds: single-line, multi-line')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    MODIFIER_LIST
+      PsiElement(const)('const')
+    PsiWhiteSpace(' ')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('stringWithInterpolationAsInvalidConstantInitializer01')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    STRING_TEMPLATE
+      PsiElement(OPEN_QUOTE)('"')
+      SHORT_STRING_TEMPLATE_ENTRY
+        PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('runTimeConstant')
+      PsiElement(CLOSING_QUOTE)('"')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    MODIFIER_LIST
+      PsiElement(const)('const')
+    PsiWhiteSpace(' ')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('stringWithInterpolationAsInvalidConstantInitializer02')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    STRING_TEMPLATE
+      PsiElement(INTERPOLATION_PREFIX)('$')
+      PsiElement(OPEN_QUOTE)('"')
+      SHORT_STRING_TEMPLATE_ENTRY
+        PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('runTimeConstant')
+      PsiElement(CLOSING_QUOTE)('"')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    MODIFIER_LIST
+      PsiElement(const)('const')
+    PsiWhiteSpace(' ')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('stringWithInterpolationAsInvalidConstantInitializer03')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    STRING_TEMPLATE
+      PsiElement(INTERPOLATION_PREFIX)('$$')
+      PsiElement(OPEN_QUOTE)('"')
+      SHORT_STRING_TEMPLATE_ENTRY
+        PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('runTimeConstant')
+      PsiElement(CLOSING_QUOTE)('"')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    MODIFIER_LIST
+      PsiElement(const)('const')
+    PsiWhiteSpace(' ')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('stringWithInterpolationAsInvalidConstantInitializer04')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    STRING_TEMPLATE
+      PsiElement(INTERPOLATION_PREFIX)('$$$$')
+      PsiElement(OPEN_QUOTE)('"')
+      SHORT_STRING_TEMPLATE_ENTRY
+        PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('runTimeConstant')
+      PsiElement(CLOSING_QUOTE)('"')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    MODIFIER_LIST
+      PsiElement(const)('const')
+    PsiWhiteSpace(' ')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('stringWithInterpolationAsInvalidConstantInitializer05')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    STRING_TEMPLATE
+      PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+      PsiElement(OPEN_QUOTE)('"')
+      SHORT_STRING_TEMPLATE_ENTRY
+        PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$$$$$')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('runTimeConstant')
+      PsiElement(CLOSING_QUOTE)('"')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    MODIFIER_LIST
+      PsiElement(const)('const')
+    PsiWhiteSpace(' ')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('stringWithInterpolationAsInvalidConstantInitializer06')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    STRING_TEMPLATE
+      PsiElement(OPEN_QUOTE)('"')
+      SHORT_STRING_TEMPLATE_ENTRY
+        PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('`runTimeConstant`')
+      PsiElement(CLOSING_QUOTE)('"')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    MODIFIER_LIST
+      PsiElement(const)('const')
+    PsiWhiteSpace(' ')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('stringWithInterpolationAsInvalidConstantInitializer07')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    STRING_TEMPLATE
+      PsiElement(INTERPOLATION_PREFIX)('$')
+      PsiElement(OPEN_QUOTE)('"')
+      SHORT_STRING_TEMPLATE_ENTRY
+        PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('`runTimeConstant`')
+      PsiElement(CLOSING_QUOTE)('"')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    MODIFIER_LIST
+      PsiElement(const)('const')
+    PsiWhiteSpace(' ')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('stringWithInterpolationAsInvalidConstantInitializer08')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    STRING_TEMPLATE
+      PsiElement(INTERPOLATION_PREFIX)('$$')
+      PsiElement(OPEN_QUOTE)('"')
+      SHORT_STRING_TEMPLATE_ENTRY
+        PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('`runTimeConstant`')
+      PsiElement(CLOSING_QUOTE)('"')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    MODIFIER_LIST
+      PsiElement(const)('const')
+    PsiWhiteSpace(' ')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('stringWithInterpolationAsInvalidConstantInitializer09')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    STRING_TEMPLATE
+      PsiElement(INTERPOLATION_PREFIX)('$$$$')
+      PsiElement(OPEN_QUOTE)('"')
+      SHORT_STRING_TEMPLATE_ENTRY
+        PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('`runTimeConstant`')
+      PsiElement(CLOSING_QUOTE)('"')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    MODIFIER_LIST
+      PsiElement(const)('const')
+    PsiWhiteSpace(' ')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('stringWithInterpolationAsInvalidConstantInitializer10')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    STRING_TEMPLATE
+      PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+      PsiElement(OPEN_QUOTE)('"')
+      SHORT_STRING_TEMPLATE_ENTRY
+        PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$$$$$')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('`runTimeConstant`')
+      PsiElement(CLOSING_QUOTE)('"')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    MODIFIER_LIST
+      PsiElement(const)('const')
+    PsiWhiteSpace(' ')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('stringWithInterpolationAsInvalidConstantInitializer11')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    STRING_TEMPLATE
+      PsiElement(OPEN_QUOTE)('"')
+      LONG_STRING_TEMPLATE_ENTRY
+        PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+        BINARY_EXPRESSION
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('0')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(PLUS)('+')
+          PsiWhiteSpace(' ')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('runTimeConstant')
+        PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+      PsiElement(CLOSING_QUOTE)('"')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    MODIFIER_LIST
+      PsiElement(const)('const')
+    PsiWhiteSpace(' ')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('stringWithInterpolationAsInvalidConstantInitializer12')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    STRING_TEMPLATE
+      PsiElement(INTERPOLATION_PREFIX)('$')
+      PsiElement(OPEN_QUOTE)('"')
+      LONG_STRING_TEMPLATE_ENTRY
+        PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+        BINARY_EXPRESSION
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('0')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(PLUS)('+')
+          PsiWhiteSpace(' ')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('runTimeConstant')
+        PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+      PsiElement(CLOSING_QUOTE)('"')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    MODIFIER_LIST
+      PsiElement(const)('const')
+    PsiWhiteSpace(' ')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('stringWithInterpolationAsInvalidConstantInitializer13')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    STRING_TEMPLATE
+      PsiElement(INTERPOLATION_PREFIX)('$$')
+      PsiElement(OPEN_QUOTE)('"')
+      LONG_STRING_TEMPLATE_ENTRY
+        PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
+        BINARY_EXPRESSION
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('0')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(PLUS)('+')
+          PsiWhiteSpace(' ')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('runTimeConstant')
+        PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+      PsiElement(CLOSING_QUOTE)('"')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    MODIFIER_LIST
+      PsiElement(const)('const')
+    PsiWhiteSpace(' ')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('stringWithInterpolationAsInvalidConstantInitializer14')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    STRING_TEMPLATE
+      PsiElement(INTERPOLATION_PREFIX)('$$$$')
+      PsiElement(OPEN_QUOTE)('"')
+      LONG_STRING_TEMPLATE_ENTRY
+        PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
+        BINARY_EXPRESSION
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('0')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(PLUS)('+')
+          PsiWhiteSpace(' ')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('runTimeConstant')
+        PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+      PsiElement(CLOSING_QUOTE)('"')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    MODIFIER_LIST
+      PsiElement(const)('const')
+    PsiWhiteSpace(' ')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('stringWithInterpolationAsInvalidConstantInitializer15')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    STRING_TEMPLATE
+      PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+      PsiElement(OPEN_QUOTE)('"')
+      LONG_STRING_TEMPLATE_ENTRY
+        PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')
+        BINARY_EXPRESSION
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('0')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(PLUS)('+')
+          PsiWhiteSpace(' ')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('runTimeConstant')
+        PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+      PsiElement(CLOSING_QUOTE)('"')
+  PsiWhiteSpace('\n\n\n')
+  PROPERTY
+    MODIFIER_LIST
+      PsiElement(const)('const')
+    PsiWhiteSpace(' ')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('stringWithInterpolationAsInvalidConstantInitializer16')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    STRING_TEMPLATE
+      PsiElement(OPEN_QUOTE)('"""')
+      SHORT_STRING_TEMPLATE_ENTRY
+        PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('runTimeConstant')
+      PsiElement(CLOSING_QUOTE)('"""')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    MODIFIER_LIST
+      PsiElement(const)('const')
+    PsiWhiteSpace(' ')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('stringWithInterpolationAsInvalidConstantInitializer17')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    STRING_TEMPLATE
+      PsiElement(INTERPOLATION_PREFIX)('$')
+      PsiElement(OPEN_QUOTE)('"""')
+      SHORT_STRING_TEMPLATE_ENTRY
+        PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('runTimeConstant')
+      PsiElement(CLOSING_QUOTE)('"""')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    MODIFIER_LIST
+      PsiElement(const)('const')
+    PsiWhiteSpace(' ')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('stringWithInterpolationAsInvalidConstantInitializer18')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    STRING_TEMPLATE
+      PsiElement(INTERPOLATION_PREFIX)('$$')
+      PsiElement(OPEN_QUOTE)('"""')
+      SHORT_STRING_TEMPLATE_ENTRY
+        PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('runTimeConstant')
+      PsiElement(CLOSING_QUOTE)('"""')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    MODIFIER_LIST
+      PsiElement(const)('const')
+    PsiWhiteSpace(' ')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('stringWithInterpolationAsInvalidConstantInitializer19')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    STRING_TEMPLATE
+      PsiElement(INTERPOLATION_PREFIX)('$$$$')
+      PsiElement(OPEN_QUOTE)('"""')
+      SHORT_STRING_TEMPLATE_ENTRY
+        PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('runTimeConstant')
+      PsiElement(CLOSING_QUOTE)('"""')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    MODIFIER_LIST
+      PsiElement(const)('const')
+    PsiWhiteSpace(' ')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('stringWithInterpolationAsInvalidConstantInitializer20')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    STRING_TEMPLATE
+      PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+      PsiElement(OPEN_QUOTE)('"""')
+      SHORT_STRING_TEMPLATE_ENTRY
+        PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$$$$$')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('runTimeConstant')
+      PsiElement(CLOSING_QUOTE)('"""')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    MODIFIER_LIST
+      PsiElement(const)('const')
+    PsiWhiteSpace(' ')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('stringWithInterpolationAsInvalidConstantInitializer21')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    STRING_TEMPLATE
+      PsiElement(OPEN_QUOTE)('"""')
+      SHORT_STRING_TEMPLATE_ENTRY
+        PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('`runTimeConstant`')
+      PsiElement(CLOSING_QUOTE)('"""')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    MODIFIER_LIST
+      PsiElement(const)('const')
+    PsiWhiteSpace(' ')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('stringWithInterpolationAsInvalidConstantInitializer22')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    STRING_TEMPLATE
+      PsiElement(INTERPOLATION_PREFIX)('$')
+      PsiElement(OPEN_QUOTE)('"""')
+      SHORT_STRING_TEMPLATE_ENTRY
+        PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('`runTimeConstant`')
+      PsiElement(CLOSING_QUOTE)('"""')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    MODIFIER_LIST
+      PsiElement(const)('const')
+    PsiWhiteSpace(' ')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('stringWithInterpolationAsInvalidConstantInitializer23')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    STRING_TEMPLATE
+      PsiElement(INTERPOLATION_PREFIX)('$$')
+      PsiElement(OPEN_QUOTE)('"""')
+      SHORT_STRING_TEMPLATE_ENTRY
+        PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('`runTimeConstant`')
+      PsiElement(CLOSING_QUOTE)('"""')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    MODIFIER_LIST
+      PsiElement(const)('const')
+    PsiWhiteSpace(' ')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('stringWithInterpolationAsInvalidConstantInitializer24')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    STRING_TEMPLATE
+      PsiElement(INTERPOLATION_PREFIX)('$$$$')
+      PsiElement(OPEN_QUOTE)('"""')
+      SHORT_STRING_TEMPLATE_ENTRY
+        PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('`runTimeConstant`')
+      PsiElement(CLOSING_QUOTE)('"""')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    MODIFIER_LIST
+      PsiElement(const)('const')
+    PsiWhiteSpace(' ')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('stringWithInterpolationAsInvalidConstantInitializer25')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    STRING_TEMPLATE
+      PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+      PsiElement(OPEN_QUOTE)('"""')
+      SHORT_STRING_TEMPLATE_ENTRY
+        PsiElement(SHORT_TEMPLATE_ENTRY_START)('$$$$$$$$')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('`runTimeConstant`')
+      PsiElement(CLOSING_QUOTE)('"""')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    MODIFIER_LIST
+      PsiElement(const)('const')
+    PsiWhiteSpace(' ')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('stringWithInterpolationAsInvalidConstantInitializer26')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    STRING_TEMPLATE
+      PsiElement(OPEN_QUOTE)('"""')
+      LONG_STRING_TEMPLATE_ENTRY
+        PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+        BINARY_EXPRESSION
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('0')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(PLUS)('+')
+          PsiWhiteSpace(' ')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('runTimeConstant')
+        PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+      PsiElement(CLOSING_QUOTE)('"""')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    MODIFIER_LIST
+      PsiElement(const)('const')
+    PsiWhiteSpace(' ')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('stringWithInterpolationAsInvalidConstantInitializer27')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    STRING_TEMPLATE
+      PsiElement(INTERPOLATION_PREFIX)('$')
+      PsiElement(OPEN_QUOTE)('"""')
+      LONG_STRING_TEMPLATE_ENTRY
+        PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+        BINARY_EXPRESSION
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('0')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(PLUS)('+')
+          PsiWhiteSpace(' ')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('runTimeConstant')
+        PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+      PsiElement(CLOSING_QUOTE)('"""')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    MODIFIER_LIST
+      PsiElement(const)('const')
+    PsiWhiteSpace(' ')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('stringWithInterpolationAsInvalidConstantInitializer28')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    STRING_TEMPLATE
+      PsiElement(INTERPOLATION_PREFIX)('$$')
+      PsiElement(OPEN_QUOTE)('"""')
+      LONG_STRING_TEMPLATE_ENTRY
+        PsiElement(LONG_TEMPLATE_ENTRY_START)('$${')
+        BINARY_EXPRESSION
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('0')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(PLUS)('+')
+          PsiWhiteSpace(' ')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('runTimeConstant')
+        PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+      PsiElement(CLOSING_QUOTE)('"""')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    MODIFIER_LIST
+      PsiElement(const)('const')
+    PsiWhiteSpace(' ')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('stringWithInterpolationAsInvalidConstantInitializer29')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    STRING_TEMPLATE
+      PsiElement(INTERPOLATION_PREFIX)('$$$$')
+      PsiElement(OPEN_QUOTE)('"""')
+      LONG_STRING_TEMPLATE_ENTRY
+        PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$${')
+        BINARY_EXPRESSION
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('0')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(PLUS)('+')
+          PsiWhiteSpace(' ')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('runTimeConstant')
+        PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+      PsiElement(CLOSING_QUOTE)('"""')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    MODIFIER_LIST
+      PsiElement(const)('const')
+    PsiWhiteSpace(' ')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('stringWithInterpolationAsInvalidConstantInitializer30')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    STRING_TEMPLATE
+      PsiElement(INTERPOLATION_PREFIX)('$$$$$$$$')
+      PsiElement(OPEN_QUOTE)('"""')
+      LONG_STRING_TEMPLATE_ENTRY
+        PsiElement(LONG_TEMPLATE_ENTRY_START)('$$$$$$$${')
+        BINARY_EXPRESSION
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('0')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(PLUS)('+')
+          PsiWhiteSpace(' ')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('runTimeConstant')
+        PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+      PsiElement(CLOSING_QUOTE)('"""')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiComment(EOL_COMMENT)('// interpolation prefix length: 1, 2, 4, 8')
+    PsiWhiteSpace('\n')
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('orphanedInterpolationPrefix')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      PsiErrorElement:Expecting an element
+        PsiElement(BAD_CHARACTER)('$')
+      PsiWhiteSpace('\n    ')
+      PsiErrorElement:Expecting an element
+        PsiElement(BAD_CHARACTER)('$')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(BAD_CHARACTER)('$')
+      PsiWhiteSpace('\n    ')
+      PsiErrorElement:Expecting an element
+        PsiElement(BAD_CHARACTER)('$')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(BAD_CHARACTER)('$')
+        PsiElement(BAD_CHARACTER)('$')
+        PsiElement(BAD_CHARACTER)('$')
+      PsiWhiteSpace('\n    ')
+      PsiErrorElement:Expecting an element
+        PsiElement(BAD_CHARACTER)('$')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(BAD_CHARACTER)('$')
+        PsiElement(BAD_CHARACTER)('$')
+        PsiElement(BAD_CHARACTER)('$')
+        PsiElement(BAD_CHARACTER)('$')
+        PsiElement(BAD_CHARACTER)('$')
+        PsiElement(BAD_CHARACTER)('$')
+        PsiElement(BAD_CHARACTER)('$')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiComment(EOL_COMMENT)('// interpolation prefix length: 1, 2, 4, 8')
+    PsiWhiteSpace('\n')
+    PsiComment(EOL_COMMENT)('// string literal kinds: single-line, multi-line')
+    PsiWhiteSpace('\n')
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('separatedInterpolationPrefix')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      PsiErrorElement:Expecting an element
+        PsiElement(BAD_CHARACTER)('$')
+      PsiWhiteSpace(' ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)('padding')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      PsiErrorElement:Expecting an element
+        PsiElement(BAD_CHARACTER)('$')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(BAD_CHARACTER)('$')
+        PsiWhiteSpace(' ')
+        PsiElement(OPEN_QUOTE)('"')
+        PsiElement(REGULAR_STRING_PART)('padding')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      PsiErrorElement:Expecting an element
+        PsiElement(BAD_CHARACTER)('$')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(BAD_CHARACTER)('$')
+        PsiElement(BAD_CHARACTER)('$')
+        PsiElement(BAD_CHARACTER)('$')
+        PsiWhiteSpace(' ')
+        PsiElement(OPEN_QUOTE)('"')
+        PsiElement(REGULAR_STRING_PART)('padding')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      PsiErrorElement:Expecting an element
+        PsiElement(BAD_CHARACTER)('$')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(BAD_CHARACTER)('$')
+        PsiElement(BAD_CHARACTER)('$')
+        PsiElement(BAD_CHARACTER)('$')
+        PsiElement(BAD_CHARACTER)('$')
+        PsiElement(BAD_CHARACTER)('$')
+        PsiElement(BAD_CHARACTER)('$')
+        PsiElement(BAD_CHARACTER)('$')
+        PsiWhiteSpace(' ')
+        PsiElement(OPEN_QUOTE)('"')
+        PsiElement(REGULAR_STRING_PART)('padding')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n\n    ')
+      PsiErrorElement:Expecting an element
+        PsiElement(BAD_CHARACTER)('$')
+      PsiWhiteSpace(' ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"""')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)('padding')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      PsiErrorElement:Expecting an element
+        PsiElement(BAD_CHARACTER)('$')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(BAD_CHARACTER)('$')
+        PsiWhiteSpace(' ')
+        PsiElement(OPEN_QUOTE)('"""')
+        PsiElement(REGULAR_STRING_PART)('padding')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      PsiErrorElement:Expecting an element
+        PsiElement(BAD_CHARACTER)('$')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(BAD_CHARACTER)('$')
+        PsiElement(BAD_CHARACTER)('$')
+        PsiElement(BAD_CHARACTER)('$')
+        PsiWhiteSpace(' ')
+        PsiElement(OPEN_QUOTE)('"""')
+        PsiElement(REGULAR_STRING_PART)('padding')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n    ')
+      PsiErrorElement:Expecting an element
+        PsiElement(BAD_CHARACTER)('$')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(BAD_CHARACTER)('$')
+        PsiElement(BAD_CHARACTER)('$')
+        PsiElement(BAD_CHARACTER)('$')
+        PsiElement(BAD_CHARACTER)('$')
+        PsiElement(BAD_CHARACTER)('$')
+        PsiElement(BAD_CHARACTER)('$')
+        PsiElement(BAD_CHARACTER)('$')
+        PsiWhiteSpace(' ')
+        PsiElement(OPEN_QUOTE)('"""')
+        PsiElement(REGULAR_STRING_PART)('padding')
+        PsiElement(CLOSING_QUOTE)('"""')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

@@ -25872,6 +25872,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("MultiDollarInterpolation.kt")
+    public void testMultiDollarInterpolation() {
+      runTest("compiler/testData/codegen/box/js/MultiDollarInterpolation.kt");
+    }
+
+    @Test
     @TestMetadata("trailingLambdaOnDynamic.kt")
     public void testTrailingLambdaOnDynamic() {
       runTest("compiler/testData/codegen/box/js/trailingLambdaOnDynamic.kt");
@@ -40093,6 +40099,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @TestMetadata("kt894.kt")
     public void testKt894() {
       runTest("compiler/testData/codegen/box/strings/kt894.kt");
+    }
+
+    @Test
+    @TestMetadata("MultiDollarInterpolation.kt")
+    public void testMultiDollarInterpolation() {
+      runTest("compiler/testData/codegen/box/strings/MultiDollarInterpolation.kt");
     }
 
     @Test
