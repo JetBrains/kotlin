@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.PendingDiagnosticsCollectorWithSuppress
@@ -50,6 +51,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
+import org.jetbrains.kotlin.utils.metadataVersion
 import java.io.File
 
 object FirKotlinToJvmBytecodeCompiler {
@@ -205,8 +207,14 @@ object FirKotlinToJvmBytecodeCompiler {
             createProviderAndScopeForIncrementalCompilation = { providerAndScopeForIncrementalCompilation }
         )
 
+        val languageVersionSettings = configuration.languageVersionSettings
         val outputs = sessionsWithSources.map { (session, sources) ->
-            buildResolveAndCheckFirFromKtFiles(session, sources, diagnosticsReporter)
+            buildResolveAndCheckFirFromKtFiles(
+                session, sources,
+                configuration.metadataVersion(languageVersionSettings.languageVersion),
+                languageVersionSettings,
+                diagnosticsReporter
+            )
         }
         outputs.runPlatformCheckers(diagnosticsReporter)
 

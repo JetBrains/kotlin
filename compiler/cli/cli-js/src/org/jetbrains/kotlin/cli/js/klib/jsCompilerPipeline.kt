@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.utils.metadataVersion
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import java.nio.file.Paths
 import kotlin.io.path.createTempDirectory
@@ -164,7 +165,13 @@ fun compileModuleToAnalyzedFirWithPsi(
         isCommonSource = isCommonSourceForPsi,
         fileBelongsToModule = fileBelongsToModuleForPsi,
         buildResolveAndCheckFir = { session, files ->
-            buildResolveAndCheckFirFromKtFiles(session, files, diagnosticsReporter)
+            val languageVersionSettings = moduleStructure.compilerConfiguration.languageVersionSettings
+            buildResolveAndCheckFirFromKtFiles(
+                session, files,
+                moduleStructure.compilerConfiguration.metadataVersion(languageVersionSettings.languageVersion),
+                languageVersionSettings,
+                diagnosticsReporter
+            )
         },
         useWasmPlatform = useWasmPlatform,
     )

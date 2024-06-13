@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
+import org.jetbrains.kotlin.utils.metadataVersion
 
 @OptIn(SessionConfiguration::class)
 internal inline fun <F> PhaseContext.firFrontend(
@@ -103,7 +104,13 @@ internal fun PhaseContext.firFrontendWithPsi(input: KotlinCoreEnvironment): FirO
             isCommonSource = isCommonSourceForPsi,
             fileBelongsToModule = fileBelongsToModuleForPsi,
             buildResolveAndCheckFir = { session, files, diagnosticsReporter ->
-                buildResolveAndCheckFirFromKtFiles(session, files, diagnosticsReporter)
+                val languageVersionSettings = configuration.languageVersionSettings
+                buildResolveAndCheckFirFromKtFiles(
+                        session, files,
+                        configuration.metadataVersion(languageVersionSettings.languageVersion),
+                        languageVersionSettings,
+                        diagnosticsReporter
+                )
             },
     )
 }

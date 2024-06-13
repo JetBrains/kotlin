@@ -64,6 +64,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.utils.metadataVersion
 
 class FirAnalysisResult(
     val firResult: FirResult,
@@ -180,10 +181,13 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
         val platformKtFiles = platformFiles.map { it.toKtFile(project) }
 
         val reporter = DiagnosticReporterFactory.createReporter()
+        val languageVersionSettings = configuration.languageVersionSettings
+        val metadataVarsion = configuration.metadataVersion(languageVersionSettings.languageVersion)
+
         val commonAnalysis =
-            buildResolveAndCheckFirFromKtFiles(commonSession, commonKtFiles, reporter)
+            buildResolveAndCheckFirFromKtFiles(commonSession, commonKtFiles, metadataVarsion, languageVersionSettings, reporter)
         val platformAnalysis =
-            buildResolveAndCheckFirFromKtFiles(platformSession, platformKtFiles, reporter)
+            buildResolveAndCheckFirFromKtFiles(platformSession, platformKtFiles, metadataVarsion, languageVersionSettings, reporter)
 
         return FirAnalysisResult(
             FirResult(listOf(commonAnalysis, platformAnalysis)),

@@ -67,12 +67,26 @@ fun FirSession.buildFirFromKtFiles(ktFiles: Collection<KtFile>): List<FirFile> {
     }
 }
 
+@OptIn(SessionConfiguration::class)
 fun buildResolveAndCheckFirFromKtFiles(
     session: FirSession,
     ktFiles: List<KtFile>,
-    diagnosticsReporter: BaseDiagnosticsCollector
+    metadataVersion: BinaryVersion,
+    languageVersionSettings: LanguageVersionSettings,
+    diagnosticsReporter: BaseDiagnosticsCollector,
 ): ModuleCompilerAnalyzedOutput {
-    return resolveAndCheckFir(session, session.buildFirFromKtFiles(ktFiles), diagnosticsReporter)
+    val firFiles = session.buildFirFromKtFiles(ktFiles)
+    val analyzedOutput = resolveAndCheckFir(session, firFiles, diagnosticsReporter)
+    if (session.moduleData.isCommon) {
+        val fragments = sortedMapOf<String, MutableList<ByteArray>>()
+        analyzedOutput.serializeFragmentsTo(fragments, languageVersionSettings, metadataVersion)
+
+        val moduleName = session.moduleData.name.asString()
+        val serializedMetadata = makeSerializedMetadataFromFragments(fragments, languageVersionSettings, moduleName)
+        session.register(FirSerializedMetadataComponent::class, FirSerializedMetadataComponent(serializedMetadata))
+    }
+    return analyzedOutput
+
 }
 
 /**
