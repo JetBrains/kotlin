@@ -63,7 +63,10 @@ public interface KaModule {
      *
      * @see [TargetPlatform]
      */
-    public val platform: TargetPlatform
+    public val targetPlatform: TargetPlatform
+
+    @Deprecated("Use 'targetPlatform' instead.", replaceWith = ReplaceWith("targetPlatform"))
+    public val platform: TargetPlatform get() = targetPlatform
 
     /**
      * [Project] to which the current module belongs.
@@ -163,7 +166,7 @@ public interface KaLibrarySourceModule : KaModule {
  * Kotlin builtins usually reside in the compiler, so [contentScope] and [getBinaryRoots] are empty.
  */
 public class KaBuiltinsModule(
-    override val platform: TargetPlatform,
+    override val targetPlatform: TargetPlatform,
     override val project: Project
 ) : KaBinaryModule {
     override val directRegularDependencies: List<KaModule> get() = emptyList()
@@ -172,10 +175,10 @@ public class KaBuiltinsModule(
     override val directFriendDependencies: List<KaModule> get() = emptyList()
     override val contentScope: GlobalSearchScope get() = GlobalSearchScope.EMPTY_SCOPE
     override fun getBinaryRoots(): Collection<Path> = emptyList()
-    override val moduleDescription: String get() = "Builtins for $platform"
+    override val moduleDescription: String get() = "Builtins for $targetPlatform"
 
-    override fun equals(other: Any?): Boolean = other is KaBuiltinsModule && this.platform == other.platform
-    override fun hashCode(): Int = platform.hashCode()
+    override fun equals(other: Any?): Boolean = other is KaBuiltinsModule && this.targetPlatform == other.targetPlatform
+    override fun hashCode(): Int = targetPlatform.hashCode()
 }
 
 /**

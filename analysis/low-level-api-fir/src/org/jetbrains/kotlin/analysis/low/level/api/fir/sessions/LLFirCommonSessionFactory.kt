@@ -122,7 +122,7 @@ internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessio
     }
 
     private fun LLFirSession.registerPlatformSpecificComponentsIfAny(module: KaModule) {
-        if (module.platform.has<JvmPlatform>())
+        if (module.targetPlatform.has<JvmPlatform>())
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
     }
 }

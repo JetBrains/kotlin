@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 
 class KaLibrarySourceModuleImpl(
     override val libraryName: String,
-    override val platform: TargetPlatform,
+    override val targetPlatform: TargetPlatform,
     override val contentScope: GlobalSearchScope,
     override val project: Project,
     override val binaryLibrary: KaLibraryModule,

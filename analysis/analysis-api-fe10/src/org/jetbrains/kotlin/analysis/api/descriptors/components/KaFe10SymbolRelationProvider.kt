@@ -160,11 +160,10 @@ internal class KaFe10SymbolRelationProvider(
             override val transitiveDependsOnDependencies: List<KaModule> = emptyList()
             override val directFriendDependencies: List<KaModule> = emptyList()
             override val contentScope: GlobalSearchScope = ProjectScope.getLibrariesScope(project)
-            override val platform: TargetPlatform
+            override val targetPlatform: TargetPlatform
                 get() = descriptor.platform!!
             override val project: Project
                 get() = analysisSession.analysisContext.resolveSession.project
-
         }
     }
 

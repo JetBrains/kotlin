@@ -162,7 +162,7 @@ private fun handleExceptionFromResolve(
             appendLine("session: ${session::class}")
             appendLine("module data: ${moduleData::class}")
             appendLine("KaModule: ${module::class}")
-            appendLine("platform: ${module.platform}")
+            appendLine("platform: ${module.targetPlatform}")
         },
         exception = exception,
     ) {
@@ -188,7 +188,7 @@ private fun handleExceptionFromResolve(
             appendLine("to $toPhase")
             appendLine("module data: ${moduleData::class}")
             appendLine("KaModule: ${module::class}")
-            appendLine("platform: ${module.platform}")
+            appendLine("platform: ${module.targetPlatform}")
         },
         exception = exception,
     ) {

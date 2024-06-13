@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.psi.KtFile
 
 class KaScriptModuleImpl(
     override val file: KtFile,
-    override val platform: TargetPlatform,
+    override val targetPlatform: TargetPlatform,
     override val languageVersionSettings: LanguageVersionSettings,
     override val project: Project,
 ) : KtModuleWithModifiableDependencies(), KaScriptModule {

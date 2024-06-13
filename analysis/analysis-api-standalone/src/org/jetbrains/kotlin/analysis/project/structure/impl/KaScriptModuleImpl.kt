@@ -19,7 +19,7 @@ internal class KaScriptModuleImpl(
     override val directRegularDependencies: List<KaModule> = emptyList(),
     override val directDependsOnDependencies: List<KaModule> = emptyList(),
     override val directFriendDependencies: List<KaModule> = emptyList(),
-    override val platform: TargetPlatform = JvmPlatforms.defaultJvmPlatform,
+    override val targetPlatform: TargetPlatform = JvmPlatforms.defaultJvmPlatform,
     override val project: Project,
     override val file: KtFile,
     override val languageVersionSettings: LanguageVersionSettings

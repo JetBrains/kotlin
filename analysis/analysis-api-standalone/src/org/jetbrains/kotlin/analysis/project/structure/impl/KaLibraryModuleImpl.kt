@@ -19,7 +19,7 @@ internal class KaLibraryModuleImpl(
     override val directDependsOnDependencies: List<KaModule>,
     override val directFriendDependencies: List<KaModule>,
     override val contentScope: GlobalSearchScope,
-    override val platform: TargetPlatform,
+    override val targetPlatform: TargetPlatform,
     override val project: Project,
     private val binaryRoots: Collection<Path>,
     override val libraryName: String,

@@ -19,7 +19,7 @@ internal class KaNotUnderContentRootModuleImpl(
     override val directRegularDependencies: List<KaModule> = emptyList(),
     override val directDependsOnDependencies: List<KaModule> = emptyList(),
     override val directFriendDependencies: List<KaModule> = emptyList(),
-    override val platform: TargetPlatform = JvmPlatforms.defaultJvmPlatform,
+    override val targetPlatform: TargetPlatform = JvmPlatforms.defaultJvmPlatform,
     override val file: PsiFile? = null,
     override val moduleDescription: String,
     override val project: Project,

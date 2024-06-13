@@ -42,8 +42,8 @@ public class KaDanglingFileModuleImpl(
     override val project: Project
         get() = contextModule.project
 
-    override val platform: TargetPlatform
-        get() = contextModule.platform
+    override val targetPlatform: TargetPlatform
+        get() = contextModule.targetPlatform
 
     override val contentScope: GlobalSearchScope
         get() = GlobalSearchScope.fileScope(file)

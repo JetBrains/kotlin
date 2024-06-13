@@ -111,7 +111,7 @@ abstract class KtModuleByCompilerConfiguration(
     val languageVersionSettings: LanguageVersionSettings
         get() = testModule.languageVersionSettings
 
-    val platform: TargetPlatform
+    val targetPlatform: TargetPlatform
         get() = testModule.targetPlatform
 }
 
@@ -182,7 +182,7 @@ private class LibraryByRoots(
     override val directDependsOnDependencies: List<KaModule> get() = emptyList()
     override val transitiveDependsOnDependencies: List<KaModule> get() = emptyList()
     override val directFriendDependencies: List<KaModule> get() = emptyList()
-    override val platform: TargetPlatform get() = parentModule.platform
+    override val targetPlatform: TargetPlatform get() = parentModule.targetPlatform
     override fun getBinaryRoots(): Collection<Path> = roots
 
     override fun equals(other: Any?): Boolean {

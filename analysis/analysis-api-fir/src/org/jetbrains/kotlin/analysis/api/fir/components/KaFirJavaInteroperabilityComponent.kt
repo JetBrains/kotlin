@@ -265,7 +265,7 @@ internal class KaFirJavaInteroperabilityComponent(
             val symbol = this@containingJvmClassName
 
             with(analysisSession) {
-                val platform = symbol.containingModule.platform
+                val platform = symbol.containingModule.targetPlatform
                 if (!platform.has<JvmPlatform>()) return null
 
                 val containingSymbolOrSelf = when (symbol) {

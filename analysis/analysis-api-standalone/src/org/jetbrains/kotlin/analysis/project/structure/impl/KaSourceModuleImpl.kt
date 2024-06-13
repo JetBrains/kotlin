@@ -19,7 +19,7 @@ internal class KaSourceModuleImpl(
     override val directDependsOnDependencies: List<KaModule>,
     override val directFriendDependencies: List<KaModule>,
     override val contentScope: GlobalSearchScope,
-    override val platform: TargetPlatform,
+    override val targetPlatform: TargetPlatform,
     override val project: Project,
     override val moduleName: String,
     override val languageVersionSettings: LanguageVersionSettings,

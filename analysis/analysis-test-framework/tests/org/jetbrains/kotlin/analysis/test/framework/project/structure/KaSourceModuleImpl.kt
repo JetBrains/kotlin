@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 
 class KaSourceModuleImpl(
     override val moduleName: String,
-    override val platform: TargetPlatform,
+    override val targetPlatform: TargetPlatform,
     override val languageVersionSettings: LanguageVersionSettings,
     override val project: Project,
     override val contentScope: GlobalSearchScope,

@@ -51,7 +51,7 @@ private object CheckersFactory {
         useExtendedCheckers: Boolean
     ): DiagnosticCollectorComponents {
         val module = session.llFirModuleData.ktModule
-        val platform = module.platform
+        val platform = module.targetPlatform
         val extensionCheckers = session.extensionService.additionalCheckers
         val declarationCheckers = createDeclarationCheckers(useExtendedCheckers, platform, extensionCheckers)
         val expressionCheckers = createExpressionCheckers(useExtendedCheckers, platform, extensionCheckers)

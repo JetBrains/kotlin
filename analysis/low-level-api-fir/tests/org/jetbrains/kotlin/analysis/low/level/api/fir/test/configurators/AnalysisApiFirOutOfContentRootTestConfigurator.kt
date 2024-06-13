@@ -80,10 +80,10 @@ private object KtOutOfContentRootTestModuleFactory : KtTestModuleFactory {
 internal class KaNotUnderContentRootModuleForTest(
     override val name: String,
     override val file: PsiFile,
-    override val platform: TargetPlatform
+    override val targetPlatform: TargetPlatform
 ) : KaNotUnderContentRootModule {
     override val directRegularDependencies: List<KaModule> by lazy {
-        listOf(LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsModule(platform))
+        listOf(LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsModule(targetPlatform))
     }
 
     override val directDependsOnDependencies: List<KaModule>

@@ -15,7 +15,7 @@ import java.nio.file.Path
 
 class KaLibraryModuleImpl(
     override val libraryName: String,
-    override val platform: TargetPlatform,
+    override val targetPlatform: TargetPlatform,
     override val contentScope: GlobalSearchScope,
     override val project: Project,
     private val binaryRoots: Collection<Path>,

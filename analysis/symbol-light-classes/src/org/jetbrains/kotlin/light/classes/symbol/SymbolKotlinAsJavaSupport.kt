@@ -209,4 +209,4 @@ class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KaMo
     }
 }
 
-private fun KaModule.isLightClassesEnabled(): Boolean = platform.has<JvmPlatform>()
+private fun KaModule.isLightClassesEnabled(): Boolean = targetPlatform.has<JvmPlatform>()

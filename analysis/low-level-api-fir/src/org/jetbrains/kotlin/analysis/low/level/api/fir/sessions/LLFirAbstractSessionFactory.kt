@@ -124,7 +124,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
     ): List<FirSymbolProvider>
 
     fun createScriptSession(module: KaScriptModule): LLFirScriptSession {
-        val platform = module.platform
+        val platform = module.targetPlatform
         val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform)
         val languageVersionSettings = wrapLanguageVersionSettings(module.languageVersionSettings)
         val scopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
@@ -291,7 +291,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         scopeProvider: FirKotlinScopeProvider = FirKotlinScopeProvider(),
         additionalSessionConfiguration: LLFirSourcesSession.(context: SourceSessionCreationContext) -> Unit,
     ): LLFirSourcesSession {
-        val platform = module.platform
+        val platform = module.targetPlatform
         val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform)
         val languageVersionSettings = wrapLanguageVersionSettings(module.languageVersionSettings)
 
@@ -372,7 +372,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             }
         }
 
-        val platform = module.platform
+        val platform = module.targetPlatform
         val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform)
         val languageVersionSettings = KotlinProjectStructureProvider.getInstance(project).libraryLanguageVersionSettings
 
@@ -457,7 +457,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         module: KaBinaryModule,
         additionalSessionConfiguration: LLFirLibrarySession.(context: BinaryLibrarySessionCreationContext) -> Unit,
     ): LLFirLibrarySession {
-        val platform = module.platform
+        val platform = module.targetPlatform
         val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform)
 
         val session = LLFirLibrarySession(module, builtinsSession.builtinTypes)
@@ -504,7 +504,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         additionalSessionConfiguration: context(DanglingFileSessionCreationContext) LLFirDanglingFileSession.() -> Unit,
     ): LLFirSession {
         val danglingFile = module.file
-        val platform = module.platform
+        val platform = module.targetPlatform
 
         val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform)
         val languageVersionSettings = wrapLanguageVersionSettings(contextSession.languageVersionSettings)

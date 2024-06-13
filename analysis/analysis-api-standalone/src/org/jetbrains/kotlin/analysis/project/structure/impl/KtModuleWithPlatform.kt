@@ -8,5 +8,5 @@ package org.jetbrains.kotlin.analysis.project.structure.impl
 import org.jetbrains.kotlin.platform.TargetPlatform
 
 internal interface KtModuleWithPlatform {
-    val platform: TargetPlatform
+    val targetPlatform: TargetPlatform
 }

@@ -237,7 +237,7 @@ class LLFirSessionCache(private val project: Project) : Disposable {
     }
 
     private fun createPlatformAwareSessionFactory(module: KaModule): LLFirAbstractSessionFactory {
-        val targetPlatform = module.platform
+        val targetPlatform = module.targetPlatform
         return when {
             targetPlatform.all { it is JvmPlatform } -> LLFirJvmSessionFactory(project)
             targetPlatform.all { it is JsPlatform } -> LLFirJsSessionFactory(project)

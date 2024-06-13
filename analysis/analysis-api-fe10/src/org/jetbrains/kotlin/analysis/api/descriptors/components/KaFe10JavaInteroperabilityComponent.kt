@@ -80,7 +80,7 @@ class KaFe10JavaInteroperabilityComponent(
             }
         }
 
-        if (!analysisSession.useSiteModule.platform.has<JvmPlatform>()) return null
+        if (!analysisSession.useSiteModule.targetPlatform.has<JvmPlatform>()) return null
 
         val typeElement = asPsiTypeElement(
             simplifyType(kotlinType),
@@ -185,7 +185,7 @@ class KaFe10JavaInteroperabilityComponent(
     override val KaCallableSymbol.containingJvmClassName: String?
         get() = withValidityAssertion {
             with(analysisSession) {
-                val platform = containingModule.platform
+                val platform = containingModule.targetPlatform
                 if (!platform.has<JvmPlatform>()) return null
 
                 val containingSymbolOrSelf = computeContainingSymbolOrSelf(this@containingJvmClassName, useSiteSession)
