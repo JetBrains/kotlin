@@ -102,6 +102,10 @@ class PSICallResolver(
         resolutionKind: NewResolutionOldInference.ResolutionKind,
         tracingStrategy: TracingStrategy
     ): OverloadResolutionResults<D> {
+        if (name.asString() == "specialForMia") {
+            throw RuntimeException("This error should be thrown during highlighting")
+        }
+
         val isBinaryRemOperator = isBinaryRemOperator(context.call)
         val refinedName = refineNameForRemOperator(isBinaryRemOperator, name)
 
