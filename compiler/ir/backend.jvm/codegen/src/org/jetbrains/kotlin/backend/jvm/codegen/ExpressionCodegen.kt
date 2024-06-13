@@ -149,7 +149,7 @@ class ExpressionCodegen(
     var finallyDepth = 0
 
     val enclosingFunctionForLocalObjects: IrFunction
-        get() = generateSequence(irFunction) { context.enclosingMethodOverride[it] }.last()
+        get() = generateSequence(irFunction) { it.enclosingMethodOverride }.last()
 
     val context = classCodegen.context
     val typeMapper = classCodegen.typeMapper

@@ -13,3 +13,5 @@ import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.org.objectweb.asm.Type
 
 var IrAttributeContainer.localClassType: Type? by irAttribute(followAttributeOwner = true)
+
+var IrFunction.enclosingMethodOverride: IrFunction? by irAttribute(followAttributeOwner = false)
