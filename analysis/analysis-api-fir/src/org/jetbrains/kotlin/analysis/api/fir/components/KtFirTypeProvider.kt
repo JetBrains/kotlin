@@ -77,7 +77,7 @@ internal class KaFirTypeProvider(
         val coneType = type.coneType
         val approximatedConeType = rootModuleSession.typeApproximator.approximateToSubType(
             coneType,
-            PublicTypeApproximator.PublicApproximatorConfiguration(localTypes = approximateLocalTypes),
+            PublicTypeApproximator.PublicApproximatorConfiguration(approximateLocalTypes = approximateLocalTypes),
         )
 
         return approximatedConeType?.asKtType()

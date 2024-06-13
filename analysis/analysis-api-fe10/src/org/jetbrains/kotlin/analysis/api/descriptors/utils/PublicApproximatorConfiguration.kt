@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.analysis.api.descriptors.utils
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 
 @Suppress("SpellCheckingInspection")
-internal class PublicApproximatorConfiguration(override val localTypes: Boolean) : TypeApproximatorConfiguration.AllFlexibleSameValue() {
-    override val allFlexible: Boolean get() = false
-    override val errorType: Boolean get() = true
-    override val definitelyNotNullType: Boolean get() = false
-    override val integerLiteralConstantType: Boolean get() = true
-    override val intersectionTypesInContravariantPositions: Boolean get() = true
+internal class PublicApproximatorConfiguration(override val approximateLocalTypes: Boolean) : TypeApproximatorConfiguration.AllFlexibleSameValue() {
+    override val keepAllFlexible: Boolean get() = false
+    override val keepErrorTypes: Boolean get() = true
+    override val keepDefinitelyNotNullTypes: Boolean get() = false
+    override val approximateIntegerLiteralConstantTypes: Boolean get() = true
+    override val approximateIntersectionTypesInContravariantPositions: Boolean get() = true
 }
