@@ -564,7 +564,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                             } else {
                                 arguments += buildErrorExpression {
                                     source = entry.toFirSourceElement()
-                                    diagnostic = ConeSyntaxDiagnostic("Empty template entry")
+                                    diagnostic = ConeSyntaxDiagnostic("Incorrect template argument")
                                 }
                             }
                         }

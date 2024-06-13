@@ -1,7 +1,7 @@
 FILE: longStringTemplateEntryInvalidCharacters.kt
     public? final? fun test(): R|kotlin/Unit| {
-        lval empty: <implicit> = <strcat>(ERROR_EXPR(Empty template entry))
-        lval s0: <implicit> = <strcat>(ERROR_EXPR(Empty template entry))
+        lval empty: <implicit> = <strcat>(ERROR_EXPR(Incorrect template argument))
+        lval s0: <implicit> = <strcat>(ERROR_EXPR(Incorrect template argument))
         lval s1: <implicit> = <strcat>(IntegerLiteral(42))
         lval s2: <implicit> = <strcat>(IntegerLiteral(42))
         lval s3: <implicit> = <strcat>(IntegerLiteral(42))
