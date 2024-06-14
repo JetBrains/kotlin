@@ -79,7 +79,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     }
 
     put(LIST_TARGETS, arguments.listTargets)
-    put(OPTIMIZATION, arguments.optimization)
+    put(OPTIMIZATION, arguments.optimization && !arguments.debug)
     put(DEBUG, arguments.debug)
     // TODO: remove after 1.4 release.
     if (arguments.lightDebugDeprecated) {
