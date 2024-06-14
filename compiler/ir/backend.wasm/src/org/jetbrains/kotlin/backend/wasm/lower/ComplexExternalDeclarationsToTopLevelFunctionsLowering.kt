@@ -472,7 +472,7 @@ class ComplexExternalDeclarationsUsageLowering(val context: WasmBackendContext) 
 
         private fun process(container: IrDeclarationContainer) {
             container.declarations.transformFlat { member ->
-                if (nestedExternalToNewTopLevelFunctions.keys.contains(member)) {
+                if (member is IrFunction && nestedExternalToNewTopLevelFunctions[member] != null) {
                     emptyList()
                 } else {
                     member.acceptVoid(this)

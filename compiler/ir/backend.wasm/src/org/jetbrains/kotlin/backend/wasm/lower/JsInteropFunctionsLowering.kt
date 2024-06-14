@@ -62,7 +62,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         if (declaration.getWasmImportDescriptor() != null) return null
         check(!(isExported && isExternal)) { "Exported external declarations are not supported: ${declaration.fqNameWhenAvailable}" }
         check(declaration.parent !is IrClass) { "Interop members are not supported:  ${declaration.fqNameWhenAvailable}" }
-        if (context.mapping.wasmNestedExternalToNewTopLevelFunction.keys.contains(declaration)) return null
+        if (context.mapping.wasmNestedExternalToNewTopLevelFunction[declaration] != null) return null
 
         additionalDeclarations.clear()
         currentParent = declaration.parent
