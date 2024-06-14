@@ -19,8 +19,12 @@ class FirProjectSessionProvider : FirSessionProvider() {
         return sessionCache[moduleData]
     }
 
-    fun getSessionByName(moduleDataName: Name): FirSession? {
-        return sessionCache.asIterable().find { it.key.name == moduleDataName }?.value
+    fun getModuleDataByOriginal(moduleData: FirModuleData): FirModuleData? {
+        return moduleDataByOriginalCache[moduleData]
+    }
+
+    fun registerModuleDataByOriginal(moduleData: FirModuleData, originalModuleData: FirModuleData) {
+        moduleDataByOriginalCache[originalModuleData] = moduleData
     }
 
     fun registerSession(moduleData: FirModuleData, session: FirSession) {
@@ -28,4 +32,5 @@ class FirProjectSessionProvider : FirSessionProvider() {
     }
 
     private val sessionCache: MutableMap<FirModuleData, FirSession> = mutableMapOf()
+    private val moduleDataByOriginalCache: MutableMap<FirModuleData, FirModuleData> = mutableMapOf()
 }
