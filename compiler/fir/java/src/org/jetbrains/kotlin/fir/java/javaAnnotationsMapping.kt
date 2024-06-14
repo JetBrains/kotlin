@@ -90,7 +90,7 @@ private fun List<FirAnnotation>.mergeTargetAnnotations(
             buildAnnotationCopy(annotationWithKotlinTarget) {
                 argumentMapping = buildAnnotationArgumentMapping {
                     this.source = annotationWithKotlinTarget.argumentMapping.source
-                    mapping[StandardClassIds.Annotations.ParameterNames.targetAllowedTargets] = buildVarargArgumentsExpression {
+                    mapping[StandardClassIds.Annotations.ParameterNames.targetAllowedTargets] = buildVarargArgumentsExpressionWithTargets {
                         arguments += if (annotationWithJavaTarget == null) {
                             JAVA_DEFAULT_TARGET_SET.map {
                                 buildEnumEntryDeserializedAccessExpression {
@@ -105,6 +105,22 @@ private fun List<FirAnnotation>.mergeTargetAnnotations(
                     }
                 }
             }
+}
+
+inline fun buildVarargArgumentsExpressionWithTargets(
+    init: FirVarargArgumentsExpressionBuilder.() -> Unit = {}
+): FirVarargArgumentsExpression {
+    return FirVarargArgumentsExpressionBuilder().apply {
+        init()
+        val elementConeType = ConeClassLikeTypeImpl(
+            StandardClassIds.AnnotationTarget.toLookupTag(),
+            emptyArray(),
+            isNullable = false,
+            ConeAttributes.Empty
+        )
+        coneTypeOrNull = elementConeType
+        coneElementTypeOrNull = elementConeType.createOutArrayType()
+    }.build()
 }
 
 private fun FirAnnotation.targetArgumentExpressions(): List<FirExpression> =
@@ -235,27 +251,18 @@ private val JAVA_TARGETS_TO_KOTLIN: Map<String, EnumSet<AnnotationTarget>> = map
 private val JAVA_DEFAULT_TARGET_SET: Set<KotlinTarget> = KotlinTarget.DEFAULT_TARGET_SET - KotlinTarget.PROPERTY
 
 private fun List<JavaAnnotationArgument>.mapJavaTargetArguments(): FirExpression? {
-    return buildVarargArgumentsExpression {
+    return buildVarargArgumentsExpressionWithTargets {
         val resultSet = EnumSet.noneOf(AnnotationTarget::class.java)
         for (target in this@mapJavaTargetArguments) {
             if (target !is JavaEnumValueAnnotationArgument) return null
             resultSet.addAll(JAVA_TARGETS_TO_KOTLIN[target.entryName?.asString()] ?: continue)
         }
-        val classId = StandardClassIds.AnnotationTarget
         resultSet.mapTo(arguments) {
             buildEnumEntryDeserializedAccessExpression {
-                enumClassId = classId
+                enumClassId = StandardClassIds.AnnotationTarget
                 enumEntryName = Name.identifier(it.name)
             }
         }
-        val elementConeType = ConeClassLikeTypeImpl(
-            classId.toLookupTag(),
-            emptyArray(),
-            isNullable = false,
-            ConeAttributes.Empty
-        )
-        coneTypeOrNull = elementConeType
-        coneElementTypeOrNull = elementConeType.createOutArrayType()
     }
 }
 
