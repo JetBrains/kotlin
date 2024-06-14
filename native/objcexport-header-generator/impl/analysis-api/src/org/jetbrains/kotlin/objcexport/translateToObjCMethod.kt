@@ -21,6 +21,7 @@ internal val KaSymbol.isConstructor: Boolean
     get() = this is KtConstructorSymbol
 
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun KtFunctionLikeSymbol.translateToObjCMethod(): ObjCMethod? {
     if (!isVisibleInObjC()) return null
     if (isFakeOverride) return null
@@ -32,6 +33,7 @@ fun KtFunctionLikeSymbol.translateToObjCMethod(): ObjCMethod? {
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.buildMethod]
  */
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KtFunctionLikeSymbol.buildObjCMethod(
     unavailable: Boolean = false,
 ): ObjCMethod {
@@ -112,6 +114,7 @@ internal fun KtCallableSymbol.isRefinedInSwift(): Boolean = when {
 }
 
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KtFunctionLikeSymbol.getSwiftName(methodBridge: MethodBridge): String {
     //assert(mapper.isBaseMethod(method)) //TODO: implement isBaseMethod
     if (this is KtNamedSymbol) {
@@ -208,6 +211,7 @@ private fun splitSelector(selector: String): List<String> {
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getSelector]
  */
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun KtFunctionLikeSymbol.getSelector(methodBridge: MethodBridge): String {
 
     if (this is KtNamedSymbol) {
@@ -265,6 +269,7 @@ fun KtFunctionLikeSymbol.getSelector(methodBridge: MethodBridge): String {
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getMangledName]
  */
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KtFunctionLikeSymbol.getMangledName(forSwift: Boolean): String {
     return if (this.isConstructor) {
         if (isArrayConstructor && !forSwift) "array" else "init"
@@ -290,6 +295,7 @@ private fun String.startsWithWords(words: String) = this.startsWith(words) &&
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mapReturnType]
  */
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun KtFunctionLikeSymbol.mapReturnType(returnBridge: MethodBridge.ReturnValue): ObjCType {
     return when (returnBridge) {
         MethodBridge.ReturnValue.Suspend,

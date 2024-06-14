@@ -41,6 +41,7 @@ private val objCProtocolClassId = ClassId(cInteropPackage, Name.identifier("ObjC
  * `@ExternalObjCClass` annotation. (See [org.jetbrains.kotlin.objcexport.analysisApiUtils.isObjCObjectType]
  */
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KtType.translateToObjCObjectType(): ObjCNonNullReferenceType {
     if (this !is KtNonErrorClassType) return objCErrorType
     val classSymbol = this.symbol as? KtClassOrObjectSymbol ?: return ObjCIdType
@@ -48,6 +49,7 @@ internal fun KtType.translateToObjCObjectType(): ObjCNonNullReferenceType {
 }
 
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KtClassOrObjectSymbol.translateToObjCObjectType(): ObjCNonNullReferenceType {
     if (isObjCMetaClass()) return ObjCMetaClassType
     if (isObjCProtocolClass()) return ObjCClassType("Protocol", extras = objCTypeExtras {
@@ -70,23 +72,27 @@ private fun KtClassOrObjectSymbol.translateToObjCObjectType(): ObjCNonNullRefere
 }
 
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KtClassOrObjectSymbol.isObjCMetaClass(): Boolean {
     if (classId == objCClassClassId) return true
     return getDeclaredSuperInterfaceSymbols().any { superInterfaceSymbol -> superInterfaceSymbol.isObjCMetaClass() }
 }
 
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KtClassOrObjectSymbol.isObjCProtocolClass(): Boolean {
     if (classId == objCProtocolClassId) return true
     return getDeclaredSuperInterfaceSymbols().any { superInterfaceSymbol -> superInterfaceSymbol.isObjCProtocolClass() }
 }
 
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KtClassOrObjectSymbol.isExternalObjCClass(): Boolean {
     return NativeStandardInteropNames.externalObjCClassClassId in annotations
 }
 
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KtClassOrObjectSymbol.isObjCForwardDeclaration(): Boolean {
     val classId = classId ?: return false
     return when (NativeForwardDeclarationKind.packageFqNameToKind[classId.packageFqName]) {

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.hasExportForCompilerAnno
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun KtClassOrObjectSymbol.translateToObjCConstructors(): List<ObjCMethod> {
 
     /* Translate declared constructors */
@@ -74,6 +75,7 @@ fun KtClassOrObjectSymbol.translateToObjCConstructors(): List<ObjCMethod> {
  * Additional primary constructor which goes always after primary constructor ([ObjCMethod.name] == "init")
  */
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun buildNewInitConstructor(constructor: KtFunctionLikeSymbol): ObjCMethod {
     return ObjCMethod(
         comment = null,

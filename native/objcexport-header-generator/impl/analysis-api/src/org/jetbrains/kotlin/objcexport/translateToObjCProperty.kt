@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun KtPropertySymbol.translateToObjCProperty(): ObjCProperty? {
     if (!isVisibleInObjC()) return null
     return buildProperty()
@@ -26,6 +27,7 @@ fun KtPropertySymbol.translateToObjCProperty(): ObjCProperty? {
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.buildProperty]
  */
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun KtPropertySymbol.buildProperty(): ObjCProperty {
     val propertyName = getObjCPropertyName()
     val name = propertyName.objCName

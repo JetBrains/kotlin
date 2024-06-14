@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
  * ```
  */
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KtClassOrObjectSymbol.getSuperClassSymbolNotAny(): KtClassOrObjectSymbol? {
     return getSuperClassTypeNotAny()?.expandedSymbol
 }
@@ -43,6 +44,7 @@ internal fun KtClassOrObjectSymbol.getSuperClassSymbolNotAny(): KtClassOrObjectS
  * ```
  */
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KtClassOrObjectSymbol.getSuperClassTypeNotAny(): KtNonErrorClassType? {
     return superTypes.firstNotNullOfOrNull find@{ superType ->
         if (superType.isAny || superType.isError) return@find null

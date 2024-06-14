@@ -19,6 +19,7 @@ internal data class KtObjCSuperClassTranslation(
 )
 
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KtClassOrObjectSymbol.translateSuperClass(): KtObjCSuperClassTranslation {
     val superClassType = getSuperClassTypeNotAny()
     val superClassName = superClassType?.getSuperClassName() ?: getDefaultSuperClassOrProtocolName()

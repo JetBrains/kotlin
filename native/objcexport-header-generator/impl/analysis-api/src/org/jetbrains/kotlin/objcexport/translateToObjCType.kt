@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.objcexport.extras.requiresForwardDeclaration
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mapType]
  */
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KtType.translateToObjCType(typeBridge: TypeBridge): ObjCType {
     return when (typeBridge) {
         is ReferenceBridge -> this.translateToObjCReferenceType()
@@ -55,6 +56,7 @@ internal fun KtType.translateToObjCType(typeBridge: TypeBridge): ObjCType {
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mapReferenceType]
  */
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KtType.translateToObjCReferenceType(): ObjCReferenceType {
     return mapToReferenceTypeIgnoringNullability().withNullabilityOf(this)
 }
@@ -63,6 +65,7 @@ internal fun KtType.translateToObjCReferenceType(): ObjCReferenceType {
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mapReferenceTypeIgnoringNullability]
  */
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KtType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReferenceType {
     val fullyExpandedType = fullyExpandedType
     val classId = (fullyExpandedType as? KtNonErrorClassType)?.classId
@@ -149,6 +152,7 @@ internal fun KtType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReferenc
 }
 
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private val KtNonErrorClassType.objCTypeName: String
     get() {
         return getClassOrObjectSymbolByClassId(classId)?.getObjCClassOrProtocolName()?.objCName
@@ -156,6 +160,7 @@ private val KtNonErrorClassType.objCTypeName: String
     }
 
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KtType.translateTypeArgumentsToObjC(): List<ObjCNonNullReferenceType> {
     if (this !is KtNonErrorClassType) return emptyList()
 

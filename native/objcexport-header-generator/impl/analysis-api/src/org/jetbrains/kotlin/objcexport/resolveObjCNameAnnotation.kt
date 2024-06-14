@@ -45,6 +45,7 @@ internal class KtResolvedObjCNameAnnotation(
 )
 
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KtAnnotatedSymbol.resolveObjCNameAnnotation(): KtResolvedObjCNameAnnotation? {
     val annotation = annotations.find { it.classId?.asSingleFqName() == KonanFqNames.objCName } ?: return null
 

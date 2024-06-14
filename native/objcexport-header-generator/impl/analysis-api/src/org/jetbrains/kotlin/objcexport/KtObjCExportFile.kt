@@ -21,6 +21,7 @@ interface KtObjCExportFile {
     val packageFqName: FqName
 
     context(KtAnalysisSession)
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     fun resolve(): KtResolvedObjCExportFile
 }
 
@@ -88,6 +89,7 @@ private class KtPsiObjCExportFile(
      * See [KtResolvedObjCExportFile]
      */
     context(KtAnalysisSession)
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     override fun resolve(): KtResolvedObjCExportFile {
         val symbol = file.getFileSymbol()
         return KtResolvedObjCExportFile(
@@ -122,6 +124,7 @@ private class KtKlibObjCExportFile(
     }
 
     context(KtAnalysisSession)
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     override fun resolve(): KtResolvedObjCExportFile {
         val classifierAddresses = addresses.filterIsInstance<KlibClassAddress>()
         val callableAddresses = addresses.filterIsInstance<KlibCallableAddress>()

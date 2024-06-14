@@ -21,6 +21,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KtSymbol.isVisibleInObjC(): Boolean = when (this) {
     is KtCallableSymbol -> this.isVisibleInObjC()
     is KtClassOrObjectSymbol -> this.isVisibleInObjC()
@@ -28,6 +29,7 @@ internal fun KtSymbol.isVisibleInObjC(): Boolean = when (this) {
 }
 
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KtCallableSymbol.isVisibleInObjC(): Boolean {
     if (this is KtSymbolWithVisibility && !isPublicApi(this)) return false
     if (this is KtPossibleMultiplatformSymbol && isExpect) return false
@@ -41,6 +43,7 @@ internal fun KtCallableSymbol.isVisibleInObjC(): Boolean {
 }
 
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KtClassOrObjectSymbol.isVisibleInObjC(): Boolean {
     // TODO if(specialMapped()) return false
     // TODO if(!defaultType.isObjCObjectType()) return false
@@ -60,6 +63,7 @@ Private utility functions
  */
 
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KtSymbol.isSealedClassConstructor(): Boolean {
     if (this !is KtConstructorSymbol) return false
     val containingSymbol = this.getContainingSymbol() as? KtSymbolWithModality ?: return false
@@ -67,6 +71,7 @@ private fun KtSymbol.isSealedClassConstructor(): Boolean {
 }
 
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 @OptIn(ExperimentalContracts::class)
 private fun KtSymbol.isComponentNMethod(): Boolean {
     contract {
@@ -81,6 +86,7 @@ private fun KtSymbol.isComponentNMethod(): Boolean {
 }
 
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KtCallableSymbol.isHiddenFromObjCByAnnotation(): Boolean {
     val overwrittenSymbols = getDirectlyOverriddenSymbols()
     if (overwrittenSymbols.isNotEmpty()) return overwrittenSymbols.first().isHiddenFromObjCByAnnotation()
@@ -88,6 +94,7 @@ private fun KtCallableSymbol.isHiddenFromObjCByAnnotation(): Boolean {
 }
 
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KtClassOrObjectSymbol.isHiddenFromObjCByAnnotation(): Boolean {
     val containingSymbol = getContainingSymbol()
     if (containingSymbol is KtClassOrObjectSymbol && containingSymbol.isHiddenFromObjCByAnnotation()) return true
@@ -114,6 +121,7 @@ private fun KtClassOrObjectSymbol.isHiddenFromObjCByAnnotation(): Boolean {
  *
  */
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KtAnnotatedSymbol.containsHidesFromObjCAnnotation(): Boolean {
     return annotations.any { annotation ->
         val annotationClassId = annotation.classId ?: return@any false
@@ -123,6 +131,7 @@ private fun KtAnnotatedSymbol.containsHidesFromObjCAnnotation(): Boolean {
 }
 
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KtCallableSymbol.isHiddenFromObjCByDeprecation(): Boolean {
     /*
     Note: ObjCExport generally expect overrides of exposed methods to be exposed.
@@ -143,6 +152,7 @@ private fun KtCallableSymbol.isHiddenFromObjCByDeprecation(): Boolean {
 }
 
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KtClassOrObjectSymbol.isHiddenFromObjCByDeprecation(): Boolean {
     if (this.deprecationStatus?.deprecationLevel == DeprecationLevelValue.HIDDEN) return true
 
@@ -165,6 +175,7 @@ private fun KtClassOrObjectSymbol.isHiddenFromObjCByDeprecation(): Boolean {
 }
 
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KtClassOrObjectSymbol.isInlined(): Boolean {
     if (this !is KtNamedClassOrObjectSymbol) return false
     if (this.isInline) return true

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.types.symbol
  * @return The **declared** super interfaces (**not the transitive closure**)
  */
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KtClassOrObjectSymbol.getDeclaredSuperInterfaceSymbols(): List<KtClassOrObjectSymbol> {
     return superTypes
         .asSequence()

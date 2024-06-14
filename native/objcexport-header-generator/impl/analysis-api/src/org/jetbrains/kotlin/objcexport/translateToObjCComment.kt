@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.isSuspend
 
 
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KtAnnotationsList.translateToObjCComment(): ObjCComment? {
     val annotations = getObjCDocumentedAnnotations()
         .mapNotNull { annotation -> renderAnnotation(annotation) }
@@ -39,6 +40,7 @@ internal fun KtAnnotationsList.translateToObjCComment(): ObjCComment? {
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.buildComment]
  */
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KtFunctionLikeSymbol.translateToObjCComment(bridge: MethodBridge, parameters: List<ObjCParameter>): ObjCComment? {
     val throwsComments = if (isSuspend || bridge.returnsError) {
         val effectiveThrows = effectiveThrows.toSet()
@@ -79,6 +81,7 @@ internal fun KtFunctionLikeSymbol.translateToObjCComment(bridge: MethodBridge, p
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mustBeDocumentedParamAttributeList]
  */
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun ObjCParameter.renderedObjCDocumentedParamAnnotations(parameterSymbol: KtValueParameterSymbol): String? {
     val renderedAnnotationsString = parameterSymbol.getObjCDocumentedAnnotations()
         .mapNotNull { annotation -> renderAnnotation(annotation) }

@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportFunctionName
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getPropertySymbol
 
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun KtFunctionLikeSymbol.getObjCFunctionName(): ObjCExportFunctionName {
     val annotationName =
         if (this is KtPropertyAccessorSymbol) this.getContainingSymbol()?.resolveObjCNameAnnotation()
@@ -17,6 +18,7 @@ fun KtFunctionLikeSymbol.getObjCFunctionName(): ObjCExportFunctionName {
 }
 
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KtFunctionLikeSymbol.getObjCFunctionName(annotationName: String?): String {
     return if (annotationName != null) {
         if (this is KtPropertyAccessorSymbol) formatPropertyName(annotationName) else annotationName
@@ -24,6 +26,7 @@ private fun KtFunctionLikeSymbol.getObjCFunctionName(annotationName: String?): S
 }
 
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private val KtFunctionLikeSymbol.translationName: String
     get() {
         return when (this) {
@@ -36,6 +39,7 @@ private val KtFunctionLikeSymbol.translationName: String
     }
 
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KtPropertyAccessorSymbol.formatPropertyName(annotationName: String? = null): String {
     val propertySymbol = this.getPropertySymbol()
     val name = annotationName ?: propertySymbol.name.asString()

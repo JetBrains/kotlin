@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
  *
  */
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun KtClassLikeSymbol.getObjCClassOrProtocolName(bareName: Boolean = false): ObjCExportClassOrProtocolName {
     val resolvedObjCNameAnnotation = resolveObjCNameAnnotation()
 
@@ -42,6 +43,7 @@ fun KtClassLikeSymbol.getObjCClassOrProtocolName(bareName: Boolean = false): Obj
 }
 
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KtClassLikeSymbol.getObjCName(
     resolvedObjCNameAnnotation: KtResolvedObjCNameAnnotation? = resolveObjCNameAnnotation(),
     bareName: Boolean = false,
@@ -65,6 +67,7 @@ private fun KtClassLikeSymbol.getObjCName(
 }
 
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KtClassLikeSymbol.getSwiftName(
     resolvedObjCNameAnnotation: KtResolvedObjCNameAnnotation? = resolveObjCNameAnnotation(),
     bareName: Boolean = false,
@@ -102,6 +105,7 @@ private fun KtClassLikeSymbol.getSwiftName(
 }
 
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KtClassLikeSymbol.canBeInnerSwift(): Boolean {
     if (configuration.objcGenerics && this.typeParameters.isNotEmpty()) {
         // Swift compiler doesn't seem to handle this case properly.
@@ -119,6 +123,7 @@ private fun KtClassLikeSymbol.canBeInnerSwift(): Boolean {
 }
 
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KtClassLikeSymbol.canBeOuterSwift(): Boolean {
     if (configuration.objcGenerics && this.typeParameters.isNotEmpty()) {
         // Swift nested classes are static but capture outer's generics.
@@ -139,6 +144,7 @@ private fun mangleSwiftNestedClassName(name: String): String = when (name) {
 }
 
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KtSymbol.getObjCModuleNamePrefix(): String? {
     val module = getContainingModule()
     val moduleName = module.getObjCKotlinModuleName() ?: return null

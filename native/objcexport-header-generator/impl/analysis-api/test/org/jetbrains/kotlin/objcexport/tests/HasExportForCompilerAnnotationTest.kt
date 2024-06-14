@@ -40,6 +40,7 @@ class HasExportForCompilerAnnotationTest(
 }
 
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun verifyHasExportForCompilerAnnotation(property: KtPropertySymbol): Boolean {
     return property
         .returnType

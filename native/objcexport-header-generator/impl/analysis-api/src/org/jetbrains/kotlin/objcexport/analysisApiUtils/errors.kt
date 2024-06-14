@@ -32,6 +32,7 @@ internal val KtType.isError
 internal const val errorClassName = "ERROR"
 
 context(KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal val errorInterface
     get() = ObjCInterfaceImpl(
         name = errorClassName,

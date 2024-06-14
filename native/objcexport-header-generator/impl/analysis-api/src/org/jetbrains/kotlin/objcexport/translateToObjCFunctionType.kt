@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KtType.translateToObjCFunctionType(typeBridge: BlockPointerBridge): ObjCReferenceType {
     if (this !is KtFunctionalType) return ObjCIdType
 

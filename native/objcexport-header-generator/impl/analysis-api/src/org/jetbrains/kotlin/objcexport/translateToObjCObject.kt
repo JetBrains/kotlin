@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.objcexport.extras.originClassId
 import org.jetbrains.kotlin.objcexport.extras.requiresForwardDeclaration
 
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun KtClassOrObjectSymbol.translateToObjCObject(): ObjCClass? {
     require(classKind == KtClassKind.OBJECT || classKind == KtClassKind.COMPANION_OBJECT)
     if (!isVisibleInObjC()) return null
@@ -49,6 +50,7 @@ fun KtClassOrObjectSymbol.translateToObjCObject(): ObjCClass? {
 }
 
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KtClassOrObjectSymbol.getDefaultMembers(): List<ObjCExportStub> {
 
     val result = mutableListOf<ObjCExportStub>()
@@ -85,6 +87,7 @@ private fun KtClassOrObjectSymbol.getDefaultMembers(): List<ObjCExportStub> {
  * See also: [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mapReferenceType]
  */
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KtClassOrObjectSymbol.toPropertyType() = ObjCClassType(
     className = getObjCClassOrProtocolName().objCName,
     typeArguments = emptyList(),
@@ -98,6 +101,7 @@ private fun KtClassOrObjectSymbol.toPropertyType() = ObjCClassType(
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getObjectInstanceSelector]
  */
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun getObjectInstanceSelector(objectSymbol: KtClassOrObjectSymbol): String {
     return objectSymbol.getObjCClassOrProtocolName(bareName = true)
         .objCName
@@ -109,6 +113,7 @@ private fun getObjectInstanceSelector(objectSymbol: KtClassOrObjectSymbol): Stri
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getObjectPropertySelector]
  */
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun getObjectPropertySelector(descriptor: KtClassOrObjectSymbol): String {
     val collides = ObjCPropertyNames.objectPropertyName == getObjectInstanceSelector(descriptor)
     return ObjCPropertyNames.objectPropertyName + (if (collides) "_" else "")

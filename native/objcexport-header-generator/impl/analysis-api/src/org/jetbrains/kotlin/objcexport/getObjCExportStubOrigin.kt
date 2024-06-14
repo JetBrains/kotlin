@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.getKDocString
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportStubFactoriesKt.ObjCExportStubOrigin]
  */
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun KtSymbol.getObjCExportStubOrigin(): ObjCExportStubOrigin {
     // TODO: Differentiate origins
     // TODO: Extract kdoc from deserialized symbols

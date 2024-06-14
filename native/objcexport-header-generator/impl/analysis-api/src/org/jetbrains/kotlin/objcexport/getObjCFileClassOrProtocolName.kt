@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.name.NameUtils
 private const val PART_CLASS_NAME_SUFFIX = "Kt"
 
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun KtResolvedObjCExportFile.getObjCFileClassOrProtocolName(): ObjCExportFileName {
     return (NameUtils.getPackagePartClassNamePrefix(fileName) + PART_CLASS_NAME_SUFFIX).toIdentifier().getObjCFileName()
 }

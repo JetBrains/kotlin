@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.tooling.core.linearClosure
  * See K1 [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapperKt.isObjCProperty]
  */
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal val KtPropertySymbol.isObjCProperty: Boolean
     get() {
         val isMappedReceiver = receiverParameter?.type?.isMappedObjCType == true
@@ -22,6 +23,7 @@ internal val KtPropertySymbol.isObjCProperty: Boolean
     }
 
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private val KtPropertySymbol.isPropertyInInnerClass: Boolean
     get() = linearClosure<KtSymbol> { symbol -> symbol.getContainingSymbol() }
         .any { it is KtNamedClassOrObjectSymbol && it.isInner }

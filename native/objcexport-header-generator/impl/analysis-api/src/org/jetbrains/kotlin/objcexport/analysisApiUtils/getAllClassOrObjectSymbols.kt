@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
  * returns `sequenceOf(A, B, C)`
  */
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KtFileSymbol.getAllClassOrObjectSymbols(): List<KtClassOrObjectSymbol> {
     return getFileScope().getClassifierSymbols()
         .filterIsInstance<KtClassOrObjectSymbol>()
@@ -28,6 +29,7 @@ internal fun KtFileSymbol.getAllClassOrObjectSymbols(): List<KtClassOrObjectSymb
 }
 
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KtClassOrObjectSymbol.getAllClassOrObjectSymbols(): Sequence<KtClassOrObjectSymbol> {
     return sequence {
         val nestedClasses = getMemberScope().getClassifierSymbols().filterIsInstance<KtClassOrObjectSymbol>()

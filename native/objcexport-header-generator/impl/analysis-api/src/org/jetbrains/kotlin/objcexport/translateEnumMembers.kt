@@ -14,12 +14,14 @@ import org.jetbrains.kotlin.name.Name
  * the Analysis API by requesting the combined member scope and looking for [KtSymbolOrigin.SOURCE_MEMBER_GENERATED].
  */
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KtClassOrObjectSymbol.translateEnumMembers(): List<ObjCExportStub> {
     if (classKind != KtClassKind.ENUM_CLASS) return emptyList()
     return getEnumEntries() + listOf(getEnumValuesMethod(), getEnumEntriesProperty())
 }
 
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KtClassOrObjectSymbol.getEnumEntries(): List<ObjCProperty> {
     val staticMembers = this.getStaticDeclaredMemberScope().getCallableSymbols().toList()
     return staticMembers.filterIsInstance<KtEnumEntrySymbol>().map { entry ->
@@ -41,6 +43,7 @@ private fun KtClassOrObjectSymbol.getEnumEntries(): List<ObjCProperty> {
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.buildEnumValuesMethod]
  */
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KtClassOrObjectSymbol.getEnumValuesMethod(): ObjCMethod {
     val valuesFunctionSymbol = getStaticMemberScope().getCallableSymbols(Name.identifier("values")).firstOrNull()
     return ObjCMethod(
@@ -58,6 +61,7 @@ private fun KtClassOrObjectSymbol.getEnumValuesMethod(): ObjCMethod {
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.buildEnumEntriesProperty]
  */
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KtClassOrObjectSymbol.getEnumEntriesProperty(): ObjCProperty {
     val entriesSymbol = getStaticMemberScope().getCallableSymbols(Name.identifier("entries")).firstOrNull()
 
@@ -74,6 +78,7 @@ private fun KtClassOrObjectSymbol.getEnumEntriesProperty(): ObjCProperty {
 }
 
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KtEnumEntrySymbol.getEnumEntryName(forSwift: Boolean): String {
 
     val propertyName: String = getObjCPropertyName().run {

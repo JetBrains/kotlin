@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.tooling.core.linearClosure
 
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KtPropertyAccessorSymbol.getPropertySymbol(): KtPropertySymbol {
     return this.linearClosure<KtSymbol> { it.getContainingSymbol() }.filterIsInstance<KtPropertySymbol>().firstOrNull()
         ?: error("Missing '${KtPropertySymbol::class} on ${this.render()}")

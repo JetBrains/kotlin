@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.name.ClassId
  * See K1: org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.getDefinedThrows
  */
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal val KtFunctionLikeSymbol.definedThrows: List<ClassId>
     get() {
         if (isSuspend) return listOf(ClassId.topLevel(KonanFqNames.cancellationException))

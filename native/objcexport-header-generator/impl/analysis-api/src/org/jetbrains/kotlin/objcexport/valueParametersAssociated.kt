@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
  * See K1 implementation [org.jetbrains.kotlin.backend.konan.objcexport.MethodBrideExtensionsKt.valueParametersAssociated]
  */
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun MethodBridge.valueParametersAssociated(
     function: KtFunctionLikeSymbol,
 ): List<Pair<MethodBridgeValueParameter, KtObjCParameterData?>> {
@@ -51,6 +52,7 @@ private fun MethodBridge.mapParameters(
 }
 
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun MutableList<Pair<MethodBridgeValueParameter, KtObjCParameterData?>>.addReceiver(
     parameters: List<MethodBridgeValueParameter>,
     function: KtFunctionLikeSymbol,
@@ -107,6 +109,7 @@ internal data class KtObjCParameterData(
  * Also see [isObjCProperty]
  */
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal val KtFunctionLikeSymbol.objCReceiverType: KtType?
     get() {
         return if (isConstructor) {

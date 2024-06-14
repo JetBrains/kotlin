@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.name.NativeStandardInteropNames
 
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KtType.isObjCObjectType(): Boolean {
     val symbol = this.symbol
 

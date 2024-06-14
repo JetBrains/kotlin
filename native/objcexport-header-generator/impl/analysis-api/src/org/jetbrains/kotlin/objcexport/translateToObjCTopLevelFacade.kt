@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDefaultSuperClassOrPr
  * See related [translateToObjCExtensionFacades]
  */
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun KtResolvedObjCExportFile.translateToObjCTopLevelFacade(): ObjCInterface? {
     val extensions = callableSymbols
         .filter { !it.isExtension || it.isExtensionOfMappedObjCType }
@@ -70,5 +71,6 @@ fun KtResolvedObjCExportFile.translateToObjCTopLevelFacade(): ObjCInterface? {
 }
 
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal val KtCallableSymbol.isExtensionOfMappedObjCType: Boolean
     get() = isExtension && receiverParameter?.type?.isMappedObjCType == true

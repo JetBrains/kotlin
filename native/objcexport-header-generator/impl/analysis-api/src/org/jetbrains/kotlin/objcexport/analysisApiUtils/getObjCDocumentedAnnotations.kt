@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
  * documentation.
  */
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KtAnnotatedSymbol.getObjCDocumentedAnnotations(): List<KtAnnotationApplicationWithArgumentsInfo> {
     return annotations.getObjCDocumentedAnnotations()
 }
@@ -28,6 +29,7 @@ internal fun KtAnnotatedSymbol.getObjCDocumentedAnnotations(): List<KtAnnotation
  * See [getObjCDocumentedAnnotations]
  */
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KtAnnotationsList.getObjCDocumentedAnnotations(): List<KtAnnotationApplicationWithArgumentsInfo> {
     return this
         .filter { annotation ->

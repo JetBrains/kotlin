@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.backend.konan.descriptors.arrayTypes
 
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal val KtCallableSymbol.isArrayConstructor: Boolean
     get() = this is KtConstructorSymbol && getContainingSymbol()
         ?.let { containingSymbol -> containingSymbol as? KtClassOrObjectSymbol }

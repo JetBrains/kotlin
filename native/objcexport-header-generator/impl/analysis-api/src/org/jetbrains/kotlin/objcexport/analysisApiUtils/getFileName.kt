@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.objcexport.KtObjCExportSession
 import org.jetbrains.kotlin.psi.KtFile
 
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KtFileSymbol.getFileName(): String? {
     val ktFile = this.psi as? KtFile ?: return null
     return NameUtils.getPackagePartClassNamePrefix(FileUtil.getNameWithoutExtension(ktFile.name))

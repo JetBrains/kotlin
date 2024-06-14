@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.konan.file.File as KonanFile
 
 interface KtObjCExportModuleNaming {
     context(KtAnalysisSession)
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     fun getModuleName(module: KtModule): String?
 
     companion object {
@@ -27,6 +28,7 @@ interface KtObjCExportModuleNaming {
 }
 
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KtModule.getObjCKotlinModuleName(): String? {
     return cached(GetObjCKotlinModuleNameCacheKey(this)) {
         internal.moduleNaming.getModuleName(this)
@@ -45,6 +47,7 @@ fun KtObjCExportModuleNaming(implementations: List<KtObjCExportModuleNaming>): K
 
 internal object KtKlibObjCExportModuleNaming : KtObjCExportModuleNaming {
     context(KtAnalysisSession)
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     override fun getModuleName(module: KtModule): String? {
         /*
         In this implementation, we're actually looking into the klib file, trying to resolve
@@ -63,6 +66,7 @@ internal object KtKlibObjCExportModuleNaming : KtObjCExportModuleNaming {
 
 internal object KtSimpleObjCExportModuleNaming : KtObjCExportModuleNaming {
     context(KtAnalysisSession)
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     override fun getModuleName(module: KtModule): String? {
         return when (module) {
             is KtSourceModule -> module.stableModuleName ?: module.moduleName
@@ -73,7 +77,9 @@ internal object KtSimpleObjCExportModuleNaming : KtObjCExportModuleNaming {
 }
 
 internal class KtCompositeObjCExportModuleNaming(private val implementations: List<KtObjCExportModuleNaming>) : KtObjCExportModuleNaming {
-    context(KtAnalysisSession) override fun getModuleName(module: KtModule): String? {
+    context(KtAnalysisSession) 
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+    override fun getModuleName(module: KtModule): String? {
         return implementations.firstNotNullOfOrNull { implementation -> implementation.getModuleName(module) }
     }
 }

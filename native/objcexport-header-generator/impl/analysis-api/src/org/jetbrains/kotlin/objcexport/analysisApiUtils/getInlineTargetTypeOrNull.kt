@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.InteropFqNames
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KtType.getInlineTargetTypeOrNull(): KtType? {
     if (this !is KtNonErrorClassType) return null
     val classSymbol = symbol as? KtNamedClassOrObjectSymbol ?: return null
@@ -22,6 +23,7 @@ internal fun KtType.getInlineTargetTypeOrNull(): KtType? {
 }
 
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KtNamedClassOrObjectSymbol.getInlineTargetTypeOrNull(): KtType? {
     if (!isInlineIncludingKotlinNativeSpecialClasses()) return null
 
@@ -47,6 +49,7 @@ internal fun KtNamedClassOrObjectSymbol.getInlineTargetTypeOrNull(): KtType? {
  * despite no modifier being present. This is considered a 'special Kotlin Native' class in the context of this function.
  */
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KtNamedClassOrObjectSymbol.isInlineIncludingKotlinNativeSpecialClasses(): Boolean {
     if (this.isInline) return true
     val classId = classId ?: return false
@@ -66,12 +69,14 @@ private fun KtNamedClassOrObjectSymbol.isInlineIncludingKotlinNativeSpecialClass
 }
 
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KtType.markNullable(): KtType {
     if (this.nullability == KtTypeNullability.NULLABLE) return this
     return this.withNullability(KtTypeNullability.NULLABLE)
 }
 
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KtType.markNullableIf(shouldMarkNullable: Boolean): KtType {
     return if (shouldMarkNullable) markNullable() else this
 }

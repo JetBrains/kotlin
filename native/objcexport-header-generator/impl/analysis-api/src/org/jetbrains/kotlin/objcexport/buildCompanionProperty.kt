@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.objcexport.extras.requiresForwardDeclaration
  * To check whether class has companion object see [needsCompanionProperty]
  */
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KtClassOrObjectSymbol.buildCompanionProperty(): ObjCProperty {
     val companion = this.getStaticMemberScope().getClassifierSymbols().toList()
         .firstOrNull { (it as? KtClassOrObjectSymbol)?.isCompanion == true }

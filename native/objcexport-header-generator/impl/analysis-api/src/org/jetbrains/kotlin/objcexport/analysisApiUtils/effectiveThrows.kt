@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.name.ClassId
  * See K1: [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.getEffectiveThrows]
  */
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal val KtFunctionLikeSymbol.effectiveThrows: List<ClassId>
     get() {
         getAllOverriddenSymbols().firstOrNull()?.let { return (it as KtFunctionLikeSymbol).effectiveThrows }

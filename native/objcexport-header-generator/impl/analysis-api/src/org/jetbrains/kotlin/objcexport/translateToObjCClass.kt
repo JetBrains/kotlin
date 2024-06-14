@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.isThrowable
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun KtClassOrObjectSymbol.translateToObjCClass(): ObjCClass? {
     require(classKind == KtClassKind.CLASS || classKind == KtClassKind.ENUM_CLASS)
     if (!isVisibleInObjC()) return null
@@ -99,6 +100,7 @@ fun KtClassOrObjectSymbol.translateToObjCClass(): ObjCClass? {
  * @see [Predefined]
  */
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KtClassOrObjectSymbol.getCallableSymbolsForObjCMemberTranslation(): Set<KtCallableSymbol> {
     val generatedCallableSymbols = getMemberScope()
         .getCallableSymbols()
@@ -113,6 +115,7 @@ internal fun KtClassOrObjectSymbol.getCallableSymbolsForObjCMemberTranslation():
 }
 
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KtNonErrorClassType.getSuperClassName(): ObjCExportClassOrProtocolName? {
     val symbol = expandedSymbol ?: return null
     return symbol.getObjCClassOrProtocolName()

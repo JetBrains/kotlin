@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
  * Interface `I` is not exposed to the generated header, so C#f is considered to be a base method even though it has an "override" keyword.
  */
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun KtCallableSymbol.isObjCBaseCallable(): Boolean {
     return getAllOverriddenSymbols().none { overriddenSymbol ->
         overriddenSymbol.isVisibleInObjC()

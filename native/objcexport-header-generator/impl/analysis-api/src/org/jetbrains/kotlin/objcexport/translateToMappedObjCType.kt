@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
  * Returns `null` if the type is not mapped to any ObjC equivalent
  */
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KtType.translateToMappedObjCTypeOrNull(): ObjCClassType? {
     return listOf(this).plus(this.getAllSuperTypes()).firstNotNullOfOrNull find@{ type ->
         val classId = type.expandedSymbol?.classId ?: return@find null
@@ -46,6 +47,7 @@ private val mappedObjCTypes = buildSet {
 
 
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal val mappedObjCTypeNames: Map<ClassId, String>
     get() = cached("mappedObjCTypeNames") {
         buildMap {
@@ -78,5 +80,6 @@ internal val mappedObjCTypeNames: Map<ClassId, String>
     }
 
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal val KtType.isMappedObjCType: Boolean
     get() = mappedObjCTypes.contains(expandedSymbol?.classId)

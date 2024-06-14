@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportPropertyName
 
 
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun KtVariableLikeSymbol.getObjCPropertyName(): ObjCExportPropertyName {
     val resolveObjCNameAnnotation = resolveObjCNameAnnotation()
     val stringName = name.asString()

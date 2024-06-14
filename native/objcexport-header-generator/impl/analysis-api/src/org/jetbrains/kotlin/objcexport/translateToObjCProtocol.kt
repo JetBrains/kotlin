@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.isObjCBaseCallable
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun KtClassOrObjectSymbol.translateToObjCProtocol(): ObjCProtocol? {
     // TODO: check if this symbol shall be exposed in the first place
     require(classKind == KtClassKind.INTERFACE)
@@ -43,6 +44,7 @@ fun KtClassOrObjectSymbol.translateToObjCProtocol(): ObjCProtocol? {
 }
 
 context(KtAnalysisSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KtClassOrObjectSymbol.superProtocols(): List<String> {
     return getDeclaredSuperInterfaceSymbols()
         .filter { it.isVisibleInObjC() }

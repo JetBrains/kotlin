@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
  * @see [getPropertySymbols]
  */
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 public fun KlibDeclarationAddress.getSymbols(): Sequence<KtSymbol> {
     return when (this) {
         is KlibClassAddress -> getClassOrObjectSymbol()?.let { symbol -> sequenceOf(symbol) } ?: emptySequence()
@@ -39,12 +40,14 @@ public fun KlibDeclarationAddress.getSymbols(): Sequence<KtSymbol> {
  * @see [getSymbols]
  */
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 public fun KlibClassAddress.getClassOrObjectSymbol(): KtClassOrObjectSymbol? {
     return getClassOrObjectSymbolByClassId(classId)
         ?.takeIf { symbol -> symbol in this }
 }
 
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 public fun KlibTypeAliasAddress.getTypeAliasSymbol(): KtTypeAliasSymbol? {
     return getTypeAliasByClassId(classId)
         ?.takeIf { symbol -> symbol in this }
@@ -54,6 +57,7 @@ public fun KlibTypeAliasAddress.getTypeAliasSymbol(): KtTypeAliasSymbol? {
  * @see [getSymbols]
  */
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 public fun KlibCallableAddress.getCallableSymbols(): Sequence<KtCallableSymbol> {
     return when (this) {
         is KlibFunctionAddress -> getFunctionSymbols()
@@ -65,6 +69,7 @@ public fun KlibCallableAddress.getCallableSymbols(): Sequence<KtCallableSymbol> 
  * @see [getSymbols]
  */
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 public fun KlibFunctionAddress.getFunctionSymbols(): Sequence<KtFunctionSymbol> {
     return getTopLevelCallableSymbols(packageFqName, callableName)
         .filterIsInstance<KtFunctionSymbol>()
@@ -75,6 +80,7 @@ public fun KlibFunctionAddress.getFunctionSymbols(): Sequence<KtFunctionSymbol> 
  * @see [getSymbols]
  */
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 public fun KlibPropertyAddress.getPropertySymbols(): Sequence<KtPropertySymbol> {
     return getTopLevelCallableSymbols(packageFqName, callableName)
         .filterIsInstance<KtPropertySymbol>()
@@ -82,6 +88,7 @@ public fun KlibPropertyAddress.getPropertySymbols(): Sequence<KtPropertySymbol> 
 }
 
 context(KtAnalysisSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private operator fun KlibDeclarationAddress.contains(symbol: KtDeclarationSymbol): Boolean {
     val symbolKlibSourceFileName = symbol.getKlibSourceFileName()
     val symbolLibraryModule = symbol.getContainingModule() as? KtLibraryModule ?: return false

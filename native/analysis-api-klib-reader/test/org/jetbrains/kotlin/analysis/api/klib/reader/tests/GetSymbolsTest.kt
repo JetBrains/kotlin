@@ -190,6 +190,7 @@ class GetSymbolsTest {
     /**
      * Runs the given [block] in an analysis session that will have the built library as [KtAnalysisSession.useSiteModule]
      */
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     private fun <T> withTestProjectLibraryAnalysisSession(block: context(KtAnalysisSession) () -> T): T {
         val session = buildStandaloneAnalysisAPISession {
             val currentArchitectureTarget = HostManager.host
