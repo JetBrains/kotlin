@@ -43,6 +43,7 @@ class KaNullConstantValueImpl(override val sourcePsi: KtElement?) : KaConstantVa
         get() = null
 
     override fun render(): String = "null"
+    override fun toString(): String = render()
 }
 
 @KaImplementationDetail
@@ -55,6 +56,7 @@ class KaBooleanConstantValueImpl(
         get() = ConstantValueKind.Boolean
 
     override fun render(): String = value.toString()
+    override fun toString(): String = render()
 }
 
 @KaImplementationDetail
@@ -67,6 +69,7 @@ class KaCharConstantValueImpl(
         get() = ConstantValueKind.Char
 
     override fun render(): String = "`$value`"
+    override fun toString(): String = render()
 }
 
 @KaImplementationDetail
@@ -79,6 +82,7 @@ class KaByteConstantValueImpl(
         get() = ConstantValueKind.Byte
 
     override fun render(): String = value.toString()
+    override fun toString(): String = render()
 }
 
 @KaImplementationDetail
@@ -91,6 +95,7 @@ class KaUnsignedByteConstantValueImpl(
         get() = ConstantValueKind.UnsignedByte
 
     override fun render(): String = "${value}u"
+    override fun toString(): String = render()
 }
 
 @KaImplementationDetail
@@ -103,6 +108,7 @@ class KaShortConstantValueImpl(
         get() = ConstantValueKind.Short
 
     override fun render(): String = value.toString()
+    override fun toString(): String = render()
 }
 
 @KaImplementationDetail
@@ -115,6 +121,7 @@ class KaUnsignedShortConstantValueImpl(
         get() = ConstantValueKind.UnsignedShort
 
     override fun render(): String = "${value}u"
+    override fun toString(): String = render()
 }
 
 @KaImplementationDetail
@@ -127,6 +134,7 @@ class KaIntConstantValueImpl(
         get() = ConstantValueKind.Int
 
     override fun render(): String = value.toString()
+    override fun toString(): String = render()
 }
 
 @KaImplementationDetail
@@ -139,6 +147,7 @@ class KaUnsignedIntConstantValueImpl(
         get() = ConstantValueKind.UnsignedInt
 
     override fun render(): String = "${value}u"
+    override fun toString(): String = render()
 }
 
 @KaImplementationDetail
@@ -151,6 +160,7 @@ class KaLongConstantValueImpl(
         get() = ConstantValueKind.Long
 
     override fun render(): String = value.toString()
+    override fun toString(): String = render()
 }
 
 @KaImplementationDetail
@@ -163,6 +173,7 @@ class KaUnsignedLongConstantValueImpl(
         get() = ConstantValueKind.UnsignedLong
 
     override fun render(): String = "${value}uL"
+    override fun toString(): String = render()
 }
 
 @KaImplementationDetail
@@ -175,6 +186,7 @@ class KaStringConstantValueImpl(
         get() = ConstantValueKind.String
 
     override fun render(): String = "\"${value}\""
+    override fun toString(): String = render()
 }
 
 @KaImplementationDetail
@@ -187,6 +199,7 @@ class KaFloatConstantValueImpl(
         get() = ConstantValueKind.Float
 
     override fun render(): String = "${value}f"
+    override fun toString(): String = render()
 }
 
 @KaImplementationDetail
@@ -199,6 +212,7 @@ class KaDoubleConstantValueImpl(
         get() = ConstantValueKind.Double
 
     override fun render(): String = value.toString()
+    override fun toString(): String = render()
 }
 
 @KaImplementationDetail
@@ -213,7 +227,6 @@ class KaErrorConstantValueImpl(
     override val value: Nothing
         get() = error("Cannot get value for KaErrorConstantValue")
 
-    override fun render(): String {
-        return "error(\"$errorMessage\")"
-    }
+    override fun render(): String = "error(\"$errorMessage\")"
+    override fun toString(): String = render()
 }
