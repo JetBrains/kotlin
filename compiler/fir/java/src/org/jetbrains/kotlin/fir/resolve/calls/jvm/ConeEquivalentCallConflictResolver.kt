@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.isSourceBased
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeCallConflictResolver
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
@@ -35,7 +36,7 @@ class ConeEquivalentCallConflictResolver(
         // Since we can consider a declaration from source and one from binary equivalent, we need to make sure we favor the one from
         // source, otherwise we might get a behavior change to K1.
         // See org.jetbrains.kotlin.resolve.calls.results.OverloadingConflictResolver.filterOutEquivalentCalls.
-        val fromSourceFirst = candidates.sortedBy { it.symbol.fir.moduleData.session.kind != FirSession.Kind.Source }
+        val fromSourceFirst = candidates.sortedBy { !it.symbol.fir.moduleData.session.kind.isSourceBased }
 
         val result = mutableSetOf<Candidate>()
         outerLoop@ for (myCandidate in fromSourceFirst) {
@@ -68,7 +69,7 @@ class ConeEquivalentCallConflictResolver(
         // org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides.areCallableDescriptorsEquivalent.
         // We can't rely on the fact that library declarations will have different moduleData, e.g. in Native metadata compilation,
         // multiple stdlib declarations with the same moduleData can be present, see KT-61461.
-        if (first.moduleData == second.moduleData && first.moduleData.session.kind == FirSession.Kind.Source) return false
+        if (first.moduleData == second.moduleData && first.moduleData.session.kind.isSourceBased) return false
         if (first.isExpect != second.isExpect) return false
         if (first is FirVariable != second is FirVariable) {
             return false

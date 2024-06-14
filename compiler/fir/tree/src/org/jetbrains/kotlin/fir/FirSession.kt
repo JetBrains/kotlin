@@ -53,9 +53,12 @@ abstract class FirSession @PrivateSessionConstructor constructor(
     }
 
     enum class Kind {
-        Source, Library
+        Source, SeparateCompilationUnit, Library
     }
 }
+
+val FirSession.Kind.isSourceBased: Boolean get() = this == FirSession.Kind.Source || this == FirSession.Kind.SeparateCompilationUnit
+val FirSession.Kind.isDeserialized: Boolean get() = this == FirSession.Kind.Library || this == FirSession.Kind.SeparateCompilationUnit
 
 abstract class FirSessionProvider {
     abstract fun getSession(moduleData: FirModuleData): FirSession?

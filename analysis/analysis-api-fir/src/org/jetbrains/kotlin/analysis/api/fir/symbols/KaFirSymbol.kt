@@ -114,7 +114,7 @@ internal fun KaClassLikeSymbol.getSymbolKind(): KaSymbolLocation {
 
 private fun FirDeclaration.javaOriginBasedOnSessionKind(): KaSymbolOrigin {
     return when (moduleData.session.kind) {
-        FirSession.Kind.Source -> KaSymbolOrigin.JAVA_SOURCE
+        FirSession.Kind.Source, FirSession.Kind.SeparateCompilationUnit -> KaSymbolOrigin.JAVA_SOURCE
         FirSession.Kind.Library -> KaSymbolOrigin.JAVA_LIBRARY
     }
 }

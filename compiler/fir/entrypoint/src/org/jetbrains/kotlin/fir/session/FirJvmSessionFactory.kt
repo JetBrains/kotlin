@@ -160,7 +160,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
     ): FirSymbolProvider? {
         return runIf(session.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation) && !session.moduleData.isCommon) {
             if (session.moduleData.dependsOnDependencies.isNotEmpty()) {
-                val refinedSourceSymbolProviders = dependencies.filter { it.session.kind == FirSession.Kind.Source }
+                val refinedSourceSymbolProviders = dependencies.filter { it.session.kind.isSourceBased }
                 FirJvmActualizingBuiltinSymbolProvider(session, kotlinScopeProvider, refinedSourceSymbolProviders)
             } else {
                 // `FirBuiltinSymbolProvider` is needed anyway for jvm-only modules that don't have common dependencies (jdk7, jdk8)

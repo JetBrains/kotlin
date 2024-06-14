@@ -182,7 +182,7 @@ abstract class FirAbstractSessionFactory {
         firProjectSessionProvider.getModuleDataByOriginal(sourceModuleData)?.let { return it }
 
         val commonArtefactSession =
-            FirCliSession(firProjectSessionProvider, FirSession.Kind.Library).apply {
+            FirCliSession(firProjectSessionProvider, FirSession.Kind.SeparateCompilationUnit).apply {
                 registerCliCompilerOnlyComponents()
                 registerCommonComponents(sourceSession.languageVersionSettings)
                 registerExtraComponents(this)
@@ -198,13 +198,15 @@ abstract class FirAbstractSessionFactory {
         firProjectSessionProvider.registerSession(commonArtefactModuleData, commonArtefactSession)
         firProjectSessionProvider.registerModuleDataByOriginal(commonArtefactModuleData, sourceModuleData)
         commonArtefactModuleData.bindSession(commonArtefactSession)
-        val providers = sourceSession.computeDependencyProviderList(sourceModuleData, registerExtraComponents, createKotlinScopeProvider) +
+        val providers =
+            listOf(
                 LazySerializedMetadataSymbolProvider(
                     commonArtefactSession,
                     SingleModuleDataProvider(commonArtefactModuleData),
                     sourceSession.kotlinScopeProvider,
                     { sourceSession.serializedMetadata?.serializedMetadata }
                 )
+            ) + sourceSession.computeDependencyProviderList(sourceModuleData, registerExtraComponents, createKotlinScopeProvider)
         val symbolProvider = FirCachingCompositeSymbolProvider(commonArtefactSession, providers)
         commonArtefactSession.register(FirSymbolProvider::class, symbolProvider)
         commonArtefactSession.register(FirProvider::class, FirLibrarySessionProvider(symbolProvider))
@@ -232,7 +234,7 @@ abstract class FirAbstractSessionFactory {
                 // symbol provider can contain source symbol providers from multiple sessions that may represent dependency symbol providers
                 // which should not be propagated transitively.
                 originalSession != null && session.kind == FirSession.Kind.Source && session == originalSession ||
-                        originalSession == null && session.kind == FirSession.Kind.Library -> {
+                        originalSession == null && session.kind != FirSession.Kind.Source -> {
                     result.add(this)
                 }
             }

@@ -289,7 +289,7 @@ private fun FirSession.collectAllDependentSourceSessionsTo(destination: MutableL
 private fun collectAllDependentSourceSessionsTo(destination: MutableList<FirSession>, dependencies: Collection<FirModuleData>) {
     for (dependency in dependencies) {
         val dependencySession = dependency.session
-        if (dependencySession.kind != FirSession.Kind.Source) continue
+        if (!dependencySession.kind.isSourceBased) continue
         destination += dependencySession
         dependencySession.collectAllDependentSourceSessionsTo(destination)
     }
