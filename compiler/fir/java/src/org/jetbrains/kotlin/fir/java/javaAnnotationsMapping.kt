@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.java
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
 import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.toKtPsiSourceElement
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
@@ -48,8 +50,8 @@ internal fun Iterable<JavaAnnotation>.convertAnnotationsToFir(
     source: KtSourceElement?,
     isDeprecatedInJavaDoc: Boolean,
 ): List<FirAnnotation> {
-    var firstTargetAnnotation: FirAnnotation? = null
-    var secondTargetAnnotation: FirAnnotation? = null
+    var annotationWithJavaTarget: FirAnnotation? = null
+    var annotationWithKotlinTarget: FirAnnotation? = null
     val result = buildList {
         var isDeprecated = false
 
@@ -57,10 +59,12 @@ internal fun Iterable<JavaAnnotation>.convertAnnotationsToFir(
             if (it.isJavaDeprecatedAnnotation()) isDeprecated = true
             val firAnnotationCall = it.toFirAnnotationCall(session, source)
             if (firAnnotationCall.toAnnotationClassId(session) == StandardClassIds.Annotations.Target) {
-                if (firstTargetAnnotation == null) {
-                    firstTargetAnnotation = firAnnotationCall
-                } else {
-                    secondTargetAnnotation = firAnnotationCall
+                val unmappedKotlinAnnotation = it.classId == StandardClassIds.Annotations.Target
+                if (annotationWithJavaTarget == null && !unmappedKotlinAnnotation) {
+                    annotationWithJavaTarget = firAnnotationCall
+                }
+                if (annotationWithKotlinTarget == null && unmappedKotlinAnnotation) {
+                    annotationWithKotlinTarget = firAnnotationCall
                 }
             }
             firAnnotationCall
@@ -70,27 +74,45 @@ internal fun Iterable<JavaAnnotation>.convertAnnotationsToFir(
             add(DeprecatedInJavaDocAnnotation.toFirAnnotationCall(session, source))
         }
     }
-    if (firstTargetAnnotation == null || secondTargetAnnotation == null) return result
-    return result.mergeTargetAnnotations(firstTargetAnnotation!!, secondTargetAnnotation!!)
+    if (annotationWithKotlinTarget == null) return result
+
+    // TODO: remove after K1 build no more needed
+    @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
+    return result.mergeTargetAnnotations(annotationWithJavaTarget, annotationWithKotlinTarget!!)
 }
 
 // Special code for situation with java.lang.annotation.Target and kotlin.annotation.Target together
 private fun List<FirAnnotation>.mergeTargetAnnotations(
-    firstTargetAnnotation: FirAnnotation,
-    secondTargetAnnotation: FirAnnotation,
+    annotationWithJavaTarget: FirAnnotation?,
+    annotationWithKotlinTarget: FirAnnotation,
 ): List<FirAnnotation> {
-    return filter { it !== firstTargetAnnotation && it !== secondTargetAnnotation } +
-            buildAnnotationCopy(firstTargetAnnotation) {
-                val targetsName = StandardClassIds.Annotations.ParameterNames.targetAllowedTargets
+    return filter { it !== annotationWithJavaTarget && it !== annotationWithKotlinTarget } +
+            buildAnnotationCopy(annotationWithKotlinTarget) {
                 argumentMapping = buildAnnotationArgumentMapping {
-                    this.source = firstTargetAnnotation.source
-                    mapping[targetsName] = buildVarargArgumentsExpression {
-                        arguments += firstTargetAnnotation.argumentMapping.mapping[targetsName]!!
-                        arguments += secondTargetAnnotation.argumentMapping.mapping[targetsName]!!
+                    this.source = annotationWithKotlinTarget.argumentMapping.source
+                    mapping[StandardClassIds.Annotations.ParameterNames.targetAllowedTargets] = buildVarargArgumentsExpression {
+                        arguments += if (annotationWithJavaTarget == null) {
+                            JAVA_DEFAULT_TARGET_SET.map {
+                                buildEnumEntryDeserializedAccessExpression {
+                                    enumClassId = StandardClassIds.AnnotationTarget
+                                    enumEntryName = Name.identifier(it.name)
+                                }
+                            }
+                        } else {
+                            annotationWithJavaTarget.targetArgumentExpressions()
+                        }
+                        arguments += annotationWithKotlinTarget.targetArgumentExpressions()
                     }
                 }
             }
 }
+
+private fun FirAnnotation.targetArgumentExpressions(): List<FirExpression> =
+    when (val mapped = argumentMapping.mapping[StandardClassIds.Annotations.ParameterNames.targetAllowedTargets]) {
+        is FirVarargArgumentsExpression -> mapped.arguments
+        is FirArrayLiteral -> mapped.argumentList.arguments
+        else -> listOf(this)
+    }
 
 internal fun JavaAnnotationOwner.convertAnnotationsToFir(
     session: FirSession, source: KtSourceElement?,
@@ -198,7 +220,7 @@ private val JAVA_RETENTION_TO_KOTLIN: Map<String, AnnotationRetention> = mapOf(
     "SOURCE" to AnnotationRetention.SOURCE
 )
 
-private val JAVA_TARGETS_TO_KOTLIN = mapOf(
+private val JAVA_TARGETS_TO_KOTLIN: Map<String, EnumSet<AnnotationTarget>> = mapOf(
     "TYPE" to EnumSet.of(AnnotationTarget.CLASS, AnnotationTarget.FILE),
     "ANNOTATION_TYPE" to EnumSet.of(AnnotationTarget.ANNOTATION_CLASS),
     "TYPE_PARAMETER" to EnumSet.of(AnnotationTarget.TYPE_PARAMETER),
@@ -209,6 +231,8 @@ private val JAVA_TARGETS_TO_KOTLIN = mapOf(
     "METHOD" to EnumSet.of(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER),
     "TYPE_USE" to EnumSet.of(AnnotationTarget.TYPE)
 )
+
+private val JAVA_DEFAULT_TARGET_SET: Set<KotlinTarget> = KotlinTarget.DEFAULT_TARGET_SET - KotlinTarget.PROPERTY
 
 private fun List<JavaAnnotationArgument>.mapJavaTargetArguments(): FirExpression? {
     return buildVarargArgumentsExpression {
