@@ -26,7 +26,7 @@ public interface KaVariableInitializerRenderer {
             //todo add initializer to KaVariableSymbol and render for it too KT-54794/
             val initializer = (symbol as? KaPropertySymbol)?.initializer as? KaConstantInitializerValue ?: return
             printer.append(" = ")
-            printer.append(initializer.constant.renderAsKotlinConstant())
+            printer.append(initializer.constant.render())
         }
     }
 }

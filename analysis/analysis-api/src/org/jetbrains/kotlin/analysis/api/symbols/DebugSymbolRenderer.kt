@@ -384,7 +384,7 @@ public class DebugSymbolRenderer(
             when (value) {
                 is KaConstantInitializerValue -> {
                     append("KtConstantInitializerValue(")
-                    append(value.constant.renderAsKotlinConstant())
+                    append(value.constant.render())
                     append(")")
                 }
 

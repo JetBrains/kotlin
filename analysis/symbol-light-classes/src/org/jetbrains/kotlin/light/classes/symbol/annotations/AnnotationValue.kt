@@ -127,7 +127,7 @@ internal sealed class AnnotationValue {
     class Constant(val constant: KaConstantValue, override val sourcePsi: KtElement?) : AnnotationValue() {
         override fun equals(other: Any?) = this === other || (other is Constant && constant == other.constant)
         override fun hashCode(): Int = constant.hashCode()
-        override fun toString() = "Constant(" + constant.renderAsKotlinConstant() + ")"
+        override fun toString() = "Constant(" + constant.render() + ")"
     }
 }
 

@@ -82,7 +82,7 @@ internal object KaAnnotationValueRenderer {
     }
 
     private fun StringBuilder.renderConstantAnnotationValue(value: KaConstantAnnotationValue) {
-        append(value.constantValue.renderAsKotlinConstant())
+        append(value.constantValue.render())
     }
 
     private fun StringBuilder.renderEnumEntryConstantValue(value: KaEnumEntryAnnotationValue) {
