@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiversOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.CallableId
 
 
+@OptIn(KaExperimentalApi::class)
 public sealed class KaCallableSymbol : @Suppress("DEPRECATION") org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithKind,
     KaPossibleMemberSymbol, KaDeclarationSymbol, KaContextReceiversOwner {
     /**

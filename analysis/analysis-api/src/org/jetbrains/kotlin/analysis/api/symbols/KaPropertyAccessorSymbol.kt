@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
@@ -17,6 +18,7 @@ public sealed class KaPropertyAccessorSymbol : KaFunctionSymbol(),
 
     final override val isExtension: Boolean get() = withValidityAssertion { false }
 
+    @KaExperimentalApi
     final override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
 
     public abstract val isDefault: Boolean

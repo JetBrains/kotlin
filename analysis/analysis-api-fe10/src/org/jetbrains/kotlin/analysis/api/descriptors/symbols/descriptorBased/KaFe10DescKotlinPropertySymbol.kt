@@ -120,6 +120,7 @@ internal class KaFe10DescKotlinPropertySymbol(
     override val receiverParameter: KaReceiverParameterSymbol?
         get() = withValidityAssertion { descriptor.extensionReceiverParameter?.toKtReceiverParameterSymbol(analysisContext) }
 
+    @KaExperimentalApi
     override val contextReceivers: List<KaContextReceiver>
         get() = withValidityAssertion { descriptor.createContextReceivers(analysisContext) }
 

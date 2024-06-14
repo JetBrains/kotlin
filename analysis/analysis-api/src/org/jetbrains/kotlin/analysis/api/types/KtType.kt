@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.types
 
 import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiversOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
@@ -145,10 +146,13 @@ public typealias KaNonErrorClassType = KaClassType
 @Deprecated("Use 'KaClassType' instead.", replaceWith = ReplaceWith("KaClassType"))
 public typealias KtNonErrorClassType = KaClassType
 
+@OptIn(KaExperimentalApi::class)
 public abstract class KaFunctionType : KaClassType(), KaContextReceiversOwner {
     public abstract val isSuspend: Boolean
     public abstract val isReflectType: Boolean
     public abstract val arity: Int
+
+    @KaExperimentalApi
     public abstract val hasContextReceivers: Boolean
     public abstract val receiverType: KaType?
     public abstract val hasReceiver: Boolean

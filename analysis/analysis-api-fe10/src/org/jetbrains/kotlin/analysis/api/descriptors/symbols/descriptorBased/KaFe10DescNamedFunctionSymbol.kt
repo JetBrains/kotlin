@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
@@ -121,6 +122,7 @@ internal class KaFe10DescNamedFunctionSymbol private constructor(
     override val receiverParameter: KaReceiverParameterSymbol?
         get() = withValidityAssertion { descriptor.extensionReceiverParameter?.toKtReceiverParameterSymbol(analysisContext) }
 
+    @KaExperimentalApi
     override val contextReceivers: List<KaContextReceiver>
         get() = withValidityAssertion { descriptor.createContextReceivers(analysisContext) }
 

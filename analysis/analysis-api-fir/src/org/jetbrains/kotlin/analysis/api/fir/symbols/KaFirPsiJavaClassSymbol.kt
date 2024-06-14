@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
@@ -115,6 +116,7 @@ internal class KaFirPsiJavaClassSymbol(
 
     override val companionObject: KaNamedClassSymbol? get() = withValidityAssertion { null }
 
+    @KaExperimentalApi
     override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

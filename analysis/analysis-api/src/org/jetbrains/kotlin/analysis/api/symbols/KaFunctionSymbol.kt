@@ -113,6 +113,8 @@ public abstract class KaConstructorSymbol : KaFunctionSymbol(),
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.CLASS }
     final override val isExtension: Boolean get() = withValidityAssertion { false }
     final override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { null }
+
+    @KaExperimentalApi
     final override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
 
     abstract override fun createPointer(): KaSymbolPointer<KaConstructorSymbol>

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
@@ -71,6 +72,7 @@ internal class KaFirNamedClassSymbol(
     override val isActual: Boolean get() = withValidityAssertion { firSymbol.isActual }
     override val isExpect: Boolean get() = withValidityAssertion { firSymbol.isExpect }
 
+    @KaExperimentalApi
     override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { firSymbol.createContextReceivers(builder) }
 
     override val companionObject: KaFirNamedClassSymbol? by cached {

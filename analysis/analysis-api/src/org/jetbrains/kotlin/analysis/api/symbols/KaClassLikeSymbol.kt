@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiversOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -100,7 +101,7 @@ public abstract class KaAnonymousObjectSymbol : KaClassSymbol() {
 @Deprecated("Use 'KaAnonymousObjectSymbol' instead", ReplaceWith("KaAnonymousObjectSymbol"))
 public typealias KtAnonymousObjectSymbol = KaAnonymousObjectSymbol
 
-@OptIn(KaImplementationDetail::class)
+@OptIn(KaImplementationDetail::class, KaExperimentalApi::class)
 public abstract class KaNamedClassSymbol : KaClassSymbol(),
     KaSymbolWithVisibility,
     KaTypeParameterOwnerSymbol,

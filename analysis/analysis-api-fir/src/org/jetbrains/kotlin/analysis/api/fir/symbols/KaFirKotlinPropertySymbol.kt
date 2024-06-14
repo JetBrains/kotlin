@@ -55,6 +55,7 @@ internal class KaFirKotlinPropertySymbol(
     override val returnType: KaType get() = withValidityAssertion { firSymbol.returnType(builder) }
     override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { firSymbol.receiver(builder) }
 
+    @KaExperimentalApi
     override val contextReceivers: List<KaContextReceiver> by cached { firSymbol.createContextReceivers(builder) }
 
     override val isExtension: Boolean get() = withValidityAssertion { firSymbol.isExtension }
