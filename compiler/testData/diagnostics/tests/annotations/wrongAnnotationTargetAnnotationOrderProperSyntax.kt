@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // ISSUE: KT-68489
 
 // FILE: BadA.java

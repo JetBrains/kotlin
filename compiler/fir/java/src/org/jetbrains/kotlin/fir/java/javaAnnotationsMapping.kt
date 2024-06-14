@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
@@ -49,17 +50,49 @@ internal fun Iterable<JavaAnnotation>.convertAnnotationsToFir(
     session: FirSession,
     source: KtSourceElement?,
     isDeprecatedInJavaDoc: Boolean,
-): List<FirAnnotation> = buildList {
-    var isDeprecated = false
+): List<FirAnnotation> {
+    var firstTargetAnnotation: FirAnnotation? = null
+    var secondTargetAnnotation: FirAnnotation? = null
+    val result = buildList {
+        var isDeprecated = false
 
-    this@convertAnnotationsToFir.mapTo(this) {
-        if (it.isJavaDeprecatedAnnotation()) isDeprecated = true
-        it.toFirAnnotationCall(session, source)
-    }
+        this@convertAnnotationsToFir.mapTo(this) {
+            if (it.isJavaDeprecatedAnnotation()) isDeprecated = true
+            val firAnnotationCall = it.toFirAnnotationCall(session, source)
+            if (firAnnotationCall.toAnnotationClassId(session) == StandardClassIds.Annotations.Target) {
+                if (firstTargetAnnotation == null) {
+                    firstTargetAnnotation = firAnnotationCall
+                } else {
+                    secondTargetAnnotation = firAnnotationCall
+                }
+            }
+            firAnnotationCall
+        }
 
-    if (!isDeprecated && isDeprecatedInJavaDoc) {
-        add(DeprecatedInJavaDocAnnotation.toFirAnnotationCall(session, source))
+        if (!isDeprecated && isDeprecatedInJavaDoc) {
+            add(DeprecatedInJavaDocAnnotation.toFirAnnotationCall(session, source))
+        }
     }
+    if (firstTargetAnnotation == null || secondTargetAnnotation == null) return result
+    return result.mergeTargetAnnotations(firstTargetAnnotation!!, secondTargetAnnotation!!)
+}
+
+// Special code for situation with java.lang.annotation.Target and kotlin.annotation.Target together
+private fun List<FirAnnotation>.mergeTargetAnnotations(
+    firstTargetAnnotation: FirAnnotation,
+    secondTargetAnnotation: FirAnnotation,
+): List<FirAnnotation> {
+    return filter { it !== firstTargetAnnotation && it !== secondTargetAnnotation } +
+            buildAnnotationCopy(firstTargetAnnotation) {
+                val targetsName = StandardClassIds.Annotations.ParameterNames.targetAllowedTargets
+                argumentMapping = buildAnnotationArgumentMapping {
+                    this.source = firstTargetAnnotation.source
+                    mapping[targetsName] = buildVarargArgumentsExpression {
+                        arguments += firstTargetAnnotation.argumentMapping.mapping[targetsName]!!
+                        arguments += secondTargetAnnotation.argumentMapping.mapping[targetsName]!!
+                    }
+                }
+            }
 }
 
 internal fun JavaAnnotationOwner.convertAnnotationsToFir(

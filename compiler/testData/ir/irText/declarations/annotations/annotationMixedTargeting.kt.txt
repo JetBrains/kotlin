@@ -1,0 +1,22 @@
+class Foo {
+  @JavaPropertyAnnotation
+  val y: Int
+    field = y
+    get
+
+  @JavaPropertyAnnotation
+  val x: Int
+    field = 1
+    get
+
+  constructor(y: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun foo() {
+  }
+
+}
+

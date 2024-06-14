@@ -634,6 +634,12 @@ public class ClassicJvmIrTextTestGenerated extends AbstractClassicJvmIrTextTest 
       }
 
       @Test
+      @TestMetadata("annotationMixedTargeting.kt")
+      public void testAnnotationMixedTargeting() {
+        runTest("compiler/testData/ir/irText/declarations/annotations/annotationMixedTargeting.kt");
+      }
+
+      @Test
       @TestMetadata("annotationOnClassWithInitializer.kt")
       public void testAnnotationOnClassWithInitializer() {
         runTest("compiler/testData/ir/irText/declarations/annotations/annotationOnClassWithInitializer.kt");
