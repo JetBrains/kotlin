@@ -99,6 +99,24 @@ public class SerializationFirPsiDiagnosticTestGenerated extends AbstractSerializ
     }
 
     @Test
+    @TestMetadata("JsonRedundantFormat.kt")
+    public void testJsonRedundantFormat() {
+      runTest("plugins/kotlinx-serialization/testData/diagnostics/JsonRedundantFormat.kt");
+    }
+
+    @Test
+    @TestMetadata("JsonRedundantFormatViaAliasedImport.kt")
+    public void testJsonRedundantFormatViaAliasedImport() {
+      runTest("plugins/kotlinx-serialization/testData/diagnostics/JsonRedundantFormatViaAliasedImport.kt");
+    }
+
+    @Test
+    @TestMetadata("JsonRedundantFormatViaTypeAlias.kt")
+    public void testJsonRedundantFormatViaTypeAlias() {
+      runTest("plugins/kotlinx-serialization/testData/diagnostics/JsonRedundantFormatViaTypeAlias.kt");
+    }
+
+    @Test
     @TestMetadata("KeepGeneratedSerializerDiagnostic.kt")
     public void testKeepGeneratedSerializerDiagnostic() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/KeepGeneratedSerializerDiagnostic.kt");

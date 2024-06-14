@@ -214,5 +214,14 @@ object KtDefaultErrorMessagesSerialization : BaseDiagnosticRendererFactory() {
             FirSerializationErrors.KEEP_SERIALIZER_ANNOTATION_ON_POLYMORPHIC,
             "@KeepGeneratedSerializer annotation is not applicable for abstract or sealed classes and interfaces"
         )
+
+        put(
+            FirSerializationErrors.JSON_FORMAT_REDUNDANT_DEFAULT,
+            "Redundant creation of Json default format. Creating instances for each usage can be slow."
+        )
+        put(
+            FirSerializationErrors.JSON_FORMAT_REDUNDANT,
+            "Redundant creation of Json format. Creating instances for each usage can be slow."
+        )
     }
 }
