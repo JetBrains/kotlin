@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirEvaluatorResult
@@ -103,14 +102,8 @@ fun FirAnnotationContainer.getAnnotationByClassId(classId: ClassId, session: Fir
     return annotations.getAnnotationByClassId(classId, session)
 }
 
-/**
- * Returns the first annotation with the matching [classId], but if there are
- * multiple matching annotations, some of which are Java annotations mapped to
- * Kotlin counterparts and some are already Kotlin ones, then the function
- * returns the first Kotlin matching annotation.
- */
 fun List<FirAnnotation>.getAnnotationByClassId(classId: ClassId, session: FirSession): FirAnnotation? {
-    return getAnnotationsByClassId(classId, session).firstOrNullButPrioritizeKotlin()
+    return getAnnotationsByClassId(classId, session).firstOrNull()
 }
 
 fun FirAnnotationContainer.getAnnotationsByClassId(classId: ClassId, session: FirSession): List<FirAnnotation> =
@@ -133,36 +126,11 @@ fun List<FirAnnotation>.filterOutAnnotationsByClassId(classId: ClassId, session:
     }
 }
 
-/**
- * Returns the first annotation that matches the [classIds], but if there are
- * multiple matching annotations, some of which are Java annotations mapped to
- * Kotlin counterparts and some are already Kotlin ones, then the function
- * returns the first Kotlin matching annotation.
- */
 fun List<FirAnnotation>.getAnnotationByClassIds(classIds: Collection<ClassId>, session: FirSession): FirAnnotation? {
-    return firstOrNullButPrioritizeKotlin {
+    return firstOrNull {
         it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session)?.lookupTag?.classId in classIds
     }
 }
-
-private inline fun List<FirAnnotation>.firstOrNullButPrioritizeKotlin(
-    predicate: (FirAnnotation) -> Boolean = { true },
-): FirAnnotation? {
-    var firstNonKotlin: FirAnnotation? = null
-
-    for (element in this) {
-        when {
-            !predicate(element) -> continue
-            element.isKotlinAnnotation -> return element
-            firstNonKotlin == null -> firstNonKotlin = element
-        }
-    }
-
-    return firstNonKotlin
-}
-
-private val FirAnnotation.isKotlinAnnotation: Boolean
-    get() = annotationTypeRef.source?.kind !is KtFakeSourceElementKind.JavaAnnotationMappedToKotlin
 
 // --------------------------- evaluated arguments ---------------------------
 
