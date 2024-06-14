@@ -6,6 +6,7 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.junit.runner.RunWith
 import org.junit.runner.Runner
 import org.junit.runners.BlockJUnit4ClassRunner
@@ -30,19 +31,18 @@ class RuntimeTests {
 
 private fun createRuntimeRunners(cls: Class<*>): List<Runner> {
     AbstractCompilerTest.setSystemProperties()
-    val k1Classes = RuntimeTestCompiler(useFir = false).run {
-        val classes = compileRuntimeClasses()
-        disposeTestRootDisposable()
-        classes
-    }
-    val k2Classes = RuntimeTestCompiler(useFir = true).run {
-        val classes = compileRuntimeClasses()
-        disposeTestRootDisposable()
-        classes
-    }
+    val compilers = listOf(
+        RuntimeTestCompiler(useFir = false, sourceInformation = false),
+        RuntimeTestCompiler(useFir = false, sourceInformation = true),
+        RuntimeTestCompiler(useFir = true, sourceInformation = false),
+        RuntimeTestCompiler(useFir = true, sourceInformation = true)
+    )
 
-    return k1Classes.map { FirVariantRunner(it, type = "[k1]") } +
-            k2Classes.map { FirVariantRunner(it, type = "[k2]") }
+    return compilers.flatMap { compiler ->
+        val classes = compiler.compileRuntimeClasses()
+        compiler.disposeTestRootDisposable()
+        classes.map { FirVariantRunner(it, compiler.description) }
+    }
 }
 
 private class FirVariantRunner(private val cls: Class<*>, val type: String) : BlockJUnit4ClassRunner(cls) {
@@ -54,7 +54,17 @@ private val runtimeTestSourceRoot = File(RUNTIME_TEST_ROOT)
 private val runtimeTestFiles = runtimeTestSourceRoot.walk().toSet()
 
 @Ignore
-private class RuntimeTestCompiler(useFir: Boolean) : AbstractCodegenTest(useFir) {
+private class RuntimeTestCompiler(
+    useFir: Boolean,
+    private val sourceInformation: Boolean
+) : AbstractCodegenTest(useFir) {
+    val description: String = "[k${if (useFir) "1" else "2"}][source=$sourceInformation]"
+
+    override fun CompilerConfiguration.updateConfiguration() {
+        put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, sourceInformation)
+        put(ComposeConfiguration.TRACE_MARKERS_ENABLED_KEY, sourceInformation)
+    }
+
     fun compileRuntimeClasses() =
         compileRuntimeTestClasses(
             runtimeTestSourceRoot,

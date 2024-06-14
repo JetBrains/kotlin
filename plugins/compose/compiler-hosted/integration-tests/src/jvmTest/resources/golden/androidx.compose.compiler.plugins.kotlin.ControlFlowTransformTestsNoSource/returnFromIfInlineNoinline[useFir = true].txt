@@ -1,0 +1,51 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.*
+
+@Composable
+fun Label(test: Boolean) {
+    OuterComposableFunction {
+        Column {
+            if (test) return@OuterComposableFunction
+        }
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+@ComposableTarget(applier = "androidx.compose.ui.UiComposable")
+fun Label(test: Boolean, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  val %dirty = %changed
+  if (%changed and 0b1110 == 0) {
+    %dirty = %dirty or if (%composer.changed(test)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
+    OuterComposableFunction(rememberComposableLambda(<>, true, { %composer: Composer?, %changed: Int ->
+      val tmp0_marker = %composer.currentMarker
+      if (%changed and 0b1011 != 0b0010 || !%composer.skipping) {
+        Column(null, null, null, { %composer: Composer?, %changed: Int ->
+          %composer.startReplaceGroup(<>)
+          if (test) {
+            %composer.endToMarker(tmp0_marker)
+            return@rememberComposableLambda
+          }
+          %composer.endReplaceGroup()
+        }, %composer, 0, 0b0111)
+      } else {
+        %composer.skipToGroupEnd()
+      }
+    }, %composer, 0b00110110), %composer, 0b0110)
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Label(test, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

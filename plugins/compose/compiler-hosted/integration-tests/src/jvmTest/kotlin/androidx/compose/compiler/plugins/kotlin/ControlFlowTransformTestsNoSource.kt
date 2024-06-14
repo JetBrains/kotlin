@@ -115,4 +115,25 @@ class ControlFlowTransformTestsNoSource(
             }
         """
     )
+
+    @Test
+    fun returnFromIfInlineNoinline() = verifyGoldenComposeIrTransform(
+        extra = """
+            import androidx.compose.runtime.*
+            @Composable fun OuterComposableFunction(content: @Composable () -> Unit) { content() }
+        """,
+        source = """
+            import androidx.compose.runtime.*
+            import androidx.compose.foundation.layout.*
+
+            @Composable
+            fun Label(test: Boolean) {
+                OuterComposableFunction {
+                    Column {
+                        if (test) return@OuterComposableFunction
+                    }
+                }
+            }
+        """
+    )
 }
