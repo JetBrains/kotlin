@@ -1,8 +1,7 @@
 package org.jetbrains.kotlin.objcexport.analysisApiUtils
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.annotations.KtArrayAnnotationValue
-import org.jetbrains.kotlin.analysis.api.annotations.KtKClassAnnotationValue
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
@@ -27,9 +26,9 @@ internal val KtFunctionLikeSymbol.definedThrows: List<ClassId>
         return throwsAnnotations
             .flatMap { annotation -> annotation.arguments }
             .map { argument -> argument.expression }
-            .filterIsInstance<KtArrayAnnotationValue>()
+            .filterIsInstance<KaAnnotationValue.ArrayValue>()
             .flatMap { arrayAnnotationValue -> arrayAnnotationValue.values }
-            .filterIsInstance<KtKClassAnnotationValue>()
+            .filterIsInstance<KaAnnotationValue.ClassLiteralValue>()
             .mapNotNull { it.type as? KtNonErrorClassType }
             .mapNotNull { it.classId }
             .toList()

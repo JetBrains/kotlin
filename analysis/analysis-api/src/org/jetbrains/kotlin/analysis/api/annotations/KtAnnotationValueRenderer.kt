@@ -17,28 +17,28 @@ internal object KaAnnotationValueRenderer {
 
     private fun StringBuilder.renderConstantValue(value: KaAnnotationValue) {
         when (value) {
-            is KaAnnotationApplicationValue -> {
+            is KaAnnotationValue.NestedAnnotationValue -> {
                 renderAnnotationConstantValue(value)
             }
-            is KaArrayAnnotationValue -> {
+            is KaAnnotationValue.ArrayValue -> {
                 renderArrayConstantValue(value)
             }
-            is KaEnumEntryAnnotationValue -> {
+            is KaAnnotationValue.EnumEntryValue -> {
                 renderEnumEntryConstantValue(value)
             }
-            is KaConstantAnnotationValue -> {
+            is KaAnnotationValue.ConstantValue -> {
                 renderConstantAnnotationValue(value)
             }
-            is KaUnsupportedAnnotationValue -> {
+            is KaAnnotationValue.UnsupportedValue -> {
                 append("error(\"non-annotation value\")")
             }
-            is KaKClassAnnotationValue -> {
+            is KaAnnotationValue.ClassLiteralValue -> {
                 renderKClassAnnotationValue(value)
             }
         }
     }
 
-    private fun StringBuilder.renderKClassAnnotationValue(value: KaKClassAnnotationValue) {
+    private fun StringBuilder.renderKClassAnnotationValue(value: KaAnnotationValue.ClassLiteralValue) {
         renderType(value.type)
         append("::class")
     }
@@ -81,16 +81,16 @@ internal object KaAnnotationValueRenderer {
         }
     }
 
-    private fun StringBuilder.renderConstantAnnotationValue(value: KaConstantAnnotationValue) {
-        append(value.constantValue.render())
+    private fun StringBuilder.renderConstantAnnotationValue(value: KaAnnotationValue.ConstantValue) {
+        append(value.value.render())
     }
 
-    private fun StringBuilder.renderEnumEntryConstantValue(value: KaEnumEntryAnnotationValue) {
+    private fun StringBuilder.renderEnumEntryConstantValue(value: KaAnnotationValue.EnumEntryValue) {
         append(value.callableId?.asSingleFqName()?.asString())
     }
 
-    private fun StringBuilder.renderAnnotationConstantValue(application: KaAnnotationApplicationValue) {
-        renderAnnotationApplication(application.annotationValue)
+    private fun StringBuilder.renderAnnotationConstantValue(application: KaAnnotationValue.NestedAnnotationValue) {
+        renderAnnotationApplication(application.annotation)
     }
 
     private fun StringBuilder.renderAnnotationApplication(value: KaAnnotation) {
@@ -102,7 +102,7 @@ internal object KaAnnotationValueRenderer {
         }
     }
 
-    private fun StringBuilder.renderArrayConstantValue(value: KaArrayAnnotationValue) {
+    private fun StringBuilder.renderArrayConstantValue(value: KaAnnotationValue.ArrayValue) {
         append("[")
         renderConstantValueList(value.values)
         append("]")

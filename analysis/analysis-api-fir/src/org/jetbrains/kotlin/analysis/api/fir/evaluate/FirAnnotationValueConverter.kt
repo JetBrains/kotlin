@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.impl.base.*
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaAnnotationImpl
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.declarations.FirClass
@@ -43,7 +43,7 @@ internal object FirAnnotationValueConverter {
     ): List<KaNamedAnnotationValue> = argumentMapping.map { (name, expression) ->
         KaNamedAnnotationValue(
             name,
-            expression.convertConstantExpression(builder) ?: KaUnsupportedAnnotationValue(analysisSession.token),
+            expression.convertConstantExpression(builder) ?: KaUnsupportedAnnotationValueImpl(analysisSession.token),
             analysisSession.token
         )
     }
@@ -51,7 +51,7 @@ internal object FirAnnotationValueConverter {
     @OptIn(KaImplementationDetail::class)
     private fun FirLiteralExpression.convertConstantExpression(
         analysisSession: KaSession
-    ): KaConstantAnnotationValue? {
+    ): KaAnnotationValue.ConstantValue? {
         val expression = psi as? KtElement
 
         @OptIn(UnresolvedExpressionTypeAccess::class)
@@ -75,7 +75,7 @@ internal object FirAnnotationValueConverter {
             else -> null
         }
 
-        return constantValue?.let { KaConstantAnnotationValue(it, analysisSession.token) }
+        return constantValue?.let { KaConstantAnnotationValueImpl(it, analysisSession.token) }
     }
 
     private fun Collection<FirExpression>.convertVarargsExpression(
@@ -86,7 +86,7 @@ internal object FirAnnotationValueConverter {
             for (expr in this@convertVarargsExpression) {
                 val converted = expr.convertConstantExpression(builder) ?: continue
 
-                if ((expr is FirSpreadArgumentExpression || expr is FirNamedArgumentExpression) && converted is KaArrayAnnotationValue) {
+                if ((expr is FirSpreadArgumentExpression || expr is FirNamedArgumentExpression) && converted is KaAnnotationValue.ArrayValue) {
                     addAll(converted.values)
                 } else {
                     add(converted)
@@ -122,12 +122,12 @@ internal object FirAnnotationValueConverter {
                 // Vararg arguments may have multiple independent expressions associated.
                 // Choose one to be the representative PSI value for the entire assembled argument.
                 val (annotationValues, representativePsi) = arguments.convertVarargsExpression(builder)
-                KaArrayAnnotationValue(annotationValues, representativePsi ?: sourcePsi, token)
+                KaArrayAnnotationValueImpl(annotationValues, representativePsi ?: sourcePsi, token)
             }
 
             is FirArrayLiteral -> {
                 // Desugared collection literals.
-                KaArrayAnnotationValue(argumentList.arguments.convertVarargsExpression(builder).first, sourcePsi, token)
+                KaArrayAnnotationValueImpl(argumentList.arguments.convertVarargsExpression(builder).first, sourcePsi, token)
             }
 
             is FirFunctionCall -> {
@@ -141,7 +141,7 @@ internal object FirAnnotationValueConverter {
                                 resultMap[param.name] = arg
                             }
 
-                            KaAnnotationApplicationValue(
+                            KaNestedAnnotationAnnotationValueImpl(
                                 KaAnnotationImpl(
                                     classId = resolvedSymbol.callableId.classId,
                                     psi = psi as? KtCallElement,
@@ -163,12 +163,12 @@ internal object FirAnnotationValueConverter {
                         // arrayOf call with a single vararg argument.
                         if (resolvedSymbol.callableId.asSingleFqName() in ArrayFqNames.ARRAY_CALL_FQ_NAMES)
                             argumentList.arguments.singleOrNull()?.convertConstantExpression(builder)
-                                ?: KaArrayAnnotationValue(emptyList(), sourcePsi, token)
+                                ?: KaArrayAnnotationValueImpl(emptyList(), sourcePsi, token)
                         else null
                     }
 
                     is FirEnumEntrySymbol -> {
-                        KaEnumEntryAnnotationValue(resolvedSymbol.callableId, sourcePsi, token)
+                        KaEnumEntryAnnotationValueImpl(resolvedSymbol.callableId, sourcePsi, token)
                     }
 
                     else -> null
@@ -179,7 +179,7 @@ internal object FirAnnotationValueConverter {
                 val reference = calleeReference as? FirResolvedNamedReference ?: return null
                 when (val resolvedSymbol = reference.resolvedSymbol) {
                     is FirEnumEntrySymbol -> {
-                        KaEnumEntryAnnotationValue(resolvedSymbol.callableId, sourcePsi, token)
+                        KaEnumEntryAnnotationValueImpl(resolvedSymbol.callableId, sourcePsi, token)
                     }
 
                     else -> null
@@ -187,7 +187,7 @@ internal object FirAnnotationValueConverter {
             }
 
             is FirEnumEntryDeserializedAccessExpression -> {
-                KaEnumEntryAnnotationValue(CallableId(enumClassId, enumEntryName), sourcePsi, token)
+                KaEnumEntryAnnotationValueImpl(CallableId(enumClassId, enumEntryName), sourcePsi, token)
             }
 
             is FirGetClassCall -> {
@@ -196,12 +196,12 @@ internal object FirAnnotationValueConverter {
                 if (coneType is ConeClassLikeType && coneType !is ConeErrorType) {
                     val classId = coneType.lookupTag.classId
                     val type = builder.typeBuilder.buildKtType(coneType)
-                    KaKClassAnnotationValue(type, classId, sourcePsi, token)
+                    KaClassLiteralAnnotationValueImpl(type, classId, sourcePsi, token)
                 } else {
                     val classId = computeErrorCallClassId(this)
                     val diagnostic = classId?.let(::ConeUnresolvedSymbolError) ?: ConeSimpleDiagnostic("Unresolved class reference")
                     val errorType = builder.typeBuilder.buildKtType(ConeErrorType(diagnostic))
-                    KaKClassAnnotationValue(errorType, classId, sourcePsi, token)
+                    KaClassLiteralAnnotationValueImpl(errorType, classId, sourcePsi, token)
                 }
             }
 

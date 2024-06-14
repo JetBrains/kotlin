@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.KaFe10PsiD
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KaFe10PsiSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.types.*
 import org.jetbrains.kotlin.analysis.api.impl.base.*
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaAnnotationImpl
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.*
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -465,20 +465,20 @@ internal fun ConstantValue<*>.toKaAnnotationValue(analysisContext: Fe10AnalysisC
     return when (this) {
         is ArrayValue -> {
             val arrayType = getType(analysisContext.resolveSession.moduleDescriptor)
-            KaArrayAnnotationValue(value.expandArrayAnnotationValue(arrayType, analysisContext), sourcePsi = null, token)
+            KaArrayAnnotationValueImpl(value.expandArrayAnnotationValue(arrayType, analysisContext), sourcePsi = null, token)
         }
-        is EnumValue -> KaEnumEntryAnnotationValue(CallableId(enumClassId, enumEntryName), sourcePsi = null, token)
+        is EnumValue -> KaEnumEntryAnnotationValueImpl(CallableId(enumClassId, enumEntryName), sourcePsi = null, token)
         is KClassValue -> when (val value = value) {
             is KClassValue.Value.LocalClass -> {
                 val type = value.type.toKtType(analysisContext)
                 val classId = value.type.unwrap().constructor.declarationDescriptor?.maybeLocalClassId
-                KaKClassAnnotationValue(type, classId, sourcePsi = null, token)
+                KaClassLiteralAnnotationValueImpl(type, classId, sourcePsi = null, token)
             }
             is KClassValue.Value.NormalClass -> {
                 val classLiteralInfo = resolveClassLiteral(value, analysisContext)
 
                 if (classLiteralInfo != null) {
-                    KaKClassAnnotationValue(classLiteralInfo.type, classLiteralInfo.classId, sourcePsi = null, token)
+                    KaClassLiteralAnnotationValueImpl(classLiteralInfo.type, classLiteralInfo.classId, sourcePsi = null, token)
                 } else {
                     val classId = if (value.arrayDimensions == 0) value.classId else StandardClassIds.Array
 
@@ -486,13 +486,13 @@ internal fun ConstantValue<*>.toKaAnnotationValue(analysisContext: Fe10AnalysisC
                         .createErrorType(ErrorTypeKind.UNRESOLVED_TYPE, classId.asFqNameString())
                         .toKtType(analysisContext)
 
-                    KaKClassAnnotationValue(type, classId, sourcePsi = null, token)
+                    KaClassLiteralAnnotationValueImpl(type, classId, sourcePsi = null, token)
                 }
             }
         }
 
         is AnnotationValue -> {
-            KaAnnotationApplicationValue(
+            KaNestedAnnotationAnnotationValueImpl(
                 KaAnnotationImpl(
                     value.annotationClass?.classId,
                     psi = null,
@@ -507,7 +507,7 @@ internal fun ConstantValue<*>.toKaAnnotationValue(analysisContext: Fe10AnalysisC
             )
         }
         else -> {
-            KaConstantAnnotationValue(toKtConstantValue(), token)
+            KaConstantAnnotationValueImpl(toKtConstantValue(), token)
         }
     }
 }

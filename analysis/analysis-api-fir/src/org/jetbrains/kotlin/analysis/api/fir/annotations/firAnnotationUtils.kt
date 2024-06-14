@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirAnnotationValueConverter
 import org.jetbrains.kotlin.analysis.api.fir.toKaAnnotation
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaArrayAnnotationValueImpl
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEnumEntryAnnotationValueImpl
 import org.jetbrains.kotlin.analysis.utils.errors.withClassEntry
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
@@ -121,9 +123,9 @@ private fun computeTargetAnnotationArguments(
 
         val value = KaNamedAnnotationValue(
             name = annotationParameterName,
-            expression = KaArrayAnnotationValue(
+            expression = KaArrayAnnotationValueImpl(
                 values = rawValues.map {
-                    KaEnumEntryAnnotationValue(
+                    KaEnumEntryAnnotationValueImpl(
                         callableId = CallableId(classId = expectedEnumClassId, callableName = Name.identifier(it)),
                         sourcePsi = null,
                         token

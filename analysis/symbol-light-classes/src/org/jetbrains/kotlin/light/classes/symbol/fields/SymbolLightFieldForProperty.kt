@@ -202,11 +202,11 @@ internal class SymbolLightFieldForProperty private constructor(
     private fun toPsiExpression(value: KaAnnotationValue): PsiExpression? =
         project.withElementFactorySafe {
             when (value) {
-                is KaConstantAnnotationValue ->
-                    value.constantValue.createPsiExpression(this@SymbolLightFieldForProperty)
-                is KaEnumEntryAnnotationValue ->
+                is KaAnnotationValue.ConstantValue ->
+                    value.value.createPsiExpression(this@SymbolLightFieldForProperty)
+                is KaAnnotationValue.EnumEntryValue ->
                     value.callableId?.let { createExpressionFromText(it.asSingleFqName().asString(), this@SymbolLightFieldForProperty) }
-                is KaArrayAnnotationValue ->
+                is KaAnnotationValue.ArrayValue ->
                     createExpressionFromText(
                         value.values
                             .map { toPsiExpression(it)?.text ?: return@withElementFactorySafe null }

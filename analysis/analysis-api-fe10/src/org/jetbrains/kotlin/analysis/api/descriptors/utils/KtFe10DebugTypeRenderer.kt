@@ -110,33 +110,33 @@ internal class KaFe10DebugTypeRenderer {
 
     private fun renderConstantValueDebug(value: KaAnnotationValue, printer: PrettyPrinter) {
         when (value) {
-            is KaAnnotationApplicationValue -> {
-                renderAnnotationDebug(value.annotationValue.classId, value.annotationValue.arguments, printer)
+            is KaAnnotationValue.NestedAnnotationValue -> {
+                renderAnnotationDebug(value.annotation.classId, value.annotation.arguments, printer)
             }
 
-            is KaArrayAnnotationValue -> {
+            is KaAnnotationValue.ArrayValue -> {
                 printer.printCollection(value.values, separator = ", ", prefix = "[", postfix = "]") {
                     renderConstantValueDebug(it, printer)
                 }
             }
 
-            is KaEnumEntryAnnotationValue -> {
+            is KaAnnotationValue.EnumEntryValue -> {
                 printer.append(value.callableId?.asSingleFqName()?.render())
             }
 
-            is KaConstantAnnotationValue -> {
+            is KaAnnotationValue.ConstantValue -> {
                 @Suppress("DEPRECATION")
-                printer.append(value.constantValue.constantValueKind.asString)
+                printer.append(value.value.constantValueKind.asString)
                     .append("(")
-                    .append(value.constantValue.value.toString())
+                    .append(value.value.value.toString())
                     .append(")")
             }
 
-            is KaUnsupportedAnnotationValue -> {
-                printer.append(KaUnsupportedAnnotationValue::class.java.simpleName)
+            is KaAnnotationValue.UnsupportedValue -> {
+                printer.append("KaUnsupportedAnnotationValue")
             }
 
-            is KaKClassAnnotationValue -> {
+            is KaAnnotationValue.ClassLiteralValue -> {
                 printer.append(value.renderAsSourceCode())
             }
         }

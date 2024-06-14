@@ -133,16 +133,16 @@ internal sealed class AnnotationValue {
 
 internal fun KaAnnotationValue.toLightClassAnnotationValue(): AnnotationValue {
     return when (this) {
-        is KaUnsupportedAnnotationValue -> AnnotationValue.Unsupported(sourcePsi)
-        is KaArrayAnnotationValue -> AnnotationValue.Array(values.map { it.toLightClassAnnotationValue() }, sourcePsi)
-        is KaAnnotationApplicationValue -> annotationValue.toLightClassAnnotationValue()
-        is KaKClassAnnotationValue -> toLightClassAnnotationValue()
-        is KaEnumEntryAnnotationValue -> AnnotationValue.EnumValue(callableId, sourcePsi)
-        is KaConstantAnnotationValue -> AnnotationValue.Constant(constantValue, sourcePsi)
+        is KaAnnotationValue.UnsupportedValue -> AnnotationValue.Unsupported(sourcePsi)
+        is KaAnnotationValue.ArrayValue -> AnnotationValue.Array(values.map { it.toLightClassAnnotationValue() }, sourcePsi)
+        is KaAnnotationValue.NestedAnnotationValue -> annotation.toLightClassAnnotationValue()
+        is KaAnnotationValue.ClassLiteralValue -> toLightClassAnnotationValue()
+        is KaAnnotationValue.EnumEntryValue -> AnnotationValue.EnumValue(callableId, sourcePsi)
+        is KaAnnotationValue.ConstantValue -> AnnotationValue.Constant(value, sourcePsi)
     }
 }
 
-internal fun KaKClassAnnotationValue.toLightClassAnnotationValue(): AnnotationValue.KClass {
+internal fun KaAnnotationValue.ClassLiteralValue.toLightClassAnnotationValue(): AnnotationValue.KClass {
     when (val type = type) {
         is KaClassType -> {
             val classId = type.classId.takeUnless { it.isLocal }

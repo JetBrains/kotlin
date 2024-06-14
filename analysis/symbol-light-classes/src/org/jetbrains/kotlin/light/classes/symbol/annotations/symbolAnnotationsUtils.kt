@@ -56,7 +56,7 @@ internal fun KaAnnotatedSymbol.getJvmNameFromAnnotation(
 ): String? {
     val annotation = findAnnotation(JvmStandardClassIds.Annotations.JvmName, useSiteTargetFilter)
     return annotation?.let {
-        (it.arguments.firstOrNull()?.expression as? KaConstantAnnotationValue)?.constantValue?.value as? String
+        (it.arguments.firstOrNull()?.expression as? KaAnnotationValue.ConstantValue)?.value?.value as? String
     }
 }
 
@@ -108,7 +108,7 @@ internal fun KaAnnotatedSymbol.suppressWildcard(): Boolean? {
 
 internal fun KaAnnotatedSymbol.getJvmSuppressWildcardsFromAnnotation(): Boolean? {
     return annotations[JvmStandardClassIds.Annotations.JvmSuppressWildcards].firstOrNull()?.let { annoApp ->
-        (annoApp.arguments.firstOrNull()?.expression as? KaConstantAnnotationValue)?.constantValue?.value as? Boolean
+        (annoApp.arguments.firstOrNull()?.expression as? KaAnnotationValue.ConstantValue)?.value?.value as? Boolean
     }
 }
 
@@ -155,11 +155,11 @@ internal fun KaAnnotatedSymbol.computeThrowsList(
 
     fun handleAnnotationValue(annotationValue: KaAnnotationValue) {
         when (annotationValue) {
-            is KaArrayAnnotationValue -> {
+            is KaAnnotationValue.ArrayValue -> {
                 annotationValue.values.forEach(::handleAnnotationValue)
             }
 
-            is KaKClassAnnotationValue -> {
+            is KaAnnotationValue.ClassLiteralValue -> {
                 if (annotationValue.type is KaClassType) {
                     val psiType = annotationValue.type.asPsiType(
                         useSitePosition,
