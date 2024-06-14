@@ -9,12 +9,10 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaPossibleMultiplatformSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithModality
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
+import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
@@ -35,7 +33,7 @@ internal fun KaSymbol.isVisibleInObjC(): Boolean = when (this) {
 context(KaSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaCallableSymbol.isVisibleInObjC(): Boolean {
-    if (this is KaSymbolWithVisibility && !isPublicApi(this)) return false
+    if (this is KaSymbolWithVisibility && !this.isPublic) return false
     if (this is KaPossibleMultiplatformSymbol && isExpect) return false
 
     if (this.isHiddenFromObjCByDeprecation()) return false
@@ -63,6 +61,19 @@ internal fun KaClassSymbol.isVisibleInObjC(): Boolean {
 /*
 Private utility functions
  */
+
+context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+private val KaCallableSymbol.isPublic: Boolean
+    get() {
+        /**
+         * Visibility check is a temp workaround, since AA doesn't have something similar to K1 [DeclarationDescriptorWithVisibility.isEffectivelyPublicApi]
+         * Remove when KT-69122 is implemented
+         *
+         * See details at [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapperKt.shouldBeExposed]
+         */
+        return (this as KaSymbolWithVisibility).visibility != Visibilities.Internal && isPublicApi(this)
+    }
 
 context(KaSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
