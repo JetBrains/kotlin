@@ -72,30 +72,30 @@ public class AnnotationTargets {
 
 // FILE: test/AnnotationTargets.kt
 
-<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@file:AnnotationTargets.typeButKotlinParameter<!>
+@file:AnnotationTargets.typeButKotlinParameter
 @file:AnnotationTargets.parameterButKotlinFile
 package test
 
 import test.AnnotationTargets.*
 
-<!WRONG_ANNOTATION_TARGET!>@baseButKotlinType<!> <!WRONG_ANNOTATION_TARGET!>@metaButKotlinFun<!> <!WRONG_ANNOTATION_TARGET!>@typeButKotlinParameter<!> <!WRONG_ANNOTATION_TARGET!>@konstructorButKotlinGetter<!> @fieldannButKotlinMeta
+<!WRONG_ANNOTATION_TARGET!>@baseButKotlinType<!> @metaButKotlinFun @typeButKotlinParameter <!WRONG_ANNOTATION_TARGET!>@konstructorButKotlinGetter<!> @fieldannButKotlinMeta
 annotation class KmetaButKotlinFun
 
-@noneButKotlinClass <!WRONG_ANNOTATION_TARGET!>@baseButKotlinType<!> <!WRONG_ANNOTATION_TARGET!>@metaButKotlinFun<!> <!WRONG_ANNOTATION_TARGET!>@typeButKotlinParameter<!> @methodButKotlinMultiple <!WRONG_ANNOTATION_TARGET!>@multipleButKotlinProperty<!> <!WRONG_ANNOTATION_TARGET!>@localButKotlinNone<!>
+@noneButKotlinClass <!WRONG_ANNOTATION_TARGET!>@baseButKotlinType<!> <!WRONG_ANNOTATION_TARGET!>@metaButKotlinFun<!> @typeButKotlinParameter @methodButKotlinMultiple <!WRONG_ANNOTATION_TARGET!>@multipleButKotlinProperty<!> <!WRONG_ANNOTATION_TARGET!>@localButKotlinNone<!>
 class KClass(
-    <!WRONG_ANNOTATION_TARGET!>@baseButKotlinType<!> <!WRONG_ANNOTATION_TARGET!>@fieldannButKotlinMeta<!> <!WRONG_ANNOTATION_TARGET!>@parameterButKotlinFile<!> <!WRONG_ANNOTATION_TARGET!>@multipleButKotlinProperty<!> val y: @baseButKotlinType <!WRONG_ANNOTATION_TARGET!>@typeButKotlinParameter<!> Int
+    <!WRONG_ANNOTATION_TARGET!>@baseButKotlinType<!> @fieldannButKotlinMeta @parameterButKotlinFile @multipleButKotlinProperty val y: @baseButKotlinType <!WRONG_ANNOTATION_TARGET!>@typeButKotlinParameter<!> Int
 ) {
-    <!WRONG_ANNOTATION_TARGET!>@baseButKotlinType<!> <!WRONG_ANNOTATION_TARGET!>@multipleButKotlinProperty<!> <!WRONG_ANNOTATION_TARGET!>@fieldannButKotlinMeta<!> <!WRONG_ANNOTATION_TARGET!>@localButKotlinNone<!>
+    <!WRONG_ANNOTATION_TARGET!>@baseButKotlinType<!> @multipleButKotlinProperty @fieldannButKotlinMeta <!WRONG_ANNOTATION_TARGET!>@localButKotlinNone<!>
     val x = 0
-        <!WRONG_ANNOTATION_TARGET!>@methodButKotlinMultiple<!> @konstructorButKotlinGetter <!WRONG_ANNOTATION_TARGET!>@typeButKotlinParameter<!> get
+        @methodButKotlinMultiple @konstructorButKotlinGetter <!WRONG_ANNOTATION_TARGET!>@typeButKotlinParameter<!> get
 
-    <!WRONG_ANNOTATION_TARGET!>@noneButKotlinClass<!> <!WRONG_ANNOTATION_TARGET!>@baseButKotlinType<!> <!WRONG_ANNOTATION_TARGET!>@methodButKotlinMultiple<!> <!WRONG_ANNOTATION_TARGET!>@multipleButKotlinProperty<!> <!WRONG_ANNOTATION_TARGET!>@konstructorButKotlinGetter<!> @metaButKotlinFun
-    fun foo(<!WRONG_ANNOTATION_TARGET!>@parameterButKotlinFile<!> @typeButKotlinParameter i: @baseButKotlinType <!WRONG_ANNOTATION_TARGET!>@multipleButKotlinProperty<!> Int): <!WRONG_ANNOTATION_TARGET!>@fieldannButKotlinMeta<!> <!WRONG_ANNOTATION_TARGET!>@parameterButKotlinFile<!> Int {
+    <!WRONG_ANNOTATION_TARGET!>@noneButKotlinClass<!> <!WRONG_ANNOTATION_TARGET!>@baseButKotlinType<!> @methodButKotlinMultiple @multipleButKotlinProperty <!WRONG_ANNOTATION_TARGET!>@konstructorButKotlinGetter<!> @metaButKotlinFun
+    fun foo(@parameterButKotlinFile @typeButKotlinParameter i: @baseButKotlinType <!WRONG_ANNOTATION_TARGET!>@multipleButKotlinProperty<!> Int): <!WRONG_ANNOTATION_TARGET!>@fieldannButKotlinMeta<!> <!WRONG_ANNOTATION_TARGET!>@parameterButKotlinFile<!> Int {
 
         @localButKotlinNone <!WRONG_ANNOTATION_TARGET!>@baseButKotlinType<!> <!WRONG_ANNOTATION_TARGET!>@multipleButKotlinProperty<!> <!WRONG_ANNOTATION_TARGET!>@fieldannButKotlinMeta<!> @methodButKotlinMultiple val j = i + 1
         @baseButKotlinType @multipleButKotlinProperty return j
     }
 
-    <!WRONG_ANNOTATION_TARGET!>@baseButKotlinType<!> <!WRONG_ANNOTATION_TARGET!>@methodButKotlinMultiple<!> <!WRONG_ANNOTATION_TARGET!>@konstructorButKotlinGetter<!>
+    <!WRONG_ANNOTATION_TARGET!>@baseButKotlinType<!> <!WRONG_ANNOTATION_TARGET!>@methodButKotlinMultiple<!> @konstructorButKotlinGetter
     constructor(): this(0)
 }
