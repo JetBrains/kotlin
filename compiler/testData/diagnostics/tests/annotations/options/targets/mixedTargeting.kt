@@ -96,6 +96,11 @@ class KClass(
         <!WRONG_ANNOTATION_TARGET!>@baseButKotlinType<!> <!WRONG_ANNOTATION_TARGET!>@multipleButKotlinProperty<!> return j
     }
 
-    @baseButKotlinType <!WRONG_ANNOTATION_TARGET!>@methodButKotlinMultiple<!> @konstructorButKotlinGetter
+    @baseButKotlinType <!WRONG_ANNOTATION_TARGET!>@methodButKotlinMultiple<!> @konstructorButKotlinGetter @multipleButKotlinProperty
     constructor(): this(0)
+
+    @property:baseButKotlinType
+    val z = 0
+
+    fun <<!WRONG_ANNOTATION_TARGET!>@baseButKotlinType<!> T> bar() {}
 }
