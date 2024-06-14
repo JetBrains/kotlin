@@ -173,17 +173,17 @@ fun interpolationOfMisplacedInterpolation() {
 // interpolation kinds: of arbitrary expression
 // string literal kinds: single-line, multi-line
 fun interpolationOfIncorrectExpression() {
-    "${42 <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!><!SYNTAX!><!>}"
-    <!REDUNDANT_INTERPOLATION_PREFIX{LT}!>$"${42 <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!><!SYNTAX!><!>}"<!>
-    $$"$${42 <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!><!SYNTAX!><!>}"
-    $$$$"$$$${42 <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!><!SYNTAX!><!>}"
-    $$$$$$$$"$$$$$$$${42 <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!><!SYNTAX!><!>}"
+    "${42 +<!SYNTAX!><!>}"
+    <!REDUNDANT_INTERPOLATION_PREFIX{LT}!>$"${42 +<!SYNTAX!><!>}"<!>
+    $$"$${42 +<!SYNTAX!><!>}"
+    $$$$"$$$${42 +<!SYNTAX!><!>}"
+    $$$$$$$$"$$$$$$$${42 +<!SYNTAX!><!>}"
 
-    """${42 <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!><!SYNTAX!><!>}"""
-    <!REDUNDANT_INTERPOLATION_PREFIX{LT}!>$"""${42 <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!><!SYNTAX!><!>}"""<!>
-    $$"""$${42 <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!><!SYNTAX!><!>}"""
-    $$$$"""$$$${42 <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!><!SYNTAX!><!>}"""
-    $$$$$$$$"""$$$$$$$${42 <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!><!SYNTAX!><!>}"""
+    """${42 +<!SYNTAX!><!>}"""
+    <!REDUNDANT_INTERPOLATION_PREFIX{LT}!>$"""${42 +<!SYNTAX!><!>}"""<!>
+    $$"""$${42 +<!SYNTAX!><!>}"""
+    $$$$"""$$$${42 +<!SYNTAX!><!>}"""
+    $$$$$$$$"""$$$$$$$${42 +<!SYNTAX!><!>}"""
 }
 
 val runTimeConstant get() = 42

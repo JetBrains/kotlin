@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
@@ -20,4 +21,8 @@ abstract class AbstractCandidate {
     abstract val diagnostics: List<ResolutionDiagnostic>
     abstract val errors: List<ConstraintSystemError>
     abstract val applicability: CandidateApplicability
+}
+
+abstract class AbstractCallCandidate : AbstractCandidate() {
+    abstract var argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>?
 }

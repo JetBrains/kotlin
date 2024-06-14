@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun <T> foo(i: Int, t: T) {}

@@ -39,14 +39,14 @@ import contracts.*
 // TESTCASE NUMBER: 1
 fun case_1(value: Any) {
     if (contracts.case_1_2(contracts.case_1_1(value is Char))) {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value.<!UNRESOLVED_REFERENCE!>category<!>)
+        println(value.<!UNRESOLVED_REFERENCE!>category<!>)
     }
 }
 
 // TESTCASE NUMBER: 2
 fun case_2(value: Any) {
     if (contracts.case_2(value is Char) is Boolean) {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value.<!UNRESOLVED_REFERENCE!>category<!>)
+        println(value.<!UNRESOLVED_REFERENCE!>category<!>)
     }
 }
 

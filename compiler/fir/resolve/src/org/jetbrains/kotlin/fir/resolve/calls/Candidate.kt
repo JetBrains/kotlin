@@ -51,7 +51,7 @@ class Candidate(
     // It's only true if we're in the member scope of smart cast receiver and this particular candidate came from original type
     val isFromOriginalTypeInPresenceOfSmartCast: Boolean = false,
     bodyResolveContext: BodyResolveContext,
-) : AbstractCandidate() {
+) : AbstractCallCandidate() {
 
     override var symbol: FirBasedSymbol<*> = symbol
         private set
@@ -115,7 +115,7 @@ class Candidate(
 
     var usesFunctionConversion: Boolean = false
 
-    var argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>? = null
+    override var argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>? = null
     var numDefaults: Int = 0
     var functionTypesOfSamConversions: HashMap<FirExpression, FirSamResolver.SamConversionInfo>? = null
     lateinit var typeArgumentMapping: TypeArgumentMapping

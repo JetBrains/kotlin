@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
+import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.SpecialNames
@@ -52,6 +54,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 private fun ConeDiagnostic.toKtDiagnostic(
+    session: FirSession,
     source: KtSourceElement?,
     callOrAssignmentSource: KtSourceElement?
 ): KtDiagnostic? = when (this) {
@@ -109,6 +112,12 @@ private fun ConeDiagnostic.toKtDiagnostic(
     }
     is ConeNoCompanionObject -> FirErrors.NO_COMPANION_OBJECT.createOn(source, this.candidateSymbol as FirClassLikeSymbol<*>)
     is ConeAmbiguityError -> @OptIn(ApplicabilityDetail::class) when {
+        // Don't report ambiguity when some non-lambda, non-callable-reference argument has an error type
+        candidates.all {
+            it is AbstractCallCandidate && it.argumentMapping?.any { (key) ->
+                key.resolvedType.hasError() && key !is FirAnonymousFunctionExpression && key !is FirCallableReferenceAccess
+            } == true
+        } -> null
         applicability.isSuccess -> FirErrors.OVERLOAD_RESOLUTION_AMBIGUITY.createOn(source, this.candidates.map { it.symbol })
         applicability == CandidateApplicability.UNSAFE_CALL -> {
             val (unsafeCall, candidate) = candidates.firstNotNullOf { it.diagnostics.firstIsInstanceOrNull<UnsafeCall>()?.to(it) }
@@ -207,7 +216,7 @@ fun ConeDiagnostic.toFirDiagnostics(
     return when (this) {
         is ConeInapplicableCandidateError -> mapInapplicableCandidateError(session, this, source, callOrAssignmentSource)
         is ConeConstraintSystemHasContradiction -> mapSystemHasContradictionError(session, this, source, callOrAssignmentSource)
-        else -> listOfNotNull(toKtDiagnostic(source, callOrAssignmentSource))
+        else -> listOfNotNull(toKtDiagnostic(session, source, callOrAssignmentSource))
     }
 }
 

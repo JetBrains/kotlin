@@ -13,7 +13,7 @@
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Any?) {
     funWithReturns(value_1 !is String)
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
 }
 
 // TESTCASE NUMBER: 2
@@ -33,7 +33,7 @@ fun case_3(value_1: Int?) {
 // TESTCASE NUMBER: 4
 fun case_4(value_1: Any?) {
     funWithReturnsAndInvertTypeCheck(value_1)
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
 }
 
 // TESTCASE NUMBER: 5
@@ -59,14 +59,14 @@ fun case_7() {
 
 // TESTCASE NUMBER: 8
 fun case_8(value_1: Any?) {
-    if (!funWithReturnsTrue(value_1 is String)) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-    if (!funWithReturnsTrueAndInvertCondition(value_1 !is String)) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-    if (funWithReturnsFalse(value_1 is String)) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-    if (funWithReturnsFalseAndInvertCondition(value_1 !is String)) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-    if (funWithReturnsNotNull(value_1 is String) == null) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-    if (!(funWithReturnsNotNull(value_1 is String) != null)) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-    if (!(funWithReturnsNull(value_1 is String) == null)) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-    if (funWithReturnsNull(value_1 is String) != null) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    if (!funWithReturnsTrue(value_1 is String)) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    if (!funWithReturnsTrueAndInvertCondition(value_1 !is String)) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    if (funWithReturnsFalse(value_1 is String)) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    if (funWithReturnsFalseAndInvertCondition(value_1 !is String)) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    if (funWithReturnsNotNull(value_1 is String) == null) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    if (!(funWithReturnsNotNull(value_1 is String) != null)) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    if (!(funWithReturnsNull(value_1 is String) == null)) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    if (funWithReturnsNull(value_1 is String) != null) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
 }
 
 // TESTCASE NUMBER: 9
@@ -83,12 +83,12 @@ fun case_9(value_1: String?) {
 
 // TESTCASE NUMBER: 10
 fun case_10(value_1: Any?) {
-    if (!funWithReturnsTrueAndTypeCheck(value_1)) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-    if (!!funWithReturnsFalseAndTypeCheck(value_1)) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-    if (!(funWithReturnsNotNullAndTypeCheck(value_1) != null)) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-    if (!!(funWithReturnsNotNullAndTypeCheck(value_1) == null)) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-    if (!!(funWithReturnsNullAndTypeCheck(value_1) != null)) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-    if (!(funWithReturnsNullAndTypeCheck(value_1) == null)) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    if (!funWithReturnsTrueAndTypeCheck(value_1)) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    if (!!funWithReturnsFalseAndTypeCheck(value_1)) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    if (!(funWithReturnsNotNullAndTypeCheck(value_1) != null)) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    if (!!(funWithReturnsNotNullAndTypeCheck(value_1) == null)) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    if (!!(funWithReturnsNullAndTypeCheck(value_1) != null)) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    if (!(funWithReturnsNullAndTypeCheck(value_1) == null)) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
 }
 
 // TESTCASE NUMBER: 11

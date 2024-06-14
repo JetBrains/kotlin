@@ -35,12 +35,12 @@ fun main(x2: Runnable) {
     Test.foo1(x2, <!ARGUMENT_TYPE_MISMATCH!>arrayOf("")<!>)
     Test.foo1(x2, *arrayOf(""))
 
-    val i1 = <!NONE_APPLICABLE!>Test<!>({}, <!CANNOT_INFER_PARAMETER_TYPE!>arrayOf<!>())
+    val i1 = Test({}, <!CANNOT_INFER_PARAMETER_TYPE!>arrayOf<!>())
     val i2 = Test({}, *arrayOf())
     val i3 = <!NONE_APPLICABLE!>Test<!>({}, x3)
     val i4 = <!NONE_APPLICABLE!>Test<!>({}, arrayOf(""))
     val i5 = Test({}, {}, *arrayOf(""))
-    val i6 = <!NONE_APPLICABLE!>Test<!>({}, {}, <!CANNOT_INFER_PARAMETER_TYPE!>arrayOf<!>())
+    val i6 = Test({}, {}, <!CANNOT_INFER_PARAMETER_TYPE!>arrayOf<!>())
 
     i1.<!UNRESOLVED_REFERENCE!>foo2<!>({}, {}, <!CANNOT_INFER_PARAMETER_TYPE!>arrayOf<!>())
     i1.<!UNRESOLVED_REFERENCE!>foo2<!>({}, {}, *<!CANNOT_INFER_PARAMETER_TYPE!>arrayOf<!>())

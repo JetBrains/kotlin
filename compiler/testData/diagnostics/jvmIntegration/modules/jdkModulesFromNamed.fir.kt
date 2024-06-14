@@ -20,5 +20,5 @@ fun main() {
 
     // Module java.desktop (this module doesn't depend on it)
     val s: javax.<!UNRESOLVED_REFERENCE!>swing<!>.JFrame? = null
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(s)
+    println(s)
 }
