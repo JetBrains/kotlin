@@ -2073,6 +2073,18 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveReferenceTestGenerated exte
       public void testGetOneFakeOverride() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors/inSource/getOneFakeOverride.kt");
       }
+
+      @Test
+      @TestMetadata("provideDelegate.kt")
+      public void testProvideDelegate() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors/inSource/provideDelegate.kt");
+      }
+
+      @Test
+      @TestMetadata("provideDelegate_explicit.kt")
+      public void testProvideDelegate_explicit() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors/inSource/provideDelegate_explicit.kt");
+      }
     }
 
     @Nested
@@ -2104,6 +2116,12 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveReferenceTestGenerated exte
       @Test
       public void testAllFilesPresentInWithErrors() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors/withErrors"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled");
+      }
+
+      @Test
+      @TestMetadata("provideDelegate_badDelegate.kt")
+      public void testProvideDelegate_badDelegate() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors/withErrors/provideDelegate_badDelegate.kt");
       }
 
       @Test

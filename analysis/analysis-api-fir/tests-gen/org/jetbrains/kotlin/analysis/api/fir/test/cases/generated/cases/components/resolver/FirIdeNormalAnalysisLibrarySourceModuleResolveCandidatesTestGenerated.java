@@ -2045,6 +2045,18 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
       public void testGetOneFakeOverride() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors/inSource/getOneFakeOverride.kt");
       }
+
+      @Test
+      @TestMetadata("provideDelegate.kt")
+      public void testProvideDelegate() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors/inSource/provideDelegate.kt");
+      }
+
+      @Test
+      @TestMetadata("provideDelegate_explicit.kt")
+      public void testProvideDelegate_explicit() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors/inSource/provideDelegate_explicit.kt");
+      }
     }
 
     @Nested
