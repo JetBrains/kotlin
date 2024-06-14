@@ -79,10 +79,9 @@ internal class ScenarioModuleImpl(
 
     private var sourcesChanges = SourcesChanges.Known(emptyList(), emptyList())
 
-    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     override fun compile(
         forceOutput: LogLevel?,
-        assertions: context(Module, ScenarioModule) CompilationOutcome.() -> Unit,
+        assertions: CompilationOutcome.(Module, ScenarioModule) -> Unit,
     ) {
         module.compileIncrementally(
             sourcesChanges,
@@ -91,7 +90,7 @@ internal class ScenarioModuleImpl(
             compilationConfigAction = { compilationOptionsModifier?.invoke(it) },
             incrementalCompilationConfigAction = { incrementalCompilationOptionsModifier?.invoke(it) },
             assertions = {
-                assertions(module, this@ScenarioModuleImpl, this)
+                assertions(this, module, this@ScenarioModuleImpl)
             })
     }
 }

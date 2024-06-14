@@ -17,29 +17,23 @@ import kotlin.io.path.walk
 /**
  * Equivalent to [assertNoCompiledSources] with an empty array/set
  */
-context(Module)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-fun CompilationOutcome.assertNoCompiledSources() {
-    assertCompiledSources()
+fun CompilationOutcome.assertNoCompiledSources(module: Module) {
+    assertCompiledSources(module)
 }
 
-context(Module)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-fun CompilationOutcome.assertCompiledSources(vararg expectedCompiledSources: String) {
-    assertCompiledSources(expectedCompiledSources.toSet())
+fun CompilationOutcome.assertCompiledSources(module: Module, vararg expectedCompiledSources: String) {
+    assertCompiledSources(module, expectedCompiledSources.toSet())
 }
 
-context(Module)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-fun CompilationOutcome.assertCompiledSources(expectedCompiledSources: Set<String>) {
+fun CompilationOutcome.assertCompiledSources(module: Module, expectedCompiledSources: Set<String>) {
     requireLogLevel(LogLevel.DEBUG)
     val actualCompiledSources = logLines.getValue(LogLevel.DEBUG)
         .filter { it.startsWith("compile iteration") }
         .flatMap { it.replace("compile iteration: ", "").trim().split(", ") }
         .toSet()
     val normalizedPaths = expectedCompiledSources
-        .map { sourcesDirectory.resolve(it) }
-        .map { it.relativeTo(project.projectDirectory) }
+        .map { module.sourcesDirectory.resolve(it) }
+        .map { it.relativeTo(module.project.projectDirectory) }
         .map(Path::toString)
         .toSet()
     assertEquals(normalizedPaths, actualCompiledSources) {
@@ -47,24 +41,20 @@ fun CompilationOutcome.assertCompiledSources(expectedCompiledSources: Set<String
     }
 }
 
-context(Module)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-fun CompilationOutcome.assertOutputs(vararg expectedOutputs: String) {
-    assertOutputs(expectedOutputs.toSet())
+fun CompilationOutcome.assertOutputs(module: Module, vararg expectedOutputs: String) {
+    assertOutputs(module, expectedOutputs.toSet())
 }
 
-context(Module)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-fun CompilationOutcome.assertOutputs(expectedOutputs: Set<String>) {
-    val filesLeft = expectedOutputs.map { outputDirectory.resolve(it).relativeTo(outputDirectory) }
+fun CompilationOutcome.assertOutputs(module: Module, expectedOutputs: Set<String>) {
+    val filesLeft = expectedOutputs.map { module.outputDirectory.resolve(it).relativeTo(module.outputDirectory) }
         .toMutableSet()
         .apply {
-            add(outputDirectory.resolve("META-INF/$moduleName.kotlin_module").relativeTo(outputDirectory))
+            add(module.outputDirectory.resolve("META-INF/${module.moduleName}.kotlin_module").relativeTo(module.outputDirectory))
         }
     val notDeclaredFiles = hashSetOf<Path>()
-    for (file in outputDirectory.walk()) {
+    for (file in module.outputDirectory.walk()) {
         if (!file.isRegularFile()) continue
-        val currentFile = file.relativeTo(outputDirectory)
+        val currentFile = file.relativeTo(module.outputDirectory)
         filesLeft.remove(currentFile).also { wasPreviously ->
             if (!wasPreviously) notDeclaredFiles.add(currentFile)
         }

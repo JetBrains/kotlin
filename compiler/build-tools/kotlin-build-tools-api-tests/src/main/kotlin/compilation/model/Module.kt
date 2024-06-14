@@ -48,15 +48,13 @@ interface Module : Dependency {
 
     val defaultStrategyConfig: CompilerExecutionStrategyConfiguration
 
-    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     fun compile(
         strategyConfig: CompilerExecutionStrategyConfiguration = defaultStrategyConfig,
         forceOutput: LogLevel? = null,
         compilationConfigAction: (JvmCompilationConfiguration) -> Unit = {},
-        assertions: context(Module) CompilationOutcome.() -> Unit = {},
+        assertions: CompilationOutcome.(Module) -> Unit = {},
     ): CompilationResult
 
-    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     fun compileIncrementally(
         sourcesChanges: SourcesChanges,
         strategyConfig: CompilerExecutionStrategyConfiguration = defaultStrategyConfig,
@@ -64,6 +62,6 @@ interface Module : Dependency {
         forceNonIncrementalCompilation: Boolean = false,
         compilationConfigAction: (JvmCompilationConfiguration) -> Unit = {},
         incrementalCompilationConfigAction: (IncrementalJvmCompilationConfiguration<*>) -> Unit = {},
-        assertions: context(Module) CompilationOutcome.() -> Unit = {},
+        assertions: CompilationOutcome.(module: Module) -> Unit = {},
     ): CompilationResult
 }

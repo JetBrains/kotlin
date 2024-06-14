@@ -13,58 +13,46 @@ import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.Module
  * This assertion has side effects modifying the expected total outputs list!
  * If you decided to start using it, don't mix it with regular [assertOutputs]
  */
-context(Module, ScenarioModule)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-fun CompilationOutcome.assertAddedOutputs(vararg addedOutputs: String) {
-    assertAddedOutputs(addedOutputs.toSet())
+fun CompilationOutcome.assertAddedOutputs(module: Module, scenarioModule: ScenarioModule, vararg addedOutputs: String) {
+    assertAddedOutputs(module, scenarioModule, addedOutputs.toSet())
 }
 
 /**
  * This assertion has side effects modifying the expected total outputs list!
  * If you decided to start using it, don't mix it with regular [assertOutputs]
  */
-context(Module, ScenarioModule)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-fun CompilationOutcome.assertAddedOutputs(addedOutputs: Set<String>) {
-    val outputs = requireScenarioModuleImpl().outputs
+fun CompilationOutcome.assertAddedOutputs(module: Module, scenarioModule: ScenarioModule, addedOutputs: Set<String>) {
+    val outputs = requireScenarioModuleImpl(scenarioModule).outputs
     outputs.addAll(addedOutputs)
-    assertOutputs(outputs)
+    assertOutputs(module, outputs)
 }
 
 /**
  * This assertion has side effects modifying the expected total outputs list!
  * If you decided to start using it, don't mix it with regular [assertOutputs]
  */
-context(Module, ScenarioModule)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-fun CompilationOutcome.assertRemovedOutputs(vararg removedOutputs: String) {
-    assertRemovedOutputs(removedOutputs.toSet())
+fun CompilationOutcome.assertRemovedOutputs(module: Module, scenarioModule: ScenarioModule, vararg removedOutputs: String) {
+    assertRemovedOutputs(module, scenarioModule, removedOutputs.toSet())
 }
 
 /**
  * This assertion has side effects modifying the expected total outputs list!
  * If you decided to start using it, don't mix it with regular [assertOutputs]
  */
-context(Module, ScenarioModule)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-fun CompilationOutcome.assertRemovedOutputs(removedOutputs: Set<String>) {
-    val outputs = requireScenarioModuleImpl().outputs
+fun CompilationOutcome.assertRemovedOutputs(module: Module, scenarioModule: ScenarioModule, removedOutputs: Set<String>) {
+    val outputs = requireScenarioModuleImpl(scenarioModule).outputs
     val notPresentOutputs = removedOutputs - outputs
     assert(notPresentOutputs.isEmpty()) {
         "The following files were expected to be removed, however they weren't even produced: $notPresentOutputs"
     }
     outputs.removeAll(removedOutputs)
-    assertOutputs(outputs)
+    assertOutputs(module, outputs)
 }
 
-context(Module, ScenarioModule)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-fun CompilationOutcome.assertNoOutputSetChanges() {
-    val outputs = requireScenarioModuleImpl().outputs
-    assertOutputs(outputs)
+fun CompilationOutcome.assertNoOutputSetChanges(module: Module, scenarioModule: ScenarioModule) {
+    val outputs = requireScenarioModuleImpl(scenarioModule).outputs
+    assertOutputs(module, outputs)
 }
 
-context(ScenarioModule)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-private fun requireScenarioModuleImpl() =
-    (this@ScenarioModule as? ScenarioModuleImpl ?: error("Expected an instance of ScenarioModuleImpl"))
+private fun requireScenarioModuleImpl(scenarioModule: ScenarioModule) =
+    (scenarioModule as? ScenarioModuleImpl ?: error("Expected an instance of ScenarioModuleImpl"))
