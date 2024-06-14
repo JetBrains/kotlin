@@ -20,8 +20,6 @@ open class KotlinJsIrTargetConfigurator :
     override fun configureTarget(target: KotlinJsIrTarget) {
         super.configureTarget(target)
 
-        target.configureTestSideEffect
-
         val assemble = target.project.tasks.named(ASSEMBLE_TASK_NAME)
 
         target.compilations.all { compilation ->

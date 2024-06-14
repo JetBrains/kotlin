@@ -35,6 +35,10 @@ abstract class KotlinJsIrSubTarget(
     val target: KotlinJsIrTarget,
     private val disambiguationClassifier: String,
 ) : KotlinJsSubTargetDsl {
+    init {
+        target.configureTestSideEffect
+    }
+
     val project get() = target.project
 
     abstract val testTaskDescription: String

@@ -62,7 +62,6 @@ sealed class JsIrBinary(
         if (target.wasmTargetType == KotlinWasmTargetType.WASI) {
             null
         } else {
-            NodeJsRootPlugin.apply(project.rootProject)
             project.registerTask<DefaultIncrementalSyncTask>(
                 linkSyncTaskName
             ) { task ->
