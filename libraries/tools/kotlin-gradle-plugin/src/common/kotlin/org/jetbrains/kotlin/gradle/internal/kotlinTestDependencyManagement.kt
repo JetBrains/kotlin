@@ -176,7 +176,7 @@ private fun KotlinCompilation<*>.kotlinTestCapabilityForJvmSourceSet(
             }
 
             "$KOTLIN_MODULE_GROUP:$KOTLIN_TEST_ROOT_MODULE_NAME-framework-$framework"
-        }// org.jetbrains.kotlin:kotlin-test-framework-junit
+        }
 }
 
 internal const val KOTLIN_TEST_ROOT_MODULE_NAME = "kotlin-test"
@@ -204,5 +204,3 @@ private fun KotlinTargetWithTests<*, *>.findTestRunsByCompilation(
     }
     return testRuns.matching { it.executionSource.isProducedFromTheCompilation() }
 }
-
-

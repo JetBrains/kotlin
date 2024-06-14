@@ -58,7 +58,8 @@ class IdeJvmAndAndroidDependencyResolutionTest {
     }
 
     private fun Project.assertBinaryDependencies(sourceSetName: String, notation: Any) {
-        project.kotlinIdeMultiplatformImport.resolveDependencies(sourceSetName)
+        project.kotlinIdeMultiplatformImport
+            .resolveDependencies(sourceSetName)
             .filterIsInstance<IdeaKotlinResolvedBinaryDependency>()
             .assertMatches(notation)
     }
@@ -83,11 +84,11 @@ class IdeJvmAndAndroidDependencyResolutionTest {
             binaryCoordinates("org.jetbrains:annotations:13.0"),
         )
 
-        IdeJvmAndAndroidPlatformBinaryDependencyResolver(project).resolve(kotlin.sourceSets.getByName("commonTest"))
+        IdeJvmAndAndroidPlatformBinaryDependencyResolver(project).resolve(kotlin.sourceSets.getByName("jvmAndAndroidMain"))
             .assertMatches(jvmAndAndroidDependencies)
 
-//        IdeJvmAndAndroidPlatformBinaryDependencyResolver(project).resolve(kotlin.sourceSets.getByName("jvmAndAndroidTest"))
-//            .assertMatches(jvmAndAndroidDependencies)
+        IdeJvmAndAndroidPlatformBinaryDependencyResolver(project).resolve(kotlin.sourceSets.getByName("jvmAndAndroidTest"))
+            .assertMatches(jvmAndAndroidDependencies)
     }
 
     @Test
@@ -271,52 +272,25 @@ class IdeJvmAndAndroidDependencyResolutionTest {
     }
 
     @Test
-    fun `test asd`() {
+    fun `test existence of kotlin-test dependencies for commonTest source set with only JVM+Android target`() {
         val project = buildProject { configureAndroidAndMultiplatform(true) }
-//        val project = buildProjectWithMPP()
-//        project.multiplatformExtension.jvm()
-//        project.repositories.mavenLocal()
-//        project.repositories.mavenCentralCacheRedirector()
 
         project.multiplatformExtension.sourceSets.getByName("commonTest").dependencies {
             implementation(kotlin("test"))
-//            implementation("com.arkivanov.mvikotlin:mvikotlin:3.0.2")
         }
+
         project.evaluate()
 
         val stdlibVersion = project.getKotlinPluginVersion()
         val stdlibDependencies = listOf(
-//            binaryCoordinates("org.jetbrains.kotlin:kotlin-test:common:${stdlibVersion}"),
-//            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:${stdlibVersion}"),
-//            binaryCoordinates("org.jetbrains:annotations:13.0"),
-
+            binaryCoordinates(Regex(".*kotlin-stdlib.*")),
+            binaryCoordinates(Regex("org\\.jetbrains:annotations:.*")),
             binaryCoordinates("org.jetbrains.kotlin:kotlin-test-junit:${stdlibVersion}"),
             binaryCoordinates("org.jetbrains.kotlin:kotlin-test:${stdlibVersion}"),
-            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:${stdlibVersion}"),
-            binaryCoordinates("org.jetbrains:annotations:13.0"),
             binaryCoordinates("junit:junit:4.13.2"),
             binaryCoordinates("org.hamcrest:hamcrest-core:1.3"),
+        )
 
-            )
-
-//        project.assertBinaryDependencies("commonMain", stdlibDependencies)
-//        project.assertBinaryDependencies("jvmAndAndroidMain", stdlibDependencies)
         project.assertBinaryDependencies("commonTest", stdlibDependencies)
-//        project.assertBinaryDependencies("jvmAndAndroidTest", stdlibDependencies)
     }
 }
-
-// for JVM:
-//":/jvmMain"
-//":/commonMain"
-//"org.jetbrains.kotlin:kotlin-test-junit:2.0.255-SNAPSHOT"
-//"org.jetbrains.kotlin:kotlin-test:2.0.255-SNAPSHOT"
-//"org.jetbrains.kotlin:kotlin-stdlib:2.0.255-SNAPSHOT"
-//"org.jetbrains:annotations:13.0"
-//"junit:junit:4.13.2"
-//"org.hamcrest:hamcrest-core:1.3"
-
-// for android
-//"org.jetbrains.kotlin:kotlin-test:2.0.255-SNAPSHOT"
-//"org.jetbrains.kotlin:kotlin-stdlib:2.0.255-SNAPSHOT"
-//"org.jetbrains:annotations:13.0"
