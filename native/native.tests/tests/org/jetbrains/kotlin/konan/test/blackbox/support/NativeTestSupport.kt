@@ -11,9 +11,11 @@ import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageMode
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeBlackBoxTest
+import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeKlibSyntheticAccessorTest
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSwiftExportTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.computeBlackBoxTestInstances
+import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.computeKlibSyntheticAccessorTestInstances
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.computeSwiftExportTestInstances
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.createSimpleTestRunSettings
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.createTestRunSettings
@@ -26,6 +28,9 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.builders.RegisteredDirectivesBuilder
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -82,6 +87,23 @@ class SwiftExportTestSupport : BeforeEachCallback {
 
         // Inject the required properties to test instance.
         with(settings.get<NativeTestInstances<AbstractNativeSwiftExportTest>>().enclosingTestInstance) {
+            testRunSettings = settings
+            testRunProvider = getOrCreateTestRunProvider()
+        }
+    }
+}
+
+class KlibSyntheticAccessorTestSupport : BeforeEachCallback {
+    override fun beforeEach(extensionContext: ExtensionContext): Unit = with(extensionContext) {
+        val settings = createTestRunSettings(computeKlibSyntheticAccessorTestInstances()) {
+            +CodegenTestDirectives.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING
+
+            // Don't run LLVM, stop after the last IR lowering.
+            TestDirectives.FREE_COMPILER_ARGS with listOf("-Xdisable-phases=LinkBitcodeDependencies,WriteBitcodeFile,ObjectFiles,Linker")
+        }
+
+        // Inject the required properties to test instance.
+        with(settings.get<NativeTestInstances<AbstractNativeKlibSyntheticAccessorTest>>().enclosingTestInstance) {
             testRunSettings = settings
             testRunProvider = getOrCreateTestRunProvider()
         }
@@ -413,7 +435,9 @@ object NativeTestSupport {
 
     /*************** Test class settings (for black box tests only) ***************/
 
-    private fun ExtensionContext.getOrCreateTestClassSettings(): TestClassSettings =
+    private fun ExtensionContext.getOrCreateTestClassSettings(
+        defaultTestDirectives: RegisteredDirectives = RegisteredDirectives.Empty
+    ): TestClassSettings =
         root.getStore(NAMESPACE).getOrComputeIfAbsent(testClassKeyFor<TestClassSettings>()) {
             val enclosingTestClass = enclosingTestClass
 
@@ -448,6 +472,8 @@ object NativeTestSupport {
                         else -> fail { "Unknown test class setting type: $clazz" }
                     }
                 }
+
+                this += RegisteredDirectives::class to defaultTestDirectives
             }
 
             TestClassSettings(parent = testProcessSettings, settings)
@@ -602,9 +628,12 @@ object NativeTestSupport {
     /*************** Test run settings (for black box tests only) ***************/
 
     // Note: TestRunSettings is not cached!
-    fun ExtensionContext.createTestRunSettings(testInstances: NativeTestInstances<*>): TestRunSettings {
+    fun ExtensionContext.createTestRunSettings(
+        testInstances: NativeTestInstances<*>,
+        defaultTestDirectiveBuilder: RegisteredDirectivesBuilder.() -> Unit = {},
+    ): TestRunSettings {
         return TestRunSettings(
-            parent = getOrCreateTestClassSettings(),
+            parent = getOrCreateTestClassSettings(RegisteredDirectivesBuilder().apply(defaultTestDirectiveBuilder).build()),
             listOfNotNull(
                 testInstances,
                 testInstances.externalSourceTransformersProvider?.let { ExternalSourceTransformersProvider::class to it }
@@ -616,6 +645,9 @@ object NativeTestSupport {
         NativeTestInstances(requiredTestInstances.allInstances)
 
     internal fun ExtensionContext.computeSwiftExportTestInstances(): NativeTestInstances<AbstractNativeSwiftExportTest> =
+        NativeTestInstances(requiredTestInstances.allInstances)
+
+    internal fun ExtensionContext.computeKlibSyntheticAccessorTestInstances(): NativeTestInstances<AbstractNativeKlibSyntheticAccessorTest> =
         NativeTestInstances(requiredTestInstances.allInstances)
 
     /*************** Test run settings (simplified) ***************/

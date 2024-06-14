@@ -184,6 +184,27 @@ fun main() {
             }
         }
 
+        // KLIB synthetic accessor tests.
+        testGroup("native/native.tests/tests-gen", "compiler/testData/klib/syntheticAccessors") {
+            testClass<AbstractNativeKlibSyntheticAccessorTest>(
+                suiteTestClassName = "ClassicNativeKlibSyntheticAccessorTestGenerated",
+                annotations = listOf(
+                    *klibSyntheticAccessors(),
+                )
+            ) {
+                model(targetBackend = TargetBackend.NATIVE)
+            }
+            testClass<AbstractNativeKlibSyntheticAccessorTest>(
+                suiteTestClassName = "FirNativeKlibSyntheticAccessorTestGenerated",
+                annotations = listOf(
+                    *klibSyntheticAccessors(),
+                    *frontendFir(),
+                )
+            ) {
+                model(targetBackend = TargetBackend.NATIVE)
+            }
+        }
+
         // CInterop tests.
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData/CInterop") {
             testClass<AbstractNativeCInteropFModulesTest>(
@@ -614,6 +635,16 @@ private fun standalone() = arrayOf(
         "propertyValue" to "STANDALONE_NO_TR"
     )
 )
+
+private fun klibSyntheticAccessors() = arrayOf(
+    annotation(
+        EnforcedProperty::class.java,
+        "property" to ClassLevelProperty.TEST_KIND,
+        "propertyValue" to "STANDALONE"
+    ),
+    provider<UseExtTestCaseGroupProvider>(),
+)
+
 private fun binaryLibraryKind(kind: String = "DYNAMIC") = annotation(
     EnforcedProperty::class.java,
     "property" to ClassLevelProperty.BINARY_LIBRARY_KIND,

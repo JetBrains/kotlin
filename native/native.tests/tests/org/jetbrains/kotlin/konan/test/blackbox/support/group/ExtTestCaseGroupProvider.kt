@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.isCompatibleTarget
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.isDirectiveDefined
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
@@ -170,15 +171,21 @@ private class ExtTestDataFile(
                      && testMode == TestMode.ONE_STAGE_MULTI_MODULE)
                 && structure.defFilesContents.all { it.defFileContentsIsSupportedOn(settings.get<KotlinNativeTargets>().testTarget) }
 
-    private fun assembleFreeCompilerArgs(): TestCompilerArgs {
+    private fun assembleFreeCompilerArgs(settings: Settings): TestCompilerArgs {
         val args = mutableListOf<String>()
+        val defaultDirectives = settings.get<RegisteredDirectives>()
+        args += defaultDirectives[FREE_COMPILER_ARGS]
         args += structure.directives[FREE_COMPILER_ARGS]
         testDataFileSettings.languageSettings.sorted().mapTo(args) { "-XXLanguage:$it" }
         testDataFileSettings.optInsForCompiler.sorted().mapTo(args) { "-opt-in=$it" }
-        if (!structure.directives[CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS].containsNativeOrAny) {
+        if (!structure.directives[CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS].containsNativeOrAny &&
+            !defaultDirectives[CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS].containsNativeOrAny
+        ) {
             args.add("-Xverify-ir-visibility")
         }
-        if (CodegenTestDirectives.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING in structure.directives) {
+        if (CodegenTestDirectives.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING in structure.directives ||
+            CodegenTestDirectives.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING in defaultDirectives
+        ) {
             args.add("-Xverify-ir-visibility-after-inlining")
         }
         args += "-opt-in=kotlin.native.internal.InternalForKotlinNative" // for `Any.isPermanent()` and `Any.isLocal()`
@@ -543,7 +550,7 @@ private class ExtTestDataFile(
             id = TestCaseId.TestDataFile(testDataFile),
             kind = if (isStandaloneTest) TestKind.STANDALONE else TestKind.REGULAR,
             modules = modules,
-            freeCompilerArgs = assembleFreeCompilerArgs(),
+            freeCompilerArgs = assembleFreeCompilerArgs(settings),
             nominalPackageName = testDataFileSettings.nominalPackageName,
             expectedFailure = isExpectedFailure,
             checks = TestRunChecks.Default(timeouts.executionTimeout).copy(
