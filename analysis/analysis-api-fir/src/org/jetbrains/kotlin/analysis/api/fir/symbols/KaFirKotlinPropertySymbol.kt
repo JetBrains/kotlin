@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaInitializerValue
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
@@ -58,6 +59,8 @@ internal class KaFirKotlinPropertySymbol(
     override val contextReceivers: List<KaContextReceiver> by cached { firSymbol.createContextReceivers(builder) }
 
     override val isExtension: Boolean get() = withValidityAssertion { firSymbol.isExtension }
+
+    @KaExperimentalApi
     override val initializer: KaInitializerValue? by cached { firSymbol.getKtConstantInitializer(builder) }
 
     override val location: KaSymbolLocation

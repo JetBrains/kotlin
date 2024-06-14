@@ -9,10 +9,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightParameterListBuilder
 import com.intellij.psi.impl.light.LightReferenceListBuilder
-import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.KaConstantInitializerValue
-import org.jetbrains.kotlin.analysis.api.KaConstantValueForAnnotation
-import org.jetbrains.kotlin.analysis.api.KaNonConstantInitializerValue
+import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
@@ -361,6 +358,7 @@ internal class SymbolLightAccessorMethod private constructor(
 
     override fun isOverride(): Boolean = _isOverride
 
+    @OptIn(KaExperimentalApi::class)
     private val _defaultValue: PsiAnnotationMemberValue? by lazyPub {
         if (!containingClass.isAnnotationType) return@lazyPub null
 

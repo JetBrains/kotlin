@@ -22,6 +22,7 @@ public interface KaVariableInitializerRenderer {
     }
 
     public object ONLY_CONST_VALUE_INITIALIZERS : KaVariableInitializerRenderer {
+        @OptIn(KaExperimentalApi::class)
         override fun renderInitializer(analysisSession: KaSession, symbol: KaVariableSymbol, printer: PrettyPrinter) {
             //todo add initializer to KaVariableSymbol and render for it too KT-54794/
             val initializer = (symbol as? KaPropertySymbol)?.initializer as? KaConstantInitializerValue ?: return

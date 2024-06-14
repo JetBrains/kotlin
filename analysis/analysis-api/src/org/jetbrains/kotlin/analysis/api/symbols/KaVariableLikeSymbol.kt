@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaInitializerValue
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -187,6 +188,7 @@ public sealed class KaPropertySymbol : KaVariableSymbol(),
      * - [KaNonConstantInitializerValue] - initializer value was provided, and it is not a compile-time constant. In case of declaration from source it would include correponding [KtExpression]
      *
      */
+    @KaExperimentalApi
     public abstract val initializer: KaInitializerValue?
 
     abstract override fun createPointer(): KaSymbolPointer<KaPropertySymbol>

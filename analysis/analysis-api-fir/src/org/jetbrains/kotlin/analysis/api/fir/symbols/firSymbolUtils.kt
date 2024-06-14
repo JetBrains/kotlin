@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaInitializerValue
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
@@ -104,6 +105,7 @@ internal fun FirCallableSymbol<*>.dispatchReceiverType(
     return type?.let { builder.typeBuilder.buildKtType(it) }
 }
 
+@KaExperimentalApi
 internal fun FirVariableSymbol<*>.getKtConstantInitializer(builder: KaSymbolByFirBuilder): KaInitializerValue? {
     // to avoid lazy resolve
     if (fir.initializer == null) return null

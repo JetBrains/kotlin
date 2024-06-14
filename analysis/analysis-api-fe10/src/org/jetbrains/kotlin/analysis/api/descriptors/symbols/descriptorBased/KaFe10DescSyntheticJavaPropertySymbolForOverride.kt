@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaInitializerValue
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
@@ -77,6 +78,7 @@ internal class KaFe10DescSyntheticJavaPropertySymbolForOverride(
     override val backingFieldSymbol: KaBackingFieldSymbol?
         get() = withValidityAssertion { null }
 
+    @KaExperimentalApi
     override val initializer: KaInitializerValue?
         get() = withValidityAssertion { createKtInitializerValue((psi as? KtProperty)?.initializer, descriptor, analysisContext) }
 

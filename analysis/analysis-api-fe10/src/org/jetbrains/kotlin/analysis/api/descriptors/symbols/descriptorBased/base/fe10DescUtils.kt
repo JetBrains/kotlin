@@ -655,6 +655,7 @@ internal fun CallableMemberDescriptor.getSymbolPointerSignature(): String {
     return DescriptorRenderer.FQ_NAMES_IN_TYPES.render(this)
 }
 
+@KaExperimentalApi
 internal fun createKtInitializerValue(
     initializer: KtExpression?,
     propertyDescriptor: PropertyDescriptor?,
