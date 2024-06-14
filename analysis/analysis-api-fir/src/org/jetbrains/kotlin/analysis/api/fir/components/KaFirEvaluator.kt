@@ -5,15 +5,18 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
 import org.jetbrains.kotlin.analysis.api.components.KaEvaluator
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirAnnotationValueConverter
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirCompileTimeConstantEvaluator
+import org.jetbrains.kotlin.analysis.api.impl.base.KaErrorConstantValueImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
@@ -33,6 +36,7 @@ internal class KaFirEvaluator(
         }
     }
 
+    @OptIn(KaImplementationDetail::class)
     private fun evaluateFir(
         fir: FirElement?,
         sourcePsi: KtExpression,
@@ -42,7 +46,7 @@ internal class KaFirEvaluator(
                 try {
                     FirCompileTimeConstantEvaluator.evaluateAsKtConstantValue(fir)
                 } catch (e: ArithmeticException) {
-                    KaConstantValue.KaErrorConstantValue(e.localizedMessage, sourcePsi)
+                    KaErrorConstantValueImpl(e.localizedMessage, sourcePsi)
                 }
             }
             // For invalid code like the following,

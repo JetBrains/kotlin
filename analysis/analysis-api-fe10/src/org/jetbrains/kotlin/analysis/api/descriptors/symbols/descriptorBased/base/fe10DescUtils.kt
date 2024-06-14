@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.KaFe10PsiD
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.KaFe10PsiDefaultSetterParameterSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KaFe10PsiSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.types.*
-import org.jetbrains.kotlin.analysis.api.impl.base.KaContextReceiverImpl
+import org.jetbrains.kotlin.analysis.api.impl.base.*
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaAnnotationImpl
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
@@ -411,23 +411,24 @@ internal val MemberDescriptor.ktModality: Modality
         return this.modality
     }
 
+@OptIn(KaImplementationDetail::class)
 internal fun ConstantValue<*>.toKtConstantValue(): KaConstantValue {
     return when (this) {
-        is ErrorValue.ErrorValueWithMessage -> KaConstantValue.KaErrorConstantValue(message, sourcePsi = null)
-        is BooleanValue -> KaConstantValue.KaBooleanConstantValue(value, sourcePsi = null)
-        is DoubleValue -> KaConstantValue.KaDoubleConstantValue(value, sourcePsi = null)
-        is FloatValue -> KaConstantValue.KaFloatConstantValue(value, sourcePsi = null)
-        is NullValue -> KaConstantValue.KaNullConstantValue(sourcePsi = null)
-        is StringValue -> KaConstantValue.KaStringConstantValue(value, sourcePsi = null)
-        is ByteValue -> KaConstantValue.KaByteConstantValue(value, sourcePsi = null)
-        is CharValue -> KaConstantValue.KaCharConstantValue(value, sourcePsi = null)
-        is IntValue -> KaConstantValue.KaIntConstantValue(value, sourcePsi = null)
-        is LongValue -> KaConstantValue.KaLongConstantValue(value, sourcePsi = null)
-        is ShortValue -> KaConstantValue.KaShortConstantValue(value, sourcePsi = null)
-        is UByteValue -> KaConstantValue.KaUnsignedByteConstantValue(value.toUByte(), sourcePsi = null)
-        is UIntValue -> KaConstantValue.KaUnsignedIntConstantValue(value.toUInt(), sourcePsi = null)
-        is ULongValue -> KaConstantValue.KaUnsignedLongConstantValue(value.toULong(), sourcePsi = null)
-        is UShortValue -> KaConstantValue.KaUnsignedShortConstantValue(value.toUShort(), sourcePsi = null)
+        is ErrorValue.ErrorValueWithMessage -> KaErrorConstantValueImpl(message, sourcePsi = null)
+        is BooleanValue -> KaBooleanConstantValueImpl(value, sourcePsi = null)
+        is DoubleValue -> KaDoubleConstantValueImpl(value, sourcePsi = null)
+        is FloatValue -> KaFloatConstantValueImpl(value, sourcePsi = null)
+        is NullValue -> KaNullConstantValueImpl(sourcePsi = null)
+        is StringValue -> KaStringConstantValueImpl(value, sourcePsi = null)
+        is ByteValue -> KaByteConstantValueImpl(value, sourcePsi = null)
+        is CharValue -> KaCharConstantValueImpl(value, sourcePsi = null)
+        is IntValue -> KaIntConstantValueImpl(value, sourcePsi = null)
+        is LongValue -> KaLongConstantValueImpl(value, sourcePsi = null)
+        is ShortValue -> KaShortConstantValueImpl(value, sourcePsi = null)
+        is UByteValue -> KaUnsignedByteConstantValueImpl(value.toUByte(), sourcePsi = null)
+        is UIntValue -> KaUnsignedIntConstantValueImpl(value.toUInt(), sourcePsi = null)
+        is ULongValue -> KaUnsignedLongConstantValueImpl(value.toULong(), sourcePsi = null)
+        is UShortValue -> KaUnsignedShortConstantValueImpl(value.toUShort(), sourcePsi = null)
         else -> error("Unexpected constant value $value")
     }
 }

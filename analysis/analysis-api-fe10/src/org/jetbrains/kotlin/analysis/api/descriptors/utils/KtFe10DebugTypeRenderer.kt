@@ -125,6 +125,7 @@ internal class KaFe10DebugTypeRenderer {
             }
 
             is KaConstantAnnotationValue -> {
+                @Suppress("DEPRECATION")
                 printer.append(value.constantValue.constantValueKind.asString)
                     .append("(")
                     .append(value.constantValue.value.toString())

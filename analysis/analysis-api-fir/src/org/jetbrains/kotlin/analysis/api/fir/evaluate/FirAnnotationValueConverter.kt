@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.evaluate
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.*
-import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
-import org.jetbrains.kotlin.analysis.api.base.KaConstantValueFactory
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.impl.base.*
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaAnnotationImpl
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
@@ -48,6 +48,7 @@ internal object FirAnnotationValueConverter {
         )
     }
 
+    @OptIn(KaImplementationDetail::class)
     private fun FirLiteralExpression.convertConstantExpression(
         analysisSession: KaSession
     ): KaConstantAnnotationValue? {
@@ -56,21 +57,21 @@ internal object FirAnnotationValueConverter {
         @OptIn(UnresolvedExpressionTypeAccess::class)
         val type = coneTypeOrNull
         val constantValue = when {
-            value == null -> KaConstantValue.KaNullConstantValue(expression)
+            value == null -> KaNullConstantValueImpl(expression)
             type == null -> KaConstantValueFactory.createConstantValue(value, psi as? KtElement)
-            type.isBoolean -> KaConstantValue.KaBooleanConstantValue(value as Boolean, expression)
-            type.isChar -> KaConstantValue.KaCharConstantValue((value as? Char) ?: (value as Number).toInt().toChar(), expression)
-            type.isByte -> KaConstantValue.KaByteConstantValue((value as Number).toByte(), expression)
-            type.isUByte -> KaConstantValue.KaUnsignedByteConstantValue((value as Number).toByte().toUByte(), expression)
-            type.isShort -> KaConstantValue.KaShortConstantValue((value as Number).toShort(), expression)
-            type.isUShort -> KaConstantValue.KaUnsignedShortConstantValue((value as Number).toShort().toUShort(), expression)
-            type.isInt -> KaConstantValue.KaIntConstantValue((value as Number).toInt(), expression)
-            type.isUInt -> KaConstantValue.KaUnsignedIntConstantValue((value as Number).toInt().toUInt(), expression)
-            type.isLong -> KaConstantValue.KaLongConstantValue((value as Number).toLong(), expression)
-            type.isULong -> KaConstantValue.KaUnsignedLongConstantValue((value as Number).toLong().toULong(), expression)
-            type.isString -> KaConstantValue.KaStringConstantValue(value.toString(), expression)
-            type.isFloat -> KaConstantValue.KaFloatConstantValue((value as Number).toFloat(), expression)
-            type.isDouble -> KaConstantValue.KaDoubleConstantValue((value as Number).toDouble(), expression)
+            type.isBoolean -> KaBooleanConstantValueImpl(value as Boolean, expression)
+            type.isChar -> KaCharConstantValueImpl((value as? Char) ?: (value as Number).toInt().toChar(), expression)
+            type.isByte -> KaByteConstantValueImpl((value as Number).toByte(), expression)
+            type.isUByte -> KaUnsignedByteConstantValueImpl((value as Number).toByte().toUByte(), expression)
+            type.isShort -> KaShortConstantValueImpl((value as Number).toShort(), expression)
+            type.isUShort -> KaUnsignedShortConstantValueImpl((value as Number).toShort().toUShort(), expression)
+            type.isInt -> KaIntConstantValueImpl((value as Number).toInt(), expression)
+            type.isUInt -> KaUnsignedIntConstantValueImpl((value as Number).toInt().toUInt(), expression)
+            type.isLong -> KaLongConstantValueImpl((value as Number).toLong(), expression)
+            type.isULong -> KaUnsignedLongConstantValueImpl((value as Number).toLong().toULong(), expression)
+            type.isString -> KaStringConstantValueImpl(value.toString(), expression)
+            type.isFloat -> KaFloatConstantValueImpl((value as Number).toFloat(), expression)
+            type.isDouble -> KaDoubleConstantValueImpl((value as Number).toDouble(), expression)
             else -> null
         }
 

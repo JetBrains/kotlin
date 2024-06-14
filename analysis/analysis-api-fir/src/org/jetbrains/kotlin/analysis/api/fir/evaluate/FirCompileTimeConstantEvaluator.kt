@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.analysis.api.fir.evaluate
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
+import org.jetbrains.kotlin.analysis.api.impl.base.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
@@ -100,6 +102,7 @@ internal object FirCompileTimeConstantEvaluator {
         } else null
     }
 
+    @OptIn(KaImplementationDetail::class)
     fun evaluateAsKtConstantValue(
         fir: FirElement,
     ): KaConstantValue? {
@@ -108,35 +111,35 @@ internal object FirCompileTimeConstantEvaluator {
         val value = evaluated.value
         val psi = evaluated.psi as? KtElement
         return when (evaluated.kind) {
-            ConstantValueKind.Byte -> KaConstantValue.KaByteConstantValue(value as Byte, psi)
-            ConstantValueKind.Int -> KaConstantValue.KaIntConstantValue(value as Int, psi)
-            ConstantValueKind.Long -> KaConstantValue.KaLongConstantValue(value as Long, psi)
-            ConstantValueKind.Short -> KaConstantValue.KaShortConstantValue(value as Short, psi)
+            ConstantValueKind.Byte -> KaByteConstantValueImpl(value as Byte, psi)
+            ConstantValueKind.Int -> KaIntConstantValueImpl(value as Int, psi)
+            ConstantValueKind.Long -> KaLongConstantValueImpl(value as Long, psi)
+            ConstantValueKind.Short -> KaShortConstantValueImpl(value as Short, psi)
 
-            ConstantValueKind.UnsignedByte -> KaConstantValue.KaUnsignedByteConstantValue(value as UByte, psi)
-            ConstantValueKind.UnsignedInt -> KaConstantValue.KaUnsignedIntConstantValue(value as UInt, psi)
-            ConstantValueKind.UnsignedLong -> KaConstantValue.KaUnsignedLongConstantValue(value as ULong, psi)
-            ConstantValueKind.UnsignedShort -> KaConstantValue.KaUnsignedShortConstantValue(value as UShort, psi)
+            ConstantValueKind.UnsignedByte -> KaUnsignedByteConstantValueImpl(value as UByte, psi)
+            ConstantValueKind.UnsignedInt -> KaUnsignedIntConstantValueImpl(value as UInt, psi)
+            ConstantValueKind.UnsignedLong -> KaUnsignedLongConstantValueImpl(value as ULong, psi)
+            ConstantValueKind.UnsignedShort -> KaUnsignedShortConstantValueImpl(value as UShort, psi)
 
-            ConstantValueKind.Double -> KaConstantValue.KaDoubleConstantValue(value as Double, psi)
-            ConstantValueKind.Float -> KaConstantValue.KaFloatConstantValue(value as Float, psi)
+            ConstantValueKind.Double -> KaDoubleConstantValueImpl(value as Double, psi)
+            ConstantValueKind.Float -> KaFloatConstantValueImpl(value as Float, psi)
 
-            ConstantValueKind.Boolean -> KaConstantValue.KaBooleanConstantValue(value as Boolean, psi)
-            ConstantValueKind.Char -> KaConstantValue.KaCharConstantValue(value as Char, psi)
-            ConstantValueKind.String -> KaConstantValue.KaStringConstantValue(value as String, psi)
-            ConstantValueKind.Null -> KaConstantValue.KaNullConstantValue(psi)
+            ConstantValueKind.Boolean -> KaBooleanConstantValueImpl(value as Boolean, psi)
+            ConstantValueKind.Char -> KaCharConstantValueImpl(value as Char, psi)
+            ConstantValueKind.String -> KaStringConstantValueImpl(value as String, psi)
+            ConstantValueKind.Null -> KaNullConstantValueImpl(psi)
 
 
             ConstantValueKind.IntegerLiteral -> {
                 val long = value as Long
-                if (Int.MIN_VALUE < long && long < Int.MAX_VALUE) KaConstantValue.KaIntConstantValue(long.toInt(), psi)
-                else KaConstantValue.KaLongConstantValue(long, psi)
+                if (Int.MIN_VALUE < long && long < Int.MAX_VALUE) KaIntConstantValueImpl(long.toInt(), psi)
+                else KaLongConstantValueImpl(long, psi)
             }
 
             ConstantValueKind.UnsignedIntegerLiteral -> {
                 val long = value as ULong
-                if (UInt.MIN_VALUE < long && long < UInt.MAX_VALUE) KaConstantValue.KaUnsignedIntConstantValue(long.toUInt(), psi)
-                else KaConstantValue.KaUnsignedLongConstantValue(long, psi)
+                if (UInt.MIN_VALUE < long && long < UInt.MAX_VALUE) KaUnsignedIntConstantValueImpl(long.toUInt(), psi)
+                else KaUnsignedLongConstantValueImpl(long, psi)
             }
 
             ConstantValueKind.Error -> errorWithFirSpecificEntries("Should not be possible to get from FIR tree", fir = fir)
