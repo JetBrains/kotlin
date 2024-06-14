@@ -21,3 +21,6 @@ fun function(arg: Int) = arg
 var variable: Int = 0
 
 val constant: Int = 0
+
+
+
