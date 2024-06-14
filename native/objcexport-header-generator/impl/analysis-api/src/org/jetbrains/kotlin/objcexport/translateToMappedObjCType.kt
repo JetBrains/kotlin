@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.backend.konan.objcexport.NSNumberKind
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCClassType
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames
@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.utils.addIfNotNull
  * This function will also look through supertypes (e.g., custom implementations of List will still be mapped to NSArray).
  * Returns `null` if the type is not mapped to any ObjC equivalent
  */
-context(KtAnalysisSession, KtObjCExportSession)
-internal fun KtType.translateToMappedObjCTypeOrNull(): ObjCClassType? {
+context(KaSession, KtObjCExportSession)
+internal fun KaType.translateToMappedObjCTypeOrNull(): ObjCClassType? {
     return listOf(this).plus(this.allSupertypes).firstNotNullOfOrNull find@{ type ->
         val classId = type.expandedSymbol?.classId ?: return@find null
         mappedObjCTypeNames[classId]?.let { mappedTypeName ->
@@ -45,7 +45,7 @@ private val mappedObjCTypes = buildSet {
 }
 
 
-context(KtAnalysisSession, KtObjCExportSession)
+context(KaSession, KtObjCExportSession)
 internal val mappedObjCTypeNames: Map<ClassId, String>
     get() = cached("mappedObjCTypeNames") {
         buildMap {
@@ -77,6 +77,6 @@ internal val mappedObjCTypeNames: Map<ClassId, String>
         }
     }
 
-context(KtAnalysisSession)
-internal val KtType.isMappedObjCType: Boolean
+context(KaSession)
+internal val KaType.isMappedObjCType: Boolean
     get() = mappedObjCTypes.contains(expandedSymbol?.classId)

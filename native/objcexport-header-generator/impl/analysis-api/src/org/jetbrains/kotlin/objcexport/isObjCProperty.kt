@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.tooling.core.linearClosure
 
@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.tooling.core.linearClosure
  *
  * See K1 [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapperKt.isObjCProperty]
  */
-context(KtAnalysisSession)
-internal val KtPropertySymbol.isObjCProperty: Boolean
+context(KaSession)
+internal val KaPropertySymbol.isObjCProperty: Boolean
     get() {
         val isMappedReceiver = receiverParameter?.type?.isMappedObjCType == true
         val hasReceiver = receiverParameter != null && !isExtension
@@ -21,7 +21,7 @@ internal val KtPropertySymbol.isObjCProperty: Boolean
         return !hasReceiver && !isPropertyInInnerClass
     }
 
-context(KtAnalysisSession)
-private val KtPropertySymbol.isPropertyInInnerClass: Boolean
-    get() = linearClosure<KtSymbol> { symbol -> symbol.containingSymbol }
-        .any { it is KtNamedClassOrObjectSymbol && it.isInner }
+context(KaSession)
+private val KaPropertySymbol.isPropertyInInnerClass: Boolean
+    get() = linearClosure<KaSymbol> { symbol -> symbol.containingSymbol }
+        .any { it is KaNamedClassOrObjectSymbol && it.isInner }

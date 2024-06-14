@@ -1,14 +1,14 @@
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportFunctionName
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getPropertySymbol
 
-context(KtAnalysisSession, KtObjCExportSession)
-fun KtFunctionLikeSymbol.getObjCFunctionName(): ObjCExportFunctionName {
+context(KaSession, KtObjCExportSession)
+fun KaFunctionLikeSymbol.getObjCFunctionName(): ObjCExportFunctionName {
     val annotationName =
-        if (this is KtPropertyAccessorSymbol) containingSymbol?.resolveObjCNameAnnotation()
+        if (this is KaPropertyAccessorSymbol) containingSymbol?.resolveObjCNameAnnotation()
         else resolveObjCNameAnnotation()
     return ObjCExportFunctionName(
         swiftName = getObjCFunctionName(annotationName?.swiftName),
@@ -16,32 +16,32 @@ fun KtFunctionLikeSymbol.getObjCFunctionName(): ObjCExportFunctionName {
     )
 }
 
-context(KtAnalysisSession)
-private fun KtFunctionLikeSymbol.getObjCFunctionName(annotationName: String?): String {
+context(KaSession)
+private fun KaFunctionLikeSymbol.getObjCFunctionName(annotationName: String?): String {
     return if (annotationName != null) {
-        if (this is KtPropertyAccessorSymbol) formatPropertyName(annotationName) else annotationName
+        if (this is KaPropertyAccessorSymbol) formatPropertyName(annotationName) else annotationName
     } else translationName
 }
 
-context(KtAnalysisSession)
-private val KtFunctionLikeSymbol.translationName: String
+context(KaSession)
+private val KaFunctionLikeSymbol.translationName: String
     get() {
         return when (this) {
-            is KtFunctionSymbol -> name.asString()
-            is KtConstructorSymbol -> "init"
-            is KtPropertyAccessorSymbol -> formatPropertyName()
-            is KtAnonymousFunctionSymbol -> ""
-            is KtSamConstructorSymbol -> ""
+            is KaFunctionSymbol -> name.asString()
+            is KaConstructorSymbol -> "init"
+            is KaPropertyAccessorSymbol -> formatPropertyName()
+            is KaAnonymousFunctionSymbol -> ""
+            is KaSamConstructorSymbol -> ""
         }
     }
 
-context(KtAnalysisSession)
-private fun KtPropertyAccessorSymbol.formatPropertyName(annotationName: String? = null): String {
+context(KaSession)
+private fun KaPropertyAccessorSymbol.formatPropertyName(annotationName: String? = null): String {
     val propertySymbol = this.getPropertySymbol()
     val name = annotationName ?: propertySymbol.name.asString()
     return when (this) {
-        is KtPropertyGetterSymbol -> name
-        is KtPropertySetterSymbol -> "set" + name.replaceFirstChar(kotlin.Char::uppercaseChar)
+        is KaPropertyGetterSymbol -> name
+        is KaPropertySetterSymbol -> "set" + name.replaceFirstChar(kotlin.Char::uppercaseChar)
         else -> ""
     }
 }

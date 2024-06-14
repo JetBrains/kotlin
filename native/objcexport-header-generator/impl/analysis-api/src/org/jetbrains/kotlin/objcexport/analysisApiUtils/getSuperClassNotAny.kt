@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.objcexport.analysisApiUtils
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
 
 /**
  * Tries to find the superclass [KtClassOrObjectSymbol] symbol which is *not* kotlin.Any
@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
  * }
  * ```
  */
-context(KtAnalysisSession)
-internal fun KtClassOrObjectSymbol.getSuperClassSymbolNotAny(): KtClassOrObjectSymbol? {
+context(KaSession)
+internal fun KaClassOrObjectSymbol.getSuperClassSymbolNotAny(): KaClassOrObjectSymbol? {
     return getSuperClassTypeNotAny()?.expandedSymbol
 }
 
@@ -42,11 +42,11 @@ internal fun KtClassOrObjectSymbol.getSuperClassSymbolNotAny(): KtClassOrObjectS
  * }
  * ```
  */
-context(KtAnalysisSession)
-internal fun KtClassOrObjectSymbol.getSuperClassTypeNotAny(): KtNonErrorClassType? {
+context(KaSession)
+internal fun KaClassOrObjectSymbol.getSuperClassTypeNotAny(): KaClassType? {
     return superTypes.firstNotNullOfOrNull find@{ superType ->
         if (superType.isAnyType || superType.isError) return@find null
-        if (superType is KtNonErrorClassType) {
+        if (superType is KaClassType) {
             val classSymbol = superType.expandedSymbol ?: return@find null
             if (classSymbol.classKind.isClass) {
                 return superType

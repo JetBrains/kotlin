@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.objcexport.analysisApiUtils
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 
 /**
  * Check that given [descriptor] is a so-called "base method", i.e. method
@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
  * ```
  * Interface `I` is not exposed to the generated header, so C#f is considered to be a base method even though it has an "override" keyword.
  */
-context(KtAnalysisSession)
-fun KtCallableSymbol.isObjCBaseCallable(): Boolean {
+context(KaSession)
+fun KaCallableSymbol.isObjCBaseCallable(): Boolean {
     return allOverriddenSymbols.none { overriddenSymbol ->
         overriddenSymbol.isVisibleInObjC()
     }

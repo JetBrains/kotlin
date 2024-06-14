@@ -1,30 +1,30 @@
 package org.jetbrains.kotlin.objcexport.analysisApiUtils
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
-context(KtAnalysisSession)
-internal val KtDeclarationSymbol?.implementsCloneable: Boolean
+context(KaSession)
+internal val KaDeclarationSymbol?.implementsCloneable: Boolean
     get() {
-        return (this as? KtClassOrObjectSymbol)?.implementsCloneable ?: false
+        return (this as? KaClassOrObjectSymbol)?.implementsCloneable ?: false
     }
 
-context(KtAnalysisSession)
-internal val KtClassOrObjectSymbol.implementsCloneable: Boolean
+context(KaSession)
+internal val KaClassOrObjectSymbol.implementsCloneable: Boolean
     get() {
         return superTypes.any {
             it.expandedSymbol?.isCloneable ?: false
         }
     }
 
-internal val KtClassOrObjectSymbol.isCloneable: Boolean
+internal val KaClassOrObjectSymbol.isCloneable: Boolean
     get() {
         return classId?.isCloneable ?: false
     }
@@ -34,8 +34,8 @@ internal val ClassId.isCloneable: Boolean
         return asSingleFqName() == StandardNames.FqNames.cloneable.toSafe()
     }
 
-context(KtAnalysisSession)
-internal val KtFunctionSymbol.isClone: Boolean
+context(KaSession)
+internal val KaFunctionSymbol.isClone: Boolean
     get() {
         val cloneCallableId = CallableId(StandardClassIds.Cloneable, Name.identifier("clone"))
         if (this.callableId == cloneCallableId) return true

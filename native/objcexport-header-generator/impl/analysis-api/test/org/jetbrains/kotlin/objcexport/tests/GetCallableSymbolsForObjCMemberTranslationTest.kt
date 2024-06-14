@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.objcexport.tests
 
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.objcexport.StableCallableOrder
 import org.jetbrains.kotlin.objcexport.getCallableSymbolsForObjCMemberTranslation
 import org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysis
@@ -37,7 +37,7 @@ class GetCallableSymbolsForObjCMemberTranslationTest(
             assertEquals(
                 listOf("bar", "abstractFun"),
                 fooSymbol.getCallableSymbolsForObjCMemberTranslation()
-                    .map { it as KtFunctionSymbol }
+                    .map { it as KaFunctionSymbol }
                     .map { it.name.asString() }
             )
         }
@@ -56,7 +56,7 @@ class GetCallableSymbolsForObjCMemberTranslationTest(
                 listOf("component1", "copy", "equals", "hashCode", "toString", "a"),
                 foo.getCallableSymbolsForObjCMemberTranslation()
                     .sortedWith(StableCallableOrder)
-                    .map { it as KtNamedSymbol }
+                    .map { it as KaNamedSymbol }
                     .map { it.name.asString() }
             )
         }
@@ -77,7 +77,7 @@ class GetCallableSymbolsForObjCMemberTranslationTest(
                 emptyList(),
                 foo.getCallableSymbolsForObjCMemberTranslation()
                     .sortedWith(StableCallableOrder)
-                    .map { it as KtNamedSymbol }
+                    .map { it as KaNamedSymbol }
                     .map { it.name.asString() }
             )
         }

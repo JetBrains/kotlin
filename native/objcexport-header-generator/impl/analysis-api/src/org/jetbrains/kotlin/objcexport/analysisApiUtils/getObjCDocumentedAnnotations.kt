@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.objcexport.analysisApiUtils
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -19,16 +19,16 @@ import org.jetbrains.kotlin.name.StandardClassIds
  * However, some annotations e.g. [kotlin.native.ObjCName], whilst annotated with `@MustBeDocumented` shall not be exported for ObjC
  * documentation.
  */
-context(KtAnalysisSession)
-internal fun KtAnnotatedSymbol.getObjCDocumentedAnnotations(): List<KtAnnotationApplicationWithArgumentsInfo> {
+context(KaSession)
+internal fun KaAnnotatedSymbol.getObjCDocumentedAnnotations(): List<KaAnnotation> {
     return annotations.getObjCDocumentedAnnotations()
 }
 
 /**
  * See [getObjCDocumentedAnnotations]
  */
-context(KtAnalysisSession)
-internal fun KtAnnotationsList.getObjCDocumentedAnnotations(): List<KtAnnotationApplicationWithArgumentsInfo> {
+context(KaSession)
+internal fun KaAnnotationList.getObjCDocumentedAnnotations(): List<KaAnnotation> {
     return this
         .filter { annotation ->
             val annotationClassId = annotation.classId ?: return@filter false

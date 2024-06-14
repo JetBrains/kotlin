@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.kapt4
 
 import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -61,7 +60,6 @@ internal class Kapt4Facade(private val testServices: TestServices) :
     }
 }
 
-@OptIn(KtAnalysisApiInternals::class)
 private fun run(
     configuration: CompilerConfiguration,
     options: KaptOptions,

@@ -2,9 +2,9 @@
 
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.name.ClassId
@@ -18,25 +18,25 @@ import org.jetbrains.kotlin.objcexport.extras.throwsAnnotationClassIds
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal val KaSymbol.isConstructor: Boolean
-    get() = this is KtConstructorSymbol
+    get() = this is KaConstructorSymbol
 
-context(KtAnalysisSession, KtObjCExportSession)
-fun KtFunctionLikeSymbol.translateToObjCMethod(): ObjCMethod? {
+context(KaSession, KtObjCExportSession)
+fun KaFunctionLikeSymbol.translateToObjCMethod(): ObjCMethod? {
     if (!isVisibleInObjC()) return null
     if (isFakeOverride) return null
-    if (this is KtFunctionSymbol && isClone) return null
+    if (this is KaFunctionSymbol && isClone) return null
     return buildObjCMethod()
 }
 
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.buildMethod]
  */
-context(KtAnalysisSession, KtObjCExportSession)
-internal fun KtFunctionLikeSymbol.buildObjCMethod(
+context(KaSession, KtObjCExportSession)
+internal fun KaFunctionLikeSymbol.buildObjCMethod(
     unavailable: Boolean = false,
 ): ObjCMethod {
 
-    val bridge = if (this is KtFunctionSymbol) {
+    val bridge = if (this is KaFunctionSymbol) {
         /**
          * Unlike constructor, a function can have base return type.
          * So in case of function we need to call [getFunctionMethodBridge] on [baseMethod]
@@ -102,19 +102,19 @@ internal fun String.toValidObjCSwiftIdentifier(): String {
         .let { if (it == "_") "__" else it }
 }
 
-internal fun KtCallableSymbol.getSwiftPrivateAttribute(): String? =
+internal fun KaCallableSymbol.getSwiftPrivateAttribute(): String? =
     if (isRefinedInSwift()) "swift_private" else null
 
-internal fun KtCallableSymbol.isRefinedInSwift(): Boolean = when {
+internal fun KaCallableSymbol.isRefinedInSwift(): Boolean = when {
     // Note: the front-end checker requires all overridden descriptors to be either refined or not refined.
     //overriddenDescriptors.isNotEmpty() -> overriddenDescriptors.first().isRefinedInSwift() //TODO: implement isRefinedInSwift
     else -> ClassId.topLevel(KonanFqNames.refinesInSwift) in annotations
 }
 
-context(KtAnalysisSession, KtObjCExportSession)
-internal fun KtFunctionLikeSymbol.getSwiftName(methodBridge: MethodBridge): String {
+context(KaSession, KtObjCExportSession)
+internal fun KaFunctionLikeSymbol.getSwiftName(methodBridge: MethodBridge): String {
     //assert(mapper.isBaseMethod(method)) //TODO: implement isBaseMethod
-    if (this is KtNamedSymbol) {
+    if (this is KaNamedSymbol) {
         anyMethodSwiftNames[name]?.let { return it }
     }
 
@@ -129,7 +129,7 @@ internal fun KtFunctionLikeSymbol.getSwiftName(methodBridge: MethodBridge): Stri
             val label = when (bridge) {
                 is MethodBridgeValueParameter.Mapped -> when {
                     parameter?.isReceiver == true -> "_"
-                    method is KtPropertySetterSymbol -> when (parameters.size) {
+                    method is KaPropertySetterSymbol -> when (parameters.size) {
                         1 -> "_"
                         else -> "value"
                     }
@@ -207,10 +207,10 @@ private fun splitSelector(selector: String): List<String> {
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getSelector]
  */
-context(KtAnalysisSession, KtObjCExportSession)
-fun KtFunctionLikeSymbol.getSelector(methodBridge: MethodBridge): String {
+context(KaSession, KtObjCExportSession)
+fun KaFunctionLikeSymbol.getSelector(methodBridge: MethodBridge): String {
 
-    if (this is KtNamedSymbol) {
+    if (this is KaNamedSymbol) {
         val name = this.name
 
         anyMethodSelectors[name]?.let { return it }
@@ -228,7 +228,7 @@ fun KtFunctionLikeSymbol.getSelector(methodBridge: MethodBridge): String {
 
             is MethodBridgeValueParameter.Mapped -> when {
                 parameter?.isReceiver == true -> ""
-                method is KtPropertySetterSymbol -> when (parameters.size) {
+                method is KaPropertySetterSymbol -> when (parameters.size) {
                     1 -> ""
                     else -> "value"
                 }
@@ -264,8 +264,8 @@ fun KtFunctionLikeSymbol.getSelector(methodBridge: MethodBridge): String {
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getMangledName]
  */
-context(KtAnalysisSession, KtObjCExportSession)
-private fun KtFunctionLikeSymbol.getMangledName(forSwift: Boolean): String {
+context(KaSession, KtObjCExportSession)
+private fun KaFunctionLikeSymbol.getMangledName(forSwift: Boolean): String {
     return if (this.isConstructor) {
         if (isArrayConstructor && !forSwift) "array" else "init"
     } else {
@@ -289,8 +289,8 @@ private fun String.startsWithWords(words: String) = this.startsWith(words) &&
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mapReturnType]
  */
-context(KtAnalysisSession, KtObjCExportSession)
-fun KtFunctionLikeSymbol.mapReturnType(returnBridge: MethodBridge.ReturnValue): ObjCType {
+context(KaSession, KtObjCExportSession)
+fun KaFunctionLikeSymbol.mapReturnType(returnBridge: MethodBridge.ReturnValue): ObjCType {
     return when (returnBridge) {
         MethodBridge.ReturnValue.Suspend,
         MethodBridge.ReturnValue.Void,
@@ -304,7 +304,7 @@ fun KtFunctionLikeSymbol.mapReturnType(returnBridge: MethodBridge.ReturnValue): 
             if (!returnBridge.successMayBeZero) {
                 check(
                     successReturnType is ObjCNonNullReferenceType
-                            || (successReturnType is ObjCPointerType && !successReturnType.nullable)
+                        || (successReturnType is ObjCPointerType && !successReturnType.nullable)
                 ) {
                     "Unexpected return type: $successReturnType in $this"
                 }

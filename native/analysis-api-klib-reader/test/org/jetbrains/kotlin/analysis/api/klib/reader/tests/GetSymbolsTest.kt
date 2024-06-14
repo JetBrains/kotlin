@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.analysis.api.klib.reader.tests
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.klib.reader.testUtils.providedTestProjectKlib
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.nameOrAnonymous
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
@@ -56,7 +56,7 @@ class GetSymbolsTest {
             val aObjectSymbol = assertNotNull(aObjectAddress.getClassOrObjectSymbol())
 
             assertEquals("AObject", aObjectSymbol.nameOrAnonymous.asString())
-            assertEquals(KtClassKind.OBJECT, aObjectSymbol.classKind)
+            assertEquals(KaClassKind.OBJECT, aObjectSymbol.classKind)
         }
     }
 
@@ -79,7 +79,7 @@ class GetSymbolsTest {
                 "Expected 'getSymbols' and 'getPropertySymbols' to be equal"
             )
 
-            val symbol = rootPkgPropertySymbols.single() as KtPropertySymbol
+            val symbol = rootPkgPropertySymbols.single() as KaPropertySymbol
             assertEquals("rootPkgProperty", symbol.name.asString())
         }
     }
@@ -191,9 +191,9 @@ class GetSymbolsTest {
     }
 
     /**
-     * Runs the given [block] in an analysis session that will have the built library as [KtAnalysisSession.useSiteModule]
+     * Runs the given [block] in an analysis session that will have the built library as [KaSession.useSiteModule]
      */
-    private fun <T> withTestProjectLibraryAnalysisSession(block: context(KtAnalysisSession) () -> T): T {
+    private fun <T> withTestProjectLibraryAnalysisSession(block: context(KaSession) () -> T): T {
         val session = buildStandaloneAnalysisAPISession {
             val currentArchitectureTarget = HostManager.host
             val nativePlatform = NativePlatforms.nativePlatformByTargets(listOf(currentArchitectureTarget))

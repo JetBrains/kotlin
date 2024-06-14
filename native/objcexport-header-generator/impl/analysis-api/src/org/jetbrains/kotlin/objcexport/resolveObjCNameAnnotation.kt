@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
-import org.jetbrains.kotlin.analysis.api.annotations.KtNamedAnnotationValue
+import org.jetbrains.kotlin.analysis.api.annotations.KaNamedAnnotationValue
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue.StringValue
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue.BooleanValue
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 
 /**
@@ -45,8 +45,8 @@ internal class KtResolvedObjCNameAnnotation(
     val isExact: Boolean,
 )
 
-context(KtAnalysisSession)
-internal fun KtAnnotatedSymbol.resolveObjCNameAnnotation(): KtResolvedObjCNameAnnotation? {
+context(KaSession)
+internal fun KaAnnotatedSymbol.resolveObjCNameAnnotation(): KtResolvedObjCNameAnnotation? {
     val annotation = annotations.find { it.classId?.asSingleFqName() == KonanFqNames.objCName } ?: return null
 
     return KtResolvedObjCNameAnnotation(
@@ -56,17 +56,17 @@ internal fun KtAnnotatedSymbol.resolveObjCNameAnnotation(): KtResolvedObjCNameAn
     )
 }
 
-private fun KtAnnotationApplicationWithArgumentsInfo.findArgument(name: String): KtNamedAnnotationValue? {
+private fun KaAnnotation.findArgument(name: String): KaNamedAnnotationValue? {
     return arguments.find { it.name.identifier == name }
 }
 
-private fun KtNamedAnnotationValue.resolveStringConstantValue(): String? {
+private fun KaNamedAnnotationValue.resolveStringConstantValue(): String? {
     return expression.let { it as? KaAnnotationValue.ConstantValue }?.value
         ?.let { it as? StringValue }
         ?.value
 }
 
-private fun KtNamedAnnotationValue.resolveBooleanConstantValue(): Boolean? {
+private fun KaNamedAnnotationValue.resolveBooleanConstantValue(): Boolean? {
     return expression.let { it as? KaAnnotationValue.ConstantValue }?.value
         ?.let { it as? BooleanValue }
         ?.value

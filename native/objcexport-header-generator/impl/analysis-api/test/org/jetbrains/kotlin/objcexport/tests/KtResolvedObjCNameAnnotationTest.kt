@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.objcexport.tests
 
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.objcexport.resolveObjCNameAnnotation
 import org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysis
@@ -25,7 +25,7 @@ class KtResolvedObjCNameAnnotationTest(
     fun `test - class - no ObjCName annotation`() {
         val ktFile = inlineSourceCodeAnalysis.createKtFile("class Foo")
         analyze(ktFile) {
-            val fooSymbol = ktFile.symbol.fileScope.classifiers(Name.identifier("Foo")).single() as KtClassLikeSymbol
+            val fooSymbol = ktFile.symbol.fileScope.classifiers(Name.identifier("Foo")).single() as KaClassLikeSymbol
             assertNull(fooSymbol.resolveObjCNameAnnotation())
         }
     }
@@ -39,7 +39,7 @@ class KtResolvedObjCNameAnnotationTest(
             """.trimIndent()
         )
         analyze(ktFile) {
-            val fooSymbol = ktFile.symbol.fileScope.classifiers(Name.identifier("Foo")).single() as KtClassLikeSymbol
+            val fooSymbol = ktFile.symbol.fileScope.classifiers(Name.identifier("Foo")).single() as KaClassLikeSymbol
             val resolvedObjCAnnotation = assertNotNull(fooSymbol.resolveObjCNameAnnotation())
             assertEquals("FooObjC", resolvedObjCAnnotation.objCName)
             assertEquals("FooSwift", resolvedObjCAnnotation.swiftName)
@@ -56,7 +56,7 @@ class KtResolvedObjCNameAnnotationTest(
             """.trimIndent()
         )
         analyze(ktFile) {
-            val fooSymbol = ktFile.symbol.fileScope.callables(Name.identifier("foo")).single() as KtFunctionSymbol
+            val fooSymbol = ktFile.symbol.fileScope.callables(Name.identifier("foo")).single() as KaFunctionSymbol
             val resolvedObjCAnnotation = assertNotNull(fooSymbol.resolveObjCNameAnnotation())
             assertEquals("fooObjC", resolvedObjCAnnotation.objCName)
             assertEquals("fooSwift", resolvedObjCAnnotation.swiftName)

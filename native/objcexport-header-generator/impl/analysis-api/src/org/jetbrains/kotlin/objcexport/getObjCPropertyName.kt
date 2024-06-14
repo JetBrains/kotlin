@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtVariableLikeSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaVariableLikeSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportPropertyName
 
 
-context(KtAnalysisSession)
-fun KtVariableLikeSymbol.getObjCPropertyName(): ObjCExportPropertyName {
+context(KaSession)
+fun KaVariableLikeSymbol.getObjCPropertyName(): ObjCExportPropertyName {
     val resolveObjCNameAnnotation = resolveObjCNameAnnotation()
     val stringName = name.asString()
     val propertyName = stringName.mangleIfReservedObjCName()

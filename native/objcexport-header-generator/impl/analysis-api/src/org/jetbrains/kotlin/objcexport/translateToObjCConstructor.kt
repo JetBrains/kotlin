@@ -1,9 +1,9 @@
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionLikeSymbol
 import org.jetbrains.kotlin.backend.konan.descriptors.arrayTypes
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInstanceType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCMethod
@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.getSuperClassSymbolNotAn
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.hasExportForCompilerAnnotation
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 
-context(KtAnalysisSession, KtObjCExportSession)
-fun KtClassOrObjectSymbol.translateToObjCConstructors(): List<ObjCMethod> {
+context(KaSession, KtObjCExportSession)
+fun KaClassOrObjectSymbol.translateToObjCConstructors(): List<ObjCMethod> {
 
     /* Translate declared constructors */
     val result = declaredMemberScope
@@ -30,7 +30,7 @@ fun KtClassOrObjectSymbol.translateToObjCConstructors(): List<ObjCMethod> {
 
     /* Create special 'alloc' constructors */
     if (this.classId?.asFqNameString() in arrayTypes ||
-        classKind.isObject || classKind == KtClassKind.ENUM_CLASS
+        classKind.isObject || classKind == KaClassKind.ENUM_CLASS
     ) {
         result.add(
             ObjCMethod(
@@ -73,8 +73,8 @@ fun KtClassOrObjectSymbol.translateToObjCConstructors(): List<ObjCMethod> {
 /**
  * Additional primary constructor which goes always after primary constructor ([ObjCMethod.name] == "init")
  */
-context(KtAnalysisSession)
-private fun buildNewInitConstructor(constructor: KtFunctionLikeSymbol): ObjCMethod {
+context(KaSession)
+private fun buildNewInitConstructor(constructor: KaFunctionLikeSymbol): ObjCMethod {
     return ObjCMethod(
         comment = null,
         origin = constructor.getObjCExportStubOrigin(),

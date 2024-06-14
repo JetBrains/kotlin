@@ -14,11 +14,11 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
@@ -89,7 +89,7 @@ private class StubGenerator(
     private val metadataRenderer: (Printer.(Metadata) -> Unit)? = null,
     private val metadataVersion: IntArray,
     private val jvmDefaultMode: JvmDefaultMode,
-    private val analysisSession: KtAnalysisSession
+    private val analysisSession: KaSession
 ) {
     private val strictMode = options[KaptFlag.STRICT]
     private val stripMetadata = options[KaptFlag.STRIP_METADATA]
@@ -188,9 +188,9 @@ private class StubGenerator(
                     ?.references
                     ?.firstOrNull() as? KtReference
                 val importedSymbols = with(analysisSession) { importedReference?.resolveToSymbols().orEmpty() }
-                val isAllUnderClassifierImport = importDirective.isAllUnder && importedSymbols.any { it is KtClassOrObjectSymbol }
-                val isCallableImport = !importDirective.isAllUnder && importedSymbols.any { it is KtCallableSymbol }
-                val isEnumEntryImport = !importDirective.isAllUnder && importedSymbols.any { it is KtEnumEntrySymbol }
+                val isAllUnderClassifierImport = importDirective.isAllUnder && importedSymbols.any { it is KaClassOrObjectSymbol }
+                val isCallableImport = !importDirective.isAllUnder && importedSymbols.any { it is KaCallableSymbol }
+                val isEnumEntryImport = !importDirective.isAllUnder && importedSymbols.any { it is KaEnumEntrySymbol }
 
                 if (isAllUnderClassifierImport || isCallableImport || isEnumEntryImport) continue
 

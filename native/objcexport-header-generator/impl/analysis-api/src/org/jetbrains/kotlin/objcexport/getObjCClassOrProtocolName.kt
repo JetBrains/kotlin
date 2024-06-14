@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportClassOrProtocolName
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
  * @param bareName if `true`, the symbol name will not be prefixed with module/framework/parent name
  *
  */
-context(KtAnalysisSession, KtObjCExportSession)
-fun KtClassLikeSymbol.getObjCClassOrProtocolName(bareName: Boolean = false): ObjCExportClassOrProtocolName {
+context(KaSession, KtObjCExportSession)
+fun KaClassLikeSymbol.getObjCClassOrProtocolName(bareName: Boolean = false): ObjCExportClassOrProtocolName {
     val resolvedObjCNameAnnotation = resolveObjCNameAnnotation()
 
     return ObjCExportClassOrProtocolName(
@@ -41,8 +41,8 @@ fun KtClassLikeSymbol.getObjCClassOrProtocolName(bareName: Boolean = false): Obj
     )
 }
 
-context(KtAnalysisSession, KtObjCExportSession)
-private fun KtClassLikeSymbol.getObjCName(
+context(KaSession, KtObjCExportSession)
+private fun KaClassLikeSymbol.getObjCName(
     resolvedObjCNameAnnotation: KtResolvedObjCNameAnnotation? = resolveObjCNameAnnotation(),
     bareName: Boolean = false,
 ): String {
@@ -53,7 +53,7 @@ private fun KtClassLikeSymbol.getObjCName(
             .handleSpecialNames("get")
     }
 
-    containingSymbol?.let { it as? KtClassLikeSymbol }?.let { containingClass ->
+    containingSymbol?.let { it as? KaClassLikeSymbol }?.let { containingClass ->
         return containingClass.getObjCName() + objCName.capitalizeAsciiOnly()
     }
 
@@ -64,8 +64,8 @@ private fun KtClassLikeSymbol.getObjCName(
     }
 }
 
-context(KtAnalysisSession, KtObjCExportSession)
-private fun KtClassLikeSymbol.getSwiftName(
+context(KaSession, KtObjCExportSession)
+private fun KaClassLikeSymbol.getSwiftName(
     resolvedObjCNameAnnotation: KtResolvedObjCNameAnnotation? = resolveObjCNameAnnotation(),
     bareName: Boolean = false,
 ): String {
@@ -74,7 +74,7 @@ private fun KtClassLikeSymbol.getSwiftName(
         return swiftName
     }
 
-    containingSymbol?.let { it as? KtClassLikeSymbol }?.let { containingClass ->
+    containingSymbol?.let { it as? KaClassLikeSymbol }?.let { containingClass ->
         val containingClassSwiftName = containingClass.getSwiftName()
         return buildString {
             if (canBeInnerSwift()) {
@@ -101,8 +101,8 @@ private fun KtClassLikeSymbol.getSwiftName(
     }
 }
 
-context(KtAnalysisSession, KtObjCExportSession)
-private fun KtClassLikeSymbol.canBeInnerSwift(): Boolean {
+context(KaSession, KtObjCExportSession)
+private fun KaClassLikeSymbol.canBeInnerSwift(): Boolean {
     if (configuration.objcGenerics && this.typeParameters.isNotEmpty()) {
         // Swift compiler doesn't seem to handle this case properly.
         // See https://bugs.swift.org/browse/SR-14607.
@@ -110,7 +110,7 @@ private fun KtClassLikeSymbol.canBeInnerSwift(): Boolean {
         return false
     }
 
-    if (this is KtClassOrObjectSymbol && this.classKind == KtClassKind.INTERFACE) {
+    if (this is KaClassOrObjectSymbol && this.classKind == KaClassKind.INTERFACE) {
         // Swift doesn't support nested protocols.
         return false
     }
@@ -118,14 +118,14 @@ private fun KtClassLikeSymbol.canBeInnerSwift(): Boolean {
     return true
 }
 
-context(KtAnalysisSession, KtObjCExportSession)
-private fun KtClassLikeSymbol.canBeOuterSwift(): Boolean {
+context(KaSession, KtObjCExportSession)
+private fun KaClassLikeSymbol.canBeOuterSwift(): Boolean {
     if (configuration.objcGenerics && this.typeParameters.isNotEmpty()) {
         // Swift nested classes are static but capture outer's generics.
         return false
     }
 
-    if (this is KtClassOrObjectSymbol && this.classKind == KtClassKind.INTERFACE) {
+    if (this is KaClassOrObjectSymbol && this.classKind == KaClassKind.INTERFACE) {
         // Swift doesn't support outer protocols.
         return false
     }
@@ -138,8 +138,8 @@ private fun mangleSwiftNestedClassName(name: String): String = when (name) {
     else -> name
 }
 
-context(KtAnalysisSession, KtObjCExportSession)
-private fun KtSymbol.getObjCModuleNamePrefix(): String? {
+context(KaSession, KtObjCExportSession)
+private fun KaSymbol.getObjCModuleNamePrefix(): String? {
     val module = containingModule
     val moduleName = module.getObjCKotlinModuleName() ?: return null
     if (moduleName == "stdlib" || moduleName == "kotlin-stdlib-common") return "Kotlin"

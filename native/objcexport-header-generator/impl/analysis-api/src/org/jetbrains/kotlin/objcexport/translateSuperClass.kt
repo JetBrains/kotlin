@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportClassOrProtocolName
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCNonNullReferenceType
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDefaultSuperClassOrProtocolName
@@ -18,15 +18,15 @@ internal data class KtObjCSuperClassTranslation(
     val superClassGenerics: List<ObjCNonNullReferenceType>,
 )
 
-context(KtAnalysisSession, KtObjCExportSession)
-internal fun KtClassOrObjectSymbol.translateSuperClass(): KtObjCSuperClassTranslation {
+context(KaSession, KtObjCExportSession)
+internal fun KaClassOrObjectSymbol.translateSuperClass(): KtObjCSuperClassTranslation {
     val superClassType = getSuperClassTypeNotAny()
     val superClassName = superClassType?.getSuperClassName() ?: getDefaultSuperClassOrProtocolName()
 
     val superClassGenerics: List<ObjCNonNullReferenceType> = superTypes
-        .filterIsInstance<KtNonErrorClassType>()
+        .filterIsInstance<KaClassType>()
         .find { type ->
-            val classSymbol = type.symbol as? KtClassOrObjectSymbol ?: return@find false
+            val classSymbol = type.symbol as? KaClassOrObjectSymbol ?: return@find false
             classSymbol.classKind.isClass
         }
         ?.typeArguments

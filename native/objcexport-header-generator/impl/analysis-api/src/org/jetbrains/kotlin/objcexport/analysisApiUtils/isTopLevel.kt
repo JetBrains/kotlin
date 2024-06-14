@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.objcexport.analysisApiUtils
 
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 
-internal val KtCallableSymbol.isTopLevel: Boolean
+internal val KaCallableSymbol.isTopLevel: Boolean
     get() = callableId?.classId == null

@@ -1,21 +1,21 @@
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithModality
-import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithModality
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isThrowable
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 
-context(KtAnalysisSession, KtObjCExportSession)
-fun KtClassOrObjectSymbol.translateToObjCClass(): ObjCClass? {
-    require(classKind == KtClassKind.CLASS || classKind == KtClassKind.ENUM_CLASS)
+context(KaSession, KtObjCExportSession)
+fun KaClassOrObjectSymbol.translateToObjCClass(): ObjCClass? {
+    require(classKind == KaClassKind.CLASS || classKind == KaClassKind.ENUM_CLASS)
     if (!isVisibleInObjC()) return null
 
-    val enumKind = this.classKind == KtClassKind.ENUM_CLASS
-    val final = if (this is KtSymbolWithModality) this.modality == Modality.FINAL else false
+    val enumKind = this.classKind == KaClassKind.ENUM_CLASS
+    val final = if (this is KaSymbolWithModality) this.modality == Modality.FINAL else false
 
     val name = getObjCClassOrProtocolName()
     val attributes = (if (enumKind || final) listOf(OBJC_SUBCLASSING_RESTRICTED) else emptyList()) + name.toNameAttributes()
@@ -38,7 +38,7 @@ fun KtClassOrObjectSymbol.translateToObjCClass(): ObjCClass? {
             .sortedWith(StableCallableOrder)
             .flatMap { it.translateToObjCExportStub() }
 
-        if (classKind == KtClassKind.ENUM_CLASS) {
+        if (classKind == KaClassKind.ENUM_CLASS) {
             this += translateEnumMembers()
         }
 
@@ -98,11 +98,11 @@ fun KtClassOrObjectSymbol.translateToObjCClass(): ObjCClass? {
  * Note: Some methods like `hashCode`, `toString`, ... have predefined selectors and ObjC names.
  * @see [Predefined]
  */
-context(KtAnalysisSession)
-internal fun KtClassOrObjectSymbol.getCallableSymbolsForObjCMemberTranslation(): Set<KtCallableSymbol> {
+context(KaSession)
+internal fun KaClassOrObjectSymbol.getCallableSymbolsForObjCMemberTranslation(): Set<KaCallableSymbol> {
     val generatedCallableSymbols = memberScope
         .callables
-        .filter { it.origin == KtSymbolOrigin.SOURCE_MEMBER_GENERATED }
+        .filter { it.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED }
         .toSet()
 
     val declaredCallableSymbols = declaredMemberScope
@@ -112,8 +112,8 @@ internal fun KtClassOrObjectSymbol.getCallableSymbolsForObjCMemberTranslation():
     return generatedCallableSymbols + declaredCallableSymbols
 }
 
-context(KtAnalysisSession, KtObjCExportSession)
-internal fun KtNonErrorClassType.getSuperClassName(): ObjCExportClassOrProtocolName? {
+context(KaSession, KtObjCExportSession)
+internal fun KaClassType.getSuperClassName(): ObjCExportClassOrProtocolName? {
     val symbol = expandedSymbol ?: return null
     return symbol.getObjCClassOrProtocolName()
 }

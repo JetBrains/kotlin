@@ -1,8 +1,8 @@
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.backend.konan.objcexport.MethodBridge
 import org.jetbrains.kotlin.backend.konan.objcexport.MethodBridgeValueParameter
 import org.jetbrains.kotlin.name.Name
@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.utils.addIfNotNull
  *
  * See K1 implementation [org.jetbrains.kotlin.backend.konan.objcexport.MethodBrideExtensionsKt.valueParametersAssociated]
  */
-context(KtAnalysisSession, KtObjCExportSession)
+context(KaSession, KtObjCExportSession)
 internal fun MethodBridge.valueParametersAssociated(
-    function: KtFunctionLikeSymbol,
+    function: KaFunctionLikeSymbol,
 ): List<Pair<MethodBridgeValueParameter, KtObjCParameterData?>> {
 
     val result = mutableListOf<Pair<MethodBridgeValueParameter, KtObjCParameterData?>>()
@@ -24,7 +24,7 @@ internal fun MethodBridge.valueParametersAssociated(
 
     result.addReceiver(bridgeParameters, function)
 
-    if (function is KtPropertySetterSymbol) {
+    if (function is KaPropertySetterSymbol) {
         /**
          * We take second parameter from [bridgeParameters] because setter has always receiver and it's picked up with [addReceiver]
          */
@@ -43,17 +43,17 @@ internal fun MethodBridge.valueParametersAssociated(
 }
 
 private fun MethodBridge.mapParameters(
-    valueParameters: List<KtValueParameterSymbol>,
+    valueParameters: List<KaValueParameterSymbol>,
 ): List<Pair<MethodBridgeValueParameter, KtObjCParameterData?>> {
     return this.valueParameters.mapIndexed() { index, valueParameterBridge ->
         mapBridgeToFunctionParameters(valueParameterBridge, valueParameters.elementAtOrNull(index))
     }.filterNotNull()
 }
 
-context(KtAnalysisSession, KtObjCExportSession)
+context(KaSession, KtObjCExportSession)
 private fun MutableList<Pair<MethodBridgeValueParameter, KtObjCParameterData?>>.addReceiver(
     parameters: List<MethodBridgeValueParameter>,
-    function: KtFunctionLikeSymbol,
+    function: KaFunctionLikeSymbol,
 ) {
 
     val receiverType = function.objCReceiverType
@@ -73,7 +73,7 @@ private fun MutableList<Pair<MethodBridgeValueParameter, KtObjCParameterData?>>.
 
 private fun mapBridgeToFunctionParameters(
     bridgeParameter: MethodBridgeValueParameter?,
-    functionParameter: KtValueParameterSymbol?,
+    functionParameter: KaValueParameterSymbol?,
 ): Pair<MethodBridgeValueParameter, KtObjCParameterData?>? {
     return if (bridgeParameter == null) null
     else if (functionParameter != null && bridgeParameter is MethodBridgeValueParameter.Mapped) bridgeParameter to KtObjCParameterData(
@@ -87,7 +87,7 @@ private fun mapBridgeToFunctionParameters(
 internal data class KtObjCParameterData(
     val name: Name,
     val isVararg: Boolean,
-    val type: KtType,
+    val type: KaType,
     val isReceiver: Boolean,
 )
 
@@ -106,8 +106,8 @@ internal data class KtObjCParameterData(
  *
  * Also see [isObjCProperty]
  */
-context(KtAnalysisSession)
-internal val KtFunctionLikeSymbol.objCReceiverType: KtType?
+context(KaSession)
+internal val KaFunctionLikeSymbol.objCReceiverType: KaType?
     get() {
         return if (isConstructor) {
             /**
@@ -118,13 +118,13 @@ internal val KtFunctionLikeSymbol.objCReceiverType: KtType?
             dispatchReceiverType
         } else if (isExtension) {
             if (receiverParameter?.type?.isMappedObjCType == true) receiverParameter?.type
-            else if ((containingSymbol as? KtNamedClassOrObjectSymbol)?.isInner == true) receiverParameter?.type
+            else if ((containingSymbol as? KaNamedClassOrObjectSymbol)?.isInner == true) receiverParameter?.type
             else if (receiverParameter?.type?.isObjCNothing == true) return receiverParameter?.type
             else null
-        } else if (this is KtPropertyGetterSymbol || this is KtPropertySetterSymbol) {
-            val property = containingSymbol as KtPropertySymbol
+        } else if (this is KaPropertyGetterSymbol || this is KaPropertySetterSymbol) {
+            val property = containingSymbol as KaPropertySymbol
             val isExtension = property.isExtension
-            val isInner = (property.containingSymbol as? KtNamedClassOrObjectSymbol)?.isInner == true
+            val isInner = (property.containingSymbol as? KaNamedClassOrObjectSymbol)?.isInner == true
             val receiverType = property.receiverType
             if (isExtension) {
                 if (isInner) {

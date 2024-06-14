@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 
 /**
@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
  * - [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapperKt.getBaseMethods]
  * - [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapperKt.isBaseMethod]
  */
-context(KtAnalysisSession)
-internal val KtFunctionSymbol.baseMethod: KtFunctionSymbol
+context(KaSession)
+internal val KaFunctionSymbol.baseMethod: KaFunctionSymbol
     get() {
         val overriddenSymbols = allOverriddenSymbols.filter { symbol -> symbol.isVisibleInObjC() }.toList()
         return if (overriddenSymbols.isEmpty()) this
-        else overriddenSymbols.last() as KtFunctionSymbol
+        else overriddenSymbols.last() as KaFunctionSymbol
     }

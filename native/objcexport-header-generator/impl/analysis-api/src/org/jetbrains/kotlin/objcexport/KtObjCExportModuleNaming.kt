@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
@@ -18,7 +18,7 @@ import kotlin.io.path.isDirectory
 import org.jetbrains.kotlin.konan.file.File as KonanFile
 
 interface KtObjCExportModuleNaming {
-    context(KtAnalysisSession)
+    context(KaSession)
     fun getModuleName(module: KtModule): String?
 
     companion object {
@@ -26,7 +26,7 @@ interface KtObjCExportModuleNaming {
     }
 }
 
-context(KtAnalysisSession, KtObjCExportSession)
+context(KaSession, KtObjCExportSession)
 internal fun KtModule.getObjCKotlinModuleName(): String? {
     return cached(GetObjCKotlinModuleNameCacheKey(this)) {
         internal.moduleNaming.getModuleName(this)
@@ -44,7 +44,7 @@ fun KtObjCExportModuleNaming(implementations: List<KtObjCExportModuleNaming>): K
 }
 
 internal object KtKlibObjCExportModuleNaming : KtObjCExportModuleNaming {
-    context(KtAnalysisSession)
+    context(KaSession)
     override fun getModuleName(module: KtModule): String? {
         /*
         In this implementation, we're actually looking into the klib file, trying to resolve
@@ -62,7 +62,7 @@ internal object KtKlibObjCExportModuleNaming : KtObjCExportModuleNaming {
 }
 
 internal object KtSimpleObjCExportModuleNaming : KtObjCExportModuleNaming {
-    context(KtAnalysisSession)
+    context(KaSession)
     override fun getModuleName(module: KtModule): String? {
         return when (module) {
             is KtSourceModule -> module.stableModuleName ?: module.moduleName
@@ -73,7 +73,7 @@ internal object KtSimpleObjCExportModuleNaming : KtObjCExportModuleNaming {
 }
 
 internal class KtCompositeObjCExportModuleNaming(private val implementations: List<KtObjCExportModuleNaming>) : KtObjCExportModuleNaming {
-    context(KtAnalysisSession) override fun getModuleName(module: KtModule): String? {
+    context(KaSession) override fun getModuleName(module: KtModule): String? {
         return implementations.firstNotNullOfOrNull { implementation -> implementation.getModuleName(module) }
     }
 }

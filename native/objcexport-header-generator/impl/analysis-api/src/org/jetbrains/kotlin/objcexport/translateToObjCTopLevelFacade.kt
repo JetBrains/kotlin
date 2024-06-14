@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterface
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterfaceImpl
 import org.jetbrains.kotlin.backend.konan.objcexport.toNameAttributes
@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDefaultSuperClassOrPr
  *
  * See related [translateToObjCExtensionFacades]
  */
-context(KtAnalysisSession, KtObjCExportSession)
+context(KaSession, KtObjCExportSession)
 fun KtResolvedObjCExportFile.translateToObjCTopLevelFacade(): ObjCInterface? {
     val extensions = callableSymbols
         .filter { !it.isExtension || it.isExtensionOfMappedObjCType }
@@ -69,6 +69,6 @@ fun KtResolvedObjCExportFile.translateToObjCTopLevelFacade(): ObjCInterface? {
     )
 }
 
-context(KtAnalysisSession, KtObjCExportSession)
-internal val KtCallableSymbol.isExtensionOfMappedObjCType: Boolean
+context(KaSession, KtObjCExportSession)
+internal val KaCallableSymbol.isExtensionOfMappedObjCType: Boolean
     get() = isExtension && receiverParameter?.type?.isMappedObjCType == true

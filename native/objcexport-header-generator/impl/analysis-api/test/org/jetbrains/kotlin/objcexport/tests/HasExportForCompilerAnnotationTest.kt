@@ -1,9 +1,9 @@
 package org.jetbrains.kotlin.objcexport.tests
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.hasExportForCompilerAnnotation
 import org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.objcexport.testUtils.getPropertyOrFail
@@ -40,9 +40,9 @@ class HasExportForCompilerAnnotationTest(
     }
 }
 
-context(KtAnalysisSession)
+context(KaSession)
 @OptIn(KaExperimentalApi::class)
-private fun verifyHasExportForCompilerAnnotation(property: KtPropertySymbol): Boolean {
+private fun verifyHasExportForCompilerAnnotation(property: KaPropertySymbol): Boolean {
     return property
         .returnType
         .scope?.getConstructors()?.toList()?.any { it.hasExportForCompilerAnnotation }

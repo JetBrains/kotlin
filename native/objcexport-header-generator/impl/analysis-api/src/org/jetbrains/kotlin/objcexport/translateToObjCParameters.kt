@@ -1,15 +1,15 @@
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySetterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySetterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.backend.konan.cKeywords
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.name.StandardClassIds
 
-context(KtAnalysisSession, KtObjCExportSession)
-internal fun KtFunctionLikeSymbol.translateToObjCParameters(baseMethodBridge: MethodBridge): List<ObjCParameter> {
+context(KaSession, KtObjCExportSession)
+internal fun KaFunctionLikeSymbol.translateToObjCParameters(baseMethodBridge: MethodBridge): List<ObjCParameter> {
     fun unifyName(initialName: String, usedNames: Set<String>): String {
         var unique = initialName.toValidObjCSwiftIdentifier()
         while (unique in usedNames || unique in cKeywords) {
@@ -29,7 +29,7 @@ internal fun KtFunctionLikeSymbol.translateToObjCParameters(baseMethodBridge: Me
             is MethodBridgeValueParameter.Mapped -> {
                 if (parameter == null) return@forEach
                 when {
-                    this is KtPropertySetterSymbol -> {
+                    this is KaPropertySetterSymbol -> {
                         if (parameter.isReceiver) "receiver"
                         else "value"
                     }
@@ -88,6 +88,6 @@ internal fun KtFunctionLikeSymbol.translateToObjCParameters(baseMethodBridge: Me
 /**
  * Not implemented
  */
-internal fun KtTypeParameterSymbol.getObjCName(): ObjCExportName {
+internal fun KaTypeParameterSymbol.getObjCName(): ObjCExportName {
     TODO()
 }

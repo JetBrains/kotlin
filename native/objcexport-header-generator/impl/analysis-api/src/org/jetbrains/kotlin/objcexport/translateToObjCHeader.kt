@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.*
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.objcexport.extras.requiresForwardDeclaration
 import org.jetbrains.kotlin.objcexport.extras.throwsAnnotationClassIds
 
 
-context(KtAnalysisSession, KtObjCExportSession)
+context(KaSession, KtObjCExportSession)
 fun translateToObjCHeader(
     files: List<KtObjCExportFile>,
     withObjCBaseDeclarations: Boolean = true,
@@ -69,7 +69,7 @@ private class KtObjCExportHeaderGenerator(
      */
     private val objCClassForwardDeclarations = mutableSetOf<String>()
 
-    context(KtAnalysisSession, KtObjCExportSession)
+    context(KaSession, KtObjCExportSession)
     fun translateAll(files: List<KtObjCExportFile>) {
         /**
          * Step 1: Translate classifiers (class, interface, object, ...)
@@ -95,13 +95,13 @@ private class KtObjCExportHeaderGenerator(
         }
     }
 
-    context(KtAnalysisSession, KtObjCExportSession)
+    context(KaSession, KtObjCExportSession)
     private fun translateClass(classId: ClassId) {
         val classOrObjectSymbol = findClass(classId) ?: return
         translateClassOrObjectSymbol(classOrObjectSymbol)
     }
 
-    context(KtAnalysisSession, KtObjCExportSession)
+    context(KaSession, KtObjCExportSession)
     private fun translateFileClassifiers(file: KtObjCExportFile) {
         val resolvedFile = file.resolve()
         resolvedFile.classifierSymbols.sortedWith(StableClassifierOrder).forEach { classOrObjectSymbol ->
@@ -109,7 +109,7 @@ private class KtObjCExportHeaderGenerator(
         }
     }
 
-    context(KtAnalysisSession, KtObjCExportSession)
+    context(KaSession, KtObjCExportSession)
     private fun translateFileFacades(file: KtObjCExportFile) {
         val resolvedFile = file.resolve()
 
@@ -125,8 +125,8 @@ private class KtObjCExportHeaderGenerator(
         }
     }
 
-    context(KtAnalysisSession, KtObjCExportSession)
-    private fun translateClassOrObjectSymbol(symbol: KtClassOrObjectSymbol): ObjCClass? {
+    context(KaSession, KtObjCExportSession)
+    private fun translateClassOrObjectSymbol(symbol: KaClassOrObjectSymbol): ObjCClass? {
         /* No classId, no stubs ¯\_(ツ)_/¯ */
         val classId = symbol.classId ?: return null
 
@@ -223,7 +223,7 @@ private class KtObjCExportHeaderGenerator(
         return ObjCClassForwardDeclaration(className)
     }
 
-    context(KtAnalysisSession, KtObjCExportSession)
+    context(KaSession, KtObjCExportSession)
     fun buildObjCHeader(): ObjCHeader {
         val hasErrorTypes = objCStubs.hasErrorTypes()
 

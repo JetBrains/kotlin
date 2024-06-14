@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.objcexport.analysisApiUtils
 
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 
-internal fun KtSymbol.getKDocString(): String? {
+internal fun KaSymbol.getKDocString(): String? {
     val psi = psi
     if (psi is KtDeclaration) {
         if (psi is KtPrimaryConstructor)

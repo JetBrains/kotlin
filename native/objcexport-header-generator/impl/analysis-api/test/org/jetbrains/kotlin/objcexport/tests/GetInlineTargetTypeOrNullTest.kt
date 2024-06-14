@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.objcexport.tests
 
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
-import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getInlineTargetTypeOrNull
 import org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysis
@@ -79,9 +79,9 @@ class GetInlineTargetTypeOrNullTest(
         }
     }
 
-    private fun KtType?.classIdOrFail(): ClassId {
+    private fun KaType?.classIdOrFail(): ClassId {
         if (this == null) error("Type was null")
-        if (this !is KtNonErrorClassType) fail("Unexpected error type: '$this'")
+        if (this !is KaClassType) fail("Unexpected error type: '$this'")
         return classId
     }
 }

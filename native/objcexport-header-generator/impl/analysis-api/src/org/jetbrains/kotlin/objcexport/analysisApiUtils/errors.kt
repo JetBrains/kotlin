@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.objcexport.analysisApiUtils
 
-import org.jetbrains.kotlin.analysis.api.types.KtClassErrorType
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.types.KaClassErrorType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.objcexport.KtObjCExportSession
 import org.jetbrains.kotlin.objcexport.extras.objCTypeExtras
@@ -26,8 +26,8 @@ internal fun ObjCExportStub.hasErrorTypes(): Boolean {
     }
 }
 
-internal val KtType.isError
-    get() = this is KtClassErrorType
+internal val KaType.isError
+    get() = this is KaClassErrorType
 
 internal const val errorClassName = "ERROR"
 

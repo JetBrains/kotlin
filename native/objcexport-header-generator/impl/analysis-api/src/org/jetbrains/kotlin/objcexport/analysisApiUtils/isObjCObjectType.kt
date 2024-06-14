@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.objcexport.analysisApiUtils
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.name.NativeStandardInteropNames
 
-context(KtAnalysisSession)
-internal fun KtType.isObjCObjectType(): Boolean {
+context(KaSession)
+internal fun KaType.isObjCObjectType(): Boolean {
     val symbol = this.symbol
 
     if (symbol != null) {

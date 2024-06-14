@@ -1,13 +1,13 @@
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.types.KtFunctionalType
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.types.KaFunctionType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 
-context(KtAnalysisSession, KtObjCExportSession)
-internal fun KtType.translateToObjCFunctionType(typeBridge: BlockPointerBridge): ObjCReferenceType {
-    if (this !is KtFunctionalType) return ObjCIdType
+context(KaSession, KtObjCExportSession)
+internal fun KaType.translateToObjCFunctionType(typeBridge: BlockPointerBridge): ObjCReferenceType {
+    if (this !is KaFunctionType) return ObjCIdType
 
     return ObjCBlockPointerType(
         returnType = if (typeBridge.returnsVoid) ObjCVoidType else returnType.translateToObjCReferenceType(),

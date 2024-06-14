@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.native.analysis.api
 
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 
@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
  * @see [getFunctionSymbols]
  * @see [getPropertySymbols]
  */
-context(KtAnalysisSession)
-public fun KlibDeclarationAddress.getSymbols(): Sequence<KtSymbol> {
+context(KaSession)
+public fun KlibDeclarationAddress.getSymbols(): Sequence<KaSymbol> {
     return when (this) {
         is KlibClassAddress -> getClassOrObjectSymbol()?.let { symbol -> sequenceOf(symbol) } ?: emptySequence()
         is KlibTypeAliasAddress -> getTypeAliasSymbol()?.let { symbol -> sequenceOf(symbol) } ?: emptySequence()
@@ -39,14 +39,14 @@ public fun KlibDeclarationAddress.getSymbols(): Sequence<KtSymbol> {
 /**
  * @see [getSymbols]
  */
-context(KtAnalysisSession)
-public fun KlibClassAddress.getClassOrObjectSymbol(): KtClassOrObjectSymbol? {
+context(KaSession)
+public fun KlibClassAddress.getClassOrObjectSymbol(): KaClassOrObjectSymbol? {
     return findClass(classId)
         ?.takeIf { symbol -> symbol in this }
 }
 
-context(KtAnalysisSession)
-public fun KlibTypeAliasAddress.getTypeAliasSymbol(): KtTypeAliasSymbol? {
+context(KaSession)
+public fun KlibTypeAliasAddress.getTypeAliasSymbol(): KaTypeAliasSymbol? {
     return findTypeAlias(classId)
         ?.takeIf { symbol -> symbol in this }
 }
@@ -54,8 +54,8 @@ public fun KlibTypeAliasAddress.getTypeAliasSymbol(): KtTypeAliasSymbol? {
 /**
  * @see [getSymbols]
  */
-context(KtAnalysisSession)
-public fun KlibCallableAddress.getCallableSymbols(): Sequence<KtCallableSymbol> {
+context(KaSession)
+public fun KlibCallableAddress.getCallableSymbols(): Sequence<KaCallableSymbol> {
     return when (this) {
         is KlibFunctionAddress -> getFunctionSymbols()
         is KlibPropertyAddress -> getPropertySymbols()
@@ -65,26 +65,26 @@ public fun KlibCallableAddress.getCallableSymbols(): Sequence<KtCallableSymbol> 
 /**
  * @see [getSymbols]
  */
-context(KtAnalysisSession)
-public fun KlibFunctionAddress.getFunctionSymbols(): Sequence<KtFunctionSymbol> {
+context(KaSession)
+public fun KlibFunctionAddress.getFunctionSymbols(): Sequence<KaFunctionSymbol> {
     return findTopLevelCallables(packageFqName, callableName)
-        .filterIsInstance<KtFunctionSymbol>()
+        .filterIsInstance<KaFunctionSymbol>()
         .filter { symbol -> symbol in this }
 }
 
 /**
  * @see [getSymbols]
  */
-context(KtAnalysisSession)
-public fun KlibPropertyAddress.getPropertySymbols(): Sequence<KtPropertySymbol> {
+context(KaSession)
+public fun KlibPropertyAddress.getPropertySymbols(): Sequence<KaPropertySymbol> {
     return findTopLevelCallables(packageFqName, callableName)
-        .filterIsInstance<KtPropertySymbol>()
+        .filterIsInstance<KaPropertySymbol>()
         .filter { symbol -> symbol in this }
 }
 
-context(KtAnalysisSession)
+context(KaSession)
 @OptIn(KaNonPublicApi::class)
-private operator fun KlibDeclarationAddress.contains(symbol: KtDeclarationSymbol): Boolean {
+private operator fun KlibDeclarationAddress.contains(symbol: KaDeclarationSymbol): Boolean {
     val symbolKlibSourceFileName = symbol.klibSourceFileName
     val symbolLibraryModule = symbol.containingModule as? KtLibraryModule ?: return false
 

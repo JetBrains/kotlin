@@ -1,15 +1,11 @@
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.KtStarTypeProjection
-import org.jetbrains.kotlin.analysis.api.KtTypeArgumentWithVariance
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
-import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.api.types.KtTypeParameterType
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.backend.konan.KonanPrimitiveType
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.name.ClassId
@@ -27,8 +23,8 @@ import org.jetbrains.kotlin.objcexport.extras.requiresForwardDeclaration
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mapType]
  */
-context(KtAnalysisSession, KtObjCExportSession)
-internal fun KtType.translateToObjCType(typeBridge: TypeBridge): ObjCType {
+context(KaSession, KtObjCExportSession)
+internal fun KaType.translateToObjCType(typeBridge: TypeBridge): ObjCType {
     return when (typeBridge) {
         is ReferenceBridge -> this.translateToObjCReferenceType()
         is BlockPointerBridge -> this.translateToObjCFunctionType(typeBridge)
@@ -54,18 +50,18 @@ internal fun KtType.translateToObjCType(typeBridge: TypeBridge): ObjCType {
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mapReferenceType]
  */
-context(KtAnalysisSession, KtObjCExportSession)
-internal fun KtType.translateToObjCReferenceType(): ObjCReferenceType {
+context(KaSession, KtObjCExportSession)
+internal fun KaType.translateToObjCReferenceType(): ObjCReferenceType {
     return mapToReferenceTypeIgnoringNullability().withNullabilityOf(this)
 }
 
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mapReferenceTypeIgnoringNullability]
  */
-context(KtAnalysisSession, KtObjCExportSession)
-internal fun KtType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReferenceType {
+context(KaSession, KtObjCExportSession)
+internal fun KaType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReferenceType {
     val fullyExpandedType = fullyExpandedType
-    val classId = (fullyExpandedType as? KtNonErrorClassType)?.classId
+    val classId = (fullyExpandedType as? KaClassType)?.classId
 
     if (isError) {
         return objCErrorType
@@ -95,10 +91,10 @@ internal fun KtType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReferenc
     }
 
     /* Check if inline type represents 'regular' inline class */
-    val classSymbol: KtClassOrObjectSymbol? = if (classId != null) findClass(classId) else null
+    val classSymbol: KaClassOrObjectSymbol? = if (classId != null) findClass(classId) else null
     run check@{
         if (classId == null) return@check
-        if (classSymbol !is KtNamedClassOrObjectSymbol) return@check
+        if (classSymbol !is KaNamedClassOrObjectSymbol) return@check
         if (classSymbol.isInline) return ObjCIdType
     }
 
@@ -107,8 +103,8 @@ internal fun KtType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReferenc
         return inlineTargetType.mapToReferenceTypeIgnoringNullability()
     }
 
-    if (fullyExpandedType is KtNonErrorClassType) {
-        return if (classSymbol?.classKind == KtClassKind.INTERFACE) {
+    if (fullyExpandedType is KaClassType) {
+        return if (classSymbol?.classKind == KaClassKind.INTERFACE) {
             ObjCProtocolType(
                 protocolName = fullyExpandedType.objCTypeName,
                 extras = objCTypeExtras {
@@ -128,14 +124,14 @@ internal fun KtType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReferenc
         }
     }
 
-    if (fullyExpandedType is KtTypeParameterType) {
+    if (fullyExpandedType is KaTypeParameterType) {
         val definingSymbol = fullyExpandedType.symbol.containingSymbol
 
-        if (definingSymbol is KtCallableSymbol) {
+        if (definingSymbol is KaCallableSymbol) {
             return ObjCIdType
         }
 
-        if (definingSymbol is KtClassOrObjectSymbol && definingSymbol.classKind == KtClassKind.INTERFACE) {
+        if (definingSymbol is KaClassOrObjectSymbol && definingSymbol.classKind == KaClassKind.INTERFACE) {
             return ObjCIdType
         }
         /*
@@ -148,24 +144,24 @@ internal fun KtType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReferenc
     return objCErrorType
 }
 
-context(KtAnalysisSession, KtObjCExportSession)
-private val KtNonErrorClassType.objCTypeName: String
+context(KaSession, KtObjCExportSession)
+private val KaClassType.objCTypeName: String
     get() {
         return findClass(classId)?.getObjCClassOrProtocolName()?.objCName
             ?: classId.shortClassName.asString().getObjCKotlinStdlibClassOrProtocolName().objCName
     }
 
-context(KtAnalysisSession, KtObjCExportSession)
-internal fun KtType.translateTypeArgumentsToObjC(): List<ObjCNonNullReferenceType> {
-    if (this !is KtNonErrorClassType) return emptyList()
+context(KaSession, KtObjCExportSession)
+internal fun KaType.translateTypeArgumentsToObjC(): List<ObjCNonNullReferenceType> {
+    if (this !is KaClassType) return emptyList()
 
     /* See special casing below */
     val isKnownCollectionType = classId in collectionClassIds
 
     return typeArguments.map { typeArgument ->
         when (typeArgument) {
-            is KtStarTypeProjection -> ObjCIdType
-            is KtTypeArgumentWithVariance -> {
+            is KaStarTypeProjection -> ObjCIdType
+            is KaTypeArgumentWithVariance -> {
                 /*
                 Kotlin `null` keys and values are represented as `NSNull` singleton in collections
                 */

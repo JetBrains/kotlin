@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCComment
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProtocol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProtocolImpl
@@ -16,10 +16,10 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDeclaredSuperInterfac
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isObjCBaseCallable
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 
-context(KtAnalysisSession, KtObjCExportSession)
-fun KtClassOrObjectSymbol.translateToObjCProtocol(): ObjCProtocol? {
+context(KaSession, KtObjCExportSession)
+fun KaClassOrObjectSymbol.translateToObjCProtocol(): ObjCProtocol? {
     // TODO: check if this symbol shall be exposed in the first place
-    require(classKind == KtClassKind.INTERFACE)
+    require(classKind == KaClassKind.INTERFACE)
     if (!isVisibleInObjC()) return null
 
     // TODO: Check error type!
@@ -42,8 +42,8 @@ fun KtClassOrObjectSymbol.translateToObjCProtocol(): ObjCProtocol? {
     )
 }
 
-context(KtAnalysisSession, KtObjCExportSession)
-internal fun KtClassOrObjectSymbol.superProtocols(): List<String> {
+context(KaSession, KtObjCExportSession)
+internal fun KaClassOrObjectSymbol.superProtocols(): List<String> {
     return getDeclaredSuperInterfaceSymbols()
         .filter { it.isVisibleInObjC() }
         .map { superInterface -> superInterface.getObjCClassOrProtocolName().objCName }

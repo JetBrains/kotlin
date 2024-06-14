@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.annotations.hasAnnotation
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.nameOrAnonymous
-import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -40,22 +39,22 @@ private val objCProtocolClassId = ClassId(cInteropPackage, Name.identifier("ObjC
  * Such types cannot be directly translated but need to use a supertype that is explicitly marked with an
  * `@ExternalObjCClass` annotation. (See [org.jetbrains.kotlin.objcexport.analysisApiUtils.isObjCObjectType]
  */
-context(KtAnalysisSession, KtObjCExportSession)
-internal fun KtType.translateToObjCObjectType(): ObjCNonNullReferenceType {
-    if (this !is KtNonErrorClassType) return objCErrorType
-    val classSymbol = this.symbol as? KtClassOrObjectSymbol ?: return ObjCIdType
+context(KaSession, KtObjCExportSession)
+internal fun KaType.translateToObjCObjectType(): ObjCNonNullReferenceType {
+    if (this !is KaClassType) return objCErrorType
+    val classSymbol = this.symbol as? KaClassOrObjectSymbol ?: return ObjCIdType
     return classSymbol.translateToObjCObjectType()
 }
 
-context(KtAnalysisSession, KtObjCExportSession)
-private fun KtClassOrObjectSymbol.translateToObjCObjectType(): ObjCNonNullReferenceType {
+context(KaSession, KtObjCExportSession)
+private fun KaClassOrObjectSymbol.translateToObjCObjectType(): ObjCNonNullReferenceType {
     if (isObjCMetaClass()) return ObjCMetaClassType
     if (isObjCProtocolClass()) return ObjCClassType("Protocol", extras = objCTypeExtras {
         requiresForwardDeclaration = true
     })
 
     if (isExternalObjCClass() || isObjCForwardDeclaration()) {
-        return if (classKind == KtClassKind.INTERFACE) {
+        return if (classKind == KaClassKind.INTERFACE) {
             ObjCProtocolType(nameOrAnonymous.asString().removeSuffix("Protocol"), extras = objCTypeExtras {
                 requiresForwardDeclaration = true
             })
@@ -69,25 +68,25 @@ private fun KtClassOrObjectSymbol.translateToObjCObjectType(): ObjCNonNullRefere
     return getSuperClassSymbolNotAny()?.translateToObjCObjectType() ?: ObjCIdType
 }
 
-context(KtAnalysisSession)
-private fun KtClassOrObjectSymbol.isObjCMetaClass(): Boolean {
+context(KaSession)
+private fun KaClassOrObjectSymbol.isObjCMetaClass(): Boolean {
     if (classId == objCClassClassId) return true
     return getDeclaredSuperInterfaceSymbols().any { superInterfaceSymbol -> superInterfaceSymbol.isObjCMetaClass() }
 }
 
-context(KtAnalysisSession)
-private fun KtClassOrObjectSymbol.isObjCProtocolClass(): Boolean {
+context(KaSession)
+private fun KaClassOrObjectSymbol.isObjCProtocolClass(): Boolean {
     if (classId == objCProtocolClassId) return true
     return getDeclaredSuperInterfaceSymbols().any { superInterfaceSymbol -> superInterfaceSymbol.isObjCProtocolClass() }
 }
 
-context(KtAnalysisSession)
-private fun KtClassOrObjectSymbol.isExternalObjCClass(): Boolean {
+context(KaSession)
+private fun KaClassOrObjectSymbol.isExternalObjCClass(): Boolean {
     return NativeStandardInteropNames.externalObjCClassClassId in annotations
 }
 
-context(KtAnalysisSession)
-private fun KtClassOrObjectSymbol.isObjCForwardDeclaration(): Boolean {
+context(KaSession)
+private fun KaClassOrObjectSymbol.isObjCForwardDeclaration(): Boolean {
     val classId = classId ?: return false
     return when (NativeForwardDeclarationKind.packageFqNameToKind[classId.packageFqName]) {
         null, NativeForwardDeclarationKind.Struct -> false

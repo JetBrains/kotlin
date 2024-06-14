@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.objcexport.analysisApiUtils
 
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 
 /**
  * @return `true` when the declaration is considered a `fake override`.
@@ -18,10 +18,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
  * - [KtSymbolOrigin.INTERSECTION_OVERRIDE]
  * - [KtSymbolOrigin.SUBSTITUTION_OVERRIDE]
  */
-internal val KtSymbol.isFakeOverride: Boolean
+internal val KaSymbol.isFakeOverride: Boolean
     get() {
         val origin = this.origin
-        if (origin == KtSymbolOrigin.INTERSECTION_OVERRIDE) return true
-        if (origin == KtSymbolOrigin.SUBSTITUTION_OVERRIDE) return true
+        if (origin == KaSymbolOrigin.INTERSECTION_OVERRIDE) return true
+        if (origin == KaSymbolOrigin.SUBSTITUTION_OVERRIDE) return true
         return false
     }

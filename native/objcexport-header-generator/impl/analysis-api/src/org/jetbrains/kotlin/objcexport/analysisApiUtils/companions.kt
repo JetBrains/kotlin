@@ -1,8 +1,8 @@
 package org.jetbrains.kotlin.objcexport.analysisApiUtils
 
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
 
 
-internal val KtClassOrObjectSymbol.isCompanion: Boolean
-    get() = classKind == KtClassKind.COMPANION_OBJECT
+internal val KaClassOrObjectSymbol.isCompanion: Boolean
+    get() = classKind == KaClassKind.COMPANION_OBJECT

@@ -1,9 +1,9 @@
 package org.jetbrains.kotlin.objcexport.analysisApiUtils
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.types.KtFunctionalType
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.types.KaFunctionType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.backend.konan.KonanPrimitiveType
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.objcexport.*
@@ -16,11 +16,11 @@ import org.jetbrains.kotlin.objcexport.*
  *
  * See K1 implementation [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapperKt.bridgeMethodImpl]
  */
-context(KtAnalysisSession, KtObjCExportSession)
-internal fun KtFunctionLikeSymbol.getFunctionMethodBridge(): MethodBridge {
+context(KaSession, KtObjCExportSession)
+internal fun KaFunctionLikeSymbol.getFunctionMethodBridge(): MethodBridge {
 
     val valueParameters = mutableListOf<MethodBridgeValueParameter>()
-    val isInner = (containingSymbol as? KtNamedClassOrObjectSymbol)?.isInner ?: false
+    val isInner = (containingSymbol as? KaNamedClassOrObjectSymbol)?.isInner ?: false
 
     this.receiverParameter?.apply {
         valueParameters += bridgeParameter(this.type)
@@ -51,8 +51,8 @@ internal fun KtFunctionLikeSymbol.getFunctionMethodBridge(): MethodBridge {
     )
 }
 
-context(KtAnalysisSession)
-internal val KtCallableSymbol.bridgeReceiverType: MethodBridgeReceiver
+context(KaSession)
+internal val KaCallableSymbol.bridgeReceiverType: MethodBridgeReceiver
     get() {
         return if (isArrayConstructor) {
             MethodBridgeReceiver.Factory
@@ -66,17 +66,17 @@ internal val KtCallableSymbol.bridgeReceiverType: MethodBridgeReceiver
 /**
  * [ObjCExportMapper.bridgeParameter]
  */
-context(KtAnalysisSession, KtObjCExportSession)
-private fun bridgeParameter(type: KtType): MethodBridgeValueParameter {
+context(KaSession, KtObjCExportSession)
+private fun bridgeParameter(type: KaType): MethodBridgeValueParameter {
     return MethodBridgeValueParameter.Mapped(bridgeType(type))
 }
 
 /**
  * [ObjCExportMapper.bridgeType]
  */
-context(KtAnalysisSession)
+context(KaSession)
 private fun bridgeType(
-    type: KtType,
+    type: KaType,
 ): TypeBridge {
     val primitiveObjCValueType = when {
         type.isBooleanType -> ObjCValueType.BOOL
@@ -116,13 +116,13 @@ private fun bridgeType(
 /**
  * [ObjCExportMapper.bridgeFunctionType]
  */
-context(KtAnalysisSession)
-private fun bridgeFunctionType(type: KtType): TypeBridge {
+context(KaSession)
+private fun bridgeFunctionType(type: KaType): TypeBridge {
 
     val numberOfParameters: Int
-    val returnType: KtType
+    val returnType: KaType
 
-    if (type is KtFunctionalType) {
+    if (type is KaFunctionType) {
         numberOfParameters = type.parameterTypes.size
         returnType = type.returnType
     } else {
@@ -137,8 +137,8 @@ private fun bridgeFunctionType(type: KtType): TypeBridge {
 /**
  * [ObjCExportMapper.bridgeReturnType]
  */
-context(KtAnalysisSession, KtObjCExportSession)
-private fun KtCallableSymbol.bridgeReturnType(): MethodBridge.ReturnValue {
+context(KaSession, KtObjCExportSession)
+private fun KaCallableSymbol.bridgeReturnType(): MethodBridge.ReturnValue {
 
     if (isArrayConstructor) {
         return MethodBridge.ReturnValue.Instance.FactoryResult
@@ -196,7 +196,7 @@ private fun MethodBridgeValueParameter.isBlockPointer(): Boolean = when (this) {
     is MethodBridgeValueParameter.SuspendCompletion -> true
 }
 
-private val KtCallableSymbol.successOrVoidReturnValue: MethodBridge.ReturnValue
+private val KaCallableSymbol.successOrVoidReturnValue: MethodBridge.ReturnValue
     get() {
         return if (hasThrowsAnnotation) MethodBridge.ReturnValue.WithError.Success
         else MethodBridge.ReturnValue.Void

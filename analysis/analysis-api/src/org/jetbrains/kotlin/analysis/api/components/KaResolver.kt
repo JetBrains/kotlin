@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallInfo
-import org.jetbrains.kotlin.analysis.api.resolution.KtCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.psi.KtElement
@@ -54,7 +53,7 @@ public interface KaResolver {
      * [resolveToCall] only returns the final result of overload resolution, i.e., the selected callable after considering candidate
      * applicability and choosing the most specific candidate.
      */
-    public fun KtElement.resolveToCallCandidates(): List<KtCallCandidateInfo>
+    public fun KtElement.resolveToCallCandidates(): List<KaCallCandidateInfo>
 
     @Deprecated(
         message = "The API will be changed soon. Use 'collectCallCandidatesOld()' in a transit period",

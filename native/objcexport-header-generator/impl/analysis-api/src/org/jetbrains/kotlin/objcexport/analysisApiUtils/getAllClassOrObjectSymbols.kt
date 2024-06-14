@@ -1,8 +1,8 @@
 package org.jetbrains.kotlin.objcexport.analysisApiUtils
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
 
 
 /**
@@ -18,18 +18,18 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
  *```
  * returns `sequenceOf(A, B, C)`
  */
-context(KtAnalysisSession)
-internal fun KtFileSymbol.getAllClassOrObjectSymbols(): List<KtClassOrObjectSymbol> {
+context(KaSession)
+internal fun KaFileSymbol.getAllClassOrObjectSymbols(): List<KaClassOrObjectSymbol> {
     return fileScope.classifiers
-        .filterIsInstance<KtClassOrObjectSymbol>()
+        .filterIsInstance<KaClassOrObjectSymbol>()
         .flatMap { classSymbol -> listOf(classSymbol) + classSymbol.getAllClassOrObjectSymbols() }
         .toList()
 }
 
-context(KtAnalysisSession)
-private fun KtClassOrObjectSymbol.getAllClassOrObjectSymbols(): Sequence<KtClassOrObjectSymbol> {
+context(KaSession)
+private fun KaClassOrObjectSymbol.getAllClassOrObjectSymbols(): Sequence<KaClassOrObjectSymbol> {
     return sequence {
-        val nestedClasses = memberScope.classifiers.filterIsInstance<KtClassOrObjectSymbol>()
+        val nestedClasses = memberScope.classifiers.filterIsInstance<KaClassOrObjectSymbol>()
         yieldAll(nestedClasses)
 
         nestedClasses.forEach { nestedClass ->
