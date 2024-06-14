@@ -2813,10 +2813,10 @@ internal class ForbiddenVarargParameterTypeImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtParameter>(firDiagnostic, token), KaFirDiagnostic.ForbiddenVarargParameterType
 
-internal class ValueParameterWithNoTypeAnnotationImpl(
+internal class ValueParameterWithoutExplicitTypeImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtParameter>(firDiagnostic, token), KaFirDiagnostic.ValueParameterWithNoTypeAnnotation
+) : KaAbstractFirDiagnostic<KtParameter>(firDiagnostic, token), KaFirDiagnostic.ValueParameterWithoutExplicitType
 
 internal class CannotInferParameterTypeImpl(
     firDiagnostic: KtPsiDiagnostic,

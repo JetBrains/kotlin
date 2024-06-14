@@ -1195,7 +1195,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val FORBIDDEN_VARARG_PARAMETER_TYPE by error<KtParameter>(PositioningStrategy.PARAMETER_VARARG_MODIFIER) {
             parameter<ConeKotlinType>("varargParameterType")
         }
-        val VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION by error<KtParameter>()
+        val VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE by error<KtParameter>()
 
         // TODO: replace with KtParameter
         val CANNOT_INFER_PARAMETER_TYPE by error<KtElement>()

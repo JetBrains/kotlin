@@ -47,7 +47,7 @@ object FirFunctionParameterChecker : FirFunctionChecker(MppCheckerKind.Common) {
             val diagnostic = returnTypeRef.diagnostic
             if (diagnostic is ConeSimpleDiagnostic && diagnostic.kind == DiagnosticKind.ValueParameterWithNoTypeAnnotation) {
                 reporter.reportOn(
-                    valueParameter.source, FirErrors.VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION,
+                    valueParameter.source, FirErrors.VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE,
                     context
                 )
             }

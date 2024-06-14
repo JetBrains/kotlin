@@ -1882,6 +1882,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
     }
 
     @Test
+    @TestMetadata("valueParameterWithoutExplicitType.kt")
+    public void testValueParameterWithoutExplicitType() {
+      runTest("compiler/testData/diagnostics/tests/valueParameterWithoutExplicitType.kt");
+    }
+
+    @Test
     @TestMetadata("varOverriddenByValThroughIntersection.kt")
     public void testVarOverriddenByValThroughIntersection() {
       runTest("compiler/testData/diagnostics/tests/varOverriddenByValThroughIntersection.kt");

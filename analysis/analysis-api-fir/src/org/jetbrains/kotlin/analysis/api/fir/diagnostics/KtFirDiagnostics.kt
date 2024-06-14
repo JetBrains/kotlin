@@ -2347,8 +2347,8 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val varargParameterType: KaType
     }
 
-    interface ValueParameterWithNoTypeAnnotation : KaFirDiagnostic<KtParameter> {
-        override val diagnosticClass get() = ValueParameterWithNoTypeAnnotation::class
+    interface ValueParameterWithoutExplicitType : KaFirDiagnostic<KtParameter> {
+        override val diagnosticClass get() = ValueParameterWithoutExplicitType::class
     }
 
     interface CannotInferParameterType : KaFirDiagnostic<KtElement> {

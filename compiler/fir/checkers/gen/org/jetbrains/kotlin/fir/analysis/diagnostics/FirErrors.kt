@@ -601,7 +601,7 @@ object FirErrors {
     val USELESS_VARARG_ON_PARAMETER: KtDiagnosticFactory0 = KtDiagnosticFactory0("USELESS_VARARG_ON_PARAMETER", WARNING, SourceElementPositioningStrategies.DEFAULT, KtParameter::class)
     val MULTIPLE_VARARG_PARAMETERS: KtDiagnosticFactory0 = KtDiagnosticFactory0("MULTIPLE_VARARG_PARAMETERS", ERROR, SourceElementPositioningStrategies.PARAMETER_VARARG_MODIFIER, KtParameter::class)
     val FORBIDDEN_VARARG_PARAMETER_TYPE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("FORBIDDEN_VARARG_PARAMETER_TYPE", ERROR, SourceElementPositioningStrategies.PARAMETER_VARARG_MODIFIER, KtParameter::class)
-    val VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtParameter::class)
+    val VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE: KtDiagnosticFactory0 = KtDiagnosticFactory0("VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtParameter::class)
     val CANNOT_INFER_PARAMETER_TYPE: KtDiagnosticFactory0 = KtDiagnosticFactory0("CANNOT_INFER_PARAMETER_TYPE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
     val NO_TAIL_CALLS_FOUND: KtDiagnosticFactory0 = KtDiagnosticFactory0("NO_TAIL_CALLS_FOUND", WARNING, SourceElementPositioningStrategies.TAILREC_MODIFIER, KtNamedFunction::class)
     val TAILREC_ON_VIRTUAL_MEMBER_ERROR: KtDiagnosticFactory0 = KtDiagnosticFactory0("TAILREC_ON_VIRTUAL_MEMBER_ERROR", ERROR, SourceElementPositioningStrategies.TAILREC_MODIFIER, KtNamedFunction::class)

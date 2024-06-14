@@ -712,7 +712,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VALUE_CLASS_EMPTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VALUE_CLASS_NOT_FINAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VALUE_CLASS_NOT_TOP_LEVEL
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAL_OR_VAR_ON_CATCH_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAL_OR_VAR_ON_FUN_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAL_OR_VAR_ON_LOOP_PARAMETER
@@ -1996,7 +1996,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(MULTIPLE_VARARG_PARAMETERS, "Multiple vararg parameters are prohibited.")
         map.put(FORBIDDEN_VARARG_PARAMETER_TYPE, "Prohibited vararg parameter type ''{0}''.", RENDER_TYPE)
-        map.put(VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION, "A type annotation is required on a value parameter.")
+        map.put(VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE, "A type annotation is required on a value parameter.")
         map.put(CANNOT_INFER_PARAMETER_TYPE, "Cannot infer type for this parameter. Please specify it explicitly.")
         map.put(NO_TAIL_CALLS_FOUND, "A function is marked as tail-recursive but no tail calls are found.")
         map.put(TAILREC_ON_VIRTUAL_MEMBER_ERROR, "Tailrec is prohibited on open members.")

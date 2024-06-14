@@ -3321,8 +3321,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION) { firDiagnostic ->
-        ValueParameterWithNoTypeAnnotationImpl(
+    add(FirErrors.VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE) { firDiagnostic ->
+        ValueParameterWithoutExplicitTypeImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
