@@ -246,11 +246,12 @@ abstract interface classifiers.inheritance/PublicInterface { // classifiers.inhe
     open fun publicDefaultFunInPublicInterface(): kotlin/String // classifiers.inheritance/PublicInterface.publicDefaultFunInPublicInterface|2012864992434792153[0]
 }
 sealed class classifiers.inheritance/SealedClass { // classifiers.inheritance/SealedClass|null[0]
-    constructor <init>() // classifiers.inheritance/SealedClass.<init>|-5645683436151566731[0]
+    sealed class SealedClass_SealedSubclass1 : classifiers.inheritance/SealedClass // classifiers.inheritance/SealedClass.SealedClass_SealedSubclass1|null[0]
     final class SealedClass_Subclass1 : classifiers.inheritance/SealedClass { // classifiers.inheritance/SealedClass.SealedClass_Subclass1|null[0]
         constructor <init>() // classifiers.inheritance/SealedClass.SealedClass_Subclass1.<init>|-5645683436151566731[0]
     }
 }
+sealed class classifiers.inheritance/SealedClass_SealedSubclass2 : classifiers.inheritance/SealedClass // classifiers.inheritance/SealedClass_SealedSubclass2|null[0]
 final class classifiers.inheritance/SealedClass_Subclass2 : classifiers.inheritance/SealedClass { // classifiers.inheritance/SealedClass_Subclass2|null[0]
     constructor <init>() // classifiers.inheritance/SealedClass_Subclass2.<init>|-5645683436151566731[0]
 }
