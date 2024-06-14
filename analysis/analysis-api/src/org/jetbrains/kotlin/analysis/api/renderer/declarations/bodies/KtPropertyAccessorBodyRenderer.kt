@@ -20,4 +20,5 @@ public interface KaPropertyAccessorBodyRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaPropertyAccessorBodyRenderer' instead", ReplaceWith("KaPropertyAccessorBodyRenderer"))
 public typealias KtPropertyAccessorBodyRenderer = KaPropertyAccessorBodyRenderer

@@ -73,14 +73,20 @@ public interface KaAnnotation : KaLifetimeOwner {
         get() = withValidityAssertion { constructorSymbol?.createPointer() }
 }
 
+@Deprecated("Use 'KaAnnotation' instead.", ReplaceWith("KaAnnotation"))
 public typealias KtAnnotationApplication = KaAnnotation
 
+@Deprecated("Use 'KaAnnotation' instead.", ReplaceWith("KaAnnotation"))
 public typealias KaAnnotationApplication = KaAnnotation
 
+@Deprecated("Use 'KaAnnotation' instead.", ReplaceWith("KaAnnotation"))
 public typealias KaAnnotationApplicationInfo = KaAnnotation
 
-public typealias KtAnnotationApplicationInfo = KaAnnotationApplicationInfo
+@Deprecated("Use 'KaAnnotation' instead.", ReplaceWith("KaAnnotation"))
+public typealias KtAnnotationApplicationInfo = KaAnnotation
 
-public typealias KaAnnotationApplicationWithArgumentsInfo = KtAnnotationApplication
+@Deprecated("Use 'KaAnnotation' instead.", ReplaceWith("KaAnnotation"))
+public typealias KaAnnotationApplicationWithArgumentsInfo = KaAnnotation
 
-public typealias KtAnnotationApplicationWithArgumentsInfo = KaAnnotationApplicationWithArgumentsInfo
+@Deprecated("Use 'KaAnnotation' instead.", ReplaceWith("KaAnnotation"))
+public typealias KtAnnotationApplicationWithArgumentsInfo = KaAnnotation

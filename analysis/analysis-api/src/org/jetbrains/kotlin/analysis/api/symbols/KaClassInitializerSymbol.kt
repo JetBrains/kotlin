@@ -9,4 +9,5 @@ package org.jetbrains.kotlin.analysis.api.symbols
 public abstract class KaClassInitializerSymbol : KaDeclarationSymbol,
     @Suppress("DEPRECATION") org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithKind
 
+@Deprecated("Use 'KaClassInitializerSymbol'", ReplaceWith("KaClassInitializerSymbol"))
 public typealias KtClassInitializerSymbol = KaClassInitializerSymbol

@@ -38,4 +38,5 @@ public interface KaEnumEntrySymbolRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaEnumEntrySymbolRenderer' instead", ReplaceWith("KaEnumEntrySymbolRenderer"))
 public typealias KtEnumEntrySymbolRenderer = KaEnumEntrySymbolRenderer

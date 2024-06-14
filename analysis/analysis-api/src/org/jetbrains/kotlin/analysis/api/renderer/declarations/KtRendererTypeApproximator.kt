@@ -37,4 +37,5 @@ public interface KaRendererTypeApproximator {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaRendererTypeApproximator' instead", ReplaceWith("KaRendererTypeApproximator"))
 public typealias KtRendererTypeApproximator = KaRendererTypeApproximator

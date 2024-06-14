@@ -49,4 +49,5 @@ public enum class KaTypeMappingMode {
     VALUE_PARAMETER,
 }
 
+@Deprecated("Use 'KaTypeMappingMode' instead", ReplaceWith("KaTypeMappingMode"))
 public typealias KtTypeMappingMode = KaTypeMappingMode

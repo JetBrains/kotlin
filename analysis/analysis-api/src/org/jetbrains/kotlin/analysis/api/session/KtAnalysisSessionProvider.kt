@@ -104,4 +104,5 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
     }
 }
 
+@Deprecated("Use 'KaSessionProvider' instead", ReplaceWith("KaSessionProvider"))
 public typealias KtAnalysisSessionProvider = KaSessionProvider

@@ -101,6 +101,7 @@ public class KaPsiBasedSymbolPointer<S : KaSymbol> private constructor(
     }
 }
 
+@Deprecated("Use 'KaPsiBasedSymbolPointer' instead", ReplaceWith("KaPsiBasedSymbolPointer"))
 public typealias KtPsiBasedSymbolPointer<S> = KaPsiBasedSymbolPointer<S>
 
 public fun KtElement.symbolPointer(): KaSymbolPointer<KaSymbol> = KaPsiBasedSymbolPointer(this, KaSymbol::class)

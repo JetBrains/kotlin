@@ -91,4 +91,5 @@ public interface KaNamedClassOrObjectSymbolRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaNamedClassOrObjectSymbolRenderer' instead", ReplaceWith("KaNamedClassOrObjectSymbolRenderer"))
 public typealias KtNamedClassOrObjectSymbolRenderer = KaNamedClassOrObjectSymbolRenderer

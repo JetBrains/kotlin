@@ -54,4 +54,5 @@ public interface KaDestructuringDeclarationRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaDestructuringDeclarationRenderer' instead", ReplaceWith("KaDestructuringDeclarationRenderer"))
 public typealias KtDestructuringDeclarationRenderer = KaDestructuringDeclarationRenderer

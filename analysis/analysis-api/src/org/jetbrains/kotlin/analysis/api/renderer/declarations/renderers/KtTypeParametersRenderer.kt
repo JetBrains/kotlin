@@ -139,4 +139,5 @@ public interface KaTypeParametersRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaTypeParametersRenderer' instead", ReplaceWith("KaTypeParametersRenderer"))
 public typealias KtTypeParametersRenderer = KaTypeParametersRenderer

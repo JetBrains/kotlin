@@ -18,4 +18,5 @@ public object KaContextReceiversRendererForSource {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaContextReceiversRendererForSource' instead", ReplaceWith("KaContextReceiversRendererForSource"))
 public typealias KtContextReceiversRendererForSource = KaContextReceiversRendererForSource

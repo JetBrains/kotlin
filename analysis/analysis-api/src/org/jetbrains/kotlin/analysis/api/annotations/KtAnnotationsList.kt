@@ -68,6 +68,8 @@ public interface KaAnnotationList : List<KaAnnotation>, KaLifetimeOwner {
         get() = classIds
 }
 
+@Deprecated("Use 'KaAnnotationList' instead.", ReplaceWith("KaAnnotationList"))
 public typealias KtAnnotationsList = KaAnnotationList
 
+@Deprecated("Use 'KaAnnotationList' instead.", ReplaceWith("KaAnnotationList"))
 public typealias KaAnnotationsList = KaAnnotationList

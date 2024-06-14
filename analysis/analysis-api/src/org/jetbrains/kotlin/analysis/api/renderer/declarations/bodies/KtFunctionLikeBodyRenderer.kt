@@ -20,4 +20,5 @@ public interface KaFunctionLikeBodyRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaFunctionLikeBodyRenderer' instead", ReplaceWith("KaFunctionLikeBodyRenderer"))
 public typealias KtFunctionLikeBodyRenderer = KaFunctionLikeBodyRenderer

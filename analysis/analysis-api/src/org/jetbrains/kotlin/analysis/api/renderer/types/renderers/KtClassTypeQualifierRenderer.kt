@@ -79,6 +79,7 @@ public interface KaClassTypeQualifierRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaClassTypeQualifierRenderer' instead", ReplaceWith("KaClassTypeQualifierRenderer"))
 public typealias KtClassTypeQualifierRenderer = KaClassTypeQualifierRenderer
 
 @OptIn(KaExperimentalApi::class)

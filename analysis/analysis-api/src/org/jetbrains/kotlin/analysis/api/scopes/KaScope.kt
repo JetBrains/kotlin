@@ -133,4 +133,5 @@ public interface KaScope : KaScopeLike {
     public fun getPackageSymbols(nameFilter: (Name) -> Boolean = { true }): Sequence<KaPackageSymbol>
 }
 
+@Deprecated("Use 'KaScope' instead.", replaceWith = ReplaceWith("KaScope"))
 public typealias KtScope = KaScope

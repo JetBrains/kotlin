@@ -44,4 +44,5 @@ public interface KaUsualClassTypeRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaUsualClassTypeRenderer' instead", ReplaceWith("KaUsualClassTypeRenderer"))
 public typealias KtUsualClassTypeRenderer = KaUsualClassTypeRenderer

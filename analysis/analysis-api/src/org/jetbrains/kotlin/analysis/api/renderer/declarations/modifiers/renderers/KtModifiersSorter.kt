@@ -31,4 +31,5 @@ public interface KaModifiersSorter {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaModifiersSorter' instead", ReplaceWith("KaModifiersSorter"))
 public typealias KtModifiersSorter = KaModifiersSorter

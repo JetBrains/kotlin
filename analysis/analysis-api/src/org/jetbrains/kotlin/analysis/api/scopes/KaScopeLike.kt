@@ -43,4 +43,5 @@ public interface KaScopeLike : KaLifetimeOwner {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaScopeLike' instead", ReplaceWith("KaScopeLike"))
 public typealias KtScopeLike = KaScopeLike

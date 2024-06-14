@@ -9,8 +9,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 
 public interface KaSymbolWithMembers : KaSymbolWithDeclarations
 
+@Deprecated("Use 'KaSymbolWithMembers' instead", ReplaceWith("KaSymbolWithMembers"))
 public typealias KtSymbolWithMembers = KaSymbolWithMembers
 
 public interface KaSymbolWithDeclarations : KaSymbol
 
+@Deprecated("Use 'KaSymbolWithDeclarations' instead", ReplaceWith("KaSymbolWithDeclarations"))
 public typealias KtSymbolWithDeclarations = KaSymbolWithDeclarations

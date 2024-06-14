@@ -12,4 +12,5 @@ public interface KaSymbolWithModality : KaSymbol {
     public val modality: Modality
 }
 
+@Deprecated("Use 'KaSymbolWithModality'", ReplaceWith("KaSymbolWithModality"))
 public typealias KtSymbolWithModality = KaSymbolWithModality

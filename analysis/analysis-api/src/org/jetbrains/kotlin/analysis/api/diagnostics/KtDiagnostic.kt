@@ -24,6 +24,7 @@ public interface KaDiagnostic : KaLifetimeOwner {
     public val defaultMessage: String
 }
 
+@Deprecated("Use 'KaDiagnostic' instead", ReplaceWith("KaDiagnostic"))
 public typealias KtDiagnostic = KaDiagnostic
 
 public interface KaDiagnosticWithPsi<out PSI : PsiElement> : KaDiagnostic {
@@ -33,6 +34,7 @@ public interface KaDiagnosticWithPsi<out PSI : PsiElement> : KaDiagnostic {
     public val textRanges: Collection<TextRange>
 }
 
+@Deprecated("Use 'KaDiagnosticWithPsi' instead", ReplaceWith("KaDiagnosticWithPsi<PSI>"))
 public typealias KtDiagnosticWithPsi<PSI> = KaDiagnosticWithPsi<PSI>
 
 public fun KaDiagnostic.getDefaultMessageWithFactoryName(): String {

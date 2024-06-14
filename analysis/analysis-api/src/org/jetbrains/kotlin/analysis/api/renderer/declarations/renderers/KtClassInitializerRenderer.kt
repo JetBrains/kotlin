@@ -39,4 +39,5 @@ public interface KaClassInitializerRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaClassInitializerRenderer' instead", ReplaceWith("KaClassInitializerRenderer"))
 public typealias KtClassInitializerRenderer = KaClassInitializerRenderer

@@ -49,4 +49,5 @@ public interface KaTypeNameRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaTypeNameRenderer' instead", ReplaceWith("KaTypeNameRenderer"))
 public typealias KtTypeNameRenderer = KaTypeNameRenderer

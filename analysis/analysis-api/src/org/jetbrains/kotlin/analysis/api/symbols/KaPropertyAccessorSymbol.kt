@@ -33,12 +33,14 @@ public sealed class KaPropertyAccessorSymbol : KaFunctionLikeSymbol(),
     abstract override fun createPointer(): KaSymbolPointer<KaPropertyAccessorSymbol>
 }
 
+@Deprecated("Use 'KaPropertyAccessorSymbol' instead", ReplaceWith("KaPropertyAccessorSymbol"))
 public typealias KtPropertyAccessorSymbol = KaPropertyAccessorSymbol
 
 public abstract class KaPropertyGetterSymbol : KaPropertyAccessorSymbol() {
     abstract override fun createPointer(): KaSymbolPointer<KaPropertyGetterSymbol>
 }
 
+@Deprecated("Use 'KaPropertyGetterSymbol' instead", ReplaceWith("KaPropertyGetterSymbol"))
 public typealias KtPropertyGetterSymbol = KaPropertyGetterSymbol
 
 public abstract class KaPropertySetterSymbol : KaPropertyAccessorSymbol() {
@@ -47,4 +49,5 @@ public abstract class KaPropertySetterSymbol : KaPropertyAccessorSymbol() {
     abstract override fun createPointer(): KaSymbolPointer<KaPropertySetterSymbol>
 }
 
+@Deprecated("Use 'KaPropertySetterSymbol' instead", ReplaceWith("KaPropertySetterSymbol"))
 public typealias KtPropertySetterSymbol = KaPropertySetterSymbol

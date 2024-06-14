@@ -18,6 +18,7 @@ public interface KaAnnotated {
         get() = annotations
 }
 
+@Deprecated("Use 'KaAnnotated' instead.", replaceWith = ReplaceWith("KaAnnotated"))
 public typealias KtAnnotated = KaAnnotated
 
 /**
@@ -32,7 +33,7 @@ public val KaAnnotated.annotations: List<KaAnnotation>
     get() = annotations
 
 @Deprecated("Use 'annotations' instead.", replaceWith = ReplaceWith("annotations"))
-public val KaAnnotated.annotationInfos: List<KaAnnotationApplicationInfo>
+public val KaAnnotated.annotationInfos: List<KaAnnotation>
     get() = annotations
 
 /**

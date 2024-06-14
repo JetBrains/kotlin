@@ -32,4 +32,5 @@ public interface KaVariableInitializerRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaVariableInitializerRenderer' instead", ReplaceWith("KaVariableInitializerRenderer"))
 public typealias KtVariableInitializerRenderer = KaVariableInitializerRenderer

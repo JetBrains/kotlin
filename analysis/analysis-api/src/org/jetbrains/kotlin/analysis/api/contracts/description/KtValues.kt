@@ -32,6 +32,7 @@ public class KaContractConstantValue(
     override fun hashCode(): Int = backingConstantType.hashCode()
 }
 
+@Deprecated("Use 'KaContractConstantValue' instead", ReplaceWith("KaContractConstantValue"))
 public typealias KtContractConstantValue = KaContractConstantValue
 
 /**
@@ -47,4 +48,5 @@ public class KaContractParameterValue(private val backingParameterSymbol: KaPara
     }
 }
 
+@Deprecated("Use 'KaContractParameterValue' instead", ReplaceWith("KaContractParameterValue"))
 public typealias KtContractParameterValue = KaContractParameterValue

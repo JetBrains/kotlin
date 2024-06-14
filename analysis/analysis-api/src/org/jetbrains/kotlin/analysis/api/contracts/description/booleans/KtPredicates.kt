@@ -35,6 +35,7 @@ public class KaContractIsInstancePredicateExpression(
     }
 }
 
+@Deprecated("Use 'KaContractIsInstancePredicateExpression' instead.", ReplaceWith("KaContractIsInstancePredicateExpression"))
 public typealias KtContractIsInstancePredicateExpression = KaContractIsInstancePredicateExpression
 
 /**
@@ -58,4 +59,5 @@ public class KaContractIsNullPredicateExpression(
     }
 }
 
+@Deprecated("Use 'KaContractIsNullPredicateExpression' instead.", ReplaceWith("KaContractIsNullPredicateExpression"))
 public typealias KtContractIsNullPredicateExpression = KaContractIsNullPredicateExpression

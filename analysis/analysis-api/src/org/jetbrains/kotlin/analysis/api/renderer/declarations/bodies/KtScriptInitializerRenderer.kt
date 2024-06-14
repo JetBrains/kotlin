@@ -31,4 +31,5 @@ public interface KaScriptInitializerRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaScriptInitializerRenderer' instead", ReplaceWith("KaScriptInitializerRenderer"))
 public typealias KtScriptInitializerRenderer = KaScriptInitializerRenderer

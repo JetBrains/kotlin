@@ -46,4 +46,5 @@ public class KaNamedAnnotationValue(
     }
 }
 
+@Deprecated("Use 'KaNamedAnnotationValue' instead", ReplaceWith("KaNamedAnnotationValue"))
 public typealias KtNamedAnnotationValue = KaNamedAnnotationValue

@@ -46,4 +46,5 @@ public interface KaCapturedTypeRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaCapturedTypeRenderer' instead", ReplaceWith("KaCapturedTypeRenderer"))
 public typealias KtCapturedTypeRenderer = KaCapturedTypeRenderer

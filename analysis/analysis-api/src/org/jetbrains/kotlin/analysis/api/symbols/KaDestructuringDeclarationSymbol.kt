@@ -45,4 +45,5 @@ public abstract class KaDestructuringDeclarationSymbol : KaDeclarationSymbol,
     abstract override fun createPointer(): KaSymbolPointer<KaDestructuringDeclarationSymbol>
 }
 
+@Deprecated("Use 'KaDestructuringDeclarationSymbol' instead", ReplaceWith("KaDestructuringDeclarationSymbol"))
 public typealias KtDestructuringDeclarationSymbol = KaDestructuringDeclarationSymbol

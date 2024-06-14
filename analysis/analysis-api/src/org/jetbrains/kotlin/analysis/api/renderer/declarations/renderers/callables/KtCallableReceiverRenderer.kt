@@ -46,4 +46,5 @@ public interface KaCallableReceiverRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaCallableReceiverRenderer' instead", ReplaceWith("KaCallableReceiverRenderer"))
 public typealias KtCallableReceiverRenderer = KaCallableReceiverRenderer

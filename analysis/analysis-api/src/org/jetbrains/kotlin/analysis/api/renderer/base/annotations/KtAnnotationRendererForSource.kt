@@ -27,4 +27,5 @@ public object KaAnnotationRendererForSource {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaAnnotationRendererForSource' instead", ReplaceWith("KaAnnotationRendererForSource"))
 public typealias KtAnnotationRendererForSource = KaAnnotationRendererForSource

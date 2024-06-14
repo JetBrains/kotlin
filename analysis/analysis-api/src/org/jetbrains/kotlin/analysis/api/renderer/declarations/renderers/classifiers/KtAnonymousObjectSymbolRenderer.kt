@@ -43,4 +43,5 @@ public interface KaAnonymousObjectSymbolRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaAnonymousObjectSymbolRenderer' instead", ReplaceWith("KaAnonymousObjectSymbolRenderer"))
 public typealias KtAnonymousObjectSymbolRenderer = KaAnonymousObjectSymbolRenderer

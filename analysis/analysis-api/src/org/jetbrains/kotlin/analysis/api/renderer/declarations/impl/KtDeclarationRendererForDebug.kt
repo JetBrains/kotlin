@@ -36,4 +36,5 @@ public object KaDeclarationRendererForDebug {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaDeclarationRendererForDebug' instead", ReplaceWith("KaDeclarationRendererForDebug"))
 public typealias KtDeclarationRendererForDebug = KaDeclarationRendererForDebug

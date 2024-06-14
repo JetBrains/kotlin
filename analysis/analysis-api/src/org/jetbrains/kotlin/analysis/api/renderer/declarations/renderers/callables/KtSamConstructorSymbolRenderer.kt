@@ -47,4 +47,5 @@ public interface KaSamConstructorSymbolRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaSamConstructorSymbolRenderer' instead", ReplaceWith("KaSamConstructorSymbolRenderer"))
 public typealias KtSamConstructorSymbolRenderer = KaSamConstructorSymbolRenderer

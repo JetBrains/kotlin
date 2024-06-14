@@ -14,4 +14,5 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithTypeParamet
  */
 public sealed interface KaDeclarationSymbol : KaSymbol, KaSymbolWithTypeParameters, KaAnnotatedSymbol
 
+@Deprecated("Use 'KaDeclarationSymbol' instead", ReplaceWith("KaDeclarationSymbol"))
 public typealias KtDeclarationSymbol = KaDeclarationSymbol

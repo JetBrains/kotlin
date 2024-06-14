@@ -82,4 +82,5 @@ public abstract class KaVariableLikeSignature<out S : KaVariableLikeSymbol> : Ka
     }
 }
 
+@Deprecated("Use 'KaVariableLikeSignature' instead", ReplaceWith("KaVariableLikeSignature"))
 public typealias KtVariableLikeSignature<S> = KaVariableLikeSignature<S>

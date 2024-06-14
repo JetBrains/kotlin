@@ -61,4 +61,5 @@ public interface KaTypeProjectionRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaTypeProjectionRenderer' instead", ReplaceWith("KaTypeProjectionRenderer"))
 public typealias KtTypeProjectionRenderer = KaTypeProjectionRenderer

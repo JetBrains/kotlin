@@ -26,6 +26,7 @@ public interface KaSymbol : KaLifetimeOwner {
     public fun createPointer(): KaSymbolPointer<KaSymbol>
 }
 
+@Deprecated("Use 'KaSymbol' instead", replaceWith = ReplaceWith("KaSymbol"))
 public typealias KtSymbol = KaSymbol
 
 /**
@@ -178,4 +179,5 @@ public enum class KaSymbolOrigin {
     NATIVE_FORWARD_DECLARATION,
 }
 
+@Deprecated("Use 'KaSymbolOrigin' instead", ReplaceWith("KaSymbolOrigin"))
 public typealias KtSymbolOrigin = KaSymbolOrigin

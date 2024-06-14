@@ -99,6 +99,7 @@ public interface KaSession : KaLifetimeOwner,
     }
 }
 
+@Deprecated("Use 'KaSession' instead.", ReplaceWith("KaSession"))
 public typealias KtAnalysisSession = KaSession
 
 public fun KaSession.getModule(element: PsiElement): KtModule {

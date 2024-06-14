@@ -79,4 +79,5 @@ public interface KaSingleTypeParameterSymbolRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaSingleTypeParameterSymbolRenderer' instead", ReplaceWith("KaSingleTypeParameterSymbolRenderer"))
 public typealias KtSingleTypeParameterSymbolRenderer = KaSingleTypeParameterSymbolRenderer

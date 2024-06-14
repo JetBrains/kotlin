@@ -41,4 +41,5 @@ public interface KaSyntheticJavaPropertySymbolRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaSyntheticJavaPropertySymbolRenderer' instead", ReplaceWith("KaSyntheticJavaPropertySymbolRenderer"))
 public typealias KtSyntheticJavaPropertySymbolRenderer = KaSyntheticJavaPropertySymbolRenderer

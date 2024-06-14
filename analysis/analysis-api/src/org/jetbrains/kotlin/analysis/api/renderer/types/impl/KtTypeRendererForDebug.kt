@@ -33,4 +33,5 @@ public object KaTypeRendererForDebug {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaTypeRendererForDebug' instead", ReplaceWith("KaTypeRendererForDebug"))
 public typealias KtTypeRendererForDebug = KaTypeRendererForDebug

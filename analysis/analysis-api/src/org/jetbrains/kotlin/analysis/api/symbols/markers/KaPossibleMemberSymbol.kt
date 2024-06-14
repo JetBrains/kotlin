@@ -14,4 +14,5 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
  */
 public interface KaPossibleMemberSymbol : KaSymbol
 
+@Deprecated("Use 'KaPossibleMemberSymbol' instead", ReplaceWith("KaPossibleMemberSymbol"))
 public typealias KtPossibleMemberSymbol = KaPossibleMemberSymbol

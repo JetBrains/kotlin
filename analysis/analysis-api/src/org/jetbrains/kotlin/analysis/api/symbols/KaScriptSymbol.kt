@@ -18,4 +18,5 @@ public abstract class KaScriptSymbol : KaDeclarationSymbol, KaAnnotatedSymbol, K
         get() = withValidityAssertion { KaSymbolLocation.TOP_LEVEL }
 }
 
+@Deprecated("Use 'KaScriptSymbol' instead", ReplaceWith("KaScriptSymbol"))
 public typealias KtScriptSymbol = KaScriptSymbol

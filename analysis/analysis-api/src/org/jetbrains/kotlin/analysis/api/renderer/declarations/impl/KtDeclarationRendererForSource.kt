@@ -97,4 +97,5 @@ public object KaDeclarationRendererForSource {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaDeclarationRendererForSource' instead", ReplaceWith("KaDeclarationRendererForSource"))
 public typealias KtDeclarationRendererForSource = KaDeclarationRendererForSource

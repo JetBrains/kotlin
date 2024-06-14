@@ -41,4 +41,5 @@ public interface KaBackingFieldSymbolRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaBackingFieldSymbolRenderer' instead", ReplaceWith("KaBackingFieldSymbolRenderer"))
 public typealias KtBackingFieldSymbolRenderer = KaBackingFieldSymbolRenderer

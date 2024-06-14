@@ -37,4 +37,5 @@ public sealed interface KaClassTypeQualifier : KaLifetimeOwner {
     }
 }
 
+@Deprecated("Use 'KaClassTypeQualifier' instead", ReplaceWith("KaClassTypeQualifier"))
 public typealias KtClassTypeQualifier = KaClassTypeQualifier

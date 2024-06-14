@@ -23,4 +23,5 @@ public abstract class KaFunctionLikeSignature<out S : KaFunctionLikeSymbol> : Ka
     abstract override fun substitute(substitutor: KaSubstitutor): KaFunctionLikeSignature<S>
 }
 
+@Deprecated("Use 'KaFunctionLikeSignature' instead", ReplaceWith("KaFunctionLikeSignature"))
 public typealias KtFunctionLikeSignature<S> = KaFunctionLikeSignature<S>

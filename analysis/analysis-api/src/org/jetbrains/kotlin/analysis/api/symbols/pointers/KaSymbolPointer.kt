@@ -42,6 +42,7 @@ public abstract class KaSymbolPointer<out S : KaSymbol> {
     override fun toString(): String = renderAsDataClassToString()
 }
 
+@Deprecated("Use 'KaSymbolPointer' instead", ReplaceWith("KaSymbolPointer"))
 public typealias KtSymbolPointer<S> = KaSymbolPointer<S>
 
 public inline fun <S : KaSymbol> symbolPointer(crossinline getSymbol: (KaSession) -> S?): KaSymbolPointer<S> =

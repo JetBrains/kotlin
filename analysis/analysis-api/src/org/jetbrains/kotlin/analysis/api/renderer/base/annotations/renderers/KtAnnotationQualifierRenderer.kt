@@ -63,4 +63,5 @@ public interface KaAnnotationQualifierRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaAnnotationQualifierRenderer' instead", ReplaceWith("KaAnnotationQualifierRenderer"))
 public typealias KtAnnotationQualifierRenderer = KaAnnotationQualifierRenderer

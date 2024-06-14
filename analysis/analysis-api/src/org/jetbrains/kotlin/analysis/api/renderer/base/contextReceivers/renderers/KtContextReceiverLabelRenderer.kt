@@ -38,4 +38,5 @@ public interface KaContextReceiverLabelRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaContextReceiverLabelRenderer' instead", ReplaceWith("KaContextReceiverLabelRenderer"))
 public typealias KtContextReceiverLabelRenderer = KaContextReceiverLabelRenderer

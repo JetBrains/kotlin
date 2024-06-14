@@ -19,6 +19,7 @@ public abstract class KaLifetimeToken {
     public abstract fun getInaccessibilityReason(): String
 }
 
+@Deprecated("Use 'KaLifetimeToken' instead", ReplaceWith("KaLifetimeToken"))
 public typealias KtLifetimeToken = KaLifetimeToken
 
 public abstract class KaLifetimeTokenFactory {
@@ -27,6 +28,7 @@ public abstract class KaLifetimeTokenFactory {
     public abstract fun create(project: Project, modificationTracker: ModificationTracker): KaLifetimeToken
 }
 
+@Deprecated("Use 'KaLifetimeTokenFactory' instead", ReplaceWith("KaLifetimeTokenFactory"))
 public typealias KtLifetimeTokenFactory = KaLifetimeTokenFactory
 
 @Suppress("NOTHING_TO_INLINE")
@@ -41,12 +43,15 @@ public inline fun KaLifetimeToken.assertIsValidAndAccessible() {
 
 public abstract class KaIllegalLifetimeOwnerAccessException : IllegalStateException()
 
+@Deprecated("Use 'KaIllegalLifetimeOwnerAccessException' instead", ReplaceWith("KaIllegalLifetimeOwnerAccessException"))
 public typealias KtIllegalLifetimeOwnerAccessException = KaIllegalLifetimeOwnerAccessException
 
 public class KaInvalidLifetimeOwnerAccessException(override val message: String) : KaIllegalLifetimeOwnerAccessException()
 
+@Deprecated("Use 'KaInvalidLifetimeOwnerAccessException' instead", ReplaceWith("KaInvalidLifetimeOwnerAccessException"))
 public typealias KtInvalidLifetimeOwnerAccessException = KaInvalidLifetimeOwnerAccessException
 
 public class KaInaccessibleLifetimeOwnerAccessException(override val message: String) : KaIllegalLifetimeOwnerAccessException()
 
+@Deprecated("Use 'KaInaccessibleLifetimeOwnerAccessException' instead", ReplaceWith("KaInaccessibleLifetimeOwnerAccessException"))
 public typealias KtInaccessibleLifetimeOwnerAccessException = KaInaccessibleLifetimeOwnerAccessException

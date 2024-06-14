@@ -60,4 +60,5 @@ public sealed class KaCallableSignature<out S : KaCallableSymbol> : KaLifetimeOw
     abstract override fun hashCode(): Int
 }
 
+@Deprecated("Use `KaCallableSignature` instead.", ReplaceWith("KaCallableSignature"))
 public typealias KtCallableSignature<S> = KaCallableSignature<S>

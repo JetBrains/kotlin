@@ -72,4 +72,5 @@ public interface KaRendererVisibilityModifierProvider {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaRendererVisibilityModifierProvider' instead", ReplaceWith("KaRendererVisibilityModifierProvider"))
 public typealias KtRendererVisibilityModifierProvider = KaRendererVisibilityModifierProvider

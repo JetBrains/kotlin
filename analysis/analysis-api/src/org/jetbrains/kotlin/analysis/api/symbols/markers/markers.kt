@@ -13,18 +13,21 @@ public interface KaPossiblyNamedSymbol : KaSymbol {
     public val name: Name?
 }
 
+@Deprecated("Use 'KaPossiblyNamedSymbol' instead", ReplaceWith("KaPossiblyNamedSymbol"))
 public typealias KtPossiblyNamedSymbol = KaPossiblyNamedSymbol
 
 public interface KaNamedSymbol : KaPossiblyNamedSymbol {
     override val name: Name
 }
 
+@Deprecated("Use 'KaNamedSymbol' instead", ReplaceWith("KaNamedSymbol"))
 public typealias KtNamedSymbol = KaNamedSymbol
 
 public interface KaSymbolWithTypeParameters : KaSymbol {
     public val typeParameters: List<KaTypeParameterSymbol>
 }
 
+@Deprecated("Use 'KaSymbolWithTypeParameters' instead", ReplaceWith("KaSymbolWithTypeParameters"))
 public typealias KtSymbolWithTypeParameters = KaSymbolWithTypeParameters
 
 /**
@@ -50,4 +53,5 @@ public interface KaPossibleMultiplatformSymbol : KaSymbol {
     public val isExpect: Boolean
 }
 
+@Deprecated("Use 'KaPossibleMultiplatformSymbol' instead", ReplaceWith("KaPossibleMultiplatformSymbol"))
 public typealias KtPossibleMultiplatformSymbol = KaPossibleMultiplatformSymbol

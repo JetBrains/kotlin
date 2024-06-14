@@ -119,4 +119,5 @@ public interface KaFlexibleTypeRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaFlexibleTypeRenderer' instead", ReplaceWith("KaFlexibleTypeRenderer"))
 public typealias KtFlexibleTypeRenderer = KaFlexibleTypeRenderer

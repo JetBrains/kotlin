@@ -37,4 +37,5 @@ public interface KaIntersectionTypeRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaIntersectionTypeRenderer' instead", ReplaceWith("KaIntersectionTypeRenderer"))
 public typealias KtIntersectionTypeRenderer = KaIntersectionTypeRenderer

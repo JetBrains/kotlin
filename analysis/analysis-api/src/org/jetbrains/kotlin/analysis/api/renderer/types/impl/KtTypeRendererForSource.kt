@@ -44,4 +44,5 @@ public object KaTypeRendererForSource {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaTypeRendererForSource' instead", ReplaceWith("KaTypeRendererForSource"))
 public typealias KtTypeRendererForSource = KaTypeRendererForSource

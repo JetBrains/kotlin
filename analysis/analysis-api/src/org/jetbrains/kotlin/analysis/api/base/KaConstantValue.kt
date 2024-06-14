@@ -163,5 +163,5 @@ public sealed interface KaConstantValue {
     public interface KaErrorConstantValue : ErrorValue
 }
 
-@Deprecated("Use 'KaConstantValue' instead.")
+@Deprecated("Use 'KaConstantValue' instead.", ReplaceWith("KaConstantValue"))
 public typealias KtConstantValue = KaConstantValue

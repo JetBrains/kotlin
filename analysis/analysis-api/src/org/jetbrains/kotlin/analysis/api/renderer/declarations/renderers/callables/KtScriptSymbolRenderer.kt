@@ -33,4 +33,5 @@ public interface KaScriptSymbolRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaScriptSymbolRenderer' instead", ReplaceWith("KaScriptSymbolRenderer"))
 public typealias KtScriptSymbolRenderer = KaScriptSymbolRenderer

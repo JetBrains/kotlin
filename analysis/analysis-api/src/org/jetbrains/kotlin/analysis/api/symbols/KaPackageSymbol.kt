@@ -18,4 +18,5 @@ public abstract class KaPackageSymbol : KaSymbol {
         get() = withValidityAssertion { KaSymbolLocation.TOP_LEVEL }
 }
 
+@Deprecated("Use 'KaPackageSymbol' instead", ReplaceWith("KaPackageSymbol"))
 public typealias KtPackageSymbol = KaPackageSymbol

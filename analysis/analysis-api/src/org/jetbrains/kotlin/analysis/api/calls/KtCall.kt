@@ -49,6 +49,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
     level = DeprecationLevel.HIDDEN,
 )
 public typealias KaCallInfo = KaCallInfo
+
+@Deprecated("Use 'KaCallInfo' instead", ReplaceWith("KaCallInfo"))
 public typealias KtCallInfo = KaCallInfo
 
 @Deprecated(
@@ -56,6 +58,8 @@ public typealias KtCallInfo = KaCallInfo
     level = DeprecationLevel.HIDDEN,
 )
 public typealias KaSuccessCallInfo = KaSuccessCallInfo
+
+@Deprecated("Use 'KaSuccessCallInfo' instead", ReplaceWith("KaSuccessCallInfo"))
 public typealias KtSuccessCallInfo = KaSuccessCallInfo
 
 @Deprecated(
@@ -63,6 +67,8 @@ public typealias KtSuccessCallInfo = KaSuccessCallInfo
     level = DeprecationLevel.HIDDEN,
 )
 public typealias KaErrorCallInfo = KaErrorCallInfo
+
+@Deprecated("Use 'KaErrorCallInfo' instead", ReplaceWith("KaErrorCallInfo"))
 public typealias KtErrorCallInfo = KaErrorCallInfo
 
 @Deprecated(
@@ -124,6 +130,8 @@ public fun KaCallInfo.successfulConstructorCallOrNull(): KaFunctionCall<KaConstr
     level = DeprecationLevel.HIDDEN,
 )
 public typealias KaCallCandidateInfo = KaCallCandidateInfo
+
+@Deprecated("Use 'KaCallCandidateInfo' instead", ReplaceWith("KaCallCandidateInfo"))
 public typealias KtCallCandidateInfo = KaCallCandidateInfo
 
 @Deprecated(
@@ -131,6 +139,8 @@ public typealias KtCallCandidateInfo = KaCallCandidateInfo
     level = DeprecationLevel.HIDDEN,
 )
 public typealias KaApplicableCallCandidateInfo = KaApplicableCallCandidateInfo
+
+@Deprecated("Use 'KaApplicableCallCandidateInfo' instead", ReplaceWith("KaApplicableCallCandidateInfo"))
 public typealias KtApplicableCallCandidateInfo = KaApplicableCallCandidateInfo
 
 @Deprecated(
@@ -138,6 +148,8 @@ public typealias KtApplicableCallCandidateInfo = KaApplicableCallCandidateInfo
     level = DeprecationLevel.HIDDEN,
 )
 public typealias KaInapplicableCallCandidateInfo = KaInapplicableCallCandidateInfo
+
+@Deprecated("Use 'KaInapplicableCallCandidateInfo' instead", ReplaceWith("KaInapplicableCallCandidateInfo"))
 public typealias KtInapplicableCallCandidateInfo = KaInapplicableCallCandidateInfo
 
 @Deprecated(
@@ -145,6 +157,8 @@ public typealias KtInapplicableCallCandidateInfo = KaInapplicableCallCandidateIn
     level = DeprecationLevel.HIDDEN,
 )
 public typealias KaCall = KaCall
+
+@Deprecated("Use 'KaCall' instead", ReplaceWith("KaCall"))
 public typealias KtCall = KaCall
 
 @Deprecated(
@@ -152,6 +166,8 @@ public typealias KtCall = KaCall
     level = DeprecationLevel.HIDDEN,
 )
 public typealias KaPartiallyAppliedSymbol<S, C> = KaPartiallyAppliedSymbol<S, C>
+
+@Deprecated("Use 'KaPartiallyAppliedSymbol' instead", ReplaceWith("KaPartiallyAppliedSymbol"))
 public typealias KtPartiallyAppliedSymbol<S, C> = KaPartiallyAppliedSymbol<S, C>
 
 @Deprecated(
@@ -165,6 +181,8 @@ public val <S : KaCallableSymbol, C : KaCallableSignature<S>> KaPartiallyApplied
     level = DeprecationLevel.HIDDEN,
 )
 public typealias KaCallableMemberCall<S, C> = KaCallableMemberCall<S, C>
+
+@Deprecated("Use 'KaCallableMemberCall' instead", ReplaceWith("KaCallableMemberCall"))
 public typealias KtCallableMemberCall<S, C> = KaCallableMemberCall<S, C>
 
 @Deprecated(
@@ -178,6 +196,8 @@ public val <S : KaCallableSymbol, C : KaCallableSignature<S>> KaCallableMemberCa
     level = DeprecationLevel.HIDDEN,
 )
 public typealias KaFunctionCall<S> = KaFunctionCall<S>
+
+@Deprecated("Use 'KaFunctionCall' instead", ReplaceWith("KaFunctionCall"))
 public typealias KtFunctionCall<S> = KaFunctionCall<S>
 
 @Deprecated(
@@ -185,6 +205,8 @@ public typealias KtFunctionCall<S> = KaFunctionCall<S>
     level = DeprecationLevel.HIDDEN,
 )
 public typealias KaPartiallyAppliedFunctionSymbol<S> = KaPartiallyAppliedFunctionSymbol<S>
+
+@Deprecated("Use 'KaPartiallyAppliedFunctionSymbol' instead", ReplaceWith("KaPartiallyAppliedFunctionSymbol"))
 public typealias KtPartiallyAppliedFunctionSymbol<S> = KaPartiallyAppliedFunctionSymbol<S>
 
 @Deprecated(
@@ -192,6 +214,8 @@ public typealias KtPartiallyAppliedFunctionSymbol<S> = KaPartiallyAppliedFunctio
     level = DeprecationLevel.HIDDEN,
 )
 public typealias KaSimpleFunctionCall = KaSimpleFunctionCall
+
+@Deprecated("Use 'KaSimpleFunctionCall' instead", ReplaceWith("KaSimpleFunctionCall"))
 public typealias KtSimpleFunctionCall = KaSimpleFunctionCall
 
 @Deprecated(
@@ -199,6 +223,8 @@ public typealias KtSimpleFunctionCall = KaSimpleFunctionCall
     level = DeprecationLevel.HIDDEN,
 )
 public typealias KaAnnotationCall = KaAnnotationCall
+
+@Deprecated("Use 'KaAnnotationCall' instead", ReplaceWith("KaAnnotationCall"))
 public typealias KtAnnotationCall = KaAnnotationCall
 
 @Deprecated(
@@ -206,6 +232,8 @@ public typealias KtAnnotationCall = KaAnnotationCall
     level = DeprecationLevel.HIDDEN,
 )
 public typealias KaDelegatedConstructorCall = KaDelegatedConstructorCall
+
+@Deprecated("Use 'KaDelegatedConstructorCall' instead", ReplaceWith("KaDelegatedConstructorCall"))
 public typealias KtDelegatedConstructorCall = KaDelegatedConstructorCall
 
 @Deprecated(
@@ -213,6 +241,8 @@ public typealias KtDelegatedConstructorCall = KaDelegatedConstructorCall
     level = DeprecationLevel.HIDDEN,
 )
 public typealias KaVariableAccessCall = KaVariableAccessCall
+
+@Deprecated("Use 'KaVariableAccessCall' instead", ReplaceWith("KaVariableAccessCall"))
 public typealias KtVariableAccessCall = KaVariableAccessCall
 
 @Deprecated(
@@ -220,6 +250,8 @@ public typealias KtVariableAccessCall = KaVariableAccessCall
     level = DeprecationLevel.HIDDEN,
 )
 public typealias KaPartiallyAppliedVariableSymbol<S> = KaPartiallyAppliedVariableSymbol<S>
+
+@Deprecated("Use 'KaPartiallyAppliedVariableSymbol' instead", ReplaceWith("KaPartiallyAppliedVariableSymbol"))
 public typealias KtPartiallyAppliedVariableSymbol<S> = KaPartiallyAppliedVariableSymbol<S>
 
 @Deprecated(
@@ -227,6 +259,8 @@ public typealias KtPartiallyAppliedVariableSymbol<S> = KaPartiallyAppliedVariabl
     level = DeprecationLevel.HIDDEN,
 )
 public typealias KaSimpleVariableAccessCall = KaSimpleVariableAccessCall
+
+@Deprecated("Use 'KaSimpleVariableAccessCall' instead", ReplaceWith("KaSimpleVariableAccessCall"))
 public typealias KtSimpleVariableAccessCall = KaSimpleVariableAccessCall
 
 @Deprecated(
@@ -234,6 +268,8 @@ public typealias KtSimpleVariableAccessCall = KaSimpleVariableAccessCall
     level = DeprecationLevel.HIDDEN,
 )
 public typealias KaSimpleVariableAccess = KaSimpleVariableAccess
+
+@Deprecated("Use 'KaSimpleVariableAccess' instead", ReplaceWith("KaSimpleVariableAccess"))
 public typealias KtSimpleVariableAccess = KaSimpleVariableAccess
 
 @Deprecated(
@@ -241,6 +277,8 @@ public typealias KtSimpleVariableAccess = KaSimpleVariableAccess
     level = DeprecationLevel.HIDDEN,
 )
 public typealias KaCompoundAccessCall = KaCompoundAccessCall
+
+@Deprecated("Use 'KaCompoundAccessCall' instead", ReplaceWith("KaCompoundAccessCall"))
 public typealias KtCompoundAccessCall = KaCompoundAccessCall
 
 @Deprecated(
@@ -248,6 +286,8 @@ public typealias KtCompoundAccessCall = KaCompoundAccessCall
     level = DeprecationLevel.HIDDEN,
 )
 public typealias KaCompoundVariableAccessCall = KaCompoundVariableAccessCall
+
+@Deprecated("Use 'KaCompoundVariableAccessCall' instead", ReplaceWith("KaCompoundVariableAccessCall"))
 public typealias KtCompoundVariableAccessCall = KaCompoundVariableAccessCall
 
 @Deprecated(
@@ -255,6 +295,8 @@ public typealias KtCompoundVariableAccessCall = KaCompoundVariableAccessCall
     level = DeprecationLevel.HIDDEN,
 )
 public typealias KaCompoundArrayAccessCall = KaCompoundArrayAccessCall
+
+@Deprecated("Use 'KaCompoundArrayAccessCall' instead", ReplaceWith("KaCompoundArrayAccessCall"))
 public typealias KtCompoundArrayAccessCall = KaCompoundArrayAccessCall
 
 @Deprecated(
@@ -262,6 +304,8 @@ public typealias KtCompoundArrayAccessCall = KaCompoundArrayAccessCall
     level = DeprecationLevel.HIDDEN,
 )
 public typealias KaCompoundAccess = KaCompoundAccess
+
+@Deprecated("Use 'KaCompoundAccess' instead", ReplaceWith("KaCompoundAccess"))
 public typealias KtCompoundAccess = KaCompoundAccess
 
 @Deprecated(
@@ -269,6 +313,8 @@ public typealias KtCompoundAccess = KaCompoundAccess
     level = DeprecationLevel.HIDDEN,
 )
 public typealias KaReceiverValue = KaReceiverValue
+
+@Deprecated("Use 'KaReceiverValue' instead", ReplaceWith("KaReceiverValue"))
 public typealias KtReceiverValue = KaReceiverValue
 
 @Deprecated(
@@ -276,6 +322,8 @@ public typealias KtReceiverValue = KaReceiverValue
     level = DeprecationLevel.HIDDEN,
 )
 public typealias KaExplicitReceiverValue = KaExplicitReceiverValue
+
+@Deprecated("Use 'KaExplicitReceiverValue' instead", ReplaceWith("KaExplicitReceiverValue"))
 public typealias KtExplicitReceiverValue = KaExplicitReceiverValue
 
 @Deprecated(
@@ -283,6 +331,8 @@ public typealias KtExplicitReceiverValue = KaExplicitReceiverValue
     level = DeprecationLevel.HIDDEN,
 )
 public typealias KaImplicitReceiverValue = KaImplicitReceiverValue
+
+@Deprecated("Use 'KaImplicitReceiverValue' instead", ReplaceWith("KaImplicitReceiverValue"))
 public typealias KtImplicitReceiverValue = KaImplicitReceiverValue
 
 @Deprecated(
@@ -290,4 +340,6 @@ public typealias KtImplicitReceiverValue = KaImplicitReceiverValue
     level = DeprecationLevel.HIDDEN,
 )
 public typealias KaSmartCastedReceiverValue = KaSmartCastedReceiverValue
+
+@Deprecated("Use 'KaSmartCastedReceiverValue' instead", ReplaceWith("KaSmartCastedReceiverValue"))
 public typealias KtSmartCastedReceiverValue = KaSmartCastedReceiverValue

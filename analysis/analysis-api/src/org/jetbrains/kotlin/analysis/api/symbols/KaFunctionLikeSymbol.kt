@@ -26,6 +26,7 @@ public sealed class KaFunctionLikeSymbol : KaCallableSymbol(), @Suppress("DEPREC
     abstract override fun createPointer(): KaSymbolPointer<KaFunctionLikeSymbol>
 }
 
+@Deprecated("Use 'KaFunctionLikeSymbol' instead", ReplaceWith("KaFunctionLikeSymbol"))
 public typealias KtFunctionLikeSymbol = KaFunctionLikeSymbol
 
 public abstract class KaAnonymousFunctionSymbol : KaFunctionLikeSymbol() {
@@ -38,6 +39,7 @@ public abstract class KaAnonymousFunctionSymbol : KaFunctionLikeSymbol() {
     abstract override fun createPointer(): KaSymbolPointer<KaAnonymousFunctionSymbol>
 }
 
+@Deprecated("Use 'KaAnonymousFunctionSymbol' instead", ReplaceWith("KaAnonymousFunctionSymbol"))
 public typealias KtAnonymousFunctionSymbol = KaAnonymousFunctionSymbol
 
 public abstract class KaSamConstructorSymbol : KaFunctionLikeSymbol(), KaNamedSymbol {
@@ -46,6 +48,7 @@ public abstract class KaSamConstructorSymbol : KaFunctionLikeSymbol(), KaNamedSy
     abstract override fun createPointer(): KaSymbolPointer<KaSamConstructorSymbol>
 }
 
+@Deprecated("Use 'KaSamConstructorSymbol' instead", ReplaceWith("KaSamConstructorSymbol"))
 public typealias KtSamConstructorSymbol = KaSamConstructorSymbol
 
 public abstract class KaFunctionSymbol : KaFunctionLikeSymbol(),
@@ -79,6 +82,7 @@ public abstract class KaFunctionSymbol : KaFunctionLikeSymbol(),
     abstract override fun createPointer(): KaSymbolPointer<KaFunctionSymbol>
 }
 
+@Deprecated("Use 'KaFunctionSymbol' instead", ReplaceWith("KaFunctionSymbol"))
 public typealias KtFunctionSymbol = KaFunctionSymbol
 
 public abstract class KaConstructorSymbol : KaFunctionLikeSymbol(),
@@ -105,4 +109,5 @@ public abstract class KaConstructorSymbol : KaFunctionLikeSymbol(),
     abstract override fun createPointer(): KaSymbolPointer<KaConstructorSymbol>
 }
 
+@Deprecated("Use 'KaConstructorSymbol' instead", ReplaceWith("KaConstructorSymbol"))
 public typealias KtConstructorSymbol = KaConstructorSymbol

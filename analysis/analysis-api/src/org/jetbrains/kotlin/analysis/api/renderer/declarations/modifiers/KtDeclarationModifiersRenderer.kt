@@ -63,4 +63,5 @@ public class KaDeclarationModifiersRenderer private constructor(
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaDeclarationModifiersRenderer' instead", ReplaceWith("KaDeclarationModifiersRenderer"))
 public typealias KtDeclarationModifiersRenderer = KaDeclarationModifiersRenderer

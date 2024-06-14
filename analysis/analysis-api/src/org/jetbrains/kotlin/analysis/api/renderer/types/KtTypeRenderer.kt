@@ -185,4 +185,5 @@ public class KaTypeRenderer private constructor(
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaTypeRenderer' instead", ReplaceWith("KaTypeRenderer"))
 public typealias KtTypeRenderer = KaTypeRenderer

@@ -10,4 +10,5 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 
 public interface KaAnnotatedSymbol : KaSymbol, KaAnnotated
 
+@Deprecated("Use 'KaAnnotatedSymbol' instead", ReplaceWith("KaAnnotatedSymbol"))
 public typealias KtAnnotatedSymbol = KaAnnotatedSymbol

@@ -54,4 +54,5 @@ public interface KaValueParameterSymbolRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaValueParameterSymbolRenderer' instead", ReplaceWith("KaValueParameterSymbolRenderer"))
 public typealias KtValueParameterSymbolRenderer = KaValueParameterSymbolRenderer

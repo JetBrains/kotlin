@@ -40,3 +40,7 @@ public class KaImportOptimizerResult(
     public val usedDeclarations: Map<FqName, Set<Name>> = emptyMap(),
     public val unresolvedNames: Set<Name> = emptySet(),
 )
+
+@KaIdeApi
+@Deprecated("Use 'KaImportOptimizerResult' instead", ReplaceWith("KaImportOptimizerResult"))
+public typealias KtImportOptimizerResult = KaImportOptimizerResult

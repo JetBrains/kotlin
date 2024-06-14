@@ -64,4 +64,5 @@ public class KaAnnotationRenderer internal constructor(
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaAnnotationRenderer' instead", ReplaceWith("KaAnnotationRenderer"))
 public typealias KtAnnotationRenderer = KaAnnotationRenderer

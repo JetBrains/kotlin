@@ -60,4 +60,5 @@ public interface KaKeywordRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaKeywordRenderer' instead", ReplaceWith("KaKeywordRenderer"))
 public typealias KtKeywordRenderer = KaKeywordRenderer

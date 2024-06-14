@@ -34,6 +34,7 @@ public interface KaRendererCodeStyle {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaRendererCodeStyle' instead", ReplaceWith("KaRendererCodeStyle"))
 public typealias KtRendererCodeStyle = KaRendererCodeStyle
 
 @KaExperimentalApi
@@ -72,4 +73,5 @@ public object KaRecommendedRendererCodeStyle : KaRendererCodeStyle {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaRecommendedRendererCodeStyle' instead", ReplaceWith("KaRecommendedRendererCodeStyle"))
 public typealias KtRecommendedRendererCodeStyle = KaRecommendedRendererCodeStyle

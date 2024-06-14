@@ -43,4 +43,5 @@ public interface KaPropertyGetterSymbolRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaPropertyGetterSymbolRenderer' instead", ReplaceWith("KaPropertyGetterSymbolRenderer"))
 public typealias KtPropertyGetterSymbolRenderer = KaPropertyGetterSymbolRenderer

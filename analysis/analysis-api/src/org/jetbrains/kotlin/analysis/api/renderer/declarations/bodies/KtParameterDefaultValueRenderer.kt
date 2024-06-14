@@ -29,4 +29,5 @@ public interface KaParameterDefaultValueRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaParameterDefaultValueRenderer' instead", ReplaceWith("KaParameterDefaultValueRenderer"))
 public typealias KtParameterDefaultValueRenderer = KaParameterDefaultValueRenderer

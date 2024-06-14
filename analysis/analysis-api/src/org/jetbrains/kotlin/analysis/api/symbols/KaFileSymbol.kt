@@ -16,4 +16,5 @@ public abstract class KaFileSymbol : KaAnnotatedSymbol {
         get() = withValidityAssertion { KaSymbolLocation.TOP_LEVEL }
 }
 
+@Deprecated("Use 'KaFileSymbol' instead", ReplaceWith("KaFileSymbol"))
 public typealias KtFileSymbol = KaFileSymbol

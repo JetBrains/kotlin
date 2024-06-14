@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.contracts.description
 
 import com.google.common.base.Objects
+import org.checkerframework.checker.signature.qual.DotSeparatedIdentifiersOrPrimitiveType
 import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContractBooleanExpression
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
  */
 public sealed interface KaContractEffectDeclaration : KaLifetimeOwner
 
+@Deprecated("Use 'KaContractEffectDeclaration' instead", ReplaceWith("KaContractEffectDeclaration"))
 public typealias KtContractEffectDeclaration = KaContractEffectDeclaration
 
 /**
@@ -40,6 +42,10 @@ public class KaContractCallsInPlaceContractEffectDeclaration(
     }
 }
 
+@Deprecated(
+    "Use 'KaContractCallsInPlaceContractEffectDeclaration' instead",
+    ReplaceWith("KaContractCallsInPlaceContractEffectDeclaration")
+)
 public typealias KtContractCallsInPlaceContractEffectDeclaration = KaContractCallsInPlaceContractEffectDeclaration
 
 /**
@@ -63,6 +69,10 @@ public class KaContractConditionalContractEffectDeclaration(
     }
 }
 
+@Deprecated(
+    "Use 'KaContractConditionalContractEffectDeclaration' instead",
+    ReplaceWith("KaContractConditionalContractEffectDeclaration")
+)
 public typealias KtContractConditionalContractEffectDeclaration = KaContractConditionalContractEffectDeclaration
 
 /**
@@ -108,4 +118,5 @@ public sealed class KaContractReturnsContractEffectDeclaration : KaContractEffec
     }
 }
 
+@Deprecated("Use 'KaContractReturnsContractEffectDeclaration' instead", ReplaceWith("KaContractReturnsContractEffectDeclaration"))
 public typealias KtContractReturnsContractEffectDeclaration = KaContractReturnsContractEffectDeclaration

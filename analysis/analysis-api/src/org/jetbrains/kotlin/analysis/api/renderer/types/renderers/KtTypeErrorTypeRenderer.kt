@@ -62,4 +62,5 @@ public interface KaErrorTypeRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaErrorTypeRenderer' instead", ReplaceWith("KaErrorTypeRenderer"))
 public typealias KtTypeErrorTypeRenderer = KaErrorTypeRenderer

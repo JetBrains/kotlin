@@ -34,4 +34,5 @@ public interface KaDynamicTypeRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaDynamicTypeRenderer' instead", ReplaceWith("KaDynamicTypeRenderer"))
 public typealias KtDynamicTypeRenderer = KaDynamicTypeRenderer

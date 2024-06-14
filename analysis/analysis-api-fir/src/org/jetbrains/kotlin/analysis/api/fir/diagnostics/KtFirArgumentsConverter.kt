@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -84,7 +84,7 @@ private fun convertArgument(argument: Any?, firSymbolBuilder: KaSymbolByFirBuild
 }
 
 private fun convertArgument(argument: FirRegularClass, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
-    return firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(argument.symbol) as KtNamedClassOrObjectSymbol
+    return firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(argument.symbol) as KaNamedClassOrObjectSymbol
 }
 
 private fun convertArgument(argument: FirValueParameterSymbol, firSymbolBuilder: KaSymbolByFirBuilder): Any? {

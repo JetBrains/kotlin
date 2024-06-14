@@ -65,4 +65,5 @@ public interface KaRendererAnnotationsFilter {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaRendererAnnotationsFilter' instead", ReplaceWith("KaRendererAnnotationsFilter"))
 public typealias KtRendererAnnotationsFilter = KaRendererAnnotationsFilter

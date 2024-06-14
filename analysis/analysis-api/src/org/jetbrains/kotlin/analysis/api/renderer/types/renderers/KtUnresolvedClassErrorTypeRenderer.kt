@@ -60,4 +60,5 @@ public interface KaUnresolvedClassErrorTypeRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaUnresolvedClassErrorTypeRenderer' instead", ReplaceWith("KaUnresolvedClassErrorTypeRenderer"))
 public typealias KtUnresolvedClassErrorTypeRenderer = KaUnresolvedClassErrorTypeRenderer

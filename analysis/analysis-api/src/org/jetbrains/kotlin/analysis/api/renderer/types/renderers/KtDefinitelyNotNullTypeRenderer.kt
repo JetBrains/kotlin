@@ -39,4 +39,5 @@ public interface KaDefinitelyNotNullTypeRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaDefinitelyNotNullTypeRenderer' instead", ReplaceWith("KaDefinitelyNotNullTypeRenderer"))
 public typealias KtDefinitelyNotNullTypeRenderer = KaDefinitelyNotNullTypeRenderer

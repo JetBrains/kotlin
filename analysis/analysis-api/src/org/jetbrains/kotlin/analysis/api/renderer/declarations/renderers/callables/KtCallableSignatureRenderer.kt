@@ -69,4 +69,5 @@ public interface KaCallableSignatureRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaCallableSignatureRenderer' instead", ReplaceWith("KaCallableSignatureRenderer"))
 public typealias KtCallableSignatureRenderer = KaCallableSignatureRenderer

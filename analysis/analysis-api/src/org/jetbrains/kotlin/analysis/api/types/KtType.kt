@@ -86,6 +86,7 @@ public sealed interface KaType : KaLifetimeOwner, KaAnnotated {
     }
 }
 
+@Deprecated("Use 'KaType' instead.", replaceWith = ReplaceWith("KaType"))
 public typealias KtType = KaType
 
 public enum class KaTypeNullability(public val isNullable: Boolean) {
@@ -98,6 +99,7 @@ public enum class KaTypeNullability(public val isNullable: Boolean) {
     }
 }
 
+@Deprecated("Use 'KaTypeNullability' instead.", replaceWith = ReplaceWith("KaTypeNullability"))
 public typealias KtTypeNullability = KaTypeNullability
 
 public interface KaErrorType : KaType {
@@ -112,11 +114,14 @@ public interface KaErrorType : KaType {
     public fun tryRenderAsNonErrorType(): String? = presentableText
 }
 
+@Deprecated("Use 'KaErrorType' instead.", replaceWith = ReplaceWith("KaErrorType"))
 public typealias KtErrorType = KaErrorType
 
+@Deprecated("Use 'KaErrorType' instead.", replaceWith = ReplaceWith("KaErrorType"))
 public typealias KaTypeErrorType = KaErrorType
 
-public typealias KtTypeErrorType = KaTypeErrorType
+@Deprecated("Use 'KaErrorType' instead.", replaceWith = ReplaceWith("KaErrorType"))
+public typealias KtTypeErrorType = KaErrorType
 
 public sealed class KaClassType : KaType {
     public abstract val classId: ClassId
@@ -137,6 +142,7 @@ public sealed class KaClassType : KaType {
 @Deprecated("Use 'KaClassType' instead.", replaceWith = ReplaceWith("KaClassType"))
 public typealias KaNonErrorClassType = KaClassType
 
+@Deprecated("Use 'KaClassType' instead.", replaceWith = ReplaceWith("KaClassType"))
 public typealias KtNonErrorClassType = KaClassType
 
 public abstract class KaFunctionType : KaClassType(), KaContextReceiversOwner {
@@ -153,10 +159,12 @@ public abstract class KaFunctionType : KaClassType(), KaContextReceiversOwner {
 @Deprecated("Use 'KaFunctionType' instead.", replaceWith = ReplaceWith("KaFunctionType"))
 public typealias KaFunctionalType = KaFunctionType
 
+@Deprecated("Use 'KaFunctionType' instead.", replaceWith = ReplaceWith("KaFunctionType"))
 public typealias KtFunctionalType = KaFunctionType
 
 public abstract class KaUsualClassType : KaClassType()
 
+@Deprecated("Use 'KaUsualClassType' instead.", replaceWith = ReplaceWith("KaUsualClassType"))
 public typealias KtUsualClassType = KaUsualClassType
 
 public abstract class KaClassErrorType : KaErrorType {
@@ -169,6 +177,7 @@ public abstract class KaClassErrorType : KaErrorType {
         get() = candidateSymbols
 }
 
+@Deprecated("Use 'KaClassErrorType' instead.", replaceWith = ReplaceWith("KaClassErrorType"))
 public typealias KtClassErrorType = KaClassErrorType
 
 public abstract class KaTypeParameterType : KaType {
@@ -176,12 +185,14 @@ public abstract class KaTypeParameterType : KaType {
     public abstract val symbol: KaTypeParameterSymbol
 }
 
+@Deprecated("Use 'KaTypeParameterType' instead.", replaceWith = ReplaceWith("KaTypeParameterType"))
 public typealias KtTypeParameterType = KaTypeParameterType
 
 public abstract class KaCapturedType : KaType {
     public abstract val projection: KaTypeProjection
 }
 
+@Deprecated("Use 'KaCapturedType' instead.", replaceWith = ReplaceWith("KaCapturedType"))
 public typealias KtCapturedType = KaCapturedType
 
 public abstract class KaDefinitelyNotNullType : KaType {
@@ -190,6 +201,7 @@ public abstract class KaDefinitelyNotNullType : KaType {
     final override val nullability: KaTypeNullability get() = withValidityAssertion { KaTypeNullability.NON_NULLABLE }
 }
 
+@Deprecated("Use 'KaDefinitelyNotNullType' instead.", replaceWith = ReplaceWith("KaDefinitelyNotNullType"))
 public typealias KtDefinitelyNotNullType = KaDefinitelyNotNullType
 
 /**
@@ -200,12 +212,14 @@ public abstract class KaFlexibleType : KaType {
     public abstract val upperBound: KaType
 }
 
+@Deprecated("Use 'KaFlexibleType' instead.", replaceWith = ReplaceWith("KaFlexibleType"))
 public typealias KtFlexibleType = KaFlexibleType
 
 public abstract class KaIntersectionType : KaType {
     public abstract val conjuncts: List<KaType>
 }
 
+@Deprecated("Use 'KaIntersectionType' instead.", replaceWith = ReplaceWith("KaIntersectionType"))
 public typealias KtIntersectionType = KaIntersectionType
 
 /**
@@ -216,4 +230,5 @@ public typealias KtIntersectionType = KaIntersectionType
  */
 public abstract class KaDynamicType : KaType
 
+@Deprecated("Use 'KaDynamicType' instead.", replaceWith = ReplaceWith("KaDynamicType"))
 public typealias KtDynamicType = KaDynamicType

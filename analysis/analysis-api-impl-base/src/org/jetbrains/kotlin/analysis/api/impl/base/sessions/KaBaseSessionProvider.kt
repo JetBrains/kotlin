@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.analysis.api.impl.base.sessions
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.util.PsiUtilCore
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.impl.base.lifetime.KaBaseLifetimeTracker
 import org.jetbrains.kotlin.analysis.api.impl.base.permissions.KaBaseWriteActionStartedChecker
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenFactory
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.api.session.KaSessionProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
@@ -37,22 +37,22 @@ abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(proje
 
     private val writeActionStartedChecker = KaBaseWriteActionStartedChecker(this)
 
-    override val tokenFactory: KtLifetimeTokenFactory by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    override val tokenFactory: KaLifetimeTokenFactory by lazy(LazyThreadSafetyMode.PUBLICATION) {
         KotlinLifetimeTokenProvider.getService(project).getLifetimeTokenFactory()
     }
 
-    override fun beforeEnteringAnalysis(session: KtAnalysisSession, useSiteElement: KtElement) {
+    override fun beforeEnteringAnalysis(session: KaSession, useSiteElement: KtElement) {
         // Catch issues with analysis on invalid PSI as early as possible.
         PsiUtilCore.ensureValid(useSiteElement)
 
         beforeEnteringAnalysis(session)
     }
 
-    override fun beforeEnteringAnalysis(session: KtAnalysisSession, useSiteModule: KtModule) {
+    override fun beforeEnteringAnalysis(session: KaSession, useSiteModule: KtModule) {
         beforeEnteringAnalysis(session)
     }
 
-    private fun beforeEnteringAnalysis(session: KtAnalysisSession) {
+    private fun beforeEnteringAnalysis(session: KaSession) {
         if (!permissionChecker.isAnalysisAllowed()) {
             throw ProhibitedAnalysisException("Analysis is not allowed: ${permissionChecker.getRejectionReason()}")
         }
@@ -61,15 +61,15 @@ abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(proje
         writeActionStartedChecker.beforeEnteringAnalysis()
     }
 
-    override fun afterLeavingAnalysis(session: KtAnalysisSession, useSiteElement: KtElement) {
+    override fun afterLeavingAnalysis(session: KaSession, useSiteElement: KtElement) {
         afterLeavingAnalysis(session)
     }
 
-    override fun afterLeavingAnalysis(session: KtAnalysisSession, useSiteModule: KtModule) {
+    override fun afterLeavingAnalysis(session: KaSession, useSiteModule: KtModule) {
         afterLeavingAnalysis(session)
     }
 
-    private fun afterLeavingAnalysis(session: KtAnalysisSession) {
+    private fun afterLeavingAnalysis(session: KaSession) {
         writeActionStartedChecker.afterLeavingAnalysis()
         lifetimeTracker.afterLeavingAnalysis(session)
     }

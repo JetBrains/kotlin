@@ -226,11 +226,11 @@ internal object FirToKtConversionCreator {
     private val typeMapping: Map<KClass<*>, HLFunctionCallConversion> = mapOf(
         // ------------------ symbols ------------------
         FirRegularClass::class to HLFunctionCallConversion(
-            "firSymbolBuilder.classifierBuilder.buildClassLikeSymbol({0}.symbol) as KtNamedClassOrObjectSymbol",
+            "firSymbolBuilder.classifierBuilder.buildClassLikeSymbol({0}.symbol) as KaNamedClassOrObjectSymbol",
             KaNamedClassOrObjectSymbol::class.createType(),
             importsToAdd = listOf(
                 "org.jetbrains.kotlin.fir.declarations.FirRegularClass",
-                "org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol"
+                "org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol"
             )
         ),
         FirValueParameterSymbol::class to HLFunctionCallConversion(

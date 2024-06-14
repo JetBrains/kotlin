@@ -15,4 +15,5 @@ import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolBasedReference
 public typealias KaSymbolBasedReference = KaSymbolBasedReference
 
 @OptIn(KaAnalysisApiInternals::class)
+@Deprecated("Use 'KaSymbolBasedReference' instead", ReplaceWith("KaSymbolBasedReference"))
 public typealias KtSymbolBasedReference = KaSymbolBasedReference

@@ -45,4 +45,5 @@ public interface KaTypeParameterTypeRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaTypeParameterTypeRenderer' instead", ReplaceWith("KaTypeParameterTypeRenderer"))
 public typealias KtTypeParameterTypeRenderer = KaTypeParameterTypeRenderer

@@ -30,6 +30,7 @@ public sealed class KaCallCandidateInfo(
     public val isInBestCandidates: Boolean by validityAsserted(isInBestCandidates)
 }
 
+@Deprecated("Use 'KaCallCandidateInfo' instead", ReplaceWith("KaCallCandidateInfo"))
 public typealias KtCallCandidateInfo = KaCallCandidateInfo
 
 /**
@@ -41,6 +42,7 @@ public class KaApplicableCallCandidateInfo(
     isInBestCandidates: Boolean,
 ) : KaCallCandidateInfo(candidate, isInBestCandidates)
 
+@Deprecated("Use 'KaApplicableCallCandidateInfo' instead", ReplaceWith("KaApplicableCallCandidateInfo"))
 public typealias KtApplicableCallCandidateInfo = KaApplicableCallCandidateInfo
 
 /**

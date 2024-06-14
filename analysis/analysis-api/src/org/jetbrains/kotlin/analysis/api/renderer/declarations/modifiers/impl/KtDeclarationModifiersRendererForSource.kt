@@ -23,4 +23,5 @@ public object KaDeclarationModifiersRendererForSource {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaDeclarationModifiersRendererForSource' instead", ReplaceWith("KaDeclarationModifiersRendererForSource"))
 public typealias KtDeclarationModifiersRendererForSource = KaDeclarationModifiersRendererForSource

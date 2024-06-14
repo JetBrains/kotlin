@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
  */
 public sealed interface KaContractBooleanExpression : KaLifetimeOwner
 
+@Deprecated("Use 'KaContractBooleanExpression' instead", ReplaceWith("KaContractBooleanExpression"))
 public typealias KtContractBooleanExpression = KaContractBooleanExpression
 
 /**
@@ -35,6 +36,7 @@ public class KaContractBooleanValueParameterExpression(
     }
 }
 
+@Deprecated("Use 'KaContractBooleanValueParameterExpression' instead", ReplaceWith("KaContractBooleanValueParameterExpression"))
 public typealias KtContractBooleanValueParameterExpression = KaContractBooleanValueParameterExpression
 
 /**
@@ -54,4 +56,5 @@ public class KaContractBooleanConstantExpression(
     override fun hashCode(): Int = backingBooleanConstant.hashCode()
 }
 
+@Deprecated("Use 'KaContractBooleanConstantExpression' instead", ReplaceWith("KaContractBooleanConstantExpression"))
 public typealias KtContractBooleanConstantExpression = KaContractBooleanConstantExpression

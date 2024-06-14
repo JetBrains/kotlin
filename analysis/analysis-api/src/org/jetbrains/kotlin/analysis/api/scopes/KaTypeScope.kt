@@ -76,4 +76,5 @@ public interface KaTypeScope : KaScopeLike {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaTypeScope' instead", ReplaceWith("KaTypeScope"))
 public typealias KtTypeScope = KaTypeScope

@@ -36,6 +36,7 @@ public abstract class KaContextReceiver : KaLifetimeOwner {
     public abstract val label: Name?
 }
 
+@Deprecated("Use 'KaContextReceiver' instead", ReplaceWith("KaContextReceiver"))
 public typealias KtContextReceiver = KaContextReceiver
 
 /**
@@ -48,4 +49,5 @@ public interface KaContextReceiversOwner : KaLifetimeOwner {
     public val contextReceivers: List<KaContextReceiver>
 }
 
+@Deprecated("Use 'KaContextReceiversOwner' instead", ReplaceWith("KaContextReceiversOwner"))
 public typealias KtContextReceiversOwner = KaContextReceiversOwner

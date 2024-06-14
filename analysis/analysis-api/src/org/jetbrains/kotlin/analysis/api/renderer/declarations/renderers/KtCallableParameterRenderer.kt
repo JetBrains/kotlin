@@ -40,4 +40,5 @@ public interface KaCallableParameterRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaCallableParameterRenderer' instead", ReplaceWith("KaCallableParameterRenderer"))
 public typealias KtCallableParameterRenderer = KaCallableParameterRenderer

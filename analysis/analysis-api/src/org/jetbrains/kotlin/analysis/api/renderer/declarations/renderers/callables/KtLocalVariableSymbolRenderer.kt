@@ -38,4 +38,5 @@ public interface KaLocalVariableSymbolRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaLocalVariableSymbolRenderer' instead", ReplaceWith("KaLocalVariableSymbolRenderer"))
 public typealias KtLocalVariableSymbolRenderer = KaLocalVariableSymbolRenderer

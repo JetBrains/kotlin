@@ -57,6 +57,7 @@ public interface KaClassifierBodyRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaClassifierBodyRenderer' instead", ReplaceWith("KaClassifierBodyRenderer"))
 public typealias KtClassifierBodyRenderer = KaClassifierBodyRenderer
 
 @KaExperimentalApi
@@ -96,4 +97,5 @@ public abstract class KaClassifierBodyWithMembersRenderer : KaClassifierBodyRend
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaClassifierBodyWithMembersRenderer' instead", ReplaceWith("KaClassifierBodyWithMembersRenderer"))
 public typealias KtClassifierBodyWithMembersRenderer = KaClassifierBodyWithMembersRenderer

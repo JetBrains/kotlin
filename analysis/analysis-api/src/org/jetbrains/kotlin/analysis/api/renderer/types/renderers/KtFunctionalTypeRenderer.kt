@@ -100,4 +100,5 @@ public interface KaFunctionalTypeRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaFunctionalTypeRenderer' instead", ReplaceWith("KaFunctionalTypeRenderer"))
 public typealias KtFunctionalTypeRenderer = KaFunctionalTypeRenderer

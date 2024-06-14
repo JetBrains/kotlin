@@ -31,4 +31,5 @@ public interface KaRendererBodyMemberScopeSorter {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaRendererBodyMemberScopeSorter' instead", ReplaceWith("KaRendererBodyMemberScopeSorter"))
 public typealias KtRendererBodyMemberScopeSorter = KaRendererBodyMemberScopeSorter

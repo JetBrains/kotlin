@@ -89,4 +89,5 @@ public interface KaPropertyAccessorsRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaPropertyAccessorsRenderer' instead", ReplaceWith("KaPropertyAccessorsRenderer"))
 public typealias KtPropertyAccessorsRenderer = KaPropertyAccessorsRenderer

@@ -40,6 +40,7 @@ public class KaContractBinaryLogicExpression(
     }
 }
 
+@Deprecated("Use 'KaContractBinaryLogicExpression' instead.", ReplaceWith("KaContractBinaryLogicExpression"))
 public typealias KtContractBinaryLogicExpression = KaContractBinaryLogicExpression
 
 /**
@@ -56,4 +57,5 @@ public class KaContractLogicalNotExpression(private val backingArgument: KaContr
     override fun hashCode(): Int = backingArgument.hashCode()
 }
 
+@Deprecated("Use 'KaContractLogicalNotExpression' instead.", ReplaceWith("KaContractLogicalNotExpression"))
 public typealias KtContractLogicalNotExpression = KaContractLogicalNotExpression

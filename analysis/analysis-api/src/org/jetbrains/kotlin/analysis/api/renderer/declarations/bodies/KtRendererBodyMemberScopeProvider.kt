@@ -50,4 +50,5 @@ public interface KaRendererBodyMemberScopeProvider {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaRendererBodyMemberScopeProvider'", ReplaceWith("KaRendererBodyMemberScopeProvider"))
 public typealias KtRendererBodyMemberScopeProvider = KaRendererBodyMemberScopeProvider

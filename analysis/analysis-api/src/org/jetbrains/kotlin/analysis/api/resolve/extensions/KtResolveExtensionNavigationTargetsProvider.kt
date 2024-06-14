@@ -21,4 +21,5 @@ public abstract class KaResolveExtensionNavigationTargetsProvider {
     public abstract fun KaSession.getNavigationTargets(element: KtElement): Collection<PsiElement>
 }
 
+@Deprecated("Use 'KaResolveExtensionNavigationTargetsProvider' instead", ReplaceWith("KaResolveExtensionNavigationTargetsProvider"))
 public typealias KtResolveExtensionNavigationTargetsProvider = KaResolveExtensionNavigationTargetsProvider

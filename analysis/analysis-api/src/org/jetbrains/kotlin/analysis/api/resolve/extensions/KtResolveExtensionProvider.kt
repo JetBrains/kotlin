@@ -37,4 +37,5 @@ public abstract class KaResolveExtensionProvider {
     }
 }
 
+@Deprecated("Use 'KaResolveExtensionProvider' instead", ReplaceWith("KaResolveExtensionProvider"))
 public typealias KtResolveExtensionProvider = KaResolveExtensionProvider

@@ -67,4 +67,5 @@ public interface KaFunctionSymbolRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaFunctionSymbolRenderer' instead", ReplaceWith("KaFunctionSymbolRenderer"))
 public typealias KtFunctionSymbolRenderer = KaFunctionSymbolRenderer

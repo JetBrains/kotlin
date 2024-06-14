@@ -28,6 +28,7 @@ public annotation class KaImplementationDetail
 @RequiresOptIn("Internal Analysis API component which should not be used outside the Analysis API implementation modules as it does not have any compatibility guarantees")
 public annotation class KaAnalysisApiInternals
 
+@Deprecated("Use 'KaAnalysisApiInternals' instead", ReplaceWith("KaAnalysisApiInternals"))
 @Suppress("OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN")
 public typealias KtAnalysisApiInternals = KaAnalysisApiInternals
 
@@ -68,5 +69,6 @@ public annotation class KaIdeApi
 @RequiresOptIn("Experimental API with no compatibility guarantees")
 public annotation class KaExperimentalApi
 
+@Deprecated("Use 'KaNonPublicApi' instead", ReplaceWith("KaNonPublicApi"))
 @Suppress("OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN")
 public typealias KtAnalysisNonPublicApi = KaAnalysisNonPublicApi

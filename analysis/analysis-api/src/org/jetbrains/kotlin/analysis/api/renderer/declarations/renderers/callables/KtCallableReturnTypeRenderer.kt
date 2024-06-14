@@ -38,4 +38,5 @@ public interface KaCallableReturnTypeRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaCallableReturnTypeRenderer' instead", ReplaceWith("KaCallableReturnTypeRenderer"))
 public typealias KtCallableReturnTypeRenderer = KaCallableReturnTypeRenderer

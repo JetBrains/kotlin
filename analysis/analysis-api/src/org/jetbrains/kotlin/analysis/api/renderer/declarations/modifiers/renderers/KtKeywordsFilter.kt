@@ -68,4 +68,5 @@ public interface KaRendererKeywordFilter {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaRendererKeywordFilter' instead", ReplaceWith("KaRendererKeywordFilter"))
 public typealias KtRendererKeywordFilter = KaRendererKeywordFilter

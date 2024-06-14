@@ -13,6 +13,7 @@ public interface KaSymbolWithVisibility : KaSymbol {
     public val visibility: Visibility
 }
 
+@Deprecated("Use 'KaSymbolWithVisibility' instead", ReplaceWith("KaSymbolWithVisibility"))
 public typealias KtSymbolWithVisibility = KaSymbolWithVisibility
 
 public fun Visibility.isPrivateOrPrivateToThis(): Boolean =

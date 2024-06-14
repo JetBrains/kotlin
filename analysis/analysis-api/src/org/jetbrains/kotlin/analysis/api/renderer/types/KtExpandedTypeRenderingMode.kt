@@ -35,4 +35,5 @@ public enum class KaExpandedTypeRenderingMode {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaExpandedTypeRenderingMode' instead", ReplaceWith("KaExpandedTypeRenderingMode"))
 public typealias KtExpandedTypeRenderingMode = KaExpandedTypeRenderingMode

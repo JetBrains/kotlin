@@ -52,4 +52,5 @@ public interface KaSuperTypesCallArgumentsRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaSuperTypesCallArgumentsRenderer' instead", ReplaceWith("KaSuperTypesCallArgumentsRenderer"))
 public typealias KtSuperTypesCallArgumentsRenderer =KaSuperTypesCallArgumentsRenderer

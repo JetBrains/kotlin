@@ -40,4 +40,5 @@ public interface KaJavaFieldSymbolRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaJavaFieldSymbolRenderer' instead", ReplaceWith("KaJavaFieldSymbolRenderer"))
 public typealias KtJavaFieldSymbolRenderer = KaJavaFieldSymbolRenderer

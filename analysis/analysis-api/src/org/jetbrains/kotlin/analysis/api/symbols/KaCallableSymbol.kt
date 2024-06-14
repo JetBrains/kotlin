@@ -32,6 +32,7 @@ public sealed class KaCallableSymbol : @Suppress("DEPRECATION") org.jetbrains.ko
     abstract override fun createPointer(): KaSymbolPointer<KaCallableSymbol>
 }
 
+@Deprecated("Use 'KaCallableSymbol' instead.", ReplaceWith("KaCallableSymbol"))
 public typealias KtCallableSymbol = KaCallableSymbol
 
 public val KaCallableSymbol.receiverType: KaType?
@@ -56,4 +57,5 @@ public abstract class KaReceiverParameterSymbol : KaAnnotatedSymbol, KaParameter
         get() = withValidityAssertion { KaSymbolLocation.LOCAL }
 }
 
+@Deprecated("Use 'KaReceiverParameterSymbol' instead.", ReplaceWith("KaReceiverParameterSymbol"))
 public typealias KtReceiverParameterSymbol = KaReceiverParameterSymbol

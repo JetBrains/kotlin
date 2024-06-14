@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
     level = DeprecationLevel.HIDDEN,
 )
 public typealias KaTypeProjection = KaTypeProjection
+
+@Deprecated("Use 'KaTypeProjection' instead", ReplaceWith("KaTypeProjection"))
 public typealias KtTypeProjection = KaTypeProjection
 
 @Deprecated(
@@ -21,6 +23,8 @@ public typealias KtTypeProjection = KaTypeProjection
     level = DeprecationLevel.HIDDEN,
 )
 public typealias KaStarTypeProjection = KaStarTypeProjection
+
+@Deprecated("Use 'KaTypeArgumentWithVariance' instead", ReplaceWith("KaTypeArgumentWithVariance"))
 public typealias KtStarTypeProjection = KaStarTypeProjection
 
 @Deprecated(
@@ -28,4 +32,6 @@ public typealias KtStarTypeProjection = KaStarTypeProjection
     level = DeprecationLevel.HIDDEN,
 )
 public typealias KaTypeArgumentWithVariance = KaTypeArgumentWithVariance
+
+@Deprecated("Use 'KaTypeArgumentWithVariance' instead", ReplaceWith("KaTypeArgumentWithVariance"))
 public typealias KtTypeArgumentWithVariance = KaTypeArgumentWithVariance

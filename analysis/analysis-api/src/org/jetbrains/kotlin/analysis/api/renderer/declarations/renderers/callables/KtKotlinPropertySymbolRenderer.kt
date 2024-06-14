@@ -41,4 +41,5 @@ public interface KaKotlinPropertySymbolRenderer {
 }
 
 @KaExperimentalApi
+@Deprecated("Use 'KaKotlinPropertySymbolRenderer' instead", ReplaceWith("KaKotlinPropertySymbolRenderer"))
 public typealias KtKotlinPropertySymbolRenderer = KaKotlinPropertySymbolRenderer
