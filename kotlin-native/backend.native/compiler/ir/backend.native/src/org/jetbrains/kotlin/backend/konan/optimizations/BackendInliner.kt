@@ -130,18 +130,6 @@ internal class BackendInliner(
                         callee.body.forEachNonScopeNode { node ->
                             if (node is DataFlowIR.Node.Call && node.callee == calleeSymbol)
                                 isALoop = true
-                            if (node is DataFlowIR.Node.VirtualCall) {
-                                val devirtualizedCallSite = devirtualizedCallSites[node]
-                                val maxUnfoldFactor = if (node is DataFlowIR.Node.ItableCall)
-                                    DevirtualizationUnfoldFactors.IR_DEVIRTUALIZED_ITABLE_CALL else DevirtualizationUnfoldFactors.IR_DEVIRTUALIZED_VTABLE_CALL
-                                if (devirtualizedCallSite != null) {
-                                    val possibleCallees = devirtualizedCallSite.possibleCallees.groupBy {
-                                        it.callee as? DataFlowIR.FunctionSymbol.Declared ?: return@forEachNonScopeNode
-                                    }
-                                    if (possibleCallees.size <= maxUnfoldFactor && devirtualizedCallSite.possibleCallees.any { it.callee == calleeSymbol })
-                                        isALoop = true
-                                }
-                            }
                         }
 //                        //if (irFunction.name.asString() == "foo")
 //                        println("        $isALoop $calleeSize")
