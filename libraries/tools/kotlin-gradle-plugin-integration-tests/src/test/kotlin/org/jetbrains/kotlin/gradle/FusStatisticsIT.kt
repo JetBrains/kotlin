@@ -31,7 +31,10 @@ class FusStatisticsIT : KGPBaseTest() {
     )
 
     private val GradleProject.fusStatisticsPath: Path
-        get() = projectPath.getSingleFileInDir("kotlin-profile")
+        get() = baseFusStatisticsDirectory.getSingleFileInDir()
+
+    private val GradleProject.baseFusStatisticsDirectory: Path
+        get() = projectPath.resolve("kotlin-profile")
 
     @JvmGradlePluginTests
     @DisplayName("for dokka")
@@ -317,6 +320,17 @@ class FusStatisticsIT : KGPBaseTest() {
                     "CONFIGURATION_IMPLEMENTATION_COUNT=1",
                     "CONFIGURATION_RUNTIME_ONLY_COUNT=1",
                 )
+            }
+        }
+    }
+
+    @JvmGradlePluginTests
+    @GradleTest
+    fun testFusMetricsCanBeDisabled(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            build("assemble", "-Pkotlin.internal.collectFUSMetrics=false") {
+                val fusStatisticsPath = baseFusStatisticsDirectory
+                assertFileNotExists(fusStatisticsPath)
             }
         }
     }

@@ -69,7 +69,10 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
 
     override fun apply(project: Project) {
         project.registerDefaultVariantImplementations()
-        BuildFusService.registerIfAbsent(project, pluginVersion)
+
+        if (project.kotlinPropertiesProvider.enableFusMetricsCollection) {
+            BuildFusService.registerIfAbsent(project, pluginVersion)
+        }
         PropertiesBuildService.registerIfAbsent(project)
 
         project.gradle.projectsEvaluated {

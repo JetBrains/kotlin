@@ -112,8 +112,8 @@ fun TestProject.sourceFilesRelativeToProject(
 /**
  * Returns a single file located in the [relativePath] subdirectory. If no file or more than one file is found an assertion error will be thrown.
  */
-fun Path.getSingleFileInDir(relativePath: String): Path {
-    val path = resolve(relativePath)
+fun Path.getSingleFileInDir(relativePath: String? = null): Path {
+    val path = if (relativePath != null) resolve(relativePath) else this
     return Files.list(path).use {
         val files = it.asSequence().toList()
         files.singleOrNull() ?: fail("The directory must contain a single file, but got: $files")
