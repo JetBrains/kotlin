@@ -67,7 +67,10 @@ dependencies {
 // FIXME: Stop embedding Analysis API after KT-61404
 fun validateSwiftExportEmbeddable(swiftExportEmbeddableJarTask: TaskProvider<out org.gradle.jvm.tasks.Jar>) {
     val swiftExportEmbeddableJar = files(swiftExportEmbeddableJarTask)
-    val swiftExportActionRuntimeClasspath = files(configurations.runtimeClasspath)
+    val swiftExportActionRuntimeClasspath = files(
+        configurations.runtimeClasspath,
+        swiftExportEmbeddableJar,
+    )
     val proguardedSwiftExportEmbeddableJar = layout.buildDirectory.file("proguard/output.jar")
 
     /**
@@ -117,7 +120,8 @@ fun validateSwiftExportEmbeddable(swiftExportEmbeddableJarTask: TaskProvider<out
     }
 
     /**
-     * This task makes sure there are no duplicates in the runtime classpath; i.e. runtimeOnly dependencies are correctly specified
+     * This task makes sure there are no duplicates in the runtime classpath; i.e. runtimeOnly dependencies are correctly specified and
+     * there is no collision with embedded classes
      */
     tasks.register("validateNoDuplicatesInRuntimeClasspath") {
         dependsOn(swiftExportActionRuntimeClasspath)
