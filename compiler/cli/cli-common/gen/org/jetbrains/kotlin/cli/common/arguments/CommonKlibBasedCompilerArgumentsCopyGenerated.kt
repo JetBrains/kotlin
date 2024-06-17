@@ -11,6 +11,7 @@ fun copyCommonKlibBasedCompilerArguments(from: CommonKlibBasedCompilerArguments,
     copyCommonCompilerArguments(from, to)
 
     to.enableSignatureClashChecks = from.enableSignatureClashChecks
+    to.experimentalDoubleInlining = from.experimentalDoubleInlining
     to.normalizeAbsolutePath = from.normalizeAbsolutePath
     to.partialLinkageLogLevel = from.partialLinkageLogLevel
     to.partialLinkageMode = from.partialLinkageMode
