@@ -4,6 +4,6 @@
     <option name="additionalArguments" value="-version -Xallow-kotlin-package -Xskip-metadata-version-check" />
   </component>
   <component name="KotlinJpsPluginSettings">
-    <option name="version" value="2.0.20-dev-4579" />
+    <option name="version" value="2.0.20-dev-6501" />
   </component>
 </project>
