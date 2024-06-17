@@ -21,7 +21,7 @@ KaJavaFieldSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaJavaFieldSymbol:
@@ -48,7 +48,7 @@ KaJavaFieldSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -87,7 +87,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaJavaFieldSymbol:
@@ -114,7 +114,7 @@ KaJavaFieldSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaSyntheticJavaPropertySymbol:
@@ -149,7 +149,7 @@ KaSyntheticJavaPropertySymbol:
       type: java/lang/String
     getContainingFileSymbol: null
     getContainingJvmClassName: java.lang.String
-    getContainingModule: KaSdkModule "SDK jdk"
+    getContainingModule: KaLibraryModule "SDK jdk"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -181,7 +181,7 @@ KaSyntheticJavaPropertySymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: length
@@ -224,7 +224,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -279,7 +279,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -289,7 +289,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -344,7 +344,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -354,7 +354,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -409,7 +409,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -434,7 +434,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -444,7 +444,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -499,7 +499,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -524,7 +524,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -534,7 +534,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -588,7 +588,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -613,7 +613,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: PackageVisibility
@@ -623,7 +623,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -678,7 +678,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -703,7 +703,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -727,7 +727,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -752,7 +752,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -762,7 +762,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -820,7 +820,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -845,7 +845,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -869,7 +869,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -894,7 +894,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -904,7 +904,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
 
 KaNamedFunctionSymbol:
@@ -957,7 +957,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -967,7 +967,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -1020,7 +1020,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -1030,7 +1030,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -1068,7 +1068,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -1123,7 +1123,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -1133,7 +1133,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -1187,7 +1187,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -1197,7 +1197,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -1251,7 +1251,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -1261,7 +1261,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -1315,7 +1315,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -1325,7 +1325,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -1379,7 +1379,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -1389,7 +1389,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -1443,7 +1443,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -1453,7 +1453,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -1508,7 +1508,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -1532,7 +1532,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -1557,7 +1557,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -1582,7 +1582,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -1592,7 +1592,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -1647,7 +1647,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -1672,7 +1672,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -1696,7 +1696,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -1721,7 +1721,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -1746,7 +1746,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -1756,7 +1756,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -1810,7 +1810,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -1835,7 +1835,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -1845,7 +1845,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -1899,7 +1899,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -1909,7 +1909,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -1963,7 +1963,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -1973,7 +1973,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -2012,7 +2012,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -2067,7 +2067,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -2077,7 +2077,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -2132,7 +2132,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -2157,7 +2157,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -2167,7 +2167,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -2221,7 +2221,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -2231,7 +2231,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -2285,7 +2285,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -2310,7 +2310,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -2320,7 +2320,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -2375,7 +2375,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -2400,7 +2400,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Private
@@ -2410,7 +2410,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -2465,7 +2465,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -2475,7 +2475,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -2530,7 +2530,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -2555,7 +2555,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -2565,7 +2565,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -2619,7 +2619,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -2629,7 +2629,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -2683,7 +2683,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -2708,7 +2708,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -2718,7 +2718,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -2773,7 +2773,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -2798,7 +2798,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Private
@@ -2808,7 +2808,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -2862,7 +2862,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -2872,7 +2872,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -2926,7 +2926,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -2951,7 +2951,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -2961,7 +2961,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -3016,7 +3016,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -3041,7 +3041,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -3051,7 +3051,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -3104,7 +3104,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -3114,7 +3114,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -3168,7 +3168,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -3193,7 +3193,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -3203,7 +3203,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -3256,7 +3256,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -3280,7 +3280,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -3290,7 +3290,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -3344,7 +3344,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -3354,7 +3354,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -3408,7 +3408,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -3418,7 +3418,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -3471,7 +3471,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -3495,7 +3495,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -3505,7 +3505,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -3558,7 +3558,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -3582,7 +3582,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -3592,7 +3592,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -3645,7 +3645,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -3670,7 +3670,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -3680,7 +3680,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -3733,7 +3733,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -3743,7 +3743,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -3796,7 +3796,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -3806,7 +3806,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -3844,7 +3844,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -3897,7 +3897,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -3907,7 +3907,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -3945,7 +3945,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -3983,7 +3983,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -4022,7 +4022,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -4060,7 +4060,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -4098,7 +4098,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -4153,7 +4153,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
@@ -4163,7 +4163,7 @@ KaNamedFunctionSymbol:
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaNamedClassSymbol:
@@ -4204,7 +4204,7 @@ KaNamedClassSymbol:
   typeParameters: []
   visibility: Private
   getContainingFileSymbol: null
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   annotationApplicableTargets: null
   deprecationStatus: null
 
@@ -4230,7 +4230,7 @@ KaConstructorSymbol:
   visibility: Public
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaConstructorSymbol:
@@ -4274,13 +4274,13 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaConstructorSymbol:
@@ -4324,13 +4324,13 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaConstructorSymbol:
@@ -4374,7 +4374,7 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -4399,7 +4399,7 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -4424,13 +4424,13 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaConstructorSymbol:
@@ -4474,7 +4474,7 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -4499,7 +4499,7 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -4524,13 +4524,13 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaConstructorSymbol:
@@ -4577,7 +4577,7 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -4602,7 +4602,7 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -4627,7 +4627,7 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -4652,13 +4652,13 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
 
 KaConstructorSymbol:
@@ -4705,7 +4705,7 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -4730,13 +4730,13 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
 
 KaConstructorSymbol:
@@ -4780,7 +4780,7 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -4805,7 +4805,7 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -4830,7 +4830,7 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -4854,13 +4854,13 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaConstructorSymbol:
@@ -4904,7 +4904,7 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -4929,7 +4929,7 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -4954,7 +4954,7 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -4978,13 +4978,13 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaConstructorSymbol:
@@ -5028,7 +5028,7 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -5052,13 +5052,13 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaConstructorSymbol:
@@ -5102,7 +5102,7 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -5126,13 +5126,13 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaConstructorSymbol:
@@ -5176,7 +5176,7 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -5201,7 +5201,7 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -5226,13 +5226,13 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaConstructorSymbol:
@@ -5276,13 +5276,13 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaConstructorSymbol:
@@ -5326,13 +5326,13 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaConstructorSymbol:
@@ -5376,13 +5376,13 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaConstructorSymbol:
@@ -5426,7 +5426,7 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -5451,13 +5451,13 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: PackageVisibility
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaConstructorSymbol:
@@ -5505,7 +5505,7 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -5530,7 +5530,7 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
       annotations: []
@@ -5554,11 +5554,11 @@ KaConstructorSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KaSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: PackageVisibility
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)

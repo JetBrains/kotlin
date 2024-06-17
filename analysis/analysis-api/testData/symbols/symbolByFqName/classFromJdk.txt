@@ -40,6 +40,6 @@ KaNamedClassSymbol:
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: null
-  getContainingModule: KaSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   annotationApplicableTargets: null
   deprecationStatus: null
