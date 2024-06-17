@@ -145,7 +145,20 @@ class WrapJsComposableLambdaLowering(
         val original = super.visitCall(expression) as IrCall
         return when (expression.symbol.owner.fqNameForIrSerialization) {
             ComposeCallableIds.composableLambda.asSingleFqName() -> {
-                transformComposableLambdaCall(original)
+                transformComposableLambdaCall(
+                    originalCall = original,
+                    currentComposer = original.getValueArgument(0),
+                    lambda = original.getValueArgument(
+                        original.valueArgumentsCount - 1
+                    ) as IrFunctionExpression
+                )
+            }
+            ComposeCallableIds.rememberComposableLambda.asSingleFqName() -> {
+                transformComposableLambdaCall(
+                    originalCall = original,
+                    currentComposer =  original.getValueArgument(3),
+                    lambda = original.getValueArgument(2) as IrFunctionExpression
+                )
             }
             ComposeCallableIds.composableLambdaInstance.asSingleFqName() -> {
                 transformComposableLambdaInstanceCall(original)
@@ -180,11 +193,11 @@ class WrapJsComposableLambdaLowering(
         }
     }
 
-    private fun transformComposableLambdaCall(originalCall: IrCall): IrExpression {
-        val currentComposer = originalCall.getValueArgument(0)
-        val lambda = originalCall.getValueArgument(originalCall.valueArgumentsCount - 1)
-            as IrFunctionExpression
-
+    private fun transformComposableLambdaCall(
+        originalCall: IrCall,
+        currentComposer: IrExpression?,
+        lambda: IrFunctionExpression
+    ): IrExpression {
         val composableLambdaVar = irTemporary(originalCall, "dispatchReceiver")
         // create dispatchReceiver::invoke function reference
         val funReference = functionReferenceForComposableLambda(
