@@ -168,6 +168,11 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         configuration.get(BinaryOptions.gcMarkSingleThreaded) ?: defaultGcMarkSingleThreaded
     }
 
+    private val defaultFixedBlockStartupDelay: UInt get() = 16u
+
+    val fixedBlockStartupDelay: UInt
+        get() = configuration.get(BinaryOptions.fixedBlockStartupDelay) ?: defaultFixedBlockStartupDelay
+
     val concurrentWeakSweep: Boolean
         get() = configuration.get(BinaryOptions.concurrentWeakSweep) ?: true
 
@@ -535,6 +540,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             append("-disable_mmap${if (disableMmap) "TRUE" else "FALSE"}")
         if (gcMarkSingleThreaded != defaultGcMarkSingleThreaded)
             append("-gc_mark_single_threaded${if (gcMarkSingleThreaded) "TRUE" else "FALSE"}")
+        if (fixedBlockStartupDelay != defaultFixedBlockStartupDelay)
+            append("-fixed_block_startup_delay$fixedBlockStartupDelay")
     }
 
     private val userCacheFlavorString = buildString {

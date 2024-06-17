@@ -7,6 +7,7 @@
 
 #include "Allocator.hpp"
 
+#include "CompilerConstants.hpp"
 #include "CustomAllocator.hpp"
 #include "CustomFinalizerProcessor.hpp"
 #include "GCApi.hpp"
@@ -16,7 +17,7 @@ namespace kotlin::alloc {
 
 class Allocator::Impl : private Pinned {
 public:
-    Impl() noexcept = default;
+    Impl() noexcept : heap_(kotlin::compiler::fixedBlockStartupDelay()) {}
 
     Heap& heap() noexcept { return heap_; }
 
