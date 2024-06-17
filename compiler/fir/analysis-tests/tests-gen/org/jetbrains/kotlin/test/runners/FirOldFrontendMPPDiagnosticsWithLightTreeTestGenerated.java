@@ -1797,9 +1797,15 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
     }
 
     @Test
-    @TestMetadata("privateMembers.kt")
-    public void testPrivateMembers() {
-      runTest("compiler/testData/diagnostics/tests/multiplatform/headerClass/privateMembers.kt");
+    @TestMetadata("privateMembers_allowPrivateConstructor.kt")
+    public void testPrivateMembers_allowPrivateConstructor() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/headerClass/privateMembers_allowPrivateConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("privateMembers_disalowPrivateConstructor.kt")
+    public void testPrivateMembers_disalowPrivateConstructor() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/headerClass/privateMembers_disalowPrivateConstructor.kt");
     }
 
     @Test
