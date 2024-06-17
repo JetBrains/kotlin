@@ -21,11 +21,11 @@ internal class InlineFunctionsSupport(mapping: NativeMapping) {
 
     fun savePartiallyLoweredInlineFunction(function: IrFunction) =
             function.deepCopyWithSymbols(function.parent).also {
-                partiallyLoweredInlineFunctions[function.symbol] = it
+                partiallyLoweredInlineFunctions[function] = it
             }
 
     fun getPartiallyLoweredInlineFunction(function: IrFunction) =
-            partiallyLoweredInlineFunctions[function.symbol]
+            partiallyLoweredInlineFunctions[function]
 }
 
 // TODO: This is a bit hacky. Think about adopting persistent IR ideas.

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.ir.addDispatchReceiver
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.*
@@ -24,11 +25,9 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.*
-import org.jetbrains.kotlin.ir.util.*
 
 val IR_DECLARATION_ORIGIN_VOLATILE = IrDeclarationOriginImpl("VOLATILE")
 
@@ -101,8 +100,8 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
 
 
     private inline fun atomicFunction(irField: IrField, type: NativeMapping.AtomicFunctionType, builder: () -> IrSimpleFunction): IrSimpleFunction {
-        val key = NativeMapping.AtomicFunctionKey(irField, type)
-        return context.mapping.volatileFieldToAtomicFunction.getOrPut(key) {
+        val atomicFunctions = context.mapping.volatileFieldToAtomicFunctions.getOrPut(irField) { mutableMapOf() }
+        return atomicFunctions.getOrPut(type) {
             builder().also {
                 context.mapping.functionToVolatileField[it] = irField
             }

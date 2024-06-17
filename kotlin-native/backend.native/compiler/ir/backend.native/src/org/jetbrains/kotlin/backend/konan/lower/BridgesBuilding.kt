@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
+import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
@@ -52,11 +53,13 @@ internal class BridgesSupport(mapping: NativeMapping, val irBuiltIns: IrBuiltIns
 
     fun getBridge(overriddenFunction: OverriddenFunctionInfo): IrSimpleFunction {
         val irFunction = overriddenFunction.function
+        val directions = overriddenFunction.bridgeDirections
         assert(overriddenFunction.needBridge) {
             "Function ${irFunction.render()} doesn't need a bridge to call overridden function ${overriddenFunction.overriddenFunction.render()}"
         }
-        val key = NativeMapping.BridgeKey(irFunction, overriddenFunction.bridgeDirections)
-        return bridges.getOrPut(key) { createBridge(key) }
+
+        val functionBridges = bridges.getOrPut(irFunction) { mutableMapOf() }
+        return functionBridges.getOrPut(directions) { createBridge(irFunction, directions) }
     }
 
     private fun BridgeDirection.type() =
@@ -64,8 +67,7 @@ internal class BridgesSupport(mapping: NativeMapping, val irBuiltIns: IrBuiltIns
                 null
             else this.erasedType ?: irBuiltIns.anyNType
 
-    private fun createBridge(key: NativeMapping.BridgeKey): IrSimpleFunction {
-        val (function, bridgeDirections) = key
+    private fun createBridge(function: IrSimpleFunction, bridgeDirections: BridgeDirections): IrSimpleFunction {
         val target = function.target
 
         // Note: bridgeDirection.type() = null only for BridgeDirectionKind.NONE (no conversion required),

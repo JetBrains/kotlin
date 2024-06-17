@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.irMessageLogger
@@ -32,18 +31,16 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import java.util.concurrent.ConcurrentHashMap
 
 internal class NativeMapping : DefaultMapping() {
-    data class BridgeKey(val target: IrSimpleFunction, val bridgeDirections: BridgeDirections)
     enum class AtomicFunctionType {
         COMPARE_AND_EXCHANGE, COMPARE_AND_SET, GET_AND_SET, GET_AND_ADD,
         ATOMIC_GET_ARRAY_ELEMENT, ATOMIC_SET_ARRAY_ELEMENT, COMPARE_AND_EXCHANGE_ARRAY_ELEMENT, COMPARE_AND_SET_ARRAY_ELEMENT, GET_AND_SET_ARRAY_ELEMENT, GET_AND_ADD_ARRAY_ELEMENT;
     }
-    data class AtomicFunctionKey(val field: IrField, val type: AtomicFunctionType)
 
     val outerThisFields = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrField>()
     val enumValueGetters = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrFunction>()
-    val enumEntriesMaps = mutableMapOf<IrClass, Map<Name, LoweredEnumEntryDescription>>()
-    val bridges = ConcurrentHashMap<BridgeKey, IrSimpleFunction>()
-    val partiallyLoweredInlineFunctions = mutableMapOf<IrFunctionSymbol, IrFunction>()
+    val enumEntriesMaps = DefaultDelegateFactory.newDeclarationToValueMapping<IrClass, Map<Name, LoweredEnumEntryDescription>>()
+    val bridges = DefaultDelegateFactory.newDeclarationToValueMapping<IrSimpleFunction, MutableMap<BridgeDirections, IrSimpleFunction>>()
+    val partiallyLoweredInlineFunctions = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrFunction, IrFunction>()
     val outerThisCacheAccessors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
     val lateinitPropertyCacheAccessors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrProperty, IrSimpleFunction>()
     val topLevelFieldCacheAccessors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrField, IrSimpleFunction>()
@@ -51,7 +48,7 @@ internal class NativeMapping : DefaultMapping() {
     val boxFunctions = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
     val unboxFunctions = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
     val loweredInlineClassConstructors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrConstructor, IrSimpleFunction>()
-    val volatileFieldToAtomicFunction = mutableMapOf<AtomicFunctionKey, IrSimpleFunction>()
+    val volatileFieldToAtomicFunctions = DefaultDelegateFactory.newDeclarationToValueMapping<IrField, MutableMap<AtomicFunctionType, IrSimpleFunction>>()
     val functionToVolatileField = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrSimpleFunction, IrField>()
 }
 

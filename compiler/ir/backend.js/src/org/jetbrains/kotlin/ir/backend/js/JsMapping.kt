@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import java.util.WeakHashMap
 
 class JsMapping : DefaultMapping() {
-    val classToItsDefaultConstructor = WeakHashMap<IrClass, IrConstructor>()
+    val classToItsDefaultConstructor = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrConstructor>()
 
     val esClassWhichNeedBoxParameters = DefaultDelegateFactory.newDeclarationToValueMapping<IrClass, Boolean>()
     val esClassToPossibilityForOptimization = DefaultDelegateFactory.newDeclarationToValueMapping<IrClass, MutableReference<Boolean>>()
