@@ -186,19 +186,18 @@ public interface KaLibrarySourceModule : KaModule {
 
 /**
  * A module which contains kotlin [builtins](https://kotlinlang.org/spec/built-in-types-and-their-semantics.html) for a specific platform.
- * Kotlin builtins usually reside in the compiler, so [contentScope] and [binaryRoots] are empty.
+ * Kotlin builtins usually reside in the compiler, so [contentScope] is empty.
  */
 @KaPlatformInterface
 public class KaBuiltinsModule(
     override val targetPlatform: TargetPlatform,
     override val project: Project
-) : KaBinaryModule {
+) : KaModule {
     override val directRegularDependencies: List<KaModule> get() = emptyList()
     override val directDependsOnDependencies: List<KaModule> get() = emptyList()
     override val transitiveDependsOnDependencies: List<KaModule> get() = emptyList()
     override val directFriendDependencies: List<KaModule> get() = emptyList()
     override val contentScope: GlobalSearchScope get() = GlobalSearchScope.EMPTY_SCOPE
-    override val binaryRoots: Collection<Path> get() = emptyList()
 
     @KaExperimentalApi
     override val moduleDescription: String get() = "Builtins for $targetPlatform"
