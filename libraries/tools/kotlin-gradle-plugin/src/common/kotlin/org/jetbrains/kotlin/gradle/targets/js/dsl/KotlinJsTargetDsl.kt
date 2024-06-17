@@ -15,8 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.HasBinaries
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.*
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
@@ -27,13 +26,13 @@ interface KotlinJsSubTargetContainerDsl : KotlinTarget {
 
     val browser: KotlinJsBrowserDsl
 
+    val subTargets: NamedDomainObjectContainer<IKotlinJsIrSubTarget>
+
     val isNodejsConfigured: Boolean
+        get() = subTargets.filterIsInstance<KotlinNodeJsIr>().isNotEmpty()
 
     val isBrowserConfigured: Boolean
-
-    fun whenNodejsConfigured(body: KotlinJsNodeDsl.() -> Unit)
-
-    fun whenBrowserConfigured(body: KotlinJsBrowserDsl.() -> Unit)
+        get() = subTargets.filterIsInstance<KotlinBrowserJsIr>().isNotEmpty()
 }
 
 interface KotlinJsTargetDsl :

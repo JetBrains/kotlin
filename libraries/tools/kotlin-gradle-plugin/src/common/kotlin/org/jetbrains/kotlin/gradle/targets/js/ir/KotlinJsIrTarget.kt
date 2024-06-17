@@ -7,20 +7,15 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
-import org.gradle.api.Task
-import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Companion.runTaskNameSuffix
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.setUpResourcesVariant
 import org.jetbrains.kotlin.gradle.targets.js.JsAggregatingExecutionSource
@@ -55,6 +50,10 @@ constructor(
     KotlinWasmSubTargetContainerDsl {
 
     private val propertiesProvider = PropertiesProvider(project)
+
+    override val subTargets: NamedDomainObjectContainer<IKotlinJsIrSubTarget> = project.container(
+        IKotlinJsIrSubTarget::class.java
+    )
 
     override val testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun> by lazy {
         project.container(KotlinJsReportAggregatingTestRun::class.java, KotlinJsTestRunFactory(this))
@@ -157,6 +156,12 @@ constructor(
             }
     }
 
+    fun <T : IKotlinJsIrSubTarget> addSubTarget(type: Class<T>, configure: T.() -> Unit): T {
+        val subTarget = project.objects.newInstance(type, this).also(configure)
+        subTargets.add(subTarget)
+        return subTarget
+    }
+
     private val commonLazyDelegate = lazy {
         NpmResolverPlugin.apply(project)
         compilations.all { compilation ->
@@ -201,23 +206,14 @@ constructor(
     //Browser
     private val browserLazyDelegate = lazy {
         commonLazy
-        project.objects.newInstance(KotlinBrowserJsIr::class.java, this).also {
-            it.configureSubTarget()
-            it.subTargetConfigurators.add(LibraryConfigurator(it))
-            it.subTargetConfigurators.add(WebpackConfigurator(it))
-            browserConfiguredHandlers.forEach { handler ->
-                handler(it)
-            }
-            browserConfiguredHandlers.clear()
+        addSubTarget(KotlinBrowserJsIr::class.java) {
+            configureSubTarget()
+            subTargetConfigurators.add(LibraryConfigurator(this))
+            subTargetConfigurators.add(WebpackConfigurator(this))
         }
     }
 
-    private val browserConfiguredHandlers = mutableListOf<KotlinJsBrowserDsl.() -> Unit>()
-
-    override val browser by browserLazyDelegate
-
-    override val isBrowserConfigured: Boolean
-        get() = browserLazyDelegate.isInitialized()
+    override val browser: KotlinJsBrowserDsl by browserLazyDelegate
 
     override fun browser(body: KotlinJsBrowserDsl.() -> Unit) {
         body(browser)
@@ -231,24 +227,14 @@ constructor(
             NodeJsRootPlugin.apply(project.rootProject)
         }
 
-        project.objects.newInstance(KotlinNodeJsIr::class.java, this).also {
-            it.configureSubTarget()
-            it.subTargetConfigurators.add(LibraryConfigurator(it))
-            it.subTargetConfigurators.add(JsEnvironmentConfigurator(it))
-            nodejsConfiguredHandlers.forEach { handler ->
-                handler(it)
-            }
-
-            nodejsConfiguredHandlers.clear()
+        addSubTarget(KotlinNodeJsIr::class.java) {
+            configureSubTarget()
+            subTargetConfigurators.add(LibraryConfigurator(this))
+            subTargetConfigurators.add(JsEnvironmentConfigurator(this))
         }
     }
 
-    private val nodejsConfiguredHandlers = mutableListOf<KotlinJsNodeDsl.() -> Unit>()
-
-    override val nodejs by nodejsLazyDelegate
-
-    override val isNodejsConfigured: Boolean
-        get() = nodejsLazyDelegate.isInitialized()
+    override val nodejs: KotlinJsNodeDsl by nodejsLazyDelegate
 
     override fun nodejs(body: KotlinJsNodeDsl.() -> Unit) {
         body(nodejs)
@@ -257,24 +243,15 @@ constructor(
     //d8
     private val d8LazyDelegate = lazy {
         commonLazy
-        project.objects.newInstance(KotlinD8Ir::class.java, this).also {
-            it.configureSubTarget()
-            it.subTargetConfigurators.add(LibraryConfigurator(it))
-            it.subTargetConfigurators.add(JsEnvironmentConfigurator(it))
-            d8ConfiguredHandlers.forEach { handler ->
-                handler(it)
-            }
 
-            d8ConfiguredHandlers.clear()
+        addSubTarget(KotlinD8Ir::class.java) {
+            configureSubTarget()
+            subTargetConfigurators.add(LibraryConfigurator(this))
+            subTargetConfigurators.add(JsEnvironmentConfigurator(this))
         }
     }
 
-    private val d8ConfiguredHandlers = mutableListOf<KotlinWasmD8Dsl.() -> Unit>()
-
-    override val d8 by d8LazyDelegate
-
-    override val isD8Configured: Boolean
-        get() = d8LazyDelegate.isInitialized()
+    override val d8: KotlinWasmD8Dsl by d8LazyDelegate
 
     private fun KotlinJsIrSubTarget.configureSubTarget() {
         configure()
@@ -282,30 +259,6 @@ constructor(
 
     override fun d8(body: KotlinWasmD8Dsl.() -> Unit) {
         body(d8)
-    }
-
-    override fun whenBrowserConfigured(body: KotlinJsBrowserDsl.() -> Unit) {
-        if (browserLazyDelegate.isInitialized()) {
-            browser(body)
-        } else {
-            browserConfiguredHandlers += body
-        }
-    }
-
-    override fun whenNodejsConfigured(body: KotlinJsNodeDsl.() -> Unit) {
-        if (nodejsLazyDelegate.isInitialized()) {
-            nodejs(body)
-        } else {
-            nodejsConfiguredHandlers += body
-        }
-    }
-
-    override fun whenD8Configured(body: KotlinWasmD8Dsl.() -> Unit) {
-        if (d8LazyDelegate.isInitialized()) {
-            d8(body)
-        } else {
-            d8ConfiguredHandlers += body
-        }
     }
 
     override fun useCommonJs() {

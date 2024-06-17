@@ -14,7 +14,10 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTargetTestRun
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmSubTargetContainerDsl
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinBrowserJsIr
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinD8Ir
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinNodeJsIr
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.testing.KotlinReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.testing.KotlinTaskTestRun
@@ -69,11 +72,8 @@ abstract class KotlinJsReportAggregatingTestRun @Inject constructor(
     private fun KotlinJsSubTargetDsl.getChildTestExecution() = testRuns.maybeCreate(testRunName)
 
     override fun getConfiguredExecutions(): Iterable<KotlinJsPlatformTestRun> = mutableListOf<KotlinJsPlatformTestRun>().apply {
-        if (target.isNodejsConfigured) {
-            add(target.nodejs.getChildTestExecution())
-        }
-        if (target.isBrowserConfigured) {
-            add(target.browser.getChildTestExecution())
+        target.subTargets.forEach { subTarget ->
+            add(subTarget.getChildTestExecution())
         }
     }
 
@@ -82,9 +82,9 @@ abstract class KotlinJsReportAggregatingTestRun @Inject constructor(
             configure(getChildTestExecution())
         }
 
-        target.whenBrowserConfigured { doConfigureInChildren(this) }
-        target.whenNodejsConfigured { doConfigureInChildren(this) }
-        (target as? KotlinWasmSubTargetContainerDsl)?.whenD8Configured { doConfigureInChildren(this) }
+        target.subTargets.all { subTarget ->
+            doConfigureInChildren(subTarget)
+        }
     }
 
     override fun filter(configureFilter: Closure<*>) = filter { target.project.configure(this, configureFilter) }

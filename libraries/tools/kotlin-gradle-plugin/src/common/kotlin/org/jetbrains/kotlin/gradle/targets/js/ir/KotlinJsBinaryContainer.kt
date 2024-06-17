@@ -48,16 +48,9 @@ constructor(
         compilation: KotlinJsCompilation = defaultCompilation,
     ): List<JsIrBinary> {
         if (target is KotlinJsIrTarget) {
-            target.whenBrowserConfigured {
-                (this as KotlinJsIrSubTarget).produceExecutable()
-            }
 
-            target.whenNodejsConfigured {
-                (this as KotlinJsIrSubTarget).produceExecutable()
-            }
-
-            target.whenD8Configured {
-                (this as KotlinJsIrSubTarget).produceExecutable()
+            target.subTargets.all { subTarget ->
+                subTarget.processBinary()
             }
 
             return compilation.binaries.executableIrInternal(compilation as KotlinJsIrCompilation)
@@ -84,16 +77,8 @@ constructor(
         compilation: KotlinJsIrCompilation = defaultCompilation,
     ): List<JsIrBinary> {
         if (target is KotlinJsIrTarget) {
-            target.whenBrowserConfigured {
-                (this as KotlinJsIrSubTarget).produceLibrary()
-            }
-
-            target.whenNodejsConfigured {
-                (this as KotlinJsIrSubTarget).produceLibrary()
-            }
-
-            target.whenD8Configured {
-                (this as KotlinJsIrSubTarget).produceLibrary()
+            target.subTargets.all { subTarget ->
+                subTarget.processBinary()
             }
 
             val factory = if (target.platformType == KotlinPlatformType.wasm) {

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
 import org.gradle.api.DomainObjectSet
+import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Task
 import org.gradle.api.plugins.ExtensionAware
@@ -18,10 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
-import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDistributionDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -31,13 +29,19 @@ import org.jetbrains.kotlin.gradle.utils.domainObjectSet
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 
+interface IKotlinJsIrSubTarget : KotlinJsSubTargetDsl, Named {
+    fun processBinary()
+}
+
 abstract class KotlinJsIrSubTarget(
     val target: KotlinJsIrTarget,
     private val disambiguationClassifier: String,
-) : KotlinJsSubTargetDsl {
+) : IKotlinJsIrSubTarget, KotlinJsSubTargetDsl {
     init {
         target.configureTestSideEffect
     }
+
+    override fun getName(): String = disambiguationClassifier
 
     val project get() = target.project
 
@@ -72,11 +76,7 @@ abstract class KotlinJsIrSubTarget(
         configureMainCompilation()
     }
 
-    internal fun produceExecutable() {
-        produceBinary
-    }
-
-    internal fun produceLibrary() {
+    override fun processBinary() {
         produceBinary
     }
 
@@ -177,18 +177,18 @@ abstract class KotlinJsIrSubTarget(
         }
     }
 
-    fun configureCompilation(compilation: KotlinJsIrCompilation) {
+    open fun configureCompilation(compilation: KotlinJsIrCompilation) {
         setupRun(compilation)
         setupBuild(compilation)
     }
 
-    fun setupRun(compilation: KotlinJsIrCompilation) {
+    open fun setupRun(compilation: KotlinJsIrCompilation) {
         subTargetConfigurators.configureEach {
             it.setupRun(compilation)
         }
     }
 
-    fun setupBuild(compilation: KotlinJsIrCompilation) {
+    open fun setupBuild(compilation: KotlinJsIrCompilation) {
         subTargetConfigurators.configureEach {
             it.setupBuild(compilation)
         }
