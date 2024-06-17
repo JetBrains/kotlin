@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.artifacts.DependencySubstitutions
 import org.gradle.api.artifacts.component.ModuleComponentSelector
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
@@ -50,7 +51,7 @@ internal fun IdeJvmAndAndroidPlatformBinaryDependencyResolver(project: Project):
              */
             componentFilter = { identifier -> identifier !is ProjectComponentIdentifier },
             dependencySubstitution = ::substituteStdlibCommonWithAndroidJvm,
-            withDependencies = { it.addKotlinTestWithCapability() }
+            withDependencies = DependencySet::addKotlinTestWithCapability,
         )
     )
 

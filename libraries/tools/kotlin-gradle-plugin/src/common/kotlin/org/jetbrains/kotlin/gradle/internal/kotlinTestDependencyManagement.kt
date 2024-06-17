@@ -23,6 +23,7 @@ import org.gradle.api.tasks.testing.junitplatform.JUnitPlatformOptions
 import org.gradle.api.tasks.testing.testng.TestNGOptions
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.execution.KotlinAggregateExecutionSource
+import org.jetbrains.kotlin.gradle.internal.KotlinTestJvmFramework.junit
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
@@ -94,12 +95,13 @@ private fun KotlinTarget.configureKotlinTestDependency(
         }
     }
 }
-internal fun DependencySet.addKotlinTestWithCapability() {
+
+internal fun DependencySet.addKotlinTestWithCapability(@Suppress("UNUSED_PARAMETER") dh: DependencyHandler) {
     val testRootDependency = allNonProjectDependencies()
         .singleOrNull { it.isKotlinTestRootDependency }
-    if(testRootDependency == null || testRootDependency !is ExternalDependency) return
+    if (testRootDependency == null || testRootDependency !is ExternalDependency) return
 
-    val testCapability = "$KOTLIN_MODULE_GROUP:$KOTLIN_TEST_ROOT_MODULE_NAME-framework-${KotlinTestJvmFramework.junit}"
+    val testCapability = getKotlinTestCapability(junit)
     val newDep = testRootDependency.copy()
     newDep.capabilities{
         it.requireCapability(testCapability)
@@ -172,12 +174,14 @@ private fun KotlinCompilation<*>.kotlinTestCapabilityForJvmSourceSet(
             val framework = when (task) {
                 is Test -> testFrameworkOf(task)
                 else -> // Android connected test tasks don't inherit from Test, but we use JUnit for them
-                    KotlinTestJvmFramework.junit
+                    junit
             }
 
-            "$KOTLIN_MODULE_GROUP:$KOTLIN_TEST_ROOT_MODULE_NAME-framework-$framework"
+            getKotlinTestCapability(framework)
         }
 }
+
+private fun getKotlinTestCapability(framework: KotlinTestJvmFramework) = "$KOTLIN_MODULE_GROUP:$KOTLIN_TEST_ROOT_MODULE_NAME-framework-$framework"
 
 internal const val KOTLIN_TEST_ROOT_MODULE_NAME = "kotlin-test"
 
@@ -186,11 +190,11 @@ private enum class KotlinTestJvmFramework {
 }
 
 private fun testFrameworkOf(testTask: Test): KotlinTestJvmFramework = when (testTask.options) {
-    is JUnitOptions -> KotlinTestJvmFramework.junit
+    is JUnitOptions -> junit
     is JUnitPlatformOptions -> KotlinTestJvmFramework.junit5
     is TestNGOptions -> KotlinTestJvmFramework.testng
     else -> // failed to detect, fallback to junit
-        KotlinTestJvmFramework.junit
+        junit
 }
 
 private fun KotlinTargetWithTests<*, *>.findTestRunsByCompilation(
