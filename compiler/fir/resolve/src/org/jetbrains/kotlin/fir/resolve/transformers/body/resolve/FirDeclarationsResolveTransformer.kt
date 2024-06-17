@@ -1204,7 +1204,7 @@ open class FirDeclarationsResolveTransformer(
                 val itParam = buildValueParameter {
                     resolvePhase = FirResolvePhase.BODY_RESOLVE
                     source = lambda.source?.fakeElement(KtFakeSourceElementKind.ItLambdaParameter)
-                    containingFunctionSymbol = resolvedLambdaAtom.atom.symbol
+                    containingFunctionSymbol = resolvedLambdaAtom.fir.symbol
                     moduleData = session.moduleData
                     origin = FirDeclarationOrigin.Source
                     returnTypeRef = singleParameterType.toFirResolvedTypeRef()

@@ -79,7 +79,7 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
         require(argument is PostponedResolvedAtom) {
             "${argument::class}"
         }
-        return ConeArgumentConstraintPosition(argument.atom)
+        return ConeArgumentConstraintPosition(argument.fir)
     }
 
     override fun <T> createFixVariableConstraintPosition(variable: TypeVariableMarker, atom: T): FixVariableConstraintPosition<T> {
@@ -92,7 +92,7 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
         require(declaration is PostponedResolvedAtom)
         return when (declaration) {
             is LambdaWithTypeVariableAsExpectedTypeAtom -> {
-                val atom = declaration.atom.anonymousFunction
+                val atom = declaration.fir.anonymousFunction
                 return if (atom.isLambda) { // lambda - must return null in case of absent parameters
                     if (atom.valueParameters.isNotEmpty())
                         atom.collectDeclaredValueParameterTypes()
@@ -113,19 +113,19 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
 
     override fun PostponedAtomWithRevisableExpectedType.isFunctionExpression(): Boolean {
         require(this is PostponedResolvedAtom)
-        return this is LambdaWithTypeVariableAsExpectedTypeAtom && !this.atom.anonymousFunction.isLambda
+        return this is LambdaWithTypeVariableAsExpectedTypeAtom && !this.fir.anonymousFunction.isLambda
     }
 
     override fun PostponedAtomWithRevisableExpectedType.isFunctionExpressionWithReceiver(): Boolean {
         require(this is PostponedResolvedAtom)
         return this is LambdaWithTypeVariableAsExpectedTypeAtom &&
-                !this.atom.anonymousFunction.isLambda &&
-                this.atom.anonymousFunction.receiverParameter?.typeRef?.coneType != null
+                !this.fir.anonymousFunction.isLambda &&
+                this.fir.anonymousFunction.receiverParameter?.typeRef?.coneType != null
     }
 
     override fun PostponedAtomWithRevisableExpectedType.isLambda(): Boolean {
         require(this is PostponedResolvedAtom)
-        return this is LambdaWithTypeVariableAsExpectedTypeAtom && this.atom.anonymousFunction.isLambda
+        return this is LambdaWithTypeVariableAsExpectedTypeAtom && this.fir.anonymousFunction.isLambda
     }
 
     override fun createTypeVariableForLambdaReturnType(): TypeVariableMarker {

@@ -268,7 +268,7 @@ class FirCallCompleter(
         atom: ResolvedLambdaAtom,
         candidate: Candidate,
     ) {
-        val returnVariable = ConeTypeVariableForLambdaReturnType(atom.atom, "_R")
+        val returnVariable = ConeTypeVariableForLambdaReturnType(atom.fir, "_R")
         val csBuilder = candidate.system.getBuilder()
         csBuilder.registerVariable(returnVariable)
         val functionalType = csBuilder.buildCurrentSubstitutor()
@@ -280,7 +280,7 @@ class FirCallCompleter(
             isNullable = functionalType.isNullable,
             functionalType.attributes
         )
-        csBuilder.addSubtypeConstraint(expectedType, functionalType, ConeArgumentConstraintPosition(atom.atom))
+        csBuilder.addSubtypeConstraint(expectedType, functionalType, ConeArgumentConstraintPosition(atom.fir))
         atom.replaceExpectedType(expectedType, returnVariable.defaultType)
         atom.replaceTypeVariableForLambdaReturnType(returnVariable)
     }
@@ -321,7 +321,7 @@ class FirCallCompleter(
             withPCLASession: Boolean,
             forOverloadByLambdaReturnType: Boolean,
         ): ReturnArgumentsAnalysisResult {
-            val lambdaArgument: FirAnonymousFunction = lambdaAtom.atom
+            val lambdaArgument: FirAnonymousFunction = lambdaAtom.fir
             val needItParam = lambdaArgument.valueParameters.isEmpty() && parameters.size == 1
 
             val matchedParameter = candidate.argumentMapping?.firstNotNullOfOrNull { (currentArgument, currentValueParameter) ->
@@ -342,7 +342,7 @@ class FirCallCompleter(
                     val itType = parameters.single()
                     buildValueParameter {
                         resolvePhase = FirResolvePhase.BODY_RESOLVE
-                        source = lambdaAtom.atom.source?.fakeElement(KtFakeSourceElementKind.ItLambdaParameter)
+                        source = lambdaAtom.fir.source?.fakeElement(KtFakeSourceElementKind.ItLambdaParameter)
                         containingFunctionSymbol = lambdaArgument.symbol
                         moduleData = session.moduleData
                         origin = FirDeclarationOrigin.Source
@@ -350,7 +350,7 @@ class FirCallCompleter(
                         symbol = FirValueParameterSymbol(name)
                         returnTypeRef =
                             itType.approximateLambdaInputType(symbol, withPCLASession).toFirResolvedTypeRef(
-                                lambdaAtom.atom.source?.fakeElement(KtFakeSourceElementKind.ItLambdaParameter)
+                                lambdaAtom.fir.source?.fakeElement(KtFakeSourceElementKind.ItLambdaParameter)
                             )
                         defaultValue = null
                         isCrossinline = false

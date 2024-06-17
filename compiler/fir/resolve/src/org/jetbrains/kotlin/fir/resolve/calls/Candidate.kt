@@ -147,7 +147,7 @@ class Candidate(
         get() = _diagnostics
 
     fun addPostponedAtom(atom: PostponedResolvedAtom) {
-        _postponedAtomsByFir[atom.atom] = atom
+        _postponedAtomsByFir[atom.fir] = atom
     }
 
     fun addDiagnostic(diagnostic: ResolutionDiagnostic) {

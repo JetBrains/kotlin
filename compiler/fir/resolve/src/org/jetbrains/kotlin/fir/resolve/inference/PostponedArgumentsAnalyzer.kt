@@ -182,12 +182,12 @@ class PostponedArgumentsAnalyzer(
         val checkerSink: CheckerSink = CheckerSinkImpl(candidate)
         val builder = c.getBuilder()
 
-        val lastExpression = lambda.atom.lastStatement() as? FirExpression
+        val lastExpression = lambda.fir.lastStatement() as? FirExpression
         var hasExpressionInReturnArguments = false
-        val returnTypeRef = lambda.atom.returnTypeRef.let {
+        val returnTypeRef = lambda.fir.returnTypeRef.let {
             it as? FirResolvedTypeRef ?: it.resolvedTypeFromPrototype(substituteAlreadyFixedVariables(lambda.returnType))
         }
-        val isUnitLambda = returnTypeRef.type.isUnitOrFlexibleUnit || lambda.atom.shouldReturnUnit(returnArguments)
+        val isUnitLambda = returnTypeRef.type.isUnitOrFlexibleUnit || lambda.fir.shouldReturnUnit(returnArguments)
 
         returnArguments.forEach {
             if (it.isImplicitUnitForEmptyLambda()) return@forEach
@@ -214,7 +214,7 @@ class PostponedArgumentsAnalyzer(
                     // See KT-63602 for details.
                     builder.addSubtypeConstraintIfCompatible(
                         it.resolvedType, returnTypeRef.type,
-                        ConeLambdaArgumentConstraintPosition(lambda.atom)
+                        ConeLambdaArgumentConstraintPosition(lambda.fir)
                     )
                 }
                 return@forEach
@@ -254,7 +254,7 @@ class PostponedArgumentsAnalyzer(
         // If we've got some errors already, no new constraints or diagnostics are required
         if (with(c) { lambdaReturnType.isError() } || builder.hasContradiction) return
 
-        val position = ConeLambdaArgumentConstraintPosition(lambda.atom)
+        val position = ConeLambdaArgumentConstraintPosition(lambda.fir)
         val unitType = components.session.builtinTypes.unitType.type
         if (!builder.addSubtypeConstraintIfCompatible(
                 unitType,
@@ -270,7 +270,7 @@ class PostponedArgumentsAnalyzer(
                     // TODO: Consider replacement with ArgumentTypeMismatch once KT-67961 is fixed
                     // Currently, ArgumentTypeMismatch only allows expressions and we don't have it here
                     UnitReturnTypeLambdaContradictsExpectedType(
-                        lambda.atom,
+                        lambda.fir,
                         wholeLambdaExpectedType,
                         lambda.sourceForFunctionExpression,
                     )
@@ -304,7 +304,7 @@ fun LambdaWithTypeVariableAsExpectedTypeAtom.transformToResolvedLambda(
         .substituteOrSelf(expectedType ?: this.expectedType)
     val resolvedAtom = candidateOfOuterCall.preprocessLambdaArgument(
         csBuilder,
-        atom,
+        fir,
         fixedExpectedType,
         context,
         sink = null,

@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 //  -------------------------- Atoms --------------------------
 
 sealed class PostponedResolvedAtom : PostponedResolvedAtomMarker {
-    abstract val atom: FirElement
+    abstract val fir: FirElement
     abstract override val inputTypes: Collection<ConeKotlinType>
     abstract override val outputType: ConeKotlinType?
     override var analyzed: Boolean = false
@@ -39,7 +39,7 @@ sealed class PostponedResolvedAtom : PostponedResolvedAtomMarker {
 //  ------------- Lambdas -------------
 
 class ResolvedLambdaAtom(
-    override val atom: FirAnonymousFunction,
+    override val fir: FirAnonymousFunction,
     expectedType: ConeKotlinType?,
     val expectedFunctionTypeKind: FunctionTypeKind?,
     val receiver: ConeKotlinType?,
@@ -93,7 +93,7 @@ class ResolvedLambdaAtom(
 }
 
 class LambdaWithTypeVariableAsExpectedTypeAtom(
-    override val atom: FirAnonymousFunctionExpression,
+    override val fir: FirAnonymousFunctionExpression,
     private val initialExpectedTypeType: ConeKotlinType,
     val candidateOfOuterCall: Candidate,
 ) : PostponedResolvedAtom(), LambdaWithTypeVariableAsExpectedTypeMarker {
@@ -130,7 +130,7 @@ class ResolvedCallableReferenceAtom(
     private val session: FirSession
 ) : PostponedResolvedAtom(), PostponedCallableReferenceMarker {
 
-    override val atom: FirCallableReferenceAccess
+    override val fir: FirCallableReferenceAccess
         get() = reference
 
     var hasBeenResolvedOnce: Boolean = false

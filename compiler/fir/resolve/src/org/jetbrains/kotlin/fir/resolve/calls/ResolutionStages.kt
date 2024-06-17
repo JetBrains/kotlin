@@ -895,7 +895,7 @@ internal object CheckLambdaAgainstTypeVariableContradiction : ResolutionStage() 
         // We don't add the constraint to the system in the end, we only check for contradictions and roll back the transaction.
         // This ensures we don't get any issues if a different function type constraint is added later, e.g., during completion.
         csBuilder.runTransaction {
-            addSubtypeConstraint(lambdaType, expectedType, ConeArgumentConstraintPosition(atom))
+            addSubtypeConstraint(lambdaType, expectedType, ConeArgumentConstraintPosition(fir))
             shouldReportError = hasContradiction
             false
         }
@@ -905,7 +905,7 @@ internal object CheckLambdaAgainstTypeVariableContradiction : ResolutionStage() 
                 ArgumentTypeMismatch(
                     expectedType,
                     lambdaType,
-                    atom,
+                    fir,
                     context.session.typeContext.isTypeMismatchDueToNullability(lambdaType, expectedType)
                 )
             )

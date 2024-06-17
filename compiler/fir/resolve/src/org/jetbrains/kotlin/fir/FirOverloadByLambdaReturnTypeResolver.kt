@@ -78,7 +78,7 @@ class FirOverloadByLambdaReturnTypeResolver(
             candidate.postponedAtoms
                 .filter { it is ResolvedLambdaAtom && !it.analyzed }
                 .map { candidate to it as ResolvedLambdaAtom }
-        }.groupBy { (_, atom) -> atom.atom }
+        }.groupBy { (_, atom) -> atom.fir }
             .values.singleOrNull()?.toMap() ?: return null
 
         if (!lambdas.values.same { it.parameters.size }) return null

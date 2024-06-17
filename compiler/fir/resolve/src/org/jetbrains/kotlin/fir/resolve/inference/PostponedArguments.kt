@@ -81,7 +81,7 @@ fun Candidate.preprocessLambdaArgument(
             contextReceivers = resolvedArgument.contextReceivers,
         )
 
-        val position = ConeArgumentConstraintPosition(resolvedArgument.atom)
+        val position = ConeArgumentConstraintPosition(resolvedArgument.fir)
         if (duringCompletion || sink == null) {
             csBuilder.addSubtypeConstraint(lambdaType, expectedType, position)
         } else {

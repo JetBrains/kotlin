@@ -469,7 +469,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
                     postponedAtomsProcessor = { postponedAtom ->
                         if (postponedAtom is ResolvedLambdaAtom) {
                             if (postponedAtom.typeVariableForLambdaReturnType == typeVariable) {
-                                suggestElement(postponedAtom.atom)
+                                suggestElement(postponedAtom.fir)
                             }
                         }
                     }
