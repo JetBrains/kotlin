@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 suspend fun foo() {}
 
 suspend fun test() {
