@@ -11,7 +11,6 @@ import org.jetbrains.kotlinx.dataframe.api.Infer
 import org.jetbrains.kotlinx.dataframe.api.pathOf
 import org.jetbrains.kotlinx.dataframe.api.toPath
 import org.jetbrains.kotlinx.dataframe.impl.api.GenericColumnsToInsert
-import org.jetbrains.kotlinx.dataframe.impl.api.GenericColumnGroup
 import org.jetbrains.kotlinx.dataframe.impl.api.insertImplGenericContainer
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
@@ -125,10 +124,9 @@ internal class Under4 : AbstractInterpreter<PluginDataFrameSchema>() {
 
 @PublishedApi
 internal fun PluginDataFrameSchema.insertImpl(
-    columns: List<GenericColumnsToInsert<SimpleCol>>,
-    columnGroupType: TypeApproximation
+    columns: List<GenericColumnsToInsert<SimpleCol>>
 ): PluginDataFrameSchema {
-    return insertImplGenericContainer<PluginDataFrameSchema, SimpleCol, GenericColumnGroup<SimpleCol>>(
+    return insertImplGenericContainer(
         this,
         columns,
         columns.firstOrNull()?.referenceNode?.getRoot(),
