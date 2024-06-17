@@ -371,8 +371,11 @@ public class DebugSymbolRenderer(
 
     @OptIn(KaExperimentalApi::class)
     private fun renderModule(module: KaModule, printer: PrettyPrinter) {
-        val ktModuleClass = module::class.allSuperclasses.first { it in kaModuleSubclasses }
-        printer.append(ktModuleClass.simpleName + " \"" + module.moduleDescription + "\"")
+        val apiClass = when (val moduleClass = module::class) {
+            in kaModuleApiSubclasses -> moduleClass
+            else -> moduleClass.allSuperclasses.first { it in kaModuleApiSubclasses }
+        }
+        printer.append(apiClass.simpleName + " \"" + module.moduleDescription + "\"")
     }
 
     private fun KClass<*>.allSealedSubClasses(): List<KClass<*>> = buildList {
@@ -380,8 +383,11 @@ public class DebugSymbolRenderer(
         sealedSubclasses.flatMapTo(this) { it.allSealedSubClasses() }
     }
 
+    /**
+     * All [KaModule] classes which are part of the API (defined in `KaModule.kt`) and should be printed in test data.
+     */
     @OptIn(KaPlatformInterface::class, KaExperimentalApi::class)
-    private val kaModuleSubclasses =
+    private val kaModuleApiSubclasses =
         listOf(
             KaModule::class,
             KaSourceModule::class,
