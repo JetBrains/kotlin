@@ -49,3 +49,31 @@ FILE: labelClashes.fir.kt
         }
 
     }
+    public final object OtherTests : R|kotlin/Any| {
+        private constructor(): R|OtherTests| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun R|kotlin/Int|.with(): R|kotlin/Unit| {
+            R|kotlin/with<Inapplicable(INAPPLICABLE): kotlin/with>#|<R|kotlin/String|, <ERROR TYPE REF: Cannot infer argument for type parameter R>>(String(), <L> = with@fun R|kotlin/String|.<anonymous>(): <ERROR TYPE REF: Cannot infer argument for type parameter R> <inline=Inline, kind=EXACTLY_ONCE>  {
+                this@R|special/anonymous|.R|kotlin/String.toString|()
+                this@R|special/anonymous|.R|kotlin/String.length|
+                ^ this@R|special/anonymous|.<Unresolved name: inc>#()
+            }
+            )
+        }
+
+    }
+    public final object OtherTests2 : R|kotlin/Any| {
+        private constructor(): R|OtherTests2| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun R|kotlin/Int|.with(): R|kotlin/Unit| {
+            R|kotlin/with|<R|kotlin/String|, R|kotlin/String|>(String(), <L> = with@fun R|kotlin/String|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+                ^ this@R|special/anonymous|.R|kotlin/String.toString|()
+            }
+            )
+        }
+
+    }

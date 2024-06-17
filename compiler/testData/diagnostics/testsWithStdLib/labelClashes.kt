@@ -44,3 +44,21 @@ class TypedThis {
         this@TypedThis
     }
 }
+
+object OtherTests {
+    fun Int.with() {
+        with("") {
+            this<!LABEL_RESOLVE_WILL_CHANGE!>@with<!>.toString()
+            this<!LABEL_RESOLVE_WILL_CHANGE!>@with<!>.<!UNRESOLVED_REFERENCE!>length<!>
+            this<!LABEL_RESOLVE_WILL_CHANGE!>@with<!>.inc()
+        }
+    }
+}
+
+object OtherTests2 {
+    fun Int.with() {
+        with("") {
+            this<!LABEL_RESOLVE_WILL_CHANGE!>@with<!>.toString()
+        }
+    }
+}

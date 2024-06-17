@@ -44,3 +44,21 @@ class TypedThis {
         this@TypedThis
     }
 }
+
+object OtherTests {
+    fun Int.with() {
+        <!CANNOT_INFER_PARAMETER_TYPE!>with<!>("") <!CANNOT_INFER_PARAMETER_TYPE!>{
+            this@with.toString()
+            this@with.length
+            this@with.<!UNRESOLVED_REFERENCE!>inc<!>()
+        }<!>
+    }
+}
+
+object OtherTests2 {
+    fun Int.with() {
+        with("") {
+            this@with.toString()
+        }
+    }
+}

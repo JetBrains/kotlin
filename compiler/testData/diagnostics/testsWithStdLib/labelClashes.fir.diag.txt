@@ -21,3 +21,9 @@
 /labelClashes.fir.kt:(378,417): error: Cannot infer type for this parameter. Please specify it explicitly.
 
 /labelClashes.fir.kt:(402,405): error: Unresolved reference 'foo'.
+
+/labelClashes.fir.kt:(713,717): error: Cannot infer type for this parameter. Please specify it explicitly.
+
+/labelClashes.fir.kt:(722,823): error: Cannot infer type for this parameter. Please specify it explicitly.
+
+/labelClashes.fir.kt:(808,811): error: Unresolved reference 'inc'.

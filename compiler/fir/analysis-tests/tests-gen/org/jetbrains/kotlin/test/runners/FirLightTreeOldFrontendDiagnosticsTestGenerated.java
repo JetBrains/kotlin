@@ -82,6 +82,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
     }
 
     @Test
+    @TestMetadata("ambiguousLabelInSuper.kt")
+    public void testAmbiguousLabelInSuper() {
+      runTest("compiler/testData/diagnostics/tests/ambiguousLabelInSuper.kt");
+    }
+
+    @Test
     @TestMetadata("annotationArgumentWithAliasedArrayType.kt")
     public void testAnnotationArgumentWithAliasedArrayType() {
       runTest("compiler/testData/diagnostics/tests/annotationArgumentWithAliasedArrayType.kt");
