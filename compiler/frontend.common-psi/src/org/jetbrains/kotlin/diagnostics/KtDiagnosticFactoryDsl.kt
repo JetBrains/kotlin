@@ -159,18 +159,13 @@ class DiagnosticFactory4DelegateProvider<A, B, C, D>(
     }
 }
 
-private const val WARNING = "_WARNING"
-private const val ERROR = "_ERROR"
-
 class DeprecationDiagnosticFactory0DelegateProvider(
     private val featureForError: LanguageFeature,
     private val positioningStrategy: AbstractSourceElementPositioningStrategy,
     private val psiType: KClass<*>
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactoryForDeprecation0> {
-        val errorFactory = KtDiagnosticFactory0("${prop.name}$ERROR", Severity.ERROR, positioningStrategy, psiType)
-        val warningFactory = KtDiagnosticFactory0("${prop.name}$WARNING", Severity.WARNING, positioningStrategy, psiType)
-        return DummyDelegate(KtDiagnosticFactoryForDeprecation0(featureForError, warningFactory, errorFactory))
+        return DummyDelegate(KtDiagnosticFactoryForDeprecation0(prop.name, featureForError, positioningStrategy, psiType))
     }
 }
 
@@ -180,9 +175,7 @@ class DeprecationDiagnosticFactory1DelegateProvider<A>(
     private val psiType: KClass<*>
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactoryForDeprecation1<A>> {
-        val errorFactory = KtDiagnosticFactory1<A>("${prop.name}$ERROR", Severity.ERROR, positioningStrategy, psiType)
-        val warningFactory = KtDiagnosticFactory1<A>("${prop.name}$WARNING", Severity.WARNING, positioningStrategy, psiType)
-        return DummyDelegate(KtDiagnosticFactoryForDeprecation1(featureForError, warningFactory, errorFactory))
+        return DummyDelegate(KtDiagnosticFactoryForDeprecation1(prop.name, featureForError, positioningStrategy, psiType))
     }
 }
 
@@ -192,9 +185,7 @@ class DeprecationDiagnosticFactory2DelegateProvider<A, B>(
     private val psiType: KClass<*>
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactoryForDeprecation2<A, B>> {
-        val errorFactory = KtDiagnosticFactory2<A, B>("${prop.name}$ERROR", Severity.ERROR, positioningStrategy, psiType)
-        val warningFactory = KtDiagnosticFactory2<A, B>("${prop.name}$WARNING", Severity.WARNING, positioningStrategy, psiType)
-        return DummyDelegate(KtDiagnosticFactoryForDeprecation2(featureForError, warningFactory, errorFactory))
+        return DummyDelegate(KtDiagnosticFactoryForDeprecation2(prop.name, featureForError, positioningStrategy, psiType))
     }
 }
 
@@ -204,9 +195,7 @@ class DeprecationDiagnosticFactory3DelegateProvider<A, B, C>(
     private val psiType: KClass<*>
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactoryForDeprecation3<A, B, C>> {
-        val errorFactory = KtDiagnosticFactory3<A, B, C>("${prop.name}$ERROR", Severity.ERROR, positioningStrategy, psiType)
-        val warningFactory = KtDiagnosticFactory3<A, B, C>("${prop.name}$WARNING", Severity.WARNING, positioningStrategy, psiType)
-        return DummyDelegate(KtDiagnosticFactoryForDeprecation3(featureForError, warningFactory, errorFactory))
+        return DummyDelegate(KtDiagnosticFactoryForDeprecation3(prop.name, featureForError, positioningStrategy, psiType))
     }
 }
 
@@ -216,8 +205,6 @@ class DeprecationDiagnosticFactory4DelegateProvider<A, B, C, D>(
     private val psiType: KClass<*>
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactoryForDeprecation4<A, B, C, D>> {
-        val errorFactory = KtDiagnosticFactory4<A, B, C, D>("${prop.name}$ERROR", Severity.ERROR, positioningStrategy, psiType)
-        val warningFactory = KtDiagnosticFactory4<A, B, C, D>("${prop.name}$WARNING", Severity.WARNING, positioningStrategy, psiType)
-        return DummyDelegate(KtDiagnosticFactoryForDeprecation4(featureForError, warningFactory, errorFactory))
+        return DummyDelegate(KtDiagnosticFactoryForDeprecation4(prop.name, featureForError, positioningStrategy, psiType))
     }
 }
