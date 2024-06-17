@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 
+const val STUB_FOR_INLINING = "stub_for_inlining"
+
 // This lowering transforms CR passed to inline function to lambda which would be inlined
 //
 //      inline fun foo(inlineParameter: (A) -> B): B {
@@ -36,17 +38,10 @@ import org.jetbrains.kotlin.name.Name
 abstract class InlineCallableReferenceToLambdaPhase(
     val context: CommonBackendContext,
     private val inlineFunctionResolver: InlineFunctionResolver,
-) : FileLoweringPass {
+) : FileLoweringPass, IrElementVisitor<Unit, IrDeclaration?> {
     override fun lower(irFile: IrFile) =
-        irFile.accept(InlineCallableReferenceToLambdaVisitor(context, inlineFunctionResolver), null)
-}
+        irFile.accept(this, null)
 
-const val STUB_FOR_INLINING = "stub_for_inlining"
-
-private class InlineCallableReferenceToLambdaVisitor(
-    val context: CommonBackendContext,
-    val inlineFunctionResolver: InlineFunctionResolver,
-) : IrElementVisitor<Unit, IrDeclaration?> {
     override fun visitElement(element: IrElement, data: IrDeclaration?) =
         element.acceptChildren(this, element as? IrDeclaration ?: data)
 
