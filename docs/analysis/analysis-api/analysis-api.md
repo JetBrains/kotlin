@@ -49,11 +49,11 @@ analysis `KaSession` we can see only modules and libraries which are transitive 
 
 ## KaSession Scope
 
-All interaction with the Analysis API should be performed **only** in **KaSession Scope**. To enter such scope `analyse`
+All interaction with the Analysis API should be performed **only** in **KaSession Scope**. To enter such scope `analyze`
 function should be used:
 
 ```kotlin
-fun <R> analyse(contextElement: KtElement, action: KaSession.() -> R): R
+fun <R> analyze(contextElement: KtElement, action: KaSession.() -> R): R
 ```
 
 Where `action` lambda represents the **KaSession Scope**.
@@ -61,8 +61,8 @@ Where `action` lambda represents the **KaSession Scope**.
 ## Lifecycle Owners
 
 Every Lifecycle Owner has its lifecycle which is defined by corresponding `KaLifetimeToken`. There is a special
-function `analyseWithCustomToken` which allows specifying needed behaviour. There are also analyse function which is made for the IDE which
-analyses with `KaReadActionConfinementLifetimeToken`
+function `analyseWithCustomToken` which allows specifying needed behaviour. There are also analyze function which is made for the IDE which
+analyzes with `KaReadActionConfinementLifetimeToken`
 
 `KaReadActionConfinementLifetimeToken` has the following contracts:
 
@@ -71,7 +71,7 @@ analyses with `KaReadActionConfinementLifetimeToken`
         * If you have no choice consider using `analyseInModalWindow` function instead (but it may be rather slow and also shows a modal
           window, so use it with caution)
     * Analysis should be called from a **read action**
-    * Analysis should not be called outside **KaSession Scope** (i.e, outside `analyse(context) { ... }` lambda
+    * Analysis should not be called outside **KaSession Scope** (i.e, outside `analyze(context) { ... }` lambda
 * Validity contracts:
     * Lifecycle Owner is valid only inside Analysis Context it was created in.
 

@@ -20,7 +20,7 @@ public typealias KtAnalysisScopeProvider = KaAnalysisScopeProvider
 
 public interface KaAnalysisScopeProviderMixIn : KaSessionMixIn {
     /**
-     * Return [GlobalSearchScope] represent a scope code in which can be analysed by current [KaSession].
+     * Return [GlobalSearchScope] represent a scope code in which can be analyzed by current [KaSession].
      * That means [org.jetbrains.kotlin.analysis.api.symbols.KaSymbol] can be built for the declarations from this scope.
      */
     public val analysisScope: GlobalSearchScope

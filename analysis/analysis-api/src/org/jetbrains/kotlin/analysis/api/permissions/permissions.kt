@@ -81,7 +81,7 @@ private annotation class KaAllowProhibitedAnalyzeFromWriteAction
  *
  * // use case code
  * fun useCase() {
- *   analyse(function) {
+ *   analyze(function) {
  *    // 'getConstantFromExpressionBody' is an imaginary function
  *    val valueBefore = function.getConstantFromExpressionBody() // valueBefore is 0
  *
@@ -89,7 +89,7 @@ private annotation class KaAllowProhibitedAnalyzeFromWriteAction
  *    val valueAfter = function.getConstantFromExpressionBody() // Wrong way: valueAfter is not guarantied to be '1'
  *   }
  *
- *   analyse(function) {
+ *   analyze(function) {
  *    val valueAfter = function.getConstantFromExpressionBody() // OK: valueAfter is guarantied to be '1'
  *   }
  * }
