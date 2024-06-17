@@ -1909,6 +1909,12 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
         }
 
         @Test
+        @TestMetadata("defaultThatCapturesPreviousParameter.kt")
+        public void testDefaultThatCapturesPreviousParameter() {
+          runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/defaultThatCapturesPreviousParameter.kt");
+        }
+
+        @Test
         @TestMetadata("differentInvokeSignature.kt")
         public void testDifferentInvokeSignature() {
           runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/differentInvokeSignature.kt");
