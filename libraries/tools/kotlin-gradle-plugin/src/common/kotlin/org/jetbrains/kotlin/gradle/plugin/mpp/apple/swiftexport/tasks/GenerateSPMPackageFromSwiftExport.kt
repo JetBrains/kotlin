@@ -12,6 +12,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.ModuleMapGenerator
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.SerializationTools
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportModule
 import org.jetbrains.kotlin.gradle.utils.getFile
@@ -113,14 +114,12 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
 
     private fun createModuleMap(modulePath: File, moduleName: String, linkModule: String) {
         modulePath.resolve("module.modulemap").writeText(
-            """
-            module $moduleName {
-                umbrella "."
-                export *
-
-                link "$linkModule"
+            ModuleMapGenerator.generateModuleMap {
+                name = moduleName
+                export = "*"
+                umbrella = "."
+                link = listOf(linkModule)
             }
-            """.trimIndent()
         )
     }
 

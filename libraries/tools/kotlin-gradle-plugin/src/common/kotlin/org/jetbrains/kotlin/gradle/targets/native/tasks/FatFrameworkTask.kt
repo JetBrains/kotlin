@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.ModuleMapGenerator
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.listProperty
@@ -396,14 +397,17 @@ internal constructor(
     }
 
     private fun createModuleFile(outputFile: File, frameworkName: String) {
-        outputFile.writeText("""
-            framework module "$frameworkName" {
-                umbrella header "$frameworkName.h"
+        outputFile.writeText(
+            ModuleMapGenerator.generateModuleMap {
+                isFramework = true
+                isUmbrellaHeader = true
 
-                export *
-                module * { export * }
+                name = frameworkName
+                export = "*"
+                umbrella = "frameworkName.h"
+                module = "* { export * }"
             }
-        """.trimIndent())
+        )
     }
 
     private fun mergePlists(outputFile: File, frameworkName: String) {
