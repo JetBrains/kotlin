@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.compilerRunner.addBuildMetricsForTaskAction
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.BITCODE_EMBEDDING_DEPRECATION_MESSAGE
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.UsesXcodeVersion
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.native.tasks.buildKotlinNativeBinaryLinkerArgs
@@ -54,7 +54,6 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
 ) : DefaultTask(),
     UsesBuildMetricsService,
     UsesKotlinNativeBundleBuildService,
-    UsesXcodeVersion,
     KotlinToolTask<KotlinCommonCompilerToolOptions> {
 
     @get:Input
@@ -81,6 +80,7 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
 
     @get:Input
     @get:Optional
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, replaceWith = ReplaceWith(""))
     abstract val embedBitcode: Property<BitcodeEmbeddingMode>
 
     @get:Classpath
@@ -236,7 +236,6 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
                 compilerPlugins = emptyList(),//CompilerPlugins aren't needed here because it's no compilation but linking
                 processTests = processTests.get(),
                 entryPoint = entryPoint.getOrNull(),
-                embedBitcode = bitcodeEmbeddingMode(),
                 linkerOpts = linkerOptions.get(),
                 binaryOptions = allBinaryOptions.get(),
                 isStaticFramework = staticFramework.get(),
@@ -250,9 +249,5 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
                 metricReporter,
             ).run(buildArgs)
         }
-    }
-
-    private fun bitcodeEmbeddingMode(): BitcodeEmbeddingMode {
-        return XcodeUtils.bitcodeEmbeddingMode(outputKind, embedBitcode.orNull, xcodeVersion, konanTarget, debuggable.get())
     }
 }

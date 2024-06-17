@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Named
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.target.Family.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.util.*
 
@@ -22,10 +21,7 @@ enum class NativeBuildType(
     override fun getName(): String = name.toLowerCase(Locale.ENGLISH)
 
     @Suppress("UNUSED_PARAMETER")
-    @Deprecated(
-        "Default BitcodeEmbeddingMode is BitcodeEmbeddingMode.DISABLE",
-        ReplaceWith("BitcodeEmbeddingMode.DISABLE")
-    )
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, ReplaceWith(""))
     fun embedBitcode(target: KonanTarget) = BitcodeEmbeddingMode.DISABLE
 
     companion object {
@@ -80,3 +76,5 @@ enum class BitcodeEmbeddingMode {
     /** Embed placeholder LLVM IR data as a marker. */
     MARKER,
 }
+
+const val BITCODE_EMBEDDING_DEPRECATION_MESSAGE = "Bitcode embedding is not supported anymore. Configuring it has no effect"

@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.Create
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.UsesXcodeVersion
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.native.UsesKonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.tasks.CompilerPluginData
@@ -54,7 +53,6 @@ constructor(
 ) : AbstractKotlinCompileTool<K2NativeCompilerArguments>(objectFactory),
     UsesKonanPropertiesBuildService,
     UsesBuildMetricsService,
-    UsesXcodeVersion,
     KotlinToolTask<KotlinCommonCompilerToolOptions>,
     UsesKotlinNativeBundleBuildService {
 
@@ -181,15 +179,16 @@ constructor(
     @get:Input
     val target: String = compilation.konanTarget.name
 
-    @Deprecated("Use 'embedBitcodeMode' provider instead.", ReplaceWith("embedBitcodeMode.get()"))
+    @Suppress("DEPRECATION")
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, replaceWith = ReplaceWith(""))
     @get:Internal
     val embedBitcode: BitcodeEmbeddingMode
         get() = embedBitcodeMode.get()
 
     @get:Input
     @get:Optional
-    val embedBitcodeMode: Provider<BitcodeEmbeddingMode> =
-        (binary as? Framework)?.embedBitcodeMode ?: objectFactory.property()
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE)
+    val embedBitcodeMode: Provider<BitcodeEmbeddingMode> = objectFactory.property()
 
     @get:Internal
     val apiFiles: ConfigurableFileCollection = objectFactory.fileCollection()
@@ -244,13 +243,6 @@ constructor(
             args.pluginOptions = compilerPlugins.flatMap { it.options.arguments }.toTypedArray()
             args.generateTestRunner = processTests
             args.mainPackage = entryPoint
-
-            when (bitcodeEmbeddingMode()) {
-                BitcodeEmbeddingMode.BITCODE -> args.embedBitcode = true
-                BitcodeEmbeddingMode.MARKER -> args.embedBitcodeMarker = true
-                BitcodeEmbeddingMode.DISABLE -> Unit
-            }
-
             args.singleLinkerArguments = (linkerOpts + additionalLinkerOpts).toTypedArray()
             args.binaryOptions = binaryOptions.map { (key, value) -> "$key=$value" }.toTypedArray()
             args.staticFramework = isStaticFramework
@@ -438,9 +430,5 @@ constructor(
 
     private inline fun <reified T : Any> lazyConvention(noinline lazyConventionValue: () -> T): Provider<T> {
         return objectFactory.providerWithLazyConvention(lazyConventionValue)
-    }
-
-    private fun bitcodeEmbeddingMode(): BitcodeEmbeddingMode {
-        return XcodeUtils.bitcodeEmbeddingMode(outputKind, embedBitcodeMode.orNull, xcodeVersion, konanTarget, debuggable)
     }
 }

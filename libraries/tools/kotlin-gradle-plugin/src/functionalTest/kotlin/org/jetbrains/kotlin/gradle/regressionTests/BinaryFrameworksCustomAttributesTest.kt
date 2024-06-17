@@ -25,7 +25,6 @@ class BinaryFrameworksCustomAttributesTest {
                     binaries {
                         framework("main")
                         framework("custom") {
-                            embedBitcode("disable")
                             linkerOpts = mutableListOf("-L.")
                             freeCompilerArgs = mutableListOf("-Xtime")
                             isStatic = true

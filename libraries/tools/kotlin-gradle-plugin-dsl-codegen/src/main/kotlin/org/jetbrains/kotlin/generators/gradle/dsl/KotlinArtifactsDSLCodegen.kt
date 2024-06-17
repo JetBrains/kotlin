@@ -24,6 +24,7 @@ private fun generateAbstractKotlinArtifactsExtensionImplementation() {
         import org.jetbrains.kotlin.gradle.dsl.KotlinArtifactConfig
         import org.jetbrains.kotlin.gradle.dsl.KotlinArtifactsExtension
         import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
+        import org.jetbrains.kotlin.gradle.plugin.mpp.BITCODE_EMBEDDING_DEPRECATION_MESSAGE
         import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
         import org.jetbrains.kotlin.konan.target.DEPRECATED_TARGET_MESSAGE
         import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -44,13 +45,15 @@ private fun generateAbstractKotlinArtifactsExtensionImplementation() {
 
     val bitcodeModeConstants = BitcodeEmbeddingMode.values().joinToString(
         separator = "\n",
-        prefix = "class BitcodeEmbeddingModeDsl {\n",
+        prefix = "@Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE)\nclass BitcodeEmbeddingModeDsl {\n",
         postfix = "\n}"
     ) {
         "val ${it.name} = BitcodeEmbeddingMode.${it.name}".indented(4)
     }.indented(4)
 
     val bitcodeMode = listOf(
+        "@Suppress(\"DEPRECATION\")",
+        "@Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE)",
         "@JvmField",
         "val EmbedBitcodeMode = BitcodeEmbeddingModeDsl()"
     ).joinToString("\n").indented(4)

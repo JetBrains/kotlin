@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.dsl
 
 import org.gradle.api.*
 import org.gradle.api.plugins.ExtensionAware
+import org.jetbrains.kotlin.gradle.plugin.mpp.BITCODE_EMBEDDING_DEPRECATION_MESSAGE
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -50,6 +51,8 @@ interface KotlinNativeLibrary : KotlinNativeArtifact {
  */
 interface KotlinNativeFramework : KotlinNativeArtifact {
     val target: KonanTarget
+
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE)
     val embedBitcode: BitcodeEmbeddingMode?
 }
 
@@ -58,6 +61,8 @@ interface KotlinNativeFramework : KotlinNativeArtifact {
  */
 interface KotlinNativeFatFramework : KotlinNativeArtifact {
     val targets: Set<KonanTarget>
+
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE)
     val embedBitcode: BitcodeEmbeddingMode?
 }
 
@@ -66,6 +71,8 @@ interface KotlinNativeFatFramework : KotlinNativeArtifact {
  */
 interface KotlinNativeXCFramework : KotlinNativeArtifact {
     val targets: Set<KonanTarget>
+
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE)
     val embedBitcode: BitcodeEmbeddingMode?
 }
 
@@ -108,6 +115,8 @@ interface KotlinNativeLibraryConfig : KotlinNativeArtifactConfig {
  */
 interface KotlinNativeFrameworkConfig : KotlinNativeArtifactConfig {
     var target: KonanTarget
+
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE)
     var embedBitcode: BitcodeEmbeddingMode?
 }
 
@@ -117,6 +126,8 @@ interface KotlinNativeFrameworkConfig : KotlinNativeArtifactConfig {
 interface KotlinNativeFatFrameworkConfig : KotlinNativeArtifactConfig {
     var targets: Set<KonanTarget>
     fun targets(vararg targets: KonanTarget)
+
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE)
     var embedBitcode: BitcodeEmbeddingMode?
 }
 
@@ -126,6 +137,8 @@ interface KotlinNativeFatFrameworkConfig : KotlinNativeArtifactConfig {
 interface KotlinNativeXCFrameworkConfig : KotlinNativeArtifactConfig {
     var targets: Set<KonanTarget>
     fun targets(vararg targets: KonanTarget)
+
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE)
     var embedBitcode: BitcodeEmbeddingMode?
 }
 
