@@ -16,7 +16,7 @@ shadow = "8.1.7" # Should be in sync with version in kotlin-native/
 spdx = "0.8.0-dev-14"
 proguard = "7.4.2"
 ktor = "2.3.7"
-kotlinx-metadataJvm = "0.7.0"
+kotlinx-metadataJvm = "0.9.0"
 # Forcing gson version because of https://github.com/google/gson/pull/1991
 gson = { strictly = "2.8.9" } # should be in sync with version.properties
 jetbrains-ideaExt = "1.0.1"
@@ -95,3 +95,4 @@ xerces = { module = "xerces:xercesImpl", version.ref = "xerces" }
 [plugins]
 jetbrains-ideaExt = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "jetbrains-ideaExt" }
 gradle-node = { id = "com.github.node-gradle.node", version.ref = "gradle-node" }
+

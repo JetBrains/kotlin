@@ -12,7 +12,7 @@ description = "Kotlin Full Reflection Library"
 
 buildscript {
     dependencies {
-        classpath("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.7.0")
+        classpath(libs.kotlinx.metadataJvm)
     }
 }
 
@@ -92,7 +92,7 @@ class KotlinModuleShadowTransformer(private val logger: Logger) : Transformer {
             relocate(fqName) to parts
         }.toMap(module.packageParts)
 
-        data += Entry(context.path, KotlinModuleMetadata.write(module))
+        data += Entry(context.path, metadata.write())
     }
 
     override fun hasTransformedResource(): Boolean = data.isNotEmpty()
