@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.sir.providers.utils
 
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
+import org.jetbrains.kotlin.analysis.api.symbols.name
 
 public interface UnsupportedDeclarationReporter {
     public fun report(symbol: KaSymbolWithVisibility, reason: String)
@@ -25,8 +25,7 @@ public class SimpleUnsupportedDeclarationReporter : UnsupportedDeclarationReport
         val declarationName = when (symbol) {
             is KaCallableSymbol -> symbol.callableId?.asSingleFqName()?.asString()
             is KaClassSymbol -> symbol.classId?.asSingleFqName()?.asString()
-            is KaNamedSymbol -> symbol.name.asString()
-            else -> null
+            else -> symbol.name?.asString()
         } ?: "declaration"
         _messages += "Can't export $declarationName: $reason"
     }

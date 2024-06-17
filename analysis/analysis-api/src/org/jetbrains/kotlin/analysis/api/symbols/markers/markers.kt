@@ -10,14 +10,18 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.name.Name
 
+/**
+ * @see org.jetbrains.kotlin.analysis.api.symbols.name
+ */
+@Deprecated("This API will be dropped soon. Use `KaSymbol.name`")
 public interface KaPossiblyNamedSymbol : KaSymbol {
     public val name: Name?
 }
 
 @Deprecated("Use 'KaPossiblyNamedSymbol' instead", ReplaceWith("KaPossiblyNamedSymbol"))
-public typealias KtPossiblyNamedSymbol = KaPossiblyNamedSymbol
+public typealias KtPossiblyNamedSymbol = @Suppress("DEPRECATION") KaPossiblyNamedSymbol
 
-public interface KaNamedSymbol : KaPossiblyNamedSymbol {
+public interface KaNamedSymbol : @Suppress("DEPRECATION") KaPossiblyNamedSymbol {
     override val name: Name
 }
 

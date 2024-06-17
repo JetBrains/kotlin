@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaPossiblyNamedSymbol
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.*
@@ -132,12 +131,12 @@ internal class KaFe10ScopeImporting(
 ) : KaFe10ScopeResolution() {
     @KaExperimentalApi
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
-        return callables.mapNotNullTo(mutableSetOf()) { (it as? KaPossiblyNamedSymbol)?.name }
+        return callables.mapNotNullTo(mutableSetOf()) { it.name }
     }
 
     @KaExperimentalApi
     override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
-        return classifiers.mapNotNullTo(mutableSetOf()) { (it as? KaPossiblyNamedSymbol)?.name }
+        return classifiers.mapNotNullTo(mutableSetOf()) { it.name }
     }
 
     override val constructors: Sequence<KaConstructorSymbol>

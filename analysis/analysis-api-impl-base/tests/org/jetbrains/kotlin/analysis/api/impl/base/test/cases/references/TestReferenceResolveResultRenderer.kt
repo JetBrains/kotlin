@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtNamedDeclarationUtil
@@ -100,6 +99,6 @@ object TestReferenceResolveResultRenderer {
         }
         val container = symbol.containingSymbol ?: return null
         val parents = generateSequence(container) { it.containingSymbol }.toList().asReversed()
-        return "<local>: " + parents.joinToString(separator = ".") { (it as? KaNamedSymbol)?.name?.asString() ?: "<no name>" }
+        return "<local>: " + parents.joinToString(separator = ".") { it.name?.asString() ?: "<no name>" }
     }
 }

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaPossiblyNamedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.name
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportStubOrigin
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getKDocString
 
@@ -20,7 +20,7 @@ fun KaSymbol.getObjCExportStubOrigin(): ObjCExportStubOrigin {
     // TODO: Differentiate origins
     // TODO: Extract kdoc from deserialized symbols
     return ObjCExportStubOrigin.Source(
-        name = let { it as? KaPossiblyNamedSymbol }?.name,
+        name = name,
         psi = psi,
         kdoc = getKDocString()
     )

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
 
-public sealed class KaClassifierSymbol : KaSymbol, KaPossiblyNamedSymbol, KaDeclarationSymbol
+public sealed class KaClassifierSymbol : KaSymbol, @Suppress("DEPRECATION") KaPossiblyNamedSymbol, KaDeclarationSymbol
 
 @Deprecated("Use 'KaClassifierSymbol' instead", ReplaceWith("KaClassifierSymbol"))
 public typealias KtClassifierSymbol = KaClassifierSymbol

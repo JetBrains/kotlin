@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.name
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -41,6 +41,6 @@ abstract class AbstractContainingDeclarationProviderByReferenceTest : AbstractAn
             else -> null
         }
 
-        return qualifiedName ?: (symbol as? KaNamedSymbol)?.name?.asString() ?: "Unnamed"
+        return qualifiedName ?: symbol.name?.asString() ?: "Unnamed"
     }
 }

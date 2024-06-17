@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
@@ -167,7 +166,7 @@ internal fun KaSession.prettyPrintSignature(signature: KaCallableSignature<*>): 
         is KaFunctionSignature -> {
             append("fun ")
             signature.receiverType?.let { append('.'); append(it.render(position = Variance.INVARIANT)) }
-            append((signature.symbol as KaNamedSymbol).name.asString())
+            append(signature.symbol.name?.asString())
             printCollection(signature.valueParameters, prefix = "(", postfix = ")") { parameter ->
                 append(parameter.name.asString())
                 append(": ")
@@ -181,7 +180,7 @@ internal fun KaSession.prettyPrintSignature(signature: KaCallableSignature<*>): 
             append(if (symbol.isVal) "val" else "var")
             append(" ")
             signature.receiverType?.let { append('.'); append(it.render(position = Variance.INVARIANT)) }
-            append((symbol as KaNamedSymbol).name.asString())
+            append(symbol.name.asString())
             append(": ")
             append(signature.returnType.render(position = Variance.INVARIANT))
         }

@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.analysis.api.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.name.Name
 
 public interface KaSymbol : KaLifetimeOwner {
     public val origin: KaSymbolOrigin
@@ -25,6 +27,12 @@ public interface KaSymbol : KaLifetimeOwner {
 
     public fun createPointer(): KaSymbolPointer<KaSymbol>
 }
+
+/**
+ * Returns the name of the [KaSymbol] if it has it.
+ */
+public val KaSymbol.name: Name?
+    get() = if (this is KaNamedSymbol) name else null
 
 @Deprecated("Use 'KaSymbol' instead", replaceWith = ReplaceWith("KaSymbol"))
 public typealias KtSymbol = KaSymbol
