@@ -115,7 +115,8 @@ fun JUnit.configureForKotlin(xmx: String = "1600m") {
         "-Didea.use.native.fs.for.win=false",
         "-Djps.kotlin.home=${File(distKotlinHomeDir).absolutePath}",
         "-Duse.jps=true",
-        "-Djava.awt.headless=true"
+        "-Djava.awt.headless=true",
+        "-Dkotlin.test.default.jvm.version=1.8",
     ).joinToString(" ")
 
     envs = mapOf(
