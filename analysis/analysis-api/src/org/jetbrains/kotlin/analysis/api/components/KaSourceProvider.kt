@@ -7,14 +7,13 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
-import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.psi.KtDeclaration
 
 @KaNonPublicApi
 public interface KaSourceProvider {
     /**
-     * If [KtDeclaration] is a deserialized klib-based symbol, then information about the original
-     * [SourceFile] is returned when available.
+     * Source file name for the given [KtDeclaration] located in a Kotlin library (klib),
+     * or `null if the declaration is not located in a klib, or when the source file name is not available.
      */
     @KaNonPublicApi
     public val KaDeclarationSymbol.klibSourceFileName: String?

@@ -26,7 +26,7 @@ public interface KaCompletionCandidateChecker {
      *
      * @param originalFile The file being edited.
      * @param nameExpression The expression under the caret in an in-memory copy of [originalFile]
-     *     with a dummy identifier inserted. Also see `CompletionUtilCore.DUMMY_IDENTIFIER` in IntelliJ IDEA.
+     *     with a placeholder identifier inserted. Also see `CompletionUtilCore.DUMMY_IDENTIFIER` in IntelliJ IDEA.
      * @param explicitReceiver A receiver expression, if available (also from the in-memory copy of [originalFile]).
      */
     @KaIdeApi
@@ -39,6 +39,9 @@ public interface KaCompletionCandidateChecker {
 
 @KaIdeApi
 public interface KaCompletionExtensionCandidateChecker {
+    /**
+     * Checks if the given [candidate] is applicable as an extension callable in the current context.
+     */
     @KaIdeApi
     @KaExperimentalApi
     public fun computeApplicability(candidate: KaCallableSymbol): KaExtensionApplicabilityResult
@@ -48,6 +51,9 @@ public interface KaCompletionExtensionCandidateChecker {
 @Deprecated("Use 'KaCompletionExtensionCandidateChecker' instead.", replaceWith = ReplaceWith("KaCompletionExtensionCandidateChecker"))
 public typealias KtCompletionExtensionCandidateChecker = KaCompletionExtensionCandidateChecker
 
+/**
+ * Represents the result of checking the applicability of an extension callable in a specific context.
+ */
 @KaIdeApi
 @KaExperimentalApi
 public sealed class KaExtensionApplicabilityResult : KaLifetimeOwner {

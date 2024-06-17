@@ -12,8 +12,18 @@ import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.psi.KtElement
 
 public interface KaResolver {
+    /**
+     * Resolves the given [KtReference] to symbols.
+     *
+     * Returns an empty collection if a reference cannot be resolved.
+     * The function may return multiple symbols if the reference is ambiguous.
+     */
     public fun KtReference.resolveToSymbols(): Collection<KaSymbol>
 
+    /**
+     * Resolves the given [KtReference] to a symbol.
+     * Returns `null` if a reference cannot be resolved, or resolved to multiple symbols because of ambiguity.
+     */
     public fun KtReference.resolveToSymbol(): KaSymbol?
 
     /**
@@ -35,6 +45,12 @@ public interface KaResolver {
      */
     public fun KtReference.isImplicitReferenceToCompanion(): Boolean
 
+    /**
+     * Resolves the given [KtElement] to a [KaCallInfo] object.
+     * [KaCallInfo] either contains a successfully resolved call or an error with a list of candidate calls and a diagnostic.
+     *
+     * Returns `null` if the element does not correspond to a call.
+     */
     public fun KtElement.resolveToCall(): KaCallInfo?
 
     @Deprecated(
@@ -47,11 +63,11 @@ public interface KaResolver {
     public fun KtElement.resolveCallOld(): KaCallInfo? = resolveToCall()
 
     /**
-     * Returns all the candidates considered during [overload resolution](https://kotlinlang.org/spec/overload-resolution.html) for the call
+     * Returns all candidates considered during [overload resolution](https://kotlinlang.org/spec/overload-resolution.html) for the call
      * corresponding to this [KtElement].
      *
-     * [resolveToCall] only returns the final result of overload resolution, i.e., the selected callable after considering candidate
-     * applicability and choosing the most specific candidate.
+     * To compare, the [resolveToCall] function only returns the final result of overload resolution,
+     * i.e., the most specific callable passing all compatibility checks.
      */
     public fun KtElement.resolveToCallCandidates(): List<KaCallCandidateInfo>
 

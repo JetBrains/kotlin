@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.psi.KtFile
 @KaIdeApi
 public interface KaImportOptimizer {
     /**
-     * Takes [file] and inspects its imports and their usages,
-     * so they can be optimized based on the resulting [KaImportOptimizerResult].
-     *
+     * Analyzes imports in the given [file] and returns a [KaImportOptimizerResult] which can later be used to optimize imports.
      * Does **not** change the file.
      */
     @KaIdeApi
@@ -29,12 +27,15 @@ public interface KaImportOptimizer {
     }
 
     /**
-     * @return a [FqName] which can be used to import [this] symbol or `null` if the symbol cannot be imported.
+     * A [FqName] which can be used to import the given symbol or `null` if the symbol cannot be imported.
      */
     @KaIdeApi
     public val KaSymbol.importableFqName: FqName?
 }
 
+/**
+ * Result of the import directive analysis.
+ */
 @KaIdeApi
 public class KaImportOptimizerResult(
     public val usedDeclarations: Map<FqName, Set<Name>> = emptyMap(),

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.psi.KtReturnExpression
 
 public interface KaDataFlowProvider {
     /**
-     * Smart cast information of the given expression, or null if the expression is not smart cast.
+     * Smart cast information for the given expression, or `null` if smart casts are not applied to it.
      */
     public val KtExpression.smartCastInfo: KaSmartCastInfo?
 
@@ -43,24 +43,58 @@ public interface KaDataFlowProvider {
     }
 }
 
+/**
+ * Represents smart cast information for an expression.
+ */
 public interface KaSmartCastInfo : KaLifetimeOwner {
+    /**
+     * `true` if the smart cast is stable.
+     *
+     * See the [Smart cast sink stability](https://kotlinlang.org/spec/type-inference.html#smart-cast-sink-stability) section of the
+     * Kotlin specification for more information.
+     */
     public val isStable: Boolean
+
+    /**
+     * The type with the smart cast applied.
+     */
     public val smartCastType: KaType
 }
 
 @Deprecated("Use 'KaSmartCastInfo' instead.", replaceWith = ReplaceWith("KaSmartCastInfo"))
 public typealias KtSmartCastInfo = KaSmartCastInfo
 
+/**
+ * Represents an implicit smart cast for the receiver expression.
+ */
 public interface KaImplicitReceiverSmartCast : KaLifetimeOwner {
+    /**
+     * The receiver type with the smart cast applied.
+     */
     public val type: KaType
+
+    /**
+     * The kind of the implicit smart cast.
+     */
     public val kind: KaImplicitReceiverSmartCastKind
 }
 
 @Deprecated("Use 'KaImplicitReceiverSmartCast' instead.", replaceWith = ReplaceWith("KaImplicitReceiverSmartCast"))
 public typealias KtImplicitReceiverSmartCast = KaImplicitReceiverSmartCast
 
+/**
+ * Represents the kind of implicit smart cast for the receiver expression.
+ */
 public enum class KaImplicitReceiverSmartCastKind {
-    DISPATCH, EXTENSION
+    /**
+     * The cast is applied to the receiver of a member call.
+     */
+    DISPATCH,
+
+    /**
+     * The cast is applied to the receiver of an extension function or property call.
+     */
+    EXTENSION
 }
 
 @Deprecated("Use 'KaImplicitReceiverSmartCastKind' instead.", replaceWith = ReplaceWith("KaImplicitReceiverSmartCastKind"))

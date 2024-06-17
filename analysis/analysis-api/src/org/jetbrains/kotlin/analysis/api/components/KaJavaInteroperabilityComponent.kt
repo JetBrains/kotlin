@@ -82,31 +82,49 @@ public interface KaJavaInteroperabilityComponent {
     public fun KaType.mapTypeToJvmType(mode: TypeMappingMode = TypeMappingMode.DEFAULT): Type = mapToJvmType(mode)
 
     /**
-     * Returns true if the type is backed by a single JVM primitive type
+     * `true` if the given type is backed by a single JVM primitive type.
      */
     @KaExperimentalApi
     public val KaType.isPrimitiveBacked: Boolean
 
+    /**
+     * Maps the given [PsiClass] declaration to a Kotlin class symbol.
+     *
+     * [namedClassSymbol] is always `null` for anonymous classes, type parameters (which are also [PsiClass]es),
+     * and for Kotlin light classes.
+     */
     public val PsiClass.namedClassSymbol: KaNamedClassSymbol?
 
+    /**
+     * Maps the given [PsiMember] method or field to a callable symbol.
+     *
+     * [callableSymbol] is always `null` for local declarations.
+     */
     public val PsiMember.callableSymbol: KaCallableSymbol?
 
     /**
-     * Returns containing JVM class name for [KaCallableSymbol]
+     * The containing JVM class name for the given [KaCallableSymbol].
      *
-     *   even for deserialized callables! (which is useful to look up the containing facade in [PsiElement])
-     *   for regular, non-local callables from source, it is a mere conversion of [ClassId] inside [CallableId]
+     * The property works for both source and library declarations.
+     * The returned JVM class name is a fully qualified name separated by dots, e.g., `foo.bar.Baz.Companion`.
      *
-     * The returned JVM class name is of fully qualified name format, e.g., foo.bar.Baz.Companion
-     *
-     * Note that this API is applicable for common or JVM modules only, and returns `null` for non-JVM modules.
+     * Applicable only to JVM modules, and common modules with JVM targets.
+     * [containingJvmClassName] is always `null` all other kinds of modules.
      */
     @KaExperimentalApi
     public val KaCallableSymbol.containingJvmClassName: String?
 
+    /**
+     * The JVM getter method name for the given [KaPropertySymbol].
+     * The behavior is undefined for modules other than JVM and common (with a JVM implementation).
+     */
     @KaExperimentalApi
     public val KaPropertySymbol.javaGetterName: Name
 
+    /**
+     * The JVM setter method name for the given [KaPropertySymbol].
+     * The behavior is undefined for modules other than JVM and common (with a JVM implementation).
+     */
     @KaExperimentalApi
     public val KaPropertySymbol.javaSetterName: Name?
 }

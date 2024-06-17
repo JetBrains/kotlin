@@ -11,6 +11,12 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
 public interface KaDiagnosticProvider {
+    /**
+     * Computes diagnostics for the given element.
+     *
+     * Note that the result may not include diagnostics that are reported for children elements,
+     * as well as diagnostics provided by the containing element checkers.
+     */
     @KaExperimentalApi
     public fun KtElement.diagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>>
 
@@ -20,6 +26,9 @@ public interface KaDiagnosticProvider {
         return diagnostics(filter)
     }
 
+    /**
+     * Computes all diagnostics for the given file.
+     */
     public fun KtFile.collectDiagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>>
 
     @Deprecated("Use 'collectDiagnostics()' instead.", replaceWith = ReplaceWith("collectDiagnostics(filter)"))

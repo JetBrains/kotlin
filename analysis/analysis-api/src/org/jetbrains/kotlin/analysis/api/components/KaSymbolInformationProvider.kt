@@ -16,13 +16,13 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 @KaExperimentalApi
 public interface KaSymbolInformationProvider {
     /**
-     * Gets the deprecation status of the given symbol. Returns null if the symbol is not deprecated.
+     * The deprecation status of the given symbol, or `null` if the declaration is not deprecated.
      */
     @KaExperimentalApi
     public val KaSymbol.deprecationStatus: DeprecationInfo?
 
     /**
-     * Gets the deprecation status of the given symbol. Returns null if the symbol is not deprecated.
+     * The deprecation status of the given symbol, or `null` if the declaration is not deprecated.
      */
     @KaExperimentalApi
     public fun KaSymbol.deprecationStatus(annotationUseSiteTarget: AnnotationUseSiteTarget?): DeprecationInfo?
@@ -36,19 +36,18 @@ public interface KaSymbolInformationProvider {
         deprecationStatus(annotationUseSiteTarget)
 
     /**
-     * Gets the deprecation status of the getter of this property symbol. Returns null if the getter is not deprecated.
+     * Deprecation status of the given property getter, or `null` if the getter is not deprecated.
      */
     @KaExperimentalApi
     public val KaPropertySymbol.getterDeprecationStatus: DeprecationInfo?
 
     /**
-     * Gets the deprecation status of the setter of this property symbol. Returns null if the setter it not deprecated or the property does
-     * not have a setter.
+     * Deprecation status of the given property setter, or `null` if the setter is not deprecated or the property does not have a setter.
      */
     @KaExperimentalApi
     public val KaPropertySymbol.setterDeprecationStatus: DeprecationInfo?
 
-    /** Gets the set of applicable targets for an annotation class symbol. Returns `null` if the symbol is not an annotation class. */
+    /** A set of applicable targets for an annotation class symbol, or `null` if the symbol is not an annotation class. */
     @KaExperimentalApi
     public val KaClassSymbol.annotationApplicableTargets: Set<KotlinTarget>?
 }

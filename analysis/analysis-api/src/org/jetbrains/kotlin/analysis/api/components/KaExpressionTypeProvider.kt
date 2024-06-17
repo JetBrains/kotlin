@@ -13,12 +13,12 @@ import org.jetbrains.kotlin.psi.KtFunction
 
 public interface KaExpressionTypeProvider {
     /**
-     * Get type of given expression.
+     * The expression type, or `null` if the given expression does not contribute a value.
      *
-     * Return:
-     * - [KtExpression] type if given [KtExpression] is real expression;
-     * - `null` for [KtExpression] inside pacakges and import declarations;
-     * - `Unit` type for statements;
+     * Particularly, the method returns:
+     * - A not-null type for valued expressions (e.g., a variable, a function call, a lambda expression);
+     * - [Unit] for statements (e.g., assignments, loops);
+     * - `null` for [KtExpression]s that are not a part of the expression tree (e.g., expressions in import or package statements).
      */
     public val KtExpression.expressionType: KaType?
 
@@ -29,9 +29,9 @@ public interface KaExpressionTypeProvider {
     public fun KtExpression.getKtType(): KaType? = expressionType
 
     /**
-     * Returns the return type of the given [KtDeclaration] as [KaType].
+     * The return type of the given [KtDeclaration].
      *
-     * IMPORTANT: For `vararg foo: T` parameter returns full `Array<out T>` type (unlike
+     * Note: For `vararg foo: T` parameter returns full `Array<out T>` type (unlike
      * [KaValueParameterSymbol.returnType][org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol.returnType],
      * which returns `T`).
      */
@@ -44,9 +44,9 @@ public interface KaExpressionTypeProvider {
     public fun KtDeclaration.getReturnKtType(): KaType = returnType
 
     /**
-     * Returns the functional type of the given [KtFunction].
+     * The functional type of the given [KtFunction].
      *
-     * For a regular function, it would be kotlin.FunctionN<Ps, R> where
+     * For a regular function, it is `kotlin.FunctionN<Ps, R>` where
      *   N is the number of value parameters in the function;
      *   Ps are types of value parameters;
      *   R is the return type of the function.
@@ -59,14 +59,17 @@ public interface KaExpressionTypeProvider {
     public fun KtFunction.getFunctionalType(): KaType = functionType
 
     /**
-     * Returns the expected [KaType] of this [PsiElement] if it is an expression. The returned value should not be a
-     * [org.jetbrains.kotlin.analysis.api.types.KaErrorType].
+     * The expected [KaType] for the given [PsiElement] if it is an expression, or `null` if the element does not have an expected type.
+     * The expected type is the type that the expression is expected to have in the context where it appears.
      */
     public val PsiElement.expectedType: KaType?
 
     /**
-     * Returns `true` if this expression is definitely null, based on declared nullability and smart cast types derived from
-     * data-flow analysis facts. Examples:
+     * `true` if this expression is 'definitely null", based on declared nullability and smart cast types derived from
+     * data-flow analysis facts.
+     *
+     * Here are a few examples:
+     *
      * ```
      *   public fun <T : Any> foo(t: T, nt: T?, s: String, ns: String?) {
      *     t     // t.isDefinitelyNull()  == false && t.isDefinitelyNotNull()  == true
@@ -83,13 +86,17 @@ public interface KaExpressionTypeProvider {
      *     ns!!  // From this point on: ns.isDefinitelyNull() == false && ns.isDefinitelyNotNull() == true
      *   }
      * ```
-     * Note that only nullability from "stable" smart cast types is considered. The
-     * [spec](https://kotlinlang.org/spec/type-inference.html#smart-cast-sink-stability) provides an explanation on smart cast stability.
+     *
+     * Note that only nullability from stable smart casts is considered.
+     * See the [Smart cast sink stability](https://kotlinlang.org/spec/type-inference.html#smart-cast-sink-stability) section of the
+     * Kotlin specification for more information.
      */
     public val KtExpression.isDefinitelyNull: Boolean
 
     /**
-     * Returns `true` if this expression is definitely not null. See [isDefinitelyNull] for examples.
+     * `true` if this expression is definitely not null.
+     *
+     * @see [isDefinitelyNull] for the examples.
      */
     public val KtExpression.isDefinitelyNotNull: Boolean
 }

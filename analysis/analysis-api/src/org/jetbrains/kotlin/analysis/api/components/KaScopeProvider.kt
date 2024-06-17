@@ -23,7 +23,7 @@ import java.util.Objects
 
 public interface KaScopeProvider {
     /**
-     * Returns a [KaScope] containing *non-static* callable members (functions, properties, and constructors) and all classifier members
+     * A [KaScope] containing *non-static* callable members (functions, properties, and constructors) and all classifier members
      * (classes and objects) of the given [KaDeclarationContainerSymbol]. The scope includes members inherited from the symbol's supertypes, in
      * addition to members which are declared explicitly inside the symbol's body.
      *
@@ -34,7 +34,7 @@ public interface KaScopeProvider {
     public val KaDeclarationContainerSymbol.memberScope: KaScope
 
     /**
-     * Returns a [KaScope] containing all members from [memberScope] and [staticMemberScope].
+     * A [KaScope] containing *all* members from [memberScope] and [staticMemberScope].
      */
     public val KaDeclarationContainerSymbol.combinedMemberScope: KaScope
         get() = withValidityAssertion {
@@ -42,7 +42,7 @@ public interface KaScopeProvider {
         }
 
     /**
-     * Returns a [KaScope] containing the *static* members of the given [KaDeclarationContainerSymbol].
+     * A [KaScope] containing the *static* members of the given [KaDeclarationContainerSymbol].
      *
      * The behavior of the scope differs based on whether the given [KaDeclarationContainerSymbol] is a Kotlin or Java class:
      *
@@ -120,7 +120,7 @@ public interface KaScopeProvider {
     public val KaDeclarationContainerSymbol.staticMemberScope: KaScope
 
     /**
-     * Returns a [KaScope] containing the *non-static* callables (functions, properties, and constructors) and inner classes explicitly
+     * A [KaScope] containing the *non-static* callables (functions, properties, and constructors) and inner classes explicitly
      * declared in the given [KaDeclarationContainerSymbol].
      *
      * The declared member scope does not contain classifiers (including the companion object) except for inner classes. To retrieve the
@@ -132,7 +132,7 @@ public interface KaScopeProvider {
     public val KaDeclarationContainerSymbol.declaredMemberScope: KaScope
 
     /**
-     * Returns a [KaScope] containing the *static* callables (functions and properties) and all classifiers (classes and objects) explicitly
+     * A [KaScope] containing the *static* callables (functions and properties) and all classifiers (classes and objects) explicitly
      * declared in the given [KaDeclarationContainerSymbol].
      *
      * It is worth noting that, while Java classes may contain declarations of static callables freely, in Kotlin only enum classes define
@@ -144,18 +144,30 @@ public interface KaScopeProvider {
     public val KaDeclarationContainerSymbol.staticDeclaredMemberScope: KaScope
 
     /**
-     * Returns a [KaScope] containing *all* members explicitly declared in the given [KaDeclarationContainerSymbol].
+     * A [KaScope] containing *all* members explicitly declared in the given [KaDeclarationContainerSymbol].
      *
      * In contrast to [declaredMemberScope] and [staticDeclaredMemberScope], this scope contains both static and non-static members.
      */
     public val KaDeclarationContainerSymbol.combinedDeclaredMemberScope: KaScope
 
+    /**
+     * A [KaScope] containing synthetic fields created by interface delegation.
+     */
     public val KaDeclarationContainerSymbol.delegatedMemberScope: KaScope
 
+    /**
+     * A [KaScope] containing top-level declarations (such as classes, functions and properties) in the given [KaFileSymbol].
+     */
     public val KaFileSymbol.fileScope: KaScope
 
+    /**
+     * A [KaScope] containing all members of the package represented by the given [KaPackageSymbol], together with subpackages.
+     */
     public val KaPackageSymbol.packageScope: KaScope
 
+    /**
+     * Flatten a list of [KaScope]s into a single [KaScope].
+     */
     public fun List<KaScope>.asCompositeScope(): KaScope
 
     /**
@@ -182,6 +194,9 @@ public interface KaScopeProvider {
     @KaExperimentalApi
     public val KaType.scope: KaTypeScope?
 
+    /**
+     * A [KaScope] containing unsubstituted declarations from the type of the given [KaType].
+     */
     @KaExperimentalApi
     public val KaTypeScope.declarationScope: KaScope
 
@@ -192,10 +207,8 @@ public interface KaScopeProvider {
     public val KaType.syntheticJavaPropertiesScope: KaTypeScope?
 
     /**
-     * For each scope in [KaScopeContext] an index is calculated. The indexes are relative to position, and they are only known for
-     * scopes obtained with [scopeContext].
-     *
-     * Scopes with [KaScopeKind.TypeScope] include synthetic Java properties.
+     * Compute the lexical scope context for a given position in the [KtFile].
+     * The scope context includes all scopes that are relevant for the given position, together with all available implicit receivers.
      */
     public fun KtFile.scopeContext(position: KtElement): KaScopeContext
 
@@ -206,15 +219,16 @@ public interface KaScopeProvider {
     }
 
     /**
-     * Returns a [KaScopeContext] formed by all imports in the [KtFile].
+     * A [KaScopeContext] formed by all imports in the [KtFile].
      *
-     * By default, this will also include default importing scopes, which can be filtered by [KaScopeKind]
+     * By default, it also includes default importing scopes, which can be filtered by [KaScopeKind].
      */
     public val KtFile.importingScopeContext: KaScopeContext
 
     /**
-     * Returns single scope, containing declarations from all scopes that satisfy [filter]. The order of declarations corresponds to the
-     * order of their containing scopes, which are sorted according to their indexes in scope tower.
+     * Returns a single scope that contains declarations from all scopes that satisfy [filter].
+     * The order of declarations corresponds to the order of their containing scopes,
+     * which are sorted according to their indexes in scope tower.
      */
     public fun KaScopeContext.compositeScope(filter: (KaScopeKind) -> Boolean = { true }): KaScope = withValidityAssertion {
         val subScopes = scopes.filter { filter(it.kind) }.map { it.scope }
@@ -227,11 +241,19 @@ public interface KaScopeProvider {
     }
 }
 
+/**
+ * Represents a resolution context for a given position in the [KtFile].
+ */
 public interface KaScopeContext : KaLifetimeOwner {
+    /**
+     * Implicit receivers available at the given position.
+     * The list is sorted according to the order of scopes in the scope tower (from innermost to outermost).
+     */
     public val implicitReceivers: List<KaImplicitReceiver>
 
     /**
-     * Scopes for position, sorted according to their indexes in scope tower, i.e. the first scope is the closest one to position.
+     * Scopes available at the given position.
+     * The list is sorted according to the order of scopes in the scope tower (from innermost to outermost).
      */
     public val scopes: List<KaScopeWithKind>
 }
@@ -239,9 +261,23 @@ public interface KaScopeContext : KaLifetimeOwner {
 @Deprecated("Use 'KaScopeContext' instead.", replaceWith = ReplaceWith("KaScopeContext"))
 public typealias KtScopeContext = KaScopeContext
 
+/**
+ * Represents the implicit receiver available in a particular context.
+ */
 public interface KaImplicitReceiver : KaLifetimeOwner {
+    /**
+     * The symbol of the owner of the implicit receiver.
+     */
     public val ownerSymbol: KaSymbol
+
+    /**
+     * The implicit receiver type.
+     */
     public val type: KaType
+
+    /**
+     * The index of the scope in the scope tower where the implicit receiver is declared.
+     */
     public val scopeIndexInTower: Int
 }
 
@@ -250,7 +286,10 @@ public typealias KtImplicitReceiver = KaImplicitReceiver
 
 public sealed interface KaScopeKind {
     /**
-     * Index in scope tower. For example:
+     * An index in the scope tower.
+     *
+     * For example:
+     *
      * ```
      * fun f(a: A, b: B) {      // local scope:       indexInTower = 2
      *     with(a) {            // type scope for A:  indexInTower = 1
@@ -266,54 +305,54 @@ public sealed interface KaScopeKind {
     public interface LocalScope : KaScopeKind
 
     /**
-     * Represents [KaScope] for type, which include synthetic Java properties of corresponding type.
+     * Represents a [KaScope] for type, which include synthetic Java properties of corresponding type.
      */
     public interface TypeScope : KaScopeKind
 
     public sealed interface NonLocalScope : KaScopeKind
 
     /**
-     * Represents [KaScope] containing type parameters.
+     * Represents a [KaScope] containing type parameters.
      */
     public interface TypeParameterScope : NonLocalScope
 
     /**
-     * Represents [KaScope] containing declarations from package.
+     * Represents a [KaScope] containing declarations from package.
      */
     public interface PackageMemberScope : NonLocalScope
 
     /**
-     * Represents [KaScope] containing declarations from imports.
+     * Represents a [KaScope] containing declarations from imports.
      */
     public sealed interface ImportingScope : NonLocalScope
 
     /**
-     * Represents [KaScope] containing declarations from explicit non-star imports.
+     * Represents a [KaScope] containing declarations from explicit non-star imports.
      */
     public interface ExplicitSimpleImportingScope : ImportingScope
 
     /**
-     * Represents [KaScope] containing declarations from explicit star imports.
+     * Represents a [KaScope] containing declarations from explicit star imports.
      */
     public interface ExplicitStarImportingScope : ImportingScope
 
     /**
-     * Represents [KaScope] containing declarations from non-star imports which are not declared explicitly and are added by default.
+     * Represents a [KaScope] containing declarations from non-star imports which are not declared explicitly and are added by default.
      */
     public interface DefaultSimpleImportingScope : ImportingScope
 
     /**
-     * Represents [KaScope] containing declarations from star imports which are not declared explicitly and are added by default.
+     * Represents a [KaScope] containing declarations from star imports which are not declared explicitly and are added by default.
      */
     public interface DefaultStarImportingScope : ImportingScope
 
     /**
-     * Represents [KaScope] containing static members of a classifier.
+     * Represents a [KaScope] containing static members of a classifier.
      */
     public interface StaticMemberScope : NonLocalScope
 
     /**
-     * Represents [KaScope] containing members of a script.
+     * Represents a [KaScope] containing members of a script.
      */
     public interface ScriptMemberScope : NonLocalScope
 }
