@@ -71,7 +71,7 @@ internal object KtSimpleObjCExportModuleNaming : KtObjCExportModuleNaming {
     @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     override fun getModuleName(module: KaModule): String? {
         return when (module) {
-            is KaSourceModule -> module.stableModuleName ?: module.moduleName
+            is KaSourceModule -> module.stableModuleName ?: module.name
             is KaLibraryModule -> module.libraryName
             else -> null
         }

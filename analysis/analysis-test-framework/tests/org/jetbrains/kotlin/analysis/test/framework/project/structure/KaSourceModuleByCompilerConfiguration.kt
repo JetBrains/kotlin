@@ -44,7 +44,7 @@ abstract class KtModuleByCompilerConfiguration(
     private val compilerConfigurationProvider = testServices.compilerConfigurationProvider
     private val configuration = compilerConfigurationProvider.getCompilerConfiguration(testModule)
 
-    val moduleName: String
+    val name: String
         get() = testModule.name
 
     val directRegularDependencies: List<KaModule> by lazy(LazyThreadSafetyMode.PUBLICATION) {

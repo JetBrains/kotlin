@@ -22,12 +22,12 @@ internal class KaSourceModuleImpl(
     override val contentScope: GlobalSearchScope,
     override val targetPlatform: TargetPlatform,
     override val project: Project,
-    override val moduleName: String,
+    override val name: String,
     override val languageVersionSettings: LanguageVersionSettings,
     internal val sourceRoots: List<PsiFileSystemItem>,
 ) : KaSourceModule, KtModuleWithPlatform {
     @KaExperimentalApi
-    override val stableModuleName: String? get() = moduleName
+    override val stableModuleName: String? get() = name
     override val transitiveDependsOnDependencies: List<KaModule> by lazy {
         computeTransitiveDependsOnDependencies(directDependsOnDependencies)
     }

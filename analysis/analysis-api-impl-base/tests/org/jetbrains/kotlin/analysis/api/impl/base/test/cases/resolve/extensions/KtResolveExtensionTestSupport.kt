@@ -104,7 +104,7 @@ object KtResolveExtensionTestSupport {
                 resolveExtensionTestFiles.map { it.toKtResolveExtensionFile(singleModulePackageName) }
 
             val provider = KaResolveExtensionProviderForTest(ktResolveExtensionFiles, packageNames, shadowedScope) {
-                it is KaSourceModule && it.moduleName == name
+                it is KaSourceModule && it.name == name
             }
             provider.register(testServices)
 

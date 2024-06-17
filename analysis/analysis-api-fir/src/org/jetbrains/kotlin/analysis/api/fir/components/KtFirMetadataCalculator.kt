@@ -143,7 +143,7 @@ internal class KaFirMetadataCalculator(
             scopeSession,
             JvmSerializationBindings(),
             useTypeTable = true,
-            moduleName = (analysisSession.useSiteModule as KaSourceModule).run { stableModuleName ?: moduleName },
+            moduleName = (analysisSession.useSiteModule as KaSourceModule).run { stableModuleName ?: name },
             classBuilderMode = ClassBuilderMode.KAPT3,
             isParamAssertionsDisabled = false,
             unifiedNullChecks = true,

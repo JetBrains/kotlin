@@ -120,7 +120,7 @@ class KaFe10AnalysisHandlerExtension(
         // Single-module [KtFe10AnalysisHandlerExtension] can be registered without specific use-site module.
         // Simple null-check below will skip the bail-out.
         if (useSiteModule != null &&
-            module.name.asString().removeSurrounding("<", ">") != useSiteModule.moduleName
+            module.name.asString().removeSurrounding("<", ">") != useSiteModule.name
         ) {
             // there is no way to properly map KaModule to ModuleDescriptor,
             // Multi-module [KtFe10AnalysisHandlerExtension]s are used only for tests,

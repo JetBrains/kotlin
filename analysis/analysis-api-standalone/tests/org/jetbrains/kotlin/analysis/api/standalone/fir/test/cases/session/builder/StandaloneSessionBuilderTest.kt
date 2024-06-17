@@ -243,8 +243,8 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
         val ktCallExpression = ktFile.findDescendantOfType<KtCallExpression>()!!
         ktCallExpression.assertIsCallOf(CallableId(FqName.ROOT, Name.identifier("foo")))
 
-        assertEquals("main", sourceModule.moduleName)
-        assertEquals(sourceModule.moduleName, sourceModule.stableModuleName)
+        assertEquals("main", sourceModule.name)
+        assertEquals(sourceModule.name, sourceModule.stableModuleName)
     }
 
     @Test

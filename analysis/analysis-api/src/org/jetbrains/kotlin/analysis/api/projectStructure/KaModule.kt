@@ -96,7 +96,10 @@ public interface KaModule {
 @OptIn(ExperimentalSubclassOptIn::class)
 @SubclassOptInRequired(markerClass = KaPlatformInterface::class)
 public interface KaSourceModule : KaModule {
-    public val moduleName: String
+    public val name: String
+
+    @Deprecated("Use 'name' instead.", replaceWith = ReplaceWith("name"))
+    public val moduleName: String get() = name
 
     /**
      * A stable binary name of module from the *Kotlin* point of view.
@@ -110,7 +113,7 @@ public interface KaSourceModule : KaModule {
 
     @KaExperimentalApi
     override val moduleDescription: String
-        get() = "Sources of $moduleName"
+        get() = "Sources of $name"
 
     /**
      * A set of Kotlin settings, like API version, supported features and flags.
