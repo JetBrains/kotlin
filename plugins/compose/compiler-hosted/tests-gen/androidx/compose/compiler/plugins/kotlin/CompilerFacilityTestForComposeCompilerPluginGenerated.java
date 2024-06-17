@@ -30,14 +30,32 @@ public class CompilerFacilityTestForComposeCompilerPluginGenerated extends Abstr
   }
 
   @Test
+  @TestMetadata("lazyPropertyBackingField.kt")
+  public void testLazyPropertyBackingField() {
+    runTest("plugins/compose/compiler-hosted/testData/codegen/lazyPropertyBackingField.kt");
+  }
+
+  @Test
   @TestMetadata("multiModulesWithComposableFunction.kt")
   public void testMultiModulesWithComposableFunction() {
     runTest("plugins/compose/compiler-hosted/testData/codegen/multiModulesWithComposableFunction.kt");
   }
 
   @Test
+  @TestMetadata("nestedLambda.kt")
+  public void testNestedLambda() {
+    runTest("plugins/compose/compiler-hosted/testData/codegen/nestedLambda.kt");
+  }
+
+  @Test
   @TestMetadata("propertyGetterBody.kt")
   public void testPropertyGetterBody() {
     runTest("plugins/compose/compiler-hosted/testData/codegen/propertyGetterBody.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyWithDelegateBackingField.kt")
+  public void testPropertyWithDelegateBackingField() {
+    runTest("plugins/compose/compiler-hosted/testData/codegen/propertyWithDelegateBackingField.kt");
   }
 }
