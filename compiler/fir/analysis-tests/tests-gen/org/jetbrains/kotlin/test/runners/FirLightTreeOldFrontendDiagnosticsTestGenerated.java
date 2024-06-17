@@ -9331,6 +9331,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("suspendCallInInit.kt")
+      public void testSuspendCallInInit() {
+        runTest("compiler/testData/diagnostics/tests/coroutines/suspendCallInInit.kt");
+      }
+
+      @Test
       @TestMetadata("suspendInvokeInsideTry.kt")
       public void testSuspendInvokeInsideTry() {
         runTest("compiler/testData/diagnostics/tests/coroutines/suspendInvokeInsideTry.kt");
