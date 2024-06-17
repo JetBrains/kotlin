@@ -91,7 +91,7 @@ fun <T> KotlinTypeFacade.interpret(
     val actualArgsMap = refinedArguments.associateBy { it.name.identifier }.toSortedMap()
     val conflictingKeys = additionalArguments.keys intersect actualArgsMap.keys
     if (conflictingKeys.isNotEmpty()) {
-        error("Conflicting keys: $conflictingKeys")
+        interpretationFrameworkError("Conflicting keys: $conflictingKeys")
     }
     val expectedArgsMap = processor.expectedArguments
         .filterNot { it.name.startsWith("typeArg") }
@@ -270,6 +270,10 @@ fun <T> KotlinTypeFacade.interpret(
         return null
     }
 }
+
+fun interpretationFrameworkError(message: String): Nothing = throw InterpretationFrameworkError(message)
+
+class InterpretationFrameworkError(message: String) : Error(message)
 
 interface InterpretationErrorReporter {
     val errorReported: Boolean
