@@ -1251,6 +1251,7 @@ abstract class FirDataFlowAnalyzer(
 
     fun exitAnnotation() {
         graphBuilder.exitFakeExpression()
+        resetSmartCastPosition() // rollback to position before annotation
     }
 
     // ----------------------------------- Init block -----------------------------------
