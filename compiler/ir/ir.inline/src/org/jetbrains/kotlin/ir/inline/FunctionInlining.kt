@@ -741,6 +741,7 @@ open class FunctionInlining(
             val substitutor = ParameterSubstitutor()
             arguments.forEach { argument ->
                 val parameter = argument.parameter
+                val container = if (argument.isDefaultArg) evaluationStatementsFromDefault else evaluationStatements
                 /*
                  * We need to create temporary variable for each argument except inlinable lambda arguments.
                  * For simplicity and to produce simpler IR we don't create temporaries for every immutable variable,
@@ -751,10 +752,10 @@ open class FunctionInlining(
                     val arg = argument.argumentExpression
                     when {
                         // This first branch is required to avoid assertion in `getArgumentsWithIr`
-                        arg is IrPropertyReference && arg.field != null -> evaluateReceiverForPropertyWithField(arg)?.let { evaluationStatements += it }
-                        arg is IrCallableReference<*> -> evaluationStatements += evaluateArguments(arg)
+                        arg is IrPropertyReference && arg.field != null -> evaluateReceiverForPropertyWithField(arg)?.let { container += it }
+                        arg is IrCallableReference<*> -> container += evaluateArguments(arg)
                         arg is IrBlock -> if (arg.origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE) {
-                            evaluationStatements += evaluateArguments(arg.statements.last() as IrFunctionReference)
+                            container += evaluateArguments(arg.statements.last() as IrFunctionReference)
                         }
                     }
 
@@ -767,7 +768,7 @@ open class FunctionInlining(
 
                 if (shouldCreateTemporaryVariable) {
                     val newVariable = createTemporaryVariable(parameter, variableInitializer, argument.isDefaultArg, callee)
-                    if (argument.isDefaultArg) evaluationStatementsFromDefault.add(newVariable) else evaluationStatements.add(newVariable)
+                    container.add(newVariable)
                     substituteMap[parameter] = irGetValueWithoutLocation(newVariable.symbol)
                     return@forEach
                 }
