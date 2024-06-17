@@ -450,8 +450,11 @@ if (!buildProperties.inJpsBuildIdeaSync) {
             ":plugins:compose-compiler-plugin:compiler",
             ":plugins:compose-compiler-plugin:compiler-hosted",
             ":plugins:compose-compiler-plugin:compiler-hosted:integration-tests",
-            ":plugins:compose-compiler-plugin:compiler-hosted:integration-tests:protobuf-test-classes",
-            ":plugins:compose-compiler-plugin:compiler-hosted:runtime-tests"
+            ":plugins:compose-compiler-plugin:compiler-hosted:integration-tests:protobuf-test-classes"
+
+    if (buildProperties.inIdeaSync) {
+        include ":plugins:compose-compiler-plugin:compiler-hosted:runtime-tests"
+    }
 }
 
 // Swift Export modules
@@ -902,7 +905,10 @@ if (!buildProperties.inJpsBuildIdeaSync) {
     project(':plugins:compose-compiler-plugin:compiler-hosted:integration-tests').projectDir = file("$rootDir/plugins/compose/compiler-hosted/integration-tests")
     project(':plugins:compose-compiler-plugin:compiler-hosted:integration-tests:protobuf-test-classes').projectDir =
             file("$rootDir/plugins/compose/compiler-hosted/integration-tests/protobuf-test-classes")
-    project(':plugins:compose-compiler-plugin:compiler-hosted:runtime-tests').projectDir = file("$rootDir/plugins/compose/compiler-hosted/runtime-tests")
+
+    if (buildProperties.inIdeaSync) {
+        project(':plugins:compose-compiler-plugin:compiler-hosted:runtime-tests').projectDir = file("$rootDir/plugins/compose/compiler-hosted/runtime-tests")
+    }
 }
 
 project(':kotlin-scripting-ide-services-unshaded').projectDir = "$rootDir/plugins/scripting/scripting-ide-services" as File

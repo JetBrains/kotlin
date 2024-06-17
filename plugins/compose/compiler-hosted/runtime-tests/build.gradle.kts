@@ -1,9 +1,18 @@
-import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     kotlin("multiplatform")
 }
+
+// WARNING: This module is attached to the project ONLY during the IDEA import.
+//
+// This module serves primarily as test data for `androidx.compose.compiler.plugins.kotlin.RuntimeTests`.
+// It improves the file editing experience but files may contain compilation errors because the module isn't expected to be compiled
+// by the bootstrap compiler.
+//
+// Attempting to run any tasks in this module, or adding it as a dependency, will cause ERRORS:
+//
+// Error: Cannot locate tasks matching `:plugins:compose-compiler-plugin:compiler-hosted:runtime-tests:*`
+// or
+// Error: Project directory '?/plugins/compose/compiler-hosted/runtime-tests' is not part of the build defined by the settings file
 
 repositories {
     if (!kotlinBuildProperties.isTeamcityBuild) {
@@ -46,40 +55,4 @@ kotlin {
             }
         }
     }
-}
-
-val reportRuntimeTests = tasks.register("reportRunningRuntimeTest") {
-    doFirst {
-        error(
-            """
-            The runtime tests are executed as part of integration-tests for now, as Kotlin repo does not support compiler dependency built from source.
-            Use `androidx.compose.compiler.plugins.kotlin.RuntimeTests` to verify runtime tests.
-            """.trimIndent()
-        )
-    }
-}
-
-// Hack to support editing these tests in IDE while running with the latest version of compiler/plugin.
-// Compilation of this module should not be allowed since bootstrap compiler cannot compile it properly.
-// The tests are executed with a custom test runner from integration-tests module instead.
-// (see androidx.compose.compiler.plugins.kotlin.RuntimeTests)
-
-tasks.named("jvmTestClasses") {
-    if (!kotlinBuildProperties.isTeamcityBuild) {
-        dependsOn(reportRuntimeTests)
-    }
-}
-
-tasks.withType(KotlinCompile::class.java) {
-    enabled = false
-    if (!kotlinBuildProperties.isTeamcityBuild) {
-        dependsOn(reportRuntimeTests)
-    }
-}
-
-tasks.withType(KotlinJvmTest::class.java) {
-    if (!kotlinBuildProperties.isTeamcityBuild) {
-        dependsOn(reportRuntimeTests)
-    }
-    this.enabled = false
 }
