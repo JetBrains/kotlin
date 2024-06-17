@@ -43,6 +43,7 @@ internal abstract class SwiftExportTask : DefaultTask() {
 
     @TaskAction
     fun run() {
+        // FIXME: Classloader here will not be cached
         val swiftExportQueue = workerExecutor.classLoaderIsolation { workerSpec ->
             workerSpec.classpath.from(swiftExportClasspath)
         }

@@ -12,6 +12,7 @@ if (kotlinBuildProperties.isSwiftExportPluginPublishingEnabled) {
     publish()
 }
 
+val validateSwiftExportEmbeddable = tasks.register("validateSwiftExportEmbeddable")
 
 dependencies {
     embedded(project(":native:swift:sir")) { isTransitive = false }
@@ -22,6 +23,7 @@ dependencies {
     embedded(project(":native:swift:swift-export-standalone")) { isTransitive = false }
     embedded(project(":native:analysis-api-klib-reader")) { isTransitive = false }
 
+    // FIXME: Stop embedding Analysis API after KT-61404
     val lowLevelApiFir = ":analysis:low-level-api-fir"
     embedded(project(":analysis:analysis-api")) { isTransitive = false }
     embedded(project(":analysis:analysis-api-fir")) { isTransitive = false }
@@ -33,7 +35,6 @@ dependencies {
     embedded(project(":analysis:analysis-api-standalone:analysis-api-standalone-base")) { isTransitive = false }
     embedded(project(":analysis:analysis-internal-utils")) { isTransitive = false }
     embedded(project(lowLevelApiFir)) { isTransitive = false }
-    // FIXME: Is this actually an unused dependency?
     embedded(project(":analysis:symbol-light-classes")) { isTransitive = false }
 
     val projectsToInheritDependenciesFrom = configurations.runtimeClasspath.get().copy()
@@ -44,7 +45,10 @@ dependencies {
         )
     )
     val dependenciesToInherit = mapOf(
+        // low-level-api-fir uses the caffeine cache
         "com.github.ben-manes.caffeine" to "caffeine",
+        // These are the dependencies of caffeine. By explicitly specifying them in runtimeClasspath we inherit the versions that are
+        // used at compile-time by low-level-api-fir
         "org.checkerframework" to "checker-qual",
         "com.google.errorprone" to "error_prone_annotations",
     )
@@ -52,38 +56,55 @@ dependencies {
         val moduleVersion = it.moduleVersion ?: return@filter false
         dependenciesToInherit[moduleVersion.group] == moduleVersion.name
     }.map { it.moduleVersion!! }
-    if (inheritedDependencies.size != dependenciesToInherit.size) { error(inheritedDependencies) }
+
+    val validateAllDependenciesWereInheritedCorrectly by tasks.registering {
+        doLast {
+            if (inheritedDependencies.size != dependenciesToInherit.size) {
+                error("Actual inherited dependencies: $inheritedDependencies")
+            }
+        }
+    }
+    validateSwiftExportEmbeddable.configure { dependsOn(validateAllDependenciesWereInheritedCorrectly) }
+
     inheritedDependencies.forEach {
-        println(it)
         runtimeOnly(group = it.group, name = it.name, version = it.version)
     }
-
     runtimeOnly(kotlinStdlib())
     runtimeOnly(project(":kotlin-compiler-embeddable"))
-    runtimeOnly(project(":kotlin-scripting-compiler-embeddable"))
-    runtimeOnly(project(":kotlin-assignment-compiler-plugin.embeddable"))
 }
 
-// FIXME: Stop embedding Analysis API after KT-61404
 fun validateSwiftExportEmbeddable(swiftExportEmbeddableJarTask: TaskProvider<out org.gradle.jvm.tasks.Jar>) {
     val swiftExportEmbeddableJar = files(swiftExportEmbeddableJarTask)
-    val swiftExportActionRuntimeClasspath = files(configurations.runtimeClasspath)
+    val runtimeClasspathCopy = configurations.runtimeClasspath.get().copyRecursive()
+    runtimeClasspathCopy.dependencies.addAll(
+        listOf(
+            /**
+             * These are needed for .kts files analysis; we don't actually want them in Swift Export, but currently ProGuard sees these in
+             * shared Analysis API code and complaints
+             */
+            dependencies.create(project(":kotlin-scripting-compiler-embeddable")),
+            dependencies.create(project(":kotlin-assignment-compiler-plugin.embeddable")),
+        )
+    )
+    val swiftExportActionRuntimeClasspath = files(runtimeClasspathCopy)
     val proguardedSwiftExportEmbeddableJar = layout.buildDirectory.file("proguard/output.jar")
 
     /**
      * This task reproduces SwiftExportAction classpath and runs ProGuard on the swift-export-embeddable. ProGuard will fail the task if
      * swift-export-embeddable references classes that are not present in libraryjars.
      */
-    val proguard = tasks.register<CacheableProguardTask>("validateSwiftExportEmbeddableHasProperDependenciesInTheClasspath") {
+    // FIXME: Publish the ProGuarded version of swift-export-embeddable - KT-69180
+    val validateSwiftExportEmbeddableHasProperDependenciesInTheClasspath by tasks.registering(CacheableProguardTask::class) {
         outputs.cacheIf { false }
         outputs.upToDateWhen { false }
+
         dependsOn(swiftExportActionRuntimeClasspath)
         dependsOn(swiftExportEmbeddableJar)
         javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8))
+
         configuration("swift-export-embeddable.pro")
 
         injars(swiftExportEmbeddableJar)
-
         outjars(proguardedSwiftExportEmbeddableJar)
 
         libraryjars(swiftExportActionRuntimeClasspath)
@@ -110,6 +131,8 @@ fun validateSwiftExportEmbeddable(swiftExportEmbeddableJarTask: TaskProvider<out
         )
     }
 
+    validateSwiftExportEmbeddable.configure { dependsOn(validateSwiftExportEmbeddableHasProperDependenciesInTheClasspath) }
+
     fun String.isImplementationClassFile() = endsWith(".class") && !endsWith("module-info.class")
     fun File.forEachClassFileInAJar(action: (ZipEntry) -> (Unit)) = ZipFile(this).use { zip ->
         zip.entries().asSequence().filter {
@@ -121,7 +144,7 @@ fun validateSwiftExportEmbeddable(swiftExportEmbeddableJarTask: TaskProvider<out
      * This task makes sure there are no duplicates in the runtime classpath; i.e. runtimeOnly dependencies are correctly specified and
      * there is no collision with embedded classes
      */
-    tasks.register("validateNoDuplicatesInRuntimeClasspath") {
+    val validateNoDuplicatesInRuntimeClasspath by tasks.registering {
         dependsOn(swiftExportActionRuntimeClasspath)
         dependsOn(swiftExportEmbeddableJar)
 
@@ -144,52 +167,7 @@ fun validateSwiftExportEmbeddable(swiftExportEmbeddableJarTask: TaskProvider<out
         }
     }
 
-    /**
-     * This task compares ProGuarded swift-export-embeddable.jar with the embedded jars and fails if ProGuard removed all classfiles from
-     * an embedded dependency
-     */
-    val jarsToEmbed = files(configurations.embedded)
-    tasks.register("validateSwiftExportEmbeddableUsesAllOfItsEmbeddedDependencies") {
-        dependsOn(proguard)
-        dependsOn(jarsToEmbed)
-
-        doLast {
-            val embeddedJarFromClass = mutableMapOf<String, File>()
-            val classesFromEmbeddedJars = mutableMapOf<File, MutableSet<String>>()
-            jarsToEmbed.forEach { jar ->
-                jar.forEachClassFileInAJar { entry ->
-                    if (embeddedJarFromClass[entry.name] != null) error("${entry.name} collides across two embedded jars: ${embeddedJarFromClass[entry.name]} and $jar")
-                    embeddedJarFromClass[entry.name] = jar
-                    classesFromEmbeddedJars.getOrPut(jar, ::hashSetOf).add(entry.name)
-                }
-            }
-
-            val classesInProguardedJar = mutableMapOf<File, MutableSet<String>>()
-            proguardedSwiftExportEmbeddableJar.get().asFile.forEachClassFileInAJar { entry ->
-                val jar = embeddedJarFromClass[entry.name] ?: error("Couldn't find class ${entry.name} in embedded jars")
-                classesInProguardedJar.getOrPut(jar, ::hashSetOf).add(entry.name)
-            }
-
-            val embeddedJarsRemovedByProguard = mutableListOf<File>()
-            jarsToEmbed.forEach { jar ->
-                val embedded = classesFromEmbeddedJars[jar]!!
-                val proguarded = classesInProguardedJar[jar]
-                if (proguarded == null) {
-                    embeddedJarsRemovedByProguard.add(jar)
-                    return@forEach
-                }
-                if (embedded.size > 0) {
-                    println("${jar}: embedded ${embedded.size}, proguarded: ${proguarded.size}, usage: ${proguarded.size.toDouble() / embedded.size.toDouble()}")
-                }
-            }
-
-            embeddedJarsRemovedByProguard.forEach { jar ->
-                println("No classes from embedded jar ${jar} were found in the proguarded jar")
-            }
-        }
-    }
-
-    // FIXME: Task that validates that all runtimes dependencies are really needed
+    validateSwiftExportEmbeddable.configure { dependsOn(validateNoDuplicatesInRuntimeClasspath) }
 }
 
 sourceSets {
