@@ -32,5 +32,5 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:${project.bootstrapKotlinVersion}")
     implementation("org.jetbrains.kotlin:kotlin-reflect:${project.bootstrapKotlinVersion}")
 
-    implementation(libs.gradle.enterprise.gradlePlugin)
+    implementation(libs.develocity.gradlePlugin)
 }
