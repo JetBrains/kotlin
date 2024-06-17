@@ -165,7 +165,15 @@ object TestModuleStructureFactory {
             if (testModule.targetPlatform.isJvm() && jdkRoots.isNotEmpty()) {
                 val jdkModule = libraryCache(jdkRoots.toSet()) {
                     val jdkScope = getScopeForLibraryByRoots(jdkRoots, testServices)
-                    KaJdkModuleImpl("jdk", JvmPlatforms.defaultJvmPlatform, jdkScope, project, jdkRoots)
+                    KaLibraryModuleImpl(
+                        "jdk",
+                        JvmPlatforms.defaultJvmPlatform,
+                        jdkScope,
+                        project,
+                        jdkRoots,
+                        librarySources = null,
+                        isSdk = true,
+                    )
                 }
                 ktModule.directRegularDependencies.add(jdkModule)
             }
@@ -205,7 +213,7 @@ object TestModuleStructureFactory {
 
         val libraryName = libraryFile.nameWithoutExtension
         val libraryScope = getScopeForLibraryByRoots(listOf(libraryFile), testServices)
-        return KaLibraryModuleImpl(libraryName, platform, libraryScope, project, listOf(libraryFile), librarySources = null)
+        return KaLibraryModuleImpl(libraryName, platform, libraryScope, project, listOf(libraryFile), librarySources = null, isSdk = false)
     }
 
     fun getScopeForLibraryByRoots(roots: Collection<Path>, testServices: TestServices): GlobalSearchScope {

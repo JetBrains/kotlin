@@ -62,6 +62,7 @@ fun createKtLibrarySourceModule(
         project,
         binaryRoots = listOf(libraryJar),
         librarySources = null,
+        isSdk = false,
     )
 
     val decompiledPsiFilesFromSourceJar = LibraryUtils.getAllPsiFilesFromJar(librarySourcesJar, project)

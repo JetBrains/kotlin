@@ -52,7 +52,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
                         addBinaryRootsFromJdkHome(Paths.get(System.getProperty("java.home")), isJre = true)
                         addBinaryRootsFromJdkHome(Paths.get(System.getProperty("java.home")), isJre = false)
                         platform = JvmPlatforms.defaultJvmPlatform
-                        sdkName = "JDK"
+                        libraryName = "JDK"
                     }
                 )
                 sourceModule = addModule(

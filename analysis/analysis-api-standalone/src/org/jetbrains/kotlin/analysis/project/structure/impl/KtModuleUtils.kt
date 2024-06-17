@@ -147,7 +147,7 @@ internal fun buildKtModuleProviderByCompilerConfiguration(
                 buildKtSdkModule {
                     this.platform = platform
                     addBinaryRootsFromJdkHome(jdkHome.toPath(), isJre = false)
-                    sdkName = "JDK for $moduleName"
+                    libraryName = "JDK for $moduleName"
                 }
             )
         }

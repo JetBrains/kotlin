@@ -151,22 +151,18 @@ public interface KaLibraryModule : KaBinaryModule {
      */
     public val librarySources: KaLibrarySourceModule?
 
-    @KaExperimentalApi
-    override val moduleDescription: String
-        get() = "Library $libraryName"
-}
-
-/**
- * A module which represent some SDK, e.g. Java JDK.
- */
-@OptIn(ExperimentalSubclassOptIn::class)
-@SubclassOptInRequired(markerClass = KaPlatformInterface::class)
-public interface KaSdkModule : KaBinaryModule {
-    public val sdkName: String
+    /**
+     * Whether the module represents an SDK, such as the JDK.
+     */
+    @KaPlatformInterface
+    public val isSdk: Boolean
 
     @KaExperimentalApi
     override val moduleDescription: String
-        get() = "SDK $sdkName"
+        get() {
+            val label = if (isSdk) "SDK" else "Library"
+            return "$label $libraryName"
+        }
 }
 
 /**

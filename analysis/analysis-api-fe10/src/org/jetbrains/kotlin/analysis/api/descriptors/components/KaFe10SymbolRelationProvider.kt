@@ -154,6 +154,7 @@ internal class KaFe10SymbolRelationProvider(
         return object : KaLibraryModule {
             override val libraryName: String = libraryPath.fileName.toString().substringBeforeLast(".")
             override val librarySources: KaLibrarySourceModule? = null
+            override val isSdk: Boolean = false
             override val binaryRoots: Collection<Path> = listOf(libraryPath)
             override val directRegularDependencies: List<KaModule> = emptyList()
             override val directDependsOnDependencies: List<KaModule> = emptyList()

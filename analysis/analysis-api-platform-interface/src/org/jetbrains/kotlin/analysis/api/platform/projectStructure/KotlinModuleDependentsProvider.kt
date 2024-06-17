@@ -14,9 +14,9 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
  *
  * [getDirectDependents] and [getTransitiveDependents] may return an empty set for
  * [KaBuiltinsModule][org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule]s and
- * [KaSdkModule][org.jetbrains.kotlin.analysis.api.projectStructure.KaSdkModule]s even though most modules depend on builtins/SDKs, because
- * it is often not feasible to compute that set. Instead, users of [KotlinModuleDependentsProvider] should keep this limitation in mind and
- * handle it separately. For example, a global modification event should be published for builtins and SDK changes.
+ * SDK [KaLibraryModule][org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule]s even though most modules depend on
+ * builtins/SDKs, because it is often not feasible to compute that set. Instead, users of [KotlinModuleDependentsProvider] should keep this
+ * limitation in mind and handle it separately. For example, a global modification event should be published for builtins and SDK changes.
  *
  * An empty set is also returned for [KaDanglingFileModule][org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule]s.
  * Additionally, dangling file modules are never included in the dependents of their context modules. This is because dangling files are

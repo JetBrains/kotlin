@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaSdkModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
@@ -71,19 +70,21 @@ abstract class KtModuleByCompilerConfiguration(
         }
     }
 
-    private fun createJdkFromConfiguration(): KaSdkModule? = configuration.get(JVMConfigurationKeys.JDK_HOME)?.let { jdkHome ->
+    private fun createJdkFromConfiguration(): KaLibraryModule? = configuration.get(JVMConfigurationKeys.JDK_HOME)?.let { jdkHome ->
         val jdkHomePaths = StandaloneProjectFactory.getDefaultJdkModulePaths(project, jdkHome.toPath())
         val scope = StandaloneProjectFactory.createSearchScopeByLibraryRoots(
             jdkHomePaths,
             testServices.environmentManager.getProjectEnvironment()
         )
 
-        KaJdkModuleImpl(
+        KaLibraryModuleImpl(
             "jdk",
             JvmPlatforms.defaultJvmPlatform,
             scope,
             project,
             jdkHomePaths,
+            librarySources = null,
+            isSdk = true,
         )
     }
 
@@ -147,6 +148,7 @@ class KaLibraryModuleByCompilerConfiguration(
     override val ktModule: KaModule get() = this
     override val libraryName: String get() = testModule.name
     override val librarySources: KaLibrarySourceModule? get() = null
+    override val isSdk: Boolean get() = false
 
     override val contentScope: GlobalSearchScope =
         GlobalSearchScope.filesScope(project, psiFiles.map { it.virtualFile })
@@ -182,6 +184,7 @@ private class LibraryByRoots(
     override val directFriendDependencies: List<KaModule> get() = emptyList()
     override val targetPlatform: TargetPlatform get() = parentModule.targetPlatform
     override val binaryRoots: Collection<Path> get() = roots
+    override val isSdk: Boolean get() = false
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

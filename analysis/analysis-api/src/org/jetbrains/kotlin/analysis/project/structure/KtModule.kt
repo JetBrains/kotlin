@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaNotUnderContentRootModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptDependencyModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaSdkModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 
 @Deprecated("Use 'KaModule' instead", ReplaceWith("KaModule"))
@@ -31,8 +30,8 @@ public typealias KtBinaryModule = KaBinaryModule
 @Deprecated("Use 'KaLibraryModule' instead", ReplaceWith("KaLibraryModule"))
 public typealias KtLibraryModule = KaLibraryModule
 
-@Deprecated("Use 'KaSdkModule' instead", ReplaceWith("KaSdkModule"))
-public typealias KtSdkModule = KaSdkModule
+@Deprecated("Use 'KaLibraryModule' instead", ReplaceWith("KaLibraryModule"))
+public typealias KtSdkModule = KaLibraryModule
 
 @Deprecated("Use 'KaLibrarySourceModule' instead", ReplaceWith("KaLibrarySourceModule"))
 public typealias KtLibrarySourceModule = KaLibrarySourceModule

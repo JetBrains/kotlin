@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaNotUnderContentRootModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptDependencyModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaSdkModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaPossiblyNamedSymbol
@@ -388,7 +387,6 @@ public class DebugSymbolRenderer(
             KaSourceModule::class,
             KaBinaryModule::class,
             KaLibraryModule::class,
-            KaSdkModule::class,
             KaLibrarySourceModule::class,
             KaBuiltinsModule::class,
             KaScriptModule::class,

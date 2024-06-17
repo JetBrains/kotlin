@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaNotUnderContentRootModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptDependencyModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaSdkModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.isStable
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
@@ -56,7 +55,7 @@ class LLFirSessionCache(private val project: Project) : Disposable {
      * Must be called from a read action.
      */
     fun getSession(module: KaModule, preferBinary: Boolean = false): LLFirSession {
-        if (module is KaBinaryModule && (preferBinary || module is KaSdkModule)) {
+        if (module is KaBinaryModule && (preferBinary || (module is KaLibraryModule && module.isSdk))) {
             return getCachedSession(module, binaryCache) {
                 createPlatformAwareSessionFactory(module).createBinaryLibrarySession(module)
             }
@@ -223,8 +222,14 @@ class LLFirSessionCache(private val project: Project) : Disposable {
         val sessionFactory = createPlatformAwareSessionFactory(module)
         return when (module) {
             is KaSourceModule -> sessionFactory.createSourcesSession(module)
-            is KaLibraryModule, is KaLibrarySourceModule -> sessionFactory.createLibrarySession(module)
-            is KaSdkModule -> sessionFactory.createBinaryLibrarySession(module)
+            is KaLibraryModule -> {
+                if (module.isSdk) {
+                    sessionFactory.createBinaryLibrarySession(module)
+                } else {
+                    sessionFactory.createLibrarySession(module)
+                }
+            }
+            is KaLibrarySourceModule -> sessionFactory.createLibrarySession(module)
             is KaScriptModule -> sessionFactory.createScriptSession(module)
             is KaDanglingFileModule -> {
                 //  Dangling file context must have an analyzable session, so we can properly compile code against it.

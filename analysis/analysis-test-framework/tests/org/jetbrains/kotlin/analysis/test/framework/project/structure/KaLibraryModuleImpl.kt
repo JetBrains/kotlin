@@ -20,6 +20,7 @@ class KaLibraryModuleImpl(
     override val project: Project,
     override val binaryRoots: Collection<Path>,
     override var librarySources: KaLibrarySourceModule?,
+    override val isSdk: Boolean,
 ) : KtModuleWithModifiableDependencies(), KaLibraryModule {
     override val directRegularDependencies: MutableList<KaModule> = mutableListOf()
     override val directDependsOnDependencies: MutableList<KaModule> = mutableListOf()

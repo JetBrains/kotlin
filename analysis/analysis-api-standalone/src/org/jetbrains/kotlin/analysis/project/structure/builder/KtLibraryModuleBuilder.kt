@@ -15,13 +15,15 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 @KtModuleBuilderDsl
-public class KtLibraryModuleBuilder(
+public open class KtLibraryModuleBuilder(
     private val kotlinCoreProjectEnvironment: KotlinCoreProjectEnvironment
 ) : KtBinaryModuleBuilder() {
     public lateinit var libraryName: String
     public var librarySources: KaLibrarySourceModule? = null
 
-    override fun build(): KaLibraryModule {
+    override fun build(): KaLibraryModule = build(isSdk = false)
+
+    protected fun build(isSdk: Boolean): KaLibraryModule {
         val binaryRoots = getBinaryRoots()
         val contentScope = StandaloneProjectFactory.createSearchScopeByLibraryRoots(binaryRoots, kotlinCoreProjectEnvironment)
         return KaLibraryModuleImpl(
@@ -34,6 +36,7 @@ public class KtLibraryModuleBuilder(
             binaryRoots,
             libraryName,
             librarySources,
+            isSdk,
         )
     }
 }

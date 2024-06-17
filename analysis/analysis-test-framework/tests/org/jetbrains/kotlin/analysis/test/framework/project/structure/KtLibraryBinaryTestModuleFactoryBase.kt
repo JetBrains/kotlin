@@ -43,6 +43,7 @@ abstract class KtLibraryBinaryTestModuleFactoryBase : KtTestModuleFactory {
                 project,
                 binaryRoots = listOf(binaryRoot),
                 librarySources = null,
+                isSdk = false,
             ),
             decompiledFiles,
         )
