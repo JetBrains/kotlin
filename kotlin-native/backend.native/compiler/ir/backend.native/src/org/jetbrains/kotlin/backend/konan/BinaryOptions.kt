@@ -49,6 +49,8 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val fixedBlockPageSize by uintOption()
 
+    val fixedBlockStartupDelay by uintOption()
+
     val concurrentWeakSweep by booleanOption()
 
     val concurrentMarkMaxIterations by uintOption()

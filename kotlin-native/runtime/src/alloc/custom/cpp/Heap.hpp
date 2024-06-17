@@ -7,6 +7,7 @@
 #define CUSTOM_ALLOC_CPP_HEAP_HPP_
 
 #include <atomic>
+#include <cstdint>
 #include <mutex>
 #include <cstring>
 
@@ -25,6 +26,8 @@ namespace kotlin::alloc {
 
 class Heap {
 public:
+    explicit Heap(uint32_t fixedBlockStartupDelay) noexcept;
+
     // Called once by the GC thread after all mutators have been suspended
     void PrepareForGC() noexcept;
 
@@ -40,6 +43,8 @@ public:
 
     void AddToFinalizerQueue(FinalizerQueue queue) noexcept;
     FinalizerQueue ExtractFinalizerQueue() noexcept;
+
+    bool IsBlockSizeDelayed(uint32_t cellCount) noexcept;
 
     // Test method
     std::vector<ObjHeader*> GetAllocatedObjects() noexcept;
@@ -80,6 +85,8 @@ private:
     PageStore<NextFitPage> nextFitPages_;
     PageStore<SingleObjectPage> singleObjectPages_;
     PageStore<ExtraObjectPage> extraObjectPages_;
+
+    std::atomic<uint8_t> fixedBlockSizeDelay_[FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE + 1];
 
     FinalizerQueue pendingFinalizerQueue_;
     std::mutex pendingFinalizerQueueMutex_;

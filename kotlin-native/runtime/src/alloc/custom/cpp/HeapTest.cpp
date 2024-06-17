@@ -7,6 +7,7 @@
 #include <cstdint>
 #include <random>
 
+#include "CompilerConstants.hpp"
 #include "ExtraObjectPage.hpp"
 #include "FixedBlockPage.hpp"
 #include "GCApi.hpp"
@@ -36,7 +37,7 @@ size_t installType(uint8_t* obj, TypeInfo* typeInfo) {
 }
 
 TEST(CustomAllocTest, HeapReuseFixedBlockPages) {
-    Heap heap;
+    Heap heap(0);
     const int MIN = MIN_BLOCK_SIZE;
     const int MAX = FixedBlockPage::MAX_BLOCK_SIZE + 1;
     TypeInfo fakeTypes[MAX];
@@ -61,7 +62,7 @@ TEST(CustomAllocTest, HeapReuseFixedBlockPages) {
 }
 
 TEST(CustomAllocTest, HeapReuseNextFitPages) {
-    Heap heap;
+    Heap heap{0};
     const uint32_t BLOCKSIZE = FixedBlockPage::MAX_BLOCK_SIZE + 42;
     kotlin::alloc::FinalizerQueue finalizerQueue;
     NextFitPage* page = heap.GetNextFitPage(BLOCKSIZE, finalizerQueue);
@@ -74,6 +75,16 @@ TEST(CustomAllocTest, HeapReuseNextFitPages) {
     auto gcHandle = kotlin::gc::GCHandle::createFakeForTests();
     heap.Sweep(gcHandle);
     EXPECT_EQ(page, heap.GetNextFitPage(0, finalizerQueue));
+}
+
+TEST(CustomAllocTest, HeapFixedBlockPageStartupDelay) {
+    Heap heap(kotlin::compiler::fixedBlockStartupDelay());
+    for (int blocks = MIN_BLOCK_SIZE; blocks < FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++blocks) {
+        for (int i = 0 ; i < kotlin::compiler::fixedBlockStartupDelay() ; ++i) {
+            EXPECT_TRUE(heap.IsBlockSizeDelayed(blocks));
+        }
+        EXPECT_FALSE(heap.IsBlockSizeDelayed(blocks));
+    }
 }
 
 } // namespace

@@ -21,6 +21,11 @@
 #include "ThreadRegistry.hpp"
 
 namespace kotlin::alloc {
+Heap::Heap(uint32_t fixedBlockStartupDelay) noexcept {
+    for (int blockSize = 0; blockSize <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++blockSize) {
+        fixedBlockSizeDelay_[blockSize] = fixedBlockStartupDelay;
+    }
+}
 
 void Heap::PrepareForGC() noexcept {
     CustomAllocDebug("Heap::PrepareForGC()");
@@ -80,6 +85,13 @@ ExtraObjectPage* Heap::GetExtraObjectPage(FinalizerQueue& finalizerQueue) noexce
 void Heap::AddToFinalizerQueue(FinalizerQueue queue) noexcept {
     std::unique_lock guard(pendingFinalizerQueueMutex_);
     pendingFinalizerQueue_.mergeFrom(std::move(queue));
+}
+
+bool Heap::IsBlockSizeDelayed(uint32_t cellCount) noexcept {
+    uint8_t count = fixedBlockSizeDelay_[cellCount].load(std::memory_order_relaxed);
+    if (count == 0) return false;
+    fixedBlockSizeDelay_[cellCount].compare_exchange_strong(count, count - 1, std::memory_order_relaxed);
+    return true;
 }
 
 FinalizerQueue Heap::ExtractFinalizerQueue() noexcept {

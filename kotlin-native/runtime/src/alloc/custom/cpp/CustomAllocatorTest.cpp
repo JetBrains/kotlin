@@ -28,7 +28,7 @@ TEST(CustomAllocTest, SmallAllocNonNull) {
     for (int i = 1; i < N; ++i) {
         fakeTypes[i] = {.typeInfo_ = &fakeTypes[i], .instanceSize_ = 8 * i, .flags_ = 0};
     }
-    Heap heap;
+    Heap heap(0);
     CustomAllocator ca(heap);
     ObjHeader* obj[N];
     for (int i = 1; i < N; ++i) {
@@ -41,7 +41,7 @@ TEST(CustomAllocTest, SmallAllocNonNull) {
 TEST(CustomAllocTest, SmallAllocSameFixedBlockPage) {
     const int N = FixedBlockPage::cellCount() / FixedBlockPage::MAX_BLOCK_SIZE;
     for (int blocks = MIN_BLOCK_SIZE; blocks < FixedBlockPage::MAX_BLOCK_SIZE; ++blocks) {
-        Heap heap;
+        Heap heap{0};
         CustomAllocator ca(heap);
         TypeInfo fakeType = {.typeInfo_ = &fakeType, .instanceSize_ = 8 * blocks, .flags_ = 0};
         uint8_t* first = reinterpret_cast<uint8_t*>(ca.CreateObject(&fakeType));
@@ -55,7 +55,7 @@ TEST(CustomAllocTest, SmallAllocSameFixedBlockPage) {
 
 TEST(CustomAllocTest, FixedBlockPageThreshold) {
     std::list<TypeInfo> types;
-    Heap heap;
+    Heap heap{0};
     CustomAllocator ca(heap);
     const int FROM = FixedBlockPage::MAX_BLOCK_SIZE - 10;
     const int TO = FixedBlockPage::MAX_BLOCK_SIZE + 10;
@@ -68,7 +68,7 @@ TEST(CustomAllocTest, FixedBlockPageThreshold) {
 
 TEST(CustomAllocTest, NextFitPageThreshold) {
     std::list<TypeInfo> types;
-    Heap heap;
+    Heap heap{0};
     CustomAllocator ca(heap);
     const int MAX_BLOCK_SIZE = NextFitPage::maxBlockSize();
     const int FROM = MAX_BLOCK_SIZE - 10;
@@ -82,7 +82,7 @@ TEST(CustomAllocTest, NextFitPageThreshold) {
 
 TEST(CustomAllocTest, TwoAllocatorsDifferentPages) {
     for (int blocks = MIN_BLOCK_SIZE; blocks < 2000; ++blocks) {
-        Heap heap;
+        Heap heap(0);
         CustomAllocator ca1(heap);
         CustomAllocator ca2(heap);
         TypeInfo fakeType = {.typeInfo_ = &fakeType, .instanceSize_ = 8 * blocks, .flags_ = 0};
