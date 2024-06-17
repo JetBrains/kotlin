@@ -42,6 +42,8 @@ public:
 
     // Tries to allocate in current page, returns null if no free block in page
     uint8_t* TryAllocate(uint32_t blockSize) noexcept;
+    std::optional<uint8_t*> TryAllocateFast(uint32_t blockSize) noexcept;
+    uint8_t* TryAllocateBackup() noexcept;
 
     void OnPageOverflow() noexcept;
 
@@ -53,7 +55,8 @@ public:
 private:
     explicit FixedBlockPage(uint32_t blockSize) noexcept;
 
-    FixedCellRange nextFree_;
+    FixedBlockCell* nextFreeCell_;
+    FixedBlockCell* nextFreeRangeLast_;
     uint32_t blockSize_;
     uint32_t end_;
     FixedBlockCell cells_[];
