@@ -64,6 +64,7 @@
 /compiler/cli/ "Kotlin Compiler Core" Simon.Ogorodnik
 /compiler/cli/cli-js/ "Kotlin Common Backend" "Kotlin Wasm"
 /compiler/cli/cli-common/src/org/jetbrains/kotlin/cli/common/arguments/K2NativeCompilerArguments.kt "Kotlin Native"
+/compiler/cli/cli-common/gen/org/jetbrains/kotlin/cli/common/arguments/K2NativeCompilerArgumentsCopyGenerated.kt "Kotlin Native"
 /compiler/compiler.version/ "Kotlin Compiler Core" Simon.Ogorodnik
 /compiler/compiler-runner/ "Kotlin Compiler Core" Simon.Ogorodnik
 /compiler/compiler-runner-unshaded/ "Kotlin Build Tools"
