@@ -68,7 +68,7 @@ class MppJvmWithJavaIT : KGPBaseTest() {
                 buildString {
                     appendLine(
                         """
-                        |apply plugin: 'com.github.johnrengelman.shadow'
+                        |apply plugin: 'io.github.goooler.shadow'
                         |apply plugin: 'application'
                         |apply plugin: 'kotlin-kapt' // Check that Kapt works, generates and compiles sources
                         """.trimMargin()
@@ -99,7 +99,7 @@ class MppJvmWithJavaIT : KGPBaseTest() {
                         |        maven { url 'https://plugins.gradle.org/m2/' }
                         |    }
                         |    dependencies {
-                        |        classpath 'com.github.johnrengelman:shadow:${TestVersions.ThirdPartyDependencies.SHADOW_PLUGIN_VERSION}'
+                        |        classpath 'io.github.goooler.shadow:shadow-gradle-plugin:${TestVersions.ThirdPartyDependencies.SHADOW_PLUGIN_VERSION}'
                         |    }
                         |}
                         |
