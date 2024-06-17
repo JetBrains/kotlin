@@ -1,5 +1,5 @@
 plugins {
-    id("com.gradle.enterprise")
+    id("com.gradle.develocity")
     id("com.gradle.common-custom-user-data-gradle-plugin") apply false
 }
 
@@ -11,21 +11,18 @@ if (buildProperties.buildScanServer != null) {
     plugins.apply("com.gradle.common-custom-user-data-gradle-plugin")
 }
 
-gradleEnterprise {
+develocity {
     buildScan {
         if (buildScanServer != null) {
             server = buildScanServer
-            publishAlways()
 
             capture {
-                isTaskInputFiles = true
-                isBuildLogging = true
-                isBuildLogging = true
-                isUploadInBackground = true
+                buildLogging = true
+                uploadInBackground = true
             }
         } else {
-            termsOfServiceUrl = "https://gradle.com/terms-of-service"
-            termsOfServiceAgree = "yes"
+            termsOfUseUrl = "https://gradle.com/terms-of-service"
+            termsOfUseAgree = "yes"
         }
 
         val overridenName = (buildProperties.getOrNull("kotlin.build.scan.username") as? String)?.trim()

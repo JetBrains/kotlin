@@ -14,6 +14,6 @@ kotlin.jvmToolchain(8)
 val buildGradlePluginVersion = extra.get("kotlin.build.gradlePlugin.version")
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:$buildGradlePluginVersion")
-    implementation(libs.gradle.enterprise.gradlePlugin)
+    implementation(libs.develocity.gradlePlugin)
     implementation(libs.gradle.customUserData.gradlePlugin)
 }

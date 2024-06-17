@@ -141,7 +141,7 @@ class CodeConformanceTest : TestCase() {
                 "repo/codebase-tests/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
                 "repo/gradle-settings-conventions/build-cache/build/generated-sources",
                 "repo/gradle-settings-conventions/jvm-toolchain-provisioning/build/generated-sources",
-                "repo/gradle-settings-conventions/gradle-enterprise/build/generated-sources",
+                "repo/gradle-settings-conventions/develocity/build/generated-sources",
                 "repo/gradle-settings-conventions/kotlin-daemon-config/build/generated-sources",
                 "repo/gradle-build-conventions/buildsrc-compat/build/generated-sources",
                 "repo/gradle-build-conventions/generators/build/generated-sources",
@@ -224,7 +224,7 @@ class CodeConformanceTest : TestCase() {
             FileTestCase(
                 message = """
                 |KT-60644: Using Gradle 'AttributeContainer.attribute(key, value)' method leads to eager tasks creation in Kotlin
-                |Gradle plugin. Please use instead for KGP code 'HasAttributes.setAttributeProvider' or 'HasAttributes.setAttribute' 
+                |Gradle plugin. Please use instead for KGP code 'HasAttributes.setAttributeProvider' or 'HasAttributes.setAttribute'
                 |(for simple values) extension methods and for other code 'AttributeContainer.attributeProvider(key, provider { value })'.
                 |
                 |%d files are affected. Please update these files or exclude them in this test:
