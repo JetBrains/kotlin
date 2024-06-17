@@ -12,7 +12,7 @@ if (kotlinBuildProperties.isSwiftExportPluginPublishingEnabled) {
     publish()
 }
 
-val validateSwiftExportEmbeddable = tasks.register("validateSwiftExportEmbeddable")
+val validateSwiftExportEmbeddable by tasks.registering
 
 dependencies {
     embedded(project(":native:swift:sir")) { isTransitive = false }
