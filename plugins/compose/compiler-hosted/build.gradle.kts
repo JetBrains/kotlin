@@ -43,7 +43,9 @@ dependencies {
 
     testImplementation("androidx.compose.runtime:runtime:$composeVersion")
 
-    testImplementation(toolsJar())
+    testCompileOnly(toolsJarApi())
+    testRuntimeOnly(toolsJar())
+
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
