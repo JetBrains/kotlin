@@ -16,7 +16,7 @@
 
 using namespace kotlin;
 
-gc::GC::ThreadData::ThreadData(GC& gc, mm::ThreadData& threadData) noexcept : impl_(std::make_unique<Impl>(gc, threadData)) {}
+gc::GC::ThreadData::ThreadData(GC& gc, mm::ThreadData& threadData) noexcept { impl_.construct<Impl>(gc, threadData); }
 
 gc::GC::ThreadData::~ThreadData() = default;
 
@@ -28,8 +28,8 @@ void gc::GC::ThreadData::onThreadRegistration() noexcept {}
 
 ALWAYS_INLINE void gc::GC::ThreadData::onAllocation(ObjHeader* object) noexcept {}
 
-gc::GC::GC(alloc::Allocator& allocator, gcScheduler::GCScheduler& gcScheduler) noexcept :
-    impl_(std::make_unique<Impl>(allocator, gcScheduler)) {}
+gc::GC::GC(alloc::Allocator& allocator, gcScheduler::GCScheduler& gcScheduler) noexcept
+    { impl_.construct<Impl>(allocator, gcScheduler); }
 
 gc::GC::~GC() = default;
 

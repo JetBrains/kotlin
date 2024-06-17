@@ -14,6 +14,7 @@
 #include "ReferenceOps.hpp"
 #include "RunLoopFinalizerProcessor.hpp"
 #include "Utils.hpp"
+#include "Pimpl.hpp"
 
 namespace kotlin {
 
@@ -49,7 +50,7 @@ public:
         void onAllocation(ObjHeader* object) noexcept;
 
     private:
-        std::unique_ptr<Impl> impl_;
+        Pimpl<Impl, 256> impl_;
     };
 
     // Header to be placed before each heap object. GC will use this to keep its data if needed.
@@ -83,7 +84,7 @@ public:
     bool mainThreadFinalizerProcessorAvailable() noexcept;
 
 private:
-    std::unique_ptr<Impl> impl_;
+    Pimpl<Impl, 101000> impl_;
 };
 
 void beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value) noexcept;

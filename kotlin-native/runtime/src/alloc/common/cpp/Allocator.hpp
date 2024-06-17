@@ -10,6 +10,7 @@
 
 #include "GC.hpp"
 #include "Utils.hpp"
+#include "Pimpl.hpp"
 
 namespace kotlin::alloc {
 
@@ -38,7 +39,7 @@ public:
         void clearForTests() noexcept;
 
     private:
-        std::unique_ptr<Impl> impl_;
+        Pimpl<Impl, 1100> impl_{};
     };
 
     Allocator() noexcept;
@@ -52,7 +53,7 @@ public:
     void clearForTests() noexcept;
 
 private:
-    std::unique_ptr<Impl> impl_;
+    Pimpl<Impl, 5000> impl_{};
 };
 
 void initObjectPool() noexcept;

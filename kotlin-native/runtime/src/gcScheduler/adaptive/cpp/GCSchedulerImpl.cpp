@@ -15,8 +15,8 @@ using namespace kotlin;
 gcScheduler::GCScheduler::ThreadData::Impl::Impl(GCScheduler& scheduler, mm::ThreadData& thread) noexcept :
     scheduler_(scheduler.impl().impl()), mutatorAssists_(scheduler_.mutatorAssists(), thread) {}
 
-gcScheduler::GCScheduler::ThreadData::ThreadData(gcScheduler::GCScheduler& scheduler, mm::ThreadData& thread) noexcept :
-    impl_(std::make_unique<Impl>(scheduler, thread)) {}
+gcScheduler::GCScheduler::ThreadData::ThreadData(gcScheduler::GCScheduler& scheduler, mm::ThreadData& thread) noexcept
+    { impl_.construct<Impl>(scheduler, thread); }
 
 gcScheduler::GCScheduler::ThreadData::~ThreadData() = default;
 
@@ -25,7 +25,7 @@ gcScheduler::GCScheduler::Impl::Impl(gcScheduler::GCSchedulerConfig& config) noe
         return mm::GlobalData::Instance().gc().Schedule();
     }) {}
 
-gcScheduler::GCScheduler::GCScheduler() noexcept : impl_(std::make_unique<Impl>(config_)) {}
+gcScheduler::GCScheduler::GCScheduler() noexcept { impl_.construct<Impl>(config_); }
 
 gcScheduler::GCScheduler::~GCScheduler() = default;
 

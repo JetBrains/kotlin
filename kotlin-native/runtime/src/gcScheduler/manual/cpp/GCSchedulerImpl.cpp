@@ -11,12 +11,12 @@
 
 using namespace kotlin;
 
-gcScheduler::GCScheduler::ThreadData::ThreadData(gcScheduler::GCScheduler&, mm::ThreadData&) noexcept :
-    impl_(std::make_unique<Impl>()) {}
+gcScheduler::GCScheduler::ThreadData::ThreadData(gcScheduler::GCScheduler&, mm::ThreadData&) noexcept
+    { impl_.construct<Impl>(); }
 
 gcScheduler::GCScheduler::ThreadData::~ThreadData() = default;
 
-gcScheduler::GCScheduler::GCScheduler() noexcept : impl_(std::make_unique<Impl>()) {}
+gcScheduler::GCScheduler::GCScheduler() noexcept { impl_.construct<Impl>(); }
 
 gcScheduler::GCScheduler::~GCScheduler() = default;
 

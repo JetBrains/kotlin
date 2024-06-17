@@ -13,6 +13,7 @@
 #include "GCSchedulerConfig.hpp"
 #include "KAssert.h"
 #include "Utils.hpp"
+#include "Pimpl.hpp"
 
 namespace kotlin::mm {
 class ThreadData;
@@ -36,7 +37,7 @@ public:
         void safePoint() noexcept;
 
     private:
-        std::unique_ptr<Impl> impl_;
+        Pimpl<Impl, 64> impl_;
     };
 
     GCScheduler() noexcept;
@@ -66,7 +67,7 @@ public:
 
 private:
     GCSchedulerConfig config_;
-    std::unique_ptr<Impl> impl_;
+    Pimpl<Impl, 2048> impl_;
 };
 
 } // namespace kotlin::gcScheduler

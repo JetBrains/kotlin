@@ -10,7 +10,7 @@
 
 using namespace kotlin;
 
-alloc::Allocator::ThreadData::ThreadData(Allocator& allocator) noexcept : impl_(std::make_unique<Impl>(allocator.impl())) {}
+alloc::Allocator::ThreadData::ThreadData(Allocator& allocator) noexcept { impl_.construct<Impl>(allocator.impl()); }
 
 alloc::Allocator::ThreadData::~ThreadData() = default;
 
@@ -39,7 +39,7 @@ void alloc::Allocator::ThreadData::clearForTests() noexcept {
     impl_->alloc().PrepareForGC();
 }
 
-alloc::Allocator::Allocator() noexcept : impl_(std::make_unique<Impl>()) {}
+alloc::Allocator::Allocator() noexcept { impl_.construct<Impl>(); }
 
 alloc::Allocator::~Allocator() = default;
 
