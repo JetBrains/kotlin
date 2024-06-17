@@ -5,25 +5,19 @@
 
 package org.jetbrains.kotlinx.dataframe.plugin
 
-import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
-import org.jetbrains.kotlinx.dataframe.plugin.impl.Interpreter
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TraverseConfiguration
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.aggregate
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.toDataFrame
-import org.jetbrains.kotlinx.dataframe.plugin.utils.Names.DF_CLASS_ID
-import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
-import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.CreateDataFrameDslImplApproximation
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
+import org.jetbrains.kotlinx.dataframe.plugin.impl.Interpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.aggregate
+import org.jetbrains.kotlinx.dataframe.plugin.utils.Names.DF_CLASS_ID
 
 fun KotlinTypeFacade.analyzeRefinedCallShape(call: FirFunctionCall, reporter: InterpretationErrorReporter): CallResult? {
     val callReturnType = call.resolvedType
@@ -38,44 +32,6 @@ fun KotlinTypeFacade.analyzeRefinedCallShape(call: FirFunctionCall, reporter: In
 
     val newSchema: PluginDataFrameSchema = call.interpreterName(session)?.let { name ->
         when (name) {
-            "toDataFrameDsl" -> {
-                val list = call.argumentList as FirResolvedArgumentList
-                val lambda = (list.arguments.singleOrNull() as? FirAnonymousFunctionExpression)?.anonymousFunction
-                val statements = lambda?.body?.statements
-                if (statements != null) {
-                    val receiver = CreateDataFrameDslImplApproximation()
-                    statements.filterIsInstance<FirFunctionCall>().forEach {
-                        val schemaProcessor = it.loadInterpreter() ?: return@forEach
-                        interpret(
-                            it,
-                            schemaProcessor,
-                            mapOf("dsl" to Interpreter.Success(receiver), "call" to Interpreter.Success(call)),
-                            reporter
-                        )
-                    }
-                    PluginDataFrameSchema(receiver.columns)
-                } else {
-                    PluginDataFrameSchema(emptyList())
-                }
-            }
-            "toDataFrame" -> {
-                val list = call.argumentList as FirResolvedArgumentList
-                val argument = list.mapping.entries.firstOrNull { it.value.name == Name.identifier("maxDepth") }?.key
-                val maxDepth = when (argument) {
-                    null -> 0
-                    is FirLiteralExpression -> (argument.value as Number).toInt()
-                    else -> null
-                }
-                if (maxDepth != null) {
-                    toDataFrame(maxDepth, call, TraverseConfiguration())
-                } else {
-                    PluginDataFrameSchema(emptyList())
-                }
-            }
-            "toDataFrameDefault" -> {
-                val maxDepth = 0
-                toDataFrame(maxDepth, call, TraverseConfiguration())
-            }
             "Aggregate" -> {
                 val groupByCall = call.explicitReceiver as? FirFunctionCall
                 val interpreter = groupByCall?.loadInterpreter(session)
