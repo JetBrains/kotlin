@@ -19,18 +19,22 @@ abstract class ImplicitReceiverStack : Iterable<ImplicitReceiverValue<*>> {
     abstract fun receiversAsReversed(): List<ImplicitReceiverValue<*>>
 }
 
+/**
+ * If there is more than one candidate, calls [block] with the boolean
+ * value denoting if all or all but one candidate come from calls with lambdas.
+ */
 inline fun Set<ImplicitReceiverValue<*>>.ifMoreThanOne(
     block: (Boolean) -> ImplicitReceiverValue<*>?,
 ) = when {
     // KT-69102: we may encounter a bug with duplicated context receivers, and it wasn't
     // obvious how to fix it
     distinctBy { if (it.isContextReceiver) it.implicitScope else it }.count() == 1 -> this.firstOrNull()
-    else -> block(all { it.boundSymbol is FirAnonymousFunctionSymbol })
+    else -> block(count { it.boundSymbol is FirAnonymousFunctionSymbol } >= size - 1)
 }
 
-fun clashingLabelDiagnostic(labelName: String?, areOnlyAnonymousFunctions: Boolean): ConeSimpleDiagnostic {
+fun clashingLabelDiagnostic(labelName: String?, areAlmostAllAnonymousFunctions: Boolean): ConeSimpleDiagnostic {
     return when {
-        areOnlyAnonymousFunctions -> ConeSimpleDiagnostic("Clashing this@$labelName", DiagnosticKind.LabelNameClash)
+        areAlmostAllAnonymousFunctions -> ConeSimpleDiagnostic("Clashing this@$labelName", DiagnosticKind.LabelNameClash)
         else -> ConeSimpleDiagnostic("Ambiguous this@$labelName", DiagnosticKind.AmbiguousLabel)
     }
 }
