@@ -9,6 +9,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaBinaryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.isStable
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.CleanableSoftValueCache
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsSessionFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.fir.FirModuleDataImpl
 import org.jetbrains.kotlin.fir.FirSession
@@ -55,6 +57,10 @@ class LLFirSessionCache(private val project: Project) : Disposable {
      * Must be called from a read action.
      */
     fun getSession(module: KaModule, preferBinary: Boolean = false): LLFirSession {
+        if (module is KaBuiltinsModule && preferBinary) {
+            return LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(module.targetPlatform)
+        }
+
         if (module is KaBinaryModule && (preferBinary || (module is KaLibraryModule && module.isSdk))) {
             return getCachedSession(module, binaryCache) {
                 createPlatformAwareSessionFactory(module).createBinaryLibrarySession(module)
