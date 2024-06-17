@@ -84,7 +84,7 @@ public:
     bool mainThreadFinalizerProcessorAvailable() noexcept;
 
 private:
-    Pimpl<Impl, 101000> impl_;
+    Pimpl<Impl, 102000> impl_;
 };
 
 void beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value) noexcept;
