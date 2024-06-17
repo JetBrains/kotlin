@@ -171,17 +171,20 @@ private fun makeKotlinType(
 val IrClassifierSymbol.defaultType: IrType
     get() = when (this) {
         is IrClassSymbol -> owner.defaultType
-        is IrTypeParameterSymbol -> owner.defaultType
+        is IrTypeParameterSymbol -> defaultType
         is IrScriptSymbol -> unexpectedSymbolKind<IrClassifierSymbol>()
     }
 
-val IrTypeParameter.defaultType: IrSimpleType
+val IrTypeParameterSymbol.defaultType: IrSimpleType
     get() = IrSimpleTypeImpl(
-        symbol,
+        this,
         SimpleTypeNullability.NOT_SPECIFIED,
         arguments = emptyList(),
         annotations = emptyList()
     )
+
+val IrTypeParameter.defaultType: IrSimpleType
+    get() = symbol.defaultType
 
 val IrClassSymbol.starProjectedType: IrSimpleType
     get() = IrSimpleTypeImpl(

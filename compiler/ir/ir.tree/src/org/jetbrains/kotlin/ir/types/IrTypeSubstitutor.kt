@@ -88,12 +88,20 @@ class IrTypeSubstitutor(
         }
     }
 
+    fun hasSubstitutionFor(typeParameter: IrTypeParameterSymbol): Boolean {
+        return typeParameter in substitution
+    }
+
     override fun getSubstitutionArgument(typeParameter: IrTypeParameterSymbol): IrTypeArgument =
         substitution[typeParameter]
             ?: typeParameter.takeIf { allowEmptySubstitution }?.owner?.defaultType
             ?: error("Unsubstituted type parameter: ${typeParameter.owner.render()}")
 
     override fun isEmptySubstitution(): Boolean = substitution.isEmpty()
+
+    companion object {
+        val EMPTY = IrTypeSubstitutor(emptyMap())
+    }
 }
 
 internal class IrCapturedTypeSubstitutor(
