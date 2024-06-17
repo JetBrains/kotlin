@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.lower.LoweredDeclarationOrigins
 import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -20,7 +21,10 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
+import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
+import org.jetbrains.kotlin.ir.types.impl.toBuilder
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
@@ -157,7 +161,8 @@ abstract class InlineCallableReferenceToLambdaPhase(
             this@toLambda.parent = scope
             +this@toLambda
             +IrFunctionReferenceImpl.fromSymbolOwner(
-                startOffset, endOffset, original.type, symbol, typeArgumentsCount = 0, reflectionTarget = null,
+                startOffset, endOffset, original.type.convertKPropertyToKFunction(context.irBuiltIns), symbol,
+                typeArgumentsCount = 0, reflectionTarget = null,
                 origin = LoweredStatementOrigins.INLINE_LAMBDA
             ).apply {
                 copyAttributes(original)
@@ -168,3 +173,10 @@ abstract class InlineCallableReferenceToLambdaPhase(
 
 private val IrStatementOrigin?.isInlinable: Boolean
     get() = isLambda || this == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE || this == IrStatementOrigin.SUSPEND_CONVERSION
+
+private fun IrType.convertKPropertyToKFunction(irBuiltIns: IrBuiltIns): IrType {
+    if (this !is IrSimpleType) return this
+    if (!this.isKProperty() && !this.isKMutableProperty()) return this
+
+    return this.toBuilder().apply { classifier = irBuiltIns.functionN(arguments.size - 1).symbol }.buildSimpleType()
+}
