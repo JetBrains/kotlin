@@ -8,26 +8,71 @@ package kotlin.text
 import kotlin.internal.InlineOnly
 
 /**
- * Represents hexadecimal format options.
+ * Represents hexadecimal format options for formatting and parsing byte arrays and integer numeric values,
+ * both signed and unsigned.
  *
- * To create a new [HexFormat] use `HexFormat` function.
+ * An instance of this class is passed to formatting and parsing functions and specifies how formatting and parsing
+ * should be conducted. The options of the [bytes] property apply only when formatting and parsing byte arrays,
+ * while the [number] property applies when formatting and parsing numeric values. The [upperCase] option affects both.
+ *
+ * This class is immutable and cannot be created or configured directly. To create a new format, use the
+ * `HexFormat { }` builder function and configure the options inside the braces. For example, use
+ * `val format = HexFormat { upperCase = true }` to enable upper-case formatting.
+ *
+ * Two predefined instances are provided by this class's companion object: [Default] and [UpperCase].
+ * The [Default] instance has the [upperCase] option set to `false`, and the options of [bytes] and [number] properties
+ * set to their default values as specified in [BytesHexFormat] and [NumberHexFormat], respectively.
+ * The [UpperCase] instance has the [upperCase] option set to `true`, and the options of [bytes] and [number] properties
+ * set to their default values.
+ *
+ * @sample samples.text.HexFormats.HexFormatClass.hexFormatBuilderFunction
+ *
+ * @see ByteArray.toHexString
+ * @see String.hexToByteArray
+ * @see Int.toHexString
+ * @see String.hexToInt
  */
 @ExperimentalStdlibApi
 @SinceKotlin("1.9")
 public class HexFormat internal constructor(
     /**
-     * Specifies whether upper case hexadecimal digits `0-9`, `A-F` should be used for formatting.
-     * If `false`, lower case hexadecimal digits `0-9`, `a-f` will be used.
+     * Specifies whether upper-case hexadecimal digits should be used for formatting, `false` by default.
      *
-     * Affects both `ByteArray` and numeric value formatting.
+     * When this option is set to `true`, formatting functions will use upper-case hexadecimal digits (`0-9`, `A-F`)
+     * to create the hexadecimal representation of the values being formatted. Otherwise, lower-case hexadecimal digits
+     * (`0-9`, `a-f`) will be used.
+     *
+     * This option affects the formatting results for both byte arrays and numeric values. However, it **has no effect
+     * on parsing**, which is always performed in a case-insensitive manner.
+     *
+     * Note: This option **affects only the case of hexadecimal digits** and does not influence other elements like
+     * [BytesHexFormat.bytePrefix] or [NumberHexFormat.suffix].
+     *
+     * @sample samples.text.HexFormats.HexFormatClass.upperCase
      */
     public val upperCase: Boolean,
+
     /**
-     * Specifies hexadecimal format used for formatting and parsing `ByteArray`.
+     * Specifies the hexadecimal format used for formatting and parsing byte arrays.
+     *
+     * This property defines how byte arrays are formatted into hexadecimal strings and parsed back from strings into
+     * byte arrays. It is utilized by [ByteArray.toHexString] for formatting and [String.hexToByteArray] for parsing.
+     * These functions are available for [UByteArray] as well.
+     *
+     * Refer to [BytesHexFormat] for details about the available format options, their impact on formatting and
+     * parsing results, and their default settings.
      */
     public val bytes: BytesHexFormat,
+
     /**
-     * Specifies hexadecimal format used for formatting and parsing a numeric value.
+     * Specifies the hexadecimal format used for formatting and parsing numeric values.
+     *
+     * This property defines how numeric values are formatted into hexadecimal strings and parsed back from strings
+     * into numeric values. It is utilized by functions like [Int.toHexString] for formatting and [String.hexToInt] for
+     * parsing. These functions are available for all integer numeric types.
+     *
+     * Refer to [NumberHexFormat] for details about the available format options, their impact on formatting and
+     * parsing results, and their default settings.
      */
     public val number: NumberHexFormat
 ) {
@@ -581,16 +626,33 @@ public class HexFormat internal constructor(
 
 
     /**
-     * A context for building a [HexFormat]. Provides API for configuring format options.
+     * Provides an API for building a [HexFormat].
+     *
+     * This class is a [builder](https://en.wikipedia.org/wiki/Builder_pattern) for [HexFormat], and
+     * serves as the receiver type of the lambda expression used in the `HexFormat { }` builder function to create a
+     * new format. Each option in this class corresponds to an option in [HexFormat] and defines it in the resulting
+     * format. For example, use `val format = HexFormat { bytes.byteSeparator = ":" }` to set
+     * [BytesHexFormat.byteSeparator] option of the [HexFormat.bytes] property.
+     *
+     * Refer to [HexFormat] for details about how the configured format options affect formatting and parsing results.
+     *
+     * @sample samples.text.HexFormats.HexFormatClass.hexFormatBuilderFunction
      */
     public class Builder @PublishedApi internal constructor() {
-        /** Defines [HexFormat.upperCase] of the format being built, `false` by default. */
+        /**
+         * Defines [HexFormat.upperCase] of the format being built, `false` by default.
+         *
+         * Refer to [HexFormat.upperCase] for details about how the format option affects the formatting results.
+         *
+         * @sample samples.text.HexFormats.HexFormatClass.upperCase
+         */
         public var upperCase: Boolean = Default.upperCase
 
         /**
          * Defines [HexFormat.bytes] of the format being built.
          *
-         * See [BytesHexFormat.Builder] for default values of the options.
+         * Refer to [BytesHexFormat] for details about the available format options, their impact on formatting and
+         * parsing results, and their default settings.
          */
         public val bytes: BytesHexFormat.Builder
             get() {
@@ -605,7 +667,8 @@ public class HexFormat internal constructor(
         /**
          * Defines [HexFormat.number] of the format being built.
          *
-         * See [NumberHexFormat.Builder] for default values of the options.
+         * Refer to [NumberHexFormat] for details about the available format options, their impact on formatting and
+         * parsing results, and their default settings.
          */
         public val number: NumberHexFormat.Builder
             get() {
@@ -618,9 +681,34 @@ public class HexFormat internal constructor(
         private var _number: NumberHexFormat.Builder? = null
 
         /**
-         * Provides a scope for configuring the [HexFormat.bytes] format options.
+         * Provides a scope for configuring the `bytes` property.
          *
-         * See [BytesHexFormat.Builder] for default values of the options.
+         * The receiver of the [builderAction] is the `bytes` property. Thus, inside the braces one can configure its
+         * options directly. This convenience function is intended to enable the configuration of multiple options
+         * within a single block. For example, the snippet:
+         * ```kotlin
+         * val format = HexFormat {
+         *     bytes {
+         *         bytesPerLine = 16
+         *         bytesPerGroup = 8
+         *         byteSeparator = " "
+         *     }
+         * }
+         * ```
+         * is equivalent to:
+         * ```kotlin
+         * val format = HexFormat {
+         *     bytes.bytesPerLine = 16
+         *     bytes.bytesPerGroup = 8
+         *     bytes.byteSeparator = " "
+         * }
+         * ```
+         *
+         * Refer to [BytesHexFormat] for details about the available format options, their impact on formatting and
+         * parsing results, and their default settings.
+         *
+         * @param builderAction The function that is applied to the `bytes` property, providing a scope for directly
+         *   configuring its options.
          */
         @InlineOnly
         public inline fun bytes(builderAction: BytesHexFormat.Builder.() -> Unit) {
@@ -628,9 +716,34 @@ public class HexFormat internal constructor(
         }
 
         /**
-         * Provides a scope for configuring the [HexFormat.number] format options.
+         * Provides a scope for configuring the `number` property.
          *
-         * See [NumberHexFormat.Builder] for default values of the options.
+         * The receiver of the [builderAction] is the `number` property. Thus, inside the braces one can configure its
+         * options directly. This convenience function is intended to enable the configuration of multiple options
+         * within a single block. For example, the snippet:
+         * ```kotlin
+         * val format = HexFormat {
+         *     number {
+         *         prefix = "&#x"
+         *         suffix = ";"
+         *         removeLeadingZeros = true
+         *     }
+         * }
+         * ```
+         * is equivalent to:
+         * ```kotlin
+         * val format = HexFormat {
+         *     number.prefix = "&#x"
+         *     number.suffix = ";"
+         *     number.removeLeadingZeros = true
+         * }
+         * ```
+         *
+         * Refer to [NumberHexFormat] for details about the available format options, their impact on formatting
+         * and parsing results, and their default settings.
+         *
+         * @param builderAction The function that is applied to the `number` property, providing a scope for directly
+         *   configuring its options.
          */
         @InlineOnly
         public inline fun number(builderAction: NumberHexFormat.Builder.() -> Unit) {
@@ -652,19 +765,22 @@ public class HexFormat internal constructor(
         /**
          * The default hexadecimal format options.
          *
-         * Uses lower case hexadecimal digits `0-9`, `a-f` when formatting
-         * both `ByteArray` and numeric values. That is [upperCase] is `false`.
+         * This [HexFormat] instance adopts default values for all format options.
          *
-         * No line separator, group separator, byte separator, byte prefix or byte suffix is used
-         * when formatting or parsing `ByteArray`. That is:
-         *   * [BytesHexFormat.bytesPerLine] is `Int.MAX_VALUE`.
-         *   * [BytesHexFormat.bytesPerGroup] is `Int.MAX_VALUE`.
-         *   * [BytesHexFormat.byteSeparator], [BytesHexFormat.bytePrefix] and [BytesHexFormat.byteSuffix] are empty strings.
+         * Formatting functions use lower-case hexadecimal digits (`0-9`, `a-f`) for both byte arrays and
+         * numeric values. Specifically, [upperCase] is set to `false`.
          *
-         * No prefix or suffix is used, and no leading zeros in hexadecimal representation are removed
-         * when formatting or parsing a numeric value. That is:
-         *   * [NumberHexFormat.prefix] and [NumberHexFormat.suffix] are empty strings.
-         *   * [NumberHexFormat.removeLeadingZeros] is `false`.
+         * No line separator, group separator, byte separator, byte prefix, or byte suffix is used
+         * when formatting or parsing byte arrays. Specifically:
+         *   * [bytes.bytesPerLine][BytesHexFormat.bytesPerLine] is set to `Int.MAX_VALUE`.
+         *   * [bytes.bytesPerGroup][BytesHexFormat.bytesPerGroup] is set to `Int.MAX_VALUE`.
+         *   * [bytes.byteSeparator][BytesHexFormat.byteSeparator], [bytes.bytePrefix][BytesHexFormat.bytePrefix],
+         *   and [bytes.byteSuffix][BytesHexFormat.byteSuffix] are empty strings.
+         *
+         * No prefix or suffix is used, and leading zeros are not removed from the hexadecimal representation
+         * when formatting or parsing numeric values. Specifically:
+         *   * [number.prefix][NumberHexFormat.prefix] and [number.suffix][NumberHexFormat.suffix] are empty strings.
+         *   * [number.removeLeadingZeros][NumberHexFormat.removeLeadingZeros] is set to `false`.
          */
         public val Default: HexFormat = HexFormat(
             upperCase = false,
@@ -673,10 +789,13 @@ public class HexFormat internal constructor(
         )
 
         /**
-         * Uses upper case hexadecimal digits `0-9`, `A-F` when formatting
-         * both `ByteArray` and numeric values. That is [upperCase] is `true`.
+         * The hexadecimal format options configured to use upper-case hexadecimal digits.
          *
-         * The same as [Default] format in other aspects.
+         * This [HexFormat] instance adopts default values for all format options, except for [upperCase],
+         * which is set to `true`. As a result, formatting functions will use upper-case hexadecimal digits
+         * (`0-9`, `A-F`) for both byte arrays and numeric values.
+         *
+         * In all other aspects, this format is identical to the [Default] format.
          */
         public val UpperCase: HexFormat = HexFormat(
             upperCase = true,
@@ -690,8 +809,22 @@ public class HexFormat internal constructor(
  * Builds a new [HexFormat] by configuring its format options using the specified [builderAction],
  * and returns the resulting format.
  *
- * The builder passed as a receiver to the [builderAction] is valid only inside that function.
- * Using it outside the function produces an unspecified behavior.
+ * The resulting format can be passed to formatting and parsing functions to dictate how formatting and parsing
+ * should be conducted. For example, `val format = HexFormat { number.prefix = "0x" }` creates a new [HexFormat] and
+ * assigns it to the `format` variable. When this `format` is passed to a number formatting function, the resulting
+ * string will include `"0x"` as the prefix of the hexadecimal representation of the numeric value being formatted.
+ * For instance, calling `58.toHexString(format)` will produce `"0x0000003a"`.
+ *
+ * Refer to [HexFormat.Builder] for details on configuring format options, and see [HexFormat] for
+ * information on how the configured format options affect formatting and parsing results.
+ *
+ * The builder provided as a receiver to the [builderAction] is valid only within that function.
+ * Using it outside the function can produce an unspecified behavior.
+ *
+ * @param builderAction The function that configures the format options of the [HexFormat.Builder] receiver.
+ * @return A new instance of [HexFormat] configured as specified by the [builderAction].
+ *
+ * @sample samples.text.HexFormats.HexFormatClass.hexFormatBuilderFunction
  */
 @ExperimentalStdlibApi
 @SinceKotlin("1.9")

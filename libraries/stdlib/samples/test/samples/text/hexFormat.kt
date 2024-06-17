@@ -11,6 +11,69 @@ import kotlin.test.*
 @RunWith(Enclosed::class)
 class HexFormats {
 
+    class HexFormatClass {
+        @Sample
+        fun hexFormatBuilderFunction() {
+            // Specifying format options for numeric values.
+            assertPrints(58.toHexString(HexFormat { number.removeLeadingZeros = true }), "3a")
+            assertPrints("0x3a".hexToInt(HexFormat { number.prefix = "0x" }), "58")
+
+            // Specifying format options for byte arrays.
+            val macAddressFormat = HexFormat {
+                upperCase = true
+                bytes {
+                    bytesPerGroup = 2
+                    groupSeparator = "."
+                }
+            }
+            val macAddressBytes = byteArrayOf(0x00, 0x1b, 0x63, 0x84.toByte(), 0x45, 0xe6.toByte())
+            assertPrints(macAddressBytes.toHexString(macAddressFormat), "001B.6384.45E6")
+            assertTrue("001B.6384.45E6".hexToByteArray(macAddressFormat).contentEquals(macAddressBytes))
+
+            // Creating a format that defines options for both byte arrays and numeric values.
+            val customHexFormat = HexFormat {
+                upperCase = true
+                number {
+                    removeLeadingZeros = true
+                    prefix = "0x"
+                }
+                bytes {
+                    bytesPerGroup = 2
+                    groupSeparator = "."
+                }
+            }
+            // Formatting numeric values utilizes the `upperCase` and `number` options.
+            assertPrints(58.toHexString(customHexFormat), "0x3A")
+            // Formatting byte arrays utilizes the `upperCase` and `bytes` options.
+            assertPrints(macAddressBytes.toHexString(customHexFormat), "001B.6384.45E6")
+        }
+
+        @Sample
+        fun upperCase() {
+            // By default, upperCase is set to false, so lower-case hexadecimal digits are used when formatting.
+            assertPrints(58.toHexString(), "0000003a")
+            assertPrints(58.toHexString(HexFormat.Default), "0000003a")
+
+            // Setting upperCase to true changes the hexadecimal digits to upper-case.
+            assertPrints(58.toHexString(HexFormat { upperCase = true }), "0000003A")
+            assertPrints(58.toHexString(HexFormat.UpperCase), "0000003A")
+
+            // The upperCase option affects only the case of hexadecimal digits.
+            val format = HexFormat {
+                upperCase = true
+                number.prefix = "0x"
+            }
+            assertPrints(58.toHexString(format), "0x0000003A")
+
+            // The upperCase option also affects how byte arrays are formatted.
+            assertPrints(byteArrayOf(0x1b, 0xe6.toByte()).toHexString(format), "1BE6")
+
+            // The upperCase option does not affect parsing; parsing is always case-insensitive.
+            assertPrints("0x0000003a".hexToInt(format), "58")
+            assertTrue("1BE6".hexToByteArray(format).contentEquals(byteArrayOf(0x1b, 0xe6.toByte())))
+        }
+    }
+
     class ByteArrays {
         @Sample
         fun bytesPerLine() {
