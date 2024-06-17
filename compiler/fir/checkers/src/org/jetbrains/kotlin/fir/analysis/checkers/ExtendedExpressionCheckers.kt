@@ -33,5 +33,11 @@ object ExtendedExpressionCheckers : ExpressionCheckers() {
     override val stringConcatenationCallCheckers: Set<FirStringConcatenationCallChecker>
         get() = setOf(
             RedundantSingleExpressionStringTemplateChecker,
+            RedundantInterpolationPrefixCheckerConcatenation,
+        )
+
+    override val literalExpressionCheckers: Set<FirLiteralExpressionChecker>
+        get() = setOf(
+            RedundantInterpolationPrefixCheckerLiteral,
         )
 }

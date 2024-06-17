@@ -279,10 +279,10 @@ internal class MissingConstructorKeywordImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.MissingConstructorKeyword
 
-internal class SingleDollarInterpolationPrefixImpl(
+internal class RedundantInterpolationPrefixImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.SingleDollarInterpolationPrefix
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.RedundantInterpolationPrefix
 
 internal class InvisibleReferenceImpl(
     override val reference: KaSymbol,

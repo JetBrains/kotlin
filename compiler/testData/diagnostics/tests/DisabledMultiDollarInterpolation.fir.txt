@@ -1,4 +1,4 @@
-FILE: DisabledMultiDollarInterpolation.fir.kt
+FILE: DisabledMultiDollarInterpolation.kt
     public final fun emptyStrings(): R|kotlin/Unit| {
         String()
         String()

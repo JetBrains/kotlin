@@ -245,8 +245,8 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = MissingConstructorKeyword::class
     }
 
-    interface SingleDollarInterpolationPrefix : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = SingleDollarInterpolationPrefix::class
+    interface RedundantInterpolationPrefix : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = RedundantInterpolationPrefix::class
     }
 
     interface InvisibleReference : KaFirDiagnostic<PsiElement> {

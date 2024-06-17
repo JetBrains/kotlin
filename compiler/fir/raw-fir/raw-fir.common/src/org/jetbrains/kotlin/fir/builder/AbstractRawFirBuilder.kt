@@ -582,7 +582,13 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
             interpolationPrefix = prefix()
             // Fast-pass if there is no errors and non-const string expressions
             if (!hasExpressions && !argumentList.arguments.any { it is FirErrorExpression })
-                return buildLiteralExpression(source, ConstantValueKind.String, sb.toString(), setType = false)
+                return buildLiteralExpression(
+                    source,
+                    ConstantValueKind.String,
+                    sb.toString(),
+                    setType = false,
+                    prefix = interpolationPrefix.takeIf { it.isNotEmpty() }
+                )
         }
     }
 

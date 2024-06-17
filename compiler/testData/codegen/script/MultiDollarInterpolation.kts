@@ -3,10 +3,8 @@
 
 // WITH_STDLIB
 
-// // IGNORE_BACKEND_K1: JVM, JVM_IR
+// IGNORE_BACKEND_K1: JVM, JVM_IR
 // ISSUE: KT-69062
-
-// JVM_ABI_K1_K2_DIFF: KT-63960, KT-63963
 
 fun box(): String {
     try {

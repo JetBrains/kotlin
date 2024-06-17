@@ -1,4 +1,6 @@
 // LANGUAGE: +MultiDollarInterpolation
+// WITH_EXTENDED_CHECKERS
+// DIAGNOSTICS: -warnings +REDUNDANT_INTERPOLATION_PREFIX
 // WITH_STDLIB
 
 // COMPARE_WITH_LIGHT_TREE
@@ -70,41 +72,41 @@ fun linebreakInterpolation() {
 // string literal kinds: single-line, multi-line
 fun interpolationOfUnresolvedReference() {
     "$<!UNRESOLVED_REFERENCE!>unresolved<!>"
-    $"$<!UNRESOLVED_REFERENCE!>unresolved<!>"
-    $$"$$<!UNRESOLVED_REFERENCE!>unresolved<!>"
-    $$$$"$$$$<!UNRESOLVED_REFERENCE!>unresolved<!>"
-    $$$$$$$$"$$$$$$$$<!UNRESOLVED_REFERENCE!>unresolved<!>"
+    <!UNSUPPORTED_FEATURE!>$"$<!UNRESOLVED_REFERENCE!>unresolved<!>"<!>
+    <!UNSUPPORTED_FEATURE!>$$"$$<!UNRESOLVED_REFERENCE!>unresolved<!>"<!>
+    <!UNSUPPORTED_FEATURE!>$$$$"$$$$<!UNRESOLVED_REFERENCE!>unresolved<!>"<!>
+    <!UNSUPPORTED_FEATURE!>$$$$$$$$"$$$$$$$$<!UNRESOLVED_REFERENCE!>unresolved<!>"<!>
 
     "$<!UNRESOLVED_REFERENCE!>`unresolved`<!>"
-    $"$<!UNRESOLVED_REFERENCE!>`unresolved`<!>"
-    $$"$$<!UNRESOLVED_REFERENCE!>`unresolved`<!>"
-    $$$$"$$$$<!UNRESOLVED_REFERENCE!>`unresolved`<!>"
-    $$$$$$$$"$$$$$$$$<!UNRESOLVED_REFERENCE!>`unresolved`<!>"
+    <!UNSUPPORTED_FEATURE!>$"$<!UNRESOLVED_REFERENCE!>`unresolved`<!>"<!>
+    <!UNSUPPORTED_FEATURE!>$$"$$<!UNRESOLVED_REFERENCE!>`unresolved`<!>"<!>
+    <!UNSUPPORTED_FEATURE!>$$$$"$$$$<!UNRESOLVED_REFERENCE!>`unresolved`<!>"<!>
+    <!UNSUPPORTED_FEATURE!>$$$$$$$$"$$$$$$$$<!UNRESOLVED_REFERENCE!>`unresolved`<!>"<!>
 
     "${<!UNRESOLVED_REFERENCE!>unresolved<!>}"
-    $"${<!UNRESOLVED_REFERENCE!>unresolved<!>}"
-    $$"$${<!UNRESOLVED_REFERENCE!>unresolved<!>}"
-    $$$$"$$$${<!UNRESOLVED_REFERENCE!>unresolved<!>}"
-    $$$$$$$$"$$$$$$$${<!UNRESOLVED_REFERENCE!>unresolved<!>}"
+    <!UNSUPPORTED_FEATURE!>$"${<!UNRESOLVED_REFERENCE!>unresolved<!>}"<!>
+    <!UNSUPPORTED_FEATURE!>$$"$${<!UNRESOLVED_REFERENCE!>unresolved<!>}"<!>
+    <!UNSUPPORTED_FEATURE!>$$$$"$$$${<!UNRESOLVED_REFERENCE!>unresolved<!>}"<!>
+    <!UNSUPPORTED_FEATURE!>$$$$$$$$"$$$$$$$${<!UNRESOLVED_REFERENCE!>unresolved<!>}"<!>
 
 
     """$<!UNRESOLVED_REFERENCE!>unresolved<!>"""
-    $"""$<!UNRESOLVED_REFERENCE!>unresolved<!>"""
-    $$"""$$<!UNRESOLVED_REFERENCE!>unresolved<!>"""
-    $$$$"""$$$$<!UNRESOLVED_REFERENCE!>unresolved<!>"""
-    $$$$$$$$"""$$$$$$$$<!UNRESOLVED_REFERENCE!>unresolved<!>"""
+    <!UNSUPPORTED_FEATURE!>$"""$<!UNRESOLVED_REFERENCE!>unresolved<!>"""<!>
+    <!UNSUPPORTED_FEATURE!>$$"""$$<!UNRESOLVED_REFERENCE!>unresolved<!>"""<!>
+    <!UNSUPPORTED_FEATURE!>$$$$"""$$$$<!UNRESOLVED_REFERENCE!>unresolved<!>"""<!>
+    <!UNSUPPORTED_FEATURE!>$$$$$$$$"""$$$$$$$$<!UNRESOLVED_REFERENCE!>unresolved<!>"""<!>
 
     """$<!UNRESOLVED_REFERENCE!>`unresolved`<!>"""
-    $"""$<!UNRESOLVED_REFERENCE!>`unresolved`<!>"""
-    $$"""$$<!UNRESOLVED_REFERENCE!>`unresolved`<!>"""
-    $$$$"""$$$$<!UNRESOLVED_REFERENCE!>`unresolved`<!>"""
-    $$$$$$$$"""$$$$$$$$<!UNRESOLVED_REFERENCE!>`unresolved`<!>"""
+    <!UNSUPPORTED_FEATURE!>$"""$<!UNRESOLVED_REFERENCE!>`unresolved`<!>"""<!>
+    <!UNSUPPORTED_FEATURE!>$$"""$$<!UNRESOLVED_REFERENCE!>`unresolved`<!>"""<!>
+    <!UNSUPPORTED_FEATURE!>$$$$"""$$$$<!UNRESOLVED_REFERENCE!>`unresolved`<!>"""<!>
+    <!UNSUPPORTED_FEATURE!>$$$$$$$$"""$$$$$$$$<!UNRESOLVED_REFERENCE!>`unresolved`<!>"""<!>
 
     """${<!UNRESOLVED_REFERENCE!>unresolved<!>}"""
-    $"""${<!UNRESOLVED_REFERENCE!>unresolved<!>}"""
-    $$"""$${<!UNRESOLVED_REFERENCE!>unresolved<!>}"""
-    $$$$"""$$$${<!UNRESOLVED_REFERENCE!>unresolved<!>}"""
-    $$$$$$$$"""$$$$$$$${<!UNRESOLVED_REFERENCE!>unresolved<!>}"""
+    <!UNSUPPORTED_FEATURE!>$"""${<!UNRESOLVED_REFERENCE!>unresolved<!>}"""<!>
+    <!UNSUPPORTED_FEATURE!>$$"""$${<!UNRESOLVED_REFERENCE!>unresolved<!>}"""<!>
+    <!UNSUPPORTED_FEATURE!>$$$$"""$$$${<!UNRESOLVED_REFERENCE!>unresolved<!>}"""<!>
+    <!UNSUPPORTED_FEATURE!>$$$$$$$$"""$$$$$$$${<!UNRESOLVED_REFERENCE!>unresolved<!>}"""<!>
 }
 
 // interpolation prefix length: 0, 1, 2, 4, 8
@@ -112,10 +114,10 @@ fun interpolationOfUnresolvedReference() {
 // string literal kinds: single-line, multi-line
 fun interpolationOfMisplacedDollar() {
     "$<!UNRESOLVED_REFERENCE!>`$`<!>"
-    $"$<!UNRESOLVED_REFERENCE!>`$`<!>"
-    $$"$$<!UNRESOLVED_REFERENCE!>`$`<!>"
-    $$$$"$$$$<!UNRESOLVED_REFERENCE!>`$`<!>"
-    $$$$$$$$"$$$$$$$$<!UNRESOLVED_REFERENCE!>`$`<!>"
+    <!UNSUPPORTED_FEATURE!>$"$<!UNRESOLVED_REFERENCE!>`$`<!>"<!>
+    <!UNSUPPORTED_FEATURE!>$$"$$<!UNRESOLVED_REFERENCE!>`$`<!>"<!>
+    <!UNSUPPORTED_FEATURE!>$$$$"$$$$<!UNRESOLVED_REFERENCE!>`$`<!>"<!>
+    <!UNSUPPORTED_FEATURE!>$$$$$$$$"$$$$$$$$<!UNRESOLVED_REFERENCE!>`$`<!>"<!>
 
     "${<!SYNTAX!><!>$<!SYNTAX!><!>}"
     $"${<!SYNTAX!><!>$<!SYNTAX!><!>}"
@@ -125,10 +127,10 @@ fun interpolationOfMisplacedDollar() {
 
 
     """$<!UNRESOLVED_REFERENCE!>`$`<!>"""
-    $"""$<!UNRESOLVED_REFERENCE!>`$`<!>"""
-    $$"""$$<!UNRESOLVED_REFERENCE!>`$`<!>"""
-    $$$$"""$$$$<!UNRESOLVED_REFERENCE!>`$`<!>"""
-    $$$$$$$$"""$$$$$$$$<!UNRESOLVED_REFERENCE!>`$`<!>"""
+    <!UNSUPPORTED_FEATURE!>$"""$<!UNRESOLVED_REFERENCE!>`$`<!>"""<!>
+    <!UNSUPPORTED_FEATURE!>$$"""$$<!UNRESOLVED_REFERENCE!>`$`<!>"""<!>
+    <!UNSUPPORTED_FEATURE!>$$$$"""$$$$<!UNRESOLVED_REFERENCE!>`$`<!>"""<!>
+    <!UNSUPPORTED_FEATURE!>$$$$$$$$"""$$$$$$$$<!UNRESOLVED_REFERENCE!>`$`<!>"""<!>
 
     """${<!SYNTAX!><!>$<!SYNTAX!><!>}"""
     $"""${<!SYNTAX!><!>$<!SYNTAX!><!>}"""
@@ -142,10 +144,10 @@ fun interpolationOfMisplacedDollar() {
 // string literal kinds: single-line, multi-line
 fun interpolationOfMisplacedInterpolation() {
     "$<!UNRESOLVED_REFERENCE!>`$value`<!>"
-    $"$<!UNRESOLVED_REFERENCE!>`$value`<!>"
-    $$"$$<!UNRESOLVED_REFERENCE!>`$$value`<!>"
-    $$$$"$$$$<!UNRESOLVED_REFERENCE!>`$$$$value`<!>"
-    $$$$$$$$"$$$$$$$$<!UNRESOLVED_REFERENCE!>`$$$$$$$$value`<!>"
+    <!UNSUPPORTED_FEATURE!>$"$<!UNRESOLVED_REFERENCE!>`$value`<!>"<!>
+    <!UNSUPPORTED_FEATURE!>$$"$$<!UNRESOLVED_REFERENCE!>`$$value`<!>"<!>
+    <!UNSUPPORTED_FEATURE!>$$$$"$$$$<!UNRESOLVED_REFERENCE!>`$$$$value`<!>"<!>
+    <!UNSUPPORTED_FEATURE!>$$$$$$$$"$$$$$$$$<!UNRESOLVED_REFERENCE!>`$$$$$$$$value`<!>"<!>
 
     "${<!SYNTAX!><!>$value<!SYNTAX!><!>}"
     $"${<!SYNTAX!><!>$value<!SYNTAX!><!>}"
@@ -155,10 +157,10 @@ fun interpolationOfMisplacedInterpolation() {
 
 
     """$<!UNRESOLVED_REFERENCE!>`$value`<!>"""
-    $"""$<!UNRESOLVED_REFERENCE!>`$value`<!>"""
-    $$"""$$<!UNRESOLVED_REFERENCE!>`$$value`<!>"""
-    $$$$"""$$$$<!UNRESOLVED_REFERENCE!>`$$$$value`<!>"""
-    $$$$$$$$"""$$$$$$$$<!UNRESOLVED_REFERENCE!>`$$$$$$$$value`<!>"""
+    <!UNSUPPORTED_FEATURE!>$"""$<!UNRESOLVED_REFERENCE!>`$value`<!>"""<!>
+    <!UNSUPPORTED_FEATURE!>$$"""$$<!UNRESOLVED_REFERENCE!>`$$value`<!>"""<!>
+    <!UNSUPPORTED_FEATURE!>$$$$"""$$$$<!UNRESOLVED_REFERENCE!>`$$$$value`<!>"""<!>
+    <!UNSUPPORTED_FEATURE!>$$$$$$$$"""$$$$$$$$<!UNRESOLVED_REFERENCE!>`$$$$$$$$value`<!>"""<!>
 
     """${<!SYNTAX!><!>$value<!SYNTAX!><!>}"""
     $"""${<!SYNTAX!><!>$value<!SYNTAX!><!>}"""
@@ -193,41 +195,41 @@ val runTimeConstant get() = 42
 // string literal kinds: single-line, multi-line
 
 @Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"$runTimeConstant"<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$"$runTimeConstant"<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$"$$runTimeConstant"<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$$$"$$$$runTimeConstant"<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$$$$$$$"$$$$$$$$runTimeConstant"<!>)
+@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNSUPPORTED_FEATURE!>$"$runTimeConstant"<!>)
+@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNSUPPORTED_FEATURE!>$$"$$runTimeConstant"<!>)
+@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNSUPPORTED_FEATURE!>$$$$"$$$$runTimeConstant"<!>)
+@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNSUPPORTED_FEATURE!>$$$$$$$$"$$$$$$$$runTimeConstant"<!>)
 
 @Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"$`runTimeConstant`"<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$"$`runTimeConstant`"<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$"$$`runTimeConstant`"<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$$$"$$$$`runTimeConstant`"<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$$$$$$$"$$$$$$$$`runTimeConstant`"<!>)
+@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNSUPPORTED_FEATURE!>$"$`runTimeConstant`"<!>)
+@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNSUPPORTED_FEATURE!>$$"$$`runTimeConstant`"<!>)
+@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNSUPPORTED_FEATURE!>$$$$"$$$$`runTimeConstant`"<!>)
+@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNSUPPORTED_FEATURE!>$$$$$$$$"$$$$$$$$`runTimeConstant`"<!>)
 
 @Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"${0 + runTimeConstant}"<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$"${0 + runTimeConstant}"<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$"$${0 + runTimeConstant}"<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$$$"$$$${0 + runTimeConstant}"<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$$$$$$$"$$$$$$$${0 + runTimeConstant}"<!>)
+@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNSUPPORTED_FEATURE!>$"${0 + runTimeConstant}"<!>)
+@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNSUPPORTED_FEATURE!>$$"$${0 + runTimeConstant}"<!>)
+@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNSUPPORTED_FEATURE!>$$$$"$$$${0 + runTimeConstant}"<!>)
+@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNSUPPORTED_FEATURE!>$$$$$$$$"$$$$$$$${0 + runTimeConstant}"<!>)
 
 
 @Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"""$runTimeConstant"""<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$"""$runTimeConstant"""<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$"""$$runTimeConstant"""<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$$$"""$$$$runTimeConstant"""<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$$$$$$$"""$$$$$$$$runTimeConstant"""<!>)
+@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNSUPPORTED_FEATURE!>$"""$runTimeConstant"""<!>)
+@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNSUPPORTED_FEATURE!>$$"""$$runTimeConstant"""<!>)
+@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNSUPPORTED_FEATURE!>$$$$"""$$$$runTimeConstant"""<!>)
+@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNSUPPORTED_FEATURE!>$$$$$$$$"""$$$$$$$$runTimeConstant"""<!>)
 
 @Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"""$`runTimeConstant`"""<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$"""$`runTimeConstant`"""<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$"""$$`runTimeConstant`"""<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$$$"""$$$$`runTimeConstant`"""<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$$$$$$$"""$$$$$$$$`runTimeConstant`"""<!>)
+@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNSUPPORTED_FEATURE!>$"""$`runTimeConstant`"""<!>)
+@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNSUPPORTED_FEATURE!>$$"""$$`runTimeConstant`"""<!>)
+@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNSUPPORTED_FEATURE!>$$$$"""$$$$`runTimeConstant`"""<!>)
+@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNSUPPORTED_FEATURE!>$$$$$$$$"""$$$$$$$$`runTimeConstant`"""<!>)
 
 @Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"""${0 + runTimeConstant}"""<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$"""${0 + runTimeConstant}"""<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$"""$${0 + runTimeConstant}"""<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$$$"""$$$${0 + runTimeConstant}"""<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$$$$$$$"""$$$$$$$${0 + runTimeConstant}"""<!>)
+@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNSUPPORTED_FEATURE!>$"""${0 + runTimeConstant}"""<!>)
+@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNSUPPORTED_FEATURE!>$$"""$${0 + runTimeConstant}"""<!>)
+@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNSUPPORTED_FEATURE!>$$$$"""$$$${0 + runTimeConstant}"""<!>)
+@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNSUPPORTED_FEATURE!>$$$$$$$$"""$$$$$$$${0 + runTimeConstant}"""<!>)
 
 fun stringsWithInterpolationAsInvalidAnnotationArguments() {}
 
@@ -236,41 +238,41 @@ fun stringsWithInterpolationAsInvalidAnnotationArguments() {}
 // string literal kinds: single-line, multi-line
 
 const val stringWithInterpolationAsInvalidConstantInitializer01 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"$runTimeConstant"<!>
-const val stringWithInterpolationAsInvalidConstantInitializer02 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$"$runTimeConstant"<!>
-const val stringWithInterpolationAsInvalidConstantInitializer03 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$"$$runTimeConstant"<!>
-const val stringWithInterpolationAsInvalidConstantInitializer04 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$$$"$$$$runTimeConstant"<!>
-const val stringWithInterpolationAsInvalidConstantInitializer05 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$$$$$$$"$$$$$$$$runTimeConstant"<!>
+const val stringWithInterpolationAsInvalidConstantInitializer02 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, UNSUPPORTED_FEATURE!>$"$runTimeConstant"<!>
+const val stringWithInterpolationAsInvalidConstantInitializer03 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, UNSUPPORTED_FEATURE!>$$"$$runTimeConstant"<!>
+const val stringWithInterpolationAsInvalidConstantInitializer04 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, UNSUPPORTED_FEATURE!>$$$$"$$$$runTimeConstant"<!>
+const val stringWithInterpolationAsInvalidConstantInitializer05 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, UNSUPPORTED_FEATURE!>$$$$$$$$"$$$$$$$$runTimeConstant"<!>
 
 const val stringWithInterpolationAsInvalidConstantInitializer06 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"$`runTimeConstant`"<!>
-const val stringWithInterpolationAsInvalidConstantInitializer07 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$"$`runTimeConstant`"<!>
-const val stringWithInterpolationAsInvalidConstantInitializer08 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$"$$`runTimeConstant`"<!>
-const val stringWithInterpolationAsInvalidConstantInitializer09 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$$$"$$$$`runTimeConstant`"<!>
-const val stringWithInterpolationAsInvalidConstantInitializer10 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$$$$$$$"$$$$$$$$`runTimeConstant`"<!>
+const val stringWithInterpolationAsInvalidConstantInitializer07 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, UNSUPPORTED_FEATURE!>$"$`runTimeConstant`"<!>
+const val stringWithInterpolationAsInvalidConstantInitializer08 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, UNSUPPORTED_FEATURE!>$$"$$`runTimeConstant`"<!>
+const val stringWithInterpolationAsInvalidConstantInitializer09 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, UNSUPPORTED_FEATURE!>$$$$"$$$$`runTimeConstant`"<!>
+const val stringWithInterpolationAsInvalidConstantInitializer10 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, UNSUPPORTED_FEATURE!>$$$$$$$$"$$$$$$$$`runTimeConstant`"<!>
 
 const val stringWithInterpolationAsInvalidConstantInitializer11 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"${0 + runTimeConstant}"<!>
-const val stringWithInterpolationAsInvalidConstantInitializer12 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$"${0 + runTimeConstant}"<!>
-const val stringWithInterpolationAsInvalidConstantInitializer13 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$"$${0 + runTimeConstant}"<!>
-const val stringWithInterpolationAsInvalidConstantInitializer14 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$$$"$$$${0 + runTimeConstant}"<!>
-const val stringWithInterpolationAsInvalidConstantInitializer15 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$$$$$$$"$$$$$$$${0 + runTimeConstant}"<!>
+const val stringWithInterpolationAsInvalidConstantInitializer12 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, UNSUPPORTED_FEATURE!>$"${0 + runTimeConstant}"<!>
+const val stringWithInterpolationAsInvalidConstantInitializer13 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, UNSUPPORTED_FEATURE!>$$"$${0 + runTimeConstant}"<!>
+const val stringWithInterpolationAsInvalidConstantInitializer14 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, UNSUPPORTED_FEATURE!>$$$$"$$$${0 + runTimeConstant}"<!>
+const val stringWithInterpolationAsInvalidConstantInitializer15 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, UNSUPPORTED_FEATURE!>$$$$$$$$"$$$$$$$${0 + runTimeConstant}"<!>
 
 
 const val stringWithInterpolationAsInvalidConstantInitializer16 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"""$runTimeConstant"""<!>
-const val stringWithInterpolationAsInvalidConstantInitializer17 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$"""$runTimeConstant"""<!>
-const val stringWithInterpolationAsInvalidConstantInitializer18 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$"""$$runTimeConstant"""<!>
-const val stringWithInterpolationAsInvalidConstantInitializer19 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$$$"""$$$$runTimeConstant"""<!>
-const val stringWithInterpolationAsInvalidConstantInitializer20 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$$$$$$$"""$$$$$$$$runTimeConstant"""<!>
+const val stringWithInterpolationAsInvalidConstantInitializer17 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, UNSUPPORTED_FEATURE!>$"""$runTimeConstant"""<!>
+const val stringWithInterpolationAsInvalidConstantInitializer18 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, UNSUPPORTED_FEATURE!>$$"""$$runTimeConstant"""<!>
+const val stringWithInterpolationAsInvalidConstantInitializer19 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, UNSUPPORTED_FEATURE!>$$$$"""$$$$runTimeConstant"""<!>
+const val stringWithInterpolationAsInvalidConstantInitializer20 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, UNSUPPORTED_FEATURE!>$$$$$$$$"""$$$$$$$$runTimeConstant"""<!>
 
 const val stringWithInterpolationAsInvalidConstantInitializer21 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"""$`runTimeConstant`"""<!>
-const val stringWithInterpolationAsInvalidConstantInitializer22 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$"""$`runTimeConstant`"""<!>
-const val stringWithInterpolationAsInvalidConstantInitializer23 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$"""$$`runTimeConstant`"""<!>
-const val stringWithInterpolationAsInvalidConstantInitializer24 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$$$"""$$$$`runTimeConstant`"""<!>
-const val stringWithInterpolationAsInvalidConstantInitializer25 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$$$$$$$"""$$$$$$$$`runTimeConstant`"""<!>
+const val stringWithInterpolationAsInvalidConstantInitializer22 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, UNSUPPORTED_FEATURE!>$"""$`runTimeConstant`"""<!>
+const val stringWithInterpolationAsInvalidConstantInitializer23 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, UNSUPPORTED_FEATURE!>$$"""$$`runTimeConstant`"""<!>
+const val stringWithInterpolationAsInvalidConstantInitializer24 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, UNSUPPORTED_FEATURE!>$$$$"""$$$$`runTimeConstant`"""<!>
+const val stringWithInterpolationAsInvalidConstantInitializer25 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, UNSUPPORTED_FEATURE!>$$$$$$$$"""$$$$$$$$`runTimeConstant`"""<!>
 
 const val stringWithInterpolationAsInvalidConstantInitializer26 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"""${0 + runTimeConstant}"""<!>
-const val stringWithInterpolationAsInvalidConstantInitializer27 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$"""${0 + runTimeConstant}"""<!>
-const val stringWithInterpolationAsInvalidConstantInitializer28 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$"""$${0 + runTimeConstant}"""<!>
-const val stringWithInterpolationAsInvalidConstantInitializer29 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$$$"""$$$${0 + runTimeConstant}"""<!>
-const val stringWithInterpolationAsInvalidConstantInitializer30 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$$$$$$$"""$$$$$$$${0 + runTimeConstant}"""<!>
+const val stringWithInterpolationAsInvalidConstantInitializer27 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, UNSUPPORTED_FEATURE!>$"""${0 + runTimeConstant}"""<!>
+const val stringWithInterpolationAsInvalidConstantInitializer28 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, UNSUPPORTED_FEATURE!>$$"""$${0 + runTimeConstant}"""<!>
+const val stringWithInterpolationAsInvalidConstantInitializer29 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, UNSUPPORTED_FEATURE!>$$$$"""$$$${0 + runTimeConstant}"""<!>
+const val stringWithInterpolationAsInvalidConstantInitializer30 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, UNSUPPORTED_FEATURE!>$$$$$$$$"""$$$$$$$${0 + runTimeConstant}"""<!>
 
 // interpolation prefix length: 1, 2, 4, 8
 fun orphanedInterpolationPrefix() {

@@ -198,6 +198,11 @@ object CommonExpressionCheckers : ExpressionCheckers() {
 
     override val stringConcatenationCallCheckers: Set<FirStringConcatenationCallChecker>
         get() = setOf(
-            FirMultiDollarInterpolationChecker,
+            FirMultiDollarInterpolationCheckerConcatenation,
+        )
+
+    override val literalExpressionCheckers: Set<FirLiteralExpressionChecker>
+        get() = setOf(
+            FirMultiDollarInterpolationCheckerLiteral,
         )
 }

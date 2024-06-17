@@ -171,7 +171,7 @@ object FirErrors {
     val INNER_ON_TOP_LEVEL_SCRIPT_CLASS: KtDiagnosticFactoryForDeprecation0 by deprecationError0<PsiElement>(ProhibitScriptTopLevelInnerClasses)
     val ERROR_SUPPRESSION: KtDiagnosticFactory1<String> by warning1<PsiElement, String>()
     val MISSING_CONSTRUCTOR_KEYWORD: KtDiagnosticFactory0 by error0<PsiElement>()
-    val SINGLE_DOLLAR_INTERPOLATION_PREFIX: KtDiagnosticFactory0 by warning0<PsiElement>()
+    val REDUNDANT_INTERPOLATION_PREFIX: KtDiagnosticFactory0 by warning0<PsiElement>()
 
     // Unresolved
     val INVISIBLE_REFERENCE: KtDiagnosticFactory3<FirBasedSymbol<*>, Visibility, ClassId?> by error3<PsiElement, FirBasedSymbol<*>, Visibility, ClassId?>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)

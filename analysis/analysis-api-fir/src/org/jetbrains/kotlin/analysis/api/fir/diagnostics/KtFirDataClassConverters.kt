@@ -288,8 +288,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.SINGLE_DOLLAR_INTERPOLATION_PREFIX) { firDiagnostic ->
-        SingleDollarInterpolationPrefixImpl(
+    add(FirErrors.REDUNDANT_INTERPOLATION_PREFIX) { firDiagnostic ->
+        RedundantInterpolationPrefixImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

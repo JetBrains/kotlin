@@ -1577,6 +1577,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         checkLiteralPrefixAndSuffix(expression, context);
 
+        PsiElement interpolationPrefix = expression.getInterpolationPrefix();
+        if (interpolationPrefix != null && !interpolationPrefix.getText().isEmpty()) {
+            context.trace.report(Errors.UNSUPPORTED_FEATURE.on(expression, new Pair<>(LanguageFeature.MultiDollarInterpolation, context.languageVersionSettings)));
+        }
+
         class StringTemplateVisitor extends KtVisitorVoid {
             private KotlinTypeInfo typeInfo = TypeInfoFactoryKt.noTypeInfo(context);
 

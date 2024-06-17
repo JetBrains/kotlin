@@ -1,4 +1,6 @@
 // LANGUAGE: +MultiDollarInterpolation
+// WITH_EXTENDED_CHECKERS
+// DIAGNOSTICS: -warnings +REDUNDANT_INTERPOLATION_PREFIX
 // WITH_STDLIB
 
 // FIR_DUMP
@@ -12,32 +14,32 @@
 // string literal kinds: single-line, multi-line
 fun emptyStrings() {
     ""
-    $""
-    $$""
-    $$$$""
-    $$$$$$$$""
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$$$$$""<!>
 
     """"""
-    $""""""
-    $$""""""
-    $$$$""""""
-    $$$$$$$$""""""
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$""""""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$""""""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$""""""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$$$$$""""""<!>
 }
 
 // interpolation prefix length: 0, 1, 2, 4, 8
 // string literal kinds: single-line, multi-line
 fun stringsWithoutInterpolation() {
     "padding"
-    $"padding"
-    $$"padding"
-    $$$$"padding"
-    $$$$$$$$"padding"
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$"padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$"padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$$$$$"padding"<!>
 
     """padding"""
-    $"""padding"""
-    $$"""padding"""
-    $$$$"""padding"""
-    $$$$$$$$"""padding"""
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$"""padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$"""padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$$$$$"""padding"""<!>
 }
 
 // interpolation prefix length: 0, 1, 2, 4, 8
@@ -45,26 +47,26 @@ fun stringsWithoutInterpolation() {
 // interpolation as padding: no, yes
 fun dollarInStrings() {
     "padding $ padding"
-    $"padding $ padding"
-    $$"padding $ padding"
-    $$$$"padding $ padding"
-    $$$$$$$$"padding $ padding"
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding $ padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$"padding $ padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$"padding $ padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$$$$$"padding $ padding"<!>
 
     """padding $ padding"""
-    $"""padding $ padding"""
-    $$"""padding $ padding"""
-    $$$$"""padding $ padding"""
-    $$$$$$$$"""padding $ padding"""
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding $ padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$"""padding $ padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$"""padding $ padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$$$$$"""padding $ padding"""<!>
 
 
     "padding $ padding $text"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding $ padding $text"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding $ padding $text"<!>
     $$"padding $ padding $$text"
     $$$$"padding $ padding $$$$text"
     $$$$$$$$"padding $ padding $$$$$$$$text"
 
     """padding $ padding $text"""
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding $ padding $text"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding $ padding $text"""<!>
     $$"""padding $ padding $$text"""
     $$$$"""padding $ padding $$$$text"""
     $$$$$$$$"""padding $ padding $$$$$$$$text"""
@@ -74,13 +76,13 @@ fun dollarInStrings() {
 // string literal kinds: single-line, multi-line
 // interpolation as padding: no, yes
 fun dollarsInStringsA() {
-    $$"padding $$ padding"
-    $$$$"padding $$$$ padding"
-    $$$$$$$$"padding $$$$$$$$ padding"
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$"padding $$ padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$"padding $$$$ padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$$$$$"padding $$$$$$$$ padding"<!>
 
-    $$"""padding $$ padding"""
-    $$$$"""padding $$$$ padding"""
-    $$$$$$$$"""padding $$$$$$$$ padding"""
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$"""padding $$ padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$"""padding $$$$ padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$$$$$"""padding $$$$$$$$ padding"""<!>
 
 
     $$"padding $$ padding $$text"
@@ -96,13 +98,13 @@ fun dollarsInStringsA() {
 // string literal kinds: single-line, multi-line
 // interpolation as padding: no, yes
 fun dollarsInStringsB() {
-    $$"padding $ padding"
-    $$$$"padding $$$ padding"
-    $$$$$$$$"padding $$$$$$$ padding"
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$"padding $ padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$"padding $$$ padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$$$$$"padding $$$$$$$ padding"<!>
 
-    $$"""padding $ padding"""
-    $$$$"""padding $$$ padding"""
-    $$$$$$$$"""padding $$$$$$$ padding"""
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$"""padding $ padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$"""padding $$$ padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$$$$$"""padding $$$$$$$ padding"""<!>
 
 
     $$"padding $ padding $$text"
@@ -119,26 +121,26 @@ fun dollarsInStringsB() {
 // interpolation as padding: no, yes
 fun dollarsInStringsC() {
     "padding $$ padding"
-    $"padding $$ padding"
-    $$"padding $$$ padding"
-    $$$$"padding $$$$$ padding"
-    $$$$$$$$"padding $$$$$$$$$ padding"
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding $$ padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$"padding $$$ padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$"padding $$$$$ padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$$$$$"padding $$$$$$$$$ padding"<!>
 
     """padding $$ padding"""
-    $"""padding $$ padding"""
-    $$"""padding $$$ padding"""
-    $$$$"""padding $$$$$ padding"""
-    $$$$$$$$"""padding $$$$$$$$$ padding"""
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding $$ padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$"""padding $$$ padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$"""padding $$$$$ padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$$$$$"""padding $$$$$$$$$ padding"""<!>
 
 
     "padding $$ padding $text"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding $$ padding $text"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding $$ padding $text"<!>
     $$"padding $$$ padding $$text"
     $$$$"padding $$$$$ padding $$$$text"
     $$$$$$$$"padding $$$$$$$$$ padding $$$$$$$$text"
 
     """padding $$ padding $text"""
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding $$ padding $text"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding $$ padding $text"""<!>
     $$"""padding $$$ padding $$text"""
     $$$$"""padding $$$$$ padding $$$$text"""
     $$$$$$$$"""padding $$$$$$$$$ padding $$$$$$$$text"""
@@ -149,26 +151,26 @@ fun dollarsInStringsC() {
 // interpolation as padding: no, yes
 fun dollarsWithoutInterpolationOfSimpleIdentifierA() {
     "padding $ value padding"
-    $"padding $ value padding"
-    $$"padding $$ value padding"
-    $$$$"padding $$$$ value padding"
-    $$$$$$$$"padding $$$$$$$$ value padding"
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding $ value padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$"padding $$ value padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$"padding $$$$ value padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$$$$$"padding $$$$$$$$ value padding"<!>
 
     """padding $ value padding"""
-    $"""padding $ value padding"""
-    $$"""padding $$ value padding"""
-    $$$$"""padding $$$$ value padding"""
-    $$$$$$$$"""padding $$$$$$$$ value padding"""
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding $ value padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$"""padding $$ value padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$"""padding $$$$ value padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$$$$$"""padding $$$$$$$$ value padding"""<!>
 
 
     "padding $ value padding $text"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding $ value padding $text"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding $ value padding $text"<!>
     $$"padding $$ value padding $$text"
     $$$$"padding $$$$ value padding $$$$text"
     $$$$$$$$"padding $$$$$$$$ value padding $$$$$$$$text"
 
     """padding $ value padding $text"""
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding $ value padding $text"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding $ value padding $text"""<!>
     $$"""padding $$ value padding $$text"""
     $$$$"""padding $$$$ value padding $$$$text"""
     $$$$$$$$"""padding $$$$$$$$ value padding $$$$$$$$text"""
@@ -179,26 +181,26 @@ fun dollarsWithoutInterpolationOfSimpleIdentifierA() {
 // interpolation as padding: no, yes
 fun dollarsWithoutInterpolationOfSimpleIdentifierB() {
     "padding $-value padding"
-    $"padding $-value padding"
-    $$"padding $$-value padding"
-    $$$$"padding $$$$-value padding"
-    $$$$$$$$"padding $$$$$$$$-value padding"
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding $-value padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$"padding $$-value padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$"padding $$$$-value padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$$$$$"padding $$$$$$$$-value padding"<!>
 
     """padding $-value padding"""
-    $"""padding $-value padding"""
-    $$"""padding $$-value padding"""
-    $$$$"""padding $$$$-value padding"""
-    $$$$$$$$"""padding $$$$$$$$-value padding"""
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding $-value padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$"""padding $$-value padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$"""padding $$$$-value padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$$$$$"""padding $$$$$$$$-value padding"""<!>
 
 
     "padding $-value padding $text"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding $-value padding $text"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding $-value padding $text"<!>
     $$"padding $$-value padding $$text"
     $$$$"padding $$$$-value padding $$$$text"
     $$$$$$$$"padding $$$$$$$$-value padding $$$$$$$$text"
 
     """padding $-value padding $text"""
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding $-value padding $text"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding $-value padding $text"""<!>
     $$"""padding $$-value padding $$text"""
     $$$$"""padding $$$$-value padding $$$$text"""
     $$$$$$$$"""padding $$$$$$$$-value padding $$$$$$$$text"""
@@ -209,26 +211,26 @@ fun dollarsWithoutInterpolationOfSimpleIdentifierB() {
 // interpolation as padding: no, yes
 fun dollarsWithoutInterpolationOfIdentifierInBackticks() {
     "padding $`` padding"
-    $"padding $`` padding"
-    $$"padding $$`` padding"
-    $$$$"padding $$$$`` padding"
-    $$$$$$$$"padding $$$$$$$$`` padding"
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding $`` padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$"padding $$`` padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$"padding $$$$`` padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$$$$$"padding $$$$$$$$`` padding"<!>
 
     """padding $`` padding"""
-    $"""padding $`` padding"""
-    $$"""padding $$`` padding"""
-    $$$$"""padding $$$$`` padding"""
-    $$$$$$$$"""padding $$$$$$$$`` padding"""
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding $`` padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$"""padding $$`` padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$"""padding $$$$`` padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$$$$$"""padding $$$$$$$$`` padding"""<!>
 
 
     "padding $`` padding $text"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding $`` padding $text"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding $`` padding $text"<!>
     $$"padding $$`` padding $$text"
     $$$$"padding $$$$`` padding $$$$text"
     $$$$$$$$"padding $$$$$$$$`` padding $$$$$$$$text"
 
     """padding $`` padding $text"""
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding $`` padding $text"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding $`` padding $text"""<!>
     $$"""padding $$`` padding $$text"""
     $$$$"""padding $$$$`` padding $$$$text"""
     $$$$$$$$"""padding $$$$$$$$`` padding $$$$$$$$text"""
@@ -239,26 +241,26 @@ fun dollarsWithoutInterpolationOfIdentifierInBackticks() {
 // interpolation as padding: no, yes
 fun dollarsWithoutInterpolationOfArbitraryExpression() {
     "padding $ {0 + value} padding"
-    $"padding $ {0 + value} padding"
-    $$"padding $$ {0 + value} padding"
-    $$$$"padding $$$$ {0 + value} padding"
-    $$$$$$$$"padding $$$$$$$$ {0 + value} padding"
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding $ {0 + value} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$"padding $$ {0 + value} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$"padding $$$$ {0 + value} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$$$$$"padding $$$$$$$$ {0 + value} padding"<!>
 
     """padding $ {0 + value} padding"""
-    $"""padding $ {0 + value} padding"""
-    $$"""padding $$ {0 + value} padding"""
-    $$$$"""padding $$$$ {0 + value} padding"""
-    $$$$$$$$"""padding $$$$$$$$ {0 + value} padding"""
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding $ {0 + value} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$"""padding $$ {0 + value} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$"""padding $$$$ {0 + value} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$$$$$$$$"""padding $$$$$$$$ {0 + value} padding"""<!>
 
 
     "padding $ {0 + value} padding $text"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding $ {0 + value} padding $text"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding $ {0 + value} padding $text"<!>
     $$"padding $$ {0 + value} padding $$text"
     $$$$"padding $$$$ {0 + value} padding $$$$text"
     $$$$$$$$"padding $$$$$$$$ {0 + value} padding $$$$$$$$text"
 
     """padding $ {0 + value} padding $text"""
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding $ {0 + value} padding $text"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding $ {0 + value} padding $text"""<!>
     $$"""padding $$ {0 + value} padding $$text"""
     $$$$"""padding $$$$ {0 + value} padding $$$$text"""
     $$$$$$$$"""padding $$$$$$$$ {0 + value} padding $$$$$$$$text"""
@@ -374,38 +376,38 @@ fun insufficientDollarsForInterpolation() {
 // interpolation as padding: no, yes
 fun escapedDollarInInterpolationPrefix() {
     "padding \$value padding"
-    $"padding \$value padding"
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding \$value padding"<!>
     $$"padding \$$value padding"
     $$$$"padding \$$$$value padding"
     $$$$$$$$"padding \$$$$$$$$value padding"
 
     "padding \$`value` padding"
-    $"padding \$`value` padding"
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding \$`value` padding"<!>
     $$"padding \$$`value` padding"
     $$$$"padding \$$$$`value` padding"
     $$$$$$$$"padding \$$$$$$$$`value` padding"
 
     "padding \${0 + value} padding"
-    $"padding \${0 + value} padding"
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding \${0 + value} padding"<!>
     $$"padding \$${0 + value} padding"
     $$$$"padding \$$$${0 + value} padding"
     $$$$$$$$"padding \$$$$$$$${0 + value} padding"
 
 
     "padding \$value padding $text"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding \$value padding $text"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding \$value padding $text"<!>
     $$"padding \$$value padding $$text"
     $$$$"padding \$$$$value padding $$$$text"
     $$$$$$$$"padding \$$$$$$$$value padding $$$$$$$$text"
 
     "padding \$`value` padding $text"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding \$`value` padding $text"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding \$`value` padding $text"<!>
     $$"padding \$$`value` padding $$text"
     $$$$"padding \$$$$`value` padding $$$$text"
     $$$$$$$$"padding \$$$$$$$$`value` padding $$$$$$$$text"
 
     "padding \${0 + value} padding $text"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding \${0 + value} padding $text"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding \${0 + value} padding $text"<!>
     $$"padding \$${0 + value} padding $$text"
     $$$$"padding \$$$${0 + value} padding $$$$text"
     $$$$$$$$"padding \$$$$$$$${0 + value} padding $$$$$$$$text"
@@ -416,38 +418,38 @@ fun escapedDollarInInterpolationPrefix() {
 // string literal kinds: single-line, multi-line
 fun stringsWithRedundantInterpolation() {
     "$text"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"$text"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"$text"<!>
     $$"$$text"
     $$$$"$$$$text"
     $$$$$$$$"$$$$$$$$text"
 
     "$`text`"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"$`text`"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"$`text`"<!>
     $$"$$`text`"
     $$$$"$$$$`text`"
     $$$$$$$$"$$$$$$$$`text`"
 
     "${"" + text}"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"${"" + text}"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"${"" + text}"<!>
     $$"$${"" + text}"
     $$$$"$$$${"" + text}"
     $$$$$$$$"$$$$$$$${"" + text}"
 
 
     """$text"""
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""$text"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""$text"""<!>
     $$"""$$text"""
     $$$$"""$$$$text"""
     $$$$$$$$"""$$$$$$$$text"""
 
     """$`text`"""
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""$`text`"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""$`text`"""<!>
     $$"""$$`text`"""
     $$$$"""$$$$`text`"""
     $$$$$$$$"""$$$$$$$$`text`"""
 
     """${"" + text}"""
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""${"" + text}"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""${"" + text}"""<!>
     $$"""$${"" + text}"""
     $$$$"""$$$${"" + text}"""
     $$$$$$$$"""$$$$$$$${"" + text}"""
@@ -458,38 +460,38 @@ fun stringsWithRedundantInterpolation() {
 // string literal kinds: single-line, multi-line
 fun stringsWithInterpolationA() {
     "padding $text padding"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding $text padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding $text padding"<!>
     $$"padding $$text padding"
     $$$$"padding $$$$text padding"
     $$$$$$$$"padding $$$$$$$$text padding"
 
     "padding $`text` padding"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding $`text` padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding $`text` padding"<!>
     $$"padding $$`text` padding"
     $$$$"padding $$$$`text` padding"
     $$$$$$$$"padding $$$$$$$$`text` padding"
 
     "padding ${"" + text} padding"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${"" + text} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${"" + text} padding"<!>
     $$"padding $${"" + text} padding"
     $$$$"padding $$$${"" + text} padding"
     $$$$$$$$"padding $$$$$$$${"" + text} padding"
 
 
     """padding $text padding"""
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding $text padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding $text padding"""<!>
     $$"""padding $$text padding"""
     $$$$"""padding $$$$text padding"""
     $$$$$$$$"""padding $$$$$$$$text padding"""
 
     """padding $`text` padding"""
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding $`text` padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding $`text` padding"""<!>
     $$"""padding $$`text` padding"""
     $$$$"""padding $$$$`text` padding"""
     $$$$$$$$"""padding $$$$$$$$`text` padding"""
 
     """padding ${"" + text} padding"""
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${"" + text} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${"" + text} padding"""<!>
     $$"""padding $${"" + text} padding"""
     $$$$"""padding $$$${"" + text} padding"""
     $$$$$$$$"""padding $$$$$$$${"" + text} padding"""
@@ -500,38 +502,38 @@ fun stringsWithInterpolationA() {
 // string literal kinds: single-line, multi-line
 fun stringsWithInterpolationB() {
     "$value"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"$value"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"$value"<!>
     $$"$$value"
     $$$$"$$$$value"
     $$$$$$$$"$$$$$$$$value"
 
     "$`value`"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"$`value`"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"$`value`"<!>
     $$"$$`value`"
     $$$$"$$$$`value`"
     $$$$$$$$"$$$$$$$$`value`"
 
     "${0 + value}"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"${0 + value}"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"${0 + value}"<!>
     $$"$${0 + value}"
     $$$$"$$$${0 + value}"
     $$$$$$$$"$$$$$$$${0 + value}"
 
 
     """$value"""
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""$value"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""$value"""<!>
     $$"""$$value"""
     $$$$"""$$$$value"""
     $$$$$$$$"""$$$$$$$$value"""
 
     """$`value`"""
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""$`value`"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""$`value`"""<!>
     $$"""$$`value`"""
     $$$$"""$$$$`value`"""
     $$$$$$$$"""$$$$$$$$`value`"""
 
     """${0 + value}"""
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""${0 + value}"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""${0 + value}"""<!>
     $$"""$${0 + value}"""
     $$$$"""$$$${0 + value}"""
     $$$$$$$$"""$$$$$$$${0 + value}"""
@@ -542,13 +544,13 @@ fun stringsWithInterpolationB() {
 // string literal kinds: single-line, multi-line
 fun interpolationOfDollarSymbolA() {
     "padding ${'$'}value"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${'$'}value"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${'$'}value"<!>
     $$"padding $${'$'}value"
     $$$$"padding $$$${'$'}value"
     $$$$$$$$"padding $$$$$$$${'$'}value"
 
     """padding ${'$'}value"""
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${'$'}value"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${'$'}value"""<!>
     $$"""padding $${'$'}value"""
     $$$$"""padding $$$${'$'}value"""
     $$$$$$$$"""padding $$$$$$$${'$'}value"""
@@ -559,13 +561,13 @@ fun interpolationOfDollarSymbolA() {
 // string literal kinds: single-line, multi-line
 fun interpolationOfDollarSymbolB() {
     "padding ${'$'}$value padding"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${'$'}$value padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${'$'}$value padding"<!>
     $$"padding $${'$'}$$value padding"
     $$$$"padding $$$${'$'}$$$$value padding"
     $$$$$$$$"padding $$$$$$$${'$'}$$$$$$$$value padding"
 
     """padding ${'$'}$value padding"""
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${'$'}$value padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${'$'}$value padding"""<!>
     $$"""padding $${'$'}$$value padding"""
     $$$$"""padding $$$${'$'}$$$$value padding"""
     $$$$$$$$"""padding $$$$$$$${'$'}$$$$$$$$value padding"""
@@ -576,13 +578,13 @@ fun interpolationOfDollarSymbolB() {
 // string literal kinds: single-line, multi-line
 fun interpolationOfDollarClassifierA() {
     "padding $`$`value"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding $`$`value"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding $`$`value"<!>
     $$"padding $$`$`value"
     $$$$"padding $$$$`$`value"
     $$$$$$$$"padding $$$$$$$$`$`value"
 
     """padding $`$`value"""
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding $`$`value"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding $`$`value"""<!>
     $$"""padding $$`$`value"""
     $$$$"""padding $$$$`$`value"""
     $$$$$$$$"""padding $$$$$$$$`$`value"""
@@ -593,13 +595,13 @@ fun interpolationOfDollarClassifierA() {
 // string literal kinds: single-line, multi-line
 fun interpolationOfDollarClassifierB() {
     "padding $`$`$value padding"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding $`$`$value padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding $`$`$value padding"<!>
     $$"padding $$`$`$$value padding"
     $$$$"padding $$$$`$`$$$$value padding"
     $$$$$$$$"padding $$$$$$$$`$`$$$$$$$$value padding"
 
     """padding $`$`$value padding"""
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding $`$`$value padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding $`$`$value padding"""<!>
     $$"""padding $$`$`$$value padding"""
     $$$$"""padding $$$$`$`$$$$value padding"""
     $$$$$$$$"""padding $$$$$$$$`$`$$$$$$$$value padding"""
@@ -610,38 +612,38 @@ fun interpolationOfDollarClassifierB() {
 // string literal kinds: single-line, multi-line
 fun excessiveDollarsForInterpolation() {
     "padding $$value padding"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding $$value padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding $$value padding"<!>
     $$"padding $$$value padding"
     $$$$"padding $$$$$value padding"
     $$$$$$$$"padding $$$$$$$$$value padding"
 
     "padding $$`value` padding"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding $$`value` padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding $$`value` padding"<!>
     $$"padding $$$`value` padding"
     $$$$"padding $$$$$`value` padding"
     $$$$$$$$"padding $$$$$$$$$`value` padding"
 
     "padding $${0 + value} padding"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding $${0 + value} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding $${0 + value} padding"<!>
     $$"padding $$${0 + value} padding"
     $$$$"padding $$$$${0 + value} padding"
     $$$$$$$$"padding $$$$$$$$${0 + value} padding"
 
 
     """padding $$value padding"""
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding $$value padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding $$value padding"""<!>
     $$"""padding $$$value padding"""
     $$$$"""padding $$$$$value padding"""
     $$$$$$$$"""padding $$$$$$$$$value padding"""
 
     """padding $$`value` padding"""
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding $$`value` padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding $$`value` padding"""<!>
     $$"""padding $$$`value` padding"""
     $$$$"""padding $$$$$`value` padding"""
     $$$$$$$$"""padding $$$$$$$$$`value` padding"""
 
     """padding $${0 + value} padding"""
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding $${0 + value} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding $${0 + value} padding"""<!>
     $$"""padding $$${0 + value} padding"""
     $$$$"""padding $$$$${0 + value} padding"""
     $$$$$$$$"""padding $$$$$$$$${0 + value} padding"""
@@ -653,57 +655,57 @@ fun excessiveDollarsForInterpolation() {
 // string literal kinds: single-line, multi-line
 fun sequentialInterpolation() {
     "padding $value$text padding"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding $value$text padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding $value$text padding"<!>
     $$"padding $$value$$text padding"
     $$$$"padding $$$$value$$$$text padding"
     $$$$$$$$"padding $$$$$$$$value$$$$$$$$text padding"
 
     "padding $`value`$text padding"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding $`value`$text padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding $`value`$text padding"<!>
     $$"padding $$`value`$$text padding"
     $$$$"padding $$$$`value`$$$$text padding"
     $$$$$$$$"padding $$$$$$$$`value`$$$$$$$$text padding"
 
     "padding ${0 + value}$text padding"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${0 + value}$text padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${0 + value}$text padding"<!>
     $$"padding $${0 + value}$$text padding"
     $$$$"padding $$$${0 + value}$$$$text padding"
     $$$$$$$$"padding $$$$$$$${0 + value}$$$$$$$$text padding"
 
 
     "padding $value$`text` padding"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding $value$`text` padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding $value$`text` padding"<!>
     $$"padding $$value$$`text` padding"
     $$$$"padding $$$$value$$$$`text` padding"
     $$$$$$$$"padding $$$$$$$$value$$$$$$$$`text` padding"
 
     "padding $`value`$`text` padding"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding $`value`$`text` padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding $`value`$`text` padding"<!>
     $$"padding $$`value`$$`text` padding"
     $$$$"padding $$$$`value`$$$$`text` padding"
     $$$$$$$$"padding $$$$$$$$`value`$$$$$$$$`text` padding"
 
     "padding ${0 + value}$`text` padding"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${0 + value}$`text` padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${0 + value}$`text` padding"<!>
     $$"padding $${0 + value}$$`text` padding"
     $$$$"padding $$$${0 + value}$$$$`text` padding"
     $$$$$$$$"padding $$$$$$$${0 + value}$$$$$$$$`text` padding"
 
 
     "padding $value${"" + text} padding"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding $value${"" + text} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding $value${"" + text} padding"<!>
     $$"padding $$value$${"" + text} padding"
     $$$$"padding $$$$value$$$${"" + text} padding"
     $$$$$$$$"padding $$$$$$$$value$$$$$$$${"" + text} padding"
 
     "padding $`value`${"" + text} padding"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding $`value`${"" + text} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding $`value`${"" + text} padding"<!>
     $$"padding $$`value`$${"" + text} padding"
     $$$$"padding $$$$`value`$$$${"" + text} padding"
     $$$$$$$$"padding $$$$$$$$`value`$$$$$$$${"" + text} padding"
 
     "padding ${0 + value}${"" + text} padding"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${0 + value}${"" + text} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${0 + value}${"" + text} padding"<!>
     $$"padding $${0 + value}$${"" + text} padding"
     $$$$"padding $$$${0 + value}$$$${"" + text} padding"
     $$$$$$$$"padding $$$$$$$${0 + value}$$$$$$$${"" + text} padding"
@@ -711,57 +713,57 @@ fun sequentialInterpolation() {
 
 
     """padding $value$text padding"""
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding $value$text padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding $value$text padding"""<!>
     $$"""padding $$value$$text padding"""
     $$$$"""padding $$$$value$$$$text padding"""
     $$$$$$$$"""padding $$$$$$$$value$$$$$$$$text padding"""
 
     """padding $`value`$text padding"""
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding $`value`$text padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding $`value`$text padding"""<!>
     $$"""padding $$`value`$$text padding"""
     $$$$"""padding $$$$`value`$$$$text padding"""
     $$$$$$$$"""padding $$$$$$$$`value`$$$$$$$$text padding"""
 
     """padding ${0 + value}$text padding"""
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${0 + value}$text padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${0 + value}$text padding"""<!>
     $$"""padding $${0 + value}$$text padding"""
     $$$$"""padding $$$${0 + value}$$$$text padding"""
     $$$$$$$$"""padding $$$$$$$${0 + value}$$$$$$$$text padding"""
 
 
     """padding $value$`text` padding"""
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding $value$`text` padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding $value$`text` padding"""<!>
     $$"""padding $$value$$`text` padding"""
     $$$$"""padding $$$$value$$$$`text` padding"""
     $$$$$$$$"""padding $$$$$$$$value$$$$$$$$`text` padding"""
 
     """padding $`value`$`text` padding"""
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding $`value`$`text` padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding $`value`$`text` padding"""<!>
     $$"""padding $$`value`$$`text` padding"""
     $$$$"""padding $$$$`value`$$$$`text` padding"""
     $$$$$$$$"""padding $$$$$$$$`value`$$$$$$$$`text` padding"""
 
     """padding ${0 + value}$`text` padding"""
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${0 + value}$`text` padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${0 + value}$`text` padding"""<!>
     $$"""padding $${0 + value}$$`text` padding"""
     $$$$"""padding $$$${0 + value}$$$$`text` padding"""
     $$$$$$$$"""padding $$$$$$$${0 + value}$$$$$$$$`text` padding"""
 
 
     """padding $value${"" + text} padding"""
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding $value${"" + text} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding $value${"" + text} padding"""<!>
     $$"""padding $$value$${"" + text} padding"""
     $$$$"""padding $$$$value$$$${"" + text} padding"""
     $$$$$$$$"""padding $$$$$$$$value$$$$$$$${"" + text} padding"""
 
     """padding $`value`${"" + text} padding"""
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding $`value`${"" + text} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding $`value`${"" + text} padding"""<!>
     $$"""padding $$`value`$${"" + text} padding"""
     $$$$"""padding $$$$`value`$$$${"" + text} padding"""
     $$$$$$$$"""padding $$$$$$$$`value`$$$$$$$${"" + text} padding"""
 
     """padding ${0 + value}${"" + text} padding"""
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${0 + value}${"" + text} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${0 + value}${"" + text} padding"""<!>
     $$"""padding $${0 + value}$${"" + text} padding"""
     $$$$"""padding $$$${0 + value}$$$${"" + text} padding"""
     $$$$$$$$"""padding $$$$$$$${0 + value}$$$$$$$${"" + text} padding"""
@@ -774,93 +776,93 @@ fun sequentialInterpolation() {
 // outer string literal kinds: single-line, multi-line
 fun nestedInterpolation() {
     "padding ${"more$text"} padding"
-    "padding ${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"more$text"<!>} padding"
+    "padding ${<!REDUNDANT_INTERPOLATION_PREFIX!>$"more$text"<!>} padding"
     "padding ${$$"more$$text"} padding"
     "padding ${$$$$"more$$$$text"} padding"
     "padding ${$$$$$$$$"more$$$$$$$$text"} padding"
 
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${"more$text"} padding"<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"more$text"<!>} padding"<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${$$"more$$text"} padding"<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${$$$$"more$$$$text"} padding"<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${$$$$$$$$"more$$$$$$$$text"} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${"more$text"} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${<!REDUNDANT_INTERPOLATION_PREFIX!>$"more$text"<!>} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${$$"more$$text"} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${$$$$"more$$$$text"} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${$$$$$$$$"more$$$$$$$$text"} padding"<!>
 
     $$"padding $${"more$text"} padding"
-    $$"padding $${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"more$text"<!>} padding"
+    $$"padding $${<!REDUNDANT_INTERPOLATION_PREFIX!>$"more$text"<!>} padding"
     $$"padding $${$$"more$$text"} padding"
     $$"padding $${$$$$"more$$$$text"} padding"
     $$"padding $${$$$$$$$$"more$$$$$$$$text"} padding"
 
     $$$$"padding $$$${"more$text"} padding"
-    $$$$"padding $$$${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"more$text"<!>} padding"
+    $$$$"padding $$$${<!REDUNDANT_INTERPOLATION_PREFIX!>$"more$text"<!>} padding"
     $$$$"padding $$$${$$"more$$text"} padding"
     $$$$"padding $$$${$$$$"more$$$$text"} padding"
     $$$$"padding $$$${$$$$$$$$"more$$$$$$$$text"} padding"
 
     $$$$$$$$"padding $$$$$$$${"more$text"} padding"
-    $$$$$$$$"padding $$$$$$$${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"more$text"<!>} padding"
+    $$$$$$$$"padding $$$$$$$${<!REDUNDANT_INTERPOLATION_PREFIX!>$"more$text"<!>} padding"
     $$$$$$$$"padding $$$$$$$${$$"more$$text"} padding"
     $$$$$$$$"padding $$$$$$$${$$$$"more$$$$text"} padding"
     $$$$$$$$"padding $$$$$$$${$$$$$$$$"more$$$$$$$$text"} padding"
 
 
     "padding ${"more$`text`"} padding"
-    "padding ${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"more$`text`"<!>} padding"
+    "padding ${<!REDUNDANT_INTERPOLATION_PREFIX!>$"more$`text`"<!>} padding"
     "padding ${$$"more$$`text`"} padding"
     "padding ${$$$$"more$$$$`text`"} padding"
     "padding ${$$$$$$$$"more$$$$$$$$`text`"} padding"
 
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${"more$`text`"} padding"<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"more$`text`"<!>} padding"<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${$$"more$$`text`"} padding"<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${$$$$"more$$$$`text`"} padding"<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${$$$$$$$$"more$$$$$$$$`text`"} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${"more$`text`"} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${<!REDUNDANT_INTERPOLATION_PREFIX!>$"more$`text`"<!>} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${$$"more$$`text`"} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${$$$$"more$$$$`text`"} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${$$$$$$$$"more$$$$$$$$`text`"} padding"<!>
 
     $$"padding $${"more$`text`"} padding"
-    $$"padding $${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"more$`text`"<!>} padding"
+    $$"padding $${<!REDUNDANT_INTERPOLATION_PREFIX!>$"more$`text`"<!>} padding"
     $$"padding $${$$"more$$`text`"} padding"
     $$"padding $${$$$$"more$$$$`text`"} padding"
     $$"padding $${$$$$$$$$"more$$$$$$$$`text`"} padding"
 
     $$$$"padding $$$${"more$`text`"} padding"
-    $$$$"padding $$$${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"more$`text`"<!>} padding"
+    $$$$"padding $$$${<!REDUNDANT_INTERPOLATION_PREFIX!>$"more$`text`"<!>} padding"
     $$$$"padding $$$${$$"more$$`text`"} padding"
     $$$$"padding $$$${$$$$"more$$$$`text`"} padding"
     $$$$"padding $$$${$$$$$$$$"more$$$$$$$$`text`"} padding"
 
     $$$$$$$$"padding $$$$$$$${"more$`text`"} padding"
-    $$$$$$$$"padding $$$$$$$${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"more$`text`"<!>} padding"
+    $$$$$$$$"padding $$$$$$$${<!REDUNDANT_INTERPOLATION_PREFIX!>$"more$`text`"<!>} padding"
     $$$$$$$$"padding $$$$$$$${$$"more$$`text`"} padding"
     $$$$$$$$"padding $$$$$$$${$$$$"more$$$$`text`"} padding"
     $$$$$$$$"padding $$$$$$$${$$$$$$$$"more$$$$$$$$`text`"} padding"
 
 
     "padding ${"more${"" + text}"} padding"
-    "padding ${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"more${"" + text}"<!>} padding"
+    "padding ${<!REDUNDANT_INTERPOLATION_PREFIX!>$"more${"" + text}"<!>} padding"
     "padding ${$$"more$${"" + text}"} padding"
     "padding ${$$$$"more$$$${"" + text}"} padding"
     "padding ${$$$$$$$$"more$$$$$$$${"" + text}"} padding"
 
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${"more${"" + text}"} padding"<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"more${"" + text}"<!>} padding"<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${$$"more$${"" + text}"} padding"<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${$$$$"more$$$${"" + text}"} padding"<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${$$$$$$$$"more$$$$$$$${"" + text}"} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${"more${"" + text}"} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${<!REDUNDANT_INTERPOLATION_PREFIX!>$"more${"" + text}"<!>} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${$$"more$${"" + text}"} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${$$$$"more$$$${"" + text}"} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${$$$$$$$$"more$$$$$$$${"" + text}"} padding"<!>
 
     $$"padding $${"more${"" + text}"} padding"
-    $$"padding $${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"more${"" + text}"<!>} padding"
+    $$"padding $${<!REDUNDANT_INTERPOLATION_PREFIX!>$"more${"" + text}"<!>} padding"
     $$"padding $${$$"more$${"" + text}"} padding"
     $$"padding $${$$$$"more$$$${"" + text}"} padding"
     $$"padding $${$$$$$$$$"more$$$$$$$${"" + text}"} padding"
 
     $$$$"padding $$$${"more${"" + text}"} padding"
-    $$$$"padding $$$${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"more${"" + text}"<!>} padding"
+    $$$$"padding $$$${<!REDUNDANT_INTERPOLATION_PREFIX!>$"more${"" + text}"<!>} padding"
     $$$$"padding $$$${$$"more$${"" + text}"} padding"
     $$$$"padding $$$${$$$$"more$$$${"" + text}"} padding"
     $$$$"padding $$$${$$$$$$$$"more$$$$$$$${"" + text}"} padding"
 
     $$$$$$$$"padding $$$$$$$${"more${"" + text}"} padding"
-    $$$$$$$$"padding $$$$$$$${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"more${"" + text}"<!>} padding"
+    $$$$$$$$"padding $$$$$$$${<!REDUNDANT_INTERPOLATION_PREFIX!>$"more${"" + text}"<!>} padding"
     $$$$$$$$"padding $$$$$$$${$$"more$${"" + text}"} padding"
     $$$$$$$$"padding $$$$$$$${$$$$"more$$$${"" + text}"} padding"
     $$$$$$$$"padding $$$$$$$${$$$$$$$$"more$$$$$$$${"" + text}"} padding"
@@ -868,93 +870,93 @@ fun nestedInterpolation() {
 
 
     "padding ${"""more$text"""} padding"
-    "padding ${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""more$text"""<!>} padding"
+    "padding ${<!REDUNDANT_INTERPOLATION_PREFIX!>$"""more$text"""<!>} padding"
     "padding ${$$"""more$$text"""} padding"
     "padding ${$$$$"""more$$$$text"""} padding"
     "padding ${$$$$$$$$"""more$$$$$$$$text"""} padding"
 
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${"""more$text"""} padding"<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""more$text"""<!>} padding"<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${$$"""more$$text"""} padding"<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${$$$$"""more$$$$text"""} padding"<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${$$$$$$$$"""more$$$$$$$$text"""} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${"""more$text"""} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${<!REDUNDANT_INTERPOLATION_PREFIX!>$"""more$text"""<!>} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${$$"""more$$text"""} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${$$$$"""more$$$$text"""} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${$$$$$$$$"""more$$$$$$$$text"""} padding"<!>
 
     $$"padding $${"""more$text"""} padding"
-    $$"padding $${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""more$text"""<!>} padding"
+    $$"padding $${<!REDUNDANT_INTERPOLATION_PREFIX!>$"""more$text"""<!>} padding"
     $$"padding $${$$"""more$$text"""} padding"
     $$"padding $${$$$$"""more$$$$text"""} padding"
     $$"padding $${$$$$$$$$"""more$$$$$$$$text"""} padding"
 
     $$$$"padding $$$${"""more$text"""} padding"
-    $$$$"padding $$$${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""more$text"""<!>} padding"
+    $$$$"padding $$$${<!REDUNDANT_INTERPOLATION_PREFIX!>$"""more$text"""<!>} padding"
     $$$$"padding $$$${$$"""more$$text"""} padding"
     $$$$"padding $$$${$$$$"""more$$$$text"""} padding"
     $$$$"padding $$$${$$$$$$$$"""more$$$$$$$$text"""} padding"
 
     $$$$$$$$"padding $$$$$$$${"""more$text"""} padding"
-    $$$$$$$$"padding $$$$$$$${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""more$text"""<!>} padding"
+    $$$$$$$$"padding $$$$$$$${<!REDUNDANT_INTERPOLATION_PREFIX!>$"""more$text"""<!>} padding"
     $$$$$$$$"padding $$$$$$$${$$"""more$$text"""} padding"
     $$$$$$$$"padding $$$$$$$${$$$$"""more$$$$text"""} padding"
     $$$$$$$$"padding $$$$$$$${$$$$$$$$"""more$$$$$$$$text"""} padding"
 
 
     "padding ${"""more$`text`"""} padding"
-    "padding ${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""more$`text`"""<!>} padding"
+    "padding ${<!REDUNDANT_INTERPOLATION_PREFIX!>$"""more$`text`"""<!>} padding"
     "padding ${$$"""more$$`text`"""} padding"
     "padding ${$$$$"""more$$$$`text`"""} padding"
     "padding ${$$$$$$$$"""more$$$$$$$$`text`"""} padding"
 
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${"""more$`text`"""} padding"<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""more$`text`"""<!>} padding"<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${$$"""more$$`text`"""} padding"<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${$$$$"""more$$$$`text`"""} padding"<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${$$$$$$$$"""more$$$$$$$$`text`"""} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${"""more$`text`"""} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${<!REDUNDANT_INTERPOLATION_PREFIX!>$"""more$`text`"""<!>} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${$$"""more$$`text`"""} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${$$$$"""more$$$$`text`"""} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${$$$$$$$$"""more$$$$$$$$`text`"""} padding"<!>
 
     $$"padding $${"""more$`text`"""} padding"
-    $$"padding $${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""more$`text`"""<!>} padding"
+    $$"padding $${<!REDUNDANT_INTERPOLATION_PREFIX!>$"""more$`text`"""<!>} padding"
     $$"padding $${$$"""more$$`text`"""} padding"
     $$"padding $${$$$$"""more$$$$`text`"""} padding"
     $$"padding $${$$$$$$$$"""more$$$$$$$$`text`"""} padding"
 
     $$$$"padding $$$${"""more$`text`"""} padding"
-    $$$$"padding $$$${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""more$`text`"""<!>} padding"
+    $$$$"padding $$$${<!REDUNDANT_INTERPOLATION_PREFIX!>$"""more$`text`"""<!>} padding"
     $$$$"padding $$$${$$"""more$$`text`"""} padding"
     $$$$"padding $$$${$$$$"""more$$$$`text`"""} padding"
     $$$$"padding $$$${$$$$$$$$"""more$$$$$$$$`text`"""} padding"
 
     $$$$$$$$"padding $$$$$$$${"""more$`text`"""} padding"
-    $$$$$$$$"padding $$$$$$$${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""more$`text`"""<!>} padding"
+    $$$$$$$$"padding $$$$$$$${<!REDUNDANT_INTERPOLATION_PREFIX!>$"""more$`text`"""<!>} padding"
     $$$$$$$$"padding $$$$$$$${$$"""more$$`text`"""} padding"
     $$$$$$$$"padding $$$$$$$${$$$$"""more$$$$`text`"""} padding"
     $$$$$$$$"padding $$$$$$$${$$$$$$$$"""more$$$$$$$$`text`"""} padding"
 
 
     "padding ${"""more${"" + text}"""} padding"
-    "padding ${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""more${"" + text}"""<!>} padding"
+    "padding ${<!REDUNDANT_INTERPOLATION_PREFIX!>$"""more${"" + text}"""<!>} padding"
     "padding ${$$"""more$${"" + text}"""} padding"
     "padding ${$$$$"""more$$$${"" + text}"""} padding"
     "padding ${$$$$$$$$"""more$$$$$$$${"" + text}"""} padding"
 
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${"""more${"" + text}"""} padding"<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""more${"" + text}"""<!>} padding"<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${$$"""more$${"" + text}"""} padding"<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${$$$$"""more$$$${"" + text}"""} padding"<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${$$$$$$$$"""more$$$$$$$${"" + text}"""} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${"""more${"" + text}"""} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${<!REDUNDANT_INTERPOLATION_PREFIX!>$"""more${"" + text}"""<!>} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${$$"""more$${"" + text}"""} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${$$$$"""more$$$${"" + text}"""} padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${$$$$$$$$"""more$$$$$$$${"" + text}"""} padding"<!>
 
     $$"padding $${"""more${"" + text}"""} padding"
-    $$"padding $${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""more${"" + text}"""<!>} padding"
+    $$"padding $${<!REDUNDANT_INTERPOLATION_PREFIX!>$"""more${"" + text}"""<!>} padding"
     $$"padding $${$$"""more$${"" + text}"""} padding"
     $$"padding $${$$$$"""more$$$${"" + text}"""} padding"
     $$"padding $${$$$$$$$$"""more$$$$$$$${"" + text}"""} padding"
 
     $$$$"padding $$$${"""more${"" + text}"""} padding"
-    $$$$"padding $$$${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""more${"" + text}"""<!>} padding"
+    $$$$"padding $$$${<!REDUNDANT_INTERPOLATION_PREFIX!>$"""more${"" + text}"""<!>} padding"
     $$$$"padding $$$${$$"""more$${"" + text}"""} padding"
     $$$$"padding $$$${$$$$"""more$$$${"" + text}"""} padding"
     $$$$"padding $$$${$$$$$$$$"""more$$$$$$$${"" + text}"""} padding"
 
     $$$$$$$$"padding $$$$$$$${"""more${"" + text}"""} padding"
-    $$$$$$$$"padding $$$$$$$${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""more${"" + text}"""<!>} padding"
+    $$$$$$$$"padding $$$$$$$${<!REDUNDANT_INTERPOLATION_PREFIX!>$"""more${"" + text}"""<!>} padding"
     $$$$$$$$"padding $$$$$$$${$$"""more$${"" + text}"""} padding"
     $$$$$$$$"padding $$$$$$$${$$$$"""more$$$${"" + text}"""} padding"
     $$$$$$$$"padding $$$$$$$${$$$$$$$$"""more$$$$$$$${"" + text}"""} padding"
@@ -963,93 +965,93 @@ fun nestedInterpolation() {
 
 
     """padding ${"more$text"} padding"""
-    """padding ${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"more$text"<!>} padding"""
+    """padding ${<!REDUNDANT_INTERPOLATION_PREFIX!>$"more$text"<!>} padding"""
     """padding ${$$"more$$text"} padding"""
     """padding ${$$$$"more$$$$text"} padding"""
     """padding ${$$$$$$$$"more$$$$$$$$text"} padding"""
 
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${"more$text"} padding"""<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"more$text"<!>} padding"""<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${$$"more$$text"} padding"""<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${$$$$"more$$$$text"} padding"""<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${$$$$$$$$"more$$$$$$$$text"} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${"more$text"} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${<!REDUNDANT_INTERPOLATION_PREFIX!>$"more$text"<!>} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${$$"more$$text"} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${$$$$"more$$$$text"} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${$$$$$$$$"more$$$$$$$$text"} padding"""<!>
 
     $$"""padding $${"more$text"} padding"""
-    $$"""padding $${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"more$text"<!>} padding"""
+    $$"""padding $${<!REDUNDANT_INTERPOLATION_PREFIX!>$"more$text"<!>} padding"""
     $$"""padding $${$$"more$$text"} padding"""
     $$"""padding $${$$$$"more$$$$text"} padding"""
     $$"""padding $${$$$$$$$$"more$$$$$$$$text"} padding"""
 
     $$$$"""padding $$$${"more$text"} padding"""
-    $$$$"""padding $$$${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"more$text"<!>} padding"""
+    $$$$"""padding $$$${<!REDUNDANT_INTERPOLATION_PREFIX!>$"more$text"<!>} padding"""
     $$$$"""padding $$$${$$"more$$text"} padding"""
     $$$$"""padding $$$${$$$$"more$$$$text"} padding"""
     $$$$"""padding $$$${$$$$$$$$"more$$$$$$$$text"} padding"""
 
     $$$$$$$$"""padding $$$$$$$${"more$text"} padding"""
-    $$$$$$$$"""padding $$$$$$$${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"more$text"<!>} padding"""
+    $$$$$$$$"""padding $$$$$$$${<!REDUNDANT_INTERPOLATION_PREFIX!>$"more$text"<!>} padding"""
     $$$$$$$$"""padding $$$$$$$${$$"more$$text"} padding"""
     $$$$$$$$"""padding $$$$$$$${$$$$"more$$$$text"} padding"""
     $$$$$$$$"""padding $$$$$$$${$$$$$$$$"more$$$$$$$$text"} padding"""
 
 
     """padding ${"more$`text`"} padding"""
-    """padding ${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"more$`text`"<!>} padding"""
+    """padding ${<!REDUNDANT_INTERPOLATION_PREFIX!>$"more$`text`"<!>} padding"""
     """padding ${$$"more$$`text`"} padding"""
     """padding ${$$$$"more$$$$`text`"} padding"""
     """padding ${$$$$$$$$"more$$$$$$$$`text`"} padding"""
 
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${"more$`text`"} padding"""<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"more$`text`"<!>} padding"""<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${$$"more$$`text`"} padding"""<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${$$$$"more$$$$`text`"} padding"""<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${$$$$$$$$"more$$$$$$$$`text`"} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${"more$`text`"} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${<!REDUNDANT_INTERPOLATION_PREFIX!>$"more$`text`"<!>} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${$$"more$$`text`"} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${$$$$"more$$$$`text`"} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${$$$$$$$$"more$$$$$$$$`text`"} padding"""<!>
 
     $$"""padding $${"more$`text`"} padding"""
-    $$"""padding $${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"more$`text`"<!>} padding"""
+    $$"""padding $${<!REDUNDANT_INTERPOLATION_PREFIX!>$"more$`text`"<!>} padding"""
     $$"""padding $${$$"more$$`text`"} padding"""
     $$"""padding $${$$$$"more$$$$`text`"} padding"""
     $$"""padding $${$$$$$$$$"more$$$$$$$$`text`"} padding"""
 
     $$$$"""padding $$$${"more$`text`"} padding"""
-    $$$$"""padding $$$${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"more$`text`"<!>} padding"""
+    $$$$"""padding $$$${<!REDUNDANT_INTERPOLATION_PREFIX!>$"more$`text`"<!>} padding"""
     $$$$"""padding $$$${$$"more$$`text`"} padding"""
     $$$$"""padding $$$${$$$$"more$$$$`text`"} padding"""
     $$$$"""padding $$$${$$$$$$$$"more$$$$$$$$`text`"} padding"""
 
     $$$$$$$$"""padding $$$$$$$${"more$`text`"} padding"""
-    $$$$$$$$"""padding $$$$$$$${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"more$`text`"<!>} padding"""
+    $$$$$$$$"""padding $$$$$$$${<!REDUNDANT_INTERPOLATION_PREFIX!>$"more$`text`"<!>} padding"""
     $$$$$$$$"""padding $$$$$$$${$$"more$$`text`"} padding"""
     $$$$$$$$"""padding $$$$$$$${$$$$"more$$$$`text`"} padding"""
     $$$$$$$$"""padding $$$$$$$${$$$$$$$$"more$$$$$$$$`text`"} padding"""
 
 
     """padding ${"more${"" + text}"} padding"""
-    """padding ${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"more${"" + text}"<!>} padding"""
+    """padding ${<!REDUNDANT_INTERPOLATION_PREFIX!>$"more${"" + text}"<!>} padding"""
     """padding ${$$"more$${"" + text}"} padding"""
     """padding ${$$$$"more$$$${"" + text}"} padding"""
     """padding ${$$$$$$$$"more$$$$$$$${"" + text}"} padding"""
 
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${"more${"" + text}"} padding"""<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"more${"" + text}"<!>} padding"""<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${$$"more$${"" + text}"} padding"""<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${$$$$"more$$$${"" + text}"} padding"""<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${$$$$$$$$"more$$$$$$$${"" + text}"} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${"more${"" + text}"} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${<!REDUNDANT_INTERPOLATION_PREFIX!>$"more${"" + text}"<!>} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${$$"more$${"" + text}"} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${$$$$"more$$$${"" + text}"} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${$$$$$$$$"more$$$$$$$${"" + text}"} padding"""<!>
 
     $$"""padding $${"more${"" + text}"} padding"""
-    $$"""padding $${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"more${"" + text}"<!>} padding"""
+    $$"""padding $${<!REDUNDANT_INTERPOLATION_PREFIX!>$"more${"" + text}"<!>} padding"""
     $$"""padding $${$$"more$${"" + text}"} padding"""
     $$"""padding $${$$$$"more$$$${"" + text}"} padding"""
     $$"""padding $${$$$$$$$$"more$$$$$$$${"" + text}"} padding"""
 
     $$$$"""padding $$$${"more${"" + text}"} padding"""
-    $$$$"""padding $$$${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"more${"" + text}"<!>} padding"""
+    $$$$"""padding $$$${<!REDUNDANT_INTERPOLATION_PREFIX!>$"more${"" + text}"<!>} padding"""
     $$$$"""padding $$$${$$"more$${"" + text}"} padding"""
     $$$$"""padding $$$${$$$$"more$$$${"" + text}"} padding"""
     $$$$"""padding $$$${$$$$$$$$"more$$$$$$$${"" + text}"} padding"""
 
     $$$$$$$$"""padding $$$$$$$${"more${"" + text}"} padding"""
-    $$$$$$$$"""padding $$$$$$$${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"more${"" + text}"<!>} padding"""
+    $$$$$$$$"""padding $$$$$$$${<!REDUNDANT_INTERPOLATION_PREFIX!>$"more${"" + text}"<!>} padding"""
     $$$$$$$$"""padding $$$$$$$${$$"more$${"" + text}"} padding"""
     $$$$$$$$"""padding $$$$$$$${$$$$"more$$$${"" + text}"} padding"""
     $$$$$$$$"""padding $$$$$$$${$$$$$$$$"more$$$$$$$${"" + text}"} padding"""
@@ -1057,93 +1059,93 @@ fun nestedInterpolation() {
 
 
     """padding ${"""more$text"""} padding"""
-    """padding ${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""more$text"""<!>} padding"""
+    """padding ${<!REDUNDANT_INTERPOLATION_PREFIX!>$"""more$text"""<!>} padding"""
     """padding ${$$"""more$$text"""} padding"""
     """padding ${$$$$"""more$$$$text"""} padding"""
     """padding ${$$$$$$$$"""more$$$$$$$$text"""} padding"""
 
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${"""more$text"""} padding"""<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""more$text"""<!>} padding"""<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${$$"""more$$text"""} padding"""<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${$$$$"""more$$$$text"""} padding"""<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${$$$$$$$$"""more$$$$$$$$text"""} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${"""more$text"""} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${<!REDUNDANT_INTERPOLATION_PREFIX!>$"""more$text"""<!>} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${$$"""more$$text"""} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${$$$$"""more$$$$text"""} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${$$$$$$$$"""more$$$$$$$$text"""} padding"""<!>
 
     $$"""padding $${"""more$text"""} padding"""
-    $$"""padding $${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""more$text"""<!>} padding"""
+    $$"""padding $${<!REDUNDANT_INTERPOLATION_PREFIX!>$"""more$text"""<!>} padding"""
     $$"""padding $${$$"""more$$text"""} padding"""
     $$"""padding $${$$$$"""more$$$$text"""} padding"""
     $$"""padding $${$$$$$$$$"""more$$$$$$$$text"""} padding"""
 
     $$$$"""padding $$$${"""more$text"""} padding"""
-    $$$$"""padding $$$${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""more$text"""<!>} padding"""
+    $$$$"""padding $$$${<!REDUNDANT_INTERPOLATION_PREFIX!>$"""more$text"""<!>} padding"""
     $$$$"""padding $$$${$$"""more$$text"""} padding"""
     $$$$"""padding $$$${$$$$"""more$$$$text"""} padding"""
     $$$$"""padding $$$${$$$$$$$$"""more$$$$$$$$text"""} padding"""
 
     $$$$$$$$"""padding $$$$$$$${"""more$text"""} padding"""
-    $$$$$$$$"""padding $$$$$$$${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""more$text"""<!>} padding"""
+    $$$$$$$$"""padding $$$$$$$${<!REDUNDANT_INTERPOLATION_PREFIX!>$"""more$text"""<!>} padding"""
     $$$$$$$$"""padding $$$$$$$${$$"""more$$text"""} padding"""
     $$$$$$$$"""padding $$$$$$$${$$$$"""more$$$$text"""} padding"""
     $$$$$$$$"""padding $$$$$$$${$$$$$$$$"""more$$$$$$$$text"""} padding"""
 
 
     """padding ${"""more$`text`"""} padding"""
-    """padding ${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""more$`text`"""<!>} padding"""
+    """padding ${<!REDUNDANT_INTERPOLATION_PREFIX!>$"""more$`text`"""<!>} padding"""
     """padding ${$$"""more$$`text`"""} padding"""
     """padding ${$$$$"""more$$$$`text`"""} padding"""
     """padding ${$$$$$$$$"""more$$$$$$$$`text`"""} padding"""
 
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${"""more$`text`"""} padding"""<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""more$`text`"""<!>} padding"""<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${$$"""more$$`text`"""} padding"""<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${$$$$"""more$$$$`text`"""} padding"""<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${$$$$$$$$"""more$$$$$$$$`text`"""} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${"""more$`text`"""} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${<!REDUNDANT_INTERPOLATION_PREFIX!>$"""more$`text`"""<!>} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${$$"""more$$`text`"""} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${$$$$"""more$$$$`text`"""} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${$$$$$$$$"""more$$$$$$$$`text`"""} padding"""<!>
 
     $$"""padding $${"""more$`text`"""} padding"""
-    $$"""padding $${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""more$`text`"""<!>} padding"""
+    $$"""padding $${<!REDUNDANT_INTERPOLATION_PREFIX!>$"""more$`text`"""<!>} padding"""
     $$"""padding $${$$"""more$$`text`"""} padding"""
     $$"""padding $${$$$$"""more$$$$`text`"""} padding"""
     $$"""padding $${$$$$$$$$"""more$$$$$$$$`text`"""} padding"""
 
     $$$$"""padding $$$${"""more$`text`"""} padding"""
-    $$$$"""padding $$$${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""more$`text`"""<!>} padding"""
+    $$$$"""padding $$$${<!REDUNDANT_INTERPOLATION_PREFIX!>$"""more$`text`"""<!>} padding"""
     $$$$"""padding $$$${$$"""more$$`text`"""} padding"""
     $$$$"""padding $$$${$$$$"""more$$$$`text`"""} padding"""
     $$$$"""padding $$$${$$$$$$$$"""more$$$$$$$$`text`"""} padding"""
 
     $$$$$$$$"""padding $$$$$$$${"""more$`text`"""} padding"""
-    $$$$$$$$"""padding $$$$$$$${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""more$`text`"""<!>} padding"""
+    $$$$$$$$"""padding $$$$$$$${<!REDUNDANT_INTERPOLATION_PREFIX!>$"""more$`text`"""<!>} padding"""
     $$$$$$$$"""padding $$$$$$$${$$"""more$$`text`"""} padding"""
     $$$$$$$$"""padding $$$$$$$${$$$$"""more$$$$`text`"""} padding"""
     $$$$$$$$"""padding $$$$$$$${$$$$$$$$"""more$$$$$$$$`text`"""} padding"""
 
 
     """padding ${"""more${"" + text}"""} padding"""
-    """padding ${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""more${"" + text}"""<!>} padding"""
+    """padding ${<!REDUNDANT_INTERPOLATION_PREFIX!>$"""more${"" + text}"""<!>} padding"""
     """padding ${$$"""more$${"" + text}"""} padding"""
     """padding ${$$$$"""more$$$${"" + text}"""} padding"""
     """padding ${$$$$$$$$"""more$$$$$$$${"" + text}"""} padding"""
 
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${"""more${"" + text}"""} padding"""<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""more${"" + text}"""<!>} padding"""<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${$$"""more$${"" + text}"""} padding"""<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${$$$$"""more$$$${"" + text}"""} padding"""<!>
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${$$$$$$$$"""more$$$$$$$${"" + text}"""} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${"""more${"" + text}"""} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${<!REDUNDANT_INTERPOLATION_PREFIX!>$"""more${"" + text}"""<!>} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${$$"""more$${"" + text}"""} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${$$$$"""more$$$${"" + text}"""} padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${$$$$$$$$"""more$$$$$$$${"" + text}"""} padding"""<!>
 
     $$"""padding $${"""more${"" + text}"""} padding"""
-    $$"""padding $${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""more${"" + text}"""<!>} padding"""
+    $$"""padding $${<!REDUNDANT_INTERPOLATION_PREFIX!>$"""more${"" + text}"""<!>} padding"""
     $$"""padding $${$$"""more$${"" + text}"""} padding"""
     $$"""padding $${$$$$"""more$$$${"" + text}"""} padding"""
     $$"""padding $${$$$$$$$$"""more$$$$$$$${"" + text}"""} padding"""
 
     $$$$"""padding $$$${"""more${"" + text}"""} padding"""
-    $$$$"""padding $$$${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""more${"" + text}"""<!>} padding"""
+    $$$$"""padding $$$${<!REDUNDANT_INTERPOLATION_PREFIX!>$"""more${"" + text}"""<!>} padding"""
     $$$$"""padding $$$${$$"""more$${"" + text}"""} padding"""
     $$$$"""padding $$$${$$$$"""more$$$${"" + text}"""} padding"""
     $$$$"""padding $$$${$$$$$$$$"""more$$$$$$$${"" + text}"""} padding"""
 
     $$$$$$$$"""padding $$$$$$$${"""more${"" + text}"""} padding"""
-    $$$$$$$$"""padding $$$$$$$${<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""more${"" + text}"""<!>} padding"""
+    $$$$$$$$"""padding $$$$$$$${<!REDUNDANT_INTERPOLATION_PREFIX!>$"""more${"" + text}"""<!>} padding"""
     $$$$$$$$"""padding $$$$$$$${$$"""more$${"" + text}"""} padding"""
     $$$$$$$$"""padding $$$$$$$${$$$$"""more$$$${"" + text}"""} padding"""
     $$$$$$$$"""padding $$$$$$$${$$$$$$$$"""more$$$$$$$${"" + text}"""} padding"""
@@ -1155,7 +1157,7 @@ fun multilineInterpolation() {
     "padding ${
         0 + value
     } padding"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${
         0 + value
     } padding"<!>
     $$"padding $${
@@ -1171,7 +1173,7 @@ fun multilineInterpolation() {
     """padding ${
         0 + value
     } padding"""
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${
         0 + value
     } padding"""<!>
     $$"""padding $${
@@ -1190,38 +1192,38 @@ fun multilineInterpolation() {
 // string literal kinds: single-line, multi-line
 fun multilineCommentsInsideStringsWithInterpolation() {
     "padding /* $value */ padding"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding /* $value */ padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding /* $value */ padding"<!>
     $$"padding /* $$value */ padding"
     $$$$"padding /* $$$$value */ padding"
     $$$$$$$$"padding /* $$$$$$$$value */ padding"
 
     "padding /* $`value` */ padding"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding /* $`value` */ padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding /* $`value` */ padding"<!>
     $$"padding /* $$`value` */ padding"
     $$$$"padding /* $$$$`value` */ padding"
     $$$$$$$$"padding /* $$$$$$$$`value` */ padding"
 
     "padding /* ${0 + value} */ padding"
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding /* ${0 + value} */ padding"<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding /* ${0 + value} */ padding"<!>
     $$"padding /* $${0 + value} */ padding"
     $$$$"padding /* $$$${0 + value} */ padding"
     $$$$$$$$"padding /* $$$$$$$${0 + value} */ padding"
 
 
     """padding /* $value */ padding"""
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding /* $value */ padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding /* $value */ padding"""<!>
     $$"""padding /* $$value */ padding"""
     $$$$"""padding /* $$$$value */ padding"""
     $$$$$$$$"""padding /* $$$$$$$$value */ padding"""
 
     """padding /* $`value` */ padding"""
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding /* $`value` */ padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding /* $`value` */ padding"""<!>
     $$"""padding /* $$`value` */ padding"""
     $$$$"""padding /* $$$$`value` */ padding"""
     $$$$$$$$"""padding /* $$$$$$$$`value` */ padding"""
 
     """padding /* ${0 + value} */ padding"""
-    <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding /* ${0 + value} */ padding"""<!>
+    <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding /* ${0 + value} */ padding"""<!>
     $$"""padding /* $${0 + value} */ padding"""
     $$$$"""padding /* $$$${0 + value} */ padding"""
     $$$$$$$$"""padding /* $$$$$$$${0 + value} */ padding"""
@@ -1324,38 +1326,38 @@ const val compileTimeConstant = 42
 // string literal kinds: single-line, multi-line
 
 @Annotation("padding $compileTimeConstant padding")
-@Annotation(<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding $compileTimeConstant padding"<!>)
+@Annotation(<!REDUNDANT_INTERPOLATION_PREFIX!>$"padding $compileTimeConstant padding"<!>)
 @Annotation($$"padding $$compileTimeConstant padding")
 @Annotation($$$$"padding $$$$compileTimeConstant padding")
 @Annotation($$$$$$$$"padding $$$$$$$$compileTimeConstant padding")
 
 @Annotation("padding $`compileTimeConstant` padding")
-@Annotation(<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding $`compileTimeConstant` padding"<!>)
+@Annotation(<!REDUNDANT_INTERPOLATION_PREFIX!>$"padding $`compileTimeConstant` padding"<!>)
 @Annotation($$"padding $$`compileTimeConstant` padding")
 @Annotation($$$$"padding $$$$`compileTimeConstant` padding")
 @Annotation($$$$$$$$"padding $$$$$$$$`compileTimeConstant` padding")
 
 @Annotation("padding ${0 + compileTimeConstant} padding")
-@Annotation(<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${0 + compileTimeConstant} padding"<!>)
+@Annotation(<!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${0 + compileTimeConstant} padding"<!>)
 @Annotation($$"padding $${0 + compileTimeConstant} padding")
 @Annotation($$$$"padding $$$${0 + compileTimeConstant} padding")
 @Annotation($$$$$$$$"padding $$$$$$$${0 + compileTimeConstant} padding")
 
 
 @Annotation("""padding $compileTimeConstant padding""")
-@Annotation(<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding $compileTimeConstant padding"""<!>)
+@Annotation(<!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding $compileTimeConstant padding"""<!>)
 @Annotation($$"""padding $$compileTimeConstant padding""")
 @Annotation($$$$"""padding $$$$compileTimeConstant padding""")
 @Annotation($$$$$$$$"""padding $$$$$$$$compileTimeConstant padding""")
 
 @Annotation("""padding $`compileTimeConstant` padding""")
-@Annotation(<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding $`compileTimeConstant` padding"""<!>)
+@Annotation(<!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding $`compileTimeConstant` padding"""<!>)
 @Annotation($$"""padding $$`compileTimeConstant` padding""")
 @Annotation($$$$"""padding $$$$`compileTimeConstant` padding""")
 @Annotation($$$$$$$$"""padding $$$$$$$$`compileTimeConstant` padding""")
 
 @Annotation("""padding ${0 + compileTimeConstant} padding""")
-@Annotation(<!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${0 + compileTimeConstant} padding"""<!>)
+@Annotation(<!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${0 + compileTimeConstant} padding"""<!>)
 @Annotation($$"""padding $${0 + compileTimeConstant} padding""")
 @Annotation($$$$"""padding $$$${0 + compileTimeConstant} padding""")
 @Annotation($$$$$$$$"""padding $$$$$$$${0 + compileTimeConstant} padding""")
@@ -1367,38 +1369,38 @@ fun stringsWithInterpolationAsValidAnnotationArguments() {}
 // string literal kinds: single-line, multi-line
 
 const val stringWithInterpolationAsValidConstantInitializer01 = "padding $compileTimeConstant padding"
-const val stringWithInterpolationAsValidConstantInitializer02 = <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding $compileTimeConstant padding"<!>
+const val stringWithInterpolationAsValidConstantInitializer02 = <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding $compileTimeConstant padding"<!>
 const val stringWithInterpolationAsValidConstantInitializer03 = $$"padding $$compileTimeConstant padding"
 const val stringWithInterpolationAsValidConstantInitializer04 = $$$$"padding $$$$compileTimeConstant padding"
 const val stringWithInterpolationAsValidConstantInitializer05 = $$$$$$$$"padding $$$$$$$$compileTimeConstant padding"
 
 const val stringWithInterpolationAsValidConstantInitializer06 = "padding $`compileTimeConstant` padding"
-const val stringWithInterpolationAsValidConstantInitializer07 = <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding $`compileTimeConstant` padding"<!>
+const val stringWithInterpolationAsValidConstantInitializer07 = <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding $`compileTimeConstant` padding"<!>
 const val stringWithInterpolationAsValidConstantInitializer08 = $$"padding $$`compileTimeConstant` padding"
 const val stringWithInterpolationAsValidConstantInitializer09 = $$$$"padding $$$$`compileTimeConstant` padding"
 const val stringWithInterpolationAsValidConstantInitializer10 = $$$$$$$$"padding $$$$$$$$`compileTimeConstant` padding"
 
 const val stringWithInterpolationAsValidConstantInitializer11 = "padding ${0 + compileTimeConstant} padding"
-const val stringWithInterpolationAsValidConstantInitializer12 = <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"padding ${0 + compileTimeConstant} padding"<!>
+const val stringWithInterpolationAsValidConstantInitializer12 = <!REDUNDANT_INTERPOLATION_PREFIX!>$"padding ${0 + compileTimeConstant} padding"<!>
 const val stringWithInterpolationAsValidConstantInitializer13 = $$"padding $${0 + compileTimeConstant} padding"
 const val stringWithInterpolationAsValidConstantInitializer14 = $$$$"padding $$$${0 + compileTimeConstant} padding"
 const val stringWithInterpolationAsValidConstantInitializer15 = $$$$$$$$"padding $$$$$$$${0 + compileTimeConstant} padding"
 
 
 const val stringWithInterpolationAsValidConstantInitializer16 = """padding $compileTimeConstant padding"""
-const val stringWithInterpolationAsValidConstantInitializer17 = <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding $compileTimeConstant padding"""<!>
+const val stringWithInterpolationAsValidConstantInitializer17 = <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding $compileTimeConstant padding"""<!>
 const val stringWithInterpolationAsValidConstantInitializer18 = $$"""padding $$compileTimeConstant padding"""
 const val stringWithInterpolationAsValidConstantInitializer19 = $$$$"""padding $$$$compileTimeConstant padding"""
 const val stringWithInterpolationAsValidConstantInitializer20 = $$$$$$$$"""padding $$$$$$$$compileTimeConstant padding"""
 
 const val stringWithInterpolationAsValidConstantInitializer21 = """padding $`compileTimeConstant` padding"""
-const val stringWithInterpolationAsValidConstantInitializer22 = <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding $`compileTimeConstant` padding"""<!>
+const val stringWithInterpolationAsValidConstantInitializer22 = <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding $`compileTimeConstant` padding"""<!>
 const val stringWithInterpolationAsValidConstantInitializer23 = $$"""padding $$`compileTimeConstant` padding"""
 const val stringWithInterpolationAsValidConstantInitializer24 = $$$$"""padding $$$$`compileTimeConstant` padding"""
 const val stringWithInterpolationAsValidConstantInitializer25 = $$$$$$$$"""padding $$$$$$$$`compileTimeConstant` padding"""
 
 const val stringWithInterpolationAsValidConstantInitializer26 = """padding ${0 + compileTimeConstant} padding"""
-const val stringWithInterpolationAsValidConstantInitializer27 = <!SINGLE_DOLLAR_INTERPOLATION_PREFIX!>$"""padding ${0 + compileTimeConstant} padding"""<!>
+const val stringWithInterpolationAsValidConstantInitializer27 = <!REDUNDANT_INTERPOLATION_PREFIX!>$"""padding ${0 + compileTimeConstant} padding"""<!>
 const val stringWithInterpolationAsValidConstantInitializer28 = $$"""padding $${0 + compileTimeConstant} padding"""
 const val stringWithInterpolationAsValidConstantInitializer29 = $$$$"""padding $$$${0 + compileTimeConstant} padding"""
 const val stringWithInterpolationAsValidConstantInitializer30 = $$$$$$$$"""padding $$$$$$$${0 + compileTimeConstant} padding"""

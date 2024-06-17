@@ -30,6 +30,7 @@ internal class FirLiteralExpressionImpl(
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var kind: ConstantValueKind,
     override val value: Any?,
+    override val prefix: String?,
 ) : FirLiteralExpression() {
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

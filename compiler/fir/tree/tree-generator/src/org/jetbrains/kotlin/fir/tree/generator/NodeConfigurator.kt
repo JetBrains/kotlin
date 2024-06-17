@@ -227,6 +227,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         literalExpression.configure {
             +field("kind", constKindType, withReplace = true)
             +field("value", anyType, nullable = true)
+            +field("prefix", stringType, nullable = true)
         }
 
         functionCall.configure {

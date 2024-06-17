@@ -25,6 +25,7 @@ abstract class FirLiteralExpression : FirExpression() {
     abstract override val annotations: List<FirAnnotation>
     abstract val kind: ConstantValueKind
     abstract val value: Any?
+    abstract val prefix: String?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitLiteralExpression(this, data)
