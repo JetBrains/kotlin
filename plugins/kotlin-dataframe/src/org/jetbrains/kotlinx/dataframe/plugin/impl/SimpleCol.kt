@@ -1,3 +1,5 @@
+@file:Suppress("INVISIBLE_REFERENCE", "CANNOT_OVERRIDE_INVISIBLE_MEMBER")
+
 package org.jetbrains.kotlinx.dataframe.plugin.impl
 
 import org.jetbrains.kotlin.fir.types.ConeKotlinType

@@ -1,3 +1,5 @@
+@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractInterpreter
