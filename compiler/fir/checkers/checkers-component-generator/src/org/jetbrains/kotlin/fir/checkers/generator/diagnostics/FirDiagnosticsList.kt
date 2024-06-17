@@ -1329,6 +1329,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val EXPECTED_LATEINIT_PROPERTY by error<KtModifierListOwner>(PositioningStrategy.LATEINIT_MODIFIER)
         val SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS by error<KtElement>(PositioningStrategy.SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS_DIAGNOSTIC)
         val EXPECTED_PRIVATE_DECLARATION by error<KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER)
+        val EXPECTED_PRIVATE_CONSTRUCTOR by deprecationError<KtModifierListOwner>(LanguageFeature.ProhibitExpectPrivateConstructor, PositioningStrategy.VISIBILITY_MODIFIER)
         val EXPECTED_EXTERNAL_DECLARATION by error<KtModifierListOwner>(PositioningStrategy.EXTERNAL_MODIFIER)
         val EXPECTED_TAILREC_FUNCTION by error<KtModifierListOwner>(PositioningStrategy.TAILREC_MODIFIER)
         val IMPLEMENTATION_BY_DELEGATION_IN_EXPECT_CLASS by error<KtDelegatedSuperTypeEntry>()

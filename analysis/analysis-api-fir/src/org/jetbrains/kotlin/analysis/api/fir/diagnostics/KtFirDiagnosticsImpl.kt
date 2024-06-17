@@ -3248,6 +3248,16 @@ internal class ExpectedPrivateDeclarationImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtModifierListOwner>(firDiagnostic, token), KaFirDiagnostic.ExpectedPrivateDeclaration
 
+internal class ExpectedPrivateConstructorErrorImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtModifierListOwner>(firDiagnostic, token), KaFirDiagnostic.ExpectedPrivateConstructorError
+
+internal class ExpectedPrivateConstructorWarningImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtModifierListOwner>(firDiagnostic, token), KaFirDiagnostic.ExpectedPrivateConstructorWarning
+
 internal class ExpectedExternalDeclarationImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

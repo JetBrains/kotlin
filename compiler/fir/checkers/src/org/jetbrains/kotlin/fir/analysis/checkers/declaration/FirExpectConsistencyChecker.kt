@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -62,7 +65,11 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker(MppCheckerKind.C
         }
 
         if (isProhibitedPrivateDeclaration(declaration)) {
-            reporter.reportOn(source, FirErrors.EXPECTED_PRIVATE_DECLARATION, context)
+            if (declaration is FirConstructor && !context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitExpectPrivateConstructor)) {
+                reporter.reportOn(source, FirErrors.EXPECTED_PRIVATE_CONSTRUCTOR, context)
+            } else {
+                reporter.reportOn(source, FirErrors.EXPECTED_PRIVATE_DECLARATION, context)
+            }
         }
 
         if (isProhibitedDeclarationWithBody(declaration)) {
@@ -103,7 +110,7 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker(MppCheckerKind.C
     }
 
     private fun isProhibitedPrivateDeclaration(declaration: FirMemberDeclaration): Boolean {
-        return declaration !is FirConstructor && declaration !is FirPropertyAccessor && Visibilities.isPrivate(declaration.visibility)
+        return declaration !is FirPropertyAccessor && Visibilities.isPrivate(declaration.visibility)
     }
 
     private fun isProhibitedEnumConstructor(declaration: FirMemberDeclaration, lastClass: FirClass?): Boolean {

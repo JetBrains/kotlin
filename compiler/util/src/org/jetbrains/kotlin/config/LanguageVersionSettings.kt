@@ -369,6 +369,8 @@ enum class LanguageFeature(
     // this feature will eventually switch this warning to an error
     ProhibitScriptTopLevelInnerClasses(sinceVersion = null, kind = OTHER),
 
+    ProhibitExpectPrivateConstructor(sinceVersion = null, kind = BUG_FIX), // KT-68688
+
     // Experimental features
 
     BreakContinueInInlineLambdas(null), // KT-1436

@@ -2698,6 +2698,14 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ExpectedPrivateDeclaration::class
     }
 
+    interface ExpectedPrivateConstructorError : KaFirDiagnostic<KtModifierListOwner> {
+        override val diagnosticClass get() = ExpectedPrivateConstructorError::class
+    }
+
+    interface ExpectedPrivateConstructorWarning : KaFirDiagnostic<KtModifierListOwner> {
+        override val diagnosticClass get() = ExpectedPrivateConstructorWarning::class
+    }
+
     interface ExpectedExternalDeclaration : KaFirDiagnostic<KtModifierListOwner> {
         override val diagnosticClass get() = ExpectedExternalDeclaration::class
     }

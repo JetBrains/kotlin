@@ -252,6 +252,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_ENUM_ENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_FUNCTION_SOURCE_WITH_DEFAULT_ARGUMENTS_NOT_FOUND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_LATEINIT_PROPERTY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_PRIVATE_CONSTRUCTOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_PRIVATE_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_PROPERTY_INITIALIZER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_TAILREC_FUNCTION
@@ -2156,6 +2157,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(EXPECTED_DELEGATED_PROPERTY, "Expected property cannot be delegated.")
         map.put(EXPECTED_LATEINIT_PROPERTY, "Expected property cannot be 'lateinit'.")
         map.put(EXPECTED_PRIVATE_DECLARATION, "Expected declaration cannot be private.")
+        map.put(EXPECTED_PRIVATE_CONSTRUCTOR, "Expected private constructor have no effect. See https://youtrack.jetbrains.com/issue/KT-68688")
         map.put(EXPECTED_EXTERNAL_DECLARATION, "Expected declaration cannot be external.")
         map.put(EXPECTED_TAILREC_FUNCTION, "Expected function cannot have 'tailrec' modifier.")
         map.put(SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS, "Expected classes cannot initialize supertypes.")

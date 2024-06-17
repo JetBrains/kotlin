@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.config.LanguageFeature.ProhibitAssigningSingleElemen
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitConfusingSyntaxInWhenBranches
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitConstructorAndSupertypeOnTypealiasWithTypeProjection
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitCyclesInAnnotations
+import org.jetbrains.kotlin.config.LanguageFeature.ProhibitExpectPrivateConstructor
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitImplementingVarByInheritedVal
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitInlineModifierOnPrimaryConstructorParameters
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitInvisibleAbstractMethodsInSuperclasses
@@ -692,6 +693,7 @@ object FirErrors {
     val EXPECTED_LATEINIT_PROPERTY: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXPECTED_LATEINIT_PROPERTY", ERROR, SourceElementPositioningStrategies.LATEINIT_MODIFIER, KtModifierListOwner::class)
     val SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS: KtDiagnosticFactory0 = KtDiagnosticFactory0("SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS", ERROR, SourceElementPositioningStrategies.SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS_DIAGNOSTIC, KtElement::class)
     val EXPECTED_PRIVATE_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXPECTED_PRIVATE_DECLARATION", ERROR, SourceElementPositioningStrategies.VISIBILITY_MODIFIER, KtModifierListOwner::class)
+    val EXPECTED_PRIVATE_CONSTRUCTOR: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("EXPECTED_PRIVATE_CONSTRUCTOR", ProhibitExpectPrivateConstructor, SourceElementPositioningStrategies.VISIBILITY_MODIFIER, KtModifierListOwner::class)
     val EXPECTED_EXTERNAL_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXPECTED_EXTERNAL_DECLARATION", ERROR, SourceElementPositioningStrategies.EXTERNAL_MODIFIER, KtModifierListOwner::class)
     val EXPECTED_TAILREC_FUNCTION: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXPECTED_TAILREC_FUNCTION", ERROR, SourceElementPositioningStrategies.TAILREC_MODIFIER, KtModifierListOwner::class)
     val IMPLEMENTATION_BY_DELEGATION_IN_EXPECT_CLASS: KtDiagnosticFactory0 = KtDiagnosticFactory0("IMPLEMENTATION_BY_DELEGATION_IN_EXPECT_CLASS", ERROR, SourceElementPositioningStrategies.DEFAULT, KtDelegatedSuperTypeEntry::class)
