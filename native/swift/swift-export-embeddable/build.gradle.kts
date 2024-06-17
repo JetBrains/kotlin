@@ -67,10 +67,7 @@ dependencies {
 // FIXME: Stop embedding Analysis API after KT-61404
 fun validateSwiftExportEmbeddable(swiftExportEmbeddableJarTask: TaskProvider<out org.gradle.jvm.tasks.Jar>) {
     val swiftExportEmbeddableJar = files(swiftExportEmbeddableJarTask)
-    val swiftExportActionRuntimeClasspath = files(
-        configurations.runtimeClasspath,
-        swiftExportEmbeddableJar,
-    )
+    val swiftExportActionRuntimeClasspath = files(configurations.runtimeClasspath)
     val proguardedSwiftExportEmbeddableJar = layout.buildDirectory.file("proguard/output.jar")
 
     /**
@@ -80,6 +77,7 @@ fun validateSwiftExportEmbeddable(swiftExportEmbeddableJarTask: TaskProvider<out
     val proguard = tasks.register<CacheableProguardTask>("validateSwiftExportEmbeddableHasProperDependenciesInTheClasspath") {
         outputs.cacheIf { false }
         outputs.upToDateWhen { false }
+        dependsOn(swiftExportActionRuntimeClasspath)
         dependsOn(swiftExportEmbeddableJar)
         javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8))
         configuration("swift-export-embeddable.pro")
@@ -125,9 +123,11 @@ fun validateSwiftExportEmbeddable(swiftExportEmbeddableJarTask: TaskProvider<out
      */
     tasks.register("validateNoDuplicatesInRuntimeClasspath") {
         dependsOn(swiftExportActionRuntimeClasspath)
+        dependsOn(swiftExportEmbeddableJar)
+
         doLast {
             val duplicates = mutableMapOf<String, MutableList<File>>()
-            swiftExportActionRuntimeClasspath.forEach { jar ->
+            (swiftExportActionRuntimeClasspath + swiftExportEmbeddableJar).forEach { jar ->
                 jar.forEachClassFileInAJar { entry ->
                     duplicates.getOrPut(entry.name, ::mutableListOf).add(jar)
                 }
