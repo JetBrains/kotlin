@@ -64,11 +64,14 @@ internal object KDocReferenceResolver {
         contextElement: KtElement,
     ): Collection<KaSymbol> {
         with(analysisSession) {
-            val fullSymbolsResolved = resolveKdocFqName(fullFqName, contextElement)
+            //ensure file context is provided for "non-physical" code as well
+            val contextDeclarationOrSelf = PsiTreeUtil.getContextOfType(contextElement, KtDeclaration::class.java, false)
+                ?: contextElement
+            val fullSymbolsResolved = resolveKdocFqName(fullFqName, contextDeclarationOrSelf)
             if (selectedFqName == fullFqName) return fullSymbolsResolved.mapTo(mutableSetOf()) { it.symbol }
             if (fullSymbolsResolved.isEmpty()) {
                 val parent = fullFqName.parent()
-                return resolveKdocFqName(analysisSession, selectedFqName, parent, contextElement)
+                return resolveKdocFqName(analysisSession, selectedFqName, parent, contextDeclarationOrSelf)
             }
             val goBackSteps = fullFqName.pathSegments().size - selectedFqName.pathSegments().size
             check(goBackSteps > 0) {
@@ -161,7 +164,7 @@ internal object KDocReferenceResolver {
         fqName: FqName,
         contextElement: KtElement,
     ): Collection<ResolveResult> {
-        val owner = contextElement.parentOfType<KtDeclaration>() ?: return emptyList()
+        val owner = contextElement.parentOfType<KtDeclaration>(withSelf = true) ?: return emptyList()
         if (fqName.pathSegments().singleOrNull()?.asString() == "this") {
             if (owner is KtCallableDeclaration && owner.receiverTypeReference != null) {
                 val symbol = owner.symbol as? KaCallableSymbol ?: return emptyList()
@@ -246,11 +249,7 @@ internal object KDocReferenceResolver {
     }
 
     private fun KaSession.getSymbolsFromPackageScope(fqName: FqName, contextElement: KtElement): Collection<KaDeclarationSymbol> {
-        //ensure file context is provided for "non-physical" code as well
-        val contextDeclarationOrSelf = PsiTreeUtil.getContextOfType(contextElement, KtDeclaration::class.java, false)
-            ?: contextElement
-
-        val containingFile = contextDeclarationOrSelf.containingKtFile
+        val containingFile = contextElement.containingKtFile
         val packageFqName = containingFile.packageFqName
         val packageSymbol = findPackage(packageFqName) ?: return emptyList()
         val packageScope = packageSymbol.packageScope
