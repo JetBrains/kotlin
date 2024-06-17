@@ -15,18 +15,6 @@ typealias K2NativeCompilerArguments = MovedK2NativeCompilerArguments
 
 @Deprecated(
         "Moved to new 'org.jetbrains.kotlin.cli.common.arguments' package",
-        ReplaceWith("EMBED_BITCODE_FLAG", "org.jetbrains.kotlin.cli.common.arguments.EMBED_BITCODE_FLAG")
-)
-const val EMBED_BITCODE_FLAG = MovedK2NativeCompilerArguments.EMBED_BITCODE_FLAG
-
-@Deprecated(
-        "Moved to new 'org.jetbrains.kotlin.cli.common.arguments' package",
-        ReplaceWith("EMBED_BITCODE_MARKER_FLAG", "org.jetbrains.kotlin.cli.common.arguments.EMBED_BITCODE_MARKER_FLAG")
-)
-const val EMBED_BITCODE_MARKER_FLAG = MovedK2NativeCompilerArguments.EMBED_BITCODE_MARKER_FLAG
-
-@Deprecated(
-        "Moved to new 'org.jetbrains.kotlin.cli.common.arguments' package",
         ReplaceWith("STATIC_FRAMEWORK_FLAG", "org.jetbrains.kotlin.cli.common.arguments.STATIC_FRAMEWORK_FLAG")
 )
 const val STATIC_FRAMEWORK_FLAG = MovedK2NativeCompilerArguments.STATIC_FRAMEWORK_FLAG

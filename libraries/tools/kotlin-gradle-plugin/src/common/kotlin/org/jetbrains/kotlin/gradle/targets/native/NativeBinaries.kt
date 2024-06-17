@@ -284,35 +284,29 @@ class Framework(
         get() = NativeOutputKind.FRAMEWORK
 
     // Embedding bitcode.
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE)
     /**
      * Embed bitcode for the framework or not. See [BitcodeEmbeddingMode].
      */
     val embedBitcodeMode = project.objects.property(org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode::class.java)
 
-    @Deprecated("Use 'embedBitcodeMode' property instead.")
-    var embedBitcode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
-        get() = embedBitcodeMode.get()
-        set(value) {
-            embedBitcodeMode.set(value)
-        }
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE)
+    var embedBitcode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode = org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.DISABLE
 
     /**
      * Enable or disable embedding bitcode for the framework. See [BitcodeEmbeddingMode].
      */
+    @Suppress("DEPRECATION")
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, replaceWith = ReplaceWith(""))
     fun embedBitcode(mode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode) {
         embedBitcodeMode.set(mode)
     }
 
     /**
-     * Enable or disable embedding bitcode for the framework.
-     * The parameter [mode] is one of the following string constants:
-     *
-     *     disable - Don't embed LLVM IR bitcode.
-     *     bitcode - Embed LLVM IR bitcode as data.
-     *               Has the same effect as the -Xembed-bitcode command line option.
-     *     marker - Embed placeholder LLVM IR data as a marker.
-     *              Has the same effect as the -Xembed-bitcode-marker command line option.
+     * [embedBitcode] is deprecated and has no effect
      */
+    @Suppress("DEPRECATION")
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, replaceWith = ReplaceWith(""))
     fun embedBitcode(mode: String) = embedBitcode(org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.valueOf(mode.toUpperCaseAsciiOnly()))
 
     /**
@@ -320,6 +314,7 @@ class Framework(
      */
     var isStatic = false
 
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE)
     object BitcodeEmbeddingMode {
         val DISABLE = org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.DISABLE
         val BITCODE = org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.BITCODE

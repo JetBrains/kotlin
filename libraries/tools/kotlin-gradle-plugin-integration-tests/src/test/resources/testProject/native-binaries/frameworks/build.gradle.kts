@@ -25,7 +25,6 @@ kotlin {
                 export(project(":exported"))
             }
             framework("custom") {
-                embedBitcode("disable")
                 linkerOpts = mutableListOf("-L.")
                 freeCompilerArgs = mutableListOf("-Xtime")
                 isStatic = true

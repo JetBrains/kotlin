@@ -1368,6 +1368,9 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode :
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
 }
 
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/NativeBinaryTypesKt {
+}
+
 public final class org/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType : java/lang/Enum, org/gradle/api/Named {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType$Companion;
 	public static final field DEBUG Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;

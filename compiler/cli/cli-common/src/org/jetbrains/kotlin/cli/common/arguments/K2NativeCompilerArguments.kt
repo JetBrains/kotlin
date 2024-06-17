@@ -195,12 +195,6 @@ By default caches will be placed into the kotlin-native system cache directory."
     @Argument(value="-Xcheck-dependencies", deprecatedName = "--check_dependencies", description = "Check dependencies and download the missing ones.")
     var checkDependencies: Boolean = false
 
-    @Argument(value = EMBED_BITCODE_FLAG, description = "Embed LLVM IR bitcode as data.")
-    var embedBitcode: Boolean = false
-
-    @Argument(value = EMBED_BITCODE_MARKER_FLAG, description = "Embed placeholder LLVM IR data as a marker.")
-    var embedBitcodeMarker: Boolean = false
-
     @Argument(value = "-Xemit-lazy-objc-header", description = "")
     var emitLazyObjCHeader: String? = null
 
@@ -489,8 +483,6 @@ The default value is 1."""
     override fun copyOf(): Freezable = copyK2NativeCompilerArguments(this, K2NativeCompilerArguments())
 
     companion object {
-        const val EMBED_BITCODE_FLAG = "-Xembed-bitcode"
-        const val EMBED_BITCODE_MARKER_FLAG = "-Xembed-bitcode-marker"
         const val STATIC_FRAMEWORK_FLAG = "-Xstatic-framework"
         const val INCLUDE_ARG = "-Xinclude"
         const val CACHED_LIBRARY = "-Xcached-library"
