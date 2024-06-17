@@ -36,8 +36,8 @@ fun KotlinTypeFacade.analyzeRefinedCallShape(call: FirFunctionCall, reporter: In
         return null
     }
 
-    val newSchema: PluginDataFrameSchema = call.interpreterName(session)?.let {
-        when (it) {
+    val newSchema: PluginDataFrameSchema = call.interpreterName(session)?.let { name ->
+        when (name) {
             "toDataFrameDsl" -> {
                 val list = call.argumentList as FirResolvedArgumentList
                 val lambda = (list.arguments.singleOrNull() as? FirAnonymousFunctionExpression)?.anonymousFunction
@@ -85,7 +85,7 @@ fun KotlinTypeFacade.analyzeRefinedCallShape(call: FirFunctionCall, reporter: In
                     PluginDataFrameSchema(emptyList())
                 }
             }
-            else -> it.load<Interpreter<*>>().let { processor ->
+            else -> name.load<Interpreter<*>>().let { processor ->
                 val dataFrameSchema = interpret(call, processor, reporter = reporter)
                     .let {
                         val value = it?.value
