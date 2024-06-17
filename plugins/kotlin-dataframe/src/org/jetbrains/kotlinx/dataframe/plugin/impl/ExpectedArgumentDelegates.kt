@@ -70,5 +70,11 @@ fun <T> AbstractInterpreter<T>.kproperty(
 
 internal fun <T> AbstractInterpreter<T>.string(
     name: ArgumentName? = null
-): ExpectedArgumentProvider<String
-    > = arg(name, lens = Interpreter.Value)
+): ExpectedArgumentProvider<String> =
+    arg(name, lens = Interpreter.Value)
+
+internal fun <T> AbstractInterpreter<T>.dsl(
+    name: ArgumentName? = null
+): ExpectedArgumentProvider<(Any, Map<String, Interpreter.Success<Any?>>) -> Unit> =
+    arg(name, lens = Interpreter.Dsl, defaultValue = Present(value = {_, _ -> }))
+

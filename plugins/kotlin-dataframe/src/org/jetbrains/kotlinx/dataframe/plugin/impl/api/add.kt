@@ -9,6 +9,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
 import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.simpleColumnOf
+import org.jetbrains.kotlinx.dataframe.plugin.impl.dsl
 import org.jetbrains.kotlinx.dataframe.plugin.impl.string
 import org.jetbrains.kotlinx.dataframe.plugin.impl.type
 
@@ -48,11 +49,11 @@ class AddDslApproximation(val columns: MutableList<SimpleCol>)
 
 class AddWithDsl : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
-    val Arguments.body: (Any) -> Unit by arg(lens = Interpreter.Dsl)
+    val Arguments.body by dsl()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         val addDsl = AddDslApproximation(receiver.columns().toMutableList())
-        body(addDsl)
+        body(addDsl, emptyMap())
         return PluginDataFrameSchema(addDsl.columns)
     }
 }

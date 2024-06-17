@@ -206,7 +206,8 @@ fun <T> KotlinTypeFacade.interpret(
             }
 
             is Interpreter.Dsl -> {
-                { receiver: Any ->
+                { receiver: Any, dslArguments: Map<String, Interpreter.Success<Any?>> ->
+                    val map = mapOf("dsl" to Interpreter.Success(receiver)) + dslArguments
                     (it.expression as FirAnonymousFunctionExpression)
                         .anonymousFunction.body!!
                         .statements.filterIsInstance<FirFunctionCall>()
@@ -215,7 +216,7 @@ fun <T> KotlinTypeFacade.interpret(
                             interpret(
                                 call,
                                 schemaProcessor,
-                                mapOf("dsl" to Interpreter.Success(receiver)),
+                                map,
                                 reporter
                             )
                         }

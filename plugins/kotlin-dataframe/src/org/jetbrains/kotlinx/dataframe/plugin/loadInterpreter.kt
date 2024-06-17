@@ -72,6 +72,9 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsAtAnyDepth0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsOf0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsOf1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FrameCols0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrame
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameDefault
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameDsl
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameFrom
 
 internal fun FirFunctionCall.loadInterpreter(session: FirSession): Interpreter<*>? {
@@ -171,6 +174,9 @@ internal inline fun <reified T> String.load(): T {
         "ColsOf1" -> ColsOf1()
         "ColsAtAnyDepth0" -> ColsAtAnyDepth0()
         "FrameCols0" -> FrameCols0()
+        "toDataFrameDsl" -> ToDataFrameDsl()
+        "toDataFrame" -> ToDataFrame()
+        "toDataFrameDefault" -> ToDataFrameDefault()
         else -> error("$this")
     } as T
 }

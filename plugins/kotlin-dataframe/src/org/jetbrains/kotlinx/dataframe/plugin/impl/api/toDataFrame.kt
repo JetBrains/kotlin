@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractInterpreter
+import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractSchemaModificationInterpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
 import org.jetbrains.kotlinx.dataframe.plugin.impl.Interpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
@@ -54,26 +55,56 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
+import org.jetbrains.kotlinx.dataframe.plugin.impl.dsl
 import org.jetbrains.kotlinx.dataframe.plugin.impl.simpleColumnOf
 import org.jetbrains.kotlinx.dataframe.plugin.impl.type
 import java.util.*
 
+class ToDataFrameDsl : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: FirExpression? by arg(lens = Interpreter.Id)
+    val Arguments.body by dsl()
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        val dsl = CreateDataFrameDslImplApproximation()
+        body(dsl, mapOf("explicitReceiver" to Interpreter.Success(receiver)))
+        return PluginDataFrameSchema(dsl.columns)
+    }
+}
+
+class ToDataFrame : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: FirExpression? by arg(lens = Interpreter.Id)
+    val Arguments.maxDepth: Number by arg(defaultValue = Present(DEFAULT_MAX_DEPTH))
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        return toDataFrame(maxDepth.toInt(), receiver, TraverseConfiguration())
+    }
+}
+
+class ToDataFrameDefault : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: FirExpression? by arg(lens = Interpreter.Id)
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        return toDataFrame(DEFAULT_MAX_DEPTH, receiver, TraverseConfiguration())
+    }
+}
+
+private const val DEFAULT_MAX_DEPTH = 0
+
 class Properties0 : AbstractInterpreter<Unit>() {
     val Arguments.dsl: CreateDataFrameDslImplApproximation by arg()
-    val Arguments.call: FirFunctionCall by arg()
+    val Arguments.explicitReceiver: FirExpression? by arg()
     val Arguments.maxDepth: Int by arg()
-    val Arguments.body: (Any) -> Unit by arg(lens = Interpreter.Dsl, defaultValue = Present(value = {}))
+    val Arguments.body by dsl()
 
     override fun Arguments.interpret() {
         dsl.configuration.maxDepth = maxDepth
-        body(dsl.configuration.traverseConfiguration)
-        val schema = toDataFrame(dsl.configuration.maxDepth, call, dsl.configuration.traverseConfiguration)
+        body(dsl.configuration.traverseConfiguration, emptyMap())
+        val schema = toDataFrame(dsl.configuration.maxDepth, explicitReceiver, dsl.configuration.traverseConfiguration)
         dsl.columns.addAll(schema.columns())
     }
 }
 
 class CreateDataFrameConfiguration {
-    var maxDepth = 0
+    var maxDepth = DEFAULT_MAX_DEPTH
     var traverseConfiguration: TraverseConfiguration = TraverseConfiguration()
 }
 
@@ -123,7 +154,7 @@ class Exclude1 : AbstractInterpreter<Unit>() {
 @OptIn(SymbolInternals::class)
 internal fun KotlinTypeFacade.toDataFrame(
     maxDepth: Int,
-    call: FirFunctionCall,
+    explicitReceiver: FirExpression?,
     traverseConfiguration: TraverseConfiguration
 ): PluginDataFrameSchema {
     fun ConeKotlinType.isValueType() =
@@ -238,7 +269,7 @@ internal fun KotlinTypeFacade.toDataFrame(
             }
     }
 
-    val receiver = call.explicitReceiver ?: return PluginDataFrameSchema(emptyList())
+    val receiver = explicitReceiver ?: return PluginDataFrameSchema(emptyList())
     val arg = receiver.resolvedType.typeArguments.firstOrNull() ?: return PluginDataFrameSchema(emptyList())
     return when {
         arg.isStarProjection -> PluginDataFrameSchema(emptyList())
