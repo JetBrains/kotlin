@@ -21,13 +21,11 @@ internal class KaLibraryModuleImpl(
     override val contentScope: GlobalSearchScope,
     override val targetPlatform: TargetPlatform,
     override val project: Project,
-    private val binaryRoots: Collection<Path>,
+    override val binaryRoots: Collection<Path>,
     override val libraryName: String,
     override val librarySources: KaLibrarySourceModule?,
 ) : KaLibraryModule, KtModuleWithPlatform {
     override val transitiveDependsOnDependencies: List<KaModule> by lazy {
         computeTransitiveDependsOnDependencies(directDependsOnDependencies)
     }
-
-    override fun getBinaryRoots(): Collection<Path> = binaryRoots
 }

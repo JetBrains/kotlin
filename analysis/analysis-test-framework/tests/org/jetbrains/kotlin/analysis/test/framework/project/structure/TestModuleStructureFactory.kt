@@ -82,7 +82,7 @@ object TestModuleStructureFactory {
 
             val dependencyBinaryRoots = testModule.regularDependencies.flatMap { dependency ->
                 val libraryModule = existingModules.getValue(dependency.moduleName).ktModule as? KaLibraryModule
-                libraryModule?.getBinaryRoots().orEmpty()
+                libraryModule?.binaryRoots.orEmpty()
             }
 
             val ktTestModule = testServices
@@ -104,7 +104,7 @@ object TestModuleStructureFactory {
      */
     private fun KaModule.addToLibraryCacheIfNeeded(libraryCache: LibraryCache) {
         if (this is KaBinaryModule) {
-            libraryCache.put(getBinaryRoots().toSet(), this)
+            libraryCache.put(binaryRoots.toSet(), this)
         }
     }
 

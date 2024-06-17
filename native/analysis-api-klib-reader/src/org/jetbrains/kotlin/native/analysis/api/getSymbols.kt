@@ -96,7 +96,7 @@ private operator fun KlibDeclarationAddress.contains(symbol: KaDeclarationSymbol
     val symbolLibraryModule = symbol.containingModule as? KaLibraryModule ?: return false
 
     /* check if symbol comes from the same klib library: symbolKlibSourceFile not known -> checking library module */
-    if (libraryPath !in symbolLibraryModule.getBinaryRoots()) {
+    if (libraryPath !in symbolLibraryModule.binaryRoots) {
         return false
     }
 

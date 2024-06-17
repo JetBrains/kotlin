@@ -141,14 +141,12 @@ class KaLibraryModuleByCompilerConfiguration(
     project: Project,
     testModule: TestModule,
     psiFiles: List<PsiFile>,
-    private val binaryRoots: List<Path>,
+    override val binaryRoots: List<Path>,
     testServices: TestServices
 ) : KtModuleByCompilerConfiguration(project, testModule, psiFiles, testServices), KaLibraryModule {
     override val ktModule: KaModule get() = this
     override val libraryName: String get() = testModule.name
     override val librarySources: KaLibrarySourceModule? get() = null
-
-    override fun getBinaryRoots(): Collection<Path> = binaryRoots
 
     override val contentScope: GlobalSearchScope =
         GlobalSearchScope.filesScope(project, psiFiles.map { it.virtualFile })
@@ -183,7 +181,7 @@ private class LibraryByRoots(
     override val transitiveDependsOnDependencies: List<KaModule> get() = emptyList()
     override val directFriendDependencies: List<KaModule> get() = emptyList()
     override val targetPlatform: TargetPlatform get() = parentModule.targetPlatform
-    override fun getBinaryRoots(): Collection<Path> = roots
+    override val binaryRoots: Collection<Path> get() = roots
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

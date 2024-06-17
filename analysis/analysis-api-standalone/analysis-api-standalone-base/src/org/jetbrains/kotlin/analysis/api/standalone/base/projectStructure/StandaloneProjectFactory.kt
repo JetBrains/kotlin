@@ -421,7 +421,7 @@ object StandaloneProjectFactory {
     private fun KaBinaryModule.getJavaRoots(
         environment: KotlinCoreProjectEnvironment,
     ): List<JavaRoot> {
-        return getVirtualFilesForLibraryRoots(getBinaryRoots(), environment).map { root ->
+        return getVirtualFilesForLibraryRoots(binaryRoots, environment).map { root ->
             JavaRoot(root, JavaRoot.RootType.BINARY)
         }
     }

@@ -50,7 +50,7 @@ import kotlin.io.path.isDirectory
  * @return The returned set has a stable order
  */
 public fun KaLibraryModule.readKlibDeclarationAddresses(): Set<KlibDeclarationAddress>? {
-    val binary = getBinaryRoots().singleOrNull() ?: return null
+    val binary = binaryRoots.singleOrNull() ?: return null
     if (!(binary.extension == "klib" || binary.isDirectory())) return null
     return readKlibDeclarationAddresses(binary)
 }

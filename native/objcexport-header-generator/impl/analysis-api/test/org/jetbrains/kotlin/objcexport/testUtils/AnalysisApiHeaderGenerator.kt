@@ -41,7 +41,7 @@ object AnalysisApiHeaderGenerator : HeaderGenerator {
         return analyze(module) {
             val exportedLibraries = module.withClosure<KaModule> { currentModule -> currentModule.allDirectDependencies().toList() }
                 .filterIsInstance<KaLibraryModule>()
-                .filter { libraryModule -> libraryModule.getBinaryRoots().first() in configuration.exportedDependencies }
+                .filter { libraryModule -> libraryModule.binaryRoots.first() in configuration.exportedDependencies }
                 .toSet()
 
             val exportedLibraryFiles = exportedLibraries

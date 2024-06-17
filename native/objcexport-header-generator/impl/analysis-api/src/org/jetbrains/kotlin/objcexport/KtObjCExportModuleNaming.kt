@@ -57,7 +57,7 @@ internal object KtKlibObjCExportModuleNaming : KtObjCExportModuleNaming {
         This information is theoretically available already (as also used by the Analysis Api), but not yet accessible.
          */
         if (module !is KaLibraryModule) return null
-        val binaryRoot = module.getBinaryRoots().singleOrNull() ?: return null
+        val binaryRoot = module.binaryRoots.singleOrNull() ?: return null
         if (!binaryRoot.isDirectory() && binaryRoot.extension != "klib") return null
         val library = runCatching { ToolingSingleFileKlibResolveStrategy.tryResolve(KonanFile(binaryRoot), DummyLogger) }
             .getOrElse { error -> error.printStackTrace(); return null } ?: return null

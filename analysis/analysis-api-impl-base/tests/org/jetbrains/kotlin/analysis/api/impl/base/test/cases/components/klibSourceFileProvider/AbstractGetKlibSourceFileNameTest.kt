@@ -41,7 +41,7 @@ abstract class AbstractGetKlibSourceFileNameTest : AbstractAnalysisApiBasedTest(
         actual.appendLine("klib declarations:")
 
         analyze(libraryModule) {
-            val binaryRoot = libraryModule.getBinaryRoots().singleOrNull() ?: fail("Expected single binary root")
+            val binaryRoot = libraryModule.binaryRoots.singleOrNull() ?: fail("Expected single binary root")
             val library = ToolingSingleFileKlibResolveStrategy.tryResolve(KonanFile(binaryRoot), DummyLogger) ?: fail("Failed loading klib")
             val headerProto = parseModuleHeader(library.moduleHeaderData)
 

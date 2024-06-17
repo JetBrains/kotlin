@@ -132,10 +132,10 @@ public interface KaBinaryModule : KaModule {
      *
      * It should be consistent with [contentScope], so (pseudo-Kotlin):
      * ```
-     * library.contentScope.contains(file) <=> library.getBinaryRoots().listRecursively().contains(file)
+     * library.contentScope.contains(file) <=> library.binaryRoots.listRecursively().contains(file)
      * ```
      */
-    public fun getBinaryRoots(): Collection<Path>
+    public val binaryRoots: Collection<Path>
 }
 
 /**
@@ -190,7 +190,7 @@ public interface KaLibrarySourceModule : KaModule {
 
 /**
  * A module which contains kotlin [builtins](https://kotlinlang.org/spec/built-in-types-and-their-semantics.html) for a specific platform.
- * Kotlin builtins usually reside in the compiler, so [contentScope] and [getBinaryRoots] are empty.
+ * Kotlin builtins usually reside in the compiler, so [contentScope] and [binaryRoots] are empty.
  */
 @KaPlatformInterface
 public class KaBuiltinsModule(
@@ -202,7 +202,7 @@ public class KaBuiltinsModule(
     override val transitiveDependsOnDependencies: List<KaModule> get() = emptyList()
     override val directFriendDependencies: List<KaModule> get() = emptyList()
     override val contentScope: GlobalSearchScope get() = GlobalSearchScope.EMPTY_SCOPE
-    override fun getBinaryRoots(): Collection<Path> = emptyList()
+    override val binaryRoots: Collection<Path> get() = emptyList()
 
     @KaExperimentalApi
     override val moduleDescription: String get() = "Builtins for $targetPlatform"

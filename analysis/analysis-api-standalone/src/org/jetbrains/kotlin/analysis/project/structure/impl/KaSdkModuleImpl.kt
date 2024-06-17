@@ -20,12 +20,10 @@ internal class KaSdkModuleImpl(
     override val contentScope: GlobalSearchScope,
     override val targetPlatform: TargetPlatform,
     override val project: Project,
-    private val binaryRoots: Collection<Path>,
+    override val binaryRoots: Collection<Path>,
     override val sdkName: String,
 ) : KaSdkModule, KtModuleWithPlatform {
     override val transitiveDependsOnDependencies: List<KaModule> by lazy {
         computeTransitiveDependsOnDependencies(directDependsOnDependencies)
     }
-
-    override fun getBinaryRoots(): Collection<Path> = binaryRoots
 }

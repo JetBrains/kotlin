@@ -18,11 +18,9 @@ class KaLibraryModuleImpl(
     override val targetPlatform: TargetPlatform,
     override val contentScope: GlobalSearchScope,
     override val project: Project,
-    private val binaryRoots: Collection<Path>,
+    override val binaryRoots: Collection<Path>,
     override var librarySources: KaLibrarySourceModule?,
 ) : KtModuleWithModifiableDependencies(), KaLibraryModule {
-    override fun getBinaryRoots(): Collection<Path> = binaryRoots
-
     override val directRegularDependencies: MutableList<KaModule> = mutableListOf()
     override val directDependsOnDependencies: MutableList<KaModule> = mutableListOf()
     override val directFriendDependencies: MutableList<KaModule> = mutableListOf()

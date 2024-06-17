@@ -136,7 +136,7 @@ class LLFirStandaloneLibrarySymbolProviderFactory(private val project: Project) 
     private fun LLFirModuleData.getLibraryKLibs(): List<KotlinLibrary> {
         val ktLibraryModule = ktModule as? KaLibraryModule ?: return emptyList()
 
-        return ktLibraryModule.getBinaryRoots()
+        return ktLibraryModule.binaryRoots
             .filter { it.isDirectory() || it.extension == KLIB_FILE_EXTENSION }
             .mapNotNull { it.tryResolveAsKLib() }
     }
