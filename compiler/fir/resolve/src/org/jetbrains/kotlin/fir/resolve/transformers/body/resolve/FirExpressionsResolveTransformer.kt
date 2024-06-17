@@ -104,12 +104,11 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             is FirThisReference -> {
                 val labelName = callee.labelName
                 val allMatchingImplicitReceivers = implicitReceiverStack[labelName]
-                val implicitReceiver = allMatchingImplicitReceivers.ifMoreThanOne { areAlmostAllAnonymousFunctions ->
-                    val diagnostic = clashingLabelDiagnostic(labelName, areAlmostAllAnonymousFunctions)
+                val implicitReceiver = allMatchingImplicitReceivers.singleOrDiagnosticFor(labelName) { diagnostic ->
                     qualifiedAccessExpression.resultType = ConeErrorType(diagnostic)
                     callee.replaceDiagnostic(diagnostic)
 
-                    if (!areAlmostAllAnonymousFunctions) {
+                    if (diagnostic.kind == DiagnosticKind.AmbiguousLabel) {
                         return qualifiedAccessExpression
                     } else {
                         allMatchingImplicitReceivers.lastOrNull()

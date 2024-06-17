@@ -19,22 +19,22 @@ abstract class ImplicitReceiverStack : Iterable<ImplicitReceiverValue<*>> {
     abstract fun receiversAsReversed(): List<ImplicitReceiverValue<*>>
 }
 
-/**
- * If there is more than one candidate, calls [block] with the boolean
- * value denoting if all or all but one candidate come from calls with lambdas.
- */
-inline fun Set<ImplicitReceiverValue<*>>.ifMoreThanOne(
-    block: (Boolean) -> ImplicitReceiverValue<*>?,
-) = when {
+inline fun Set<ImplicitReceiverValue<*>>.singleOrDiagnosticFor(
+    labelName: String?,
+    block: (ConeSimpleDiagnostic) -> ImplicitReceiverValue<*>?,
+): ImplicitReceiverValue<*>? {
     // KT-69102: we may encounter a bug with duplicated context receivers, and it wasn't
     // obvious how to fix it
-    distinctBy { if (it.isContextReceiver) it.implicitScope else it }.count() == 1 -> this.firstOrNull()
-    else -> block(count { it.boundSymbol is FirAnonymousFunctionSymbol } >= size - 1)
-}
+    if (distinctBy { if (it.isContextReceiver) it.implicitScope else it }.count() == 1) {
+        return this.firstOrNull()
+    }
 
-fun clashingLabelDiagnostic(labelName: String?, areAlmostAllAnonymousFunctions: Boolean): ConeSimpleDiagnostic {
-    return when {
+    val areAlmostAllAnonymousFunctions = count { it.boundSymbol is FirAnonymousFunctionSymbol } >= size - 1
+
+    val diagnostic = when {
         areAlmostAllAnonymousFunctions -> ConeSimpleDiagnostic("Clashing this@$labelName", DiagnosticKind.LabelNameClash)
         else -> ConeSimpleDiagnostic("Ambiguous this@$labelName", DiagnosticKind.AmbiguousLabel)
     }
+
+    return block(diagnostic)
 }
