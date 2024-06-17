@@ -423,7 +423,7 @@ class TestProject(
 
         gradleSettingToUpdate.append(
             """
-                
+
             include(":$newSubmoduleName")
             """.trimIndent()
         )
@@ -444,14 +444,14 @@ class TestProject(
         if (settingsGradle.exists()) {
             settingsGradle.append(
                 """
-                
+
                     includeBuild '$newProjectName'
                 """.trimIndent()
             )
         } else {
             settingsGradleKts.append(
                 """
-                    
+
                     includeBuild("$newProjectName")
                 """.trimIndent()
             )
@@ -632,7 +632,7 @@ private fun Path.addDependencyRepositoriesToBuildScript(
 
 private fun String.wrapWithAllProjectBlock(): String =
     """
-    |    
+    |
     |allprojects {
     |    $this
     |}
@@ -662,7 +662,7 @@ internal fun Path.addPluginManagementToSettings() {
             if (!it.contains("pluginManagement {")) {
                 """
                 |$DEFAULT_GROOVY_SETTINGS_FILE
-                |                  
+                |
                 |$it
                 |""".trimMargin()
             } else {
@@ -734,7 +734,7 @@ internal fun Path.addDependencyManagementToSettings(
                         additionalDependencyRepositories,
                         localRepo
                     )
-                } 
+                }
                 """.trimMargin()
             } else {
                 it
@@ -771,14 +771,14 @@ private fun TestProject.agreeToBuildScanService() {
     val settingsFile = if (Files.exists(settingsGradle)) settingsGradle else settingsGradleKts
     settingsFile.append(
         """
-            
-        gradleEnterprise {
+
+        develocity {
             buildScan {
                 termsOfServiceUrl = "https://gradle.com/terms-of-service"
                 termsOfServiceAgree = "yes"
             }
         }
-            
+
         """.trimIndent()
     )
 }
@@ -801,7 +801,7 @@ private fun TestProject.setupNonDefaultJdk(pathToJdk: File) {
         """
         |org.gradle.java.home=${pathToJdk.absolutePath.normalizePath()}
         |
-        |$it        
+        |$it
         """.trimMargin()
     }
 }

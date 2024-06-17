@@ -18,7 +18,7 @@ import kotlin.io.path.*
 import kotlin.test.assertTrue
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.testbase.TestVersions.ThirdPartyDependencies.GRADLE_ENTERPRISE_PLUGIN_VERSION
+import org.jetbrains.kotlin.gradle.testbase.TestVersions.ThirdPartyDependencies.DEVELOCITY_PLUGIN_VERSION
 import org.jetbrains.kotlin.gradle.util.BuildOperationRecordImpl
 import org.jetbrains.kotlin.gradle.util.readJsonReport
 import java.nio.file.Files
@@ -503,7 +503,7 @@ class BuildReportsIT : KGPBaseTest() {
                         }
 
                         dependencies {
-                            classpath 'com.gradle:gradle-enterprise-gradle-plugin:$GRADLE_ENTERPRISE_PLUGIN_VERSION'
+                            classpath 'com.gradle:develocity-gradle-plugin:$DEVELOCITY_PLUGIN_VERSION'
                         }
                     }
 

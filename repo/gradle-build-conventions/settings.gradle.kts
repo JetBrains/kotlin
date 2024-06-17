@@ -16,7 +16,7 @@ pluginManagement {
 
 plugins {
     id("build-cache")
-    id("gradle-enterprise")
+    id("develocity")
     id("jvm-toolchain-provisioning")
     id("kotlin-daemon-config")
 }
