@@ -35,18 +35,6 @@ interface KotlinTypeFacade {
 
     fun Marker.type() = type
 
-    val anyDataFrame get() = ConeClassLikeTypeImpl(
-        ConeClassLikeLookupTagImpl(Names.DF_CLASS_ID),
-        typeArguments = arrayOf(session.builtinTypes.anyType.type),
-        isNullable = false
-    ).wrap()
-
-    val anyRow get() = ConeClassLikeTypeImpl(
-        ConeClassLikeLookupTagImpl(Names.DATA_ROW_CLASS_ID),
-        typeArguments = arrayOf(session.builtinTypes.anyType.type),
-        isNullable = false
-    ).wrap()
-
     fun from(type: KType): Marker {
         return Marker(fromImpl(type))
     }
