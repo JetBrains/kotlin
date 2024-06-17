@@ -53,8 +53,6 @@ val KotlinTypeFacade.toPluginDataFrameSchema: DataFrameSchema.() -> PluginDataFr
     )
 }
 
-
-
 val KotlinTypeFacade.deserializeToPluginDataFrameSchema: SerializableSchema.() -> PluginDataFrameSchema
     get() =  {
     PluginDataFrameSchema(
@@ -155,7 +153,6 @@ private fun from(type: KType): SerializableKType {
     return serializableKType
 }
 
-
 private fun List<KTypeProjection>.mapToConeTypeProjection(): List<TypeProjection> = List(size) {
     val typeProjection = get(it)
     val type = typeProjection.type
@@ -188,7 +185,6 @@ private fun List<TypeProjection>.mapToConeTypeProjection(): Array<out ConeTypePr
         }
     }
 }
-
 
 fun KType.from(): String {
     val classifier = classifier ?: error("")
