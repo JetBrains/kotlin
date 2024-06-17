@@ -96,17 +96,16 @@ private fun KotlinTarget.configureKotlinTestDependency(
     }
 }
 
-internal fun DependencySet.addKotlinTestWithCapability(@Suppress("UNUSED_PARAMETER") dh: DependencyHandler) {
-    val testRootDependency = allNonProjectDependencies()
-        .singleOrNull { it.isKotlinTestRootDependency }
+internal fun DependencySet.addKotlinTestWithCapability(@Suppress("UNUSED_PARAMETER") dependencyHandler: DependencyHandler) {
+    val testRootDependency = allNonProjectDependencies().singleOrNull { it.isKotlinTestRootDependency }
     if (testRootDependency == null || testRootDependency !is ExternalDependency) return
 
     val testCapability = getKotlinTestCapability(junit)
-    val newDep = testRootDependency.copy()
-    newDep.capabilities{
+    val newTestDependencyWithCapability = testRootDependency.copy()
+    newTestDependencyWithCapability.capabilities {
         it.requireCapability(testCapability)
     }
-    this.add(newDep)
+    this.add(newTestDependencyWithCapability)
 }
 
 private fun Configuration.maybeAddTestDependencyCapability(
@@ -181,7 +180,8 @@ private fun KotlinCompilation<*>.kotlinTestCapabilityForJvmSourceSet(
         }
 }
 
-private fun getKotlinTestCapability(framework: KotlinTestJvmFramework) = "$KOTLIN_MODULE_GROUP:$KOTLIN_TEST_ROOT_MODULE_NAME-framework-$framework"
+private fun getKotlinTestCapability(framework: KotlinTestJvmFramework) =
+    "$KOTLIN_MODULE_GROUP:$KOTLIN_TEST_ROOT_MODULE_NAME-framework-$framework"
 
 internal const val KOTLIN_TEST_ROOT_MODULE_NAME = "kotlin-test"
 
