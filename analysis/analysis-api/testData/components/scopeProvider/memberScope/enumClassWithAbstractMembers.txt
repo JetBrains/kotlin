@@ -169,7 +169,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Enum<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Enum
-  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -224,7 +224,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: KaFileSymbol(enumClassWithAbstractMembers.kt)
       getContainingJvmClassName: test.E
-      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -289,7 +289,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Enum
-      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -303,7 +303,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Enum<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Enum
-  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -346,7 +346,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Enum<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Enum
-  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -389,7 +389,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Enum<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Enum
-  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaKotlinPropertySymbol:
@@ -415,7 +415,7 @@ KaKotlinPropertySymbol:
     typeParameters: []
     getContainingFileSymbol: null
     getContainingJvmClassName: kotlin.Enum
-    getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
+    getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
     deprecationStatus: null
   callableId: kotlin/Enum.name
   contextReceivers: []
@@ -450,7 +450,7 @@ KaKotlinPropertySymbol:
       type: kotlin/Enum<E>
     getContainingFileSymbol: null
     getContainingJvmClassName: kotlin.Enum
-    getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
+    getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -488,7 +488,7 @@ KaKotlinPropertySymbol:
     type: kotlin/Enum<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Enum
-  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getName
@@ -515,7 +515,7 @@ KaKotlinPropertySymbol:
     typeParameters: []
     getContainingFileSymbol: null
     getContainingJvmClassName: kotlin.Enum
-    getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
+    getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
     deprecationStatus: null
   callableId: kotlin/Enum.ordinal
   contextReceivers: []
@@ -550,7 +550,7 @@ KaKotlinPropertySymbol:
       type: kotlin/Enum<E>
     getContainingFileSymbol: null
     getContainingJvmClassName: kotlin.Enum
-    getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
+    getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -588,7 +588,7 @@ KaKotlinPropertySymbol:
     type: kotlin/Enum<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Enum
-  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getOrdinal
@@ -673,7 +673,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Enum<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Enum
-  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaNamedClassSymbol:
@@ -702,7 +702,7 @@ KaNamedClassSymbol:
   typeParameters: []
   visibility: Public
   getContainingFileSymbol: null
-  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   annotationApplicableTargets: null
   deprecationStatus: null
 

@@ -89,7 +89,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Any
-      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -99,7 +99,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Any
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Any
-  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -138,7 +138,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Any
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Any
-  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -177,7 +177,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Any
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Any
-  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaNamedClassSymbol:

@@ -49,7 +49,7 @@ KaNamedFunctionSymbol:
       typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.List
-      getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
@@ -63,5 +63,5 @@ KaNamedFunctionSymbol:
     type: kotlin/collections/List<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.collections.List
-  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null

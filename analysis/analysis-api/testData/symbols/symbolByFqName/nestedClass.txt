@@ -34,6 +34,6 @@ KaNamedClassSymbol:
   ]
   visibility: Public
   getContainingFileSymbol: null
-  getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   annotationApplicableTargets: null
   deprecationStatus: null
