@@ -21,7 +21,7 @@ develocity {
                 uploadInBackground = true
             }
         } else {
-            termsOfUseUrl = "https://gradle.com/terms-of-service"
+            termsOfUseUrl = "https://gradle.com/help/legal-terms-of-use"
             termsOfUseAgree = "yes"
         }
 
