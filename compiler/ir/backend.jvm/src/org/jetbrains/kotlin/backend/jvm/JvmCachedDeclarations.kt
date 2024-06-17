@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
@@ -35,16 +36,16 @@ class JvmCachedDeclarations(
 ) {
     val syntheticAccessorGenerator = JvmSyntheticAccessorGenerator(context)
 
-    private val singletonFieldDeclarations = ConcurrentHashMap<IrSymbolOwner, IrField>()
-    private val staticBackingFields = ConcurrentHashMap<IrProperty, IrField>()
-    private val staticCompanionDeclarations = ConcurrentHashMap<IrSimpleFunction, Pair<IrSimpleFunction, IrSimpleFunction>>()
+    private val singletonFieldDeclarations by irAttribute<IrSymbolOwner, IrField>(false).asMap()
+    private val staticBackingFields by irAttribute<IrProperty, IrField>(false).asMap()
+    private val staticCompanionDeclarations by irAttribute<IrSimpleFunction, Pair<IrSimpleFunction, IrSimpleFunction>>(false).asMap()
 
-    private val defaultImplsMethods = ConcurrentHashMap<IrSimpleFunction, IrSimpleFunction>()
-    private val defaultImplsClasses = ConcurrentHashMap<IrClass, IrClass>()
-    private val defaultImplsRedirections = ConcurrentHashMap<IrSimpleFunction, IrSimpleFunction>()
-    private val defaultImplsOriginalMethods = ConcurrentHashMap<IrSimpleFunction, IrSimpleFunction>()
+    private val defaultImplsMethods by irAttribute<IrSimpleFunction, IrSimpleFunction>(false).asMap()
+    private val defaultImplsClasses by irAttribute<IrClass, IrClass>(false).asMap()
+    private val defaultImplsRedirections by irAttribute<IrSimpleFunction, IrSimpleFunction>(false).asMap()
+    private val defaultImplsOriginalMethods by irAttribute<IrSimpleFunction, IrSimpleFunction>(false).asMap()
 
-    private val repeatedAnnotationSyntheticContainers = ConcurrentHashMap<IrClass, IrClass>()
+    private val repeatedAnnotationSyntheticContainers by irAttribute<IrClass, IrClass>(false).asMap()
 
     fun getFieldForEnumEntry(enumEntry: IrEnumEntry): IrField =
         singletonFieldDeclarations.getOrPut(enumEntry) {
@@ -339,8 +340,8 @@ class CachedFieldsForObjectInstances(
     private val irFactory: IrFactory,
     private val languageVersionSettings: LanguageVersionSettings,
 ) {
-    private val singletonFieldDeclarations = ConcurrentHashMap<IrSymbolOwner, IrField>()
-    private val interfaceCompanionFieldDeclarations = ConcurrentHashMap<IrSymbolOwner, IrField>()
+    private val singletonFieldDeclarations by irAttribute<IrSymbolOwner, IrField>(false).asMap()
+    private val interfaceCompanionFieldDeclarations by irAttribute<IrSymbolOwner, IrField>(false).asMap()
 
     fun getFieldForObjectInstance(singleton: IrClass): IrField =
         singletonFieldDeclarations.getOrPut(singleton) {
