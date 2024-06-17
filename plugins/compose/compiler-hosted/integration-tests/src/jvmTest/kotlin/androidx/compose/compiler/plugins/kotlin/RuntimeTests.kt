@@ -98,3 +98,6 @@ private fun File.commonSourceRoot() = "${absolutePath}/commonTest/kotlin"
 private fun File.jvmSourceRoot() = "${absolutePath}/jvmTest/kotlin"
 private fun File.toSourceFile(sourceRootPath: String) =
     SourceFile(name, readText(), path = absolutePath.removePrefix(sourceRootPath))
+
+
+// test change
