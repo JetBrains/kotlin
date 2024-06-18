@@ -452,13 +452,20 @@ class Fir2IrDelegatedMembersGenerationStrategy(
         requireNotNull(targetFunctionFromDelegateFieldClass)
         require(classSymbolOfDelegateField == targetFunctionFromDelegateFieldClass.parentAsClass.symbol)
 
+        val typeParametersOfClassOfDelegateField = classSymbolOfDelegateField.owner.typeParameters.map { it.symbol }
+
+        /**
+         * Type of delegate field may be a local class that captures type parameters of outer function, so we need to take only first
+         *   arguments, which correspond to type parameters of actual class declaration
+         */
+        val substitutor = IrTypeSubstitutor(
+            typeParametersOfClassOfDelegateField,
+            (delegateField.type as IrSimpleType).arguments.take(typeParametersOfClassOfDelegateField.size),
+            allowEmptySubstitution = true
+        )
         return DelegatedFunctionBodyInfo(
             targetFunctionFromDelegateFieldClass,
-            substitutor = IrTypeSubstitutor(
-                classSymbolOfDelegateField.owner.typeParameters.map { it.symbol },
-                (delegateField.type as IrSimpleType).arguments,
-                allowEmptySubstitution = true
-            ),
+            substitutor = substitutor,
             delegatingToMethodOfSupertype = false
         )
     }
