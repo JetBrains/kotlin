@@ -37,6 +37,9 @@ class FirPCLAInferenceSession(
     var currentCommonSystem: NewConstraintSystemImpl = prepareSharedBaseSystem(outerCandidate.system, inferenceComponents)
         private set
 
+    var isDisposed = false
+        private set
+
     override fun baseConstraintStorageForCandidate(candidate: Candidate, bodyResolveContext: BodyResolveContext): ConstraintStorage? {
         if (candidate.mightBeAnalyzedAndCompletedIndependently(bodyResolveContext.returnTypeCalculator)) return null
 
@@ -115,7 +118,9 @@ class FirPCLAInferenceSession(
     }
 
     fun applyResultsToMainCandidate() {
+        check(!isDisposed)
         outerCandidate.system.replaceContentWith(currentCommonSystem.currentStorage())
+        isDisposed = true
     }
 
     fun integrateChildSession(

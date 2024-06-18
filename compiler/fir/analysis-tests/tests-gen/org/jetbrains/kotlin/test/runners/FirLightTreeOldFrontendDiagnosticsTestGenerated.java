@@ -4205,6 +4205,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("lambdaBelongsToOuterCall.kt")
+      public void testLambdaBelongsToOuterCall() {
+        runTest("compiler/testData/diagnostics/tests/builderInference/lambdaBelongsToOuterCall.kt");
+      }
+
+      @Test
       @TestMetadata("overloadResolutionByLambdaReturnType.kt")
       public void testOverloadResolutionByLambdaReturnType() {
         runTest("compiler/testData/diagnostics/tests/builderInference/overloadResolutionByLambdaReturnType.kt");
