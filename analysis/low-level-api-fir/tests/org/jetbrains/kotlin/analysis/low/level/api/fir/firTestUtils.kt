@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionConfigurator
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
@@ -17,11 +18,21 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.psi.KtAnonymousInitializer
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtConstructor
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtDeclarationContainer
+import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.PreAnalysisHandler
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
+import kotlin.collections.forEach
 
 
 internal fun FirElement.renderWithClassName(): String =
@@ -67,6 +78,31 @@ internal fun TestConfigurationBuilder.useFirSessionConfigurator(configurator: (T
     }
 
     usePreAnalysisHandlers(::ConfiguratorPreAnalysisHandler)
+}
+
+internal fun findFirstDeclarationWithClass(
+    declarations: List<KtDeclaration>,
+    expectedClass: Class<out PsiElement>,
+): KtDeclaration? {
+    declarations.filterIsInstance(expectedClass).firstOrNull()?.let { return it as KtDeclaration }
+    declarations.forEach { decl ->
+        if (decl is KtDeclarationContainer) {
+            findFirstDeclarationWithClass(decl.declarations, expectedClass)?.let { return it }
+        }
+        if (decl is KtFunction) {
+            findFirstDeclarationWithClass(decl.valueParameters, expectedClass)?.let { return it }
+        }
+        if (decl is KtProperty) {
+            findFirstDeclarationWithClass(decl.accessors, expectedClass)?.let { return it }
+        }
+        if (decl is KtTypeParameterListOwner) {
+            findFirstDeclarationWithClass(decl.typeParameters, expectedClass)?.let { return it }
+        }
+        if (decl is KtClass && KtConstructor::class.java.isAssignableFrom(expectedClass)) {
+            decl.primaryConstructor?.let { return it }
+        }
+    }
+    return null
 }
 
 inline fun <reified E : FirElement> FirElement.collectAllElementsOfType(): List<E> {

@@ -1,0 +1,5 @@
+KT element: KtPrimaryConstructor
+KT element text: public constructor()
+FIR element: FirPrimaryConstructor
+File name: MyClass.class
+FIR container source: JvmStubDeserializedContainerSource test/MyClass

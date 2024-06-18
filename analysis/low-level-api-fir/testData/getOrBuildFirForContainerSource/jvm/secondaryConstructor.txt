@@ -1,0 +1,5 @@
+KT element: KtSecondaryConstructor
+KT element text: public constructor(a: kotlin.Int) { /* compiled code */ }
+FIR element: FirConstructorImpl
+File name: MyClass.class
+FIR container source: JvmStubDeserializedContainerSource test/MyClass

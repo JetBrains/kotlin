@@ -165,7 +165,7 @@ internal class StubBasedFirDeserializationContext(
             parameterListOwner: KtTypeParameterListOwner,
             symbol: FirBasedSymbol<*>,
             initialOrigin: FirDeclarationOrigin,
-            containerSource: DeserializedContainerSource
+            containerSource: DeserializedContainerSource?,
         ): StubBasedFirDeserializationContext {
             return createRootContext(
                 moduleData,

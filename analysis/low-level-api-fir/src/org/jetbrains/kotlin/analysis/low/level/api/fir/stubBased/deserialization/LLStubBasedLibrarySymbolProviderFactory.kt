@@ -145,6 +145,7 @@ private class StubBasedBuiltInsSymbolProvider(
     session,
     SingleModuleDataProvider(moduleData),
     kotlinScopeProvider,
+    BuiltinsDeserializedContainerSourceProvider,
     project,
     BuiltinsVirtualFileProvider.getInstance().createBuiltinsScope(project),
     isFallbackDependenciesProvider = false,

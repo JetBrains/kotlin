@@ -1,0 +1,5 @@
+KT element: KtProperty
+KT element text: public val prop: kotlin.Int /* compiled code */
+FIR element: FirPropertyImpl
+File name: TopLevelPropertyKt.class
+FIR container source: JvmStubDeserializedFacadeContainerSource test/TopLevelPropertyKt
