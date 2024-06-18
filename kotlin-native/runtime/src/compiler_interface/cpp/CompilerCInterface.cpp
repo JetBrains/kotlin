@@ -77,7 +77,9 @@ touchFunction(KRefSharedHolder_dispose)
 touchFunction(KRefSharedHolder_ref)
 
 touchFunction(Kotlin_mm_switchThreadStateNative)
+touchFunction(Kotlin_mm_switchThreadStateNative_debug)
 touchFunction(Kotlin_mm_switchThreadStateRunnable)
+touchFunction(Kotlin_mm_switchThreadStateRunnable_debug)
 touchFunction(Kotlin_mm_safePointFunctionPrologue)
 touchFunction(Kotlin_mm_safePointWhileLoopBody)
 
