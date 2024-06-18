@@ -47,13 +47,13 @@ fun box(): String {
     }
 
     val continuationName = "Continuation at TwoRefsKt\$box\$1.invokeSuspend(twoRefs.kt:46)"
-    if (spilledVariables != setOf("label" to "1", "L$0" to "a", "L$1" to "b", "L$2" to continuationName, "L$3" to "null")) return "FAIL 1: $spilledVariables"
+    if (spilledVariables != setOf("label" to "1", "L$0" to "a", "L$1" to "b", "L$2" to continuationName)) return "FAIL 1: $spilledVariables"
     c?.resume(Unit)
-    if (spilledVariables != setOf("label" to "2", "L$0" to "a", "L$1" to "b", "L$2" to continuationName, "L$3" to "[a]")) return "FAIL 2: $spilledVariables"
+    if (spilledVariables != setOf("label" to "2", "L$0" to "a", "L$1" to "b", "L$2" to continuationName)) return "FAIL 2: $spilledVariables"
     c?.resume(Unit)
-    if (spilledVariables != setOf("label" to "3", "L$0" to "a", "L$1" to "b", "L$2" to continuationName, "L$3" to "[b]")) return "FAIL 3: $spilledVariables"
+    if (spilledVariables != setOf("label" to "3", "L$0" to "a", "L$1" to "b", "L$2" to continuationName)) return "FAIL 3: $spilledVariables"
     c?.resume(Unit)
-    if (spilledVariables != setOf("label" to "3", "L$0" to "a", "L$1" to "b", "L$2" to continuationName, "L$3" to "[b]")) return "FAIL 4: $spilledVariables"
+    if (spilledVariables != setOf("label" to "3", "L$0" to "a", "L$1" to "b", "L$2" to continuationName)) return "FAIL 4: $spilledVariables"
 
     return "OK"
 }
