@@ -54,6 +54,29 @@ apiValidation {
     additionalSourceSets.add("common")
 }
 
+val unpublishedCompilerRuntimeDependencies = listOf( // TODO: remove in KT-70247
+    ":compiler:cli", // for MessageRenderer, related to MessageCollector usage
+    ":compiler:cli-common", // for compiler arguments setup, for logging via MessageCollector, CompilerSystemProperties, ExitCode
+    ":compiler:compiler.version", // for user projects buildscripts, `loadCompilerVersion`
+    ":compiler:config.jvm", // for K2JVMCompilerArguments initialization
+    ":compiler:ir.tree", // for PartialLinkageMode (K/N)
+    ":compiler:plugin-api", // `ExperimentalCompilerApi`
+    ":compiler:util", // for CommonCompilerArguments initialization, K/N
+    ":core:compiler.common", // for FUS statistics parsing all the compiler arguments
+    ":core:compiler.common.jvm", // for FUS statistics parsing all the compiler arguments
+    ":core:descriptors", // for `fromUIntToLong`
+    ":core:util.runtime", // for stdlib extensions
+    ":kotlin-build-common", // for incremental compilation setup
+    ":wasm:wasm.config", // for k/js task
+)
+
+val intellijRuntimeDependencies = listOf( // TODO: remove in KT-70252
+    intellijUtilRt(), // for kapt (PathUtil.getJdkClassesRoots)
+    intellijPlatformUtil(), // for kapt (JavaVersion), KotlinToolRunner (escapeStringCharacters)
+    intellijPlatformUtilBase(), // for kapt (PathUtil.getJdkClassesRoots)
+    commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil") // for kapt (PathUtil.getJdkClassesRoots)
+)
+
 dependencies {
     commonApi(platform(project(":kotlin-gradle-plugins-bom")))
     commonApi(project(":kotlin-gradle-plugin-api"))
@@ -71,11 +94,20 @@ dependencies {
         }
     }
 
-    commonCompileOnly(project(":compiler:cli"))
-    commonCompileOnly(project(":daemon-common"))
-    commonCompileOnly(project(":kotlin-daemon-client"))
+    for (compilerRuntimeDependency in unpublishedCompilerRuntimeDependencies) {
+        commonCompileOnly(project(compilerRuntimeDependency)) { isTransitive = false }
+    }
+    commonCompileOnly(libs.guava)
+    commonCompileOnly(project(":daemon-common")) {
+        isTransitive = false
+    }
+    commonCompileOnly(project(":kotlin-daemon-client")) {
+        isTransitive = false
+    }
     commonCompileOnly(project(":kotlin-gradle-compiler-types"))
-    commonCompileOnly(project(":kotlin-compiler-runner-unshaded"))
+    commonCompileOnly(project(":kotlin-compiler-runner-unshaded")) {
+        isTransitive = false
+    }
     commonCompileOnly(project(":kotlin-gradle-statistics"))
     commonCompileOnly(project(":kotlin-gradle-build-metrics"))
     commonCompileOnly(project(":compiler:build-tools:kotlin-build-tools-jdk-utils"))
@@ -84,7 +116,12 @@ dependencies {
     commonCompileOnly(libs.android.gradle.plugin.builder) { isTransitive = false }
     commonCompileOnly(libs.android.gradle.plugin.builder.model) { isTransitive = false }
     commonCompileOnly(libs.android.tools.common) { isTransitive = false }
-    commonCompileOnly(intellijPlatformUtil())
+    commonCompileOnly(intellijPlatformUtil()) { // TODO: remove in KT-70252
+        isTransitive = false
+    }
+    commonCompileOnly(intellijUtilRt()) { // TODO: remove in KT-70252
+        isTransitive = false
+    }
     commonCompileOnly(commonDependency("org.jetbrains.teamcity:serviceMessages"))
     commonCompileOnly(libs.develocity.gradlePlugin)
     commonCompileOnly(commonDependency("com.google.code.gson:gson"))
@@ -98,17 +135,22 @@ dependencies {
 
     commonImplementation(project(":kotlin-gradle-plugin-idea"))
     commonImplementation(project(":kotlin-gradle-plugin-idea-proto"))
-    commonImplementation(project(":native:kotlin-klib-commonizer-api"))
+    commonImplementation(project(":native:kotlin-klib-commonizer-api")) // TODO: consider removing in KT-70247
     commonImplementation(project(":compiler:build-tools:kotlin-build-tools-api"))
     commonImplementation(project(":compiler:build-tools:kotlin-build-statistics"))
+    commonImplementation(project(":kotlin-util-klib-metadata")) // TODO: consider removing in KT-70247
 
-    commonRuntimeOnly(project(":kotlin-compiler-runner")) {
+    commonRuntimeOnly(project(":kotlin-compiler-runner")) { // TODO: consider removing in KT-70247
         // Excluding dependency with not-relocated 'com.intellij' types
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-build-common")
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-compiler-embeddable")
     }
-    commonRuntimeOnly(project(":kotlin-util-klib"))
-    commonRuntimeOnly(project(":kotlin-compiler-embeddable"))
+    for (compilerRuntimeDependency in unpublishedCompilerRuntimeDependencies) {
+        embedded(project(compilerRuntimeDependency)) { isTransitive = false }
+    }
+    for (compilerRuntimeDependency in intellijRuntimeDependencies) {
+        embedded(compilerRuntimeDependency) { isTransitive = false }
+    }
 
     embedded(project(":kotlin-gradle-build-metrics"))
     embedded(project(":kotlin-gradle-statistics"))

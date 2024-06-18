@@ -82,6 +82,10 @@
       <exclusions>
         <exclusion>
           <groupId>org.jetbrains.kotlin</groupId>
+          <artifactId>kotlin-util-klib</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-reflect</artifactId>
         </exclusion>
         <exclusion>
