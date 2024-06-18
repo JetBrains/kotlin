@@ -47175,6 +47175,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("enumCompanion.kt")
+      public void testEnumCompanion() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/enumCompanion.kt");
+      }
+
+      @Test
       @TestMetadata("errors.kt")
       public void testErrors() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/errors.kt");
