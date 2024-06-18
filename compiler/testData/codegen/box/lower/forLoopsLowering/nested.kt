@@ -91,6 +91,13 @@ fun testIntSumOfIterableIntWithTempValIterableInt(): Int {
     return iterableIntWithTempValIterableInt().sumOf { it }
 }
 
+// CHECK-LABEL: define i32 @"kfun:#testIntSumOfIterableIntInParam(kotlin.collections.Iterable<kotlin.Int>){}kotlin.Int
+// CHECK: iterator
+// CHECK-LABEL: epilogue:
+fun testIntSumOfIterableIntInParam(param: Iterable<Int>): Int {
+    return param.sumOf { it }
+}
+
 // CHECK-LABEL: define %struct.ObjHeader* @"kfun:#box(){}kotlin.String"
 fun box(): String {
     assertEquals(55, testIntSumOfIntRange())
@@ -101,5 +108,7 @@ fun box(): String {
     assertEquals(55, testIntSumOfIterableInt())
     assertEquals(55, testIntSumOfIterableIntWithTempVal())
     assertEquals(55, testIntSumOfIterableIntWithTempValIterableInt())
+    assertEquals(55, testIntSumOfIterableIntInParam(0..10))
+    assertEquals(55, testIntSumOfIterableIntInParam(listOf(0, 50, 5)))
     return "OK"
 }

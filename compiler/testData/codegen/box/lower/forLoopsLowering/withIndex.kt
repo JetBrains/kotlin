@@ -13,6 +13,51 @@ fun testIntForWithIndex(): Int {
     return s
 }
 
+// CHECK-LABEL: define i32 @"kfun:#testIntForWithIndexNotUsed(){}kotlin.Int
+// CHECK-NOT: iterator
+// CHECK-LABEL: epilogue:
+fun testIntForWithIndexNotUsed(): Int {
+    var s = 0
+    for ((_, _) in (1..5).withIndex()) {
+        s++
+    }
+    return s
+}
+
+// CHECK-LABEL: define i32 @"kfun:#testIntForWithIndexPartiallyUsed(){}kotlin.Int
+// CHECK-NOT: iterator
+// CHECK-LABEL: epilogue:
+fun testIntForWithIndexPartiallyUsed(): Int {
+    var s = 0
+    for ((index, _) in (1..5).withIndex()) {
+        s = s * 10 + index
+    }
+    return s
+}
+
+// CHECK-LABEL: define i32 @"kfun:#testIntForWithIndexAndDestructor(){}kotlin.Int
+// CHECK: iterator
+// CHECK-LABEL: epilogue:
+fun testIntForWithIndexAndDestructor(): Int {
+    var s = 0
+    for (ie in (1..5).withIndex()) {
+        val (index, elem) = ie
+        s = s * 10 + index * elem
+    }
+    return s
+}
+
+// CHECK-LABEL: define i32 @"kfun:#testIntForWithIndexAndDestructorNotUsed(){}kotlin.Int
+// CHECK: iterator
+// CHECK-LABEL: epilogue:
+fun testIntForWithIndexAndDestructorNotUsed(): Int {
+    var s = 0
+    for (ie in (1..5).withIndex()) {
+        s++
+    }
+    return s
+}
+
 // CHECK-LABEL: define i32 @"kfun:#testIntArrayForWithIndex(){}kotlin.Int
 // CHECK-NOT: iterator
 // CHECK-LABEL: epilogue:
@@ -100,6 +145,10 @@ fun testIntForEachSequenceWithIndex(): Int {
 // CHECK-LABEL: define %struct.ObjHeader* @"kfun:#box(){}kotlin.String"
 fun box(): String {
     assertEquals(2740, testIntForWithIndex())
+    assertEquals(2740, testIntForWithIndexAndDestructor())
+    assertEquals(1234, testIntForWithIndexPartiallyUsed())
+    assertEquals(5, testIntForWithIndexNotUsed())
+    assertEquals(5, testIntForWithIndexAndDestructorNotUsed())
     assertEquals(2740, testIntArrayForWithIndex())
     assertEquals(2740, testUIntArrayForWithIndex())
     assertEquals(794, testForStringWithIndex())

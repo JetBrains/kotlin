@@ -41,6 +41,17 @@ fun testUShortSumOfArray(): Int {
     return ushortArrayOf.sumOf { it.toInt() }
 }
 
+// CHECK-LABEL: define float @"kfun:#testFloatSumOfArray(){}kotlin.Float
+// CHECK-NOT: iterator
+// CHECK-LABEL: epilogue:
+fun testFloatSumOfArray(): Float {
+    var sum = 0F
+    for (elem in floatArrayOf(1F, 5F)) {
+        sum += elem
+    }
+    return sum
+}
+
 
 // CHECK-LABEL: define %struct.ObjHeader* @"kfun:#box(){}kotlin.String"
 fun box(): String {
@@ -49,5 +60,6 @@ fun box(): String {
     assertEquals(6, testUIntSumOfArray())
     assertEquals(6, testShortSumOfArray())
     assertEquals(6, testUShortSumOfArray())
+    assertEquals(6F, testFloatSumOfArray())
     return "OK"
 }
