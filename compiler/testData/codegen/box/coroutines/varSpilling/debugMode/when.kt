@@ -63,13 +63,13 @@ fun box(): String {
     }
 
     var continuationName = "Continuation at WhenKt\$box\$1.invokeSuspend(when.kt:62)"
-    if (spilledVariables != setOf("label" to "1", "I$0" to "0", "I$1" to "0", "I$2" to "0", "L$0" to continuationName, "L$1" to "a0", "L$2" to "null"))
+    if (spilledVariables != setOf("label" to "1", "I$0" to "0", "I$1" to "0", "L$0" to continuationName, "L$1" to "a0", "L$2" to "null"))
         return "FAIL 1: $spilledVariables"
     c?.resume(Unit)
-    if (spilledVariables != setOf("label" to "4", "I$0" to "0", "I$1" to "0", "I$2" to "0", "L$0" to continuationName, "L$1" to "a0", "L$2" to "[a0]"))
+    if (spilledVariables != setOf("label" to "4", "I$0" to "0", "I$1" to "0", "L$0" to continuationName, "L$1" to "a0", "L$2" to "null"))
         return "FAIL 2: $spilledVariables"
     c?.resume(Unit)
-    if (spilledVariables != setOf("label" to "4", "I$0" to "0", "I$1" to "0", "I$2" to "0", "L$0" to continuationName, "L$1" to "a0", "L$2" to "[a0]"))
+    if (spilledVariables != setOf("label" to "4", "I$0" to "0", "I$1" to "0", "L$0" to continuationName, "L$1" to "a0", "L$2" to "null"))
         return "FAIL 3: $spilledVariables"
 
     builder {
@@ -77,13 +77,13 @@ fun box(): String {
     }
 
     continuationName = "Continuation at WhenKt\$box\$2.invokeSuspend(when.kt:76)"
-    if (spilledVariables != setOf("label" to "2", "I$0" to "1", "I$1" to "1", "I$2" to "0", "L$0" to continuationName, "L$1" to "a1", "L$2" to "b1"))
+    if (spilledVariables != setOf("label" to "2", "I$0" to "1", "I$1" to "0", "L$0" to continuationName, "L$1" to "a1", "L$2" to "b1"))
         return "FAIL 4: $spilledVariables"
     c?.resume(Unit)
-    if (spilledVariables != setOf("label" to "4", "I$0" to "1", "I$1" to "1", "I$2" to "0", "L$0" to continuationName, "L$1" to "a1", "L$2" to "b1"))
+    if (spilledVariables != setOf("label" to "4", "I$0" to "1", "I$1" to "0", "L$0" to continuationName, "L$1" to "a1", "L$2" to "b1"))
         return "FAIL 5: $spilledVariables"
     c?.resume(Unit)
-    if (spilledVariables != setOf("label" to "4", "I$0" to "1", "I$1" to "1", "I$2" to "0", "L$0" to continuationName, "L$1" to "a1", "L$2" to "b1"))
+    if (spilledVariables != setOf("label" to "4", "I$0" to "1", "I$1" to "0", "L$0" to continuationName, "L$1" to "a1", "L$2" to "b1"))
         return "FAIL 6: $spilledVariables"
 
     builder {
@@ -91,13 +91,13 @@ fun box(): String {
     }
 
     continuationName = "Continuation at WhenKt\$box\$3.invokeSuspend(when.kt:90)"
-    if (spilledVariables != setOf("label" to "3", "I$0" to "2", "I$1" to "2", "I$2" to "1", "L$0" to continuationName, "L$1" to "a2", "L$2" to "b2"))
+    if (spilledVariables != setOf("label" to "3", "I$0" to "2", "I$1" to "1", "L$0" to continuationName, "L$1" to "a2", "L$2" to "b2"))
         return "FAIL 7: $spilledVariables"
     c?.resume(Unit)
-    if (spilledVariables != setOf("label" to "4", "I$0" to "2", "I$1" to "2", "I$2" to "1", "L$0" to continuationName, "L$1" to "a2", "L$2" to "b2"))
+    if (spilledVariables != setOf("label" to "4", "I$0" to "2", "I$1" to "1", "L$0" to continuationName, "L$1" to "a2", "L$2" to "b2"))
         return "FAIL 8: $spilledVariables"
     c?.resume(Unit)
-    if (spilledVariables != setOf("label" to "4", "I$0" to "2", "I$1" to "2", "I$2" to "1", "L$0" to continuationName, "L$1" to "a2", "L$2" to "b2"))
+    if (spilledVariables != setOf("label" to "4", "I$0" to "2", "I$1" to "1", "L$0" to continuationName, "L$1" to "a2", "L$2" to "b2"))
         return "FAIL 9: $spilledVariables"
 
     return "OK"

@@ -16177,6 +16177,12 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
         }
 
         @Test
+        @TestMetadata("kt63954.kt")
+        public void testKt63954() {
+          runTest("compiler/testData/codegen/box/coroutines/varSpilling/debugMode/kt63954.kt");
+        }
+
+        @Test
         @TestMetadata("nullCleanup.kt")
         public void testNullCleanup() {
           runTest("compiler/testData/codegen/box/coroutines/varSpilling/debugMode/nullCleanup.kt");
