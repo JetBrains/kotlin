@@ -25,6 +25,11 @@ import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.visitors.IrTypeTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.library.KOTLINTEST_MODULE_NAME
+import org.jetbrains.kotlin.library.KOTLIN_JS_STDLIB_NAME
+import org.jetbrains.kotlin.library.KOTLIN_NATIVE_STDLIB_NAME
+import org.jetbrains.kotlin.library.KOTLIN_WASM_STDLIB_NAME
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
 /**
@@ -51,6 +56,16 @@ internal class IrVisibilityChecker(
     private val reportError: ReportIrValidationError,
 ) : IrTypeTransformerVoid() {
 
+    companion object {
+        private val EXCLUDED_MODULE_NAMES: Set<Name> =
+            arrayOf(
+                KOTLIN_NATIVE_STDLIB_NAME,
+                KOTLIN_JS_STDLIB_NAME,
+                KOTLIN_WASM_STDLIB_NAME,
+                KOTLINTEST_MODULE_NAME,
+            ).mapTo(mutableSetOf()) { Name.special("<$it>") }
+    }
+
     private val parentChain = mutableListOf<IrElement>()
 
     private fun visibilityError(element: IrElement, visibility: Visibility) {
@@ -73,7 +88,7 @@ internal class IrVisibilityChecker(
         // Don't validate the standard library.
         // Since we're always lowering the whole world on non-JVM backends, including the standard library, visibility violations there
         // cause most compiler tests to fail, which we don't want.
-        if (module.name.asString() in setOf("<kotlin>", "<kotlin-test>")) return
+        if (module.name in EXCLUDED_MODULE_NAMES) return
 
         parentChain.push(element)
         element.acceptChildrenVoid(this)
@@ -86,7 +101,7 @@ internal class IrVisibilityChecker(
             // When compiling JS stdlib, intrinsic declarations are moved to a special module that doesn't have a descriptor.
             // This happens after deserialization but before executing any lowerings, including IR validating lowering
             // See MoveBodilessDeclarationsToSeparatePlaceLowering
-            return this@IrVisibilityChecker.module.name.asString() == "<kotlin>"
+            return this@IrVisibilityChecker.module.name.asString() == "<$KOTLIN_JS_STDLIB_NAME>"
         }
         return this@IrVisibilityChecker.module.descriptor.shouldSeeInternalsOf(referencedDeclarationPackageFragment.moduleDescriptor)
     }
