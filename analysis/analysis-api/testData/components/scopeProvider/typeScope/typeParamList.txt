@@ -202,6 +202,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: element
@@ -252,6 +253,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: elements
@@ -306,6 +308,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: index
@@ -357,6 +360,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: element
@@ -471,6 +475,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: element
@@ -559,6 +564,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: index
@@ -614,6 +620,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: fromIndex
@@ -634,6 +641,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: toIndex
@@ -653,6 +661,7 @@ KaKotlinPropertySymbol:
     callableId: null
     contextReceivers: []
     isExtension: false
+    isVal: true
     location: PROPERTY
     name: field
     origin: PROPERTY_BACKING_FIELD
@@ -751,6 +760,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: other

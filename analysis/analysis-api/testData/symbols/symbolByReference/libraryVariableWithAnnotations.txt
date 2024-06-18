@@ -8,6 +8,7 @@ KaKotlinPropertySymbol:
     callableId: null
     contextReceivers: []
     isExtension: false
+    isVal: true
     location: PROPERTY
     name: field
     origin: PROPERTY_BACKING_FIELD
@@ -104,6 +105,7 @@ KaKotlinPropertySymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: value
@@ -138,6 +140,7 @@ KaKotlinPropertySymbol:
         isExtension: false
         isImplicitLambdaParameter: false
         isNoinline: false
+        isVal: true
         isVararg: false
         location: LOCAL
         name: value

@@ -4,6 +4,7 @@ KaEnumEntrySymbol:
   contextReceivers: []
   enumEntryInitializer: null
   isExtension: false
+  isVal: true
   location: CLASS
   name: SYNCHRONIZED
   origin: LIBRARY

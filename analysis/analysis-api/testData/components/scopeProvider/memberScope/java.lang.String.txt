@@ -266,6 +266,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -330,6 +331,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -394,6 +396,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -418,6 +421,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p1
@@ -482,6 +486,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -506,6 +511,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p1
@@ -570,6 +576,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -593,6 +600,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p1
@@ -657,6 +665,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -681,6 +690,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p1
@@ -705,6 +715,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p2
@@ -728,6 +739,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p3
@@ -795,6 +807,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -819,6 +832,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p1
@@ -843,6 +857,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p2
@@ -866,6 +881,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p3
@@ -929,6 +945,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -991,6 +1008,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -1092,6 +1110,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -1156,6 +1175,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -1219,6 +1239,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -1282,6 +1303,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -1345,6 +1367,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -1408,6 +1431,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -1471,6 +1495,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -1495,6 +1520,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p1
@@ -1518,6 +1544,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p2
@@ -1542,6 +1569,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p3
@@ -1606,6 +1634,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -1630,6 +1659,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p1
@@ -1654,6 +1684,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p2
@@ -1677,6 +1708,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p3
@@ -1701,6 +1733,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p4
@@ -1765,6 +1798,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -1788,6 +1822,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p1
@@ -1852,6 +1887,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -1915,6 +1951,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -2017,6 +2054,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -2081,6 +2119,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -2105,6 +2144,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p1
@@ -2169,6 +2209,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -2232,6 +2273,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -2255,6 +2297,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p1
@@ -2319,6 +2362,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -2343,6 +2387,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p1
@@ -2407,6 +2452,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -2471,6 +2517,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -2495,6 +2542,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p1
@@ -2559,6 +2607,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -2622,6 +2671,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -2645,6 +2695,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p1
@@ -2709,6 +2760,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -2733,6 +2785,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p1
@@ -2796,6 +2849,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -2859,6 +2913,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -2883,6 +2938,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p1
@@ -2947,6 +3003,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -2971,6 +3028,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p1
@@ -3034,6 +3092,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -3096,6 +3155,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -3120,6 +3180,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p1
@@ -3183,6 +3244,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -3206,6 +3268,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p1
@@ -3269,6 +3332,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -3332,6 +3396,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -3394,6 +3459,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -3417,6 +3483,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p1
@@ -3479,6 +3546,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -3502,6 +3570,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p1
@@ -3564,6 +3633,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -3587,6 +3657,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p1
@@ -3650,6 +3721,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -3712,6 +3784,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -3812,6 +3885,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -4066,6 +4140,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -4187,6 +4262,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -4236,6 +4312,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -4285,6 +4362,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -4308,6 +4386,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p1
@@ -4332,6 +4411,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p2
@@ -4382,6 +4462,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -4405,6 +4486,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p1
@@ -4429,6 +4511,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p2
@@ -4482,6 +4565,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -4505,6 +4589,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p1
@@ -4529,6 +4614,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p2
@@ -4553,6 +4639,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p3
@@ -4606,6 +4693,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -4629,6 +4717,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p1
@@ -4679,6 +4768,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -4702,6 +4792,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p1
@@ -4726,6 +4817,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p2
@@ -4750,6 +4842,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p3
@@ -4799,6 +4892,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -4822,6 +4916,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p1
@@ -4846,6 +4941,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p2
@@ -4870,6 +4966,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p3
@@ -4919,6 +5016,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -4942,6 +5040,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p1
@@ -4991,6 +5090,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -5014,6 +5114,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p1
@@ -5063,6 +5164,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -5086,6 +5188,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p1
@@ -5110,6 +5213,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p2
@@ -5160,6 +5264,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -5209,6 +5314,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -5258,6 +5364,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -5307,6 +5414,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -5330,6 +5438,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p1
@@ -5383,6 +5492,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p0
@@ -5407,6 +5517,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p1
@@ -5431,6 +5542,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: p2

@@ -37,6 +37,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: x
@@ -101,6 +102,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: x
@@ -165,6 +167,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: other

@@ -21,6 +21,7 @@ scopes:
         isExtension: false
         isImplicitLambdaParameter: false
         isNoinline: false
+        isVal: true
         isVararg: false
         location: LOCAL
         name: constructorParam
@@ -44,6 +45,7 @@ scopes:
           callableId: null
           contextReceivers: []
           isExtension: false
+          isVal: true
           location: PROPERTY
           name: field
           origin: PROPERTY_BACKING_FIELD
@@ -140,6 +142,7 @@ scopes:
           callableId: null
           contextReceivers: []
           isExtension: false
+          isVal: true
           location: PROPERTY
           name: field
           origin: PROPERTY_BACKING_FIELD
@@ -206,6 +209,7 @@ scopes:
           callableId: null
           contextReceivers: []
           isExtension: false
+          isVal: true
           location: PROPERTY
           name: field
           origin: PROPERTY_BACKING_FIELD
@@ -302,6 +306,7 @@ scopes:
           callableId: null
           contextReceivers: []
           isExtension: false
+          isVal: true
           location: PROPERTY
           name: field
           origin: PROPERTY_BACKING_FIELD
@@ -400,6 +405,7 @@ scopes:
             isExtension: false
             isImplicitLambdaParameter: false
             isNoinline: false
+            isVal: true
             isVararg: false
             location: LOCAL
             name: other
@@ -503,6 +509,7 @@ scopes:
                 callableId: null
                 contextReceivers: []
                 isExtension: false
+                isVal: true
                 location: PROPERTY
                 name: field
                 origin: PROPERTY_BACKING_FIELD
@@ -567,6 +574,7 @@ scopes:
             isExtension: false
             isImplicitLambdaParameter: false
             isNoinline: false
+            isVal: true
             isVararg: false
             location: LOCAL
             name: constructorProp
@@ -587,6 +595,7 @@ scopes:
             isExtension: false
             isImplicitLambdaParameter: false
             isNoinline: false
+            isVal: true
             isVararg: false
             location: LOCAL
             name: constructorParam

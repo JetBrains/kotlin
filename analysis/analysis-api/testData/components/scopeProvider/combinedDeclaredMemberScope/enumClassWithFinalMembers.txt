@@ -4,6 +4,7 @@ KaEnumEntrySymbol:
   contextReceivers: []
   enumEntryInitializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
   isExtension: false
+  isVal: true
   location: CLASS
   name: A
   origin: SOURCE
@@ -24,6 +25,7 @@ KaEnumEntrySymbol:
   contextReceivers: []
   enumEntryInitializer: null
   isExtension: false
+  isVal: true
   location: CLASS
   name: B
   origin: SOURCE
@@ -45,6 +47,7 @@ KaKotlinPropertySymbol:
     callableId: null
     contextReceivers: []
     isExtension: false
+    isVal: true
     location: PROPERTY
     name: field
     origin: PROPERTY_BACKING_FIELD
@@ -247,6 +250,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: value

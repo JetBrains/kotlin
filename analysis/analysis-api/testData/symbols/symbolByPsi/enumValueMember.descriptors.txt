@@ -28,6 +28,7 @@ KaConstructorSymbol:
           callableId: null
           contextReceivers: []
           isExtension: false
+          isVal: true
           location: PROPERTY
           name: field
           origin: PROPERTY_BACKING_FIELD
@@ -116,6 +117,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: value
@@ -144,6 +146,7 @@ KaKotlinPropertySymbol:
     callableId: null
     contextReceivers: []
     isExtension: false
+    isVal: true
     location: PROPERTY
     name: field
     origin: PROPERTY_BACKING_FIELD
@@ -234,6 +237,7 @@ KaEnumEntrySymbol:
   contextReceivers: []
   enumEntryInitializer: KaEnumEntrySymbol(/Style.SHEET)
   isExtension: false
+  isVal: true
   location: CLASS
   name: SHEET
   origin: SOURCE
@@ -255,6 +259,7 @@ KaKotlinPropertySymbol:
     callableId: null
     contextReceivers: []
     isExtension: false
+    isVal: true
     location: PROPERTY
     name: field
     origin: PROPERTY_BACKING_FIELD

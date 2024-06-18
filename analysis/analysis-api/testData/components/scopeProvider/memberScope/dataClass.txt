@@ -5,6 +5,7 @@ KaKotlinPropertySymbol:
     callableId: null
     contextReceivers: []
     isExtension: false
+    isVal: true
     location: PROPERTY
     name: field
     origin: PROPERTY_BACKING_FIELD
@@ -96,6 +97,7 @@ KaKotlinPropertySymbol:
     callableId: null
     contextReceivers: []
     isExtension: false
+    isVal: true
     location: PROPERTY
     name: field
     origin: PROPERTY_BACKING_FIELD
@@ -187,6 +189,7 @@ KaKotlinPropertySymbol:
     callableId: null
     contextReceivers: []
     isExtension: false
+    isVal: true
     location: PROPERTY
     name: field
     origin: PROPERTY_BACKING_FIELD
@@ -317,6 +320,7 @@ KaKotlinPropertySymbol:
     callableId: null
     contextReceivers: []
     isExtension: false
+    isVal: true
     location: PROPERTY
     name: field
     origin: PROPERTY_BACKING_FIELD
@@ -575,6 +579,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: firstProperty
@@ -599,6 +604,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: secondProperty
@@ -623,6 +629,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: thirdProperty
@@ -687,6 +694,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: other
@@ -820,6 +828,7 @@ KaConstructorSymbol:
           callableId: null
           contextReceivers: []
           isExtension: false
+          isVal: true
           location: PROPERTY
           name: field
           origin: PROPERTY_BACKING_FIELD
@@ -908,6 +917,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: firstProperty
@@ -933,6 +943,7 @@ KaConstructorSymbol:
           callableId: null
           contextReceivers: []
           isExtension: false
+          isVal: true
           location: PROPERTY
           name: field
           origin: PROPERTY_BACKING_FIELD
@@ -1021,6 +1032,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: secondProperty
@@ -1046,6 +1058,7 @@ KaConstructorSymbol:
           callableId: null
           contextReceivers: []
           isExtension: false
+          isVal: true
           location: PROPERTY
           name: field
           origin: PROPERTY_BACKING_FIELD
@@ -1134,6 +1147,7 @@ KaConstructorSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: thirdProperty

@@ -82,6 +82,7 @@ KaEnumEntrySymbol:
   contextReceivers: []
   enumEntryInitializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
   isExtension: false
+  isVal: true
   location: CLASS
   name: FirstEntry
   origin: SOURCE
@@ -142,6 +143,7 @@ KaKotlinPropertySymbol:
     callableId: null
     contextReceivers: []
     isExtension: false
+    isVal: true
     location: PROPERTY
     name: field
     origin: PROPERTY_BACKING_FIELD
@@ -228,6 +230,7 @@ KaEnumEntrySymbol:
   contextReceivers: []
   enumEntryInitializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
   isExtension: false
+  isVal: true
   location: CLASS
   name: SecondEntry
   origin: SOURCE
@@ -320,6 +323,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: i
@@ -351,6 +355,7 @@ KaEnumEntrySymbol:
   contextReceivers: []
   enumEntryInitializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
   isExtension: false
+  isVal: true
   location: CLASS
   name: ThirdEntry
   origin: SOURCE
@@ -443,6 +448,7 @@ KaNamedFunctionSymbol:
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
       location: LOCAL
       name: i
@@ -475,6 +481,7 @@ KaKotlinPropertySymbol:
     callableId: null
     contextReceivers: []
     isExtension: false
+    isVal: true
     location: PROPERTY
     name: field
     origin: PROPERTY_BACKING_FIELD

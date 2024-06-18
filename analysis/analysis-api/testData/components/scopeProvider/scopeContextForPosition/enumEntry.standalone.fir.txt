@@ -61,6 +61,7 @@ scopes:
           callableId: null
           contextReceivers: []
           isExtension: false
+          isVal: true
           location: PROPERTY
           name: field
           origin: PROPERTY_BACKING_FIELD
@@ -219,6 +220,7 @@ scopes:
             isExtension: false
             isImplicitLambdaParameter: false
             isNoinline: false
+            isVal: true
             isVararg: false
             location: LOCAL
             name: other
@@ -270,6 +272,7 @@ scopes:
             isExtension: false
             isImplicitLambdaParameter: false
             isNoinline: false
+            isVal: true
             isVararg: false
             location: LOCAL
             name: other
@@ -352,6 +355,7 @@ scopes:
           callableId: null
           contextReceivers: []
           isExtension: false
+          isVal: true
           location: PROPERTY
           name: field
           origin: PROPERTY_BACKING_FIELD
@@ -418,6 +422,7 @@ scopes:
           callableId: null
           contextReceivers: []
           isExtension: false
+          isVal: true
           location: PROPERTY
           name: field
           origin: PROPERTY_BACKING_FIELD
@@ -568,6 +573,7 @@ scopes:
         contextReceivers: []
         enumEntryInitializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
         isExtension: false
+        isVal: true
         location: CLASS
         name: A
         origin: SOURCE
@@ -651,6 +657,7 @@ scopes:
             isExtension: false
             isImplicitLambdaParameter: false
             isNoinline: false
+            isVal: true
             isVararg: false
             location: LOCAL
             name: value
@@ -801,6 +808,7 @@ scopes:
             isExtension: false
             isImplicitLambdaParameter: false
             isNoinline: false
+            isVal: true
             isVararg: false
             location: LOCAL
             name: other

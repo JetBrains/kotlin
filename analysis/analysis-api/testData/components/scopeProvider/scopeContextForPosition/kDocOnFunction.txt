@@ -50,6 +50,7 @@ scopes:
             isExtension: false
             isImplicitLambdaParameter: false
             isNoinline: false
+            isVal: true
             isVararg: false
             location: LOCAL
             name: other
@@ -158,6 +159,7 @@ scopes:
         isExtension: false
         isImplicitLambdaParameter: false
         isNoinline: false
+        isVal: true
         isVararg: false
         location: LOCAL
         name: param1
@@ -178,6 +180,7 @@ scopes:
         isExtension: false
         isImplicitLambdaParameter: false
         isNoinline: false
+        isVal: true
         isVararg: false
         location: LOCAL
         name: param2
@@ -338,6 +341,7 @@ scopes:
             isExtension: false
             isImplicitLambdaParameter: false
             isNoinline: false
+            isVal: true
             isVararg: false
             location: LOCAL
             name: param1
@@ -358,6 +362,7 @@ scopes:
             isExtension: false
             isImplicitLambdaParameter: false
             isNoinline: false
+            isVal: true
             isVararg: false
             location: LOCAL
             name: param2

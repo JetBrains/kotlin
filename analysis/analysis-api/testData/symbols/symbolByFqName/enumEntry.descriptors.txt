@@ -4,6 +4,7 @@ KaEnumEntrySymbol:
   contextReceivers: []
   enumEntryInitializer: KaEnumEntrySymbol(kotlin/LazyThreadSafetyMode.SYNCHRONIZED)
   isExtension: false
+  isVal: true
   location: CLASS
   name: SYNCHRONIZED
   origin: LIBRARY

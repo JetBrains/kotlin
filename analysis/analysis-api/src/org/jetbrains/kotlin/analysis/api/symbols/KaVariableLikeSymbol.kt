@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.name.Name
 
 public sealed class KaVariableLikeSymbol : KaCallableSymbol(), KaNamedSymbol, @Suppress("DEPRECATION") KaSymbolWithKind,
     KaPossibleMemberSymbol {
+    public abstract val isVal: Boolean
+
     abstract override fun createPointer(): KaSymbolPointer<KaVariableLikeSymbol>
 }
 
@@ -46,6 +48,7 @@ public abstract class KaBackingFieldSymbol : KaVariableLikeSymbol() {
     final override val isExtension: Boolean get() = withValidityAssertion { false }
     final override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { null }
     final override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
+    final override val isVal: Boolean get() = withValidityAssertion { true }
 
     final override val typeParameters: List<KaTypeParameterSymbol>
         get() = withValidityAssertion { emptyList() }
@@ -88,6 +91,7 @@ public abstract class KaEnumEntrySymbol : KaVariableLikeSymbol(), @Suppress("DEP
     final override val isExtension: Boolean get() = withValidityAssertion { false }
     final override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { null }
     final override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
+    final override val isVal: Boolean get() = withValidityAssertion { true }
 
     final override val typeParameters: List<KaTypeParameterSymbol>
         get() = withValidityAssertion { emptyList() }
@@ -130,7 +134,7 @@ public interface KaEnumEntryInitializerSymbol : KaDeclarationContainerSymbol
 public typealias KtEnumEntryInitializerSymbol = KaEnumEntryInitializerSymbol
 
 public sealed class KaVariableSymbol : KaVariableLikeSymbol() {
-    public abstract val isVal: Boolean
+    public abstract override val isVal: Boolean
 
     abstract override fun createPointer(): KaSymbolPointer<KaVariableSymbol>
 }
@@ -259,6 +263,7 @@ public abstract class KaValueParameterSymbol : KaVariableLikeSymbol(), KaParamet
     final override val isExtension: Boolean get() = withValidityAssertion { false }
     final override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { null }
     final override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
+    final override val isVal: Boolean get() = withValidityAssertion { true }
 
     /**
      * Returns true if the function parameter is marked with `noinline` modifier

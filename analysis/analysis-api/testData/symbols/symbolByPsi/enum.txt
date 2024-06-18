@@ -4,6 +4,7 @@ KaEnumEntrySymbol:
   contextReceivers: []
   enumEntryInitializer: null
   isExtension: false
+  isVal: true
   location: CLASS
   name: Y
   origin: SOURCE
@@ -24,6 +25,7 @@ KaEnumEntrySymbol:
   contextReceivers: []
   enumEntryInitializer: null
   isExtension: false
+  isVal: true
   location: CLASS
   name: Z
   origin: SOURCE
