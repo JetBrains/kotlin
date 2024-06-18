@@ -10,8 +10,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.asDebugString
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaBinaryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaNotUnderContentRootModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependencies
@@ -70,10 +70,10 @@ internal class KotlinStandaloneProjectStructureProvider(
                 .withAttachment("modules", allModules.joinToString(separator = System.lineSeparator()) { it.asDebugString() })
     }
 
-    internal val binaryModules: List<KaBinaryModule> by lazy {
+    internal val binaryModules: List<KaLibraryModule> by lazy {
         allModules
             .flatMap { it.allDirectDependencies() }
-            .filterIsInstance<KaBinaryModule>()
+            .filterIsInstance<KaLibraryModule>()
     }
 
     override val allSourceFiles: List<PsiFileSystemItem> by lazy {

@@ -10,7 +10,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory.findJvmRootsForJavaFiles
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaBinaryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 import org.jetbrains.kotlin.psi.KtFile
@@ -35,7 +35,7 @@ class KtTestModule(
 }
 
 /**
- * A module structure of [KtTestModule]s, and additional [KaBinaryModule]s not originating from test modules. This module structure
+ * A module structure of [KtTestModule]s, and additional [KaLibraryModule]s not originating from test modules. This module structure
  * is created by [AnalysisApiTestConfigurator.createModules][org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator.createModules].
  *
  * [mainModules] are created from the configured [TestModule]s and must be in the same order as [testModuleStructure]'s
@@ -44,7 +44,7 @@ class KtTestModule(
 class KtTestModuleStructure(
     val testModuleStructure: TestModuleStructure,
     val mainModules: List<KtTestModule>,
-    val binaryModules: Iterable<KaBinaryModule>,
+    val binaryModules: Iterable<KaLibraryModule>,
 ) {
     private val mainModulesByName: Map<String, KtTestModule> = mainModules.associateBy { it.testModule.name }
 

@@ -9,7 +9,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.computeTransitiveDependsOnDependencies
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaBinaryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -53,7 +52,7 @@ abstract class KtModuleByCompilerConfiguration(
         }
     }
 
-    private fun computeLibraryDependencies(): List<KaBinaryModule> {
+    private fun computeLibraryDependencies(): List<KaLibraryModule> {
         val targetPlatform = testModule.targetPlatform
         return when {
             targetPlatform.isNative() -> {

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.project.structure
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaBinaryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
@@ -24,8 +23,8 @@ public typealias KtModule = KaModule
 @Deprecated("Use 'KaSourceModule' instead", ReplaceWith("KaSourceModule"))
 public typealias KtSourceModule = KaSourceModule
 
-@Deprecated("Use 'KaBinaryModule' instead", ReplaceWith("KaBinaryModule"))
-public typealias KtBinaryModule = KaBinaryModule
+@Deprecated("Use 'KaLibraryModule' instead", ReplaceWith("KaLibraryModule"))
+public typealias KtBinaryModule = KaLibraryModule
 
 @Deprecated("Use 'KaLibraryModule' instead", ReplaceWith("KaLibraryModule"))
 public typealias KtLibraryModule = KaLibraryModule

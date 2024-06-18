@@ -10,7 +10,6 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaBinaryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -37,7 +36,7 @@ import kotlin.io.path.exists
 import kotlin.io.path.extension
 import kotlin.io.path.nameWithoutExtension
 
-private typealias LibraryCache = MutableMap<Set<Path>, KaBinaryModule>
+private typealias LibraryCache = MutableMap<Set<Path>, KaLibraryModule>
 
 private typealias ModulesByName = Map<String, KtTestModule>
 
@@ -103,7 +102,7 @@ object TestModuleStructureFactory {
      * library module.
      */
     private fun KaModule.addToLibraryCacheIfNeeded(libraryCache: LibraryCache) {
-        if (this is KaBinaryModule) {
+        if (this is KaLibraryModule) {
             libraryCache.put(binaryRoots.toSet(), this)
         }
     }
@@ -145,7 +144,7 @@ object TestModuleStructureFactory {
         testModule: TestModule,
         testServices: TestServices,
         ktModule: KtModuleWithModifiableDependencies,
-        libraryCache: (paths: Set<Path>, factory: () -> KaBinaryModule) -> KaBinaryModule
+        libraryCache: (paths: Set<Path>, factory: () -> KaLibraryModule) -> KaLibraryModule
     ) {
         val project = ktModule.project
 

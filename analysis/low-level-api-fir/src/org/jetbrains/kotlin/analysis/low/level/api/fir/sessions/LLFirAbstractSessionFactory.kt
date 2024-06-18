@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinFileBasedDe
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.platform.utils.mergeInto
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaBinaryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
@@ -83,7 +82,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
     abstract fun createSourcesSession(module: KaSourceModule): LLFirSourcesSession
     abstract fun createLibrarySession(module: KaModule): LLFirLibraryOrLibrarySourceResolvableModuleSession
-    abstract fun createBinaryLibrarySession(module: KaBinaryModule): LLFirLibrarySession
+    abstract fun createBinaryLibrarySession(module: KaLibraryModule): LLFirLibrarySession
 
     private fun createLibraryProvidersForScope(
         session: LLFirSession,
@@ -454,7 +453,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
     protected class BinaryLibrarySessionCreationContext
 
     protected fun doCreateBinaryLibrarySession(
-        module: KaBinaryModule,
+        module: KaLibraryModule,
         additionalSessionConfiguration: LLFirLibrarySession.(context: BinaryLibrarySessionCreationContext) -> Unit,
     ): LLFirLibrarySession {
         val platform = module.targetPlatform
@@ -618,7 +617,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         fun getOrCreateSessionForDependency(dependency: KaModule): LLFirSession? = when (dependency) {
             is KaBuiltinsModule -> null // Built-ins are already added
 
-            is KaBinaryModule -> llFirSessionCache.getSession(dependency, preferBinary = true)
+            is KaLibraryModule -> llFirSessionCache.getSession(dependency, preferBinary = true)
 
             is KaSourceModule -> llFirSessionCache.getSession(dependency)
 

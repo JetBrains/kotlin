@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.contracts.description.Context
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.contracts.description.renderKaContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaBinaryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
@@ -391,7 +390,6 @@ public class DebugSymbolRenderer(
         listOf(
             KaModule::class,
             KaSourceModule::class,
-            KaBinaryModule::class,
             KaLibraryModule::class,
             KaLibrarySourceModule::class,
             KaBuiltinsModule::class,

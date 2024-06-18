@@ -34,7 +34,6 @@ import com.intellij.util.messages.ListenerDescriptor
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleDependentsProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaBinaryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -337,7 +336,7 @@ object StandaloneProjectFactory {
         modules: List<KaModule>,
         environment: KotlinCoreProjectEnvironment,
     ): List<JavaRoot> = withAllTransitiveDependencies(modules)
-        .filterIsInstance<KaBinaryModule>()
+        .filterIsInstance<KaLibraryModule>()
         .flatMap { it.getJavaRoots(environment) }
 
     fun createSearchScopeByLibraryRoots(
@@ -418,7 +417,7 @@ object StandaloneProjectFactory {
         }
     }
 
-    private fun KaBinaryModule.getJavaRoots(
+    private fun KaLibraryModule.getJavaRoots(
         environment: KotlinCoreProjectEnvironment,
     ): List<JavaRoot> {
         return getVirtualFilesForLibraryRoots(binaryRoots, environment).map { root ->

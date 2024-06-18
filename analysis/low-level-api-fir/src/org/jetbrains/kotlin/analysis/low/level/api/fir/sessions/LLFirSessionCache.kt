@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaBinaryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
@@ -61,7 +60,7 @@ class LLFirSessionCache(private val project: Project) : Disposable {
             return LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(module.targetPlatform)
         }
 
-        if (module is KaBinaryModule && (preferBinary || (module is KaLibraryModule && module.isSdk))) {
+        if (module is KaLibraryModule && (preferBinary || module.isSdk)) {
             return getCachedSession(module, binaryCache) {
                 createPlatformAwareSessionFactory(module).createBinaryLibrarySession(module)
             }
@@ -134,7 +133,7 @@ class LLFirSessionCache(private val project: Project) : Disposable {
         ApplicationManager.getApplication().assertWriteAccessAllowed()
 
         val didSourceSessionExist = removeSessionFrom(module, sourceCache)
-        val didBinarySessionExist = module is KaBinaryModule && removeSessionFrom(module, binaryCache)
+        val didBinarySessionExist = module is KaLibraryModule && removeSessionFrom(module, binaryCache)
         val didDanglingFileSessionExist = module is KaDanglingFileModule && removeSessionFrom(module, danglingFileSessionCache)
         val didUnstableDanglingFileSessionExist = module is KaDanglingFileModule && removeSessionFrom(module, unstableDanglingFileSessionCache)
 
@@ -157,7 +156,7 @@ class LLFirSessionCache(private val project: Project) : Disposable {
             removeAllSessionsFrom(binaryCache)
         } else {
             // `binaryCache` can only contain library modules, so we only need to remove sessions from `sourceCache`.
-            removeAllMatchingSessionsFrom(sourceCache) { it !is KaBinaryModule && it !is KaLibrarySourceModule }
+            removeAllMatchingSessionsFrom(sourceCache) { it !is KaLibraryModule && it !is KaLibrarySourceModule }
         }
 
         removeAllDanglingFileSessions()

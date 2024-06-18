@@ -122,29 +122,23 @@ public interface KaSourceModule : KaModule {
 }
 
 /**
- * A module which consists of binary declarations.
+ * A module which represents a binary library, e.g. JAR or KLIB.
  */
 @OptIn(ExperimentalSubclassOptIn::class)
 @SubclassOptInRequired(markerClass = KaPlatformInterface::class)
-public interface KaBinaryModule : KaModule {
+public interface KaLibraryModule : KaModule {
+    public val libraryName: String
+
     /**
-     * A list of binary files which forms a binary module. It can be a list of JARs, KLIBs, folders with .class files.
+     * A list of binary files which constitute the library. The list can contain JARs, KLIBs, folders with `.class` files, and so on.
      *
-     * It should be consistent with [contentScope], so (pseudo-Kotlin):
+     * The paths should be consistent with the [contentScope], so the following equivalence should hold:
+     *
      * ```
      * library.contentScope.contains(file) <=> library.binaryRoots.listRecursively().contains(file)
      * ```
      */
     public val binaryRoots: Collection<Path>
-}
-
-/**
- * A module which represents a binary library, e.g. JAR or KLIB.
- */
-@OptIn(ExperimentalSubclassOptIn::class)
-@SubclassOptInRequired(markerClass = KaPlatformInterface::class)
-public interface KaLibraryModule : KaBinaryModule {
-    public val libraryName: String
 
     /**
      * A library source, if any. If current module is a binary JAR, then [librarySources] corresponds to the sources JAR.

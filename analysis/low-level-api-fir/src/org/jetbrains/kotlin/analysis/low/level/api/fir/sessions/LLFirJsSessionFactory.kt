@@ -10,8 +10,8 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirModuleWithDependenciesSymbolProvider
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaBinaryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.fir.BuiltinTypes
@@ -59,7 +59,7 @@ internal class LLFirJsSessionFactory(project: Project) : LLFirAbstractSessionFac
         }
     }
 
-    override fun createBinaryLibrarySession(module: KaBinaryModule): LLFirLibrarySession {
+    override fun createBinaryLibrarySession(module: KaLibraryModule): LLFirLibrarySession {
         return doCreateBinaryLibrarySession(module) {
             registerJsComponents(moduleKind = null)
         }

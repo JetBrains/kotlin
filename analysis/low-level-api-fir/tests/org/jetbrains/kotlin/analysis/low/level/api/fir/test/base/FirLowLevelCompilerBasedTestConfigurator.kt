@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisAp
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiIdeModeTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.FirStandaloneServiceRegistrar
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaBinaryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependenciesOfType
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KaScriptModuleByCompilerConfiguration
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KaSourceModuleByCompilerConfiguration
@@ -74,7 +74,7 @@ object FirLowLevelCompilerBasedTestConfigurator : AnalysisApiTestConfigurator() 
         return KtTestModuleStructure(
             testModuleStructure = moduleStructure,
             mainModules = mainModules,
-            binaryModules = mainModules.asSequence().flatMap { it.ktModule.allDirectDependenciesOfType<KaBinaryModule>() }.asIterable(),
+            binaryModules = mainModules.asSequence().flatMap { it.ktModule.allDirectDependenciesOfType<KaLibraryModule>() }.asIterable(),
         )
     }
 
