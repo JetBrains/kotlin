@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.scopes.KaTypeScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithDeclarations
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithMembers
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
@@ -64,7 +63,7 @@ internal class KaFirScopeProvider(
         is KaFirAnonymousObjectSymbol -> firSymbol.fir
         else -> error(
             "`${this::class.qualifiedName}` needs to be specially handled by the scope provider or is an unknown" +
-                    " ${KaSymbolWithDeclarations::class.simpleName} implementation."
+                    " ${KaSymbolWithMembers::class.simpleName} implementation."
         )
     }
 

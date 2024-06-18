@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10Neve
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithDeclarations
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -20,7 +19,7 @@ import org.jetbrains.kotlin.psi.KtFile
 internal class KaFe10FileSymbol(
     private val file: KtFile,
     override val analysisContext: Fe10AnalysisContext
-) : KaFileSymbol(), KaSymbolWithDeclarations, KaFe10AnnotatedSymbol {
+) : KaFileSymbol(), KaFe10AnnotatedSymbol {
     override val psi: KtFile
         get() = withValidityAssertion { file }
 
