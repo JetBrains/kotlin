@@ -37,4 +37,5 @@ package kotlin.native.concurrent
     AnnotationTarget.TYPEALIAS,
 )
 @Retention(AnnotationRetention.BINARY)
+@MustBeDocumented
 public annotation class ObsoleteWorkersApi
