@@ -133,17 +133,11 @@ public interface KaEnumEntryInitializerSymbol : KaDeclarationContainerSymbol
 @Deprecated("Use 'KaEnumEntryInitializerSymbol' instead", ReplaceWith("KaEnumEntryInitializerSymbol"))
 public typealias KtEnumEntryInitializerSymbol = KaEnumEntryInitializerSymbol
 
-public sealed class KaVariableSymbol : KaVariableLikeSymbol() {
-    public abstract override val isVal: Boolean
-
-    abstract override fun createPointer(): KaSymbolPointer<KaVariableSymbol>
-}
-
-@Deprecated("Use 'KaVariableSymbol' instead", ReplaceWith("KaVariableSymbol"))
-public typealias KtVariableSymbol = KaVariableSymbol
+@Deprecated("Use 'KaVariableLikeSymbol' instead", ReplaceWith("KaVariableLikeSymbol"))
+public typealias KtVariableSymbol = KaVariableLikeSymbol
 
 public abstract class KaJavaFieldSymbol :
-    KaVariableSymbol(),
+    KaVariableLikeSymbol(),
     KaSymbolWithModality,
     KaSymbolWithVisibility,
     @Suppress("DEPRECATION") KaSymbolWithKind {
@@ -163,7 +157,7 @@ public abstract class KaJavaFieldSymbol :
 @Deprecated("Use 'KaJavaFieldSymbol' instead", ReplaceWith("KaJavaFieldSymbol"))
 public typealias KtJavaFieldSymbol = KaJavaFieldSymbol
 
-public sealed class KaPropertySymbol : KaVariableSymbol(),
+public sealed class KaPropertySymbol : KaVariableLikeSymbol(),
     KaPossibleMemberSymbol,
     KaSymbolWithModality,
     KaSymbolWithVisibility,
@@ -231,7 +225,7 @@ public abstract class KaSyntheticJavaPropertySymbol : KaPropertySymbol() {
 @Deprecated("Use 'KaSyntheticJavaPropertySymbol' instead", ReplaceWith("KaSyntheticJavaPropertySymbol"))
 public typealias KtSyntheticJavaPropertySymbol = KaSyntheticJavaPropertySymbol
 
-public abstract class KaLocalVariableSymbol : KaVariableSymbol(),
+public abstract class KaLocalVariableSymbol : KaVariableLikeSymbol(),
     @Suppress("DEPRECATION") KaSymbolWithKind {
     final override val callableId: CallableId? get() = withValidityAssertion { null }
     final override val isExtension: Boolean get() = withValidityAssertion { false }
