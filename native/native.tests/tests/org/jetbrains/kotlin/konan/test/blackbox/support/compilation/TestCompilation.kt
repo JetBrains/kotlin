@@ -98,6 +98,7 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
                 // Instead of directly passing system cache directory (which depends on a lot of different compiler options),
                 // just pass auto cacheable directory which will force the compiler to select and use proper system cache directory.
                 add("-Xauto-cache-from=${this@BasicCompilation.home.librariesDir}")
+                add("-Xbackend-threads=1") // The tests are run in parallel already, don't add more here.
             }
             add(dependencies.uniqueCacheDirs) { libraryCacheDir -> "-Xcache-directory=${libraryCacheDir.path}" }
         }
