@@ -3,6 +3,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 plugins {
     java
     id("jps-compatible")
+//    id("gradle-plugin-compiler-dependency-configuration")
 }
 
 // This module does not apply Kotlin plugin, so we are setting toolchain via
