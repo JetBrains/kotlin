@@ -27,13 +27,13 @@ public final class OuterInternal /* pkg.OuterInternal*/ {
 public abstract class SealedWithArgs /* pkg.SealedWithArgs*/ {
   private final int a;
 
-  protected  SealedWithArgs(int);//  .ctor(int)
+  private  SealedWithArgs(int);//  .ctor(int)
 
   public final int getA();//  getA()
 }
 
 public abstract class Season /* pkg.Season*/ {
-  protected  Season();//  .ctor()
+  private  Season();//  .ctor()
 
   class Nested ...
 }

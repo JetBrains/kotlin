@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotations
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForEnumEntry
+import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForNamedClassLike
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
@@ -66,8 +67,11 @@ internal class SymbolLightConstructor(
     }
 
     private fun computeModifiers(modifier: String): Map<String, Boolean>? {
-        if (modifier !in GranularModifiersBox.VISIBILITY_MODIFIERS) return null
-        return GranularModifiersBox.computeVisibilityForMember(ktModule, functionSymbolPointer)
+        return when {
+            modifier !in GranularModifiersBox.VISIBILITY_MODIFIERS -> null
+            (containingClass as? SymbolLightClassForNamedClassLike)?.isSealed == true -> GranularModifiersBox.VISIBILITY_MODIFIERS_MAP.with(PsiModifier.PRIVATE)
+            else -> GranularModifiersBox.computeVisibilityForMember(ktModule, functionSymbolPointer)
+        }
     }
 
     override fun getModifierList(): PsiModifierList = _modifierList
