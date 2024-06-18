@@ -97,7 +97,8 @@ fun <T> KotlinTypeFacade.interpret(
         .filterNot { it.name.startsWith("typeArg") }
         .associateBy { it.name }.toSortedMap().minus(additionalArguments.keys)
 
-    if (expectedArgsMap.keys - defaultArguments != actualArgsMap.keys - defaultArguments) {
+    val unexpectedArguments = expectedArgsMap.keys - defaultArguments != actualArgsMap.keys - defaultArguments
+    if (unexpectedArguments) {
         val message = buildString {
             appendLine("ERROR: Different set of arguments")
             appendLine("Implementation class: $processor")
@@ -107,8 +108,7 @@ fun <T> KotlinTypeFacade.interpret(
             appendLine("add arguments to an interpeter:")
             appendLine(diff.map { actualArgsMap[it] })
         }
-        reporter.reportInterpretationError(functionCall, message)
-        return null
+        interpretationFrameworkError(message)
     }
 
     val arguments = mutableMapOf<String, Interpreter.Success<Any?>>()
