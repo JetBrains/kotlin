@@ -40,6 +40,8 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.platform.konan.isNative
 
+val hiddenFromObjCClassId = ClassId.fromString("kotlin/native/HiddenFromObjC")
+
 /**
  *  AddHiddenFromObjCLowering looks for functions and properties with @Composable types and
  *  adds the `kotlin.native.HiddenFromObjC` annotation to them.
@@ -61,7 +63,7 @@ class AddHiddenFromObjCLowering(
 ) {
 
     private val hiddenFromObjCAnnotation: IrClassSymbol by lazy {
-        getTopLevelClass(ClassId.fromString("kotlin/native/HiddenFromObjC"))
+        getTopLevelClass(hiddenFromObjCClassId)
     }
 
     private var currentShouldAnnotateClass = false
