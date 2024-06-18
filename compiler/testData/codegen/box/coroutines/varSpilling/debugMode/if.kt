@@ -56,10 +56,10 @@ fun box(): String {
     if (spilledVariables != setOf("label" to "1", "Z$0" to "true", "L$0" to continuationName, "L$1" to "a1", "L$2" to "null"))
         return "FAIL 1: $spilledVariables"
     c?.resume(Unit)
-    if (spilledVariables != setOf("label" to "3", "Z$0" to "true", "L$0" to continuationName, "L$1" to "a1", "L$2" to "[a1]"))
+    if (spilledVariables != setOf("label" to "3", "Z$0" to "true", "L$0" to continuationName, "L$1" to "a1", "L$2" to "null"))
         return "FAIL 2: $spilledVariables"
     c?.resume(Unit)
-    if (spilledVariables != setOf("label" to "3", "Z$0" to "true", "L$0" to continuationName, "L$1" to "a1", "L$2" to "[a1]"))
+    if (spilledVariables != setOf("label" to "3", "Z$0" to "true", "L$0" to continuationName, "L$1" to "a1", "L$2" to "null"))
         return "FAIL 3: $spilledVariables"
 
     builder {

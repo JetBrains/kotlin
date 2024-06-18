@@ -669,7 +669,19 @@ class CoroutineTransformerMethodVisitor(
             for (slot in 0 until localsCount) {
                 if (slot == continuationIndex || slot == dataIndex) continue
                 val value = frame.getLocal(slot)
-                if (value.type == null || (shouldOptimiseUnusedVariables && !livenessFrame.isAlive(slot))) continue
+                if (value.type == null) continue
+                if (!livenessFrame.isAlive(slot)) {
+                    if (!shouldOptimiseUnusedVariables) {
+                        val visibleByDebugger = methodNode.localVariables.any {
+                            if (it.index != slot) return@any false
+                            val suspensionInsnIndex = suspension.suspensionCallBegin.index()
+                            it.start.index() < suspensionInsnIndex && suspensionInsnIndex < it.end.index()
+                        }
+                        if (!visibleByDebugger) continue
+                    } else {
+                        continue
+                    }
+                }
 
                 if (value === StrictBasicValue.NULL_VALUE) {
                     referencesToSpill += slot to null
