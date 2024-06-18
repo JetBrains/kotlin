@@ -426,10 +426,10 @@ class Fir2IrClassifierStorage(
     }
 }
 
-private inline fun <reified FP : FirClassLikeDeclaration, reified IS : IrSymbol> Map<FP, IS>.getCachedIrSymbolByFirClassLike(
+internal inline fun <reified FP : FirClassLikeDeclaration, reified IS : IrSymbol> Map<FP, IS>.getCachedIrSymbolByFirClassLike(
     firclassLike: FP,
 ): IS? {
-    return if (firclassLike.origin == FirDeclarationOrigin.CommonArtefact) {
+    return if (firclassLike.origin == FirDeclarationOrigin.CommonArtefact || firclassLike.moduleData.isFromCommonArtefact) {
         val classId = firclassLike.symbol.classId
         return getCachedIrSymbolByCommonDeclaration {
             it.symbol.classId == classId && it.symbol.isExpect == firclassLike.symbol.isExpect
@@ -448,7 +448,7 @@ private fun FirTypeParameter.getContaininingId(): Pair<ClassId?, CallableId?> = 
 private inline fun <reified FTP : FirTypeParameter> Map<FTP, IrTypeParameter>.getCachedIrParameterByFirTypeParameter(
     firTypeParameter: FTP,
 ): IrTypeParameter? {
-    return if (firTypeParameter.origin == FirDeclarationOrigin.CommonArtefact) {
+    return if (firTypeParameter.origin == FirDeclarationOrigin.CommonArtefact || firTypeParameter.moduleData.isFromCommonArtefact) {
         val name = firTypeParameter.name
         val containingId = firTypeParameter.getContaininingId()
         return asIterable().find {

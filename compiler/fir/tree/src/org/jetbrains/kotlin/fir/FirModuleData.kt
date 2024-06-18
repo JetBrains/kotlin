@@ -53,6 +53,7 @@ abstract class FirModuleData : FirSessionComponent {
     abstract val friendDependencies: List<FirModuleData>
     abstract val platform: TargetPlatform
     abstract val isCommon: Boolean
+    abstract val isFromCommonArtefact: Boolean
 
     open val capabilities: FirModuleCapabilities
         get() = FirModuleCapabilities.Empty
@@ -82,6 +83,7 @@ class FirModuleDataImpl(
     override val platform: TargetPlatform,
     override val capabilities: FirModuleCapabilities = FirModuleCapabilities.Empty,
     override val isCommon: Boolean = platform.isCommon(),
+    override val isFromCommonArtefact: Boolean = false,
 ) : FirModuleData() {
     override val session: FirSession
         get() = boundSession
