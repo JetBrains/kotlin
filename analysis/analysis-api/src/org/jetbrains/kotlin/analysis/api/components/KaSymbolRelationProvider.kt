@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
@@ -75,14 +75,14 @@ public interface KaSymbolRelationProvider {
      *
      * N.B. The class is not considered to be a subclass of itself, so `myClass.isSubClassOf(myClass)` is always `false`.
      */
-    public fun KaClassOrObjectSymbol.isSubClassOf(superClass: KaClassOrObjectSymbol): Boolean
+    public fun KaClassSymbol.isSubClassOf(superClass: KaClassSymbol): Boolean
 
     /**
      * Checks if [this] class has [superClass] listed as its direct superclass.
      *
      * N.B. The class is not considered to be a direct subclass of itself, so `myClass.isDirectSubClassOf(myClass)` is always `false`.
      */
-    public fun KaClassOrObjectSymbol.isDirectSubClassOf(superClass: KaClassOrObjectSymbol): Boolean
+    public fun KaClassSymbol.isDirectSubClassOf(superClass: KaClassSymbol): Boolean
 
     public val KaCallableSymbol.intersectionOverriddenSymbols: List<KaCallableSymbol>
 
@@ -91,7 +91,7 @@ public interface KaSymbolRelationProvider {
      * member.
      */
     @KaExperimentalApi
-    public fun KaCallableSymbol.getImplementationStatus(parentClassSymbol: KaClassOrObjectSymbol): ImplementationStatus?
+    public fun KaCallableSymbol.getImplementationStatus(parentClassSymbol: KaClassSymbol): ImplementationStatus?
 
     /**
      * Unwraps fake override [KaCallableSymbol]s until an original declared symbol is uncovered.
@@ -124,13 +124,13 @@ public interface KaSymbolRelationProvider {
      * Gets the class symbol where the given callable symbol is declared. See [fakeOverrideOriginal] for more details.
      */
     @Deprecated(
-        "Use 'fakeOverrideOriginal.containingSymbol as? KaClassOrObjectSymbol' instead.",
+        "Use 'fakeOverrideOriginal.containingSymbol as? KaClassSymbol' instead.",
         replaceWith = ReplaceWith(
-            "fakeOverrideOriginal.containingSymbol as? KaClassOrObjectSymbol",
-            imports = ["org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol"]
+            "fakeOverrideOriginal.containingSymbol as? KaClassSymbol",
+            imports = ["org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol"]
         )
     )
-    public val KaCallableSymbol.originalContainingClassForOverride: KaClassOrObjectSymbol?
+    public val KaCallableSymbol.originalContainingClassForOverride: KaClassSymbol?
 
     /**
      * Gives expect symbol for the actual one if it is available.

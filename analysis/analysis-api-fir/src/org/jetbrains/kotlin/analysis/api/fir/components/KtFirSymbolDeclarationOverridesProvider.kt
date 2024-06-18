@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirAnonymousObjectSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
+import org.jetbrains.kotlin.analysis.api.fir.utils.isSubClassOf
+import org.jetbrains.kotlin.analysis.api.impl.base.components.AbstractKaSymbolDeclarationOverridesProvider
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
@@ -22,8 +24,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
-import org.jetbrains.kotlin.analysis.api.fir.utils.isSubClassOf
-import org.jetbrains.kotlin.analysis.api.impl.base.components.AbstractKaSymbolDeclarationOverridesProvider
 
 internal class KaFirSymbolDeclarationOverridesProvider(
     override val analysisSessionProvider: () -> KaFirSession
@@ -129,7 +129,7 @@ internal class KaFirSymbolDeclarationOverridesProvider(
         require(callableSymbol is KaFirSymbol<*>)
 
         val containingDeclaration = with(analysisSession) {
-            callableSymbol.containingSymbol as? KaClassOrObjectSymbol
+            callableSymbol.containingSymbol as? KaClassSymbol
         } ?: return
 
         when (containingDeclaration) {
@@ -174,15 +174,15 @@ internal class KaFirSymbolDeclarationOverridesProvider(
         }
     }
 
-    fun isSubClassOf(subClass: KaClassOrObjectSymbol, superClass: KaClassOrObjectSymbol): Boolean {
+    fun isSubClassOf(subClass: KaClassSymbol, superClass: KaClassSymbol): Boolean {
         return isSubClassOf(subClass, superClass, allowIndirectSubtyping = true)
     }
 
-    fun isDirectSubClassOf(subClass: KaClassOrObjectSymbol, superClass: KaClassOrObjectSymbol): Boolean {
+    fun isDirectSubClassOf(subClass: KaClassSymbol, superClass: KaClassSymbol): Boolean {
         return isSubClassOf(subClass, superClass, allowIndirectSubtyping = false)
     }
 
-    private fun isSubClassOf(subClass: KaClassOrObjectSymbol, superClass: KaClassOrObjectSymbol, allowIndirectSubtyping: Boolean): Boolean {
+    private fun isSubClassOf(subClass: KaClassSymbol, superClass: KaClassSymbol, allowIndirectSubtyping: Boolean): Boolean {
         require(subClass is KaFirSymbol<*>)
         require(superClass is KaFirSymbol<*>)
 

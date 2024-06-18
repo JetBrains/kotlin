@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.*
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
@@ -97,7 +97,7 @@ internal class KaFirSymbolInformationProvider(
         return SimpleDeprecationInfo(deprecationLevel, propagatesToOverrides, null)
     }
 
-    override val KaClassOrObjectSymbol.annotationApplicableTargets: Set<KotlinTarget>?
+    override val KaClassSymbol.annotationApplicableTargets: Set<KotlinTarget>?
         get() = withValidityAssertion {
             requireIsInstance<KaFirSymbol<*>>(this)
             if (this !is KaFirNamedClassOrObjectSymbolBase) return null

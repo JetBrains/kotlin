@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.*
@@ -126,7 +126,7 @@ private class KtObjCExportHeaderGenerator(
     }
 
     context(KaSession, KtObjCExportSession)
-    private fun translateClassOrObjectSymbol(symbol: KaClassOrObjectSymbol): ObjCClass? {
+    private fun translateClassOrObjectSymbol(symbol: KaClassSymbol): ObjCClass? {
         /* No classId, no stubs ¯\_(ツ)_/¯ */
         val classId = symbol.classId ?: return null
 

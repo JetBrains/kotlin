@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.native.analysis.api
 
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.symbols.*
 
 /**
  * Note: A single [KlibDeclarationAddress] can be shared by multiple symbols.
@@ -40,7 +40,7 @@ public fun KlibDeclarationAddress.getSymbols(): Sequence<KaSymbol> {
  * @see [getSymbols]
  */
 context(KaSession)
-public fun KlibClassAddress.getClassOrObjectSymbol(): KaClassOrObjectSymbol? {
+public fun KlibClassAddress.getClassOrObjectSymbol(): KaClassSymbol? {
     return findClass(classId)
         ?.takeIf { symbol -> symbol in this }
 }

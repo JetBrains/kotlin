@@ -1,7 +1,12 @@
+/*
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.objcexport.analysisApiUtils
 
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -13,18 +18,18 @@ import org.jetbrains.kotlin.name.StandardClassIds
 context(KaSession)
 internal val KaDeclarationSymbol?.implementsCloneable: Boolean
     get() {
-        return (this as? KaClassOrObjectSymbol)?.implementsCloneable ?: false
+        return (this as? KaClassSymbol)?.implementsCloneable ?: false
     }
 
 context(KaSession)
-internal val KaClassOrObjectSymbol.implementsCloneable: Boolean
+internal val KaClassSymbol.implementsCloneable: Boolean
     get() {
         return superTypes.any {
             it.expandedSymbol?.isCloneable ?: false
         }
     }
 
-internal val KaClassOrObjectSymbol.isCloneable: Boolean
+internal val KaClassSymbol.isCloneable: Boolean
     get() {
         return classId?.isCloneable ?: false
     }

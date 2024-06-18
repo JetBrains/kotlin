@@ -632,7 +632,7 @@ internal fun SymbolLightClassBase.addPropertyBackingFields(
 ) {
     val propertySymbols = containerSymbol.combinedDeclaredMemberScope.callables
         .filterIsInstance<KaPropertySymbol>()
-        .applyIf(containerSymbol is KaClassOrObjectSymbol && containerSymbol.classKind == KaClassKind.COMPANION_OBJECT) {
+        .applyIf(containerSymbol is KaClassSymbol && containerSymbol.classKind == KaClassKind.COMPANION_OBJECT) {
             // All fields for companion object of classes are generated to the containing class
             // For interfaces, only @JvmField-annotated properties are generated to the containing class
             // Probably, the same should work for const vals but it doesn't at the moment (see KT-28294)
@@ -640,7 +640,7 @@ internal fun SymbolLightClassBase.addPropertyBackingFields(
         }
 
     val (ctorProperties, memberProperties) = propertySymbols.partition { it.isFromPrimaryConstructor }
-    val isStatic = forceIsStaticTo ?: (containerSymbol is KaClassOrObjectSymbol && containerSymbol.classKind.isObject)
+    val isStatic = forceIsStaticTo ?: (containerSymbol is KaClassSymbol && containerSymbol.classKind.isObject)
     fun addPropertyBackingField(propertySymbol: KaPropertySymbol) {
         createField(
             declaration = propertySymbol,

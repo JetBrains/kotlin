@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.objcexport.analysisApiUtils
 
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -52,7 +52,7 @@ private fun KaNamedClassOrObjectSymbol.isInlineIncludingKotlinNativeSpecialClass
     val classId = classId ?: return false
 
     /* Top Level symbols can be special K/N types */
-    if (containingSymbol is KaClassOrObjectSymbol) return false
+    if (containingSymbol is KaClassSymbol) return false
 
     if (classId.packageFqName == KonanFqNames.internalPackageName && classId.shortClassName == KonanFqNames.nativePtr.shortName()) {
         return true

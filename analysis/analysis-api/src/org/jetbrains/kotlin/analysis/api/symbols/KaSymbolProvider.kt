@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -56,9 +56,9 @@ public interface KaSymbolProvider {
     public val KtObjectLiteralExpression.symbol: KaAnonymousObjectSymbol
 
     /** Returns a symbol for a given [KtClassOrObject]. Returns `null` for `KtEnumEntry` declarations. */
-    public val KtClassOrObject.classSymbol: KaClassOrObjectSymbol?
+    public val KtClassOrObject.classSymbol: KaClassSymbol?
 
-    public val KtObjectDeclaration.symbol: KaClassOrObjectSymbol
+    public val KtObjectDeclaration.symbol: KaClassSymbol
 
     /** Returns a symbol for a given named [KtClassOrObject]. Returns `null` for `KtEnumEntry` declarations and object literals. */
     public val KtClassOrObject.namedClassSymbol: KaNamedClassOrObjectSymbol?
@@ -110,7 +110,7 @@ public interface KaSymbolProvider {
     public fun KtObjectLiteralExpression.getAnonymousObjectSymbol(): KaAnonymousObjectSymbol = symbol
 
     @Deprecated("Use 'classSymbol' instead", replaceWith = ReplaceWith("classSymbol"))
-    public fun KtClassOrObject.getClassOrObjectSymbol(): KaClassOrObjectSymbol? = classSymbol
+    public fun KtClassOrObject.getClassOrObjectSymbol(): KaClassSymbol? = classSymbol
 
     @Deprecated("Use 'namedClassSymbol' instead", replaceWith = ReplaceWith("namedClassSymbol"))
     public fun KtClassOrObject.getNamedClassOrObjectSymbol(): KaNamedClassOrObjectSymbol? = namedClassSymbol
@@ -136,10 +136,10 @@ public interface KaSymbolProvider {
     /**
      * @return symbol with specified [this@getClassOrObjectSymbolByClassId] or `null` in case such symbol is not found
      */
-    public fun findClass(classId: ClassId): KaClassOrObjectSymbol?
+    public fun findClass(classId: ClassId): KaClassSymbol?
 
     @Deprecated("Use 'findClass() instead.", replaceWith = ReplaceWith("findClass(classId)"))
-    public fun getClassOrObjectSymbolByClassId(classId: ClassId): KaClassOrObjectSymbol? = findClass(classId)
+    public fun getClassOrObjectSymbolByClassId(classId: ClassId): KaClassSymbol? = findClass(classId)
 
     /**
      * @return [KaTypeAliasSymbol] with specified [classId] or `null` in case such symbol is not found

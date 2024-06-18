@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KaSession
@@ -25,7 +30,7 @@ internal fun KaCallableSymbol.translateToObjCExportStub(): List<ObjCExportStub> 
 }
 
 context(KaSession, KtObjCExportSession)
-internal fun KaClassOrObjectSymbol.translateToObjCExportStub(): ObjCClass? = when (classKind) {
+internal fun KaClassSymbol.translateToObjCExportStub(): ObjCClass? = when (classKind) {
     KaClassKind.INTERFACE -> translateToObjCProtocol()
     KaClassKind.CLASS -> translateToObjCClass()
     KaClassKind.OBJECT -> translateToObjCObject()

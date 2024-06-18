@@ -121,7 +121,7 @@ internal fun ClassifierDescriptor.toKtClassifierSymbol(analysisContext: Fe10Anal
     }
 }
 
-internal fun ClassDescriptor.toKaClassSymbol(analysisContext: Fe10AnalysisContext): KaClassOrObjectSymbol {
+internal fun ClassDescriptor.toKaClassSymbol(analysisContext: Fe10AnalysisContext): KaClassSymbol {
     return if (DescriptorUtils.isAnonymousObject(this)) {
         KaFe10DescAnonymousObjectSymbol(this, analysisContext)
     } else {

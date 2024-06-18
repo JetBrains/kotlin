@@ -12,10 +12,10 @@ import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.contracts.description.Context
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.contracts.description.renderKaContractEffectDeclaration
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaPossiblyNamedSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -74,7 +74,7 @@ public class DebugSymbolRenderer(
 
             renderComputedValue("getContainingModule", printer) { symbol.containingModule }
 
-            if (symbol is KaClassOrObjectSymbol) {
+            if (symbol is KaClassSymbol) {
                 renderComputedValue("annotationApplicableTargets", printer) { symbol.annotationApplicableTargets }
             }
 

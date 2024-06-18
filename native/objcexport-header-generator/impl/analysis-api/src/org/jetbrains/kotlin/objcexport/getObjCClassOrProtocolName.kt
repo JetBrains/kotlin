@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -110,7 +110,7 @@ private fun KaClassLikeSymbol.canBeInnerSwift(): Boolean {
         return false
     }
 
-    if (this is KaClassOrObjectSymbol && this.classKind == KaClassKind.INTERFACE) {
+    if (this is KaClassSymbol && this.classKind == KaClassKind.INTERFACE) {
         // Swift doesn't support nested protocols.
         return false
     }
@@ -125,7 +125,7 @@ private fun KaClassLikeSymbol.canBeOuterSwift(): Boolean {
         return false
     }
 
-    if (this is KaClassOrObjectSymbol && this.classKind == KaClassKind.INTERFACE) {
+    if (this is KaClassSymbol && this.classKind == KaClassKind.INTERFACE) {
         // Swift doesn't support outer protocols.
         return false
     }

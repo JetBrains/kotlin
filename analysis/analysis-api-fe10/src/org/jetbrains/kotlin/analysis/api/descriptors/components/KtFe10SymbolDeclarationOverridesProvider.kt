@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.components.AbstractKaSymbolDeclarationOverridesProvider
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
@@ -78,7 +78,7 @@ internal class KaFe10SymbolDeclarationOverridesProvider(
         return overriddenDescriptors
     }
 
-    fun isSubClassOf(subClass: KaClassOrObjectSymbol, superClass: KaClassOrObjectSymbol): Boolean {
+    fun isSubClassOf(subClass: KaClassSymbol, superClass: KaClassSymbol): Boolean {
         if (subClass == superClass) return false
 
         val subClassDescriptor = getSymbolDescriptor(subClass) as? ClassDescriptor ?: return false
@@ -86,7 +86,7 @@ internal class KaFe10SymbolDeclarationOverridesProvider(
         return subClassDescriptor.isSubclassOf(superClassDescriptor)
     }
 
-    fun isDirectSubClassOf(subClass: KaClassOrObjectSymbol, superClass: KaClassOrObjectSymbol): Boolean {
+    fun isDirectSubClassOf(subClass: KaClassSymbol, superClass: KaClassSymbol): Boolean {
         val subClassDescriptor = getSymbolDescriptor(subClass) as? ClassDescriptor ?: return false
         val superClassDescriptor = getSymbolDescriptor(superClass) as? ClassDescriptor ?: return false
         return subClassDescriptor.getSuperClassOrAny() == superClassDescriptor

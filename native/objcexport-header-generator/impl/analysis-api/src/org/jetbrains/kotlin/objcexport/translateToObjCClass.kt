@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KaSession
@@ -10,7 +15,7 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.isThrowable
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 
 context(KaSession, KtObjCExportSession)
-fun KaClassOrObjectSymbol.translateToObjCClass(): ObjCClass? {
+fun KaClassSymbol.translateToObjCClass(): ObjCClass? {
     require(classKind == KaClassKind.CLASS || classKind == KaClassKind.ENUM_CLASS)
     if (!isVisibleInObjC()) return null
 
@@ -71,7 +76,7 @@ fun KaClassOrObjectSymbol.translateToObjCClass(): ObjCClass? {
 }
 
 /**
- * Resolves all [KtCallableSymbol] symbols that are to be translated to ObjC for [this] [KtClassOrObjectSymbol].
+ * Resolves all [KtCallableSymbol] symbols that are to be translated to ObjC for [this] [KaClassSymbol].
  * Note: This will return only 'declared' members (aka members written on this class/interface/object) and 'synthetic'/'generated' members.
  *
  * ## Example regular class
@@ -99,7 +104,7 @@ fun KaClassOrObjectSymbol.translateToObjCClass(): ObjCClass? {
  * @see [Predefined]
  */
 context(KaSession)
-internal fun KaClassOrObjectSymbol.getCallableSymbolsForObjCMemberTranslation(): Set<KaCallableSymbol> {
+internal fun KaClassSymbol.getCallableSymbolsForObjCMemberTranslation(): Set<KaCallableSymbol> {
     val generatedCallableSymbols = memberScope
         .callables
         .filter { it.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED }

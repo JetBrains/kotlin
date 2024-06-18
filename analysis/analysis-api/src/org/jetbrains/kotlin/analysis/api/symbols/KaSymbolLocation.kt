@@ -43,7 +43,7 @@ public enum class KaSymbolLocation {
     TOP_LEVEL,
 
     /**
-     * Symbols which are a part of a [KaClassOrObjectSymbol].
+     * Symbols which are a part of a [KaClassSymbol].
      */
     CLASS,
 

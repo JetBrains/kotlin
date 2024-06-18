@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10Sessi
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertyAccessorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
@@ -104,7 +104,7 @@ internal class KaFe10SymbolInformationProvider(
     override val KaPropertySymbol.setterDeprecationStatus: DeprecationInfo?
         get() = withValidityAssertion { getAccessorDeprecation(this, setter) { it.setter } }
 
-    override val KaClassOrObjectSymbol.annotationApplicableTargets: Set<KotlinTarget>?
+    override val KaClassSymbol.annotationApplicableTargets: Set<KotlinTarget>?
         get() = withValidityAssertion {
             val descriptor = getSymbolDescriptor(this) as? ClassDescriptor ?: return null
             if (descriptor.kind != ClassKind.ANNOTATION_CLASS) return null

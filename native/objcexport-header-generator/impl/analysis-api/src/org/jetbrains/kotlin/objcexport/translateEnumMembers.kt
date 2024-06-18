@@ -1,8 +1,13 @@
+/*
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.name.Name
@@ -13,13 +18,13 @@ import org.jetbrains.kotlin.name.Name
  * the Analysis API by requesting the combined member scope and looking for [KtSymbolOrigin.SOURCE_MEMBER_GENERATED].
  */
 context(KaSession, KtObjCExportSession)
-internal fun KaClassOrObjectSymbol.translateEnumMembers(): List<ObjCExportStub> {
+internal fun KaClassSymbol.translateEnumMembers(): List<ObjCExportStub> {
     if (classKind != KaClassKind.ENUM_CLASS) return emptyList()
     return getEnumEntries() + listOf(getEnumValuesMethod(), getEnumEntriesProperty())
 }
 
 context(KaSession, KtObjCExportSession)
-private fun KaClassOrObjectSymbol.getEnumEntries(): List<ObjCProperty> {
+private fun KaClassSymbol.getEnumEntries(): List<ObjCProperty> {
     val staticMembers = this.staticDeclaredMemberScope.callables.toList()
     return staticMembers.filterIsInstance<KaEnumEntrySymbol>().map { entry ->
 
@@ -40,7 +45,7 @@ private fun KaClassOrObjectSymbol.getEnumEntries(): List<ObjCProperty> {
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.buildEnumValuesMethod]
  */
 context(KaSession, KtObjCExportSession)
-private fun KaClassOrObjectSymbol.getEnumValuesMethod(): ObjCMethod {
+private fun KaClassSymbol.getEnumValuesMethod(): ObjCMethod {
     val valuesFunctionSymbol = staticMemberScope.callables(Name.identifier("values")).firstOrNull()
     return ObjCMethod(
         comment = null,
@@ -57,7 +62,7 @@ private fun KaClassOrObjectSymbol.getEnumValuesMethod(): ObjCMethod {
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.buildEnumEntriesProperty]
  */
 context(KaSession, KtObjCExportSession)
-private fun KaClassOrObjectSymbol.getEnumEntriesProperty(): ObjCProperty {
+private fun KaClassSymbol.getEnumEntriesProperty(): ObjCProperty {
     val entriesSymbol = staticMemberScope.callables(Name.identifier("entries")).firstOrNull()
 
     return ObjCProperty(

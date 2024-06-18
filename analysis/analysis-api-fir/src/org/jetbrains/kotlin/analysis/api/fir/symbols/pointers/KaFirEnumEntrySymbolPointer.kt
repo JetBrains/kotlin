@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.name.Name
 
 internal class KaFirEnumEntrySymbolPointer(
-    private val ownerPointer: KaSymbolPointer<KaClassOrObjectSymbol>,
+    private val ownerPointer: KaSymbolPointer<KaClassSymbol>,
     private val name: Name,
 ) : KaSymbolPointer<KaEnumEntrySymbol>() {
     @KaImplementationDetail

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
-import org.jetbrains.kotlin.analysis.api.types.KaFlexibleType
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
+import org.jetbrains.kotlin.analysis.api.types.KaFlexibleType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -142,11 +142,11 @@ public interface KaTypeInformationProvider {
     public val KaType.isUByte: Boolean get() = withValidityAssertion { isClassType(StandardNames.FqNames.uByte) }
 
     /** Gets the class symbol backing the given type, if available. */
-    public val KaType.expandedSymbol: KaClassOrObjectSymbol?
+    public val KaType.expandedSymbol: KaClassSymbol?
         get() = withValidityAssertion {
             return when (this) {
                 is KaClassType -> when (val symbol = symbol) {
-                    is KaClassOrObjectSymbol -> symbol
+                    is KaClassSymbol -> symbol
                     is KaTypeAliasSymbol -> symbol.expandedType.expandedSymbol
                 }
                 else -> null
@@ -155,7 +155,7 @@ public interface KaTypeInformationProvider {
 
     /** Gets the class symbol backing the given type, if available. */
     @Deprecated("Use 'expandedSymbol' instead.", ReplaceWith("expandedSymbol"))
-    public val KaType.expandedClassSymbol: KaClassOrObjectSymbol?
+    public val KaType.expandedClassSymbol: KaClassSymbol?
         get() = expandedSymbol
 
 

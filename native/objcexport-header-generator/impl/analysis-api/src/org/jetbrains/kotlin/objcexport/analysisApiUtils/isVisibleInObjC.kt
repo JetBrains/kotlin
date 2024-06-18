@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -24,7 +24,7 @@ import kotlin.contracts.contract
 context(KaSession)
 internal fun KaSymbol.isVisibleInObjC(): Boolean = when (this) {
     is KaCallableSymbol -> this.isVisibleInObjC()
-    is KaClassOrObjectSymbol -> this.isVisibleInObjC()
+    is KaClassSymbol -> this.isVisibleInObjC()
     else -> false
 }
 
@@ -42,7 +42,7 @@ internal fun KaCallableSymbol.isVisibleInObjC(): Boolean {
 }
 
 context(KaSession)
-internal fun KaClassOrObjectSymbol.isVisibleInObjC(): Boolean {
+internal fun KaClassSymbol.isVisibleInObjC(): Boolean {
     // TODO if(specialMapped()) return false
     // TODO if(!defaultType.isObjCObjectType()) return false
 
@@ -89,9 +89,9 @@ private fun KaCallableSymbol.isHiddenFromObjCByAnnotation(): Boolean {
 }
 
 context(KaSession)
-private fun KaClassOrObjectSymbol.isHiddenFromObjCByAnnotation(): Boolean {
+private fun KaClassSymbol.isHiddenFromObjCByAnnotation(): Boolean {
     val containingSymbol = containingSymbol
-    if (containingSymbol is KaClassOrObjectSymbol && containingSymbol.isHiddenFromObjCByAnnotation()) return true
+    if (containingSymbol is KaClassSymbol && containingSymbol.isHiddenFromObjCByAnnotation()) return true
     return this.containsHidesFromObjCAnnotation()
 }
 
@@ -136,7 +136,7 @@ private fun KaCallableSymbol.isHiddenFromObjCByDeprecation(): Boolean {
         return true
     }
 
-    val containingClassSymbol = containingSymbol as? KaClassOrObjectSymbol
+    val containingClassSymbol = containingSymbol as? KaClassSymbol
     if (containingClassSymbol?.deprecationStatus?.deprecationLevel == DeprecationLevelValue.HIDDEN) {
         return true
     }
@@ -146,7 +146,7 @@ private fun KaCallableSymbol.isHiddenFromObjCByDeprecation(): Boolean {
 
 context(KaSession)
 @OptIn(KaExperimentalApi::class)
-private fun KaClassOrObjectSymbol.isHiddenFromObjCByDeprecation(): Boolean {
+private fun KaClassSymbol.isHiddenFromObjCByDeprecation(): Boolean {
     if (this.deprecationStatus?.deprecationLevel == DeprecationLevelValue.HIDDEN) return true
 
     // Note: ObjCExport requires super class of exposed class to be exposed.
@@ -160,7 +160,7 @@ private fun KaClassOrObjectSymbol.isHiddenFromObjCByDeprecation(): Boolean {
     // Also in Kotlin hidden class members (including other classes) aren't directly accessible.
     // So hide a class if its enclosing class is hidden:
     val containingSymbol = containingSymbol
-    if (containingSymbol is KaClassOrObjectSymbol && containingSymbol.isHiddenFromObjCByDeprecation()) {
+    if (containingSymbol is KaClassSymbol && containingSymbol.isHiddenFromObjCByDeprecation()) {
         return true
     }
 
@@ -168,7 +168,7 @@ private fun KaClassOrObjectSymbol.isHiddenFromObjCByDeprecation(): Boolean {
 }
 
 context(KaSession)
-private fun KaClassOrObjectSymbol.isInlined(): Boolean {
+private fun KaClassSymbol.isInlined(): Boolean {
     if (this !is KaNamedClassOrObjectSymbol) return false
     if (this.isInline) return true
     // TODO: There are some native types that are 'implicitly inlined'

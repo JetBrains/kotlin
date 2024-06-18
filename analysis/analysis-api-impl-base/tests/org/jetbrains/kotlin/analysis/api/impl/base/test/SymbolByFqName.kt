@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.impl.base.test.SymbolByFqName.getSymbolDataFromFile
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.name.CallableId
@@ -99,7 +99,7 @@ sealed class SymbolData {
             return symbols
         }
 
-        private fun KaSession.findMatchingCallableSymbols(classSymbol: KaClassOrObjectSymbol): List<KaCallableSymbol> {
+        private fun KaSession.findMatchingCallableSymbols(classSymbol: KaClassSymbol): List<KaCallableSymbol> {
             val declaredSymbols = classSymbol.combinedDeclaredMemberScope
                 .callables(callableId.callableName).toList()
 

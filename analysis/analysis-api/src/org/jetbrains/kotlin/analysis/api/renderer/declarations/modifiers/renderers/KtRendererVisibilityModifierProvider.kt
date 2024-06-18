@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -38,7 +38,7 @@ public interface KaRendererVisibilityModifierProvider {
                     is KaFunctionSymbol -> if (symbol.isOverride) return null
                     is KaPropertySymbol -> if (symbol.isOverride) return null
                     is KaConstructorSymbol -> {
-                        if ((symbol.containingSymbol as? KaClassOrObjectSymbol)?.classKind == KaClassKind.ENUM_CLASS) return null
+                        if ((symbol.containingSymbol as? KaClassSymbol)?.classKind == KaClassKind.ENUM_CLASS) return null
                     }
                 }
 

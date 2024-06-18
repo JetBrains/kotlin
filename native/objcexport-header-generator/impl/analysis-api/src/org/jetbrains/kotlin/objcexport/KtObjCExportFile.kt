@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.objcexport
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.native.analysis.api.*
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getAllClassOrObjectSymbols
@@ -32,7 +32,7 @@ interface KtObjCExportFile {
 data class KtResolvedObjCExportFile(
     val fileName: String,
     val packageFqName: FqName,
-    val classifierSymbols: List<KaClassOrObjectSymbol>,
+    val classifierSymbols: List<KaClassSymbol>,
     val callableSymbols: List<KaCallableSymbol>,
 )
 
@@ -131,8 +131,8 @@ private class KtKlibObjCExportFile(
             packageFqName = packageFqName,
             classifierSymbols = classifierAddresses
                 .mapNotNull { classAddress -> classAddress.getClassOrObjectSymbol() }
-                .withClosure<KaClassOrObjectSymbol> { symbol ->
-                    symbol.memberScope.classifiers.filterIsInstance<KaClassOrObjectSymbol>().asIterable()
+                .withClosure<KaClassSymbol> { symbol ->
+                    symbol.memberScope.classifiers.filterIsInstance<KaClassSymbol>().asIterable()
                 }.toList(),
             callableSymbols = callableAddresses.flatMap { address ->
                 address.getCallableSymbols()

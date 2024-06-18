@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.components.KaScopeKind
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
@@ -115,13 +115,13 @@ internal object KDocReferenceResolver {
     }
 
     /**
-     * N.B. Works only for [KaClassOrObjectSymbol] parents chain.
+     * N.B. Works only for [KaClassSymbol] parents chain.
      */
     private fun KaSession.goToNthParent(symbol: KaDeclarationSymbol, steps: Int): KaDeclarationSymbol? {
         var currentSymbol = symbol
 
         repeat(steps) {
-            currentSymbol = currentSymbol.containingSymbol as? KaClassOrObjectSymbol ?: return null
+            currentSymbol = currentSymbol.containingSymbol as? KaClassSymbol ?: return null
         }
 
         return currentSymbol

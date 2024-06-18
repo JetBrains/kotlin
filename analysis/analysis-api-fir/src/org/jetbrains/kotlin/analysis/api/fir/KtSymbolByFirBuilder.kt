@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
@@ -148,7 +148,7 @@ internal class KaSymbolByFirBuilder(
             }
         }
 
-        fun buildClassOrObjectSymbol(firSymbol: FirClassSymbol<*>): KaClassOrObjectSymbol {
+        fun buildClassOrObjectSymbol(firSymbol: FirClassSymbol<*>): KaClassSymbol {
             return when (firSymbol) {
                 is FirAnonymousObjectSymbol -> buildAnonymousObjectSymbol(firSymbol)
                 is FirRegularClassSymbol -> buildNamedClassOrObjectSymbol(firSymbol)

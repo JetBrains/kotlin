@@ -1,7 +1,12 @@
+/*
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCClassType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProperty
 import org.jetbrains.kotlin.backend.konan.objcexport.swiftNameAttribute
@@ -15,11 +20,11 @@ import org.jetbrains.kotlin.objcexport.extras.requiresForwardDeclaration
  * To check whether class has companion object see [needsCompanionProperty]
  */
 context(KaSession, KtObjCExportSession)
-internal fun KaClassOrObjectSymbol.buildCompanionProperty(): ObjCProperty {
+internal fun KaClassSymbol.buildCompanionProperty(): ObjCProperty {
     val companion = this.staticMemberScope.classifiers.toList()
-        .firstOrNull { (it as? KaClassOrObjectSymbol)?.isCompanion == true }
+        .firstOrNull { (it as? KaClassSymbol)?.isCompanion == true }
 
-    val typeName = (companion as KaClassOrObjectSymbol).getObjCClassOrProtocolName()
+    val typeName = (companion as KaClassSymbol).getObjCClassOrProtocolName()
     val propertyName = ObjCPropertyNames.companionObjectPropertyName
 
     return ObjCProperty(

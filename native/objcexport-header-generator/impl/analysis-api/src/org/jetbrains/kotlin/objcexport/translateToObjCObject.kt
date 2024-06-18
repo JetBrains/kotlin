@@ -1,8 +1,13 @@
+/*
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithModality
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.descriptors.Modality
@@ -12,7 +17,7 @@ import org.jetbrains.kotlin.objcexport.extras.originClassId
 import org.jetbrains.kotlin.objcexport.extras.requiresForwardDeclaration
 
 context(KaSession, KtObjCExportSession)
-fun KaClassOrObjectSymbol.translateToObjCObject(): ObjCClass? {
+fun KaClassSymbol.translateToObjCObject(): ObjCClass? {
     require(classKind == KaClassKind.OBJECT || classKind == KaClassKind.COMPANION_OBJECT)
     if (!isVisibleInObjC()) return null
 
@@ -49,7 +54,7 @@ fun KaClassOrObjectSymbol.translateToObjCObject(): ObjCClass? {
 }
 
 context(KaSession, KtObjCExportSession)
-private fun KaClassOrObjectSymbol.getDefaultMembers(): List<ObjCExportStub> {
+private fun KaClassSymbol.getDefaultMembers(): List<ObjCExportStub> {
 
     val result = mutableListOf<ObjCExportStub>()
 
@@ -85,7 +90,7 @@ private fun KaClassOrObjectSymbol.getDefaultMembers(): List<ObjCExportStub> {
  * See also: [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mapReferenceType]
  */
 context(KaSession, KtObjCExportSession)
-private fun KaClassOrObjectSymbol.toPropertyType() = ObjCClassType(
+private fun KaClassSymbol.toPropertyType() = ObjCClassType(
     className = getObjCClassOrProtocolName().objCName,
     typeArguments = emptyList(),
     extras = objCTypeExtras {
@@ -98,7 +103,7 @@ private fun KaClassOrObjectSymbol.toPropertyType() = ObjCClassType(
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getObjectInstanceSelector]
  */
 context(KaSession, KtObjCExportSession)
-private fun getObjectInstanceSelector(objectSymbol: KaClassOrObjectSymbol): String {
+private fun getObjectInstanceSelector(objectSymbol: KaClassSymbol): String {
     return objectSymbol.getObjCClassOrProtocolName(bareName = true)
         .objCName
         .replaceFirstChar(Char::lowercaseChar)
@@ -109,7 +114,7 @@ private fun getObjectInstanceSelector(objectSymbol: KaClassOrObjectSymbol): Stri
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getObjectPropertySelector]
  */
 context(KaSession, KtObjCExportSession)
-private fun getObjectPropertySelector(descriptor: KaClassOrObjectSymbol): String {
+private fun getObjectPropertySelector(descriptor: KaClassSymbol): String {
     val collides = ObjCPropertyNames.objectPropertyName == getObjectInstanceSelector(descriptor)
     return ObjCPropertyNames.objectPropertyName + (if (collides) "_" else "")
 }

@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
@@ -36,7 +36,7 @@ internal val KaConstructorSymbol.firSymbol: FirConstructorSymbol get() = (this a
 internal val KaPropertyAccessorSymbol.firSymbol: FirPropertyAccessorSymbol get() = (this as KaFirSymbol<*>).firSymbol as FirPropertyAccessorSymbol
 internal val KaClassInitializerSymbol.firSymbol: FirAnonymousInitializerSymbol get() = (this as KaFirSymbol<*>).firSymbol as FirAnonymousInitializerSymbol
 internal val KaClassLikeSymbol.firSymbol: FirClassLikeSymbol<*> get() = (this as KaFirSymbol<*>).firSymbol as FirClassLikeSymbol<*>
-internal val KaClassOrObjectSymbol.firSymbol: FirClassSymbol<*> get() = (this as KaFirSymbol<*>).firSymbol as FirClassSymbol<*>
+internal val KaClassSymbol.firSymbol: FirClassSymbol<*> get() = (this as KaFirSymbol<*>).firSymbol as FirClassSymbol<*>
 
 
 fun FirBasedSymbol<*>.getContainingKtModule(firResolveSession: LLFirResolveSession): KaModule {

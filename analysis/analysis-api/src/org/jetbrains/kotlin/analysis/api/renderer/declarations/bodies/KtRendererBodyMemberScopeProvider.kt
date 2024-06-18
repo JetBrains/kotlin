@@ -33,7 +33,7 @@ public interface KaRendererBodyMemberScopeProvider {
                                 origin != KaSymbolOrigin.SUBSTITUTION_OVERRIDE &&
                                 origin != KaSymbolOrigin.INTERSECTION_OVERRIDE
                     }.filter { member ->
-                        member !is KaConstructorSymbol || symbol !is KaClassOrObjectSymbol || !symbol.classKind.isObject
+                        member !is KaConstructorSymbol || symbol !is KaClassSymbol || !symbol.classKind.isObject
                     }.filterNot { member ->
                         member is KaConstructorSymbol && symbol is KaEnumEntrySymbol
                     }

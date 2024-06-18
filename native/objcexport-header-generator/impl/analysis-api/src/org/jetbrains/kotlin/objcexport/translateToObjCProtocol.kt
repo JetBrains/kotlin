@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCComment
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProtocol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProtocolImpl
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.isObjCBaseCallable
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 
 context(KaSession, KtObjCExportSession)
-fun KaClassOrObjectSymbol.translateToObjCProtocol(): ObjCProtocol? {
+fun KaClassSymbol.translateToObjCProtocol(): ObjCProtocol? {
     // TODO: check if this symbol shall be exposed in the first place
     require(classKind == KaClassKind.INTERFACE)
     if (!isVisibleInObjC()) return null
@@ -43,7 +43,7 @@ fun KaClassOrObjectSymbol.translateToObjCProtocol(): ObjCProtocol? {
 }
 
 context(KaSession, KtObjCExportSession)
-internal fun KaClassOrObjectSymbol.superProtocols(): List<String> {
+internal fun KaClassSymbol.superProtocols(): List<String> {
     return getDeclaredSuperInterfaceSymbols()
         .filter { it.isVisibleInObjC() }
         .map { superInterface -> superInterface.getObjCClassOrProtocolName().objCName }

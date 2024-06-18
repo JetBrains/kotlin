@@ -1,12 +1,12 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -50,5 +50,5 @@ public interface KaSymbolInformationProvider {
 
     /** Gets the set of applicable targets for an annotation class symbol. Returns `null` if the symbol is not an annotation class. */
     @KaExperimentalApi
-    public val KaClassOrObjectSymbol.annotationApplicableTargets: Set<KotlinTarget>?
+    public val KaClassSymbol.annotationApplicableTargets: Set<KotlinTarget>?
 }

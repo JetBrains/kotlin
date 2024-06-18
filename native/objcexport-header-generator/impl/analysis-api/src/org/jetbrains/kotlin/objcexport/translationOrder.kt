@@ -34,7 +34,7 @@ internal val StableConstructorOrder: Comparator<KaConstructorSymbol>
 
 internal val StableClassifierOrder: Comparator<KaClassifierSymbol> =
     compareBy<KaClassifierSymbol> { classifier ->
-        if (classifier !is KaClassOrObjectSymbol) return@compareBy 0
+        if (classifier !is KaClassSymbol) return@compareBy 0
         else 2
     }.thenComparing { classifier ->
         if (classifier is KaClassLikeSymbol) classifier.classId?.toString().orEmpty()

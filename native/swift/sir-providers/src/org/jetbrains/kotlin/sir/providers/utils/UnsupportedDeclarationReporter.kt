@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.sir.providers.utils
 
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 
@@ -24,7 +24,7 @@ public class SimpleUnsupportedDeclarationReporter : UnsupportedDeclarationReport
     override fun report(symbol: KaSymbolWithVisibility, reason: String) {
         val declarationName = when (symbol) {
             is KaCallableSymbol -> symbol.callableId?.asSingleFqName()?.asString()
-            is KaClassOrObjectSymbol -> symbol.classId?.asSingleFqName()?.asString()
+            is KaClassSymbol -> symbol.classId?.asSingleFqName()?.asString()
             is KaNamedSymbol -> symbol.name.asString()
             else -> null
         } ?: "declaration"

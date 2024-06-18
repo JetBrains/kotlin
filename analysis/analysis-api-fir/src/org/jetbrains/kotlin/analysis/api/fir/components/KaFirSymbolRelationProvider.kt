@@ -322,11 +322,11 @@ internal class KaFirSymbolRelationProvider(
             overridesProvider.getDirectlyOverriddenSymbols(this)
         }
 
-    override fun KaClassOrObjectSymbol.isSubClassOf(superClass: KaClassOrObjectSymbol): Boolean = withValidityAssertion {
+    override fun KaClassSymbol.isSubClassOf(superClass: KaClassSymbol): Boolean = withValidityAssertion {
         return overridesProvider.isSubClassOf(this, superClass)
     }
 
-    override fun KaClassOrObjectSymbol.isDirectSubClassOf(superClass: KaClassOrObjectSymbol): Boolean = withValidityAssertion {
+    override fun KaClassSymbol.isDirectSubClassOf(superClass: KaClassSymbol): Boolean = withValidityAssertion {
         return overridesProvider.isDirectSubClassOf(this, superClass)
     }
 
@@ -335,7 +335,7 @@ internal class KaFirSymbolRelationProvider(
             overridesProvider.getIntersectionOverriddenSymbols(this)
         }
 
-    override fun KaCallableSymbol.getImplementationStatus(parentClassSymbol: KaClassOrObjectSymbol): ImplementationStatus? {
+    override fun KaCallableSymbol.getImplementationStatus(parentClassSymbol: KaClassSymbol): ImplementationStatus? {
         withValidityAssertion {
             require(this is KaFirSymbol<*>)
             require(parentClassSymbol is KaFirSymbol<*>)
@@ -361,7 +361,7 @@ internal class KaFirSymbolRelationProvider(
         }
 
     @Suppress("OVERRIDE_DEPRECATION")
-    override val KaCallableSymbol.originalContainingClassForOverride: KaClassOrObjectSymbol?
+    override val KaCallableSymbol.originalContainingClassForOverride: KaClassSymbol?
         get() = withValidityAssertion {
             require(this is KaFirSymbol<*>)
 
@@ -370,7 +370,7 @@ internal class KaFirSymbolRelationProvider(
 
             val unwrappedFirSymbol = unwrappedDeclaration.symbol
             val unwrappedKtSymbol = analysisSession.firSymbolBuilder.callableBuilder.buildCallableSymbol(unwrappedFirSymbol)
-            return with(analysisSession) { unwrappedKtSymbol.containingSymbol as? KaClassOrObjectSymbol }
+            return with(analysisSession) { unwrappedKtSymbol.containingSymbol as? KaClassSymbol }
         }
 
     override fun KaDeclarationSymbol.getExpectsForActual(): List<KaDeclarationSymbol> = withValidityAssertion {

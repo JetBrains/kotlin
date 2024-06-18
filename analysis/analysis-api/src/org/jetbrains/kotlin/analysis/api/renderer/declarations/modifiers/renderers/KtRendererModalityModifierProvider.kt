@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -47,8 +47,8 @@ public interface KaRendererModalityModifierProvider {
                     is KaFunctionSymbol -> if (symbol.isOverride && symbol.modality != Modality.FINAL) return null
                     is KaPropertySymbol -> if (symbol.isOverride && symbol.modality != Modality.FINAL) return null
                 }
-                if ((symbol as? KaClassOrObjectSymbol)?.classKind == KaClassKind.INTERFACE) return null
-                if ((symbol.containingSymbol as? KaClassOrObjectSymbol)?.classKind == KaClassKind.INTERFACE) return null
+                if ((symbol as? KaClassSymbol)?.classKind == KaClassKind.INTERFACE) return null
+                if ((symbol.containingSymbol as? KaClassSymbol)?.classKind == KaClassKind.INTERFACE) return null
 
                 return when (symbol.modality) {
                     Modality.FINAL -> null
