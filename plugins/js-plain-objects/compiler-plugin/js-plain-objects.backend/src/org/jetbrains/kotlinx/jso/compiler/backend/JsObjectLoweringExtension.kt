@@ -15,9 +15,11 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
@@ -35,13 +37,13 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
 
         if (parent == null || declaration !is IrSimpleFunction || declaration.origin != EXPECTED_ORIGIN) return null
 
-        val proxyFunction = declaration.createFunctionContainingTheLogic().also(file::addChild)
+        val proxyFunction = declaration.createFunctionContainingTheLogic(parent).also(file::addChild)
         declaration.body = declaration.generateBodyWithTheProxyFunctionCall(proxyFunction)
 
         return null
     }
 
-    private fun IrSimpleFunction.createFunctionContainingTheLogic(): IrSimpleFunction {
+    private fun IrSimpleFunction.createFunctionContainingTheLogic(parent: IrClass): IrSimpleFunction {
         val declaration = this
 
         return context.irFactory.buildFun {
@@ -52,12 +54,21 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
             isInline = true
             isExternal = false
         }.apply {
-            copyParameterDeclarationsFrom(declaration)
+            copyTypeParametersFrom(declaration)
+
+            val substitutionMap = HashMap<IrTypeParameterSymbol, IrType>()
+            substitutionMap.putAll(makeTypeParameterSubstitutionMap(declaration, this))
+
+            if (!parent.isCompanion) {
+                copyTypeParametersFrom(parent)
+                substitutionMap.putAll(makeTypeParameterSubstitutionMap(parent, this))
+            }
+
+            copyValueParametersFrom(declaration, substitutionMap)
 
             extensionReceiverParameter = dispatchReceiverParameter
             dispatchReceiverParameter = null
-
-            returnType = returnType.remapTypeParameters(declaration, this)
+            returnType = returnType.substitute(substitutionMap)
 
             body = when (declaration.name) {
                 StandardNames.DATA_CLASS_COPY -> generateBodyForCopyFunction()

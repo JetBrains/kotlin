@@ -55,6 +55,12 @@ public class FirJsPlainObjectsIrJsBoxTestGenerated extends AbstractFirJsPlainObj
   }
 
   @Test
+  @TestMetadata("simpleWithTypeParameter.kt")
+  public void testSimpleWithTypeParameter() {
+    runTest("plugins/js-plain-objects/compiler-plugin/testData/box/simpleWithTypeParameter.kt");
+  }
+
+  @Test
   @TestMetadata("with-inheritance.kt")
   public void testWith_inheritance() {
     runTest("plugins/js-plain-objects/compiler-plugin/testData/box/with-inheritance.kt");
