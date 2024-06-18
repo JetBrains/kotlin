@@ -77,10 +77,10 @@ internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
         }
         is KaValueParameterSymbol -> "${if (isVararg) "vararg " else ""}$name: ${returnType.render()}"
         is KaTypeParameterSymbol -> this.nameOrAnonymous.asString()
-        is KaVariableSymbol -> "${if (isVal) "val" else "var"} $name: ${returnType.render()}"
+        is KaEnumEntrySymbol -> callableId?.toString() ?: name.asString()
+        is KaVariableLikeSymbol -> "${if (isVal) "val" else "var"} $name: ${returnType.render()}"
         is KaClassLikeSymbol -> classId?.toString() ?: nameOrAnonymous.asString()
         is KaPackageSymbol -> fqName.toString()
-        is KaEnumEntrySymbol -> callableId?.toString() ?: name.asString()
         is KaSymbol -> DebugSymbolRenderer().render(useSiteSession, this)
         is Boolean -> toString()
         is Map<*, *> -> if (isEmpty()) "{}" else entries.joinToString(
@@ -173,10 +173,8 @@ internal fun KaSession.prettyPrintSignature(signature: KaCallableSignature<*>): 
         }
         is KaVariableLikeSignature -> {
             val symbol = signature.symbol
-            if (symbol is KaVariableSymbol) {
-                append(if (symbol.isVal) "val" else "var")
-                append(" ")
-            }
+            append(if (symbol.isVal) "val" else "var")
+            append(" ")
             signature.receiverType?.let { append('.'); append(it.render(position = Variance.INVARIANT)) }
             append((symbol as KaNamedSymbol).name.asString())
             append(": ")
