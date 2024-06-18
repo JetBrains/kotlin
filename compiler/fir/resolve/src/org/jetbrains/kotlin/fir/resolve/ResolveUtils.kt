@@ -443,28 +443,6 @@ fun BodyResolveComponents.typeFromCallee(access: FirElement, calleeReference: Fi
                 }
             }
         }
-        is FirSuperReference -> {
-            val labelName = calleeReference.labelName
-            val receiverSet = implicitReceiverStack[labelName]
-            val implicitReceiver =
-                if (labelName != null) {
-                    receiverSet.singleWithoutDuplicatingContextReceiversOrNull() as? ImplicitDispatchReceiverValue ?: run {
-                        return buildErrorTypeRef {
-                            source = calleeReference.source
-                            diagnostic = receiverSet.ambiguityDiagnosticFor(labelName)
-                        }
-                    }
-                } else {
-                    implicitReceiverStack.lastDispatchReceiver()
-                }
-            val resolvedTypeRef =
-                calleeReference.superTypeRef as? FirResolvedTypeRef
-                    ?: implicitReceiver?.boundSymbol?.fir?.superTypeRefs?.singleOrNull() as? FirResolvedTypeRef
-            resolvedTypeRef ?: buildErrorTypeRef {
-                source = calleeReference.source
-                diagnostic = ConeUnresolvedNameError(Name.identifier("super"))
-            }
-        }
         else -> errorWithAttachment("Failed to extract type from: ${calleeReference::class.simpleName}") {
             withFirEntry("reference", calleeReference)
         }
