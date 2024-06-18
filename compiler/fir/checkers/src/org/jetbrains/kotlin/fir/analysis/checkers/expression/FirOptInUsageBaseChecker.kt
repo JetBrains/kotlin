@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isData
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -166,7 +167,9 @@ object FirOptInUsageBaseChecker {
         val session = context.session
         when (fir) {
             is FirCallableDeclaration ->
-                fir.loadCallableSpecificExperimentalities(this, context, visited, fromSetter, dispatchReceiverType, result)
+                fir.loadCallableSpecificExperimentalities(
+                    this as FirCallableSymbol, context, visited, fromSetter, dispatchReceiverType, result
+                )
             is FirClassLikeDeclaration ->
                 fir.loadClassLikeSpecificExperimentalities(this, context, visited, result)
             is FirAnonymousInitializer, is FirDanglingModifierList, is FirFile, is FirTypeParameter, is FirScript, is FirCodeFragment -> {}
@@ -189,7 +192,7 @@ object FirOptInUsageBaseChecker {
     }
 
     private fun FirCallableDeclaration.loadCallableSpecificExperimentalities(
-        symbol: FirBasedSymbol<*>,
+        symbol: FirCallableSymbol<*>,
         context: CheckerContext,
         visited: MutableSet<FirDeclaration>,
         fromSetter: Boolean,
@@ -208,7 +211,9 @@ object FirOptInUsageBaseChecker {
             returnTypeRef.coneTypeSafe<ConeKotlinType>()?.abbreviatedTypeOrSelf.addExperimentalities(context, result, visited)
             receiverParameter?.typeRef?.coneType?.abbreviatedTypeOrSelf.addExperimentalities(context, result, visited)
         }
-        dispatchReceiverType?.addExperimentalities(context, result, visited)
+        if (!symbol.isStatic) {
+            dispatchReceiverType?.addExperimentalities(context, result, visited)
+        }
         if (this is FirFunction) {
             valueParameters.forEach {
                 it.returnTypeRef.coneType.abbreviatedTypeOrSelf.addExperimentalities(context, result, visited)
