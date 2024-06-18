@@ -53,6 +53,7 @@ internal open class StubBasedFirDeserializedSymbolProvider(
     session: FirSession,
     moduleDataProvider: SingleModuleDataProvider,
     private val kotlinScopeProvider: FirKotlinScopeProvider,
+    private val deserializedContainerSourceProvider: DeserializedContainerSourceProvider,
     project: Project,
     scope: GlobalSearchScope,
 
@@ -173,7 +174,7 @@ internal open class StubBasedFirDeserializedSymbolProvider(
             for (function in topLevelFunctions) {
                 val functionStub = function.stub as? KotlinFunctionStubImpl ?: loadStubByElement(function)
                 val functionFile = function.containingKtFile
-                val containerSource = getContainerSource(functionFile, functionStub?.origin)
+                val containerSource = deserializedContainerSourceProvider.getContainerSource(functionFile, functionStub?.origin)
                 val functionOrigin = getDeclarationOriginFor(functionFile)
 
                 if (functionOrigin != FirDeclarationOrigin.BuiltIns &&
@@ -199,7 +200,7 @@ internal open class StubBasedFirDeserializedSymbolProvider(
             for (property in topLevelProperties) {
                 val propertyStub = property.stub as? KotlinPropertyStubImpl ?: loadStubByElement(property)
                 val propertyFile = property.containingKtFile
-                val containerSource = getContainerSource(propertyFile, propertyStub?.origin)
+                val containerSource = deserializedContainerSourceProvider.getContainerSource(propertyFile, propertyStub?.origin)
                 val propertyOrigin = getDeclarationOriginFor(propertyFile)
 
                 val symbol = FirPropertySymbol(callableId)
@@ -207,36 +208,6 @@ internal open class StubBasedFirDeserializedSymbolProvider(
                     .createRootContext(session, moduleData, callableId, property, symbol, propertyOrigin, containerSource)
 
                 add(rootContext.memberDeserializer.loadProperty(property, null, symbol).symbol)
-            }
-        }
-    }
-
-    private fun getContainerSource(file: KtFile, origin: KotlinStubOrigin?): DeserializedContainerSource {
-        if (getDeclarationOriginFor(file) == FirDeclarationOrigin.BuiltIns) {
-            require(origin is KotlinStubOrigin.Facade) {
-                "Expected builtins file to have Facade origin, got origin=$origin instead"
-            }
-
-            return JvmStubDeserializedBuiltInsContainerSource(
-                facadeClassName = JvmClassName.byInternalName(origin.className)
-            )
-        }
-
-        return when (origin) {
-            is KotlinStubOrigin.Facade -> {
-                val className = JvmClassName.byInternalName(origin.className)
-                JvmStubDeserializedFacadeContainerSource(className, facadeClassName = null)
-            }
-            is KotlinStubOrigin.MultiFileFacade -> {
-                val className = JvmClassName.byInternalName(origin.className)
-                val facadeClassName = JvmClassName.byInternalName(origin.facadeClassName)
-                JvmStubDeserializedFacadeContainerSource(className, facadeClassName)
-            }
-            else -> {
-                val virtualFile = file.virtualFile
-                val classId = ClassId(file.packageFqName, Name.identifier(virtualFile.nameWithoutExtension))
-                val className = JvmClassName.byClassId(classId)
-                JvmStubDeserializedFacadeContainerSource(className, facadeClassName = null)
             }
         }
     }
