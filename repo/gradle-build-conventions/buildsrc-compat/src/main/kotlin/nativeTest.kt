@@ -114,7 +114,7 @@ fun Project.nativeTest(
 ) = projectTest(
     taskName,
     jUnitMode = JUnitMode.JUnit5,
-    maxHeapSizeMb = 3072, // Extra heap space for Kotlin/Native compiler.
+    maxHeapSizeMb = 5 * 1024, // Extra heap space for Kotlin/Native compiler.
     maxMetaspaceSizeMb = maxMetaspaceSizeMb,
     defineJDKEnvVariables = defineJDKEnvVariables,
 ) {
