@@ -17403,6 +17403,18 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("kt69159Simplified.kt")
+      public void testKt69159Simplified() {
+        runTest("compiler/testData/diagnostics/tests/inference/kt69159Simplified.kt");
+      }
+
+      @Test
+      @TestMetadata("kt69159WithComparable.kt")
+      public void testKt69159WithComparable() {
+        runTest("compiler/testData/diagnostics/tests/inference/kt69159WithComparable.kt");
+      }
+
+      @Test
       @TestMetadata("lambdaAgainstSimpleTypeMismatch.kt")
       public void testLambdaAgainstSimpleTypeMismatch() {
         runTest("compiler/testData/diagnostics/tests/inference/lambdaAgainstSimpleTypeMismatch.kt");
