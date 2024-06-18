@@ -7,7 +7,7 @@ KtCallExpression(97,102): 'foo()'
           symbol = one/two/TopLevelObject
           type = one.two.TopLevelObject
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
           symbol = one/two/BaseClass.foo(<dispatch receiver>: one.two.BaseClass): kotlin.Unit

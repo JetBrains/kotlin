@@ -5,7 +5,7 @@ KtEnumEntrySuperclassReferenceExpression(127,127): ''
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = EnumWithConstructor
           symbol = <constructor>(i: kotlin.Int): EnumWithConstructor

@@ -6,7 +6,7 @@ KtCallExpression(61,99): 'generic<String, String>("a", "b", "c")'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
           symbol = /generic(a: A, b: B, c: C): kotlin.Unit

@@ -8,7 +8,7 @@ KtOperationReferenceExpression(184,186): '=='
           isSafeNavigation = false
           type = Child
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Boolean
           symbol = /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean

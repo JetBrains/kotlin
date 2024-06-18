@@ -6,7 +6,7 @@ KtNameReferenceExpression(99,104): 'coreR'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = test.pkg.R.string
           symbol = <constructor>(): test.pkg.R.string

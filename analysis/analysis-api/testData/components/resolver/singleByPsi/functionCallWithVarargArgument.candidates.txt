@@ -5,7 +5,7 @@ KtCallExpression(49,66): 'function(1, 2, 3)'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
           symbol = /function(vararg a: kotlin.Int): kotlin.Unit

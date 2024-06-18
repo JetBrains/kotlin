@@ -5,7 +5,7 @@ KtCallExpression(80,85): 'foo()'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
           symbol = /BaseClass.foo(): kotlin.Unit

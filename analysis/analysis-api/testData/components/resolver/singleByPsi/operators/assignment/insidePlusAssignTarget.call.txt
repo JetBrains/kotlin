@@ -5,7 +5,7 @@ KtNameReferenceExpression(87,100): 'mutableListOf'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.collections.MutableList<kotlin.String>
           symbol = kotlin/collections/mutableListOf(): kotlin.collections.MutableList<T>

@@ -4,7 +4,7 @@ KtAnnotationEntry(23,34): '@field:Anno'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = Anno
           symbol = <constructor>(): Anno

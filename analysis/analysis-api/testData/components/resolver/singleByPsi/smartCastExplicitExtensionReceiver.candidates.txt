@@ -10,7 +10,7 @@ KtCallExpression(52,57): 'foo()'
             isSafeNavigation = false
             type = kotlin.Any
           type = kotlin.String
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.String
           returnType = kotlin.Unit
           symbol = /foo(<extension receiver>: kotlin.String): kotlin.Unit

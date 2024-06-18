@@ -6,7 +6,7 @@ KtCallExpression(128,144): 'function<Int>(1)'
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = null
           extensionReceiver = null
-          signature = KaFunctionLikeSignature:
+          signature = KaFunctionSignature:
             receiverType = null
             returnType = kotlin.Unit
             symbol = /function(t: T, a: kotlin.Char): kotlin.Unit
@@ -41,7 +41,7 @@ KtCallExpression(128,144): 'function<Int>(1)'
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = null
           extensionReceiver = null
-          signature = KaFunctionLikeSignature:
+          signature = KaFunctionSignature:
             receiverType = null
             returnType = kotlin.Unit
             symbol = /function(u: U, b: kotlin.Boolean): kotlin.Unit
@@ -76,7 +76,7 @@ KtCallExpression(128,144): 'function<Int>(1)'
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = null
           extensionReceiver = null
-          signature = KaFunctionLikeSignature:
+          signature = KaFunctionSignature:
             receiverType = null
             returnType = kotlin.Unit
             symbol = /function(v: V, c: kotlin.String): kotlin.Unit

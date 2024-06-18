@@ -3,7 +3,7 @@ Symbol:
 set(value: kotlin.Int)
 
 Signature:
-KaFunctionLikeSignature:
+KaFunctionSignature:
   receiverType = null
   returnType = kotlin.Unit
   symbol = <setter>(value: kotlin.Int): kotlin.Unit

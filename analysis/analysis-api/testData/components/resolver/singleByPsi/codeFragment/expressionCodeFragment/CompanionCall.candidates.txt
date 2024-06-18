@@ -6,7 +6,7 @@ KtNameReferenceExpression(138,144): 'String'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.String
           symbol = <constructor>(): kotlin.String

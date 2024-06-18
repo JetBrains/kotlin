@@ -6,7 +6,7 @@ KtConstructorDelegationCall(103,111): 'super(1)'
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = null
           extensionReceiver = null
-          signature = KaFunctionLikeSignature:
+          signature = KaFunctionSignature:
             receiverType = null
             returnType = kotlin.Any
             symbol = <constructor>(): kotlin.Any

@@ -5,7 +5,7 @@ KtNameReferenceExpression(123,132): 'dummyTest'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.String
           symbol = test/dummyTest(value: test.Test): kotlin.String

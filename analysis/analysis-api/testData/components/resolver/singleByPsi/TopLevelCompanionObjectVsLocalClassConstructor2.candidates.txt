@@ -8,7 +8,7 @@ KtNameReferenceExpression(141,149): 'Conflict'
           isSafeNavigation = false
           type = test.Conflict.Companion
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
           symbol = test/Conflict.Companion.invoke(<dispatch receiver>: test.Conflict.Companion): kotlin.Unit
@@ -24,7 +24,7 @@ KtNameReferenceExpression(141,149): 'Conflict'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = <local>.Conflict
           symbol = <constructor>(): <local>.Conflict
@@ -41,7 +41,7 @@ KtNameReferenceExpression(141,149): 'Conflict'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = test.Conflict
           symbol = <constructor>(i: kotlin.Int): test.Conflict

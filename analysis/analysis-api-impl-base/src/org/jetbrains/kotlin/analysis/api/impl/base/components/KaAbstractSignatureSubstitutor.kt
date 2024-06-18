@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaSignatureSubstitutor
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
-import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionLikeSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 
 @KaImplementationDetail
 abstract class KaAbstractSignatureSubstitutor<T : KaSession> : KaSessionComponent<T>(), KaSignatureSubstitutor {
-    override fun <S : KaFunctionSymbol> S.substitute(substitutor: KaSubstitutor): KaFunctionLikeSignature<S> = withValidityAssertion {
+    override fun <S : KaFunctionSymbol> S.substitute(substitutor: KaSubstitutor): KaFunctionSignature<S> = withValidityAssertion {
         if (substitutor is KaSubstitutor.Empty) return asSignature()
         return asSignature().substitute(substitutor)
     }

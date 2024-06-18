@@ -5,7 +5,7 @@ KtConstructorDelegationCall(144,152): 'super(1)'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = ClassWithType<T>
           symbol = <constructor>(i: T): ClassWithType<T>

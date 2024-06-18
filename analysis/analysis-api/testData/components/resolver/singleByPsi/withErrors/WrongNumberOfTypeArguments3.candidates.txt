@@ -6,7 +6,7 @@ KtNameReferenceExpression(51,53): 'DD'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = foo.DD<T, T2>
           symbol = <constructor>(): foo.DD<T, T2>

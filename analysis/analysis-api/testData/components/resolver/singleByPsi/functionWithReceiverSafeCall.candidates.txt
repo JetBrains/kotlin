@@ -8,7 +8,7 @@ KtCallExpression(56,67): 'function(1)'
           expression = "str"
           isSafeNavigation = true
           type = kotlin.String
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.String
           returnType = kotlin.Unit
           symbol = /function(<extension receiver>: kotlin.String, a: kotlin.Int): kotlin.Unit

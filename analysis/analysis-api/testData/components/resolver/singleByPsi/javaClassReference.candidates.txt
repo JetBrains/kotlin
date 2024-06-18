@@ -6,7 +6,7 @@ KtCallExpression(31,44): 'Array<String>'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Array<T>
           symbol = <constructor>(size: kotlin.Int, init: kotlin.Function1<kotlin.Int, T>): kotlin.Array<T>

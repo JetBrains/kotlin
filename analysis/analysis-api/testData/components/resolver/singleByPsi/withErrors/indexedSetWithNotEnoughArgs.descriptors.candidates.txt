@@ -9,7 +9,7 @@ KtArrayAccessExpression(93,97): 'c[1]'
           isSafeNavigation = false
           type = C
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
           symbol = /C.set(<dispatch receiver>: C, a: kotlin.Int, b: kotlin.String, value: kotlin.Boolean): kotlin.Unit

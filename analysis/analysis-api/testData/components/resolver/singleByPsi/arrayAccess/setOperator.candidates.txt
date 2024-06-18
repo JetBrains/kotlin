@@ -8,7 +8,7 @@ KtArrayAccessExpression(68,72): '1[2]'
           expression = 1
           isSafeNavigation = false
           type = kotlin.Int
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.Int
           returnType = kotlin.Int
           symbol = /set(<extension receiver>: kotlin.Int, index: kotlin.Int, value: kotlin.Int): kotlin.Int

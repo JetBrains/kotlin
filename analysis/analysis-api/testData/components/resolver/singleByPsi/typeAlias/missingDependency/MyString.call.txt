@@ -8,7 +8,7 @@ KtNameReferenceExpression(141,146): 'check'
           isSafeNavigation = false
           type = library2.MyInterface
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
           symbol = library2/MyInterface.check(<dispatch receiver>: library2.MyInterface, string: {library1.MyString=} kotlin.String): kotlin.Unit

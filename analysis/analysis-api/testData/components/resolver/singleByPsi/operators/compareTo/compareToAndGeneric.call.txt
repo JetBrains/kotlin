@@ -8,7 +8,7 @@ KtNameReferenceExpression(114,123): 'compareTo'
           expression = m
           isSafeNavigation = false
           type = MyClass
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = MyClass
           returnType = kotlin.Int
           symbol = /compareTo(<extension receiver>: T, int: kotlin.Int): kotlin.Int

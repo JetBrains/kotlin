@@ -5,7 +5,7 @@ KtCallExpression(62,67): 'A(42)'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = A
           symbol = <constructor>(i: kotlin.Int): A

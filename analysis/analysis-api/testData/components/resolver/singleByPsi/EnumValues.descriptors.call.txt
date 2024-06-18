@@ -5,7 +5,7 @@ KtNameReferenceExpression(55,61): 'values'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Array<test.E>
           symbol = test/E.values(): kotlin.Array<test.E>

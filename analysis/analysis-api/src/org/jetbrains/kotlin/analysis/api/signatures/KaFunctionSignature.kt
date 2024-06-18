@@ -13,15 +13,18 @@ import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 /**
  * A signature of a function-like symbol. This includes functions, getters, setters, lambdas, etc.
  */
-public abstract class KaFunctionLikeSignature<out S : KaFunctionSymbol> : KaCallableSignature<S>() {
+public abstract class KaFunctionSignature<out S : KaFunctionSymbol> : KaCallableSignature<S>() {
     /**
      * The use-site-substituted value parameters.
      */
     public abstract val valueParameters: List<KaVariableLikeSignature<KaValueParameterSymbol>>
 
     @KaExperimentalApi
-    abstract override fun substitute(substitutor: KaSubstitutor): KaFunctionLikeSignature<S>
+    abstract override fun substitute(substitutor: KaSubstitutor): KaFunctionSignature<S>
 }
 
-@Deprecated("Use 'KaFunctionLikeSignature' instead", ReplaceWith("KaFunctionLikeSignature"))
-public typealias KtFunctionLikeSignature<S> = KaFunctionLikeSignature<S>
+@Deprecated("Use 'KaFunctionSignature' instead", ReplaceWith("KaFunctionSignature"))
+public typealias KaFunctionLikeSignature<S> = KaFunctionSignature<S>
+
+@Deprecated("Use 'KaFunctionSignature' instead", ReplaceWith("KaFunctionSignature"))
+public typealias KtFunctionLikeSignature<S> = KaFunctionSignature<S>

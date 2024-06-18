@@ -5,7 +5,7 @@ KtCallExpression(16,32): 'bar(2, l@{ it })'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
           symbol = /bar(a: kotlin.Int, b: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Unit

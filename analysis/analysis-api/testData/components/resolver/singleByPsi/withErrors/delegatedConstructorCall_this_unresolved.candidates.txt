@@ -6,7 +6,7 @@ KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = Sub
           symbol = <constructor>(i: kotlin.Int, j: kotlin.Int): Sub
@@ -36,7 +36,7 @@ KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = Sub
           symbol = <constructor>(p: kotlin.Int): Sub

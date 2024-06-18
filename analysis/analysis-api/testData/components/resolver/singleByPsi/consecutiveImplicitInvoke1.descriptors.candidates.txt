@@ -9,7 +9,7 @@ KtCallExpression(135,138): 'i()'
           expression = i
           isSafeNavigation = false
           type = kotlin.Int
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.Double
           returnType = kotlin.Unit
           symbol = /invoke(<extension receiver>: kotlin.Double): kotlin.Unit
@@ -28,7 +28,7 @@ KtCallExpression(135,138): 'i()'
           expression = i
           isSafeNavigation = false
           type = kotlin.Int
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.Int
           returnType = kotlin.Long
           symbol = /invoke(<extension receiver>: kotlin.Int): kotlin.Long
@@ -48,7 +48,7 @@ KtCallExpression(135,138): 'i()'
           expression = i
           isSafeNavigation = false
           type = kotlin.Int
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.Long
           returnType = kotlin.Double
           symbol = /invoke(<extension receiver>: kotlin.Long): kotlin.Double

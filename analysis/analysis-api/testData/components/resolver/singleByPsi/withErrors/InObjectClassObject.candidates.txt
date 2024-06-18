@@ -5,7 +5,7 @@ KtNameReferenceExpression(69,70): 'A'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = test.A
           symbol = <constructor>(): test.A

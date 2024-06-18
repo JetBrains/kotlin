@@ -9,7 +9,7 @@ KtCallExpression(110,117): 'x(true)'
           expression = x
           isSafeNavigation = false
           type = kotlin.Int
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.Int
           returnType = kotlin.Unit
           symbol = /invoke(<extension receiver>: kotlin.Int, i: kotlin.Int): kotlin.Unit
@@ -40,7 +40,7 @@ KtCallExpression(110,117): 'x(true)'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
           symbol = /x(c: kotlin.Char): kotlin.Unit
@@ -70,7 +70,7 @@ KtCallExpression(110,117): 'x(true)'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
           symbol = x(b: kotlin.Boolean): kotlin.Unit

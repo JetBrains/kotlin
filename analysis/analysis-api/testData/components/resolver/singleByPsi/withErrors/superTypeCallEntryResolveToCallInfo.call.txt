@@ -5,7 +5,7 @@ KtSuperTypeCallEntry(26,44): 'java.lang.Object()'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = java.lang.Object
           symbol = <constructor>(): java.lang.Object

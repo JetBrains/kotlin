@@ -8,7 +8,7 @@ KtNameReferenceExpression(54,57): 'set'
           isSafeNavigation = false
           type = kotlin.collections.MutableList<kotlin.Int>
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Int
           symbol = kotlin/collections/MutableList.set(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int, element: E): E

@@ -10,7 +10,7 @@ KtDotQualifiedExpression(162,171): 'b.clear()'
             type = main.B?
           type = main.B
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
           symbol = kotlin/collections/MutableList.clear(<dispatch receiver>: kotlin.collections.MutableList<E>): kotlin.Unit

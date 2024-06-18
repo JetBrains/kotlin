@@ -9,7 +9,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.Array<out ERROR_TYPE>
           returnType = kotlin.collections.Map<ERROR_TYPE, kotlin.collections.List<ERROR_TYPE>>
           symbol = kotlin/collections/groupBy(<extension receiver>: kotlin.Array<out T>, keySelector: kotlin.Function1<T, K>): kotlin.collections.Map<K, kotlin.collections.List<T>>
@@ -35,7 +35,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     candidate = KaSimpleFunctionCall:
@@ -46,7 +46,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.Array<out ERROR_TYPE>
           returnType = kotlin.collections.Map<ERROR_TYPE, kotlin.collections.List<ERROR_TYPE>>
           symbol = kotlin/collections/groupBy(<extension receiver>: kotlin.Array<out T>, keySelector: kotlin.Function1<T, K>, valueTransform: kotlin.Function1<T, V>): kotlin.collections.Map<K, kotlin.collections.List<V>>
@@ -85,7 +85,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     candidate = KaSimpleFunctionCall:
@@ -96,7 +96,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.BooleanArray
           returnType = kotlin.collections.Map<ERROR_TYPE, kotlin.collections.List<ERROR_TYPE>>
           symbol = kotlin/collections/groupBy(<extension receiver>: kotlin.BooleanArray, keySelector: kotlin.Function1<kotlin.Boolean, K>, valueTransform: kotlin.Function1<kotlin.Boolean, V>): kotlin.collections.Map<K, kotlin.collections.List<V>>
@@ -134,7 +134,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> BooleanArray.groupBy(keySelector: (Boolean) -> K): Map<K, List<Boolean>> defined in kotlin.collections>
     candidate = KaSimpleFunctionCall:
@@ -145,7 +145,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.BooleanArray
           returnType = kotlin.collections.Map<ERROR_TYPE, kotlin.collections.List<kotlin.Boolean>>
           symbol = kotlin/collections/groupBy(<extension receiver>: kotlin.BooleanArray, keySelector: kotlin.Function1<kotlin.Boolean, K>): kotlin.collections.Map<K, kotlin.collections.List<kotlin.Boolean>>
@@ -170,7 +170,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     candidate = KaSimpleFunctionCall:
@@ -181,7 +181,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.ByteArray
           returnType = kotlin.collections.Map<ERROR_TYPE, kotlin.collections.List<ERROR_TYPE>>
           symbol = kotlin/collections/groupBy(<extension receiver>: kotlin.ByteArray, keySelector: kotlin.Function1<kotlin.Byte, K>, valueTransform: kotlin.Function1<kotlin.Byte, V>): kotlin.collections.Map<K, kotlin.collections.List<V>>
@@ -219,7 +219,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> ByteArray.groupBy(keySelector: (Byte) -> K): Map<K, List<Byte>> defined in kotlin.collections>
     candidate = KaSimpleFunctionCall:
@@ -230,7 +230,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.ByteArray
           returnType = kotlin.collections.Map<ERROR_TYPE, kotlin.collections.List<kotlin.Byte>>
           symbol = kotlin/collections/groupBy(<extension receiver>: kotlin.ByteArray, keySelector: kotlin.Function1<kotlin.Byte, K>): kotlin.collections.Map<K, kotlin.collections.List<kotlin.Byte>>
@@ -255,7 +255,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     candidate = KaSimpleFunctionCall:
@@ -266,7 +266,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.CharArray
           returnType = kotlin.collections.Map<ERROR_TYPE, kotlin.collections.List<ERROR_TYPE>>
           symbol = kotlin/collections/groupBy(<extension receiver>: kotlin.CharArray, keySelector: kotlin.Function1<kotlin.Char, K>, valueTransform: kotlin.Function1<kotlin.Char, V>): kotlin.collections.Map<K, kotlin.collections.List<V>>
@@ -304,7 +304,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> CharArray.groupBy(keySelector: (Char) -> K): Map<K, List<Char>> defined in kotlin.collections>
     candidate = KaSimpleFunctionCall:
@@ -315,7 +315,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.CharArray
           returnType = kotlin.collections.Map<ERROR_TYPE, kotlin.collections.List<kotlin.Char>>
           symbol = kotlin/collections/groupBy(<extension receiver>: kotlin.CharArray, keySelector: kotlin.Function1<kotlin.Char, K>): kotlin.collections.Map<K, kotlin.collections.List<kotlin.Char>>
@@ -340,7 +340,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     candidate = KaSimpleFunctionCall:
@@ -351,7 +351,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.CharSequence
           returnType = kotlin.collections.Map<ERROR_TYPE, kotlin.collections.List<ERROR_TYPE>>
           symbol = kotlin/text/groupBy(<extension receiver>: kotlin.CharSequence, keySelector: kotlin.Function1<kotlin.Char, K>, valueTransform: kotlin.Function1<kotlin.Char, V>): kotlin.collections.Map<K, kotlin.collections.List<V>>
@@ -389,7 +389,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> CharSequence.groupBy(keySelector: (Char) -> K): Map<K, List<Char>> defined in kotlin.text>
     candidate = KaSimpleFunctionCall:
@@ -400,7 +400,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.CharSequence
           returnType = kotlin.collections.Map<ERROR_TYPE, kotlin.collections.List<kotlin.Char>>
           symbol = kotlin/text/groupBy(<extension receiver>: kotlin.CharSequence, keySelector: kotlin.Function1<kotlin.Char, K>): kotlin.collections.Map<K, kotlin.collections.List<kotlin.Char>>
@@ -425,7 +425,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     candidate = KaSimpleFunctionCall:
@@ -436,7 +436,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.DoubleArray
           returnType = kotlin.collections.Map<ERROR_TYPE, kotlin.collections.List<ERROR_TYPE>>
           symbol = kotlin/collections/groupBy(<extension receiver>: kotlin.DoubleArray, keySelector: kotlin.Function1<kotlin.Double, K>, valueTransform: kotlin.Function1<kotlin.Double, V>): kotlin.collections.Map<K, kotlin.collections.List<V>>
@@ -474,7 +474,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> DoubleArray.groupBy(keySelector: (Double) -> K): Map<K, List<Double>> defined in kotlin.collections>
     candidate = KaSimpleFunctionCall:
@@ -485,7 +485,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.DoubleArray
           returnType = kotlin.collections.Map<ERROR_TYPE, kotlin.collections.List<kotlin.Double>>
           symbol = kotlin/collections/groupBy(<extension receiver>: kotlin.DoubleArray, keySelector: kotlin.Function1<kotlin.Double, K>): kotlin.collections.Map<K, kotlin.collections.List<kotlin.Double>>
@@ -510,7 +510,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     candidate = KaSimpleFunctionCall:
@@ -521,7 +521,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.FloatArray
           returnType = kotlin.collections.Map<ERROR_TYPE, kotlin.collections.List<ERROR_TYPE>>
           symbol = kotlin/collections/groupBy(<extension receiver>: kotlin.FloatArray, keySelector: kotlin.Function1<kotlin.Float, K>, valueTransform: kotlin.Function1<kotlin.Float, V>): kotlin.collections.Map<K, kotlin.collections.List<V>>
@@ -559,7 +559,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> FloatArray.groupBy(keySelector: (Float) -> K): Map<K, List<Float>> defined in kotlin.collections>
     candidate = KaSimpleFunctionCall:
@@ -570,7 +570,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.FloatArray
           returnType = kotlin.collections.Map<ERROR_TYPE, kotlin.collections.List<kotlin.Float>>
           symbol = kotlin/collections/groupBy(<extension receiver>: kotlin.FloatArray, keySelector: kotlin.Function1<kotlin.Float, K>): kotlin.collections.Map<K, kotlin.collections.List<kotlin.Float>>
@@ -595,7 +595,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     candidate = KaSimpleFunctionCall:
@@ -606,7 +606,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.IntArray
           returnType = kotlin.collections.Map<ERROR_TYPE, kotlin.collections.List<ERROR_TYPE>>
           symbol = kotlin/collections/groupBy(<extension receiver>: kotlin.IntArray, keySelector: kotlin.Function1<kotlin.Int, K>, valueTransform: kotlin.Function1<kotlin.Int, V>): kotlin.collections.Map<K, kotlin.collections.List<V>>
@@ -644,7 +644,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> IntArray.groupBy(keySelector: (Int) -> K): Map<K, List<Int>> defined in kotlin.collections>
     candidate = KaSimpleFunctionCall:
@@ -655,7 +655,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.IntArray
           returnType = kotlin.collections.Map<ERROR_TYPE, kotlin.collections.List<kotlin.Int>>
           symbol = kotlin/collections/groupBy(<extension receiver>: kotlin.IntArray, keySelector: kotlin.Function1<kotlin.Int, K>): kotlin.collections.Map<K, kotlin.collections.List<kotlin.Int>>
@@ -680,7 +680,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     candidate = KaSimpleFunctionCall:
@@ -691,7 +691,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.LongArray
           returnType = kotlin.collections.Map<ERROR_TYPE, kotlin.collections.List<ERROR_TYPE>>
           symbol = kotlin/collections/groupBy(<extension receiver>: kotlin.LongArray, keySelector: kotlin.Function1<kotlin.Long, K>, valueTransform: kotlin.Function1<kotlin.Long, V>): kotlin.collections.Map<K, kotlin.collections.List<V>>
@@ -729,7 +729,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> LongArray.groupBy(keySelector: (Long) -> K): Map<K, List<Long>> defined in kotlin.collections>
     candidate = KaSimpleFunctionCall:
@@ -740,7 +740,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.LongArray
           returnType = kotlin.collections.Map<ERROR_TYPE, kotlin.collections.List<kotlin.Long>>
           symbol = kotlin/collections/groupBy(<extension receiver>: kotlin.LongArray, keySelector: kotlin.Function1<kotlin.Long, K>): kotlin.collections.Map<K, kotlin.collections.List<kotlin.Long>>
@@ -765,7 +765,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     candidate = KaSimpleFunctionCall:
@@ -776,7 +776,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.ShortArray
           returnType = kotlin.collections.Map<ERROR_TYPE, kotlin.collections.List<ERROR_TYPE>>
           symbol = kotlin/collections/groupBy(<extension receiver>: kotlin.ShortArray, keySelector: kotlin.Function1<kotlin.Short, K>, valueTransform: kotlin.Function1<kotlin.Short, V>): kotlin.collections.Map<K, kotlin.collections.List<V>>
@@ -814,7 +814,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> ShortArray.groupBy(keySelector: (Short) -> K): Map<K, List<Short>> defined in kotlin.collections>
     candidate = KaSimpleFunctionCall:
@@ -825,7 +825,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.ShortArray
           returnType = kotlin.collections.Map<ERROR_TYPE, kotlin.collections.List<kotlin.Short>>
           symbol = kotlin/collections/groupBy(<extension receiver>: kotlin.ShortArray, keySelector: kotlin.Function1<kotlin.Short, K>): kotlin.collections.Map<K, kotlin.collections.List<kotlin.Short>>
@@ -850,7 +850,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     candidate = KaSimpleFunctionCall:
@@ -861,7 +861,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.UByteArray
           returnType = kotlin.collections.Map<ERROR_TYPE, kotlin.collections.List<ERROR_TYPE>>
           symbol = kotlin/collections/groupBy(<extension receiver>: kotlin.UByteArray, keySelector: kotlin.Function1<kotlin.UByte, K>, valueTransform: kotlin.Function1<kotlin.UByte, V>): kotlin.collections.Map<K, kotlin.collections.List<V>>
@@ -899,7 +899,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> UByteArray.groupBy(keySelector: (UByte) -> K): Map<K, List<UByte>> defined in kotlin.collections>
     candidate = KaSimpleFunctionCall:
@@ -910,7 +910,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.UByteArray
           returnType = kotlin.collections.Map<ERROR_TYPE, kotlin.collections.List<kotlin.UByte>>
           symbol = kotlin/collections/groupBy(<extension receiver>: kotlin.UByteArray, keySelector: kotlin.Function1<kotlin.UByte, K>): kotlin.collections.Map<K, kotlin.collections.List<kotlin.UByte>>
@@ -935,7 +935,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     candidate = KaSimpleFunctionCall:
@@ -946,7 +946,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.UIntArray
           returnType = kotlin.collections.Map<ERROR_TYPE, kotlin.collections.List<ERROR_TYPE>>
           symbol = kotlin/collections/groupBy(<extension receiver>: kotlin.UIntArray, keySelector: kotlin.Function1<kotlin.UInt, K>, valueTransform: kotlin.Function1<kotlin.UInt, V>): kotlin.collections.Map<K, kotlin.collections.List<V>>
@@ -984,7 +984,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> UIntArray.groupBy(keySelector: (UInt) -> K): Map<K, List<UInt>> defined in kotlin.collections>
     candidate = KaSimpleFunctionCall:
@@ -995,7 +995,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.UIntArray
           returnType = kotlin.collections.Map<ERROR_TYPE, kotlin.collections.List<kotlin.UInt>>
           symbol = kotlin/collections/groupBy(<extension receiver>: kotlin.UIntArray, keySelector: kotlin.Function1<kotlin.UInt, K>): kotlin.collections.Map<K, kotlin.collections.List<kotlin.UInt>>
@@ -1020,7 +1020,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     candidate = KaSimpleFunctionCall:
@@ -1031,7 +1031,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.ULongArray
           returnType = kotlin.collections.Map<ERROR_TYPE, kotlin.collections.List<ERROR_TYPE>>
           symbol = kotlin/collections/groupBy(<extension receiver>: kotlin.ULongArray, keySelector: kotlin.Function1<kotlin.ULong, K>, valueTransform: kotlin.Function1<kotlin.ULong, V>): kotlin.collections.Map<K, kotlin.collections.List<V>>
@@ -1069,7 +1069,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> ULongArray.groupBy(keySelector: (ULong) -> K): Map<K, List<ULong>> defined in kotlin.collections>
     candidate = KaSimpleFunctionCall:
@@ -1080,7 +1080,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.ULongArray
           returnType = kotlin.collections.Map<ERROR_TYPE, kotlin.collections.List<kotlin.ULong>>
           symbol = kotlin/collections/groupBy(<extension receiver>: kotlin.ULongArray, keySelector: kotlin.Function1<kotlin.ULong, K>): kotlin.collections.Map<K, kotlin.collections.List<kotlin.ULong>>
@@ -1105,7 +1105,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     candidate = KaSimpleFunctionCall:
@@ -1116,7 +1116,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.UShortArray
           returnType = kotlin.collections.Map<ERROR_TYPE, kotlin.collections.List<ERROR_TYPE>>
           symbol = kotlin/collections/groupBy(<extension receiver>: kotlin.UShortArray, keySelector: kotlin.Function1<kotlin.UShort, K>, valueTransform: kotlin.Function1<kotlin.UShort, V>): kotlin.collections.Map<K, kotlin.collections.List<V>>
@@ -1154,7 +1154,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> UShortArray.groupBy(keySelector: (UShort) -> K): Map<K, List<UShort>> defined in kotlin.collections>
     candidate = KaSimpleFunctionCall:
@@ -1165,7 +1165,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.UShortArray
           returnType = kotlin.collections.Map<ERROR_TYPE, kotlin.collections.List<kotlin.UShort>>
           symbol = kotlin/collections/groupBy(<extension receiver>: kotlin.UShortArray, keySelector: kotlin.Function1<kotlin.UShort, K>): kotlin.collections.Map<K, kotlin.collections.List<kotlin.UShort>>
@@ -1190,7 +1190,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with groupBy>
     candidate = KaSimpleFunctionCall:
@@ -1201,7 +1201,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
           returnType = kotlin.collections.Map<ERROR_TYPE, kotlin.collections.List<ERROR_TYPE>>
           symbol = kotlin/collections/groupBy(<extension receiver>: kotlin.collections.Iterable<T>, keySelector: kotlin.Function1<T, K>, valueTransform: kotlin.Function1<T, V>): kotlin.collections.Map<K, kotlin.collections.List<V>>
@@ -1240,7 +1240,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = true
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <T, K> Iterable<T>.groupBy(keySelector: (T) -> K): Map<K, List<T>> defined in kotlin.collections>
     candidate = KaSimpleFunctionCall:
@@ -1251,7 +1251,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
           returnType = kotlin.collections.Map<ERROR_TYPE, kotlin.collections.List<kotlin.collections.IndexedValue<kotlin.Int>>>
           symbol = kotlin/collections/groupBy(<extension receiver>: kotlin.collections.Iterable<T>, keySelector: kotlin.Function1<T, K>): kotlin.collections.Map<K, kotlin.collections.List<T>>
@@ -1277,7 +1277,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     candidate = KaSimpleFunctionCall:
@@ -1288,7 +1288,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.collections.List<kotlin.Pair<kotlin.Int, kotlin.Int>>
           returnType = kotlin.collections.Map<ERROR_TYPE, kotlin.collections.List<kotlin.Int>>
           symbol = /groupBy(<extension receiver>: kotlin.collections.List<kotlin.Pair<kotlin.Int, kotlin.Int>>, keySelector: kotlin.Function1<kotlin.Pair<kotlin.Int, kotlin.Int>, K>, valueTransform: kotlin.Function1<kotlin.Pair<kotlin.Int, kotlin.Int>, kotlin.Int>): kotlin.collections.Map<K, kotlin.collections.List<kotlin.Int>>
@@ -1325,7 +1325,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <T, K> Sequence<T>.groupBy(keySelector: (T) -> K): Map<K, List<T>> defined in kotlin.sequences>
     candidate = KaSimpleFunctionCall:
@@ -1336,7 +1336,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.sequences.Sequence<ERROR_TYPE>
           returnType = kotlin.collections.Map<ERROR_TYPE, kotlin.collections.List<ERROR_TYPE>>
           symbol = kotlin/sequences/groupBy(<extension receiver>: kotlin.sequences.Sequence<T>, keySelector: kotlin.Function1<T, K>): kotlin.collections.Map<K, kotlin.collections.List<T>>
@@ -1362,7 +1362,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     candidate = KaSimpleFunctionCall:
@@ -1373,7 +1373,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.sequences.Sequence<ERROR_TYPE>
           returnType = kotlin.collections.Map<ERROR_TYPE, kotlin.collections.List<ERROR_TYPE>>
           symbol = kotlin/sequences/groupBy(<extension receiver>: kotlin.sequences.Sequence<T>, keySelector: kotlin.Function1<T, K>, valueTransform: kotlin.Function1<T, V>): kotlin.collections.Map<K, kotlin.collections.List<V>>

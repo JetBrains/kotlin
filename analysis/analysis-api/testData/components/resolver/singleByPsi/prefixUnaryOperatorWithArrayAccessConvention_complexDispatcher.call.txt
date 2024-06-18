@@ -10,7 +10,7 @@ KtPrefixExpression(182,190): '++m["a"]'
             isSafeNavigation = false
             type = kotlin.Int
           extensionReceiver = null
-          signature = KaFunctionLikeSignature:
+          signature = KaFunctionSignature:
             receiverType = null
             returnType = kotlin.Int
             symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
@@ -22,7 +22,7 @@ KtPrefixExpression(182,190): '++m["a"]'
           isSafeNavigation = false
           type = MyMap<kotlin.String, kotlin.Int>
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Int
           symbol = /MyMap.get(<dispatch receiver>: MyMap<K1, V1>, k: K1): V1
@@ -46,7 +46,7 @@ KtPrefixExpression(182,190): '++m["a"]'
           expression = m
           isSafeNavigation = false
           type = MyMap<kotlin.String, kotlin.Int>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = MyMap<kotlin.String, kotlin.Int>
           returnType = kotlin.Unit
           symbol = /Foo.set(<extension receiver>: MyMap<K2, V2>, <dispatch receiver>: Foo, k: K2, v: V2): kotlin.Unit

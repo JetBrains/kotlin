@@ -6,7 +6,7 @@ KtNameReferenceExpression(58,64): 'sample'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = my.sample.Inner
           symbol = <constructor>(): my.sample.Inner

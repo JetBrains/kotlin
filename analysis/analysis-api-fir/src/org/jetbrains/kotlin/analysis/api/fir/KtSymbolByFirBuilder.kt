@@ -7,14 +7,14 @@ package org.jetbrains.kotlin.analysis.api.fir
 
 import com.intellij.openapi.project.Project
 import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.kotlin.analysis.api.fir.signatures.KaFirFunctionLikeSubstitutorBasedSignature
+import org.jetbrains.kotlin.analysis.api.fir.signatures.KaFirFunctionSubstitutorBasedSignature
 import org.jetbrains.kotlin.analysis.api.fir.signatures.KaFirVariableLikeSubstitutorBasedSignature
 import org.jetbrains.kotlin.analysis.api.fir.symbols.*
 import org.jetbrains.kotlin.analysis.api.fir.types.*
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
-import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionLikeSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
@@ -212,7 +212,7 @@ internal class KaSymbolByFirBuilder(
             }
         }
 
-        fun buildFunctionSignature(fir: FirFunctionSymbol<*>): KaFunctionLikeSignature<KaFunctionSymbol> {
+        fun buildFunctionSignature(fir: FirFunctionSymbol<*>): KaFunctionSignature<KaFunctionSymbol> {
             if (fir is FirNamedFunctionSymbol && fir.origin != FirDeclarationOrigin.SamConstructor)
                 return buildNamedFunctionSignature(fir)
 
@@ -237,9 +237,9 @@ internal class KaSymbolByFirBuilder(
             return symbolsCache.cache(firSymbol) { KaFirNamedFunctionSymbol(firSymbol, analysisSession) }
         }
 
-        fun buildNamedFunctionSignature(firSymbol: FirNamedFunctionSymbol): KaFunctionLikeSignature<KaFirNamedFunctionSymbol> {
+        fun buildNamedFunctionSignature(firSymbol: FirNamedFunctionSymbol): KaFunctionSignature<KaFirNamedFunctionSymbol> {
             firSymbol.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
-            return KaFirFunctionLikeSubstitutorBasedSignature(analysisSession.token, firSymbol, analysisSession.firSymbolBuilder)
+            return KaFirFunctionSubstitutorBasedSignature(analysisSession.token, firSymbol, analysisSession.firSymbolBuilder)
         }
 
         fun buildAnonymousFunctionSymbol(firSymbol: FirAnonymousFunctionSymbol): KaFirAnonymousFunctionSymbol {

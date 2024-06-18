@@ -5,7 +5,7 @@ KtCallExpression(157,168): 'call(1, "")'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
           symbol = /call(a: @R|kotlin.ParameterName|(name = String(notMe))  kotlin.Int, b: @R|kotlin.ParameterName|(name = String(meNeither))  kotlin.String): kotlin.Unit

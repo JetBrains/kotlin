@@ -8,7 +8,7 @@ KtDotQualifiedExpression(107,113): 'a.x(1)'
           expression = x
           isSafeNavigation = false
           type = kotlin.Int
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.Int
           returnType = kotlin.Unit
           symbol = /invoke(<extension receiver>: kotlin.Int, i: kotlin.Int): kotlin.Unit

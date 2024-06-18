@@ -8,7 +8,7 @@ KtNameReferenceExpression(100,109): 'asDynamic'
           expression = "some"
           isSafeNavigation = false
           type = kotlin.String
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.Any?
           returnType = dynamic
           symbol = kotlin/js/asDynamic(<extension receiver>: kotlin.Any?): dynamic

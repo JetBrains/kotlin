@@ -5,7 +5,7 @@ KtNameReferenceExpression(18,28): 'Comparator'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = java.util.Comparator<ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin.Int) kotlin.Int!>
           symbol = java/util/Comparator(function: kotlin.Function2<T!, T!, kotlin.Int>): java.util.Comparator<T>

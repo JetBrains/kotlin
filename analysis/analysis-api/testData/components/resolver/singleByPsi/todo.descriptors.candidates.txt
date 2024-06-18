@@ -6,7 +6,7 @@ KtNameReferenceExpression(55,59): 'TODO'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Nothing
           symbol = kotlin/TODO(): kotlin.Nothing
@@ -15,14 +15,14 @@ KtNameReferenceExpression(55,59): 'TODO'
       typeArgumentsMapping = {}
       argumentMapping = {}
     isInBestCandidates = false
-
+  
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Nothing
           symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing

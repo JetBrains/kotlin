@@ -11,7 +11,7 @@ KtCallExpression(107,110): 'f()'
           expression = ""
           isSafeNavigation = false
           type = kotlin.String
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
           symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R

@@ -8,7 +8,7 @@ KtNameReferenceExpression(110,113): 'foo'
           isSafeNavigation = false
           type = C
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
           symbol = /C.foo(<dispatch receiver>: A): kotlin.Unit

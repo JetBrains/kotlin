@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
-import org.jetbrains.kotlin.analysis.api.descriptors.signatures.KaFe10FunctionLikeSignature
+import org.jetbrains.kotlin.analysis.api.descriptors.signatures.KaFe10FunctionSignature
 import org.jetbrains.kotlin.analysis.api.descriptors.signatures.KaFe10VariableLikeSignature
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10ReceiverParameterSymbol
@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.analysis.api.resolution.KaSmartCastedReceiverValue
 import org.jetbrains.kotlin.analysis.api.resolution.KaVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.symbol
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
-import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionLikeSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
@@ -544,7 +544,7 @@ internal class KaFe10Resolver(
         }
         return when (symbol) {
             is KaVariableLikeSymbol -> KaFe10VariableLikeSignature(symbol, ktReturnType, receiverType)
-            is KaFunctionSymbol -> KaFe10FunctionLikeSignature(
+            is KaFunctionSymbol -> KaFe10FunctionSignature(
                 symbol,
                 ktReturnType,
                 receiverType,
@@ -559,7 +559,7 @@ internal class KaFe10Resolver(
     private fun CallableDescriptor?.isSynthesizedPropertyFromJavaAccessors() =
         this is PropertyDescriptor && kind == CallableMemberDescriptor.Kind.SYNTHESIZED
 
-    private fun ResolvedCall<*>.createArgumentMapping(signature: KaFunctionLikeSignature<*>): LinkedHashMap<KtExpression, KaVariableLikeSignature<KaValueParameterSymbol>> {
+    private fun ResolvedCall<*>.createArgumentMapping(signature: KaFunctionSignature<*>): LinkedHashMap<KtExpression, KaVariableLikeSignature<KaValueParameterSymbol>> {
         val parameterSignatureByName = signature.valueParameters.associateBy {
             // ResolvedCall.valueArguments have their names affected by the `@ParameterName` annotations,
             // so we use `name` instead of `symbol.name`

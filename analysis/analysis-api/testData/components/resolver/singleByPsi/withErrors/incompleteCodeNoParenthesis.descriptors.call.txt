@@ -5,7 +5,7 @@ KtCallExpression(64,75): 'ALE<String>'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = ALE<kotlin.String>
           symbol = <constructor>(): ALE<T>

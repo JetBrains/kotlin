@@ -5,7 +5,7 @@ KtConstructorDelegationCall(118,130): 'super(i + j)'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = Base
           symbol = <constructor>(p1: kotlin.Int): Base

@@ -8,7 +8,7 @@ KtCallExpression(76,79): 'f()'
           isSafeNavigation = false
           type = Foo
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
           symbol = /Foo.invoke(<dispatch receiver>: Foo, vararg a: kotlin.Any): kotlin.Unit

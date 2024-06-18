@@ -5,7 +5,7 @@ KtCallExpression(39,55): 'uintArrayOf(42u)'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.UIntArray
           symbol = kotlin/uintArrayOf(vararg elements: kotlin.UInt): kotlin.UIntArray

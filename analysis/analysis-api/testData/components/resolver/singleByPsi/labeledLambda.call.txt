@@ -5,7 +5,7 @@ KtCallExpression(49,62): 'foo label@ {}'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
           symbol = /foo(l1: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit

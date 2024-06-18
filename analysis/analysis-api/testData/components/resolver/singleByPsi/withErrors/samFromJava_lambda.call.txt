@@ -8,7 +8,7 @@ KtDotQualifiedExpression(156,183): 'handler.stash(lambda, list)'
           isSafeNavigation = false
           type = test.pkg.MyHandler
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
           symbol = test/pkg/MyHandler.stash(<dispatch receiver>: test.pkg.MyHandler, actor: test.pkg.MyInterface!, actors: ft<kotlin.collections.MutableList<test.pkg.MyInterface!>, kotlin.collections.List<test.pkg.MyInterface!>?>): kotlin.Unit

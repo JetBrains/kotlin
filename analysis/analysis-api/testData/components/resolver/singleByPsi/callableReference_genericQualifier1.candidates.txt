@@ -6,7 +6,7 @@ KtCallExpression(71,80): 'Test<Bar>'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = test.Test<T>
           symbol = <constructor>(): test.Test<T>

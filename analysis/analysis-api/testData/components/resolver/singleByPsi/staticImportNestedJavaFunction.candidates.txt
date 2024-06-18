@@ -7,7 +7,7 @@ KtCallExpression(95,100): 'foo()'
           symbol = /Dependency.Nested
           type = kotlin.Unit
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
           symbol = /Dependency.Nested.foo(): kotlin.Unit
@@ -26,7 +26,7 @@ KtCallExpression(95,100): 'foo()'
           symbol = /Dependency.Nested
           type = kotlin.Unit
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
           symbol = /Dependency.Nested.foo(i: kotlin.Int): kotlin.Unit

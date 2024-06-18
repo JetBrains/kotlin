@@ -3,7 +3,7 @@ Symbol:
 get()
 
 Signature:
-KaFunctionLikeSignature:
+KaFunctionSignature:
   receiverType = null
   returnType = kotlin.Int
   symbol = <getter>(): kotlin.Int

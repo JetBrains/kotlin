@@ -8,7 +8,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
           expression = l
           isSafeNavigation = false
           type = kotlin.collections.MutableList<kotlin.Int>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.collections.MutableCollection<in kotlin.Int>
           returnType = kotlin.Unit
           symbol = kotlin/collections/plusAssign(<extension receiver>: kotlin.collections.MutableCollection<in T>, element: T): kotlin.Unit

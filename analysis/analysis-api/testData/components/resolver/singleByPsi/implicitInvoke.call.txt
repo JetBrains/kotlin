@@ -5,7 +5,7 @@ KtCallExpression(110,117): 'x(true)'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
           symbol = x(b: kotlin.Boolean): kotlin.Unit

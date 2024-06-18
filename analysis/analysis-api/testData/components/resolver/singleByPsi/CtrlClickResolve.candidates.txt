@@ -5,7 +5,7 @@ KtNameReferenceExpression(202,210): 'IntArray'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Array<out kotlin.String>
           symbol = ctrl_click/IntArray(vararg content: kotlin.String): kotlin.Array<out kotlin.String>
@@ -36,7 +36,7 @@ KtNameReferenceExpression(202,210): 'IntArray'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.IntArray
           symbol = <constructor>(size: kotlin.Int): kotlin.IntArray
@@ -67,7 +67,7 @@ KtNameReferenceExpression(202,210): 'IntArray'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.IntArray
           symbol = <constructor>(size: kotlin.Int, init: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.IntArray

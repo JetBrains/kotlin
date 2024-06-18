@@ -8,7 +8,7 @@ KtArrayAccessExpression(146,152): 'm["a"]'
           isSafeNavigation = false
           type = MyMap<kotlin.String, A>
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = A
           symbol = /MyMap.get(<dispatch receiver>: MyMap<K, V>, k: K): V

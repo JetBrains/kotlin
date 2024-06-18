@@ -5,7 +5,7 @@ KtConstructorDelegationCall(111,125): 'this(s.length)'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = Sub
           symbol = <constructor>(p1: kotlin.Int): Sub

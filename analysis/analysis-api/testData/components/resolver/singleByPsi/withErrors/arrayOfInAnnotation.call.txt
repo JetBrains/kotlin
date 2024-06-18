@@ -5,7 +5,7 @@ KtCallExpression(86,102): 'arrayOf(1, 2, 3)'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Array<kotlin.Int>
           symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>

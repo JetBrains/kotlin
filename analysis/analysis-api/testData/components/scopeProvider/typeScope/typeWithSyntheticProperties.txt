@@ -2,13 +2,13 @@ Expression: a
 KaType: A
 
 KaTypeScope:
-KaFunctionLikeSignature:
+KaFunctionSignature:
   receiverType = null
   returnType = kotlin.Int!
   symbol = /JavaClass.getValue(<dispatch receiver>: JavaClass): kotlin.Int!
   valueParameters = []
   callableId = /JavaClass.getValue
-KaFunctionLikeSignature:
+KaFunctionSignature:
   receiverType = null
   returnType = kotlin.Boolean
   symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
@@ -21,13 +21,13 @@ KaFunctionLikeSignature:
       callableId = null
   ]
   callableId = kotlin/Any.equals
-KaFunctionLikeSignature:
+KaFunctionSignature:
   receiverType = null
   returnType = kotlin.Int
   symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
   valueParameters = []
   callableId = kotlin/Any.hashCode
-KaFunctionLikeSignature:
+KaFunctionSignature:
   receiverType = null
   returnType = kotlin.String
   symbol = kotlin/Any.toString(<dispatch receiver>: kotlin.Any): kotlin.String

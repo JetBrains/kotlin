@@ -5,7 +5,7 @@ KtNameReferenceExpression(51,60): 'JavaClass'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = JavaClass
           symbol = <constructor>(s: kotlin.String): JavaClass

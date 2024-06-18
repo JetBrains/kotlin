@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.analysis.api.resolution.calls
 import org.jetbrains.kotlin.analysis.api.resolution.symbol
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
-import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionLikeSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
@@ -134,7 +134,7 @@ internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
 
 private fun KaSession.stringRepresentation(signature: KaCallableSignature<*>): String = buildString {
     when (signature) {
-        is KaFunctionLikeSignature<*> -> append(KaFunctionLikeSignature::class.simpleName)
+        is KaFunctionSignature<*> -> append(KaFunctionSignature::class.simpleName)
         is KaVariableLikeSignature<*> -> append(KaVariableLikeSignature::class.simpleName)
     }
 
@@ -143,7 +143,7 @@ private fun KaSession.stringRepresentation(signature: KaCallableSignature<*>): S
         KaCallableSignature<*>::receiverType,
         KaCallableSignature<*>::returnType,
         KaCallableSignature<*>::symbol,
-        KaFunctionLikeSignature<*>::valueParameters.takeIf { signature is KaFunctionLikeSignature<*> },
+        KaFunctionSignature<*>::valueParameters.takeIf { signature is KaFunctionSignature<*> },
         KaCallableSignature<*>::callableId
     )
 
@@ -159,7 +159,7 @@ private fun String.indented() = replace("\n", "\n  ")
 
 internal fun KaSession.prettyPrintSignature(signature: KaCallableSignature<*>): String = prettyPrint {
     when (signature) {
-        is KaFunctionLikeSignature -> {
+        is KaFunctionSignature -> {
             append("fun ")
             signature.receiverType?.let { append('.'); append(it.render(position = Variance.INVARIANT)) }
             append((signature.symbol as KaNamedSymbol).name.asString())

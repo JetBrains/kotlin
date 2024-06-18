@@ -5,7 +5,7 @@ KtNameReferenceExpression(108,115): 'makeFoo'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = testing.Foo
           symbol = testing/makeFoo(): testing.Foo

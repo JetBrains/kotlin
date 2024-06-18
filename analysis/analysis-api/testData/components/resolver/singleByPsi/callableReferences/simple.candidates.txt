@@ -5,7 +5,7 @@ KtCallableReferenceExpression(16,21): '::foo'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
           symbol = /foo(): kotlin.Unit

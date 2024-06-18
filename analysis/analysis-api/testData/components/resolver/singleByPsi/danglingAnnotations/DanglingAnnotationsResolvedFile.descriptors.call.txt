@@ -4,7 +4,7 @@ KtNameReferenceExpression(49,56): 'JvmName'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.jvm.JvmName
           symbol = <constructor>(name: kotlin.String): kotlin.jvm.JvmName

@@ -5,7 +5,7 @@ KtNameReferenceExpression(327,331): 'Test'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = Test<kotlin.Int>
           symbol = <constructor>(): Test<T>

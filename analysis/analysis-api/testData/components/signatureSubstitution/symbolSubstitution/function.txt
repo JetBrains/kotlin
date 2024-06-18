@@ -3,7 +3,7 @@ Symbol:
 fun <T, S> foo(x: kotlin.collections.List<T>, y: kotlin.collections.Map<T, kotlin.collections.List<S>>, k: kotlin.String): T
 
 Signature:
-KaFunctionLikeSignature:
+KaFunctionSignature:
   receiverType = null
   returnType = kotlin.collections.List<S>
   symbol = /foo(x: kotlin.collections.List<T>, y: kotlin.collections.Map<T, kotlin.collections.List<S>>, k: kotlin.String): T

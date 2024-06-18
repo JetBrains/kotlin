@@ -4,7 +4,7 @@ KtNameReferenceExpression(7,8): 'S'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Suppress
           symbol = <constructor>(vararg names: kotlin.String): kotlin.Suppress

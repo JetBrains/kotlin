@@ -8,7 +8,7 @@ KtCallExpression(83,86): 'f()'
           expression = f
           isSafeNavigation = false
           type = kotlin.Int
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.Int
           returnType = kotlin.Unit
           symbol = /invoke(<extension receiver>: kotlin.Int): kotlin.Unit

@@ -8,7 +8,7 @@ KtNameReferenceExpression(140,151): 'materialize'
           isSafeNavigation = false
           type = test.MyClass
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = test.MyClass
           symbol = test/MyClass.materialize(<dispatch receiver>: test.MyClass): test.MyClass

@@ -8,7 +8,7 @@ KtBinaryExpression(199,207): 's1 == s2'
           isSafeNavigation = false
           type = SealedClass
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Boolean
           symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean

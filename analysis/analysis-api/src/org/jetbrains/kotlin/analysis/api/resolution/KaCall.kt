@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
-import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionLikeSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
@@ -45,7 +45,7 @@ public val <S : KaCallableSymbol, C : KaCallableSignature<S>> KaCallableMemberCa
 
 public sealed class KaFunctionCall<S : KaFunctionSymbol>(
     argumentMapping: LinkedHashMap<KtExpression, KaVariableLikeSignature<KaValueParameterSymbol>>,
-) : KaCallableMemberCall<S, KaFunctionLikeSignature<S>>() {
+) : KaCallableMemberCall<S, KaFunctionSignature<S>>() {
 
     /**
      * The mapping from argument to parameter declaration. In case of vararg parameters, multiple arguments may be mapped to the same

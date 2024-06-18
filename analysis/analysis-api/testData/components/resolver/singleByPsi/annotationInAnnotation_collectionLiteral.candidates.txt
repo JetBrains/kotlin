@@ -6,7 +6,7 @@ KtCallExpression(131,155): 'Annotation(["v1", "v2"])'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = Annotation
           symbol = <constructor>(vararg strings: kotlin.String): Annotation

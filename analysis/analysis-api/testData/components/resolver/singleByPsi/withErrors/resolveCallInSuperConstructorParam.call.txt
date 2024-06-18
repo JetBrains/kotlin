@@ -8,7 +8,7 @@ KtBinaryExpression(75,81): '1 to 2'
           expression = 1
           isSafeNavigation = false
           type = kotlin.Int
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.Int
           returnType = kotlin.Int
           symbol = /to(<extension receiver>: A, other: B): A

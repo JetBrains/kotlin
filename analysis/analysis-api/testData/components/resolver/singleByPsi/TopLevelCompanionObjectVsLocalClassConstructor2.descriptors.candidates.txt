@@ -5,7 +5,7 @@ KtNameReferenceExpression(141,149): 'Conflict'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = test.Conflict
           symbol = <constructor>(): test.Conflict
@@ -22,7 +22,7 @@ KtNameReferenceExpression(141,149): 'Conflict'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = test.Conflict
           symbol = <constructor>(i: kotlin.Int): test.Conflict

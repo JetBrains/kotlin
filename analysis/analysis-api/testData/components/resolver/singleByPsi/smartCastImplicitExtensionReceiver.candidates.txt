@@ -15,7 +15,7 @@ KtCallExpression(51,56): 'foo()'
               typeArguments: []
               type: kotlin/Any
           type = kotlin.String
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.String
           returnType = kotlin.Unit
           symbol = /foo(<extension receiver>: kotlin.String): kotlin.Unit

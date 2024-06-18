@@ -2,19 +2,19 @@ Expression: el
 KaType: kotlin.Pair<kotlin.Int, kotlin.Int>
 
 KaTypeScope:
-KaFunctionLikeSignature:
+KaFunctionSignature:
   receiverType = null
   returnType = kotlin.Int
   symbol = kotlin/Pair.component1(<dispatch receiver>: kotlin.Pair<A, B>): A
   valueParameters = []
   callableId = kotlin/Pair.component1
-KaFunctionLikeSignature:
+KaFunctionSignature:
   receiverType = null
   returnType = kotlin.Int
   symbol = kotlin/Pair.component2(<dispatch receiver>: kotlin.Pair<A, B>): B
   valueParameters = []
   callableId = kotlin/Pair.component2
-KaFunctionLikeSignature:
+KaFunctionSignature:
   receiverType = null
   returnType = kotlin.Pair<kotlin.Int, kotlin.Int>
   symbol = kotlin/Pair.copy(<dispatch receiver>: kotlin.Pair<A, B>, first: A, second: B): kotlin.Pair<A, B>
@@ -33,7 +33,7 @@ KaFunctionLikeSignature:
       callableId = null
   ]
   callableId = kotlin/Pair.copy
-KaFunctionLikeSignature:
+KaFunctionSignature:
   receiverType = null
   returnType = kotlin.Boolean
   symbol = kotlin/Pair.equals(<dispatch receiver>: kotlin.Pair<A, B>, other: kotlin.Any?): kotlin.Boolean
@@ -46,13 +46,13 @@ KaFunctionLikeSignature:
       callableId = null
   ]
   callableId = kotlin/Pair.equals
-KaFunctionLikeSignature:
+KaFunctionSignature:
   receiverType = null
   returnType = kotlin.Int
   symbol = kotlin/Pair.hashCode(<dispatch receiver>: kotlin.Pair<A, B>): kotlin.Int
   valueParameters = []
   callableId = kotlin/Pair.hashCode
-KaFunctionLikeSignature:
+KaFunctionSignature:
   receiverType = null
   returnType = kotlin.String
   symbol = kotlin/Pair.toString(<dispatch receiver>: kotlin.Pair<A, B>): kotlin.String

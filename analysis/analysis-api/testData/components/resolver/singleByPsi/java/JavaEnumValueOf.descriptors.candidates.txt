@@ -5,7 +5,7 @@ KtNameReferenceExpression(74,81): 'valueOf'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = java.lang.annotation.RetentionPolicy
           symbol = java/lang/annotation/RetentionPolicy.valueOf(value: kotlin.String): java.lang.annotation.RetentionPolicy

@@ -8,7 +8,7 @@ KtArrayAccessExpression(70,77): 'list[0]'
           isSafeNavigation = false
           type = kotlin.collections.MutableList<kotlin.Int>
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Int
           symbol = kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.List<E>, index: kotlin.Int): E

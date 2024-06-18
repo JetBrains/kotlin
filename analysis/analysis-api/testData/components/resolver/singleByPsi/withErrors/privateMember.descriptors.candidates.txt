@@ -9,7 +9,7 @@ KtDotQualifiedExpression(59,66): 'a.foo()'
           isSafeNavigation = false
           type = A
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
           symbol = /A.foo(<dispatch receiver>: A): kotlin.Unit

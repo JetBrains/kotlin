@@ -8,7 +8,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
           returnType = kotlin.collections.Map<kotlin.Int, kotlin.collections.List<kotlin.Int>>
           symbol = kotlin/collections/groupBy(<extension receiver>: kotlin.collections.Iterable<T>, keySelector: kotlin.Function1<T, K>, valueTransform: kotlin.Function1<T, V>): kotlin.collections.Map<K, kotlin.collections.List<V>>
@@ -58,7 +58,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
           returnType = kotlin.collections.Map<kotlin.Int, kotlin.collections.List<kotlin.collections.IndexedValue<kotlin.Int>>>
           symbol = kotlin/collections/groupBy(<extension receiver>: kotlin.collections.Iterable<T>, keySelector: kotlin.Function1<T, K>): kotlin.collections.Map<K, kotlin.collections.List<T>>
@@ -95,7 +95,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           expression = nums.withIndex()
           isSafeNavigation = false
           type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.collections.List<kotlin.Pair<kotlin.Int, kotlin.Int>>
           returnType = kotlin.collections.Map<kotlin.collections.IndexedValue<kotlin.Int>, kotlin.collections.List<kotlin.Int>>
           symbol = /groupBy(<extension receiver>: kotlin.collections.List<kotlin.Pair<kotlin.Int, kotlin.Int>>, keySelector: kotlin.Function1<kotlin.Pair<kotlin.Int, kotlin.Int>, K>, valueTransform: kotlin.Function1<kotlin.Pair<kotlin.Int, kotlin.Int>, kotlin.Int>): kotlin.collections.Map<K, kotlin.collections.List<kotlin.Int>>

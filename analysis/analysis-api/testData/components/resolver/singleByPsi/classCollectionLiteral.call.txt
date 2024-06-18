@@ -5,7 +5,7 @@ KtCollectionLiteralExpression(206,256): '[AnnoWithKClass::class, one.AnnoWithKCl
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Array<kotlin.reflect.KClass<*>>
           symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>

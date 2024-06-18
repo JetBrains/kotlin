@@ -7,7 +7,7 @@ KtNameReferenceExpression(160,163): 'bar'
           symbol = <anonymous>
           type = <anonymous>
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
           symbol = bar(<dispatch receiver>: <anonymous>): kotlin.Unit

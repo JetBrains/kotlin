@@ -6,7 +6,7 @@ KtConstructorDelegationReferenceExpression(38,42): 'this'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = A
           symbol = <constructor>(): A
@@ -22,7 +22,7 @@ KtConstructorDelegationReferenceExpression(38,42): 'this'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = A
           symbol = <constructor>(a: kotlin.Int): A

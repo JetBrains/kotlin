@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.analysis.api.resolution.KaSmartCastedReceiverValue
 import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolBasedReference
 import org.jetbrains.kotlin.analysis.api.resolution.symbol
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
-import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionLikeSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
@@ -448,7 +448,7 @@ internal class KaFirResolver(
             ?: return null
         if (targetSymbol !is FirCallableSymbol<*>) return null
         if (targetSymbol is FirErrorFunctionSymbol || targetSymbol is FirErrorPropertySymbol) return null
-        val unsubstitutedKtSignature = targetSymbol.toKtSignature()
+        val unsubstitutedKtSignature = targetSymbol.toKaSignature()
 
         handleCompoundAccessCall(psi, fir, resolveFragmentOfCall)?.let { return it }
 
@@ -602,7 +602,7 @@ internal class KaFirResolver(
                 @Suppress("UNCHECKED_CAST") // safe because of the above check on targetKtSymbol
                 KaAnnotationCall(
                     partiallyAppliedSymbol as KaPartiallyAppliedFunctionSymbol<KaConstructorSymbol>,
-                    fir.createArgumentMapping(partiallyAppliedSymbol.signature as KaFunctionLikeSignature<*>)
+                    fir.createArgumentMapping(partiallyAppliedSymbol.signature as KaFunctionSignature<*>)
                 )
             }
             is FirDelegatedConstructorCall -> {
@@ -611,7 +611,7 @@ internal class KaFirResolver(
                 KaDelegatedConstructorCall(
                     partiallyAppliedSymbol as KaPartiallyAppliedFunctionSymbol<KaConstructorSymbol>,
                     if (fir.isThis) KaDelegatedConstructorCall.Kind.THIS_CALL else KaDelegatedConstructorCall.Kind.SUPER_CALL,
-                    fir.createArgumentMapping(partiallyAppliedSymbol.signature as KaFunctionLikeSignature<*>),
+                    fir.createArgumentMapping(partiallyAppliedSymbol.signature as KaFunctionSignature<*>),
                     fir.toTypeArgumentsMapping(partiallyAppliedSymbol)
                 )
             }
@@ -667,7 +667,7 @@ internal class KaFirResolver(
                     partiallyAppliedSymbol as KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
                     @Suppress("USELESS_CAST") // K2 warning suppression, TODO: KT-62472
                     argumentMappingWithoutExtensionReceiver
-                        ?.createArgumentMapping(partiallyAppliedSymbol.signature as KaFunctionLikeSignature<*>)
+                        ?.createArgumentMapping(partiallyAppliedSymbol.signature as KaFunctionSignature<*>)
                         ?: LinkedHashMap(),
                     fir.toTypeArgumentsMapping(partiallyAppliedSymbol),
                     isImplicitInvoke
@@ -886,7 +886,7 @@ internal class KaFirResolver(
         val variableRef = calleeReference as? FirResolvedNamedReference ?: return null
         val variableSymbol = variableRef.resolvedSymbol as? FirVariableSymbol<*> ?: return null
         val substitutor = unwrapLValue()?.createConeSubstitutorFromTypeArguments(rootModuleSession) ?: return null
-        val ktSignature = variableSymbol.toKtSignature()
+        val ktSignature = variableSymbol.toKaSignature()
         return KaPartiallyAppliedSymbol(
             with(analysisSession) { ktSignature.substitute(substitutor.toKtSubstitutor()) },
             dispatchReceiver?.toKtReceiverValue(),
@@ -926,7 +926,7 @@ internal class KaFirResolver(
         } else {
             extensionReceiver?.toKtReceiverValue()
         }
-        val ktSignature = operationSymbol.toKtSignature()
+        val ktSignature = operationSymbol.toKaSignature()
         return KaPartiallyAppliedSymbol(
             with(analysisSession) { ktSignature.substitute(substitutor.toKtSubstitutor()) },
             dispatchReceiverValue,
@@ -946,7 +946,7 @@ internal class KaFirResolver(
             }
             this is FirThisReceiverExpression && this.isImplicit -> {
                 val implicitPartiallyAppliedSymbol = when (val partiallyAppliedSymbol = calleeReference.boundSymbol) {
-                    is FirClassSymbol<*> -> partiallyAppliedSymbol.toKtSymbol()
+                    is FirClassSymbol<*> -> partiallyAppliedSymbol.toKaSymbol()
                     is FirCallableSymbol<*> -> firSymbolBuilder.callableBuilder.buildExtensionReceiverSymbol(partiallyAppliedSymbol)
                         ?: return null
                     else -> return null
@@ -955,7 +955,7 @@ internal class KaFirResolver(
             }
             this is FirResolvedQualifier && this.source?.kind is KtFakeSourceElementKind.ImplicitReceiver -> {
                 val symbol = this.symbol ?: return null
-                KaImplicitReceiverValue(symbol.toKtSymbol(), resolvedType.asKtType())
+                KaImplicitReceiverValue(symbol.toKaSymbol(), resolvedType.asKtType())
             }
             else -> {
                 val psi = psi
@@ -965,15 +965,15 @@ internal class KaFirResolver(
         }
     }
 
-    private fun FirCallableSymbol<*>.toKtSignature(): KaCallableSignature<KaCallableSymbol> =
+    private fun FirCallableSymbol<*>.toKaSignature(): KaCallableSignature<KaCallableSymbol> =
         firSymbolBuilder.callableBuilder.buildCallableSignature(this)
 
-    private fun FirClassLikeSymbol<*>.toKtSymbol(): KaClassLikeSymbol = firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(this)
+    private fun FirClassLikeSymbol<*>.toKaSymbol(): KaClassLikeSymbol = firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(this)
 
-    private fun FirNamedFunctionSymbol.toKtSignature(): KaFunctionLikeSignature<KaNamedFunctionSymbol> =
+    private fun FirNamedFunctionSymbol.toKaSignature(): KaFunctionSignature<KaNamedFunctionSymbol> =
         firSymbolBuilder.functionBuilder.buildNamedFunctionSignature(this)
 
-    private fun FirVariableSymbol<*>.toKtSignature(): KaVariableLikeSignature<KaVariableLikeSymbol> =
+    private fun FirVariableSymbol<*>.toKaSignature(): KaVariableLikeSignature<KaVariableLikeSymbol> =
         firSymbolBuilder.variableLikeBuilder.buildVariableLikeSignature(this)
 
     private fun FirQualifiedAccessExpression.toTypeArgumentsMapping(
@@ -1317,16 +1317,16 @@ internal class KaFirResolver(
                 val leftOperand = arguments.firstOrNull() ?: return null
 
                 val equalsSymbol = getEqualsSymbol() ?: return null
-                val ktSignature = equalsSymbol.toKtSignature()
+                val kaSignature = equalsSymbol.toKaSignature()
                 KaSuccessCallInfo(
                     KaSimpleFunctionCall(
                         KaPartiallyAppliedSymbol(
-                            ktSignature,
+                            kaSignature,
                             KaExplicitReceiverValue(leftPsi, leftOperand.resolvedType.asKtType(), false, token),
                             null
                         ),
                         LinkedHashMap<KtExpression, KaVariableLikeSignature<KaValueParameterSymbol>>().apply {
-                            put(rightPsi, ktSignature.valueParameters.first())
+                            put(rightPsi, kaSignature.valueParameters.first())
                         },
                         emptyMap(),
                         false
@@ -1347,12 +1347,12 @@ internal class KaFirResolver(
         return equalsSymbol ?: equalsSymbolInAny
     }
 
-    private fun FirCall.createArgumentMapping(signatureOfCallee: KaFunctionLikeSignature<*>): LinkedHashMap<KtExpression, KaVariableLikeSignature<KaValueParameterSymbol>> {
+    private fun FirCall.createArgumentMapping(signatureOfCallee: KaFunctionSignature<*>): LinkedHashMap<KtExpression, KaVariableLikeSignature<KaValueParameterSymbol>> {
         return resolvedArgumentMapping?.entries.createArgumentMapping(signatureOfCallee)
     }
 
     private fun Iterable<MutableMap.MutableEntry<FirExpression, FirValueParameter>>?.createArgumentMapping(
-        signatureOfCallee: KaFunctionLikeSignature<*>,
+        signatureOfCallee: KaFunctionSignature<*>,
     ): LinkedHashMap<KtExpression, KaVariableLikeSignature<KaValueParameterSymbol>> {
         val paramSignatureByName = signatureOfCallee.valueParameters.associateBy {
             // We intentionally use `symbol.name` instead of `name` here, since

@@ -7,7 +7,7 @@ KtCallExpression(50,57): 'myRun()'
         extensionReceiver = KaImplicitReceiverValue:
           symbol = foo/Foo
           type = foo.Foo
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.Any
           returnType = kotlin.Unit
           symbol = foo/myRun(<extension receiver>: kotlin.Any): kotlin.Unit
@@ -23,7 +23,7 @@ KtCallExpression(50,57): 'myRun()'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
           symbol = foo/myRun(): kotlin.Unit

@@ -5,7 +5,7 @@ KtCallExpression(108,119): 'processB(a)'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Int
           symbol = /processB(b: B): kotlin.Int

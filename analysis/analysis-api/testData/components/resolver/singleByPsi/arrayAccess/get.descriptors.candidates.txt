@@ -8,7 +8,7 @@ KtArrayAccessExpression(70,77): 'list[0]'
           isSafeNavigation = false
           type = kotlin.collections.MutableList<kotlin.Int>
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Int
           symbol = kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.List<E>, index: kotlin.Int): E
@@ -31,7 +31,7 @@ KtArrayAccessExpression(70,77): 'list[0]'
           callableId = null)
       }
     isInBestCandidates = true
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
     candidate = KaSimpleFunctionCall:
@@ -42,7 +42,7 @@ KtArrayAccessExpression(70,77): 'list[0]'
           expression = list
           isSafeNavigation = false
           type = kotlin.collections.MutableList<kotlin.Int>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.collections.Map<out kotlin.Int, ERROR_TYPE>
           returnType = ERROR_TYPE?
           symbol = kotlin/collections/get(<extension receiver>: kotlin.collections.Map<out K, V>, key: K): V?
@@ -68,7 +68,7 @@ KtArrayAccessExpression(70,77): 'list[0]'
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type String>
     candidate = KaSimpleFunctionCall:
@@ -79,7 +79,7 @@ KtArrayAccessExpression(70,77): 'list[0]'
           expression = list
           isSafeNavigation = false
           type = kotlin.collections.MutableList<kotlin.Int>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.text.MatchGroupCollection
           returnType = kotlin.text.MatchGroup?
           symbol = kotlin/text/get(<extension receiver>: kotlin.text.MatchGroupCollection, name: kotlin.String): kotlin.text.MatchGroup?

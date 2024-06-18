@@ -8,7 +8,7 @@ KtBinaryExpression(156,164): 'd1 == d2'
           isSafeNavigation = false
           type = D
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Boolean
           symbol = /D.equals(<dispatch receiver>: D, other: kotlin.Any?): kotlin.Boolean

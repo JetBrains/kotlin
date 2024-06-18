@@ -10,7 +10,7 @@ KtDotQualifiedExpression(162,171): 'b.clear()'
             type = main.B?
           type = main.B
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
           symbol = kotlin/collections/MutableList.clear(<dispatch receiver>: kotlin.collections.MutableList<E>): kotlin.Unit
@@ -19,7 +19,7 @@ KtDotQualifiedExpression(162,171): 'b.clear()'
       typeArgumentsMapping = {}
       argumentMapping = {}
     isInBestCandidates = true
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with clear>
     candidate = KaSimpleFunctionCall:
@@ -32,7 +32,7 @@ KtDotQualifiedExpression(162,171): 'b.clear()'
             isSafeNavigation = false
             type = main.B?
           type = main.B
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.text.StringBuilder
           returnType = kotlin.text.StringBuilder
           symbol = kotlin/text/clear(<extension receiver>: kotlin.text.StringBuilder): kotlin.text.StringBuilder

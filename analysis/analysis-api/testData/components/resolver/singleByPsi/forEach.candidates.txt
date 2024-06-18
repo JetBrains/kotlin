@@ -8,7 +8,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           expression = listOf(1, 2, 3)
           isSafeNavigation = false
           type = kotlin.collections.List<kotlin.Int>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.collections.Iterable<kotlin.Int>
           returnType = kotlin.Unit
           symbol = kotlin/collections/forEach(<extension receiver>: kotlin.collections.Iterable<T>, action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
@@ -44,7 +44,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           expression = listOf(1, 2, 3)
           isSafeNavigation = false
           type = kotlin.collections.List<kotlin.Int>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.collections.List<kotlin.Int>
           returnType = kotlin.Unit
           symbol = /forEach(<extension receiver>: kotlin.collections.List<kotlin.Int>, action: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit

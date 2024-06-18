@@ -9,7 +9,7 @@ KtOperationReferenceExpression(138,139): '+'
           isSafeNavigation = false
           type = kotlin.Int
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Double
           symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Double): kotlin.Double
@@ -43,7 +43,7 @@ KtOperationReferenceExpression(138,139): '+'
           isSafeNavigation = false
           type = kotlin.Int
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Float
           symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Float): kotlin.Float
@@ -77,7 +77,7 @@ KtOperationReferenceExpression(138,139): '+'
           isSafeNavigation = false
           type = kotlin.Int
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Int
           symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Byte): kotlin.Int
@@ -110,7 +110,7 @@ KtOperationReferenceExpression(138,139): '+'
           isSafeNavigation = false
           type = kotlin.Int
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Int
           symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
@@ -144,7 +144,7 @@ KtOperationReferenceExpression(138,139): '+'
           isSafeNavigation = false
           type = kotlin.Int
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Int
           symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Short): kotlin.Int
@@ -178,7 +178,7 @@ KtOperationReferenceExpression(138,139): '+'
           isSafeNavigation = false
           type = kotlin.Int
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Long
           symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Long): kotlin.Long

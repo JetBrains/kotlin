@@ -20,7 +20,7 @@ KtNameReferenceExpression(248,251): 'add'
               type: test/Target<kotlin/String>
           type = test.Target<kotlin.String>
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
           symbol = test/Target.add(<dispatch receiver>: test.Target<T>, t: T): kotlin.Unit

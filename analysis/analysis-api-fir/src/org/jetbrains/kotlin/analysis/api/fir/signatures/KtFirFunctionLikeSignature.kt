@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.fir.types.AbstractKaFirSubstitutor
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionLikeSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
@@ -23,25 +23,25 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 
-internal sealed class KaFirFunctionLikeSignature<out S : KaFunctionSymbol> : KaFunctionLikeSignature<S>(), FirSymbolBasedSignature {
-    abstract override fun substitute(substitutor: KaSubstitutor): KaFirFunctionLikeSignature<S>
+internal sealed class KaFirFunctionSignature<out S : KaFunctionSymbol> : KaFunctionSignature<S>(), FirSymbolBasedSignature {
+    abstract override fun substitute(substitutor: KaSubstitutor): KaFirFunctionSignature<S>
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as KaFirFunctionLikeSignature<*>
+        other as KaFirFunctionSignature<*>
         return firSymbol == other.firSymbol
     }
 
     override fun hashCode(): Int = firSymbol.hashCode()
 }
 
-internal class KaFirFunctionLikeDummySignature<out S : KaFunctionSymbol>(
+internal class KaFirFunctionDummySignature<out S : KaFunctionSymbol>(
     override val token: KaLifetimeToken,
     override val firSymbol: FirFunctionSymbol<*>,
     override val firSymbolBuilder: KaSymbolByFirBuilder,
-) : KaFirFunctionLikeSignature<S>() {
+) : KaFirFunctionSignature<S>() {
     @Suppress("UNCHECKED_CAST")
     override val symbol: S
         get() = withValidityAssertion { firSymbol.buildSymbol(firSymbolBuilder) as S }
@@ -53,20 +53,20 @@ internal class KaFirFunctionLikeDummySignature<out S : KaFunctionSymbol>(
         firSymbol.valueParameterSymbols.map { KaFirVariableLikeDummySignature(token, it, firSymbolBuilder) }
     }
 
-    override fun substitute(substitutor: KaSubstitutor): KaFirFunctionLikeSignature<S> = withValidityAssertion {
+    override fun substitute(substitutor: KaSubstitutor): KaFirFunctionSignature<S> = withValidityAssertion {
         if (substitutor is KaSubstitutor.Empty) return@withValidityAssertion this
         require(substitutor is AbstractKaFirSubstitutor<*>)
 
-        KaFirFunctionLikeSubstitutorBasedSignature(token, firSymbol, firSymbolBuilder, substitutor.substitutor)
+        KaFirFunctionSubstitutorBasedSignature(token, firSymbol, firSymbolBuilder, substitutor.substitutor)
     }
 }
 
-internal class KaFirFunctionLikeSubstitutorBasedSignature<out S : KaFunctionSymbol>(
+internal class KaFirFunctionSubstitutorBasedSignature<out S : KaFunctionSymbol>(
     override val token: KaLifetimeToken,
     override val firSymbol: FirFunctionSymbol<*>,
     override val firSymbolBuilder: KaSymbolByFirBuilder,
     override val coneSubstitutor: ConeSubstitutor = ConeSubstitutor.Empty,
-) : KaFirFunctionLikeSignature<S>(), SubstitutorBasedSignature {
+) : KaFirFunctionSignature<S>(), SubstitutorBasedSignature {
     @Suppress("UNCHECKED_CAST")
     override val symbol: S
         get() = withValidityAssertion { firSymbol.buildSymbol(firSymbolBuilder) as S }
@@ -86,18 +86,18 @@ internal class KaFirFunctionLikeSubstitutorBasedSignature<out S : KaFunctionSymb
         }
     }
 
-    override fun substitute(substitutor: KaSubstitutor): KaFirFunctionLikeSignature<S> = withValidityAssertion {
+    override fun substitute(substitutor: KaSubstitutor): KaFirFunctionSignature<S> = withValidityAssertion {
         if (substitutor is KaSubstitutor.Empty) return@withValidityAssertion this
         require(substitutor is AbstractKaFirSubstitutor<*>)
         val chainedSubstitutor = ChainedSubstitutor(coneSubstitutor, substitutor.substitutor)
 
-        KaFirFunctionLikeSubstitutorBasedSignature(token, firSymbol, firSymbolBuilder, chainedSubstitutor)
+        KaFirFunctionSubstitutorBasedSignature(token, firSymbol, firSymbolBuilder, chainedSubstitutor)
     }
 
     override fun equals(other: Any?): Boolean {
         if (!super.equals(other)) return false
 
-        other as KaFirFunctionLikeSubstitutorBasedSignature<*>
+        other as KaFirFunctionSubstitutorBasedSignature<*>
         return coneSubstitutor == other.coneSubstitutor
     }
 

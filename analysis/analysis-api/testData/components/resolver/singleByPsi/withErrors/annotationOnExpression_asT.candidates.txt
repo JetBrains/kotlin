@@ -4,7 +4,7 @@ KtAnnotationEntry(69,96): '@Suppress("UNCHECKED_CAST")'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Suppress
           symbol = <constructor>(vararg names: kotlin.String): kotlin.Suppress

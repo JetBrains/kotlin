@@ -7,27 +7,27 @@ package org.jetbrains.kotlin.analysis.api.descriptors.signatures
 
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionLikeSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KaType
 
-internal class KaFe10FunctionLikeSignature<out S : KaFunctionSymbol>(
+internal class KaFe10FunctionSignature<out S : KaFunctionSymbol>(
     private val backingSymbol: S,
     private val backingReturnType: KaType,
     private val backingReceiverType: KaType?,
     private val backingValueParameters: List<KaVariableLikeSignature<KaValueParameterSymbol>>,
-) : KaFunctionLikeSignature<S>() {
+) : KaFunctionSignature<S>() {
     override val token: KaLifetimeToken get() = backingSymbol.token
     override val symbol: S get() = withValidityAssertion { backingSymbol }
     override val returnType: KaType get() = withValidityAssertion { backingReturnType }
     override val receiverType: KaType? get() = withValidityAssertion { backingReceiverType }
     override val valueParameters: List<KaVariableLikeSignature<KaValueParameterSymbol>> get() = withValidityAssertion { backingValueParameters }
 
-    override fun substitute(substitutor: KaSubstitutor): KaFunctionLikeSignature<S> = withValidityAssertion {
-        KaFe10FunctionLikeSignature(
+    override fun substitute(substitutor: KaSubstitutor): KaFunctionSignature<S> = withValidityAssertion {
+        KaFe10FunctionSignature(
             symbol,
             substitutor.substitute(returnType),
             receiverType?.let { substitutor.substitute(it) },
@@ -45,7 +45,7 @@ internal class KaFe10FunctionLikeSignature<out S : KaFunctionSymbol>(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as KaFe10FunctionLikeSignature<*>
+        other as KaFe10FunctionSignature<*>
 
         if (backingSymbol != other.backingSymbol) return false
         if (backingReturnType != other.backingReturnType) return false

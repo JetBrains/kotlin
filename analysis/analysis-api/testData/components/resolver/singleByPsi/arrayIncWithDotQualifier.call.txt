@@ -8,7 +8,7 @@ KtCallExpression(105,111): 'peek()'
           isSafeNavigation = false
           type = F
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = F
           symbol = /F.peek(<dispatch receiver>: F): F

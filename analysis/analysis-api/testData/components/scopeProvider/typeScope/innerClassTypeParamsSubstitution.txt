@@ -2,7 +2,7 @@ Expression: a
 KaType: Outer<kotlin.String>.A<kotlin.Int>
 
 KaTypeScope:
-KaFunctionLikeSignature:
+KaFunctionSignature:
   receiverType = null
   returnType = kotlin.collections.Map<kotlin.Int, kotlin.collections.Map<Y, kotlin.String>>
   symbol = /Outer.A.foo(<dispatch receiver>: Outer.A<X, O>, x: X, y: Y): kotlin.collections.Map<X, kotlin.collections.Map<Y, O>>
@@ -27,13 +27,13 @@ KaVariableLikeSignature:
   returnType = kotlin.collections.Map<kotlin.Int, kotlin.String>
   symbol = val map: kotlin.collections.Map<X, O>
   callableId = /Outer.A.map
-KaFunctionLikeSignature:
+KaFunctionSignature:
   receiverType = null
   returnType = kotlin.String
   symbol = /Outer.A.fromSuper(<dispatch receiver>: Outer.A<X, O>): O
   valueParameters = []
   callableId = /Outer.A.fromSuper
-KaFunctionLikeSignature:
+KaFunctionSignature:
   receiverType = null
   returnType = kotlin.Boolean
   symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
@@ -46,13 +46,13 @@ KaFunctionLikeSignature:
       callableId = null
   ]
   callableId = kotlin/Any.equals
-KaFunctionLikeSignature:
+KaFunctionSignature:
   receiverType = null
   returnType = kotlin.Int
   symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
   valueParameters = []
   callableId = kotlin/Any.hashCode
-KaFunctionLikeSignature:
+KaFunctionSignature:
   receiverType = null
   returnType = kotlin.String
   symbol = kotlin/Any.toString(<dispatch receiver>: kotlin.Any): kotlin.String

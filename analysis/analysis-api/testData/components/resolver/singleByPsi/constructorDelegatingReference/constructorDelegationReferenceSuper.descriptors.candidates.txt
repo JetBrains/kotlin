@@ -5,7 +5,7 @@ KtConstructorDelegationReferenceExpression(145,150): 'super'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = r.BaseClass
           symbol = <constructor>(i: kotlin.Int): r.BaseClass
@@ -28,7 +28,7 @@ KtConstructorDelegationReferenceExpression(145,150): 'super'
           callableId = null)
       }
     isInBestCandidates = true
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     candidate = KaDelegatedConstructorCall:
@@ -36,7 +36,7 @@ KtConstructorDelegationReferenceExpression(145,150): 'super'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = r.BaseClass
           symbol = <constructor>(s: kotlin.String): r.BaseClass

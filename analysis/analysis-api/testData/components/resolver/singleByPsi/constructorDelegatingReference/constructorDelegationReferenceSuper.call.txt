@@ -5,7 +5,7 @@ KtConstructorDelegationReferenceExpression(145,150): 'super'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = r.BaseClass
           symbol = <constructor>(i: kotlin.Int): r.BaseClass

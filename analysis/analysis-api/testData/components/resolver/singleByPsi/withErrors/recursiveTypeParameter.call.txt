@@ -7,7 +7,7 @@ KtCallExpression(96,130): 'install(CoroutineModule.builder())'
           symbol = /RunnerModule
           type = RunnerModule
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
           symbol = /AbstractModule.install(<dispatch receiver>: AbstractModule, builder: ft<AbstractModule.Builder<*>, AbstractModule.Builder<*>?>): kotlin.Unit

@@ -5,7 +5,7 @@ KtNameReferenceExpression(75,78): 'bar'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
           symbol = kotlin/pckg/bar(): kotlin.Unit

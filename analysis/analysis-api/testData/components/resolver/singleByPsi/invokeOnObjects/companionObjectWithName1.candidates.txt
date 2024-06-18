@@ -6,7 +6,7 @@ KtNameReferenceExpression(127,133): 'Helper'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = Foo.Helper
           symbol = <constructor>(): Foo.Helper

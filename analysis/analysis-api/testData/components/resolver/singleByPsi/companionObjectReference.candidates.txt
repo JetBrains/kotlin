@@ -6,7 +6,7 @@ KtNameReferenceExpression(122,128): 'Server'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = Server
           symbol = <constructor>(): Server

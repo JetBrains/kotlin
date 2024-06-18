@@ -8,7 +8,7 @@ KtCallExpression(76,88): 'javaMethod()'
           isSafeNavigation = false
           type = JavaClass
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
           symbol = /JavaClass.javaMethod(<dispatch receiver>: JavaClass): kotlin.Unit

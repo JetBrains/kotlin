@@ -6,7 +6,7 @@ KtNameReferenceExpression(68,76): 'Conflict'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = test.Conflict
           symbol = <constructor>(): test.Conflict

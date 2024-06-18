@@ -5,7 +5,7 @@ KtNameReferenceExpression(152,157): 'Local'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = <local>.Local
           symbol = <constructor>(): <local>.Local

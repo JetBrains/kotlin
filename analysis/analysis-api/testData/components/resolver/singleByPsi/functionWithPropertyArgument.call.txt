@@ -5,7 +5,7 @@ KtCallExpression(44,62): 'foo(localProperty)'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
           symbol = /foo(i: kotlin.Int): kotlin.Unit

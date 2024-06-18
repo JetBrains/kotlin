@@ -6,7 +6,7 @@ KtNameReferenceExpression(48,57): 'Companion'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = dependency.C.Companion
           symbol = <constructor>(): dependency.C.Companion

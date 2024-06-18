@@ -8,7 +8,7 @@ KtCallableReferenceExpression(72,80): 'obj::foo'
           expression = obj
           isSafeNavigation = false
           type = Foo
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = Foo
           returnType = kotlin.Unit
           symbol = /foo(<extension receiver>: Foo, a: kotlin.Int): kotlin.Unit

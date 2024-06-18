@@ -8,7 +8,7 @@ KtNameReferenceExpression(54,57): 'set'
           isSafeNavigation = false
           type = kotlin.collections.MutableList<kotlin.Int>
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Int
           symbol = kotlin/collections/MutableList.set(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int, element: E): E
@@ -43,7 +43,7 @@ KtNameReferenceExpression(54,57): 'set'
           callableId = null)
       }
     isInBestCandidates = true
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with set>
     candidate = KaSimpleFunctionCall:
@@ -54,7 +54,7 @@ KtNameReferenceExpression(54,57): 'set'
           expression = l
           isSafeNavigation = false
           type = kotlin.collections.MutableList<kotlin.Int>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.collections.MutableMap<kotlin.Int, kotlin.Int>
           returnType = kotlin.Unit
           symbol = kotlin/collections/set(<extension receiver>: kotlin.collections.MutableMap<K, V>, key: K, value: V): kotlin.Unit
@@ -92,7 +92,7 @@ KtNameReferenceExpression(54,57): 'set'
           callableId = null)
       }
     isInBestCandidates = false
-
+  
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with set>
     candidate = KaSimpleFunctionCall:
@@ -103,7 +103,7 @@ KtNameReferenceExpression(54,57): 'set'
           expression = l
           isSafeNavigation = false
           type = kotlin.collections.MutableList<kotlin.Int>
-        signature = KaFunctionLikeSignature:
+        signature = KaFunctionSignature:
           receiverType = kotlin.text.StringBuilder
           returnType = kotlin.Unit
           symbol = kotlin/text/set(<extension receiver>: kotlin.text.StringBuilder, index: kotlin.Int, value: kotlin.Char): kotlin.Unit
