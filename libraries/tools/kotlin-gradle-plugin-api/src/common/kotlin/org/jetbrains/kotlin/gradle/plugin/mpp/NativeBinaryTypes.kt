@@ -7,6 +7,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Named
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.util.*
@@ -20,6 +21,7 @@ enum class NativeBuildType(
 
     override fun getName(): String = name.toLowerCase(Locale.ENGLISH)
 
+    @OptIn(InternalKotlinGradlePluginApi::class)
     @Suppress("UNUSED_PARAMETER")
     @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, ReplaceWith(""))
     fun embedBitcode(target: KonanTarget) = BitcodeEmbeddingMode.DISABLE
@@ -77,4 +79,5 @@ enum class BitcodeEmbeddingMode {
     MARKER,
 }
 
+@InternalKotlinGradlePluginApi
 const val BITCODE_EMBEDDING_DEPRECATION_MESSAGE = "Bitcode embedding is not supported anymore. Configuring it has no effect"
