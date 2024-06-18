@@ -72,7 +72,7 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
                         )
                     },
                     syntheticFunctionInterfaceProvider,
-                    FirBuiltinSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
+                    FirBuiltinSymbolProvider.initializeIfNotStdlib(session, builtinsModuleData, kotlinScopeProvider),
                     FirBuiltinSyntheticFunctionInterfaceProvider.initialize(session, builtinsModuleData, kotlinScopeProvider),
                     FirCloneableSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
                 )

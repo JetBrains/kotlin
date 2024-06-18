@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.providers.impl
 
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.*
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
@@ -30,6 +32,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.serialization.deserialization.ProtoBasedClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.serialization.deserialization.getName
+import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import java.io.InputStream
 
@@ -49,10 +52,17 @@ import java.io.InputStream
 open class FirBuiltinSymbolProvider(
     session: FirSession,
     val moduleData: FirModuleData,
-    val kotlinScopeProvider: FirKotlinScopeProvider
+    val kotlinScopeProvider: FirKotlinScopeProvider,
+    deserializeAsActual: Boolean = false,
 ) : FirSymbolProvider(session) {
 
     companion object {
+        fun initializeIfNotStdlib(session: FirSession, moduleData: FirModuleData, kotlinScopeProvider: FirKotlinScopeProvider): FirSymbolProvider? {
+            return runUnless(session.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)) {
+                FirBuiltinSymbolProvider(session, moduleData, kotlinScopeProvider)
+            }
+        }
+
         private val builtInsPackageFragments: Map<FqName, BuiltInsPackageFragment> = run {
             val classLoader = FirBuiltinSymbolProvider::class.java.classLoader
             val streamProvider = { path: String -> classLoader?.getResourceAsStream(path) ?: ClassLoader.getSystemResourceAsStream(path) }
@@ -73,7 +83,7 @@ open class FirBuiltinSymbolProvider(
     }
 
     private val allPackageFragments = builtInsPackageFragments.mapValues { (fqName, foo) ->
-        BuiltInsPackageFragmentWrapper(foo, fqName, moduleData, kotlinScopeProvider)
+        BuiltInsPackageFragmentWrapper(foo, fqName, moduleData, kotlinScopeProvider, deserializeAsActual)
     }
 
     override fun getPackage(fqName: FqName): FqName? {
@@ -138,6 +148,7 @@ open class FirBuiltinSymbolProvider(
         val fqName: FqName,
         val moduleData: FirModuleData,
         val kotlinScopeProvider: FirKotlinScopeProvider,
+        deserializeAsActual: Boolean,
     ) {
 
         private val packageProto get() = builtInsPackageFragment.packageProto
@@ -150,7 +161,8 @@ open class FirBuiltinSymbolProvider(
                 FirBuiltinAnnotationDeserializer(moduleData.session),
                 FirTypeDeserializer.FlexibleTypeFactory.Default,
                 FirConstDeserializer(BuiltInSerializerProtocol),
-                containerSource = null
+                containerSource = null,
+                deserializeAsActual = deserializeAsActual,
             ).memberDeserializer
         }
 
@@ -167,6 +179,7 @@ open class FirBuiltinSymbolProvider(
                 null,
                 origin = FirDeclarationOrigin.BuiltIns,
                 this::findAndDeserializeClass,
+                isActual = deserializeAsActual,
             )
         }
 

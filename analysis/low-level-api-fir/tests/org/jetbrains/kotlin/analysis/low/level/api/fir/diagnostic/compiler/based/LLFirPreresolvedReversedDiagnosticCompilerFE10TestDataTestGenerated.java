@@ -26233,6 +26233,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("dontDeprioritizeExpectFunIfShapeIsMoreSpecific.kt")
+      public void testDontDeprioritizeExpectFunIfShapeIsMoreSpecific() {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/dontDeprioritizeExpectFunIfShapeIsMoreSpecific.kt");
+      }
+
+      @Test
       @TestMetadata("expectAbstractToString.kt")
       public void testExpectAbstractToString() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/expectAbstractToString.kt");
@@ -28011,6 +28017,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         @TestMetadata("kt-55570.kt")
         public void testKt_55570() {
           runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/kt-55570.kt");
+        }
+
+        @Test
+        @TestMetadata("regularAndDeprecatedActualOverloads.kt")
+        public void testRegularAndDeprecatedActualOverloads() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/regularAndDeprecatedActualOverloads.kt");
         }
 
         @Test

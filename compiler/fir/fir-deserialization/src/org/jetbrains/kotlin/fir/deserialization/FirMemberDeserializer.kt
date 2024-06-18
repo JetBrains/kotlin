@@ -52,7 +52,8 @@ class FirDeserializationContext(
     val constDeserializer: FirConstDeserializer,
     val containerSource: DeserializedContainerSource?,
     val outerClassSymbol: FirRegularClassSymbol?,
-    val outerTypeParameters: List<FirTypeParameterSymbol>
+    val outerTypeParameters: List<FirTypeParameterSymbol>,
+    val deserializeAsActual: Boolean,
 ) {
     val session: FirSession = moduleData.session
 
@@ -84,7 +85,8 @@ class FirDeserializationContext(
         constDeserializer,
         containerSource,
         outerClassSymbol,
-        if (capturesTypeParameters) allTypeParameters else emptyList()
+        if (capturesTypeParameters) allTypeParameters else emptyList(),
+        deserializeAsActual,
     )
 
     val memberDeserializer: FirMemberDeserializer = FirMemberDeserializer(this)
@@ -100,7 +102,8 @@ class FirDeserializationContext(
             annotationDeserializer: AbstractAnnotationDeserializer,
             flexibleTypeFactory: FirTypeDeserializer.FlexibleTypeFactory,
             constDeserializer: FirConstDeserializer,
-            containerSource: DeserializedContainerSource?
+            containerSource: DeserializedContainerSource?,
+            deserializeAsActual: Boolean,
         ): FirDeserializationContext = createRootContext(
             nameResolver,
             TypeTable(packageProto.typeTable),
@@ -114,7 +117,8 @@ class FirDeserializationContext(
             typeParameterProtos = emptyList(),
             containerSource,
             outerClassSymbol = null,
-            containingDeclarationSymbol = null
+            containingDeclarationSymbol = null,
+            deserializeAsActual = deserializeAsActual,
         )
 
         fun createForClass(
@@ -126,7 +130,8 @@ class FirDeserializationContext(
             flexibleTypeFactory: FirTypeDeserializer.FlexibleTypeFactory,
             constDeserializer: FirConstDeserializer,
             containerSource: DeserializedContainerSource?,
-            outerClassSymbol: FirRegularClassSymbol
+            outerClassSymbol: FirRegularClassSymbol,
+            deserializeAsActual: Boolean,
         ): FirDeserializationContext = createRootContext(
             nameResolver,
             TypeTable(classProto.typeTable),
@@ -140,7 +145,8 @@ class FirDeserializationContext(
             classProto.typeParameterList,
             containerSource,
             outerClassSymbol,
-            outerClassSymbol
+            outerClassSymbol,
+            deserializeAsActual,
         )
 
         private fun createRootContext(
@@ -156,7 +162,8 @@ class FirDeserializationContext(
             typeParameterProtos: List<ProtoBuf.TypeParameter>,
             containerSource: DeserializedContainerSource?,
             outerClassSymbol: FirRegularClassSymbol?,
-            containingDeclarationSymbol: FirBasedSymbol<*>?
+            containingDeclarationSymbol: FirBasedSymbol<*>?,
+            deserializeAsActual: Boolean,
         ): FirDeserializationContext {
             return FirDeserializationContext(
                 nameResolver, typeTable,
@@ -178,7 +185,8 @@ class FirDeserializationContext(
                 constDeserializer,
                 containerSource,
                 outerClassSymbol,
-                emptyList()
+                emptyList(),
+                deserializeAsActual,
             )
         }
     }
@@ -215,7 +223,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 visibility.toEffectiveVisibility(owner = null)
             ).apply {
                 isExpect = Flags.IS_EXPECT_CLASS.get(flags)
-                isActual = false
+                isActual = c.deserializeAsActual
             }
 
             annotations += c.annotationDeserializer.loadTypeAliasAnnotations(proto, local.nameResolver)
@@ -396,7 +404,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags))
             status = FirResolvedDeclarationStatusImpl(visibility, propertyModality, visibility.toEffectiveVisibility(classSymbol)).apply {
                 isExpect = Flags.IS_EXPECT_PROPERTY.get(flags)
-                isActual = false
+                isActual = c.deserializeAsActual
                 isOverride = false
                 isConst = Flags.IS_CONST.get(flags)
                 isLateInit = Flags.IS_LATEINIT.get(flags)
@@ -498,7 +506,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         classProto: ProtoBuf.Class? = null,
         classSymbol: FirClassSymbol<*>? = null,
         // TODO: introduce the similar changes for the other deserialized entities
-        deserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library
+        deserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library,
     ): FirSimpleFunction {
         val flags = if (proto.hasFlags()) proto.flags else loadOldFlags(proto.oldFlags)
 
@@ -535,7 +543,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 visibility.toEffectiveVisibility(classSymbol)
             ).apply {
                 isExpect = Flags.IS_EXPECT_FUNCTION.get(flags)
-                isActual = false
+                isActual = c.deserializeAsActual
                 isOverride = false
                 isOperator = Flags.IS_OPERATOR.get(flags)
                 isInfix = Flags.IS_INFIX.get(flags)
@@ -579,7 +587,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
     fun loadConstructor(
         proto: ProtoBuf.Constructor,
         classProto: ProtoBuf.Class,
-        classBuilder: FirRegularClassBuilder
+        classBuilder: FirRegularClassBuilder,
     ): FirConstructor {
         val flags = proto.flags
         val relativeClassName = c.relativeClassName!!
@@ -617,7 +625,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 // It is inherited from containing class
                 isExpect = Flags.IS_EXPECT_CLASS.get(classProto.flags)
                 hasStableParameterNames = !Flags.IS_CONSTRUCTOR_WITH_NON_STABLE_PARAMETER_NAMES.get(flags)
-                isActual = false
+                isActual = c.deserializeAsActual
                 isOverride = false
                 this.isInner = isInner
             }

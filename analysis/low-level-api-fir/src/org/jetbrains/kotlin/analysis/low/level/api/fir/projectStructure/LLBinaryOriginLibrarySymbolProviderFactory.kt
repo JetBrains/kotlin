@@ -128,8 +128,8 @@ class LLBinaryOriginLibrarySymbolProviderFactory(private val project: Project) :
         moduleData: LLFirModuleData,
         kotlinScopeProvider: FirKotlinScopeProvider,
     ): List<FirSymbolProvider> {
-        return listOf(
-            FirBuiltinSymbolProvider(session, moduleData, kotlinScopeProvider),
+        return listOfNotNull(
+            FirBuiltinSymbolProvider.initializeIfNotStdlib(session, moduleData, kotlinScopeProvider),
             FirBuiltinSyntheticFunctionInterfaceProvider.initialize(session, moduleData, kotlinScopeProvider),
         )
     }
