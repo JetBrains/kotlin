@@ -34,6 +34,7 @@ import androidx.compose.compiler.plugins.kotlin.analysis.knownUnstable
 import androidx.compose.compiler.plugins.kotlin.irTrace
 import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -45,10 +46,11 @@ import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
+import org.jetbrains.kotlin.ir.builders.irBlockBody
+import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -86,6 +88,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrBranchImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrElseBranchImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
@@ -128,6 +131,7 @@ import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.addChild
+import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.functions
@@ -155,11 +159,23 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.DFS
 
+import androidx.compose.compiler.plugins.kotlin.lower.hiddenfromobjc.hiddenFromObjCClassId
+import org.jetbrains.kotlin.GeneratedDeclarationKey
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.fir.declarations.utils.klibSourceFile
+import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
+import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
+import org.jetbrains.kotlin.ir.util.packageFqName
+import org.jetbrains.kotlin.library.metadata.DeserializedSourceFile
+
+object ComposeCompilerKey : GeneratedDeclarationKey()
+
 abstract class AbstractComposeLowering(
     val context: IrPluginContext,
     val symbolRemapper: DeepCopySymbolRemapper,
     val metrics: ModuleMetrics,
-    val stabilityInferencer: StabilityInferencer
+    val stabilityInferencer: StabilityInferencer,
+    protected val unstableClassesWarning: MutableSet<ClassDescriptor>? = null
 ) : IrElementTransformerVoid(), ModuleLoweringPass {
     protected val builtIns = context.irBuiltIns
 
@@ -379,15 +395,7 @@ abstract class AbstractComposeLowering(
                 null
 
         is Stability.Parameter -> resolve(parameter)
-        is Stability.Runtime -> {
-            val stableField = declaration.makeStabilityField()
-            IrGetFieldImpl(
-                UNDEFINED_OFFSET,
-                UNDEFINED_OFFSET,
-                stableField.symbol,
-                stableField.type
-            )
-        }
+        is Stability.Runtime -> declaration.getRuntimeStabilityValue()
 
         is Stability.Unknown -> null
     }
@@ -778,6 +786,15 @@ abstract class AbstractComposeLowering(
         return irGet(variable.type, variable.symbol)
     }
 
+    protected fun irGetField(field: IrField): IrGetField {
+        return IrGetFieldImpl(
+            UNDEFINED_OFFSET,
+            UNDEFINED_OFFSET,
+            field.symbol,
+            field.type
+        )
+    }
+
     protected fun irIf(condition: IrExpression, body: IrExpression): IrExpression {
         return IrIfThenElseImpl(
             UNDEFINED_OFFSET,
@@ -898,54 +915,100 @@ abstract class AbstractComposeLowering(
         kotlinFqName.asString().replace(".", "_") + KtxNameConventions.STABILITY_PROP_FLAG
     )
 
-    fun IrClass.makeStabilityField(): IrField {
-        return if (context.platform.isJvm()) {
-            this.makeStabilityFieldJvm()
+    private fun IrClass.uniqueStabilityGetterName(): Name = Name.identifier(
+        kotlinFqName.asString().replace(".", "_") + KtxNameConventions.STABILITY_GETTER_FLAG
+    )
+
+    private fun IrClass.getMetadataStabilityGetterFun(): IrSimpleFunctionSymbol? {
+        val suitableFunctions = context.referenceFunctions(CallableId(this.packageFqName!!, uniqueStabilityGetterName()))
+        return suitableFunctions.singleOrNull()
+    }
+
+    private fun IrClass.getRuntimeStabilityValue(): IrExpression {
+        if (context.platform.isJvm()) {
+            val stableField = this.makeStabilityFieldJvm()
+            return irGetField(stableField)
         } else {
-            this.makeStabilityFieldNonJvm()
+            // since k2.0.10 compiler plugin adds special getter function that should be visible in metadata declarations
+            val stabilityGetter = getMetadataStabilityGetterFun()
+            if (stabilityGetter != null) {
+                return irCall(stabilityGetter)
+            }
+
+            // in case we have not found getter function and dependency was compiled with k1.9, we can rely on
+            // IrGetField over property backing field because it was generated with `isConst = true` and should be initialized
+            val classKotlinVersion =
+                ((this as? Fir2IrLazyClass)?.fir?.klibSourceFile as? DeserializedSourceFile)?.library?.versions?.compilerVersion
+            if (classKotlinVersion != null && classKotlinVersion.startsWith("1.9")) {
+                val stableField = this.buildStabilityProp()
+                val backingField = stableField.backingField!!
+
+                return irGetField(backingField)
+            }
+
+            // if we can not find stability getter function in metadata, dependency was compiled with older version of compiler plugin,
+            // so we can not trust value produced from `irGetField` because it may contain uninitialized data on native targets
+            //   (there is no guarantees that any of static/toplevel functions were called at this point,
+            //    so no guarantees that package initializer was called and field value was initialized)
+            // we treat those classes as `Unstable` and produce compilation warning that user may observe additional recompositions
+            // and may need to update dependencies to version compiled with newer compiler plugin to get rid of them
+            unstableClassesWarning?.add(this.descriptor)
+            return irConst(StabilityBits.UNSTABLE.bitsForSlot(0))
+        }
+    }
+
+    internal fun IrClass.makeStabilityField(): IrField {
+        return if (context.platform.isJvm()) {
+            makeStabilityFieldJvm()
+        } else {
+            makeStabilityFieldNonJvm()
         }
     }
 
     private fun IrClass.makeStabilityFieldJvm(): IrField {
-        return context.irFactory.buildField {
-            startOffset = SYNTHETIC_OFFSET
-            endOffset = SYNTHETIC_OFFSET
-            name = KtxNameConventions.STABILITY_FLAG
-            isStatic = true
-            isFinal = true
-            type = context.irBuiltIns.intType
-            visibility = DescriptorVisibilities.PUBLIC
-        }.also { stabilityField ->
+        return buildStabilityField(KtxNameConventions.STABILITY_FLAG).also { stabilityField ->
             stabilityField.parent = this@makeStabilityFieldJvm
+            declarations += stabilityField
         }
     }
 
     private fun IrClass.makeStabilityFieldNonJvm(): IrField {
-        val stabilityFieldName = this.uniqueStabilityFieldName()
-        val fieldParent = this.getPackageFragment()
+        val prop = this.buildStabilityProp()
+        this.buildStabilityGetter(prop)
+        return prop.backingField!!
+    }
 
+    private fun buildStabilityField(fieldName: Name): IrField {
         return context.irFactory.buildField {
             startOffset = SYNTHETIC_OFFSET
             endOffset = SYNTHETIC_OFFSET
-            name = stabilityFieldName
+            name = fieldName
             isStatic = true
             isFinal = true
             type = context.irBuiltIns.intType
             visibility = DescriptorVisibilities.PUBLIC
-        }.also { stabilityField ->
-            stabilityField.parent = fieldParent
-            makeStabilityProp(stabilityField, fieldParent)
         }
     }
 
-    private fun IrClass.makeStabilityProp(
-        stabilityField: IrField,
-        fieldParent: IrDeclarationContainer
-    ): IrProperty {
-        return context.irFactory.buildProperty {
+    private fun IrClass.buildStabilityProp(): IrProperty {
+        val fieldParent = this.getPackageFragment()
+
+        val propName = this@buildStabilityProp.uniqueStabilityPropertyName()
+        val existingProp = fieldParent.declarations.firstOrNull {
+            it is IrProperty && it.name == propName
+        } as? IrProperty
+        if (existingProp != null) {
+            return existingProp
+        }
+
+        val stabilityField = buildStabilityField(uniqueStabilityFieldName()).also {
+            it.parent = fieldParent
+        }
+
+        val property = context.irFactory.buildProperty {
             startOffset = SYNTHETIC_OFFSET
             endOffset = SYNTHETIC_OFFSET
-            name = this@makeStabilityProp.uniqueStabilityPropertyName()
+            name = propName
             visibility = DescriptorVisibilities.PUBLIC
         }.also { property ->
             property.parent = fieldParent
@@ -953,6 +1016,43 @@ abstract class AbstractComposeLowering(
             property.backingField = stabilityField
             fieldParent.addChild(property)
         }
+
+        return property
+    }
+
+    private val hiddenFromObjCAnnotationSymbol: IrClassSymbol = getTopLevelClass(hiddenFromObjCClassId)
+    private val hiddenFromObjCAnnotation = IrConstructorCallImpl.fromSymbolOwner(
+        type = hiddenFromObjCAnnotationSymbol.defaultType,
+        constructorSymbol = hiddenFromObjCAnnotationSymbol.constructors.first()
+    )
+
+    private fun IrClass.buildStabilityGetter(stabilityProp: IrProperty) {
+        val fieldParent = stabilityProp.parent as IrPackageFragment
+        val getterName = uniqueStabilityGetterName()
+
+        val stabilityField = stabilityProp.backingField!!
+
+        // we could have created getter instead of separate function,
+        // but `registerFunctionAsMetadataVisible` is not working for field getter for some reason
+        // and there is no api to register properties as metadata-visible
+        val stabilityGetter = context.irFactory.buildFun {
+            startOffset = SYNTHETIC_OFFSET
+            endOffset = SYNTHETIC_OFFSET
+            name = getterName
+            returnType = stabilityField.type
+            visibility = DescriptorVisibilities.PUBLIC
+            origin = IrDeclarationOrigin.GeneratedByPlugin(ComposeCompilerKey)
+            annotations = listOf(hiddenFromObjCAnnotation)
+        }.also { fn ->
+            fn.parent = fieldParent
+            fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
+                +irReturn(irGetField(stabilityField))
+            }
+            fieldParent.addChild(fn)
+        }
+
+        context.metadataDeclarationRegistrar.addMetadataVisibleAnnotationsToElement(stabilityGetter, hiddenFromObjCAnnotation)
+        context.metadataDeclarationRegistrar.registerFunctionAsMetadataVisible(stabilityGetter)
     }
 
     fun IrExpression.isStatic(): Boolean {
