@@ -17,24 +17,35 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSdkModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 
+@Deprecated("Use 'KaModule' instead", ReplaceWith("KaModule"))
 public typealias KtModule = KaModule
 
+@Deprecated("Use 'KaSourceModule' instead", ReplaceWith("KaSourceModule"))
 public typealias KtSourceModule = KaSourceModule
 
+@Deprecated("Use 'KaBinaryModule' instead", ReplaceWith("KaBinaryModule"))
 public typealias KtBinaryModule = KaBinaryModule
 
+@Deprecated("Use 'KaLibraryModule' instead", ReplaceWith("KaLibraryModule"))
 public typealias KtLibraryModule = KaLibraryModule
 
+@Deprecated("Use 'KaSdkModule' instead", ReplaceWith("KaSdkModule"))
 public typealias KtSdkModule = KaSdkModule
 
+@Deprecated("Use 'KaLibrarySourceModule' instead", ReplaceWith("KaLibrarySourceModule"))
 public typealias KtLibrarySourceModule = KaLibrarySourceModule
 
+@Deprecated("Use 'KaBuiltinsModule' instead", ReplaceWith("KaBuiltinsModule"))
 public typealias KtBuiltinsModule = KaBuiltinsModule
 
+@Deprecated("Use 'KaScriptModule' instead", ReplaceWith("KaScriptModule"))
 public typealias KtScriptModule = KaScriptModule
 
+@Deprecated("Use 'KaScriptDependencyModule' instead", ReplaceWith("KaScriptDependencyModule"))
 public typealias KtScriptDependencyModule = KaScriptDependencyModule
 
+@Deprecated("Use 'KaDanglingFileModule' instead", ReplaceWith("KaDanglingFileModule"))
 public typealias KtDanglingFileModule = KaDanglingFileModule
 
+@Deprecated("Use 'KaNotUnderContentRootModule' instead", ReplaceWith("KaNotUnderContentRootModule"))
 public typealias KtNotUnderContentRootModule = KaNotUnderContentRootModule
