@@ -596,7 +596,7 @@ internal object EagerResolveOfCallableReferences : CheckerStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         if (candidate.postponedAtoms.isEmpty()) return
         for (atom in candidate.postponedAtoms) {
-            if (atom is ResolvedCallableReferenceAtom) {
+            if (atom is ConeResolvedCallableReferenceAtom) {
                 val (applicability, success) =
                     context.bodyResolveComponents.callResolver.resolveCallableReference(
                         candidate, atom, hasSyntheticOuterCall = candidate.callInfo.name == ACCEPT_SPECIFIC_TYPE.callableName
@@ -862,7 +862,7 @@ internal object CheckLambdaAgainstTypeVariableContradiction : ResolutionStage() 
         }
 
         for (postponedAtom in candidate.postponedAtoms) {
-            if (postponedAtom !is LambdaWithTypeVariableAsExpectedTypeAtom) continue
+            if (postponedAtom !is ConeLambdaWithTypeVariableAsExpectedTypeAtom) continue
             postponedAtom.checkForContradiction(csBuilder, context, sink)
         }
     }
@@ -872,7 +872,7 @@ internal object CheckLambdaAgainstTypeVariableContradiction : ResolutionStage() 
      * lambda by checking if _any_ function type can satisfy the constraints of the type variable.
      * This makes some code green that would otherwise report an overload resolution ambiguity.
      */
-    private fun LambdaWithTypeVariableAsExpectedTypeAtom.checkForContradiction(
+    private fun ConeLambdaWithTypeVariableAsExpectedTypeAtom.checkForContradiction(
         csBuilder: NewConstraintSystemImpl,
         context: ResolutionContext,
         sink: CheckerSink,
@@ -912,7 +912,7 @@ internal object CheckLambdaAgainstTypeVariableContradiction : ResolutionStage() 
         }
     }
 
-    private fun LambdaWithTypeVariableAsExpectedTypeAtom.hasFunctionTypeConstraint(
+    private fun ConeLambdaWithTypeVariableAsExpectedTypeAtom.hasFunctionTypeConstraint(
         csBuilder: NewConstraintSystemImpl,
         context: ResolutionContext,
     ): Boolean {

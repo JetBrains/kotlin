@@ -35,7 +35,7 @@ data class ReturnArgumentsAnalysisResult(
 
 interface LambdaAnalyzer {
     fun analyzeAndGetLambdaReturnArguments(
-        lambdaAtom: ResolvedLambdaAtom,
+        lambdaAtom: ConeResolvedLambdaAtom,
         receiverType: ConeKotlinType?,
         contextReceivers: List<ConeKotlinType>,
         parameters: List<ConeKotlinType>,
@@ -55,26 +55,26 @@ class PostponedArgumentsAnalyzer(
 
     fun analyze(
         c: PostponedArgumentsAnalyzerContext,
-        argument: PostponedResolvedAtom,
+        argument: ConePostponedResolvedAtom,
         candidate: Candidate,
         withPCLASession: Boolean,
     ) {
         when (argument) {
-            is ResolvedLambdaAtom ->
+            is ConeResolvedLambdaAtom ->
                 analyzeLambda(c, argument, candidate, forOverloadByLambdaReturnType = false, withPCLASession)
 
-            is LambdaWithTypeVariableAsExpectedTypeAtom ->
+            is ConeLambdaWithTypeVariableAsExpectedTypeAtom ->
                 analyzeLambda(
                     c,
                     argument.transformToResolvedLambda(c.getBuilder(), resolutionContext),
                     candidate, forOverloadByLambdaReturnType = false, withPCLASession
                 )
 
-            is ResolvedCallableReferenceAtom -> processCallableReference(argument, candidate)
+            is ConeResolvedCallableReferenceAtom -> processCallableReference(argument, candidate)
         }
     }
 
-    private fun processCallableReference(atom: ResolvedCallableReferenceAtom, candidate: Candidate) {
+    private fun processCallableReference(atom: ConeResolvedCallableReferenceAtom, candidate: Candidate) {
         if (atom.mightNeedAdditionalResolution) {
             callResolver.resolveCallableReference(candidate, atom, hasSyntheticOuterCall = false)
         }
@@ -106,7 +106,7 @@ class PostponedArgumentsAnalyzer(
 
     fun analyzeLambda(
         c: PostponedArgumentsAnalyzerContext,
-        lambda: ResolvedLambdaAtom,
+        lambda: ConeResolvedLambdaAtom,
         candidate: Candidate,
         forOverloadByLambdaReturnType: Boolean,
         withPCLASession: Boolean,
@@ -168,7 +168,7 @@ class PostponedArgumentsAnalyzer(
 
     fun applyResultsOfAnalyzedLambdaToCandidateSystem(
         c: PostponedArgumentsAnalyzerContext,
-        lambda: ResolvedLambdaAtom,
+        lambda: ConeResolvedLambdaAtom,
         candidate: Candidate,
         results: ReturnArgumentsAnalysisResult,
         substituteAlreadyFixedVariables: (ConeKotlinType) -> ConeKotlinType = c.createSubstituteFunctorForLambdaAnalysis(),
@@ -245,7 +245,7 @@ class PostponedArgumentsAnalyzer(
     private fun addLambdaReturnTypeUnitConstraintOrReportError(
         c: PostponedArgumentsAnalyzerContext,
         builder: ConstraintSystemBuilder,
-        lambda: ResolvedLambdaAtom,
+        lambda: ConeResolvedLambdaAtom,
         checkerSink: CheckerSink,
         substituteAlreadyFixedVariables: (ConeKotlinType) -> ConeKotlinType,
     ) {
@@ -294,12 +294,12 @@ class PostponedArgumentsAnalyzer(
     }
 }
 
-fun LambdaWithTypeVariableAsExpectedTypeAtom.transformToResolvedLambda(
+fun ConeLambdaWithTypeVariableAsExpectedTypeAtom.transformToResolvedLambda(
     csBuilder: ConstraintSystemBuilder,
     context: ResolutionContext,
     expectedType: ConeKotlinType? = null,
     returnTypeVariable: ConeTypeVariableForLambdaReturnType? = null,
-): ResolvedLambdaAtom {
+): ConeResolvedLambdaAtom {
     val fixedExpectedType = (csBuilder.buildCurrentSubstitutor() as ConeSubstitutor)
         .substituteOrSelf(expectedType ?: this.expectedType)
     val resolvedAtom = candidateOfOuterCall.preprocessLambdaArgument(
@@ -310,7 +310,7 @@ fun LambdaWithTypeVariableAsExpectedTypeAtom.transformToResolvedLambda(
         sink = null,
         duringCompletion = true,
         returnTypeVariable = returnTypeVariable
-    ) as ResolvedLambdaAtom
+    ) as ConeResolvedLambdaAtom
     analyzed = true
     return resolvedAtom
 }

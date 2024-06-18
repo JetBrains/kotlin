@@ -61,7 +61,7 @@ private class CalculatorForNestedCall(
     private val variablesWithQueuedConstraints = mutableSetOf<TypeVariableMarker>()
     private val typesToProcess: Queue<KotlinTypeMarker> = ArrayDeque()
 
-    private val postponedAtoms: List<PostponedResolvedAtom> by lazy {
+    private val postponedAtoms: List<ConePostponedResolvedAtom> by lazy {
         ConstraintSystemCompleter.getOrderedNotAnalyzedPostponedArguments(candidate)
     }
 

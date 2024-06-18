@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.CandidateChosenUsingOverloadResolu
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
 import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceSession
-import org.jetbrains.kotlin.fir.resolve.inference.ResolvedLambdaAtom
+import org.jetbrains.kotlin.fir.resolve.inference.ConeResolvedLambdaAtom
 import org.jetbrains.kotlin.fir.resolve.initialTypeOfCandidate
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
@@ -76,8 +76,8 @@ class FirOverloadByLambdaReturnTypeResolver(
         if (candidates.any { !it.isSuccessful }) return candidates
         val lambdas = candidates.flatMap { candidate ->
             candidate.postponedAtoms
-                .filter { it is ResolvedLambdaAtom && !it.analyzed }
-                .map { candidate to it as ResolvedLambdaAtom }
+                .filter { it is ConeResolvedLambdaAtom && !it.analyzed }
+                .map { candidate to it as ConeResolvedLambdaAtom }
         }.groupBy { (_, atom) -> atom.fir }
             .values.singleOrNull()?.toMap() ?: return null
 

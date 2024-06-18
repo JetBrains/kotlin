@@ -265,7 +265,7 @@ class FirCallCompleter(
     }
 
     fun prepareLambdaAtomForFactoryPattern(
-        atom: ResolvedLambdaAtom,
+        atom: ConeResolvedLambdaAtom,
         candidate: Candidate,
     ) {
         val returnVariable = ConeTypeVariableForLambdaReturnType(atom.fir, "_R")
@@ -312,7 +312,7 @@ class FirCallCompleter(
 
     private inner class LambdaAnalyzerImpl : LambdaAnalyzer {
         override fun analyzeAndGetLambdaReturnArguments(
-            lambdaAtom: ResolvedLambdaAtom,
+            lambdaAtom: ConeResolvedLambdaAtom,
             receiverType: ConeKotlinType?,
             contextReceivers: List<ConeKotlinType>,
             parameters: List<ConeKotlinType>,

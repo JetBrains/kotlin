@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildThisReceiverExpressionC
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
-import org.jetbrains.kotlin.fir.resolve.inference.PostponedResolvedAtom
+import org.jetbrains.kotlin.fir.resolve.inference.ConePostponedResolvedAtom
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -120,9 +120,9 @@ class Candidate(
     var functionTypesOfSamConversions: HashMap<FirExpression, FirSamResolver.SamConversionInfo>? = null
     lateinit var typeArgumentMapping: TypeArgumentMapping
 
-    private val _postponedAtomsByFir: MutableMap<FirElement, MutableList<PostponedResolvedAtom>> = mutableMapOf()
-    val postponedAtomsByFir: Map<FirElement, List<PostponedResolvedAtom>> get() = _postponedAtomsByFir
-    val postponedAtoms: Collection<PostponedResolvedAtom> get() = _postponedAtomsByFir.values.flatten()
+    private val _postponedAtomsByFir: MutableMap<FirElement, MutableList<ConePostponedResolvedAtom>> = mutableMapOf()
+    val postponedAtomsByFir: Map<FirElement, List<ConePostponedResolvedAtom>> get() = _postponedAtomsByFir
+    val postponedAtoms: Collection<ConePostponedResolvedAtom> get() = _postponedAtomsByFir.values.flatten()
 
     // PCLA-related parts
     val postponedPCLACalls: MutableList<FirStatement> = mutableListOf()
@@ -146,7 +146,7 @@ class Candidate(
     override val diagnostics: List<ResolutionDiagnostic>
         get() = _diagnostics
 
-    fun addPostponedAtom(atom: PostponedResolvedAtom) {
+    fun addPostponedAtom(atom: ConePostponedResolvedAtom) {
         _postponedAtomsByFir.getOrPut(atom.fir) { mutableListOf() }.add(atom)
     }
 

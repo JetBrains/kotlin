@@ -9,13 +9,12 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.inference.LambdaWithTypeVariableAsExpectedTypeAtom
+import org.jetbrains.kotlin.fir.resolve.inference.ConeLambdaWithTypeVariableAsExpectedTypeAtom
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.preprocessCallableReference
@@ -38,7 +37,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.TypeSystemCommonSuperTypesContext
-import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.types.model.typeConstructor
 
 val SAM_LOOKUP_NAME: Name = Name.special("<SAM-CONSTRUCTOR>")
@@ -507,7 +505,7 @@ fun FirExpression.shouldUseSamConversion(
 
             val namedReferenceWithCandidate = unwrapped.namedReferenceWithCandidate()
             if (namedReferenceWithCandidate?.candidate?.postponedAtoms?.any {
-                    it is LambdaWithTypeVariableAsExpectedTypeAtom &&
+                    it is ConeLambdaWithTypeVariableAsExpectedTypeAtom &&
                             it.expectedType.typeConstructor(session.typeContext) == coneType.typeConstructor(session.typeContext)
                 } == true
             ) {

@@ -28,7 +28,7 @@ fun extractLambdaInfoFromFunctionType(
     candidate: Candidate?,
     allowCoercionToExtensionReceiver: Boolean,
     sourceForFunctionExpression: KtSourceElement?,
-): ResolvedLambdaAtom? {
+): ConeResolvedLambdaAtom? {
     val session = components.session
     if (expectedType == null) return null
     if (expectedType is ConeFlexibleType) {
@@ -111,7 +111,7 @@ fun extractLambdaInfoFromFunctionType(
             else -> lambda.contextReceivers.map { it.typeRef.coneType }
         }
 
-    return ResolvedLambdaAtom(
+    return ConeResolvedLambdaAtom(
         lambda,
         argument,
         expectedType,

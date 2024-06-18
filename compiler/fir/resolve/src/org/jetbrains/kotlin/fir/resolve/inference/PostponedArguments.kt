@@ -33,7 +33,7 @@ fun Candidate.preprocessLambdaArgument(
     sink: CheckerSink?,
     duringCompletion: Boolean = false,
     returnTypeVariable: ConeTypeVariableForLambdaReturnType? = null
-): PostponedResolvedAtom {
+): ConePostponedResolvedAtom {
     if (expectedType != null && !duringCompletion && csBuilder.isTypeVariable(expectedType)) {
         val expectedTypeVariableWithConstraints =
             csBuilder.currentStorage().notFixedTypeVariables[expectedType.typeConstructor(context.typeContext)]
@@ -44,7 +44,7 @@ fun Candidate.preprocessLambdaArgument(
             }?.type as ConeKotlinType?
 
             if (explicitTypeArgument == null || explicitTypeArgument.typeArguments.isNotEmpty()) {
-                return LambdaWithTypeVariableAsExpectedTypeAtom(argument, expectedType, this).also {
+                return ConeLambdaWithTypeVariableAsExpectedTypeAtom(argument, expectedType, this).also {
                     addPostponedAtom(it)
                 }
             }
@@ -107,7 +107,7 @@ fun Candidate.preprocessCallableReference(
     context: ResolutionContext
 ) {
     val lhs = context.bodyResolveComponents.doubleColonExpressionResolver.resolveDoubleColonLHS(argument)
-    addPostponedAtom(ResolvedCallableReferenceAtom(argument, expectedType, lhs, context.session))
+    addPostponedAtom(ConeResolvedCallableReferenceAtom(argument, expectedType, lhs, context.session))
 }
 
 private fun extractLambdaInfo(
@@ -117,7 +117,7 @@ private fun extractLambdaInfo(
     session: FirSession,
     candidate: Candidate?,
     sourceForFunctionExpression: KtSourceElement?,
-): ResolvedLambdaAtom {
+): ConeResolvedLambdaAtom {
     require(expectedType?.lowerBoundIfFlexible()?.functionTypeKind(session) == null) {
         "Currently, we only extract lambda info from its shape when expected type is not function, but $expectedType"
     }
@@ -146,7 +146,7 @@ private fun extractLambdaInfo(
     val newTypeVariableUsed = returnType == typeVariable.defaultType
     if (newTypeVariableUsed) csBuilder.registerVariable(typeVariable)
 
-    return ResolvedLambdaAtom(
+    return ConeResolvedLambdaAtom(
         lambda,
         argument,
         expectedType,
