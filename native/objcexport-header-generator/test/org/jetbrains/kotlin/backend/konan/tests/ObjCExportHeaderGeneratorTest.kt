@@ -430,6 +430,16 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("deprecatedHidden"))
     }
 
+    @Test
+    fun `test - inlineClassWithNestedClass`() {
+        doTest(headersTestDataDir.resolve("inlineClassWithNestedClass"))
+    }
+
+    @Test
+    fun `test - privateTopLevelClassProperty`() {
+        doTest(headersTestDataDir.resolve("privateTopLevelClassProperty"))
+    }
+
     /**
      * Depends on unimplemented AA deprecation message: KT-67823
      */

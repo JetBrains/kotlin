@@ -22,13 +22,18 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
  * }
  *```
  * returns `sequenceOf(A, B, C)`
+ *
+ * See K1 [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportHeaderGenerator.collectClasses]
  */
 context(KaSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaFileSymbol.getAllClassOrObjectSymbols(): List<KaClassSymbol> {
     return fileScope.classifiers
         .filterIsInstance<KaClassSymbol>()
-        .flatMap { classSymbol -> listOf(classSymbol) + classSymbol.getAllClassOrObjectSymbols() }
+        .flatMap { classSymbol ->
+            if (classSymbol.isVisibleInObjC()) listOf(classSymbol) + classSymbol.getAllClassOrObjectSymbols()
+            else emptyList()
+        }
         .toList()
 }
 

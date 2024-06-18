@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.getInlineTargetTypeOrNull
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.isError
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.isObjCObjectType
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.objCErrorType
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.*
 import org.jetbrains.kotlin.objcexport.extras.objCTypeExtras
 import org.jetbrains.kotlin.objcexport.extras.originClassId
 import org.jetbrains.kotlin.objcexport.extras.requiresForwardDeclaration
@@ -80,6 +77,10 @@ internal fun KaType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReferenc
     }
 
     if (classId in hiddenClassIds) {
+        return ObjCIdType
+    }
+
+    if (this.symbol?.isVisibleInObjC() == false) {
         return ObjCIdType
     }
 

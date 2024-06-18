@@ -29,6 +29,9 @@ internal fun KaSymbol.isVisibleInObjC(): Boolean = when (this) {
     else -> false
 }
 
+/**
+ * Doesn't check visibility of containing symbol, so nested callables are visible
+ */
 context(KaSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaCallableSymbol.isVisibleInObjC(): Boolean {
@@ -39,7 +42,6 @@ internal fun KaCallableSymbol.isVisibleInObjC(): Boolean {
     if (this.isHiddenFromObjCByAnnotation()) return false
     if (this.isSealedClassConstructor()) return false
     if (this.isComponentNMethod() && !this.directlyOverriddenSymbols.any()) return false
-    containingSymbol?.let { if (!it.isVisibleInObjC()) return false }
     return true
 }
 
@@ -55,7 +57,6 @@ internal fun KaClassSymbol.isVisibleInObjC(): Boolean {
     if (!this.classKind.isVisibleInObjC()) return false
     if (this.isExpect) return false
     if (this.isInlined()) return false
-    containingSymbol?.let { if (!it.isVisibleInObjC()) return false }
     return true
 }
 
