@@ -693,7 +693,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
                     destination = TestModule.Exclusive(
                         name = extTestModule.name,
                         directRegularDependencySymbols = extTestModule.dependencies.mapToSet(::transformDependency),
-                        directFriendSymbols = extTestModule.friends.mapToSet(::transformDependency),
+                        directFriendDependencySymbols = extTestModule.friends.mapToSet(::transformDependency),
                         directDependsOnSymbols = extTestModule.dependsOn.mapToSet(::transformDependency),
                     ),
                     baseDir = testCaseDir

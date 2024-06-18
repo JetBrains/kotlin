@@ -156,7 +156,7 @@ abstract class AbstractKlibLinkageTest : AbstractNativeSimpleTest() {
                 name = moduleName,
                 directRegularDependencySymbols = emptySet(), /* Don't need to pass any dependency symbols here.
                                                          Dependencies are already handled by the AbstractNativePartialLinkageTest class. */
-                directFriendSymbols = emptySet(),
+                directFriendDependencySymbols = emptySet(),
                 directDependsOnSymbols = emptySet(),
             ).also { module ->
                 moduleSourceDir.walk()
