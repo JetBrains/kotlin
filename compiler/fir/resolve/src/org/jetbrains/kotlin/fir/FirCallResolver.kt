@@ -409,7 +409,7 @@ class FirCallResolver(
         hasSyntheticOuterCall: Boolean,
     ): Pair<CandidateApplicability, Boolean> = components.context.inferenceSession.runCallableReferenceResolution(containingCallCandidate) {
         val constraintSystemBuilder = containingCallCandidate.csBuilder
-        val callableReferenceAccess = resolvedCallableReferenceAtom.reference
+        val callableReferenceAccess = resolvedCallableReferenceAtom.fir
         val calleeReference = callableReferenceAccess.calleeReference
         val lhs = resolvedCallableReferenceAtom.lhs
         val coneSubstitutor = constraintSystemBuilder.buildCurrentSubstitutor() as ConeSubstitutor

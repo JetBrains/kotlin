@@ -120,9 +120,9 @@ class Candidate(
     var functionTypesOfSamConversions: HashMap<FirExpression, FirSamResolver.SamConversionInfo>? = null
     lateinit var typeArgumentMapping: TypeArgumentMapping
 
-    private val _postponedAtomsByFir: MutableMap<FirElement, PostponedResolvedAtom> = mutableMapOf()
-    val postponedAtomsByFir: Map<FirElement, PostponedResolvedAtom> get() = _postponedAtomsByFir
-    val postponedAtoms: Collection<PostponedResolvedAtom> get() = _postponedAtomsByFir.values
+    private val _postponedAtomsByFir: MutableMap<FirElement, MutableList<PostponedResolvedAtom>> = mutableMapOf()
+    val postponedAtomsByFir: Map<FirElement, List<PostponedResolvedAtom>> get() = _postponedAtomsByFir
+    val postponedAtoms: Collection<PostponedResolvedAtom> get() = _postponedAtomsByFir.values.flatten()
 
     // PCLA-related parts
     val postponedPCLACalls: MutableList<FirStatement> = mutableListOf()
@@ -147,7 +147,7 @@ class Candidate(
         get() = _diagnostics
 
     fun addPostponedAtom(atom: PostponedResolvedAtom) {
-        _postponedAtomsByFir[atom.fir] = atom
+        _postponedAtomsByFir.getOrPut(atom.fir) { mutableListOf() }.add(atom)
     }
 
     fun addDiagnostic(diagnostic: ResolutionDiagnostic) {

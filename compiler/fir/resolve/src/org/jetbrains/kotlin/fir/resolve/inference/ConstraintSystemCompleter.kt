@@ -610,11 +610,11 @@ private fun FirExpression.getPostponedAtoms(candidate: Candidate, topLevelCandid
 }
 
 private fun MutableList<PostponedResolvedAtom>.addPostponedAtoms(element: FirElement, candidate: Candidate) {
-    candidate.postponedAtomsByFir[element]?.let(this::add)
+    candidate.postponedAtomsByFir[element]?.let(this::addAll)
 
     // ResolvedLambdaAtom uses the function as key, other implementations use the expression.
     if (element is FirAnonymousFunctionExpression) {
-        candidate.postponedAtomsByFir[element.anonymousFunction]?.let(this::add)
+        candidate.postponedAtomsByFir[element.anonymousFunction]?.let(this::addAll)
     }
 }
 

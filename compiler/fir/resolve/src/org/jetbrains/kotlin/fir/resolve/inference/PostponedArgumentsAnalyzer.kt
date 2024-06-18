@@ -79,7 +79,7 @@ class PostponedArgumentsAnalyzer(
             callResolver.resolveCallableReference(candidate, atom, hasSyntheticOuterCall = false)
         }
 
-        val callableReferenceAccess = atom.reference
+        val callableReferenceAccess = atom.fir
         atom.analyzed = true
 
         resolutionContext.bodyResolveContext.dropCallableReferenceContext(callableReferenceAccess)
@@ -304,7 +304,7 @@ fun LambdaWithTypeVariableAsExpectedTypeAtom.transformToResolvedLambda(
         .substituteOrSelf(expectedType ?: this.expectedType)
     val resolvedAtom = candidateOfOuterCall.preprocessLambdaArgument(
         csBuilder,
-        fir,
+        expression,
         fixedExpectedType,
         context,
         sink = null,
