@@ -18,10 +18,10 @@ KaUsualClassType:
   qualifiers: [
     qualifier:
       name: String
-      symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+      symbol: KaNamedClassSymbol(kotlin/String)
       typeArguments: []
   ]
-  symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+  symbol: KaNamedClassSymbol(kotlin/String)
   typeArguments: []
 
 Rendered type:

@@ -11,7 +11,7 @@ KaTypeParameterSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: X
   classKind: CLASS
@@ -220,7 +220,7 @@ KaFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: null
   classKind: CLASS
@@ -289,7 +289,7 @@ KaFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: null
   classKind: CLASS
@@ -358,7 +358,7 @@ KaFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: A
   classKind: CLASS

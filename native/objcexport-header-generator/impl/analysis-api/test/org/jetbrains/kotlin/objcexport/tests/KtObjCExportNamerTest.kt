@@ -1,11 +1,11 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.objcexport.tests
 
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportClassOrProtocolName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.objcexport.getObjCClassOrProtocolName
@@ -24,7 +24,7 @@ class KtObjCExportNamerTest(
         analyzeWithObjCExport(foo) {
             val fooSymbol = foo.symbol.fileScope
                 .classifiers(Name.identifier("Foo"))
-                .single() as KaNamedClassOrObjectSymbol
+                .single() as KaNamedClassSymbol
 
             assertEquals(
                 ObjCExportClassOrProtocolName("Foo", "Foo"),

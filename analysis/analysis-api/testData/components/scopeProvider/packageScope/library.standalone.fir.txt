@@ -727,7 +727,7 @@ KaFunctionSymbol:
   getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: library/api/FakeI
   classKind: INTERFACE
@@ -757,7 +757,7 @@ KaNamedClassOrObjectSymbol:
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: library/api/InternalFakeI
   classKind: INTERFACE
@@ -787,7 +787,7 @@ KaNamedClassOrObjectSymbol:
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: library/api/PrivateFakeI
   classKind: INTERFACE
@@ -817,7 +817,7 @@ KaNamedClassOrObjectSymbol:
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: library/api/PrivateI
   classKind: INTERFACE
@@ -847,7 +847,7 @@ KaNamedClassOrObjectSymbol:
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: library/api/InternalI
   classKind: INTERFACE
@@ -877,7 +877,7 @@ KaNamedClassOrObjectSymbol:
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: library/api/I
   classKind: INTERFACE
@@ -907,7 +907,7 @@ KaNamedClassOrObjectSymbol:
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: library/api/C1
   classKind: CLASS
@@ -937,7 +937,7 @@ KaNamedClassOrObjectSymbol:
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: library/api/InternalC1
   classKind: CLASS
@@ -967,7 +967,7 @@ KaNamedClassOrObjectSymbol:
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: library/api/PrivateC1
   classKind: CLASS

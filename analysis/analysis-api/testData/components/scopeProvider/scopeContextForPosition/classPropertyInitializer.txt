@@ -4,7 +4,7 @@ implicit receivers:
     annotations: []
     typeArguments: []
     type: test/Child
-  owner symbol: KaFirNamedClassOrObjectSymbol
+  owner symbol: KaFirNamedClassSymbol
 
 scopes:
   LocalScope, index = 0
@@ -609,7 +609,7 @@ scopes:
   PackageMemberScope, index = 3
     packages: 0
     classifiers: 2
-      KaNamedClassOrObjectSymbol:
+      KaNamedClassSymbol:
         annotations: []
         classId: test/Base
         classKind: CLASS
@@ -634,7 +634,7 @@ scopes:
         ]
         typeParameters: []
         visibility: Public
-      KaNamedClassOrObjectSymbol:
+      KaNamedClassSymbol:
         annotations: []
         classId: test/Child
         classKind: CLASS

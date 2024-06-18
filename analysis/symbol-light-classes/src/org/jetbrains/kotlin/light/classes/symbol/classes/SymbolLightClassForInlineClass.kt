@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiMethod
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -27,7 +27,7 @@ internal class SymbolLightClassForInlineClass : SymbolLightClassForClassOrObject
         ktModule: KaModule,
     ) : this(
         classOrObjectDeclaration = classOrObject,
-        classOrObjectSymbolPointer = classOrObject.symbolPointerOfType(),
+        classSymbolPointer = classOrObject.symbolPointerOfType(),
         ktModule = ktModule,
         manager = classOrObject.manager,
     ) {
@@ -36,21 +36,21 @@ internal class SymbolLightClassForInlineClass : SymbolLightClassForClassOrObject
 
     private constructor(
         classOrObjectDeclaration: KtClassOrObject?,
-        classOrObjectSymbolPointer: KaSymbolPointer<KaNamedClassOrObjectSymbol>,
+        classSymbolPointer: KaSymbolPointer<KaNamedClassSymbol>,
         ktModule: KaModule,
         manager: PsiManager,
     ) : super(
         classOrObjectDeclaration = classOrObjectDeclaration,
-        classOrObjectSymbolPointer = classOrObjectSymbolPointer,
+        classSymbolPointer = classSymbolPointer,
         ktModule = ktModule,
         manager = manager,
     )
 
     override fun getOwnMethods(): List<PsiMethod> = cachedValue {
-        withClassOrObjectSymbol { classOrObjectSymbol ->
+        withClassSymbol { classSymbol ->
             val result = mutableListOf<KtLightMethod>()
 
-            val declaredMemberScope = classOrObjectSymbol.declaredMemberScope
+            val declaredMemberScope = classSymbol.declaredMemberScope
             val applicableDeclarations = declaredMemberScope.callables
                 .filter {
                     (it as? KaPropertySymbol)?.isOverride == true || (it as? KaFunctionSymbol)?.isOverride == true
@@ -84,13 +84,13 @@ internal class SymbolLightClassForInlineClass : SymbolLightClassForClassOrObject
     }
 
     override fun getOwnFields(): List<KtLightField> = cachedValue {
-        withClassOrObjectSymbol { classOrObjectSymbol ->
+        withClassSymbol { classSymbol ->
             mutableListOf<KtLightField>().apply {
-                addPropertyBackingFields(this, classOrObjectSymbol, SymbolLightField.FieldNameGenerator())
+                addPropertyBackingFields(this, classSymbol, SymbolLightField.FieldNameGenerator())
             }
         }
     }
 
     override fun copy(): SymbolLightClassForInlineClass =
-        SymbolLightClassForInlineClass(classOrObjectDeclaration, classOrObjectSymbolPointer, ktModule, manager)
+        SymbolLightClassForInlineClass(classOrObjectDeclaration, classSymbolPointer, ktModule, manager)
 }

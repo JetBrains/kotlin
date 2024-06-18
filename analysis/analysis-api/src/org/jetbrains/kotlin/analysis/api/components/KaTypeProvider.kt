@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaFlexibleType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
@@ -58,10 +58,10 @@ public interface KaTypeProvider {
     public val KaType.enhancedTypeOrSelf: KaType?
         get() = withValidityAssertion { enhancedType ?: this }
 
-    public val KaNamedClassOrObjectSymbol.defaultType: KaType
+    public val KaNamedClassSymbol.defaultType: KaType
 
     @Deprecated("Use 'defaultType' instead.", replaceWith = ReplaceWith("defaultType"))
-    public fun KaNamedClassOrObjectSymbol.buildSelfClassType(): KaType = defaultType
+    public fun KaNamedClassSymbol.buildSelfClassType(): KaType = defaultType
 
     /**
      * Computes the common super type of the given collection of [KaType].

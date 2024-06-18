@@ -100,7 +100,7 @@ internal class KaFirSymbolInformationProvider(
     override val KaClassSymbol.annotationApplicableTargets: Set<KotlinTarget>?
         get() = withValidityAssertion {
             requireIsInstance<KaFirSymbol<*>>(this)
-            if (this !is KaFirNamedClassOrObjectSymbolBase) return null
+            if (this !is KaFirNamedClassSymbolBase) return null
             if (firSymbol.classKind != ClassKind.ANNOTATION_CLASS) return null
             return firSymbol.getAllowedAnnotationTargets(analysisSession.firSession)
         }

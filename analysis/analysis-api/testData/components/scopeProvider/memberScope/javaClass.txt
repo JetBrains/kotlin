@@ -286,7 +286,7 @@ KaFunctionSymbol:
   getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: JavaClass.NestedClass
   classKind: CLASS
@@ -316,7 +316,7 @@ KaNamedClassOrObjectSymbol:
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: JavaClass.InnerClass
   classKind: CLASS
@@ -346,7 +346,7 @@ KaNamedClassOrObjectSymbol:
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: SuperClass.NestedSuperClass
   classKind: CLASS
@@ -376,7 +376,7 @@ KaNamedClassOrObjectSymbol:
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: SuperClass.InnerSuperClass
   classKind: CLASS

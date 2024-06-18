@@ -1,4 +1,4 @@
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: java/lang/String
   classKind: CLASS

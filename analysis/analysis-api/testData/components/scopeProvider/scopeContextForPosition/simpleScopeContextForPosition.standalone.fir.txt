@@ -16,7 +16,7 @@ implicit receivers:
     annotations: []
     typeArguments: []
     type: C
-  owner symbol: KaFirNamedClassOrObjectSymbol
+  owner symbol: KaFirNamedClassSymbol
 
 scopes:
   LocalScope, index = 0
@@ -519,7 +519,7 @@ scopes:
   TypeScope, index = 11
     packages: 0
     classifiers: 2
-      KaNamedClassOrObjectSymbol:
+      KaNamedClassSymbol:
         annotations: []
         classId: C.NestedInC
         classKind: CLASS
@@ -544,7 +544,7 @@ scopes:
         ]
         typeParameters: []
         visibility: Public
-      KaNamedClassOrObjectSymbol:
+      KaNamedClassSymbol:
         annotations: []
         classId: JavaClass.NestedInJavaClass
         classKind: CLASS
@@ -759,7 +759,7 @@ scopes:
   StaticMemberScope, index = 12
     packages: 0
     classifiers: 1
-      KaNamedClassOrObjectSymbol:
+      KaNamedClassSymbol:
         annotations: []
         classId: C.NestedInC
         classKind: CLASS
@@ -790,7 +790,7 @@ scopes:
   StaticMemberScope, index = 13
     packages: 0
     classifiers: 1
-      KaNamedClassOrObjectSymbol:
+      KaNamedClassSymbol:
         annotations: []
         classId: JavaClass.NestedInJavaClass
         classKind: CLASS
@@ -851,7 +851,7 @@ scopes:
         location: TOP_LEVEL
         origin: SOURCE
     classifiers: 4
-      KaNamedClassOrObjectSymbol:
+      KaNamedClassSymbol:
         annotations: []
         classId: A
         classKind: CLASS
@@ -876,7 +876,7 @@ scopes:
         ]
         typeParameters: []
         visibility: Public
-      KaNamedClassOrObjectSymbol:
+      KaNamedClassSymbol:
         annotations: []
         classId: B
         classKind: CLASS
@@ -901,7 +901,7 @@ scopes:
         ]
         typeParameters: []
         visibility: Public
-      KaNamedClassOrObjectSymbol:
+      KaNamedClassSymbol:
         annotations: []
         classId: C
         classKind: CLASS
@@ -926,7 +926,7 @@ scopes:
         ]
         typeParameters: []
         visibility: Public
-      KaNamedClassOrObjectSymbol:
+      KaNamedClassSymbol:
         annotations: []
         classId: JavaClass
         classKind: CLASS

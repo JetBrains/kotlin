@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.types
 import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktNullability
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKaClassSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
@@ -110,7 +110,7 @@ internal class KaFe10FunctionalType(
         }
 
     override val symbol: KaClassLikeSymbol
-        get() = withValidityAssertion { KaFe10DescNamedClassOrObjectSymbol(descriptor, analysisContext) }
+        get() = withValidityAssertion { KaFe10DescNamedClassSymbol(descriptor, analysisContext) }
 
     override val typeArguments: List<KaTypeProjection>
         get() = withValidityAssertion { fe10Type.arguments.map { it.toKtTypeProjection(analysisContext) } }

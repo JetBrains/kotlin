@@ -55,7 +55,7 @@ KaJavaFieldSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: JavaClass.InnerClass
   classKind: CLASS
@@ -85,7 +85,7 @@ KaNamedClassOrObjectSymbol:
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: JavaClass.NestedClass
   classKind: CLASS

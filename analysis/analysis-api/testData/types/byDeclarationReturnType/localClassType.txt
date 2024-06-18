@@ -6,10 +6,10 @@ KaUsualClassType:
   qualifiers: [
     qualifier:
       name: B
-      symbol: KaNamedClassOrObjectSymbol(<local>/B)
+      symbol: KaNamedClassSymbol(<local>/B)
       typeArguments: []
   ]
-  symbol: KaNamedClassOrObjectSymbol(<local>/B)
+  symbol: KaNamedClassSymbol(<local>/B)
   typeArguments: []
 
 Rendered type:

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.KaDecla
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.*
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callables.*
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.classifiers.KaAnonymousObjectSymbolRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.classifiers.KaNamedClassOrObjectSymbolRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.classifiers.KaNamedClassSymbolRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.classifiers.KaSingleTypeParameterSymbolRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.classifiers.KaTypeAliasSymbolRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.superTypes.KaSuperTypeListRenderer
@@ -79,7 +79,7 @@ public class KaDeclarationRenderer private constructor(
     public val destructuringDeclarationRenderer: KaDestructuringDeclarationRenderer,
 
     public val classInitializerRender: KaClassInitializerRenderer,
-    public val classOrObjectRenderer: KaNamedClassOrObjectSymbolRenderer,
+    public val namedClassRenderer: KaNamedClassSymbolRenderer,
     public val typeAliasRenderer: KaTypeAliasSymbolRenderer,
     public val anonymousObjectRenderer: KaAnonymousObjectSymbolRenderer,
     public val singleTypeParameterRenderer: KaSingleTypeParameterSymbolRenderer,
@@ -92,7 +92,7 @@ public class KaDeclarationRenderer private constructor(
     public fun renderDeclaration(analysisSession: KaSession, symbol: KaDeclarationSymbol, printer: PrettyPrinter) {
         when (symbol) {
             is KaAnonymousObjectSymbol -> anonymousObjectRenderer.renderSymbol(analysisSession, symbol, this, printer)
-            is KaNamedClassOrObjectSymbol -> classOrObjectRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KaNamedClassSymbol -> namedClassRenderer.renderSymbol(analysisSession, symbol, this, printer)
             is KaTypeAliasSymbol -> typeAliasRenderer.renderSymbol(analysisSession, symbol, this, printer)
             is KaAnonymousFunctionSymbol -> anonymousFunctionRenderer.renderSymbol(analysisSession, symbol, this, printer)
             is KaConstructorSymbol -> constructorRenderer.renderSymbol(analysisSession, symbol, this, printer)
@@ -167,7 +167,7 @@ public class KaDeclarationRenderer private constructor(
             this.destructuringDeclarationRenderer = renderer.destructuringDeclarationRenderer
 
             this.classInitializerRender = renderer.classInitializerRender
-            this.classOrObjectRenderer = renderer.classOrObjectRenderer
+            this.namedClassRenderer = renderer.namedClassRenderer
             this.typeAliasRenderer = renderer.typeAliasRenderer
             this.anonymousObjectRenderer = renderer.anonymousObjectRenderer
             this.singleTypeParameterRenderer = renderer.singleTypeParameterRenderer
@@ -236,7 +236,7 @@ public class KaDeclarationRenderer private constructor(
         public lateinit var destructuringDeclarationRenderer: KaDestructuringDeclarationRenderer
 
         public lateinit var classInitializerRender: KaClassInitializerRenderer
-        public lateinit var classOrObjectRenderer: KaNamedClassOrObjectSymbolRenderer
+        public lateinit var namedClassRenderer: KaNamedClassSymbolRenderer
         public lateinit var typeAliasRenderer: KaTypeAliasSymbolRenderer
         public lateinit var anonymousObjectRenderer: KaAnonymousObjectSymbolRenderer
         public lateinit var singleTypeParameterRenderer: KaSingleTypeParameterSymbolRenderer
@@ -294,7 +294,7 @@ public class KaDeclarationRenderer private constructor(
             destructuringDeclarationRenderer,
 
             classInitializerRender,
-            classOrObjectRenderer,
+            namedClassRenderer,
             typeAliasRenderer,
             anonymousObjectRenderer,
             singleTypeParameterRenderer,

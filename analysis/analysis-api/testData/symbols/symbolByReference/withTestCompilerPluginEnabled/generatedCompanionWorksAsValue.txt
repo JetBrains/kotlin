@@ -1,4 +1,4 @@
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: test/WithGeneratedCompanion.Companion
   classKind: COMPANION_OBJECT

@@ -24,7 +24,7 @@ KaTypeParameterSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: X.Y
   classKind: CLASS
@@ -69,7 +69,7 @@ KaTypeParameterSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: X.Z
   classKind: CLASS
@@ -140,7 +140,7 @@ KaTypeParameterSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: null
   classKind: CLASS
@@ -185,7 +185,7 @@ KaTypeParameterSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: null
   classKind: CLASS
@@ -243,7 +243,7 @@ KaTypeParameterSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: null
   classKind: CLASS
@@ -288,7 +288,7 @@ KaTypeParameterSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: null
   classKind: CLASS
@@ -359,7 +359,7 @@ KaTypeParameterSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: null
   classKind: CLASS
@@ -404,7 +404,7 @@ KaTypeParameterSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: null
   classKind: CLASS
@@ -436,7 +436,7 @@ KaNamedClassOrObjectSymbol:
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: null
   classKind: CLASS
@@ -513,7 +513,7 @@ KaFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: null
   classKind: CLASS
@@ -545,7 +545,7 @@ KaNamedClassOrObjectSymbol:
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: null
   classKind: CLASS
@@ -622,7 +622,7 @@ KaFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: X
   classKind: CLASS

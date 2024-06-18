@@ -88,7 +88,7 @@ internal class KaFe10SymbolProvider(
         get() = withValidityAssertion { KaFe10PsiAnonymousObjectSymbol(objectDeclaration, analysisContext) }
 
     override val KtObjectDeclaration.symbol: KaClassSymbol
-        get() = withValidityAssertion { KaFe10PsiNamedClassOrObjectSymbol(this, analysisContext) }
+        get() = withValidityAssertion { KaFe10PsiNamedClassSymbol(this, analysisContext) }
 
     override val KtClassOrObject.classSymbol: KaClassSymbol?
         get() = withValidityAssertion {
@@ -97,17 +97,17 @@ internal class KaFe10SymbolProvider(
             } else if (this is KtObjectDeclaration && isObjectLiteral()) {
                 KaFe10PsiAnonymousObjectSymbol(this, analysisContext)
             } else {
-                KaFe10PsiNamedClassOrObjectSymbol(this, analysisContext)
+                KaFe10PsiNamedClassSymbol(this, analysisContext)
             }
         }
 
-    override val KtClassOrObject.namedClassSymbol: KaNamedClassOrObjectSymbol?
+    override val KtClassOrObject.namedClassSymbol: KaNamedClassSymbol?
         get() = withValidityAssertion {
             if (this is KtEnumEntry || nameIdentifier == null) {
                 return null
             }
 
-            return KaFe10PsiNamedClassOrObjectSymbol(this, analysisContext)
+            return KaFe10PsiNamedClassSymbol(this, analysisContext)
         }
 
     override val KtPropertyAccessor.symbol: KaPropertyAccessorSymbol

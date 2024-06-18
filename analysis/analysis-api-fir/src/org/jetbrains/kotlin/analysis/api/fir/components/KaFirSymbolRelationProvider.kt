@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.getClassLikeSymbol
@@ -384,20 +384,20 @@ internal class KaFirSymbolRelationProvider(
             ?.map { analysisSession.firSymbolBuilder.buildSymbol(it) as KaDeclarationSymbol }.orEmpty()
     }
 
-    override val KaNamedClassOrObjectSymbol.sealedClassInheritors: List<KaNamedClassOrObjectSymbol>
+    override val KaNamedClassSymbol.sealedClassInheritors: List<KaNamedClassSymbol>
         get() = withValidityAssertion {
             require(modality == Modality.SEALED)
-            require(this is KaFirNamedClassOrObjectSymbol)
+            require(this is KaFirNamedClassSymbol)
 
             val inheritorClassIds = firSymbol.fir.getSealedClassInheritors(analysisSession.firSession)
 
             return with(analysisSession) {
-                inheritorClassIds.mapNotNull { findClass(it) as? KaNamedClassOrObjectSymbol }
+                inheritorClassIds.mapNotNull { findClass(it) as? KaNamedClassSymbol }
             }
         }
 
     @Deprecated("Use the declaration scope instead.")
-    override val KaNamedClassOrObjectSymbol.enumEntries: List<KaEnumEntrySymbol>
+    override val KaNamedClassSymbol.enumEntries: List<KaEnumEntrySymbol>
         get() = withValidityAssertion {
             require(classKind == KaClassKind.ENUM_CLASS)
             return with(analysisSession) {

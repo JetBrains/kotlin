@@ -6,7 +6,7 @@ KaUsualClassType:
   qualifiers: [
     qualifier:
       name: B
-      symbol: KaNamedClassOrObjectSymbol(<local>/B)
+      symbol: KaNamedClassSymbol(<local>/B)
       typeArguments: [
         KaUsualClassType:
           abbreviatedType: null
@@ -16,14 +16,14 @@ KaUsualClassType:
           qualifiers: [
             qualifier:
               name: Int
-              symbol: KaNamedClassOrObjectSymbol(kotlin/Int)
+              symbol: KaNamedClassSymbol(kotlin/Int)
               typeArguments: []
           ]
-          symbol: KaNamedClassOrObjectSymbol(kotlin/Int)
+          symbol: KaNamedClassSymbol(kotlin/Int)
           typeArguments: []
       ]
   ]
-  symbol: KaNamedClassOrObjectSymbol(<local>/B)
+  symbol: KaNamedClassSymbol(<local>/B)
   typeArguments: [
     KaUsualClassType:
       abbreviatedType: null
@@ -33,10 +33,10 @@ KaUsualClassType:
       qualifiers: [
         qualifier:
           name: Int
-          symbol: KaNamedClassOrObjectSymbol(kotlin/Int)
+          symbol: KaNamedClassSymbol(kotlin/Int)
           typeArguments: []
       ]
-      symbol: KaNamedClassOrObjectSymbol(kotlin/Int)
+      symbol: KaNamedClassSymbol(kotlin/Int)
       typeArguments: []
   ]
 

@@ -53,7 +53,7 @@ KaFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: null
   classKind: CLASS

@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertyAccessorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
@@ -236,7 +236,7 @@ internal class KaFirJavaInteroperabilityComponent(
             return analysisSession.firSession.jvmTypeMapper.isPrimitiveBacked(coneType)
         }
 
-    override val PsiClass.namedClassSymbol: KaNamedClassOrObjectSymbol?
+    override val PsiClass.namedClassSymbol: KaNamedClassSymbol?
         get() = withValidityAssertion {
             if (qualifiedName == null) return null
             if (this is PsiTypeParameter) return null

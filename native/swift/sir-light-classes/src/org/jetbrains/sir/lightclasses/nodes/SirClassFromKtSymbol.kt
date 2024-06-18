@@ -5,9 +5,9 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildGetter
 import org.jetbrains.kotlin.sir.builder.buildInit
@@ -24,10 +24,10 @@ import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
 
 internal class SirClassFromKtSymbol(
-    override val ktSymbol: KaNamedClassOrObjectSymbol,
+    override val ktSymbol: KaNamedClassSymbol,
     override val ktModule: KaModule,
     override val sirSession: SirSession,
-) : SirClass(), SirFromKtSymbol<KaNamedClassOrObjectSymbol> {
+) : SirClass(), SirFromKtSymbol<KaNamedClassSymbol> {
 
     override val origin: SirOrigin by lazy {
         KotlinSource(ktSymbol)

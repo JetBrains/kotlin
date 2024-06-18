@@ -6,10 +6,10 @@ KaUsualClassType:
   qualifiers: [
     qualifier:
       name: Any
-      symbol: KaNamedClassOrObjectSymbol(kotlin/Any)
+      symbol: KaNamedClassSymbol(kotlin/Any)
       typeArguments: []
   ]
-  symbol: KaNamedClassOrObjectSymbol(kotlin/Any)
+  symbol: KaNamedClassSymbol(kotlin/Any)
   typeArguments: []
 
 Rendered type:

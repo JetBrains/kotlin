@@ -1,4 +1,4 @@
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: test/KotlinClass
   classKind: CLASS
@@ -28,7 +28,7 @@ KaNamedClassOrObjectSymbol:
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: test/SuperClass
   classKind: CLASS
@@ -62,7 +62,7 @@ KaNamedClassOrObjectSymbol:
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: test/JavaClass
   classKind: CLASS

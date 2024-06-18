@@ -156,7 +156,7 @@ internal class KaFirSymbolProvider(
             return firSymbolBuilder.classifierBuilder.buildClassOrObjectSymbol(firSymbol)
         }
 
-    override val KtClassOrObject.namedClassSymbol: KaNamedClassOrObjectSymbol?
+    override val KtClassOrObject.namedClassSymbol: KaNamedClassSymbol?
         get() = withValidityAssertion {
             if (this is KtEnumEntry || this.isObjectLiteral()) {
                 return null

@@ -4091,7 +4091,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: java/lang/String.CaseInsensitiveComparator
   classKind: CLASS

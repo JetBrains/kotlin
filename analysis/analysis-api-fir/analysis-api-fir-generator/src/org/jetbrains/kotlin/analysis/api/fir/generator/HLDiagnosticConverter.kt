@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -226,11 +226,11 @@ internal object FirToKtConversionCreator {
     private val typeMapping: Map<KClass<*>, HLFunctionCallConversion> = mapOf(
         // ------------------ symbols ------------------
         FirRegularClass::class to HLFunctionCallConversion(
-            "firSymbolBuilder.classifierBuilder.buildClassLikeSymbol({0}.symbol) as KaNamedClassOrObjectSymbol",
-            KaNamedClassOrObjectSymbol::class.createType(),
+            "firSymbolBuilder.classifierBuilder.buildClassLikeSymbol({0}.symbol) as KaNamedClassSymbol",
+            KaNamedClassSymbol::class.createType(),
             importsToAdd = listOf(
                 "org.jetbrains.kotlin.fir.declarations.FirRegularClass",
-                "org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol"
+                "org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol"
             )
         ),
         FirValueParameterSymbol::class to HLFunctionCallConversion(

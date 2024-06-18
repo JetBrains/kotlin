@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirAnonymousObjectSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirBackingFieldSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.isSubClassOf
 import org.jetbrains.kotlin.analysis.api.impl.base.components.AbstractKaSymbolDeclarationOverridesProvider
@@ -133,7 +133,7 @@ internal class KaFirSymbolDeclarationOverridesProvider(
         } ?: return
 
         when (containingDeclaration) {
-            is KaFirNamedClassOrObjectSymbol -> processOverrides(containingDeclaration, callableSymbol, process)
+            is KaFirNamedClassSymbol -> processOverrides(containingDeclaration, callableSymbol, process)
             is KaFirAnonymousObjectSymbol -> processOverrides(containingDeclaration, callableSymbol, process)
             else -> throw IllegalStateException("Expected $containingDeclaration to be a KtFirNamedClassOrObjectSymbol or KtFirAnonymousObjectSymbol")
         }

@@ -1,4 +1,4 @@
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: kotlin/collections/MutableMap.MutableEntry
   classKind: INTERFACE
@@ -34,7 +34,7 @@ KaNamedClassOrObjectSymbol:
   ]
   visibility: Public
   getContainingFileSymbol: null
-  getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassOrObjectSymbol
+  getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol
 
   annotationApplicableTargets: null
   deprecationStatus: null

@@ -28,10 +28,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
-internal class KaFirNamedClassOrObjectSymbol(
+internal class KaFirNamedClassSymbol(
     override val firSymbol: FirRegularClassSymbol,
     override val analysisSession: KaFirSession,
-) : KaFirNamedClassOrObjectSymbolBase() {
+) : KaFirNamedClassSymbolBase() {
     override val token: KaLifetimeToken get() = builder.token
     override val psi: PsiElement? by cached { firSymbol.findPsi() }
 
@@ -72,7 +72,7 @@ internal class KaFirNamedClassOrObjectSymbol(
 
     override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { firSymbol.createContextReceivers(builder) }
 
-    override val companionObject: KaFirNamedClassOrObjectSymbol? by cached {
+    override val companionObject: KaFirNamedClassSymbol? by cached {
         firSymbol.companionObjectSymbol?.let {
             builder.classifierBuilder.buildNamedClassOrObjectSymbol(it)
         }

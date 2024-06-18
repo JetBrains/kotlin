@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,7 +12,7 @@ import com.intellij.psi.PsiType
 import kotlinx.collections.immutable.mutate
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
@@ -34,13 +34,13 @@ internal class SymbolLightFieldForObject private constructor(
     containingClass: SymbolLightClassForClassLike<*>,
     private val name: String,
     lightMemberOrigin: LightMemberOrigin?,
-    private val objectSymbolPointer: KaSymbolPointer<KaNamedClassOrObjectSymbol>,
+    private val objectSymbolPointer: KaSymbolPointer<KaNamedClassSymbol>,
     override val kotlinOrigin: KtObjectDeclaration?,
     private val isCompanion: Boolean,
 ) : SymbolLightField(containingClass, lightMemberOrigin) {
     internal constructor(
         ktAnalysisSession: KaSession,
-        objectSymbol: KaNamedClassOrObjectSymbol,
+        objectSymbol: KaNamedClassSymbol,
         name: String,
         lightMemberOrigin: LightMemberOrigin?,
         containingClass: SymbolLightClassForClassLike<*>,
@@ -54,7 +54,7 @@ internal class SymbolLightFieldForObject private constructor(
         isCompanion = isCompanion,
     )
 
-    private inline fun <T> withObjectDeclarationSymbol(crossinline action: KaSession.(KaNamedClassOrObjectSymbol) -> T): T =
+    private inline fun <T> withObjectDeclarationSymbol(crossinline action: KaSession.(KaNamedClassSymbol) -> T): T =
         objectSymbolPointer.withSymbol(ktModule, action)
 
     override fun getName(): String = name

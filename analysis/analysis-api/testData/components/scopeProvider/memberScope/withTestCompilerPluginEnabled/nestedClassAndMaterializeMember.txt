@@ -179,7 +179,7 @@ KaFunctionSymbol:
   getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: test/MyClass.Nested
   classKind: CLASS

@@ -16,7 +16,7 @@ scopes:
   PackageMemberScope, index = 2
     packages: 0
     classifiers: 2
-      KaNamedClassOrObjectSymbol:
+      KaNamedClassSymbol:
         annotations: []
         classId: test/Base
         classKind: CLASS
@@ -41,7 +41,7 @@ scopes:
         ]
         typeParameters: []
         visibility: Public
-      KaNamedClassOrObjectSymbol:
+      KaNamedClassSymbol:
         annotations: []
         classId: test/Child
         classKind: CLASS

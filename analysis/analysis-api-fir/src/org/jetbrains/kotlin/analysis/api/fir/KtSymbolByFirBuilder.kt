@@ -156,8 +156,8 @@ internal class KaSymbolByFirBuilder(
             }
         }
 
-        fun buildNamedClassOrObjectSymbol(symbol: FirRegularClassSymbol): KaFirNamedClassOrObjectSymbol {
-            return symbolsCache.cache(symbol) { KaFirNamedClassOrObjectSymbol(symbol, analysisSession) }
+        fun buildNamedClassOrObjectSymbol(symbol: FirRegularClassSymbol): KaFirNamedClassSymbol {
+            return symbolsCache.cache(symbol) { KaFirNamedClassSymbol(symbol, analysisSession) }
         }
 
         fun buildAnonymousObjectSymbol(symbol: FirAnonymousObjectSymbol): KaAnonymousObjectSymbol {

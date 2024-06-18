@@ -1,4 +1,4 @@
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: kotlin/io/FileWalkDirection
   classKind: ENUM_CLASS

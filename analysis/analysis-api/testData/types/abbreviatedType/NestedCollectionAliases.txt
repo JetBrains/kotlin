@@ -40,10 +40,10 @@ KaUsualClassType:
                       qualifiers: [
                         qualifier:
                           name: String
-                          symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+                          symbol: KaNamedClassSymbol(kotlin/String)
                           typeArguments: []
                       ]
-                      symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+                      symbol: KaNamedClassSymbol(kotlin/String)
                       typeArguments: []
                   ]
               ]
@@ -69,10 +69,10 @@ KaUsualClassType:
                   qualifiers: [
                     qualifier:
                       name: String
-                      symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+                      symbol: KaNamedClassSymbol(kotlin/String)
                       typeArguments: []
                   ]
-                  symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+                  symbol: KaNamedClassSymbol(kotlin/String)
                   typeArguments: []
               ]
             annotations: []
@@ -81,7 +81,7 @@ KaUsualClassType:
             qualifiers: [
               qualifier:
                 name: Set
-                symbol: KaNamedClassOrObjectSymbol(kotlin/collections/Set)
+                symbol: KaNamedClassSymbol(kotlin/collections/Set)
                 typeArguments: [
                   KaUsualClassType:
                     abbreviatedType: KaUsualClassType:
@@ -103,14 +103,14 @@ KaUsualClassType:
                     qualifiers: [
                       qualifier:
                         name: String
-                        symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+                        symbol: KaNamedClassSymbol(kotlin/String)
                         typeArguments: []
                     ]
-                    symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+                    symbol: KaNamedClassSymbol(kotlin/String)
                     typeArguments: []
                 ]
             ]
-            symbol: KaNamedClassOrObjectSymbol(kotlin/collections/Set)
+            symbol: KaNamedClassSymbol(kotlin/collections/Set)
             typeArguments: [
               KaUsualClassType:
                 abbreviatedType: KaUsualClassType:
@@ -132,10 +132,10 @@ KaUsualClassType:
                 qualifiers: [
                   qualifier:
                     name: String
-                    symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+                    symbol: KaNamedClassSymbol(kotlin/String)
                     typeArguments: []
                 ]
-                symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+                symbol: KaNamedClassSymbol(kotlin/String)
                 typeArguments: []
             ]
         ]
@@ -173,10 +173,10 @@ KaUsualClassType:
                   qualifiers: [
                     qualifier:
                       name: String
-                      symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+                      symbol: KaNamedClassSymbol(kotlin/String)
                       typeArguments: []
                   ]
-                  symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+                  symbol: KaNamedClassSymbol(kotlin/String)
                   typeArguments: []
               ]
           ]
@@ -202,10 +202,10 @@ KaUsualClassType:
               qualifiers: [
                 qualifier:
                   name: String
-                  symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+                  symbol: KaNamedClassSymbol(kotlin/String)
                   typeArguments: []
               ]
-              symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+              symbol: KaNamedClassSymbol(kotlin/String)
               typeArguments: []
           ]
         annotations: []
@@ -214,7 +214,7 @@ KaUsualClassType:
         qualifiers: [
           qualifier:
             name: Set
-            symbol: KaNamedClassOrObjectSymbol(kotlin/collections/Set)
+            symbol: KaNamedClassSymbol(kotlin/collections/Set)
             typeArguments: [
               KaUsualClassType:
                 abbreviatedType: KaUsualClassType:
@@ -236,14 +236,14 @@ KaUsualClassType:
                 qualifiers: [
                   qualifier:
                     name: String
-                    symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+                    symbol: KaNamedClassSymbol(kotlin/String)
                     typeArguments: []
                 ]
-                symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+                symbol: KaNamedClassSymbol(kotlin/String)
                 typeArguments: []
             ]
         ]
-        symbol: KaNamedClassOrObjectSymbol(kotlin/collections/Set)
+        symbol: KaNamedClassSymbol(kotlin/collections/Set)
         typeArguments: [
           KaUsualClassType:
             abbreviatedType: KaUsualClassType:
@@ -265,10 +265,10 @@ KaUsualClassType:
             qualifiers: [
               qualifier:
                 name: String
-                symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+                symbol: KaNamedClassSymbol(kotlin/String)
                 typeArguments: []
             ]
-            symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+            symbol: KaNamedClassSymbol(kotlin/String)
             typeArguments: []
         ]
     ]
@@ -278,7 +278,7 @@ KaUsualClassType:
   qualifiers: [
     qualifier:
       name: List
-      symbol: KaNamedClassOrObjectSymbol(kotlin/collections/List)
+      symbol: KaNamedClassSymbol(kotlin/collections/List)
       typeArguments: [
         KaUsualClassType:
           abbreviatedType: KaUsualClassType:
@@ -311,10 +311,10 @@ KaUsualClassType:
                     qualifiers: [
                       qualifier:
                         name: String
-                        symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+                        symbol: KaNamedClassSymbol(kotlin/String)
                         typeArguments: []
                     ]
-                    symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+                    symbol: KaNamedClassSymbol(kotlin/String)
                     typeArguments: []
                 ]
             ]
@@ -340,10 +340,10 @@ KaUsualClassType:
                 qualifiers: [
                   qualifier:
                     name: String
-                    symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+                    symbol: KaNamedClassSymbol(kotlin/String)
                     typeArguments: []
                 ]
-                symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+                symbol: KaNamedClassSymbol(kotlin/String)
                 typeArguments: []
             ]
           annotations: []
@@ -352,7 +352,7 @@ KaUsualClassType:
           qualifiers: [
             qualifier:
               name: Set
-              symbol: KaNamedClassOrObjectSymbol(kotlin/collections/Set)
+              symbol: KaNamedClassSymbol(kotlin/collections/Set)
               typeArguments: [
                 KaUsualClassType:
                   abbreviatedType: KaUsualClassType:
@@ -374,14 +374,14 @@ KaUsualClassType:
                   qualifiers: [
                     qualifier:
                       name: String
-                      symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+                      symbol: KaNamedClassSymbol(kotlin/String)
                       typeArguments: []
                   ]
-                  symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+                  symbol: KaNamedClassSymbol(kotlin/String)
                   typeArguments: []
               ]
           ]
-          symbol: KaNamedClassOrObjectSymbol(kotlin/collections/Set)
+          symbol: KaNamedClassSymbol(kotlin/collections/Set)
           typeArguments: [
             KaUsualClassType:
               abbreviatedType: KaUsualClassType:
@@ -403,15 +403,15 @@ KaUsualClassType:
               qualifiers: [
                 qualifier:
                   name: String
-                  symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+                  symbol: KaNamedClassSymbol(kotlin/String)
                   typeArguments: []
               ]
-              symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+              symbol: KaNamedClassSymbol(kotlin/String)
               typeArguments: []
           ]
       ]
   ]
-  symbol: KaNamedClassOrObjectSymbol(kotlin/collections/List)
+  symbol: KaNamedClassSymbol(kotlin/collections/List)
   typeArguments: [
     KaUsualClassType:
       abbreviatedType: KaUsualClassType:
@@ -444,10 +444,10 @@ KaUsualClassType:
                 qualifiers: [
                   qualifier:
                     name: String
-                    symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+                    symbol: KaNamedClassSymbol(kotlin/String)
                     typeArguments: []
                 ]
-                symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+                symbol: KaNamedClassSymbol(kotlin/String)
                 typeArguments: []
             ]
         ]
@@ -473,10 +473,10 @@ KaUsualClassType:
             qualifiers: [
               qualifier:
                 name: String
-                symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+                symbol: KaNamedClassSymbol(kotlin/String)
                 typeArguments: []
             ]
-            symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+            symbol: KaNamedClassSymbol(kotlin/String)
             typeArguments: []
         ]
       annotations: []
@@ -485,7 +485,7 @@ KaUsualClassType:
       qualifiers: [
         qualifier:
           name: Set
-          symbol: KaNamedClassOrObjectSymbol(kotlin/collections/Set)
+          symbol: KaNamedClassSymbol(kotlin/collections/Set)
           typeArguments: [
             KaUsualClassType:
               abbreviatedType: KaUsualClassType:
@@ -507,14 +507,14 @@ KaUsualClassType:
               qualifiers: [
                 qualifier:
                   name: String
-                  symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+                  symbol: KaNamedClassSymbol(kotlin/String)
                   typeArguments: []
               ]
-              symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+              symbol: KaNamedClassSymbol(kotlin/String)
               typeArguments: []
           ]
       ]
-      symbol: KaNamedClassOrObjectSymbol(kotlin/collections/Set)
+      symbol: KaNamedClassSymbol(kotlin/collections/Set)
       typeArguments: [
         KaUsualClassType:
           abbreviatedType: KaUsualClassType:
@@ -536,10 +536,10 @@ KaUsualClassType:
           qualifiers: [
             qualifier:
               name: String
-              symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+              symbol: KaNamedClassSymbol(kotlin/String)
               typeArguments: []
           ]
-          symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+          symbol: KaNamedClassSymbol(kotlin/String)
           typeArguments: []
       ]
   ]

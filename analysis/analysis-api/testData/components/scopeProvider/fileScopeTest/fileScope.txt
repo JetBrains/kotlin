@@ -1745,7 +1745,7 @@ KaKotlinPropertySymbol:
   javaSetterName: jvmField
   setterDeprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: OuterClass
   classKind: CLASS

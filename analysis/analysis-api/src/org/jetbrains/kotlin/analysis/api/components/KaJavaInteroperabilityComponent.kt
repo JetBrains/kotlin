@@ -11,7 +11,7 @@ import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
@@ -87,7 +87,7 @@ public interface KaJavaInteroperabilityComponent {
     @KaExperimentalApi
     public val KaType.isPrimitiveBacked: Boolean
 
-    public val PsiClass.namedClassSymbol: KaNamedClassOrObjectSymbol?
+    public val PsiClass.namedClassSymbol: KaNamedClassSymbol?
 
     public val PsiMember.callableSymbol: KaCallableSymbol?
 

@@ -250,7 +250,7 @@ KaConstructorSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: Anno
   classKind: ANNOTATION_CLASS
@@ -322,7 +322,7 @@ KaFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: [
     Anno(param1 = "param", param2 = 2)
       psi: KtAnnotationEntry

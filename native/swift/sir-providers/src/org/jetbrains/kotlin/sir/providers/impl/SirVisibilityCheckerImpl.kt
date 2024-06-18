@@ -21,7 +21,7 @@ public class SirVisibilityCheckerImpl(
     override fun KaSymbolWithVisibility.sirVisibility(ktAnalysisSession: KaSession): SirVisibility = with(ktAnalysisSession) {
         val ktSymbol = this@sirVisibility
         val isConsumable = isPublic() && when (ktSymbol) {
-            is KaNamedClassOrObjectSymbol -> {
+            is KaNamedClassSymbol -> {
                 ktSymbol.isConsumableBySirBuilder(ktAnalysisSession)
             }
             is KaConstructorSymbol -> {
@@ -67,7 +67,7 @@ public class SirVisibilityCheckerImpl(
         return true
     }
 
-    private fun KaNamedClassOrObjectSymbol.isConsumableBySirBuilder(ktAnalysisSession: KaSession): Boolean =
+    private fun KaNamedClassSymbol.isConsumableBySirBuilder(ktAnalysisSession: KaSession): Boolean =
         with(ktAnalysisSession) {
             if (!((classKind == KaClassKind.CLASS) || classKind == KaClassKind.OBJECT)) {
                 unsupportedDeclarationReporter

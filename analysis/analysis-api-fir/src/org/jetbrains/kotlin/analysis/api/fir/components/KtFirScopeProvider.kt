@@ -58,7 +58,7 @@ internal class KaFirScopeProvider(
     }
 
     private fun KaDeclarationContainerSymbol.getFirForScope(): FirClass = when (this) {
-        is KaFirNamedClassOrObjectSymbol -> firSymbol.fir
+        is KaFirNamedClassSymbol -> firSymbol.fir
         is KaFirPsiJavaClassSymbol -> firSymbol.fir
         is KaFirAnonymousObjectSymbol -> firSymbol.fir
         else -> error(

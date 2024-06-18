@@ -1,7 +1,7 @@
 element: param
 implicit receivers:
   type: kotlin.myPackage.SomeClass
-  owner symbol: KaFirNamedClassOrObjectSymbol
+  owner symbol: KaFirNamedClassSymbol
 
 scopes:
   LocalScope, index = 0

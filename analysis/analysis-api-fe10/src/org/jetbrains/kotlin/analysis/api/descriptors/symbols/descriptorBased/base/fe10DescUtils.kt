@@ -125,7 +125,7 @@ internal fun ClassDescriptor.toKaClassSymbol(analysisContext: Fe10AnalysisContex
     return if (DescriptorUtils.isAnonymousObject(this)) {
         KaFe10DescAnonymousObjectSymbol(this, analysisContext)
     } else {
-        KaFe10DescNamedClassOrObjectSymbol(this, analysisContext)
+        KaFe10DescNamedClassSymbol(this, analysisContext)
     }
 }
 

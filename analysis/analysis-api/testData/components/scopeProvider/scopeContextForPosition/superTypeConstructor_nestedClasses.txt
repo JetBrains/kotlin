@@ -10,7 +10,7 @@ scopes:
   StaticMemberScope, index = 1
     packages: 0
     classifiers: 2
-      KaNamedClassOrObjectSymbol:
+      KaNamedClassSymbol:
         annotations: []
         classId: test/Base.NestedFromClass
         classKind: CLASS
@@ -35,7 +35,7 @@ scopes:
         ]
         typeParameters: []
         visibility: Public
-      KaNamedClassOrObjectSymbol:
+      KaNamedClassSymbol:
         annotations: []
         classId: test/Base.InnerFromClass
         classKind: CLASS
@@ -72,7 +72,7 @@ scopes:
   PackageMemberScope, index = 3
     packages: 0
     classifiers: 3
-      KaNamedClassOrObjectSymbol:
+      KaNamedClassSymbol:
         annotations: []
         classId: test/BaseInterface
         classKind: INTERFACE
@@ -97,7 +97,7 @@ scopes:
         ]
         typeParameters: []
         visibility: Public
-      KaNamedClassOrObjectSymbol:
+      KaNamedClassSymbol:
         annotations: []
         classId: test/Base
         classKind: CLASS
@@ -122,7 +122,7 @@ scopes:
         ]
         typeParameters: []
         visibility: Public
-      KaNamedClassOrObjectSymbol:
+      KaNamedClassSymbol:
         annotations: []
         classId: test/Child
         classKind: CLASS

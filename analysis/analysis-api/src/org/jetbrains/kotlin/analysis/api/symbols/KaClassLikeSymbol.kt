@@ -100,7 +100,7 @@ public abstract class KaAnonymousObjectSymbol : KaClassSymbol() {
 @Deprecated("Use 'KaAnonymousObjectSymbol' instead", ReplaceWith("KaAnonymousObjectSymbol"))
 public typealias KtAnonymousObjectSymbol = KaAnonymousObjectSymbol
 
-public abstract class KaNamedClassOrObjectSymbol : KaClassSymbol(),
+public abstract class KaNamedClassSymbol : KaClassSymbol(),
     KaSymbolWithModality,
     KaSymbolWithVisibility,
     KaNamedSymbol,
@@ -113,13 +113,16 @@ public abstract class KaNamedClassOrObjectSymbol : KaClassSymbol(),
 
     public abstract val isExternal: Boolean
 
-    public abstract val companionObject: KaNamedClassOrObjectSymbol?
+    public abstract val companionObject: KaNamedClassSymbol?
 
-    abstract override fun createPointer(): KaSymbolPointer<KaNamedClassOrObjectSymbol>
+    abstract override fun createPointer(): KaSymbolPointer<KaNamedClassSymbol>
 }
 
-@Deprecated("Use 'KaNamedClassOrObjectSymbol' instead", ReplaceWith("KaNamedClassOrObjectSymbol"))
-public typealias KtNamedClassOrObjectSymbol = KaNamedClassOrObjectSymbol
+@Deprecated("Use 'KaNamedClassSymbol' instead", ReplaceWith("KaNamedClassSymbol"))
+public typealias KaNamedClassOrObjectSymbol = KaNamedClassSymbol
+
+@Deprecated("Use 'KaNamedClassSymbol' instead", ReplaceWith("KaNamedClassSymbol"))
+public typealias KtNamedClassOrObjectSymbol = KaNamedClassSymbol
 
 public enum class KaClassKind {
     CLASS,

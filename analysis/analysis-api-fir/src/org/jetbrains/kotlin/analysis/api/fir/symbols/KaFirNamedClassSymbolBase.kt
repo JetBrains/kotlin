@@ -10,7 +10,7 @@ import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirClassLikeSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
@@ -20,10 +20,10 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 
 /**
- * [KaFirNamedClassOrObjectSymbolBase] provides shared equality and hash code implementations for FIR-based named class or object symbols so
+ * [KaFirNamedClassSymbolBase] provides shared equality and hash code implementations for FIR-based named class or object symbols so
  * that symbols of different kinds can be compared and remain interchangeable.
  */
-internal sealed class KaFirNamedClassOrObjectSymbolBase : KaNamedClassOrObjectSymbol(), KaFirSymbol<FirRegularClassSymbol> {
+internal sealed class KaFirNamedClassSymbolBase : KaNamedClassSymbol(), KaFirSymbol<FirRegularClassSymbol> {
     /**
      * Whether [firSymbol] is computed lazily. Equality will fall back to PSI-equality if one of the symbols is lazy and both classes have
      * an associated [PsiClass].
@@ -32,7 +32,7 @@ internal sealed class KaFirNamedClassOrObjectSymbolBase : KaNamedClassOrObjectSy
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other == null || other !is KaFirNamedClassOrObjectSymbolBase) return false
+        if (other == null || other !is KaFirNamedClassSymbolBase) return false
 
         if (hasLazyFirSymbol || other.hasLazyFirSymbol) {
             val psiClass = psi as? PsiClass ?: return symbolEquals(other)
@@ -55,15 +55,15 @@ internal sealed class KaFirNamedClassOrObjectSymbolBase : KaNamedClassOrObjectSy
         firSymbol.superTypesList(builder)
     }
 
-    override fun createPointer(): KaSymbolPointer<KaNamedClassOrObjectSymbol> = withValidityAssertion {
-        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaNamedClassOrObjectSymbol>(this)?.let { return it }
+    override fun createPointer(): KaSymbolPointer<KaNamedClassSymbol> = withValidityAssertion {
+        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaNamedClassSymbol>(this)?.let { return it }
 
         return when (val symbolKind = location) {
             KaSymbolLocation.LOCAL ->
                 throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(classId?.asString() ?: name.asString())
 
             KaSymbolLocation.CLASS, KaSymbolLocation.TOP_LEVEL ->
-                KaFirClassLikeSymbolPointer(classId!!, KaNamedClassOrObjectSymbol::class)
+                KaFirClassLikeSymbolPointer(classId!!, KaNamedClassSymbol::class)
 
             else -> throw UnsupportedSymbolLocation(this::class, symbolKind)
         }

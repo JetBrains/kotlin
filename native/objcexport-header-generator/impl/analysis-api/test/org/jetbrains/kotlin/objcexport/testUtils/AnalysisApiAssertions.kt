@@ -9,24 +9,24 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import kotlin.test.fail
 
 context(KaSession)
-fun KtFile.getClassOrFail(name: String): KaNamedClassOrObjectSymbol {
+fun KtFile.getClassOrFail(name: String): KaNamedClassSymbol {
     return symbol.fileScope.getClassOrFail(name)
 }
 
 context(KaSession)
-fun KaScope.getClassOrFail(name: String): KaNamedClassOrObjectSymbol {
+fun KaScope.getClassOrFail(name: String): KaNamedClassSymbol {
     val allSymbols = classifiers(Name.identifier(name)).toList()
     if (allSymbols.isEmpty()) fail("Missing class '$name'")
     if (allSymbols.size > 1) fail("Found multiple classes with name '$name'")
     val classifier = allSymbols.single()
-    if (classifier !is KaNamedClassOrObjectSymbol) fail("$classifier is not a named class or object")
+    if (classifier !is KaNamedClassSymbol) fail("$classifier is not a named class or object")
     return classifier
 }
 

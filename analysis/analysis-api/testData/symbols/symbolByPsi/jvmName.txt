@@ -338,7 +338,7 @@ KaKotlinPropertySymbol:
   javaSetterName: setMyJ
   setterDeprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: Foo
   classKind: CLASS

@@ -4,7 +4,7 @@ scopes:
   ExplicitSimpleImportingScope, index = 0
     packages: 0
     classifiers: 1
-      KaNamedClassOrObjectSymbol:
+      KaNamedClassSymbol:
         annotations: []
         classId: pkg/A
         classKind: CLASS
@@ -63,7 +63,7 @@ scopes:
         location: TOP_LEVEL
         origin: SOURCE
     classifiers: 1
-      KaNamedClassOrObjectSymbol:
+      KaNamedClassSymbol:
         annotations: []
         classId: B
         classKind: CLASS

@@ -3,7 +3,7 @@ implicit receivers:
   type: KaClassErrorType:
     annotations: []
     type: ERROR_TYPE
-  owner symbol: KaFirNamedClassOrObjectSymbol
+  owner symbol: KaFirNamedClassSymbol
 
 scopes:
   LocalScope, index = 0

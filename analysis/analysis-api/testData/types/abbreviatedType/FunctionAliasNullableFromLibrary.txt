@@ -18,16 +18,16 @@ KaFunctionType:
       qualifiers: [
         qualifier:
           name: String
-          symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+          symbol: KaNamedClassSymbol(kotlin/String)
           typeArguments: []
       ]
-      symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+      symbol: KaNamedClassSymbol(kotlin/String)
       typeArguments: []
   ]
   qualifiers: [
     qualifier:
       name: Function1
-      symbol: KaNamedClassOrObjectSymbol(kotlin/Function1)
+      symbol: KaNamedClassSymbol(kotlin/Function1)
       typeArguments: [
         KaUsualClassType:
           abbreviatedType: null
@@ -37,10 +37,10 @@ KaFunctionType:
           qualifiers: [
             qualifier:
               name: String
-              symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+              symbol: KaNamedClassSymbol(kotlin/String)
               typeArguments: []
           ]
-          symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+          symbol: KaNamedClassSymbol(kotlin/String)
           typeArguments: []
         KaUsualClassType:
           abbreviatedType: null
@@ -50,10 +50,10 @@ KaFunctionType:
           qualifiers: [
             qualifier:
               name: Int
-              symbol: KaNamedClassOrObjectSymbol(kotlin/Int)
+              symbol: KaNamedClassSymbol(kotlin/Int)
               typeArguments: []
           ]
-          symbol: KaNamedClassOrObjectSymbol(kotlin/Int)
+          symbol: KaNamedClassSymbol(kotlin/Int)
           typeArguments: []
       ]
   ]
@@ -66,12 +66,12 @@ KaFunctionType:
     qualifiers: [
       qualifier:
         name: Int
-        symbol: KaNamedClassOrObjectSymbol(kotlin/Int)
+        symbol: KaNamedClassSymbol(kotlin/Int)
         typeArguments: []
     ]
-    symbol: KaNamedClassOrObjectSymbol(kotlin/Int)
+    symbol: KaNamedClassSymbol(kotlin/Int)
     typeArguments: []
-  symbol: KaNamedClassOrObjectSymbol(kotlin/Function1)
+  symbol: KaNamedClassSymbol(kotlin/Function1)
   typeArguments: [
     KaUsualClassType:
       abbreviatedType: null
@@ -81,10 +81,10 @@ KaFunctionType:
       qualifiers: [
         qualifier:
           name: String
-          symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+          symbol: KaNamedClassSymbol(kotlin/String)
           typeArguments: []
       ]
-      symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+      symbol: KaNamedClassSymbol(kotlin/String)
       typeArguments: []
     KaUsualClassType:
       abbreviatedType: null
@@ -94,10 +94,10 @@ KaFunctionType:
       qualifiers: [
         qualifier:
           name: Int
-          symbol: KaNamedClassOrObjectSymbol(kotlin/Int)
+          symbol: KaNamedClassSymbol(kotlin/Int)
           typeArguments: []
       ]
-      symbol: KaNamedClassOrObjectSymbol(kotlin/Int)
+      symbol: KaNamedClassSymbol(kotlin/Int)
       typeArguments: []
   ]
 

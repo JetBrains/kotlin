@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,13 +9,13 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReferenceList
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThis
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
@@ -26,15 +26,15 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
     constructor(
         ktAnalysisSession: KaSession,
         ktModule: KaModule,
-        classOrObjectSymbol: KaNamedClassOrObjectSymbol,
+        classSymbol: KaNamedClassSymbol,
         manager: PsiManager
     ) : super(
         ktAnalysisSession = ktAnalysisSession,
         ktModule = ktModule,
-        classOrObjectSymbol = classOrObjectSymbol,
+        classSymbol = classSymbol,
         manager = manager,
     ) {
-        require(classOrObjectSymbol.classKind == KaClassKind.INTERFACE)
+        require(classSymbol.classKind == KaClassKind.INTERFACE)
     }
 
     constructor(classOrObject: KtClassOrObject, ktModule: KaModule) : super(classOrObject, ktModule) {
@@ -43,24 +43,24 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
 
     protected constructor(
         classOrObjectDeclaration: KtClassOrObject?,
-        classOrObjectSymbolPointer: KaSymbolPointer<KaNamedClassOrObjectSymbol>,
+        classSymbolPointer: KaSymbolPointer<KaNamedClassSymbol>,
         ktModule: KaModule,
         manager: PsiManager,
     ) : super(
         classOrObjectDeclaration = classOrObjectDeclaration,
-        classOrObjectSymbolPointer = classOrObjectSymbolPointer,
+        classSymbolPointer = classSymbolPointer,
         ktModule = ktModule,
         manager = manager,
     )
 
     override fun getOwnMethods(): List<PsiMethod> = cachedValue {
-        withClassOrObjectSymbol { classOrObjectSymbol ->
+        withClassSymbol { classSymbol ->
             val result = mutableListOf<KtLightMethod>()
 
-            val visibleDeclarations = classOrObjectSymbol.declaredMemberScope.callables.filter { acceptCallableSymbol(it) }
+            val visibleDeclarations = classSymbol.declaredMemberScope.callables.filter { acceptCallableSymbol(it) }
 
             createMethods(visibleDeclarations, result)
-            addMethodsFromCompanionIfNeeded(result, classOrObjectSymbol)
+            addMethodsFromCompanionIfNeeded(result, classSymbol)
 
             result
         }
@@ -71,11 +71,11 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
         !(symbol is KaFunctionSymbol && symbol.visibility.isPrivateOrPrivateToThis() || symbol.hasTypeForValueClassInSignature())
 
     override fun copy(): SymbolLightClassForInterface =
-        SymbolLightClassForInterface(classOrObjectDeclaration, classOrObjectSymbolPointer, ktModule, manager)
+        SymbolLightClassForInterface(classOrObjectDeclaration, classSymbolPointer, ktModule, manager)
 
     private val _extendsList: PsiReferenceList by lazyPub {
-        withClassOrObjectSymbol { classOrObjectSymbol ->
-            createInheritanceList(forExtendsList = true, classOrObjectSymbol.superTypes)
+        withClassSymbol { classSymbol ->
+            createInheritanceList(forExtendsList = true, classSymbol.superTypes)
         }
     }
 

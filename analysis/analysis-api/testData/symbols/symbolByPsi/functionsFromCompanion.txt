@@ -104,7 +104,7 @@ KaFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: MyClass.Companion
   classKind: COMPANION_OBJECT
@@ -134,11 +134,11 @@ KaNamedClassOrObjectSymbol:
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: MyClass
   classKind: CLASS
-  companionObject: KaNamedClassOrObjectSymbol(MyClass.Companion)
+  companionObject: KaNamedClassSymbol(MyClass.Companion)
   contextReceivers: []
   isActual: false
   isData: false

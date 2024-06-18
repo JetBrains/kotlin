@@ -10,7 +10,7 @@ implicit receivers:
     annotations: []
     typeArguments: []
     type: kotlin/Enum.Companion
-  owner symbol: KaFirNamedClassOrObjectSymbol
+  owner symbol: KaFirNamedClassSymbol
 
 scopes:
   LocalScope, index = 0
@@ -28,7 +28,7 @@ scopes:
   TypeScope, index = 2
     packages: 0
     classifiers: 1
-      KaNamedClassOrObjectSymbol:
+      KaNamedClassSymbol:
         annotations: []
         classId: kotlin/Enum.Companion
         classKind: COMPANION_OBJECT
@@ -730,7 +730,7 @@ scopes:
   StaticMemberScope, index = 4
     packages: 0
     classifiers: 1
-      KaNamedClassOrObjectSymbol:
+      KaNamedClassSymbol:
         annotations: []
         classId: kotlin/Enum.Companion
         classKind: COMPANION_OBJECT
@@ -908,7 +908,7 @@ scopes:
         location: TOP_LEVEL
         origin: SOURCE
     classifiers: 1
-      KaNamedClassOrObjectSymbol:
+      KaNamedClassSymbol:
         annotations: []
         classId: E
         classKind: ENUM_CLASS

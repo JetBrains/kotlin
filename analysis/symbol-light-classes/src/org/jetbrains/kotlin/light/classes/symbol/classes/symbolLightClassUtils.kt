@@ -81,28 +81,28 @@ internal fun KtClassOrObject.modificationTrackerForClassInnerStuff(): List<Modif
 
 context(KaSession)
 internal fun createLightClassNoCache(
-    ktClassOrObjectSymbol: KaNamedClassOrObjectSymbol,
+    classSymbol: KaNamedClassSymbol,
     ktModule: KaModule,
     manager: PsiManager,
-): SymbolLightClassBase = when (ktClassOrObjectSymbol.classKind) {
+): SymbolLightClassBase = when (classSymbol.classKind) {
     KaClassKind.INTERFACE -> SymbolLightClassForInterface(
         ktAnalysisSession = this@KaSession,
         ktModule = ktModule,
-        classOrObjectSymbol = ktClassOrObjectSymbol,
+        classSymbol = classSymbol,
         manager = manager,
     )
 
     KaClassKind.ANNOTATION_CLASS -> SymbolLightClassForAnnotationClass(
         ktAnalysisSession = this@KaSession,
         ktModule = ktModule,
-        classOrObjectSymbol = ktClassOrObjectSymbol,
+        classSymbol = classSymbol,
         manager = manager,
     )
 
     else -> SymbolLightClassForClassOrObject(
         ktAnalysisSession = this@KaSession,
         ktModule = ktModule,
-        classOrObjectSymbol = ktClassOrObjectSymbol,
+        classSymbol = classSymbol,
         manager = manager,
     )
 }
@@ -548,7 +548,7 @@ internal fun KaDeclarationContainerSymbol.createInnerClasses(
 ): List<SymbolLightClassBase> {
     val result = SmartList<SymbolLightClassBase>()
 
-    staticDeclaredMemberScope.classifiers.filterIsInstance<KaNamedClassOrObjectSymbol>().mapNotNullTo(result) {
+    staticDeclaredMemberScope.classifiers.filterIsInstance<KaNamedClassSymbol>().mapNotNullTo(result) {
         val classOrObjectDeclaration = it.sourcePsiSafe<KtClassOrObject>()
         if (classOrObjectDeclaration != null) {
             classOrObjectDeclaration.toLightClass() as? SymbolLightClassBase
@@ -571,7 +571,7 @@ internal fun KaDeclarationContainerSymbol.createInnerClasses(
     }
 
     if (containingClass is SymbolLightClassForAnnotationClass &&
-        this is KaNamedClassOrObjectSymbol &&
+        this is KaNamedClassSymbol &&
         StandardClassIds.Annotations.Repeatable in annotations &&
         JvmStandardClassIds.Annotations.Java.Repeatable !in annotations
     ) {
@@ -689,6 +689,6 @@ internal fun KaCallableSymbol.hasTypeForValueClassInSignature(
 context(KaSession)
 internal val KaType.typeForValueClass: Boolean
     get() {
-        val symbol = expandedSymbol as? KaNamedClassOrObjectSymbol ?: return false
+        val symbol = expandedSymbol as? KaNamedClassSymbol ?: return false
         return symbol.isInline
     }

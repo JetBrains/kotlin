@@ -353,7 +353,7 @@ KaEnumEntrySymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: MyEnumClass
   classKind: ENUM_CLASS

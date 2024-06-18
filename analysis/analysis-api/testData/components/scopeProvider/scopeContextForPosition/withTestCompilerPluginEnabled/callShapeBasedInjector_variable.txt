@@ -323,7 +323,7 @@ scopes:
         location: TOP_LEVEL
         origin: SOURCE
     classifiers: 2
-      KaNamedClassOrObjectSymbol:
+      KaNamedClassSymbol:
         annotations: []
         classId: DataFrame
         classKind: INTERFACE
@@ -350,7 +350,7 @@ scopes:
           KaTypeParameterSymbol(T)
         ]
         visibility: Public
-      KaNamedClassOrObjectSymbol:
+      KaNamedClassSymbol:
         annotations: []
         classId: Refine
         classKind: ANNOTATION_CLASS

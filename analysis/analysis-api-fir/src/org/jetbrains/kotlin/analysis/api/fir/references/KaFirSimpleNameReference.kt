@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.references
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSyntheticJavaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.references.KaBaseSimpleNameReference
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.fir.expressions.FirLoopJump
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.psi.*
 
 internal class KaFirSimpleNameReference(
@@ -35,7 +34,7 @@ internal class KaFirSimpleNameReference(
         if (resultsToFix.isEmpty() || !isAnnotationCall) return resultsToFix
 
         return resultsToFix.map { targetSymbol ->
-            if (targetSymbol is KaFirNamedClassOrObjectSymbol && targetSymbol.classKind == KaClassKind.ANNOTATION_CLASS) {
+            if (targetSymbol is KaFirNamedClassSymbol && targetSymbol.classKind == KaClassKind.ANNOTATION_CLASS) {
                 targetSymbol.memberScope.constructors.firstOrNull() ?: targetSymbol
             } else targetSymbol
         }

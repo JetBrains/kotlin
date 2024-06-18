@@ -1,4 +1,4 @@
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: kotlin/collections/MutableMap.MutableEntry
   classKind: INTERFACE

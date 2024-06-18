@@ -1,4 +1,4 @@
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: [
     org/jetbrains/kotlin/fir/plugin/MyInterfaceSupertype()
       psi: KtAnnotationEntry

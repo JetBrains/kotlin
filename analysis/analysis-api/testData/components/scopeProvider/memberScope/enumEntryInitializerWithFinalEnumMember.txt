@@ -723,7 +723,7 @@ KaFunctionSymbol:
   getContainingModule: KaBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: kotlin/Enum.Companion
   classKind: COMPANION_OBJECT

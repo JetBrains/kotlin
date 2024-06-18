@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSamConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.util.ImplementationStatus
@@ -140,8 +140,8 @@ public interface KaSymbolRelationProvider {
     @KaExperimentalApi
     public fun KaDeclarationSymbol.getExpectsForActual(): List<KaDeclarationSymbol>
 
-    public val KaNamedClassOrObjectSymbol.sealedClassInheritors: List<KaNamedClassOrObjectSymbol>
+    public val KaNamedClassSymbol.sealedClassInheritors: List<KaNamedClassSymbol>
 
     @Deprecated("Use the declaration scope instead.")
-    public val KaNamedClassOrObjectSymbol.enumEntries: List<KaEnumEntrySymbol>
+    public val KaNamedClassSymbol.enumEntries: List<KaEnumEntrySymbol>
 }

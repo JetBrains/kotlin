@@ -137,7 +137,7 @@ KaConstructorSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: Foo
   classKind: ANNOTATION_CLASS

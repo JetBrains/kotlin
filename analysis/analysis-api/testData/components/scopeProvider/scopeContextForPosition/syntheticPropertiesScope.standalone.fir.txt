@@ -266,7 +266,7 @@ scopes:
         location: TOP_LEVEL
         origin: SOURCE
     classifiers: 1
-      KaNamedClassOrObjectSymbol:
+      KaNamedClassSymbol:
         annotations: []
         classId: JavaClass
         classKind: CLASS

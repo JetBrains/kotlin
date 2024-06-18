@@ -4,7 +4,7 @@ implicit receivers:
     annotations: []
     typeArguments: []
     type: <local>/Y
-  owner symbol: KaFirNamedClassOrObjectSymbol
+  owner symbol: KaFirNamedClassSymbol
 
 scopes:
   LocalScope, index = 0
@@ -270,7 +270,7 @@ scopes:
   LocalScope, index = 3
     packages: 0
     classifiers: 1
-      KaNamedClassOrObjectSymbol:
+      KaNamedClassSymbol:
         annotations: []
         classId: null
         classKind: CLASS

@@ -241,7 +241,7 @@ internal class KaFe10SymbolRelationProvider(
             .toList()
     }
 
-    override val KaNamedClassOrObjectSymbol.sealedClassInheritors: List<KaNamedClassOrObjectSymbol>
+    override val KaNamedClassSymbol.sealedClassInheritors: List<KaNamedClassSymbol>
         get() = withValidityAssertion {
             val classDescriptor = getSymbolDescriptor(this) as? ClassDescriptor ?: return emptyList()
 
@@ -250,11 +250,11 @@ internal class KaFe10SymbolRelationProvider(
                 .supportsFeature(LanguageFeature.AllowSealedInheritorsInDifferentFilesOfSamePackage)
 
             return inheritorsProvider.computeSealedSubclasses(classDescriptor, allowInDifferentFiles)
-                .mapNotNull { it.toKtClassifierSymbol(analysisContext) as? KaNamedClassOrObjectSymbol }
+                .mapNotNull { it.toKtClassifierSymbol(analysisContext) as? KaNamedClassSymbol }
         }
 
     @Deprecated("Use the declaration scope instead.")
-    override val KaNamedClassOrObjectSymbol.enumEntries: List<KaEnumEntrySymbol>
+    override val KaNamedClassSymbol.enumEntries: List<KaEnumEntrySymbol>
         get() = withValidityAssertion {
             val enumDescriptor = getSymbolDescriptor(this) as? ClassDescriptor ?: return emptyList()
             if (enumDescriptor.kind != ClassKind.ENUM_CLASS) {

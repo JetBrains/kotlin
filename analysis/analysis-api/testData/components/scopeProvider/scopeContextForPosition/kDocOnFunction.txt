@@ -214,7 +214,7 @@ scopes:
   PackageMemberScope, index = 4
     packages: 0
     classifiers: 3
-      KaNamedClassOrObjectSymbol:
+      KaNamedClassSymbol:
         annotations: []
         classId: test/Receiver
         classKind: CLASS
@@ -239,7 +239,7 @@ scopes:
         ]
         typeParameters: []
         visibility: Public
-      KaNamedClassOrObjectSymbol:
+      KaNamedClassSymbol:
         annotations: []
         classId: test/Param1
         classKind: CLASS
@@ -264,7 +264,7 @@ scopes:
         ]
         typeParameters: []
         visibility: Public
-      KaNamedClassOrObjectSymbol:
+      KaNamedClassSymbol:
         annotations: []
         classId: test/Param2
         classKind: CLASS

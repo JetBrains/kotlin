@@ -11,12 +11,12 @@ import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.*
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.isEqualTo
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10DescNamedClassOrObjectSymbolSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10DescNamedClassSymbolPointer
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10NeverRestoringSymbolPointer
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.toKtClassKind
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
@@ -27,10 +27,10 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-internal class KaFe10DescNamedClassOrObjectSymbol(
+internal class KaFe10DescNamedClassSymbol(
     override val descriptor: ClassDescriptor,
     override val analysisContext: Fe10AnalysisContext
-) : KaNamedClassOrObjectSymbol(), KaFe10DescMemberSymbol<ClassDescriptor> {
+) : KaNamedClassSymbol(), KaFe10DescMemberSymbol<ClassDescriptor> {
     override val name: Name
         get() = withValidityAssertion { descriptor.name }
 
@@ -55,11 +55,11 @@ internal class KaFe10DescNamedClassOrObjectSymbol(
     override val isExpect: Boolean
         get() = withValidityAssertion { descriptor.isExpect }
 
-    override val companionObject: KaNamedClassOrObjectSymbol?
+    override val companionObject: KaNamedClassSymbol?
         get() {
             withValidityAssertion {
                 val companionObject = descriptor.companionObjectDescriptor ?: return null
-                return KaFe10DescNamedClassOrObjectSymbol(companionObject, analysisContext)
+                return KaFe10DescNamedClassSymbol(companionObject, analysisContext)
             }
         }
 
@@ -89,14 +89,14 @@ internal class KaFe10DescNamedClassOrObjectSymbol(
     override val typeParameters: List<KaTypeParameterSymbol>
         get() = withValidityAssertion { descriptor.declaredTypeParameters.map { KaFe10DescTypeParameterSymbol(it, analysisContext) } }
 
-    override fun createPointer(): KaSymbolPointer<KaNamedClassOrObjectSymbol> = withValidityAssertion {
-        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaNamedClassOrObjectSymbol>(this)?.let {
+    override fun createPointer(): KaSymbolPointer<KaNamedClassSymbol> = withValidityAssertion {
+        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaNamedClassSymbol>(this)?.let {
             return it
         }
 
         val classId = descriptor.classId
         if (classId != null) {
-            return KaFe10DescNamedClassOrObjectSymbolSymbol(classId)
+            return KaFe10DescNamedClassSymbolPointer(classId)
         }
 
         return KaFe10NeverRestoringSymbolPointer()

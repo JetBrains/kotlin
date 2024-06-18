@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThis
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.psi.KtClass
@@ -23,15 +23,15 @@ internal open class SymbolLightClassForAnnotationClass : SymbolLightClassForInte
     constructor(
         ktAnalysisSession: KaSession,
         ktModule: KaModule,
-        classOrObjectSymbol: KaNamedClassOrObjectSymbol,
+        classSymbol: KaNamedClassSymbol,
         manager: PsiManager
     ) : super(
         ktAnalysisSession = ktAnalysisSession,
         ktModule = ktModule,
-        classOrObjectSymbol = classOrObjectSymbol,
+        classSymbol = classSymbol,
         manager = manager,
     ) {
-        require(classOrObjectSymbol.classKind == KaClassKind.ANNOTATION_CLASS)
+        require(classSymbol.classKind == KaClassKind.ANNOTATION_CLASS)
     }
 
     constructor(classOrObject: KtClassOrObject, ktModule: KaModule) : super(classOrObject, ktModule) {
@@ -40,21 +40,21 @@ internal open class SymbolLightClassForAnnotationClass : SymbolLightClassForInte
 
     constructor(
         classOrObjectDeclaration: KtClassOrObject?,
-        classOrObjectSymbolPointer: KaSymbolPointer<KaNamedClassOrObjectSymbol>,
+        classSymbolPointer: KaSymbolPointer<KaNamedClassSymbol>,
         ktModule: KaModule,
         manager: PsiManager,
     ) : super(
         classOrObjectDeclaration = classOrObjectDeclaration,
-        classOrObjectSymbolPointer = classOrObjectSymbolPointer,
+        classSymbolPointer = classSymbolPointer,
         ktModule = ktModule,
         manager = manager,
     )
 
     override fun classKind(): KaClassKind = KaClassKind.ANNOTATION_CLASS
 
-    protected open fun computeOwnMethods(): List<PsiMethod> = withClassOrObjectSymbol { classOrObjectSymbol ->
+    protected open fun computeOwnMethods(): List<PsiMethod> = withClassSymbol { classSymbol ->
         val result = mutableListOf<KtLightMethod>()
-        val visibleDeclarations = classOrObjectSymbol.declaredMemberScope.callables
+        val visibleDeclarations = classSymbol.declaredMemberScope.callables
             .filterNot { it is KaFunctionSymbol && it.visibility.isPrivateOrPrivateToThis() }
             .filterNot { it is KaConstructorSymbol }
 
@@ -75,7 +75,7 @@ internal open class SymbolLightClassForAnnotationClass : SymbolLightClassForInte
 
     override fun copy(): SymbolLightClassForAnnotationClass = SymbolLightClassForAnnotationClass(
         classOrObjectDeclaration = classOrObjectDeclaration,
-        classOrObjectSymbolPointer = classOrObjectSymbolPointer,
+        classSymbolPointer = classSymbolPointer,
         ktModule = ktModule,
         manager = manager,
     )

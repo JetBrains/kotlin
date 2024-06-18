@@ -1,4 +1,4 @@
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: [
     kotlin/jvm/JvmInline()
       psi: KtAnnotationEntry

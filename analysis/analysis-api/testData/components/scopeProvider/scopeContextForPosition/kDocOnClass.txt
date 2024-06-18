@@ -8,7 +8,7 @@ implicit receivers:
         type: TypeParam
     ]
     type: test/MyClass<TypeParam>
-  owner symbol: KaFirNamedClassOrObjectSymbol
+  owner symbol: KaFirNamedClassSymbol
 
 scopes:
   TypeScope, index = 0
@@ -315,7 +315,7 @@ scopes:
   PackageMemberScope, index = 3
     packages: 0
     classifiers: 3
-      KaNamedClassOrObjectSymbol:
+      KaNamedClassSymbol:
         annotations: []
         classId: test/Param1
         classKind: CLASS
@@ -340,7 +340,7 @@ scopes:
         ]
         typeParameters: []
         visibility: Public
-      KaNamedClassOrObjectSymbol:
+      KaNamedClassSymbol:
         annotations: []
         classId: test/Param2
         classKind: CLASS
@@ -365,7 +365,7 @@ scopes:
         ]
         typeParameters: []
         visibility: Public
-      KaNamedClassOrObjectSymbol:
+      KaNamedClassSymbol:
         annotations: []
         classId: test/MyClass
         classKind: CLASS

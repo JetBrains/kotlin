@@ -243,7 +243,7 @@ internal object KDocReferenceResolver {
         ).asCompositeScope()
 
     private fun KaSession.getCompanionObjectMemberScope(symbol: KaDeclarationContainerSymbol): KaScope? {
-        val namedClassSymbol = symbol as? KaNamedClassOrObjectSymbol ?: return null
+        val namedClassSymbol = symbol as? KaNamedClassSymbol ?: return null
         val companionSymbol = namedClassSymbol.companionObject ?: return null
         return companionSymbol.memberScope
     }

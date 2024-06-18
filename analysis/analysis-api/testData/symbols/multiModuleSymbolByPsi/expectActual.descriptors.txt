@@ -1,6 +1,6 @@
 // FILE: Common.kt
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: sample/A
   classKind: OBJECT
@@ -26,7 +26,7 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: sample/B
   classKind: CLASS
@@ -136,7 +136,7 @@ KaConstructorSymbol:
   ]
   visibility: Public
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: sample/B.Nested
   classKind: CLASS
@@ -260,7 +260,7 @@ KaKotlinPropertySymbol:
   typeParameters: []
   visibility: Public
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: sample/C
   classKind: CLASS
@@ -286,7 +286,7 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: sample/C.Nested
   classKind: CLASS
@@ -473,7 +473,7 @@ KaKotlinPropertySymbol:
 
 // FILE: JvmAndroid.kt
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: sample/A
   classKind: OBJECT
@@ -499,7 +499,7 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: sample/B
   classKind: CLASS
@@ -609,7 +609,7 @@ KaConstructorSymbol:
   ]
   visibility: Public
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: sample/B.Nested
   classKind: CLASS
@@ -748,7 +748,7 @@ KaTypeAliasSymbol:
   typeParameters: []
   visibility: Public
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: sample/D
   classKind: CLASS
@@ -774,7 +774,7 @@ KaNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: sample/D.Nested
   classKind: CLASS

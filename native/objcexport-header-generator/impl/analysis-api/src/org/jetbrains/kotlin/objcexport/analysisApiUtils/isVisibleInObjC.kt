@@ -76,7 +76,7 @@ private fun KaSymbol.isComponentNMethod(): Boolean {
 
     if (this !is KaFunctionSymbol) return false
     if (!this.isOperator) return false
-    val containingClassSymbol = this.containingSymbol as? KaNamedClassOrObjectSymbol ?: return false
+    val containingClassSymbol = this.containingSymbol as? KaNamedClassSymbol ?: return false
     if (!containingClassSymbol.isData) return false
     return DataClassResolver.isComponentLike(this.name)
 }
@@ -169,7 +169,7 @@ private fun KaClassSymbol.isHiddenFromObjCByDeprecation(): Boolean {
 
 context(KaSession)
 private fun KaClassSymbol.isInlined(): Boolean {
-    if (this !is KaNamedClassOrObjectSymbol) return false
+    if (this !is KaNamedClassSymbol) return false
     if (this.isInline) return true
     // TODO: There are some native types that are 'implicitly inlined'
     return false

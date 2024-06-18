@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.objcexport.analysisApiUtils
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
@@ -17,12 +17,12 @@ import org.jetbrains.kotlin.backend.konan.KonanFqNames
 context(KaSession)
 internal fun KaType.getInlineTargetTypeOrNull(): KaType? {
     if (this !is KaClassType) return null
-    val classSymbol = symbol as? KaNamedClassOrObjectSymbol ?: return null
+    val classSymbol = symbol as? KaNamedClassSymbol ?: return null
     return classSymbol.getInlineTargetTypeOrNull()?.markNullableIf(isMarkedNullable)
 }
 
 context(KaSession)
-internal fun KaNamedClassOrObjectSymbol.getInlineTargetTypeOrNull(): KaType? {
+internal fun KaNamedClassSymbol.getInlineTargetTypeOrNull(): KaType? {
     if (!isInlineIncludingKotlinNativeSpecialClasses()) return null
 
     val constructor = declaredMemberScope.constructors
@@ -47,7 +47,7 @@ internal fun KaNamedClassOrObjectSymbol.getInlineTargetTypeOrNull(): KaType? {
  * despite no modifier being present. This is considered a 'special Kotlin Native' class in the context of this function.
  */
 context(KaSession)
-private fun KaNamedClassOrObjectSymbol.isInlineIncludingKotlinNativeSpecialClasses(): Boolean {
+private fun KaNamedClassSymbol.isInlineIncludingKotlinNativeSpecialClasses(): Boolean {
     if (this.isInline) return true
     val classId = classId ?: return false
 

@@ -529,7 +529,7 @@ KaFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: [
     kotlin/Deprecated(message = "don't use MyClass")
       psi: KtAnnotationEntry
@@ -698,7 +698,7 @@ KaFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
 
-KaNamedClassOrObjectSymbol:
+KaNamedClassSymbol:
   annotations: []
   classId: Foo
   classKind: CLASS

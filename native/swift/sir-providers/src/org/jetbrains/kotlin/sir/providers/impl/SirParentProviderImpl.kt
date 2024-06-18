@@ -30,7 +30,7 @@ public class SirParentProviderImpl(
         return if (parentSymbol == null) {
             // top level function. -> parent is either extension for package, of plain module in case of <root> package
             val packageFqName = when (symbol) {
-                is KaNamedClassOrObjectSymbol -> symbol.classId?.packageFqName
+                is KaNamedClassSymbol -> symbol.classId?.packageFqName
                 is KaCallableSymbol -> symbol.callableId?.packageName
                 is KaTypeAliasSymbol -> symbol.classId?.packageFqName
                 else -> null

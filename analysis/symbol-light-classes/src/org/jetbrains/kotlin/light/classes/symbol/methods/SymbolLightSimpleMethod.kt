@@ -10,7 +10,7 @@ import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.mutate
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
@@ -206,7 +206,7 @@ internal class SymbolLightSimpleMethod(
 
     @Suppress("UnusedReceiverParameter")
     private fun KaSession.isInlineClassType(type: KaType): Boolean {
-        return ((type as? KaClassType)?.symbol as? KaNamedClassOrObjectSymbol)?.isInline == true
+        return ((type as? KaClassType)?.symbol as? KaNamedClassSymbol)?.isInline == true
     }
 
     private fun KaSession.isVoidType(type: KaType): Boolean {

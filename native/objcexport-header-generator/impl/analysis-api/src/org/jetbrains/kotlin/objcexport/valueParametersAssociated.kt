@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KaSession
@@ -118,13 +123,13 @@ internal val KaFunctionLikeSymbol.objCReceiverType: KaType?
             dispatchReceiverType
         } else if (isExtension) {
             if (receiverParameter?.type?.isMappedObjCType == true) receiverParameter?.type
-            else if ((containingSymbol as? KaNamedClassOrObjectSymbol)?.isInner == true) receiverParameter?.type
+            else if ((containingSymbol as? KaNamedClassSymbol)?.isInner == true) receiverParameter?.type
             else if (receiverParameter?.type?.isObjCNothing == true) return receiverParameter?.type
             else null
         } else if (this is KaPropertyGetterSymbol || this is KaPropertySetterSymbol) {
             val property = containingSymbol as KaPropertySymbol
             val isExtension = property.isExtension
-            val isInner = (property.containingSymbol as? KaNamedClassOrObjectSymbol)?.isInner == true
+            val isInner = (property.containingSymbol as? KaNamedClassSymbol)?.isInner == true
             val receiverType = property.receiverType
             if (isExtension) {
                 if (isInner) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.impl.Ka
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.*
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callables.*
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.classifiers.KaAnonymousObjectSymbolRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.classifiers.KaNamedClassOrObjectSymbolRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.classifiers.KaNamedClassSymbolRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.classifiers.KaSingleTypeParameterSymbolRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.classifiers.KaTypeAliasSymbolRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.superTypes.KaSuperTypeListRenderer
@@ -71,7 +71,7 @@ public object KaDeclarationRendererForSource {
         parameterDefaultValueRenderer = KaParameterDefaultValueRenderer.NO_DEFAULT_VALUE
         variableInitializerRenderer = KaVariableInitializerRenderer.NO_INITIALIZER
 
-        classOrObjectRenderer = KaNamedClassOrObjectSymbolRenderer.AS_SOURCE
+        namedClassRenderer = KaNamedClassSymbolRenderer.AS_SOURCE
         typeAliasRenderer = KaTypeAliasSymbolRenderer.AS_SOURCE
         anonymousObjectRenderer = KaAnonymousObjectSymbolRenderer.AS_SOURCE
         singleTypeParameterRenderer = KaSingleTypeParameterSymbolRenderer.WITHOUT_BOUNDS

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -113,7 +113,7 @@ internal open class KaFe10ScopeNonStaticMember(
     analysisContext: Fe10AnalysisContext
 ) : KaFe10ScopeMember(scope, constructors, analysisContext) {
     override fun classifiers(nameFilter: (Name) -> Boolean): Sequence<KaClassifierSymbol> =
-        super.classifiers(nameFilter).filter { it is KaNamedClassOrObjectSymbol && it.isInner }
+        super.classifiers(nameFilter).filter { it is KaNamedClassSymbol && it.isInner }
 
     override fun callables(nameFilter: (Name) -> Boolean): Sequence<KaCallableSymbol> = withValidityAssertion {
         super.callables(nameFilter).filter { symbol ->

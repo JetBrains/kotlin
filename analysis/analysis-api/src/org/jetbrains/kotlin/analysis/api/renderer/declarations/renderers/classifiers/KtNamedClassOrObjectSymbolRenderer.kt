@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,17 +9,18 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderAnnotationsModifiersAndContextReceivers
+import org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtTokens
 
 @KaExperimentalApi
-public interface KaNamedClassOrObjectSymbolRenderer {
+public interface KaNamedClassSymbolRenderer {
     public fun renderSymbol(
         analysisSession: KaSession,
-        symbol: KaNamedClassOrObjectSymbol,
+        symbol: KaNamedClassSymbol,
         declarationRenderer: KaDeclarationRenderer,
         printer: PrettyPrinter,
     )
@@ -27,10 +28,10 @@ public interface KaNamedClassOrObjectSymbolRenderer {
     public object AS_SOURCE: AsSourceRenderer(true)
     public object AS_SOURCE_WITHOUT_PRIMARY_CONSTRUCTOR: AsSourceRenderer(false)
 
-    public open class AsSourceRenderer(private val withPrimaryConstructor: Boolean) : KaNamedClassOrObjectSymbolRenderer {
+    public open class AsSourceRenderer(private val withPrimaryConstructor: Boolean) : KaNamedClassSymbolRenderer {
         override fun renderSymbol(
             analysisSession: KaSession,
-            symbol: KaNamedClassOrObjectSymbol,
+            symbol: KaNamedClassSymbol,
             declarationRenderer: KaDeclarationRenderer,
             printer: PrettyPrinter,
         ) {
@@ -42,7 +43,7 @@ public interface KaNamedClassOrObjectSymbolRenderer {
                     KaClassKind.OBJECT -> listOf(KtTokens.OBJECT_KEYWORD)
                     KaClassKind.COMPANION_OBJECT -> listOf(KtTokens.COMPANION_KEYWORD, KtTokens.OBJECT_KEYWORD)
                     KaClassKind.INTERFACE -> listOf(KtTokens.INTERFACE_KEYWORD)
-                    KaClassKind.ANONYMOUS_OBJECT -> error("KaNamedClassOrObjectSymbol cannot be KaAnonymousObjectSymbol")
+                    KaClassKind.ANONYMOUS_OBJECT -> error("${KaNamedClassSymbol::class.simpleName} cannot be ${KaAnonymousObjectSymbol::class.simpleName}")
                 }
 
                 " ".separated(
@@ -91,5 +92,9 @@ public interface KaNamedClassOrObjectSymbolRenderer {
 }
 
 @KaExperimentalApi
-@Deprecated("Use 'KaNamedClassOrObjectSymbolRenderer' instead", ReplaceWith("KaNamedClassOrObjectSymbolRenderer"))
-public typealias KtNamedClassOrObjectSymbolRenderer = KaNamedClassOrObjectSymbolRenderer
+@Deprecated("Use 'KaNamedClassSymbolRenderer' instead", ReplaceWith("KaNamedClassSymbolRenderer"))
+public typealias KaNamedClassOrObjectSymbolRenderer = KaNamedClassSymbolRenderer
+
+@KaExperimentalApi
+@Deprecated("Use 'KaNamedClassSymbolRenderer' instead", ReplaceWith("KaNamedClassSymbolRenderer"))
+public typealias KtNamedClassOrObjectSymbolRenderer = KaNamedClassSymbolRenderer

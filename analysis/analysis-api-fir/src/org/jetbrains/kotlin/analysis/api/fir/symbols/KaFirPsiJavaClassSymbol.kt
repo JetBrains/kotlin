@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotation
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.toKtClassKind
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
@@ -36,14 +36,14 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 /**
- * Implements [KaNamedClassOrObjectSymbol] for a Java class. The underlying [firSymbol] is built lazily and only when needed. Many simple
+ * Implements [KaNamedClassSymbol] for a Java class. The underlying [firSymbol] is built lazily and only when needed. Many simple
  * properties are computed from the given [PsiClass] instead of [firSymbol]. This improves performance when "slow" properties don't need to
  * be accessed.
  */
 internal class KaFirPsiJavaClassSymbol(
     override val psi: PsiClass,
     override val analysisSession: KaFirSession,
-) : KaFirNamedClassOrObjectSymbolBase(), KaFirPsiSymbol<PsiClass, FirRegularClassSymbol> {
+) : KaFirNamedClassSymbolBase(), KaFirPsiSymbol<PsiClass, FirRegularClassSymbol> {
     /**
      * [javaClass] is used to defer some properties to the compiler's view of a Java class.
      */
@@ -112,7 +112,7 @@ internal class KaFirPsiJavaClassSymbol(
     override val isActual: Boolean get() = withValidityAssertion { false }
     override val isExpect: Boolean get() = withValidityAssertion { false }
 
-    override val companionObject: KaNamedClassOrObjectSymbol? get() = withValidityAssertion { null }
+    override val companionObject: KaNamedClassSymbol? get() = withValidityAssertion { null }
 
     override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
 

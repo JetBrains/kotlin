@@ -61,7 +61,7 @@ public interface KaSymbolProvider {
     public val KtObjectDeclaration.symbol: KaClassSymbol
 
     /** Returns a symbol for a given named [KtClassOrObject]. Returns `null` for `KtEnumEntry` declarations and object literals. */
-    public val KtClassOrObject.namedClassSymbol: KaNamedClassOrObjectSymbol?
+    public val KtClassOrObject.namedClassSymbol: KaNamedClassSymbol?
 
     public val KtPropertyAccessor.symbol: KaPropertyAccessorSymbol
 
@@ -113,7 +113,7 @@ public interface KaSymbolProvider {
     public fun KtClassOrObject.getClassOrObjectSymbol(): KaClassSymbol? = classSymbol
 
     @Deprecated("Use 'namedClassSymbol' instead", replaceWith = ReplaceWith("namedClassSymbol"))
-    public fun KtClassOrObject.getNamedClassOrObjectSymbol(): KaNamedClassOrObjectSymbol? = namedClassSymbol
+    public fun KtClassOrObject.getNamedClassOrObjectSymbol(): KaNamedClassSymbol? = namedClassSymbol
 
     @Deprecated("Use 'symbol' instead", replaceWith = ReplaceWith("symbol"))
     public fun KtPropertyAccessor.getPropertyAccessorSymbol(): KaPropertyAccessorSymbol = symbol

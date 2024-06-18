@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.backend.konan.KonanPrimitiveType
 import org.jetbrains.kotlin.backend.konan.objcexport.*
@@ -99,7 +99,7 @@ internal fun KaType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReferenc
     val classSymbol: KaClassSymbol? = if (classId != null) findClass(classId) else null
     run check@{
         if (classId == null) return@check
-        if (classSymbol !is KaNamedClassOrObjectSymbol) return@check
+        if (classSymbol !is KaNamedClassSymbol) return@check
         if (classSymbol.isInline) return ObjCIdType
     }
 
