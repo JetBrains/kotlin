@@ -33,7 +33,7 @@ public class SirDeclarationFromKtSymbolProvider(
                     sirSession = sirSession,
                 )
             }
-            is KaFunctionLikeSymbol -> {
+            is KaFunctionSymbol -> {
                 SirFunctionFromKtSymbol(
                     ktSymbol = ktSymbol,
                     ktModule = ktModule,

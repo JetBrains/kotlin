@@ -16,13 +16,13 @@ import org.jetbrains.kotlin.objcexport.*
 /**
  * This method is tightly bound with [valueParametersAssociated] and order in [MethodBridge.valueParameters] matters.
  * K1 function descriptor has property [allParameters], but analysis API doesn't so we need to combine manually in exact order:
- * [KtFunctionLikeSymbol.receiverParameter], [KtFunctionLikeSymbol.valueParameters] and inner class edge case.
+ * [KaFunctionSymbol.receiverParameter], [KaFunctionSymbol.valueParameters] and inner class edge case.
  * Then [valueParametersAssociated] associates parameters according the order.
  *
  * See K1 implementation [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapperKt.bridgeMethodImpl]
  */
 context(KaSession, KtObjCExportSession)
-internal fun KaFunctionLikeSymbol.getFunctionMethodBridge(): MethodBridge {
+internal fun KaFunctionSymbol.getFunctionMethodBridge(): MethodBridge {
 
     val valueParameters = mutableListOf<MethodBridgeValueParameter>()
     val isInner = (containingSymbol as? KaNamedClassSymbol)?.isInner ?: false

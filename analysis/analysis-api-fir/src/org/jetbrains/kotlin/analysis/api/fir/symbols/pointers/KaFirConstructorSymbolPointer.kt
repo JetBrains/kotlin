@@ -28,7 +28,7 @@ internal class KaFirConstructorSymbolPointer(
         } ?: return null
 
         if (firConstructor.isPrimary != isPrimary) return null
-        return firSymbolBuilder.functionLikeBuilder.buildConstructorSymbol(firConstructor.symbol)
+        return firSymbolBuilder.functionBuilder.buildConstructorSymbol(firConstructor.symbol)
     }
 
     override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = other === this ||

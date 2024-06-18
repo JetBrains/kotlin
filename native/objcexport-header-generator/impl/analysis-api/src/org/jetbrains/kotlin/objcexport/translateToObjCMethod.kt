@@ -26,7 +26,7 @@ internal val KaSymbol.isConstructor: Boolean
     get() = this is KaConstructorSymbol
 
 context(KaSession, KtObjCExportSession)
-fun KaFunctionLikeSymbol.translateToObjCMethod(): ObjCMethod? {
+fun KaFunctionSymbol.translateToObjCMethod(): ObjCMethod? {
     if (!isVisibleInObjC()) return null
     if (isFakeOverride) return null
     if (this is KaNamedFunctionSymbol && isClone) return null
@@ -37,7 +37,7 @@ fun KaFunctionLikeSymbol.translateToObjCMethod(): ObjCMethod? {
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.buildMethod]
  */
 context(KaSession, KtObjCExportSession)
-internal fun KaFunctionLikeSymbol.buildObjCMethod(
+internal fun KaFunctionSymbol.buildObjCMethod(
     unavailable: Boolean = false,
 ): ObjCMethod {
 
@@ -117,7 +117,7 @@ internal fun KaCallableSymbol.isRefinedInSwift(): Boolean = when {
 }
 
 context(KaSession, KtObjCExportSession)
-internal fun KaFunctionLikeSymbol.getSwiftName(methodBridge: MethodBridge): String {
+internal fun KaFunctionSymbol.getSwiftName(methodBridge: MethodBridge): String {
     //assert(mapper.isBaseMethod(method)) //TODO: implement isBaseMethod
     if (this is KaNamedSymbol) {
         anyMethodSwiftNames[name]?.let { return it }
@@ -213,7 +213,7 @@ private fun splitSelector(selector: String): List<String> {
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getSelector]
  */
 context(KaSession, KtObjCExportSession)
-fun KaFunctionLikeSymbol.getSelector(methodBridge: MethodBridge): String {
+fun KaFunctionSymbol.getSelector(methodBridge: MethodBridge): String {
 
     if (this is KaNamedSymbol) {
         val name = this.name
@@ -270,7 +270,7 @@ fun KaFunctionLikeSymbol.getSelector(methodBridge: MethodBridge): String {
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getMangledName]
  */
 context(KaSession, KtObjCExportSession)
-private fun KaFunctionLikeSymbol.getMangledName(forSwift: Boolean): String {
+private fun KaFunctionSymbol.getMangledName(forSwift: Boolean): String {
     return if (this.isConstructor) {
         if (isArrayConstructor && !forSwift) "array" else "init"
     } else {
@@ -295,7 +295,7 @@ private fun String.startsWithWords(words: String) = this.startsWith(words) &&
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mapReturnType]
  */
 context(KaSession, KtObjCExportSession)
-fun KaFunctionLikeSymbol.mapReturnType(returnBridge: MethodBridge.ReturnValue): ObjCType {
+fun KaFunctionSymbol.mapReturnType(returnBridge: MethodBridge.ReturnValue): ObjCType {
     return when (returnBridge) {
         MethodBridge.ReturnValue.Suspend,
         MethodBridge.ReturnValue.Void,

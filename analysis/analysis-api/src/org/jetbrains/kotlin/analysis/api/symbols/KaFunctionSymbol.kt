@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 
-public sealed class KaFunctionLikeSymbol : KaCallableSymbol(), @Suppress("DEPRECATION") KaSymbolWithKind {
+public sealed class KaFunctionSymbol : KaCallableSymbol(), @Suppress("DEPRECATION") KaSymbolWithKind {
     public abstract val valueParameters: List<KaValueParameterSymbol>
 
     /**
@@ -23,13 +23,16 @@ public sealed class KaFunctionLikeSymbol : KaCallableSymbol(), @Suppress("DEPREC
      */
     public abstract val hasStableParameterNames: Boolean
 
-    abstract override fun createPointer(): KaSymbolPointer<KaFunctionLikeSymbol>
+    abstract override fun createPointer(): KaSymbolPointer<KaFunctionSymbol>
 }
 
-@Deprecated("Use 'KaFunctionLikeSymbol' instead", ReplaceWith("KaFunctionLikeSymbol"))
-public typealias KtFunctionLikeSymbol = KaFunctionLikeSymbol
+@Deprecated("Use 'KaFunctionSymbol' instead", ReplaceWith("KaFunctionSymbol"))
+public typealias KaFunctionLikeSymbol = KaFunctionSymbol
 
-public abstract class KaAnonymousFunctionSymbol : KaFunctionLikeSymbol() {
+@Deprecated("Use 'KaFunctionSymbol' instead", ReplaceWith("KaFunctionSymbol"))
+public typealias KtFunctionLikeSymbol = KaFunctionSymbol
+
+public abstract class KaAnonymousFunctionSymbol : KaFunctionSymbol() {
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.LOCAL }
     final override val callableId: CallableId? get() = withValidityAssertion { null }
 
@@ -42,7 +45,7 @@ public abstract class KaAnonymousFunctionSymbol : KaFunctionLikeSymbol() {
 @Deprecated("Use 'KaAnonymousFunctionSymbol' instead", ReplaceWith("KaAnonymousFunctionSymbol"))
 public typealias KtAnonymousFunctionSymbol = KaAnonymousFunctionSymbol
 
-public abstract class KaSamConstructorSymbol : KaFunctionLikeSymbol(), KaNamedSymbol {
+public abstract class KaSamConstructorSymbol : KaFunctionSymbol(), KaNamedSymbol {
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.TOP_LEVEL }
 
     abstract override fun createPointer(): KaSymbolPointer<KaSamConstructorSymbol>
@@ -51,7 +54,7 @@ public abstract class KaSamConstructorSymbol : KaFunctionLikeSymbol(), KaNamedSy
 @Deprecated("Use 'KaSamConstructorSymbol' instead", ReplaceWith("KaSamConstructorSymbol"))
 public typealias KtSamConstructorSymbol = KaSamConstructorSymbol
 
-public abstract class KaNamedFunctionSymbol : KaFunctionLikeSymbol(),
+public abstract class KaNamedFunctionSymbol : KaFunctionSymbol(),
     KaNamedSymbol,
     KaPossibleMemberSymbol,
     KaPossibleMultiplatformSymbol,
@@ -85,7 +88,7 @@ public abstract class KaNamedFunctionSymbol : KaFunctionLikeSymbol(),
 @Deprecated("Use 'KaNamedFunctionSymbol' instead", ReplaceWith("KaNamedFunctionSymbol"))
 public typealias KtFunctionSymbol = KaNamedFunctionSymbol
 
-public abstract class KaConstructorSymbol : KaFunctionLikeSymbol(),
+public abstract class KaConstructorSymbol : KaFunctionSymbol(),
     KaPossibleMemberSymbol,
     KaPossibleMultiplatformSymbol,
     KaSymbolWithVisibility {

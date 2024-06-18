@@ -10,7 +10,7 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableLikeSymbol
@@ -1247,7 +1247,7 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface OperatorModifierRequired : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = OperatorModifierRequired::class
-        val functionSymbol: KaFunctionLikeSymbol
+        val functionSymbol: KaFunctionSymbol
         val name: String
     }
 
@@ -1258,7 +1258,7 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface InfixModifierRequired : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = InfixModifierRequired::class
-        val functionSymbol: KaFunctionLikeSymbol
+        val functionSymbol: KaFunctionSymbol
     }
 
     interface WrongModifierContainingDeclaration : KaFirDiagnostic<PsiElement> {
@@ -2755,7 +2755,7 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     interface DefaultArgumentsInExpectActualizedByFakeOverride : KaFirDiagnostic<KtClass> {
         override val diagnosticClass get() = DefaultArgumentsInExpectActualizedByFakeOverride::class
         val expectClassSymbol: KaClassLikeSymbol
-        val members: List<KaFunctionLikeSymbol>
+        val members: List<KaFunctionSymbol>
     }
 
     interface ExpectedFunctionSourceWithDefaultArgumentsNotFound : KaFirDiagnostic<PsiElement> {
@@ -3266,7 +3266,7 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface AssignmentOperatorShouldReturnUnit : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = AssignmentOperatorShouldReturnUnit::class
-        val functionSymbol: KaFunctionLikeSymbol
+        val functionSymbol: KaFunctionSymbol
         val operator: String
     }
 
@@ -3739,9 +3739,9 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface AccidentalOverrideClashByJvmSignature : KaFirDiagnostic<KtNamedFunction> {
         override val diagnosticClass get() = AccidentalOverrideClashByJvmSignature::class
-        val hidden: KaFunctionLikeSymbol
+        val hidden: KaFunctionSymbol
         val overrideDescription: String
-        val regular: KaFunctionLikeSymbol
+        val regular: KaFunctionSymbol
     }
 
     interface JavaTypeMismatch : KaFirDiagnostic<KtExpression> {
@@ -4077,7 +4077,7 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface SyntheticPropertyWithoutJavaOrigin : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = SyntheticPropertyWithoutJavaOrigin::class
-        val originalSymbol: KaFunctionLikeSymbol
+        val originalSymbol: KaFunctionSymbol
         val functionName: Name
     }
 
@@ -4096,7 +4096,7 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface OverridingExternalFunWithOptionalParamsWithFake : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = OverridingExternalFunWithOptionalParamsWithFake::class
-        val function: KaFunctionLikeSymbol
+        val function: KaFunctionSymbol
     }
 
     interface CallToDefinedExternallyFromNonExternalDeclaration : KaFirDiagnostic<PsiElement> {

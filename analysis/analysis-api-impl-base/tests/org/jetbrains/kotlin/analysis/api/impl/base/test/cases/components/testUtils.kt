@@ -48,7 +48,7 @@ internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
     fun KaType.render() = toString().replace('/', '.')
     return when (this) {
         null -> "null"
-        is KaFunctionLikeSymbol -> buildString {
+        is KaFunctionSymbol -> buildString {
             append(
                 when (this@with) {
                     is KaNamedFunctionSymbol -> callableId ?: name
@@ -308,7 +308,7 @@ internal fun KaSession.renderScopeWithParentDeclarations(scope: KaScope): String
             }
         }
 
-        if (symbol is KaFunctionLikeSymbol && symbol.valueParameters.isNotEmpty()) {
+        if (symbol is KaFunctionSymbol && symbol.valueParameters.isNotEmpty()) {
             appendLine()
             withIndent {
                 printCollection(symbol.valueParameters, separator = "\n") { typeParameter ->

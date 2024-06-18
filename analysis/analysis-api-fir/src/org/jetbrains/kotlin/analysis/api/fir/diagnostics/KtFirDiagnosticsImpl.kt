@@ -10,7 +10,7 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableLikeSymbol
@@ -1492,7 +1492,7 @@ internal class WrongModifierTargetImpl(
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.WrongModifierTarget
 
 internal class OperatorModifierRequiredImpl(
-    override val functionSymbol: KaFunctionLikeSymbol,
+    override val functionSymbol: KaFunctionSymbol,
     override val name: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
@@ -1505,7 +1505,7 @@ internal class OperatorCallOnConstructorImpl(
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.OperatorCallOnConstructor
 
 internal class InfixModifierRequiredImpl(
-    override val functionSymbol: KaFunctionLikeSymbol,
+    override val functionSymbol: KaFunctionSymbol,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.InfixModifierRequired
@@ -3317,7 +3317,7 @@ internal class DefaultArgumentsInExpectWithActualTypealiasImpl(
 
 internal class DefaultArgumentsInExpectActualizedByFakeOverrideImpl(
     override val expectClassSymbol: KaClassLikeSymbol,
-    override val members: List<KaFunctionLikeSymbol>,
+    override val members: List<KaFunctionSymbol>,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtClass>(firDiagnostic, token), KaFirDiagnostic.DefaultArgumentsInExpectActualizedByFakeOverride
@@ -3931,7 +3931,7 @@ internal class IncDecShouldNotReturnUnitImpl(
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.IncDecShouldNotReturnUnit
 
 internal class AssignmentOperatorShouldReturnUnitImpl(
-    override val functionSymbol: KaFunctionLikeSymbol,
+    override val functionSymbol: KaFunctionSymbol,
     override val operator: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
@@ -4509,9 +4509,9 @@ internal class WrongNullabilityForJavaOverrideImpl(
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.WrongNullabilityForJavaOverride
 
 internal class AccidentalOverrideClashByJvmSignatureImpl(
-    override val hidden: KaFunctionLikeSymbol,
+    override val hidden: KaFunctionSymbol,
     override val overrideDescription: String,
-    override val regular: KaFunctionLikeSymbol,
+    override val regular: KaFunctionSymbol,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtNamedFunction>(firDiagnostic, token), KaFirDiagnostic.AccidentalOverrideClashByJvmSignature
@@ -4919,7 +4919,7 @@ internal class NoReflectionInClassPathImpl(
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.NoReflectionInClassPath
 
 internal class SyntheticPropertyWithoutJavaOriginImpl(
-    override val originalSymbol: KaFunctionLikeSymbol,
+    override val originalSymbol: KaFunctionSymbol,
     override val functionName: Name,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
@@ -4942,7 +4942,7 @@ internal class OverridingExternalFunWithOptionalParamsImpl(
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.OverridingExternalFunWithOptionalParams
 
 internal class OverridingExternalFunWithOptionalParamsWithFakeImpl(
-    override val function: KaFunctionLikeSymbol,
+    override val function: KaFunctionSymbol,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.OverridingExternalFunWithOptionalParamsWithFake

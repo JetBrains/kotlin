@@ -48,7 +48,7 @@ internal class KaFe10SymbolProvider(
             }
         }
 
-    override val KtNamedFunction.symbol: KaFunctionLikeSymbol
+    override val KtNamedFunction.symbol: KaFunctionSymbol
         get() = withValidityAssertion {
             return if (hasBody() && (funKeyword == null || nameIdentifier == null)) {
                 anonymousSymbol

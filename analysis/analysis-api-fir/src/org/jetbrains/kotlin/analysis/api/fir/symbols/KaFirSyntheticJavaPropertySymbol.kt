@@ -69,13 +69,13 @@ internal class KaFirSyntheticJavaPropertySymbol(
     override val javaGetterSymbol: KaNamedFunctionSymbol
         get() = withValidityAssertion {
             val fir = firSymbol.fir as FirSyntheticProperty
-            return builder.functionLikeBuilder.buildNamedFunctionSymbol(fir.getter.delegate.symbol)
+            return builder.functionBuilder.buildNamedFunctionSymbol(fir.getter.delegate.symbol)
         }
 
     override val javaSetterSymbol: KaNamedFunctionSymbol?
         get() = withValidityAssertion {
             val fir = firSymbol.fir as FirSyntheticProperty
-            return fir.setter?.delegate?.let { builder.functionLikeBuilder.buildNamedFunctionSymbol(it.symbol) }
+            return fir.setter?.delegate?.let { builder.functionBuilder.buildNamedFunctionSymbol(it.symbol) }
         }
 
     override val setter: KaPropertySetterSymbol?

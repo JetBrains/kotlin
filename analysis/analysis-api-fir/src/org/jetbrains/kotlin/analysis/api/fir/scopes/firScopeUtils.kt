@@ -22,7 +22,7 @@ internal fun FirScope.getCallableSymbols(
     callableNames.forEach { name ->
         yieldList {
             processFunctionsByName(name) { firSymbol ->
-                add(builder.functionLikeBuilder.buildNamedFunctionSymbol(firSymbol))
+                add(builder.functionBuilder.buildNamedFunctionSymbol(firSymbol))
             }
         }
         yieldList {
@@ -40,7 +40,7 @@ internal fun FirScope.getCallableSignatures(
     callableNames.forEach { name ->
         yieldList {
             processFunctionsByName(name) { firSymbol ->
-                add(builder.functionLikeBuilder.buildFunctionLikeSignature(firSymbol))
+                add(builder.functionBuilder.buildFunctionSignature(firSymbol))
             }
         }
         yieldList {
@@ -66,7 +66,7 @@ internal fun FirScope.getConstructors(builder: KaSymbolByFirBuilder): Sequence<K
     sequence {
         yieldList {
             processDeclaredConstructors { firSymbol ->
-                add(builder.functionLikeBuilder.buildConstructorSymbol(firSymbol))
+                add(builder.functionBuilder.buildConstructorSymbol(firSymbol))
             }
         }
     }

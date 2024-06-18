@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionLikeSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
@@ -43,7 +43,7 @@ public sealed class KaCallableMemberCall<S : KaCallableSymbol, C : KaCallableSig
 
 public val <S : KaCallableSymbol, C : KaCallableSignature<S>> KaCallableMemberCall<S, C>.symbol: S get() = partiallyAppliedSymbol.symbol
 
-public sealed class KaFunctionCall<S : KaFunctionLikeSymbol>(
+public sealed class KaFunctionCall<S : KaFunctionSymbol>(
     argumentMapping: LinkedHashMap<KtExpression, KaVariableLikeSignature<KaValueParameterSymbol>>,
 ) : KaCallableMemberCall<S, KaFunctionLikeSignature<S>>() {
 
@@ -59,19 +59,19 @@ public sealed class KaFunctionCall<S : KaFunctionLikeSymbol>(
  * A call to a function.
  */
 public class KaSimpleFunctionCall(
-    partiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionLikeSymbol>,
+    partiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
     argumentMapping: LinkedHashMap<KtExpression, KaVariableLikeSignature<KaValueParameterSymbol>>,
     typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
     isImplicitInvoke: Boolean,
-) : KaFunctionCall<KaFunctionLikeSymbol>(argumentMapping) {
-    private val backingPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionLikeSymbol> = partiallyAppliedSymbol
+) : KaFunctionCall<KaFunctionSymbol>(argumentMapping) {
+    private val backingPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol> = partiallyAppliedSymbol
 
     override val token: KaLifetimeToken get() = backingPartiallyAppliedSymbol.token
 
     /**
      * The function and receivers for this call.
      */
-    override val partiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionLikeSymbol> get() = withValidityAssertion { backingPartiallyAppliedSymbol }
+    override val partiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol> get() = withValidityAssertion { backingPartiallyAppliedSymbol }
 
     override val typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType> by validityAsserted(typeArgumentsMapping)
 

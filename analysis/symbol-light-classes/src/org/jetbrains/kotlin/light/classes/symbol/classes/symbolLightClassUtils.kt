@@ -269,7 +269,7 @@ internal fun SymbolLightClassBase.createMethods(
 }
 
 context(KaSession)
-private inline fun <T : KaFunctionLikeSymbol> createJvmOverloadsIfNeeded(
+private inline fun <T : KaFunctionSymbol> createJvmOverloadsIfNeeded(
     declaration: T,
     result: MutableList<KtLightMethod>,
     lightMethodCreator: (Int, BitSet) -> KtLightMethod
@@ -679,7 +679,7 @@ internal fun KaCallableSymbol.hasTypeForValueClassInSignature(
     }
 
     if (receiverType?.typeForValueClass == true) return true
-    if (this is KaFunctionLikeSymbol) {
+    if (this is KaFunctionSymbol) {
         return valueParameters.any { it.returnType.typeForValueClass }
     }
 

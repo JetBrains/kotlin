@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.methods
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightReferenceListBuilder
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.psiSafe
@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtDeclaration
 import java.util.*
 
-internal abstract class SymbolLightMethod<FType : KaFunctionLikeSymbol> private constructor(
+internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private constructor(
     protected val functionSymbolPointer: KaSymbolPointer<FType>,
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassBase,

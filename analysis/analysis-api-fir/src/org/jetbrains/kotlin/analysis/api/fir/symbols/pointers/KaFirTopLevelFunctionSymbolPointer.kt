@@ -23,7 +23,7 @@ internal class KaFirTopLevelFunctionSymbolPointer(
         firSession: FirSession
     ): KaNamedFunctionSymbol? {
         val firFunction = candidates.findDeclarationWithSignatureBySymbols<FirSimpleFunction>(signature) ?: return null
-        return firSymbolBuilder.functionLikeBuilder.buildNamedFunctionSymbol(firFunction.symbol)
+        return firSymbolBuilder.functionBuilder.buildNamedFunctionSymbol(firFunction.symbol)
     }
 
     override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||

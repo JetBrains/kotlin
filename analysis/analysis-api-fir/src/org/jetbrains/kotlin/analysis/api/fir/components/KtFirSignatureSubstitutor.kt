@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAbstractSignatur
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionLikeSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 internal class KaFirSignatureSubstitutor(
     override val analysisSessionProvider: () -> KaFirSession
 ) : KaAbstractSignatureSubstitutor<KaFirSession>(), KaFirSessionComponent {
-    override fun <S : KaFunctionLikeSymbol> S.asSignature(): KaFunctionLikeSignature<S> = withValidityAssertion {
+    override fun <S : KaFunctionSymbol> S.asSignature(): KaFunctionLikeSignature<S> = withValidityAssertion {
         val firSymbol = (this as KaFirSymbol<*>).firSymbol as FirFunctionSymbol<*>
         return KaFirFunctionLikeDummySignature<S>(analysisSession.token, firSymbol, analysisSession.firSymbolBuilder)
     }

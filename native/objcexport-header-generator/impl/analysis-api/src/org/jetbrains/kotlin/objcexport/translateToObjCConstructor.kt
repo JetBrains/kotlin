@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.objcexport
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.backend.konan.descriptors.arrayTypes
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInstanceType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCMethod
@@ -79,7 +79,7 @@ fun KaClassSymbol.translateToObjCConstructors(): List<ObjCMethod> {
  * Additional primary constructor which goes always after primary constructor ([ObjCMethod.name] == "init")
  */
 context(KaSession)
-private fun buildNewInitConstructor(constructor: KaFunctionLikeSymbol): ObjCMethod {
+private fun buildNewInitConstructor(constructor: KaFunctionSymbol): ObjCMethod {
     return ObjCMethod(
         comment = null,
         origin = constructor.getObjCExportStubOrigin(),

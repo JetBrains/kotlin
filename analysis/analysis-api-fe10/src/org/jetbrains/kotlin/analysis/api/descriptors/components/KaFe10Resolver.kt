@@ -411,7 +411,7 @@ internal class KaFe10Resolver(
     }
 
     private fun ResolvedCall<*>.toFunctionKtCall(context: BindingContext): KaFunctionCall<*>? {
-        val partiallyAppliedSymbol = toPartiallyAppliedFunctionSymbol<KaFunctionLikeSymbol>(context) ?: return null
+        val partiallyAppliedSymbol = toPartiallyAppliedFunctionSymbol<KaFunctionSymbol>(context) ?: return null
         val argumentMapping = createArgumentMapping(partiallyAppliedSymbol.signature)
         if (partiallyAppliedSymbol.signature.symbol is KaConstructorSymbol) {
             @Suppress("UNCHECKED_CAST")
@@ -449,7 +449,7 @@ internal class KaFe10Resolver(
     }
 
 
-    private inline fun <reified S : KaFunctionLikeSymbol> ResolvedCall<*>.toPartiallyAppliedFunctionSymbol(context: BindingContext): KaPartiallyAppliedFunctionSymbol<S>? {
+    private inline fun <reified S : KaFunctionSymbol> ResolvedCall<*>.toPartiallyAppliedFunctionSymbol(context: BindingContext): KaPartiallyAppliedFunctionSymbol<S>? {
         val partiallyAppliedSymbol = toPartiallyAppliedSymbol(context) ?: return null
         if (partiallyAppliedSymbol.symbol !is S) return null
         @Suppress("UNCHECKED_CAST")
@@ -544,7 +544,7 @@ internal class KaFe10Resolver(
         }
         return when (symbol) {
             is KaVariableLikeSymbol -> KaFe10VariableLikeSignature(symbol, ktReturnType, receiverType)
-            is KaFunctionLikeSymbol -> KaFe10FunctionLikeSignature(
+            is KaFunctionSymbol -> KaFe10FunctionLikeSignature(
                 symbol,
                 ktReturnType,
                 receiverType,

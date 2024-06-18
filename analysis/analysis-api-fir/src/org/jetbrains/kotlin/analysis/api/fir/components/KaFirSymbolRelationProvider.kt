@@ -306,7 +306,7 @@ internal class KaFirSymbolRelationProvider(
             val firSession = analysisSession.firSession
             val resolver = FirSamResolver(firSession, analysisSession.getScopeSessionFor(firSession))
             return resolver.getSamConstructor(owner)?.let {
-                analysisSession.firSymbolBuilder.functionLikeBuilder.buildSamConstructorSymbol(it.symbol)
+                analysisSession.firSymbolBuilder.functionBuilder.buildSamConstructorSymbol(it.symbol)
             }
         }
 

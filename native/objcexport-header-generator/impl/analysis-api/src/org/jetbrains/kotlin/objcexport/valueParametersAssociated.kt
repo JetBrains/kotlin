@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
  */
 context(KaSession, KtObjCExportSession)
 internal fun MethodBridge.valueParametersAssociated(
-    function: KaFunctionLikeSymbol,
+    function: KaFunctionSymbol,
 ): List<Pair<MethodBridgeValueParameter, KtObjCParameterData?>> {
 
     val result = mutableListOf<Pair<MethodBridgeValueParameter, KtObjCParameterData?>>()
@@ -58,7 +58,7 @@ private fun MethodBridge.mapParameters(
 context(KaSession, KtObjCExportSession)
 private fun MutableList<Pair<MethodBridgeValueParameter, KtObjCParameterData?>>.addReceiver(
     parameters: List<MethodBridgeValueParameter>,
-    function: KaFunctionLikeSymbol,
+    function: KaFunctionSymbol,
 ) {
 
     val receiverType = function.objCReceiverType
@@ -112,7 +112,7 @@ internal data class KtObjCParameterData(
  * Also see [isObjCProperty]
  */
 context(KaSession)
-internal val KaFunctionLikeSymbol.objCReceiverType: KaType?
+internal val KaFunctionSymbol.objCReceiverType: KaType?
     get() {
         return if (isConstructor) {
             /**

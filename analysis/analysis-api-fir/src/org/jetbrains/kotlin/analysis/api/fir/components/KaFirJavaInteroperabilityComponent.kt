@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertyAccessorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
@@ -270,7 +270,7 @@ internal class KaFirJavaInteroperabilityComponent(
 
                 val containingSymbolOrSelf = when (symbol) {
                     is KaValueParameterSymbol -> {
-                        symbol.containingSymbol as? KaFunctionLikeSymbol ?: symbol
+                        symbol.containingSymbol as? KaFunctionSymbol ?: symbol
                     }
                     is KaPropertyAccessorSymbol -> {
                         symbol.containingSymbol as? KaPropertySymbol ?: symbol

@@ -82,7 +82,7 @@ internal class KaSymbolByFirBuilder(
     private val symbolsCache = BuilderCache<FirBasedSymbol<*>, KaSymbol>()
 
     val classifierBuilder = ClassifierSymbolBuilder()
-    val functionLikeBuilder = FunctionLikeSymbolBuilder()
+    val functionBuilder = FunctionSymbolBuilder()
     val variableLikeBuilder = VariableLikeSymbolBuilder()
     val callableBuilder = CallableSymbolBuilder()
     val anonymousInitializerBuilder = AnonymousInitializerBuilder()
@@ -195,8 +195,8 @@ internal class KaSymbolByFirBuilder(
         }
     }
 
-    inner class FunctionLikeSymbolBuilder {
-        fun buildFunctionLikeSymbol(firSymbol: FirFunctionSymbol<*>): KaFunctionLikeSymbol {
+    inner class FunctionSymbolBuilder {
+        fun buildFunctionSymbol(firSymbol: FirFunctionSymbol<*>): KaFunctionSymbol {
             return when (firSymbol) {
                 is FirNamedFunctionSymbol -> {
                     if (firSymbol.origin == FirDeclarationOrigin.SamConstructor) {
@@ -212,10 +212,11 @@ internal class KaSymbolByFirBuilder(
             }
         }
 
-        fun buildFunctionLikeSignature(fir: FirFunctionSymbol<*>): KaFunctionLikeSignature<KaFunctionLikeSymbol> {
+        fun buildFunctionSignature(fir: FirFunctionSymbol<*>): KaFunctionLikeSignature<KaFunctionSymbol> {
             if (fir is FirNamedFunctionSymbol && fir.origin != FirDeclarationOrigin.SamConstructor)
                 return buildNamedFunctionSignature(fir)
-            return with(analysisSession) { buildFunctionLikeSymbol(fir).asSignature() }
+
+            return with(analysisSession) { buildFunctionSymbol(fir).asSignature() }
         }
 
         fun buildNamedFunctionSymbol(firSymbol: FirNamedFunctionSymbol): KaFirNamedFunctionSymbol {
@@ -262,7 +263,7 @@ internal class KaSymbolByFirBuilder(
             }
         }
 
-        fun buildPropertyAccessorSymbol(firSymbol: FirPropertyAccessorSymbol): KaFunctionLikeSymbol {
+        fun buildPropertyAccessorSymbol(firSymbol: FirPropertyAccessorSymbol): KaFunctionSymbol {
             return symbolsCache.cache(firSymbol) {
                 if (firSymbol.isGetter) {
                     KaFirPropertyGetterSymbol(firSymbol, analysisSession)
@@ -390,7 +391,7 @@ internal class KaSymbolByFirBuilder(
         fun buildCallableSymbol(firSymbol: FirCallableSymbol<*>): KaCallableSymbol {
             return when (firSymbol) {
                 is FirPropertyAccessorSymbol -> buildPropertyAccessorSymbol(firSymbol)
-                is FirFunctionSymbol<*> -> functionLikeBuilder.buildFunctionLikeSymbol(firSymbol)
+                is FirFunctionSymbol<*> -> functionBuilder.buildFunctionSymbol(firSymbol)
                 is FirVariableSymbol<*> -> variableLikeBuilder.buildVariableLikeSymbol(firSymbol)
                 else -> throwUnexpectedElementError(firSymbol)
             }
@@ -399,7 +400,7 @@ internal class KaSymbolByFirBuilder(
         fun buildCallableSignature(firSymbol: FirCallableSymbol<*>): KaCallableSignature<KaCallableSymbol> {
             return when (firSymbol) {
                 is FirPropertyAccessorSymbol ->  with(analysisSession) { buildPropertyAccessorSymbol(firSymbol).asSignature() }
-                is FirFunctionSymbol<*> -> functionLikeBuilder.buildFunctionLikeSignature(firSymbol)
+                is FirFunctionSymbol<*> -> functionBuilder.buildFunctionSignature(firSymbol)
                 is FirVariableSymbol<*> -> variableLikeBuilder.buildVariableLikeSignature(firSymbol)
                 else -> throwUnexpectedElementError(firSymbol)
             }

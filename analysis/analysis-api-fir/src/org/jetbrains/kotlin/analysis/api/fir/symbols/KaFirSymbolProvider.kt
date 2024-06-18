@@ -65,18 +65,18 @@ internal class KaFirSymbolProvider(
             firSymbolBuilder.buildScriptSymbol(resolveToFirSymbolOfType<FirScriptSymbol>(firResolveSession))
         }
 
-    override val KtNamedFunction.symbol: KaFunctionLikeSymbol
+    override val KtNamedFunction.symbol: KaFunctionSymbol
         get() = withValidityAssertion {
             return when (val firSymbol = resolveToFirSymbolOfType<FirFunctionSymbol<*>>(firResolveSession)) {
                 is FirNamedFunctionSymbol -> {
                     if (firSymbol.origin == FirDeclarationOrigin.SamConstructor) {
-                        firSymbolBuilder.functionLikeBuilder.buildSamConstructorSymbol(firSymbol)
+                        firSymbolBuilder.functionBuilder.buildSamConstructorSymbol(firSymbol)
                     } else {
-                        firSymbolBuilder.functionLikeBuilder.buildNamedFunctionSymbol(firSymbol)
+                        firSymbolBuilder.functionBuilder.buildNamedFunctionSymbol(firSymbol)
                     }
                 }
 
-                is FirAnonymousFunctionSymbol -> firSymbolBuilder.functionLikeBuilder.buildAnonymousFunctionSymbol(firSymbol)
+                is FirAnonymousFunctionSymbol -> firSymbolBuilder.functionBuilder.buildAnonymousFunctionSymbol(firSymbol)
                 else -> errorWithAttachment("Unexpected ${firSymbol::class}") {
                     withFirSymbolEntry("firSymbol", firSymbol)
                     withPsiEntry("function", this@symbol, analysisSession::getModule)
@@ -86,7 +86,7 @@ internal class KaFirSymbolProvider(
 
     override val KtConstructor<*>.symbol: KaConstructorSymbol
         get() = withValidityAssertion {
-            firSymbolBuilder.functionLikeBuilder.buildConstructorSymbol(
+            firSymbolBuilder.functionBuilder.buildConstructorSymbol(
                 resolveToFirSymbolOfType<FirConstructorSymbol>(firResolveSession)
             )
         }
@@ -114,14 +114,14 @@ internal class KaFirSymbolProvider(
 
     override val KtNamedFunction.anonymousSymbol: KaAnonymousFunctionSymbol
         get() = withValidityAssertion {
-            firSymbolBuilder.functionLikeBuilder.buildAnonymousFunctionSymbol(
+            firSymbolBuilder.functionBuilder.buildAnonymousFunctionSymbol(
                 resolveToFirSymbolOfType<FirAnonymousFunctionSymbol>(firResolveSession)
             )
         }
 
     override val KtFunctionLiteral.symbol: KaAnonymousFunctionSymbol
         get() = withValidityAssertion {
-            firSymbolBuilder.functionLikeBuilder.buildAnonymousFunctionSymbol(
+            firSymbolBuilder.functionBuilder.buildAnonymousFunctionSymbol(
                 resolveToFirSymbolOfType<FirAnonymousFunctionSymbol>(firResolveSession)
             )
         }

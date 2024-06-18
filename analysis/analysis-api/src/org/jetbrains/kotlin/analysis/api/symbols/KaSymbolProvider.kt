@@ -32,12 +32,12 @@ public interface KaSymbolProvider {
     public val KtParameter.symbol: KaVariableLikeSymbol
 
     /**
-     * Creates [KaFunctionLikeSymbol] by [KtNamedFunction]
+     * Creates [KaFunctionSymbol] by [KtNamedFunction]
      *
      * If [KtNamedFunction.getName] is `null` then returns [KaAnonymousFunctionSymbol]
      * Otherwise, returns [KaNamedFunctionSymbol]
      */
-    public val KtNamedFunction.symbol: KaFunctionLikeSymbol
+    public val KtNamedFunction.symbol: KaFunctionSymbol
 
     public val KtConstructor<*>.symbol: KaConstructorSymbol
 
@@ -83,7 +83,7 @@ public interface KaSymbolProvider {
     public fun KtParameter.getParameterSymbol(): KaVariableLikeSymbol = symbol
 
     @Deprecated("Use 'symbol' instead", replaceWith = ReplaceWith("symbol"))
-    public fun KtNamedFunction.getFunctionLikeSymbol(): KaFunctionLikeSymbol = symbol
+    public fun KtNamedFunction.getFunctionLikeSymbol(): KaFunctionSymbol = symbol
 
     @Deprecated("Use 'symbol' instead", replaceWith = ReplaceWith("symbol"))
     public fun KtConstructor<*>.getConstructorSymbol(): KaConstructorSymbol = symbol

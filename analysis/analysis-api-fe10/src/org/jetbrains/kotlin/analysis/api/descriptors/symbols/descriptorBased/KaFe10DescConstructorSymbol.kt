@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.*
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.isEqualTo
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10DescFunctionLikeSymbolPointer
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10DescFunctionSymbolPointer
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10NeverRestoringSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
@@ -62,7 +62,7 @@ internal class KaFe10DescConstructorSymbol(
         val callableId = descriptor.callableIdIfNotLocal
         if (callableId != null) {
             val signature = descriptor.getSymbolPointerSignature()
-            return KaFe10DescFunctionLikeSymbolPointer(callableId, signature)
+            return KaFe10DescFunctionSymbolPointer(callableId, signature)
         }
 
         return KaFe10NeverRestoringSymbolPointer()

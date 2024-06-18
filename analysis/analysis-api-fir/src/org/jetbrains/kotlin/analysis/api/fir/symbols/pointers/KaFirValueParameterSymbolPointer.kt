@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.name.Name
 
 internal class KaFirValueParameterSymbolPointer(
-    private val ownerPointer: KaSymbolPointer<KaFunctionLikeSymbol>,
+    private val ownerPointer: KaSymbolPointer<KaFunctionSymbol>,
     private val name: Name,
     private val index: Int,
 ) : KaSymbolPointer<KaValueParameterSymbol>() {

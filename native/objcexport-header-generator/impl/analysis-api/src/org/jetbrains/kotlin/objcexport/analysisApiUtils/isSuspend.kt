@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.objcexport.analysisApiUtils
 
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 
-internal val KaFunctionLikeSymbol.isSuspend: Boolean
+internal val KaFunctionSymbol.isSuspend: Boolean
     get() = if (this is KaNamedFunctionSymbol) isSuspend else false

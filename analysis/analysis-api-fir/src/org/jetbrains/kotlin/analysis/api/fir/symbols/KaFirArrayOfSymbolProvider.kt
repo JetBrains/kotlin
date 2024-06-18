@@ -22,7 +22,7 @@ object KaFirArrayOfSymbolProvider {
              */
             (it as? FirFunctionSymbol<*>)?.fir?.valueParameters?.singleOrNull()?.isVararg == true
         } as? FirNamedFunctionSymbol ?: return null
-        return firSymbolBuilder.functionLikeBuilder.buildNamedFunctionSymbol(firSymbol)
+        return firSymbolBuilder.functionBuilder.buildNamedFunctionSymbol(firSymbol)
     }
 
     private val kotlinPackage = FqName("kotlin")

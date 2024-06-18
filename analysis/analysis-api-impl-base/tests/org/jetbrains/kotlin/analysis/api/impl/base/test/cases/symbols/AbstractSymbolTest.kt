@@ -411,7 +411,7 @@ private fun KaSymbol?.withImplicitSymbols(): Sequence<KaSymbol> {
             yieldAll(ktSymbol.setter.withImplicitSymbols())
         }
 
-        if (ktSymbol is KaFunctionLikeSymbol) {
+        if (ktSymbol is KaFunctionSymbol) {
             for (parameter in ktSymbol.valueParameters) {
                 yieldAll(parameter.withImplicitSymbols())
             }

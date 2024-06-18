@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportFunctionName
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getPropertySymbol
 
 context(KaSession, KtObjCExportSession)
-fun KaFunctionLikeSymbol.getObjCFunctionName(): ObjCExportFunctionName {
+fun KaFunctionSymbol.getObjCFunctionName(): ObjCExportFunctionName {
     val annotationName =
         if (this is KaPropertyAccessorSymbol) containingSymbol?.resolveObjCNameAnnotation()
         else resolveObjCNameAnnotation()
@@ -22,14 +22,14 @@ fun KaFunctionLikeSymbol.getObjCFunctionName(): ObjCExportFunctionName {
 }
 
 context(KaSession)
-private fun KaFunctionLikeSymbol.getObjCFunctionName(annotationName: String?): String {
+private fun KaFunctionSymbol.getObjCFunctionName(annotationName: String?): String {
     return if (annotationName != null) {
         if (this is KaPropertyAccessorSymbol) formatPropertyName(annotationName) else annotationName
     } else translationName
 }
 
 context(KaSession)
-private val KaFunctionLikeSymbol.translationName: String
+private val KaFunctionSymbol.translationName: String
     get() {
         return when (this) {
             is KaNamedFunctionSymbol -> name.asString()

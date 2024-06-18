@@ -7,7 +7,7 @@ package org.jetbrains.sir.lightclasses.utils
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.source.KotlinParameterOrigin
 import org.jetbrains.kotlin.sir.providers.utils.updateImports
@@ -27,7 +27,7 @@ internal inline fun <reified T : KaCallableSymbol> SirFromKtSymbol<T>.translateR
 }
 
 @OptIn(KaExperimentalApi::class)
-internal inline fun <reified T : KaFunctionLikeSymbol> SirFromKtSymbol<T>.translateParameters(): List<SirParameter> {
+internal inline fun <reified T : KaFunctionSymbol> SirFromKtSymbol<T>.translateParameters(): List<SirParameter> {
     return withSessions {
         this@translateParameters.ktSymbol.valueParameters.map { parameter ->
             val sirType = parameter.returnType.translateType(

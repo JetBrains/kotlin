@@ -277,7 +277,7 @@ internal fun computeContainingSymbolOrSelf(symbol: KaSymbol, analysisSession: Ka
     with(analysisSession) {
         return when (symbol) {
             is KaValueParameterSymbol -> {
-                symbol.containingSymbol as? KaFunctionLikeSymbol ?: symbol
+                symbol.containingSymbol as? KaFunctionSymbol ?: symbol
             }
             is KaPropertyAccessorSymbol -> {
                 symbol.containingSymbol as? KaPropertySymbol ?: symbol

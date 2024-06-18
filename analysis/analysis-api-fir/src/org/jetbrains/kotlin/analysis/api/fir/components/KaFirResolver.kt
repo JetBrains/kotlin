@@ -46,11 +46,11 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfTypeSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesResolver
-import org.jetbrains.kotlin.analysis.api.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
@@ -638,10 +638,10 @@ internal class KaFirResolver(
                         )
                     }
                     // if errorsness call without ()
-                    is KaFunctionLikeSymbol -> {
+                    is KaFunctionSymbol -> {
                         @Suppress("UNCHECKED_CAST") // safe because of the above check on targetKtSymbol
                         KaSimpleFunctionCall(
-                            partiallyAppliedSymbol as KaPartiallyAppliedFunctionSymbol<KaFunctionLikeSymbol>,
+                            partiallyAppliedSymbol as KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
                             LinkedHashMap(),
                             fir.toTypeArgumentsMapping(partiallyAppliedSymbol),
                             isImplicitInvoke,
@@ -650,7 +650,7 @@ internal class KaFirResolver(
                 }
             }
             is FirFunctionCall -> {
-                if (unsubstitutedKtSignature.symbol !is KaFunctionLikeSymbol) return null
+                if (unsubstitutedKtSignature.symbol !is KaFunctionSymbol) return null
                 val argumentMapping = if (candidate is Candidate) {
                     candidate.argumentMapping
                 } else {
@@ -664,7 +664,7 @@ internal class KaFirResolver(
                     }
                 @Suppress("UNCHECKED_CAST") // safe because of the above check on targetKtSymbol
                 KaSimpleFunctionCall(
-                    partiallyAppliedSymbol as KaPartiallyAppliedFunctionSymbol<KaFunctionLikeSymbol>,
+                    partiallyAppliedSymbol as KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
                     @Suppress("USELESS_CAST") // K2 warning suppression, TODO: KT-62472
                     argumentMappingWithoutExtensionReceiver
                         ?.createArgumentMapping(partiallyAppliedSymbol.signature as KaFunctionLikeSignature<*>)
@@ -971,7 +971,7 @@ internal class KaFirResolver(
     private fun FirClassLikeSymbol<*>.toKtSymbol(): KaClassLikeSymbol = firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(this)
 
     private fun FirNamedFunctionSymbol.toKtSignature(): KaFunctionLikeSignature<KaNamedFunctionSymbol> =
-        firSymbolBuilder.functionLikeBuilder.buildNamedFunctionSignature(this)
+        firSymbolBuilder.functionBuilder.buildNamedFunctionSignature(this)
 
     private fun FirVariableSymbol<*>.toKtSignature(): KaVariableLikeSignature<KaVariableLikeSymbol> =
         firSymbolBuilder.variableLikeBuilder.buildVariableLikeSignature(this)
