@@ -35,6 +35,9 @@ val ConeAttributes.enhancedTypeForWarning: EnhancedTypeForWarningAttribute? by C
 val ConeKotlinType.enhancedTypeForWarning: ConeKotlinType?
     get() = attributes.enhancedTypeForWarning?.coneType
 
+val ConeKotlinType.enhancedTypeForWarningOrSelf: ConeKotlinType
+    get() = enhancedTypeForWarning ?: this
+
 val ConeKotlinType.isEnhancedTypeForWarningDeprecation: Boolean
     get() = attributes.enhancedTypeForWarning?.isDeprecation == true
 

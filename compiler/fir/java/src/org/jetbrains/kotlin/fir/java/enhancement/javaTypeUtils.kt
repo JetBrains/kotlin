@@ -123,7 +123,12 @@ private fun ConeSimpleKotlinType.enhanceInflexibleType(
     )
 
     return if (enhanced != null && (effectiveQualifiers.isNullabilityQualifierForWarning || convertErrorToWarning)) {
-        val newAttributes = attributes.add(EnhancedTypeForWarningAttribute(enhanced, isDeprecation = convertErrorToWarning && effectiveQualifiers.enhancesSomethingForError()))
+        val newAttributes = attributes.add(
+            EnhancedTypeForWarningAttribute(
+                enhanced.enhancedTypeForWarningOrSelf,
+                isDeprecation = convertErrorToWarning && effectiveQualifiers.enhancesSomethingForError()
+            )
+        )
 
         if (enhancedTag != lookupTag) {
             // Handle case when mutability was enhanced and nullability was enhanced for warning.
