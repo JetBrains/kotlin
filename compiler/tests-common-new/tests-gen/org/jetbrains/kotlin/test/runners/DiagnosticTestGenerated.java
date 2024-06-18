@@ -17015,6 +17015,24 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("kt69159Simplified.kt")
+      public void testKt69159Simplified() {
+        runTest("compiler/testData/diagnostics/tests/inference/kt69159Simplified.kt");
+      }
+
+      @Test
+      @TestMetadata("kt69159WithComparable.kt")
+      public void testKt69159WithComparable() {
+        runTest("compiler/testData/diagnostics/tests/inference/kt69159WithComparable.kt");
+      }
+
+      @Test
+      @TestMetadata("kt69326.kt")
+      public void testKt69326() {
+        runTest("compiler/testData/diagnostics/tests/inference/kt69326.kt");
+      }
+
+      @Test
       @TestMetadata("lambdaArgumentWithLabel.kt")
       public void testLambdaArgumentWithLabel() {
         runTest("compiler/testData/diagnostics/tests/inference/lambdaArgumentWithLabel.kt");
