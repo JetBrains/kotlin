@@ -479,6 +479,7 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
                 stableTypeMatchers = stableTypeMatchers,
                 moduleMetricsFactory = moduleMetricsFactory,
                 descriptorSerializerContext = descriptorSerializerContext,
+                messageCollector = msgCollector
             )
         }
     }

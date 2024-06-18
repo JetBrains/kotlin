@@ -43,6 +43,9 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureFactory
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsGlobalDeclarationTable
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -51,6 +54,7 @@ import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
 class ComposeIrGenerationExtension(
     @Suppress("unused") private val liveLiteralsEnabled: Boolean = false,
@@ -69,6 +73,7 @@ class ComposeIrGenerationExtension(
     private val stableTypeMatchers: Set<FqNameMatcher> = emptySet(),
     private val moduleMetricsFactory: ((StabilityInferencer) -> ModuleMetrics)? = null,
     private val descriptorSerializerContext: ComposeDescriptorSerializerContext? = null,
+    private val messageCollector: MessageCollector? = null
 ) : IrGenerationExtension {
     var metrics: ModuleMetrics = EmptyModuleMetrics
         private set
@@ -124,7 +129,8 @@ class ComposeIrGenerationExtension(
             classStabilityInferredCollection = descriptorSerializerContext
                 ?.classStabilityInferredCollection?.takeIf {
                     !pluginContext.platform.isJvm()
-                }
+                },
+            messageCollector
         ).lower(moduleFragment)
 
         LiveLiteralTransformer(

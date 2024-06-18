@@ -27,6 +27,9 @@ import androidx.compose.compiler.plugins.kotlin.analysis.normalize
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.IrStatement
@@ -36,7 +39,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
@@ -50,6 +52,7 @@ import org.jetbrains.kotlin.ir.util.isFileClass
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
 enum class StabilityBits(val bits: Int) {
     UNSTABLE(0b100),
@@ -67,8 +70,9 @@ class ClassStabilityTransformer(
     symbolRemapper: DeepCopySymbolRemapper,
     metrics: ModuleMetrics,
     stabilityInferencer: StabilityInferencer,
-    private val classStabilityInferredCollection: ClassStabilityInferredCollection? = null
-) : AbstractComposeLowering(context, symbolRemapper, metrics, stabilityInferencer),
+    private val classStabilityInferredCollection: ClassStabilityInferredCollection? = null,
+    private val messageCollector: MessageCollector? = null
+) : AbstractComposeLowering(context, symbolRemapper, metrics, stabilityInferencer, mutableSetOf<ClassDescriptor>()),
     ClassLoweringPass,
     ModuleLoweringPass {
 
@@ -78,6 +82,18 @@ class ClassStabilityTransformer(
 
     override fun lower(module: IrModuleFragment) {
         module.transformChildrenVoid(this)
+
+        if (!context.platform.isJvm() && !unstableClassesWarning.isNullOrEmpty()) {
+            val classIds = unstableClassesWarning.mapTo(mutableSetOf()) { it.fqNameSafe.toString() }
+            val classesConcatenated = classIds.sorted().joinToString("\n")
+            messageCollector?.report(
+                CompilerMessageSeverity.WARNING,
+                "Due to some of dependencies were built using older compiler plugin, stability of following classes " +
+                        "is considered `Unstable`, which may cause additional recompositions happening at runtime on non-JVM targets. " +
+                        "To prevent that consider updating dependency libraries to a newer version built with newer compose compiler plugin.\n" +
+                        classesConcatenated
+            )
+        }
     }
 
     override fun lower(irClass: IrClass) {
@@ -197,16 +213,11 @@ class ClassStabilityTransformer(
 
     @OptIn(IrImplementationDetail::class, UnsafeDuringIrConstructionAPI::class)
     private fun IrClass.addStabilityMarkerField(stabilityExpression: IrExpression) {
-        val stabilityField = this.makeStabilityField().apply {
-            initializer = context.irFactory.createExpressionBody(
-                UNDEFINED_OFFSET,
-                UNDEFINED_OFFSET,
-                stabilityExpression
-            )
-        }
-
-        if (context.platform.isJvm()) {
-            declarations += stabilityField
-        }
+        val stabilityField = makeStabilityField()
+        stabilityField.initializer = context.irFactory.createExpressionBody(
+            UNDEFINED_OFFSET,
+            UNDEFINED_OFFSET,
+            stabilityExpression
+        )
     }
 }
