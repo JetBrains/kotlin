@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
+import org.jetbrains.kotlin.analysis.low.level.api.fir.services.firRenderingOptions
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -34,6 +35,6 @@ abstract class AbstractStdLibBasedGetOrBuildFirTest : AbstractAnalysisApiBasedTe
 
         val resolveSession = LLFirResolveSessionService.getInstance(project).getFirResolveSession(mainModule.ktModule)
         val fir = declaration.resolveToFirSymbol(resolveSession).fir
-        testServices.assertions.assertEqualsToTestDataFileSibling(renderActualFir(fir, declaration))
+        testServices.assertions.assertEqualsToTestDataFileSibling(renderActualFir(fir, declaration, testServices.firRenderingOptions))
     }
 }
