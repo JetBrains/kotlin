@@ -29,8 +29,6 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeVisibilityError
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 
@@ -70,20 +68,6 @@ object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker(M
 
         val callableSymbol = expression.calleeReference?.toResolvedCallableSymbol()
         if (callableSymbol is FirPropertySymbol && shouldInvisibleSetterBeReported(callableSymbol)) {
-            val explicitReceiver = expression.explicitReceiver
-            // Try to get type from smartcast
-            if (explicitReceiver is FirSmartCastExpression) {
-                val symbol = explicitReceiver.originalExpression.resolvedType.toRegularClassSymbol(context.session)
-                if (symbol != null) {
-                    for (declarationSymbol in symbol.declarationSymbols) {
-                        if (declarationSymbol is FirPropertySymbol && declarationSymbol.name == callableSymbol.name) {
-                            if (!shouldInvisibleSetterBeReported(declarationSymbol)) {
-                                return
-                            }
-                        }
-                    }
-                }
-            }
             reporter.reportOn(
                 expression.lValue.source,
                 FirErrors.INVISIBLE_SETTER,
