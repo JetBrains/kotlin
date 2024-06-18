@@ -233,6 +233,7 @@ abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     override fun applyDependencies(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
         dependencies.friends.takeIf(Collection<*>::isNotEmpty)?.let { friends ->
             add("-friend-modules", friends.joinToString(File.pathSeparator) { friend -> friend.path })
+            addFlattened(friends) { friend -> listOf("-l", friend.path) }
         }
         add(dependencies.includedLibraries) { include -> "-Xinclude=${include.path}" }
         super.applyDependencies(argsBuilder)
@@ -728,24 +729,17 @@ internal class StaticCacheCompilation(
 
     override fun applyDependencies(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
         dependencies.friends.takeIf(Collection<*>::isNotEmpty)?.let { friends ->
-            add(
-                "-friend-modules",
-                friends.joinToString(File.pathSeparator) { friend ->
-                    friend.headerKlib.takeIf { useHeaders && it.exists() }?.path ?: friend.path
-                })
+            add("-friend-modules", friends.joinToString(File.pathSeparator) { friend -> friend.getHeaderKlibPathOrDefaultPath() })
         }
-        addFlattened(dependencies.cachedLibraries) { lib ->
-            listOf(
-                "-l",
-                lib.klib.headerKlib.takeIf { useHeaders && it.exists() }?.path ?: lib.klib.path
-            )
-        }
+        addFlattened(dependencies.cachedLibraries) { lib -> listOf("-l", lib.klib.getHeaderKlibPathOrDefaultPath()) }
         super.applyDependencies(argsBuilder)
     }
 
     override fun postCompileCheck() {
         (options as? Options.ForIncludedLibraryWithTests)?.expectedExecutableArtifact?.testDumpFile?.assertTestDumpFileNotEmptyIfExists()
     }
+
+    private fun KLIB.getHeaderKlibPathOrDefaultPath(): String = headerKlib.takeIf { useHeaders && it.exists() }?.path ?: path
 }
 
 internal class TestBundleCompilation(

@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.konan.test.blackbox.support
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.WithTestRunnerExtras
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allRegularDependencies
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allDependsOnDependencies
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allFriendDependencies
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
@@ -252,12 +253,14 @@ class TestCase(
         modules.forEach { module ->
             allModules += module
             allModules += module.allRegularDependencies
+            allModules += module.allFriendDependencies
             allModules += module.allDependsOnDependencies
         }
 
         val rootModules = allModules.toHashSet()
         allModules.forEach { module ->
             rootModules -= module.allRegularDependencies
+            rootModules -= module.allFriendDependencies
             rootModules -= module.allDependsOnDependencies
         }
 

@@ -376,10 +376,8 @@ internal class TestCompilationFactory {
                 val klibCompilations = modulesToKlib(setOf(dependencyModule), freeCompilerArgs, produceStaticCache, settings)
                 klibDependencies += klibCompilations.klib.asKlibDependency(type)
 
-                if (type == Library || type == IncludedLibrary) {
-                    staticCacheDependencies.addIfNotNull(klibCompilations.staticCache?.asStaticCacheDependency())
-                    staticCacheHeaderDependencies.addIfNotNull((klibCompilations.headerCache ?: klibCompilations.staticCache)?.asStaticCacheDependency())
-                }
+                staticCacheDependencies.addIfNotNull(klibCompilations.staticCache?.asStaticCacheDependency())
+                staticCacheHeaderDependencies.addIfNotNull((klibCompilations.headerCache ?: klibCompilations.staticCache)?.asStaticCacheDependency())
             }
 
         sourceModules.allRegularDependencies().collectDependencies(Library)
