@@ -53,7 +53,7 @@ internal class KaFe10SymbolProvider(
             return if (hasBody() && (funKeyword == null || nameIdentifier == null)) {
                 anonymousSymbol
             } else {
-                KaFe10PsiFunctionSymbol(this, analysisContext)
+                KaFe10PsiNamedFunctionSymbol(this, analysisContext)
             }
         }
 

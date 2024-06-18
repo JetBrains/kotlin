@@ -100,7 +100,7 @@ private fun convertArgument(argument: FirRegularClassSymbol, firSymbolBuilder: K
 }
 
 private fun convertArgument(argument: FirNamedFunctionSymbol, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
-    return firSymbolBuilder.functionLikeBuilder.buildFunctionSymbol(argument)
+    return firSymbolBuilder.functionLikeBuilder.buildNamedFunctionSymbol(argument)
 }
 
 private fun convertArgument(argument: FirPropertySymbol, firSymbolBuilder: KaSymbolByFirBuilder): Any? {

@@ -7,7 +7,7 @@ KtNameReferenceExpression(44,47): 'foo'
             annotations: []
             location: LOCAL
             origin: SOURCE
-            owningCallableSymbol: KaFunctionSymbol(/call)
+            owningCallableSymbol: KaNamedFunctionSymbol(/call)
             type: KaUsualClassType:
               annotations: []
               typeArguments: []

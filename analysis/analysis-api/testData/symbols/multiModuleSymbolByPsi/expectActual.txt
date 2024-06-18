@@ -162,7 +162,7 @@ KaNamedClassSymbol:
   typeParameters: []
   visibility: Public
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: sample/B.bar
   contextReceivers: []
@@ -312,7 +312,7 @@ KaNamedClassSymbol:
   typeParameters: []
   visibility: Public
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: sample/baz
   contextReceivers: []
@@ -635,7 +635,7 @@ KaNamedClassSymbol:
   typeParameters: []
   visibility: Public
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: sample/B.bar
   contextReceivers: []
@@ -800,7 +800,7 @@ KaNamedClassSymbol:
   typeParameters: []
   visibility: Public
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: sample/baz
   contextReceivers: []

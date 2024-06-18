@@ -1,4 +1,4 @@
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: [
     org/jetbrains/annotations/NotNull()
       psi: null

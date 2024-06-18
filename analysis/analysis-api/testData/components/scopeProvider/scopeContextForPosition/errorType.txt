@@ -70,7 +70,7 @@ scopes:
         origin: SOURCE
     classifiers: 0
     callables: 1
-      KaFunctionSymbol:
+      KaNamedFunctionSymbol:
         annotations: []
         callableId: /test
         contextReceivers: []

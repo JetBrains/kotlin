@@ -55,7 +55,7 @@ public object KaDeclarationRendererForSource {
         backingFieldRenderer = KaBackingFieldSymbolRenderer.AS_FIELD_KEYWORD
         constructorRenderer = KaConstructorSymbolRenderer.AS_SOURCE
         enumEntryRenderer = KaEnumEntrySymbolRenderer.AS_SOURCE
-        functionSymbolRenderer = KaFunctionSymbolRenderer.AS_SOURCE
+        namedFunctionRenderer = KaNamedFunctionSymbolRenderer.AS_SOURCE
         javaFieldRenderer = KaJavaFieldSymbolRenderer.AS_SOURCE
         localVariableRenderer = KaLocalVariableSymbolRenderer.AS_SOURCE
         getterRenderer = KaPropertyGetterSymbolRenderer.AS_SOURCE

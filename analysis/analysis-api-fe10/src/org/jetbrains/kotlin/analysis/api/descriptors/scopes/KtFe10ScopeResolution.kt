@@ -118,7 +118,7 @@ internal open class KaFe10ScopeNonStaticMember(
     override fun callables(nameFilter: (Name) -> Boolean): Sequence<KaCallableSymbol> = withValidityAssertion {
         super.callables(nameFilter).filter { symbol ->
             when (symbol) {
-                is KaFunctionSymbol -> !symbol.isStatic
+                is KaNamedFunctionSymbol -> !symbol.isStatic
                 is KaPropertySymbol -> !symbol.isStatic
                 else -> true
             }

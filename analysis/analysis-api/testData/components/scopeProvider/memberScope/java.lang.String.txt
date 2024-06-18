@@ -51,7 +51,7 @@ KaJavaFieldSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.hash32
   contextReceivers: []
@@ -161,7 +161,7 @@ KaSyntheticJavaPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
-  javaGetterSymbol: KaFunctionSymbol(java/lang/String.length)
+  javaGetterSymbol: KaNamedFunctionSymbol(java/lang/String.length)
   javaSetterSymbol: null
   location: CLASS
   modality: OPEN
@@ -188,7 +188,7 @@ KaSyntheticJavaPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.isEmpty
   contextReceivers: []
@@ -227,7 +227,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.codePointAt
   contextReceivers: []
@@ -291,7 +291,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.codePointBefore
   contextReceivers: []
@@ -355,7 +355,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.codePointCount
   contextReceivers: []
@@ -443,7 +443,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.offsetByCodePoints
   contextReceivers: []
@@ -531,7 +531,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.getChars
   contextReceivers: []
@@ -618,7 +618,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.getChars
   contextReceivers: []
@@ -753,7 +753,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: [
     kotlin/Deprecated(message = "Deprecated in Java")
       psi: null
@@ -891,7 +891,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.getBytes
   contextReceivers: []
@@ -953,7 +953,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.getBytes
   contextReceivers: []
@@ -1015,7 +1015,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.getBytes
   contextReceivers: []
@@ -1053,7 +1053,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.equals
   contextReceivers: []
@@ -1117,7 +1117,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.contentEquals
   contextReceivers: []
@@ -1180,7 +1180,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.contentEquals
   contextReceivers: []
@@ -1243,7 +1243,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.equalsIgnoreCase
   contextReceivers: []
@@ -1306,7 +1306,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.compareTo
   contextReceivers: []
@@ -1369,7 +1369,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.compareToIgnoreCase
   contextReceivers: []
@@ -1432,7 +1432,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.regionMatches
   contextReceivers: []
@@ -1567,7 +1567,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.regionMatches
   contextReceivers: []
@@ -1726,7 +1726,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.startsWith
   contextReceivers: []
@@ -1813,7 +1813,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.startsWith
   contextReceivers: []
@@ -1876,7 +1876,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.endsWith
   contextReceivers: []
@@ -1939,7 +1939,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.hashCode
   contextReceivers: []
@@ -1978,7 +1978,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.indexOf
   contextReceivers: []
@@ -2042,7 +2042,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.indexOf
   contextReceivers: []
@@ -2130,7 +2130,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.indexOf
   contextReceivers: []
@@ -2193,7 +2193,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.indexOf
   contextReceivers: []
@@ -2280,7 +2280,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.indexOfSupplementary
   contextReceivers: []
@@ -2368,7 +2368,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.lastIndexOf
   contextReceivers: []
@@ -2432,7 +2432,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.lastIndexOf
   contextReceivers: []
@@ -2520,7 +2520,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.lastIndexOf
   contextReceivers: []
@@ -2583,7 +2583,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.lastIndexOf
   contextReceivers: []
@@ -2670,7 +2670,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.lastIndexOfSupplementary
   contextReceivers: []
@@ -2758,7 +2758,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.substring
   contextReceivers: []
@@ -2821,7 +2821,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.substring
   contextReceivers: []
@@ -2908,7 +2908,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.subSequence
   contextReceivers: []
@@ -2996,7 +2996,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.concat
   contextReceivers: []
@@ -3058,7 +3058,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.replace
   contextReceivers: []
@@ -3145,7 +3145,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.replace
   contextReceivers: []
@@ -3230,7 +3230,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.matches
   contextReceivers: []
@@ -3293,7 +3293,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.contains
   contextReceivers: []
@@ -3356,7 +3356,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.replaceFirst
   contextReceivers: []
@@ -3441,7 +3441,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.replaceAll
   contextReceivers: []
@@ -3526,7 +3526,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.split
   contextReceivers: []
@@ -3612,7 +3612,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.split
   contextReceivers: []
@@ -3674,7 +3674,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.toLowerCase
   contextReceivers: []
@@ -3736,7 +3736,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.toLowerCase
   contextReceivers: []
@@ -3774,7 +3774,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.toUpperCase
   contextReceivers: []
@@ -3836,7 +3836,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.toUpperCase
   contextReceivers: []
@@ -3874,7 +3874,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.trim
   contextReceivers: []
@@ -3912,7 +3912,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.toString
   contextReceivers: []
@@ -3951,7 +3951,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.toCharArray
   contextReceivers: []
@@ -3989,7 +3989,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.intern
   contextReceivers: []
@@ -4027,7 +4027,7 @@ KaFunctionSymbol:
   getContainingModule: KaSdkModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: java/lang/String.get
   contextReceivers: []

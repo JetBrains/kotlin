@@ -35,7 +35,7 @@ public interface KaRendererVisibilityModifierProvider {
         ): KtModifierKeywordToken? {
             with(analysisSession) {
                 when (symbol) {
-                    is KaFunctionSymbol -> if (symbol.isOverride) return null
+                    is KaNamedFunctionSymbol -> if (symbol.isOverride) return null
                     is KaPropertySymbol -> if (symbol.isOverride) return null
                     is KaConstructorSymbol -> {
                         if ((symbol.containingSymbol as? KaClassSymbol)?.classKind == KaClassKind.ENUM_CLASS) return null

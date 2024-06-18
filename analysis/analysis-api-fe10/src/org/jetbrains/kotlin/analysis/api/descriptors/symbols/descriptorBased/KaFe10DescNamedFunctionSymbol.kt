@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10Neve
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
 import org.jetbrains.kotlin.analysis.api.impl.base.util.kotlinFunctionInvokeCallableIds
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
@@ -35,10 +35,10 @@ import org.jetbrains.kotlin.resolve.calls.inference.returnTypeOrNothing
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 
-internal class KaFe10DescFunctionSymbol private constructor(
+internal class KaFe10DescNamedFunctionSymbol private constructor(
     override val descriptor: FunctionDescriptor,
     override val analysisContext: Fe10AnalysisContext,
-) : KaFunctionSymbol(), KaFe10DescMemberSymbol<FunctionDescriptor> {
+) : KaNamedFunctionSymbol(), KaFe10DescMemberSymbol<FunctionDescriptor> {
     override val name: Name
         get() = withValidityAssertion { descriptor.name }
 
@@ -126,8 +126,8 @@ internal class KaFe10DescFunctionSymbol private constructor(
     override val typeParameters: List<KaTypeParameterSymbol>
         get() = withValidityAssertion { descriptor.typeParameters.map { KaFe10DescTypeParameterSymbol(it, analysisContext) } }
 
-    override fun createPointer(): KaSymbolPointer<KaFunctionSymbol> = withValidityAssertion {
-        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaFunctionSymbol>(this)?.let {
+    override fun createPointer(): KaSymbolPointer<KaNamedFunctionSymbol> = withValidityAssertion {
+        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaNamedFunctionSymbol>(this)?.let {
             return it
         }
 
@@ -144,8 +144,8 @@ internal class KaFe10DescFunctionSymbol private constructor(
     override fun hashCode(): Int = calculateHashCode()
 
     companion object {
-        fun build(descriptor: FunctionDescriptor, analysisContext: Fe10AnalysisContext): KaFe10DescFunctionSymbol {
-            return KaFe10DescFunctionSymbol(descriptor, analysisContext)
+        fun build(descriptor: FunctionDescriptor, analysisContext: Fe10AnalysisContext): KaFe10DescNamedFunctionSymbol {
+            return KaFe10DescNamedFunctionSymbol(descriptor, analysisContext)
         }
     }
 }

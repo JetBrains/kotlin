@@ -31,7 +31,7 @@ scopes:
         typeParameters: []
         visibility: Public
     callables: 1
-      KaFunctionSymbol:
+      KaNamedFunctionSymbol:
         annotations: []
         callableId: other/b
         contextReceivers: []

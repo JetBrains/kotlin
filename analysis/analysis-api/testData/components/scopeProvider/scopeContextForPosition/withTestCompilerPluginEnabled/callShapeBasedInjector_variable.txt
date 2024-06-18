@@ -103,7 +103,7 @@ scopes:
         setter: null
         typeParameters: []
         visibility: Local
-      KaFunctionSymbol:
+      KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.equals
         contextReceivers: []
@@ -154,7 +154,7 @@ scopes:
             typeParameters: []
         ]
         visibility: Public
-      KaFunctionSymbol:
+      KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.hashCode
         contextReceivers: []
@@ -184,7 +184,7 @@ scopes:
         typeParameters: []
         valueParameters: []
         visibility: Public
-      KaFunctionSymbol:
+      KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.toString
         contextReceivers: []
@@ -376,7 +376,7 @@ scopes:
         typeParameters: []
         visibility: Public
     callables: 2
-      KaFunctionSymbol:
+      KaNamedFunctionSymbol:
         annotations: [
           Refine()
             psi: KtAnnotationEntry
@@ -405,7 +405,7 @@ scopes:
           annotations: []
           location: LOCAL
           origin: SOURCE
-          owningCallableSymbol: KaFunctionSymbol(/add)
+          owningCallableSymbol: KaNamedFunctionSymbol(/add)
           type: KaUsualClassType:
             annotations: []
             typeArguments: [
@@ -474,7 +474,7 @@ scopes:
             typeParameters: []
         ]
         visibility: Public
-      KaFunctionSymbol:
+      KaNamedFunctionSymbol:
         annotations: []
         callableId: /test_1
         contextReceivers: []

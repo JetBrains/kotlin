@@ -54,7 +54,7 @@ KaKotlinPropertySymbol:
   javaSetterName: setZoo
   setterDeprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: /A.foo
   contextReceivers: []
@@ -138,7 +138,7 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: /A.smth
   contextReceivers: []
@@ -164,7 +164,7 @@ KaFunctionSymbol:
     annotations: []
     location: LOCAL
     origin: DELEGATED
-    owningCallableSymbol: KaFunctionSymbol(/A.smth)
+    owningCallableSymbol: KaNamedFunctionSymbol(/A.smth)
     type: KaUsualClassType:
       annotations: []
       typeArguments: []

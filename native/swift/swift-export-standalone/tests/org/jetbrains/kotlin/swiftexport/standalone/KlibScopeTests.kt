@@ -11,7 +11,7 @@ import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
@@ -45,7 +45,7 @@ class KlibScopeTests : AbstractNativeSimpleTest() {
             """.trimIndent()
         ) {
             val symbol = declarations.single()
-            assertTrue(symbol is KaFunctionSymbol)
+            assertTrue(symbol is KaNamedFunctionSymbol)
             assertEquals("foo", symbol.name.asString())
         }
     }
@@ -76,7 +76,7 @@ class KlibScopeTests : AbstractNativeSimpleTest() {
     fun `callable name filter`() {
         withKlibScope(source = simpleContentWithCollisions) {
             val symbol = callables { it.asString() == "foo" }.single()
-            assertTrue(symbol is KaFunctionSymbol)
+            assertTrue(symbol is KaNamedFunctionSymbol)
             assertEquals("foo", symbol.name.asString())
         }
     }

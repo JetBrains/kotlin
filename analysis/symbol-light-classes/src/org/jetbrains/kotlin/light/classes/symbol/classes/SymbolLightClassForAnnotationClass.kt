@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThis
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
@@ -55,7 +55,7 @@ internal open class SymbolLightClassForAnnotationClass : SymbolLightClassForInte
     protected open fun computeOwnMethods(): List<PsiMethod> = withClassSymbol { classSymbol ->
         val result = mutableListOf<KtLightMethod>()
         val visibleDeclarations = classSymbol.declaredMemberScope.callables
-            .filterNot { it is KaFunctionSymbol && it.visibility.isPrivateOrPrivateToThis() }
+            .filterNot { it is KaNamedFunctionSymbol && it.visibility.isPrivateOrPrivateToThis() }
             .filterNot { it is KaConstructorSymbol }
 
         createMethods(visibleDeclarations, result)

@@ -35,7 +35,7 @@ public interface KaSymbolProvider {
      * Creates [KaFunctionLikeSymbol] by [KtNamedFunction]
      *
      * If [KtNamedFunction.getName] is `null` then returns [KaAnonymousFunctionSymbol]
-     * Otherwise, returns [KaFunctionSymbol]
+     * Otherwise, returns [KaNamedFunctionSymbol]
      */
     public val KtNamedFunction.symbol: KaFunctionLikeSymbol
 

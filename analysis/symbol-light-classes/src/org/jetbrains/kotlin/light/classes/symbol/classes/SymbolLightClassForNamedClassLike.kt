@@ -10,8 +10,8 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiModifier
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.isLocal
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -74,7 +74,7 @@ abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<
         val companionObjectSymbol = classSymbol.companionObject ?: return
         val methods = companionObjectSymbol.declaredMemberScope
             .callables
-            .filterIsInstance<KaFunctionSymbol>()
+            .filterIsInstance<KaNamedFunctionSymbol>()
             .filter { it.hasJvmStaticAnnotation() }
 
         createMethods(methods, result)

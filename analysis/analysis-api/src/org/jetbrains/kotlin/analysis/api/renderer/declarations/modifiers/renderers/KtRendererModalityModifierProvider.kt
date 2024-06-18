@@ -44,7 +44,7 @@ public interface KaRendererModalityModifierProvider {
         override fun getModalityModifier(analysisSession: KaSession, symbol: KaSymbolWithModality): KtModifierKeywordToken? {
             with(analysisSession) {
                 when (symbol) {
-                    is KaFunctionSymbol -> if (symbol.isOverride && symbol.modality != Modality.FINAL) return null
+                    is KaNamedFunctionSymbol -> if (symbol.isOverride && symbol.modality != Modality.FINAL) return null
                     is KaPropertySymbol -> if (symbol.isOverride && symbol.modality != Modality.FINAL) return null
                 }
                 if ((symbol as? KaClassSymbol)?.classKind == KaClassKind.INTERFACE) return null

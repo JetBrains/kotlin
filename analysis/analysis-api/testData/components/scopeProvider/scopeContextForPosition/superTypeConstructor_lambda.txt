@@ -17,7 +17,7 @@ scopes:
     packages: 0
     classifiers: 0
     callables: 4
-      KaFunctionSymbol:
+      KaNamedFunctionSymbol:
         annotations: []
         callableId: test/Receiver.fromReceiver
         contextReceivers: []
@@ -47,7 +47,7 @@ scopes:
         typeParameters: []
         valueParameters: []
         visibility: Public
-      KaFunctionSymbol:
+      KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.equals
         contextReceivers: []
@@ -98,7 +98,7 @@ scopes:
             typeParameters: []
         ]
         visibility: Public
-      KaFunctionSymbol:
+      KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.hashCode
         contextReceivers: []
@@ -128,7 +128,7 @@ scopes:
         typeParameters: []
         valueParameters: []
         visibility: Public
-      KaFunctionSymbol:
+      KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.toString
         contextReceivers: []

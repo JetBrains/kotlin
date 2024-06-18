@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleFunctionCall
 import org.jetbrains.kotlin.analysis.api.resolution.calls
 import org.jetbrains.kotlin.analysis.api.resolution.symbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.idea.references.KtInvokeFunctionReference
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -22,7 +22,7 @@ internal class KaFirInvokeFunctionReference(expression: KtCallExpression) : KtIn
                 ?.takeIf { it.isImplicitInvoke }
                 ?.partiallyAppliedSymbol
                 ?.symbol
-                ?.takeUnless { it is KaFunctionSymbol && it.isBuiltinFunctionInvoke }
+                ?.takeUnless { it is KaNamedFunctionSymbol && it.isBuiltinFunctionInvoke }
         }
     }
 

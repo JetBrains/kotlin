@@ -9,7 +9,7 @@ KtCallExpression(51,56): 'foo()'
             annotations: []
             location: LOCAL
             origin: SOURCE
-            owningCallableSymbol: KaFunctionSymbol(/test)
+            owningCallableSymbol: KaNamedFunctionSymbol(/test)
             type: KaUsualClassType:
               annotations: []
               typeArguments: []

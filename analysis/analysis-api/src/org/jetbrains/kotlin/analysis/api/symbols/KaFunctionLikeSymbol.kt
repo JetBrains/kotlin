@@ -51,7 +51,7 @@ public abstract class KaSamConstructorSymbol : KaFunctionLikeSymbol(), KaNamedSy
 @Deprecated("Use 'KaSamConstructorSymbol' instead", ReplaceWith("KaSamConstructorSymbol"))
 public typealias KtSamConstructorSymbol = KaSamConstructorSymbol
 
-public abstract class KaFunctionSymbol : KaFunctionLikeSymbol(),
+public abstract class KaNamedFunctionSymbol : KaFunctionLikeSymbol(),
     KaNamedSymbol,
     KaPossibleMemberSymbol,
     KaPossibleMultiplatformSymbol,
@@ -79,11 +79,11 @@ public abstract class KaFunctionSymbol : KaFunctionLikeSymbol(),
      */
     public abstract val isBuiltinFunctionInvoke: Boolean
 
-    abstract override fun createPointer(): KaSymbolPointer<KaFunctionSymbol>
+    abstract override fun createPointer(): KaSymbolPointer<KaNamedFunctionSymbol>
 }
 
-@Deprecated("Use 'KaFunctionSymbol' instead", ReplaceWith("KaFunctionSymbol"))
-public typealias KtFunctionSymbol = KaFunctionSymbol
+@Deprecated("Use 'KaNamedFunctionSymbol' instead", ReplaceWith("KaNamedFunctionSymbol"))
+public typealias KtFunctionSymbol = KaNamedFunctionSymbol
 
 public abstract class KaConstructorSymbol : KaFunctionLikeSymbol(),
     KaPossibleMemberSymbol,

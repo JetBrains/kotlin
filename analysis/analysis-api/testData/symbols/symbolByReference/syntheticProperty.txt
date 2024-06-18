@@ -42,8 +42,8 @@ KaSyntheticJavaPropertySymbol:
   isOverride: true
   isStatic: false
   isVal: false
-  javaGetterSymbol: KaFunctionSymbol(/Derived.getSomething)
-  javaSetterSymbol: KaFunctionSymbol(/Derived.setSomething)
+  javaGetterSymbol: KaNamedFunctionSymbol(/Derived.getSomething)
+  javaSetterSymbol: KaNamedFunctionSymbol(/Derived.setSomething)
   location: CLASS
   modality: OPEN
   name: something

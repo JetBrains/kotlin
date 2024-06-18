@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -65,15 +65,17 @@ internal class KaFirSyntheticJavaPropertySymbol(
         get() = withValidityAssertion {
             builder.callableBuilder.buildGetterSymbol(firSymbol.getterSymbol!!)
         }
-    override val javaGetterSymbol: KaFunctionSymbol
+
+    override val javaGetterSymbol: KaNamedFunctionSymbol
         get() = withValidityAssertion {
             val fir = firSymbol.fir as FirSyntheticProperty
-            return builder.functionLikeBuilder.buildFunctionSymbol(fir.getter.delegate.symbol)
+            return builder.functionLikeBuilder.buildNamedFunctionSymbol(fir.getter.delegate.symbol)
         }
-    override val javaSetterSymbol: KaFunctionSymbol?
+
+    override val javaSetterSymbol: KaNamedFunctionSymbol?
         get() = withValidityAssertion {
             val fir = firSymbol.fir as FirSyntheticProperty
-            return fir.setter?.delegate?.let { builder.functionLikeBuilder.buildFunctionSymbol(it.symbol) }
+            return fir.setter?.delegate?.let { builder.functionLikeBuilder.buildNamedFunctionSymbol(it.symbol) }
         }
 
     override val setter: KaPropertySetterSymbol?

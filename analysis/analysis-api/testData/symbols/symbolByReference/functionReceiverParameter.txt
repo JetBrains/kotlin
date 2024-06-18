@@ -5,7 +5,7 @@ KaReceiverParameterSymbol:
   ]
   location: LOCAL
   origin: SOURCE
-  owningCallableSymbol: KaFunctionSymbol(/foo)
+  owningCallableSymbol: KaNamedFunctionSymbol(/foo)
   type: KaUsualClassType:
     annotations: [
       ReceiverTypeAnnotation()

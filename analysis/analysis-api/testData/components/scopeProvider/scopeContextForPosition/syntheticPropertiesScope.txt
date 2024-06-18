@@ -4,7 +4,7 @@ implicit receivers:
     annotations: []
     typeArguments: []
     type: JavaClass
-  owner symbol: KaFirFunctionSymbol
+  owner symbol: KaFirNamedFunctionSymbol
 
 scopes:
   LocalScope, index = 0
@@ -17,7 +17,7 @@ scopes:
     packages: 0
     classifiers: 0
     callables: 5
-      KaFunctionSymbol:
+      KaNamedFunctionSymbol:
         annotations: []
         callableId: /JavaClass.getValue
         contextReceivers: []
@@ -46,7 +46,7 @@ scopes:
         typeParameters: []
         valueParameters: []
         visibility: Public
-      KaFunctionSymbol:
+      KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.equals
         contextReceivers: []
@@ -97,7 +97,7 @@ scopes:
             typeParameters: []
         ]
         visibility: Public
-      KaFunctionSymbol:
+      KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.hashCode
         contextReceivers: []
@@ -127,7 +127,7 @@ scopes:
         typeParameters: []
         valueParameters: []
         visibility: Public
-      KaFunctionSymbol:
+      KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.toString
         contextReceivers: []
@@ -192,7 +192,7 @@ scopes:
         isOverride: false
         isStatic: false
         isVal: true
-        javaGetterSymbol: KaFunctionSymbol(/JavaClass.getValue)
+        javaGetterSymbol: KaNamedFunctionSymbol(/JavaClass.getValue)
         javaSetterSymbol: null
         location: CLASS
         modality: OPEN
@@ -267,7 +267,7 @@ scopes:
         origin: SOURCE
     classifiers: 0
     callables: 1
-      KaFunctionSymbol:
+      KaNamedFunctionSymbol:
         annotations: []
         callableId: /test
         contextReceivers: []
@@ -293,7 +293,7 @@ scopes:
           annotations: []
           location: LOCAL
           origin: SOURCE
-          owningCallableSymbol: KaFunctionSymbol(/test)
+          owningCallableSymbol: KaNamedFunctionSymbol(/test)
           type: KaUsualClassType:
             annotations: []
             typeArguments: []

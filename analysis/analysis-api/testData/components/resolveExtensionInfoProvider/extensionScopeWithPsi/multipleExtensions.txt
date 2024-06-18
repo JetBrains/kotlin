@@ -67,7 +67,7 @@ classifiers: 2
       Resolve extension navigation targets: 1
         [Resolve extension navigation target for test for KtClass RexClass2]
 callables: 2
-  KaFunctionSymbol:
+  KaNamedFunctionSymbol:
     annotations: []
     callableId: rex1/rexCallable1
     contextReceivers: []
@@ -101,7 +101,7 @@ callables: 2
       From resolve extension: true
       Resolve extension navigation targets: 1
         [Resolve extension navigation target for test for KtNamedFunction rexCallable1]
-  KaFunctionSymbol:
+  KaNamedFunctionSymbol:
     annotations: []
     callableId: rex2/rexCallable2
     contextReceivers: []

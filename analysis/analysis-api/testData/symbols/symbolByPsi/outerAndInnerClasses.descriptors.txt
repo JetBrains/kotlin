@@ -468,7 +468,7 @@ KaNamedClassSymbol:
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: null
   contextReceivers: []
@@ -577,7 +577,7 @@ KaNamedClassSymbol:
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: /X.foo
   contextReceivers: []

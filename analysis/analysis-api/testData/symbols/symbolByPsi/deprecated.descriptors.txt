@@ -491,7 +491,7 @@ KaKotlinPropertySymbol:
   javaSetterName: setI4
   setterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use setter of i4)
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: [
     kotlin/Deprecated(message = "don't use f")
       psi: KtAnnotationEntry
@@ -656,7 +656,7 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i2)
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: [
     kotlin/Deprecated(message = "don't use f2")
       psi: KtAnnotationEntry

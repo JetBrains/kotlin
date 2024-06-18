@@ -247,7 +247,7 @@ internal object FirToKtConversionCreator {
             KaClassLikeSymbol::class.createType()
         ),
         FirNamedFunctionSymbol::class to HLFunctionCallConversion(
-            "firSymbolBuilder.functionLikeBuilder.buildFunctionSymbol({0})",
+            "firSymbolBuilder.functionLikeBuilder.buildNamedFunctionSymbol({0})",
             KaFunctionLikeSymbol::class.createType()
         ),
         FirPropertySymbol::class to HLFunctionCallConversion(

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.createDynamicType
 
 internal class KaFe10DynamicFunctionDescValueParameterSymbol(
-    val owner: KaFe10DescFunctionSymbol,
+    val owner: KaFe10DescNamedFunctionSymbol,
 ) : KaValueParameterSymbol(), KaFe10Symbol {
     override val analysisContext: Fe10AnalysisContext
         get() = owner.analysisContext
@@ -70,10 +70,10 @@ internal class KaFe10DynamicFunctionDescValueParameterSymbol(
     override fun hashCode(): Int = owner.hashCode()
 
 
-    private class Pointer(val ownerPointer: KaSymbolPointer<KaFunctionSymbol>) : KaSymbolPointer<KaValueParameterSymbol>() {
+    private class Pointer(val ownerPointer: KaSymbolPointer<KaNamedFunctionSymbol>) : KaSymbolPointer<KaValueParameterSymbol>() {
         @KaImplementationDetail
         override fun restoreSymbol(analysisSession: KaSession): KaValueParameterSymbol? {
-            val owner = ownerPointer.restoreSymbol(analysisSession) as? KaFe10DescFunctionSymbol ?: return null
+            val owner = ownerPointer.restoreSymbol(analysisSession) as? KaFe10DescNamedFunctionSymbol ?: return null
             return KaFe10DynamicFunctionDescValueParameterSymbol(owner)
         }
     }

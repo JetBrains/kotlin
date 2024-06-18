@@ -23,7 +23,7 @@ internal fun KaCallableSymbol.translateToObjCExportStub(): List<ObjCExportStub> 
                 result.addIfNotNull(this.setter?.translateToObjCMethod())
             }
         }
-        is KaFunctionSymbol -> result.addIfNotNull(translateToObjCMethod())
+        is KaNamedFunctionSymbol -> result.addIfNotNull(translateToObjCMethod())
         else -> Unit
     }
     return result

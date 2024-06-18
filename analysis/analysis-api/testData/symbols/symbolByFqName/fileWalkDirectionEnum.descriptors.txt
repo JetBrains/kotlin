@@ -1,4 +1,4 @@
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/listOf
   contextReceivers: []
@@ -63,7 +63,7 @@ KaFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: [
     kotlin/internal/InlineOnly()
       psi: null
@@ -107,7 +107,7 @@ KaFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/listOf
   contextReceivers: []

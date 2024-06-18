@@ -51,7 +51,7 @@ internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
         is KaFunctionLikeSymbol -> buildString {
             append(
                 when (this@with) {
-                    is KaFunctionSymbol -> callableId ?: name
+                    is KaNamedFunctionSymbol -> callableId ?: name
                     is KaSamConstructorSymbol -> callableId ?: name
                     is KaConstructorSymbol -> "<constructor>"
                     is KaPropertyGetterSymbol -> callableId ?: "<getter>"
@@ -61,7 +61,7 @@ internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
                 }
             )
             append("(")
-            (this@with as? KaFunctionSymbol)?.receiverParameter?.let { receiver ->
+            (this@with as? KaNamedFunctionSymbol)?.receiverParameter?.let { receiver ->
                 append("<extension receiver>: ${receiver.type.render()}")
                 if (valueParameters.isNotEmpty()) append(", ")
             }

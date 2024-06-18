@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,14 +15,14 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
 object KaFirArrayOfSymbolProvider {
-    internal fun KaFirSession.arrayOfSymbol(identifier: Name): KaFirFunctionSymbol? {
+    internal fun KaFirSession.arrayOfSymbol(identifier: Name): KaFirNamedFunctionSymbol? {
         val firSymbol = firSession.symbolProvider.getTopLevelCallableSymbols(kotlinPackage, identifier).firstOrNull {
             /* choose (for byte array)
              * public fun byteArrayOf(vararg elements: kotlin.Byte): kotlin.ByteArray
              */
             (it as? FirFunctionSymbol<*>)?.fir?.valueParameters?.singleOrNull()?.isVararg == true
         } as? FirNamedFunctionSymbol ?: return null
-        return firSymbolBuilder.functionLikeBuilder.buildFunctionSymbol(firSymbol)
+        return firSymbolBuilder.functionLikeBuilder.buildNamedFunctionSymbol(firSymbol)
     }
 
     private val kotlinPackage = FqName("kotlin")

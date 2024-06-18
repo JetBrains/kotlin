@@ -123,7 +123,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
                     // Technically, synthetic members of `data` class, such as `componentN` or `copy`, are visible.
                     // They're just needed to be added later (to be in a backward-compatible order of members).
                     filterNot { function ->
-                        function is KaFunctionSymbol && function.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED
+                        function is KaNamedFunctionSymbol && function.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED
                     }
                 }.applyIf(isEnum && isEnumEntriesDisabled()) {
                     filterNot {
@@ -159,13 +159,13 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
     private fun addMethodsFromDataClass(result: MutableList<KtLightMethod>, classSymbol: KaNamedClassSymbol) {
         if (!classSymbol.isData) return
 
-        fun createMethodFromAny(ktFunctionSymbol: KaFunctionSymbol) {
+        fun createMethodFromAny(functionSymbol: KaNamedFunctionSymbol) {
             // Similar to `copy`, synthetic members from `Any` should refer to `data` class as origin, not the function in `Any`.
             val lightMemberOrigin = classOrObjectDeclaration?.let { LightMemberOriginForDeclaration(it, JvmDeclarationOriginKind.OTHER) }
             result.add(
                 SymbolLightSimpleMethod(
                     ktAnalysisSession = this@KaSession,
-                    ktFunctionSymbol,
+                    functionSymbol,
                     lightMemberOrigin,
                     this,
                     METHOD_INDEX_BASE,
@@ -180,7 +180,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         val componentAndCopyFunctions = classSymbol.declaredMemberScope
             .callables { name -> DataClassResolver.isCopy(name) || DataClassResolver.isComponentLike(name) }
             .filter { it.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED }
-            .filterIsInstance<KaFunctionSymbol>()
+            .filterIsInstance<KaNamedFunctionSymbol>()
 
         createMethods(componentAndCopyFunctions, result)
 
@@ -188,7 +188,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         // We want to mimic that.
         val generatedFunctionsFromAny = classSymbol.memberScope
             .callables(EQUALS, HASHCODE_NAME, TO_STRING)
-            .filterIsInstance<KaFunctionSymbol>()
+            .filterIsInstance<KaNamedFunctionSymbol>()
             .filter { it.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED }
 
         val functionsFromAnyByName = generatedFunctionsFromAny.associateBy { it.name }
@@ -201,13 +201,13 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
 
     context(KaSession)
     private fun addDelegatesToInterfaceMethods(result: MutableList<KtLightMethod>, classSymbol: KaNamedClassSymbol) {
-        fun createDelegateMethod(ktFunctionSymbol: KaFunctionSymbol) {
-            val kotlinOrigin = ktFunctionSymbol.psiSafe<KtDeclaration>() ?: classOrObjectDeclaration
+        fun createDelegateMethod(functionSymbol: KaNamedFunctionSymbol) {
+            val kotlinOrigin = functionSymbol.psiSafe<KtDeclaration>() ?: classOrObjectDeclaration
             val lightMemberOrigin = kotlinOrigin?.let { LightMemberOriginForDeclaration(it, JvmDeclarationOriginKind.DELEGATION) }
             result.add(
                 SymbolLightSimpleMethod(
                     ktAnalysisSession = this@KaSession,
-                    ktFunctionSymbol,
+                    functionSymbol,
                     lightMemberOrigin,
                     this,
                     METHOD_INDEX_FOR_NON_ORIGIN_METHOD,
@@ -219,7 +219,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         }
 
         classSymbol.delegatedMemberScope.callables.forEach { functionSymbol ->
-            if (functionSymbol is KaFunctionSymbol) {
+            if (functionSymbol is KaNamedFunctionSymbol) {
                 createDelegateMethod(functionSymbol)
             }
         }

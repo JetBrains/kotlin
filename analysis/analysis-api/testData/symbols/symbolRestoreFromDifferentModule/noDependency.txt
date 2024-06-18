@@ -1,5 +1,5 @@
 Inital from Sources of main:
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: /foo
   contextReceivers: []

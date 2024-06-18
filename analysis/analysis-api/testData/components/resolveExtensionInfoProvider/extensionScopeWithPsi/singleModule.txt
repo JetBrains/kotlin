@@ -63,7 +63,7 @@ classifiers: 2
       Resolve extension navigation targets: 1
         [Resolve extension navigation target for test for KtClass GenClass2]
 callables: 5
-  KaFunctionSymbol:
+  KaNamedFunctionSymbol:
     annotations: []
     callableId: generated/genTopLevelFun1
     contextReceivers: []
@@ -118,7 +118,7 @@ callables: 5
       From resolve extension: true
       Resolve extension navigation targets: 1
         [Resolve extension navigation target for test for KtNamedFunction genTopLevelFun1]
-  KaFunctionSymbol:
+  KaNamedFunctionSymbol:
     annotations: []
     callableId: generated/genTopLevelExtension1
     contextReceivers: []
@@ -144,7 +144,7 @@ callables: 5
       annotations: []
       location: LOCAL
       origin: SOURCE
-      owningCallableSymbol: KaFunctionSymbol(generated/genTopLevelExtension1)
+      owningCallableSymbol: KaNamedFunctionSymbol(generated/genTopLevelExtension1)
       type: KaUsualClassType:
         annotations: []
         typeArguments: []

@@ -12,7 +12,7 @@ internal val StableFileOrder: Comparator<KtObjCExportFile>
     get() = compareBy<KtObjCExportFile> { file -> file.packageFqName.asString() }
         .thenComparing { file -> file.fileName }
 
-internal val StableFunctionOrder: Comparator<KaFunctionSymbol>
+internal val StableFunctionOrder: Comparator<KaNamedFunctionSymbol>
     get() = compareBy(
         { it.isConstructor },
         { it.name },
@@ -58,7 +58,7 @@ internal val StableNamedOrder: Comparator<KaNamedSymbol> = compareBy { it.name.t
 internal val StableCallableOrder: Comparator<KaCallableSymbol> = compareBy<KaCallableSymbol> {
     when (it) {
         is KaConstructorSymbol -> 0
-        is KaFunctionSymbol -> 1
+        is KaNamedFunctionSymbol -> 1
         is KaPropertySymbol -> 2
         else -> 3
     }

@@ -65,7 +65,7 @@ public class KaDeclarationRenderer private constructor(
     public val backingFieldRenderer: KaBackingFieldSymbolRenderer,
     public val constructorRenderer: KaConstructorSymbolRenderer,
     public val enumEntryRenderer: KaEnumEntrySymbolRenderer,
-    public val functionSymbolRenderer: KaFunctionSymbolRenderer,
+    public val namedFunctionRenderer: KaNamedFunctionSymbolRenderer,
     public val javaFieldRenderer: KaJavaFieldSymbolRenderer,
     public val localVariableRenderer: KaLocalVariableSymbolRenderer,
     public val getterRenderer: KaPropertyGetterSymbolRenderer,
@@ -96,7 +96,7 @@ public class KaDeclarationRenderer private constructor(
             is KaTypeAliasSymbol -> typeAliasRenderer.renderSymbol(analysisSession, symbol, this, printer)
             is KaAnonymousFunctionSymbol -> anonymousFunctionRenderer.renderSymbol(analysisSession, symbol, this, printer)
             is KaConstructorSymbol -> constructorRenderer.renderSymbol(analysisSession, symbol, this, printer)
-            is KaFunctionSymbol -> functionSymbolRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KaNamedFunctionSymbol -> namedFunctionRenderer.renderSymbol(analysisSession, symbol, this, printer)
             is KaPropertyGetterSymbol -> getterRenderer.renderSymbol(analysisSession, symbol, this, printer)
             is KaPropertySetterSymbol -> setterRenderer.renderSymbol(analysisSession, symbol, this, printer)
             is KaSamConstructorSymbol -> samConstructorRenderer.renderSymbol(analysisSession, symbol, this, printer)
@@ -153,7 +153,7 @@ public class KaDeclarationRenderer private constructor(
             this.backingFieldRenderer = renderer.backingFieldRenderer
             this.constructorRenderer = renderer.constructorRenderer
             this.enumEntryRenderer = renderer.enumEntryRenderer
-            this.functionSymbolRenderer = renderer.functionSymbolRenderer
+            this.namedFunctionRenderer = renderer.namedFunctionRenderer
             this.javaFieldRenderer = renderer.javaFieldRenderer
             this.localVariableRenderer = renderer.localVariableRenderer
             this.getterRenderer = renderer.getterRenderer
@@ -222,7 +222,7 @@ public class KaDeclarationRenderer private constructor(
         public lateinit var backingFieldRenderer: KaBackingFieldSymbolRenderer
         public lateinit var constructorRenderer: KaConstructorSymbolRenderer
         public lateinit var enumEntryRenderer: KaEnumEntrySymbolRenderer
-        public lateinit var functionSymbolRenderer: KaFunctionSymbolRenderer
+        public lateinit var namedFunctionRenderer: KaNamedFunctionSymbolRenderer
         public lateinit var javaFieldRenderer: KaJavaFieldSymbolRenderer
         public lateinit var localVariableRenderer: KaLocalVariableSymbolRenderer
         public lateinit var getterRenderer: KaPropertyGetterSymbolRenderer
@@ -280,7 +280,7 @@ public class KaDeclarationRenderer private constructor(
             backingFieldRenderer,
             constructorRenderer,
             enumEntryRenderer,
-            functionSymbolRenderer,
+            namedFunctionRenderer,
             javaFieldRenderer,
             localVariableRenderer,
             getterRenderer,

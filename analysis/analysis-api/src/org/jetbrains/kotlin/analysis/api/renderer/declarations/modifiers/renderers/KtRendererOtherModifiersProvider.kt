@@ -49,7 +49,7 @@ public interface KaRendererOtherModifiersProvider {
                     if (symbol.isExpect) add(KtTokens.EXPECT_KEYWORD)
                 }
 
-                if (symbol is KaFunctionSymbol) {
+                if (symbol is KaNamedFunctionSymbol) {
                     if (symbol.isExternal) add(KtTokens.EXTERNAL_KEYWORD)
                     if (symbol.isOverride) add(KtTokens.OVERRIDE_KEYWORD)
                     if (symbol.isInline) add(KtTokens.INLINE_KEYWORD)

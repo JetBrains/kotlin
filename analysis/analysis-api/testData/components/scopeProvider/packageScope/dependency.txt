@@ -1,4 +1,4 @@
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/fooApi3
   contextReceivers: []
@@ -33,7 +33,7 @@ KaFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/internalFooApi3
   contextReceivers: []
@@ -68,7 +68,7 @@ KaFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/privateFooApi3
   contextReceivers: []
@@ -103,7 +103,7 @@ KaFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/barApi3
   contextReceivers: []
@@ -129,7 +129,7 @@ KaFunctionSymbol:
     annotations: []
     location: LOCAL
     origin: SOURCE
-    owningCallableSymbol: KaFunctionSymbol(dependency/api/barApi3)
+    owningCallableSymbol: KaNamedFunctionSymbol(dependency/api/barApi3)
     type: KaUsualClassType:
       annotations: []
       typeArguments: []
@@ -149,7 +149,7 @@ KaFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/internalBarApi3
   contextReceivers: []
@@ -175,7 +175,7 @@ KaFunctionSymbol:
     annotations: []
     location: LOCAL
     origin: SOURCE
-    owningCallableSymbol: KaFunctionSymbol(dependency/api/internalBarApi3)
+    owningCallableSymbol: KaNamedFunctionSymbol(dependency/api/internalBarApi3)
     type: KaUsualClassType:
       annotations: []
       typeArguments: []
@@ -195,7 +195,7 @@ KaFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/privateBarApi3
   contextReceivers: []
@@ -221,7 +221,7 @@ KaFunctionSymbol:
     annotations: []
     location: LOCAL
     origin: SOURCE
-    owningCallableSymbol: KaFunctionSymbol(dependency/api/privateBarApi3)
+    owningCallableSymbol: KaNamedFunctionSymbol(dependency/api/privateBarApi3)
     type: KaUsualClassType:
       annotations: []
       typeArguments: []
@@ -241,7 +241,7 @@ KaFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/fooApi1
   contextReceivers: []
@@ -276,7 +276,7 @@ KaFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of dependency"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/internalFooApi1
   contextReceivers: []
@@ -311,7 +311,7 @@ KaFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of dependency"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/privateFooApi1
   contextReceivers: []
@@ -346,7 +346,7 @@ KaFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of dependency"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/barApi1
   contextReceivers: []
@@ -372,7 +372,7 @@ KaFunctionSymbol:
     annotations: []
     location: LOCAL
     origin: SOURCE
-    owningCallableSymbol: KaFunctionSymbol(dependency/api/barApi1)
+    owningCallableSymbol: KaNamedFunctionSymbol(dependency/api/barApi1)
     type: KaUsualClassType:
       annotations: []
       typeArguments: []
@@ -392,7 +392,7 @@ KaFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of dependency"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/internalBarApi1
   contextReceivers: []
@@ -418,7 +418,7 @@ KaFunctionSymbol:
     annotations: []
     location: LOCAL
     origin: SOURCE
-    owningCallableSymbol: KaFunctionSymbol(dependency/api/internalBarApi1)
+    owningCallableSymbol: KaNamedFunctionSymbol(dependency/api/internalBarApi1)
     type: KaUsualClassType:
       annotations: []
       typeArguments: []
@@ -438,7 +438,7 @@ KaFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of dependency"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/privateBarApi1
   contextReceivers: []
@@ -464,7 +464,7 @@ KaFunctionSymbol:
     annotations: []
     location: LOCAL
     origin: SOURCE
-    owningCallableSymbol: KaFunctionSymbol(dependency/api/privateBarApi1)
+    owningCallableSymbol: KaNamedFunctionSymbol(dependency/api/privateBarApi1)
     type: KaUsualClassType:
       annotations: []
       typeArguments: []
@@ -484,7 +484,7 @@ KaFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of dependency"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/fooApi2
   contextReceivers: []
@@ -519,7 +519,7 @@ KaFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of dependency"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/internalFooApi2
   contextReceivers: []
@@ -554,7 +554,7 @@ KaFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of dependency"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/privateFooApi2
   contextReceivers: []
@@ -589,7 +589,7 @@ KaFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of dependency"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/barApi2
   contextReceivers: []
@@ -615,7 +615,7 @@ KaFunctionSymbol:
     annotations: []
     location: LOCAL
     origin: SOURCE
-    owningCallableSymbol: KaFunctionSymbol(dependency/api/barApi2)
+    owningCallableSymbol: KaNamedFunctionSymbol(dependency/api/barApi2)
     type: KaUsualClassType:
       annotations: []
       typeArguments: []
@@ -635,7 +635,7 @@ KaFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of dependency"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/internalBarApi2
   contextReceivers: []
@@ -661,7 +661,7 @@ KaFunctionSymbol:
     annotations: []
     location: LOCAL
     origin: SOURCE
-    owningCallableSymbol: KaFunctionSymbol(dependency/api/internalBarApi2)
+    owningCallableSymbol: KaNamedFunctionSymbol(dependency/api/internalBarApi2)
     type: KaUsualClassType:
       annotations: []
       typeArguments: []
@@ -681,7 +681,7 @@ KaFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of dependency"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: dependency/api/privateBarApi2
   contextReceivers: []
@@ -707,7 +707,7 @@ KaFunctionSymbol:
     annotations: []
     location: LOCAL
     origin: SOURCE
-    owningCallableSymbol: KaFunctionSymbol(dependency/api/privateBarApi2)
+    owningCallableSymbol: KaNamedFunctionSymbol(dependency/api/privateBarApi2)
     type: KaUsualClassType:
       annotations: []
       typeArguments: []

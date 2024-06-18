@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.getSingleTestTargetSymbo
 import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KaTypeRendererForSource
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
@@ -51,7 +51,7 @@ abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBa
 
     private fun KaSession.renderSignature(symbol: KaCallableSymbol): String = buildString {
         append(renderDeclarationQualifiedName(symbol))
-        if (symbol is KaFunctionSymbol) {
+        if (symbol is KaNamedFunctionSymbol) {
             append("(")
             symbol.valueParameters.forEachIndexed { index, parameter ->
                 append(parameter.name.identifier)

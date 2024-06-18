@@ -181,7 +181,7 @@ KaTypeAliasSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: null
   contextReceivers: []
@@ -250,7 +250,7 @@ KaNamedClassSymbol:
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: null
   contextReceivers: []
@@ -319,7 +319,7 @@ KaNamedClassSymbol:
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: /A.check
   contextReceivers: []

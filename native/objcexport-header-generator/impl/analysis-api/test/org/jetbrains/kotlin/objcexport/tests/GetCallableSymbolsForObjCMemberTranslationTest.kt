@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.objcexport.tests
 
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.objcexport.StableCallableOrder
 import org.jetbrains.kotlin.objcexport.getCallableSymbolsForObjCMemberTranslation
@@ -37,7 +37,7 @@ class GetCallableSymbolsForObjCMemberTranslationTest(
             assertEquals(
                 listOf("bar", "abstractFun"),
                 fooSymbol.getCallableSymbolsForObjCMemberTranslation()
-                    .map { it as KaFunctionSymbol }
+                    .map { it as KaNamedFunctionSymbol }
                     .map { it.name.asString() }
             )
         }

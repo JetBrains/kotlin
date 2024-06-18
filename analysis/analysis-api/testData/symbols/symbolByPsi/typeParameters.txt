@@ -35,7 +35,7 @@ KaLocalVariableSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: /f
   contextReceivers: []

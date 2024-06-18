@@ -214,7 +214,7 @@ internal fun SymbolLightClassBase.createMethods(
 
     fun KaSession.handleDeclaration(declaration: KaCallableSymbol) {
         when (declaration) {
-            is KaFunctionSymbol -> {
+            is KaNamedFunctionSymbol -> {
                 ProgressManager.checkCanceled()
 
                 if (declaration.hasReifiedParameters || declaration.isHiddenOrSynthetic()) return

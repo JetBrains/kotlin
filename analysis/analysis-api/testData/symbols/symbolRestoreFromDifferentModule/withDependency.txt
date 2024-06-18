@@ -1,5 +1,5 @@
 Inital from Sources of main:
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: /foo
   contextReceivers: []
@@ -31,7 +31,7 @@ KaFunctionSymbol:
   visibility: Public
 
 Restored in Sources of restoreInContextOf:
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: /foo
   contextReceivers: []

@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirTopLevelFunct
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.impl.base.util.kotlinFunctionInvokeCallableIds
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
@@ -39,10 +39,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.isExtension
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 
-internal class KaFirFunctionSymbol(
+internal class KaFirNamedFunctionSymbol(
     override val firSymbol: FirNamedFunctionSymbol,
     override val analysisSession: KaFirSession,
-) : KaFunctionSymbol(), KaFirSymbol<FirNamedFunctionSymbol> {
+) : KaNamedFunctionSymbol(), KaFirSymbol<FirNamedFunctionSymbol> {
     override val psi: PsiElement? by cached { firSymbol.findPsi() }
     override val name: Name get() = withValidityAssertion { firSymbol.name }
 
@@ -97,8 +97,8 @@ internal class KaFirFunctionSymbol(
     override val modality: Modality get() = withValidityAssertion { firSymbol.modality }
     override val visibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
 
-    override fun createPointer(): KaSymbolPointer<KaFunctionSymbol> = withValidityAssertion {
-        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaFunctionSymbol>(this)?.let { return it }
+    override fun createPointer(): KaSymbolPointer<KaNamedFunctionSymbol> = withValidityAssertion {
+        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaNamedFunctionSymbol>(this)?.let { return it }
 
         return when (val kind = location) {
             KaSymbolLocation.TOP_LEVEL -> KaFirTopLevelFunctionSymbolPointer(

@@ -186,7 +186,7 @@ internal fun CallableDescriptor.toKtCallableSymbol(analysisContext: Fe10Analysis
             if (DescriptorUtils.isAnonymousFunction(unwrapped)) {
                 KaFe10DescAnonymousFunctionSymbol(unwrapped, analysisContext)
             } else {
-                KaFe10DescFunctionSymbol.build(unwrapped, analysisContext)
+                KaFe10DescNamedFunctionSymbol.build(unwrapped, analysisContext)
             }
         }
         is SyntheticFieldDescriptor -> KaFe10DescSyntheticFieldSymbol(unwrapped, analysisContext)

@@ -71,10 +71,10 @@ context(KaSession)
 @OptIn(ExperimentalContracts::class)
 private fun KaSymbol.isComponentNMethod(): Boolean {
     contract {
-        returns(true) implies (this@isComponentNMethod is KaFunctionSymbol)
+        returns(true) implies (this@isComponentNMethod is KaNamedFunctionSymbol)
     }
 
-    if (this !is KaFunctionSymbol) return false
+    if (this !is KaNamedFunctionSymbol) return false
     if (!this.isOperator) return false
     val containingClassSymbol = this.containingSymbol as? KaNamedClassSymbol ?: return false
     if (!containingClassSymbol.isData) return false

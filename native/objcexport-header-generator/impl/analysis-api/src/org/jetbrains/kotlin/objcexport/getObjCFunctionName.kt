@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KaSession
@@ -27,7 +32,7 @@ context(KaSession)
 private val KaFunctionLikeSymbol.translationName: String
     get() {
         return when (this) {
-            is KaFunctionSymbol -> name.asString()
+            is KaNamedFunctionSymbol -> name.asString()
             is KaConstructorSymbol -> "init"
             is KaPropertyAccessorSymbol -> formatPropertyName()
             is KaAnonymousFunctionSymbol -> ""

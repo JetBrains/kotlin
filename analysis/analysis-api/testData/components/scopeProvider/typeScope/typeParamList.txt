@@ -163,7 +163,7 @@ KaFunctionLikeSignature:
 
 
 Declaration Scope:
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/List.contains
   contextReceivers: []
@@ -213,7 +213,7 @@ KaFunctionSymbol:
       typeParameters: []
   ]
   visibility: Public
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/List.containsAll
   contextReceivers: []
@@ -268,7 +268,7 @@ KaFunctionSymbol:
       typeParameters: []
   ]
   visibility: Public
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/List.get
   contextReceivers: []
@@ -318,7 +318,7 @@ KaFunctionSymbol:
       typeParameters: []
   ]
   visibility: Public
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/List.indexOf
   contextReceivers: []
@@ -368,7 +368,7 @@ KaFunctionSymbol:
       typeParameters: []
   ]
   visibility: Public
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/List.isEmpty
   contextReceivers: []
@@ -398,7 +398,7 @@ KaFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/List.iterator
   contextReceivers: []
@@ -432,7 +432,7 @@ KaFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/List.lastIndexOf
   contextReceivers: []
@@ -482,7 +482,7 @@ KaFunctionSymbol:
       typeParameters: []
   ]
   visibility: Public
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/List.listIterator
   contextReceivers: []
@@ -516,7 +516,7 @@ KaFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/List.listIterator
   contextReceivers: []
@@ -571,7 +571,7 @@ KaFunctionSymbol:
       typeParameters: []
   ]
   visibility: Public
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/List.subList
   contextReceivers: []
@@ -712,7 +712,7 @@ KaKotlinPropertySymbol:
   setter: null
   typeParameters: []
   visibility: Public
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Any.equals
   contextReceivers: []
@@ -763,7 +763,7 @@ KaFunctionSymbol:
       typeParameters: []
   ]
   visibility: Public
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Any.hashCode
   contextReceivers: []
@@ -793,7 +793,7 @@ KaFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Any.toString
   contextReceivers: []
@@ -823,7 +823,7 @@ KaFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/List.getFirst
   contextReceivers: []
@@ -852,7 +852,7 @@ KaFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/List.getLast
   contextReceivers: []

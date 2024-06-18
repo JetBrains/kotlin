@@ -4,14 +4,14 @@ implicit receivers:
     annotations: []
     typeArguments: []
     type: test/Receiver
-  owner symbol: KaFirFunctionSymbol
+  owner symbol: KaFirNamedFunctionSymbol
 
 scopes:
   TypeScope, index = 0
     packages: 0
     classifiers: 0
     callables: 3
-      KaFunctionSymbol:
+      KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.equals
         contextReceivers: []
@@ -62,7 +62,7 @@ scopes:
             typeParameters: []
         ]
         visibility: Public
-      KaFunctionSymbol:
+      KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.hashCode
         contextReceivers: []
@@ -92,7 +92,7 @@ scopes:
         typeParameters: []
         valueParameters: []
         visibility: Public
-      KaFunctionSymbol:
+      KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.toString
         contextReceivers: []
@@ -290,7 +290,7 @@ scopes:
         typeParameters: []
         visibility: Public
     callables: 1
-      KaFunctionSymbol:
+      KaNamedFunctionSymbol:
         annotations: []
         callableId: test/function
         contextReceivers: []
@@ -316,7 +316,7 @@ scopes:
           annotations: []
           location: LOCAL
           origin: SOURCE
-          owningCallableSymbol: KaFunctionSymbol(test/function)
+          owningCallableSymbol: KaNamedFunctionSymbol(test/function)
           type: KaUsualClassType:
             annotations: []
             typeArguments: []

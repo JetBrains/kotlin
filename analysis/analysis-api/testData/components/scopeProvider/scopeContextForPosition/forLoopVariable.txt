@@ -80,7 +80,7 @@ scopes:
     packages: 0
     classifiers: 0
     callables: 1
-      KaFunctionSymbol:
+      KaNamedFunctionSymbol:
         annotations: []
         callableId: test/usage
         contextReceivers: []

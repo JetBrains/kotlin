@@ -55,7 +55,7 @@ KaFunctionLikeSignature:
 
 
 Declaration Scope:
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: /A.foo
   contextReceivers: []
@@ -223,7 +223,7 @@ KaKotlinPropertySymbol:
   setter: null
   typeParameters: []
   visibility: Public
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Any.equals
   contextReceivers: []
@@ -274,7 +274,7 @@ KaFunctionSymbol:
       typeParameters: []
   ]
   visibility: Public
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Any.hashCode
   contextReceivers: []
@@ -304,7 +304,7 @@ KaFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Any.toString
   contextReceivers: []

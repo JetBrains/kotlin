@@ -1,7 +1,7 @@
 element: e
 implicit receivers:
   type: Context
-  owner symbol: KaFirFunctionSymbol
+  owner symbol: KaFirNamedFunctionSymbol
 
 scopes:
   LocalScope, index = 0

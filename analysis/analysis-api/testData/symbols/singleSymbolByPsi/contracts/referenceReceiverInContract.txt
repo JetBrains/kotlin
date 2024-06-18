@@ -1,4 +1,4 @@
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: [
     kotlin/OptIn(markerClass = [kotlin.contracts.ExperimentalContracts::class])
       psi: KtAnnotationEntry
@@ -14,7 +14,7 @@ KaFunctionSymbol:
               annotations: []
               location: LOCAL
               origin: SOURCE
-              owningCallableSymbol: KaFunctionSymbol(/referenceReceiverInContract)
+              owningCallableSymbol: KaNamedFunctionSymbol(/referenceReceiverInContract)
               type: KaFunctionType:
                 annotations: []
                 typeArguments: [
@@ -50,7 +50,7 @@ KaFunctionSymbol:
     annotations: []
     location: LOCAL
     origin: SOURCE
-    owningCallableSymbol: KaFunctionSymbol(/referenceReceiverInContract)
+    owningCallableSymbol: KaNamedFunctionSymbol(/referenceReceiverInContract)
     type: KaFunctionType:
       annotations: []
       typeArguments: [

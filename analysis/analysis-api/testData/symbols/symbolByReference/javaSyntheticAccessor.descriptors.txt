@@ -52,7 +52,7 @@ KaSyntheticJavaPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
-  javaGetterSymbol: KaFunctionSymbol(/JavaClass.getFoo)
+  javaGetterSymbol: KaNamedFunctionSymbol(/JavaClass.getFoo)
   javaSetterSymbol: null
   location: CLASS
   modality: FINAL

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -20,15 +20,15 @@ internal class KaFirMemberFunctionSymbolPointer(
     private val name: Name,
     private val signature: FirCallableSignature,
     isStatic: Boolean,
-) : KaFirMemberSymbolPointer<KaFunctionSymbol>(ownerPointer, isStatic) {
+) : KaFirMemberSymbolPointer<KaNamedFunctionSymbol>(ownerPointer, isStatic) {
     override fun KaFirSession.chooseCandidateAndCreateSymbol(
         candidates: FirScope,
         firSession: FirSession
-    ): KaFunctionSymbol? {
+    ): KaNamedFunctionSymbol? {
         val firFunction = candidates.findDeclarationWithSignature<FirSimpleFunction>(signature) {
             processFunctionsByName(name, it)
         } ?: return null
-        return firSymbolBuilder.functionLikeBuilder.buildFunctionSymbol(firFunction.symbol)
+        return firSymbolBuilder.functionLikeBuilder.buildNamedFunctionSymbol(firFunction.symbol)
     }
 
     override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||

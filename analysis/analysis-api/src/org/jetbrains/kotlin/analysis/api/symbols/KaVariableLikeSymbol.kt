@@ -218,8 +218,8 @@ public abstract class KaSyntheticJavaPropertySymbol : KaPropertySymbol() {
 
     abstract override val getter: KaPropertyGetterSymbol
 
-    public abstract val javaGetterSymbol: KaFunctionSymbol
-    public abstract val javaSetterSymbol: KaFunctionSymbol?
+    public abstract val javaGetterSymbol: KaNamedFunctionSymbol
+    public abstract val javaSetterSymbol: KaNamedFunctionSymbol?
 
     abstract override fun createPointer(): KaSymbolPointer<KaSyntheticJavaPropertySymbol>
 }

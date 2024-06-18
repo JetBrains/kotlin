@@ -72,7 +72,7 @@ internal class KaFirSymbolProvider(
                     if (firSymbol.origin == FirDeclarationOrigin.SamConstructor) {
                         firSymbolBuilder.functionLikeBuilder.buildSamConstructorSymbol(firSymbol)
                     } else {
-                        firSymbolBuilder.functionLikeBuilder.buildFunctionSymbol(firSymbol)
+                        firSymbolBuilder.functionLikeBuilder.buildNamedFunctionSymbol(firSymbol)
                     }
                 }
 

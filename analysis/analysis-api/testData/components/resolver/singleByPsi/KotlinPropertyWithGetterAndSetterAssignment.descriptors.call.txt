@@ -104,7 +104,7 @@
               annotations: []
               location: LOCAL
               origin: SOURCE
-              owningCallableSymbol: KaFunctionSymbol(/foo)
+              owningCallableSymbol: KaNamedFunctionSymbol(/foo)
               type: KaUsualClassType:
                 annotations: []
                 typeArguments: []
@@ -130,7 +130,7 @@
               annotations: []
               location: LOCAL
               origin: SOURCE
-              owningCallableSymbol: KaFunctionSymbol(/foo)
+              owningCallableSymbol: KaNamedFunctionSymbol(/foo)
               type: KaUsualClassType:
                 annotations: []
                 typeArguments: []
@@ -156,7 +156,7 @@
               annotations: []
               location: LOCAL
               origin: SOURCE
-              owningCallableSymbol: KaFunctionSymbol(/foo)
+              owningCallableSymbol: KaNamedFunctionSymbol(/foo)
               type: KaUsualClassType:
                 annotations: []
                 typeArguments: []

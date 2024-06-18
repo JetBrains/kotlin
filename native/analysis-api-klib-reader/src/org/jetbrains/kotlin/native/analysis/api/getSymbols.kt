@@ -66,9 +66,9 @@ public fun KlibCallableAddress.getCallableSymbols(): Sequence<KaCallableSymbol> 
  * @see [getSymbols]
  */
 context(KaSession)
-public fun KlibFunctionAddress.getFunctionSymbols(): Sequence<KaFunctionSymbol> {
+public fun KlibFunctionAddress.getFunctionSymbols(): Sequence<KaNamedFunctionSymbol> {
     return findTopLevelCallables(packageFqName, callableName)
-        .filterIsInstance<KaFunctionSymbol>()
+        .filterIsInstance<KaNamedFunctionSymbol>()
         .filter { symbol -> symbol in this }
 }
 

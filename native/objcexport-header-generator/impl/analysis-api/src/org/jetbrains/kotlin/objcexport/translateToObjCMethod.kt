@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 @file:Suppress("UNUSED_PARAMETER")
 
 package org.jetbrains.kotlin.objcexport
@@ -24,7 +29,7 @@ context(KaSession, KtObjCExportSession)
 fun KaFunctionLikeSymbol.translateToObjCMethod(): ObjCMethod? {
     if (!isVisibleInObjC()) return null
     if (isFakeOverride) return null
-    if (this is KaFunctionSymbol && isClone) return null
+    if (this is KaNamedFunctionSymbol && isClone) return null
     return buildObjCMethod()
 }
 
@@ -36,7 +41,7 @@ internal fun KaFunctionLikeSymbol.buildObjCMethod(
     unavailable: Boolean = false,
 ): ObjCMethod {
 
-    val bridge = if (this is KaFunctionSymbol) {
+    val bridge = if (this is KaNamedFunctionSymbol) {
         /**
          * Unlike constructor, a function can have base return type.
          * So in case of function we need to call [getFunctionMethodBridge] on [baseMethod]

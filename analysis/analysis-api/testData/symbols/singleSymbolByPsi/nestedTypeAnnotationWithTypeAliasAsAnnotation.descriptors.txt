@@ -1,4 +1,4 @@
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: /foo2
   contextReceivers: []
@@ -24,7 +24,7 @@ KaFunctionSymbol:
     annotations: []
     location: LOCAL
     origin: SOURCE
-    owningCallableSymbol: KaFunctionSymbol(/foo2)
+    owningCallableSymbol: KaNamedFunctionSymbol(/foo2)
     type: KaTypeParameterType:
       annotations: []
       type: T

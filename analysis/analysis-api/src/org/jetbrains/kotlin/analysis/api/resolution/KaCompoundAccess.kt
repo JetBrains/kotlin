@@ -9,16 +9,16 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.psi.KtExpression
 
 /**
  * The type of access to a variable or using the array access convention.
  */
 public sealed class KaCompoundAccess(
-    operationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>
+    operationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>
 ) : KaLifetimeOwner {
-    private val backingOperationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol> = operationPartiallyAppliedSymbol
+    private val backingOperationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol> = operationPartiallyAppliedSymbol
 
     override val token: KaLifetimeToken get() = backingOperationPartiallyAppliedSymbol.token
 
@@ -26,13 +26,13 @@ public sealed class KaCompoundAccess(
      * The function that compute the value for this compound access. For example, if the access is `+=`, this is the resolved `plus`
      * function. If the access is `++`, this is the resolved `inc` function.
      */
-    public val operationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol> get() = withValidityAssertion { backingOperationPartiallyAppliedSymbol }
+    public val operationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol> get() = withValidityAssertion { backingOperationPartiallyAppliedSymbol }
 
     /**
      * A compound access that read, compute, and write the computed value back. Note that calls to `<op>Assign` is not represented by this.
      */
     public class CompoundAssign(
-        operationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
+        operationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>,
         kind: Kind,
         operand: KtExpression,
     ) : KaCompoundAccess(operationPartiallyAppliedSymbol) {
@@ -49,7 +49,7 @@ public sealed class KaCompoundAccess(
      * A compound access that read, increment or decrement, and write the computed value back.
      */
     public class IncOrDecOperation(
-        operationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
+        operationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>,
         kind: Kind,
         precedence: Precedence,
     ) : KaCompoundAccess(operationPartiallyAppliedSymbol) {

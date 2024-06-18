@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.objcexport.testUtils
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
@@ -31,7 +31,7 @@ fun KaScope.getClassOrFail(name: String): KaNamedClassSymbol {
 }
 
 context(KaSession)
-fun KtFile.getFunctionOrFail(name: String): KaFunctionSymbol {
+fun KtFile.getFunctionOrFail(name: String): KaNamedFunctionSymbol {
     return symbol.fileScope.getFunctionOrFail(name)
 }
 
@@ -41,12 +41,12 @@ fun KtFile.getPropertyOrFail(name: String): KaPropertySymbol {
 }
 
 context(KaSession)
-fun KaScope.getFunctionOrFail(name: String): KaFunctionSymbol {
+fun KaScope.getFunctionOrFail(name: String): KaNamedFunctionSymbol {
     val allSymbols = callables(Name.identifier(name)).toList()
     if (allSymbols.isEmpty()) fail("Missing function '$name'")
     if (allSymbols.size > 1) fail("Found multiple functions with name '$name'")
     val symbol = allSymbols.single()
-    if (symbol !is KaFunctionSymbol) fail("$symbol is not a function")
+    if (symbol !is KaNamedFunctionSymbol) fail("$symbol is not a function")
     return symbol
 }
 
@@ -61,6 +61,6 @@ fun KaScope.getPropertyOrFail(name: String): KaPropertySymbol {
 }
 
 context(KaSession)
-fun KaClassSymbol.getFunctionOrFail(name: String): KaFunctionSymbol {
+fun KaClassSymbol.getFunctionOrFail(name: String): KaNamedFunctionSymbol {
     return this.memberScope.getFunctionOrFail(name)
 }

@@ -320,7 +320,7 @@ KaLocalVariableSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: /destruct
   contextReceivers: []

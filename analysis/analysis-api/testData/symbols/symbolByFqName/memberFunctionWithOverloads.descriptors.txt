@@ -1,4 +1,4 @@
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/List.listIterator
   contextReceivers: []
@@ -47,7 +47,7 @@ KaFunctionSymbol:
 
   deprecationStatus: null
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/List.listIterator
   contextReceivers: []

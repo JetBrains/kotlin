@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.api.fir.scopes.getConstructors
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayOf
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayOfSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayTypeToArrayOfCall
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.processEqualsFunctions
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAbstractResolver
@@ -797,9 +797,9 @@ internal class KaFirResolver(
     }
 
     private data class CompoundArrayAccessPartiallyAppliedSymbols(
-        val operationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
-        val getPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
-        val setPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
+        val operationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>,
+        val getPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>,
+        val setPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>,
     )
 
     private fun getOperationPartiallyAppliedSymbolsForCompoundArrayAssignment(
@@ -876,7 +876,7 @@ internal class KaFirResolver(
     private fun getOperationPartiallyAppliedSymbolsForCompoundVariableAccess(
         fir: FirVariableAssignment,
         leftOperandPsi: KtExpression,
-    ): KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>? {
+    ): KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>? {
         // The new value is a call to the appropriate operator function.
         val operationCall = fir.rValue as? FirFunctionCall ?: getInitializerOfReferencedLocalVariable(fir.rValue) ?: return null
         return operationCall.toPartiallyAppliedSymbol(leftOperandPsi)
@@ -896,7 +896,7 @@ internal class KaFirResolver(
 
     private fun FirFunctionCall.toPartiallyAppliedSymbol(
         explicitReceiverPsiSupplement: KtExpression? = null,
-    ): KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>? {
+    ): KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>? {
         val operationSymbol =
             (calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirNamedFunctionSymbol ?: return null
         val substitutor = createConeSubstitutorFromTypeArguments(rootModuleSession) ?: return null
@@ -970,8 +970,8 @@ internal class KaFirResolver(
 
     private fun FirClassLikeSymbol<*>.toKtSymbol(): KaClassLikeSymbol = firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(this)
 
-    private fun FirNamedFunctionSymbol.toKtSignature(): KaFunctionLikeSignature<KaFunctionSymbol> =
-        firSymbolBuilder.functionLikeBuilder.buildFunctionSignature(this)
+    private fun FirNamedFunctionSymbol.toKtSignature(): KaFunctionLikeSignature<KaNamedFunctionSymbol> =
+        firSymbolBuilder.functionLikeBuilder.buildNamedFunctionSignature(this)
 
     private fun FirVariableSymbol<*>.toKtSignature(): KaVariableLikeSignature<KaVariableLikeSymbol> =
         firSymbolBuilder.variableLikeBuilder.buildVariableLikeSignature(this)
@@ -1298,7 +1298,7 @@ internal class KaFirResolver(
         )
     }
 
-    private fun FirArrayLiteral.createSubstitutorFromTypeArguments(arrayOfSymbol: KaFirFunctionSymbol): KaSubstitutor {
+    private fun FirArrayLiteral.createSubstitutorFromTypeArguments(arrayOfSymbol: KaFirNamedFunctionSymbol): KaSubstitutor {
         val firSymbol = arrayOfSymbol.firSymbol
         // No type parameter means this is an arrayOf call of primitives, in which case there is no type arguments
         val typeParameter = firSymbol.fir.typeParameters.singleOrNull() ?: return KaSubstitutor.Empty(token)
@@ -1368,7 +1368,7 @@ internal class KaFirResolver(
     }
 
     private fun FirArrayLiteral.createArgumentMapping(
-        arrayOfSymbol: KaFirFunctionSymbol,
+        arrayOfSymbol: KaFirNamedFunctionSymbol,
         substitutor: KaSubstitutor,
     ): LinkedHashMap<KtExpression, KaVariableLikeSignature<KaValueParameterSymbol>> {
         val ktArgumentMapping = LinkedHashMap<KtExpression, KaVariableLikeSignature<KaValueParameterSymbol>>()

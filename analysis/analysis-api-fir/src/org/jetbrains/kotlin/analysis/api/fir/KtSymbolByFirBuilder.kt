@@ -202,7 +202,7 @@ internal class KaSymbolByFirBuilder(
                     if (firSymbol.origin == FirDeclarationOrigin.SamConstructor) {
                         buildSamConstructorSymbol(firSymbol)
                     } else {
-                        buildFunctionSymbol(firSymbol)
+                        buildNamedFunctionSymbol(firSymbol)
                     }
                 }
                 is FirConstructorSymbol -> buildConstructorSymbol(firSymbol)
@@ -214,29 +214,29 @@ internal class KaSymbolByFirBuilder(
 
         fun buildFunctionLikeSignature(fir: FirFunctionSymbol<*>): KaFunctionLikeSignature<KaFunctionLikeSymbol> {
             if (fir is FirNamedFunctionSymbol && fir.origin != FirDeclarationOrigin.SamConstructor)
-                return buildFunctionSignature(fir)
+                return buildNamedFunctionSignature(fir)
             return with(analysisSession) { buildFunctionLikeSymbol(fir).asSignature() }
         }
 
-        fun buildFunctionSymbol(firSymbol: FirNamedFunctionSymbol): KaFirFunctionSymbol {
+        fun buildNamedFunctionSymbol(firSymbol: FirNamedFunctionSymbol): KaFirNamedFunctionSymbol {
             firSymbol.fir.unwrapSubstitutionOverrideIfNeeded()?.let {
-                return buildFunctionSymbol(it.symbol)
+                return buildNamedFunctionSymbol(it.symbol)
             }
 
             if (firSymbol.dispatchReceiverType?.contains { it is ConeStubType } == true) {
-                return buildFunctionSymbol(
+                return buildNamedFunctionSymbol(
                     firSymbol.originalIfFakeOverride()
                         ?: errorWithFirSpecificEntries("Stub type in real declaration", fir = firSymbol.fir)
                 )
             }
 
-            firSymbol.unwrapImportedFromObjectOrStatic(::buildFunctionSymbol)?.let { return it }
+            firSymbol.unwrapImportedFromObjectOrStatic(::buildNamedFunctionSymbol)?.let { return it }
 
             check(firSymbol.origin != FirDeclarationOrigin.SamConstructor)
-            return symbolsCache.cache(firSymbol) { KaFirFunctionSymbol(firSymbol, analysisSession) }
+            return symbolsCache.cache(firSymbol) { KaFirNamedFunctionSymbol(firSymbol, analysisSession) }
         }
 
-        fun buildFunctionSignature(firSymbol: FirNamedFunctionSymbol): KaFunctionLikeSignature<KaFirFunctionSymbol> {
+        fun buildNamedFunctionSignature(firSymbol: FirNamedFunctionSymbol): KaFunctionLikeSignature<KaFirNamedFunctionSymbol> {
             firSymbol.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
             return KaFirFunctionLikeSubstitutorBasedSignature(analysisSession.token, firSymbol, analysisSession.firSymbolBuilder)
         }

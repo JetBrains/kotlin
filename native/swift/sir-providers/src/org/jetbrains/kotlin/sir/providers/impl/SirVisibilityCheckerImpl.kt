@@ -27,7 +27,7 @@ public class SirVisibilityCheckerImpl(
             is KaConstructorSymbol -> {
                 true
             }
-            is KaFunctionSymbol -> {
+            is KaNamedFunctionSymbol -> {
                 ktSymbol.isConsumableBySirBuilder()
             }
             is KaVariableSymbol -> {
@@ -43,7 +43,7 @@ public class SirVisibilityCheckerImpl(
         return if (isConsumable) SirVisibility.PUBLIC else SirVisibility.PRIVATE
     }
 
-    private fun KaFunctionSymbol.isConsumableBySirBuilder(): Boolean {
+    private fun KaNamedFunctionSymbol.isConsumableBySirBuilder(): Boolean {
         if (origin !in SUPPORTED_SYMBOL_ORIGINS) {
             unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "${origin.name.lowercase()} origin is not supported yet.")
             return false
