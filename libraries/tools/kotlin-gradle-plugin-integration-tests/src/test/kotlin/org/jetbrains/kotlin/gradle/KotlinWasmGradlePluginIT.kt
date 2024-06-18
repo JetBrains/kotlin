@@ -165,6 +165,29 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
                     Files.size(original) > Files.size(optimized)
                 }
             }
+
+            build(":wasmJsD8ProductionRun") {
+                assertTasksUpToDate(":compileProductionExecutableKotlinWasmJs")
+                assertTasksUpToDate(":compileProductionExecutableKotlinWasmJsOptimize")
+                assertTasksExecuted(":wasmJsD8ProductionRun")
+            }
+
+            projectPath.resolve("src/wasmJsMain/kotlin/foo.kt").modify {
+                it.replace(
+                    "fun main() {}",
+                    """
+                            fun main() {
+                                println("Hello from Wasi")
+                            }
+                            """
+                )
+            }
+
+            build(":wasmJsD8ProductionRun") {
+                assertTasksExecuted(":compileProductionExecutableKotlinWasmJs")
+                assertTasksExecuted(":compileProductionExecutableKotlinWasmJsOptimize")
+                assertTasksExecuted(":wasmJsD8ProductionRun")
+            }
         }
     }
 

@@ -239,11 +239,7 @@ open class ExecutableWasm(
             fs.copy {
                 it.from(compileWasmDestDir)
                 it.into(outputDirectory)
-                it.eachFile {
-                    if (it.relativePath.getFile(outputDirectory.get().asFile).exists()) {
-                        it.exclude()
-                    }
-                }
+                it.exclude(outputFileName.get())
             }
         }
     }.also { binaryenExec ->
