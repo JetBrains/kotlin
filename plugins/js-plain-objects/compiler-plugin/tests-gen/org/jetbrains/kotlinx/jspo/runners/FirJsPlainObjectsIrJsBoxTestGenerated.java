@@ -43,6 +43,12 @@ public class FirJsPlainObjectsIrJsBoxTestGenerated extends AbstractFirJsPlainObj
   }
 
   @Test
+  @TestMetadata("optionalByTypealias.kt")
+  public void testOptionalByTypealias() {
+    runTest("plugins/js-plain-objects/compiler-plugin/testData/box/optionalByTypealias.kt");
+  }
+
+  @Test
   @TestMetadata("simple.kt")
   public void testSimple() {
     runTest("plugins/js-plain-objects/compiler-plugin/testData/box/simple.kt");
