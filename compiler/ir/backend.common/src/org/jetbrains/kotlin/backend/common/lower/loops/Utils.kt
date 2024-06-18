@@ -200,7 +200,7 @@ internal fun IrExpression.castIfNecessary(targetClass: IrClass) =
 // For a class, returns `this`,
 // For an interface, returns null,
 // For a type parameter, finds nearest class ancestor.
-private fun IrClassifierSymbol.closestSuperClass(): IrClassSymbol? =
+internal fun IrClassifierSymbol.closestSuperClass(): IrClassSymbol? =
     if (this is IrClassSymbol)
         if (owner.isInterface) null
         else this

@@ -358,39 +358,23 @@ private class Transformer(
         return leastCommonPrimitiveNumericType(symbols, argumentType, commonBoundType)?.getClass()
     }
 
-    private fun leastCommonPrimitiveNumericType(symbols: Symbols, t1: IrType, t2: IrType): IrType? {
+    private fun leastCommonPrimitiveNumericType(symbols: Symbols, type1: IrType, type2: IrType): IrType? {
+        // In case of type parameters, use their upper bounds instead
+        val t1 = (type1 as IrSimpleType).classifier.closestSuperClass()!!.defaultType
+        val t2 = (type2 as IrSimpleType).classifier.closestSuperClass()!!.defaultType
         val primitive1 = t1.getPrimitiveType()
         val primitive2 = t2.getPrimitiveType()
         val unsigned1 = t1.getUnsignedType()
         val unsigned2 = t2.getUnsignedType()
 
-        fun IrType.isPromotableToInt(): Boolean =
-            isSubtypeOfClass(symbols.int) || isSubtypeOfClass(symbols.short) || isSubtypeOfClass(symbols.byte)
-
-        fun IrType.isPromotableToUInt(): Boolean =
-            symbols.uInt?.let { isSubtypeOfClass(it) } == true ||
-                    symbols.uShort?.let { isSubtypeOfClass(it) } == true ||
-                    symbols.uByte?.let { isSubtypeOfClass(it) } == true
-
         return when {
-            primitive1 == PrimitiveType.DOUBLE || primitive2 == PrimitiveType.DOUBLE ||
-                    t1.isSubtypeOfClass(symbols.double) ||
-                    t2.isSubtypeOfClass(symbols.double) -> symbols.double
-            primitive1 == PrimitiveType.FLOAT || primitive2 == PrimitiveType.FLOAT ||
-                    t1.isSubtypeOfClass(symbols.float) ||
-                    t2.isSubtypeOfClass(symbols.float) -> symbols.float
-            unsigned1 == UnsignedType.ULONG || unsigned2 == UnsignedType.ULONG ||
-                    symbols.uLong?.let { t1.isSubtypeOfClass(it) || t2.isSubtypeOfClass(it) } == true -> symbols.uLong!!
-            unsigned1.isPromotableToUInt() || unsigned2.isPromotableToUInt() ||
-                    t1.isPromotableToUInt() || t2.isPromotableToUInt() -> symbols.uInt!!
-            primitive1 == PrimitiveType.LONG || primitive2 == PrimitiveType.LONG ||
-                    t1.isSubtypeOfClass(symbols.long) ||
-                    t2.isSubtypeOfClass(symbols.long) -> symbols.long
-            primitive1.isPromotableToInt() || primitive2.isPromotableToInt() ||
-                    t1.isPromotableToInt() || t2.isPromotableToInt() -> symbols.int
-            primitive1 == PrimitiveType.CHAR || primitive2 == PrimitiveType.CHAR ||
-                    t1.isSubtypeOfClass(symbols.char) ||
-                    t2.isSubtypeOfClass(symbols.char) -> symbols.char
+            primitive1 == PrimitiveType.DOUBLE || primitive2 == PrimitiveType.DOUBLE -> symbols.double
+            primitive1 == PrimitiveType.FLOAT || primitive2 == PrimitiveType.FLOAT -> symbols.float
+            unsigned1 == UnsignedType.ULONG || unsigned2 == UnsignedType.ULONG -> symbols.uLong!!
+            unsigned1.isPromotableToUInt() || unsigned2.isPromotableToUInt() -> symbols.uInt!!
+            primitive1 == PrimitiveType.LONG || primitive2 == PrimitiveType.LONG -> symbols.long
+            primitive1.isPromotableToInt() || primitive2.isPromotableToInt() -> symbols.int
+            primitive1 == PrimitiveType.CHAR || primitive2 == PrimitiveType.CHAR -> symbols.char
             else -> error("Unexpected types: t1=${t1.render()}, t2=${t2.render()}")
         }.defaultType
     }
