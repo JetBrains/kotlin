@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 /**
  * A signature of a variable-like symbol. This includes properties, enum entries local variables, etc.
  */
-public abstract class KaVariableLikeSignature<out S : KaVariableSymbol> : KaCallableSignature<S>() {
+public abstract class KaVariableSignature<out S : KaVariableSymbol> : KaCallableSignature<S>() {
     /**
-     * A name of the variable with respect to the `@ParameterName` annotation. Can be different from the [KaVariableLikeSymbol.name].
+     * A name of the variable with respect to the `@ParameterName` annotation. Can be different from the [KaVariableSymbol.name].
      *
      * Some variables can have their names changed by special annotations like `@ParameterName(name = "newName")`. This is used to preserve
      * the names of the lambda parameters in the situations like this:
@@ -58,7 +58,7 @@ public abstract class KaVariableLikeSignature<out S : KaVariableSymbol> : KaCall
         }
 
     @KaExperimentalApi
-    abstract override fun substitute(substitutor: KaSubstitutor): KaVariableLikeSignature<S>
+    abstract override fun substitute(substitutor: KaSubstitutor): KaVariableSignature<S>
 
     private fun getValueFromParameterNameAnnotation(): Name? {
         val resultingAnnotation = findParameterNameAnnotation() ?: return null
@@ -82,5 +82,8 @@ public abstract class KaVariableLikeSignature<out S : KaVariableSymbol> : KaCall
     }
 }
 
-@Deprecated("Use 'KaVariableLikeSignature' instead", ReplaceWith("KaVariableLikeSignature"))
-public typealias KtVariableLikeSignature<S> = KaVariableLikeSignature<S>
+@Deprecated("Use 'KaVariableSignature' instead", ReplaceWith("KaVariableSignature"))
+public typealias KaVariableLikeSignature<S> = KaVariableSignature<S>
+
+@Deprecated("Use 'KaVariableSignature' instead", ReplaceWith("KaVariableSignature"))
+public typealias KtVariableLikeSignature<S> = KaVariableSignature<S>

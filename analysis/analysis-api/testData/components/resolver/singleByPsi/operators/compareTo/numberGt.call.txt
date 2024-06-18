@@ -13,7 +13,7 @@ KtOperationReferenceExpression(20,21): '>'
           returnType = kotlin.Int
           symbol = kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = other
               receiverType = null
               returnType = kotlin.Int
@@ -23,7 +23,7 @@ KtOperationReferenceExpression(20,21): '>'
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
       argumentMapping = {
-        2 -> (KaVariableLikeSignature:
+        2 -> (KaVariableSignature:
           name = other
           receiverType = null
           returnType = kotlin.Int

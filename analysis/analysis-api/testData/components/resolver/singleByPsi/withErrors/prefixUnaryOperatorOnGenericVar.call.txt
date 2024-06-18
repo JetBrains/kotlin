@@ -22,7 +22,7 @@ KtPrefixExpression(47,58): '++foo.value'
           expression = foo
           isSafeNavigation = false
           type = CInt32VarX<kotlin.Int>
-        signature = KaVariableLikeSignature:
+        signature = KaVariableSignature:
           name = value
           receiverType = CInt32VarX<kotlin.Int>
           returnType = kotlin.Int

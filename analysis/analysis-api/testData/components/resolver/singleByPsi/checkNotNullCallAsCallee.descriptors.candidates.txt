@@ -10,7 +10,7 @@ KtPostfixExpression(33,36): 'a!!'
           returnType = kotlin.Function0<kotlin.Unit>
           symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = baseExpr
               receiverType = null
               returnType = kotlin.Function0<kotlin.Unit>?
@@ -22,7 +22,7 @@ KtPostfixExpression(33,36): 'a!!'
         <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (kotlin.Function0<kotlin.Unit>)
       }
       argumentMapping = {
-        a -> (KaVariableLikeSignature:
+        a -> (KaVariableSignature:
           name = baseExpr
           receiverType = null
           returnType = kotlin.Function0<kotlin.Unit>?

@@ -10,7 +10,7 @@ KtConstructorDelegationCall(144,152): 'super(1)'
           returnType = ClassWithType<kotlin.Int>
           symbol = <constructor>(i: T): ClassWithType<T>
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = i
               receiverType = null
               returnType = kotlin.Int
@@ -20,7 +20,7 @@ KtConstructorDelegationCall(144,152): 'super(1)'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {
-        1 -> (KaVariableLikeSignature:
+        1 -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = kotlin.Int
@@ -41,13 +41,13 @@ KtConstructorDelegationCall(144,152): 'super(1)'
           returnType = ClassWithType<kotlin.Int>
           symbol = <constructor>(i: T, str: kotlin.String): ClassWithType<T>
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = i
               receiverType = null
               returnType = kotlin.Int
               symbol = i: T
               callableId = null,
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = str
               receiverType = null
               returnType = kotlin.String
@@ -57,7 +57,7 @@ KtConstructorDelegationCall(144,152): 'super(1)'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {
-        1 -> (KaVariableLikeSignature:
+        1 -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = kotlin.Int

@@ -10,7 +10,7 @@ KtNameReferenceExpression(18,28): 'Comparator'
           returnType = java.util.Comparator<kotlin.Int>
           symbol = java/util/Comparator(function: kotlin.Function2<T!, T!, kotlin.Int>): java.util.Comparator<T>
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = function
               receiverType = null
               returnType = kotlin.Function2<kotlin.Int!, kotlin.Int!, kotlin.Int>
@@ -22,7 +22,7 @@ KtNameReferenceExpression(18,28): 'Comparator'
         T -> (kotlin.Int!)
       }
       argumentMapping = {
-        { x, y -> 1 } -> (KaVariableLikeSignature:
+        { x, y -> 1 } -> (KaVariableSignature:
           name = function
           receiverType = null
           returnType = kotlin.Function2<kotlin.Int!, kotlin.Int!, kotlin.Int>

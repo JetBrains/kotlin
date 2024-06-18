@@ -6,7 +6,7 @@ KtNameReferenceExpression(80,83): 'bar'
           symbol = /Child
           type = kotlin.Unit
         extensionReceiver = null
-        signature = KaVariableLikeSignature:
+        signature = KaVariableSignature:
           name = bar
           receiverType = null
           returnType = kotlin.Int

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.components
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
-import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
@@ -38,7 +38,7 @@ public interface KaSignatureSubstitutor {
      * @see KaSubstitutor.substitute
      */
     @KaExperimentalApi
-    public fun <S : KaVariableSymbol> S.substitute(substitutor: KaSubstitutor): KaVariableLikeSignature<S>
+    public fun <S : KaVariableSymbol> S.substitute(substitutor: KaSubstitutor): KaVariableSignature<S>
 
     /**
      * Creates a new [KaCallableSignature] by given symbol and leave all types intact
@@ -56,5 +56,5 @@ public interface KaSignatureSubstitutor {
      * Creates a new [KaCallableSignature] by given symbol and leave all types intact
      */
     @KaExperimentalApi
-    public fun <S : KaVariableSymbol> S.asSignature(): KaVariableLikeSignature<S>
+    public fun <S : KaVariableSymbol> S.asSignature(): KaVariableSignature<S>
 }

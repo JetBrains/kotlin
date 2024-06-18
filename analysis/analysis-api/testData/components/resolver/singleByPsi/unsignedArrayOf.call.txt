@@ -10,7 +10,7 @@ KtCallExpression(39,55): 'uintArrayOf(42u)'
           returnType = kotlin.UIntArray
           symbol = kotlin/uintArrayOf(vararg elements: kotlin.UInt): kotlin.UIntArray
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = elements
               receiverType = null
               returnType = kotlin.UInt
@@ -20,7 +20,7 @@ KtCallExpression(39,55): 'uintArrayOf(42u)'
           callableId = kotlin/uintArrayOf
       typeArgumentsMapping = {}
       argumentMapping = {
-        42u -> (KaVariableLikeSignature:
+        42u -> (KaVariableSignature:
           name = elements
           receiverType = null
           returnType = kotlin.UInt

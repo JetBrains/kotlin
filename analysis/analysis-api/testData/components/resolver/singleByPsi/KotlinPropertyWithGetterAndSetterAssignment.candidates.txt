@@ -8,7 +8,7 @@
             isSafeNavigation = false
             type = A
           extensionReceiver = null
-          signature = KaVariableLikeSignature:
+          signature = KaVariableSignature:
             name = something
             receiverType = null
             returnType = kotlin.Int
@@ -28,7 +28,7 @@
             isSafeNavigation = false
             type = A
           extensionReceiver = null
-          signature = KaVariableLikeSignature:
+          signature = KaVariableSignature:
             name = something
             receiverType = null
             returnType = kotlin.Int
@@ -49,7 +49,7 @@
             isSafeNavigation = false
             type = A
           extensionReceiver = null
-          signature = KaVariableLikeSignature:
+          signature = KaVariableSignature:
             name = something
             receiverType = null
             returnType = kotlin.Int
@@ -69,7 +69,7 @@
             isSafeNavigation = false
             type = A
           extensionReceiver = null
-          signature = KaVariableLikeSignature:
+          signature = KaVariableSignature:
             name = something
             receiverType = null
             returnType = kotlin.Int
@@ -89,7 +89,7 @@
             isSafeNavigation = false
             type = A
           extensionReceiver = null
-          signature = KaVariableLikeSignature:
+          signature = KaVariableSignature:
             name = something
             receiverType = null
             returnType = kotlin.Int
@@ -117,7 +117,7 @@
                 type: A
             type = A
           extensionReceiver = null
-          signature = KaVariableLikeSignature:
+          signature = KaVariableSignature:
             name = something
             receiverType = null
             returnType = kotlin.Int
@@ -144,7 +144,7 @@
                 type: A
             type = A
           extensionReceiver = null
-          signature = KaVariableLikeSignature:
+          signature = KaVariableSignature:
             name = something
             receiverType = null
             returnType = kotlin.Int
@@ -171,7 +171,7 @@
                 type: A
             type = A
           extensionReceiver = null
-          signature = KaVariableLikeSignature:
+          signature = KaVariableSignature:
             name = something
             receiverType = null
             returnType = kotlin.Int
@@ -192,7 +192,7 @@
             isSafeNavigation = false
             type = A
           extensionReceiver = null
-          signature = KaVariableLikeSignature:
+          signature = KaVariableSignature:
             name = something
             receiverType = null
             returnType = kotlin.Int

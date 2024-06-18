@@ -10,7 +10,7 @@ KtCallExpression(110,117): 'x(true)'
           returnType = kotlin.Unit
           symbol = x(b: kotlin.Boolean): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = b
               receiverType = null
               returnType = kotlin.Boolean
@@ -20,7 +20,7 @@ KtCallExpression(110,117): 'x(true)'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {
-        true -> (KaVariableLikeSignature:
+        true -> (KaVariableSignature:
           name = b
           receiverType = null
           returnType = kotlin.Boolean

@@ -6,7 +6,7 @@ KtNameReferenceExpression(94,97): 'bar'
           symbol = one/two/TopLevelObject
           type = one.two.TopLevelObject
         extensionReceiver = null
-        signature = KaVariableLikeSignature:
+        signature = KaVariableSignature:
           name = bar
           receiverType = null
           returnType = kotlin.Int

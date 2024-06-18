@@ -8,19 +8,19 @@ KaFunctionSignature:
   returnType = kotlin.collections.List<S>
   symbol = /foo(x: kotlin.collections.List<T>, y: kotlin.collections.Map<T, kotlin.collections.List<S>>, k: kotlin.String): T
   valueParameters = [
-    KaVariableLikeSignature:
+    KaVariableSignature:
       name = x
       receiverType = null
       returnType = kotlin.collections.List<kotlin.collections.List<S>>
       symbol = x: kotlin.collections.List<T>
       callableId = null,
-    KaVariableLikeSignature:
+    KaVariableSignature:
       name = y
       receiverType = null
       returnType = kotlin.collections.Map<kotlin.collections.List<S>, kotlin.collections.List<kotlin.Long>>
       symbol = y: kotlin.collections.Map<T, kotlin.collections.List<S>>
       callableId = null,
-    KaVariableLikeSignature:
+    KaVariableSignature:
       name = k
       receiverType = null
       returnType = kotlin.String

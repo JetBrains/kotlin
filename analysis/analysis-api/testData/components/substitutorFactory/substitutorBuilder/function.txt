@@ -11,7 +11,7 @@ KaFunctionSignature:
   returnType = kotlin.collections.List<kotlin.String>
   symbol = /fooo(<extension receiver>: A, x: kotlin.collections.List<B>): C
   valueParameters = [
-    KaVariableLikeSignature:
+    KaVariableSignature:
       name = x
       receiverType = null
       returnType = kotlin.collections.List<kotlin.Long>

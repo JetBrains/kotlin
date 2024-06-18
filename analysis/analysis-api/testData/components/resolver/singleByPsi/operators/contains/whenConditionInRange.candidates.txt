@@ -14,7 +14,7 @@ KtOperationReferenceExpression(169,171): 'in'
           returnType = kotlin.Boolean
           symbol = /MyClass.contains(<dispatch receiver>: MyClass, str: kotlin.String): kotlin.Boolean
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = str
               receiverType = null
               returnType = kotlin.String
@@ -24,7 +24,7 @@ KtOperationReferenceExpression(169,171): 'in'
           callableId = /MyClass.contains
       typeArgumentsMapping = {}
       argumentMapping = {
-        1 -> (KaVariableLikeSignature:
+        1 -> (KaVariableSignature:
           name = str
           receiverType = null
           returnType = kotlin.String
@@ -47,7 +47,7 @@ KtOperationReferenceExpression(169,171): 'in'
           returnType = kotlin.Boolean
           symbol = /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = int
               receiverType = null
               returnType = kotlin.Int
@@ -59,7 +59,7 @@ KtOperationReferenceExpression(169,171): 'in'
         T -> (MyClass)
       }
       argumentMapping = {
-        1 -> (KaVariableLikeSignature:
+        1 -> (KaVariableSignature:
           name = int
           receiverType = null
           returnType = kotlin.Int

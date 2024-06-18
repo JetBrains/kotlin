@@ -13,7 +13,7 @@ KtOperationReferenceExpression(195,197): '+='
           returnType = test.WithOperator
           symbol = test/WithOperator.plus(<dispatch receiver>: test.WithOperator, f: test.Foo): test.WithOperator
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = f
               receiverType = null
               returnType = test.Foo
@@ -23,7 +23,7 @@ KtOperationReferenceExpression(195,197): '+='
           callableId = test/WithOperator.plus
       typeArgumentsMapping = {}
       argumentMapping = {
-        foo -> (KaVariableLikeSignature:
+        foo -> (KaVariableSignature:
           name = f
           receiverType = null
           returnType = test.Foo

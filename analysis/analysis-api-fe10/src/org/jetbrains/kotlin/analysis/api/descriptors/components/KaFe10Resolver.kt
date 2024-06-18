@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.Analysis
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.signatures.KaFe10FunctionSignature
-import org.jetbrains.kotlin.analysis.api.descriptors.signatures.KaFe10VariableLikeSignature
+import org.jetbrains.kotlin.analysis.api.descriptors.signatures.KaFe10VariableSignature
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10ReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.KaFe10DescSymbol
@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.analysis.api.resolution.KaVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.symbol
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
-import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -443,7 +443,7 @@ internal class KaFe10Resolver(
 
     private fun ResolvedCall<*>.toPartiallyAppliedVariableSymbol(context: BindingContext): KaPartiallyAppliedVariableSymbol<KaVariableSymbol>? {
         val partiallyAppliedSymbol = toPartiallyAppliedSymbol(context) ?: return null
-        if (partiallyAppliedSymbol.signature !is KaVariableLikeSignature<*>) return null
+        if (partiallyAppliedSymbol.signature !is KaVariableSignature<*>) return null
         @Suppress("UNCHECKED_CAST")
         return partiallyAppliedSymbol as KaPartiallyAppliedVariableSymbol<KaVariableSymbol>
     }
@@ -543,14 +543,14 @@ internal class KaFe10Resolver(
             resultingDescriptor.extensionReceiverParameter?.returnType?.toKtType(analysisContext)
         }
         return when (symbol) {
-            is KaVariableSymbol -> KaFe10VariableLikeSignature(symbol, ktReturnType, receiverType)
+            is KaVariableSymbol -> KaFe10VariableSignature(symbol, ktReturnType, receiverType)
             is KaFunctionSymbol -> KaFe10FunctionSignature(
                 symbol,
                 ktReturnType,
                 receiverType,
                 @Suppress("UNCHECKED_CAST")
                 symbol.valueParameters.zip(resultingDescriptor.valueParameters).map { (symbol, resultingDescriptor) ->
-                    createSignature(symbol, resultingDescriptor) as KaVariableLikeSignature<KaValueParameterSymbol>
+                    createSignature(symbol, resultingDescriptor) as KaVariableSignature<KaValueParameterSymbol>
                 })
             else -> error("unexpected callable symbol $this")
         }
@@ -559,13 +559,13 @@ internal class KaFe10Resolver(
     private fun CallableDescriptor?.isSynthesizedPropertyFromJavaAccessors() =
         this is PropertyDescriptor && kind == CallableMemberDescriptor.Kind.SYNTHESIZED
 
-    private fun ResolvedCall<*>.createArgumentMapping(signature: KaFunctionSignature<*>): LinkedHashMap<KtExpression, KaVariableLikeSignature<KaValueParameterSymbol>> {
+    private fun ResolvedCall<*>.createArgumentMapping(signature: KaFunctionSignature<*>): LinkedHashMap<KtExpression, KaVariableSignature<KaValueParameterSymbol>> {
         val parameterSignatureByName = signature.valueParameters.associateBy {
             // ResolvedCall.valueArguments have their names affected by the `@ParameterName` annotations,
             // so we use `name` instead of `symbol.name`
             it.name
         }
-        val result = LinkedHashMap<KtExpression, KaVariableLikeSignature<KaValueParameterSymbol>>()
+        val result = LinkedHashMap<KtExpression, KaVariableSignature<KaValueParameterSymbol>>()
         for ((parameter, arguments) in valueArguments) {
             val parameterSymbol = KaFe10DescValueParameterSymbol(parameter, analysisContext)
 

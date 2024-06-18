@@ -19,7 +19,7 @@ KtPostfixExpression(31,34): 'i++'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaVariableLikeSignature:
+        signature = KaVariableSignature:
           name = i
           receiverType = null
           returnType = kotlin.Int

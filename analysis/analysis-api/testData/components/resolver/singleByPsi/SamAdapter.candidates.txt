@@ -13,7 +13,7 @@ KtNameReferenceExpression(35,46): 'invokeLater'
           returnType = kotlin.Unit
           symbol = javax/swing/SwingUtilities.invokeLater(p0: java.lang.Runnable!): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = p0
               receiverType = null
               returnType = java.lang.Runnable!
@@ -23,7 +23,7 @@ KtNameReferenceExpression(35,46): 'invokeLater'
           callableId = javax/swing/SwingUtilities.invokeLater
       typeArgumentsMapping = {}
       argumentMapping = {
-        {  } -> (KaVariableLikeSignature:
+        {  } -> (KaVariableSignature:
           name = p0
           receiverType = null
           returnType = java.lang.Runnable!

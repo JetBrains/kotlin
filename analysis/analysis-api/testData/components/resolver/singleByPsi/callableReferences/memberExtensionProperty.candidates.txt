@@ -14,7 +14,7 @@ KtCallableReferenceExpression(249,257): 'Bar::foo'
               type: Foo
           type = Foo
         extensionReceiver = null
-        signature = KaVariableLikeSignature:
+        signature = KaVariableSignature:
           name = foo
           receiverType = Bar
           returnType = kotlin.String

@@ -11,19 +11,19 @@ KtCallExpression(61,99): 'generic<String, String>("a", "b", "c")'
             returnType = kotlin.Unit
             symbol = /generic(a: A, b: B, c: C): kotlin.Unit
             valueParameters = [
-              KaVariableLikeSignature:
+              KaVariableSignature:
                 name = a
                 receiverType = null
                 returnType = kotlin.String
                 symbol = a: A
                 callableId = null,
-              KaVariableLikeSignature:
+              KaVariableSignature:
                 name = b
                 receiverType = null
                 returnType = kotlin.String
                 symbol = b: B
                 callableId = null,
-              KaVariableLikeSignature:
+              KaVariableSignature:
                 name = c
                 receiverType = null
                 returnType = kotlin.String
@@ -37,19 +37,19 @@ KtCallExpression(61,99): 'generic<String, String>("a", "b", "c")'
           C -> (kotlin.String)
         }
         argumentMapping = {
-          "a" -> (KaVariableLikeSignature:
+          "a" -> (KaVariableSignature:
             name = a
             receiverType = null
             returnType = kotlin.String
             symbol = a: A
             callableId = null),
-          "b" -> (KaVariableLikeSignature:
+          "b" -> (KaVariableSignature:
             name = b
             receiverType = null
             returnType = kotlin.String
             symbol = b: B
             callableId = null),
-          "c" -> (KaVariableLikeSignature:
+          "c" -> (KaVariableSignature:
             name = c
             receiverType = null
             returnType = kotlin.String

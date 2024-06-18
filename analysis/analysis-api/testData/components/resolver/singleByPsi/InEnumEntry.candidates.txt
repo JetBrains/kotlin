@@ -4,7 +4,7 @@ KtNameReferenceExpression(100,109): 'TOP_LEVEL'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaVariableLikeSignature:
+        signature = KaVariableSignature:
           name = TOP_LEVEL
           receiverType = null
           returnType = kotlin.Int

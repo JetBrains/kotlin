@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.signatures.KaFe10FunctionSignature
-import org.jetbrains.kotlin.analysis.api.descriptors.signatures.KaFe10VariableLikeSignature
+import org.jetbrains.kotlin.analysis.api.descriptors.signatures.KaFe10VariableSignature
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAbstractSignatureSubstitutor
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
-import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.receiverType
@@ -24,7 +24,7 @@ internal class KaFe10SignatureSubstitutor(
         return KaFe10FunctionSignature(this, returnType, receiverType, valueParameters.map { it.asSignature() })
     }
 
-    override fun <S : KaVariableSymbol> S.asSignature(): KaVariableLikeSignature<S> = withValidityAssertion {
-        return KaFe10VariableLikeSignature(this, returnType, receiverType)
+    override fun <S : KaVariableSymbol> S.asSignature(): KaVariableSignature<S> = withValidityAssertion {
+        return KaFe10VariableSignature(this, returnType, receiverType)
     }
 }

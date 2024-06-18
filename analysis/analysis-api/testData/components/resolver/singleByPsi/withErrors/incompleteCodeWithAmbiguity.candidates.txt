@@ -11,7 +11,7 @@ KtCallExpression(89,100): 'Foo<String>'
           returnType = Foo<T>
           symbol = <constructor>(len: kotlin.Int): Foo<T>
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = len
               receiverType = null
               returnType = kotlin.Int
@@ -37,7 +37,7 @@ KtCallExpression(89,100): 'Foo<String>'
           returnType = Foo<T>
           symbol = <constructor>(s: kotlin.String): Foo<T>
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = s
               receiverType = null
               returnType = kotlin.String

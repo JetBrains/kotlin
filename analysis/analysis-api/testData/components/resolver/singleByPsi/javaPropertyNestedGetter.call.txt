@@ -7,7 +7,7 @@ KtNameReferenceExpression(76,79): 'sub'
           isSafeNavigation = false
           type = JavaClass
         extensionReceiver = null
-        signature = KaVariableLikeSignature:
+        signature = KaVariableSignature:
           name = sub
           receiverType = null
           returnType = JavaSubClass!

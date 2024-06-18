@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.analysis.api.resolution.symbol
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
-import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
@@ -135,11 +135,11 @@ internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
 private fun KaSession.stringRepresentation(signature: KaCallableSignature<*>): String = buildString {
     when (signature) {
         is KaFunctionSignature<*> -> append(KaFunctionSignature::class.simpleName)
-        is KaVariableLikeSignature<*> -> append(KaVariableLikeSignature::class.simpleName)
+        is KaVariableSignature<*> -> append(KaVariableSignature::class.simpleName)
     }
 
     val memberProperties = listOfNotNull(
-        KaVariableLikeSignature<*>::name.takeIf { signature is KaVariableLikeSignature<*> },
+        KaVariableSignature<*>::name.takeIf { signature is KaVariableSignature<*> },
         KaCallableSignature<*>::receiverType,
         KaCallableSignature<*>::returnType,
         KaCallableSignature<*>::symbol,
@@ -171,7 +171,7 @@ internal fun KaSession.prettyPrintSignature(signature: KaCallableSignature<*>): 
             append(": ")
             append(signature.returnType.render(position = Variance.INVARIANT))
         }
-        is KaVariableLikeSignature -> {
+        is KaVariableSignature -> {
             val symbol = signature.symbol
             append(if (symbol.isVal) "val" else "var")
             append(" ")

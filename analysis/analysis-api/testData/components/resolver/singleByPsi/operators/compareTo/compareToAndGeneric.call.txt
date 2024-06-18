@@ -13,7 +13,7 @@ KtNameReferenceExpression(114,123): 'compareTo'
           returnType = kotlin.Int
           symbol = /compareTo(<extension receiver>: T, int: kotlin.Int): kotlin.Int
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = int
               receiverType = null
               returnType = kotlin.Int
@@ -25,7 +25,7 @@ KtNameReferenceExpression(114,123): 'compareTo'
         T -> (MyClass)
       }
       argumentMapping = {
-        2 -> (KaVariableLikeSignature:
+        2 -> (KaVariableSignature:
           name = int
           receiverType = null
           returnType = kotlin.Int

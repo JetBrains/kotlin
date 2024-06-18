@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
-import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.receiverType
@@ -49,8 +49,8 @@ internal class KaFirFunctionDummySignature<out S : KaFunctionSymbol>(
         get() = withValidityAssertion { symbol.returnType }
     override val receiverType: KaType?
         get() = withValidityAssertion { symbol.receiverType }
-    override val valueParameters: List<KaVariableLikeSignature<KaValueParameterSymbol>> by cached {
-        firSymbol.valueParameterSymbols.map { KaFirVariableLikeDummySignature(token, it, firSymbolBuilder) }
+    override val valueParameters: List<KaVariableSignature<KaValueParameterSymbol>> by cached {
+        firSymbol.valueParameterSymbols.map { KaFirVariableDummySignature(token, it, firSymbolBuilder) }
     }
 
     override fun substitute(substitutor: KaSubstitutor): KaFirFunctionSignature<S> = withValidityAssertion {
@@ -80,9 +80,9 @@ internal class KaFirFunctionSubstitutorBasedSignature<out S : KaFunctionSymbol>(
         }
         receiverTypeRef?.let { firSymbolBuilder.typeBuilder.buildKtType(coneSubstitutor.substituteOrSelf(it.type)) }
     }
-    override val valueParameters: List<KaVariableLikeSignature<KaValueParameterSymbol>> by cached {
+    override val valueParameters: List<KaVariableSignature<KaValueParameterSymbol>> by cached {
         firSymbol.fir.valueParameters.map { firValueParameter ->
-            KaFirVariableLikeSubstitutorBasedSignature(token, firValueParameter.symbol, firSymbolBuilder, coneSubstitutor)
+            KaFirVariableSubstitutorBasedSignature(token, firValueParameter.symbol, firSymbolBuilder, coneSubstitutor)
         }
     }
 

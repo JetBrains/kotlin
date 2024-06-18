@@ -10,7 +10,7 @@ KtCallableReferenceExpression(114,120): '::Anno'
           returnType = Anno
           symbol = <constructor>(value: kotlin.String): Anno
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = value
               receiverType = null
               returnType = kotlin.String

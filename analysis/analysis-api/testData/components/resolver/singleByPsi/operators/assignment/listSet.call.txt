@@ -13,13 +13,13 @@ KtOperationReferenceExpression(57,58): '='
           returnType = kotlin.Int
           symbol = kotlin/collections/MutableList.set(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int, element: E): E
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = index
               receiverType = null
               returnType = kotlin.Int
               symbol = index: kotlin.Int
               callableId = null,
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = element
               receiverType = null
               returnType = kotlin.Int
@@ -29,13 +29,13 @@ KtOperationReferenceExpression(57,58): '='
           callableId = kotlin/collections/MutableList.set
       typeArgumentsMapping = {}
       argumentMapping = {
-        0 -> (KaVariableLikeSignature:
+        0 -> (KaVariableSignature:
           name = index
           receiverType = null
           returnType = kotlin.Int
           symbol = index: kotlin.Int
           callableId = null),
-        1 -> (KaVariableLikeSignature:
+        1 -> (KaVariableSignature:
           name = element
           receiverType = null
           returnType = kotlin.Int

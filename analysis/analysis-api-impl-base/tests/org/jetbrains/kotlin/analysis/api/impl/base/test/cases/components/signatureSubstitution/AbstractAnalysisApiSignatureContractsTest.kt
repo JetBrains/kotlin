@@ -10,7 +10,7 @@ import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.buildSubstitutor
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
-import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
@@ -83,8 +83,8 @@ abstract class AbstractAnalysisApiSignatureContractsTest : AbstractAnalysisApiBa
                 checkSubstitutionResult(symbol, directlySubstituted, substitutor, testServices)
             }
             is KaVariableSymbol -> {
-                val substitutedViaSignature: KaVariableLikeSignature<KaVariableSymbol> = symbol.asSignature().substitute(substitutor)
-                val directlySubstituted: KaVariableLikeSignature<KaVariableSymbol> = symbol.substitute(substitutor)
+                val substitutedViaSignature: KaVariableSignature<KaVariableSymbol> = symbol.asSignature().substitute(substitutor)
+                val directlySubstituted: KaVariableSignature<KaVariableSymbol> = symbol.substitute(substitutor)
 
                 testServices.assertions.assertEquals(directlySubstituted, substitutedViaSignature)
                 testServices.assertions.assertEquals(symbol, directlySubstituted.symbol)
@@ -113,7 +113,7 @@ abstract class AbstractAnalysisApiSignatureContractsTest : AbstractAnalysisApiBa
 
     private fun KaSession.checkSubstitutionResult(
         symbol: KaVariableSymbol,
-        signature: KaVariableLikeSignature<*>,
+        signature: KaVariableSignature<*>,
         substitutor: KaSubstitutor,
         testServices: TestServices,
     ) {

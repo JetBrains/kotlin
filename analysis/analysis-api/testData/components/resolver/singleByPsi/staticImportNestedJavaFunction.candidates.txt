@@ -31,7 +31,7 @@ KtCallExpression(95,100): 'foo()'
           returnType = kotlin.Unit
           symbol = /Dependency.Nested.foo(i: kotlin.Int): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = i
               receiverType = null
               returnType = kotlin.Int

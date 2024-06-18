@@ -31,7 +31,7 @@ KtCallExpression(81,86): 'foo()'
           returnType = kotlin.Unit
           symbol = /BaseClass.foo(i: kotlin.Int): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = i
               receiverType = null
               returnType = kotlin.Int

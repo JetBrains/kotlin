@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolBasedReference
 import org.jetbrains.kotlin.analysis.api.resolution.symbol
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
-import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
@@ -696,7 +696,7 @@ internal class KaFirResolver(
                 val (operationPartiallyAppliedSymbol, getPartiallyAppliedSymbol, setPartiallyAppliedSymbol) =
                     getOperationPartiallyAppliedSymbolsForCompoundArrayAssignment(fir, leftOperandPsi) ?: return null
 
-                val getAccessArgumentMapping = LinkedHashMap<KtExpression, KaVariableLikeSignature<KaValueParameterSymbol>>().apply {
+                val getAccessArgumentMapping = LinkedHashMap<KtExpression, KaVariableSignature<KaValueParameterSymbol>>().apply {
                     putAll(leftOperandPsi.indexExpressions.zip(getPartiallyAppliedSymbol.signature.valueParameters))
                 }
 
@@ -751,7 +751,7 @@ internal class KaFirResolver(
                 val (operationPartiallyAppliedSymbol, getPartiallyAppliedSymbol, setPartiallyAppliedSymbol) =
                     getOperationPartiallyAppliedSymbolsForIncOrDecOperation(fir, baseExpression, incDecPrecedence) ?: return null
 
-                val getAccessArgumentMapping = LinkedHashMap<KtExpression, KaVariableLikeSignature<KaValueParameterSymbol>>().apply {
+                val getAccessArgumentMapping = LinkedHashMap<KtExpression, KaVariableSignature<KaValueParameterSymbol>>().apply {
                     putAll(baseExpression.indexExpressions.zip(getPartiallyAppliedSymbol.signature.valueParameters))
                 }
                 return if (resolveFragmentOfCall) {
@@ -973,7 +973,7 @@ internal class KaFirResolver(
     private fun FirNamedFunctionSymbol.toKaSignature(): KaFunctionSignature<KaNamedFunctionSymbol> =
         firSymbolBuilder.functionBuilder.buildNamedFunctionSignature(this)
 
-    private fun FirVariableSymbol<*>.toKaSignature(): KaVariableLikeSignature<KaVariableSymbol> =
+    private fun FirVariableSymbol<*>.toKaSignature(): KaVariableSignature<KaVariableSymbol> =
         firSymbolBuilder.variableBuilder.buildVariableLikeSignature(this)
 
     private fun FirQualifiedAccessExpression.toTypeArgumentsMapping(
@@ -1325,7 +1325,7 @@ internal class KaFirResolver(
                             KaExplicitReceiverValue(leftPsi, leftOperand.resolvedType.asKtType(), false, token),
                             null
                         ),
-                        LinkedHashMap<KtExpression, KaVariableLikeSignature<KaValueParameterSymbol>>().apply {
+                        LinkedHashMap<KtExpression, KaVariableSignature<KaValueParameterSymbol>>().apply {
                             put(rightPsi, kaSignature.valueParameters.first())
                         },
                         emptyMap(),
@@ -1347,19 +1347,19 @@ internal class KaFirResolver(
         return equalsSymbol ?: equalsSymbolInAny
     }
 
-    private fun FirCall.createArgumentMapping(signatureOfCallee: KaFunctionSignature<*>): LinkedHashMap<KtExpression, KaVariableLikeSignature<KaValueParameterSymbol>> {
+    private fun FirCall.createArgumentMapping(signatureOfCallee: KaFunctionSignature<*>): LinkedHashMap<KtExpression, KaVariableSignature<KaValueParameterSymbol>> {
         return resolvedArgumentMapping?.entries.createArgumentMapping(signatureOfCallee)
     }
 
     private fun Iterable<MutableMap.MutableEntry<FirExpression, FirValueParameter>>?.createArgumentMapping(
         signatureOfCallee: KaFunctionSignature<*>,
-    ): LinkedHashMap<KtExpression, KaVariableLikeSignature<KaValueParameterSymbol>> {
+    ): LinkedHashMap<KtExpression, KaVariableSignature<KaValueParameterSymbol>> {
         val paramSignatureByName = signatureOfCallee.valueParameters.associateBy {
             // We intentionally use `symbol.name` instead of `name` here, since
             // `FirValueParameter.name` is not affected by the `@ParameterName`
             it.symbol.name
         }
-        val ktArgumentMapping = LinkedHashMap<KtExpression, KaVariableLikeSignature<KaValueParameterSymbol>>()
+        val ktArgumentMapping = LinkedHashMap<KtExpression, KaVariableSignature<KaValueParameterSymbol>>()
         this?.forEach { (firExpression, firValueParameter) ->
             val parameterSymbol = paramSignatureByName[firValueParameter.name] ?: return@forEach
             mapArgumentExpressionToParameter(firExpression, parameterSymbol, ktArgumentMapping)
@@ -1370,8 +1370,8 @@ internal class KaFirResolver(
     private fun FirArrayLiteral.createArgumentMapping(
         arrayOfSymbol: KaFirNamedFunctionSymbol,
         substitutor: KaSubstitutor,
-    ): LinkedHashMap<KtExpression, KaVariableLikeSignature<KaValueParameterSymbol>> {
-        val ktArgumentMapping = LinkedHashMap<KtExpression, KaVariableLikeSignature<KaValueParameterSymbol>>()
+    ): LinkedHashMap<KtExpression, KaVariableSignature<KaValueParameterSymbol>> {
+        val ktArgumentMapping = LinkedHashMap<KtExpression, KaVariableSignature<KaValueParameterSymbol>>()
         val parameterSymbol = arrayOfSymbol.valueParameters.single()
 
         for (firExpression in argumentList.arguments) {
@@ -1386,8 +1386,8 @@ internal class KaFirResolver(
 
     private fun mapArgumentExpressionToParameter(
         argumentExpression: FirExpression,
-        parameterSymbol: KaVariableLikeSignature<KaValueParameterSymbol>,
-        argumentMapping: LinkedHashMap<KtExpression, KaVariableLikeSignature<KaValueParameterSymbol>>,
+        parameterSymbol: KaVariableSignature<KaValueParameterSymbol>,
+        argumentMapping: LinkedHashMap<KtExpression, KaVariableSignature<KaValueParameterSymbol>>,
     ) {
         if (argumentExpression is FirVarargArgumentsExpression) {
             for (varargArgument in argumentExpression.arguments) {

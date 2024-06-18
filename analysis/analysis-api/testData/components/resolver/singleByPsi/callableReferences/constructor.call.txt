@@ -10,7 +10,7 @@ KtCallableReferenceExpression(55,60): '::Foo'
           returnType = Foo
           symbol = <constructor>(value: kotlin.String): Foo
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = value
               receiverType = null
               returnType = kotlin.String

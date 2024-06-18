@@ -10,7 +10,7 @@ KtCallExpression(86,102): 'arrayOf(1, 2, 3)'
           returnType = kotlin.Array<kotlin.Int>
           symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = elements
               receiverType = null
               returnType = kotlin.Int
@@ -22,19 +22,19 @@ KtCallExpression(86,102): 'arrayOf(1, 2, 3)'
         T -> (kotlin.Int)
       }
       argumentMapping = {
-        1 -> (KaVariableLikeSignature:
+        1 -> (KaVariableSignature:
           name = elements
           receiverType = null
           returnType = kotlin.Int
           symbol = vararg elements: T
           callableId = null),
-        2 -> (KaVariableLikeSignature:
+        2 -> (KaVariableSignature:
           name = elements
           receiverType = null
           returnType = kotlin.Int
           symbol = vararg elements: T
           callableId = null),
-        3 -> (KaVariableLikeSignature:
+        3 -> (KaVariableSignature:
           name = elements
           receiverType = null
           returnType = kotlin.Int

@@ -14,7 +14,7 @@ KtDotQualifiedExpression(107,113): 'a.x(1)'
           returnType = kotlin.Unit
           symbol = /A.x(<dispatch receiver>: A, b: kotlin.Boolean): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = b
               receiverType = null
               returnType = kotlin.Boolean
@@ -24,7 +24,7 @@ KtDotQualifiedExpression(107,113): 'a.x(1)'
           callableId = /A.x
       typeArgumentsMapping = {}
       argumentMapping = {
-        1 -> (KaVariableLikeSignature:
+        1 -> (KaVariableSignature:
           name = b
           receiverType = null
           returnType = kotlin.Boolean
@@ -47,7 +47,7 @@ KtDotQualifiedExpression(107,113): 'a.x(1)'
           returnType = kotlin.Unit
           symbol = /invoke(<extension receiver>: kotlin.Int, i: kotlin.Int): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = i
               receiverType = null
               returnType = kotlin.Int
@@ -57,7 +57,7 @@ KtDotQualifiedExpression(107,113): 'a.x(1)'
           callableId = /invoke
       typeArgumentsMapping = {}
       argumentMapping = {
-        1 -> (KaVariableLikeSignature:
+        1 -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = kotlin.Int

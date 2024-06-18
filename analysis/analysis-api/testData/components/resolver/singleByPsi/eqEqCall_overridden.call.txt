@@ -13,7 +13,7 @@ KtBinaryExpression(121,129): 'a1 == a2'
           returnType = kotlin.Boolean
           symbol = /A.equals(<dispatch receiver>: A, other: kotlin.Any?): kotlin.Boolean
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = other
               receiverType = null
               returnType = kotlin.Any?
@@ -23,7 +23,7 @@ KtBinaryExpression(121,129): 'a1 == a2'
           callableId = /A.equals
       typeArgumentsMapping = {}
       argumentMapping = {
-        a2 -> (KaVariableLikeSignature:
+        a2 -> (KaVariableSignature:
           name = other
           receiverType = null
           returnType = kotlin.Any?

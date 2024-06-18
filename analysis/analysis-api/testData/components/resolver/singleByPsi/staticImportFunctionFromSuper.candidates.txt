@@ -31,7 +31,7 @@ KtCallExpression(97,102): 'foo()'
           returnType = kotlin.Unit
           symbol = one/two/BaseClass.foo(<dispatch receiver>: one.two.BaseClass, i: kotlin.Int): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = i
               receiverType = null
               returnType = kotlin.Int

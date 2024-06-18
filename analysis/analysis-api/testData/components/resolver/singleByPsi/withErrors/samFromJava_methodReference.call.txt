@@ -13,7 +13,7 @@ KtDotQualifiedExpression(137,160): 'handler.act(::callback)'
           returnType = kotlin.Unit
           symbol = test/pkg/MyHandler.act(<dispatch receiver>: test.pkg.MyHandler, actor: test.pkg.MyInterface!): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = actor
               receiverType = null
               returnType = test.pkg.MyInterface!
@@ -23,7 +23,7 @@ KtDotQualifiedExpression(137,160): 'handler.act(::callback)'
           callableId = test/pkg/MyHandler.act
       typeArgumentsMapping = {}
       argumentMapping = {
-        ::callback -> (KaVariableLikeSignature:
+        ::callback -> (KaVariableSignature:
           name = actor
           receiverType = null
           returnType = test.pkg.MyInterface!

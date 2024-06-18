@@ -10,7 +10,7 @@ KtConstructorDelegationReferenceExpression(90,94): 'this'
           returnType = r.BaseClass
           symbol = <constructor>(i: kotlin.Int): r.BaseClass
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = i
               receiverType = null
               returnType = kotlin.Int
@@ -20,7 +20,7 @@ KtConstructorDelegationReferenceExpression(90,94): 'this'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {
-        1 -> (KaVariableLikeSignature:
+        1 -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = kotlin.Int

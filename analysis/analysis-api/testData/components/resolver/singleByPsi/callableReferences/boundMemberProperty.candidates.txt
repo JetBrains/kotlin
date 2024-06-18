@@ -7,7 +7,7 @@ KtCallableReferenceExpression(87,95): 'obj::foo'
           isSafeNavigation = false
           type = Foo
         extensionReceiver = null
-        signature = KaVariableLikeSignature:
+        signature = KaVariableSignature:
           name = foo
           receiverType = null
           returnType = kotlin.String

@@ -13,7 +13,7 @@ KtNameReferenceExpression(176,181): 'check'
           returnType = kotlin.Unit
           symbol = library4/MyInterface.check(<dispatch receiver>: library4.MyInterface, list: {library3.AsymmetricAlias2<{library1.IntAlias=} kotlin.Int, {library2.AsymmetricAlias<{library1.BooleanAlias=} kotlin.Boolean, {library1.IntAlias=} kotlin.Int>=} kotlin.String>=} kotlin.collections.List<{library2.AsymmetricAlias<{library1.BooleanAlias=} kotlin.Boolean, {library1.IntAlias=} kotlin.Int>=} kotlin.String>): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = list
               receiverType = null
               returnType = {library3.AsymmetricAlias2<{library1.IntAlias=} kotlin.Int, {library2.AsymmetricAlias<{library1.BooleanAlias=} kotlin.Boolean, {library1.IntAlias=} kotlin.Int>=} kotlin.String>=} kotlin.collections.List<{library2.AsymmetricAlias<{library1.BooleanAlias=} kotlin.Boolean, {library1.IntAlias=} kotlin.Int>=} kotlin.String>
@@ -23,7 +23,7 @@ KtNameReferenceExpression(176,181): 'check'
           callableId = library4/MyInterface.check
       typeArgumentsMapping = {}
       argumentMapping = {
-        emptyList() -> (KaVariableLikeSignature:
+        emptyList() -> (KaVariableSignature:
           name = list
           receiverType = null
           returnType = {library3.AsymmetricAlias2<{library1.IntAlias=} kotlin.Int, {library2.AsymmetricAlias<{library1.BooleanAlias=} kotlin.Boolean, {library1.IntAlias=} kotlin.Int>=} kotlin.String>=} kotlin.collections.List<{library2.AsymmetricAlias<{library1.BooleanAlias=} kotlin.Boolean, {library1.IntAlias=} kotlin.Int>=} kotlin.String>

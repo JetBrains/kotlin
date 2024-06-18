@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.signatures
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
-import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
@@ -18,13 +18,13 @@ internal class KaFe10FunctionSignature<out S : KaFunctionSymbol>(
     private val backingSymbol: S,
     private val backingReturnType: KaType,
     private val backingReceiverType: KaType?,
-    private val backingValueParameters: List<KaVariableLikeSignature<KaValueParameterSymbol>>,
+    private val backingValueParameters: List<KaVariableSignature<KaValueParameterSymbol>>,
 ) : KaFunctionSignature<S>() {
     override val token: KaLifetimeToken get() = backingSymbol.token
     override val symbol: S get() = withValidityAssertion { backingSymbol }
     override val returnType: KaType get() = withValidityAssertion { backingReturnType }
     override val receiverType: KaType? get() = withValidityAssertion { backingReceiverType }
-    override val valueParameters: List<KaVariableLikeSignature<KaValueParameterSymbol>> get() = withValidityAssertion { backingValueParameters }
+    override val valueParameters: List<KaVariableSignature<KaValueParameterSymbol>> get() = withValidityAssertion { backingValueParameters }
 
     override fun substitute(substitutor: KaSubstitutor): KaFunctionSignature<S> = withValidityAssertion {
         KaFe10FunctionSignature(
@@ -32,7 +32,7 @@ internal class KaFe10FunctionSignature<out S : KaFunctionSymbol>(
             substitutor.substitute(returnType),
             receiverType?.let { substitutor.substitute(it) },
             valueParameters.map { valueParameter ->
-                KaFe10VariableLikeSignature<KaValueParameterSymbol>(
+                KaFe10VariableSignature<KaValueParameterSymbol>(
                     valueParameter.symbol,
                     substitutor.substitute(valueParameter.returnType),
                     valueParameter.receiverType?.let { substitutor.substitute(it) }

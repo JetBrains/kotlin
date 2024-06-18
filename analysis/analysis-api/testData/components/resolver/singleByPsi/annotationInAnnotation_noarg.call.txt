@@ -10,7 +10,7 @@ KtCallExpression(131,143): 'Annotation()'
           returnType = Annotation
           symbol = <constructor>(vararg strings: kotlin.String): Annotation
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = strings
               receiverType = null
               returnType = kotlin.String

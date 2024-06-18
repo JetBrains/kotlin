@@ -7,7 +7,7 @@ KtNameReferenceExpression(31,37): 'SOURCE'
           isSafeNavigation = false
           type = kotlin.Unit
         extensionReceiver = null
-        signature = KaVariableLikeSignature:
+        signature = KaVariableSignature:
           name = SOURCE
           receiverType = null
           returnType = kotlin.annotation.AnnotationRetention

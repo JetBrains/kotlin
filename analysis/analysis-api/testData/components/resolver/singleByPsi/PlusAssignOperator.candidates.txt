@@ -13,7 +13,7 @@ KtOperationReferenceExpression(159,161): '+='
           returnType = kotlin.Unit
           symbol = test/WithOperator.plusAssign(<dispatch receiver>: test.WithOperator, f: test.Foo): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = f
               receiverType = null
               returnType = test.Foo
@@ -23,7 +23,7 @@ KtOperationReferenceExpression(159,161): '+='
           callableId = test/WithOperator.plusAssign
       typeArgumentsMapping = {}
       argumentMapping = {
-        foo -> (KaVariableLikeSignature:
+        foo -> (KaVariableSignature:
           name = f
           receiverType = null
           returnType = test.Foo

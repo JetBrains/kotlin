@@ -13,7 +13,7 @@ KtNameReferenceExpression(74,81): 'valueOf'
           returnType = java.lang.annotation.RetentionPolicy
           symbol = java/lang/annotation/RetentionPolicy.valueOf(value: kotlin.String): java.lang.annotation.RetentionPolicy
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = value
               receiverType = null
               returnType = kotlin.String
@@ -23,7 +23,7 @@ KtNameReferenceExpression(74,81): 'valueOf'
           callableId = java/lang/annotation/RetentionPolicy.valueOf
       typeArgumentsMapping = {}
       argumentMapping = {
-        "" -> (KaVariableLikeSignature:
+        "" -> (KaVariableSignature:
           name = value
           receiverType = null
           returnType = kotlin.String

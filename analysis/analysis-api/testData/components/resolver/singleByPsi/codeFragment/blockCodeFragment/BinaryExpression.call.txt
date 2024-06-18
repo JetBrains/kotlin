@@ -13,7 +13,7 @@ KtOperationReferenceExpression(138,139): '+'
           returnType = kotlin.Int
           symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = other
               receiverType = null
               returnType = kotlin.Int
@@ -23,7 +23,7 @@ KtOperationReferenceExpression(138,139): '+'
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
       argumentMapping = {
-        b -> (KaVariableLikeSignature:
+        b -> (KaVariableSignature:
           name = other
           receiverType = null
           returnType = kotlin.Int

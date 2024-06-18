@@ -4,7 +4,7 @@ KtNameReferenceExpression(73,74): 'l'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaVariableLikeSignature:
+        signature = KaVariableSignature:
           name = l
           receiverType = null
           returnType = A

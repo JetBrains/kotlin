@@ -28,7 +28,7 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
           returnType = A
           symbol = <constructor>(a: kotlin.Int): A
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = a
               receiverType = null
               returnType = kotlin.Int
@@ -38,7 +38,7 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {
-        "2" -> (KaVariableLikeSignature:
+        "2" -> (KaVariableSignature:
           name = a
           receiverType = null
           returnType = kotlin.Int
@@ -58,7 +58,7 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
           returnType = A
           symbol = <constructor>(b: kotlin.String): A
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = b
               receiverType = null
               returnType = kotlin.String
@@ -68,7 +68,7 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {
-        "2" -> (KaVariableLikeSignature:
+        "2" -> (KaVariableSignature:
           name = b
           receiverType = null
           returnType = kotlin.String

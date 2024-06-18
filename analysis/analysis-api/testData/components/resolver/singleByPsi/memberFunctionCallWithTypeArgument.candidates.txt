@@ -13,7 +13,7 @@ KtCallExpression(71,77): 'foo(1)'
           returnType = kotlin.Unit
           symbol = /A.foo(<dispatch receiver>: A<T>, r: R): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = r
               receiverType = null
               returnType = kotlin.Int
@@ -25,7 +25,7 @@ KtCallExpression(71,77): 'foo(1)'
         R -> (kotlin.Int)
       }
       argumentMapping = {
-        1 -> (KaVariableLikeSignature:
+        1 -> (KaVariableSignature:
           name = r
           receiverType = null
           returnType = kotlin.Int

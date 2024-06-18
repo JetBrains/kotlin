@@ -13,7 +13,7 @@ KtArrayAccessExpression(70,77): 'list[0]'
           returnType = kotlin.Int
           symbol = kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int): E
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = index
               receiverType = null
               returnType = kotlin.Int
@@ -23,7 +23,7 @@ KtArrayAccessExpression(70,77): 'list[0]'
           callableId = kotlin/collections/MutableList.get
       typeArgumentsMapping = {}
       argumentMapping = {
-        0 -> (KaVariableLikeSignature:
+        0 -> (KaVariableSignature:
           name = index
           receiverType = null
           returnType = kotlin.Int

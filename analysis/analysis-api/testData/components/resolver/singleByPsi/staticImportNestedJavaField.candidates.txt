@@ -6,7 +6,7 @@ KtNameReferenceExpression(89,92): 'bar'
           symbol = /Dependency.Nested
           type = kotlin.Unit
         extensionReceiver = null
-        signature = KaVariableLikeSignature:
+        signature = KaVariableSignature:
           name = bar
           receiverType = null
           returnType = kotlin.Int

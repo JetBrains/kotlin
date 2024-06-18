@@ -13,13 +13,13 @@ KtDotQualifiedExpression(156,183): 'handler.stash(lambda, list)'
           returnType = kotlin.Unit
           symbol = test/pkg/MyHandler.stash(<dispatch receiver>: test.pkg.MyHandler, actor: test.pkg.MyInterface!, actors: (kotlin.collections.MutableList<test.pkg.MyInterface!>..kotlin.collections.List<test.pkg.MyInterface!>?)): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = actor
               receiverType = null
               returnType = test.pkg.MyInterface!
               symbol = actor: test.pkg.MyInterface!
               callableId = null,
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = actors
               receiverType = null
               returnType = (kotlin.collections.MutableList<test.pkg.MyInterface!>..kotlin.collections.List<test.pkg.MyInterface!>?)
@@ -29,13 +29,13 @@ KtDotQualifiedExpression(156,183): 'handler.stash(lambda, list)'
           callableId = test/pkg/MyHandler.stash
       typeArgumentsMapping = {}
       argumentMapping = {
-        lambda -> (KaVariableLikeSignature:
+        lambda -> (KaVariableSignature:
           name = actor
           receiverType = null
           returnType = test.pkg.MyInterface!
           symbol = actor: test.pkg.MyInterface!
           callableId = null),
-        list -> (KaVariableLikeSignature:
+        list -> (KaVariableSignature:
           name = actors
           receiverType = null
           returnType = (kotlin.collections.MutableList<test.pkg.MyInterface!>..kotlin.collections.List<test.pkg.MyInterface!>?)

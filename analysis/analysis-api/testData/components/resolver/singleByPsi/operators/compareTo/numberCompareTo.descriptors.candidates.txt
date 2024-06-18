@@ -14,7 +14,7 @@ KtNameReferenceExpression(20,29): 'compareTo'
           returnType = kotlin.Int
           symbol = kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Byte): kotlin.Int
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = other
               receiverType = null
               returnType = kotlin.Byte
@@ -24,7 +24,7 @@ KtNameReferenceExpression(20,29): 'compareTo'
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
       argumentMapping = {
-        2 -> (KaVariableLikeSignature:
+        2 -> (KaVariableSignature:
           name = other
           receiverType = null
           returnType = kotlin.Byte
@@ -48,7 +48,7 @@ KtNameReferenceExpression(20,29): 'compareTo'
           returnType = kotlin.Int
           symbol = kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Double): kotlin.Int
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = other
               receiverType = null
               returnType = kotlin.Double
@@ -58,7 +58,7 @@ KtNameReferenceExpression(20,29): 'compareTo'
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
       argumentMapping = {
-        2 -> (KaVariableLikeSignature:
+        2 -> (KaVariableSignature:
           name = other
           receiverType = null
           returnType = kotlin.Double
@@ -82,7 +82,7 @@ KtNameReferenceExpression(20,29): 'compareTo'
           returnType = kotlin.Int
           symbol = kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Float): kotlin.Int
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = other
               receiverType = null
               returnType = kotlin.Float
@@ -92,7 +92,7 @@ KtNameReferenceExpression(20,29): 'compareTo'
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
       argumentMapping = {
-        2 -> (KaVariableLikeSignature:
+        2 -> (KaVariableSignature:
           name = other
           receiverType = null
           returnType = kotlin.Float
@@ -115,7 +115,7 @@ KtNameReferenceExpression(20,29): 'compareTo'
           returnType = kotlin.Int
           symbol = kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = other
               receiverType = null
               returnType = kotlin.Int
@@ -125,7 +125,7 @@ KtNameReferenceExpression(20,29): 'compareTo'
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
       argumentMapping = {
-        2 -> (KaVariableLikeSignature:
+        2 -> (KaVariableSignature:
           name = other
           receiverType = null
           returnType = kotlin.Int
@@ -149,7 +149,7 @@ KtNameReferenceExpression(20,29): 'compareTo'
           returnType = kotlin.Int
           symbol = kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Long): kotlin.Int
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = other
               receiverType = null
               returnType = kotlin.Long
@@ -159,7 +159,7 @@ KtNameReferenceExpression(20,29): 'compareTo'
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
       argumentMapping = {
-        2 -> (KaVariableLikeSignature:
+        2 -> (KaVariableSignature:
           name = other
           receiverType = null
           returnType = kotlin.Long
@@ -183,7 +183,7 @@ KtNameReferenceExpression(20,29): 'compareTo'
           returnType = kotlin.Int
           symbol = kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Short): kotlin.Int
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = other
               receiverType = null
               returnType = kotlin.Short
@@ -193,7 +193,7 @@ KtNameReferenceExpression(20,29): 'compareTo'
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
       argumentMapping = {
-        2 -> (KaVariableLikeSignature:
+        2 -> (KaVariableSignature:
           name = other
           receiverType = null
           returnType = kotlin.Short

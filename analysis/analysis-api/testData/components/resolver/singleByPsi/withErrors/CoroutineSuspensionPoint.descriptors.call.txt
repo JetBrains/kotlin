@@ -21,7 +21,7 @@ KtNameReferenceExpression(183,194): 'suspendHere'
             returnType = kotlin.Unit
             symbol = /Controller.suspendHere(<dispatch receiver>: Controller, x: ERROR_TYPE): kotlin.Unit
             valueParameters = [
-              KaVariableLikeSignature:
+              KaVariableSignature:
                 name = x
                 receiverType = null
                 returnType = ERROR_TYPE

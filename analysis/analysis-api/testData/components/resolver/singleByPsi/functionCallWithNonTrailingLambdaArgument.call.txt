@@ -10,13 +10,13 @@ KtCallExpression(66,92): 'function(1, { s -> true })'
           returnType = kotlin.Unit
           symbol = /function(a: kotlin.Int, b: kotlin.Function1<kotlin.String, kotlin.Boolean>): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = a
               receiverType = null
               returnType = kotlin.Int
               symbol = a: kotlin.Int
               callableId = null,
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = b
               receiverType = null
               returnType = kotlin.Function1<kotlin.String, kotlin.Boolean>
@@ -26,13 +26,13 @@ KtCallExpression(66,92): 'function(1, { s -> true })'
           callableId = /function
       typeArgumentsMapping = {}
       argumentMapping = {
-        1 -> (KaVariableLikeSignature:
+        1 -> (KaVariableSignature:
           name = a
           receiverType = null
           returnType = kotlin.Int
           symbol = a: kotlin.Int
           callableId = null),
-        { s -> true } -> (KaVariableLikeSignature:
+        { s -> true } -> (KaVariableSignature:
           name = b
           receiverType = null
           returnType = kotlin.Function1<kotlin.String, kotlin.Boolean>

@@ -11,7 +11,7 @@ KtNameReferenceExpression(75,83): 'Conflict'
           returnType = <local>.Conflict
           symbol = <constructor>(i: kotlin.Int): <local>.Conflict
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = i
               receiverType = null
               returnType = kotlin.Int

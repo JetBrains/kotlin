@@ -13,7 +13,7 @@ KtArrayAccessExpression(146,152): 'm["a"]'
           returnType = A
           symbol = /MyMap.get(<dispatch receiver>: MyMap<K, V>, k: K): V
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = k
               receiverType = null
               returnType = kotlin.String
@@ -23,7 +23,7 @@ KtArrayAccessExpression(146,152): 'm["a"]'
           callableId = /MyMap.get
       typeArgumentsMapping = {}
       argumentMapping = {
-        "a" -> (KaVariableLikeSignature:
+        "a" -> (KaVariableSignature:
           name = k
           receiverType = null
           returnType = kotlin.String

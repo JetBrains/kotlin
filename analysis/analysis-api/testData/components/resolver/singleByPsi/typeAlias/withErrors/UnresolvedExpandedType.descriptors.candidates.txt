@@ -10,7 +10,7 @@ KtNameReferenceExpression(67,70): 'foo'
           returnType = kotlin.Unit
           symbol = main/foo(t: ERROR_TYPE): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = t
               receiverType = null
               returnType = ERROR_TYPE
@@ -20,7 +20,7 @@ KtNameReferenceExpression(67,70): 'foo'
           callableId = main/foo
       typeArgumentsMapping = {}
       argumentMapping = {
-        2 -> (KaVariableLikeSignature:
+        2 -> (KaVariableSignature:
           name = t
           receiverType = null
           returnType = ERROR_TYPE

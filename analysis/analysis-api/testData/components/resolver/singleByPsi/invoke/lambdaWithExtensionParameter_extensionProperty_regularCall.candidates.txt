@@ -7,7 +7,7 @@ KtNameReferenceExpression(94,100): 'action'
           expression = foo
           isSafeNavigation = false
           type = test.Foo
-        signature = KaVariableLikeSignature:
+        signature = KaVariableSignature:
           name = action
           receiverType = test.Foo
           returnType = kotlin.Function0<kotlin.Unit>

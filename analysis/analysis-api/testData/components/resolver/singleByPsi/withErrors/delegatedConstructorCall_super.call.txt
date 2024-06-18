@@ -10,7 +10,7 @@ KtConstructorDelegationCall(118,130): 'super(i + j)'
           returnType = Base
           symbol = <constructor>(p1: kotlin.Int): Base
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = p1
               receiverType = null
               returnType = kotlin.Int
@@ -20,7 +20,7 @@ KtConstructorDelegationCall(118,130): 'super(i + j)'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {
-        i + j -> (KaVariableLikeSignature:
+        i + j -> (KaVariableSignature:
           name = p1
           receiverType = null
           returnType = kotlin.Int

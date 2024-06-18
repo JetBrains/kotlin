@@ -28,7 +28,7 @@ KtNameReferenceExpression(87,100): 'mutableListOf'
           returnType = kotlin.collections.MutableList<kotlin.String>
           symbol = kotlin/collections/mutableListOf(vararg elements: T): kotlin.collections.MutableList<T>
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = elements
               receiverType = null
               returnType = kotlin.String

@@ -13,13 +13,13 @@ KtOperationReferenceExpression(150,151): '='
           returnType = kotlin.Unit
           symbol = /MyList.set(<dispatch receiver>: MyList, index: kotlin.Int, value: kotlin.String): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = index
               receiverType = null
               returnType = kotlin.Int
               symbol = index: kotlin.Int
               callableId = null,
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = value
               receiverType = null
               returnType = kotlin.String
@@ -29,13 +29,13 @@ KtOperationReferenceExpression(150,151): '='
           callableId = /MyList.set
       typeArgumentsMapping = {}
       argumentMapping = {
-        10 -> (KaVariableLikeSignature:
+        10 -> (KaVariableSignature:
           name = index
           receiverType = null
           returnType = kotlin.Int
           symbol = index: kotlin.Int
           callableId = null),
-        "value" -> (KaVariableLikeSignature:
+        "value" -> (KaVariableSignature:
           name = value
           receiverType = null
           returnType = kotlin.String

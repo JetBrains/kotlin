@@ -4,7 +4,7 @@ KtNameReferenceExpression(173,176): 'obj'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaVariableLikeSignature:
+        signature = KaVariableSignature:
           name = obj
           receiverType = null
           returnType = kotlin.Any

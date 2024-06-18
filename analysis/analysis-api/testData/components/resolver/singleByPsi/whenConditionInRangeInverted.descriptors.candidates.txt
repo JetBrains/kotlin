@@ -13,7 +13,7 @@ KtWhenConditionInRange(177,190): '!in MyClass()'
           returnType = kotlin.Boolean
           symbol = /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = int
               receiverType = null
               returnType = kotlin.Int
@@ -25,7 +25,7 @@ KtWhenConditionInRange(177,190): '!in MyClass()'
         T -> (MyClass)
       }
       argumentMapping = {
-        f -> (KaVariableLikeSignature:
+        f -> (KaVariableSignature:
           name = int
           receiverType = null
           returnType = kotlin.Int

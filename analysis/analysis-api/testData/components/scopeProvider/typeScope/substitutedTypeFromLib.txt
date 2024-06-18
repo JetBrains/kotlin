@@ -19,13 +19,13 @@ KaFunctionSignature:
   returnType = kotlin.Pair<kotlin.Int, kotlin.Int>
   symbol = kotlin/Pair.copy(<dispatch receiver>: kotlin.Pair<A, B>, first: A, second: B): kotlin.Pair<A, B>
   valueParameters = [
-    KaVariableLikeSignature:
+    KaVariableSignature:
       name = first
       receiverType = null
       returnType = kotlin.Int
       symbol = first: A
       callableId = null,
-    KaVariableLikeSignature:
+    KaVariableSignature:
       name = second
       receiverType = null
       returnType = kotlin.Int
@@ -38,7 +38,7 @@ KaFunctionSignature:
   returnType = kotlin.Boolean
   symbol = kotlin/Pair.equals(<dispatch receiver>: kotlin.Pair<A, B>, other: kotlin.Any?): kotlin.Boolean
   valueParameters = [
-    KaVariableLikeSignature:
+    KaVariableSignature:
       name = other
       receiverType = null
       returnType = kotlin.Any?
@@ -58,13 +58,13 @@ KaFunctionSignature:
   symbol = kotlin/Pair.toString(<dispatch receiver>: kotlin.Pair<A, B>): kotlin.String
   valueParameters = []
   callableId = kotlin/Pair.toString
-KaVariableLikeSignature:
+KaVariableSignature:
   name = first
   receiverType = null
   returnType = kotlin.Int
   symbol = val first: A
   callableId = kotlin/Pair.first
-KaVariableLikeSignature:
+KaVariableSignature:
   name = second
   receiverType = null
   returnType = kotlin.Int

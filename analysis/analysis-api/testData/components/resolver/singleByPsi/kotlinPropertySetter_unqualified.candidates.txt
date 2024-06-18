@@ -14,7 +14,7 @@ KtNameReferenceExpression(50,51): 'i'
               type: A
           type = A
         extensionReceiver = null
-        signature = KaVariableLikeSignature:
+        signature = KaVariableSignature:
           name = i
           receiverType = null
           returnType = kotlin.Int

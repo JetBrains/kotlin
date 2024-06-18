@@ -9,7 +9,7 @@ KtAnnotationEntry(121,197): '@AnnotationArray(annos = [Annotation("v1", "v2"), A
           returnType = AnnotationArray
           symbol = <constructor>(vararg annos: Annotation): AnnotationArray
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = annos
               receiverType = null
               returnType = Annotation
@@ -19,7 +19,7 @@ KtAnnotationEntry(121,197): '@AnnotationArray(annos = [Annotation("v1", "v2"), A
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {
-        [Annotation("v1", "v2"), Annotation(["v3", "v4"])] -> (KaVariableLikeSignature:
+        [Annotation("v1", "v2"), Annotation(["v3", "v4"])] -> (KaVariableSignature:
           name = annos
           receiverType = null
           returnType = Annotation

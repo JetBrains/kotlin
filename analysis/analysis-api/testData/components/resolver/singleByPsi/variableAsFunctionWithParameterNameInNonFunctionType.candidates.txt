@@ -10,13 +10,13 @@ KtCallExpression(157,168): 'call(1, "")'
           returnType = kotlin.Unit
           symbol = /call(a: @R|kotlin.ParameterName|(name = String(notMe))  kotlin.Int, b: @R|kotlin.ParameterName|(name = String(meNeither))  kotlin.String): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = a
               receiverType = null
               returnType = @R|kotlin.ParameterName|(name = String(notMe))  kotlin.Int
               symbol = a: @R|kotlin.ParameterName|(name = String(notMe))  kotlin.Int
               callableId = null,
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = b
               receiverType = null
               returnType = @R|kotlin.ParameterName|(name = String(meNeither))  kotlin.String
@@ -26,13 +26,13 @@ KtCallExpression(157,168): 'call(1, "")'
           callableId = /call
       typeArgumentsMapping = {}
       argumentMapping = {
-        1 -> (KaVariableLikeSignature:
+        1 -> (KaVariableSignature:
           name = a
           receiverType = null
           returnType = @R|kotlin.ParameterName|(name = String(notMe))  kotlin.Int
           symbol = a: @R|kotlin.ParameterName|(name = String(notMe))  kotlin.Int
           callableId = null),
-        "" -> (KaVariableLikeSignature:
+        "" -> (KaVariableSignature:
           name = b
           receiverType = null
           returnType = @R|kotlin.ParameterName|(name = String(meNeither))  kotlin.String

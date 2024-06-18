@@ -9,7 +9,7 @@ KtNameReferenceExpression(52,58): 'length'
             type = kotlin.Any
           type = kotlin.String
         extensionReceiver = null
-        signature = KaVariableLikeSignature:
+        signature = KaVariableSignature:
           name = length
           receiverType = null
           returnType = kotlin.Int

@@ -11,7 +11,7 @@ KtNameReferenceExpression(119,122): 'Foo'
           returnType = foo.Foo
           symbol = <constructor>(i: kotlin.Int): foo.Foo
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = i
               receiverType = null
               returnType = kotlin.Int

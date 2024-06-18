@@ -10,7 +10,7 @@ KtNameReferenceExpression(55,59): 'TODO'
           returnType = kotlin.Nothing
           symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = reason
               receiverType = null
               returnType = kotlin.String
@@ -20,7 +20,7 @@ KtNameReferenceExpression(55,59): 'TODO'
           callableId = kotlin/TODO
       typeArgumentsMapping = {}
       argumentMapping = {
-        "Not implemented yet" -> (KaVariableLikeSignature:
+        "Not implemented yet" -> (KaVariableSignature:
           name = reason
           receiverType = null
           returnType = kotlin.String

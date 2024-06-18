@@ -9,7 +9,7 @@ KtAnnotationEntry(69,96): '@Suppress("UNCHECKED_CAST")'
           returnType = kotlin.Suppress
           symbol = <constructor>(vararg names: kotlin.String): kotlin.Suppress
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = names
               receiverType = null
               returnType = kotlin.String
@@ -19,7 +19,7 @@ KtAnnotationEntry(69,96): '@Suppress("UNCHECKED_CAST")'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {
-        "UNCHECKED_CAST" -> (KaVariableLikeSignature:
+        "UNCHECKED_CAST" -> (KaVariableSignature:
           name = names
           receiverType = null
           returnType = kotlin.String

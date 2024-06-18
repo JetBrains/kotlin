@@ -9,7 +9,7 @@ KtAnnotationEntry(114,154): '@AnnotationInner(Annotation("v1", "v2"))'
           returnType = AnnotationInner
           symbol = <constructor>(value: Annotation): AnnotationInner
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = value
               receiverType = null
               returnType = Annotation
@@ -19,7 +19,7 @@ KtAnnotationEntry(114,154): '@AnnotationInner(Annotation("v1", "v2"))'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {
-        Annotation("v1", "v2") -> (KaVariableLikeSignature:
+        Annotation("v1", "v2") -> (KaVariableSignature:
           name = value
           receiverType = null
           returnType = Annotation

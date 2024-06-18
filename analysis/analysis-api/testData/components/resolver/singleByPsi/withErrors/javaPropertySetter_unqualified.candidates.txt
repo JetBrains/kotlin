@@ -14,7 +14,7 @@ KtNameReferenceExpression(44,47): 'foo'
               type: JavaClass
           type = JavaClass
         extensionReceiver = null
-        signature = KaVariableLikeSignature:
+        signature = KaVariableSignature:
           name = foo
           receiverType = null
           returnType = kotlin.Int

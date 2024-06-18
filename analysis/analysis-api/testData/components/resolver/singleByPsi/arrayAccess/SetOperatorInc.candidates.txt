@@ -13,7 +13,7 @@ KtArrayAccessExpression(205,209): 'a[2]'
           returnType = test.B
           symbol = test/B.get(<dispatch receiver>: test.B, i: kotlin.Int): test.B
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = i
               receiverType = null
               returnType = kotlin.Int
@@ -23,7 +23,7 @@ KtArrayAccessExpression(205,209): 'a[2]'
           callableId = test/B.get
       typeArgumentsMapping = {}
       argumentMapping = {
-        2 -> (KaVariableLikeSignature:
+        2 -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = kotlin.Int

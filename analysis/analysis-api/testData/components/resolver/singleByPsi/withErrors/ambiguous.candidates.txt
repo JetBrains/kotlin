@@ -11,7 +11,7 @@ KtCallExpression(98,109): 'function(1)'
           returnType = kotlin.Unit
           symbol = /function(a: kotlin.Char): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = a
               receiverType = null
               returnType = kotlin.Char
@@ -21,7 +21,7 @@ KtCallExpression(98,109): 'function(1)'
           callableId = /function
       typeArgumentsMapping = {}
       argumentMapping = {
-        1 -> (KaVariableLikeSignature:
+        1 -> (KaVariableSignature:
           name = a
           receiverType = null
           returnType = kotlin.Char
@@ -42,7 +42,7 @@ KtCallExpression(98,109): 'function(1)'
           returnType = kotlin.Unit
           symbol = /function(b: kotlin.Boolean): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = b
               receiverType = null
               returnType = kotlin.Boolean
@@ -52,7 +52,7 @@ KtCallExpression(98,109): 'function(1)'
           callableId = /function
       typeArgumentsMapping = {}
       argumentMapping = {
-        1 -> (KaVariableLikeSignature:
+        1 -> (KaVariableSignature:
           name = b
           receiverType = null
           returnType = kotlin.Boolean
@@ -73,7 +73,7 @@ KtCallExpression(98,109): 'function(1)'
           returnType = kotlin.Unit
           symbol = /function(c: kotlin.String): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = c
               receiverType = null
               returnType = kotlin.String
@@ -83,7 +83,7 @@ KtCallExpression(98,109): 'function(1)'
           callableId = /function
       typeArgumentsMapping = {}
       argumentMapping = {
-        1 -> (KaVariableLikeSignature:
+        1 -> (KaVariableSignature:
           name = c
           receiverType = null
           returnType = kotlin.String

@@ -10,7 +10,7 @@ KtCallExpression(131,155): 'Annotation(["v1", "v2"])'
           returnType = Annotation
           symbol = <constructor>(vararg strings: kotlin.String): Annotation
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = strings
               receiverType = null
               returnType = kotlin.String
@@ -20,7 +20,7 @@ KtCallExpression(131,155): 'Annotation(["v1", "v2"])'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {
-        ["v1", "v2"] -> (KaVariableLikeSignature:
+        ["v1", "v2"] -> (KaVariableSignature:
           name = strings
           receiverType = null
           returnType = kotlin.String

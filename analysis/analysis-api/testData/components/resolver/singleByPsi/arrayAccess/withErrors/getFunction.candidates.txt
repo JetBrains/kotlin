@@ -14,7 +14,7 @@ KtArrayAccessExpression(44,48): '1[2]'
           returnType = kotlin.Int
           symbol = /get(<extension receiver>: kotlin.Int, index: kotlin.Int): kotlin.Int
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = index
               receiverType = null
               returnType = kotlin.Int
@@ -24,7 +24,7 @@ KtArrayAccessExpression(44,48): '1[2]'
           callableId = /get
       typeArgumentsMapping = {}
       argumentMapping = {
-        2 -> (KaVariableLikeSignature:
+        2 -> (KaVariableSignature:
           name = index
           receiverType = null
           returnType = kotlin.Int

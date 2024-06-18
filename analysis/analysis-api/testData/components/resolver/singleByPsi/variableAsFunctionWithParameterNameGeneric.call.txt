@@ -13,7 +13,7 @@ KtCallExpression(81,85): 'x(1)'
           returnType = kotlin.Unit
           symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = a
               receiverType = null
               returnType = @R|kotlin.ParameterName|(name = String(a))  kotlin.Int
@@ -23,7 +23,7 @@ KtCallExpression(81,85): 'x(1)'
           callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
       argumentMapping = {
-        1 -> (KaVariableLikeSignature:
+        1 -> (KaVariableSignature:
           name = a
           receiverType = null
           returnType = @R|kotlin.ParameterName|(name = String(a))  kotlin.Int

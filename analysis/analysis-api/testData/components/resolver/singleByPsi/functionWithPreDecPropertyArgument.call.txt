@@ -10,7 +10,7 @@ KtCallExpression(44,64): 'foo(--localProperty)'
           returnType = kotlin.Unit
           symbol = /foo(i: kotlin.Int): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = i
               receiverType = null
               returnType = kotlin.Int
@@ -20,7 +20,7 @@ KtCallExpression(44,64): 'foo(--localProperty)'
           callableId = /foo
       typeArgumentsMapping = {}
       argumentMapping = {
-        --localProperty -> (KaVariableLikeSignature:
+        --localProperty -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = kotlin.Int

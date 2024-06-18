@@ -4,7 +4,7 @@ KtNameReferenceExpression(60,61): 'i'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaVariableLikeSignature:
+        signature = KaVariableSignature:
           name = i
           receiverType = null
           returnType = kotlin.Int

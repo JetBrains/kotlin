@@ -13,7 +13,7 @@ KtOperationReferenceExpression(54,56): '+='
           returnType = kotlin.Unit
           symbol = kotlin/collections/plusAssign(<extension receiver>: kotlin.collections.MutableCollection<in T>, element: T): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = element
               receiverType = null
               returnType = kotlin.Int
@@ -25,7 +25,7 @@ KtOperationReferenceExpression(54,56): '+='
         T -> (kotlin.Int)
       }
       argumentMapping = {
-        1 -> (KaVariableLikeSignature:
+        1 -> (KaVariableSignature:
           name = element
           receiverType = null
           returnType = kotlin.Int

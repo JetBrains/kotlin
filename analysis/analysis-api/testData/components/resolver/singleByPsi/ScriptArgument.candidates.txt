@@ -4,7 +4,7 @@ KtNameReferenceExpression(16,20): 'args'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaVariableLikeSignature:
+        signature = KaVariableSignature:
           name = args
           receiverType = null
           returnType = kotlin.Array<kotlin.String>

@@ -3,7 +3,7 @@ Symbol:
 val <T, S> kotlin.collections.Map<T, S>.value: kotlin.collections.List<S>
 
 Signature before substitution:
-KaVariableLikeSignature:
+KaVariableSignature:
   name = value
   receiverType = kotlin.collections.Map<T, S>
   returnType = kotlin.collections.List<S>
@@ -11,7 +11,7 @@ KaVariableLikeSignature:
   callableId = /value
 
 Signature after substitution:
-KaVariableLikeSignature:
+KaVariableSignature:
   name = value
   receiverType = kotlin.collections.Map<kotlin.collections.List<S>, kotlin.Long>
   returnType = kotlin.collections.List<kotlin.Long>

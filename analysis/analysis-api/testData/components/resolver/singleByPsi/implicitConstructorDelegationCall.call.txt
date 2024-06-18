@@ -10,7 +10,7 @@ KtCallExpression(62,67): 'A(42)'
           returnType = A
           symbol = <constructor>(i: kotlin.Int): A
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = i
               receiverType = null
               returnType = kotlin.Int
@@ -20,7 +20,7 @@ KtCallExpression(62,67): 'A(42)'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {
-        42 -> (KaVariableLikeSignature:
+        42 -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = kotlin.Int

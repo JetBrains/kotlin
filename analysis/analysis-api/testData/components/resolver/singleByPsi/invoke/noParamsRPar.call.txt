@@ -13,7 +13,7 @@ KtCallExpression(75,78): 'f()'
           returnType = kotlin.Unit
           symbol = /Foo.invoke(<dispatch receiver>: Foo, vararg a: kotlin.Any): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = a
               receiverType = null
               returnType = kotlin.Any

@@ -14,19 +14,19 @@ KtArrayAccessExpression(93,97): 'c[1]'
             returnType = kotlin.Unit
             symbol = /C.set(<dispatch receiver>: C, a: kotlin.Int, b: kotlin.String, value: kotlin.Boolean): kotlin.Unit
             valueParameters = [
-              KaVariableLikeSignature:
+              KaVariableSignature:
                 name = a
                 receiverType = null
                 returnType = kotlin.Int
                 symbol = a: kotlin.Int
                 callableId = null,
-              KaVariableLikeSignature:
+              KaVariableSignature:
                 name = b
                 receiverType = null
                 returnType = kotlin.String
                 symbol = b: kotlin.String
                 callableId = null,
-              KaVariableLikeSignature:
+              KaVariableSignature:
                 name = value
                 receiverType = null
                 returnType = kotlin.Boolean
@@ -36,13 +36,13 @@ KtArrayAccessExpression(93,97): 'c[1]'
             callableId = /C.set
         typeArgumentsMapping = {}
         argumentMapping = {
-          1 -> (KaVariableLikeSignature:
+          1 -> (KaVariableSignature:
             name = a
             receiverType = null
             returnType = kotlin.Int
             symbol = a: kotlin.Int
             callableId = null),
-          false -> (KaVariableLikeSignature:
+          false -> (KaVariableSignature:
             name = value
             receiverType = null
             returnType = kotlin.Boolean

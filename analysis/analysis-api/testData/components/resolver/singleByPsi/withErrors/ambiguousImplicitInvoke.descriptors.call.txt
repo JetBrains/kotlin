@@ -14,7 +14,7 @@ KtCallExpression(134,137): 'x()'
             returnType = kotlin.Unit
             symbol = invoke(<extension receiver>: kotlin.Int, a: kotlin.String): kotlin.Unit
             valueParameters = [
-              KaVariableLikeSignature:
+              KaVariableSignature:
                 name = a
                 receiverType = null
                 returnType = kotlin.String
@@ -37,7 +37,7 @@ KtCallExpression(134,137): 'x()'
             returnType = kotlin.Unit
             symbol = invoke(<extension receiver>: kotlin.Int, b: kotlin.Boolean): kotlin.Unit
             valueParameters = [
-              KaVariableLikeSignature:
+              KaVariableSignature:
                 name = b
                 receiverType = null
                 returnType = kotlin.Boolean

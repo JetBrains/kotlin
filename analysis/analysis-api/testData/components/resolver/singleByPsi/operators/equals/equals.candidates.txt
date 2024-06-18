@@ -13,7 +13,7 @@ KtOperationReferenceExpression(62,64): '=='
           returnType = kotlin.Boolean
           symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = other
               receiverType = null
               returnType = kotlin.Any?
@@ -23,7 +23,7 @@ KtOperationReferenceExpression(62,64): '=='
           callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
       argumentMapping = {
-        m2 -> (KaVariableLikeSignature:
+        m2 -> (KaVariableSignature:
           name = other
           receiverType = null
           returnType = kotlin.Any?

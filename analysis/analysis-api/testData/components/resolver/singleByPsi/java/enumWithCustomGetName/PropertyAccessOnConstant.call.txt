@@ -7,7 +7,7 @@ KtNameReferenceExpression(54,58): 'name'
           isSafeNavigation = false
           type = JavaEnum
         extensionReceiver = null
-        signature = KaVariableLikeSignature:
+        signature = KaVariableSignature:
           name = name
           receiverType = null
           returnType = kotlin.String

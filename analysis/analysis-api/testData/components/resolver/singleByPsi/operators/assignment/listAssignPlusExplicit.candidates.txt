@@ -13,7 +13,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
           returnType = kotlin.Unit
           symbol = kotlin/collections/plusAssign(<extension receiver>: kotlin.collections.MutableCollection<in T>, element: T): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = element
               receiverType = null
               returnType = kotlin.Int
@@ -25,7 +25,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
         T -> (kotlin.Int)
       }
       argumentMapping = {
-        1 -> (KaVariableLikeSignature:
+        1 -> (KaVariableSignature:
           name = element
           receiverType = null
           returnType = kotlin.Int
@@ -49,7 +49,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
           returnType = kotlin.Unit
           symbol = kotlin/collections/plusAssign(<extension receiver>: kotlin.collections.MutableCollection<in T>, elements: kotlin.Array<T>): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = elements
               receiverType = null
               returnType = kotlin.Array<kotlin.Int>
@@ -61,7 +61,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
         T -> (kotlin.Int)
       }
       argumentMapping = {
-        1 -> (KaVariableLikeSignature:
+        1 -> (KaVariableSignature:
           name = elements
           receiverType = null
           returnType = kotlin.Array<kotlin.Int>
@@ -85,7 +85,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
           returnType = kotlin.Unit
           symbol = kotlin/collections/plusAssign(<extension receiver>: kotlin.collections.MutableCollection<in T>, elements: kotlin.collections.Iterable<T>): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = elements
               receiverType = null
               returnType = kotlin.collections.Iterable<kotlin.Int>
@@ -97,7 +97,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
         T -> (kotlin.Int)
       }
       argumentMapping = {
-        1 -> (KaVariableLikeSignature:
+        1 -> (KaVariableSignature:
           name = elements
           receiverType = null
           returnType = kotlin.collections.Iterable<kotlin.Int>
@@ -121,7 +121,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
           returnType = kotlin.Unit
           symbol = kotlin/collections/plusAssign(<extension receiver>: kotlin.collections.MutableCollection<in T>, elements: kotlin.sequences.Sequence<T>): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = elements
               receiverType = null
               returnType = kotlin.sequences.Sequence<kotlin.Int>
@@ -133,7 +133,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
         T -> (kotlin.Int)
       }
       argumentMapping = {
-        1 -> (KaVariableLikeSignature:
+        1 -> (KaVariableSignature:
           name = elements
           receiverType = null
           returnType = kotlin.sequences.Sequence<kotlin.Int>

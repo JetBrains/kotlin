@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.components.KaSignatureSubstitutor
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
-import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
@@ -25,7 +25,7 @@ abstract class KaAbstractSignatureSubstitutor<T : KaSession> : KaSessionComponen
         return asSignature().substitute(substitutor)
     }
 
-    override fun <S : KaVariableSymbol> S.substitute(substitutor: KaSubstitutor): KaVariableLikeSignature<S> = withValidityAssertion {
+    override fun <S : KaVariableSymbol> S.substitute(substitutor: KaSubstitutor): KaVariableSignature<S> = withValidityAssertion {
         if (substitutor is KaSubstitutor.Empty) return asSignature()
         return asSignature().substitute(substitutor)
     }

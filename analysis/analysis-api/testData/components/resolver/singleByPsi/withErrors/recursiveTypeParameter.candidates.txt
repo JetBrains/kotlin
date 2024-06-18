@@ -12,7 +12,7 @@ KtCallExpression(96,130): 'install(CoroutineModule.builder())'
           returnType = kotlin.Unit
           symbol = /AbstractModule.install(<dispatch receiver>: AbstractModule, builder: ft<AbstractModule.Builder<*>, AbstractModule.Builder<*>?>): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = builder
               receiverType = null
               returnType = ft<AbstractModule.Builder<*>, AbstractModule.Builder<*>?>
@@ -22,7 +22,7 @@ KtCallExpression(96,130): 'install(CoroutineModule.builder())'
           callableId = /AbstractModule.install
       typeArgumentsMapping = {}
       argumentMapping = {
-        CoroutineModule.builder() -> (KaVariableLikeSignature:
+        CoroutineModule.builder() -> (KaVariableSignature:
           name = builder
           receiverType = null
           returnType = ft<AbstractModule.Builder<*>, AbstractModule.Builder<*>?>

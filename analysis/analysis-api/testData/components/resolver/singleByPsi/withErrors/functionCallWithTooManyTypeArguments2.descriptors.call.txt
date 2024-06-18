@@ -11,7 +11,7 @@ KtCallExpression(43,66): 'generic<Int, String>(5)'
             returnType = kotlin.Unit
             symbol = /generic(a: A): kotlin.Unit
             valueParameters = [
-              KaVariableLikeSignature:
+              KaVariableSignature:
                 name = a
                 receiverType = null
                 returnType = kotlin.Int
@@ -23,7 +23,7 @@ KtCallExpression(43,66): 'generic<Int, String>(5)'
           A -> (kotlin.Int)
         }
         argumentMapping = {
-          5 -> (KaVariableLikeSignature:
+          5 -> (KaVariableSignature:
             name = a
             receiverType = null
             returnType = kotlin.Int

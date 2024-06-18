@@ -10,7 +10,7 @@ KtConstructorDelegationCall(111,125): 'this(s.length)'
           returnType = Sub
           symbol = <constructor>(p1: kotlin.Int): Sub
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = p1
               receiverType = null
               returnType = kotlin.Int
@@ -20,7 +20,7 @@ KtConstructorDelegationCall(111,125): 'this(s.length)'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {
-        s.length -> (KaVariableLikeSignature:
+        s.length -> (KaVariableSignature:
           name = p1
           receiverType = null
           returnType = kotlin.Int

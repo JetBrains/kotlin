@@ -10,7 +10,7 @@ KtCallExpression(42,53): 'function(1)'
           returnType = kotlin.Unit
           symbol = /function(a: kotlin.Int): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = a
               receiverType = null
               returnType = kotlin.Int
@@ -20,7 +20,7 @@ KtCallExpression(42,53): 'function(1)'
           callableId = /function
       typeArgumentsMapping = {}
       argumentMapping = {
-        1 -> (KaVariableLikeSignature:
+        1 -> (KaVariableSignature:
           name = a
           receiverType = null
           returnType = kotlin.Int

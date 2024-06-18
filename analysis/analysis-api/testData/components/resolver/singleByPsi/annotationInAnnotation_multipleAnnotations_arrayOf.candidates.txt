@@ -10,7 +10,7 @@ KtCallExpression(146,220): 'arrayOf(Annotation("v1", "v2"), Annotation(strings =
           returnType = kotlin.Array<Annotation>
           symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = elements
               receiverType = null
               returnType = Annotation
@@ -22,13 +22,13 @@ KtCallExpression(146,220): 'arrayOf(Annotation("v1", "v2"), Annotation(strings =
         T -> (Annotation)
       }
       argumentMapping = {
-        Annotation("v1", "v2") -> (KaVariableLikeSignature:
+        Annotation("v1", "v2") -> (KaVariableSignature:
           name = elements
           receiverType = null
           returnType = Annotation
           symbol = vararg elements: T
           callableId = null),
-        Annotation(strings = arrayOf("v3", "v4")) -> (KaVariableLikeSignature:
+        Annotation(strings = arrayOf("v3", "v4")) -> (KaVariableSignature:
           name = elements
           receiverType = null
           returnType = Annotation

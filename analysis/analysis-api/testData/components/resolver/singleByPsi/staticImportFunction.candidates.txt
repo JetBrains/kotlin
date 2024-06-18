@@ -31,7 +31,7 @@ KtCallExpression(95,100): 'foo()'
           returnType = kotlin.Unit
           symbol = one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject, int: kotlin.Int): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = int
               receiverType = null
               returnType = kotlin.Int

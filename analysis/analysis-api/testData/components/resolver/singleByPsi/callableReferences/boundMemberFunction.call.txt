@@ -13,7 +13,7 @@ KtCallableReferenceExpression(72,80): 'obj::foo'
           returnType = kotlin.Unit
           symbol = /Foo.foo(<dispatch receiver>: Foo, a: kotlin.Int): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = a
               receiverType = null
               returnType = kotlin.Int

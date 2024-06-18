@@ -7,23 +7,23 @@ package org.jetbrains.kotlin.analysis.api.descriptors.signatures
 
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KaType
 
-internal class KaFe10VariableLikeSignature<out S : KaVariableSymbol>(
+internal class KaFe10VariableSignature<out S : KaVariableSymbol>(
     private val backingSymbol: S,
     private val backingReturnType: KaType,
     private val backingReceiverType: KaType?,
-) : KaVariableLikeSignature<S>() {
+) : KaVariableSignature<S>() {
     override val token: KaLifetimeToken get() = backingSymbol.token
     override val symbol: S get() = withValidityAssertion { backingSymbol }
     override val returnType: KaType get() = withValidityAssertion { backingReturnType }
     override val receiverType: KaType? get() = withValidityAssertion { backingReceiverType }
 
-    override fun substitute(substitutor: KaSubstitutor): KaVariableLikeSignature<S> = withValidityAssertion {
-        KaFe10VariableLikeSignature(
+    override fun substitute(substitutor: KaSubstitutor): KaVariableSignature<S> = withValidityAssertion {
+        KaFe10VariableSignature(
             symbol,
             substitutor.substitute(returnType),
             receiverType?.let { substitutor.substitute(it) },
@@ -34,7 +34,7 @@ internal class KaFe10VariableLikeSignature<out S : KaVariableSymbol>(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as KaFe10VariableLikeSignature<*>
+        other as KaFe10VariableSignature<*>
 
         if (backingSymbol != other.backingSymbol) return false
         if (backingReturnType != other.backingReturnType) return false

@@ -14,7 +14,7 @@ KtOperationReferenceExpression(143,144): '+'
           returnType = kotlin.Double
           symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Double): kotlin.Double
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = other
               receiverType = null
               returnType = kotlin.Double
@@ -24,7 +24,7 @@ KtOperationReferenceExpression(143,144): '+'
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
       argumentMapping = {
-        b -> (KaVariableLikeSignature:
+        b -> (KaVariableSignature:
           name = other
           receiverType = null
           returnType = kotlin.Double
@@ -48,7 +48,7 @@ KtOperationReferenceExpression(143,144): '+'
           returnType = kotlin.Float
           symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Float): kotlin.Float
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = other
               receiverType = null
               returnType = kotlin.Float
@@ -58,7 +58,7 @@ KtOperationReferenceExpression(143,144): '+'
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
       argumentMapping = {
-        b -> (KaVariableLikeSignature:
+        b -> (KaVariableSignature:
           name = other
           receiverType = null
           returnType = kotlin.Float
@@ -82,7 +82,7 @@ KtOperationReferenceExpression(143,144): '+'
           returnType = kotlin.Int
           symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Byte): kotlin.Int
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = other
               receiverType = null
               returnType = kotlin.Byte
@@ -92,7 +92,7 @@ KtOperationReferenceExpression(143,144): '+'
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
       argumentMapping = {
-        b -> (KaVariableLikeSignature:
+        b -> (KaVariableSignature:
           name = other
           receiverType = null
           returnType = kotlin.Byte
@@ -115,7 +115,7 @@ KtOperationReferenceExpression(143,144): '+'
           returnType = kotlin.Int
           symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = other
               receiverType = null
               returnType = kotlin.Int
@@ -125,7 +125,7 @@ KtOperationReferenceExpression(143,144): '+'
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
       argumentMapping = {
-        b -> (KaVariableLikeSignature:
+        b -> (KaVariableSignature:
           name = other
           receiverType = null
           returnType = kotlin.Int
@@ -149,7 +149,7 @@ KtOperationReferenceExpression(143,144): '+'
           returnType = kotlin.Int
           symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Short): kotlin.Int
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = other
               receiverType = null
               returnType = kotlin.Short
@@ -159,7 +159,7 @@ KtOperationReferenceExpression(143,144): '+'
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
       argumentMapping = {
-        b -> (KaVariableLikeSignature:
+        b -> (KaVariableSignature:
           name = other
           receiverType = null
           returnType = kotlin.Short
@@ -183,7 +183,7 @@ KtOperationReferenceExpression(143,144): '+'
           returnType = kotlin.Long
           symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Long): kotlin.Long
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = other
               receiverType = null
               returnType = kotlin.Long
@@ -193,7 +193,7 @@ KtOperationReferenceExpression(143,144): '+'
           callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
       argumentMapping = {
-        b -> (KaVariableLikeSignature:
+        b -> (KaVariableSignature:
           name = other
           receiverType = null
           returnType = kotlin.Long

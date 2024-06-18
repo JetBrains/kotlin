@@ -17,7 +17,7 @@ public abstract class KaFunctionSignature<out S : KaFunctionSymbol> : KaCallable
     /**
      * The use-site-substituted value parameters.
      */
-    public abstract val valueParameters: List<KaVariableLikeSignature<KaValueParameterSymbol>>
+    public abstract val valueParameters: List<KaVariableSignature<KaValueParameterSymbol>>
 
     @KaExperimentalApi
     abstract override fun substitute(substitutor: KaSubstitutor): KaFunctionSignature<S>

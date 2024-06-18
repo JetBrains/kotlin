@@ -15,7 +15,7 @@ KtBinaryExpression(31,37): 'i += 1'
             returnType = kotlin.Int
             symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
             valueParameters = [
-              KaVariableLikeSignature:
+              KaVariableSignature:
                 name = other
                 receiverType = null
                 returnType = kotlin.Int
@@ -26,7 +26,7 @@ KtBinaryExpression(31,37): 'i += 1'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaVariableLikeSignature:
+        signature = KaVariableSignature:
           name = i
           receiverType = null
           returnType = kotlin.Int

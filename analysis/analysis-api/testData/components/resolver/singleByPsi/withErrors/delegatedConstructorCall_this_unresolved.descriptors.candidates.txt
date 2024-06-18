@@ -11,13 +11,13 @@ KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
           returnType = Sub
           symbol = <constructor>(i: kotlin.Int, j: kotlin.Int): Sub
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = i
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
               callableId = null,
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = j
               receiverType = null
               returnType = kotlin.Int
@@ -27,13 +27,13 @@ KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {
-        i -> (KaVariableLikeSignature:
+        i -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
           callableId = null),
-        j -> (KaVariableLikeSignature:
+        j -> (KaVariableSignature:
           name = j
           receiverType = null
           returnType = kotlin.Int
@@ -54,7 +54,7 @@ KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
           returnType = Sub
           symbol = <constructor>(p: kotlin.Int): Sub
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = p
               receiverType = null
               returnType = kotlin.Int
@@ -64,7 +64,7 @@ KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {
-        i -> (KaVariableLikeSignature:
+        i -> (KaVariableSignature:
           name = p
           receiverType = null
           returnType = kotlin.Int

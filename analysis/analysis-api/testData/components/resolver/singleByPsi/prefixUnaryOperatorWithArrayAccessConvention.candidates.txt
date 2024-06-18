@@ -27,7 +27,7 @@ KtPrefixExpression(128,136): '++m["a"]'
           returnType = kotlin.Int
           symbol = /MyMap.get(<dispatch receiver>: MyMap<K, V>, k: K): V
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = k
               receiverType = null
               returnType = kotlin.String
@@ -49,13 +49,13 @@ KtPrefixExpression(128,136): '++m["a"]'
           returnType = kotlin.Unit
           symbol = /MyMap.set(<dispatch receiver>: MyMap<K, V>, k: K, v: V): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = k
               receiverType = null
               returnType = kotlin.String
               symbol = k: K
               callableId = null,
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = v
               receiverType = null
               returnType = kotlin.Int

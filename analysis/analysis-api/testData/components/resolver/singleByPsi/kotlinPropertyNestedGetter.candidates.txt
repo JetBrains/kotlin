@@ -7,7 +7,7 @@ KtNameReferenceExpression(53,61): 'instance'
           isSafeNavigation = false
           type = KtClass
         extensionReceiver = null
-        signature = KaVariableLikeSignature:
+        signature = KaVariableSignature:
           name = instance
           receiverType = null
           returnType = KtSubClass

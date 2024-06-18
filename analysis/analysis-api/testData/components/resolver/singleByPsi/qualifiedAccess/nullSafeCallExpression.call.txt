@@ -7,7 +7,7 @@ KtNameReferenceExpression(50,52): 'aa'
           isSafeNavigation = true
           type = A
         extensionReceiver = null
-        signature = KaVariableLikeSignature:
+        signature = KaVariableSignature:
           name = aa
           receiverType = null
           returnType = A?

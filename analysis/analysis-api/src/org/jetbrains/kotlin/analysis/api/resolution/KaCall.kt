@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
-import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
@@ -44,14 +44,14 @@ public sealed class KaCallableMemberCall<S : KaCallableSymbol, C : KaCallableSig
 public val <S : KaCallableSymbol, C : KaCallableSignature<S>> KaCallableMemberCall<S, C>.symbol: S get() = partiallyAppliedSymbol.symbol
 
 public sealed class KaFunctionCall<S : KaFunctionSymbol>(
-    argumentMapping: LinkedHashMap<KtExpression, KaVariableLikeSignature<KaValueParameterSymbol>>,
+    argumentMapping: LinkedHashMap<KtExpression, KaVariableSignature<KaValueParameterSymbol>>,
 ) : KaCallableMemberCall<S, KaFunctionSignature<S>>() {
 
     /**
      * The mapping from argument to parameter declaration. In case of vararg parameters, multiple arguments may be mapped to the same
      * [KaValueParameterSymbol].
      */
-    public val argumentMapping: LinkedHashMap<KtExpression, KaVariableLikeSignature<KaValueParameterSymbol>>
+    public val argumentMapping: LinkedHashMap<KtExpression, KaVariableSignature<KaValueParameterSymbol>>
             by validityAsserted(argumentMapping)
 }
 
@@ -60,7 +60,7 @@ public sealed class KaFunctionCall<S : KaFunctionSymbol>(
  */
 public class KaSimpleFunctionCall(
     partiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
-    argumentMapping: LinkedHashMap<KtExpression, KaVariableLikeSignature<KaValueParameterSymbol>>,
+    argumentMapping: LinkedHashMap<KtExpression, KaVariableSignature<KaValueParameterSymbol>>,
     typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
     isImplicitInvoke: Boolean,
 ) : KaFunctionCall<KaFunctionSymbol>(argumentMapping) {
@@ -91,7 +91,7 @@ public class KaSimpleFunctionCall(
  */
 public class KaAnnotationCall(
     partiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaConstructorSymbol>,
-    argumentMapping: LinkedHashMap<KtExpression, KaVariableLikeSignature<KaValueParameterSymbol>>,
+    argumentMapping: LinkedHashMap<KtExpression, KaVariableSignature<KaValueParameterSymbol>>,
 ) : KaFunctionCall<KaConstructorSymbol>(argumentMapping) {
     private val backingPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaConstructorSymbol> = partiallyAppliedSymbol
 
@@ -119,7 +119,7 @@ public class KaAnnotationCall(
 public class KaDelegatedConstructorCall(
     partiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaConstructorSymbol>,
     kind: Kind,
-    argumentMapping: LinkedHashMap<KtExpression, KaVariableLikeSignature<KaValueParameterSymbol>>,
+    argumentMapping: LinkedHashMap<KtExpression, KaVariableSignature<KaValueParameterSymbol>>,
     typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
 ) : KaFunctionCall<KaConstructorSymbol>(argumentMapping) {
     private val backingPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaConstructorSymbol> = partiallyAppliedSymbol
@@ -141,7 +141,7 @@ public class KaDelegatedConstructorCall(
 /**
  * An access to variables (including properties).
  */
-public sealed class KaVariableAccessCall : KaCallableMemberCall<KaVariableSymbol, KaVariableLikeSignature<KaVariableSymbol>>()
+public sealed class KaVariableAccessCall : KaCallableMemberCall<KaVariableSymbol, KaVariableSignature<KaVariableSymbol>>()
 
 /**
  * A simple read or write to a variable or property.

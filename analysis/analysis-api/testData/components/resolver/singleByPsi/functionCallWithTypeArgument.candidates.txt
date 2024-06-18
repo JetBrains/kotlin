@@ -10,13 +10,13 @@ KtCallExpression(53,68): 'function(1, "")'
           returnType = kotlin.Unit
           symbol = /function(a: A, b: B): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = a
               receiverType = null
               returnType = kotlin.Int
               symbol = a: A
               callableId = null,
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = b
               receiverType = null
               returnType = kotlin.String
@@ -29,13 +29,13 @@ KtCallExpression(53,68): 'function(1, "")'
         B -> (kotlin.String)
       }
       argumentMapping = {
-        1 -> (KaVariableLikeSignature:
+        1 -> (KaVariableSignature:
           name = a
           receiverType = null
           returnType = kotlin.Int
           symbol = a: A
           callableId = null),
-        "" -> (KaVariableLikeSignature:
+        "" -> (KaVariableSignature:
           name = b
           receiverType = null
           returnType = kotlin.String

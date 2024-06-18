@@ -7,7 +7,7 @@ KtNameReferenceExpression(61,62): 'f'
           isSafeNavigation = false
           type = A
         extensionReceiver = null
-        signature = KaVariableLikeSignature:
+        signature = KaVariableSignature:
           name = f
           receiverType = null
           returnType = kotlin.Function0<kotlin.Unit>

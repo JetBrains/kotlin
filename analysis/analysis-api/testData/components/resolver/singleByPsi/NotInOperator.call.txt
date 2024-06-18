@@ -13,7 +13,7 @@ KtOperationReferenceExpression(69,72): '!in'
           returnType = kotlin.Boolean
           symbol = /Foo.contains(<dispatch receiver>: Foo, v: kotlin.Int): kotlin.Boolean
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = v
               receiverType = null
               returnType = kotlin.Int
@@ -23,7 +23,7 @@ KtOperationReferenceExpression(69,72): '!in'
           callableId = /Foo.contains
       typeArgumentsMapping = {}
       argumentMapping = {
-        0 -> (KaVariableLikeSignature:
+        0 -> (KaVariableSignature:
           name = v
           receiverType = null
           returnType = kotlin.Int

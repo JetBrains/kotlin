@@ -4,7 +4,7 @@ KtNameReferenceExpression(30,31): 'f'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaVariableLikeSignature:
+        signature = KaVariableSignature:
           name = f
           receiverType = null
           returnType = kotlin.Function0<kotlin.Unit>

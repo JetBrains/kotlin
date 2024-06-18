@@ -11,13 +11,13 @@ KtCallExpression(31,44): 'Array<String>'
             returnType = kotlin.Array<T>
             symbol = <constructor>(size: kotlin.Int, init: kotlin.Function1<kotlin.Int, T>): kotlin.Array<T>
             valueParameters = [
-              KaVariableLikeSignature:
+              KaVariableSignature:
                 name = size
                 receiverType = null
                 returnType = kotlin.Int
                 symbol = size: kotlin.Int
                 callableId = null,
-              KaVariableLikeSignature:
+              KaVariableSignature:
                 name = init
                 receiverType = null
                 returnType = kotlin.Function1<kotlin.Int, T>

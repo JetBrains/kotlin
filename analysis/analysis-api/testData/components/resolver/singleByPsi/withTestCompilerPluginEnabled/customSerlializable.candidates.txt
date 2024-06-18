@@ -13,7 +13,7 @@ KtNameReferenceExpression(319,339): 'serializeFirstTarget'
           returnType = kotlin.Unit
           symbol = test/Serializer.serializeFirstTarget(<dispatch receiver>: test.Serializer, x: test.FirstTarget): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = x
               receiverType = null
               returnType = test.FirstTarget
@@ -23,7 +23,7 @@ KtNameReferenceExpression(319,339): 'serializeFirstTarget'
           callableId = test/Serializer.serializeFirstTarget
       typeArgumentsMapping = {}
       argumentMapping = {
-        target -> (KaVariableLikeSignature:
+        target -> (KaVariableSignature:
           name = x
           receiverType = null
           returnType = test.FirstTarget

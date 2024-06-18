@@ -7,7 +7,7 @@ KtNameReferenceExpression(144,147): 'foo'
           isSafeNavigation = false
           type = JavaClass
         extensionReceiver = null
-        signature = KaVariableLikeSignature:
+        signature = KaVariableSignature:
           name = foo
           receiverType = null
           returnType = kotlin.Int

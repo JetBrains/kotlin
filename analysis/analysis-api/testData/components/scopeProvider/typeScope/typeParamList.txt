@@ -7,7 +7,7 @@ KaFunctionSignature:
   returnType = kotlin.Boolean
   symbol = kotlin/collections/List.contains(<dispatch receiver>: kotlin.collections.List<E>, element: E): kotlin.Boolean
   valueParameters = [
-    KaVariableLikeSignature:
+    KaVariableSignature:
       name = element
       receiverType = null
       returnType = AAA
@@ -20,7 +20,7 @@ KaFunctionSignature:
   returnType = kotlin.Boolean
   symbol = kotlin/collections/List.containsAll(<dispatch receiver>: kotlin.collections.List<E>, elements: kotlin.collections.Collection<E>): kotlin.Boolean
   valueParameters = [
-    KaVariableLikeSignature:
+    KaVariableSignature:
       name = elements
       receiverType = null
       returnType = kotlin.collections.Collection<AAA>
@@ -33,7 +33,7 @@ KaFunctionSignature:
   returnType = AAA
   symbol = kotlin/collections/List.get(<dispatch receiver>: kotlin.collections.List<E>, index: kotlin.Int): E
   valueParameters = [
-    KaVariableLikeSignature:
+    KaVariableSignature:
       name = index
       receiverType = null
       returnType = kotlin.Int
@@ -46,7 +46,7 @@ KaFunctionSignature:
   returnType = kotlin.Int
   symbol = kotlin/collections/List.indexOf(<dispatch receiver>: kotlin.collections.List<E>, element: E): kotlin.Int
   valueParameters = [
-    KaVariableLikeSignature:
+    KaVariableSignature:
       name = element
       receiverType = null
       returnType = AAA
@@ -71,7 +71,7 @@ KaFunctionSignature:
   returnType = kotlin.Int
   symbol = kotlin/collections/List.lastIndexOf(<dispatch receiver>: kotlin.collections.List<E>, element: E): kotlin.Int
   valueParameters = [
-    KaVariableLikeSignature:
+    KaVariableSignature:
       name = element
       receiverType = null
       returnType = AAA
@@ -90,7 +90,7 @@ KaFunctionSignature:
   returnType = kotlin.collections.ListIterator<AAA>
   symbol = kotlin/collections/List.listIterator(<dispatch receiver>: kotlin.collections.List<E>, index: kotlin.Int): kotlin.collections.ListIterator<E>
   valueParameters = [
-    KaVariableLikeSignature:
+    KaVariableSignature:
       name = index
       receiverType = null
       returnType = kotlin.Int
@@ -103,13 +103,13 @@ KaFunctionSignature:
   returnType = kotlin.collections.List<AAA>
   symbol = kotlin/collections/List.subList(<dispatch receiver>: kotlin.collections.List<E>, fromIndex: kotlin.Int, toIndex: kotlin.Int): kotlin.collections.List<E>
   valueParameters = [
-    KaVariableLikeSignature:
+    KaVariableSignature:
       name = fromIndex
       receiverType = null
       returnType = kotlin.Int
       symbol = fromIndex: kotlin.Int
       callableId = null,
-    KaVariableLikeSignature:
+    KaVariableSignature:
       name = toIndex
       receiverType = null
       returnType = kotlin.Int
@@ -117,7 +117,7 @@ KaFunctionSignature:
       callableId = null
   ]
   callableId = kotlin/collections/List.subList
-KaVariableLikeSignature:
+KaVariableSignature:
   name = size
   receiverType = null
   returnType = kotlin.Int
@@ -128,7 +128,7 @@ KaFunctionSignature:
   returnType = kotlin.Boolean
   symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
   valueParameters = [
-    KaVariableLikeSignature:
+    KaVariableSignature:
       name = other
       receiverType = null
       returnType = kotlin.Any?

@@ -8,7 +8,7 @@ KaFunctionSignature:
   returnType = kotlin.Unit
   symbol = <setter>(value: kotlin.Int): kotlin.Unit
   valueParameters = [
-    KaVariableLikeSignature:
+    KaVariableSignature:
       name = value
       receiverType = null
       returnType = kotlin.Int

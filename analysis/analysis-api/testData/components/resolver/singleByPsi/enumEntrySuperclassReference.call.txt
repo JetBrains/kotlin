@@ -10,7 +10,7 @@ KtEnumEntrySuperclassReferenceExpression(127,127): ''
           returnType = EnumWithConstructor
           symbol = <constructor>(i: kotlin.Int): EnumWithConstructor
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = i
               receiverType = null
               returnType = kotlin.Int
@@ -20,7 +20,7 @@ KtEnumEntrySuperclassReferenceExpression(127,127): ''
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {
-        1 -> (KaVariableLikeSignature:
+        1 -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = kotlin.Int

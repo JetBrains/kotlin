@@ -4,7 +4,7 @@ KtNameReferenceExpression(81,87): 'action'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KaVariableLikeSignature:
+        signature = KaVariableSignature:
           name = action
           receiverType = null
           returnType = kotlin.Function1<test.Foo, kotlin.Unit>

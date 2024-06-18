@@ -12,7 +12,7 @@ KtCallExpression(146,166): 'test(this::uiMethod)'
           returnType = kotlin.Unit
           symbol = /Test.test(<dispatch receiver>: Test, foo: Test.Foo): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = foo
               receiverType = null
               returnType = Test.Foo
@@ -22,7 +22,7 @@ KtCallExpression(146,166): 'test(this::uiMethod)'
           callableId = /Test.test
       typeArgumentsMapping = {}
       argumentMapping = {
-        this::uiMethod -> (KaVariableLikeSignature:
+        this::uiMethod -> (KaVariableSignature:
           name = foo
           receiverType = null
           returnType = Test.Foo

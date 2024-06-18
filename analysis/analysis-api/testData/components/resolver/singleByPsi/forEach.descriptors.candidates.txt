@@ -14,7 +14,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           returnType = kotlin.Unit
           symbol = kotlin/collections/forEach(<extension receiver>: kotlin.Array<out T>, action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = action
               receiverType = null
               returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
@@ -26,7 +26,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         T -> (ERROR_TYPE)
       }
       argumentMapping = {
-        { } -> (KaVariableLikeSignature:
+        { } -> (KaVariableSignature:
           name = action
           receiverType = null
           returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
@@ -50,7 +50,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           returnType = kotlin.Unit
           symbol = kotlin/collections/forEach(<extension receiver>: kotlin.BooleanArray, action: kotlin.Function1<kotlin.Boolean, kotlin.Unit>): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = action
               receiverType = null
               returnType = kotlin.Function1<kotlin.Boolean, kotlin.Unit>
@@ -60,7 +60,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
       argumentMapping = {
-        { } -> (KaVariableLikeSignature:
+        { } -> (KaVariableSignature:
           name = action
           receiverType = null
           returnType = kotlin.Function1<kotlin.Boolean, kotlin.Unit>
@@ -84,7 +84,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           returnType = kotlin.Unit
           symbol = kotlin/collections/forEach(<extension receiver>: kotlin.ByteArray, action: kotlin.Function1<kotlin.Byte, kotlin.Unit>): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = action
               receiverType = null
               returnType = kotlin.Function1<kotlin.Byte, kotlin.Unit>
@@ -94,7 +94,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
       argumentMapping = {
-        { } -> (KaVariableLikeSignature:
+        { } -> (KaVariableSignature:
           name = action
           receiverType = null
           returnType = kotlin.Function1<kotlin.Byte, kotlin.Unit>
@@ -118,7 +118,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           returnType = kotlin.Unit
           symbol = kotlin/collections/forEach(<extension receiver>: kotlin.CharArray, action: kotlin.Function1<kotlin.Char, kotlin.Unit>): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = action
               receiverType = null
               returnType = kotlin.Function1<kotlin.Char, kotlin.Unit>
@@ -128,7 +128,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
       argumentMapping = {
-        { } -> (KaVariableLikeSignature:
+        { } -> (KaVariableSignature:
           name = action
           receiverType = null
           returnType = kotlin.Function1<kotlin.Char, kotlin.Unit>
@@ -152,7 +152,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           returnType = kotlin.Unit
           symbol = kotlin/text/forEach(<extension receiver>: kotlin.CharSequence, action: kotlin.Function1<kotlin.Char, kotlin.Unit>): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = action
               receiverType = null
               returnType = kotlin.Function1<kotlin.Char, kotlin.Unit>
@@ -162,7 +162,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           callableId = kotlin/text/forEach
       typeArgumentsMapping = {}
       argumentMapping = {
-        { } -> (KaVariableLikeSignature:
+        { } -> (KaVariableSignature:
           name = action
           receiverType = null
           returnType = kotlin.Function1<kotlin.Char, kotlin.Unit>
@@ -186,7 +186,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           returnType = kotlin.Unit
           symbol = kotlin/collections/forEach(<extension receiver>: kotlin.DoubleArray, action: kotlin.Function1<kotlin.Double, kotlin.Unit>): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = action
               receiverType = null
               returnType = kotlin.Function1<kotlin.Double, kotlin.Unit>
@@ -196,7 +196,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
       argumentMapping = {
-        { } -> (KaVariableLikeSignature:
+        { } -> (KaVariableSignature:
           name = action
           receiverType = null
           returnType = kotlin.Function1<kotlin.Double, kotlin.Unit>
@@ -220,7 +220,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           returnType = kotlin.Unit
           symbol = kotlin/collections/forEach(<extension receiver>: kotlin.FloatArray, action: kotlin.Function1<kotlin.Float, kotlin.Unit>): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = action
               receiverType = null
               returnType = kotlin.Function1<kotlin.Float, kotlin.Unit>
@@ -230,7 +230,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
       argumentMapping = {
-        { } -> (KaVariableLikeSignature:
+        { } -> (KaVariableSignature:
           name = action
           receiverType = null
           returnType = kotlin.Function1<kotlin.Float, kotlin.Unit>
@@ -254,7 +254,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           returnType = kotlin.Unit
           symbol = kotlin/collections/forEach(<extension receiver>: kotlin.IntArray, action: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = action
               receiverType = null
               returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
@@ -264,7 +264,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
       argumentMapping = {
-        { } -> (KaVariableLikeSignature:
+        { } -> (KaVariableSignature:
           name = action
           receiverType = null
           returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
@@ -288,7 +288,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           returnType = kotlin.Unit
           symbol = kotlin/collections/forEach(<extension receiver>: kotlin.LongArray, action: kotlin.Function1<kotlin.Long, kotlin.Unit>): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = action
               receiverType = null
               returnType = kotlin.Function1<kotlin.Long, kotlin.Unit>
@@ -298,7 +298,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
       argumentMapping = {
-        { } -> (KaVariableLikeSignature:
+        { } -> (KaVariableSignature:
           name = action
           receiverType = null
           returnType = kotlin.Function1<kotlin.Long, kotlin.Unit>
@@ -322,7 +322,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           returnType = kotlin.Unit
           symbol = kotlin/collections/forEach(<extension receiver>: kotlin.ShortArray, action: kotlin.Function1<kotlin.Short, kotlin.Unit>): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = action
               receiverType = null
               returnType = kotlin.Function1<kotlin.Short, kotlin.Unit>
@@ -332,7 +332,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
       argumentMapping = {
-        { } -> (KaVariableLikeSignature:
+        { } -> (KaVariableSignature:
           name = action
           receiverType = null
           returnType = kotlin.Function1<kotlin.Short, kotlin.Unit>
@@ -356,7 +356,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           returnType = kotlin.Unit
           symbol = kotlin/collections/forEach(<extension receiver>: kotlin.UByteArray, action: kotlin.Function1<kotlin.UByte, kotlin.Unit>): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = action
               receiverType = null
               returnType = kotlin.Function1<kotlin.UByte, kotlin.Unit>
@@ -366,7 +366,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
       argumentMapping = {
-        { } -> (KaVariableLikeSignature:
+        { } -> (KaVariableSignature:
           name = action
           receiverType = null
           returnType = kotlin.Function1<kotlin.UByte, kotlin.Unit>
@@ -390,7 +390,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           returnType = kotlin.Unit
           symbol = kotlin/collections/forEach(<extension receiver>: kotlin.UIntArray, action: kotlin.Function1<kotlin.UInt, kotlin.Unit>): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = action
               receiverType = null
               returnType = kotlin.Function1<kotlin.UInt, kotlin.Unit>
@@ -400,7 +400,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
       argumentMapping = {
-        { } -> (KaVariableLikeSignature:
+        { } -> (KaVariableSignature:
           name = action
           receiverType = null
           returnType = kotlin.Function1<kotlin.UInt, kotlin.Unit>
@@ -424,7 +424,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           returnType = kotlin.Unit
           symbol = kotlin/collections/forEach(<extension receiver>: kotlin.ULongArray, action: kotlin.Function1<kotlin.ULong, kotlin.Unit>): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = action
               receiverType = null
               returnType = kotlin.Function1<kotlin.ULong, kotlin.Unit>
@@ -434,7 +434,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
       argumentMapping = {
-        { } -> (KaVariableLikeSignature:
+        { } -> (KaVariableSignature:
           name = action
           receiverType = null
           returnType = kotlin.Function1<kotlin.ULong, kotlin.Unit>
@@ -458,7 +458,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           returnType = kotlin.Unit
           symbol = kotlin/collections/forEach(<extension receiver>: kotlin.UShortArray, action: kotlin.Function1<kotlin.UShort, kotlin.Unit>): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = action
               receiverType = null
               returnType = kotlin.Function1<kotlin.UShort, kotlin.Unit>
@@ -468,7 +468,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           callableId = kotlin/collections/forEach
       typeArgumentsMapping = {}
       argumentMapping = {
-        { } -> (KaVariableLikeSignature:
+        { } -> (KaVariableSignature:
           name = action
           receiverType = null
           returnType = kotlin.Function1<kotlin.UShort, kotlin.Unit>
@@ -491,7 +491,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           returnType = kotlin.Unit
           symbol = kotlin/collections/forEach(<extension receiver>: kotlin.collections.Iterable<T>, action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = action
               receiverType = null
               returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
@@ -503,7 +503,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         T -> (kotlin.Int)
       }
       argumentMapping = {
-        { } -> (KaVariableLikeSignature:
+        { } -> (KaVariableSignature:
           name = action
           receiverType = null
           returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
@@ -526,7 +526,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           returnType = kotlin.Unit
           symbol = kotlin/collections/forEach(<extension receiver>: kotlin.collections.Iterable<T>, action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = action
               receiverType = null
               returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
@@ -538,7 +538,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         T -> (kotlin.Int)
       }
       argumentMapping = {
-        { } -> (KaVariableLikeSignature:
+        { } -> (KaVariableSignature:
           name = action
           receiverType = null
           returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
@@ -562,7 +562,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           returnType = kotlin.Unit
           symbol = kotlin/collections/forEach(<extension receiver>: kotlin.collections.Iterator<T>, operation: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = operation
               receiverType = null
               returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
@@ -574,7 +574,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         T -> (ERROR_TYPE)
       }
       argumentMapping = {
-        { } -> (KaVariableLikeSignature:
+        { } -> (KaVariableSignature:
           name = operation
           receiverType = null
           returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
@@ -597,7 +597,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           returnType = kotlin.Unit
           symbol = /forEach(<extension receiver>: kotlin.collections.List<kotlin.Int>, action: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = action
               receiverType = null
               returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
@@ -607,7 +607,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           callableId = /forEach
       typeArgumentsMapping = {}
       argumentMapping = {
-        { } -> (KaVariableLikeSignature:
+        { } -> (KaVariableSignature:
           name = action
           receiverType = null
           returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
@@ -631,7 +631,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           returnType = kotlin.Unit
           symbol = kotlin/collections/forEach(<extension receiver>: kotlin.collections.Map<out K, V>, action: kotlin.Function1<kotlin.collections.Map.Entry<K, V>, kotlin.Unit>): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = action
               receiverType = null
               returnType = kotlin.Function1<kotlin.collections.Map.Entry<ERROR_TYPE, ERROR_TYPE>, kotlin.Unit>
@@ -644,7 +644,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         V -> (ERROR_TYPE)
       }
       argumentMapping = {
-        { } -> (KaVariableLikeSignature:
+        { } -> (KaVariableSignature:
           name = action
           receiverType = null
           returnType = kotlin.Function1<kotlin.collections.Map.Entry<ERROR_TYPE, ERROR_TYPE>, kotlin.Unit>
@@ -668,7 +668,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           returnType = kotlin.Unit
           symbol = kotlin/collections/forEach(<extension receiver>: kotlin.collections.Map<out K, V>, action: kotlin.Function1<kotlin.collections.Map.Entry<K, V>, kotlin.Unit>): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = action
               receiverType = null
               returnType = kotlin.Function1<kotlin.collections.Map.Entry<ERROR_TYPE, ERROR_TYPE>, kotlin.Unit>
@@ -681,7 +681,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         V -> (ERROR_TYPE)
       }
       argumentMapping = {
-        { } -> (KaVariableLikeSignature:
+        { } -> (KaVariableSignature:
           name = action
           receiverType = null
           returnType = kotlin.Function1<kotlin.collections.Map.Entry<ERROR_TYPE, ERROR_TYPE>, kotlin.Unit>
@@ -705,7 +705,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           returnType = kotlin.Unit
           symbol = kotlin/sequences/forEach(<extension receiver>: kotlin.sequences.Sequence<T>, action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = action
               receiverType = null
               returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
@@ -717,7 +717,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         T -> (ERROR_TYPE)
       }
       argumentMapping = {
-        { } -> (KaVariableLikeSignature:
+        { } -> (KaVariableSignature:
           name = action
           receiverType = null
           returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>

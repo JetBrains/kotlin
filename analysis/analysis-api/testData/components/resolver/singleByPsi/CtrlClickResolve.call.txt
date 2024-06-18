@@ -10,7 +10,7 @@ KtNameReferenceExpression(202,210): 'IntArray'
           returnType = kotlin.Array<out kotlin.String>
           symbol = ctrl_click/IntArray(vararg content: kotlin.String): kotlin.Array<out kotlin.String>
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = content
               receiverType = null
               returnType = kotlin.String
@@ -20,7 +20,7 @@ KtNameReferenceExpression(202,210): 'IntArray'
           callableId = ctrl_click/IntArray
       typeArgumentsMapping = {}
       argumentMapping = {
-        array("1", "2", "3") -> (KaVariableLikeSignature:
+        array("1", "2", "3") -> (KaVariableSignature:
           name = content
           receiverType = null
           returnType = kotlin.String

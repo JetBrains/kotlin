@@ -13,7 +13,7 @@ KtNameReferenceExpression(141,146): 'check'
           returnType = kotlin.Unit
           symbol = library2/MyInterface.check(<dispatch receiver>: library2.MyInterface, string: {library1.MyString=} kotlin.String): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = string
               receiverType = null
               returnType = {library1.MyString=} kotlin.String
@@ -23,7 +23,7 @@ KtNameReferenceExpression(141,146): 'check'
           callableId = library2/MyInterface.check
       typeArgumentsMapping = {}
       argumentMapping = {
-        "" -> (KaVariableLikeSignature:
+        "" -> (KaVariableSignature:
           name = string
           receiverType = null
           returnType = {library1.MyString=} kotlin.String

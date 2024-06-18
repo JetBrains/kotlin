@@ -7,7 +7,7 @@ KtNameReferenceExpression(69,76): 'RUNTIME'
           isSafeNavigation = false
           type = kotlin.Unit
         extensionReceiver = null
-        signature = KaVariableLikeSignature:
+        signature = KaVariableSignature:
           name = RUNTIME
           receiverType = null
           returnType = java.lang.annotation.RetentionPolicy

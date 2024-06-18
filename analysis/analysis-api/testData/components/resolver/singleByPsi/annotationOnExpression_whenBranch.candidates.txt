@@ -9,7 +9,7 @@ KtAnnotationEntry(54,78): '@Suppress("DEPRECATION")'
           returnType = kotlin.Suppress
           symbol = <constructor>(vararg names: kotlin.String): kotlin.Suppress
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = names
               receiverType = null
               returnType = kotlin.String
@@ -19,7 +19,7 @@ KtAnnotationEntry(54,78): '@Suppress("DEPRECATION")'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {
-        "DEPRECATION" -> (KaVariableLikeSignature:
+        "DEPRECATION" -> (KaVariableSignature:
           name = names
           receiverType = null
           returnType = kotlin.String

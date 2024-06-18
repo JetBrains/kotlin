@@ -9,7 +9,7 @@ KtNameReferenceExpression(49,56): 'JvmName'
           returnType = kotlin.jvm.JvmName
           symbol = <constructor>(name: kotlin.String): kotlin.jvm.JvmName
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = name
               receiverType = null
               returnType = kotlin.String
@@ -19,7 +19,7 @@ KtNameReferenceExpression(49,56): 'JvmName'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {
-        "" -> (KaVariableLikeSignature:
+        "" -> (KaVariableSignature:
           name = name
           receiverType = null
           returnType = kotlin.String

@@ -15,7 +15,7 @@ KtBinaryExpression(128,139): 'm["a"] += 1'
             returnType = kotlin.Int
             symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
             valueParameters = [
-              KaVariableLikeSignature:
+              KaVariableSignature:
                 name = other
                 receiverType = null
                 returnType = kotlin.Int
@@ -34,7 +34,7 @@ KtBinaryExpression(128,139): 'm["a"] += 1'
           returnType = kotlin.Int
           symbol = /MyMap.get(<dispatch receiver>: MyMap<K, V>, k: K): V
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = k
               receiverType = null
               returnType = kotlin.String
@@ -56,13 +56,13 @@ KtBinaryExpression(128,139): 'm["a"] += 1'
           returnType = kotlin.Unit
           symbol = /MyMap.set(<dispatch receiver>: MyMap<K, V>, k: K, v: V): kotlin.Unit
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = k
               receiverType = null
               returnType = kotlin.String
               symbol = k: K
               callableId = null,
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = v
               receiverType = null
               returnType = kotlin.Int

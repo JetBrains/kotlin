@@ -9,7 +9,7 @@ KtAnnotationEntry(51,65): '@Suppress("s")'
           returnType = kotlin.Suppress
           symbol = <constructor>(vararg names: kotlin.String): kotlin.Suppress
           valueParameters = [
-            KaVariableLikeSignature:
+            KaVariableSignature:
               name = names
               receiverType = null
               returnType = kotlin.String
@@ -19,7 +19,7 @@ KtAnnotationEntry(51,65): '@Suppress("s")'
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {
-        "s" -> (KaVariableLikeSignature:
+        "s" -> (KaVariableSignature:
           name = names
           receiverType = null
           returnType = kotlin.String
