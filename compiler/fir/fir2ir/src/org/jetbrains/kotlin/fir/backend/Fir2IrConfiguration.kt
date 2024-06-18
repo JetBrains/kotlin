@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.incremental.components.InlineConstTracker
  */
 class Fir2IrConfiguration private constructor(
     val languageVersionSettings: LanguageVersionSettings,
-    val diagnosticReporter: DiagnosticReporter,
+    val diagnosticReporter: BaseDiagnosticsCollector,
     val evaluatedConstTracker: EvaluatedConstTracker,
     val inlineConstTracker: InlineConstTracker?,
     val expectActualTracker: ExpectActualTracker?,
@@ -40,7 +40,7 @@ class Fir2IrConfiguration private constructor(
     companion object {
         fun forJvmCompilation(
             compilerConfiguration: CompilerConfiguration,
-            diagnosticReporter: DiagnosticReporter,
+            diagnosticReporter: BaseDiagnosticsCollector,
         ): Fir2IrConfiguration =
             Fir2IrConfiguration(
                 languageVersionSettings = compilerConfiguration.languageVersionSettings,
@@ -56,7 +56,7 @@ class Fir2IrConfiguration private constructor(
 
         fun forKlibCompilation(
             compilerConfiguration: CompilerConfiguration,
-            diagnosticReporter: DiagnosticReporter,
+            diagnosticReporter: BaseDiagnosticsCollector,
         ): Fir2IrConfiguration =
             Fir2IrConfiguration(
                 languageVersionSettings = compilerConfiguration.languageVersionSettings,
@@ -73,7 +73,7 @@ class Fir2IrConfiguration private constructor(
         fun forAnalysisApi(
             compilerConfiguration: CompilerConfiguration,
             languageVersionSettings: LanguageVersionSettings,
-            diagnosticReporter: DiagnosticReporter,
+            diagnosticReporter: BaseDiagnosticsCollector,
         ): Fir2IrConfiguration =
             Fir2IrConfiguration(
                 languageVersionSettings = languageVersionSettings,

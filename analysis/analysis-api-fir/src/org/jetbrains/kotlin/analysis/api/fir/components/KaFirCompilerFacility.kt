@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
 import org.jetbrains.kotlin.fir.backend.*
@@ -286,7 +287,7 @@ internal class KaFirCompilerFacility(
         session: LLFirSession,
         firFiles: List<FirFile>,
         fir2IrExtensions: Fir2IrExtensions,
-        diagnosticReporter: DiagnosticReporter,
+        diagnosticReporter: BaseDiagnosticsCollector,
         effectiveConfiguration: CompilerConfiguration,
         irGeneratorExtensions: List<IrGenerationExtension>
     ): Fir2IrActualizedResult {
