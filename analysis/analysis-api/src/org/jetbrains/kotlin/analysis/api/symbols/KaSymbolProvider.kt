@@ -16,7 +16,7 @@ public interface KaSymbolProvider {
     public val KtDeclaration.symbol: KaDeclarationSymbol
 
     /**
-     * Creates [KaVariableLikeSymbol] by [KtParameter].
+     * Creates [KaVariableSymbol] by [KtParameter].
      *
      * Unfortunately, [KtParameter] in PSI stands for many things, and not all of them are represented by a single type of symbol,
      * so this function does not work for all possible [KtParameter]s.
@@ -29,7 +29,7 @@ public interface KaSymbolProvider {
      *
      * Otherwise, returns [KaValueParameterSymbol].
      */
-    public val KtParameter.symbol: KaVariableLikeSymbol
+    public val KtParameter.symbol: KaVariableSymbol
 
     /**
      * Creates [KaFunctionSymbol] by [KtNamedFunction]
@@ -51,7 +51,7 @@ public interface KaSymbolProvider {
 
     public val KtFunctionLiteral.symbol: KaAnonymousFunctionSymbol
 
-    public val KtProperty.symbol: KaVariableLikeSymbol
+    public val KtProperty.symbol: KaVariableSymbol
 
     public val KtObjectLiteralExpression.symbol: KaAnonymousObjectSymbol
 
@@ -71,7 +71,7 @@ public interface KaSymbolProvider {
      * @return symbol corresponding to the local variable introduced by individual destructuring declaration entries.
      * E.g. `val (x, y) = p` has two declaration entries, one corresponding to `x`, one to `y`.
      */
-    public val KtDestructuringDeclarationEntry.symbol: KaVariableLikeSymbol
+    public val KtDestructuringDeclarationEntry.symbol: KaVariableSymbol
 
     public val KtDestructuringDeclaration.symbol: KaDestructuringDeclarationSymbol
 
@@ -80,7 +80,7 @@ public interface KaSymbolProvider {
     public val KtScript.symbol: KaScriptSymbol
 
     @Deprecated("Use 'symbol' instead", replaceWith = ReplaceWith("symbol"))
-    public fun KtParameter.getParameterSymbol(): KaVariableLikeSymbol = symbol
+    public fun KtParameter.getParameterSymbol(): KaVariableSymbol = symbol
 
     @Deprecated("Use 'symbol' instead", replaceWith = ReplaceWith("symbol"))
     public fun KtNamedFunction.getFunctionLikeSymbol(): KaFunctionSymbol = symbol
@@ -104,7 +104,7 @@ public interface KaSymbolProvider {
     public fun KtFunctionLiteral.getAnonymousFunctionSymbol(): KaAnonymousFunctionSymbol = symbol
 
     @Deprecated("Use 'symbol' instead", replaceWith = ReplaceWith("symbol"))
-    public fun KtProperty.getVariableSymbol(): KaVariableLikeSymbol = symbol
+    public fun KtProperty.getVariableSymbol(): KaVariableSymbol = symbol
 
     @Deprecated("Use 'symbol' instead", replaceWith = ReplaceWith("symbol"))
     public fun KtObjectLiteralExpression.getAnonymousObjectSymbol(): KaAnonymousObjectSymbol = symbol
@@ -165,7 +165,7 @@ public interface KaSymbolProvider {
         findTopLevelCallables(packageFqName, name)
 
     @Deprecated("Use 'symbol' instead", replaceWith = ReplaceWith("symbol"))
-    public fun KtDestructuringDeclarationEntry.getDestructuringDeclarationEntrySymbol(): KaVariableLikeSymbol = symbol
+    public fun KtDestructuringDeclarationEntry.getDestructuringDeclarationEntrySymbol(): KaVariableSymbol = symbol
 
     public val rootPackageSymbol: KaPackageSymbol
 

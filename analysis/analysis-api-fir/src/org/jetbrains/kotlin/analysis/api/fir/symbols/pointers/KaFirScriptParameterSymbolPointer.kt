@@ -28,7 +28,7 @@ internal class KaFirScriptParameterSymbolPointer(
         } ?: return null
 
         val parameter = script.parameters.find { it.name == parameterName } ?: return null
-        return analysisSession.firSymbolBuilder.variableLikeBuilder.buildLocalVariableSymbol(parameter.symbol)
+        return analysisSession.firSymbolBuilder.variableBuilder.buildLocalVariableSymbol(parameter.symbol)
     }
 
     override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||

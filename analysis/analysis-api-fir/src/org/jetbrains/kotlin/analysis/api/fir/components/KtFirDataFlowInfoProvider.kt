@@ -24,11 +24,11 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.utils.errors.withKaModuleEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.collectUseSiteContainers
-import org.jetbrains.kotlin.analysis.api.utils.errors.withKaModuleEntry
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
@@ -598,7 +598,7 @@ internal class KaFirDataFlowProvider(
             val expression = variableAssignment.psi as? KtExpression
 
             if (firVariableSymbol is FirVariableSymbol<*> && firVariableSymbol.fir.isLocalMember && expression != null) {
-                val variableSymbol = analysisSession.firSymbolBuilder.variableLikeBuilder.buildVariableLikeSymbol(firVariableSymbol)
+                val variableSymbol = analysisSession.firSymbolBuilder.variableBuilder.buildVariableSymbol(firVariableSymbol)
                 val reassignment = VariableReassignment(expression, variableSymbol, variableAssignment.isAugmented())
                 variableReassignments.add(reassignment)
             }

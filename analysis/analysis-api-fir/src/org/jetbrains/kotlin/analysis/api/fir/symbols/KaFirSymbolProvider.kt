@@ -33,7 +33,7 @@ internal class KaFirSymbolProvider(
     override val analysisSessionProvider: () -> KaFirSession,
     private val firSymbolProvider: FirSymbolProvider,
 ) : AbstractKaSymbolProvider<KaFirSession>(), KaFirSessionComponent {
-    override val KtParameter.symbol: KaVariableLikeSymbol
+    override val KtParameter.symbol: KaVariableSymbol
         get() = withValidityAssertion {
             return when {
                 isFunctionTypeParameter -> errorWithFirSpecificEntries(
@@ -42,13 +42,13 @@ internal class KaFirSymbolProvider(
                 )
 
                 isLoopParameter || isCatchParameter -> {
-                    firSymbolBuilder.variableLikeBuilder.buildLocalVariableSymbol(
+                    firSymbolBuilder.variableBuilder.buildLocalVariableSymbol(
                         resolveToFirSymbolOfType<FirPropertySymbol>(firResolveSession)
                     )
                 }
 
                 else -> {
-                    firSymbolBuilder.variableLikeBuilder.buildValueParameterSymbol(
+                    firSymbolBuilder.variableBuilder.buildValueParameterSymbol(
                         resolveToFirSymbolOfType<FirValueParameterSymbol>(firResolveSession)
                     )
                 }
@@ -126,9 +126,9 @@ internal class KaFirSymbolProvider(
             )
         }
 
-    override val KtProperty.symbol: KaVariableLikeSymbol
+    override val KtProperty.symbol: KaVariableSymbol
         get() = withValidityAssertion {
-            firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(
+            firSymbolBuilder.variableBuilder.buildVariableSymbol(
                 resolveToFirSymbolOfType<FirPropertySymbol>(firResolveSession)
             )
         }
@@ -193,11 +193,11 @@ internal class KaFirSymbolProvider(
             )
         }
 
-    override val KtDestructuringDeclarationEntry.symbol: KaVariableLikeSymbol
+    override val KtDestructuringDeclarationEntry.symbol: KaVariableSymbol
         get() = withValidityAssertion {
             return when (val firSymbol = resolveToFirSymbol(firResolveSession)) {
-                is FirPropertySymbol -> firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(firSymbol)
-                is FirErrorPropertySymbol -> firSymbolBuilder.variableLikeBuilder.buildErrorVariableSymbol(firSymbol)
+                is FirPropertySymbol -> firSymbolBuilder.variableBuilder.buildVariableSymbol(firSymbol)
+                is FirErrorPropertySymbol -> firSymbolBuilder.variableBuilder.buildErrorVariableSymbol(firSymbol)
                 else -> throwUnexpectedFirElementError(
                     firSymbol,
                     this,

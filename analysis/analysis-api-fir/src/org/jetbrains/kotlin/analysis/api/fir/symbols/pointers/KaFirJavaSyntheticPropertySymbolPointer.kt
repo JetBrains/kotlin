@@ -34,7 +34,7 @@ internal class KaFirJavaSyntheticPropertySymbolPointer(
             .singleOrNull()
             ?: return null
 
-        return firSymbolBuilder.variableLikeBuilder.buildSyntheticJavaPropertySymbol(syntheticProperty.symbol)
+        return firSymbolBuilder.variableBuilder.buildSyntheticJavaPropertySymbol(syntheticProperty.symbol)
     }
 
     override fun getSearchScope(analysisSession: KaFirSession, owner: FirClassSymbol<*>): FirScope? {

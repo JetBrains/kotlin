@@ -10,12 +10,12 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaVariableLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 
 class KaFirPsiBasedPropertySymbolPointer(
-    private val variableSymbolPointer: KaPsiBasedSymbolPointer<KaVariableLikeSymbol>,
+    private val variableSymbolPointer: KaPsiBasedSymbolPointer<KaVariableSymbol>,
 ) : KaSymbolPointer<KaKotlinPropertySymbol>() {
     @KaImplementationDetail
     override fun restoreSymbol(analysisSession: KaSession): KaKotlinPropertySymbol? =

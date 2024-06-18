@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
-import org.jetbrains.kotlin.analysis.api.symbols.KaVariableLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.receiverType
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.types.arrayElementType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
-internal sealed class KaFirVariableLikeSignature<out S : KaVariableLikeSymbol> : KaVariableLikeSignature<S>(), FirSymbolBasedSignature {
+internal sealed class KaFirVariableLikeSignature<out S : KaVariableSymbol> : KaVariableLikeSignature<S>(), FirSymbolBasedSignature {
     abstract override fun substitute(substitutor: KaSubstitutor): KaFirVariableLikeSignature<S>
 
     override fun equals(other: Any?): Boolean {
@@ -38,7 +38,7 @@ internal sealed class KaFirVariableLikeSignature<out S : KaVariableLikeSymbol> :
     override fun hashCode(): Int = firSymbol.hashCode()
 }
 
-internal class KaFirVariableLikeDummySignature<out S : KaVariableLikeSymbol>(
+internal class KaFirVariableLikeDummySignature<out S : KaVariableSymbol>(
     override val token: KaLifetimeToken,
     override val firSymbol: FirVariableSymbol<*>,
     override val firSymbolBuilder: KaSymbolByFirBuilder,
@@ -59,7 +59,7 @@ internal class KaFirVariableLikeDummySignature<out S : KaVariableLikeSymbol>(
     }
 }
 
-internal class KaFirVariableLikeSubstitutorBasedSignature<out S : KaVariableLikeSymbol>(
+internal class KaFirVariableLikeSubstitutorBasedSignature<out S : KaVariableSymbol>(
     override val token: KaLifetimeToken,
     override val firSymbol: FirVariableSymbol<*>,
     override val firSymbolBuilder: KaSymbolByFirBuilder,

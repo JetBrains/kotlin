@@ -125,7 +125,7 @@ internal class KaFirKotlinPropertySymbol(
     override val hasSetter: Boolean get() = withValidityAssertion { firSymbol.setterSymbol != null }
 
     override fun createPointer(): KaSymbolPointer<KaKotlinPropertySymbol> = withValidityAssertion {
-        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaVariableLikeSymbol>(this)?.let { psiPointer ->
+        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaVariableSymbol>(this)?.let { psiPointer ->
             return KaFirPsiBasedPropertySymbolPointer(psiPointer)
         }
 

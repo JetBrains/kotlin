@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaVariableLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.config.ApiVersion
@@ -250,7 +250,7 @@ internal class ValOrVarOnSecondaryConstructorParameterImpl(
 ) : KaAbstractFirDiagnostic<KtParameter>(firDiagnostic, token), KaFirDiagnostic.ValOrVarOnSecondaryConstructorParameter
 
 internal class InvisibleSetterImpl(
-    override val property: KaVariableLikeSymbol,
+    override val property: KaVariableSymbol,
     override val visibility: Visibility,
     override val callableId: CallableId,
     firDiagnostic: KtPsiDiagnostic,
@@ -3431,7 +3431,7 @@ internal class ComponentFunctionReturnTypeMismatchImpl(
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.ComponentFunctionReturnTypeMismatch
 
 internal class UninitializedVariableImpl(
-    override val variable: KaVariableLikeSymbol,
+    override val variable: KaVariableSymbol,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.UninitializedVariable
@@ -3455,43 +3455,43 @@ internal class UninitializedEnumCompanionImpl(
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.UninitializedEnumCompanion
 
 internal class ValReassignmentImpl(
-    override val variable: KaVariableLikeSymbol,
+    override val variable: KaVariableSymbol,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.ValReassignment
 
 internal class ValReassignmentViaBackingFieldErrorImpl(
-    override val property: KaVariableLikeSymbol,
+    override val property: KaVariableSymbol,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.ValReassignmentViaBackingFieldError
 
 internal class ValReassignmentViaBackingFieldWarningImpl(
-    override val property: KaVariableLikeSymbol,
+    override val property: KaVariableSymbol,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.ValReassignmentViaBackingFieldWarning
 
 internal class CapturedValInitializationImpl(
-    override val property: KaVariableLikeSymbol,
+    override val property: KaVariableSymbol,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.CapturedValInitialization
 
 internal class CapturedMemberValInitializationImpl(
-    override val property: KaVariableLikeSymbol,
+    override val property: KaVariableSymbol,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.CapturedMemberValInitialization
 
 internal class NonInlineMemberValInitializationImpl(
-    override val property: KaVariableLikeSymbol,
+    override val property: KaVariableSymbol,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.NonInlineMemberValInitialization
 
 internal class SetterProjectedOutImpl(
-    override val property: KaVariableLikeSymbol,
+    override val property: KaVariableSymbol,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtBinaryExpression>(firDiagnostic, token), KaFirDiagnostic.SetterProjectedOut
@@ -4925,7 +4925,7 @@ internal class SyntheticPropertyWithoutJavaOriginImpl(
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.SyntheticPropertyWithoutJavaOrigin
 
 internal class JavaFieldShadowedByKotlinPropertyImpl(
-    override val kotlinProperty: KaVariableLikeSymbol,
+    override val kotlinProperty: KaVariableSymbol,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JavaFieldShadowedByKotlinProperty

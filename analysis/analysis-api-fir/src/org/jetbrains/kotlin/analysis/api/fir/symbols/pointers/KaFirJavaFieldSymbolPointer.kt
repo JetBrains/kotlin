@@ -26,7 +26,7 @@ internal class KaFirJavaFieldSymbolPointer(
         firSession: FirSession,
     ): KaJavaFieldSymbol? {
         val javaField = candidates.getProperties(fieldName).mapNotNull { it.fir as? FirJavaField }.singleOrNull() ?: return null
-        return firSymbolBuilder.variableLikeBuilder.buildFieldSymbol(javaField.symbol)
+        return firSymbolBuilder.variableBuilder.buildFieldSymbol(javaField.symbol)
     }
 
     override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||

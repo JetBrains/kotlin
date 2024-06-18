@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaVariableLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtExpression
 
@@ -141,21 +141,21 @@ public class KaDelegatedConstructorCall(
 /**
  * An access to variables (including properties).
  */
-public sealed class KaVariableAccessCall : KaCallableMemberCall<KaVariableLikeSymbol, KaVariableLikeSignature<KaVariableLikeSymbol>>()
+public sealed class KaVariableAccessCall : KaCallableMemberCall<KaVariableSymbol, KaVariableLikeSignature<KaVariableSymbol>>()
 
 /**
  * A simple read or write to a variable or property.
  */
 public class KaSimpleVariableAccessCall(
-    partiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableLikeSymbol>,
+    partiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableSymbol>,
     typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
     simpleAccess: KaSimpleVariableAccess,
 ) : KaVariableAccessCall() {
-    private val backingPartiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableLikeSymbol> = partiallyAppliedSymbol
+    private val backingPartiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableSymbol> = partiallyAppliedSymbol
 
     override val token: KaLifetimeToken get() = backingPartiallyAppliedSymbol.token
 
-    override val partiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableLikeSymbol> get() = withValidityAssertion { backingPartiallyAppliedSymbol }
+    override val partiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableSymbol> get() = withValidityAssertion { backingPartiallyAppliedSymbol }
 
     override val typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType> by validityAsserted(typeArgumentsMapping)
 
@@ -211,14 +211,14 @@ public interface KaCompoundAccessCall {
  * ```
  */
 public class KaCompoundVariableAccessCall(
-    partiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableLikeSymbol>,
+    partiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableSymbol>,
     typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
     compoundAccess: KaCompoundAccess,
 ) : KaVariableAccessCall(), KaCompoundAccessCall {
-    private val backingPartiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableLikeSymbol> = partiallyAppliedSymbol
+    private val backingPartiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableSymbol> = partiallyAppliedSymbol
     override val token: KaLifetimeToken get() = backingPartiallyAppliedSymbol.token
 
-    override val partiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableLikeSymbol> get() = withValidityAssertion { backingPartiallyAppliedSymbol }
+    override val partiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableSymbol> get() = withValidityAssertion { backingPartiallyAppliedSymbol }
     override val typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType> by validityAsserted(typeArgumentsMapping)
     override val compoundAccess: KaCompoundAccess by validityAsserted(compoundAccess)
 }

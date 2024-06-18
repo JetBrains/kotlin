@@ -82,9 +82,9 @@ abstract class AbstractAnalysisApiSignatureContractsTest : AbstractAnalysisApiBa
 
                 checkSubstitutionResult(symbol, directlySubstituted, substitutor, testServices)
             }
-            is KaVariableLikeSymbol -> {
-                val substitutedViaSignature: KaVariableLikeSignature<KaVariableLikeSymbol> = symbol.asSignature().substitute(substitutor)
-                val directlySubstituted: KaVariableLikeSignature<KaVariableLikeSymbol> = symbol.substitute(substitutor)
+            is KaVariableSymbol -> {
+                val substitutedViaSignature: KaVariableLikeSignature<KaVariableSymbol> = symbol.asSignature().substitute(substitutor)
+                val directlySubstituted: KaVariableLikeSignature<KaVariableSymbol> = symbol.substitute(substitutor)
 
                 testServices.assertions.assertEquals(directlySubstituted, substitutedViaSignature)
                 testServices.assertions.assertEquals(symbol, directlySubstituted.symbol)
@@ -112,7 +112,7 @@ abstract class AbstractAnalysisApiSignatureContractsTest : AbstractAnalysisApiBa
     }
 
     private fun KaSession.checkSubstitutionResult(
-        symbol: KaVariableLikeSymbol,
+        symbol: KaVariableSymbol,
         signature: KaVariableLikeSignature<*>,
         substitutor: KaSubstitutor,
         testServices: TestServices,

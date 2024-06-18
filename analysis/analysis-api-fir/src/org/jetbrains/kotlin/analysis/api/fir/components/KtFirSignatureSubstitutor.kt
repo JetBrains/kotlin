@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaVariableLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 
@@ -26,7 +26,7 @@ internal class KaFirSignatureSubstitutor(
         return KaFirFunctionDummySignature<S>(analysisSession.token, firSymbol, analysisSession.firSymbolBuilder)
     }
 
-    override fun <S : KaVariableLikeSymbol> S.asSignature(): KaVariableLikeSignature<S> = withValidityAssertion {
+    override fun <S : KaVariableSymbol> S.asSignature(): KaVariableLikeSignature<S> = withValidityAssertion {
         val firSymbol = (this as KaFirSymbol<*>).firSymbol as FirVariableSymbol<*>
         return KaFirVariableLikeDummySignature<S>(analysisSession.token, firSymbol, analysisSession.firSymbolBuilder)
     }

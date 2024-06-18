@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaVariableLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 
 @KaExperimentalApi
@@ -38,7 +38,7 @@ public interface KaSignatureSubstitutor {
      * @see KaSubstitutor.substitute
      */
     @KaExperimentalApi
-    public fun <S : KaVariableLikeSymbol> S.substitute(substitutor: KaSubstitutor): KaVariableLikeSignature<S>
+    public fun <S : KaVariableSymbol> S.substitute(substitutor: KaSubstitutor): KaVariableLikeSignature<S>
 
     /**
      * Creates a new [KaCallableSignature] by given symbol and leave all types intact
@@ -56,5 +56,5 @@ public interface KaSignatureSubstitutor {
      * Creates a new [KaCallableSignature] by given symbol and leave all types intact
      */
     @KaExperimentalApi
-    public fun <S : KaVariableLikeSymbol> S.asSignature(): KaVariableLikeSignature<S>
+    public fun <S : KaVariableSymbol> S.asSignature(): KaVariableLikeSignature<S>
 }

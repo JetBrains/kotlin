@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KaFe1
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaDestructuringDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaVariableLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -39,7 +39,7 @@ internal class KaFe10PsiDestructuringDeclarationSymbol(
 
     override val analysisContext: Fe10AnalysisContext get() = analysisSession.analysisContext
 
-    override val entries: List<KaVariableLikeSymbol>
+    override val entries: List<KaVariableSymbol>
         get() = withValidityAssertion {
             psi.entries.map { entry ->
                 with(analysisSession) { entry.symbol }

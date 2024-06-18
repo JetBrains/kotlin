@@ -39,7 +39,7 @@ internal class KaFe10SymbolProvider(
     override val KtScript.symbol: KaScriptSymbol
         get() = withValidityAssertion { KaFe10PsiScriptSymbol(this, analysisContext) }
 
-    override val KtParameter.symbol: KaVariableLikeSymbol
+    override val KtParameter.symbol: KaVariableSymbol
         get() = withValidityAssertion {
             when {
                 isFunctionTypeParameter -> error("Function type parameters are not supported in getParameterSymbol()")
@@ -75,7 +75,7 @@ internal class KaFe10SymbolProvider(
     override val KtFunctionLiteral.symbol: KaAnonymousFunctionSymbol
         get() = withValidityAssertion { KaFe10PsiLiteralAnonymousFunctionSymbol(this, analysisContext) }
 
-    override val KtProperty.symbol: KaVariableLikeSymbol
+    override val KtProperty.symbol: KaVariableSymbol
         get() = withValidityAssertion {
             return if (isLocal) {
                 KaFe10PsiLocalVariableSymbol(this, analysisContext)
@@ -122,7 +122,7 @@ internal class KaFe10SymbolProvider(
     override val KtClassInitializer.symbol: KaClassInitializerSymbol
         get() = withValidityAssertion { KaFe10PsiClassInitializerSymbol(this, analysisContext) }
 
-    override val KtDestructuringDeclarationEntry.symbol: KaVariableLikeSymbol
+    override val KtDestructuringDeclarationEntry.symbol: KaVariableSymbol
         get() = withValidityAssertion { KaFe10PsiLocalVariableSymbol(this, analysisContext) }
 
     override val KtDestructuringDeclaration.symbol: KaDestructuringDeclarationSymbol

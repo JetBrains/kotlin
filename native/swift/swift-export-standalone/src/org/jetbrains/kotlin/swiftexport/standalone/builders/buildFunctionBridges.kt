@@ -51,7 +51,7 @@ private fun SirFunction.constructBridgeRequests(generator: BridgeGenerator): Lis
 
 private fun SirVariable.constructBridgeRequests(generator: BridgeGenerator): List<BridgeRequest> {
     val fqName = when (val origin = origin) {
-        is KotlinSource -> (origin.symbol as? KaVariableLikeSymbol)
+        is KotlinSource -> (origin.symbol as? KaVariableSymbol)
             ?.callableId?.asSingleFqName()
             ?.pathSegments()?.map { it.toString() }
         is SirOrigin.ObjectAccessor -> ((origin.`for` as KotlinSource).symbol as KaNamedClassSymbol)

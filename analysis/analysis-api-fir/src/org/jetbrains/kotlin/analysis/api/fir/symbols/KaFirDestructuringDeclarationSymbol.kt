@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaDestructuringDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaVariableLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -48,7 +48,7 @@ internal class KaFirDestructuringDeclarationSymbol(
     override val annotations: KaAnnotationList
         get() = withValidityAssertion { KaFirAnnotationListForDeclaration.create(firSymbol, builder) }
 
-    override val entries: List<KaVariableLikeSymbol>
+    override val entries: List<KaVariableSymbol>
         get() = withValidityAssertion {
             psi.entries.map { entry ->
                 with(analysisSession) { entry.symbol }

@@ -40,7 +40,7 @@ public class SirDeclarationFromKtSymbolProvider(
                     sirSession = sirSession,
                 )
             }
-            is KaVariableLikeSymbol -> {
+            is KaVariableSymbol -> {
                 SirVariableFromKtSymbol(
                     ktSymbol = ktSymbol,
                     ktModule = ktModule,

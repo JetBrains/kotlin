@@ -45,7 +45,7 @@ internal fun FirScope.getCallableSignatures(
         }
         yieldList {
             processPropertiesByName(name) { firSymbol ->
-                add(builder.variableLikeBuilder.buildVariableLikeSignature(firSymbol))
+                add(builder.variableBuilder.buildVariableLikeSignature(firSymbol))
             }
         }
     }

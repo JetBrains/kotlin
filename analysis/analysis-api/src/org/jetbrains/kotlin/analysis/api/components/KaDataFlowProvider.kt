@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KaVariableLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtReturnExpression
@@ -172,7 +172,7 @@ public class KaDataFlowExitPointSnapshot(
         public val expression: KtExpression,
 
         /** Reassigned variable symbol. */
-        public val variable: KaVariableLikeSymbol,
+        public val variable: KaVariableSymbol,
 
         /** `true` if the variable is both read and set (as in `x += y` or `x++`). */
         public val isAugmented: Boolean

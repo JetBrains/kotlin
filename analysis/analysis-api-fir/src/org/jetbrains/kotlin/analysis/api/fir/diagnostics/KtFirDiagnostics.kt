@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaVariableLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.config.ApiVersion
@@ -222,7 +222,7 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface InvisibleSetter : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = InvisibleSetter::class
-        val property: KaVariableLikeSymbol
+        val property: KaVariableSymbol
         val visibility: Visibility
         val callableId: CallableId
     }
@@ -2850,7 +2850,7 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface UninitializedVariable : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = UninitializedVariable::class
-        val variable: KaVariableLikeSymbol
+        val variable: KaVariableSymbol
     }
 
     interface UninitializedParameter : KaFirDiagnostic<KtSimpleNameExpression> {
@@ -2870,37 +2870,37 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface ValReassignment : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = ValReassignment::class
-        val variable: KaVariableLikeSymbol
+        val variable: KaVariableSymbol
     }
 
     interface ValReassignmentViaBackingFieldError : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = ValReassignmentViaBackingFieldError::class
-        val property: KaVariableLikeSymbol
+        val property: KaVariableSymbol
     }
 
     interface ValReassignmentViaBackingFieldWarning : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = ValReassignmentViaBackingFieldWarning::class
-        val property: KaVariableLikeSymbol
+        val property: KaVariableSymbol
     }
 
     interface CapturedValInitialization : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = CapturedValInitialization::class
-        val property: KaVariableLikeSymbol
+        val property: KaVariableSymbol
     }
 
     interface CapturedMemberValInitialization : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = CapturedMemberValInitialization::class
-        val property: KaVariableLikeSymbol
+        val property: KaVariableSymbol
     }
 
     interface NonInlineMemberValInitialization : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = NonInlineMemberValInitialization::class
-        val property: KaVariableLikeSymbol
+        val property: KaVariableSymbol
     }
 
     interface SetterProjectedOut : KaFirDiagnostic<KtBinaryExpression> {
         override val diagnosticClass get() = SetterProjectedOut::class
-        val property: KaVariableLikeSymbol
+        val property: KaVariableSymbol
     }
 
     interface WrongInvocationKind : KaFirDiagnostic<PsiElement> {
@@ -4082,7 +4082,7 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface JavaFieldShadowedByKotlinProperty : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = JavaFieldShadowedByKotlinProperty::class
-        val kotlinProperty: KaVariableLikeSymbol
+        val kotlinProperty: KaVariableSymbol
     }
 
     interface ImplementingFunctionInterface : KaFirDiagnostic<KtClassOrObject> {

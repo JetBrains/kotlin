@@ -28,7 +28,7 @@ internal class KaFirResultPropertySymbolPointer(private val scriptPointer: KaSym
 
         val lastProperty = script.declarations.lastOrNull() as? FirProperty ?: return null
         if (lastProperty.origin !is FirDeclarationOrigin.ScriptCustomization.ResultProperty) return null
-        return analysisSession.firSymbolBuilder.variableLikeBuilder.buildPropertySymbol(lastProperty.symbol) as? KaKotlinPropertySymbol
+        return analysisSession.firSymbolBuilder.variableBuilder.buildPropertySymbol(lastProperty.symbol) as? KaKotlinPropertySymbol
     }
 
     override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||

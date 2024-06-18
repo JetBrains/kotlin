@@ -256,7 +256,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.INVISIBLE_SETTER) { firDiagnostic ->
         InvisibleSetterImpl(
-            firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(firDiagnostic.a),
+            firSymbolBuilder.variableBuilder.buildVariableSymbol(firDiagnostic.a),
             firDiagnostic.b,
             firDiagnostic.c,
             firDiagnostic as KtPsiDiagnostic,
@@ -4078,7 +4078,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.UNINITIALIZED_VARIABLE) { firDiagnostic ->
         UninitializedVariableImpl(
-            firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(firDiagnostic.a),
+            firSymbolBuilder.variableBuilder.buildVariableSymbol(firDiagnostic.a),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -4106,49 +4106,49 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.VAL_REASSIGNMENT) { firDiagnostic ->
         ValReassignmentImpl(
-            firSymbolBuilder.variableLikeBuilder.buildVariableLikeSymbol(firDiagnostic.a),
+            firSymbolBuilder.variableBuilder.buildVariableSymbol(firDiagnostic.a),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
     add(FirErrors.VAL_REASSIGNMENT_VIA_BACKING_FIELD.errorFactory) { firDiagnostic ->
         ValReassignmentViaBackingFieldErrorImpl(
-            firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(firDiagnostic.a.fir.propertySymbol),
+            firSymbolBuilder.variableBuilder.buildVariableSymbol(firDiagnostic.a.fir.propertySymbol),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
     add(FirErrors.VAL_REASSIGNMENT_VIA_BACKING_FIELD.warningFactory) { firDiagnostic ->
         ValReassignmentViaBackingFieldWarningImpl(
-            firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(firDiagnostic.a.fir.propertySymbol),
+            firSymbolBuilder.variableBuilder.buildVariableSymbol(firDiagnostic.a.fir.propertySymbol),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
     add(FirErrors.CAPTURED_VAL_INITIALIZATION) { firDiagnostic ->
         CapturedValInitializationImpl(
-            firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(firDiagnostic.a),
+            firSymbolBuilder.variableBuilder.buildVariableSymbol(firDiagnostic.a),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
     add(FirErrors.CAPTURED_MEMBER_VAL_INITIALIZATION) { firDiagnostic ->
         CapturedMemberValInitializationImpl(
-            firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(firDiagnostic.a),
+            firSymbolBuilder.variableBuilder.buildVariableSymbol(firDiagnostic.a),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
     add(FirErrors.NON_INLINE_MEMBER_VAL_INITIALIZATION) { firDiagnostic ->
         NonInlineMemberValInitializationImpl(
-            firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(firDiagnostic.a),
+            firSymbolBuilder.variableBuilder.buildVariableSymbol(firDiagnostic.a),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
     add(FirErrors.SETTER_PROJECTED_OUT) { firDiagnostic ->
         SetterProjectedOutImpl(
-            firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(firDiagnostic.a),
+            firSymbolBuilder.variableBuilder.buildVariableSymbol(firDiagnostic.a),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -5852,7 +5852,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
     }
     add(FirJvmErrors.JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY) { firDiagnostic ->
         JavaFieldShadowedByKotlinPropertyImpl(
-            firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(firDiagnostic.a),
+            firSymbolBuilder.variableBuilder.buildVariableSymbol(firDiagnostic.a),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

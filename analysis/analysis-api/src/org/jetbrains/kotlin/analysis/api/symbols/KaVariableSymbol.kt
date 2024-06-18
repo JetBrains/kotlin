@@ -16,15 +16,18 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 
-public sealed class KaVariableLikeSymbol : KaCallableSymbol(), KaNamedSymbol, @Suppress("DEPRECATION") KaSymbolWithKind,
+public sealed class KaVariableSymbol : KaCallableSymbol(), KaNamedSymbol, @Suppress("DEPRECATION") KaSymbolWithKind,
     KaPossibleMemberSymbol {
     public abstract val isVal: Boolean
 
-    abstract override fun createPointer(): KaSymbolPointer<KaVariableLikeSymbol>
+    abstract override fun createPointer(): KaSymbolPointer<KaVariableSymbol>
 }
 
-@Deprecated("Use 'KaVariableLikeSymbol' instead", ReplaceWith("KaVariableLikeSymbol"))
-public typealias KtVariableLikeSymbol = KaVariableLikeSymbol
+@Deprecated("Use 'KaVariableSymbol' instead", ReplaceWith("KaVariableSymbol"))
+public typealias KaVariableLikeSymbol = KaVariableSymbol
+
+@Deprecated("Use 'KaVariableSymbol' instead", ReplaceWith("KaVariableSymbol"))
+public typealias KtVariableLikeSymbol = KaVariableSymbol
 
 /**
  * Backing field of some member property
@@ -37,7 +40,7 @@ public typealias KtVariableLikeSymbol = KaVariableLikeSymbol
  *
  * Symbol at caret will be resolved to a [KaBackingFieldSymbol]
  */
-public abstract class KaBackingFieldSymbol : KaVariableLikeSymbol() {
+public abstract class KaBackingFieldSymbol : KaVariableSymbol() {
     public abstract val owningProperty: KaKotlinPropertySymbol
 
     final override val name: Name get() = withValidityAssertion { fieldName }
@@ -86,7 +89,7 @@ public typealias KtBackingFieldSymbol = KaBackingFieldSymbol
  *
  * `A` is an enum entry of enum class `E`. `x` is a property of `A`'s initializer and thus not accessible outside the initializer.
  */
-public abstract class KaEnumEntrySymbol : KaVariableLikeSymbol(), @Suppress("DEPRECATION") KaSymbolWithKind {
+public abstract class KaEnumEntrySymbol : KaVariableSymbol(), @Suppress("DEPRECATION") KaSymbolWithKind {
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.CLASS }
     final override val isExtension: Boolean get() = withValidityAssertion { false }
     final override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { null }
@@ -134,10 +137,10 @@ public interface KaEnumEntryInitializerSymbol : KaDeclarationContainerSymbol
 public typealias KtEnumEntryInitializerSymbol = KaEnumEntryInitializerSymbol
 
 @Deprecated("Use 'KaVariableLikeSymbol' instead", ReplaceWith("KaVariableLikeSymbol"))
-public typealias KtVariableSymbol = KaVariableLikeSymbol
+public typealias KtVariableSymbol = KaVariableSymbol
 
 public abstract class KaJavaFieldSymbol :
-    KaVariableLikeSymbol(),
+    KaVariableSymbol(),
     KaSymbolWithModality,
     KaSymbolWithVisibility,
     @Suppress("DEPRECATION") KaSymbolWithKind {
@@ -157,7 +160,7 @@ public abstract class KaJavaFieldSymbol :
 @Deprecated("Use 'KaJavaFieldSymbol' instead", ReplaceWith("KaJavaFieldSymbol"))
 public typealias KtJavaFieldSymbol = KaJavaFieldSymbol
 
-public sealed class KaPropertySymbol : KaVariableLikeSymbol(),
+public sealed class KaPropertySymbol : KaVariableSymbol(),
     KaPossibleMemberSymbol,
     KaSymbolWithModality,
     KaSymbolWithVisibility,
@@ -225,7 +228,7 @@ public abstract class KaSyntheticJavaPropertySymbol : KaPropertySymbol() {
 @Deprecated("Use 'KaSyntheticJavaPropertySymbol' instead", ReplaceWith("KaSyntheticJavaPropertySymbol"))
 public typealias KtSyntheticJavaPropertySymbol = KaSyntheticJavaPropertySymbol
 
-public abstract class KaLocalVariableSymbol : KaVariableLikeSymbol(),
+public abstract class KaLocalVariableSymbol : KaVariableSymbol(),
     @Suppress("DEPRECATION") KaSymbolWithKind {
     final override val callableId: CallableId? get() = withValidityAssertion { null }
     final override val isExtension: Boolean get() = withValidityAssertion { false }
@@ -250,7 +253,7 @@ public sealed interface KaParameterSymbol : KaAnnotatedSymbol
 @Deprecated("Use 'KaParameterSymbol' instead", ReplaceWith("KaParameterSymbol"))
 public typealias KtParameterSymbol = KaParameterSymbol
 
-public abstract class KaValueParameterSymbol : KaVariableLikeSymbol(), KaParameterSymbol,
+public abstract class KaValueParameterSymbol : KaVariableSymbol(), KaParameterSymbol,
     @Suppress("DEPRECATION") KaSymbolWithKind, KaAnnotatedSymbol {
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.LOCAL }
     final override val callableId: CallableId? get() = withValidityAssertion { null }

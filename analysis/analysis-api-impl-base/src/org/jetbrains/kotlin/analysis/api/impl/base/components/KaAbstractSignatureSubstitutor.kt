@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaVariableLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 
@@ -25,7 +25,7 @@ abstract class KaAbstractSignatureSubstitutor<T : KaSession> : KaSessionComponen
         return asSignature().substitute(substitutor)
     }
 
-    override fun <S : KaVariableLikeSymbol> S.substitute(substitutor: KaSubstitutor): KaVariableLikeSignature<S> = withValidityAssertion {
+    override fun <S : KaVariableSymbol> S.substitute(substitutor: KaSubstitutor): KaVariableLikeSignature<S> = withValidityAssertion {
         if (substitutor is KaSubstitutor.Empty) return asSignature()
         return asSignature().substitute(substitutor)
     }
@@ -33,7 +33,7 @@ abstract class KaAbstractSignatureSubstitutor<T : KaSession> : KaSessionComponen
     override fun <S : KaCallableSymbol> S.substitute(substitutor: KaSubstitutor): KaCallableSignature<S> = withValidityAssertion {
         when (this) {
             is KaFunctionSymbol -> substitute(substitutor)
-            is KaVariableLikeSymbol -> substitute(substitutor)
+            is KaVariableSymbol -> substitute(substitutor)
             else -> unexpectedElementError("symbol", this)
         }
     }
@@ -41,7 +41,7 @@ abstract class KaAbstractSignatureSubstitutor<T : KaSession> : KaSessionComponen
     override fun <S : KaCallableSymbol> S.asSignature(): KaCallableSignature<S> = withValidityAssertion {
         return when (this) {
             is KaFunctionSymbol -> asSignature()
-            is KaVariableLikeSymbol -> asSignature()
+            is KaVariableSymbol -> asSignature()
             else -> unexpectedElementError("symbol", this)
         }
     }

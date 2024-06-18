@@ -616,11 +616,11 @@ internal class KaFirResolver(
                 )
             }
             is FirVariableAssignment -> {
-                if (unsubstitutedKtSignature.symbol !is KaVariableLikeSymbol) return null
+                if (unsubstitutedKtSignature.symbol !is KaVariableSymbol) return null
                 val rhs = fir.rValue.psi as? KtExpression
                 @Suppress("UNCHECKED_CAST") // safe because of the above check on targetKtSymbol
                 KaSimpleVariableAccessCall(
-                    partiallyAppliedSymbol as KaPartiallyAppliedVariableSymbol<KaVariableLikeSymbol>,
+                    partiallyAppliedSymbol as KaPartiallyAppliedVariableSymbol<KaVariableSymbol>,
                     fir.unwrapLValue()?.toTypeArgumentsMapping(partiallyAppliedSymbol) ?: emptyMap(),
                     KaSimpleVariableAccess.Write(rhs)
                 )
@@ -629,10 +629,10 @@ internal class KaFirResolver(
                 @Suppress("USELESS_IS_CHECK") // K2 warning suppression, TODO: KT-62472
                 require(fir is FirQualifiedAccessExpression)
                 when (unsubstitutedKtSignature.symbol) {
-                    is KaVariableLikeSymbol -> {
+                    is KaVariableSymbol -> {
                         @Suppress("UNCHECKED_CAST") // safe because of the above check on targetKtSymbol
                         KaSimpleVariableAccessCall(
-                            partiallyAppliedSymbol as KaPartiallyAppliedVariableSymbol<KaVariableLikeSymbol>,
+                            partiallyAppliedSymbol as KaPartiallyAppliedVariableSymbol<KaVariableSymbol>,
                             fir.toTypeArgumentsMapping(partiallyAppliedSymbol),
                             KaSimpleVariableAccess.Read
                         )
@@ -882,7 +882,7 @@ internal class KaFirResolver(
         return operationCall.toPartiallyAppliedSymbol(leftOperandPsi)
     }
 
-    private fun FirVariableAssignment.toPartiallyAppliedSymbol(): KaPartiallyAppliedVariableSymbol<KaVariableLikeSymbol>? {
+    private fun FirVariableAssignment.toPartiallyAppliedSymbol(): KaPartiallyAppliedVariableSymbol<KaVariableSymbol>? {
         val variableRef = calleeReference as? FirResolvedNamedReference ?: return null
         val variableSymbol = variableRef.resolvedSymbol as? FirVariableSymbol<*> ?: return null
         val substitutor = unwrapLValue()?.createConeSubstitutorFromTypeArguments(rootModuleSession) ?: return null
@@ -973,8 +973,8 @@ internal class KaFirResolver(
     private fun FirNamedFunctionSymbol.toKaSignature(): KaFunctionSignature<KaNamedFunctionSymbol> =
         firSymbolBuilder.functionBuilder.buildNamedFunctionSignature(this)
 
-    private fun FirVariableSymbol<*>.toKaSignature(): KaVariableLikeSignature<KaVariableLikeSymbol> =
-        firSymbolBuilder.variableLikeBuilder.buildVariableLikeSignature(this)
+    private fun FirVariableSymbol<*>.toKaSignature(): KaVariableLikeSignature<KaVariableSymbol> =
+        firSymbolBuilder.variableBuilder.buildVariableLikeSignature(this)
 
     private fun FirQualifiedAccessExpression.toTypeArgumentsMapping(
         partiallyAppliedSymbol: KaPartiallyAppliedSymbol<*, *>,

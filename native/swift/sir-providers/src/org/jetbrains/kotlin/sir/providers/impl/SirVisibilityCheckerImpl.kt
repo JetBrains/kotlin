@@ -30,7 +30,7 @@ public class SirVisibilityCheckerImpl(
             is KaNamedFunctionSymbol -> {
                 ktSymbol.isConsumableBySirBuilder()
             }
-            is KaVariableLikeSymbol -> {
+            is KaVariableSymbol -> {
                 true
             }
             is KaTypeAliasSymbol -> ktSymbol.expandedType.fullyExpandedType

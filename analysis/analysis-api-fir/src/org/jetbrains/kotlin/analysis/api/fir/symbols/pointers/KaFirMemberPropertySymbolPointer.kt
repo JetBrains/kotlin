@@ -29,7 +29,7 @@ internal class KaFirMemberPropertySymbolPointer(
             processPropertiesByName(name, it)
         } ?: return null
 
-        return firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(firProperty.symbol) as? KaKotlinPropertySymbol
+        return firSymbolBuilder.variableBuilder.buildVariableSymbol(firProperty.symbol) as? KaKotlinPropertySymbol
     }
 
     override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||

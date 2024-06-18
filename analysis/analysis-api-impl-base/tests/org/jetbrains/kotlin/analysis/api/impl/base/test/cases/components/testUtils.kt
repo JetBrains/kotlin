@@ -78,7 +78,7 @@ internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
         is KaValueParameterSymbol -> "${if (isVararg) "vararg " else ""}$name: ${returnType.render()}"
         is KaTypeParameterSymbol -> this.nameOrAnonymous.asString()
         is KaEnumEntrySymbol -> callableId?.toString() ?: name.asString()
-        is KaVariableLikeSymbol -> "${if (isVal) "val" else "var"} $name: ${returnType.render()}"
+        is KaVariableSymbol -> "${if (isVal) "val" else "var"} $name: ${returnType.render()}"
         is KaClassLikeSymbol -> classId?.toString() ?: nameOrAnonymous.asString()
         is KaPackageSymbol -> fqName.toString()
         is KaSymbol -> DebugSymbolRenderer().render(useSiteSession, this)

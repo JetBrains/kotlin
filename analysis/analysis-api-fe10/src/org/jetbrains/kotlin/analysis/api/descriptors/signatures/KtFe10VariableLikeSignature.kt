@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.analysis.api.descriptors.signatures
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
-import org.jetbrains.kotlin.analysis.api.symbols.KaVariableLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KaType
 
-internal class KaFe10VariableLikeSignature<out S : KaVariableLikeSymbol>(
+internal class KaFe10VariableLikeSignature<out S : KaVariableSymbol>(
     private val backingSymbol: S,
     private val backingReturnType: KaType,
     private val backingReceiverType: KaType?,

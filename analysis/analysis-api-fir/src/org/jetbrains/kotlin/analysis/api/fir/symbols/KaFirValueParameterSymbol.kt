@@ -64,7 +64,7 @@ internal class KaFirValueParameterSymbol(
 
     override val generatedPrimaryConstructorProperty: KaKotlinPropertySymbol? by cached {
         val propertySymbol = firSymbol.fir.correspondingProperty?.symbol ?: return@cached null
-        val ktPropertySymbol = builder.variableLikeBuilder.buildPropertySymbol(propertySymbol)
+        val ktPropertySymbol = builder.variableBuilder.buildPropertySymbol(propertySymbol)
         check(ktPropertySymbol is KaKotlinPropertySymbol) {
             "Unexpected symbol for primary constructor property ${ktPropertySymbol.javaClass} for fir: ${firSymbol.fir.renderWithType()}"
         }

@@ -441,11 +441,11 @@ internal class KaFe10Resolver(
         )
     }
 
-    private fun ResolvedCall<*>.toPartiallyAppliedVariableSymbol(context: BindingContext): KaPartiallyAppliedVariableSymbol<KaVariableLikeSymbol>? {
+    private fun ResolvedCall<*>.toPartiallyAppliedVariableSymbol(context: BindingContext): KaPartiallyAppliedVariableSymbol<KaVariableSymbol>? {
         val partiallyAppliedSymbol = toPartiallyAppliedSymbol(context) ?: return null
         if (partiallyAppliedSymbol.signature !is KaVariableLikeSignature<*>) return null
         @Suppress("UNCHECKED_CAST")
-        return partiallyAppliedSymbol as KaPartiallyAppliedVariableSymbol<KaVariableLikeSymbol>
+        return partiallyAppliedSymbol as KaPartiallyAppliedVariableSymbol<KaVariableSymbol>
     }
 
 
@@ -543,7 +543,7 @@ internal class KaFe10Resolver(
             resultingDescriptor.extensionReceiverParameter?.returnType?.toKtType(analysisContext)
         }
         return when (symbol) {
-            is KaVariableLikeSymbol -> KaFe10VariableLikeSignature(symbol, ktReturnType, receiverType)
+            is KaVariableSymbol -> KaFe10VariableLikeSignature(symbol, ktReturnType, receiverType)
             is KaFunctionSymbol -> KaFe10FunctionSignature(
                 symbol,
                 ktReturnType,

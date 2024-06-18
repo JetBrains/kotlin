@@ -104,15 +104,15 @@ private fun convertArgument(argument: FirNamedFunctionSymbol, firSymbolBuilder: 
 }
 
 private fun convertArgument(argument: FirPropertySymbol, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
-    return firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(argument)
+    return firSymbolBuilder.variableBuilder.buildVariableSymbol(argument)
 }
 
 private fun convertArgument(argument: FirBackingFieldSymbol, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
-    return firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(argument.fir.propertySymbol)
+    return firSymbolBuilder.variableBuilder.buildVariableSymbol(argument.fir.propertySymbol)
 }
 
 private fun convertArgument(argument: FirVariableSymbol<*>, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
-    return firSymbolBuilder.variableLikeBuilder.buildVariableLikeSymbol(argument)
+    return firSymbolBuilder.variableBuilder.buildVariableSymbol(argument)
 }
 
 private fun convertArgument(argument: FirTypeParameterSymbol, firSymbolBuilder: KaSymbolByFirBuilder): Any? {

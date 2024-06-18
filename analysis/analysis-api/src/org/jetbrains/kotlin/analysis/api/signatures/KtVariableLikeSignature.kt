@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KaVariableLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.Name
@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 /**
  * A signature of a variable-like symbol. This includes properties, enum entries local variables, etc.
  */
-public abstract class KaVariableLikeSignature<out S : KaVariableLikeSymbol> : KaCallableSignature<S>() {
+public abstract class KaVariableLikeSignature<out S : KaVariableSymbol> : KaCallableSignature<S>() {
     /**
      * A name of the variable with respect to the `@ParameterName` annotation. Can be different from the [KaVariableLikeSymbol.name].
      *
