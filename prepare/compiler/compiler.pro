@@ -361,3 +361,16 @@
 }
 # Uses a ClassLoader method from JDK 9+
 -dontwarn org.jetbrains.kotlin.buildtools.internal.ClassLoaderUtilsKt
+
+-keep class com.intellij.codeInsight.PsiEquivalenceUtil {
+    public static boolean areElementsEquivalent(com.intellij.psi.PsiElement, com.intellij.psi.PsiElement);
+}
+-keep class com.intellij.util.indexing.FileContentImpl {
+    public static com.intellij.util.indexing.FileContent createByFile(com.intellij.openapi.vfs.VirtualFile);
+}
+-keep class com.intellij.util.containers.ContainerUtil {
+    public static java.util.Map createSoftValueMap();
+}
+-keep class com.intellij.openapi.util.NlsSafe
+-keep class com.intellij.openapi.util.Iconable
+-keep class com.intellij.openapi.util.Iconable$IconFlags
