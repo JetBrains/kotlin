@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.test.services.impl.RegisteredDirectivesParser
+import org.jetbrains.kotlin.test.util.joinToArrayString
 import java.io.File
 
 /**
@@ -92,11 +93,24 @@ sealed class TestModule {
         val directDependsOnDependencySymbols: Set<String>, // mimics the name from ModuleStructureExtractorImpl, thought later converted to `-Xfragment-refines` parameter
         val directives: MutableList<RegisteredDirectivesParser.ParsedDirective> = mutableListOf()
     ) : TestModule() {
+        init {
+            val intersection = buildSet {
+                addAll(directRegularDependencySymbols intersect directFriendDependencySymbols)
+                addAll(directRegularDependencySymbols intersect directDependsOnDependencySymbols)
+                addAll(directFriendDependencySymbols intersect directDependsOnDependencySymbols)
+            }
+            require(intersection.isEmpty()) {
+                val m = if (intersection.size == 1) "module" else "modules"
+                val names = if (intersection.size == 1) "`${intersection.first()}`" else intersection.joinToArrayString()
+                """Module `$name` depends on $m $names with different kinds simultaneously"""
+            }
+        }
+
         override val files: FailOnDuplicatesSet<TestFile<Exclusive>> = FailOnDuplicatesSet()
 
-        lateinit var directRegularDependencies: Set<TestModule>
-        lateinit var directFriendDependencies: Set<TestModule>
-        lateinit var directDependsOnDependencies: Set<TestModule>
+        private lateinit var directRegularDependencies: Set<TestModule>
+        private lateinit var directFriendDependencies: Set<TestModule>
+        private lateinit var directDependsOnDependencies: Set<TestModule>
 
         // N.B. The following two properties throw an exception on attempt to resolve cyclic dependencies.
         val allRegularDependencies: Set<TestModule> by SM.lazyNeighbors({ directRegularDependencies }, { it.allRegularDependencies })
@@ -104,9 +118,24 @@ sealed class TestModule {
         val allDependsOnDependencies: Set<TestModule> by SM.lazyNeighbors({ directDependsOnDependencies }, { it.allDependsOnDependencies })
 
         lateinit var testCase: TestCase
+            private set
 
         fun commit() {
             files.forEach { it.commit() }
+        }
+
+        /** Initialize all lateinit properties */
+        fun initialize(
+            testCase: TestCase,
+            directRegularDependencies: Set<TestModule>,
+            directFriendDependencies: Set<TestModule>,
+            directDependsOnDependencies: Set<TestModule>
+        ) {
+            this.testCase = testCase
+
+            this.directRegularDependencies = directRegularDependencies
+            this.directFriendDependencies = directFriendDependencies
+            this.directDependsOnDependencies = directDependsOnDependencies
         }
 
         fun haveSameSymbols(other: Exclusive) =
@@ -276,15 +305,16 @@ class TestCase(
 
         modules.forEach { module ->
             module.commit() // Save to the file system and release the memory.
-            module.testCase = this
 
-            module.directRegularDependencies = buildSet {
-                module.directRegularDependencySymbols.mapTo(this, ::findModule)
-                givenModules?.let(this@buildSet::addAll)
-            }
-
-            module.directFriendDependencies = module.directFriendDependencySymbols.mapToSet(::findModule)
-            module.directDependsOnDependencies = module.directDependsOnDependencySymbols.mapToSet(::findModule)
+            module.initialize(
+                testCase = this,
+                directRegularDependencies = buildSet {
+                    module.directRegularDependencySymbols.mapTo(this, ::findModule)
+                    givenModules?.let(this@buildSet::addAll)
+                },
+                directFriendDependencies = module.directFriendDependencySymbols.mapToSet(::findModule),
+                directDependsOnDependencies = module.directDependsOnDependencySymbols.mapToSet(::findModule)
+            )
         }
     }
 }
