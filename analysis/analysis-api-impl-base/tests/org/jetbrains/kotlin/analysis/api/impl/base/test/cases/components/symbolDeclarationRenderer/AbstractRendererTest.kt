@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.renderer.declarations.bodies.KaRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForSource
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KaClassifierBodyRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithMembers
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
@@ -26,11 +26,11 @@ abstract class AbstractRendererTest : AbstractAnalysisApiBasedTest() {
                 override fun sortMembers(
                     analysisSession: KaSession,
                     members: List<KaDeclarationSymbol>,
-                    owner: KaSymbolWithMembers,
+                    container: KaDeclarationContainerSymbol,
                 ): List<KaDeclarationSymbol> {
                     with(analysisSession) {
                         return KaRendererBodyMemberScopeSorter.ENUM_ENTRIES_AT_BEGINING
-                            .sortMembers(analysisSession, members, owner)
+                            .sortMembers(analysisSession, members, container)
                             .sortedBy { it.render() }
                     }
                 }

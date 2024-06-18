@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithMembers
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.fir.FirSession
@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 
 internal abstract class KaFirMemberSymbolPointer<S : KaSymbol>(
-    private val ownerPointer: KaSymbolPointer<KaSymbolWithMembers>,
+    private val ownerPointer: KaSymbolPointer<KaDeclarationContainerSymbol>,
     private val isStatic: Boolean = false,
 ) : KaSymbolPointer<S>() {
     @KaImplementationDetail

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.scopes.KaTypeScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithMembers
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
@@ -57,17 +57,17 @@ internal class KaFirScopeProvider(
         return analysisSession.getScopeSessionFor(analysisSession.firSession)
     }
 
-    private fun KaSymbolWithMembers.getFirForScope(): FirClass = when (this) {
+    private fun KaDeclarationContainerSymbol.getFirForScope(): FirClass = when (this) {
         is KaFirNamedClassOrObjectSymbol -> firSymbol.fir
         is KaFirPsiJavaClassSymbol -> firSymbol.fir
         is KaFirAnonymousObjectSymbol -> firSymbol.fir
         else -> error(
             "`${this::class.qualifiedName}` needs to be specially handled by the scope provider or is an unknown" +
-                    " ${KaSymbolWithMembers::class.simpleName} implementation."
+                    " ${KaDeclarationContainerSymbol::class.simpleName} implementation."
         )
     }
 
-    override val KaSymbolWithMembers.memberScope: KaScope
+    override val KaDeclarationContainerSymbol.memberScope: KaScope
         get() = withValidityAssertion {
             val firScope = getFirForScope().unsubstitutedScope(
                 analysisSession.firSession,
@@ -78,7 +78,7 @@ internal class KaFirScopeProvider(
             return KaFirDelegatingNamesAwareScope(firScope, analysisSession.firSymbolBuilder)
         }
 
-    override val KaSymbolWithMembers.staticMemberScope: KaScope
+    override val KaDeclarationContainerSymbol.staticMemberScope: KaScope
         get() = withValidityAssertion {
             val fir = getFirForScope()
             val firScope = fir.scopeProvider.getStaticScope(fir, analysisSession.firSession, getScopeSession())
@@ -87,17 +87,17 @@ internal class KaFirScopeProvider(
             return KaFirDelegatingNamesAwareScope(firScope, analysisSession.firSymbolBuilder)
         }
 
-    override val KaSymbolWithMembers.declaredMemberScope: KaScope
+    override val KaDeclarationContainerSymbol.declaredMemberScope: KaScope
         get() = withValidityAssertion {
             getDeclaredMemberScope(this, DeclaredMemberScopeKind.NON_STATIC)
         }
 
-    override val KaSymbolWithMembers.staticDeclaredMemberScope: KaScope
+    override val KaDeclarationContainerSymbol.staticDeclaredMemberScope: KaScope
         get() = withValidityAssertion {
             getDeclaredMemberScope(this, DeclaredMemberScopeKind.STATIC)
         }
 
-    override val KaSymbolWithMembers.combinedDeclaredMemberScope: KaScope
+    override val KaDeclarationContainerSymbol.combinedDeclaredMemberScope: KaScope
         get() = withValidityAssertion {
             getDeclaredMemberScope(this, DeclaredMemberScopeKind.COMBINED)
         }
@@ -116,21 +116,21 @@ internal class KaFirScopeProvider(
         COMBINED,
     }
 
-    private fun getDeclaredMemberScope(classSymbol: KaSymbolWithMembers, kind: DeclaredMemberScopeKind): KaScope {
-        val firDeclaration = classSymbol.firSymbol.fir
+    private fun getDeclaredMemberScope(symbol: KaDeclarationContainerSymbol, kind: DeclaredMemberScopeKind): KaScope {
+        val firDeclaration = symbol.firSymbol.fir
         val firScope = when (firDeclaration) {
             is FirJavaClass -> getFirJavaDeclaredMemberScope(firDeclaration, kind) ?: return createEmptyScope()
-            else -> getFirKotlinDeclaredMemberScope(classSymbol, kind)
+            else -> getFirKotlinDeclaredMemberScope(symbol, kind)
         }
 
         return KaFirDelegatingNamesAwareScope(firScope, analysisSession.firSymbolBuilder)
     }
 
     private fun getFirKotlinDeclaredMemberScope(
-        classSymbol: KaSymbolWithMembers,
+        symbol: KaDeclarationContainerSymbol,
         kind: DeclaredMemberScopeKind,
     ): FirContainingNamesAwareScope {
-        val combinedScope = getCombinedFirKotlinDeclaredMemberScope(classSymbol)
+        val combinedScope = getCombinedFirKotlinDeclaredMemberScope(symbol)
         return when (kind) {
             DeclaredMemberScopeKind.NON_STATIC -> FirNonStaticMembersScope(combinedScope)
             DeclaredMemberScopeKind.STATIC -> FirStaticScope(combinedScope)
@@ -142,11 +142,11 @@ internal class KaFirScopeProvider(
      * Returns a declared member scope which contains both static and non-static callables, as well as all classifiers. Java classes need to
      * be handled specially, because [declaredMemberScope] doesn't handle Java enhancement properly.
      */
-    private fun getCombinedFirKotlinDeclaredMemberScope(symbolWithMembers: KaSymbolWithMembers): FirContainingNamesAwareScope {
+    private fun getCombinedFirKotlinDeclaredMemberScope(symbol: KaDeclarationContainerSymbol): FirContainingNamesAwareScope {
         val useSiteSession = analysisSession.firSession
-        return when (symbolWithMembers) {
-            is KaFirScriptSymbol -> FirScriptDeclarationsScope(useSiteSession, symbolWithMembers.firSymbol.fir)
-            else -> useSiteSession.declaredMemberScope(symbolWithMembers.getFirForScope(), memberRequiredPhase = null)
+        return when (symbol) {
+            is KaFirScriptSymbol -> FirScriptDeclarationsScope(useSiteSession, symbol.firSymbol.fir)
+            else -> useSiteSession.declaredMemberScope(symbol.getFirForScope(), memberRequiredPhase = null)
         }
     }
 
@@ -194,7 +194,7 @@ internal class KaFirScopeProvider(
         }
     }
 
-    override val KaSymbolWithMembers.delegatedMemberScope: KaScope
+    override val KaDeclarationContainerSymbol.delegatedMemberScope: KaScope
         get() = withValidityAssertion {
             val declaredScope = (declaredMemberScope as? KaFirDelegatingNamesAwareScope)?.firScope ?: return createEmptyScope()
 

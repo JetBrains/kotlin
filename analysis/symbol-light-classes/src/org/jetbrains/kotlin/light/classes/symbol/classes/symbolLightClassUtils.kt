@@ -13,17 +13,17 @@ import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiReferenceList
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.getModule
+import org.jetbrains.kotlin.analysis.api.platform.modification.createProjectWideOutOfBlockModificationTracker
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithMembers
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithTypeParameters
 import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThis
 import org.jetbrains.kotlin.analysis.api.types.KaClassErrorType
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
-import org.jetbrains.kotlin.analysis.api.platform.modification.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
@@ -541,7 +541,7 @@ internal fun SymbolLightClassForClassLike<*>.createInheritanceList(
 }
 
 context(KaSession)
-internal fun KaSymbolWithMembers.createInnerClasses(
+internal fun KaDeclarationContainerSymbol.createInnerClasses(
     manager: PsiManager,
     containingClass: SymbolLightClassBase,
     classOrObject: KtClassOrObject?
@@ -626,13 +626,13 @@ private val KaSymbolWithTypeParameters.hasReifiedParameters: Boolean
 context(KaSession)
 internal fun SymbolLightClassBase.addPropertyBackingFields(
     result: MutableList<KtLightField>,
-    symbolWithMembers: KaSymbolWithMembers,
+    containerSymbol: KaDeclarationContainerSymbol,
     nameGenerator: SymbolLightField.FieldNameGenerator,
     forceIsStaticTo: Boolean? = null,
 ) {
-    val propertySymbols = symbolWithMembers.combinedDeclaredMemberScope.callables
+    val propertySymbols = containerSymbol.combinedDeclaredMemberScope.callables
         .filterIsInstance<KaPropertySymbol>()
-        .applyIf(symbolWithMembers is KaClassOrObjectSymbol && symbolWithMembers.classKind == KaClassKind.COMPANION_OBJECT) {
+        .applyIf(containerSymbol is KaClassOrObjectSymbol && containerSymbol.classKind == KaClassKind.COMPANION_OBJECT) {
             // All fields for companion object of classes are generated to the containing class
             // For interfaces, only @JvmField-annotated properties are generated to the containing class
             // Probably, the same should work for const vals but it doesn't at the moment (see KT-28294)
@@ -640,7 +640,7 @@ internal fun SymbolLightClassBase.addPropertyBackingFields(
         }
 
     val (ctorProperties, memberProperties) = propertySymbols.partition { it.isFromPrimaryConstructor }
-    val isStatic = forceIsStaticTo ?: (symbolWithMembers is KaClassOrObjectSymbol && symbolWithMembers.classKind.isObject)
+    val isStatic = forceIsStaticTo ?: (containerSymbol is KaClassOrObjectSymbol && containerSymbol.classKind.isObject)
     fun addPropertyBackingField(propertySymbol: KaPropertySymbol) {
         createField(
             declaration = propertySymbol,

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.api.scopes.KaTypeScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithMembers
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -24,32 +24,32 @@ import java.util.Objects
 public interface KaScopeProvider {
     /**
      * Returns a [KaScope] containing *non-static* callable members (functions, properties, and constructors) and all classifier members
-     * (classes and objects) of the given [KaSymbolWithMembers]. The scope includes members inherited from the symbol's supertypes, in
+     * (classes and objects) of the given [KaDeclarationContainerSymbol]. The scope includes members inherited from the symbol's supertypes, in
      * addition to members which are declared explicitly inside the symbol's body.
      *
      * The member scope doesn't include synthetic Java properties. To get such properties, use [syntheticJavaPropertiesScope].
      *
      * @see staticMemberScope
      */
-    public val KaSymbolWithMembers.memberScope: KaScope
+    public val KaDeclarationContainerSymbol.memberScope: KaScope
 
     /**
      * Returns a [KaScope] containing all members from [memberScope] and [staticMemberScope].
      */
-    public val KaSymbolWithMembers.combinedMemberScope: KaScope
+    public val KaDeclarationContainerSymbol.combinedMemberScope: KaScope
         get() = withValidityAssertion {
             return listOf(memberScope, staticMemberScope).asCompositeScope()
         }
 
     /**
-     * Returns a [KaScope] containing the *static* members of the given [KaSymbolWithMembers].
+     * Returns a [KaScope] containing the *static* members of the given [KaDeclarationContainerSymbol].
      *
-     * The behavior of the scope differs based on whether the given [KaSymbolWithMembers] is a Kotlin or Java class:
+     * The behavior of the scope differs based on whether the given [KaDeclarationContainerSymbol] is a Kotlin or Java class:
      *
      * - **Kotlin class:** The scope contains static callables (functions and properties) and classifiers (classes and objects) declared
-     *   directly in the [KaSymbolWithMembers]. Hence, the static member scope for Kotlin classes is equivalent to [declaredMemberScope].
-     * - **Java class:** The scope contains static callables (functions and properties) declared in the [KaSymbolWithMembers] or any of its
-     *   superclasses (excluding static callables from super-interfaces), and classes declared directly in the [KaSymbolWithMembers]. This
+     *   directly in the [KaDeclarationContainerSymbol]. Hence, the static member scope for Kotlin classes is equivalent to [declaredMemberScope].
+     * - **Java class:** The scope contains static callables (functions and properties) declared in the [KaDeclarationContainerSymbol] or any of its
+     *   superclasses (excluding static callables from super-interfaces), and classes declared directly in the [KaDeclarationContainerSymbol]. This
      *   follows Kotlin's rules about static inheritance in Java classes, where static callables are propagated from superclasses, but
      *   nested classes are not.
      *
@@ -117,23 +117,23 @@ public interface KaScopeProvider {
      *
      * @see memberScope
      */
-    public val KaSymbolWithMembers.staticMemberScope: KaScope
+    public val KaDeclarationContainerSymbol.staticMemberScope: KaScope
 
     /**
      * Returns a [KaScope] containing the *non-static* callables (functions, properties, and constructors) and inner classes explicitly
-     * declared in the given [KaSymbolWithMembers].
+     * declared in the given [KaDeclarationContainerSymbol].
      *
      * The declared member scope does not contain classifiers (including the companion object) except for inner classes. To retrieve the
-     * classifiers declared in this [KaSymbolWithMembers], please use the *static* declared member scope provided by
+     * classifiers declared in this [KaDeclarationContainerSymbol], please use the *static* declared member scope provided by
      * [staticDeclaredMemberScope].
      *
      * @see staticDeclaredMemberScope
      */
-    public val KaSymbolWithMembers.declaredMemberScope: KaScope
+    public val KaDeclarationContainerSymbol.declaredMemberScope: KaScope
 
     /**
      * Returns a [KaScope] containing the *static* callables (functions and properties) and all classifiers (classes and objects) explicitly
-     * declared in the given [KaSymbolWithMembers].
+     * declared in the given [KaDeclarationContainerSymbol].
      *
      * It is worth noting that, while Java classes may contain declarations of static callables freely, in Kotlin only enum classes define
      * static callables. Hence, for non-enum Kotlin classes, it is not expected that the static declared member scope will contain any
@@ -141,16 +141,16 @@ public interface KaScopeProvider {
      *
      * @see declaredMemberScope
      */
-    public val KaSymbolWithMembers.staticDeclaredMemberScope: KaScope
+    public val KaDeclarationContainerSymbol.staticDeclaredMemberScope: KaScope
 
     /**
-     * Returns a [KaScope] containing *all* members explicitly declared in the given [KaSymbolWithMembers].
+     * Returns a [KaScope] containing *all* members explicitly declared in the given [KaDeclarationContainerSymbol].
      *
      * In contrast to [declaredMemberScope] and [staticDeclaredMemberScope], this scope contains both static and non-static members.
      */
-    public val KaSymbolWithMembers.combinedDeclaredMemberScope: KaScope
+    public val KaDeclarationContainerSymbol.combinedDeclaredMemberScope: KaScope
 
-    public val KaSymbolWithMembers.delegatedMemberScope: KaScope
+    public val KaDeclarationContainerSymbol.delegatedMemberScope: KaScope
 
     public val KaFileSymbol.fileScope: KaScope
 

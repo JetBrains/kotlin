@@ -124,7 +124,7 @@ public typealias KtEnumEntrySymbol = KaEnumEntrySymbol
  * The initializer of `A` declares a member `x: Int`, which is inaccessible outside the initializer. Still, the corresponding
  * [KaEnumEntryInitializerSymbol] can be used to get a declared member scope that contains `x`.
  */
-public interface KaEnumEntryInitializerSymbol : KaSymbolWithMembers
+public interface KaEnumEntryInitializerSymbol : KaDeclarationContainerSymbol
 
 @Deprecated("Use 'KaEnumEntryInitializerSymbol' instead", ReplaceWith("KaEnumEntryInitializerSymbol"))
 public typealias KtEnumEntryInitializerSymbol = KaEnumEntryInitializerSymbol

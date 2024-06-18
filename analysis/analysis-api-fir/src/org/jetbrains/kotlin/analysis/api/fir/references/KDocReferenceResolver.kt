@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,23 +10,23 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaScopeContext
 import org.jetbrains.kotlin.analysis.api.components.KaScopeKind
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithMembers
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
+import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
+import org.jetbrains.kotlin.load.java.possibleGetMethodNames
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import kotlin.reflect.KClass
-import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
-import org.jetbrains.kotlin.load.java.possibleGetMethodNames
-import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal object KDocReferenceResolver {
     /**
@@ -236,13 +236,13 @@ internal object KDocReferenceResolver {
         return emptyList()
     }
 
-    private fun KaSession.getCompositeCombinedMemberAndCompanionObjectScope(symbol: KaSymbolWithMembers): KaScope =
+    private fun KaSession.getCompositeCombinedMemberAndCompanionObjectScope(symbol: KaDeclarationContainerSymbol): KaScope =
         listOfNotNull(
             symbol.combinedMemberScope,
             getCompanionObjectMemberScope(symbol),
         ).asCompositeScope()
 
-    private fun KaSession.getCompanionObjectMemberScope(symbol: KaSymbolWithMembers): KaScope? {
+    private fun KaSession.getCompanionObjectMemberScope(symbol: KaDeclarationContainerSymbol): KaScope? {
         val namedClassSymbol = symbol as? KaNamedClassOrObjectSymbol ?: return null
         val companionSymbol = namedClassSymbol.companionObject ?: return null
         return companionSymbol.memberScope
@@ -271,7 +271,7 @@ internal object KDocReferenceResolver {
             .fold(scope) { currentScope, fqNamePart ->
                 currentScope
                     .classifiers(fqNamePart)
-                    .filterIsInstance<KaSymbolWithMembers>()
+                    .filterIsInstance<KaDeclarationContainerSymbol>()
                     .map { getCompositeCombinedMemberAndCompanionObjectScope(it) }
                     .toList()
                     .asCompositeScope()

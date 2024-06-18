@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.analysis.api.scopes.KaTypeScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithMembers
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
@@ -56,7 +56,7 @@ internal class KaFe10ScopeProvider(
         val LOG = Logger.getInstance(KaFe10ScopeProvider::class.java)
     }
 
-    override val KaSymbolWithMembers.memberScope: KaScope
+    override val KaDeclarationContainerSymbol.memberScope: KaScope
         get() = withValidityAssertion {
             val descriptor = getDescriptor<ClassDescriptor>(this)
                 ?: return createEmptyScope()
@@ -64,13 +64,13 @@ internal class KaFe10ScopeProvider(
             return KaFe10ScopeMember(descriptor.unsubstitutedMemberScope, descriptor.constructors, analysisContext)
         }
 
-    override val KaSymbolWithMembers.staticMemberScope: KaScope
+    override val KaDeclarationContainerSymbol.staticMemberScope: KaScope
         get() = withValidityAssertion {
             val descriptor = getDescriptor<ClassDescriptor>(this) ?: return createEmptyScope()
             return KaFe10ScopeMember(descriptor.staticScope, emptyList(), analysisContext)
         }
 
-    override val KaSymbolWithMembers.declaredMemberScope: KaScope
+    override val KaDeclarationContainerSymbol.declaredMemberScope: KaScope
         get() = withValidityAssertion {
             val descriptor = getDescriptor<ClassDescriptor>(this)
                 ?: return createEmptyScope()
@@ -78,7 +78,7 @@ internal class KaFe10ScopeProvider(
             return KaFe10ScopeNonStaticMember(DeclaredMemberScope(descriptor), descriptor.constructors, analysisContext)
         }
 
-    override val KaSymbolWithMembers.staticDeclaredMemberScope: KaScope
+    override val KaDeclarationContainerSymbol.staticDeclaredMemberScope: KaScope
         get() = withValidityAssertion {
             val descriptor = getDescriptor<ClassDescriptor>(this)
                 ?: return createEmptyScope()
@@ -90,7 +90,7 @@ internal class KaFe10ScopeProvider(
             )
         }
 
-    override val KaSymbolWithMembers.combinedDeclaredMemberScope: KaScope
+    override val KaDeclarationContainerSymbol.combinedDeclaredMemberScope: KaScope
         get() = withValidityAssertion {
             val descriptor = getDescriptor<ClassDescriptor>(this)
                 ?: return createEmptyScope()
@@ -98,7 +98,7 @@ internal class KaFe10ScopeProvider(
             return KaFe10ScopeMember(DeclaredMemberScope(descriptor), descriptor.constructors, analysisContext)
         }
 
-    override val KaSymbolWithMembers.delegatedMemberScope: KaScope
+    override val KaDeclarationContainerSymbol.delegatedMemberScope: KaScope
         get() = withValidityAssertion {
             val descriptor = getDescriptor<ClassDescriptor>(this)
                 ?: return createEmptyScope()

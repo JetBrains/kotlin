@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,14 +8,14 @@ package org.jetbrains.kotlin.analysis.api.renderer.declarations.bodies
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithMembers
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 
 @KaExperimentalApi
 public interface KaRendererBodyMemberScopeProvider {
-    public fun getMemberScope(analysisSession: KaSession, symbol: KaSymbolWithMembers): List<KaDeclarationSymbol>
+    public fun getMemberScope(analysisSession: KaSession, symbol: KaDeclarationContainerSymbol): List<KaDeclarationSymbol>
 
     public object ALL : KaRendererBodyMemberScopeProvider {
-        override fun getMemberScope(analysisSession: KaSession, symbol: KaSymbolWithMembers): List<KaDeclarationSymbol> {
+        override fun getMemberScope(analysisSession: KaSession, symbol: KaDeclarationContainerSymbol): List<KaDeclarationSymbol> {
             with(analysisSession) {
                 return symbol.combinedDeclaredMemberScope.declarations.toList()
             }
@@ -23,7 +23,7 @@ public interface KaRendererBodyMemberScopeProvider {
     }
 
     public object ALL_DECLARED : KaRendererBodyMemberScopeProvider {
-        override fun getMemberScope(analysisSession: KaSession, symbol: KaSymbolWithMembers): List<KaDeclarationSymbol> {
+        override fun getMemberScope(analysisSession: KaSession, symbol: KaDeclarationContainerSymbol): List<KaDeclarationSymbol> {
             with(analysisSession) {
                 return symbol.combinedDeclaredMemberScope.declarations
                     .filter { member ->
@@ -43,7 +43,7 @@ public interface KaRendererBodyMemberScopeProvider {
     }
 
     public object NONE : KaRendererBodyMemberScopeProvider {
-        override fun getMemberScope(analysisSession: KaSession, symbol: KaSymbolWithMembers): List<KaDeclarationSymbol> {
+        override fun getMemberScope(analysisSession: KaSession, symbol: KaDeclarationContainerSymbol): List<KaDeclarationSymbol> {
             return emptyList()
         }
     }

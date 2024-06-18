@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.analysis.api.symbols
 
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithMembers
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 
-public abstract class KaScriptSymbol : KaDeclarationSymbol, KaAnnotatedSymbol, KaNamedSymbol, KaSymbolWithMembers {
+public abstract class KaScriptSymbol : KaDeclarationSymbol, KaAnnotatedSymbol, KaNamedSymbol, KaDeclarationContainerSymbol {
     abstract override fun createPointer(): KaSymbolPointer<KaScriptSymbol>
 
     final override val location: KaSymbolLocation

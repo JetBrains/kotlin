@@ -69,7 +69,7 @@ public abstract class KaTypeAliasSymbol : KaClassLikeSymbol(),
 @Deprecated("Use 'KaTypeAliasSymbol' instead", ReplaceWith("KaTypeAliasSymbol"))
 public typealias KtTypeAliasSymbol = KaTypeAliasSymbol
 
-public sealed class KaClassOrObjectSymbol : KaClassLikeSymbol(), KaSymbolWithMembers {
+public sealed class KaClassOrObjectSymbol : KaClassLikeSymbol(), KaDeclarationContainerSymbol {
 
     public abstract val classKind: KaClassKind
     public abstract val superTypes: List<KaType>

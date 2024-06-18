@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithMembers
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrintWithSettingsFrom
 
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.utils.printer.prettyPrintWithSettingsFrom
 public interface KaClassifierBodyRenderer {
     public fun renderBody(
         analysisSession: KaSession,
-        symbol: KaSymbolWithMembers,
+        symbol: KaDeclarationContainerSymbol,
         declarationRenderer: KaDeclarationRenderer,
         printer: PrettyPrinter,
     )
@@ -26,7 +26,7 @@ public interface KaClassifierBodyRenderer {
     public object NO_BODY : KaClassifierBodyRenderer {
         override fun renderBody(
             analysisSession: KaSession,
-            symbol: KaSymbolWithMembers,
+            symbol: KaDeclarationContainerSymbol,
             declarationRenderer: KaDeclarationRenderer,
             printer: PrettyPrinter,
         ) {}
@@ -35,7 +35,7 @@ public interface KaClassifierBodyRenderer {
     public object EMPTY_BRACES : KaClassifierBodyRenderer {
         override fun renderBody(
             analysisSession: KaSession,
-            symbol: KaSymbolWithMembers,
+            symbol: KaDeclarationContainerSymbol,
             declarationRenderer: KaDeclarationRenderer,
             printer: PrettyPrinter,
         ) {
@@ -44,13 +44,13 @@ public interface KaClassifierBodyRenderer {
     }
 
     public object BODY_WITH_MEMBERS : KaClassifierBodyWithMembersRenderer() {
-        override fun renderEmptyBodyForEmptyMemberScope(symbol: KaSymbolWithMembers): Boolean {
+        override fun renderEmptyBodyForEmptyMemberScope(symbol: KaDeclarationContainerSymbol): Boolean {
             return false
         }
     }
 
     public object BODY_WITH_MEMBERS_OR_EMPTY_BRACES : KaClassifierBodyWithMembersRenderer() {
-        override fun renderEmptyBodyForEmptyMemberScope(symbol: KaSymbolWithMembers): Boolean {
+        override fun renderEmptyBodyForEmptyMemberScope(symbol: KaDeclarationContainerSymbol): Boolean {
             return true
         }
     }
@@ -62,11 +62,11 @@ public typealias KtClassifierBodyRenderer = KaClassifierBodyRenderer
 
 @KaExperimentalApi
 public abstract class KaClassifierBodyWithMembersRenderer : KaClassifierBodyRenderer {
-    public abstract fun renderEmptyBodyForEmptyMemberScope(symbol: KaSymbolWithMembers): Boolean
+    public abstract fun renderEmptyBodyForEmptyMemberScope(symbol: KaDeclarationContainerSymbol): Boolean
 
     public override fun renderBody(
         analysisSession: KaSession,
-        symbol: KaSymbolWithMembers,
+        symbol: KaDeclarationContainerSymbol,
         declarationRenderer: KaDeclarationRenderer,
         printer: PrettyPrinter,
     ) {
