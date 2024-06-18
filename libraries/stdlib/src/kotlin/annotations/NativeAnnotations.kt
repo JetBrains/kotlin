@@ -49,6 +49,7 @@ public expect annotation class CName(val externName: String = "", val shortName:
     AnnotationTarget.TYPEALIAS,
 )
 @Retention(AnnotationRetention.BINARY)
+@MustBeDocumented
 @OptionalExpectation
 public expect annotation class FreezingIsDeprecated
 
@@ -132,4 +133,3 @@ public expect annotation class RefinesInSwift()
 @ExperimentalObjCRefinement
 @SinceKotlin("1.8")
 public expect annotation class ShouldRefineInSwift()
-
