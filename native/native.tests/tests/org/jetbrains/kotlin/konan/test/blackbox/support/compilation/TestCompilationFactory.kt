@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allRegularDependencies
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allDependsOn
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allDependsOnDependencies
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allFriendDependencies
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationDependencyType.*
@@ -389,7 +389,7 @@ internal class TestCompilationFactory {
     }
 
     private fun sortDependsOnTopologically(module: TestModule): List<TestModule> {
-        return topologicalSort(listOf(module), reverseOrder = true) { it.allDependsOn }
+        return topologicalSort(listOf(module), reverseOrder = true) { it.allDependsOnDependencies }
     }
 
     companion object {

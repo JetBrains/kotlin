@@ -54,7 +54,7 @@ internal class PredefinedTestCaseGroupProvider(annotation: PredefinedTestCases) 
                 name = testCaseId.uniqueName,
                 directRegularDependencySymbols = emptySet(),
                 directFriendDependencySymbols = emptySet(),
-                directDependsOnSymbols = emptySet(),
+                directDependsOnDependencySymbols = emptySet(),
             )
 
             val ignoredFiles = predefinedTestCase.ignoredFiles.map { it.absoluteNormalizedFile() }

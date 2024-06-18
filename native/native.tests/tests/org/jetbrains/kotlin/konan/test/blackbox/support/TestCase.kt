@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.konan.test.blackbox.support
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.WithTestRunnerExtras
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allRegularDependencies
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allDependsOn
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allDependsOnDependencies
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
@@ -89,19 +89,19 @@ sealed class TestModule {
         override val name: String,
         val directRegularDependencySymbols: Set<String>,
         val directFriendDependencySymbols: Set<String>,
-        val directDependsOnSymbols: Set<String>, // mimics the name from ModuleStructureExtractorImpl, thought later converted to `-Xfragment-refines` parameter
+        val directDependsOnDependencySymbols: Set<String>, // mimics the name from ModuleStructureExtractorImpl, thought later converted to `-Xfragment-refines` parameter
         val directives: MutableList<RegisteredDirectivesParser.ParsedDirective> = mutableListOf()
     ) : TestModule() {
         override val files: FailOnDuplicatesSet<TestFile<Exclusive>> = FailOnDuplicatesSet()
 
         lateinit var directRegularDependencies: Set<TestModule>
         lateinit var directFriendDependencies: Set<TestModule>
-        lateinit var directDependsOn: Set<TestModule>
+        lateinit var directDependsOnDependencies: Set<TestModule>
 
         // N.B. The following two properties throw an exception on attempt to resolve cyclic dependencies.
         val allRegularDependencies: Set<TestModule> by SM.lazyNeighbors({ directRegularDependencies }, { it.allRegularDependencies })
         val allFriendDependencies: Set<TestModule> by SM.lazyNeighbors({ directFriendDependencies }, { it.allFriendDependencies })
-        val allDependsOn: Set<TestModule> by SM.lazyNeighbors({ directDependsOn }, { it.allDependsOn })
+        val allDependsOnDependencies: Set<TestModule> by SM.lazyNeighbors({ directDependsOnDependencies }, { it.allDependsOnDependencies })
 
         lateinit var testCase: TestCase
 
@@ -112,7 +112,7 @@ sealed class TestModule {
         fun haveSameSymbols(other: Exclusive) =
             other.directRegularDependencySymbols == directRegularDependencySymbols &&
                     other.directFriendDependencySymbols == directFriendDependencySymbols &&
-                    other.directDependsOnSymbols == directDependsOnSymbols
+                    other.directDependsOnDependencySymbols == directDependsOnDependencySymbols
     }
 
     data class Shared(override val name: String) : TestModule() {
@@ -145,9 +145,9 @@ sealed class TestModule {
                 is Shared, is Given -> emptySet()
             }
 
-        val TestModule.allDependsOn: Set<TestModule>
+        val TestModule.allDependsOnDependencies: Set<TestModule>
             get() = when (this) {
-                is Exclusive -> allDependsOn
+                is Exclusive -> allDependsOnDependencies
                 is Shared, is Given -> emptySet()
             }
 
@@ -223,13 +223,13 @@ class TestCase(
         modules.forEach { module ->
             allModules += module
             allModules += module.allRegularDependencies
-            allModules += module.allDependsOn
+            allModules += module.allDependsOnDependencies
         }
 
         val rootModules = allModules.toHashSet()
         allModules.forEach { module ->
             rootModules -= module.allRegularDependencies
-            rootModules -= module.allDependsOn
+            rootModules -= module.allDependsOnDependencies
         }
 
         assertTrue(rootModules.isNotEmpty()) { "$id: No root modules in test case." }
@@ -284,7 +284,7 @@ class TestCase(
             }
 
             module.directFriendDependencies = module.directFriendDependencySymbols.mapToSet(::findModule)
-            module.directDependsOn = module.directDependsOnSymbols.mapToSet(::findModule)
+            module.directDependsOnDependencies = module.directDependsOnDependencySymbols.mapToSet(::findModule)
         }
     }
 }

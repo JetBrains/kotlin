@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.withOSVersion
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.*
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allDependsOn
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allDependsOnDependencies
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ExecutableCompilation.Companion.applyFileCheckArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ExecutableCompilation.Companion.applyPartialLinkageArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ExecutableCompilation.Companion.applyTestRunnerSpecificArgs
@@ -242,7 +242,7 @@ abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
         if (pipelineType == PipelineType.K2 && freeCompilerArgs.compilerArgs.any { it == "-XXLanguage:+MultiPlatformProjects" }) {
             sourceModules.mapToSet { "-Xfragments=${it.name}" }
                 .sorted().forEach { add(it) }
-            sourceModules.flatMapToSet { module -> module.allDependsOn.map { "-Xfragment-refines=${module.name}:${it.name}" } }
+            sourceModules.flatMapToSet { module -> module.allDependsOnDependencies.map { "-Xfragment-refines=${module.name}:${it.name}" } }
                 .sorted().forEach { add(it) }
             sourceModules.flatMapToSet { module -> module.files.map { "-Xfragment-sources=${module.name}:${it.location.path}" } }
                 .sorted().forEach { add(it) }

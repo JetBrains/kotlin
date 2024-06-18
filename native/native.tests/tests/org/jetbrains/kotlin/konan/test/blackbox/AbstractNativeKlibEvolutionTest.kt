@@ -185,7 +185,7 @@ abstract class AbstractNativeKlibEvolutionTest : AbstractNativeSimpleTest() {
             name = name,
             directRegularDependencySymbols = emptySet(),
             directFriendDependencySymbols = emptySet(),
-            directDependsOnSymbols = emptySet(),
+            directDependsOnDependencySymbols = emptySet(),
         )
 
         val localBuildDir: File =

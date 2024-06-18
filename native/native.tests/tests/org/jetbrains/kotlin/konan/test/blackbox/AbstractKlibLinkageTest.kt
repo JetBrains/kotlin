@@ -157,7 +157,7 @@ abstract class AbstractKlibLinkageTest : AbstractNativeSimpleTest() {
                 directRegularDependencySymbols = emptySet(), /* Don't need to pass any dependency symbols here.
                                                          Dependencies are already handled by the AbstractNativePartialLinkageTest class. */
                 directFriendDependencySymbols = emptySet(),
-                directDependsOnSymbols = emptySet(),
+                directDependsOnDependencySymbols = emptySet(),
             ).also { module ->
                 moduleSourceDir.walk()
                     .filter { file -> file.isFile && file.extension == "kt" }
