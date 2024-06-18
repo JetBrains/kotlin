@@ -183,7 +183,7 @@ abstract class AbstractNativeKlibEvolutionTest : AbstractNativeSimpleTest() {
     ) {
         val module: TestModule.Exclusive = TestModule.Exclusive(
             name = name,
-            directDependencySymbols = emptySet(),
+            directRegularDependencySymbols = emptySet(),
             directFriendSymbols = emptySet(),
             directDependsOnSymbols = emptySet(),
         )

@@ -52,7 +52,7 @@ internal class PredefinedTestCaseGroupProvider(annotation: PredefinedTestCases) 
 
             val module = TestModule.Exclusive(
                 name = testCaseId.uniqueName,
-                directDependencySymbols = emptySet(),
+                directRegularDependencySymbols = emptySet(),
                 directFriendSymbols = emptySet(),
                 directDependsOnSymbols = emptySet(),
             )

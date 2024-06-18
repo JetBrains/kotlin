@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.*
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allDependencies
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allRegularDependencies
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allDependsOn
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allFriends
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.*
@@ -382,7 +382,7 @@ internal class TestCompilationFactory {
                 }
             }
 
-        sourceModules.allDependencies().collectDependencies(Library)
+        sourceModules.allRegularDependencies().collectDependencies(Library)
         sourceModules.allFriends().collectDependencies(FriendLibrary)
 
         return CompilationDependencies(klibDependencies, staticCacheDependencies, staticCacheHeaderDependencies)
@@ -393,7 +393,9 @@ internal class TestCompilationFactory {
     }
 
     companion object {
-        private fun Set<TestModule>.allDependencies() = if (size == 1) first().allDependencies else flatMapToSet { it.allDependencies }
+        private fun Set<TestModule>.allRegularDependencies(): Set<TestModule> =
+            if (size == 1) first().allRegularDependencies else flatMapToSet { it.allRegularDependencies }
+
         private fun Set<TestModule>.allFriends() = if (size == 1) first().allFriends else flatMapToSet { it.allFriends }
 
         private fun <T : TestCompilationDependencyType<KLIB>> TestCompilation<KLIB>.asKlibDependency(type: T): CompiledDependency<KLIB> =
