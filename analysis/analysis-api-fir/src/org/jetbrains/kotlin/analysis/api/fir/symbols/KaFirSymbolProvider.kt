@@ -126,7 +126,7 @@ internal class KaFirSymbolProvider(
             )
         }
 
-    override val KtProperty.symbol: KaVariableSymbol
+    override val KtProperty.symbol: KaVariableLikeSymbol
         get() = withValidityAssertion {
             firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(
                 resolveToFirSymbolOfType<FirPropertySymbol>(firResolveSession)
@@ -193,7 +193,7 @@ internal class KaFirSymbolProvider(
             )
         }
 
-    override val KtDestructuringDeclarationEntry.symbol: KaVariableSymbol
+    override val KtDestructuringDeclarationEntry.symbol: KaVariableLikeSymbol
         get() = withValidityAssertion {
             return when (val firSymbol = resolveToFirSymbol(firResolveSession)) {
                 is FirPropertySymbol -> firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(firSymbol)

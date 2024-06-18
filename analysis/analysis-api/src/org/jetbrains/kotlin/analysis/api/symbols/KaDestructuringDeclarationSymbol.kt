@@ -21,7 +21,7 @@ public abstract class KaDestructuringDeclarationSymbol : KaDeclarationSymbol,
     final override val typeParameters: List<KaTypeParameterSymbol> get() = withValidityAssertion { emptyList() }
 
     /**
-     * A list of [KaVariableSymbol]s which were created from this destructuring declaration.
+     * A list of [KaVariableLikeSymbol]s which were created from this destructuring declaration.
      *
      * The entries are usually [KaLocalVariableSymbol]s. However, for top-level destructuring declarations in scripts, the entries are
      * [KaPropertySymbol]s instead.
@@ -40,7 +40,7 @@ public abstract class KaDestructuringDeclarationSymbol : KaDeclarationSymbol,
      * val _: String
      * ```
      */
-    public abstract val entries: List<KaVariableSymbol>
+    public abstract val entries: List<KaVariableLikeSymbol>
 
     abstract override fun createPointer(): KaSymbolPointer<KaDestructuringDeclarationSymbol>
 }

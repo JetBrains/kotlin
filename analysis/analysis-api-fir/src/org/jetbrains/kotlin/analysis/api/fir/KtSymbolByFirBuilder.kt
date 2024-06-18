@@ -295,7 +295,7 @@ internal class KaSymbolByFirBuilder(
             return with(analysisSession) { buildVariableLikeSymbol(firSymbol).asSignature() }
         }
 
-        fun buildVariableSymbol(firSymbol: FirPropertySymbol): KaVariableSymbol {
+        fun buildVariableSymbol(firSymbol: FirPropertySymbol): KaVariableLikeSymbol {
             return when {
                 firSymbol.isLocal -> buildLocalVariableSymbol(firSymbol)
                 firSymbol is FirSyntheticPropertySymbol -> buildSyntheticJavaPropertySymbol(firSymbol)
@@ -303,7 +303,7 @@ internal class KaSymbolByFirBuilder(
             }
         }
 
-        fun buildPropertySymbol(firSymbol: FirPropertySymbol): KaVariableSymbol {
+        fun buildPropertySymbol(firSymbol: FirPropertySymbol): KaVariableLikeSymbol {
             checkRequirementForBuildingSymbol<KaKotlinPropertySymbol>(firSymbol, !firSymbol.isLocal)
             checkRequirementForBuildingSymbol<KaKotlinPropertySymbol>(firSymbol, firSymbol !is FirSyntheticPropertySymbol)
 
@@ -318,7 +318,7 @@ internal class KaSymbolByFirBuilder(
             }
         }
 
-        fun buildPropertySignature(firSymbol: FirPropertySymbol): KaVariableLikeSignature<KaVariableSymbol> {
+        fun buildPropertySignature(firSymbol: FirPropertySymbol): KaVariableLikeSignature<KaVariableLikeSymbol> {
             firSymbol.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
             return KaFirVariableLikeSubstitutorBasedSignature(analysisSession.token, firSymbol, analysisSession.firSymbolBuilder)
         }

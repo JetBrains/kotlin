@@ -252,11 +252,11 @@ internal object FirToKtConversionCreator {
         ),
         FirPropertySymbol::class to HLFunctionCallConversion(
             "firSymbolBuilder.variableLikeBuilder.buildVariableSymbol({0})",
-            KaVariableSymbol::class.createType()
+            KaVariableLikeSymbol::class.createType()
         ),
         FirBackingFieldSymbol::class to HLFunctionCallConversion(
             "firSymbolBuilder.variableLikeBuilder.buildVariableSymbol({0}.fir.propertySymbol)",
-            KaVariableSymbol::class.createType()
+            KaVariableLikeSymbol::class.createType()
         ),
         FirVariableSymbol::class to HLFunctionCallConversion(
             "firSymbolBuilder.variableLikeBuilder.buildVariableLikeSymbol({0})",

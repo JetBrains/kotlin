@@ -75,7 +75,7 @@ internal class KaFe10SymbolProvider(
     override val KtFunctionLiteral.symbol: KaAnonymousFunctionSymbol
         get() = withValidityAssertion { KaFe10PsiLiteralAnonymousFunctionSymbol(this, analysisContext) }
 
-    override val KtProperty.symbol: KaVariableSymbol
+    override val KtProperty.symbol: KaVariableLikeSymbol
         get() = withValidityAssertion {
             return if (isLocal) {
                 KaFe10PsiLocalVariableSymbol(this, analysisContext)
@@ -122,7 +122,7 @@ internal class KaFe10SymbolProvider(
     override val KtClassInitializer.symbol: KaClassInitializerSymbol
         get() = withValidityAssertion { KaFe10PsiClassInitializerSymbol(this, analysisContext) }
 
-    override val KtDestructuringDeclarationEntry.symbol: KaVariableSymbol
+    override val KtDestructuringDeclarationEntry.symbol: KaVariableLikeSymbol
         get() = withValidityAssertion { KaFe10PsiLocalVariableSymbol(this, analysisContext) }
 
     override val KtDestructuringDeclaration.symbol: KaDestructuringDeclarationSymbol
