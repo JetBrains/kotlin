@@ -234,7 +234,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                     val lookupTag = classifier.toLookupTag()
                     lookupTag.constructType(
                         this.arguments.map { it.toConeTypeProjection() }.toTypedArray(),
-                        isNullable = this.isNullable()
+                        isNullable = this.isMarkedNullable()
                     )
                 }
                 is IrDynamicType -> ConeDynamicType.create(session)

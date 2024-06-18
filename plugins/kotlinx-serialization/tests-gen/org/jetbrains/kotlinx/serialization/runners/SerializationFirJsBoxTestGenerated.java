@@ -145,6 +145,12 @@ public class SerializationFirJsBoxTestGenerated extends AbstractSerializationFir
   }
 
   @Test
+  @TestMetadata("multimoduleInheritanceJsGeneric.kt")
+  public void testMultimoduleInheritanceJsGeneric() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/multimoduleInheritanceJsGeneric.kt");
+  }
+
+  @Test
   @TestMetadata("multipleGenericsPolymorphic.kt")
   public void testMultipleGenericsPolymorphic() {
     runTest("plugins/kotlinx-serialization/testData/boxIr/multipleGenericsPolymorphic.kt");
