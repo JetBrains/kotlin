@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.UsesKotlinJavaToolchain
+import org.jetbrains.kotlin.library.KOTLIN_JS_STDLIB_NAME
+import org.jetbrains.kotlin.library.KOTLIN_WASM_STDLIB_NAME
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
 import plugins.publishing.configureMultiModuleMavenPublishing
@@ -243,7 +245,7 @@ kotlin {
                 @Suppress("DEPRECATION")
                 kotlinOptions {
                     freeCompilerArgs += listOfNotNull(
-                        "-Xir-module-name=kotlin",
+                        "-Xir-module-name=$KOTLIN_JS_STDLIB_NAME",
                         diagnosticNamesArg,
                     )
 
@@ -273,7 +275,7 @@ kotlin {
             }
             @Suppress("DEPRECATION")
             val main by getting {
-                kotlinOptions.freeCompilerArgs += "-Xir-module-name=kotlin"
+                kotlinOptions.freeCompilerArgs += "-Xir-module-name=$KOTLIN_WASM_STDLIB_NAME"
                 kotlinOptions.allWarningsAsErrors = true
                 compileTaskProvider.configure {
                     compilerOptions.mainCompilationWithK1()

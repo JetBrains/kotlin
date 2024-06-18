@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.konan.properties.saveProperties
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_COMPILER_VERSION
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_NATIVE_TARGETS
+import org.jetbrains.kotlin.library.KOTLIN_NATIVE_STDLIB_NAME
 import org.jetbrains.kotlin.konan.file.File as KFile
 import org.jetbrains.kotlin.konan.target.Architecture as TargetArchitecture
 
@@ -574,7 +575,7 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
             "-Werror",
             "-Xexplicit-api=strict",
             "-Xexpect-actual-classes",
-            "-module-name", "stdlib",
+            "-module-name", KOTLIN_NATIVE_STDLIB_NAME,
             "-opt-in=kotlin.RequiresOptIn",
             "-opt-in=kotlin.contracts.ExperimentalContracts",
             "-opt-in=kotlin.ExperimentalMultiplatform",

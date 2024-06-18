@@ -94,6 +94,7 @@ kotlin {
         }
         nodejs {}
         compilations["main"].compileTaskProvider.configure {
+            // TODO: Use the KOTLINTEST_MODULE_NAME from :kotlin-util-klib after bootstrap advance
             compilerOptions.freeCompilerArgs.add("-Xir-module-name=kotlin-test")
         }
     }
@@ -122,6 +123,7 @@ kotlin {
     wasmJs {
         nodejs()
         compilations["main"].compileTaskProvider.configure {
+            // TODO: Use the KOTLINTEST_MODULE_NAME from :kotlin-util-klib after bootstrap advance
             compilerOptions.freeCompilerArgs.add("-Xir-module-name=kotlin-test")
         }
     }
@@ -132,6 +134,7 @@ kotlin {
     wasmWasi {
         nodejs()
         compilations["main"].compileTaskProvider.configure {
+            // TODO: Use the KOTLINTEST_MODULE_NAME from :kotlin-util-klib after bootstrap advance
             compilerOptions.freeCompilerArgs.add("-Xir-module-name=kotlin-test")
         }
     }
