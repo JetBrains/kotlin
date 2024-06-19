@@ -7,8 +7,8 @@ FILE: read.kt
                 @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val full_name: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(3)) public abstract val topics: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Topics_391>|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Topics_391>|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(3)) public abstract val topics: R|kotlin/String|
+                    public get(): R|kotlin/String|
 
                 @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(4)) public abstract val watchers: R|kotlin/Int|
                     public get(): R|kotlin/Int|
@@ -30,11 +30,11 @@ FILE: read.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Read_16I>|.full_name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Read_16I>|.topics: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Topics_391>|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Topics_391>|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Read_16I>|.topics: R|kotlin/String|
+                    public get(): R|kotlin/String|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Read_16I>|.topics: R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Topics_391>>|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Topics_391>>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Read_16I>|.topics: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Read_16I>|.watchers: R|kotlin/Int|
                     public get(): R|kotlin/Int|
@@ -58,33 +58,10 @@ FILE: read.kt
 
             }
 
-            local abstract class Topics_391 : R|kotlin/Any| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val value: R|kotlin/Double|
-                    public get(): R|kotlin/Double|
-
-                public constructor(): R|<local>/Topics_391|
-
-            }
-
-            local final class Scope1 : R|kotlin/Any| {
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Topics_391>|.value: R|kotlin/Double|
-                    public get(): R|kotlin/Double|
-
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Topics_391>|.value: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Double>|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Double>|
-
-                public constructor(): R|<local>/Scope1|
-
-            }
-
             local abstract class Read_16 : R|<local>/Read_16I| {
                 public abstract var scope0: R|<local>/Scope0|
                     public get(): R|<local>/Scope0|
                     public set(value: R|<local>/Scope0|): R|kotlin/Unit|
-
-                public abstract var scope1: R|<local>/Scope1|
-                    public get(): R|<local>/Scope1|
-                    public set(value: R|<local>/Scope1|): R|kotlin/Unit|
 
                 public constructor(): R|<local>/Read_16|
 
