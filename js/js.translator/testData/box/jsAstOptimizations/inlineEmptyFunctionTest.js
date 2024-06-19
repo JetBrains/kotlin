@@ -55,6 +55,8 @@ function box() {
   } else {
     if (isNumber(tmp0_subject)) {
       // Inline function 'inlineFunction' call
+    } else {
+      // Inline function 'inlineFunction' call
     }
   }
   sep('Call in try/catch/finally');

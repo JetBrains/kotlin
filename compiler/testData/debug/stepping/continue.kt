@@ -35,6 +35,7 @@ fun box() {
 // test.kt:17 box
 
 // EXPECTATIONS JS_IR
+// test.kt:5 <init properties test.kt>
 // test.kt:8 box
 // test.kt:5 <get-strings>
 // test.kt:8 box
@@ -65,7 +66,7 @@ fun box() {
 // test.kt:17 box
 
 // EXPECTATIONS WASM
-// test.kt:5 $<init properties test.kt>
+// test.kt:5 $<init properties test.kt> (22, 22, 22, 22, 28, 28, 28, 28, 34, 34, 34, 34, 39, 39, 39, 39, 22, 22, 14)
 // test.kt:8 $box (14, 14, 14, 14, 14, 4, 14, 4, 4, 4, 14, 9, 14, 4, 14, 4, 4, 4, 14, 9, 14, 4, 14, 4, 4, 4, 14, 9, 14, 4, 14, 4, 4, 4, 14, 9, 14, 4, 14, 4, 4, 4)
 // test.kt:5 $<get-strings>
 // test.kt:9 $box (12, 17, 17, 17, 17, 12, 12, 17, 17, 17, 17, 12, 25, 30, 30, 30, 30, 25, 12, 17, 17, 17, 17, 12, 25, 30, 30, 30, 30, 25, 12, 17, 17, 17, 17, 12, 25, 30, 30, 30, 30, 25)

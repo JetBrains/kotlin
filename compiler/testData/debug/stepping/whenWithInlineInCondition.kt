@@ -91,8 +91,8 @@ fun nop() {}
 // test.kt:23 $box (23, 24)
 // test.kt:29 $nop (12, 12)
 // test.kt:13 $box (10, 17, 10)
-// test.kt:14 $box (8, 13, 8, 8)
+// test.kt:14 $box (8, 13, 8)
 // test.kt:27 $box (28, 32)
-// test.kt:15 $box (8, 11, 8, 20)
+// test.kt:15 $box (8, 11, 8, 8, 20)
 // test.kt:26 $box (29, 30)
 // test.kt:18 $box
