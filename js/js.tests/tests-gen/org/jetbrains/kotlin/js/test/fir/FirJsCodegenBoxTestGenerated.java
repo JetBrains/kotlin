@@ -19202,6 +19202,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
     }
 
     @Test
+    @TestMetadata("LocalEntitiesInAnonymousObjectInInlineCallables.kt")
+    public void testLocalEntitiesInAnonymousObjectInInlineCallables() {
+      runTest("compiler/testData/codegen/box/inline/LocalEntitiesInAnonymousObjectInInlineCallables.kt");
+    }
+
+    @Test
     @TestMetadata("localFunctionInInitializerBlock.kt")
     public void testLocalFunctionInInitializerBlock() {
       runTest("compiler/testData/codegen/box/inline/localFunctionInInitializerBlock.kt");

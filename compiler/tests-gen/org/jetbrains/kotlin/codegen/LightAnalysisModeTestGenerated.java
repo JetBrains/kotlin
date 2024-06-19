@@ -21098,6 +21098,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/inline/lateinitProperty.kt");
     }
 
+    @TestMetadata("LocalEntitiesInAnonymousObjectInInlineCallables.kt")
+    public void testLocalEntitiesInAnonymousObjectInInlineCallables() {
+      runTest("compiler/testData/codegen/box/inline/LocalEntitiesInAnonymousObjectInInlineCallables.kt");
+    }
+
     @TestMetadata("localFunctionInInitializerBlock.kt")
     public void testLocalFunctionInInitializerBlock() {
       runTest("compiler/testData/codegen/box/inline/localFunctionInInitializerBlock.kt");
