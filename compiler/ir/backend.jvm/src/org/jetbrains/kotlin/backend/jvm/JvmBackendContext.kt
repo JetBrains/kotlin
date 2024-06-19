@@ -131,8 +131,6 @@ class JvmBackendContext(
     fun <ClassCodegen : Any> getOrCreateClassCodegen(klass: IrClass, create: (IrClass) -> ClassCodegen): ClassCodegen =
         classCodegens.computeIfAbsent(klass, create) as ClassCodegen
 
-    val localDelegatedProperties by irAttribute<IrAttributeContainer, List<IrLocalDelegatedPropertySymbol>>(false).asMap()
-
     val multifileFacadesToAdd = mutableMapOf<JvmClassName, MutableList<IrClass>>()
     val multifileFacadeForPart by irAttribute<IrClass, JvmClassName>(false).asMap()
     val multifileFacadeClassForPart by irAttribute<IrClass, IrClass>(false).asMap()

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.backend.jvm
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.localDelegatedProperties
 import org.jetbrains.kotlin.backend.jvm.metadata.MetadataSerializer
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
@@ -47,7 +48,7 @@ fun makeFirMetadataSerializerForIrClass(
     actualizedExpectDeclarations: Set<FirDeclaration>?
 ): FirMetadataSerializer {
     val approximator = TypeApproximatorForMetadataSerializer(session)
-    val localDelegatedProperties = context.localDelegatedProperties[irClass.attributeOwnerId]?.mapNotNull {
+    val localDelegatedProperties = irClass.localDelegatedProperties?.mapNotNull {
         (it.owner.metadata as? FirMetadataSource.Property)?.fir?.copyToFreeProperty(approximator)
     } ?: emptyList()
     val firSerializerExtension = FirJvmSerializerExtension(

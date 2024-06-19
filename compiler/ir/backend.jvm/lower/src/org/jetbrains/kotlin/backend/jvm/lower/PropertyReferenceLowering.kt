@@ -258,7 +258,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
             })
         }
         if (data.localProperties.isNotEmpty()) {
-            context.localDelegatedProperties[declaration.attributeOwnerId] = data.localProperties
+            declaration.localDelegatedProperties = data.localProperties
         }
         return declaration
     }
