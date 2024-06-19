@@ -18,3 +18,5 @@ var IrAttributeContainer.localClassType: Type? by irAttribute(followAttributeOwn
 var IrFunction.enclosingMethodOverride: IrFunction? by irAttribute(followAttributeOwner = false)
 
 var IrClass.localDelegatedProperties: List<IrLocalDelegatedPropertySymbol>? by irAttribute(followAttributeOwner = true)
+
+var IrFunction.hasSpecialBridge: Boolean by irFlag(followAttributeOwner = false)

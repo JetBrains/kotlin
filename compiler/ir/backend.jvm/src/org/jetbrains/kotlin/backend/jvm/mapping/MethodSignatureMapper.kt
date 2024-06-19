@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.mapping
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.hasSpecialBridge
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -275,7 +276,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
 
         // Old back-end doesn't patch generic signatures if corresponding function had special bridges.
         // See org.jetbrains.kotlin.codegen.FunctionCodegen#hasSpecialBridgeMethod and its usage.
-        if (specialSignatureInfo != null && function !in context.functionsWithSpecialBridges) {
+        if (specialSignatureInfo != null && !function.hasSpecialBridge) {
             val newGenericSignature = specialSignatureInfo.replaceValueParametersIn(signature.genericsSignature)
             return JvmMethodGenericSignature(signature.asmMethod, signature.valueParameters, newGenericSignature)
         }

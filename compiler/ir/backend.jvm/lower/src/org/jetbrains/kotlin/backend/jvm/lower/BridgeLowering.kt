@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.SpecialMethodWithDefaultInfo
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements
-import org.jetbrains.kotlin.backend.jvm.SpecialBridge
+import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
 import org.jetbrains.kotlin.codegen.AsmUtil
@@ -165,7 +162,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
             if (parentAsClass.isJvmInterface) {
                 // If function requires a special bridge, we should record it for generic signatures generation.
                 if (specialBridgeOrNull != null) {
-                    context.functionsWithSpecialBridges.add(this)
+                    this.hasSpecialBridge = true
                 }
                 return false
             }
@@ -473,7 +470,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
             returnType = specialBridge.substitutedReturnType?.eraseToScope(target.parentAsClass)
                 ?: specialBridge.overridden.returnType.eraseTypeParameters()
         }.apply {
-            context.functionsWithSpecialBridges.add(target)
+            target.hasSpecialBridge = true
 
             copyParametersWithErasure(this@addSpecialBridge, specialBridge.overridden, specialBridge.substitutedParameterTypes)
             context.remapMultiFieldValueClassStructure(specialBridge.overridden, this, parametersMappingOrNull = null)

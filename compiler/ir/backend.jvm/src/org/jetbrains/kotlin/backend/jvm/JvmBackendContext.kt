@@ -151,7 +151,6 @@ class JvmBackendContext(
         overridesWithoutStubs.getOrElse(function) { function.overriddenSymbols }
 
     val bridgeLoweringCache = BridgeLoweringCache(this)
-    val functionsWithSpecialBridges by irFlag<IrFunction>(false).asSet()
 
     override var inVerbosePhase: Boolean = false // TODO: needs parallelizing
 
