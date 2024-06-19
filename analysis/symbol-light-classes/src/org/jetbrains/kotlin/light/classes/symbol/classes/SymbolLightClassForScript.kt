@@ -28,7 +28,6 @@ internal class SymbolLightClassForScript private constructor(
     private val symbolPointer: KaSymbolPointer<KaScriptSymbol>,
     ktModule: KaModule,
 ) : KtLightClassForScript, SymbolLightClassBase(ktModule, script.manager) {
-
     internal constructor(
         script: KtScript,
         ktModule: KaModule,

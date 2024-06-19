@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.symbols.pointers
 
 import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import kotlin.reflect.KClass
 
+@KaImplementationDetail
 public class KaPsiBasedSymbolPointer<S : KaSymbol> private constructor(
     private val psiPointer: SmartPsiElementPointer<out KtElement>,
     private val expectedClass: KClass<S>,
@@ -101,8 +103,14 @@ public class KaPsiBasedSymbolPointer<S : KaSymbol> private constructor(
     }
 }
 
+@KaImplementationDetail
 @Deprecated("Use 'KaPsiBasedSymbolPointer' instead", ReplaceWith("KaPsiBasedSymbolPointer"))
 public typealias KtPsiBasedSymbolPointer<S> = KaPsiBasedSymbolPointer<S>
 
+@OptIn(KaImplementationDetail::class)
+@KaExperimentalApi
 public fun KtElement.symbolPointer(): KaSymbolPointer<KaSymbol> = KaPsiBasedSymbolPointer(this, KaSymbol::class)
+
+@OptIn(KaImplementationDetail::class)
+@KaExperimentalApi
 public inline fun <reified S : KaSymbol> KtElement.symbolPointerOfType(): KaSymbolPointer<S> = KaPsiBasedSymbolPointer(this, S::class)
