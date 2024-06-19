@@ -439,7 +439,7 @@ internal inline fun <reified FP : FirClassLikeDeclaration, reified IS : IrSymbol
     }
 }
 
-private fun FirTypeParameter.getContaininingId(): Pair<ClassId?, CallableId?> = when (val container = symbol.containingDeclarationSymbol) {
+internal fun FirTypeParameter.getContaininingId(): Pair<ClassId?, CallableId?> = when (val container = symbol.containingDeclarationSymbol) {
     is FirClassLikeSymbol<*> -> container.classId to null
     is FirCallableSymbol<*> -> null to container.callableId
     else -> null to null

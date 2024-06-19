@@ -1438,15 +1438,23 @@ internal inline fun <reified FD : FirDeclaration, reified IS : IrSymbol> Map<FD,
     }*/?.value
 }
 
+private fun FirValueParameter.getTypeOrTypeParameterId() =
+    when (val type = returnTypeRef.coneType) {
+        is ConeTypeParameterType -> null to type.lookupTag.typeParameterSymbol.fir.getContaininingId()
+        else -> type to null
+    }
+
 private inline fun <reified FF : FirFunction, reified IS : IrSymbol> Map<FF, IS>.getCachedIrSymbolByCommonFunction(
     firFunction: FF
 ): IS? {
     val callableId = firFunction.symbol.callableId
     val receiver = firFunction.receiverParameter?.typeRef?.coneType
-    val argTypes = firFunction.valueParameters.map { it.returnTypeRef.coneType }
+    val typeParameterIds = firFunction.typeParameters.map { it.symbol.fir.getContaininingId() }
+    val argTypeIds = firFunction.valueParameters.map { it.getTypeOrTypeParameterId() }
     return getCachedIrSymbolByCommonDeclaration {
         it.symbol.callableId == callableId && it.receiverParameter?.typeRef?.coneType == receiver &&
-                it.valueParameters.map { it.returnTypeRef.coneType } == argTypes &&
+                it.typeParameters.map { it.symbol.fir.getContaininingId() } == typeParameterIds &&
+                it.valueParameters.map { it.getTypeOrTypeParameterId() } == argTypeIds &&
                 it.symbol.isExpect == firFunction.symbol.isExpect
     }
 }
