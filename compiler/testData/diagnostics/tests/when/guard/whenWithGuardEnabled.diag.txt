@@ -1,0 +1,24 @@
+/whenWithGuardEnabled.kt:15:26: error: the feature "when guards" is not supported in language versions 1.*, please use version 2.0 or later
+        is BooleanHolder if x.value -> Unit
+                         ^^^^^^^^^^
+/whenWithGuardEnabled.kt:16:25: error: the feature "when guards" is not supported in language versions 1.*, please use version 2.0 or later
+        is StringHolder if x.value != null &&
+                        ^^^^^^^^^^^^^^^^^^^^^
+/whenWithGuardEnabled.kt:18:14: error: the feature "when guards" is not supported in language versions 1.*, please use version 2.0 or later
+        else if x is Boolean && x -> Unit
+             ^^^^^^^^^^^^^^^^^^^^
+/whenWithGuardEnabled.kt:26:28: error: the feature "when guards" is not supported in language versions 1.*, please use version 2.0 or later
+        x is BooleanHolder if x.value -> Unit
+                           ^^^^^^^^^^
+/whenWithGuardEnabled.kt:28:14: error: the feature "when guards" is not supported in language versions 1.*, please use version 2.0 or later
+        else if x is Boolean -> Unit
+             ^^^^^^^^^^^^^^^
+/whenWithGuardEnabled.kt:36:27: error: the feature "when guards" is not supported in language versions 1.*, please use version 2.0 or later
+        is True, is False if x.value -> Unit
+                          ^^^^^^^^^^
+/whenWithGuardEnabled.kt:44:18: error: the feature "when guards" is not supported in language versions 1.*, please use version 2.0 or later
+        is False if x.value -> Unit
+                 ^^^^^^^^^^
+/whenWithGuardEnabled.kt:51:18: error: the feature "when guards" is not supported in language versions 1.*, please use version 2.0 or later
+        is False if x.value -> Unit
+                 ^^^^^^^^^^

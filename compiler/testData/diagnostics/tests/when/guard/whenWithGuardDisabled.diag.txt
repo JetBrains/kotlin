@@ -1,0 +1,24 @@
+/whenWithGuardDisabled.kt:14:26: error: the feature "when guards" is experimental and should be enabled explicitly
+        is BooleanHolder if x.value -> Unit
+                         ^^^^^^^^^^
+/whenWithGuardDisabled.kt:15:25: error: the feature "when guards" is experimental and should be enabled explicitly
+        is StringHolder if x.value != null &&
+                        ^^^^^^^^^^^^^^^^^^^^^
+/whenWithGuardDisabled.kt:17:14: error: the feature "when guards" is experimental and should be enabled explicitly
+        else if x is Boolean && x -> Unit
+             ^^^^^^^^^^^^^^^^^^^^
+/whenWithGuardDisabled.kt:25:28: error: the feature "when guards" is experimental and should be enabled explicitly
+        x is BooleanHolder if x.value -> Unit
+                           ^^^^^^^^^^
+/whenWithGuardDisabled.kt:27:14: error: the feature "when guards" is experimental and should be enabled explicitly
+        else if x is Boolean -> Unit
+             ^^^^^^^^^^^^^^^
+/whenWithGuardDisabled.kt:35:27: error: the feature "when guards" is experimental and should be enabled explicitly
+        is True, is False if x.value -> Unit
+                          ^^^^^^^^^^
+/whenWithGuardDisabled.kt:43:18: error: the feature "when guards" is experimental and should be enabled explicitly
+        is False if x.value -> Unit
+                 ^^^^^^^^^^
+/whenWithGuardDisabled.kt:50:18: error: the feature "when guards" is experimental and should be enabled explicitly
+        is False if x.value -> Unit
+                 ^^^^^^^^^^
