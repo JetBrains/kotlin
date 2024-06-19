@@ -90,9 +90,10 @@ private fun resolveFile(resolutionPath: String?, path: String): File? {
 
 internal class ReadDelimStr : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.text: String by arg()
+    val Arguments.delimiter: Char by arg(defaultValue = Present(','))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return DataFrame.readDelimStr(text).schema().toPluginDataFrameSchema()
+        return DataFrame.readDelimStr(text, delimiter).schema().toPluginDataFrameSchema()
     }
 }
 
