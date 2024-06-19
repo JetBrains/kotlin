@@ -22,7 +22,7 @@ fun KaFunctionSymbol.getObjCFunctionName(): ObjCExportFunctionName {
     )
 }
 
-context(KaSession)
+context(KaSession, KtObjCExportSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaFunctionSymbol.getObjCFunctionName(annotationName: String?): String {
     return if (annotationName != null) {
@@ -30,12 +30,12 @@ private fun KaFunctionSymbol.getObjCFunctionName(annotationName: String?): Strin
     } else translationName
 }
 
-context(KaSession)
+context(KaSession, KtObjCExportSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private val KaFunctionSymbol.translationName: String
     get() {
         return when (this) {
-            is KaNamedFunctionSymbol -> name.asString()
+            is KaNamedFunctionSymbol -> exportSessionSymbolName()
             is KaConstructorSymbol -> "init"
             is KaPropertyAccessorSymbol -> formatPropertyName()
             is KaAnonymousFunctionSymbol -> ""
@@ -43,11 +43,11 @@ private val KaFunctionSymbol.translationName: String
         }
     }
 
-context(KaSession)
+context(KaSession, KtObjCExportSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaPropertyAccessorSymbol.formatPropertyName(annotationName: String? = null): String {
     val propertySymbol = this.getPropertySymbol()
-    val name = annotationName ?: propertySymbol.name.asString()
+    val name = annotationName ?: propertySymbol.exportSessionSymbolName()
     return when (this) {
         is KaPropertyGetterSymbol -> name
         is KaPropertySetterSymbol -> "set" + name.replaceFirstChar(kotlin.Char::uppercaseChar)

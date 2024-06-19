@@ -49,7 +49,7 @@ private fun KaClassLikeSymbol.getObjCName(
     resolvedObjCNameAnnotation: KtResolvedObjCNameAnnotation? = resolveObjCNameAnnotation(),
     bareName: Boolean = false,
 ): String {
-    val objCName = (resolvedObjCNameAnnotation?.objCName ?: nameOrAnonymous.asString()).toValidObjCSwiftIdentifier()
+    val objCName = (resolvedObjCNameAnnotation?.objCName ?: exportSessionSymbolNameOrAnonymous()).toValidObjCSwiftIdentifier()
 
     if (bareName || resolvedObjCNameAnnotation != null && resolvedObjCNameAnnotation.isExact) {
         return objCName
@@ -73,7 +73,7 @@ private fun KaClassLikeSymbol.getSwiftName(
     resolvedObjCNameAnnotation: KtResolvedObjCNameAnnotation? = resolveObjCNameAnnotation(),
     bareName: Boolean = false,
 ): String {
-    val swiftName = (resolvedObjCNameAnnotation?.swiftName ?: nameOrAnonymous.asString()).toValidObjCSwiftIdentifier()
+    val swiftName = (resolvedObjCNameAnnotation?.swiftName ?: exportSessionSymbolNameOrAnonymous()).toValidObjCSwiftIdentifier()
     if (bareName || resolvedObjCNameAnnotation != null && resolvedObjCNameAnnotation.isExact) {
         return swiftName
     }

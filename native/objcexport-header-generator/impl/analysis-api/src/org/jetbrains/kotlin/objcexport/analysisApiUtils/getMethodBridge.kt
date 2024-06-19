@@ -29,15 +29,15 @@ internal fun KaFunctionSymbol.getFunctionMethodBridge(): MethodBridge {
     val isInner = (containingSymbol as? KaNamedClassSymbol)?.isInner ?: false
 
     this.receiverParameter?.apply {
-        valueParameters += bridgeParameter(this.type)
+        valueParameters += this.type.bridgeParameter()
     }
 
     this.valueParameters.forEach {
-        valueParameters += bridgeParameter(it.returnType)
+        valueParameters += it.returnType.bridgeParameter()
     }
 
     if (isInner) {
-        valueParameters += bridgeParameter(this.returnType)
+        valueParameters += this.returnType.bridgeParameter()
     }
 
     if (isSuspend) {
@@ -75,8 +75,8 @@ internal val KaCallableSymbol.bridgeReceiverType: MethodBridgeReceiver
  */
 context(KaSession, KtObjCExportSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-private fun bridgeParameter(type: KaType): MethodBridgeValueParameter {
-    return MethodBridgeValueParameter.Mapped(bridgeType(type))
+fun KaType.bridgeParameter(): MethodBridgeValueParameter {
+    return MethodBridgeValueParameter.Mapped(bridgeType(this))
 }
 
 /**
@@ -150,6 +150,7 @@ private fun bridgeFunctionType(type: KaType): TypeBridge {
 context(KaSession, KtObjCExportSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaCallableSymbol.bridgeReturnType(): MethodBridge.ReturnValue {
+    val sessionReturnType = exportSessionReturnType()
 
     if (isArrayConstructor) {
         return MethodBridge.ReturnValue.Instance.FactoryResult
@@ -160,7 +161,7 @@ private fun KaCallableSymbol.bridgeReturnType(): MethodBridge.ReturnValue {
         } else {
             return result
         }
-    } else if (returnType.isSuspendFunctionType) {
+    } else if (sessionReturnType.isSuspendFunctionType) {
         return MethodBridge.ReturnValue.Suspend
     }
 
@@ -168,19 +169,19 @@ private fun KaCallableSymbol.bridgeReturnType(): MethodBridge.ReturnValue {
         return MethodBridge.ReturnValue.HashCode
     }
 
-    if (returnType.isUnitType) {
+    if (sessionReturnType.isUnitType) {
         return successOrVoidReturnValue
     }
 
-    if (returnType.isObjCNothing && this !is KaPropertyAccessorSymbol) {
+    if (sessionReturnType.isObjCNothing && this !is KaPropertyAccessorSymbol) {
         return successOrVoidReturnValue
     }
 
-    val returnTypeBridge = bridgeType(returnType)
+    val returnTypeBridge = bridgeType(sessionReturnType)
     val successReturnValueBridge = MethodBridge.ReturnValue.Mapped(returnTypeBridge)
 
     return if (hasThrowsAnnotation) {
-        val canReturnZero = !returnTypeBridge.isReferenceOrPointer() || returnType.canBeNull
+        val canReturnZero = !returnTypeBridge.isReferenceOrPointer() || sessionReturnType.canBeNull
         MethodBridge.ReturnValue.WithError.ZeroForError(
             successReturnValueBridge,
             successMayBeZero = canReturnZero

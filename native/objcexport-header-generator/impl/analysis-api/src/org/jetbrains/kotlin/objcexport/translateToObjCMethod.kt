@@ -34,6 +34,18 @@ fun KaFunctionSymbol.translateToObjCMethod(): ObjCMethod? {
     return buildObjCMethod()
 }
 
+context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+fun KaFunctionSymbol.getBaseFunctionMethodBridge(): MethodBridge =
+    when (this) {
+        /**
+         * Unlike constructor, a function can have base return type.
+         * So in case of function we need to call [getFunctionMethodBridge] on [baseMethod]
+         */
+        is KaNamedFunctionSymbol -> baseMethod.getFunctionMethodBridge()
+        else -> this.getFunctionMethodBridge()
+    }
+
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.buildMethod]
  */
@@ -43,16 +55,7 @@ internal fun KaFunctionSymbol.buildObjCMethod(
     unavailable: Boolean = false,
 ): ObjCMethod {
 
-    val bridge = if (this is KaNamedFunctionSymbol) {
-        /**
-         * Unlike constructor, a function can have base return type.
-         * So in case of function we need to call [getFunctionMethodBridge] on [baseMethod]
-         */
-        baseMethod.getFunctionMethodBridge()
-    } else {
-        this.getFunctionMethodBridge()
-    }
-
+    val bridge = getBaseFunctionMethodBridge()
     val returnType: ObjCType = mapReturnType(bridge.returnBridge)
     val parameters = translateToObjCParameters(bridge)
     val selector = getSelector(bridge)
@@ -275,7 +278,7 @@ fun KaFunctionSymbol.getSelector(methodBridge: MethodBridge): String {
  */
 context(KaSession, KtObjCExportSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-private fun KaFunctionSymbol.getMangledName(forSwift: Boolean): String {
+fun KaFunctionSymbol.getMangledName(forSwift: Boolean): String {
     return if (this.isConstructor) {
         if (isArrayConstructor && !forSwift) "array" else "init"
     } else {

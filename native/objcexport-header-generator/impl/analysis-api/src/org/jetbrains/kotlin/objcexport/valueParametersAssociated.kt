@@ -20,9 +20,10 @@ import org.jetbrains.kotlin.utils.addIfNotNull
  */
 context(KaSession, KtObjCExportSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal fun MethodBridge.valueParametersAssociated(
+fun MethodBridge.valueParametersAssociated(
     function: KaFunctionSymbol,
 ): List<Pair<MethodBridgeValueParameter, KtObjCParameterData?>> {
+    function.exportSessionValueParameters()?.let { return it }
 
     val result = mutableListOf<Pair<MethodBridgeValueParameter, KtObjCParameterData?>>()
     val functionParameters = function.valueParameters
@@ -48,6 +49,8 @@ internal fun MethodBridge.valueParametersAssociated(
     return result
 }
 
+context(KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun MethodBridge.mapParameters(
     valueParameters: List<KaValueParameterSymbol>,
 ): List<Pair<MethodBridgeValueParameter, KtObjCParameterData?>> {
@@ -78,20 +81,22 @@ private fun MutableList<Pair<MethodBridgeValueParameter, KtObjCParameterData?>>.
     }
 }
 
+context(KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun mapBridgeToFunctionParameters(
     bridgeParameter: MethodBridgeValueParameter?,
     functionParameter: KaValueParameterSymbol?,
 ): Pair<MethodBridgeValueParameter, KtObjCParameterData?>? {
     return if (bridgeParameter == null) null
     else if (functionParameter != null && bridgeParameter is MethodBridgeValueParameter.Mapped) bridgeParameter to KtObjCParameterData(
-        name = functionParameter.name,
+        name = Name.identifier(functionParameter.exportSessionSymbolName()),
         isVararg = functionParameter.isVararg,
         type = functionParameter.returnType,
         isReceiver = false
     ) else bridgeParameter to null
 }
 
-internal data class KtObjCParameterData(
+data class KtObjCParameterData(
     val name: Name,
     val isVararg: Boolean,
     val type: KaType,
