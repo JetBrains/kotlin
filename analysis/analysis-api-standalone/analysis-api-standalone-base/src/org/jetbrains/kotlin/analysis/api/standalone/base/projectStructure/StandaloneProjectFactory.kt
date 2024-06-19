@@ -125,7 +125,7 @@ object StandaloneProjectFactory {
                 registerService(ClsKotlinBinaryClassCache::class.java)
                 registerService(
                     BuiltinsVirtualFileProvider::class.java,
-                    BuiltinsVirtualFileProviderCliImpl(applicationEnvironment.jarFileSystem as CoreJarFileSystem)
+                    BuiltinsVirtualFileProviderCliImpl()
                 )
                 registerService(FileAttributeService::class.java, DummyFileAttributeService::class.java)
             }

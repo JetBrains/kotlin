@@ -6,5 +6,7 @@
         serviceInterface="org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDirectInheritorsProvider"
         serviceImplementation="org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneFirDirectInheritorsProvider"
     />
+    <applicationService serviceInterface="org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider"
+        serviceImplementation="org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProviderCliImpl"/>
   </extensions>
 </idea-plugin>
