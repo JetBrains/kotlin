@@ -8,8 +8,9 @@ package org.jetbrains.kotlin.analysis.test.framework.services
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.Application
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaBuiltinsModuleImpl
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironmentMode
@@ -34,6 +35,7 @@ abstract class AnalysisApiEnvironmentManager : TestService {
     abstract fun getApplicationEnvironment(): KotlinCoreApplicationEnvironment
 }
 
+@OptIn(KaAnalysisApiInternals::class)
 class AnalysisApiEnvironmentManagerImpl(
     override val testServices: TestServices,
     override val testRootDisposable: Disposable,
@@ -56,7 +58,7 @@ class AnalysisApiEnvironmentManagerImpl(
         val ktTestModuleStructure = testServices.ktTestModuleStructure
         val useSiteModule = testServices.moduleStructure.modules.first()
         val useSiteCompilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(useSiteModule)
-        val builtinsModule = KaBuiltinsModule(useSiteModule.targetPlatform, getProject())
+        val builtinsModule = KaBuiltinsModuleImpl(useSiteModule.targetPlatform, getProject())
 
         val globalLanguageVersionSettings = useSiteModule.languageVersionSettings
 

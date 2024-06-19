@@ -10,6 +10,7 @@ import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaBuiltinsModuleImpl
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirBuiltinsAndCloneableSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirBuiltinsAndCloneableSession
@@ -51,7 +52,7 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
      * been registered at that point.
      */
     fun getBuiltinsModule(platform: TargetPlatform): KaBuiltinsModule =
-        builtinsModules.getOrPut(platform) { KaBuiltinsModule(platform, project) }
+        builtinsModules.getOrPut(platform) { KaBuiltinsModuleImpl(platform, project) }
 
     fun getBuiltinsSession(platform: TargetPlatform): LLFirBuiltinsAndCloneableSession =
         builtinsAndCloneableSessions.getOrPut(platform) {

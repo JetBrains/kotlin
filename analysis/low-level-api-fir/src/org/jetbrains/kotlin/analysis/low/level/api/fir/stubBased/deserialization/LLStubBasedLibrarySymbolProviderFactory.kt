@@ -143,7 +143,7 @@ private class StubBasedBuiltInsSymbolProvider(
     SingleModuleDataProvider(moduleData),
     kotlinScopeProvider,
     project,
-    createBuiltInsScope(project),
+    BuiltInsVirtualFileProvider.getInstance().createBuiltinsScope(project),
     isFallbackDependenciesProvider = false,
 ) {
     private val syntheticFunctionInterfaceProvider = FirBuiltinSyntheticFunctionInterfaceProvider.initialize(
@@ -169,9 +169,4 @@ private class StubBasedBuiltInsSymbolProvider(
         // this provider operates only on builtins files, no need to check anything
         return FirDeclarationOrigin.BuiltIns
     }
-}
-
-private fun createBuiltInsScope(project: Project): GlobalSearchScope {
-    val builtInFiles = BuiltInsVirtualFileProvider.getInstance().getBuiltInVirtualFiles()
-    return GlobalSearchScope.filesScope(project, builtInFiles)
 }
