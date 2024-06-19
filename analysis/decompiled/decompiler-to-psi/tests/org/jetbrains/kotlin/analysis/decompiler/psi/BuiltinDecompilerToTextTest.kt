@@ -58,7 +58,7 @@ class BuiltinDecompilerToTextTest : AbstractDecompiledClassTest() {
         if (application.getService(BuiltinsVirtualFileProvider::class.java) == null) {
             application.registerService(
                 BuiltinsVirtualFileProvider::class.java,
-                BuiltinsVirtualFileProviderCliImpl(applicationEnvironment.jarFileSystem as CoreJarFileSystem)
+                BuiltinsVirtualFileProviderCliImpl()
             )
         }
     }
