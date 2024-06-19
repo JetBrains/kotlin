@@ -312,7 +312,7 @@ FILE fqName:<root> fileName:/toDataFrame.kt
                 CALL 'public open fun now (): @[FlexibleNullability] java.time.Year? declared in java.time.Year' type=@[FlexibleNullability] java.time.Year? origin=null
               boolean: CONST Boolean type=kotlin.Boolean value=true
               instant: CALL 'public open fun now (): kotlinx.datetime.Instant declared in kotlinx.datetime.Clock.System' type=kotlinx.datetime.Instant origin=null
-                $this: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:System modality:FINAL visibility:public superTypes:[kotlinx.datetime.Clock]' type=kotlinx.datetime.Clock.System
+                $this: GET_OBJECT 'CLASS OBJECT name:System modality:FINAL visibility:public superTypes:[kotlinx.datetime.Clock]' type=kotlinx.datetime.Clock.System
               numberI: CONST Int type=kotlin.Int value=12
               number: CONST Int type=kotlin.Int value=12
               numberFloat: CONST Float type=kotlin.Float value=12.0
