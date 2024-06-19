@@ -181,7 +181,7 @@ internal class XcodeProject(private val workDir: Path) {
         codesign(
             "--force", "--sign", "-",
             "--timestamp=none",
-            "--entitlements", path.parent.resolve(ENITITLEMENTS).absolutePathString(),
+            "--entitlements", path.parent.resolve(ENTITLEMENTS).absolutePathString(),
             "--generate-entitlement-der",
             application.toString()
         )
@@ -196,7 +196,7 @@ internal class XcodeProject(private val workDir: Path) {
     companion object {
         private const val PROJECT_NAME = "test-ios-launch"
         private const val PROJECT_RESOURCE_PATH = "/xcode-project"
-        private const val ENITITLEMENTS = "$PROJECT_NAME.app.xcent"
+        private const val ENTITLEMENTS = "$PROJECT_NAME.app.xcent"
 
         // Those variables make Xcode skip its code signing that we do by ourselves manually and using ad-hoc technique
         private val XCODE_CODESIGN_PARAMETERS = listOf(
