@@ -41,10 +41,9 @@ internal object FirAnnotationValueConverter {
         argumentMapping: Map<Name, FirExpression>,
         builder: KaSymbolByFirBuilder,
     ): List<KaNamedAnnotationValue> = argumentMapping.map { (name, expression) ->
-        KaNamedAnnotationValue(
+        KaBaseNamedAnnotationValue(
             name,
             expression.convertConstantExpression(builder) ?: KaUnsupportedAnnotationValueImpl(analysisSession.token),
-            analysisSession.token
         )
     }
 
