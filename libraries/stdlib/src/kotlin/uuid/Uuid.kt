@@ -347,8 +347,8 @@ public class Uuid internal constructor(
          *
          * The following APIs are used for producing the random uuid in each of the supported targets:
          *   - Kotlin/JVM - [java.security.SecureRandom](https://docs.oracle.com/javase/8/docs/api/java/security/SecureRandom.html)
-         *   - Kotlin/JS - [Crypto.getRandomBytes()](https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues)
-         *   - Kotlin/WasmJs - [Crypto.getRandomBytes()](https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues)
+         *   - Kotlin/JS - [Crypto.getRandomValues()](https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues)
+         *   - Kotlin/WasmJs - [Crypto.getRandomValues()](https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues)
          *   - Kotlin/WasmWasi - [random_get](https://github.com/WebAssembly/WASI/blob/main/legacy/preview1/docs.md#random_get)
          *   - Kotlin/Native:
          *       - Linux targets - [getrandom](https://www.man7.org/linux/man-pages/man2/getrandom.2.html)
