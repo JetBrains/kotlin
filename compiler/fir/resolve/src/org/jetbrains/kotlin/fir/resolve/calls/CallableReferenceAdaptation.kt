@@ -14,7 +14,7 @@ internal class CallableReferenceAdaptation(
     val argumentTypes: Array<ConeKotlinType>,
     val coercionStrategy: CoercionStrategy,
     val defaults: Int,
-    val mappedArguments: CallableReferenceMappedArguments,
+    val mappedArguments: CallableReferenceMappedArguments<ConeCallAtom>,
     val suspendConversionStrategy: CallableReferenceConversionStrategy,
 ) {
     init {

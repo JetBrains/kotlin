@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.fir.references
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.calls.CallableReferenceMappedArguments
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -25,7 +26,7 @@ abstract class FirResolvedCallableReference : FirResolvedNamedReference() {
     abstract override val name: Name
     abstract override val resolvedSymbol: FirBasedSymbol<*>
     abstract val inferredTypeArguments: List<ConeKotlinType>
-    abstract val mappedArguments: CallableReferenceMappedArguments
+    abstract val mappedArguments: CallableReferenceMappedArguments<FirExpression>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitResolvedCallableReference(this, data)

@@ -1082,7 +1082,7 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(resolvedNamedReference)
 
         +listField("inferredTypeArguments", coneKotlinTypeType)
-        +field("mappedArguments", callableReferenceMappedArgumentsType)
+        +field("mappedArguments", callableReferenceMappedArgumentsType.withArgs(expression))
     }
 
     val delegateFieldReference: Element by element(Reference) {
