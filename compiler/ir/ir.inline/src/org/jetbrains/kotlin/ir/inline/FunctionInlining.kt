@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.ir.isInlineLambdaBlock
 import org.jetbrains.kotlin.backend.common.ir.isPure
-import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins.INLINED_FUNCTION_ARGUMENTS
-import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins.INLINED_FUNCTION_DEFAULT_ARGUMENTS
 import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins.INLINED_FUNCTION_REFERENCE
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -137,7 +135,7 @@ open class FunctionInlining(
         return inliner.inline().markAsRegenerated()
     }
 
-    private fun IrReturnableBlock.markAsRegenerated(): IrReturnableBlock {
+    private fun IrBlock.markAsRegenerated(): IrBlock {
         if (!regenerateInlinedAnonymousObjects) return this
         acceptVoid(object : IrElementVisitorVoid {
             private fun IrAttributeContainer.setUpCorrectAttributeOwner() {
@@ -187,12 +185,12 @@ open class FunctionInlining(
             callSite: IrFunctionAccessExpression,
             callee: IrFunction,
             originalInlinedElement: IrElement,
-        ): IrReturnableBlock {
+        ): IrBlock {
             val copiedCallee = inlineFunctionBodyPreprocessor.preprocess(callee).apply {
                 parent = callee.parent
             }
 
-            val evaluationStatements = evaluateArguments(callSite, copiedCallee)
+            val (newStatementsFromCallSite, newStatementsFromDefault) = evaluateArguments(callSite, copiedCallee)
             val statements = (copiedCallee.body as? IrBlockBody)?.statements
                 ?: error("Body not found for function ${callee.render()}")
 
@@ -213,12 +211,10 @@ open class FunctionInlining(
                 inlineCall = callSite,
                 inlinedElement = originalInlinedElement,
                 origin = null,
-                statements = evaluationStatements + newStatements
+                statements = newStatementsFromDefault + newStatements
             )
 
-            // Note: here we wrap `IrInlinedFunctionBlock` inside `IrReturnableBlock` because such way it is easier to
-            // control special composite blocks that are inside `IrInlinedFunctionBlock`
-            return IrReturnableBlockImpl(
+            val retBlock = IrReturnableBlockImpl(
                 startOffset = callSite.startOffset,
                 endOffset = callSite.endOffset,
                 type = callSite.type,
@@ -239,6 +235,13 @@ open class FunctionInlining(
                 })
                 patchDeclarationParents(parent) // TODO: Why it is not enough to just run SetDeclarationsParentVisitor?
             }
+
+            return IrBlockImpl(
+                startOffset = callSite.startOffset,
+                endOffset = callSite.endOffset,
+                type = callSite.type,
+                statements = newStatementsFromCallSite + retBlock
+            )
         }
 
         //---------------------------------------------------------------------//
@@ -653,10 +656,14 @@ open class FunctionInlining(
             return newVariable
         }
 
-        private fun evaluateArguments(callSite: IrFunctionAccessExpression, callee: IrFunction): List<IrStatement> {
-            val arguments = buildParameterToArgument(callSite, callee)
+        private fun evaluateArguments(callSite: IrFunctionAccessExpression, callee: IrFunction): Pair<List<IrStatement>, List<IrStatement>> {
+            // The next two lists are used just as containers for two types of variables.
+            // The first one stores temp variables that represent non-default arguments of inline call, and the second one stores defaults.
+            // This is needed because defaults must be included inside IrInlinedBlock and non=defaults must be outside.
             val evaluationStatements = mutableListOf<IrVariable>()
             val evaluationStatementsFromDefault = mutableListOf<IrVariable>()
+
+            val arguments = buildParameterToArgument(callSite, callee)
             val substitutor = ParameterSubstitutor()
             arguments.forEach { argument ->
                 val parameter = argument.parameter
@@ -699,24 +706,7 @@ open class FunctionInlining(
                 }
             }
 
-
-            // Next two composite blocks are used just as containers for two types of variables.
-            // First one store temp variables that represent non default arguments of inline call and second one store defaults.
-            // This is needed because these two groups of variables need slightly different processing on (JVM) backend.
-            val blockForNewStatements = IrCompositeImpl(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.unitType,
-                INLINED_FUNCTION_ARGUMENTS, statements = evaluationStatements
-            )
-
-            val blockForNewStatementsFromDefault = IrCompositeImpl(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.unitType,
-                INLINED_FUNCTION_DEFAULT_ARGUMENTS, statements = evaluationStatementsFromDefault
-            )
-
-            return listOfNotNull(
-                blockForNewStatements.takeIf { evaluationStatements.isNotEmpty() },
-                blockForNewStatementsFromDefault.takeIf { evaluationStatementsFromDefault.isNotEmpty() }
-            )
+            return evaluationStatements to evaluationStatementsFromDefault
         }
 
         private fun ParameterToArgument.shouldBeSubstitutedViaTemporaryVariable(): Boolean =
