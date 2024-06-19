@@ -120,12 +120,15 @@ abstract class AbstractValueUsageTransformer(
         return body
     }
 
-    override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
-        if (!replaceTypesInsideInlinedFunctionBlock && expression is IrInlinedFunctionBlock) {
-            expression.transformChildrenVoid(this)
-            return expression
+    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock): IrExpression {
+        if (!replaceTypesInsideInlinedFunctionBlock) {
+            inlinedBlock.transformChildrenVoid(this)
+            return inlinedBlock
         }
+        return super.visitInlinedFunctionBlock(inlinedBlock)
+    }
 
+    override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
         expression.transformChildrenVoid(this)
 
         if (expression.statements.isEmpty()) {

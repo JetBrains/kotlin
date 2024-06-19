@@ -1026,9 +1026,8 @@ open class LocalDeclarationsLowering(
                     element.acceptChildren(this, data)
                 }
 
-                override fun visitBlock(expression: IrBlock, data: Data) {
-                    if (expression !is IrInlinedFunctionBlock) return super.visitBlock(expression, data)
-                    super.visitBlock(expression, data.withInline(expression.isFunctionInlining()))
+                override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: Data) {
+                    super.visitInlinedFunctionBlock(inlinedBlock, data.withInline(inlinedBlock.isFunctionInlining()))
                 }
 
                 override fun visitFunctionExpression(expression: IrFunctionExpression, data: Data) {

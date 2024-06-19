@@ -35,11 +35,11 @@ internal class TailCallOptimizationLowering(private val context: JvmBackendConte
             override fun visitSimpleFunction(declaration: IrSimpleFunction, data: TailCallOptimizationData?) =
                 super.visitSimpleFunction(declaration, if (declaration.isSuspend) TailCallOptimizationData(declaration) else null)
 
-            override fun visitContainerExpression(expression: IrContainerExpression, data: TailCallOptimizationData?): IrExpression {
-                if (expression is IrInlinedFunctionBlock && expression.isFunctionInlining()) {
-                    return expression
+            override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: TailCallOptimizationData?): IrExpression {
+                if (inlinedBlock.isFunctionInlining()) {
+                    return inlinedBlock
                 }
-                return super.visitContainerExpression(expression, data)
+                return super.visitInlinedFunctionBlock(inlinedBlock, data)
             }
 
             override fun visitCall(expression: IrCall, data: TailCallOptimizationData?): IrExpression {

@@ -344,11 +344,10 @@ class DumpIrTreeVisitor(
     private fun IrMemberAccessExpression<*>.renderTypeArgument(index: Int): String =
         getTypeArgument(index)?.render() ?: "<none>"
 
-    override fun visitBlock(expression: IrBlock, data: String) {
-        if (expression !is IrInlinedFunctionBlock) return super.visitBlock(expression, data)
-        expression.dumpLabeledElementWith(data) {
-            expression.inlinedElement.dumpInternal("inlinedElement")
-            expression.acceptChildren(this, "")
+    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: String) {
+        inlinedBlock.dumpLabeledElementWith(data) {
+            inlinedBlock.inlinedElement.dumpInternal("inlinedElement")
+            inlinedBlock.acceptChildren(this, "")
         }
     }
 

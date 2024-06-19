@@ -42,9 +42,9 @@ internal class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: Jvm
         element.acceptChildrenVoid(this)
     }
 
-    override fun visitBlock(expression: IrBlock) {
-        if (expression is IrInlinedFunctionBlock && expression.isFunctionInlining()) {
-            val element = expression.inlineDeclaration
+    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock) {
+        if (inlinedBlock.isFunctionInlining()) {
+            val element = inlinedBlock.inlineDeclaration
             if (!element.wasVisitedForRegenerationLowering) {
                 // Note: functions from other module will not be affected here, they are loaded as IrLazy declarations.
                 // BUT during IR serialization support we need to carefully test this logic.
@@ -52,12 +52,12 @@ internal class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: Jvm
                 element.acceptVoid(this)
             }
 
-            val mustBeRegenerated = expression.collectDeclarationsThatMustBeRegenerated()
-            expression.setUpCorrectAttributesForAllInnerElements(mustBeRegenerated)
+            val mustBeRegenerated = inlinedBlock.collectDeclarationsThatMustBeRegenerated()
+            inlinedBlock.setUpCorrectAttributesForAllInnerElements(mustBeRegenerated)
             return
         }
 
-        super.visitBlock(expression)
+        super.visitInlinedFunctionBlock(inlinedBlock)
     }
 
     private fun IrInlinedFunctionBlock.collectDeclarationsThatMustBeRegenerated(): Set<IrAttributeContainer> {

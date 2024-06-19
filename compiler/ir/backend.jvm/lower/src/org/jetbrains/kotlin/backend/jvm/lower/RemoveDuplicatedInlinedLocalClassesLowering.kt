@@ -66,18 +66,18 @@ private class RemoveDuplicatedInlinedLocalClassesTransformer(val context: JvmBac
         return super.visitCall(expression, data)
     }
 
-    override fun visitBlock(expression: IrBlock, data: Data): IrExpression {
-        if (expression is IrInlinedFunctionBlock) {
-            val newData = data.copy(insideInlineBlock = true)
-            expression.getNonDefaultAdditionalStatementsFromInlinedBlock()
-                .forEach { it.transform(this, newData.copy(classDeclaredOnCallSiteOrIsDefaultLambda = false)) }
-            expression.getDefaultAdditionalStatementsFromInlinedBlock()
-                .forEach { it.transform(this, newData.copy(classDeclaredOnCallSiteOrIsDefaultLambda = true)) }
-            expression.getOriginalStatementsFromInlinedBlock()
-                .forEach { it.transform(this, newData.copy(classDeclaredOnCallSiteOrIsDefaultLambda = true)) }
-            return expression
-        }
+    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: Data): IrExpression {
+        val newData = data.copy(insideInlineBlock = true)
+        inlinedBlock.getNonDefaultAdditionalStatementsFromInlinedBlock()
+            .forEach { it.transform(this, newData.copy(classDeclaredOnCallSiteOrIsDefaultLambda = false)) }
+        inlinedBlock.getDefaultAdditionalStatementsFromInlinedBlock()
+            .forEach { it.transform(this, newData.copy(classDeclaredOnCallSiteOrIsDefaultLambda = true)) }
+        inlinedBlock.getOriginalStatementsFromInlinedBlock()
+            .forEach { it.transform(this, newData.copy(classDeclaredOnCallSiteOrIsDefaultLambda = true)) }
+        return inlinedBlock
+    }
 
+    override fun visitBlock(expression: IrBlock, data: Data): IrExpression {
         val anonymousClass = expression.statements.firstOrNull()
         val result = super.visitBlock(expression, data)
         if (anonymousClass is IrClass && result is IrBlock && result.statements.firstOrNull() is IrComposite) {

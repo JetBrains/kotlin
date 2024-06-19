@@ -51,23 +51,23 @@ abstract class InventNamesForLocalClasses(private val generateNamesForRegenerate
         private val anonymousClassesCount = mutableMapOf<String, Int>()
         private val localFunctionNames = mutableMapOf<IrFunctionSymbol, String>()
 
-        override fun visitContainerExpression(expression: IrContainerExpression, data: NameInventorData) {
-            if (expression is IrInlinedFunctionBlock && !generateNamesForRegeneratedObjects) {
-                return expression.getNonDefaultAdditionalStatementsFromInlinedBlock().forEach { it.accept(this, data) }
+        override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: NameInventorData) {
+            if (!generateNamesForRegeneratedObjects) {
+                return inlinedBlock.getNonDefaultAdditionalStatementsFromInlinedBlock().forEach { it.accept(this, data) }
             }
 
-            if (!data.processingInlinedFunction && expression is IrInlinedFunctionBlock && expression.isFunctionInlining()) {
-                expression.getAdditionalStatementsFromInlinedBlock().forEach { it.accept(this, data) }
+            if (!data.processingInlinedFunction && inlinedBlock.isFunctionInlining()) {
+                inlinedBlock.getAdditionalStatementsFromInlinedBlock().forEach { it.accept(this, data) }
 
-                val inlinedAt = expression.inlineCall.symbol.owner.name.asString()
+                val inlinedAt = inlinedBlock.inlineCall.symbol.owner.name.asString()
                 val newData = data.copy(
                     enclosingName = data.enclosingName + "$\$inlined\$$inlinedAt", isLocal = true, processingInlinedFunction = true
                 )
-                expression.getOriginalStatementsFromInlinedBlock().forEach { it.accept(this, newData) }
+                inlinedBlock.getOriginalStatementsFromInlinedBlock().forEach { it.accept(this, newData) }
 
                 return
             }
-            super.visitContainerExpression(expression, data)
+            super.visitInlinedFunctionBlock(inlinedBlock, data)
         }
 
         override fun visitClass(declaration: IrClass, data: NameInventorData) {

@@ -35,22 +35,21 @@ class CreateSeparateCallForInlinedLambdasLowering(val context: JvmBackendContext
         }
     }
 
-    override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
-        if (expression is IrInlinedFunctionBlock && expression.isFunctionInlining()) {
-            val newCalls = expression.getOnlyInlinableArguments().map { arg ->
+    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock): IrExpression {
+        if (inlinedBlock.isFunctionInlining()) {
+            val newCalls = inlinedBlock.getOnlyInlinableArguments().map { arg ->
                 IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.ir.symbols.singleArgumentInlineFunction)
                     .also { it.putValueArgument(0, arg.transform(this, null)) }
             }
 
             // we don't need to transform body of original function, just arguments that were extracted as variables
-            expression.getAdditionalStatementsFromInlinedBlock().forEach { it.transformChildrenVoid() }
+            inlinedBlock.getAdditionalStatementsFromInlinedBlock().forEach { it.transformChildrenVoid() }
             newCalls.reversed().forEach {
-                expression.putStatementBeforeActualInline(context.createJvmIrBuilder(it.symbol), it)
+                inlinedBlock.putStatementBeforeActualInline(context.createJvmIrBuilder(it.symbol), it)
             }
-            return expression
+            return inlinedBlock
         }
-
-        return super.visitContainerExpression(expression)
+        return super.visitInlinedFunctionBlock(inlinedBlock)
     }
 
     private fun IrInlinedFunctionBlock.getOnlyInlinableArguments(): List<IrExpression> {

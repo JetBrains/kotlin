@@ -74,11 +74,11 @@ internal class FakeLocalVariablesForIrInlinerLowering(
         }
     }
 
-    override fun visitBlock(expression: IrBlock) {
+    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock) {
         when {
-            expression is IrInlinedFunctionBlock && expression.isFunctionInlining() -> handleInlineFunction(expression)
-            expression is IrInlinedFunctionBlock && expression.isLambdaInlining() -> handleInlineLambda(expression)
-            else -> super.visitBlock(expression)
+            inlinedBlock.isFunctionInlining() -> handleInlineFunction(inlinedBlock)
+            inlinedBlock.isLambdaInlining() -> handleInlineLambda(inlinedBlock)
+            else -> super.visitInlinedFunctionBlock(inlinedBlock)
         }
     }
 
@@ -129,20 +129,16 @@ private class LocalVariablesProcessor : IrElementVisitor<Unit, LocalVariablesPro
         super.visitClass(declaration, data)
     }
 
-    override fun visitBlock(expression: IrBlock, data: Data) {
-        if (expression !is IrInlinedFunctionBlock) {
-            return super.visitBlock(expression, data)
-        }
-
-        if (expression.isLambdaInlining()) {
-            val argument = expression.inlinedElement as IrAttributeContainer
+    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: Data) {
+        if (inlinedBlock.isLambdaInlining()) {
+            val argument = inlinedBlock.inlinedElement as IrAttributeContainer
             val callee = inlinedStack.extractDeclarationWhereGivenElementWasInlined(argument)
             if (callee == null || callee != inlinedStack.lastOrNull()) return
         }
 
-        super.visitBlock(expression, data)
+        super.visitInlinedFunctionBlock(inlinedBlock, data)
 
-        expression.insertInStackAndProcess {
+        inlinedBlock.insertInStackAndProcess {
             getOriginalStatementsFromInlinedBlock().forEach {
                 it.accept(this@LocalVariablesProcessor, data.copy(processingOriginalDeclarations = true))
             }
@@ -175,14 +171,10 @@ private class FunctionParametersProcessor : IrElementVisitorVoid {
         element.acceptChildrenVoid(this)
     }
 
-    override fun visitBlock(expression: IrBlock) {
-        if (expression !is IrInlinedFunctionBlock) {
-            return super.visitBlock(expression)
-        }
-
-        super.visitBlock(expression)
-        expression.getAdditionalStatementsFromInlinedBlock().forEach {
-            it.processFunctionParameter(expression)
+    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock) {
+        super.visitInlinedFunctionBlock(inlinedBlock)
+        inlinedBlock.getAdditionalStatementsFromInlinedBlock().forEach {
+            it.processFunctionParameter(inlinedBlock)
         }
     }
 
@@ -214,13 +206,9 @@ private class ScopeNumberVariableProcessor : IrElementVisitorVoid {
         declaration.acceptChildrenVoid(processor)
     }
 
-    override fun visitBlock(expression: IrBlock) {
-        if (expression !is IrInlinedFunctionBlock) {
-            return super.visitBlock(expression)
-        }
-
-        expression.insertInStackAndProcess {
-            super.visitBlock(expression)
+    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock) {
+        inlinedBlock.insertInStackAndProcess {
+            super.visitInlinedFunctionBlock(inlinedBlock)
         }
     }
 

@@ -337,20 +337,19 @@ private class SyntheticAccessorTransformer(
         return super.visitFunctionReference(expression)
     }
 
-    override fun visitBlock(expression: IrBlock): IrExpression {
-        if (expression is IrInlinedFunctionBlock && expression.isFunctionInlining()) {
-            val callee = expression.inlineDeclaration
-            val parentClass = callee.parentClassOrNull ?: return super.visitBlock(expression)
+    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock): IrExpression {
+        if (inlinedBlock.isFunctionInlining()) {
+            val callee = inlinedBlock.inlineDeclaration
+            val parentClass = callee.parentClassOrNull ?: return super.visitInlinedFunctionBlock(inlinedBlock)
             return withinIrInlinedFun {
                 withinScope(parentClass) {
                     withinScope(callee) {
-                        super.visitBlock(expression)
+                        super.visitInlinedFunctionBlock(inlinedBlock)
                     }
                 }
             }
         }
-
-        return super.visitBlock(expression)
+        return super.visitInlinedFunctionBlock(inlinedBlock)
     }
 
     /**
