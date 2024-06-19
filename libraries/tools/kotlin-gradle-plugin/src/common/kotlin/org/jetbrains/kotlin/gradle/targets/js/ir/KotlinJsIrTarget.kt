@@ -230,7 +230,7 @@ constructor(
         addSubTarget(KotlinNodeJsIr::class.java) {
             configureSubTarget()
             subTargetConfigurators.add(LibraryConfigurator(this))
-            subTargetConfigurators.add(JsEnvironmentConfigurator(this))
+            subTargetConfigurators.add(NodeJsEnvironmentConfigurator(this))
         }
     }
 
@@ -247,7 +247,7 @@ constructor(
         addSubTarget(KotlinD8Ir::class.java) {
             configureSubTarget()
             subTargetConfigurators.add(LibraryConfigurator(this))
-            subTargetConfigurators.add(JsEnvironmentConfigurator(this))
+            subTargetConfigurators.add(D8EnvironmentConfigurator(this))
         }
     }
 

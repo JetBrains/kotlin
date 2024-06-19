@@ -20,52 +20,26 @@ import org.jetbrains.kotlin.gradle.utils.domainObjectSet
 import javax.inject.Inject
 
 abstract class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
-    KotlinJsIrSubTargetJsEnvWithRunTask(target, "node"),
+    KotlinJsIrSubTarget(target, "node"),
     KotlinJsNodeDsl {
 
     private val nodeJs = project.rootProject.kotlinNodeJsExtension
     private val nodeJsTaskProviders = project.rootProject.kotlinNodeJsExtension
 
-    private val runTaskConfigurations = project.objects.domainObjectSet<Action<NodeJsExec>>()
-
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside nodejs using the builtin test framework"
 
     override fun runTask(body: Action<NodeJsExec>) {
-        runTaskConfigurations.add(body)
+        subTargetConfigurators.configureEach {
+            if (it is NodeJsEnvironmentConfigurator) {
+                it.configureRun(body)
+            }
+        }
     }
 
     @ExperimentalMainFunctionArgumentsDsl
     override fun passProcessArgvToMainFunction() {
         target.passAsArgumentToMainFunction("process.argv")
-    }
-
-    override fun locateOrRegisterRunTask(binary: JsIrBinary, name: String) {
-        if (project.locateTask<NodeJsExec>(name) != null) return
-
-        val compilation = binary.compilation
-        NodeJsExec.create(compilation, name) {
-            group = taskGroupName
-            val inputFile = if ((compilation.target as KotlinJsIrTarget).wasmTargetType == KotlinWasmTargetType.WASI) {
-                sourceMapStackTraces = false
-                if (binary is ExecutableWasm && binary.mode == KotlinJsBinaryMode.PRODUCTION) {
-                    dependsOn(binary.optimizeTask)
-                    binary.mainOptimizedFile
-                } else {
-                    dependsOn(binary.linkTask)
-                    binary.mainFile
-                }
-            } else {
-                dependsOn(binary.linkSyncTask)
-                binary.mainFileSyncPath
-            }
-            inputFileProperty.set(
-                inputFile
-            )
-            runTaskConfigurations.all {
-                it.execute(this)
-            }
-        }
     }
 
     override fun configureTestDependencies(test: KotlinJsTest) {

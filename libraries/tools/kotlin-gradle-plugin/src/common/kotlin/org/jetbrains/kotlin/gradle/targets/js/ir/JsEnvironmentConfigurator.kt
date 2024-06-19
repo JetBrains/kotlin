@@ -6,15 +6,18 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
+import org.gradle.api.Task
 import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTarget.Companion.RUN_TASK_NAME
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import org.jetbrains.kotlin.gradle.utils.domainObjectSet
 
-class JsEnvironmentConfigurator(private val subTarget: KotlinJsIrSubTargetJsEnvWithRunTask) : SubTargetConfigurator<Copy, Nothing> {
-    private val project = subTarget.target.project
+abstract class JsEnvironmentConfigurator<RunTask : Task>(protected val subTarget: KotlinJsIrSubTarget) : SubTargetConfigurator<Copy, RunTask> {
+    protected val project = subTarget.target.project
+
+    protected val runTaskConfigurations = project.objects.domainObjectSet<Action<RunTask>>()
 
     override fun setupBuild(compilation: KotlinJsIrCompilation) {
         compilation.binaries
@@ -40,19 +43,13 @@ class JsEnvironmentConfigurator(private val subTarget: KotlinJsIrSubTargetJsEnvW
             }
     }
 
-    override fun configureRun(body: Action<Nothing>) {
-        // do nothing
+    override fun configureRun(body: Action<RunTask>) {
+        runTaskConfigurations.add(body)
     }
 
     override fun configureBuild(body: Action<Copy>) {
         // do nothing
     }
 
-    private fun configureBinaryRun(binary: JsIrBinary) {
-        val binaryRunName = subTarget.disambiguateCamelCased(
-            binary.mode.name.toLowerCaseAsciiOnly(),
-            RUN_TASK_NAME
-        )
-        subTarget.locateOrRegisterRunTask(binary, binaryRunName)
-    }
+    protected abstract fun configureBinaryRun(binary: JsIrBinary): TaskProvider<RunTask>
 }

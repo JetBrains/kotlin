@@ -16,31 +16,18 @@ import org.jetbrains.kotlin.gradle.utils.domainObjectSet
 import javax.inject.Inject
 
 abstract class KotlinD8Ir @Inject constructor(target: KotlinJsIrTarget) :
-    KotlinJsIrSubTargetJsEnvWithRunTask(target, "d8"),
+    KotlinJsIrSubTarget(target, "d8"),
     KotlinWasmD8Dsl {
 
     private val d8 = D8RootPlugin.apply(project.rootProject)
-
-    private val runTaskConfigurations = project.objects.domainObjectSet<Action<D8Exec>>()
 
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside d8 using the builtin test framework"
 
     override fun runTask(body: Action<D8Exec>) {
-        runTaskConfigurations.add(body)
-    }
-
-    override fun locateOrRegisterRunTask(binary: JsIrBinary, name: String) {
-        if (project.locateTask<D8Exec>(name) != null) return
-
-        D8Exec.create(binary.compilation, name) {
-            group = taskGroupName
-            dependsOn(binary.linkSyncTask)
-            inputFileProperty.set(
-                binary.mainFileSyncPath
-            )
-            runTaskConfigurations.all {
-                it.execute(this)
+        subTargetConfigurators.configureEach {
+            if (it is D8EnvironmentConfigurator) {
+                it.configureRun(body)
             }
         }
     }
