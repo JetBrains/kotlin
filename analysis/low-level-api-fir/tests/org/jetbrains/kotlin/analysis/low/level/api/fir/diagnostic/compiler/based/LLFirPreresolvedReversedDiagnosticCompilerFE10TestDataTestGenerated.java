@@ -12441,6 +12441,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       public void testDestructuringInInitializer() {
         runTest("compiler/testData/diagnostics/tests/destructuring/destructuringInInitializer.kt");
       }
+
+      @Test
+      @TestMetadata("destructuringInWhenSubject.kt")
+      public void testDestructuringInWhenSubject() {
+        runTest("compiler/testData/diagnostics/tests/destructuring/destructuringInWhenSubject.kt");
+      }
     }
 
     @Nested
