@@ -13,11 +13,11 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.FirCallableSignatu
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirConstructorSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.isLocal
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -64,7 +64,7 @@ internal class KaFirConstructorSymbol(
     override fun createPointer(): KaSymbolPointer<KaConstructorSymbol> = withValidityAssertion {
         KaPsiBasedSymbolPointer.createForSymbolFromSource<KaConstructorSymbol>(this)?.let { return it }
         if (isLocal) {
-            throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException("constructor")
+            throw KaCannotCreateSymbolPointerForLocalLibraryDeclarationException("constructor")
         }
 
         KaFirConstructorSymbolPointer(

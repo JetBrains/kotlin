@@ -9,13 +9,13 @@ import com.intellij.codeInsight.PsiEquivalenceUtil
 import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirClassLikeSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaUnsupportedSymbolLocation
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.UnsupportedSymbolLocation
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 
@@ -60,12 +60,12 @@ internal sealed class KaFirNamedClassSymbolBase : KaNamedClassSymbol(), KaFirSym
 
         return when (val symbolKind = location) {
             KaSymbolLocation.LOCAL ->
-                throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(classId?.asString() ?: name.asString())
+                throw KaCannotCreateSymbolPointerForLocalLibraryDeclarationException(classId?.asString() ?: name.asString())
 
             KaSymbolLocation.CLASS, KaSymbolLocation.TOP_LEVEL ->
                 KaFirClassLikeSymbolPointer(classId!!, KaNamedClassSymbol::class)
 
-            else -> throw UnsupportedSymbolLocation(this::class, symbolKind)
+            else -> throw KaUnsupportedSymbolLocation(this::class, symbolKind)
         }
     }
 }

@@ -3,18 +3,18 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.symbols.pointers
+package org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers
 
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import kotlin.reflect.KClass
 
-public class CanNotCreateSymbolPointerForLocalLibraryDeclarationException(identifier: String) :
+class KaCannotCreateSymbolPointerForLocalLibraryDeclarationException(identifier: String) :
     IllegalStateException("Could not create a symbol pointer for local symbol $identifier") {
-    public constructor(klass: KClass<*>) : this(klass.java.simpleName)
+    constructor(klass: KClass<*>) : this(klass.java.simpleName)
 }
 
-public class UnsupportedSymbolLocation(identifier: String, location: KaSymbolLocation) : IllegalStateException(
+class KaUnsupportedSymbolLocation(identifier: String, location: KaSymbolLocation) : IllegalStateException(
     "For symbol with kind = KaSymbolLocation.${location.name} was $identifier"
 ) {
-    public constructor(clazz: KClass<*>, location: KaSymbolLocation) : this(clazz.java.simpleName, location)
+    constructor(clazz: KClass<*>, location: KaSymbolLocation) : this(clazz.java.simpleName, location)
 }

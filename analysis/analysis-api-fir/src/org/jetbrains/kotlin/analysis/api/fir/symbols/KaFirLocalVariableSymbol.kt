@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForD
 import org.jetbrains.kotlin.analysis.api.fir.getAllowedPsi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirScriptParameterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaLocalVariableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -48,7 +48,7 @@ internal abstract class KaFirLocalOrErrorVariableSymbol<E : FirVariable, S : Fir
             return KaFirScriptParameterSymbolPointer(name, analysisSession.createOwnerPointer(this))
         }
 
-        throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(name.asString())
+        throw KaCannotCreateSymbolPointerForLocalLibraryDeclarationException(name.asString())
     }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)
