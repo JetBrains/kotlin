@@ -11,16 +11,16 @@ import org.jetbrains.kotlin.analysis.api.fir.signatures.KaFirFunctionSubstitutor
 import org.jetbrains.kotlin.analysis.api.fir.signatures.KaFirVariableSubstitutorBasedSignature
 import org.jetbrains.kotlin.analysis.api.fir.symbols.*
 import org.jetbrains.kotlin.analysis.api.fir.types.*
+import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseStarTypeProjection
+import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
@@ -486,8 +486,8 @@ internal class KaSymbolByFirBuilder(
         }
 
         fun buildTypeProjection(coneType: ConeTypeProjection): KaTypeProjection = when (coneType) {
-            is ConeStarProjection -> KaStarTypeProjection(token)
-            is ConeKotlinTypeProjection -> KaTypeArgumentWithVariance(
+            is ConeStarProjection -> KaBaseStarTypeProjection(token)
+            is ConeKotlinTypeProjection -> KaBaseTypeArgumentWithVariance(
                 buildKtType(coneType.type),
                 coneType.kind.toVariance(),
                 token,

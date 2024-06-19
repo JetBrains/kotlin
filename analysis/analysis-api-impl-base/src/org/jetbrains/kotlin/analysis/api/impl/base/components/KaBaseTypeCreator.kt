@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.components
 
 import org.jetbrains.kotlin.analysis.api.components.KaClassTypeBuilder
 import org.jetbrains.kotlin.analysis.api.components.KaTypeParameterTypeBuilder
+import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -35,7 +36,7 @@ sealed class KaBaseClassTypeBuilder : KaClassTypeBuilder {
     }
 
     override fun argument(type: KaType, variance: Variance): Unit = withValidityAssertion {
-        backingArguments += KaTypeArgumentWithVariance(type, variance, type.token)
+        backingArguments += KaBaseTypeArgumentWithVariance(type, variance, type.token)
     }
 
     class ByClassId(classId: ClassId, override val token: KaLifetimeToken) : KaBaseClassTypeBuilder() {

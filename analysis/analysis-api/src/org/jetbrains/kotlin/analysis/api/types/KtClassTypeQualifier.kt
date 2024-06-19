@@ -6,36 +6,19 @@
 package org.jetbrains.kotlin.analysis.api.types
 
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.nameOrAnonymous
 import org.jetbrains.kotlin.name.Name
 
 public sealed interface KaClassTypeQualifier : KaLifetimeOwner {
     public val name: Name
     public val typeArguments: List<KaTypeProjection>
-
-    public class KaResolvedClassTypeQualifier(
-        private val backingSymbol: KaClassifierSymbol,
-        typeArguments: List<KaTypeProjection>,
-        override val token: KaLifetimeToken
-    ) : KaClassTypeQualifier {
-        override val name: Name get() = withValidityAssertion { backingSymbol.nameOrAnonymous }
-        public val symbol: KaClassifierSymbol get() = withValidityAssertion { backingSymbol }
-        override val typeArguments: List<KaTypeProjection> by validityAsserted(typeArguments)
-    }
-
-    public class KaUnresolvedClassTypeQualifier(
-        name: Name,
-        typeArguments: List<KaTypeProjection>,
-        override val token: KaLifetimeToken
-    ) : KaClassTypeQualifier {
-        override val name: Name by validityAsserted(name)
-        override val typeArguments: List<KaTypeProjection> by validityAsserted(typeArguments)
-    }
 }
+
+public interface KaResolvedClassTypeQualifier : KaClassTypeQualifier {
+    public val symbol: KaClassifierSymbol
+}
+
+public interface KaUnresolvedClassTypeQualifier : KaClassTypeQualifier
 
 @Deprecated("Use 'KaClassTypeQualifier' instead", ReplaceWith("KaClassTypeQualifier"))
 public typealias KtClassTypeQualifier = KaClassTypeQualifier

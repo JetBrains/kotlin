@@ -6,24 +6,19 @@
 package org.jetbrains.kotlin.analysis.api.types
 
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.types.Variance
 
-public sealed class KaTypeProjection : KaLifetimeOwner {
-    public abstract val type: KaType?
+public sealed interface KaTypeProjection : KaLifetimeOwner {
+    public val type: KaType?
 }
 
-public class KaStarTypeProjection(override val token: KaLifetimeToken) : KaTypeProjection() {
+public interface KaStarTypeProjection : KaTypeProjection {
     override val type: KaType? get() = withValidityAssertion { null }
 }
 
-public class KaTypeArgumentWithVariance(
-    type: KaType,
-    variance: Variance,
-    override val token: KaLifetimeToken,
-) : KaTypeProjection() {
-    override val type: KaType by validityAsserted(type)
-    public val variance: Variance by validityAsserted(variance)
+public interface KaTypeArgumentWithVariance : KaTypeProjection {
+    override val type: KaType
+
+    public val variance: Variance
 }

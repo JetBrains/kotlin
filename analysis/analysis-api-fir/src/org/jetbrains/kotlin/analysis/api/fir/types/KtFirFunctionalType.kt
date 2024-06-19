@@ -36,7 +36,7 @@ internal class KaFirFunctionalType(
     }
     override val typeArguments: List<KaTypeProjection> get() = withValidityAssertion { qualifiers.last().typeArguments }
 
-    override val qualifiers: List<KaClassTypeQualifier.KaResolvedClassTypeQualifier> by cached {
+    override val qualifiers: List<KaResolvedClassTypeQualifier> by cached {
         UsualClassTypeQualifierBuilder.buildQualifiers(coneType, builder)
     }
 

@@ -11,11 +11,12 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.renderForDebugging
+import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseUnresolvedClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaClassErrorType
-import org.jetbrains.kotlin.analysis.api.types.KaClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
+import org.jetbrains.kotlin.analysis.api.types.KaUnresolvedClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.error.ErrorType
@@ -31,10 +32,10 @@ internal class KaFe10ClassErrorType(
         }
     }
 
-    override val qualifiers: List<KaClassTypeQualifier.KaUnresolvedClassTypeQualifier>
+    override val qualifiers: List<KaUnresolvedClassTypeQualifier>
         get() = withValidityAssertion {
             fe10Type.formatParams.first().split('.').map {
-                KaClassTypeQualifier.KaUnresolvedClassTypeQualifier(Name.guessByFirstCharacter(it), emptyList(), token)
+                KaBaseUnresolvedClassTypeQualifier(Name.guessByFirstCharacter(it), emptyList(), token)
             }
         }
 

@@ -15,9 +15,10 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.renderForDebugging
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.KaFe10JvmTypeMapperContext
+import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseResolvedClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.types.KaClassTypeQualifier
+import org.jetbrains.kotlin.analysis.api.types.KaResolvedClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
 import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
@@ -31,7 +32,7 @@ internal class KaFe10UsualClassType(
     private val descriptor: ClassDescriptor,
     override val analysisContext: Fe10AnalysisContext
 ) : KaUsualClassType(), KaFe10Type {
-    override val qualifiers: List<KaClassTypeQualifier.KaResolvedClassTypeQualifier>
+    override val qualifiers: List<KaResolvedClassTypeQualifier>
         get() = withValidityAssertion {
             val nestedType = KaFe10JvmTypeMapperContext.getNestedType(fe10Type)
             val nonInnerQualifiers =
@@ -39,18 +40,16 @@ internal class KaFe10UsualClassType(
 
             buildList {
                 nonInnerQualifiers.mapTo(this) {
-                    KaClassTypeQualifier.KaResolvedClassTypeQualifier(
+                    KaBaseResolvedClassTypeQualifier(
                         it.toKaClassSymbol(analysisContext),
                         emptyList(),
-                        token
                     )
                 }
 
                 nestedType.allInnerTypes.mapTo(this) { innerType ->
-                    KaClassTypeQualifier.KaResolvedClassTypeQualifier(
+                    KaBaseResolvedClassTypeQualifier(
                         innerType.classDescriptor.toKaClassSymbol(analysisContext),
                         innerType.arguments.map { it.toKtTypeProjection(analysisContext) },
-                        token
                     )
                 }
 

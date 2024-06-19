@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.renderForDebugging
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.KaFe10JvmTypeMapperContext
 import org.jetbrains.kotlin.analysis.api.impl.base.KaContextReceiverImpl
+import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseResolvedClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
@@ -37,13 +38,12 @@ internal class KaFe10FunctionalType(
     override val abbreviatedType: KaUsualClassType?
         get() = withValidityAssertion { null }
 
-    override val qualifiers: List<KaClassTypeQualifier.KaResolvedClassTypeQualifier>
+    override val qualifiers: List<KaResolvedClassTypeQualifier>
         get() = withValidityAssertion {
             KaFe10JvmTypeMapperContext.getNestedType(fe10Type).allInnerTypes.map { innerType ->
-                KaClassTypeQualifier.KaResolvedClassTypeQualifier(
+                KaBaseResolvedClassTypeQualifier(
                     innerType.classDescriptor.toKaClassSymbol(analysisContext),
                     innerType.arguments.map { it.toKtTypeProjection(analysisContext) },
-                    token
                 )
             }
         }

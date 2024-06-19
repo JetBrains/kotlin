@@ -128,7 +128,7 @@ public sealed class KaClassType : KaType {
     public abstract val symbol: KaClassLikeSymbol
     public abstract val typeArguments: List<KaTypeProjection>
 
-    public abstract val qualifiers: List<KaClassTypeQualifier.KaResolvedClassTypeQualifier>
+    public abstract val qualifiers: List<KaResolvedClassTypeQualifier>
 
     @Deprecated("Use 'symbol' instead.", ReplaceWith("symbol"))
     public val classSymbol: KaClassLikeSymbol

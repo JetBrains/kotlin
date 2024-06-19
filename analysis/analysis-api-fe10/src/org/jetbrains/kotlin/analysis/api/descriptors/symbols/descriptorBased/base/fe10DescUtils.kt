@@ -24,10 +24,10 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KaFe1
 import org.jetbrains.kotlin.analysis.api.descriptors.types.*
 import org.jetbrains.kotlin.analysis.api.impl.base.*
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.*
+import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseStarTypeProjection
+import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
@@ -317,9 +317,9 @@ internal fun KotlinType.toKtType(analysisContext: Fe10AnalysisContext): KaType {
 
 internal fun TypeProjection.toKtTypeProjection(analysisContext: Fe10AnalysisContext): KaTypeProjection {
     return if (isStarProjection) {
-        KaStarTypeProjection(analysisContext.token)
+        KaBaseStarTypeProjection(analysisContext.token)
     } else {
-        KaTypeArgumentWithVariance(type.toKtType(analysisContext), this.projectionKind, analysisContext.token)
+        KaBaseTypeArgumentWithVariance(type.toKtType(analysisContext), this.projectionKind, analysisContext.token)
     }
 }
 
