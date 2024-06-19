@@ -24,6 +24,10 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KaFe10PsiSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.getResolutionScope
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseImplicitReceiver
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseScopeContext
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseScopeKinds
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseScopeWithKind
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaCompositeScope
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaEmptyScope
@@ -233,16 +237,24 @@ internal class KaFe10ScopeProvider(
         val elementToAnalyze = position.containingNonLocalDeclaration() ?: this
         val bindingContext = analysisContext.analyze(elementToAnalyze)
 
-        val scopeKind = KaScopeKind.LocalScope(0) // TODO
+        val scopeKind = KaBaseScopeKinds.LocalScope(0) // TODO
         val lexicalScope = position.getResolutionScope(bindingContext)
         if (lexicalScope != null) {
             val compositeScope = KaCompositeScope.create(listOf(KaFe10ScopeLexical(lexicalScope, analysisContext)), token)
-            return KaScopeContext(listOf(KaScopeWithKind(compositeScope, scopeKind, token)), collectImplicitReceivers(lexicalScope), token)
+            return KaBaseScopeContext(
+                listOf(KaBaseScopeWithKind(compositeScope, scopeKind, token)),
+                collectImplicitReceivers(lexicalScope),
+                token,
+            )
         }
 
         val fileScope = analysisContext.resolveSession.fileScopeProvider.getFileResolutionScope(this)
         val compositeScope = KaCompositeScope.create(listOf(KaFe10ScopeLexical(fileScope, analysisContext)), token)
-        return KaScopeContext(listOf(KaScopeWithKind(compositeScope, scopeKind, token)), collectImplicitReceivers(fileScope), token)
+        return KaBaseScopeContext(
+            listOf(KaBaseScopeWithKind(compositeScope, scopeKind, token)),
+            collectImplicitReceivers(fileScope),
+            token,
+        )
     }
 
     override val KtFile.importingScopeContext: KaScopeContext
@@ -250,7 +262,7 @@ internal class KaFe10ScopeProvider(
             val importingScopes = scopeContext(position = this)
                 .scopes
                 .filter { it.kind is KaScopeKind.ImportingScope }
-            return KaScopeContext(importingScopes, implicitReceivers = emptyList(), token)
+            return KaBaseScopeContext(importingScopes, implicitReceivers = emptyList(), token)
         }
 
     private inline fun <reified T : DeclarationDescriptor> getDescriptor(symbol: KaSymbol): T? {
@@ -277,7 +289,7 @@ internal class KaFe10ScopeProvider(
                 continue
             }
 
-            result += KaImplicitReceiver(token, type, owner, index)
+            result += KaBaseImplicitReceiver(type, owner, index)
         }
 
         return result
