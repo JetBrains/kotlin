@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import org.jetbrains.kotlin.analysis.api.components.KaClassTypeBuilder
-import org.jetbrains.kotlin.analysis.api.components.KaTypeCreator
 import org.jetbrains.kotlin.analysis.api.components.KaTypeParameterTypeBuilder
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
@@ -16,8 +15,8 @@ import org.jetbrains.kotlin.analysis.api.descriptors.types.KaFe10ClassErrorType
 import org.jetbrains.kotlin.analysis.api.descriptors.types.KaFe10UsualClassType
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseClassTypeBuilder
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseTypeCreator
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseTypeParameterTypeBuilder
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
@@ -41,7 +40,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 internal class KaFe10TypeCreator(
     override val analysisSessionProvider: () -> KaFe10Session
-) : KaSessionComponent<KaFe10Session>(), KaTypeCreator, KaFe10SessionComponent {
+) : KaBaseTypeCreator<KaFe10Session>(), KaFe10SessionComponent {
     override fun buildClassType(classId: ClassId, init: KaClassTypeBuilder.() -> Unit): KaType = withValidityAssertion {
         return buildClassType(KaBaseClassTypeBuilder.ByClassId(classId, token).apply(init))
     }

@@ -5,20 +5,27 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.components
 
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaClassTypeBuilder
+import org.jetbrains.kotlin.analysis.api.components.KaTypeCreator
 import org.jetbrains.kotlin.analysis.api.components.KaTypeParameterTypeBuilder
+import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
+
+abstract class KaBaseTypeCreator<T : KaSession> : KaSessionComponent<T>(), KaTypeCreator {
+    override fun buildStarTypeProjection(): KaStarTypeProjection = KaBaseStarTypeProjection(token)
+}
 
 sealed class KaBaseClassTypeBuilder : KaClassTypeBuilder {
     private val backingArguments = mutableListOf<KaTypeProjection>()
