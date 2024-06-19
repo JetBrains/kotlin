@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserializatio
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltInsVirtualFileProvider
+import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirJavaSymbolProvider
@@ -143,7 +143,7 @@ private class StubBasedBuiltInsSymbolProvider(
     SingleModuleDataProvider(moduleData),
     kotlinScopeProvider,
     project,
-    BuiltInsVirtualFileProvider.getInstance().createBuiltinsScope(project),
+    BuiltinsVirtualFileProvider.getInstance().createBuiltinsScope(project),
     isFallbackDependenciesProvider = false,
 ) {
     private val syntheticFunctionInterfaceProvider = FirBuiltinSyntheticFunctionInterfaceProvider.initialize(

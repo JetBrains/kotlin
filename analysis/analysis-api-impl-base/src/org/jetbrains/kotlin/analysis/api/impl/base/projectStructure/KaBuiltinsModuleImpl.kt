@@ -10,7 +10,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
-import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltInsVirtualFileProvider
+import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
 import org.jetbrains.kotlin.platform.TargetPlatform
 
 @KaAnalysisApiInternals
@@ -20,7 +20,7 @@ class KaBuiltinsModuleImpl(
     override val project: Project,
 ) : KaBuiltinsModule {
     override val contentScope: GlobalSearchScope
-        get() = BuiltInsVirtualFileProvider.getInstance().createBuiltinsScope(project)
+        get() = BuiltinsVirtualFileProvider.getInstance().createBuiltinsScope(project)
 
     override fun equals(other: Any?): Boolean = other is KaBuiltinsModule && this.targetPlatform == other.targetPlatform
     override fun hashCode(): Int = targetPlatform.hashCode()

@@ -36,7 +36,7 @@ class BuiltinDecompilerToTextTest : AbstractDecompiledClassTest() {
     private fun loadBuiltIns(): Collection<KtFile> {
         val psiManager = PsiManager.getInstance(project)
         val builtInDecompiler = KotlinBuiltInDecompiler()
-        return BuiltInsVirtualFileProvider.getInstance().getBuiltInVirtualFiles().mapNotNull { virtualFile ->
+        return BuiltinsVirtualFileProvider.getInstance().getBuiltinVirtualFiles().mapNotNull { virtualFile ->
             createKtFileStub(psiManager, builtInDecompiler, virtualFile)
         }
     }
@@ -55,10 +55,10 @@ class BuiltinDecompilerToTextTest : AbstractDecompiledClassTest() {
         super.setUp()
         val applicationEnvironment = environment.projectEnvironment.environment
         val application = applicationEnvironment.application
-        if (application.getService(BuiltInsVirtualFileProvider::class.java) == null) {
+        if (application.getService(BuiltinsVirtualFileProvider::class.java) == null) {
             application.registerService(
-                BuiltInsVirtualFileProvider::class.java,
-                BuiltInsVirtualFileProviderCliImpl(applicationEnvironment.jarFileSystem as CoreJarFileSystem)
+                BuiltinsVirtualFileProvider::class.java,
+                BuiltinsVirtualFileProviderCliImpl(applicationEnvironment.jarFileSystem as CoreJarFileSystem)
             )
         }
     }
