@@ -38391,6 +38391,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("QualifiedThisAsExtensionCallableExpressionBody.kt")
+      public void testQualifiedThisAsExtensionCallableExpressionBody() {
+        runTest("compiler/testData/diagnostics/tests/thisAndSuper/QualifiedThisAsExtensionCallableExpressionBody.kt");
+      }
+
+      @Test
       @TestMetadata("Super.kt")
       public void testSuper() {
         runTest("compiler/testData/diagnostics/tests/thisAndSuper/Super.kt");
