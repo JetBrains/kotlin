@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.scopes.KaTypeScope
@@ -17,6 +19,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerS
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
+import java.util.Objects
 
 public interface KaScopeProvider {
     /**
@@ -315,12 +318,55 @@ public sealed interface KaScopeKind {
     public interface ScriptMemberScope : NonLocalScope
 }
 
+@KaIdeApi
+public object KaScopeKinds {
+    public class LocalScope(override val indexInTower: Int) : KaScopeKind.LocalScope
+
+    public class TypeScope(override val indexInTower: Int) : KaScopeKind.TypeScope
+
+    public class TypeParameterScope(override val indexInTower: Int) : KaScopeKind.TypeParameterScope
+
+    public class PackageMemberScope(override val indexInTower: Int) : KaScopeKind.PackageMemberScope
+
+    public class ExplicitSimpleImportingScope(override val indexInTower: Int) : KaScopeKind.ExplicitSimpleImportingScope
+
+    public class ExplicitStarImportingScope(override val indexInTower: Int) : KaScopeKind.ExplicitStarImportingScope
+
+    public class DefaultSimpleImportingScope(override val indexInTower: Int) : KaScopeKind.DefaultSimpleImportingScope
+
+    public class DefaultStarImportingScope(override val indexInTower: Int) : KaScopeKind.DefaultStarImportingScope
+
+    public class StaticMemberScope(override val indexInTower: Int) : KaScopeKind.StaticMemberScope
+
+    public class ScriptMemberScope(override val indexInTower: Int) : KaScopeKind.ScriptMemberScope
+}
+
 @Deprecated("Use KaScopeKind' instead.", replaceWith = ReplaceWith("KaScopeKind"))
 public typealias KtScopeKind = KaScopeKind
 
 public interface KaScopeWithKind : KaLifetimeOwner {
     public val scope: KaScope
     public val kind: KaScopeKind
+}
+
+@KaIdeApi
+public class KaScopeWithKindImpl(
+    private val backingScope: KaScope,
+    private val backingKind: KaScopeKind,
+) : KaScopeWithKind {
+    override val token: KaLifetimeToken get() = backingScope.token
+
+    override val scope: KaScope get() = withValidityAssertion { backingScope }
+    override val kind: KaScopeKind get() = withValidityAssertion { backingKind }
+
+    override fun equals(other: Any?): Boolean {
+        return this === other ||
+                other is KaScopeWithKindImpl &&
+                other.backingScope == backingScope &&
+                other.backingKind == backingKind
+    }
+
+    override fun hashCode(): Int = Objects.hash(backingScope, backingKind)
 }
 
 @Deprecated("Use 'KaScopeWithKind' instead.", replaceWith = ReplaceWith("KaScopeWithKind"))

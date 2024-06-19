@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.getRe
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseImplicitReceiver
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseScopeContext
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseScopeKinds
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseScopeWithKind
+import org.jetbrains.kotlin.analysis.api.components.KaScopeKinds
+import org.jetbrains.kotlin.analysis.api.components.KaScopeWithKindImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaCompositeScope
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaEmptyScope
@@ -237,12 +237,12 @@ internal class KaFe10ScopeProvider(
         val elementToAnalyze = position.containingNonLocalDeclaration() ?: this
         val bindingContext = analysisContext.analyze(elementToAnalyze)
 
-        val scopeKind = KaBaseScopeKinds.LocalScope(0) // TODO
+        val scopeKind = KaScopeKinds.LocalScope(0) // TODO
         val lexicalScope = position.getResolutionScope(bindingContext)
         if (lexicalScope != null) {
             val compositeScope = KaCompositeScope.create(listOf(KaFe10ScopeLexical(lexicalScope, analysisContext)), token)
             return KaBaseScopeContext(
-                listOf(KaBaseScopeWithKind(compositeScope, scopeKind, token)),
+                listOf(KaScopeWithKindImpl(compositeScope, scopeKind)),
                 collectImplicitReceivers(lexicalScope),
                 token,
             )
@@ -251,7 +251,7 @@ internal class KaFe10ScopeProvider(
         val fileScope = analysisContext.resolveSession.fileScopeProvider.getFileResolutionScope(this)
         val compositeScope = KaCompositeScope.create(listOf(KaFe10ScopeLexical(fileScope, analysisContext)), token)
         return KaBaseScopeContext(
-            listOf(KaBaseScopeWithKind(compositeScope, scopeKind, token)),
+            listOf(KaScopeWithKindImpl(compositeScope, scopeKind)),
             collectImplicitReceivers(fileScope),
             token,
         )
