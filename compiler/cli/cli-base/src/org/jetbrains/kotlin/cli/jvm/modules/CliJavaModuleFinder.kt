@@ -23,6 +23,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.io.URLUtil
+import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
@@ -119,7 +120,13 @@ class CliJavaModuleFinder(
     private fun findSystemModule(moduleRoot: VirtualFile, useSig: Boolean = false): JavaModule.Explicit? {
         val file = moduleRoot.findChild(if (useSig) PsiJavaModule.MODULE_INFO_CLASS + ".sig" else PsiJavaModule.MODULE_INFO_CLS_FILE)
             ?: return null
-        val moduleInfo = JavaModuleInfo.read(file, javaFileManager, allScope) ?: return null
+        val moduleInfo = try {
+            JavaModuleInfo.read(file, javaFileManager, allScope) ?: return null
+        } catch (e: IllegalStateException) {
+            reportError(e.message!!)
+            throw CompilationErrorException()
+        }
+
         return systemModulesCache.getOrPut(moduleInfo.moduleName) {
             JavaModule.Explicit(
                 moduleInfo,

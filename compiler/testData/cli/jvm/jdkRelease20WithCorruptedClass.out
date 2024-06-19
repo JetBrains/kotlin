@@ -1,0 +1,2 @@
+error: could not load module definition from: $JDK_21/lib/ct.sym!/IJK/jdk.httpserver/module-info.sig. The file might be broken by incorrect post-processing via bytecode tools. Please remove this file from the classpath.
+COMPILATION_ERROR
