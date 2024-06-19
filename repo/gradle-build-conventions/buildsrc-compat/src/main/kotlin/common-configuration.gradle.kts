@@ -2,6 +2,7 @@ import org.gradle.api.internal.file.collections.DefaultConfigurableFileCollectio
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 // Contains common configuration that should be applied to all projects
@@ -159,7 +160,7 @@ fun Project.configureKotlinCompilationOptions() {
                 !project.path.startsWith(":native:analysis-api-klib-reader")
             ) {
                 doFirst {
-                    if (!useAbsolutePathsInKlib) {
+                    if (!useAbsolutePathsInKlib && this !is KotlinJvmCompile && this !is KotlinCompileCommon) {
                         @Suppress("DEPRECATION")
                         (this as KotlinCompile<*>).kotlinOptions.freeCompilerArgs +=
                             "-Xklib-relative-path-base=${layout.buildDirectory.get().asFile},${layout.projectDirectory.asFile},$rootDir"
