@@ -309,7 +309,7 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
                 }
             }
 
-            +irCastIfNeeded(newCall, expression.type)
+            +irSafeCastIfNeeded(newCall, expression.type)
         }.unwrapBlock()
     }
 

@@ -339,6 +339,9 @@ fun IrBuilderWithScope.irAs(argument: IrExpression, type: IrType) =
 fun IrBuilderWithScope.irImplicitCast(argument: IrExpression, type: IrType) =
     IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.IMPLICIT_CAST, type, argument)
 
+fun IrBuilderWithScope.irSafeCast(argument: IrExpression, type: IrType) =
+    IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.SAFE_CAST, type, argument)
+
 fun IrBuilderWithScope.irReinterpretCast(argument: IrExpression, type: IrType) =
     IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.REINTERPRET_CAST, type, argument)
 

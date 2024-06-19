@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.builders.irImplicitCast
+import org.jetbrains.kotlin.ir.builders.irSafeCast
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -1401,6 +1402,9 @@ fun IrFactory.createStaticFunctionWithReceivers(
 
 fun IrBuilderWithScope.irCastIfNeeded(expression: IrExpression, to: IrType): IrExpression =
     if (expression.type == to || to.isAny() || to.isNullableAny()) expression else irImplicitCast(expression, to)
+
+fun IrBuilderWithScope.irSafeCastIfNeeded(expression: IrExpression, to: IrType): IrExpression =
+    if (expression.type == to || to.isAny() || to.isNullableAny()) expression else irSafeCast(expression, to)
 
 fun IrContainerExpression.unwrapBlock(): IrExpression = statements.singleOrNull() as? IrExpression ?: this
 

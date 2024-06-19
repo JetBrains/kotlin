@@ -17202,6 +17202,12 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     }
 
     @Test
+    @TestMetadata("kt69239.kt")
+    public void testKt69239() {
+      runTest("compiler/testData/codegen/box/functions/kt69239.kt");
+    }
+
+    @Test
     @TestMetadata("kt785.kt")
     public void testKt785() {
       runTest("compiler/testData/codegen/box/functions/kt785.kt");
