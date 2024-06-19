@@ -224,16 +224,21 @@ internal inline fun createShortArray(size: Int, init: (Int) -> Short): ShortArra
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  * @throws RuntimeException if the specified [size] is negative.
  */
-public class IntArray(size: Int) {
-    internal val storage: WasmIntArray
-
-    init {
-        if (size < 0) throw IllegalArgumentException("Negative array size")
-        storage = WasmIntArray(size)
-    }
-
-    @WasmPrimitiveConstructor
-    internal constructor(storage: WasmIntArray)
+// TODO make inline?
+@WasmAutoboxed
+public class IntArray internal constructor(internal val storage: WasmIntArray) {
+    // @WasmPrimitiveConstructor
+    public constructor(size: Int) : this(if (size < 0) throw IllegalArgumentException("Negative array size") else WasmIntArray(size))
+//public class IntArray(size: Int) {
+//    internal val storage: WasmIntArray
+//
+//    init {
+//        if (size < 0) throw IllegalArgumentException("Negative array size")
+//        storage = WasmIntArray(size)
+//    }
+//
+//    @WasmPrimitiveConstructor
+//    internal constructor(storage: WasmIntArray)
 
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
@@ -244,7 +249,7 @@ public class IntArray(size: Int) {
      *
      * @throws RuntimeException if the specified [size] is negative.
      */
-    public inline constructor(size: Int, init: (Int) -> Int)
+    public inline constructor(size: Int, init: (Int) -> Int) : this(WasmIntArray(size))
 
     /**
      * Returns the array element at the given [index].  This method can be called using the index operator.

@@ -45,9 +45,9 @@ internal class WasmVarargExpressionLowering(
 
         val primaryConstructor: IrConstructor
             get() =
-                if (isUnsigned)
+//                if (isUnsigned)
                     arrayClass.constructors.find { it.valueParameters.singleOrNull()?.type == context.irBuiltIns.intType }!!
-                else arrayClass.primaryConstructor!!
+//                else arrayClass.primaryConstructor!!
 
         val constructors
             get() = arrayClass.constructors

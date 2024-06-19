@@ -132,7 +132,8 @@ class BodyGenerator(
         val location = expression.getSourceLocation()
         generateAnyParameters(arrayClass.symbol, location)
         if (!tryGenerateConstVarargArray(expression, wasmArrayType)) tryGenerateVarargArray(expression, wasmArrayType)
-        body.buildStructNew(context.referenceGcType(expression.type.getRuntimeClass(irBuiltIns).symbol), location)
+        if (!backendContext.inlineClassesUtils.isClassInlineLike(expression.type.classOrFail.owner))
+            body.buildStructNew(context.referenceGcType(expression.type.getRuntimeClass(irBuiltIns).symbol), location)
     }
 
     override fun visitThrow(expression: IrThrow) {
