@@ -11,6 +11,7 @@ dependencies {
     api(project(":analysis:analysis-api-impl-barebone"))
     api(project(":analysis:kt-references"))
     api(project(":compiler:resolution.common.jvm"))
+    implementation(project(":analysis:decompiled:decompiler-to-psi"))
     implementation(project(":compiler:backend-common"))
     implementation(kotlinxCollectionsImmutable())
     api(intellijCore())
@@ -32,7 +33,6 @@ dependencies {
     testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
     testImplementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
     testImplementation(project(":analysis:decompiled:light-classes-for-decompiled"))
-    testImplementation(project(":analysis:decompiled:decompiler-to-psi"))
     testImplementation(project(":analysis:decompiled:decompiler-native"))
     testImplementation(projectTests(":analysis:analysis-test-framework"))
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }

@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.analysis.decompiler.psi
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
@@ -16,6 +18,8 @@ import java.net.URL
 
 abstract class BuiltInsVirtualFileProvider {
     abstract fun getBuiltInVirtualFiles(): Set<VirtualFile>
+
+    abstract fun createBuiltinsScope(project: Project): GlobalSearchScope
 
     companion object {
         fun getInstance(): BuiltInsVirtualFileProvider =
@@ -33,6 +37,11 @@ abstract class BuiltInsVirtualFileProviderBaseImpl : BuiltInsVirtualFileProvider
                     withEntry("resourcePath", resourcePath)
                 }
         }
+    }
+
+    override fun createBuiltinsScope(project: Project): GlobalSearchScope {
+        val builtInFiles = getBuiltInVirtualFiles()
+        return GlobalSearchScope.filesScope(project, builtInFiles)
     }
 
     protected abstract fun findVirtualFile(url: URL): VirtualFile?
