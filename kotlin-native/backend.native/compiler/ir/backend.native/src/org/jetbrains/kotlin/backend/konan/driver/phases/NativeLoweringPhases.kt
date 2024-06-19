@@ -642,8 +642,8 @@ internal fun PhaseEngine<NativeGenerationState>.getLoweringsAfterInlining(): Low
         enumClassPhase,
         enumUsagePhase,
         interopPhase,
-        varargPhase,
         kotlinNothingValueExceptionPhase,
+        varargPhase,
         coroutinesPhase,
         // Either of these could be turned off without losing correctness.
         coroutinesLivenessAnalysisPhase, // This is more optimal
