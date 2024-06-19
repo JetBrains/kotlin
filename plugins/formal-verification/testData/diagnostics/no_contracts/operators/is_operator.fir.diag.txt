@@ -1,0 +1,39 @@
+/is_operator.kt:(23,36): info: Generated Viper text for isNonNullable:
+method global$fun_isNonNullable$fun_take$NT_Int$return$T_Boolean(local$x: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
+{
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
+  ret$0 := dom$RuntimeType$boolToRef(dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x),
+    dom$RuntimeType$intType()))
+  goto label$ret$0
+  label label$ret$0
+}
+
+/is_operator.kt:(84,97): info: Generated Viper text for notIsNullable:
+method global$fun_notIsNullable$fun_take$NT_Int$return$T_Boolean(local$x: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
+{
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
+  ret$0 := special$notBool(dom$RuntimeType$boolToRef(dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x),
+    dom$RuntimeType$nothingType())))
+  goto label$ret$0
+  label label$ret$0
+}
+
+/is_operator.kt:(150,159): info: Generated Viper text for smartCast:
+method global$fun_smartCast$fun_take$NT_Any$return$T_Int(local$x: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
+{
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$nullable(dom$RuntimeType$anyType()))
+  if (dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$intType())) {
+    ret$0 := local$x
+    goto label$ret$0
+  } else {
+    ret$0 := dom$RuntimeType$intToRef(-1)
+    goto label$ret$0
+  }
+  label label$ret$0
+}

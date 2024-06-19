@@ -234,75 +234,9 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
     }
 
     @Test
-    @TestMetadata("any.kt")
-    public void testAny() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/any.kt");
-    }
-
-    @Test
-    @TestMetadata("arithmetic.kt")
-    public void testArithmetic() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/arithmetic.kt");
-    }
-
-    @Test
-    @TestMetadata("as_operator.kt")
-    public void testAs_operator() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/as_operator.kt");
-    }
-
-    @Test
     @TestMetadata("basic.kt")
     public void testBasic() {
       runTest("plugins/formal-verification/testData/diagnostics/no_contracts/basic.kt");
-    }
-
-    @Test
-    @TestMetadata("boolean_logic.kt")
-    public void testBoolean_logic() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/boolean_logic.kt");
-    }
-
-    @Test
-    @TestMetadata("class_constructors.kt")
-    public void testClass_constructors() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/class_constructors.kt");
-    }
-
-    @Test
-    @TestMetadata("classes.kt")
-    public void testClasses() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/classes.kt");
-    }
-
-    @Test
-    @TestMetadata("classes_getters.kt")
-    public void testClasses_getters() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/classes_getters.kt");
-    }
-
-    @Test
-    @TestMetadata("classes_setters.kt")
-    public void testClasses_setters() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/classes_setters.kt");
-    }
-
-    @Test
-    @TestMetadata("comparison.kt")
-    public void testComparison() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/comparison.kt");
-    }
-
-    @Test
-    @TestMetadata("exp_side_effects.kt")
-    public void testExp_side_effects() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/exp_side_effects.kt");
-    }
-
-    @Test
-    @TestMetadata("extension_function.kt")
-    public void testExtension_function() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/extension_function.kt");
     }
 
     @Test
@@ -318,12 +252,6 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
     }
 
     @Test
-    @TestMetadata("function_call.kt")
-    public void testFunction_call() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/function_call.kt");
-    }
-
-    @Test
     @TestMetadata("function_object.kt")
     public void testFunction_object() {
       runTest("plugins/formal-verification/testData/diagnostics/no_contracts/function_object.kt");
@@ -333,126 +261,6 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
     @TestMetadata("function_overloading.kt")
     public void testFunction_overloading() {
       runTest("plugins/formal-verification/testData/diagnostics/no_contracts/function_overloading.kt");
-    }
-
-    @Test
-    @TestMetadata("generics.kt")
-    public void testGenerics() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/generics.kt");
-    }
-
-    @Test
-    @TestMetadata("if.kt")
-    public void testIf() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/if.kt");
-    }
-
-    @Test
-    @TestMetadata("inheritance.kt")
-    public void testInheritance() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/inheritance.kt");
-    }
-
-    @Test
-    @TestMetadata("inheritance_fields.kt")
-    public void testInheritance_fields() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/inheritance_fields.kt");
-    }
-
-    @Test
-    @TestMetadata("inline.kt")
-    public void testInline() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/inline.kt");
-    }
-
-    @Test
-    @TestMetadata("inlining_captured.kt")
-    public void testInlining_captured() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/inlining_captured.kt");
-    }
-
-    @Test
-    @TestMetadata("inlining_lambdas.kt")
-    public void testInlining_lambdas() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/inlining_lambdas.kt");
-    }
-
-    @Test
-    @TestMetadata("interface.kt")
-    public void testInterface() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/interface.kt");
-    }
-
-    @Test
-    @TestMetadata("is_operator.kt")
-    public void testIs_operator() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/is_operator.kt");
-    }
-
-    @Test
-    @TestMetadata("loop.kt")
-    public void testLoop() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/loop.kt");
-    }
-
-    @Test
-    @TestMetadata("loop_invariants.kt")
-    public void testLoop_invariants() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/loop_invariants.kt");
-    }
-
-    @Test
-    @TestMetadata("member_functions.kt")
-    public void testMember_functions() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/member_functions.kt");
-    }
-
-    @Test
-    @TestMetadata("multiple_interfaces.kt")
-    public void testMultiple_interfaces() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/multiple_interfaces.kt");
-    }
-
-    @Test
-    @TestMetadata("non-local-returns.kt")
-    public void testNon_local_returns() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/non-local-returns.kt");
-    }
-
-    @Test
-    @TestMetadata("nullable.kt")
-    public void testNullable() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/nullable.kt");
-    }
-
-    @Test
-    @TestMetadata("predicates.kt")
-    public void testPredicates() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/predicates.kt");
-    }
-
-    @Test
-    @TestMetadata("predicates_access.kt")
-    public void testPredicates_access() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/predicates_access.kt");
-    }
-
-    @Test
-    @TestMetadata("recursion.kt")
-    public void testRecursion() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/recursion.kt");
-    }
-
-    @Test
-    @TestMetadata("return_break_continue.kt")
-    public void testReturn_break_continue() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/return_break_continue.kt");
-    }
-
-    @Test
-    @TestMetadata("safe_call.kt")
-    public void testSafe_call() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/safe_call.kt");
     }
 
     @Test
@@ -467,28 +275,276 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
       runTest("plugins/formal-verification/testData/diagnostics/no_contracts/shadowing.kt");
     }
 
-    @Test
-    @TestMetadata("smartcast.kt")
-    public void testSmartcast() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/smartcast.kt");
+    @Nested
+    @TestMetadata("plugins/formal-verification/testData/diagnostics/no_contracts/classes")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Classes {
+      @Test
+      public void testAllFilesPresentInClasses() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/formal-verification/testData/diagnostics/no_contracts/classes"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("field_getters.kt")
+      public void testField_getters() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/classes/field_getters.kt");
+      }
+
+      @Test
+      @TestMetadata("inheritance.kt")
+      public void testInheritance() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/classes/inheritance.kt");
+      }
+
+      @Test
+      @TestMetadata("inheritance_fields.kt")
+      public void testInheritance_fields() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/classes/inheritance_fields.kt");
+      }
+
+      @Test
+      @TestMetadata("interface.kt")
+      public void testInterface() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/classes/interface.kt");
+      }
+
+      @Test
+      @TestMetadata("member_functions.kt")
+      public void testMember_functions() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/classes/member_functions.kt");
+      }
+
+      @Test
+      @TestMetadata("multiple_interfaces.kt")
+      public void testMultiple_interfaces() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/classes/multiple_interfaces.kt");
+      }
+
+      @Test
+      @TestMetadata("predicates.kt")
+      public void testPredicates() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/classes/predicates.kt");
+      }
+
+      @Test
+      @TestMetadata("predicates_access.kt")
+      public void testPredicates_access() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/classes/predicates_access.kt");
+      }
+
+      @Test
+      @TestMetadata("primary_constructors.kt")
+      public void testPrimary_constructors() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/classes/primary_constructors.kt");
+      }
+
+      @Test
+      @TestMetadata("property_getters.kt")
+      public void testProperty_getters() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/classes/property_getters.kt");
+      }
+
+      @Test
+      @TestMetadata("secondary_constructors.kt")
+      public void testSecondary_constructors() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/classes/secondary_constructors.kt");
+      }
+
+      @Test
+      @TestMetadata("setters.kt")
+      public void testSetters() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/classes/setters.kt");
+      }
+
+      @Test
+      @TestMetadata("subtyping.kt")
+      public void testSubtyping() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/classes/subtyping.kt");
+      }
     }
 
-    @Test
-    @TestMetadata("subtyping.kt")
-    public void testSubtyping() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/subtyping.kt");
+    @Nested
+    @TestMetadata("plugins/formal-verification/testData/diagnostics/no_contracts/control_flow")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Control_flow {
+      @Test
+      public void testAllFilesPresentInControl_flow() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/formal-verification/testData/diagnostics/no_contracts/control_flow"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("exp_side_effects.kt")
+      public void testExp_side_effects() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/control_flow/exp_side_effects.kt");
+      }
+
+      @Test
+      @TestMetadata("function_call.kt")
+      public void testFunction_call() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/control_flow/function_call.kt");
+      }
+
+      @Test
+      @TestMetadata("if.kt")
+      public void testIf() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/control_flow/if.kt");
+      }
+
+      @Test
+      @TestMetadata("loop.kt")
+      public void testLoop() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/control_flow/loop.kt");
+      }
+
+      @Test
+      @TestMetadata("loop_invariants.kt")
+      public void testLoop_invariants() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/control_flow/loop_invariants.kt");
+      }
+
+      @Test
+      @TestMetadata("non-local-returns.kt")
+      public void testNon_local_returns() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/control_flow/non-local-returns.kt");
+      }
+
+      @Test
+      @TestMetadata("recursion.kt")
+      public void testRecursion() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/control_flow/recursion.kt");
+      }
+
+      @Test
+      @TestMetadata("return_break_continue.kt")
+      public void testReturn_break_continue() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/control_flow/return_break_continue.kt");
+      }
+
+      @Test
+      @TestMetadata("try_catch.kt")
+      public void testTry_catch() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/control_flow/try_catch.kt");
+      }
+
+      @Test
+      @TestMetadata("when.kt")
+      public void testWhen() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/control_flow/when.kt");
+      }
     }
 
-    @Test
-    @TestMetadata("try_catch.kt")
-    public void testTry_catch() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/try_catch.kt");
+    @Nested
+    @TestMetadata("plugins/formal-verification/testData/diagnostics/no_contracts/inlining")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Inlining {
+      @Test
+      public void testAllFilesPresentInInlining() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/formal-verification/testData/diagnostics/no_contracts/inlining"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("captured.kt")
+      public void testCaptured() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/inlining/captured.kt");
+      }
+
+      @Test
+      @TestMetadata("inline.kt")
+      public void testInline() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/inlining/inline.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdas.kt")
+      public void testLambdas() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/inlining/lambdas.kt");
+      }
     }
 
-    @Test
-    @TestMetadata("when.kt")
-    public void testWhen() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/when.kt");
+    @Nested
+    @TestMetadata("plugins/formal-verification/testData/diagnostics/no_contracts/operators")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Operators {
+      @Test
+      public void testAllFilesPresentInOperators() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/formal-verification/testData/diagnostics/no_contracts/operators"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("arithmetic.kt")
+      public void testArithmetic() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/operators/arithmetic.kt");
+      }
+
+      @Test
+      @TestMetadata("as_operator.kt")
+      public void testAs_operator() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/operators/as_operator.kt");
+      }
+
+      @Test
+      @TestMetadata("boolean_logic.kt")
+      public void testBoolean_logic() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/operators/boolean_logic.kt");
+      }
+
+      @Test
+      @TestMetadata("comparison.kt")
+      public void testComparison() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/operators/comparison.kt");
+      }
+
+      @Test
+      @TestMetadata("elvis.kt")
+      public void testElvis() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/operators/elvis.kt");
+      }
+
+      @Test
+      @TestMetadata("is_operator.kt")
+      public void testIs_operator() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/operators/is_operator.kt");
+      }
+
+      @Test
+      @TestMetadata("safe_call.kt")
+      public void testSafe_call() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/operators/safe_call.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("plugins/formal-verification/testData/diagnostics/no_contracts/types")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Types {
+      @Test
+      public void testAllFilesPresentInTypes() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/formal-verification/testData/diagnostics/no_contracts/types"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("any.kt")
+      public void testAny() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/types/any.kt");
+      }
+
+      @Test
+      @TestMetadata("generics.kt")
+      public void testGenerics() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/types/generics.kt");
+      }
+
+      @Test
+      @TestMetadata("nullable.kt")
+      public void testNullable() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/types/nullable.kt");
+      }
+
+      @Test
+      @TestMetadata("smartcast.kt")
+      public void testSmartcast() {
+        runTest("plugins/formal-verification/testData/diagnostics/no_contracts/types/smartcast.kt");
+      }
     }
   }
 

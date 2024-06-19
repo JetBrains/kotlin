@@ -1,0 +1,120 @@
+/predicates.kt:(203,213): info: Generated Viper text for useClasses:
+field public$backing_field_a: Ref
+
+field public$backing_field_b: Ref
+
+field public$backing_field_next: Ref
+
+field public$backing_field_pf: Ref
+
+predicate T_class_global$class_Baz(special$class$predicate$subject: Ref) {
+  true
+}
+
+predicate T_class_global$class_PrimitiveFields(special$class$predicate$subject: Ref) {
+  acc(special$class$predicate$subject.public$backing_field_a, wildcard) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_a),
+  dom$RuntimeType$intType())
+}
+
+predicate T_class_global$class_Recursive(special$class$predicate$subject: Ref) {
+  acc(special$class$predicate$subject.public$backing_field_next, wildcard) &&
+  (special$class$predicate$subject.public$backing_field_next !=
+  dom$RuntimeType$nullValue() ==>
+  acc(T_class_global$class_Recursive(special$class$predicate$subject.public$backing_field_next), wildcard)) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_next),
+  dom$RuntimeType$nullable(dom$RuntimeType$T_class_global$class_Recursive()))
+}
+
+predicate T_class_global$class_ReferenceField(special$class$predicate$subject: Ref) {
+  acc(special$class$predicate$subject.public$backing_field_pf, wildcard) &&
+  acc(T_class_global$class_PrimitiveFields(special$class$predicate$subject.public$backing_field_pf), wildcard) &&
+  acc(T_class_global$class_Baz(special$class$predicate$subject), wildcard) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_pf),
+  dom$RuntimeType$T_class_global$class_PrimitiveFields())
+}
+
+method global$fun_useClasses$fun_take$T_class_global$class_ReferenceField$T_class_global$class_Recursive$return$T_Unit(local$rf: Ref,
+  local$rec: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+{
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$rf), dom$RuntimeType$T_class_global$class_ReferenceField())
+  inhale acc(T_class_global$class_ReferenceField(local$rf), wildcard)
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$rec), dom$RuntimeType$T_class_global$class_Recursive())
+  inhale acc(T_class_global$class_Recursive(local$rec), wildcard)
+  ret$0 := dom$RuntimeType$unitValue()
+  label label$ret$0
+}
+
+/predicates.kt:(354,374): info: Generated Viper text for threeLayersHierarchy:
+field public$backing_field_x: Ref
+
+field public$backing_field_y: Ref
+
+predicate T_class_global$class_A(special$class$predicate$subject: Ref) {
+  acc(special$class$predicate$subject.public$backing_field_x, wildcard) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_x),
+  dom$RuntimeType$intType())
+}
+
+predicate T_class_global$class_B(special$class$predicate$subject: Ref) {
+  acc(T_class_global$class_A(special$class$predicate$subject), wildcard)
+}
+
+predicate T_class_global$class_C(special$class$predicate$subject: Ref) {
+  acc(T_class_global$class_B(special$class$predicate$subject), wildcard)
+}
+
+method global$fun_threeLayersHierarchy$fun_take$T_class_global$class_C$return$T_Unit(local$c: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+{
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$c), dom$RuntimeType$T_class_global$class_C())
+  inhale acc(T_class_global$class_C(local$c), wildcard)
+  ret$0 := dom$RuntimeType$unitValue()
+  label label$ret$0
+}
+
+/predicates.kt:(390,403): info: Generated Viper text for listHierarchy:
+field special$size: Ref
+
+predicate T_class_pkg$kotlin$collections$global$class_Collection(special$class$predicate$subject: Ref) {
+  acc(T_class_pkg$kotlin$collections$global$class_Iterable(special$class$predicate$subject), wildcard)
+}
+
+predicate T_class_pkg$kotlin$collections$global$class_Iterable(special$class$predicate$subject: Ref) {
+  true
+}
+
+predicate T_class_pkg$kotlin$collections$global$class_List(special$class$predicate$subject: Ref) {
+  acc(T_class_pkg$kotlin$collections$global$class_Collection(special$class$predicate$subject), wildcard)
+}
+
+predicate T_class_pkg$kotlin$collections$global$class_MutableCollection(special$class$predicate$subject: Ref) {
+  acc(T_class_pkg$kotlin$collections$global$class_Collection(special$class$predicate$subject), wildcard) &&
+  acc(T_class_pkg$kotlin$collections$global$class_MutableIterable(special$class$predicate$subject), wildcard)
+}
+
+predicate T_class_pkg$kotlin$collections$global$class_MutableIterable(special$class$predicate$subject: Ref) {
+  acc(T_class_pkg$kotlin$collections$global$class_Iterable(special$class$predicate$subject), wildcard)
+}
+
+predicate T_class_pkg$kotlin$collections$global$class_MutableList(special$class$predicate$subject: Ref) {
+  acc(T_class_pkg$kotlin$collections$global$class_List(special$class$predicate$subject), wildcard) &&
+  acc(T_class_pkg$kotlin$collections$global$class_MutableCollection(special$class$predicate$subject), wildcard)
+}
+
+method global$fun_listHierarchy$fun_take$T_class_pkg$kotlin$collections$global$class_MutableList$return$T_Unit(local$xs: Ref)
+  returns (ret$0: Ref)
+  requires acc(local$xs.special$size, write)
+  requires dom$RuntimeType$intFromRef(local$xs.special$size) >= 0
+  ensures acc(local$xs.special$size, write)
+  ensures dom$RuntimeType$intFromRef(local$xs.special$size) >= 0
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+{
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$xs), dom$RuntimeType$T_class_pkg$kotlin$collections$global$class_MutableList())
+  inhale acc(T_class_pkg$kotlin$collections$global$class_MutableList(local$xs), wildcard)
+  ret$0 := dom$RuntimeType$unitValue()
+  label label$ret$0
+}

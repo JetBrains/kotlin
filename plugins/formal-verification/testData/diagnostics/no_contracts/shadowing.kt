@@ -1,6 +1,6 @@
 // NEVER_VALIDATE
 
-fun <!VIPER_TEXT!>shadow_local<!>(): Unit {
+fun <!VIPER_TEXT!>shadowLocal<!>(): Unit {
     var foo: Int
     val x = 0
     if (x == 0) {
@@ -15,14 +15,14 @@ fun <!VIPER_TEXT!>shadow_local<!>(): Unit {
     foo = x
 }
 
-fun <!VIPER_TEXT!>shadow_param<!>(x: Int): Unit {
+fun <!VIPER_TEXT!>shadowParam<!>(x: Int): Unit {
     var foo: Int
     foo = x
     val x = 0
     foo = x
 }
 
-fun <!VIPER_TEXT!>shadow_nested<!>(x: Int): Unit {
+fun <!VIPER_TEXT!>shadowNested<!>(x: Int): Unit {
     var foo: Int
     foo = x
     val x = 0

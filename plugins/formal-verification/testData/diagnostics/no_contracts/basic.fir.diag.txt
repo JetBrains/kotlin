@@ -1,14 +1,13 @@
-/basic.kt:(23,34): info: Generated Viper text for return_unit:
-method global$fun_return_unit$fun_take$$return$T_Unit()
-  returns (ret$0: Ref)
+/basic.kt:(23,33): info: Generated Viper text for returnUnit:
+method global$fun_returnUnit$fun_take$$return$T_Unit() returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
   ret$0 := dom$RuntimeType$unitValue()
   label label$ret$0
 }
 
-/basic.kt:(44,54): info: Generated Viper text for return_int:
-method global$fun_return_int$fun_take$$return$T_Int() returns (ret$0: Ref)
+/basic.kt:(43,52): info: Generated Viper text for returnInt:
+method global$fun_returnInt$fun_take$$return$T_Int() returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
 {
   ret$0 := dom$RuntimeType$intToRef(0)
@@ -16,8 +15,8 @@ method global$fun_return_int$fun_take$$return$T_Int() returns (ret$0: Ref)
   label label$ret$0
 }
 
-/basic.kt:(79,99): info: Generated Viper text for take_int_return_unit:
-method global$fun_take_int_return_unit$fun_take$T_Int$return$T_Unit(local$x: Ref)
+/basic.kt:(77,94): info: Generated Viper text for takeIntReturnUnit:
+method global$fun_takeIntReturnUnit$fun_take$T_Int$return$T_Unit(local$x: Ref)
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
@@ -26,8 +25,8 @@ method global$fun_take_int_return_unit$fun_take$T_Int$return$T_Unit(local$x: Ref
   label label$ret$0
 }
 
-/basic.kt:(145,164): info: Generated Viper text for take_int_return_int:
-method global$fun_take_int_return_int$fun_take$T_Int$return$T_Int(local$x: Ref)
+/basic.kt:(140,156): info: Generated Viper text for takeIntReturnInt:
+method global$fun_takeIntReturnInt$fun_take$T_Int$return$T_Int(local$x: Ref)
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
 {
@@ -37,8 +36,8 @@ method global$fun_take_int_return_int$fun_take$T_Int$return$T_Int(local$x: Ref)
   label label$ret$0
 }
 
-/basic.kt:(195,219): info: Generated Viper text for take_int_return_int_expr:
-method global$fun_take_int_return_int_expr$fun_take$T_Int$return$T_Int(local$x: Ref)
+/basic.kt:(187,207): info: Generated Viper text for takeIntReturnIntExpr:
+method global$fun_takeIntReturnIntExpr$fun_take$T_Int$return$T_Int(local$x: Ref)
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
 {
@@ -48,8 +47,8 @@ method global$fun_take_int_return_int_expr$fun_take$T_Int$return$T_Int(local$x: 
   label label$ret$0
 }
 
-/basic.kt:(241,261): info: Generated Viper text for with_int_declaration:
-method global$fun_with_int_declaration$fun_take$$return$T_Int()
+/basic.kt:(229,247): info: Generated Viper text for withIntDeclaration:
+method global$fun_withIntDeclaration$fun_take$$return$T_Int()
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
 {
@@ -60,8 +59,8 @@ method global$fun_with_int_declaration$fun_take$$return$T_Int()
   label label$ret$0
 }
 
-/basic.kt:(304,318): info: Generated Viper text for int_assignment:
-method global$fun_int_assignment$fun_take$$return$T_Unit()
+/basic.kt:(290,303): info: Generated Viper text for intAssignment:
+method global$fun_intAssignment$fun_take$$return$T_Unit()
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {

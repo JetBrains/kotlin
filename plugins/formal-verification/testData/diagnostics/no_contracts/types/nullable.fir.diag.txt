@@ -1,0 +1,70 @@
+/nullable.kt:(80,96): info: Generated Viper text for useNullableTwice:
+method global$fun_useNullableTwice$fun_take$NT_Int$return$NT_Int(local$x: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
+{
+  var local0$a: Ref
+  var local0$b: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
+  local0$a := local$x
+  local0$b := local$x
+  ret$0 := local0$a
+  goto label$ret$0
+  label label$ret$0
+}
+
+/nullable.kt:(162,183): info: Generated Viper text for passNullableParameter:
+method global$fun_passNullableParameter$fun_take$NT_Int$return$NT_Int(local$x: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
+{
+  var anonymous$0: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
+  anonymous$0 := global$fun_useNullableTwice$fun_take$NT_Int$return$NT_Int(local$x)
+  ret$0 := local$x
+  goto label$ret$0
+  label label$ret$0
+}
+
+method global$fun_useNullableTwice$fun_take$NT_Int$return$NT_Int(local$x: Ref)
+  returns (ret: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
+
+
+/nullable.kt:(245,271): info: Generated Viper text for nullableNullableComparison:
+method global$fun_nullableNullableComparison$fun_take$NT_Int$NT_Int$return$T_Boolean(local$x: Ref,
+  local$y: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
+{
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$y), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
+  ret$0 := dom$RuntimeType$boolToRef(local$x == local$y)
+  goto label$ret$0
+  label label$ret$0
+}
+
+/nullable.kt:(326,355): info: Generated Viper text for nullableNonNullableComparison:
+method global$fun_nullableNonNullableComparison$fun_take$NT_Int$NT_Int$return$T_Boolean(local$x: Ref,
+  local$y: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
+{
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$y), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
+  ret$0 := special$notBool(dom$RuntimeType$boolToRef(local$x ==
+    dom$RuntimeType$intToRef(3)))
+  goto label$ret$0
+  label label$ret$0
+}
+
+/nullable.kt:(410,424): info: Generated Viper text for nullComparison:
+method global$fun_nullComparison$fun_take$NT_Int$return$T_Boolean(local$x: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
+{
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
+  ret$0 := dom$RuntimeType$boolToRef(local$x == dom$RuntimeType$nullValue())
+  goto label$ret$0
+  label label$ret$0
+}

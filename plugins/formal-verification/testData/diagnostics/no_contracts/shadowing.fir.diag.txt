@@ -1,5 +1,5 @@
-/shadowing.kt:(23,35): info: Generated Viper text for shadow_local:
-method global$fun_shadow_local$fun_take$$return$T_Unit()
+/shadowing.kt:(23,34): info: Generated Viper text for shadowLocal:
+method global$fun_shadowLocal$fun_take$$return$T_Unit()
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
@@ -22,8 +22,8 @@ method global$fun_shadow_local$fun_take$$return$T_Unit()
   label label$ret$0
 }
 
-/shadowing.kt:(233,245): info: Generated Viper text for shadow_param:
-method global$fun_shadow_param$fun_take$T_Int$return$T_Unit(local$x: Ref)
+/shadowing.kt:(232,243): info: Generated Viper text for shadowParam:
+method global$fun_shadowParam$fun_take$T_Int$return$T_Unit(local$x: Ref)
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
@@ -37,8 +37,8 @@ method global$fun_shadow_param$fun_take$T_Int$return$T_Unit(local$x: Ref)
   label label$ret$0
 }
 
-/shadowing.kt:(324,337): info: Generated Viper text for shadow_nested:
-method global$fun_shadow_nested$fun_take$T_Int$return$T_Unit(local$x: Ref)
+/shadowing.kt:(322,334): info: Generated Viper text for shadowNested:
+method global$fun_shadowNested$fun_take$T_Int$return$T_Unit(local$x: Ref)
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {

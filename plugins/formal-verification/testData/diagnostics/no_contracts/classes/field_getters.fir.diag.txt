@@ -1,0 +1,119 @@
+/field_getters.kt:(70,94): info: Generated Viper text for testPrimitiveFieldGetter:
+field public$backing_field_a: Ref
+
+field public$backing_field_b: Ref
+
+method global$fun_testPrimitiveFieldGetter$fun_take$T_class_global$class_PrimitiveFields$return$T_Unit(local$pf: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+{
+  var local0$a: Ref
+  var local0$b: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$pf), dom$RuntimeType$T_class_global$class_PrimitiveFields())
+  inhale acc(T_class_global$class_PrimitiveFields(local$pf), wildcard)
+  ret$0 := dom$RuntimeType$unitValue()
+  unfold acc(T_class_global$class_PrimitiveFields(local$pf), wildcard)
+  local0$a := local$pf.public$backing_field_a
+  inhale acc(local$pf.public$backing_field_b, write)
+  local0$b := local$pf.public$backing_field_b
+  exhale acc(local$pf.public$backing_field_b, write)
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local0$b), dom$RuntimeType$intType())
+  label label$ret$0
+}
+
+/field_getters.kt:(230,254): info: Generated Viper text for testReferenceFieldGetter:
+field public$backing_field_a: Ref
+
+field public$backing_field_b: Ref
+
+field public$backing_field_f: Ref
+
+field public$backing_field_g: Ref
+
+method global$fun_testReferenceFieldGetter$fun_take$T_class_global$class_ReferenceFields$return$T_Unit(local$rf: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+{
+  var local0$f: Ref
+  var local0$g: Ref
+  var local0$fa: Ref
+  var local0$fb: Ref
+  var local0$ga: Ref
+  var local0$gb: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$rf), dom$RuntimeType$T_class_global$class_ReferenceFields())
+  inhale acc(T_class_global$class_ReferenceFields(local$rf), wildcard)
+  ret$0 := dom$RuntimeType$unitValue()
+  unfold acc(T_class_global$class_ReferenceFields(local$rf), wildcard)
+  local0$f := local$rf.public$backing_field_f
+  inhale acc(local$rf.public$backing_field_g, write)
+  local0$g := local$rf.public$backing_field_g
+  exhale acc(local$rf.public$backing_field_g, write)
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local0$g), dom$RuntimeType$T_class_global$class_PrimitiveFields())
+  inhale acc(T_class_global$class_PrimitiveFields(local0$g), wildcard)
+  unfold acc(T_class_global$class_PrimitiveFields(local0$f), wildcard)
+  local0$fa := local0$f.public$backing_field_a
+  inhale acc(local0$f.public$backing_field_b, write)
+  local0$fb := local0$f.public$backing_field_b
+  exhale acc(local0$f.public$backing_field_b, write)
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local0$fb), dom$RuntimeType$intType())
+  unfold acc(T_class_global$class_PrimitiveFields(local0$g), wildcard)
+  local0$ga := local0$g.public$backing_field_a
+  inhale acc(local0$g.public$backing_field_b, write)
+  local0$gb := local0$g.public$backing_field_b
+  exhale acc(local0$g.public$backing_field_b, write)
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local0$gb), dom$RuntimeType$intType())
+  label label$ret$0
+}
+
+/field_getters.kt:(387,411): info: Generated Viper text for testCascadingFieldGetter:
+field public$backing_field_a: Ref
+
+field public$backing_field_b: Ref
+
+field public$backing_field_f: Ref
+
+field public$backing_field_g: Ref
+
+method global$fun_testCascadingFieldGetter$fun_take$T_class_global$class_ReferenceFields$return$T_Unit(local$rf: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+{
+  var local0$fa: Ref
+  var anonymous$0: Ref
+  var local0$fb: Ref
+  var anonymous$1: Ref
+  var local0$ga: Ref
+  var anonymous$2: Ref
+  var local0$gb: Ref
+  var anonymous$3: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$rf), dom$RuntimeType$T_class_global$class_ReferenceFields())
+  inhale acc(T_class_global$class_ReferenceFields(local$rf), wildcard)
+  ret$0 := dom$RuntimeType$unitValue()
+  unfold acc(T_class_global$class_ReferenceFields(local$rf), wildcard)
+  anonymous$0 := local$rf.public$backing_field_f
+  unfold acc(T_class_global$class_PrimitiveFields(anonymous$0), wildcard)
+  local0$fa := anonymous$0.public$backing_field_a
+  unfold acc(T_class_global$class_ReferenceFields(local$rf), wildcard)
+  anonymous$1 := local$rf.public$backing_field_f
+  inhale acc(anonymous$1.public$backing_field_b, write)
+  local0$fb := anonymous$1.public$backing_field_b
+  exhale acc(anonymous$1.public$backing_field_b, write)
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local0$fb), dom$RuntimeType$intType())
+  inhale acc(local$rf.public$backing_field_g, write)
+  anonymous$2 := local$rf.public$backing_field_g
+  exhale acc(local$rf.public$backing_field_g, write)
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$2), dom$RuntimeType$T_class_global$class_PrimitiveFields())
+  inhale acc(T_class_global$class_PrimitiveFields(anonymous$2), wildcard)
+  unfold acc(T_class_global$class_PrimitiveFields(anonymous$2), wildcard)
+  local0$ga := anonymous$2.public$backing_field_a
+  inhale acc(local$rf.public$backing_field_g, write)
+  anonymous$3 := local$rf.public$backing_field_g
+  exhale acc(local$rf.public$backing_field_g, write)
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$3), dom$RuntimeType$T_class_global$class_PrimitiveFields())
+  inhale acc(T_class_global$class_PrimitiveFields(anonymous$3), wildcard)
+  inhale acc(anonymous$3.public$backing_field_b, write)
+  local0$gb := anonymous$3.public$backing_field_b
+  exhale acc(anonymous$3.public$backing_field_b, write)
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local0$gb), dom$RuntimeType$intType())
+  label label$ret$0
+}

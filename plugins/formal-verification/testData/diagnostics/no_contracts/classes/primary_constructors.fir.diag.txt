@@ -1,0 +1,72 @@
+/primary_constructors.kt:(70,91): info: Generated Viper text for createPrimitiveFields:
+field public$backing_field_a: Ref
+
+field public$backing_field_b: Ref
+
+method class_PrimitiveFields$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_PrimitiveFields(local$a: Ref,
+  local$b: Ref)
+  returns (ret: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_PrimitiveFields())
+  ensures acc(T_class_global$class_PrimitiveFields(ret), wildcard)
+  ensures (unfolding acc(T_class_global$class_PrimitiveFields(ret), wildcard) in
+      dom$RuntimeType$intFromRef(ret.public$backing_field_a) ==
+      dom$RuntimeType$intFromRef(local$a) &&
+      dom$RuntimeType$intFromRef(ret.public$backing_field_b) ==
+      dom$RuntimeType$intFromRef(local$b))
+
+
+method global$fun_createPrimitiveFields$fun_take$$return$T_class_global$class_PrimitiveFields()
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$T_class_global$class_PrimitiveFields())
+  ensures acc(T_class_global$class_PrimitiveFields(ret$0), wildcard)
+{
+  ret$0 := class_PrimitiveFields$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_PrimitiveFields(dom$RuntimeType$intToRef(10),
+    dom$RuntimeType$intToRef(20))
+  goto label$ret$0
+  label label$ret$0
+}
+
+/primary_constructors.kt:(178,193): info: Generated Viper text for createRecursive:
+field public$backing_field_a: Ref
+
+method class_Recursive$constructor$fun_take$NT_class_global$class_Recursive$return$T_class_global$class_Recursive(local$a: Ref)
+  returns (ret: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Recursive())
+  ensures acc(T_class_global$class_Recursive(ret), wildcard)
+  ensures (unfolding acc(T_class_global$class_Recursive(ret), wildcard) in
+      ret.public$backing_field_a == local$a)
+
+
+method global$fun_createRecursive$fun_take$$return$T_class_global$class_Recursive()
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$T_class_global$class_Recursive())
+  ensures acc(T_class_global$class_Recursive(ret$0), wildcard)
+{
+  ret$0 := class_Recursive$constructor$fun_take$NT_class_global$class_Recursive$return$T_class_global$class_Recursive(dom$RuntimeType$nullValue())
+  goto label$ret$0
+  label label$ret$0
+}
+
+/primary_constructors.kt:(279,296): info: Generated Viper text for createFieldInBody:
+field public$backing_field_a: Ref
+
+field public$backing_field_c: Ref
+
+method class_FieldInBody$constructor$fun_take$T_Int$return$T_class_global$class_FieldInBody(local$c: Ref)
+  returns (ret: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_FieldInBody())
+  ensures acc(T_class_global$class_FieldInBody(ret), wildcard)
+  ensures (unfolding acc(T_class_global$class_FieldInBody(ret), wildcard) in
+      dom$RuntimeType$intFromRef(ret.public$backing_field_c) ==
+      dom$RuntimeType$intFromRef(local$c))
+
+
+method global$fun_createFieldInBody$fun_take$$return$T_class_global$class_FieldInBody()
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$T_class_global$class_FieldInBody())
+  ensures acc(T_class_global$class_FieldInBody(ret$0), wildcard)
+{
+  ret$0 := class_FieldInBody$constructor$fun_take$T_Int$return$T_class_global$class_FieldInBody(dom$RuntimeType$intToRef(10))
+  goto label$ret$0
+  label label$ret$0
+}

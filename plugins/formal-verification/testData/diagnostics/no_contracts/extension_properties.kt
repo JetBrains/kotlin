@@ -1,38 +1,32 @@
 // NEVER_VALIDATE
 
-val Int.succ: Int get() = this + 1
+val Int.intValProp: Int get() = this
 
-var Int.strange: Int
-    get() = this
-    set(v) {
-        val x = (v + this)
-    }
+var Int.intVarProp: Int
+    get() = 0
+    set(v) {}
 
 fun <!VIPER_TEXT!>extensionGetterProperty<!>() {
-    val a = 3.succ
-    val b = 40.succ.succ
+    val a = 0.intValProp
+    val b = 1.intValProp.intValProp
 }
 
 fun <!VIPER_TEXT!>extensionSetterProperty<!>() {
-    42.strange = 0
+    42.intVarProp = 0
 }
 
-class Foo(val x: Int)
+class PrimitiveField(val x: Int)
 
-val Foo.succ: Int get() = this.x + 1
+val PrimitiveField.pfValProp: Int get() = this.x
 
-var Foo.strange: Int
-    get() = this.x
-    set(v) {
-        val x1 = (v + this.x)
-    }
+var PrimitiveField.pfVarProp: Int
+    get() = 0
+    set(v) {}
 
-fun <!VIPER_TEXT!>extensionGetterPropertyUserDefinedClass<!>() {
-    val f = Foo(42)
-    val x = f.succ
+fun <!VIPER_TEXT!>extensionGetterPropertyUserDefinedClass<!>(pf: PrimitiveField) {
+    val x = pf.pfValProp
 }
 
-fun <!VIPER_TEXT!>extensionSetterPropertyUserDefinedClass<!>() {
-    val f = Foo(42)
-    f.strange = 42
+fun <!VIPER_TEXT!>extensionSetterPropertyUserDefinedClass<!>(pf: PrimitiveField) {
+    pf.pfVarProp = 42
 }
