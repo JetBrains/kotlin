@@ -108,6 +108,7 @@ allprojects {
                 "org.jetbrains.kotlin.fir.symbols.SymbolInternals",
                 "org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals",
                 "org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals",
+                "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
             )
         )
     }
