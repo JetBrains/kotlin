@@ -157,7 +157,7 @@ class UuidTest {
         val randomUuid = Uuid.random()
         assertTrue(randomUuid.isIetfVariant)
         assertEquals(4, randomUuid.version)
-        println("Random Uuid: $randomUuid")
+        println("Random uuid: $randomUuid")
     }
 
     @Test

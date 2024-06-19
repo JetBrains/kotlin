@@ -332,19 +332,21 @@ public class Uuid internal constructor(
         /**
          * Generates a new random [Uuid] instance.
          *
-         * The returned uuid conforms to [IETF variant (variant 2)](https://www.rfc-editor.org/rfc/rfc9562.html#section-4.1)
+         * The returned uuid conforms to the [IETF variant (variant 2)](https://www.rfc-editor.org/rfc/rfc9562.html#section-4.1)
          * and [version 4](https://www.rfc-editor.org/rfc/rfc9562.html#section-4.2),
-         * designed to be unique with a very high probability regardless of when or where it is generated.
+         * designed to be unique with a very high probability, regardless of when or where it is generated.
          * The uuid is produced using a cryptographically secure pseudorandom number generator (CSPRNG)
          * available on the platform. If the underlying system has not collected enough entropy, this function
-         * may block until sufficient entropy is collected and the CSPRNG is fully initialized.
+         * may block until sufficient entropy is collected, and the CSPRNG is fully initialized. It is worth mentioning
+         * that the PRNG used in the Kotlin/WasmWasi target is not guaranteed to be cryptographically secure.
+         * See the list below for details about the API used for producing the random uuid in each supported target.
          *
          * Note that the returned uuid is not recommended for use for cryptographic purposes.
          * Because version 4 uuid has a partially predictable bit pattern, and utilizes at most
          * 122 bits of entropy, regardless of platform.
          *
          * The following APIs are used for producing the random uuid in each of the supported targets:
-         *   - Kotlin/JVM - [java.security.SecureRandom](https://docs.oracle.com/javase%2F8%2Fdocs%2Fapi%2F%2F/java/security/SecureRandom.html)
+         *   - Kotlin/JVM - [java.security.SecureRandom](https://docs.oracle.com/javase/8/docs/api/java/security/SecureRandom.html)
          *   - Kotlin/JS - [Crypto.getRandomBytes()](https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues)
          *   - Kotlin/WasmJs - [Crypto.getRandomBytes()](https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues)
          *   - Kotlin/WasmWasi - [random_get](https://github.com/WebAssembly/WASI/blob/main/legacy/preview1/docs.md#random_get)
@@ -356,6 +358,8 @@ public class Uuid internal constructor(
          * Note that the underlying API used to produce random uuids may change in the future.
          *
          * @return A randomly generated uuid.
+         * @throws RuntimeException if the underlying API fails. Refer to the corresponding underlying API
+         *   documentation for possible reasons for failure and guidance on how to handle them.
          *
          * @sample samples.uuid.Uuids.random
          */

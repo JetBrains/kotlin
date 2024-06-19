@@ -21,7 +21,7 @@ internal actual fun secureRandomUuid(): Uuid {
             }
             uuidFromRandomBytes(randomBytes)
         } else {
-            throw WasiError(WasiErrorCode.entries[ret])
+            throw RuntimeException(cause = WasiError(WasiErrorCode.entries[ret]))
         }
     }
 }
