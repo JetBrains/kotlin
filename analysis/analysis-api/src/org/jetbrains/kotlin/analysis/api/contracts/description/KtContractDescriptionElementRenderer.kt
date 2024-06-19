@@ -5,19 +5,20 @@
 
 package org.jetbrains.kotlin.analysis.api.contracts.description
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractReturnsContractEffectDeclaration.*
 import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.*
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
+import org.jetbrains.kotlin.analysis.api.utils.getApiKClassOf
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
-import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
 @KaNonPublicApi
 internal fun Context.renderKaContractEffectDeclaration(value: KaContractEffectDeclaration, endWithNewLine: Boolean = true): Unit =
-    printer.appendHeader(value::class) {
+    printer.appendHeader(value) {
         when (value) {
             is KaContractCallsInPlaceContractEffectDeclaration -> {
                 appendProperty(value::valueParameterReference, ::renderKaContractParameterValue)
@@ -39,19 +40,19 @@ internal fun Context.renderKaContractEffectDeclaration(value: KaContractEffectDe
 
 @KaNonPublicApi
 private fun Context.renderKaContractConstantValue(value: KaContractConstantValue, endWithNewLine: Boolean = true): Unit =
-    printer.appendHeader(value::class) {
+    printer.appendHeader(value) {
         appendSimpleProperty(value::constantType, endWithNewLine)
     }
 
 @KaNonPublicApi
 private fun Context.renderKaContractParameterValue(value: KaContractParameterValue, endWithNewLine: Boolean = true): Unit =
-    printer.appendHeader(value::class) {
+    printer.appendHeader(value) {
         appendProperty(value::parameterSymbol, ::renderKaParameterSymbol, endWithNewLine)
     }
 
 @KaNonPublicApi
 private fun Context.renderKaContractBooleanExpression(value: KaContractBooleanExpression, endWithNewLine: Boolean = true): Unit =
-    printer.appendHeader(value::class) {
+    printer.appendHeader(value) {
         when (value) {
             is KaContractLogicalNotExpression -> appendProperty(value::argument, ::renderKaContractBooleanExpression, endWithNewLine)
             is KaContractBooleanConstantExpression -> appendSimpleProperty(value::booleanConstant, endWithNewLine)
@@ -86,8 +87,9 @@ private fun Context.renderKaParameterSymbol(value: KaParameterSymbol, endWithNew
 @KaNonPublicApi
 internal data class Context(val session: KaSession, val printer: PrettyPrinter, val symbolRenderer: DebugSymbolRenderer)
 
-private fun PrettyPrinter.appendHeader(clazz: KClass<*>, body: PrettyPrinter.() -> Unit) {
-    append(clazz.simpleName)
+@OptIn(KaImplementationDetail::class)
+private fun PrettyPrinter.appendHeader(value: Any, body: PrettyPrinter.() -> Unit) {
+    append(getApiKClassOf(value).simpleName)
     appendLine(":")
     withIndent { body() }
 }

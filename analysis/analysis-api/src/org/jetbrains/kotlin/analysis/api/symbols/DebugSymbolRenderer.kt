@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaPossiblyNamedSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
+import org.jetbrains.kotlin.analysis.api.utils.getApiKClassOf
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -44,7 +45,7 @@ import kotlin.reflect.full.*
 import kotlin.reflect.jvm.isAccessible
 
 @KaNonPublicApi
-@OptIn(KaExperimentalApi::class)
+@OptIn(KaExperimentalApi::class, KaImplementationDetail::class)
 public class DebugSymbolRenderer(
     public val renderExtra: Boolean = false,
     public val renderTypeByProperties: Boolean = false,
@@ -154,7 +155,7 @@ public class DebugSymbolRenderer(
 
     private fun KaSession.renderSymbolInternals(symbol: KaSymbol, printer: PrettyPrinter) {
         renderFrontendIndependentKClassNameOf(symbol, printer)
-        val apiClass = getFrontendIndependentKClassOf(symbol)
+        val apiClass = getApiKClassOf(symbol)
         printer.withIndent {
             val members = apiClass.members
                 .filterIsInstance<KProperty<*>>()
@@ -169,7 +170,7 @@ public class DebugSymbolRenderer(
     }
 
     private fun renderFrontendIndependentKClassNameOf(instanceOfClassToRender: Any, printer: PrettyPrinter) {
-        val apiClass = getFrontendIndependentKClassOf(instanceOfClassToRender)
+        val apiClass = getApiKClassOf(instanceOfClassToRender)
         printer.append(apiClass.simpleName).append(':')
     }
 
@@ -203,7 +204,7 @@ public class DebugSymbolRenderer(
         }
 
         with(printer) {
-            append(getFrontendIndependentKClassOf(symbol).simpleName)
+            append(getApiKClassOf(symbol).simpleName)
             append("(")
             when (symbol) {
                 is KaClassLikeSymbol -> renderId(symbol.classId, symbol)
@@ -434,34 +435,6 @@ public class DebugSymbolRenderer(
         renderList(value, printer, renderSymbolsFully = false)
     }
 
-    private fun getFrontendIndependentKClassOf(value: Any): KClass<*> {
-        fun KClass<*>.isFrontendIndependent(): Boolean {
-            if (this == Any::class) return false
-            val qualifiedName = qualifiedName ?: return false
-            return symbolImplementationPackageNames.none { qualifiedName.startsWith("$it.") }
-        }
-
-        val valueClass = value::class
-        val allClasses = listOf(valueClass) + valueClass.allSuperclasses
-
-        val matchingClasses = allClasses.filter { it.isFrontendIndependent() }
-        val matchingClassSet = matchingClasses.toSet()
-
-        val matchingClassesRanking = matchingClasses
-            .associateWith { matchingClassSet.intersect(it.allSuperclasses).size }
-
-        // Find supertypes with the highest number of frontend-independent supertypes
-        // It means more specific classes will be selected (such as KaClassSymbol instead of KaSymbol)
-        val minSupertypeCount = matchingClassesRanking.maxOf { it.value }
-
-        // If there are multiple matching classes, at least choose some stable one (based on the simple name ordering)
-        return matchingClassesRanking
-            .filter { it.value == minSupertypeCount }
-            .keys
-            .sortedBy { it.simpleName }
-            .first()
-    }
-
     private fun PsiElement.firstLineOfPsi(): String {
         val text = text
         val lines = text.lines()
@@ -483,11 +456,6 @@ public class DebugSymbolRenderer(
             "classIdIfNonLocal",
             "containingClassIdIfNonLocal",
             "callableIdIfNonLocal",
-        )
-
-        private val symbolImplementationPackageNames = listOf(
-            "org.jetbrains.kotlin.analysis.api.fir",
-            "org.jetbrains.kotlin.analysis.api.descriptors",
         )
     }
 }
