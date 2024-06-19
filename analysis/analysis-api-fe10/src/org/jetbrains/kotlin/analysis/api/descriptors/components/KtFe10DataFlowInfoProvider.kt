@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
-import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.components.KaDataFlowExitPointSnapshot
 import org.jetbrains.kotlin.analysis.api.components.KaDataFlowProvider
 import org.jetbrains.kotlin.analysis.api.components.KaImplicitReceiverSmartCast
@@ -14,6 +13,8 @@ import org.jetbrains.kotlin.analysis.api.components.KaSmartCastInfo
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseImplicitReceiverSmartCast
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSmartCastInfo
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -36,11 +37,11 @@ internal class KaFe10DataFlowProvider(
             when {
                 stableSmartCasts != null -> {
                     val type = stableSmartCasts.asSingleType() ?: return null
-                    KaSmartCastInfo(type, true, token)
+                    KaBaseSmartCastInfo(type, true)
                 }
                 unstableSmartCasts != null -> {
                     val type = unstableSmartCasts.asSingleType() ?: return null
-                    KaSmartCastInfo(type, false, token)
+                    KaBaseSmartCastInfo(type, false)
                 }
                 else -> null
             }
@@ -74,7 +75,7 @@ internal class KaFe10DataFlowProvider(
 
     private fun createImplicitReceiverSmartCast(type: KotlinType?, kind: KaImplicitReceiverSmartCastKind): KaImplicitReceiverSmartCast? {
         if (type == null) return null
-        return KaImplicitReceiverSmartCast(type.toKtType(analysisContext), kind, token)
+        return KaBaseImplicitReceiverSmartCast(type.toKtType(analysisContext), kind)
     }
 
     override fun computeExitPointSnapshot(statements: List<KtExpression>): KaDataFlowExitPointSnapshot = withValidityAssertion {

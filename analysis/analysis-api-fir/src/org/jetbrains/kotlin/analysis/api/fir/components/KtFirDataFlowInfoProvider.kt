@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.analysis.api.components.KaImplicitReceiverSmartCastK
 import org.jetbrains.kotlin.analysis.api.components.KaSmartCastInfo
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseImplicitReceiverSmartCast
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSmartCastInfo
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -87,7 +89,7 @@ internal class KaFirDataFlowProvider(
         get() = withValidityAssertion {
             val firSmartCastExpression = getMatchingFirExpressionWithSmartCast(this) ?: return null
             val type = firSmartCastExpression.smartcastType.coneTypeSafe<ConeKotlinType>()?.asKtType() ?: return null
-            return KaSmartCastInfo(type, firSmartCastExpression.isStable, token)
+            return KaBaseSmartCastInfo(type, firSmartCastExpression.isStable)
         }
 
     override val KtExpression.implicitReceiverSmartCasts: Collection<KaImplicitReceiverSmartCast>
@@ -175,7 +177,7 @@ internal class KaFirDataFlowProvider(
         if (!receiver.isStableSmartcast()) return null
 
         val type = receiver.resolvedType.asKtType()
-        return KaImplicitReceiverSmartCast(type, kind, token)
+        return KaBaseImplicitReceiverSmartCast(type, kind)
     }
 
     override fun computeExitPointSnapshot(statements: List<KtExpression>): KaDataFlowExitPointSnapshot = withValidityAssertion {

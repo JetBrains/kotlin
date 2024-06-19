@@ -7,13 +7,10 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtReturnExpression
-import java.util.Objects
 
 public interface KaDataFlowProvider {
     /**
@@ -46,45 +43,17 @@ public interface KaDataFlowProvider {
     }
 }
 
-public class KaSmartCastInfo(
-    private val backingSmartCastType: KaType,
-    private val backingIsStable: Boolean,
-    override val token: KaLifetimeToken
-) : KaLifetimeOwner {
-    public val isStable: Boolean get() = withValidityAssertion { backingIsStable }
-    public val smartCastType: KaType get() = withValidityAssertion { backingSmartCastType }
-
-    override fun equals(other: Any?): Boolean {
-        return this === other ||
-                other is KaSmartCastInfo &&
-                other.backingSmartCastType == backingSmartCastType &&
-                other.backingIsStable == backingIsStable
-    }
-
-    override fun hashCode(): Int = Objects.hash(backingSmartCastType, backingIsStable)
+public interface KaSmartCastInfo : KaLifetimeOwner {
+    public val isStable: Boolean
+    public val smartCastType: KaType
 }
 
 @Deprecated("Use 'KaSmartCastInfo' instead.", replaceWith = ReplaceWith("KaSmartCastInfo"))
 public typealias KtSmartCastInfo = KaSmartCastInfo
 
-public class KaImplicitReceiverSmartCast(
-    private val backingType: KaType,
-    private val backingKind: KaImplicitReceiverSmartCastKind,
-    override val token: KaLifetimeToken
-) : KaLifetimeOwner {
-    public val type: KaType get() = withValidityAssertion { backingType }
-    public val kind: KaImplicitReceiverSmartCastKind get() = withValidityAssertion { backingKind }
-
-    override fun equals(other: Any?): Boolean {
-        return this === other ||
-                other is KaImplicitReceiverSmartCast &&
-                other.backingType == backingType &&
-                other.backingKind == backingKind
-    }
-
-    override fun hashCode(): Int {
-        return Objects.hash(backingType, backingKind)
-    }
+public interface KaImplicitReceiverSmartCast : KaLifetimeOwner {
+    public val type: KaType
+    public val kind: KaImplicitReceiverSmartCastKind
 }
 
 @Deprecated("Use 'KaImplicitReceiverSmartCast' instead.", replaceWith = ReplaceWith("KaImplicitReceiverSmartCast"))
