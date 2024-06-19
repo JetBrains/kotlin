@@ -97,7 +97,7 @@ internal class Linker(
                 val name = bundleDir.name.removeSuffix(config.produce.suffix())
                 require(target.family.isAppleFamily)
                 val bundleRelativePath = if (target.family == Family.OSX) "Contents/MacOS/$name" else name
-                additionalLinkerArgs = listOf("-bundle")
+                additionalLinkerArgs = listOf("-bundle", "-dead_strip")
                 val bundlePath = bundleDir.child(bundleRelativePath)
                 bundlePath.parentFile.mkdirs()
                 executable = bundlePath.absolutePath

@@ -203,9 +203,9 @@ internal class TestCompilationFactory {
             dependenciesToCompileExecutable: Iterable<CompiledDependency<*>>,
             sourceModulesToCompileExecutable: Set<TestModule.Exclusive>
         ) = getDependenciesAndSourceModules(settings, rootModules, freeCompilerArgs) {
-            // TODO: should also include caches but the test compilation architecture is not configurable enough
-            //  to de-duplicate code used for executable and other compiler outputs
-            ProduceStaticCache.No
+            // An adapter to the cache production that accepts only Executable
+            val executable = Executable(executableArtifact.bundleDir, executableArtifact.fileCheckStage)
+            ProduceStaticCache.decideForIncludedKlib(settings, executable, extras)
         }
 
         return cachedTestBundleCompilations.computeIfAbsent(cacheKey) {
