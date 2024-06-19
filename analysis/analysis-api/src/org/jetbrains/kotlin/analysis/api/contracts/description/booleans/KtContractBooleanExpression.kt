@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.contracts.description.booleans
 
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
 
 /**
@@ -25,15 +23,8 @@ public typealias KtContractBooleanExpression = KaContractBooleanExpression
 /**
  * Represents boolean parameter reference passed to `booleanExpression` argument of [kotlin.contracts.SimpleEffect.implies].
  */
-public class KaContractBooleanValueParameterExpression(
-    private val backingParameterSymbol: KaParameterSymbol
-) : KaContractBooleanExpression {
-    override val token: KaLifetimeToken get() = backingParameterSymbol.token
-    public val parameterSymbol: KaParameterSymbol get() = withValidityAssertion { backingParameterSymbol }
-    override fun hashCode(): Int = backingParameterSymbol.hashCode()
-    override fun equals(other: Any?): Boolean {
-        return this === other || other is KaContractBooleanValueParameterExpression && other.backingParameterSymbol == backingParameterSymbol
-    }
+public interface KaContractBooleanValueParameterExpression : KaContractBooleanExpression {
+    public val parameterSymbol: KaParameterSymbol
 }
 
 @Deprecated("Use 'KaContractBooleanValueParameterExpression' instead", ReplaceWith("KaContractBooleanValueParameterExpression"))
@@ -43,17 +34,8 @@ public typealias KtContractBooleanValueParameterExpression = KaContractBooleanVa
  * Represents boolean constant reference. The boolean constant can be passed to `booleanExpression` argument of
  * [kotlin.contracts.SimpleEffect.implies].
  */
-public class KaContractBooleanConstantExpression(
-    private val backingBooleanConstant: Boolean,
-    override val token: KaLifetimeToken
-) : KaContractBooleanExpression {
-    public val booleanConstant: Boolean get() = withValidityAssertion { backingBooleanConstant }
-
-    override fun equals(other: Any?): Boolean {
-        return this === other || other is KaContractBooleanConstantExpression && other.backingBooleanConstant == backingBooleanConstant
-    }
-
-    override fun hashCode(): Int = backingBooleanConstant.hashCode()
+public interface KaContractBooleanConstantExpression : KaContractBooleanExpression {
+    public val booleanConstant: Boolean
 }
 
 @Deprecated("Use 'KaContractBooleanConstantExpression' instead", ReplaceWith("KaContractBooleanConstantExpression"))
