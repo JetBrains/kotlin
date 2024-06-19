@@ -15,6 +15,7 @@ import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.ES_2015
 import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinBrowserJsIr.Companion.WEBPACK_TASK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTarget.Companion.DISTRIBUTION_TASK_NAME
@@ -136,7 +137,7 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
 
                 subTarget.registerSubTargetTask<KotlinWebpack>(
                     subTarget.disambiguateCamelCased(
-                        binary.executeTaskBaseName,
+                        if (binary.mode == KotlinJsBinaryMode.DEVELOPMENT && compilation.isMain()) "" else binary.executeTaskBaseName,
                         RUN_TASK_NAME
                     ),
                     listOf(compilation)

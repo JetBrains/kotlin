@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8Exec
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTarget.Companion.RUN_TASK_NAME
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -16,7 +17,7 @@ class D8EnvironmentConfigurator(subTarget: KotlinJsIrSubTarget) :
 
     override fun configureBinaryRun(binary: JsIrBinary): TaskProvider<D8Exec> {
         val binaryRunName = subTarget.disambiguateCamelCased(
-            binary.mode.name.toLowerCaseAsciiOnly(),
+            if (binary.mode == KotlinJsBinaryMode.DEVELOPMENT) "" else binary.mode.name.toLowerCaseAsciiOnly(),
             RUN_TASK_NAME
         )
         val locateTask = project.locateTask<D8Exec>(binaryRunName)
