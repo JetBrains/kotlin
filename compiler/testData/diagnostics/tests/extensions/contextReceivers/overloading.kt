@@ -3,17 +3,28 @@
 // LANGUAGE: +ContextReceivers
 
 context(Int, String)
-fun foo(): Int {
-    return this@Int + 42
+fun foo(): String {
+    return ""
 }
 
 context(Int)
 fun foo(): Int {
-    return this@Int + 42
+    return 42
+}
+
+context(String)
+fun foo(): Double {
+    return 42.0
 }
 
 fun test() {
     with(42) {
-        foo()
+        with("") {
+            val a: String = foo()
+        }
+        val b: Int = foo()
+    }
+    with("") {
+        val c: Double = foo()
     }
 }
