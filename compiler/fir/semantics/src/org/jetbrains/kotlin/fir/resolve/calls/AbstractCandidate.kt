@@ -24,5 +24,6 @@ abstract class AbstractCandidate {
 }
 
 abstract class AbstractCallCandidate : AbstractCandidate() {
-    abstract var argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>?
+    abstract val argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>
+    abstract val argumentMappingInitialized: Boolean
 }

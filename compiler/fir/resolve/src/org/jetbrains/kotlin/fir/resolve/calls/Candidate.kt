@@ -114,7 +114,16 @@ class Candidate(
 
     var usesFunctionConversion: Boolean = false
 
-    override var argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>? = null
+    private var _argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>? = null
+    override val argumentMappingInitialized: Boolean
+        get() = _argumentMapping != null
+    override val argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>
+        get() = _argumentMapping ?: error("Argument mapping is not initialized yet")
+
+    fun updateArgumentMapping(argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>) {
+        _argumentMapping = argumentMapping
+    }
+
     var numDefaults: Int = 0
     var functionTypesOfSamConversions: HashMap<FirExpression, FirSamResolver.SamConversionInfo>? = null
     lateinit var typeArgumentMapping: TypeArgumentMapping

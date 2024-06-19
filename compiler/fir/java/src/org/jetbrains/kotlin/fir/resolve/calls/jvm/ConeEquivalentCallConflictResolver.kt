@@ -102,7 +102,8 @@ class ConeEquivalentCallConflictResolver(
         get() {
             val function = symbol.fir as? FirFunction ?: return null
             val parametersToIndices = function.valueParameters.mapIndexed { index, it -> it to index }.toMap()
-            val mapping = argumentMapping ?: return null
+            if (!argumentMappingInitialized) return null
+            val mapping = argumentMapping
             val result = IntArray(mapping.size + 1) { function.valueParameters.size }
             for ((index, parameter) in mapping.values.withIndex()) {
                 result[index + 1] = parametersToIndices[parameter] ?: error("Unmapped argument in arguments mapping")

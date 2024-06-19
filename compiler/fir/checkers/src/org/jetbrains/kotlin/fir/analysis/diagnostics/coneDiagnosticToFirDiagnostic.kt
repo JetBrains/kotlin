@@ -114,9 +114,12 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeAmbiguityError -> @OptIn(ApplicabilityDetail::class) when {
         // Don't report ambiguity when some non-lambda, non-callable-reference argument has an error type
         candidates.all {
-            it is AbstractCallCandidate && it.argumentMapping?.any { (key) ->
-                key.resolvedType.hasError() && key !is FirAnonymousFunctionExpression && key !is FirCallableReferenceAccess
-            } == true
+            if (it !is AbstractCallCandidate) return@all false
+            // Ambiguous candidates may be not fully processed, so argument mapping may be not initialized
+            if (!it.argumentMappingInitialized) return@all false
+            it.argumentMapping.keys.any { arg ->
+                arg.resolvedType.hasError() && arg !is FirAnonymousFunctionExpression && arg !is FirCallableReferenceAccess
+            }
         } -> null
         applicability.isSuccess -> FirErrors.OVERLOAD_RESOLUTION_AMBIGUITY.createOn(source, this.candidates.map { it.symbol })
         applicability == CandidateApplicability.UNSAFE_CALL -> {

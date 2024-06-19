@@ -537,8 +537,10 @@ class ConeOverloadConflictResolver(
                     }
             } else {
                 called.contextReceivers.mapTo(this) { TypeWithConversion(it.typeRef.coneType.prepareType(session, call)) }
-                call.argumentMapping?.mapTo(this) { (_, parameter) ->
-                    parameter.toTypeWithConversion(session, call)
+                if (call.argumentMappingInitialized) {
+                    call.argumentMapping.mapTo(this) { (_, parameter) ->
+                        parameter.toTypeWithConversion(session, call)
+                    }
                 }
             }
         }
@@ -575,7 +577,7 @@ class ConeOverloadConflictResolver(
 
     private fun FirValueParameter.toFunctionTypeForSamOrNull(call: Candidate): ConeKotlinType? {
         val functionTypesOfSamConversions = call.functionTypesOfSamConversions ?: return null
-        return call.argumentMapping?.entries?.firstNotNullOfOrNull {
+        return call.argumentMapping.entries.firstNotNullOfOrNull {
             runIf(it.value == this) { functionTypesOfSamConversions[it.key.unwrapArgument()]?.functionalType }
         }
     }

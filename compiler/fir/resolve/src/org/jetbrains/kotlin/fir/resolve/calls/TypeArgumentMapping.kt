@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.isRaw
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.types.Variance
+import java.util.LinkedHashMap
 
 sealed class TypeArgumentMapping {
     abstract operator fun get(typeParameterIndex: Int): FirTypeProjection
@@ -89,5 +90,11 @@ internal object NoTypeArguments : ResolutionStage() {
             sink.yieldDiagnostic(InapplicableCandidate)
         }
         candidate.typeArgumentMapping = TypeArgumentMapping.NoExplicitArguments
+    }
+}
+
+internal object InitializeCallableReferenceArguments : ResolutionStage() {
+    override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
+        candidate.updateArgumentMapping(LinkedHashMap())
     }
 }

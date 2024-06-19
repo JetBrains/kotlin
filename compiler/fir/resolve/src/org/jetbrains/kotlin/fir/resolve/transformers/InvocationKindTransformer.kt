@@ -29,7 +29,7 @@ tailrec fun FirExpression.unwrapAnonymousFunctionExpression(): FirAnonymousFunct
 
 fun FirFunctionCall.replaceLambdaArgumentInvocationKinds(session: FirSession) {
     val calleeReference = calleeReference as? FirNamedReferenceWithCandidate ?: return
-    val argumentMapping = calleeReference.candidate.argumentMapping ?: return
+    val argumentMapping = calleeReference.candidate.argumentMapping
     val function = calleeReference.candidateSymbol.fir as? FirSimpleFunction ?: return
     val isInline = function.isInline
 

@@ -364,7 +364,7 @@ object CheckDslScopeViolation : ResolutionStage() {
         if (candidate.dispatchReceiver?.resolvedType?.fullyExpandedType(context.session)?.isSomeFunctionType(context.session) == true &&
             (candidate.symbol as? FirNamedFunctionSymbol)?.name == OperatorNameConventions.INVOKE
         ) {
-            val firstArg = candidate.argumentMapping?.keys?.firstOrNull() as? FirThisReceiverExpression ?: return
+            val firstArg = candidate.argumentMapping.keys.firstOrNull() as? FirThisReceiverExpression ?: return
             if (!firstArg.isImplicit) return
             checkImpl(
                 candidate,
@@ -503,7 +503,7 @@ internal object MapArguments : ResolutionStage() {
             candidate.originScope,
             callSiteIsOperatorCall = (callInfo.callSite as? FirFunctionCall)?.origin == FirFunctionCallOrigin.Operator
         )
-        candidate.argumentMapping = mapping.toArgumentToParameterMapping()
+        candidate.updateArgumentMapping(mapping.toArgumentToParameterMapping())
         candidate.numDefaults = mapping.numDefaults()
 
         mapping.diagnostics.forEach(sink::reportDiagnostic)
@@ -514,8 +514,7 @@ internal object MapArguments : ResolutionStage() {
 internal object CheckArguments : CheckerStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         candidate.symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
-        val argumentMapping =
-            candidate.argumentMapping ?: error("Argument should be already mapped while checking arguments!")
+        val argumentMapping = candidate.argumentMapping
         val isInvokeFromExtensionFunctionType = candidate.isInvokeFromExtensionFunctionType
 
         for ((index, argument) in callInfo.arguments.withIndex()) {
@@ -557,7 +556,7 @@ private val Candidate.isInvokeFromExtensionFunctionType: Boolean
 
 internal fun Candidate.shouldHaveLowPriorityDueToSAM(bodyResolveComponents: BodyResolveComponents): Boolean {
     if (!usesSamConversion || isJavaApplicableCandidate()) return false
-    return argumentMapping!!.values.any {
+    return argumentMapping.values.any {
         val coneType = it.returnTypeRef.coneType
         bodyResolveComponents.samResolver.isSamType(coneType) &&
                 // Candidate is not from Java, so no flexible types are possible here

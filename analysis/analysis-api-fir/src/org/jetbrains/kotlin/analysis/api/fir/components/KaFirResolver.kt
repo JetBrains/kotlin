@@ -94,6 +94,7 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -627,7 +628,7 @@ internal class KaFirResolver(
             is FirFunctionCall -> {
                 if (unsubstitutedKtSignature.symbol !is KaFunctionSymbol) return null
                 val argumentMapping = if (candidate is Candidate) {
-                    candidate.argumentMapping
+                    runIf(candidate.argumentMappingInitialized) { candidate.argumentMapping }
                 } else {
                     fir.resolvedArgumentMapping
                 }

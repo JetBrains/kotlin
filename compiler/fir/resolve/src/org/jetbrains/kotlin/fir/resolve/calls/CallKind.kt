@@ -88,6 +88,7 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         CheckVisibility,
         DiscriminateSyntheticProperties,
         NoTypeArguments,
+        InitializeCallableReferenceArguments,
         CreateFreshTypeVariableSubstitutorStage,
         CollectTypeVariableUsagesInfo,
         CheckDispatchReceiver,
