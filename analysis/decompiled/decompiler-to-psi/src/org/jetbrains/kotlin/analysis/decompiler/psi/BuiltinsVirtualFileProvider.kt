@@ -16,18 +16,18 @@ import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerial
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import java.net.URL
 
-abstract class BuiltInsVirtualFileProvider {
-    abstract fun getBuiltInVirtualFiles(): Set<VirtualFile>
+abstract class BuiltinsVirtualFileProvider {
+    abstract fun getBuiltinVirtualFiles(): Set<VirtualFile>
 
     abstract fun createBuiltinsScope(project: Project): GlobalSearchScope
 
     companion object {
-        fun getInstance(): BuiltInsVirtualFileProvider =
-            ApplicationManager.getApplication().getService(BuiltInsVirtualFileProvider::class.java)
+        fun getInstance(): BuiltinsVirtualFileProvider =
+            ApplicationManager.getApplication().getService(BuiltinsVirtualFileProvider::class.java)
     }
 }
 
-abstract class BuiltInsVirtualFileProviderBaseImpl : BuiltInsVirtualFileProvider() {
+abstract class BuiltinsVirtualFileProviderBaseImpl : BuiltinsVirtualFileProvider() {
     private val builtInUrls: Set<URL> by lazy {
         val classLoader = this::class.java.classLoader
         StandardClassIds.builtInsPackages.mapTo(mutableSetOf()) { builtInPackageFqName ->
@@ -40,13 +40,13 @@ abstract class BuiltInsVirtualFileProviderBaseImpl : BuiltInsVirtualFileProvider
     }
 
     override fun createBuiltinsScope(project: Project): GlobalSearchScope {
-        val builtInFiles = getBuiltInVirtualFiles()
+        val builtInFiles = getBuiltinVirtualFiles()
         return GlobalSearchScope.filesScope(project, builtInFiles)
     }
 
     protected abstract fun findVirtualFile(url: URL): VirtualFile?
 
-    override fun getBuiltInVirtualFiles(): Set<VirtualFile> = builtInUrls.mapTo(mutableSetOf()) { url ->
+    override fun getBuiltinVirtualFiles(): Set<VirtualFile> = builtInUrls.mapTo(mutableSetOf()) { url ->
         findVirtualFile(url)
             ?: errorWithAttachment("Virtual file for builtin is not found") {
                 withEntry("resourceUrl", url) { it.toString() }
@@ -54,17 +54,17 @@ abstract class BuiltInsVirtualFileProviderBaseImpl : BuiltInsVirtualFileProvider
     }
 }
 
-class BuiltInsVirtualFileProviderCliImpl(
+class BuiltinsVirtualFileProviderCliImpl(
     private val jarFileSystem: CoreJarFileSystem,
-) : BuiltInsVirtualFileProviderBaseImpl() {
+) : BuiltinsVirtualFileProviderBaseImpl() {
     override fun findVirtualFile(url: URL): VirtualFile? {
         val split = URLUtil.splitJarUrl(url.path)
             ?: errorWithAttachment("URL for builtins does not contain jar separator") {
                 withEntry("url", url) { url.toString() }
             }
         val jarPath = split.first
-        val builtInFile = split.second
-        val pathToQuery = jarPath + URLUtil.JAR_SEPARATOR + builtInFile
+        val builtinFile = split.second
+        val pathToQuery = jarPath + URLUtil.JAR_SEPARATOR + builtinFile
         return jarFileSystem.findFileByPath(pathToQuery)
     }
 }
