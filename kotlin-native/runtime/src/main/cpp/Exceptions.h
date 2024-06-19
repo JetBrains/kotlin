@@ -42,6 +42,7 @@ void RUNTIME_NORETURN ThrowNotImplementedError();
 void RUNTIME_NORETURN ThrowCharacterCodingException();
 void RUNTIME_NORETURN ThrowIllegalArgumentException();
 void RUNTIME_NORETURN ThrowIllegalStateException();
+void RUNTIME_NORETURN ThrowIllegalStateExceptionWithMessage(KConstRef message);
 void RUNTIME_NORETURN ThrowInvalidMutabilityException(KConstRef where);
 void RUNTIME_NORETURN ThrowIncorrectDereferenceException();
 void RUNTIME_NORETURN ThrowFileFailedToInitializeException(KRef reason);

@@ -30,7 +30,9 @@
 #endif
 
 #include "KAssert.h"
+#include "KString.h"
 #include "Exceptions.h"
+#include "Format.h"
 #include "Memory.h"
 #include "Natives.h"
 #include "Types.h"
@@ -132,6 +134,18 @@ ALWAYS_INLINE void Kotlin_ByteArray_set_value(KRef thiz, KInt index, KByte value
     boundsCheck(array, index);
   mutabilityCheck(thiz);
   *ByteArrayAddressOfElementAt(array, index) = value;
+}
+
+void throwReadingRandomBytesFailed(const char* format, ...) {
+    va_list args;
+    va_start(args, format);
+    std::array<char, 128> buffer;
+    kotlin::std_support::span<char> span(buffer);
+    span = kotlin::VFormatToSpan(span, format, args);
+    va_end(args);
+    ObjHolder holder;
+    StringFromUtf8Buffer(buffer.data(), buffer.size() - span.size(), holder.slot());
+    ThrowIllegalStateExceptionWithMessage(holder.obj());
 }
 
 }  // namespace
@@ -621,13 +635,13 @@ void Kotlin_ByteArray_fillWithRandomBytes(KRef byteArray, KInt size) {
         if (ret >= 0) {
             count += ret;
         } else if (errno != EINTR) { // repeat if interrupted
-            ThrowIllegalStateException();
+            throwReadingRandomBytesFailed("getrandom returned a negative value: %ld, errno: %d", ret, errno);
         }
     }
 #elif KONAN_WINDOWS
     NTSTATUS status = BCryptGenRandom(NULL, (PUCHAR)address, (ULONG)size, BCRYPT_USE_SYSTEM_PREFERRED_RNG);
     if (!NT_SUCCESS(status)) {
-        ThrowIllegalStateException();
+        throwReadingRandomBytesFailed("Unexpected failure in random bytes generation: %ld", status);
     }
 #else
 #error "How to Kotlin_ByteArray_fillWithRandomBytes()?"
