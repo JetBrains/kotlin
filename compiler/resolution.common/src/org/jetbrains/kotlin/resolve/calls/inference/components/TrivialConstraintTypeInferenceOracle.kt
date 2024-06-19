@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
-import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
@@ -16,13 +15,6 @@ class TrivialConstraintTypeInferenceOracle private constructor(context: TypeSyst
     TypeSystemInferenceExtensionContext by context {
     // This constructor is used for injection only in old FE
     constructor(context: TypeSystemInferenceExtensionContextDelegate) : this(context as TypeSystemInferenceExtensionContext)
-
-    // The idea is to add knowledge that constraint `Nothing(?) <: T` is quite useless and
-    // it's totally fine to go and resolve postponed argument without fixation T to Nothing(?).
-    // In other words, constraint `Nothing(?) <: T` is *not* proper
-    fun isNotInterestingConstraint(constraint: Constraint): Boolean {
-        return constraint.kind == ConstraintKind.LOWER && constraint.type.typeConstructor().isNothingConstructor()
-    }
 
     // This function controls the choice between sub and super result type
     // Even that Nothing(?) is the most specific type for subtype, it doesn't bring valuable information to the user,

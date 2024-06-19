@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.ForkPointData
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode.PARTIAL
 import org.jetbrains.kotlin.resolve.calls.inference.hasRecursiveTypeParametersWithGivenSelfType
 import org.jetbrains.kotlin.resolve.calls.inference.isRecursiveTypeParameter
-import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
-import org.jetbrains.kotlin.resolve.calls.inference.model.DeclaredUpperBoundConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.IncorporationConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
+import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.types.model.*
 
@@ -151,9 +148,15 @@ class VariableFixationFinder(
 
     private fun Context.allConstraintsTrivialOrNonProper(variable: TypeConstructorMarker): Boolean {
         return notFixedTypeVariables[variable]?.constraints?.all { constraint ->
-            trivialConstraintTypeInferenceOracle.isNotInterestingConstraint(constraint) || !isProperArgumentConstraint(constraint)
+            isLowerNothingOrNullableNothing(constraint) || !isProperArgumentConstraint(constraint)
         } ?: false
     }
+
+    // The idea is to add knowledge that constraint `Nothing(?) <: T` is quite useless and
+    // it's totally fine to go and resolve postponed argument without fixation T to Nothing(?).
+    // In other words, constraint `Nothing(?) <: T` is *not* proper
+    private fun Context.isLowerNothingOrNullableNothing(constraint: Constraint): Boolean =
+        constraint.kind == ConstraintKind.LOWER && constraint.type.typeConstructor().isNothingConstructor()
 
     private fun Context.variableHasOnlyIncorporatedConstraintsFromDeclaredUpperBound(variable: TypeConstructorMarker): Boolean {
         val constraints = notFixedTypeVariables[variable]?.constraints ?: return false
