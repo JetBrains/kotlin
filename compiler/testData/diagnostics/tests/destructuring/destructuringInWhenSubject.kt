@@ -1,4 +1,3 @@
-// COMPARE_WITH_LIGHT_TREE
 data class Foo(val name: String)
 
 fun main() {
