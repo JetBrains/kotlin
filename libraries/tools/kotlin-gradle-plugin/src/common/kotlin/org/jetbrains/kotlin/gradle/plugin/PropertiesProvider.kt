@@ -229,9 +229,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
             }
             .orElse(false)
 
-    val wasmStabilityNoWarn: Boolean
-        get() = booleanProperty("kotlin.wasm.stability.nowarn") ?: false
-
     val ignoreDisabledNativeTargets: Boolean?
         get() = booleanProperty(KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS)
 

@@ -944,14 +944,6 @@ object KotlinToolingDiagnostics {
         }
     }
 
-    object WasmStabilityWarning : ToolingDiagnosticFactory(WARNING) {
-        operator fun invoke(): ToolingDiagnostic =
-            build(
-                "New 'wasm' target is Work-in-Progress and is subject to change without notice. " +
-                        "Please report encountered issues to https://kotl.in/issue"
-            )
-    }
-
     object RedundantDependsOnEdgesFound : ToolingDiagnosticFactory(WARNING) {
         data class RedundantEdge(val from: String, val to: String)
 

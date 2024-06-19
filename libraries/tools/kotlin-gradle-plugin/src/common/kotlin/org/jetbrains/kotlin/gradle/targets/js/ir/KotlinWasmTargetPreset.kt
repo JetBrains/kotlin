@@ -24,10 +24,6 @@ class KotlinWasmTargetPreset(
     override val platformType: KotlinPlatformType = KotlinPlatformType.wasm
 
     override fun instantiateTarget(name: String): KotlinJsIrTarget {
-        if (!PropertiesProvider(project).wasmStabilityNoWarn) {
-            project.reportDiagnosticOncePerBuild(KotlinToolingDiagnostics.WasmStabilityWarning())
-        }
-
         val irTarget = project.objects.newInstance(KotlinJsIrTarget::class.java, project, KotlinPlatformType.wasm)
         irTarget.isMpp = true
         irTarget.wasmTargetType = targetType
