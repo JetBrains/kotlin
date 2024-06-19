@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.resolution
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
@@ -58,7 +59,7 @@ public sealed class KaFunctionCall<S : KaFunctionSymbol>(
 /**
  * A call to a function.
  */
-public class KaSimpleFunctionCall(
+public class KaSimpleFunctionCall @KaImplementationDetail constructor(
     partiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
     argumentMapping: LinkedHashMap<KtExpression, KaVariableSignature<KaValueParameterSymbol>>,
     typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
@@ -89,7 +90,7 @@ public class KaSimpleFunctionCall(
  * fun foo() {}
  * ```
  */
-public class KaAnnotationCall(
+public class KaAnnotationCall @KaImplementationDetail constructor(
     partiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaConstructorSymbol>,
     argumentMapping: LinkedHashMap<KtExpression, KaVariableSignature<KaValueParameterSymbol>>,
 ) : KaFunctionCall<KaConstructorSymbol>(argumentMapping) {
@@ -116,7 +117,7 @@ public class KaAnnotationCall(
  * }
  * ```
  */
-public class KaDelegatedConstructorCall(
+public class KaDelegatedConstructorCall @KaImplementationDetail constructor(
     partiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaConstructorSymbol>,
     kind: Kind,
     argumentMapping: LinkedHashMap<KtExpression, KaVariableSignature<KaValueParameterSymbol>>,
@@ -146,7 +147,7 @@ public sealed class KaVariableAccessCall : KaCallableMemberCall<KaVariableSymbol
 /**
  * A simple read or write to a variable or property.
  */
-public class KaSimpleVariableAccessCall(
+public class KaSimpleVariableAccessCall @KaImplementationDetail constructor(
     partiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableSymbol>,
     typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
     simpleAccess: KaSimpleVariableAccess,
@@ -259,7 +260,7 @@ public interface KaCompoundVariableAccessCall : KaCall, KaCompoundAccessCall {
  * The above call is represented as a simple `KaFunctionCall` to `MutableList.plusAssign`, with the dispatch receiver referencing the
  * `m["a"]`, which is again a simple `KaFunctionCall` to `ThrowingMap.get`.
  */
-public class KaCompoundArrayAccessCall(
+public class KaCompoundArrayAccessCall @KaImplementationDetail constructor(
     compoundAccess: KaCompoundAccess,
     indexArguments: List<KtExpression>,
     getPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>,

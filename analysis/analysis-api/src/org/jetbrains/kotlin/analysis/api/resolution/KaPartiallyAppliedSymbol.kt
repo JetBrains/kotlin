@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.resolution
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
  * properties, the missing information is the type of access (read, write, or compound access) to this property. For functions, the missing
  * information is the value arguments for the call.
  */
-public class KaPartiallyAppliedSymbol<out S : KaCallableSymbol, out C : KaCallableSignature<S>>(
+public class KaPartiallyAppliedSymbol<out S : KaCallableSymbol, out C : KaCallableSignature<S>> @KaImplementationDetail constructor(
     signature: C,
     dispatchReceiver: KaReceiverValue?,
     extensionReceiver: KaReceiverValue?,

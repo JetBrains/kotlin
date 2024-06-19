@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.resolution
 
-import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.idea.references.KtReference
 
-@KaAnalysisApiInternals
+@KaImplementationDetail
 public interface KaSymbolBasedReference : KtReference {
     public fun KaSession.resolveToSymbols(): Collection<KaSymbol>
 }

@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.analysis.api
 
 import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolBasedReference
 
-@OptIn(KaAnalysisApiInternals::class)
+@KaImplementationDetail
 @Deprecated(
     "The API has been moved into `org.jetbrains.kotlin.analysis.api.resolution` package",
     level = DeprecationLevel.HIDDEN,
 )
 public typealias KaSymbolBasedReference = KaSymbolBasedReference
 
-@OptIn(KaAnalysisApiInternals::class)
+@KaImplementationDetail
 @Deprecated("Use 'KaSymbolBasedReference' instead", ReplaceWith("KaSymbolBasedReference"))
 public typealias KtSymbolBasedReference = KaSymbolBasedReference

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.resolution
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
@@ -31,7 +32,7 @@ public sealed class KaCompoundAccess(
     /**
      * A compound access that read, compute, and write the computed value back. Note that calls to `<op>Assign` is not represented by this.
      */
-    public class CompoundAssign(
+    public class CompoundAssign @KaImplementationDetail constructor(
         operationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>,
         kind: Kind,
         operand: KtExpression,
@@ -48,7 +49,7 @@ public sealed class KaCompoundAccess(
     /**
      * A compound access that read, increment or decrement, and write the computed value back.
      */
-    public class IncOrDecOperation(
+    public class IncOrDecOperation @KaImplementationDetail constructor(
         operationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>,
         kind: Kind,
         precedence: Precedence,

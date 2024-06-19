@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.resolution
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
@@ -34,7 +35,7 @@ public sealed class KaReceiverValue : KaLifetimeOwner {
  *   "".length // explicit receiver `""`
  * ```
  */
-public class KaExplicitReceiverValue(
+public class KaExplicitReceiverValue @KaImplementationDetail constructor(
     expression: KtExpression,
     type: KaType,
     isSafeNavigation: Boolean,
@@ -71,7 +72,7 @@ public class KaExplicitReceiverValue(
  * }
  * ```
  */
-public class KaImplicitReceiverValue(
+public class KaImplicitReceiverValue @KaImplementationDetail constructor(
     symbol: KaSymbol,
     type: KaType,
 ) : KaReceiverValue() {
@@ -92,7 +93,7 @@ public class KaImplicitReceiverValue(
  * }
  * ```
  */
-public class KaSmartCastedReceiverValue(
+public class KaSmartCastedReceiverValue @KaImplementationDetail constructor(
     original: KaReceiverValue,
     smartCastType: KaType,
 ) : KaReceiverValue() {

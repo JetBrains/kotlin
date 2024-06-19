@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.resolution
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
@@ -20,7 +21,7 @@ public sealed class KaCallInfo : KaLifetimeOwner
 /**
  * Successfully resolved call.
  */
-public class KaSuccessCallInfo(private val backingCall: KaCall) : KaCallInfo() {
+public class KaSuccessCallInfo @KaImplementationDetail constructor(private val backingCall: KaCall) : KaCallInfo() {
     override val token: KaLifetimeToken get() = backingCall.token
     public val call: KaCall get() = withValidityAssertion { backingCall }
 }
@@ -28,7 +29,7 @@ public class KaSuccessCallInfo(private val backingCall: KaCall) : KaCallInfo() {
 /**
  * Call that contains errors.
  */
-public class KaErrorCallInfo(
+public class KaErrorCallInfo @KaImplementationDetail constructor(
     candidateCalls: List<KaCall>,
     diagnostic: KaDiagnostic,
     override val token: KaLifetimeToken,
