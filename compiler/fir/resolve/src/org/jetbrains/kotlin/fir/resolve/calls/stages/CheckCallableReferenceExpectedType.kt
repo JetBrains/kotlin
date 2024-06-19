@@ -227,7 +227,7 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
      */
     var defaults = 0
     var varargMappingState = VarargMappingState.UNMAPPED
-    val mappedArguments = linkedMapOf<FirValueParameter, ResolvedCallArgument>()
+    val mappedArguments = linkedMapOf<FirValueParameter, ResolvedCallArgument<FirExpression>>()
     val mappedVarargElements = linkedMapOf<FirValueParameter, MutableList<FirExpression>>()
     val mappedArgumentTypes = arrayOfNulls<ConeKotlinType?>(fakeArguments.size)
 
