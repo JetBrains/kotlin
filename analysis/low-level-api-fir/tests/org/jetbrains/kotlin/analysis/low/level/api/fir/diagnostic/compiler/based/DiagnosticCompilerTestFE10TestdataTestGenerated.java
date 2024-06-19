@@ -22739,6 +22739,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("fileJvmNameSameAsClass.kt")
+      public void testFileJvmNameSameAsClass() {
+        runTest("compiler/testData/diagnostics/tests/j+k/fileJvmNameSameAsClass.kt");
+      }
+
+      @Test
       @TestMetadata("finalCollectionSize.kt")
       public void testFinalCollectionSize() {
         runTest("compiler/testData/diagnostics/tests/j+k/finalCollectionSize.kt");
