@@ -41,8 +41,8 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependencies
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinFakeClsStubsCache
 import org.jetbrains.kotlin.analysis.api.symbols.AdditionalKDocResolutionProvider
-import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltInsVirtualFileProvider
-import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltInsVirtualFileProviderCliImpl
+import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
+import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProviderCliImpl
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.DummyFileAttributeService
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.FileAttributeService
@@ -124,8 +124,8 @@ object StandaloneProjectFactory {
                 registerService(KotlinFakeClsStubsCache::class.java, KotlinFakeClsStubsCache::class.java)
                 registerService(ClsKotlinBinaryClassCache::class.java)
                 registerService(
-                    BuiltInsVirtualFileProvider::class.java,
-                    BuiltInsVirtualFileProviderCliImpl(applicationEnvironment.jarFileSystem as CoreJarFileSystem)
+                    BuiltinsVirtualFileProvider::class.java,
+                    BuiltinsVirtualFileProviderCliImpl(applicationEnvironment.jarFileSystem as CoreJarFileSystem)
                 )
                 registerService(FileAttributeService::class.java, DummyFileAttributeService::class.java)
             }
