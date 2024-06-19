@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // WITH_STDLIB
 // ISSUE: KT-68469
 // FILE: Bar.java

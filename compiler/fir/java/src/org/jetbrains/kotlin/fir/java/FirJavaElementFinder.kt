@@ -105,15 +105,9 @@ class FirJavaElementFinder(
             if (topLevelClass.isRoot) break
             val classId = ClassId.topLevel(topLevelClass)
 
-            // 1. We could be asked to find class of kind "...MainKt" that was created from file "main.kt"
-            val firFile = fileCache.getValue(classId.packageFqName)[classId.relativeClassName.asString()]?.singleOrNull()
-            if (firFile != null) {
-                val fileStub = createJavaFileStub(classId.packageFqName, psiManager)
-                return buildFileAsClassStub(firFile, classId, fileStub).psi
-            }
-
-            // 2. Find regular class
+            // 1. Find regular class
             val firClass = firProviders.firstNotNullOfOrNull { it.getFirClassifierByFqName(classId) as? FirRegularClass } ?: continue
+
             val fileStub = createJavaFileStub(classId.packageFqName, psiManager)
             val topLevelResult = buildStub(firClass, fileStub).psi
             val tail = fqName.tail(topLevelClass).pathSegments()
@@ -121,6 +115,15 @@ class FirJavaElementFinder(
             return tail.fold(topLevelResult) { psiClass, segment ->
                 psiClass.findInnerClassByName(segment.identifier, false) ?: return null
             }
+        }
+
+        // 2. We could be asked to find class of kind "...MainKt" that was created from file "main.kt"
+        val classId = ClassId.topLevel(fqName)
+        val firFile = fileCache.getValue(classId.packageFqName)[classId.relativeClassName.asString()]?.singleOrNull()
+
+        if (firFile != null) {
+            val fileStub = createJavaFileStub(classId.packageFqName, psiManager)
+            return buildFileAsClassStub(firFile, classId, fileStub).psi
         }
 
         return null
