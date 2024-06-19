@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.NotSupportedForK1Exception
 import org.jetbrains.kotlin.analysis.api.components.KaSubstitutorProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -20,12 +19,13 @@ internal class KaFe10SubstitutorProvider(
 ) : KaSessionComponent<KaSession>(), KaSubstitutorProvider {
     override fun createInheritanceTypeSubstitutor(subClass: KaClassSymbol, superClass: KaClassSymbol): KaSubstitutor? {
         withValidityAssertion {
-            throw NotSupportedForK1Exception()
+            throw UnsupportedOperationException("This operation is not supported in the K1 version of the Analysis API.")
         }
     }
 
     override fun createSubstitutor(mappings: Map<KaTypeParameterSymbol, KaType>): KaSubstitutor = withValidityAssertion {
         if (mappings.isEmpty()) return KaSubstitutor.Empty(token)
-        TODO()
+
+        throw UnsupportedOperationException("This operation is not supported in the K1 version of the Analysis API.")
     }
 }
