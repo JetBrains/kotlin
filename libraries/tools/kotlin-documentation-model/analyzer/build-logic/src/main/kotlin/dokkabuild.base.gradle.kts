@@ -2,7 +2,6 @@
  * Copyright 2014-2024 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
  */
 import dokkabuild.DokkaBuildProperties
-import org.gradle.language.base.plugins.LifecycleBasePlugin.VERIFICATION_GROUP
 
 /**
  * A convention plugin that sets up common config and sensible defaults for all subprojects.

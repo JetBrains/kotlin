@@ -64,7 +64,7 @@ gradlePlugin-gradle-enterprise = "3.16.2"
 ## Test
 junit = "5.9.3"
 kotest = "5.6.2"
-eclipse-jgit = "5.13.2.202306221912-r" # jgit 6.X requires Java 11 to run
+eclipse-jgit = "5.13.3.202401111512-r" # jgit 6.X requires Java 11 to run
 
 [libraries]
 
