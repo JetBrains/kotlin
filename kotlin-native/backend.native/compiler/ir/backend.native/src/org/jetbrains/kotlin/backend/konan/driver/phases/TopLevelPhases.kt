@@ -317,6 +317,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.compileAndLink(
             listOf(linkerInput.canonicalPath),
             moduleCompilationOutput.dependenciesTrackingResult,
             outputFiles,
+            temporaryFiles,
             cacheBinaries,
     )
     runPhase(LinkerPhase, linkerPhaseInput)

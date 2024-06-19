@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.konan.KonanExternalToolFailure
+import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
@@ -38,6 +39,7 @@ internal class Linker(
         private val config: KonanConfig,
         private val linkerOutput: LinkerOutputKind,
         private val outputFiles: OutputFiles,
+        private val tempFiles: TempFiles,
 ) {
     private val platform = config.platform
     private val linker = platform.linker
@@ -135,6 +137,7 @@ internal class Linker(
 
         return with(linker) {
             LinkerArguments(
+                    tempFiles = tempFiles,
                     objectFiles = objectFiles,
                     executable = executable,
                     libraries = linker.linkStaticLibraries(includedBinaries) + caches.static,

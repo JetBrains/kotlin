@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.konan.target
 
+import org.jetbrains.kotlin.konan.TempFiles
 import java.lang.ProcessBuilder
 import java.lang.ProcessBuilder.Redirect
 import org.jetbrains.kotlin.konan.exec.Command
@@ -60,6 +61,7 @@ private fun staticGnuArCommands(ar: String, executable: ExecutableFile,
     }
 
 class LinkerArguments(
+    val tempFiles: TempFiles,
     val objectFiles: List<ObjectFile>,
     val executable: ExecutableFile,
     val libraries: List<String>,
@@ -83,6 +85,7 @@ fun LinkerFlags.finalLinkCommands(
     sanitizer: SanitizerKind? = null,
 ): List<Command> = with(this) {
     LinkerArguments(
+        TempFiles(),
         objectFiles, executable, libraries, linkerArgs, optimize, debug, kind, outputDsymBundle, mimallocEnabled, sanitizer
     ).finalLinkCommands()
 }
@@ -247,12 +250,14 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
         add(sdkVersion)
     }.toList()
 
-    override fun finalLinkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
-                                   libraries: List<String>, linkerArgs: List<String>,
-                                   optimize: Boolean, debug: Boolean, kind: LinkerOutputKind,
-                                   outputDsymBundle: String,
-                                   mimallocEnabled: Boolean,
-                                   sanitizer: SanitizerKind?): List<Command> {
+    override fun LinkerArguments.finalLinkCommands(): List<Command> {
+        val librariesArgs = if (libraries.isEmpty())
+            libraries
+        else tempFiles.create("libraries").let { librariesListFile ->
+            librariesListFile.writeLines(libraries)
+            listOf("-filelist", librariesListFile.absolutePath)
+        }
+
         if (kind == LinkerOutputKind.STATIC_LIBRARY) {
             require(sanitizer == null) {
                 "Sanitizers are unsupported"
@@ -262,7 +267,7 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
                 +listOf("-o", executable)
                 +listOf("-arch_only", arch)
                 +objectFiles
-                +libraries
+                +librariesArgs
             })
         }
         val dynamic = kind == LinkerOutputKind.DYNAMIC_LIBRARY
@@ -281,7 +286,7 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
             +linkerKonanFlags
             if (mimallocEnabled) +mimallocLinkerDependencies
             if (compilerRtLibrary != null) +compilerRtLibrary!!
-            +libraries
+            +librariesArgs
             +linkerArgs
             +rpath(dynamic, sanitizer)
             when (sanitizer) {
