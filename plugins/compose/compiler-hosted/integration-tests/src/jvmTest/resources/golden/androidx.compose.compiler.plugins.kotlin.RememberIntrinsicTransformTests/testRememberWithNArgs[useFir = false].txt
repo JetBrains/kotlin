@@ -20,19 +20,19 @@ fun Test(a: Int, b: Int, c: Bar, d: Boolean, %composer: Composer?, %changed: Int
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)<rememb...>:Test.kt")
   val %dirty = %changed
-  if (%changed and 0b1110 == 0) {
+  if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
   }
-  if (%changed and 0b01110000 == 0) {
+  if (%changed and 0b00110000 == 0) {
     %dirty = %dirty or if (%composer.changed(b)) 0b00100000 else 0b00010000
   }
-  if (%changed and 0b001110000000 == 0) {
+  if (%changed and 0b000110000000 == 0) {
     %dirty = %dirty or if (%composer.changed(c)) 0b000100000000 else 0b10000000
   }
-  if (%changed and 0b0001110000000000 == 0) {
+  if (%changed and 0b110000000000 == 0) {
     %dirty = %dirty or if (%composer.changed(d)) 0b100000000000 else 0b010000000000
   }
-  if (%dirty and 0b0001011011011011 != 0b010010010010 || !%composer.skipping) {
+  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }

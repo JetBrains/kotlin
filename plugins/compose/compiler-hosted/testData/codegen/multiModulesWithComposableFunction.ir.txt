@@ -26,7 +26,7 @@ MODULE_FRAGMENT
                               $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=null
                                 arg0: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
                                   $this: GET_VAR '$changed: kotlin.Int declared in home.ComposableSingletons$MainKt.lambda-1.<anonymous>' type=kotlin.Int origin=null
-                                  other: CONST Int type=kotlin.Int value=11
+                                  other: CONST Int type=kotlin.Int value=3
                                 arg1: CONST Int type=kotlin.Int value=2
                             then: CONST Boolean type=kotlin.Boolean value=true
                           BRANCH

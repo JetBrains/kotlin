@@ -110,7 +110,7 @@ abstract class ComposeCompilerGradlePluginExtension @Inject constructor(objectFa
      *  - [AndroidX strong skipping](https://github.com/androidx/androidx/blob/androidx-main/compose/compiler/design/strong-skipping.md)
      */
     @Deprecated("Use the featureFlags option instead")
-    val enableStrongSkippingMode: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(false)
+    val enableStrongSkippingMode: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(true)
 
     /**
      * Path to the stability configuration file.
@@ -174,8 +174,8 @@ abstract class ComposeCompilerGradlePluginExtension @Inject constructor(objectFa
             // Add features that used to be added by deprecated options. No other features should be added this way.
             enableIntrinsicRemember.zip(enableStrongSkippingMode) { intrinsicRemember, strongSkippingMode ->
                 setOfNotNull(
-                    if (!intrinsicRemember) ComposeFeatureFlag.IntrinsicRemember.disable() else null,
-                    if (strongSkippingMode) ComposeFeatureFlag.StrongSkipping else null
+                    if (!intrinsicRemember) ComposeFeatureFlag.IntrinsicRemember.disabled() else null,
+                    if (!strongSkippingMode) ComposeFeatureFlag.StrongSkipping.disabled() else null
                 )
             }.zip(enableNonSkippingGroupOptimization) { features, nonSkippingGroupsOptimization ->
                 if (nonSkippingGroupsOptimization) features + ComposeFeatureFlag.OptimizeNonSkippingGroups else features

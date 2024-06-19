@@ -11,19 +11,19 @@ import java.io.Serializable
 /**
  * A feature flag is used to roll out features that will eventually become the default behavior of the Compose compiler plugin.
  *
- * A feature flag value that disables the feature can be created by calling [disable] on the feature flag.
+ * A feature flag value that disables the feature can be created by calling [disabled] on the feature flag.
  */
 sealed interface ComposeFeatureFlag : Named, Serializable {
     /**
      * Return a feature flag that will disable this feature.
      */
-    fun disable(): ComposeFeatureFlag
+    fun disabled(): ComposeFeatureFlag
 
     /**
      * The enabled value of [feature]. These values are stored in a set they should have value identity.
      */
     private class Enabled(val feature: Feature) : ComposeFeatureFlag, Serializable {
-        override fun disable() = Disabled(feature)
+        override fun disabled() = Disabled(feature)
         override fun getName(): String = feature.name
         override fun hashCode(): Int = feature.hashCode() * 17
         override fun equals(other: Any?): Boolean = other is Enabled && other.feature == feature
@@ -34,7 +34,7 @@ sealed interface ComposeFeatureFlag : Named, Serializable {
      * The disabled value of [feature]. These values are stored in a set they should have value identity.
      */
     private class Disabled(val feature: Feature) : ComposeFeatureFlag, Serializable {
-        override fun disable(): ComposeFeatureFlag = this
+        override fun disabled(): ComposeFeatureFlag = this
         override fun getName(): String = "Disabled ${feature.name}"
         override fun hashCode(): Int = feature.hashCode() * 19
         override fun equals(other: Any?): Boolean = other is Disabled && other.feature == feature
@@ -79,10 +79,10 @@ sealed interface ComposeFeatureFlag : Named, Serializable {
          * For more information, see this link:
          *  - [Strong skipping](https://https://github.com/JetBrains/kotlin/blob/master/plugins/compose/design/strong-skipping.md)
          *
-         * This feature is disabled by default. To enable, include this feature flag,
+         * This feature is enabled by default. To disable, provide this feature flag in a [disabled] state:
          * ```
          * composeOptions {
-         *     featureFlags = setOf(ComposeFeatureFlag.StrongSkipping)
+         *     featureFlags = setOf(ComposeFeatureFlag.StrongSkipping.disabled())
          * }
          * ```
          */
@@ -96,10 +96,10 @@ sealed interface ComposeFeatureFlag : Named, Serializable {
          * invocations and replacing `.equals` comparison (for keys) with comparisons of the `$changed` meta parameter when possible. This
          * results in fewer slots being used and fewer comparisons being done at runtime.
          *
-         * This feature is on by default. It can be disabled by adding a disable flag by calling [disable] on this flag. To disable,
+         * This feature is enabled by default. To disable, provide this feature flag in a [disabled] state:
          * ```
          * composeOptions {
-         *     featureFlags = setOf(ComposeFeatureFlag.IntrinsicRemember.disable())
+         *     featureFlags = setOf(ComposeFeatureFlag.IntrinsicRemember.disabled())
          * }
          * ```
          */

@@ -20,7 +20,7 @@ fun Example() {
 @NonRestartableComposable
 @Composable
 fun Example(%composer: Composer?, %changed: Int) {
-  sourceInformationMarkerStart(%composer, <>, "C(Example)<rememb...>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(Example)<rememb...>,<x::foo>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
@@ -32,7 +32,15 @@ fun Example(%composer: Composer?, %changed: Int) {
     sourceInformationMarkerEnd(%composer)
     tmp0_group
   }
-  val shouldNotMemoize = x::foo
+  val shouldNotMemoize = <block>{
+    val tmp0 = x
+    sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+    val tmp1_group = %composer.cache(%composer.changedInstance(tmp0)) {
+      tmp0::foo
+    }
+    sourceInformationMarkerEnd(%composer)
+    tmp1_group
+  }
   if (isTraceInProgress()) {
     traceEventEnd()
   }

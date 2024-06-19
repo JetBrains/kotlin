@@ -20,21 +20,31 @@ fun Test(param: String, unstable: List<*>, %composer: Composer?, %changed: Int) 
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)<Inline...>:Test.kt")
   val %dirty = %changed
-  if (isTraceInProgress()) {
-    traceEventStart(<>, %dirty, -1, <>)
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(param)) 0b0100 else 0b0010
   }
-  println(unstable)
-  InlineWrapper({ %composer: Composer?, %changed: Int ->
-    sourceInformationMarkerStart(%composer, <>, "C<rememb...>:Test.kt")
-    sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
-    %composer.cache(%changed@Test and 0b1110 xor 0b0110 > 4 && %composer@Test.changed(param) || %changed@Test and 0b0110 == 0b0100) {
-      param
+  if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(unstable)) 0b00100000 else 0b00010000
+  }
+  if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
     }
-    sourceInformationMarkerEnd(%composer)
-    sourceInformationMarkerEnd(%composer)
-  }, %composer, 0)
-  if (isTraceInProgress()) {
-    traceEventEnd()
+    println(unstable)
+    InlineWrapper({ %composer: Composer?, %changed: Int ->
+      sourceInformationMarkerStart(%composer, <>, "C<rememb...>:Test.kt")
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      %composer.cache(%dirty and 0b1110 == 0b0100) {
+        param
+      }
+      sourceInformationMarkerEnd(%composer)
+      sourceInformationMarkerEnd(%composer)
+    }, %composer, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
   }
   %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
     Test(param, unstable, %composer, updateChangedFlags(%changed or 0b0001))
