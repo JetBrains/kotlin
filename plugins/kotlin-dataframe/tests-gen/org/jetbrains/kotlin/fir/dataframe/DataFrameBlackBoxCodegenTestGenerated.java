@@ -226,6 +226,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("readDelimStr_delimiter.kt")
+  public void testReadDelimStr_delimiter() {
+    runTest("testData/box/readDelimStr_delimiter.kt");
+  }
+
+  @Test
   @TestMetadata("readJson.kt")
   public void testReadJson() {
     runTest("testData/box/readJson.kt");
