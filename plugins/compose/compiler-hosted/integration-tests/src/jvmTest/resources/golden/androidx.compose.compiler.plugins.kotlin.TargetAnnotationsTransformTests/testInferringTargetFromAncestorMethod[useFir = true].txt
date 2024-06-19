@@ -47,28 +47,47 @@ abstract class Base {
   @ComposableTarget(applier = "N")
   abstract fun Compose(%composer: Composer?, %changed: Int)
   static val %stable: Int = 0
+  class ComposeDefaultImpls {
+    @Composable
+    @ComposableTarget(applier = "N")
+    fun Compose%default(%this%: Base, %composer: Composer?, %changed: Int) {
+      %composer = %composer.startRestartGroup(<>)
+      sourceInformation(%composer, "C(Compose%default):Test.kt")
+      val %dirty = %changed
+      if (%changed and 0b0110 == 0) {
+        %dirty = %dirty or if (%composer.changed(%this%)) 0b0100 else 0b0010
+      }
+      if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+        if (isTraceInProgress()) {
+          traceEventStart(<>, %dirty, -1, <>)
+        }
+        %this%.Compose(%composer, 0b1110 and %dirty)
+        if (isTraceInProgress()) {
+          traceEventEnd()
+        }
+      } else {
+        %composer.skipToGroupEnd()
+      }
+      %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+        Compose%default(%this%, %composer, updateChangedFlags(%changed or 0b0001))
+      }
+    }
+  }
 }
 @StabilityInferred(parameters = 1)
 class Valid : Base {
   @Composable
   override fun Compose(%composer: Composer?, %changed: Int) {
-    %composer = %composer.startRestartGroup(<>)
+    %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "C(Compose)<OpenTa...>:Test.kt")
-    if (%changed and 0b0001 != 0 || !%composer.skipping) {
-      if (isTraceInProgress()) {
-        traceEventStart(<>, %changed, -1, <>)
-      }
-      OpenTarget(%composer, 0)
-      if (isTraceInProgress()) {
-        traceEventEnd()
-      }
-    } else {
-      %composer.skipToGroupEnd()
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
     }
-    val tmp0_rcvr = <this>
-    %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-      tmp0_rcvr.Compose(%composer, updateChangedFlags(%changed or 0b0001))
+    OpenTarget(%composer, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
     }
+    %composer.endReplaceGroup()
   }
   static val %stable: Int = 0
 }

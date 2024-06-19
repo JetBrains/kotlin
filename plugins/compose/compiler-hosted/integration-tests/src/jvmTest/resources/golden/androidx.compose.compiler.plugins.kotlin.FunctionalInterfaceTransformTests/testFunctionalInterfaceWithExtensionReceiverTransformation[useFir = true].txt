@@ -26,6 +26,40 @@ fun CallTest() {
 interface TestContent {
   @Composable
   abstract fun String.Content(%composer: Composer?, %changed: Int)
+  class ComposeDefaultImpls {
+    @Composable
+    @ComposableInferredTarget(scheme = "[0[0]]")
+    fun Content%default(%this%: TestContent, %this%: String, %composer: Composer?, %changed: Int) {
+      %composer = %composer.startRestartGroup(<>)
+      sourceInformation(%composer, "C(Content%default):Test.kt")
+      val %dirty = %changed
+      if (%changed and 0b0110 == 0) {
+        %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
+          %composer.changed(%this%)
+        } else {
+          %composer.changedInstance(%this%)
+        }
+        ) 0b0100 else 0b0010
+      }
+      if (%changed and 0b00110000 == 0) {
+        %dirty = %dirty or if (%composer.changed(%this%)) 0b00100000 else 0b00010000
+      }
+      if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
+        if (isTraceInProgress()) {
+          traceEventStart(<>, %dirty, -1, <>)
+        }
+        %this%.Content(%composer, 0b1110 and %dirty shr 0b0011 or 0b01110000 and %dirty shl 0b0011)
+        if (isTraceInProgress()) {
+          traceEventEnd()
+        }
+      } else {
+        %composer.skipToGroupEnd()
+      }
+      %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+        Content%default(%this%, %this%, %composer, updateChangedFlags(%changed or 0b0001))
+      }
+    }
+  }
 }
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
@@ -46,7 +80,7 @@ fun Test(content: TestContent, %composer: Composer?, %changed: Int) {
       traceEventStart(<>, %dirty, -1, <>)
     }
     with(content) {
-      %this%with.Content(%composer, 0b0110)
+      Content%default(%this%with, "", %composer, 0b00110000)
     }
     if (isTraceInProgress()) {
       traceEventEnd()
@@ -70,30 +104,16 @@ fun CallTest(%composer: Composer?, %changed: Int) {
       class <no name provided> : TestContent {
         @Composable
         override fun Content(%this%Test: String, %composer: Composer?, %changed: Int) {
-          %composer = %composer.startRestartGroup(<>)
+          %composer.startReplaceGroup(<>)
           sourceInformation(%composer, "C(Content):Test.kt")
-          val %dirty = %changed
-          if (%changed and 0b0110 == 0) {
-            %dirty = %dirty or if (%composer.changed(%this%Test)) 0b0100 else 0b0010
+          if (isTraceInProgress()) {
+            traceEventStart(<>, %changed, -1, <>)
           }
-          if (%changed and 0b00110000 == 0) {
-            %dirty = %dirty or if (%composer.changed(<this>)) 0b00100000 else 0b00010000
+          %this%Test.length
+          if (isTraceInProgress()) {
+            traceEventEnd()
           }
-          if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
-            if (isTraceInProgress()) {
-              traceEventStart(<>, %dirty, -1, <>)
-            }
-            %this%Test.length
-            if (isTraceInProgress()) {
-              traceEventEnd()
-            }
-          } else {
-            %composer.skipToGroupEnd()
-          }
-          val tmp0_rcvr = <this>
-          %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-            tmp0_rcvr.Content(%this%Test, %composer, updateChangedFlags(%changed or 0b0001))
-          }
+          %composer.endReplaceGroup()
         }
       }
       <no name provided>()

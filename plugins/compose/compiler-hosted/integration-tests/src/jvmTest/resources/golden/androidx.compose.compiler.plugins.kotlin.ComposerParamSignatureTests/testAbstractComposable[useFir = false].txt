@@ -19,20 +19,26 @@ public abstract class BaseFoo {
   public abstract bar(Landroidx/compose/runtime/Composer;I)V
   static <clinit>()V
   public final static I %stable
+  public final static INNERCLASS BaseFoo%ComposeDefaultImpls BaseFoo ComposeDefaultImpls
+}
+public final class BaseFoo%ComposeDefaultImpls {
+  public final static bar%default(LBaseFoo;Landroidx/compose/runtime/Composer;I)V
+  public final static INNERCLASS BaseFoo%ComposeDefaultImpls BaseFoo ComposeDefaultImpls
+  final static INNERCLASS BaseFoo%ComposeDefaultImpls%bar%default%1 null null
+}
+final class BaseFoo%ComposeDefaultImpls%bar%default%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
+  <init>(LBaseFoo;I)V
+  public final invoke(Landroidx/compose/runtime/Composer;I)V
+  public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+  final synthetic LBaseFoo; %this_
+  final synthetic I %%changed
+  OUTERCLASS BaseFoo%ComposeDefaultImpls bar%default (LBaseFoo;Landroidx/compose/runtime/Composer;I)V
+  public final static INNERCLASS BaseFoo%ComposeDefaultImpls BaseFoo ComposeDefaultImpls
+  final static INNERCLASS BaseFoo%ComposeDefaultImpls%bar%default%1 null null
 }
 public final class FooImpl extends BaseFoo {
   public <init>()V
   public bar(Landroidx/compose/runtime/Composer;I)V
   static <clinit>()V
   public final static I %stable
-  final static INNERCLASS FooImpl%bar%1 null null
-}
-final class FooImpl%bar%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
-  <init>(LFooImpl;I)V
-  public final invoke(Landroidx/compose/runtime/Composer;I)V
-  public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
-  final synthetic LFooImpl; %tmp0_rcvr
-  final synthetic I %%changed
-  OUTERCLASS FooImpl bar (Landroidx/compose/runtime/Composer;I)V
-  final static INNERCLASS FooImpl%bar%1 null null
 }

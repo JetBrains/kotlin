@@ -24,6 +24,12 @@ import androidx.compose.runtime.*
 
 public abstract interface Consumer {
   public abstract consume(Ljava/lang/Object;Landroidx/compose/runtime/Composer;I)V
+  public final static INNERCLASS Consumer%ComposeDefaultImpls Consumer ComposeDefaultImpls
+}
+public final class Consumer%ComposeDefaultImpls {
+  public final static consume%default(Ljava/lang/Object;LConsumer;Landroidx/compose/runtime/Composer;I)V
+  private final static consume_default%lambda%0(Ljava/lang/Object;LConsumer;ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  public final static INNERCLASS Consumer%ComposeDefaultImpls Consumer ComposeDefaultImpls
 }
 public final class Repro {
   public <init>()V
@@ -38,7 +44,6 @@ public final class TestKt {
 final class TestKt%test%1 implements Consumer {
   <init>()V
   public final consume(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
-  private final static consume%lambda%0(LTestKt%test%1;Ljava/lang/String;ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
   public synthetic bridge consume(Ljava/lang/Object;Landroidx/compose/runtime/Composer;I)V
   static <clinit>()V
   public final static LTestKt%test%1; INSTANCE

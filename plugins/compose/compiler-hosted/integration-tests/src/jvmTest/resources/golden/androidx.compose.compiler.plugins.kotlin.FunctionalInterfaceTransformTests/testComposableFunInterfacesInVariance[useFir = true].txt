@@ -25,6 +25,44 @@ fun test() {
 interface Consumer<T>  {
   @Composable
   abstract fun consume(t: T, %composer: Composer?, %changed: Int)
+  class ComposeDefaultImpls {
+    @Composable
+    fun consume%default(t: T, %this%: Consumer<T>, %composer: Composer?, %changed: Int) {
+      %composer = %composer.startRestartGroup(<>)
+      sourceInformation(%composer, "C(consume%default):Test.kt")
+      val %dirty = %changed
+      if (%changed and 0b0110 == 0) {
+        %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
+          %composer.changed(t)
+        } else {
+          %composer.changedInstance(t)
+        }
+        ) 0b0100 else 0b0010
+      }
+      if (%changed and 0b00110000 == 0) {
+        %dirty = %dirty or if (if (%changed and 0b01000000 == 0) {
+          %composer.changed(%this%)
+        } else {
+          %composer.changedInstance(%this%)
+        }
+        ) 0b00100000 else 0b00010000
+      }
+      if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
+        if (isTraceInProgress()) {
+          traceEventStart(<>, %dirty, -1, <>)
+        }
+        %this%.consume(t, %composer, 0b1110 and %dirty or 0b01110000 and %dirty)
+        if (isTraceInProgress()) {
+          traceEventEnd()
+        }
+      } else {
+        %composer.skipToGroupEnd()
+      }
+      %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+        consume%default(t, %this%, %composer, updateChangedFlags(%changed or 0b0001))
+      }
+    }
+  }
 }
 @StabilityInferred(parameters = 2)
 class Repro<T: Any>  {
@@ -36,30 +74,16 @@ fun test() {
     class <no name provided> : Consumer<Any?> {
       @Composable
       override fun consume(string: String, %composer: Composer?, %changed: Int) {
-        %composer = %composer.startRestartGroup(<>)
+        %composer.startReplaceGroup(<>)
         sourceInformation(%composer, "C(consume):Test.kt")
-        val %dirty = %changed
-        if (%changed and 0b0110 == 0) {
-          %dirty = %dirty or if (%composer.changed(string)) 0b0100 else 0b0010
+        if (isTraceInProgress()) {
+          traceEventStart(<>, %changed, -1, <>)
         }
-        if (%changed and 0b00110000 == 0) {
-          %dirty = %dirty or if (%composer.changed(<this>)) 0b00100000 else 0b00010000
+        println(string)
+        if (isTraceInProgress()) {
+          traceEventEnd()
         }
-        if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
-          if (isTraceInProgress()) {
-            traceEventStart(<>, %dirty, -1, <>)
-          }
-          println(string)
-          if (isTraceInProgress()) {
-            traceEventEnd()
-          }
-        } else {
-          %composer.skipToGroupEnd()
-        }
-        val tmp0_rcvr = <this>
-        %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-          tmp0_rcvr.consume(string, %composer, updateChangedFlags(%changed or 0b0001))
-        }
+        %composer.endReplaceGroup()
       }
     }
     <no name provided>()

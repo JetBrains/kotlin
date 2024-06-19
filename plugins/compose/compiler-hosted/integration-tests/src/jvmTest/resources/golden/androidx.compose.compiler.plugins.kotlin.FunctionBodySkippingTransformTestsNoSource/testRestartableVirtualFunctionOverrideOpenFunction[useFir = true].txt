@@ -1,0 +1,97 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable fun CallWithDefaults(test: Test) {
+    test.foo(0)
+    test.bar(0)
+}
+
+open class Test {
+    @Composable open fun foo(param: Int) {}
+    @Composable open fun bar(param: Int): Int = param
+}
+
+class TestImpl : Test() {
+    @Composable override fun foo(param: Int) {}
+    @Composable override fun bar(param: Int): Int {
+        return super.bar(param)
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun CallWithDefaults(test: Test, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(test)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    foo%default(0, test, %composer, 0b0110 or 0b01110000 and %dirty shl 0b0011)
+    test.bar(0, %composer, 0b0110 or 0b01110000 and %dirty shl 0b0011)
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    CallWithDefaults(test, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@StabilityInferred(parameters = 1)
+open class Test {
+  @Composable
+  open fun foo(param: Int, %composer: Composer?, %changed: Int) {
+    %composer.startReplaceGroup(<>)
+    %composer.endReplaceGroup()
+  }
+  @Composable
+  open fun bar(param: Int, %composer: Composer?, %changed: Int): Int {
+    %composer.startReplaceGroup(<>)
+    val tmp0 = param
+    %composer.endReplaceGroup()
+    return tmp0
+  }
+  static val %stable: Int = 0
+  class ComposeDefaultImpls {
+    @Composable
+    fun foo%default(param: Int, %this%: Test, %composer: Composer?, %changed: Int) {
+      %composer = %composer.startRestartGroup(<>)
+      val %dirty = %changed
+      if (%changed and 0b0110 == 0) {
+        %dirty = %dirty or if (%composer.changed(param)) 0b0100 else 0b0010
+      }
+      if (%changed and 0b00110000 == 0) {
+        %dirty = %dirty or if (%composer.changed(%this%)) 0b00100000 else 0b00010000
+      }
+      if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
+        %this%.foo(param, %composer, 0b1110 and %dirty or 0b01110000 and %dirty)
+      } else {
+        %composer.skipToGroupEnd()
+      }
+      %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+        foo%default(param, %this%, %composer, updateChangedFlags(%changed or 0b0001))
+      }
+    }
+  }
+}
+@StabilityInferred(parameters = 1)
+class TestImpl : Test {
+  @Composable
+  override fun foo(param: Int, %composer: Composer?, %changed: Int) {
+    %composer.startReplaceGroup(<>)
+    %composer.endReplaceGroup()
+  }
+  @Composable
+  override fun bar(param: Int, %composer: Composer?, %changed: Int): Int {
+    %composer.startReplaceGroup(<>)
+    val tmp0 = super<Test>.bar(param, %composer, 0b1110 and %changed or 0b01110000 and %changed)
+    %composer.endReplaceGroup()
+    return tmp0
+  }
+  static val %stable: Int = 0
+}

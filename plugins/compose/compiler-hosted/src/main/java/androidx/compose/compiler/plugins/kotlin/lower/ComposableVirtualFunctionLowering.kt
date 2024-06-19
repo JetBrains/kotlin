@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.copyAnnotationsFrom
@@ -42,7 +43,7 @@ import org.jetbrains.kotlin.ir.util.createImplicitParameterDeclarationWithWrappe
 import org.jetbrains.kotlin.name.Name
 
 /**
- * Replaces abstract/open function calls with default parameters with a wrapper that will contain
+ * Replaces abstract/open function calls that are restartable or have default parameters with a wrapper that will contain
  * the default parameter preamble and make a virtual call to correct override.
  *
  * Given:
@@ -63,6 +64,7 @@ import org.jetbrains.kotlin.name.Name
  *     @Composable open fun doSomething(arg1: Int) {}
  *
  *     class ComposeDefaultsImpl {
+ *          @Composable
  *          /* static */ fun doSomething$composable$default(
  *              instance: Test,
  *              arg1: Int = remember { 0 },
@@ -83,7 +85,7 @@ import org.jetbrains.kotlin.name.Name
  * }
  *```
  */
-class ComposableDefaultParamLowering(
+class ComposableVirtualFunctionLowering(
     context: IrPluginContext,
     symbolRemapper: DeepCopySymbolRemapper,
     metrics: ModuleMetrics,
@@ -102,7 +104,7 @@ class ComposableDefaultParamLowering(
             return declaration
         }
 
-        if (!declaration.isVirtualFunctionWithDefaultParam()) {
+        if (!declaration.isRestartableVirtualFunction() && !declaration.isVirtualFunctionWithDefaultParam()) {
             return super.visitSimpleFunction(declaration)
         }
 
@@ -121,7 +123,7 @@ class ComposableDefaultParamLowering(
             return super.visitCall(expression)
         }
 
-        val wrapper = callee.findOverriddenFunWithDefaultParam()?.transformIfNeeded()
+        val wrapper = callee.findVirtualOverriddenFun()?.transformIfNeeded()
         if (wrapper == null) {
             return super.visitCall(expression)
         }
@@ -149,7 +151,7 @@ class ComposableDefaultParamLowering(
     private fun IrSimpleFunction.transformIfNeeded(): IrSimpleFunction {
         if (this in originalToTransformed) return originalToTransformed[this]!!
 
-        val wrapper = makeDefaultParameterWrapper(this)
+        val wrapper = makeVirtualFunWrapper(this)
         originalToTransformed[this] = wrapper
         // add to the set of transformed functions to ensure it is not transformed twice
         originalToTransformed[wrapper] = wrapper
@@ -171,17 +173,17 @@ class ComposableDefaultParamLowering(
         return wrapper
     }
 
-    private fun IrSimpleFunction.findOverriddenFunWithDefaultParam(): IrSimpleFunction? {
+    private fun IrSimpleFunction.findVirtualOverriddenFun(): IrSimpleFunction? {
         if (this in originalToTransformed) {
             return this
         }
 
-        if (isVirtualFunctionWithDefaultParam()) {
+        if (isVirtualFunctionWithDefaultParam() || isRestartableVirtualFunction()) {
             return this
         }
 
         overriddenSymbols.forEach {
-            val matchingOverride = it.owner.findOverriddenFunWithDefaultParam()
+            val matchingOverride = it.owner.findVirtualOverriddenFun()
             if (matchingOverride != null) {
                 return matchingOverride
             }
@@ -192,18 +194,28 @@ class ComposableDefaultParamLowering(
 
     private fun IrSimpleFunction.isVirtualFunctionWithDefaultParam() =
         hasComposableAnnotation() &&
-            !isExpect &&
-            (modality == Modality.OPEN || modality == Modality.ABSTRACT) && // virtual function
-            overriddenSymbols.isEmpty() && // first in the chain of overrides
-            valueParameters.any { it.defaultValue != null } // has a default parameter
+                !isExpect &&
+                (modality == Modality.OPEN || modality == Modality.ABSTRACT) && // virtual function
+                overriddenSymbols.isEmpty() && // first in the chain of overrides
+                valueParameters.any { it.defaultValue != null } // has a default parameter
 
-    private fun makeDefaultParameterWrapper(
+    private fun IrSimpleFunction.isRestartableVirtualFunction() =
+        hasComposableAnnotation() &&
+                !isExpect &&
+                (modality == Modality.OPEN || modality == Modality.ABSTRACT) && // virtual function
+                overriddenSymbols.isEmpty() && // first in the chain of overrides
+                returnType.isUnit() && // repeated checks from [shouldBeRestartable]
+                !hasExplicitGroups &&
+                !hasNonRestartableAnnotation &&
+                !isComposableDelegatedAccessor()
+
+    private fun makeVirtualFunWrapper(
         source: IrSimpleFunction
     ): IrSimpleFunction {
         val wrapper = context.irFactory.createSimpleFunction(
             startOffset = source.startOffset,
             endOffset = source.endOffset,
-            origin = IrDeclarationOrigin.DEFINED,
+            origin = source.origin,
             name = Name.identifier("${source.name.asString()}\$default"),
             visibility = source.visibility,
             isInline = false,
@@ -236,18 +248,23 @@ class ComposableDefaultParamLowering(
             wrapper.extensionReceiverParameter = null
         }
 
-        wrapper.body = DeclarationIrBuilder(
-            context,
-            wrapper.symbol
-        ).irBlockBody {
-            +irCall(
-                source.symbol,
-                dispatchReceiver = dispatcherReceiver?.let(::irGet),
-                extensionReceiver = extensionReceiver?.let(::irGet),
-                args = Array(source.valueParameters.size) {
-                    irGet(wrapper.valueParameters[it])
+        wrapper.body = when(source.origin) {
+            IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB -> null
+            else -> {
+                DeclarationIrBuilder(
+                    context,
+                    wrapper.symbol
+                ).irBlockBody {
+                    +irCall(
+                        source.symbol,
+                        dispatchReceiver = dispatcherReceiver?.let(::irGet),
+                        extensionReceiver = extensionReceiver?.let(::irGet),
+                        args = Array(source.valueParameters.size) {
+                            irGet(wrapper.valueParameters[it])
+                        }
+                    )
                 }
-            )
+            }
         }
 
         return wrapper

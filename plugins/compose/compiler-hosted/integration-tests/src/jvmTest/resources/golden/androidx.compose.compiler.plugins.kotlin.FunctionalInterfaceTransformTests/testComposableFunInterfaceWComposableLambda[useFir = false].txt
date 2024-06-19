@@ -44,31 +44,17 @@ private fun Decorated(boolean: Boolean, %composer: Composer?, %changed: Int) {
         @Composable
         @ComposableInferredTarget(scheme = "[0[0]]")
         override fun Decoration(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
-          %composer = %composer.startRestartGroup(<>)
+          %composer.startReplaceGroup(<>)
           sourceInformation(%composer, "C(Decoration)<conten...>:Test.kt")
-          val %dirty = %changed
-          if (%changed and 0b0110 == 0) {
-            %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010
+          if (isTraceInProgress()) {
+            traceEventStart(<>, %changed, -1, <>)
           }
-          if (%changed and 0b00110000 == 0) {
-            %dirty = %dirty or if (%composer.changed(<this>)) 0b00100000 else 0b00010000
+          used(boolean)
+          content(%composer, 0b1110 and %changed)
+          if (isTraceInProgress()) {
+            traceEventEnd()
           }
-          if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
-            if (isTraceInProgress()) {
-              traceEventStart(<>, %dirty, -1, <>)
-            }
-            used(boolean)
-            content(%composer, 0b1110 and %dirty)
-            if (isTraceInProgress()) {
-              traceEventEnd()
-            }
-          } else {
-            %composer.skipToGroupEnd()
-          }
-          val tmp0_rcvr = <this>
-          %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-            tmp0_rcvr.Decoration(content, %composer, updateChangedFlags(%changed or 0b0001))
-          }
+          %composer.endReplaceGroup()
         }
       }
       <no name provided>()
@@ -101,7 +87,7 @@ private fun Decoratable(decorator: Decoration, %composer: Composer?, %changed: I
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
-    decorator.Decoration(ComposableSingletons%TestKt.lambda-1, %composer, 0b0110 or 0b01110000 and %dirty shl 0b0011)
+    Decoration%default(ComposableSingletons%TestKt.lambda-1, decorator, %composer, 0b0110 or 0b01110000 and %dirty shl 0b0011)
     if (isTraceInProgress()) {
       traceEventEnd()
     }
@@ -115,6 +101,40 @@ private fun Decoratable(decorator: Decoration, %composer: Composer?, %changed: I
 interface Decoration {
   @Composable
   abstract fun Decoration(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int)
+  class ComposeDefaultImpls {
+    @Composable
+    @ComposableInferredTarget(scheme = "[0[_][0]]")
+    fun Decoration%default(content: Function2<Composer, Int, Unit>, %this%: Decoration, %composer: Composer?, %changed: Int) {
+      %composer = %composer.startRestartGroup(<>)
+      sourceInformation(%composer, "C(Decoration%default):Test.kt")
+      val %dirty = %changed
+      if (%changed and 0b0110 == 0) {
+        %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010
+      }
+      if (%changed and 0b00110000 == 0) {
+        %dirty = %dirty or if (if (%changed and 0b01000000 == 0) {
+          %composer.changed(%this%)
+        } else {
+          %composer.changedInstance(%this%)
+        }
+        ) 0b00100000 else 0b00010000
+      }
+      if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
+        if (isTraceInProgress()) {
+          traceEventStart(<>, %dirty, -1, <>)
+        }
+        %this%.Decoration(content, %composer, 0b1110 and %dirty or 0b01110000 and %dirty)
+        if (isTraceInProgress()) {
+          traceEventEnd()
+        }
+      } else {
+        %composer.skipToGroupEnd()
+      }
+      %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+        Decoration%default(content, %this%, %composer, updateChangedFlags(%changed or 0b0001))
+      }
+    }
+  }
 }
 internal object ComposableSingletons%TestKt {
   val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->

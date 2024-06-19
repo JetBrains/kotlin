@@ -155,7 +155,7 @@ class ComposeIrGenerationExtension(
         }
 
         // Generate default wrappers for virtual functions
-        ComposableDefaultParamLowering(
+        ComposableVirtualFunctionLowering(
             pluginContext,
             symbolRemapper,
             metrics,

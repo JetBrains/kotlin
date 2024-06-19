@@ -16,11 +16,16 @@ class FooImpl : Foo {
 
 public abstract interface Foo {
   public abstract bar(Landroidx/compose/runtime/Composer;I)V
+  public final static INNERCLASS Foo%ComposeDefaultImpls Foo ComposeDefaultImpls
+}
+public final class Foo%ComposeDefaultImpls {
+  public final static bar%default(LFoo;Landroidx/compose/runtime/Composer;I)V
+  private final static bar_default%lambda%0(LFoo;ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  public final static INNERCLASS Foo%ComposeDefaultImpls Foo ComposeDefaultImpls
 }
 public final class FooImpl implements Foo {
   public <init>()V
   public bar(Landroidx/compose/runtime/Composer;I)V
-  private final static bar%lambda%0(LFooImpl;ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
   static <clinit>()V
   public final static I %stable
 }

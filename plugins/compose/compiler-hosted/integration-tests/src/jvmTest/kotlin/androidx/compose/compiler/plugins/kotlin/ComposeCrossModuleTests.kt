@@ -1317,6 +1317,63 @@ class ComposeCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
         )
     }
 
+    @Test
+    fun composableVirtualRestartableFunFromDifferentModule() {
+        compile(
+            mapOf(
+                "Base" to mapOf(
+                    "base/Base.kt" to """
+                    package base
+
+                    import androidx.compose.runtime.Composable
+                    
+                    interface Foo {
+                        @Composable
+                        fun abstractFun()
+                        @Composable
+                        fun openFun() {}
+                    }
+                    """
+                ),
+                "Main" to mapOf(
+                    "Main.kt" to """
+                    package main
+
+                    import androidx.compose.runtime.Composable
+                    import base.Foo
+                    
+                    class FooImpl : Foo {
+                        @Composable override fun openFun() {
+                            super.openFun()
+                        }
+                        
+                        @Composable override fun abstractFun() {
+                        }
+                    }
+
+                    @Composable
+                    fun Test(foo: Foo, fooImpl: FooImpl) {
+                        foo.abstractFun()
+                        foo.openFun()
+                        fooImpl.abstractFun()
+                        fooImpl.openFun()
+                    }
+                    """
+                )
+            ),
+            validate = {
+                assertTrue(
+                    "expected INVOKESTATIC with for Foo.abstractFun",
+                    it.contains("INVOKESTATIC base/Foo%ComposeDefaultImpls.abstractFun%default (Lbase/Foo;Landroidx/compose/runtime/Composer;I)V")
+                )
+                assertTrue(
+                    "expected INVOKESTATIC with for Foo.openFun",
+                    it.contains("INVOKESTATIC base/Foo%ComposeDefaultImpls.openFun%default (Lbase/Foo;Landroidx/compose/runtime/Composer;I)V")
+                )
+            }
+        )
+    }
+
     private fun compile(
         modules: Map<String, Map<String, String>>,
         dumpClasses: Boolean = false,

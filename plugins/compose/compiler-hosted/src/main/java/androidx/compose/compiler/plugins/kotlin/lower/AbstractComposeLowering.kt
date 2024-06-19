@@ -1149,12 +1149,25 @@ abstract class AbstractComposeLowering(
      */
     fun IrFunction.isComposableDelegatedAccessor(): Boolean =
         origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR &&
-            body?.let {
-                val returnStatement = it.statements.singleOrNull() as? IrReturn
-                val callStatement = returnStatement?.value as? IrCall
-                val target = callStatement?.symbol?.owner
-                target?.hasComposableAnnotation()
-            } == true
+                body?.let {
+                    val returnStatement = it.statements.singleOrNull() as? IrReturn
+                    val callStatement = returnStatement?.value as? IrCall
+                    val target = callStatement?.symbol?.owner
+                    target?.hasComposableAnnotation()
+                } == true
+
+    val IrFunction.hasNonRestartableAnnotation: Boolean
+        get() = hasAnnotation(ComposeFqNames.NonRestartableComposable)
+
+    val IrFunction.hasReadOnlyAnnotation: Boolean
+        get() = hasAnnotation(ComposeFqNames.ReadOnlyComposable)
+
+    val IrFunction.hasExplicitGroups: Boolean
+        get() = hasAnnotation(ComposeFqNames.ExplicitGroupsComposable)
+
+    val IrFunction.hasNonSkippableAnnotation: Boolean
+        get() = hasAnnotation(ComposeFqNames.NonSkippableComposable)
+
 
     private val cacheFunction by guardedLazy {
         getTopLevelFunctions(ComposeCallableIds.cache).first {

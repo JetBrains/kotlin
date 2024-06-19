@@ -15,6 +15,12 @@ fun Example(a: A) {
 
 public abstract interface A {
   public abstract compute(ILandroidx/compose/runtime/Composer;I)V
+  public final static INNERCLASS A%ComposeDefaultImpls A ComposeDefaultImpls
+}
+public final class A%ComposeDefaultImpls {
+  public final static compute%default(ILA;Landroidx/compose/runtime/Composer;I)V
+  private final static compute_default%lambda%0(ILA;ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  public final static INNERCLASS A%ComposeDefaultImpls A ComposeDefaultImpls
 }
 public final class TestKt {
   public final static Example(LA;)V
@@ -23,8 +29,8 @@ public final class TestKt {
 final class TestKt%Example%1 implements A {
   <init>(LA;)V
   public final compute(ILandroidx/compose/runtime/Composer;I)V
-  private final static compute%lambda%0(LTestKt%Example%1;IILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
   final synthetic LA; %a
   OUTERCLASS TestKt Example (LA;)V
+  public final static INNERCLASS A%ComposeDefaultImpls A ComposeDefaultImpls
   final static INNERCLASS TestKt%Example%1 null null
 }

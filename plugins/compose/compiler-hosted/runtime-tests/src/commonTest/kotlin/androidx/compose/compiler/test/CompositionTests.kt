@@ -127,6 +127,19 @@ class CompositionTests {
         state = false
         advance()
     }
+
+    @Test
+    fun recomposeVirtualFunction() = compositionTest {
+        var state = mutableStateOf(0)
+        val a = VirtualRestartableImpl()
+
+        compose {
+            a.content(state)
+        }
+
+        state.value++
+        advance()
+    }
 }
 
 @Composable
@@ -163,3 +176,15 @@ fun DefaultValueClass(
 
 @Composable
 fun OuterComposable(content: @Composable () -> Unit) = content()
+
+open class VirtualRestartable {
+    @Composable
+    open fun content(num: State<Int>) {
+        num.value
+    }
+}
+
+class VirtualRestartableImpl: VirtualRestartable() {
+    @Composable
+    override fun content(num: State<Int>): Unit = super.content(num)
+}

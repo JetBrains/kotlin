@@ -710,18 +710,6 @@ class ComposableFunctionBodyTransformer(
             (context.irTrace[ComposeWritableSlices.IS_VIRTUAL_WITH_DEFAULT_PARAM, this] == true ||
                 overriddenSymbols.any { it.owner.isVirtualFunctionWithDefaultParam() })
 
-    private val IrFunction.hasNonRestartableAnnotation: Boolean
-        get() = hasAnnotation(ComposeFqNames.NonRestartableComposable)
-
-    private val IrFunction.hasReadOnlyAnnotation: Boolean
-        get() = hasAnnotation(ComposeFqNames.ReadOnlyComposable)
-
-    private val IrFunction.hasExplicitGroups: Boolean
-        get() = hasAnnotation(ComposeFqNames.ExplicitGroupsComposable)
-
-    private val IrFunction.hasNonSkippableAnnotation: Boolean
-        get() = hasAnnotation(ComposeFqNames.NonSkippableComposable)
-
     // At a high level, without useNonSkippingGroupOptimization, a non-restartable composable
     // function
     // 1. gets a replace group placed around the body

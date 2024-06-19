@@ -18,36 +18,56 @@ fun Example(a: A) {
 interface A {
   @Composable
   abstract fun compute(value: Int, %composer: Composer?, %changed: Int)
+  class ComposeDefaultImpls {
+    @Composable
+    @ComposableInferredTarget(scheme = "[0[0]]")
+    fun compute%default(value: Int, %this%: A, %composer: Composer?, %changed: Int) {
+      %composer = %composer.startRestartGroup(<>)
+      sourceInformation(%composer, "C(compute%default):Test.kt")
+      val %dirty = %changed
+      if (%changed and 0b0110 == 0) {
+        %dirty = %dirty or if (%composer.changed(value)) 0b0100 else 0b0010
+      }
+      if (%changed and 0b00110000 == 0) {
+        %dirty = %dirty or if (if (%changed and 0b01000000 == 0) {
+          %composer.changed(%this%)
+        } else {
+          %composer.changedInstance(%this%)
+        }
+        ) 0b00100000 else 0b00010000
+      }
+      if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
+        if (isTraceInProgress()) {
+          traceEventStart(<>, %dirty, -1, <>)
+        }
+        %this%.compute(value, %composer, 0b1110 and %dirty or 0b01110000 and %dirty)
+        if (isTraceInProgress()) {
+          traceEventEnd()
+        }
+      } else {
+        %composer.skipToGroupEnd()
+      }
+      %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+        compute%default(value, %this%, %composer, updateChangedFlags(%changed or 0b0001))
+      }
+    }
+  }
 }
 fun Example(a: A) {
   Example(<block>{
     class <no name provided> : A {
       @Composable
       override fun compute(it: Int, %composer: Composer?, %changed: Int) {
-        %composer = %composer.startRestartGroup(<>)
+        %composer.startReplaceGroup(<>)
         sourceInformation(%composer, "C(compute)<comput...>:Test.kt")
-        val %dirty = %changed
-        if (%changed and 0b0110 == 0) {
-          %dirty = %dirty or if (%composer.changed(it)) 0b0100 else 0b0010
+        if (isTraceInProgress()) {
+          traceEventStart(<>, %changed, -1, <>)
         }
-        if (%changed and 0b00110000 == 0) {
-          %dirty = %dirty or if (%composer.changed(<this>)) 0b00100000 else 0b00010000
+        compute%default(it, a, %composer, 0b1110 and %changed)
+        if (isTraceInProgress()) {
+          traceEventEnd()
         }
-        if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
-          if (isTraceInProgress()) {
-            traceEventStart(<>, %dirty, -1, <>)
-          }
-          a.compute(it, %composer, 0b1110 and %dirty)
-          if (isTraceInProgress()) {
-            traceEventEnd()
-          }
-        } else {
-          %composer.skipToGroupEnd()
-        }
-        val tmp0_rcvr = <this>
-        %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-          tmp0_rcvr.compute(it, %composer, updateChangedFlags(%changed or 0b0001))
-        }
+        %composer.endReplaceGroup()
       }
     }
     <no name provided>()

@@ -18,7 +18,6 @@ package androidx.compose.compiler.plugins.kotlin
 
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.junit.Ignore
 import org.junit.Test
 
 abstract class FunctionBodySkippingTransformTestsBase(
@@ -1455,6 +1454,112 @@ class FunctionBodySkippingTransformTestsNoSource(
 
             @Composable
             fun Text(value: String) {}
+        """
+    )
+
+    @Test
+    fun testRestartableVirtualFunctionOverride() = verifyGoldenComposeIrTransform(
+        extra = """""",
+        source = """
+            import androidx.compose.runtime.*
+
+            interface Test {
+                @Composable fun foo(param: Int)
+            }
+
+            interface TestBetween : Test {
+                 @Composable fun betweenFoo(param: Int)
+                 @Composable fun betweenFooDefault(param: Int) {}
+            }
+
+            class TestImpl : TestBetween {
+                @Composable override fun foo(param: Int) {}
+                @Composable override fun betweenFoo(param: Int) {}
+            }
+
+            @Composable fun CallWithDefaults(test: Test, testBetween: TestBetween, testImpl: TestImpl) {
+                test.foo(0)
+
+                testBetween.foo(0)
+                testBetween.betweenFoo(0)
+                testBetween.betweenFooDefault(0)
+
+                testImpl.foo(0)
+                testImpl.betweenFoo(0)
+                testImpl.betweenFooDefault(0)
+            }
+        """
+    )
+
+    @Test
+    fun testRestartableVirtualFunctionOverrideOpenFunction() = verifyGoldenComposeIrTransform(
+        extra = """""",
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable fun CallWithDefaults(test: Test) {
+                test.foo(0)
+                test.bar(0)
+            }
+
+            open class Test {
+                @Composable open fun foo(param: Int) {}
+                @Composable open fun bar(param: Int): Int = param
+            }
+
+            class TestImpl : Test() {
+                @Composable override fun foo(param: Int) {}
+                @Composable override fun bar(param: Int): Int {
+                    return super.bar(param)
+                }
+            }
+        """
+    )
+
+    @Test
+    fun testRestartableVirtualFunctionOverrideExtensionReceiver() = verifyGoldenComposeIrTransform(
+        extra = "",
+        source = """
+            import androidx.compose.runtime.*
+
+            interface Test {
+                @Composable fun Int.foo(param: Int)
+                @Composable fun Int.bar(param: Int): Int = param
+            }
+
+            class TestImpl : Test {
+                @Composable override fun Int.foo(param: Int) {}
+                @Composable override fun Int.bar(param: Int): Int = 0
+            }
+
+            @Composable fun CallWithDefaults(test: Test) {
+                with(test) {
+                    42.foo(0)
+                    42.bar(0)
+                }
+            }
+        """
+    )
+
+    @Test
+    fun testRestartableVirtualFunctionOverrideFakeOverride() = verifyGoldenComposeIrTransform(
+        extra = "",
+        source = """
+            import androidx.compose.runtime.*
+
+            open class Test {
+                @Composable open fun foo(param: Int) {}
+                @Composable open fun bar(param: Int): Int = param
+            }
+
+            class TestImpl : Test() {
+                @Composable override fun foo(param: Int) {}
+            }
+
+            @Composable fun CallWithDefaults(test: Test) {
+                test.foo(0)
+                test.bar(0)
+            }
         """
     )
 }

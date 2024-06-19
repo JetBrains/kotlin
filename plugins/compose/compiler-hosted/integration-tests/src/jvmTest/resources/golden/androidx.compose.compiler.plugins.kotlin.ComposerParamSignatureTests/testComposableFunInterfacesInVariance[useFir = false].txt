@@ -24,6 +24,23 @@ import androidx.compose.runtime.*
 
 public abstract interface Consumer {
   public abstract consume(Ljava/lang/Object;Landroidx/compose/runtime/Composer;I)V
+  public final static INNERCLASS Consumer%ComposeDefaultImpls Consumer ComposeDefaultImpls
+}
+public final class Consumer%ComposeDefaultImpls {
+  public final static consume%default(Ljava/lang/Object;LConsumer;Landroidx/compose/runtime/Composer;I)V
+  public final static INNERCLASS Consumer%ComposeDefaultImpls Consumer ComposeDefaultImpls
+  final static INNERCLASS Consumer%ComposeDefaultImpls%consume%default%1 null null
+}
+final class Consumer%ComposeDefaultImpls%consume%default%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
+  <init>(Ljava/lang/Object;LConsumer;I)V
+  public final invoke(Landroidx/compose/runtime/Composer;I)V
+  public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+  final synthetic Ljava/lang/Object; %t
+  final synthetic LConsumer; %this_
+  final synthetic I %%changed
+  OUTERCLASS Consumer%ComposeDefaultImpls consume%default (Ljava/lang/Object;LConsumer;Landroidx/compose/runtime/Composer;I)V
+  public final static INNERCLASS Consumer%ComposeDefaultImpls Consumer ComposeDefaultImpls
+  final static INNERCLASS Consumer%ComposeDefaultImpls%consume%default%1 null null
 }
 public final class Repro {
   public <init>()V
@@ -43,16 +60,4 @@ final class TestKt%test%1 implements Consumer {
   public final static LTestKt%test%1; INSTANCE
   OUTERCLASS TestKt test ()V
   final static INNERCLASS TestKt%test%1 null null
-  final static INNERCLASS TestKt%test%1%consume%1 null null
-}
-final class TestKt%test%1%consume%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
-  <init>(LTestKt%test%1;Ljava/lang/String;I)V
-  public final invoke(Landroidx/compose/runtime/Composer;I)V
-  public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
-  final synthetic LTestKt%test%1; %tmp0_rcvr
-  final synthetic Ljava/lang/String; %string
-  final synthetic I %%changed
-  OUTERCLASS TestKt%test%1 consume (Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
-  final static INNERCLASS TestKt%test%1 null null
-  final static INNERCLASS TestKt%test%1%consume%1 null null
 }
