@@ -50,7 +50,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/diff.kt
     BLOCK_BODY
       VAR name:df type:org.jetbrains.kotlinx.dataframe.DataFrame<*> [val]
         CALL 'public final fun readDelimStr (text: kotlin.String, colTypes: kotlin.collections.Map<kotlin.String, org.jetbrains.kotlinx.dataframe.io.ColType>, skipLines: kotlin.Int, readLines: kotlin.Int?): org.jetbrains.kotlinx.dataframe.DataFrame<*> declared in org.jetbrains.kotlinx.dataframe.io' type=org.jetbrains.kotlinx.dataframe.DataFrame<*> origin=null
-          $receiver: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=org.jetbrains.kotlinx.dataframe.DataFrame.Companion
+          $receiver: GET_OBJECT 'CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=org.jetbrains.kotlinx.dataframe.DataFrame.Companion
           text: CALL 'public final fun trimIndent (): kotlin.String declared in kotlin.text' type=kotlin.String origin=null
             $receiver: CONST String type=kotlin.String value="\n        char,level,race,charclass,zone,guild,timestamp\n        59425,1,Orc,Rogue,Orgrimmar,165,01/01/08 00:02:04\n        65494,9,Orc,Hunter,Durotar,-1,01/01/08 00:02:04\n    "
       VAR name:df1 type:org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.ActivePlayer> [val]
