@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.test.directives.model.ComposedRegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.*
@@ -37,6 +38,7 @@ class TestModuleStructureImpl(
                 in JvmPlatforms.allJvmPlatforms -> ArtifactKinds.Jvm
                 in JsPlatforms.allJsPlatforms -> ArtifactKinds.Js
                 in NativePlatforms.allNativePlatforms -> ArtifactKinds.Native
+                in WasmPlatforms.allWasmPlatforms -> ArtifactKinds.Wasm
                 else -> BinaryKind.NoArtifact
             }
         }

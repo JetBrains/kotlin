@@ -98,7 +98,9 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
             get() = null
     }
 
-    class WasmBackendInput(
+    sealed class WasmBackendInput : IrBackendInput()
+
+    class WasmAfterFrontendBackendInput(
         override val irModuleFragment: IrModuleFragment,
         override val irPluginContext: IrPluginContext,
         val icData: List<KotlinFileSerializedData>,
@@ -108,7 +110,27 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
         override val irMangler: KotlinMangler.IrMangler,
         override val firMangler: FirMangler?,
         val metadataSerializer: KlibSingleFileMetadataSerializer<*>,
-    ) : IrBackendInput()
+    ) : WasmBackendInput()
+
+    class WasmDeserializedFromKlibBackendInput(
+        val moduleInfo: IrModuleInfo,
+        val klib: File,
+        override val irPluginContext: IrPluginContext,
+        override val diagnosticReporter: BaseDiagnosticsCollector,
+    ) : WasmBackendInput() {
+
+        override val irModuleFragment: IrModuleFragment
+            get() = moduleInfo.module
+
+        override val descriptorMangler: KotlinMangler.DescriptorMangler?
+            get() = moduleInfo.symbolTable.signaturer?.mangler
+
+        override val irMangler: KotlinMangler.IrMangler
+            get() = moduleInfo.deserializer.fakeOverrideBuilder.mangler
+
+        override val firMangler: FirMangler?
+            get() = null
+    }
 
     class JvmIrBackendInput(
         val state: GenerationState,

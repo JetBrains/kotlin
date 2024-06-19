@@ -85,7 +85,7 @@ class Fir2IrJsResultsConverter(testServices: TestServices) : Fir2IrJsWasmResults
 
 class Fir2IrWasmResultsConverter(testServices: TestServices) : Fir2IrJsWasmResultsConverter(testServices) {
     override val artifactFactory: (IrModuleFragment, IrPluginContext, List<KotlinFileSerializedData>, BaseDiagnosticsCollector, Boolean, KotlinMangler.DescriptorMangler?, KotlinMangler.IrMangler, FirMangler?, KlibSingleFileMetadataSerializer<*>) -> IrBackendInput
-        get() = IrBackendInput::WasmBackendInput
+        get() = IrBackendInput::WasmAfterFrontendBackendInput
 
     override fun resolveLibraries(module: TestModule, compilerConfiguration: CompilerConfiguration): List<KotlinResolvedLibrary> {
         return resolveWasmLibraries(module, testServices, compilerConfiguration)

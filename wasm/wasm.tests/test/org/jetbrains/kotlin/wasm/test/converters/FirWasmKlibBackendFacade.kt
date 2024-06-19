@@ -45,8 +45,8 @@ class FirWasmKlibBackendFacade(
     }
 
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.KLib {
-        require(inputArtifact is IrBackendInput.WasmBackendInput) {
-            "FirWasmKlibBackendFacade expects IrBackendInput.WasmBackendInput as input"
+        require(inputArtifact is IrBackendInput.WasmAfterFrontendBackendInput) {
+            "FirWasmKlibBackendFacade expects IrBackendInput.WasmAfterFrontendBackendInput as input"
         }
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)

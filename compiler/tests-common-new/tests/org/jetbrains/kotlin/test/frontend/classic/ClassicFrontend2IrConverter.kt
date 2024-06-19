@@ -167,7 +167,7 @@ class ClassicFrontend2IrConverter(
         )
 
         @OptIn(ObsoleteDescriptorBasedAPI::class)
-        return IrBackendInput.WasmBackendInput(
+        return IrBackendInput.WasmAfterFrontendBackendInput(
             moduleFragment,
             pluginContext,
             icData,
