@@ -17,22 +17,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#if KONAN_MACOSX || KONAN_IOS || KONAN_TVOS || KONAN_WATCHOS || KONAN_ANDROID
-#include <stdlib.h>
-#elif KONAN_LINUX
-#include <unistd.h>
-#include <sys/syscall.h>
-#include <errno.h>
-#elif KONAN_WINDOWS
-#include <windows.h>
-#include <bcrypt.h>
-#include <ntdef.h>
-#endif
-
 #include "KAssert.h"
-#include "KString.h"
 #include "Exceptions.h"
-#include "Format.h"
 #include "Memory.h"
 #include "Natives.h"
 #include "Types.h"
@@ -134,18 +120,6 @@ ALWAYS_INLINE void Kotlin_ByteArray_set_value(KRef thiz, KInt index, KByte value
     boundsCheck(array, index);
   mutabilityCheck(thiz);
   *ByteArrayAddressOfElementAt(array, index) = value;
-}
-
-void throwReadingRandomBytesFailed(const char* format, ...) {
-    va_list args;
-    va_start(args, format);
-    std::array<char, 128> buffer;
-    kotlin::std_support::span<char> span(buffer);
-    span = kotlin::VFormatToSpan(span, format, args);
-    va_end(args);
-    ObjHolder holder;
-    StringFromUtf8Buffer(buffer.data(), buffer.size() - span.size(), holder.slot());
-    ThrowIllegalStateExceptionWithMessage(holder.obj());
 }
 
 }  // namespace
@@ -618,34 +592,6 @@ void Kotlin_DoubleArray_fillImpl(KRef thiz, KInt fromIndex, KInt toIndex, KDoubl
 
 void Kotlin_BooleanArray_fillImpl(KRef thiz, KInt fromIndex, KInt toIndex, KBoolean value) {
   fillImpl<KBoolean>(thiz, fromIndex, toIndex, value);
-}
-
-// Mostly taken from kotlin-native/runtime/src/mimalloc/c/random.c
-void Kotlin_ByteArray_fillWithRandomBytes(KRef byteArray, KInt size) {
-    kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
-    ArrayHeader* array = byteArray->array();
-    uint8_t* address = reinterpret_cast<uint8_t*>(ByteArrayAddressOfElementAt(array, 0));
-
-#if KONAN_MACOSX || KONAN_IOS || KONAN_TVOS || KONAN_WATCHOS || KONAN_ANDROID
-    arc4random_buf(address, size);
-#elif KONAN_LINUX
-    long count = 0;
-    while (count < size) {
-        long ret = syscall(SYS_getrandom, address + count, size - count, 0); // blocking
-        if (ret >= 0) {
-            count += ret;
-        } else if (errno != EINTR) { // repeat if interrupted
-            throwReadingRandomBytesFailed("getrandom returned a negative value: %ld, errno: %d", ret, errno);
-        }
-    }
-#elif KONAN_WINDOWS
-    NTSTATUS status = BCryptGenRandom(NULL, (PUCHAR)address, (ULONG)size, BCRYPT_USE_SYSTEM_PREFERRED_RNG);
-    if (!NT_SUCCESS(status)) {
-        throwReadingRandomBytesFailed("Unexpected failure in random bytes generation: %ld", status);
-    }
-#else
-#error "How to Kotlin_ByteArray_fillWithRandomBytes()?"
-#endif
 }
 
 void Kotlin_ByteArray_copyImpl(KConstRef thiz, KInt fromIndex,

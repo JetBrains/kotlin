@@ -7,12 +7,12 @@ package kotlin.uuid
 
 import kotlin.native.internal.GCUnsafeCall
 
-@GCUnsafeCall("Kotlin_ByteArray_fillWithRandomBytes")
-private external fun fillWithRandomBytes(byteArray: ByteArray, size: Int): Unit
+@GCUnsafeCall("Kotlin_Uuid_getRandomBytes")
+private external fun getRandomBytes(byteArray: ByteArray, size: Int): Unit
 
 @ExperimentalStdlibApi
 internal actual fun secureRandomUuid(): Uuid {
     val randomBytes = ByteArray(Uuid.SIZE_BYTES)
-    fillWithRandomBytes(randomBytes, randomBytes.size)
+    getRandomBytes(randomBytes, randomBytes.size)
     return uuidFromRandomBytes(randomBytes)
 }
