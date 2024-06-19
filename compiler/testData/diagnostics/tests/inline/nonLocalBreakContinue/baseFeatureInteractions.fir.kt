@@ -13,8 +13,8 @@ inline fun inline(s: ()->Unit) {
 fun test1(i: Int) {
     while (i < 10) {
         inline {
-            if (i == 1) <!UNSUPPORTED_FEATURE!>continue<!>
-            if (i == 2) <!UNSUPPORTED_FEATURE!>break<!>
+            if (i == 1) continue
+            if (i == 2) break
         }
     }
 }
@@ -31,8 +31,8 @@ fun test2(i: Int) {
 fun test3(i: Int) {
     do {
         inline {
-            if (i == 1) <!UNSUPPORTED_FEATURE!>continue<!>
-            if (i == 2) <!UNSUPPORTED_FEATURE!>break<!>
+            if (i == 1) continue
+            if (i == 2) break
         }
     } while(i < 10)
 }
@@ -50,8 +50,8 @@ fun test5() {
     for (i in 0..10) {
         inline {
             when {
-                i == 0 -> <!UNSUPPORTED_FEATURE!>continue<!>
-                i == 1 -> <!UNSUPPORTED_FEATURE!>break<!>
+                i == 0 -> continue
+                i == 1 -> break
             }
         }
     }
@@ -72,7 +72,7 @@ fun test7(x: Any, b: Boolean){
     for (i in 0..10) {
         inline {
             when (x) {
-                if (b) <!UNSUPPORTED_FEATURE!>continue<!> else <!UNSUPPORTED_FEATURE!>break<!> -> 1
+                if (b) continue else break -> 1
             }
         }
     }
@@ -92,9 +92,9 @@ fun test9() {
     for (i in 0..10) {
         inline {
             try {
-                <!UNSUPPORTED_FEATURE!>continue<!>
+                continue
             } catch (e: Exception) {
-                <!UNSUPPORTED_FEATURE!>break<!>
+                break
             }
         }
     }
@@ -115,10 +115,10 @@ fun test10() {
 fun test11(x: Any) {
     for (i in 0..10) {
         inline {
-            x is String || <!UNSUPPORTED_FEATURE!>continue<!>
-            x is Int || <!UNSUPPORTED_FEATURE!>break<!>
-            x is Double && <!UNSUPPORTED_FEATURE!>continue<!>
-            x is Float && <!UNSUPPORTED_FEATURE!>break<!>
+            x is String || continue
+            x is Int || break
+            x is Double && continue
+            x is Float && break
         }
     }
 }
@@ -137,8 +137,8 @@ fun test12(x: Any) {
 fun test13(x: Any?) {
     for (i in 0..10) {
         inline{
-            x?: <!UNSUPPORTED_FEATURE!>continue<!>
-            x?: <!UNSUPPORTED_FEATURE!>break<!>
+            x?: continue
+            x?: break
         }
     }
 }

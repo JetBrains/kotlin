@@ -4,8 +4,8 @@
 fun test() {
     for (i in 1..10) {
         lambdaAny {
-            if (i == 3) continue
-            if (i == 5) break
+            if (i == 3) <!UNSUPPORTED_FEATURE!>continue<!>
+            if (i == 5) <!UNSUPPORTED_FEATURE!>break<!>
         }
     }
 }

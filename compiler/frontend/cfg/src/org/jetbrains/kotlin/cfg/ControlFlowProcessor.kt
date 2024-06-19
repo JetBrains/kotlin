@@ -927,9 +927,8 @@ class ControlFlowProcessor(
 
         private fun jumpDoesNotCrossFunctionBoundary(jumpExpression: KtExpressionWithLabel, jumpTarget: KtLoopExpression): Boolean {
             val bindingContext = trace.bindingContext
-            val skipInlineFunctions = languageVersionSettings.supportsFeature(BreakContinueInInlineLambdas)
-            val labelExprEnclosingFunc = getEnclosingFunctionDescriptor(bindingContext, jumpExpression, skipInlineFunctions)
-            val labelTargetEnclosingFunc = getEnclosingFunctionDescriptor(bindingContext, jumpTarget, skipInlineFunctions)
+            val labelExprEnclosingFunc = getEnclosingFunctionDescriptor(bindingContext, jumpExpression, skipInlineFunctionLiterals = false)
+            val labelTargetEnclosingFunc = getEnclosingFunctionDescriptor(bindingContext, jumpTarget, skipInlineFunctionLiterals = false)
             return if (labelExprEnclosingFunc !== labelTargetEnclosingFunc) {
                 // Check to report only once
                 if (builder.getLoopExitPoint(jumpTarget) != null ||
@@ -938,8 +937,9 @@ class ControlFlowProcessor(
                     // See generateInitializersForClassOrObject && generateDeclarationForLocalClassOrObjectIfNeeded
                     labelExprEnclosingFunc is ConstructorDescriptor && !labelExprEnclosingFunc.isPrimary
                 ) {
-                    val dependsOnInlineLambdas = !skipInlineFunctions &&
-                            getEnclosingFunctionDescriptor(bindingContext, jumpExpression, true) == getEnclosingFunctionDescriptor(bindingContext, jumpTarget, true)
+                    val dependsOnInlineLambdas =
+                        getEnclosingFunctionDescriptor(bindingContext, jumpExpression, skipInlineFunctionLiterals = true) ==
+                                getEnclosingFunctionDescriptor(bindingContext, jumpTarget, skipInlineFunctionLiterals = true)
                     if (dependsOnInlineLambdas) {
                         trace.report(UNSUPPORTED_FEATURE.on(jumpExpression, BreakContinueInInlineLambdas to languageVersionSettings))
                     } else {

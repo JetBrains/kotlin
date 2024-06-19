@@ -10,8 +10,8 @@ class Test2: Test() {
     init {
         loop@ for (i in 0..10) {
             super.foo {
-                <!UNSUPPORTED_FEATURE!>break<!>
-                <!UNSUPPORTED_FEATURE!>continue<!>
+                break
+                continue
             }
             super.bar {
                 <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!>

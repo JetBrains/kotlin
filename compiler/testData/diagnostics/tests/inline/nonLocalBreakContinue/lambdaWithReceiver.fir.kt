@@ -10,8 +10,8 @@ public inline fun <T, R> with(receiver: T, block: T.() -> R): R {
 fun test() {
     val list = listOf(User("Masha"), User("Kate"))
     for (i in list) with(i) {
-        if (name == "Kate") <!UNSUPPORTED_FEATURE!>break<!>
-        if (name == "Masha") <!UNSUPPORTED_FEATURE!>continue<!>
+        if (name == "Kate") break
+        if (name == "Masha") continue
     }
 }
 

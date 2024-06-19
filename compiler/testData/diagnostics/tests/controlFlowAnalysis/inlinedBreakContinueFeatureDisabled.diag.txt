@@ -1,0 +1,36 @@
+/inlinedBreakContinueFeatureDisabled.kt:16:15: error: the feature "break continue in inline lambdas" is experimental and should be enabled explicitly
+        foo { break }
+              ^^^^^
+/inlinedBreakContinueFeatureDisabled.kt:17:15: error: the feature "break continue in inline lambdas" is experimental and should be enabled explicitly
+        foo { continue }
+              ^^^^^^^^
+/inlinedBreakContinueFeatureDisabled.kt:18:22: error: the feature "break continue in inline lambdas" is experimental and should be enabled explicitly
+        foo(fun () { break })
+                     ^^^^^
+/inlinedBreakContinueFeatureDisabled.kt:19:22: error: the feature "break continue in inline lambdas" is experimental and should be enabled explicitly
+        foo(fun () { continue })
+                     ^^^^^^^^
+/inlinedBreakContinueFeatureDisabled.kt:25:14: error: the feature "break continue in inline lambdas" is experimental and should be enabled explicitly
+        bar({break}, {})
+             ^^^^^
+/inlinedBreakContinueFeatureDisabled.kt:26:14: error: the feature "break continue in inline lambdas" is experimental and should be enabled explicitly
+        bar({continue}, {})
+             ^^^^^^^^
+/inlinedBreakContinueFeatureDisabled.kt:28:21: error: the feature "break continue in inline lambdas" is experimental and should be enabled explicitly
+        bar(fun () {break}, fun () {})
+                    ^^^^^
+/inlinedBreakContinueFeatureDisabled.kt:29:21: error: the feature "break continue in inline lambdas" is experimental and should be enabled explicitly
+        bar(fun () {continue}, fun () {})
+                    ^^^^^^^^
+/inlinedBreakContinueFeatureDisabled.kt:35:19: error: 'break' or 'continue' jumps across a function or a class boundary
+        bar({}, { break }, { break })
+                  ^^^^^
+/inlinedBreakContinueFeatureDisabled.kt:35:30: error: 'break' or 'continue' jumps across a function or a class boundary
+        bar({}, { break }, { break })
+                             ^^^^^
+/inlinedBreakContinueFeatureDisabled.kt:36:19: error: 'break' or 'continue' jumps across a function or a class boundary
+        bar({}, { continue }, { break })
+                  ^^^^^^^^
+/inlinedBreakContinueFeatureDisabled.kt:36:33: error: 'break' or 'continue' jumps across a function or a class boundary
+        bar({}, { continue }, { break })
+                                ^^^^^
