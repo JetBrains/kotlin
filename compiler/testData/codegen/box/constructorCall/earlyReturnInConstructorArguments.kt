@@ -1,7 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 
-// JVM_ABI_K1_K2_DIFF: KT-63864
 inline fun ok(): String {
     return foo(1, 1.0, 1.0f, 1L, "O", C(if (bar()) return "zap" else "K"))
 }

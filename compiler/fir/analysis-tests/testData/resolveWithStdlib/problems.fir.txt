@@ -1,6 +1,6 @@
 FILE: problems.kt
-    public final val sb: R|java/lang/StringBuilder| = R|java/lang/StringBuilder.StringBuilder|()
-        public get(): R|java/lang/StringBuilder|
+    public final val sb: R|{kotlin/text/StringBuilder=} java/lang/StringBuilder| = R|java/lang/StringBuilder.StringBuilder|()
+        public get(): R|{kotlin/text/StringBuilder=} java/lang/StringBuilder|
     public final val o: R|kotlin/Any| = object : R|kotlin/Any| {
         private constructor(): R|<anonymous>| {
             super<R|kotlin/Any|>()

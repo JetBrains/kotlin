@@ -4,7 +4,6 @@
  */
 // KT-66106: uncaught exception: Wrong box result 'undefined'; Expected "OK"
 // IGNORE_BACKEND: WASM
-// JVM_ABI_K1_K2_DIFF: KT-63864
 // WITH_STDLIB
 
 import kotlin.test.*

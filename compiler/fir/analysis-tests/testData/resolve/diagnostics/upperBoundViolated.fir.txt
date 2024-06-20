@@ -73,8 +73,8 @@ FILE: upperBoundViolated.kt
     public final typealias NL<K> = R|NumColl<kotlin/collections/List<K>>|
     public final val test7: <ERROR TYPE REF: Unresolved name: NumberPhile> = R|/NumColl.NumColl|<R|kotlin/Int|>().<Unresolved name: NumberPhile>#(ERROR_EXPR(No right operand))
         public get(): <ERROR TYPE REF: Unresolved name: NumberPhile>
-    public final val test8: R|NumColl<kotlin/collections/List<kotlin/String>>| = R|/NumColl.NumColl|<R|kotlin/String|>()
-        public get(): R|NumColl<kotlin/collections/List<kotlin/String>>|
+    public final val test8: R|{NL<kotlin/String>=} NumColl<kotlin/collections/List<kotlin/String>>| = R|/NumColl.NumColl|<R|kotlin/String|>()
+        public get(): R|{NL<kotlin/String>=} NumColl<kotlin/collections/List<kotlin/String>>|
     public final class NumberPhile<T : R|kotlin/Number|> : R|kotlin/Any| {
         public constructor<T : R|kotlin/Number|>(x: R|T|): R|NumberPhile<T>| {
             super<R|kotlin/Any|>()

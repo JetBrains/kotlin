@@ -18,8 +18,7 @@ import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.TypeAliasConstructorsSubstitutingScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.fir.whileAnalysing
 import org.jetbrains.kotlin.name.Name
@@ -49,7 +48,8 @@ private fun FirScope.processConstructorsByName(
         processor,
         session,
         bodyResolveComponents,
-        constructorFilter
+        constructorFilter,
+        callInfo.typeArguments,
     )
 
     processSyntheticConstructors(
@@ -237,7 +237,8 @@ private fun processConstructors(
     processor: (FirFunctionSymbol<*>) -> Unit,
     session: FirSession,
     bodyResolveComponents: BodyResolveComponents,
-    constructorFilter: ConstructorFilter
+    constructorFilter: ConstructorFilter,
+    typeArguments: List<FirTypeProjection>,
 ) {
     whileAnalysing(session, matchedSymbol.fir) {
         val scope = when (matchedSymbol) {
@@ -256,7 +257,11 @@ private fun processConstructors(
                     TypeAliasConstructorsSubstitutingScope(
                         matchedSymbol,
                         basicScope,
-                        outerType
+                        outerType,
+                        abbreviation = matchedSymbol.constructType(
+                            Array(typeArguments.size) { typeArguments[it].toConeTypeProjection() },
+                            isNullable = false, ConeAttributes.Empty,
+                        ),
                     )
                 } else {
                     null

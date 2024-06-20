@@ -16,8 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.withReplacedConeType
+import org.jetbrains.kotlin.fir.types.*
 
 private object TypeAliasConstructorKey : FirDeclarationDataKey()
 
@@ -39,6 +38,7 @@ class TypeAliasConstructorsSubstitutingScope(
     private val typeAliasSymbol: FirTypeAliasSymbol,
     private val delegatingScope: FirScope,
     private val outerType: ConeClassLikeType?,
+    private val abbreviation: ConeClassLikeType?,
 ) : FirScope() {
 
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
@@ -52,6 +52,12 @@ class TypeAliasConstructorsSubstitutingScope(
 
                     this.typeParameters.clear()
                     typeParameters.mapTo(this.typeParameters) { buildConstructedClassTypeParameterRef { symbol = it.symbol } }
+
+                    if (abbreviation != null) {
+                        returnTypeRef = returnTypeRef.withReplacedConeType(
+                            returnTypeRef.coneType.withAbbreviation(AbbreviatedTypeAttribute(abbreviation))
+                        )
+                    }
 
                     if (outerType != null) {
                         // If the matched symbol is a type alias, and the expanded type is a nested class, e.g.,
