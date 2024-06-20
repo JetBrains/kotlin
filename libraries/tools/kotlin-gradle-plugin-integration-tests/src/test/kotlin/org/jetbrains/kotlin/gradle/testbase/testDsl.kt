@@ -478,6 +478,7 @@ private fun commonBuildSetup(
     val jdkLocations = System.getProperties()
         .filterKeys { it.toString().matches(jdkPropNameRegex) }
         .values
+        .sortedWith(compareBy { it.toString() })
         .joinToString(separator = ",")
     return buildOptions.toArguments(gradleVersion) + buildArguments + listOfNotNull(
         // Required toolchains should be pre-installed via repo. Tests should not download any JDKs
