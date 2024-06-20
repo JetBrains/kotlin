@@ -253,6 +253,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
             is IrTypeOperatorCall -> (irStatement.argument as IrFunctionAccessExpression).getThisReceiver() // for enums
             is IrFunctionAccessExpression -> irStatement.getThisReceiver()
             is IrBlock -> (irStatement.statements.last() as IrFunctionAccessExpression).getThisReceiver()
+            is IrReturn -> null // TODO
             else -> TODO("${irStatement::class.java} is not supported as first statement in constructor call")
         }
         superReceiver?.let { callStack.storeState(it, objectState) }

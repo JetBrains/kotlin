@@ -236,8 +236,9 @@ class CacheBuilder(
         configuration.report(CompilerMessageSeverity.LOGGING, "CACHING ${library.libraryName}")
         filesToCache.forEach { configuration.report(CompilerMessageSeverity.LOGGING, "    $it") }
 
+        val stdlib = konanConfig.distribution.stdlib
         // Produce monolithic caches for external libraries for now.
-        val makePerFileCache = !isExternal && !library.isCInteropLibrary()
+        val makePerFileCache = (!isExternal && !library.isCInteropLibrary()) || library.libraryName.startsWith(stdlib)
 
         val libraryCacheDirectory = when {
             library.isDefault -> konanConfig.systemCacheDirectory
