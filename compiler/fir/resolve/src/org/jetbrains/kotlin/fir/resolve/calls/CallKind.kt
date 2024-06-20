@@ -88,7 +88,7 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         CheckVisibility,
         DiscriminateSyntheticProperties,
         NoTypeArguments,
-        InitializeCallableReferenceArguments,
+        InitializeEmptyArgumentMap,
         CreateFreshTypeVariableSubstitutorStage,
         CollectTypeVariableUsagesInfo,
         CheckDispatchReceiver,
@@ -139,7 +139,7 @@ class ResolutionSequenceBuilder(
         val stages = mutableListOf<ResolutionStage>().apply {
             if (checkVisibility) add(CheckVisibility)
             if (discriminateSynthetics) add(DiscriminateSyntheticProperties)
-            if (checkArguments) add(MapArguments)
+            if (checkArguments) add(MapArguments) else add(InitializeEmptyArgumentMap)
             if (checkExplicitReceiverConsistency) add(CheckExplicitReceiverConsistency)
             if (mapTypeArguments) add(MapTypeArguments) else add(NoTypeArguments)
             if (checkArguments || checkDispatchReceiver || checkExtensionReceiver) add(CreateFreshTypeVariableSubstitutorStage)
