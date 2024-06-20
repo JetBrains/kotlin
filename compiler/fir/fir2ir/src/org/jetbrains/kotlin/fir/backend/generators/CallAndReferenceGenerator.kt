@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.utils.*
-import org.jetbrains.kotlin.fir.backend.utils.convertCatching
-import org.jetbrains.kotlin.fir.backend.utils.implicitCast
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
@@ -1132,12 +1130,12 @@ class CallAndReferenceGenerator(
                         val value = if (function?.itOrExpectHasDefaultParameterValue(index) == true) {
                             null
                         } else {
-                            val elementType = parameter.returnTypeRef.toIrType()
+                            val varargType = parameter.returnTypeRef.toIrType()
                             IrVarargImpl(
                                 UNDEFINED_OFFSET,
                                 UNDEFINED_OFFSET,
-                                elementType,
-                                elementType.toArrayOrPrimitiveArrayType(builtins)
+                                varargType,
+                                varargElementType(varargType)
                             )
                         }
                         putValueArgument(index, value)
@@ -1147,6 +1145,20 @@ class CallAndReferenceGenerator(
             return this
         }
     }
+
+    private fun varargElementType(varargType: IrType): IrType =
+        when(varargType.classifierOrFail) {
+            builtins.arrayClass -> (varargType as IrSimpleType).arguments.single().unwrapVarargElementType()
+            builtins.byteArray -> builtins.byteType
+            builtins.charArray -> builtins.charType
+            builtins.shortArray -> builtins.shortType
+            builtins.intArray -> builtins.intType
+            builtins.longArray -> builtins.longType
+            builtins.floatArray -> builtins.floatType
+            builtins.doubleArray -> builtins.doubleType
+            builtins.booleanArray -> builtins.booleanType
+            else -> error ("Unsupported vararg type: ${varargType.classFqName}")
+        }
 
     private fun needArgumentReordering(
         parametersInActualOrder: Collection<FirValueParameter>,
