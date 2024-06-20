@@ -26,6 +26,34 @@ public class FirJsKlibSyntheticAccessorTestGenerated extends AbstractFirJsKlibSy
   }
 
   @Nested
+  @TestMetadata("compiler/testData/klib/syntheticAccessors/outerThis")
+  @TestDataPath("$PROJECT_ROOT")
+  public class OuterThis {
+    @Test
+    public void testAllFilesPresentInOuterThis() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/outerThis"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("leakingOuterThisCrossFile.kt")
+    public void testLeakingOuterThisCrossFile() {
+      runTest("compiler/testData/klib/syntheticAccessors/outerThis/leakingOuterThisCrossFile.kt");
+    }
+
+    @Test
+    @TestMetadata("leakingOuterThisCrossModule.kt")
+    public void testLeakingOuterThisCrossModule() {
+      runTest("compiler/testData/klib/syntheticAccessors/outerThis/leakingOuterThisCrossModule.kt");
+    }
+
+    @Test
+    @TestMetadata("outerThisUsageSingleFile.kt")
+    public void testOuterThisUsageSingleFile() {
+      runTest("compiler/testData/klib/syntheticAccessors/outerThis/outerThisUsageSingleFile.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/klib/syntheticAccessors/privateMember")
   @TestDataPath("$PROJECT_ROOT")
   public class PrivateMember {
