@@ -25,7 +25,8 @@ typealias ReportIrValidationError = (IrFile?, IrElement, String, List<IrElement>
 internal data class IrValidatorConfig(
     val checkTypes: Boolean = true,
     val checkProperties: Boolean = false,
-    val checkScopes: Boolean = false, // TODO: Consider setting to true by default and deleting
+    val checkValueScopes: Boolean = false,
+    val checkTypeParameterScopes: Boolean = false,
     val checkVisibilities: Boolean = false,
 )
 
@@ -41,8 +42,11 @@ private class IrValidator(
     override fun visitFile(declaration: IrFile) {
         currentFile = declaration
         super.visitFile(declaration)
-        if (config.checkScopes) {
-            ScopeValidator(this::error, parentChain).check(declaration)
+        if (config.checkValueScopes) {
+            IrValueScopeValidator(this::error, parentChain).check(declaration)
+        }
+        if (config.checkTypeParameterScopes) {
+            IrTypeParameterScopeValidator(this::error, parentChain).check(declaration)
         }
         if (config.checkVisibilities) {
             declaration.acceptVoid(IrVisibilityChecker(declaration.module, declaration, reportError))
@@ -120,16 +124,9 @@ class DuplicateIrNodeError(element: IrElement) : IrValidationError(element.rende
 private fun performBasicIrValidation(
     element: IrElement,
     irBuiltIns: IrBuiltIns,
-    checkProperties: Boolean = false,
-    checkTypes: Boolean = false,
-    checkVisibilities: Boolean = false,
+    validatorConfig: IrValidatorConfig,
     reportError: ReportIrValidationError,
 ) {
-    val validatorConfig = IrValidatorConfig(
-        checkTypes = checkTypes,
-        checkProperties = checkProperties,
-        checkVisibilities = checkVisibilities,
-    )
     val validator = IrValidator(irBuiltIns, validatorConfig, reportError)
     try {
         element.acceptVoid(validator)
@@ -179,13 +176,19 @@ sealed interface IrValidationContext {
         checkProperties: Boolean = false,
         checkTypes: Boolean = false,
         checkVisibilities: Boolean = false,
+        checkValueScopes: Boolean = false,
+        checkTypeParameterScopes: Boolean = false,
     ) {
         performBasicIrValidation(
             fragment,
             irBuiltIns,
-            checkProperties,
-            checkTypes,
-            checkVisibilities,
+            IrValidatorConfig(
+                checkTypes,
+                checkProperties,
+                checkValueScopes,
+                checkTypeParameterScopes,
+                checkVisibilities,
+            ),
         ) { file, element, message, parentChain ->
             reportIrValidationError(file, element, message, phaseName, parentChain)
         }
