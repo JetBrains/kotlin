@@ -7,13 +7,12 @@ package org.jetbrains.kotlin.gradle.dependencyResolutionTests
 
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
-import org.gradle.kotlin.dsl.maven
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.platformTargets
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.gradle.utils.targets
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
@@ -25,21 +24,29 @@ abstract class SourceSetDependenciesResolution {
     class SourceSetDependenciesDsl(
         private val project: Project
     ) {
-        val declaredDependencies = mutableSetOf<Pair<String, String>>() // list of name + versions
+        val mavenRepositoryMock = MavenRepositoryMock()
 
-        /**
-         * Declares an API dependency to test:[name]:[version] for [sourceSetName] source set
-         */
-        fun api(sourceSetName: String, name: String, version: String): Unit = project
+        fun mavenRepositoryMock(code: MavenRepositoryMockDsl.() -> Unit) =
+            MavenRepositoryMockDsl(mavenRepositoryMock).run(code)
+
+        fun api(sourceSetName: String, name: String, version: String): Unit =
+            api(sourceSetName, "test:$name:$version")
+
+        fun mockedDependency(name: String, version: String): String {
+            return mavenRepositoryMock.module("test", name, version).asMavenNotation
+        }
+
+        fun api(sourceSetName: String, dependencyNotation: String): Unit = project
             .kotlinExtension
             .sourceSets
             .getByName(sourceSetName)
-            .dependencies { api(mockedDependency(name, version)) }
+            .dependencies { api(mockedDependency(dependencyNotation)) }
 
-        fun mockedDependency(name: String, version: String): String {
-            declaredDependencies.add(name to version)
-            return "test:$name:$version"
+        fun mockedDependency(dependencyNotation: String): String {
+            mavenRepositoryMock.module(dependencyNotation)
+            return dependencyNotation
         }
+
     }
 
     /**
@@ -49,35 +56,38 @@ abstract class SourceSetDependenciesResolution {
     fun assertSourceSetDependenciesResolution(
         expectedFilePath: String,
         withProject: ProjectInternal? = null,
+        sanitize: String.() -> String = { this },
         configure: SourceSetDependenciesDsl.(Project) -> Unit
     ) {
         val repoRoot = tempFolder.newFolder()
         val project = withProject ?: buildProject {
-            applyMultiplatformPlugin()
-        }
+            // Disable stdlib and kotlin-dom-api for default tests, as they just pollute dependencies dumps
+            enableDefaultStdlibDependency(false)
+            enableDefaultJsDomApiDependency(false)
 
-        project.allprojects {
-            it.enableDefaultStdlibDependency(false)
-            it.enableDependencyVerification(false)
-            it.repositories.maven(repoRoot)
+            configureRepositoriesForTests()
+            applyMultiplatformPlugin()
         }
 
         val dsl = SourceSetDependenciesDsl(project)
         dsl.configure(project)
 
-        dsl.declaredDependencies.forEach { project.multiplatformExtension.publishAsMockedLibrary(repoRoot, it.first, it.second) }
+        dsl.mavenRepositoryMock.applyToProject(project, repoRoot)
 
         project.evaluate()
 
-        val actualResult = project.resolveAllSourceSetDependencies()
-        val expectedFile = resourcesRoot.resolve("dependenciesResolution").resolve(expectedFilePath)
+        val actualResult = project.resolveAllSourceSetDependencies().sanitize()
+        val expectedFile = resourcesRoot
+            .resolve("dependenciesResolution")
+            .resolve(this.javaClass.simpleName)
+            .resolve(expectedFilePath)
         KotlinTestUtils.assertEqualsToFile(expectedFile, actualResult)
     }
 
     private fun Project.resolveAllSourceSetDependencies(): String {
-        val allSourceSets = multiplatformExtension.sourceSets.toSet()
+        val allSourceSets = kotlinExtension.sourceSets.toSet()
 
-        val platformSpecificSourceSets = multiplatformExtension
+        val platformSpecificSourceSets = kotlinExtension
             .targets
             .platformTargets
             .flatMap { it.compilations }
@@ -88,13 +98,7 @@ abstract class SourceSetDependenciesResolution {
             .associateWith { it.internal.resolvableMetadataConfiguration }
 
         val actual = (platformSpecificSourceSets + commonSourceSetsWithoutMetadataCompilation).mapValues { (_, configuration) ->
-            val resolutionResult = configuration.incoming.resolutionResult
-            val rootComponent = resolutionResult.root
-            val dependencies = resolutionResult.allComponents
-                .minus(rootComponent)
-                .map { it.id.displayName }
-                .sorted()
-            dependencies.joinToString("\n") { "  $it" }
+            configuration.dumpResolvedDependencies().prependIndent("  ")
         }.entries.sortedBy { (sourceSet, _) -> sourceSet.name }.joinToString("\n") {
             it.key.name + "\n" + it.value
         }
