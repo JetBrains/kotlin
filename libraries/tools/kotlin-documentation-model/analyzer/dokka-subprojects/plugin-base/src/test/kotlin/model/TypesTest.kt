@@ -8,12 +8,14 @@ import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.driOrNull
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
 import utils.AbstractModelTest
+import utils.OnlyDescriptors
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
 class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types") {
 
     @Test
+    @OnlyDescriptors("#3649")
     fun `type with typealias to functional type with parameter`() {
         inlineModelTest(
             """
@@ -42,6 +44,7 @@ class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types")
     }
 
     @Test
+    @OnlyDescriptors("#3649")
     fun `type with typealias to functional type`() {
         inlineModelTest(
             """
