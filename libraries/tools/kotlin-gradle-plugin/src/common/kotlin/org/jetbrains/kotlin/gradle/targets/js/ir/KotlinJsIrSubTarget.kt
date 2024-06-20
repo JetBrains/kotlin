@@ -179,9 +179,9 @@ abstract class KotlinJsIrSubTarget(
         configureBuild(compilation)
     }
 
-    protected abstract fun configureRun(compilation: KotlinJsIrCompilation)
+    abstract fun configureRun(compilation: KotlinJsIrCompilation)
 
-    protected abstract fun configureBuild(compilation: KotlinJsIrCompilation)
+    abstract fun configureBuild(compilation: KotlinJsIrCompilation)
 
     private fun configureLibrary() {
         target.compilations.all { compilation ->
