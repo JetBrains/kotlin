@@ -37,30 +37,27 @@ class Fir2IrLazyPropertyAccessor(
     parent: IrDeclarationParent,
     isFakeOverride: Boolean,
     override var correspondingPropertySymbol: IrPropertySymbol?
-) : AbstractFir2IrLazyFunction<FirCallableDeclaration>(c, startOffset, endOffset, origin, symbol, parent, isFakeOverride) {
+) : AbstractFir2IrLazyFunction<FirCallableDeclaration>(c, startOffset, endOffset, origin, symbol, parent, isFakeOverride,firAccessor ?: firParentProperty) {
     init {
         symbol.bind(this)
         this.contextReceiverParametersCount = fir.contextParametersForFunctionOrContainingProperty().size
     }
-
-    override val fir: FirCallableDeclaration
-        get() = firAccessor ?: firParentProperty
 
     // TODO: investigate why some deserialized properties are inline
     override var isInline: Boolean
         get() = firAccessor?.isInline == true
         set(_) = mutationNotSupported()
 
-    override var annotations: List<IrConstructorCall> by when {
-        firAccessor != null -> createLazyAnnotations()
-        else -> lazyVar<List<IrConstructorCall>>(lock) { emptyList() }
+    override var annotations: List<IrConstructorCall> = when {
+        firAccessor != null -> createNonLazyAnnotations()
+        else -> emptyList()
     }
 
     override var name: Name
         get() = Name.special("<${if (isSetter) "set" else "get"}-${firParentProperty.name}>")
         set(_) = mutationNotSupported()
 
-    override var returnType: IrType by lazyVar(lock) {
+    override var returnType: IrType = run {
         if (isSetter) builtins.unitType else firParentProperty.returnTypeRef.toIrType(typeConverter, conversionTypeContext)
     }
 
@@ -107,5 +104,5 @@ class Fir2IrLazyPropertyAccessor(
     override val containerSource: DeserializedContainerSource?
         get() = firParentProperty.containerSource
 
-    private val conversionTypeContext = if (isSetter) ConversionTypeOrigin.SETTER else ConversionTypeOrigin.DEFAULT
+    private val conversionTypeContext get() = if (isSetter) ConversionTypeOrigin.SETTER else ConversionTypeOrigin.DEFAULT
 }

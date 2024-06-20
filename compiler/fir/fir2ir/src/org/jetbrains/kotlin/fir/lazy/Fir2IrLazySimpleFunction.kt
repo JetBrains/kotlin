@@ -26,19 +26,19 @@ class Fir2IrLazySimpleFunction(
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,
-    override val fir: FirSimpleFunction,
+    fir: FirSimpleFunction,
     private val firParent: FirRegularClass?,
     symbol: IrSimpleFunctionSymbol,
     parent: IrDeclarationParent,
     isFakeOverride: Boolean
-) : AbstractFir2IrLazyFunction<FirSimpleFunction>(c, startOffset, endOffset, origin, symbol, parent, isFakeOverride) {
+) : AbstractFir2IrLazyFunction<FirSimpleFunction>(c, startOffset, endOffset, origin, symbol, parent, isFakeOverride, fir) {
     init {
         symbol.bind(this)
         classifierStorage.preCacheTypeParameters(fir)
         this.contextReceiverParametersCount = fir.contextParametersForFunctionOrContainingProperty().size
     }
 
-    override var annotations: List<IrConstructorCall> by createLazyAnnotations()
+    override var annotations: List<IrConstructorCall> = createNonLazyAnnotations()
 
     override var name: Name
         get() = fir.name

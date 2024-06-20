@@ -33,6 +33,7 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
     override val symbol: IrSimpleFunctionSymbol,
     parent: IrDeclarationParent,
     override var isFakeOverride: Boolean,
+    override val fir: F,
 ) : AbstractIrLazyFunction(), AbstractFir2IrLazyDeclaration<F>, Fir2IrTypeParametersContainer, IrLazyFunctionBase,
     Fir2IrComponents by c {
 
@@ -85,7 +86,7 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
     }
 
     @Suppress("LeakingThis")
-    override var visibility: DescriptorVisibility by lazyVar(lock) {
+    override var visibility: DescriptorVisibility = run {
         c.visibilityConverter.convertToDescriptorVisibility(fir.visibility)
     }
 
