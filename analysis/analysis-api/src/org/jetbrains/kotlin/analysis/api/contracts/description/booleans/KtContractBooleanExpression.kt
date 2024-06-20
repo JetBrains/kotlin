@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.contracts.description.booleans
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
 
@@ -15,28 +16,34 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
  * [org.jetbrains.kotlin.analysis.api.contracts.description.KaContractConditionalContractEffectDeclaration]. See
  * [org.jetbrains.kotlin.analysis.api.contracts.description.KaContractConditionalContractEffectDeclaration.condition]
  */
+@KaExperimentalApi
 public sealed interface KaContractBooleanExpression : KaLifetimeOwner
 
 @Deprecated("Use 'KaContractBooleanExpression' instead", ReplaceWith("KaContractBooleanExpression"))
+@KaExperimentalApi
 public typealias KtContractBooleanExpression = KaContractBooleanExpression
 
 /**
  * Represents boolean parameter reference passed to `booleanExpression` argument of [kotlin.contracts.SimpleEffect.implies].
  */
+@KaExperimentalApi
 public interface KaContractBooleanValueParameterExpression : KaContractBooleanExpression {
     public val parameterSymbol: KaParameterSymbol
 }
 
 @Deprecated("Use 'KaContractBooleanValueParameterExpression' instead", ReplaceWith("KaContractBooleanValueParameterExpression"))
+@KaExperimentalApi
 public typealias KtContractBooleanValueParameterExpression = KaContractBooleanValueParameterExpression
 
 /**
  * Represents boolean constant reference. The boolean constant can be passed to `booleanExpression` argument of
  * [kotlin.contracts.SimpleEffect.implies].
  */
+@KaExperimentalApi
 public interface KaContractBooleanConstantExpression : KaContractBooleanExpression {
     public val booleanConstant: Boolean
 }
 
 @Deprecated("Use 'KaContractBooleanConstantExpression' instead", ReplaceWith("KaContractBooleanConstantExpression"))
+@KaExperimentalApi
 public typealias KtContractBooleanConstantExpression = KaContractBooleanConstantExpression

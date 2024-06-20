@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -75,6 +76,8 @@ public abstract class KaNamedFunctionSymbol : KaFunctionSymbol(),
      * @return true if the function is tail-recursive, false otherwise
      */
     public abstract val isTailRec: Boolean
+
+    @KaExperimentalApi
     public abstract val contractEffects: List<KaContractEffectDeclaration>
 
     /**

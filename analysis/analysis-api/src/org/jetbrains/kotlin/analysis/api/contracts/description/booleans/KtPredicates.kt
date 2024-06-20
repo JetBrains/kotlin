@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.api.contracts.description.booleans
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractParameterValue
 import org.jetbrains.kotlin.analysis.api.types.KaType
 
 /**
  * See: [KaContractBooleanExpression].
  */
+@KaExperimentalApi
 public interface KaContractIsInstancePredicateExpression : KaContractBooleanExpression {
     public val argument: KaContractParameterValue
 
@@ -22,11 +24,13 @@ public interface KaContractIsInstancePredicateExpression : KaContractBooleanExpr
 }
 
 @Deprecated("Use 'KaContractIsInstancePredicateExpression' instead.", ReplaceWith("KaContractIsInstancePredicateExpression"))
+@KaExperimentalApi
 public typealias KtContractIsInstancePredicateExpression = KaContractIsInstancePredicateExpression
 
 /**
  * See: [KaContractBooleanExpression].
  */
+@KaExperimentalApi
 public interface KaContractIsNullPredicateExpression : KaContractBooleanExpression {
     public val argument: KaContractParameterValue
 
@@ -36,4 +40,5 @@ public interface KaContractIsNullPredicateExpression : KaContractBooleanExpressi
 }
 
 @Deprecated("Use 'KaContractIsNullPredicateExpression' instead.", ReplaceWith("KaContractIsNullPredicateExpression"))
+@KaExperimentalApi
 public typealias KtContractIsNullPredicateExpression = KaContractIsNullPredicateExpression

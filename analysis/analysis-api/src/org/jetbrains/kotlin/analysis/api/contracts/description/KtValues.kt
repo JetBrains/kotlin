@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.contracts.description
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
 
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
  *
  * See: [org.jetbrains.kotlin.analysis.api.contracts.description.KaContractReturnsContractEffectDeclaration.KaContractReturnsSpecificValueEffectDeclaration.value]
  */
+@KaExperimentalApi
 public interface KaContractConstantValue : KaLifetimeOwner {
     public enum class KaContractConstantType {
         NULL,
@@ -24,14 +26,17 @@ public interface KaContractConstantValue : KaLifetimeOwner {
 }
 
 @Deprecated("Use 'KaContractConstantValue' instead", ReplaceWith("KaContractConstantValue"))
+@KaExperimentalApi
 public typealias KtContractConstantValue = KaContractConstantValue
 
 /**
  * Represents parameter that can be passed to `value` argument of [kotlin.contracts.ContractBuilder.callsInPlace].
  */
+@KaExperimentalApi
 public interface KaContractParameterValue : KaLifetimeOwner {
     public val parameterSymbol: KaParameterSymbol
 }
 
 @Deprecated("Use 'KaContractParameterValue' instead", ReplaceWith("KaContractParameterValue"))
+@KaExperimentalApi
 public typealias KtContractParameterValue = KaContractParameterValue

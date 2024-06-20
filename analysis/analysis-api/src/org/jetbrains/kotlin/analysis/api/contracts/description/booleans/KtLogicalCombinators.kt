@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.contracts.description.booleans
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+
 /**
  * See: [KaContractBooleanExpression].
  */
+@KaExperimentalApi
 public interface KaContractBinaryLogicExpression : KaContractBooleanExpression {
     public enum class KaLogicOperation {
         AND,
@@ -22,14 +25,17 @@ public interface KaContractBinaryLogicExpression : KaContractBooleanExpression {
 }
 
 @Deprecated("Use 'KaContractBinaryLogicExpression' instead.", ReplaceWith("KaContractBinaryLogicExpression"))
+@KaExperimentalApi
 public typealias KtContractBinaryLogicExpression = KaContractBinaryLogicExpression
 
 /**
  * See: [KaContractBooleanExpression].
  */
+@KaExperimentalApi
 public interface KaContractLogicalNotExpression : KaContractBooleanExpression {
     public val argument: KaContractBooleanExpression
 }
 
 @Deprecated("Use 'KaContractLogicalNotExpression' instead.", ReplaceWith("KaContractLogicalNotExpression"))
+@KaExperimentalApi
 public typealias KtContractLogicalNotExpression = KaContractLogicalNotExpression
