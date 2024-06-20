@@ -63,7 +63,7 @@ class Fir2IrLazyProperty(
         classifierStorage.preCacheTypeParameters(fir)
     }
 
-    override var annotations: List<IrConstructorCall> by createLazyAnnotations()
+    override var annotations: List<IrConstructorCall> = createNonLazyAnnotations()
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: PropertyDescriptor

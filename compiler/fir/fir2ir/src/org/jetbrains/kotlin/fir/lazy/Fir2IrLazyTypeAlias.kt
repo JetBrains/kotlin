@@ -39,7 +39,7 @@ class Fir2IrLazyTypeAlias(
         classifierStorage.preCacheTypeParameters(fir)
     }
 
-    override var annotations: List<IrConstructorCall> by createLazyAnnotations()
+    override var annotations: List<IrConstructorCall> = createNonLazyAnnotations()
     override lateinit var typeParameters: List<IrTypeParameter>
 
     @ObsoleteDescriptorBasedAPI
@@ -57,7 +57,7 @@ class Fir2IrLazyTypeAlias(
         get() = fir.isActual
         set(_) = mutationNotSupported()
 
-    override var expandedType: IrType by lazyVar(lock) {
+    override var expandedType: IrType = run {
         fir.expandedTypeRef.toIrType(typeConverter)
     }
 

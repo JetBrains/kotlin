@@ -48,7 +48,7 @@ class Fir2IrLazyConstructor(
         this.contextReceiverParametersCount = fir.contextParameters.size
     }
 
-    override var annotations: List<IrConstructorCall> by createLazyAnnotations()
+    override var annotations: List<IrConstructorCall> = createNonLazyAnnotations()
     override lateinit var typeParameters: List<IrTypeParameter>
 
     override var isPrimary: Boolean
@@ -80,7 +80,7 @@ class Fir2IrLazyConstructor(
     override var visibility: DescriptorVisibility = c.visibilityConverter.convertToDescriptorVisibility(fir.visibility)
         set(_) = mutationNotSupported()
 
-    override var returnType: IrType by lazyVar(lock) {
+    override var returnType: IrType = run {
         fir.returnTypeRef.toIrType(typeConverter)
     }
 

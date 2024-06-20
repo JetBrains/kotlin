@@ -59,7 +59,7 @@ class Fir2IrLazyClass(
         }
     }
 
-    override var annotations: List<IrConstructorCall> by createLazyAnnotations()
+    override var annotations: List<IrConstructorCall> = createNonLazyAnnotations()
     override lateinit var typeParameters: List<IrTypeParameter>
 
     override val source: SourceElement
@@ -126,11 +126,11 @@ class Fir2IrLazyClass(
         get() = fir.hasEnumEntries
         set(_) = mutationNotSupported()
 
-    override var superTypes: List<IrType> by lazyVar(lock) {
+    override var superTypes: List<IrType> = run {
         fir.superTypeRefs.map { it.toIrType(typeConverter) }
     }
 
-    override var sealedSubclasses: List<IrClassSymbol> by lazyVar(lock) {
+    override var sealedSubclasses: List<IrClassSymbol> = run {
         if (fir.isSealed) {
             fir.getIrSymbolsForSealedSubclasses(c)
         } else {
@@ -138,7 +138,7 @@ class Fir2IrLazyClass(
         }
     }
 
-    override var thisReceiver: IrValueParameter? by lazyVar(lock) {
+    override var thisReceiver: IrValueParameter? = run {
         setThisReceiver(c, fir.typeParameters)
         thisReceiver
     }
