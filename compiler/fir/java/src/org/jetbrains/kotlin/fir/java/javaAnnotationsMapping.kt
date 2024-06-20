@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
 import org.jetbrains.kotlin.name.*
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.toKtPsiSourceElement
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
@@ -118,8 +117,8 @@ inline fun buildVarargArgumentsExpressionWithTargets(
             isNullable = false,
             ConeAttributes.Empty
         )
-        coneTypeOrNull = elementConeType
-        coneElementTypeOrNull = elementConeType.createOutArrayType()
+        coneTypeOrNull = elementConeType.createOutArrayType()
+        coneElementTypeOrNull = elementConeType
     }.build()
 }
 
