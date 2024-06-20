@@ -303,10 +303,7 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
 ) {
     ProgressManager.checkCanceled()
 
-    if (declaration is KaKotlinPropertySymbol && declaration.isConst) return
     if (declaration.name.isSpecial) return
-
-    if (declaration.getter?.hasBody != true && declaration.setter?.hasBody != true && declaration.visibility.isPrivateOrPrivateToThis()) return
 
     val originalElement = declaration.sourcePsiSafe<KtDeclaration>()
 
@@ -332,6 +329,9 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
             result.add(method)
         }
     }
+
+    if (declaration is KaKotlinPropertySymbol && declaration.isConst) return
+    if (declaration.getter?.hasBody != true && declaration.setter?.hasBody != true && declaration.visibility.isPrivateOrPrivateToThis()) return
 
     if (declaration.isJvmField) return
     val propertyTypeIsValueClass = declaration.hasTypeForValueClassInSignature(suppressJvmNameCheck = true)

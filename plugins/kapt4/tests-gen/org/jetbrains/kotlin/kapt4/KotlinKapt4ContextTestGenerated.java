@@ -540,6 +540,12 @@ public class KotlinKapt4ContextTestGenerated extends AbstractKotlinKapt4ContextT
   }
 
   @Test
+  @TestMetadata("kt68145.kt")
+  public void testKt68145() {
+    runTest("plugins/kapt4/../kapt3/kapt3-compiler/testData/converter/kt68145.kt");
+  }
+
+  @Test
   @TestMetadata("lazyProperty.kt")
   public void testLazyProperty() {
     runTest("plugins/kapt4/../kapt3/kapt3-compiler/testData/converter/lazyProperty.kt");

@@ -46,3 +46,9 @@ open class O {
     @Anno("protected")
     protected val protectedProperty = 1
 }
+
+@Anno("const")
+const val constProperty = 1
+
+@Anno("private")
+private val privateProperty = 1

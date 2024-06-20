@@ -45,7 +45,11 @@ public final class PropertyAnnotationsKt /* PropertyAnnotationsKt*/ {
 
   private static final int deprecated;
 
+  private static final int privateProperty;
+
   private static transient volatile int jvmFlags;
+
+  public static final int constProperty = 1 /* initializer type: int */ /* constant value 1 */;
 
   @org.jetbrains.annotations.NotNull()
   public static final java.lang.String getNonNullable();//  getNonNullable()
