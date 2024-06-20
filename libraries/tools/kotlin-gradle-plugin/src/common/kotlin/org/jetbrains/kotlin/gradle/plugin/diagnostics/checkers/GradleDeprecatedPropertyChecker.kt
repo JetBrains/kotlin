@@ -18,6 +18,7 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
         "kotlin.internal.single.build.metrics.file",
         "kotlin.build.report.dir",
         "kotlin.native.ignoreIncorrectDependencies",
+        "kotlin.wasm.stability.nowarn",
     )
 
     override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
