@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.analysis.api.platform.modification.createProjectWide
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithModality
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithTypeParameters
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.*
@@ -297,7 +296,7 @@ internal fun <T : KaSymbol> KaSymbolPointer<T>.restoreSymbolOrThrowIfDisposed():
 internal fun hasTypeParameters(
     ktModule: KaModule,
     declaration: KtTypeParameterListOwner?,
-    declarationPointer: KaSymbolPointer<KaSymbolWithTypeParameters>,
+    declarationPointer: KaSymbolPointer<KaDeclarationSymbol>,
 ): Boolean = declaration?.typeParameters?.isNotEmpty() ?: declarationPointer.withSymbol(ktModule) {
     it.typeParameters.isNotEmpty()
 }

@@ -50,7 +50,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Any
-      typeParameters: []
       getContainingFileSymbol: KaFileSymbol(invalidContractParameterPassedToReturns.kt)
       getContainingJvmClassName: InvalidContractParameterPassedToReturnsKt
       getContainingModule: KaSourceModule "Sources of main"
@@ -75,7 +74,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Boolean
-      typeParameters: []
       getContainingFileSymbol: KaFileSymbol(invalidContractParameterPassedToReturns.kt)
       getContainingJvmClassName: InvalidContractParameterPassedToReturnsKt
       getContainingModule: KaSourceModule "Sources of main"

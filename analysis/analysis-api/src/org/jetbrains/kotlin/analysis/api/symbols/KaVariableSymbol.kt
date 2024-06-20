@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaInitializerValue
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -53,9 +54,6 @@ public abstract class KaBackingFieldSymbol : KaVariableSymbol() {
     final override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
     final override val isVal: Boolean get() = withValidityAssertion { true }
 
-    final override val typeParameters: List<KaTypeParameterSymbol>
-        get() = withValidityAssertion { emptyList() }
-
     abstract override fun createPointer(): KaSymbolPointer<KaBackingFieldSymbol>
 
     public companion object {
@@ -95,9 +93,6 @@ public abstract class KaEnumEntrySymbol : KaVariableSymbol(), @Suppress("DEPRECA
     final override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { null }
     final override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
     final override val isVal: Boolean get() = withValidityAssertion { true }
-
-    final override val typeParameters: List<KaTypeParameterSymbol>
-        get() = withValidityAssertion { emptyList() }
 
     /**
      * Returns the enum entry's initializer, or `null` if the enum entry doesn't have a body.
@@ -149,9 +144,6 @@ public abstract class KaJavaFieldSymbol :
     final override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { null }
     final override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
 
-    final override val typeParameters: List<KaTypeParameterSymbol>
-        get() = withValidityAssertion { emptyList() }
-
     public abstract val isStatic: Boolean
 
     abstract override fun createPointer(): KaSymbolPointer<KaJavaFieldSymbol>
@@ -160,10 +152,12 @@ public abstract class KaJavaFieldSymbol :
 @Deprecated("Use 'KaJavaFieldSymbol' instead", ReplaceWith("KaJavaFieldSymbol"))
 public typealias KtJavaFieldSymbol = KaJavaFieldSymbol
 
+@OptIn(KaImplementationDetail::class)
 public sealed class KaPropertySymbol : KaVariableSymbol(),
     KaPossibleMemberSymbol,
     KaSymbolWithModality,
     KaSymbolWithVisibility,
+    KaSymbolWithTypeParameters,
     @Suppress("DEPRECATION") KaSymbolWithKind {
 
     public abstract val hasGetter: Boolean
@@ -235,9 +229,6 @@ public abstract class KaLocalVariableSymbol : KaVariableSymbol(),
     final override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { null }
     final override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
 
-    final override val typeParameters: List<KaTypeParameterSymbol>
-        get() = withValidityAssertion { emptyList() }
-
     final override val location: KaSymbolLocation
         get() = withValidityAssertion { KaSymbolLocation.LOCAL }
 
@@ -271,9 +262,6 @@ public abstract class KaValueParameterSymbol : KaVariableSymbol(), KaParameterSy
      * Returns true if the function parameter is marked with `crossinline` modifier
      */
     public abstract val isCrossinline: Boolean
-
-    final override val typeParameters: List<KaTypeParameterSymbol>
-        get() = withValidityAssertion { emptyList() }
 
     /**
      * Whether this value parameter has a default value or not.

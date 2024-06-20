@@ -34,7 +34,6 @@ KaTypeParameterSymbol:
   location: LOCAL
   name: J
   origin: SOURCE
-  typeParameters: []
   upperBounds: [
     KaUsualClassType:
       annotations: []
@@ -95,7 +94,6 @@ KaNamedFunctionSymbol:
       returnType: KaTypeParameterType:
         annotations: []
         type: J
-      typeParameters: []
       getContainingFileSymbol: KaFileSymbol(similarGenericSignature.kt)
       getContainingJvmClassName: SimilarGenericSignatureKt
       getContainingModule: KaSourceModule "Sources of main"
@@ -113,7 +111,6 @@ KaTypeParameterSymbol:
   location: LOCAL
   name: T
   origin: SOURCE
-  typeParameters: []
   upperBounds: []
   variance: INVARIANT
   getContainingFileSymbol: KaFileSymbol(similarGenericSignature.kt)
@@ -169,7 +166,6 @@ KaNamedFunctionSymbol:
       returnType: KaTypeParameterType:
         annotations: []
         type: T
-      typeParameters: []
       getContainingFileSymbol: KaFileSymbol(similarGenericSignature.kt)
       getContainingJvmClassName: SimilarGenericSignatureKt
       getContainingModule: KaSourceModule "Sources of main"

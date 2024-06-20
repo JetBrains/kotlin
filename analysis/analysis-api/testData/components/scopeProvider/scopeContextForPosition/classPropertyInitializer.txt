@@ -31,7 +31,6 @@ scopes:
           annotations: []
           typeArguments: []
           type: kotlin/Int
-        typeParameters: []
     constructors: 0
 
   TypeScope, index = 1
@@ -55,7 +54,6 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Int
-          typeParameters: []
         callableId: test/Child.constructorProp
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
@@ -76,7 +74,6 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Int
-          typeParameters: []
           valueParameters: []
           visibility: Public
         hasBackingField: true
@@ -152,7 +149,6 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Int
-          typeParameters: []
         callableId: test/Child.childProp
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
@@ -173,7 +169,6 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Int
-          typeParameters: []
           valueParameters: []
           visibility: Public
         hasBackingField: true
@@ -219,7 +214,6 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Int
-          typeParameters: []
         callableId: test/Base.value
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
@@ -240,7 +234,6 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Int
-          typeParameters: []
           valueParameters: []
           visibility: Public
         hasBackingField: true
@@ -316,7 +309,6 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Int
-          typeParameters: []
         callableId: test/Base.baseProp
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
@@ -337,7 +329,6 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Int
-          typeParameters: []
           valueParameters: []
           visibility: Public
         hasBackingField: true
@@ -415,7 +406,6 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/Any?
-            typeParameters: []
         ]
         visibility: Public
       KaNamedFunctionSymbol:
@@ -519,7 +509,6 @@ scopes:
                   annotations: []
                   typeArguments: []
                   type: kotlin/Int
-                typeParameters: []
               callableId: test/Child.constructorProp
               contextReceivers: []
               getter: KaPropertyGetterSymbol:
@@ -540,7 +529,6 @@ scopes:
                   annotations: []
                   typeArguments: []
                   type: kotlin/Int
-                typeParameters: []
                 valueParameters: []
                 visibility: Public
               hasBackingField: true
@@ -584,7 +572,6 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/Int
-            typeParameters: []
           KaValueParameterSymbol:
             annotations: []
             callableId: null
@@ -605,7 +592,6 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/Int
-            typeParameters: []
         ]
         visibility: Public
 

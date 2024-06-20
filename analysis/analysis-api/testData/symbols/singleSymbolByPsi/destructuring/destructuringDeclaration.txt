@@ -9,7 +9,6 @@ KaDestructuringDeclarationSymbol:
   ]
   location: LOCAL
   origin: SOURCE
-  typeParameters: []
   getContainingFileSymbol: KaFileSymbol(destructuringDeclaration.kt)
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

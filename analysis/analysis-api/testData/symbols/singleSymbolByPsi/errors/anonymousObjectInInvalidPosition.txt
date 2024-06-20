@@ -18,7 +18,6 @@ KaAnonymousObjectSymbol:
       ]
       type: A<kotlin/Int>
   ]
-  typeParameters: []
   getContainingFileSymbol: KaFileSymbol(anonymousObjectInInvalidPosition.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null

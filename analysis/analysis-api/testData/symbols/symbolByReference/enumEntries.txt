@@ -26,7 +26,6 @@ KaKotlinPropertySymbol:
           type: MyKotlinEnum
       ]
       type: kotlin/enums/EnumEntries<MyKotlinEnum>
-    typeParameters: []
     valueParameters: []
     visibility: Public
     getContainingFileSymbol: KaFileSymbol(enumEntries.kt)

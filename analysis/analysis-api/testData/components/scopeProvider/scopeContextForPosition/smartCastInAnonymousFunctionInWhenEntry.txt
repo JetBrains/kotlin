@@ -84,7 +84,6 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/Any?
-            typeParameters: []
         ]
         visibility: Public
       KaNamedFunctionSymbol:

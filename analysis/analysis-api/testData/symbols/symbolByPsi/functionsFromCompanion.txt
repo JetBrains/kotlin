@@ -47,7 +47,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: KaFileSymbol(functionsFromCompanion.kt)
       getContainingJvmClassName: MyClass.Companion
       getContainingModule: KaSourceModule "Sources of main"

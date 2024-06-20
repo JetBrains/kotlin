@@ -20,7 +20,6 @@ KaKotlinPropertySymbol:
           type: MyKotlinEnum
       ]
       type: kotlin/enums/EnumEntries<MyKotlinEnum>
-    typeParameters: []
     getContainingFileSymbol: KaFileSymbol(enumEntries.kt)
     getContainingJvmClassName: MyKotlinEnum
     getContainingModule: KaSourceModule "Sources of main"
@@ -50,7 +49,6 @@ KaKotlinPropertySymbol:
           type: MyKotlinEnum
       ]
       type: kotlin/enums/EnumEntries<MyKotlinEnum>
-    typeParameters: []
     valueParameters: []
     visibility: Public
     getContainingFileSymbol: KaFileSymbol(enumEntries.kt)

@@ -34,7 +34,6 @@ KaNamedFunctionSymbol:
                     annotations: []
                     typeArguments: []
                     type: kotlin/Boolean
-                  typeParameters: []
                   getContainingFileSymbol: KaFileSymbol(logicalNotContract.kt)
                   getContainingJvmClassName: LogicalNotContractKt
                   getContainingModule: KaSourceModule "Sources of main"
@@ -84,7 +83,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Boolean
-      typeParameters: []
       getContainingFileSymbol: KaFileSymbol(logicalNotContract.kt)
       getContainingJvmClassName: LogicalNotContractKt
       getContainingModule: KaSourceModule "Sources of main"

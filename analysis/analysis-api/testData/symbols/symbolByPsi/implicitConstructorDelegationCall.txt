@@ -37,7 +37,6 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: KaFileSymbol(implicitConstructorDelegationCall.kt)
       getContainingJvmClassName: A
       getContainingModule: KaSourceModule "Sources of main"

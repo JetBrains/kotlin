@@ -13,7 +13,6 @@ KaEnumEntrySymbol:
     annotations: []
     typeArguments: []
     type: test/E
-  typeParameters: []
   getContainingFileSymbol: KaFileSymbol(enumClassWithFinalMembers.kt)
   getContainingJvmClassName: test.E
   getContainingModule: KaSourceModule "Sources of main"
@@ -34,7 +33,6 @@ KaEnumEntrySymbol:
     annotations: []
     typeArguments: []
     type: test/E
-  typeParameters: []
   getContainingFileSymbol: KaFileSymbol(enumClassWithFinalMembers.kt)
   getContainingJvmClassName: test.E
   getContainingModule: KaSourceModule "Sources of main"
@@ -57,7 +55,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    typeParameters: []
     getContainingFileSymbol: KaFileSymbol(enumClassWithFinalMembers.kt)
     getContainingJvmClassName: test.E
     getContainingModule: KaSourceModule "Sources of main"
@@ -82,7 +79,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    typeParameters: []
     valueParameters: []
     visibility: Public
     getDispatchReceiver(): KaUsualClassType:
@@ -260,7 +256,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/String
-      typeParameters: []
       getContainingFileSymbol: KaFileSymbol(enumClassWithFinalMembers.kt)
       getContainingJvmClassName: test.E
       getContainingModule: KaSourceModule "Sources of main"
@@ -300,7 +295,6 @@ KaKotlinPropertySymbol:
           type: test/E
       ]
       type: kotlin/enums/EnumEntries<test/E>
-    typeParameters: []
     valueParameters: []
     visibility: Public
     getContainingFileSymbol: KaFileSymbol(enumClassWithFinalMembers.kt)

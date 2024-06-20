@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassInitializerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
-import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.psi.KtClassInitializer
@@ -41,7 +40,6 @@ class KaFe10PsiClassInitializerSymbol(
         KaPsiBasedSymbolPointer.createForSymbolFromSource<KaClassInitializerSymbol>(this) ?: KaFe10NeverRestoringSymbolPointer()
     }
 
-    override val typeParameters: List<KaTypeParameterSymbol> get() = withValidityAssertion { emptyList() }
     override val annotations: KaAnnotationList get() = withValidityAssertion { KaEmptyAnnotationList(token) }
 
     override fun equals(other: Any?): Boolean = isEqualTo(other)

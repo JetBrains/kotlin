@@ -25,7 +25,6 @@ scopes:
           annotations: []
           typeArguments: []
           type: test/Base
-        typeParameters: []
     constructors: 0
 
   ExplicitSimpleImportingScope, index = 1

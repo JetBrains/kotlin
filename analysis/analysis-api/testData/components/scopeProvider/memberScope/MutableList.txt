@@ -46,7 +46,6 @@ KaNamedFunctionSymbol:
       returnType: KaTypeParameterType:
         annotations: []
         type: E
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -115,7 +114,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -139,7 +137,6 @@ KaNamedFunctionSymbol:
       returnType: KaTypeParameterType:
         annotations: []
         type: E
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -208,7 +205,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -237,7 +233,6 @@ KaNamedFunctionSymbol:
             type: E
         ]
         type: kotlin/collections/Collection<E>
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -310,7 +305,6 @@ KaNamedFunctionSymbol:
             type: E
         ]
         type: kotlin/collections/Collection<E>
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -473,7 +467,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -541,7 +534,6 @@ KaNamedFunctionSymbol:
       returnType: KaTypeParameterType:
         annotations: []
         type: E
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -614,7 +606,6 @@ KaNamedFunctionSymbol:
             type: E
         ]
         type: kotlin/collections/Collection<E>
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -682,7 +673,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -755,7 +745,6 @@ KaNamedFunctionSymbol:
             type: E
         ]
         type: kotlin/collections/Collection<E>
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -823,7 +812,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -847,7 +835,6 @@ KaNamedFunctionSymbol:
       returnType: KaTypeParameterType:
         annotations: []
         type: E
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -920,7 +907,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -945,7 +931,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -1105,7 +1090,6 @@ KaNamedFunctionSymbol:
       returnType: KaTypeParameterType:
         annotations: []
         type: E
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -1225,7 +1209,6 @@ KaNamedFunctionSymbol:
             type: E
         ]
         type: kotlin/collections/Collection<E>
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -1293,7 +1276,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -1361,7 +1343,6 @@ KaNamedFunctionSymbol:
       returnType: KaTypeParameterType:
         annotations: []
         type: E
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -1429,7 +1410,6 @@ KaNamedFunctionSymbol:
       returnType: KaTypeParameterType:
         annotations: []
         type: E
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.MutableList
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -1498,7 +1478,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Any?
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Any
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"

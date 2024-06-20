@@ -12,7 +12,6 @@ KaLocalVariableSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
-  typeParameters: []
   getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
@@ -31,7 +30,6 @@ KaAnonymousFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
-  typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
       annotations: []
@@ -53,7 +51,6 @@ KaAnonymousFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
@@ -87,7 +84,6 @@ KaLocalVariableSymbol:
         type: kotlin/Int
     ]
     type: kotlin/Function1<kotlin/Int, kotlin/Int>
-  typeParameters: []
   getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
@@ -107,7 +103,6 @@ KaLocalVariableSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
-  typeParameters: []
   getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
@@ -126,7 +121,6 @@ KaAnonymousFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
-  typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
       annotations: []
@@ -148,7 +142,6 @@ KaAnonymousFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
@@ -182,7 +175,6 @@ KaLocalVariableSymbol:
         type: kotlin/Int
     ]
     type: kotlin/Function1<kotlin/Int, kotlin/Int>
-  typeParameters: []
   getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
@@ -202,7 +194,6 @@ KaLocalVariableSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
-  typeParameters: []
   getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
@@ -221,7 +212,6 @@ KaAnonymousFunctionSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
-  typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
       annotations: []
@@ -243,7 +233,6 @@ KaAnonymousFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
@@ -347,7 +336,6 @@ KaNamedFunctionSymbol:
             type: kotlin/Int
         ]
         type: kotlin/Function1<kotlin/Int, kotlin/Int>
-      typeParameters: []
       getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
       getContainingJvmClassName: ImplicitReturnInLambdaKt
       getContainingModule: KaSourceModule "Sources of main"

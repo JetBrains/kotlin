@@ -52,7 +52,6 @@ KaNamedFunctionSymbol:
             type: kotlin/Int
         ]
         type: kotlin/Function0<kotlin/Int>
-      typeParameters: []
       getContainingFileSymbol: KaFileSymbol(parameterInlining.kt)
       getContainingJvmClassName: ParameterInliningKt
       getContainingModule: KaSourceModule "Sources of main"
@@ -82,7 +81,6 @@ KaNamedFunctionSymbol:
             type: kotlin/Int
         ]
         type: kotlin/Function0<kotlin/Int>
-      typeParameters: []
       getContainingFileSymbol: KaFileSymbol(parameterInlining.kt)
       getContainingJvmClassName: ParameterInliningKt
       getContainingModule: KaSourceModule "Sources of main"
@@ -112,7 +110,6 @@ KaNamedFunctionSymbol:
             type: kotlin/Int
         ]
         type: kotlin/Function0<kotlin/Int>
-      typeParameters: []
       getContainingFileSymbol: KaFileSymbol(parameterInlining.kt)
       getContainingJvmClassName: ParameterInliningKt
       getContainingModule: KaSourceModule "Sources of main"

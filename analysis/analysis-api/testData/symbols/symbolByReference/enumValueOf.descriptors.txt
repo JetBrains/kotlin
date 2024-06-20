@@ -47,7 +47,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/String
-      typeParameters: []
       getContainingFileSymbol: KaFileSymbol(enumValueOf.kt)
       getContainingJvmClassName: MyKotlinEnum
       getContainingModule: KaSourceModule "Sources of main"

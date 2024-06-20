@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.objcexport
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportClassOrProtocolName
@@ -107,6 +108,7 @@ private fun KaClassLikeSymbol.getSwiftName(
 context(KaSession, KtObjCExportSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaClassLikeSymbol.canBeInnerSwift(): Boolean {
+    @OptIn(KaExperimentalApi::class)
     if (configuration.objcGenerics && this.typeParameters.isNotEmpty()) {
         // Swift compiler doesn't seem to handle this case properly.
         // See https://bugs.swift.org/browse/SR-14607.
@@ -125,6 +127,7 @@ private fun KaClassLikeSymbol.canBeInnerSwift(): Boolean {
 context(KaSession, KtObjCExportSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaClassLikeSymbol.canBeOuterSwift(): Boolean {
+    @OptIn(KaExperimentalApi::class)
     if (configuration.objcGenerics && this.typeParameters.isNotEmpty()) {
         // Swift nested classes are static but capture outer's generics.
         return false

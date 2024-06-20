@@ -112,7 +112,6 @@ KaNamedFunctionSymbol:
       returnType: KaTypeParameterType:
         annotations: []
         type: X
-      typeParameters: []
     KaValueParameterSymbol:
       annotations: []
       callableId: null
@@ -132,7 +131,6 @@ KaNamedFunctionSymbol:
       returnType: KaTypeParameterType:
         annotations: []
         type: Y
-      typeParameters: []
   ]
   visibility: Public
 KaKotlinPropertySymbol:
@@ -160,7 +158,6 @@ KaKotlinPropertySymbol:
           type: kotlin/String
       ]
       type: kotlin/collections/Map<X, kotlin/String>
-    typeParameters: []
   callableId: /A.map
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
@@ -189,7 +186,6 @@ KaKotlinPropertySymbol:
           type: kotlin/String
       ]
       type: kotlin/collections/Map<X, kotlin/String>
-    typeParameters: []
     valueParameters: []
     visibility: Public
   hasBackingField: true
@@ -275,7 +271,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Any?
-      typeParameters: []
   ]
   visibility: Public
 KaNamedFunctionSymbol:

@@ -35,7 +35,6 @@ KaNamedFunctionSymbol:
                     type: kotlin/Unit
                 ]
                 type: kotlin/Function0<kotlin/Unit>
-              typeParameters: []
               getContainingFileSymbol: KaFileSymbol(callsInPlaceAtLeastOnceContract.kt)
               getContainingJvmClassName: CallsInPlaceAtLeastOnceContractKt
               getContainingModule: KaSourceModule "Sources of main"
@@ -91,7 +90,6 @@ KaNamedFunctionSymbol:
             type: kotlin/Unit
         ]
         type: kotlin/Function0<kotlin/Unit>
-      typeParameters: []
       getContainingFileSymbol: KaFileSymbol(callsInPlaceAtLeastOnceContract.kt)
       getContainingJvmClassName: CallsInPlaceAtLeastOnceContractKt
       getContainingModule: KaSourceModule "Sources of main"

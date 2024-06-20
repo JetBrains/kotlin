@@ -38,7 +38,6 @@ KaConstructorSymbol:
             annotations: []
             typeArguments: []
             type: kotlin/String
-          typeParameters: []
           getContainingFileSymbol: KaFileSymbol(annotations.kt)
           getContainingJvmClassName: Anno
           getContainingModule: KaSourceModule "Sources of main"
@@ -63,7 +62,6 @@ KaConstructorSymbol:
             annotations: []
             typeArguments: []
             type: kotlin/String
-          typeParameters: []
           valueParameters: []
           visibility: Public
           getDispatchReceiver(): KaUsualClassType:
@@ -127,7 +125,6 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/String
-      typeParameters: []
       getContainingFileSymbol: KaFileSymbol(annotations.kt)
       getContainingJvmClassName: Anno
       getContainingModule: KaSourceModule "Sources of main"
@@ -153,7 +150,6 @@ KaConstructorSymbol:
             annotations: []
             typeArguments: []
             type: kotlin/Int
-          typeParameters: []
           getContainingFileSymbol: KaFileSymbol(annotations.kt)
           getContainingJvmClassName: Anno
           getContainingModule: KaSourceModule "Sources of main"
@@ -178,7 +174,6 @@ KaConstructorSymbol:
             annotations: []
             typeArguments: []
             type: kotlin/Int
-          typeParameters: []
           valueParameters: []
           visibility: Public
           getDispatchReceiver(): KaUsualClassType:
@@ -242,7 +237,6 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: KaFileSymbol(annotations.kt)
       getContainingJvmClassName: Anno
       getContainingModule: KaSourceModule "Sources of main"

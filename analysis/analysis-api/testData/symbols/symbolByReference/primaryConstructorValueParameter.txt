@@ -18,7 +18,6 @@ KaValueParameterSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
-  typeParameters: []
   getContainingFileSymbol: KaFileSymbol(primaryConstructorValueParameter.kt)
   getContainingJvmClassName: A
   getContainingModule: KaSourceModule "Sources of main"

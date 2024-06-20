@@ -47,7 +47,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: KaFileSymbol(tailrecFunction.kt)
       getContainingJvmClassName: TailrecFunctionKt
       getContainingModule: KaSourceModule "Sources of main"

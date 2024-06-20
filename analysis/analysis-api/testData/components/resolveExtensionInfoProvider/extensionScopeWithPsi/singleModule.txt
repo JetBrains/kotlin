@@ -112,7 +112,6 @@ callables: 5
           annotations: []
           typeArguments: []
           type: generated/GenClass2
-        typeParameters: []
     ]
     visibility: Public
     PSI: KtNamedFunction genTopLevelFun1 [from extension1.kt]
@@ -178,7 +177,6 @@ callables: 5
         annotations: []
         typeArguments: []
         type: kotlin/String
-      typeParameters: []
     callableId: generated/genTopLevelVal1
     contextReceivers: []
     getter: KaPropertyGetterSymbol:
@@ -199,7 +197,6 @@ callables: 5
         annotations: []
         typeArguments: []
         type: kotlin/String
-      typeParameters: []
       valueParameters: []
       visibility: Public
     hasBackingField: true
@@ -249,7 +246,6 @@ callables: 5
         annotations: []
         typeArguments: []
         type: kotlin/String
-      typeParameters: []
     callableId: generated/genTopLevelVar1
     contextReceivers: []
     getter: KaPropertyGetterSymbol:
@@ -270,7 +266,6 @@ callables: 5
         annotations: []
         typeArguments: []
         type: kotlin/String
-      typeParameters: []
       valueParameters: []
       visibility: Public
     hasBackingField: true
@@ -329,13 +324,11 @@ callables: 5
           annotations: []
           typeArguments: []
           type: kotlin/String
-        typeParameters: []
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Unit
-      typeParameters: []
       valueParameters: [
         KaValueParameterSymbol:
           annotations: []
@@ -357,7 +350,6 @@ callables: 5
             annotations: []
             typeArguments: []
             type: kotlin/String
-          typeParameters: []
       ]
       visibility: Internal
     typeParameters: []
@@ -383,7 +375,6 @@ callables: 5
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
     callableId: generated/genExtensionVal1
     contextReceivers: []
     getter: KaPropertyGetterSymbol:
@@ -412,7 +403,6 @@ callables: 5
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       valueParameters: []
       visibility: Public
     hasBackingField: false

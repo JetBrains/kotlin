@@ -15,7 +15,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    typeParameters: []
     getContainingFileSymbol: KaFileSymbol(contextReceiversOnProperty.kt)
     getContainingJvmClassName: ContextReceiversOnPropertyKt
     getContainingModule: KaSourceModule "Sources of main"
@@ -53,7 +52,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    typeParameters: []
     valueParameters: []
     visibility: Public
     getContainingFileSymbol: KaFileSymbol(contextReceiversOnProperty.kt)

@@ -4,7 +4,6 @@ KaTypeParameterSymbol:
   location: CLASS
   name: T
   origin: SOURCE
-  typeParameters: []
   upperBounds: []
   variance: INVARIANT
   getContainingFileSymbol: KaFileSymbol(typeAlias.kt)
@@ -49,7 +48,6 @@ KaTypeParameterSymbol:
   location: LOCAL
   name: Z
   origin: SOURCE
-  typeParameters: []
   upperBounds: []
   variance: INVARIANT
   getContainingFileSymbol: KaFileSymbol(typeAlias.kt)

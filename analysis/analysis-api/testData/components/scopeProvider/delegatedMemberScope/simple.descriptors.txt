@@ -15,7 +15,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Unit
-    typeParameters: []
     getContainingFileSymbol: KaFileSymbol(simple.kt)
     getContainingJvmClassName: I
     getContainingModule: KaSourceModule "Sources of main"
@@ -51,7 +50,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Unit
-    typeParameters: []
     valueParameters: []
     visibility: Public
     getDispatchReceiver(): KaUsualClassType:
@@ -129,7 +127,6 @@ KaKotlinPropertySymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Unit
-      typeParameters: []
       getContainingFileSymbol: KaFileSymbol(simple.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
@@ -150,7 +147,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Unit
-    typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
         annotations: []
@@ -172,7 +168,6 @@ KaKotlinPropertySymbol:
           annotations: []
           typeArguments: []
           type: kotlin/Unit
-        typeParameters: []
         getContainingFileSymbol: KaFileSymbol(simple.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
@@ -308,7 +303,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    typeParameters: []
     getContainingFileSymbol: KaFileSymbol(simple.kt)
     getContainingJvmClassName: I
     getContainingModule: KaSourceModule "Sources of main"
@@ -333,7 +327,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    typeParameters: []
     valueParameters: []
     visibility: Public
     getDispatchReceiver(): KaUsualClassType:
@@ -400,7 +393,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Long
-    typeParameters: []
     getContainingFileSymbol: KaFileSymbol(simple.kt)
     getContainingJvmClassName: I
     getContainingModule: KaSourceModule "Sources of main"
@@ -425,7 +417,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Long
-    typeParameters: []
     valueParameters: []
     visibility: Public
     getDispatchReceiver(): KaUsualClassType:
@@ -492,7 +483,6 @@ KaKotlinPropertySymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Long
-      typeParameters: []
       getContainingFileSymbol: KaFileSymbol(simple.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
@@ -502,7 +492,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Unit
-    typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
         annotations: []
@@ -524,7 +513,6 @@ KaKotlinPropertySymbol:
           annotations: []
           typeArguments: []
           type: kotlin/Long
-        typeParameters: []
         getContainingFileSymbol: KaFileSymbol(simple.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
@@ -571,7 +559,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/String
-    typeParameters: []
     getContainingFileSymbol: KaFileSymbol(simple.kt)
     getContainingJvmClassName: I
     getContainingModule: KaSourceModule "Sources of main"
@@ -607,7 +594,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/String
-    typeParameters: []
     valueParameters: []
     visibility: Public
     getDispatchReceiver(): KaUsualClassType:

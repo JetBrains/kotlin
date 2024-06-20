@@ -28,7 +28,6 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Int
-          typeParameters: []
         callableId: null
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
@@ -62,7 +61,6 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Int
-          typeParameters: []
           valueParameters: []
           visibility: Local
         hasBackingField: true
@@ -153,7 +151,6 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/Any?
-            typeParameters: []
         ]
         visibility: Public
       KaNamedFunctionSymbol:
@@ -270,7 +267,6 @@ scopes:
             *
           ]
           type: DataFrame<*>
-        typeParameters: []
     constructors: 0
 
   ExplicitSimpleImportingScope, index = 3
@@ -431,7 +427,6 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/String
-            typeParameters: []
           KaValueParameterSymbol:
             annotations: []
             callableId: null
@@ -456,7 +451,6 @@ scopes:
                   type: R
               ]
               type: kotlin/Function0<R>
-            typeParameters: []
         ]
         visibility: Public
       KaNamedFunctionSymbol:
@@ -510,7 +504,6 @@ scopes:
                 *
               ]
               type: DataFrame<*>
-            typeParameters: []
         ]
         visibility: Public
     constructors: 0

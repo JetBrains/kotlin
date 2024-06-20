@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 public abstract class KaDestructuringDeclarationSymbol : KaDeclarationSymbol,
     @Suppress("DEPRECATION") org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithKind {
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.LOCAL }
-    final override val typeParameters: List<KaTypeParameterSymbol> get() = withValidityAssertion { emptyList() }
 
     /**
      * A list of [KaVariableSymbol]s which were created from this destructuring declaration.

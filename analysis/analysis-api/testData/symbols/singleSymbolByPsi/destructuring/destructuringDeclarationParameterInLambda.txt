@@ -18,7 +18,6 @@ KaValueParameterSymbol:
     annotations: []
     typeArguments: []
     type: X
-  typeParameters: []
   getContainingFileSymbol: KaFileSymbol(destructuringDeclarationParameterInLambda.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"

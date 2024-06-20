@@ -45,7 +45,6 @@ KaNamedFunctionSymbol:
       returnType: KaDynamicType:
         annotations: []
         type: dynamic
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"

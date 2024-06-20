@@ -13,7 +13,6 @@ KaEnumEntrySymbol:
     annotations: []
     typeArguments: []
     type: kotlin/LazyThreadSafetyMode
-  typeParameters: []
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.LazyThreadSafetyMode
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"

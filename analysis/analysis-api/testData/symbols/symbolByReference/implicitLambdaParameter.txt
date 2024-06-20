@@ -18,7 +18,6 @@ KaValueParameterSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
-  typeParameters: []
   getContainingFileSymbol: KaFileSymbol(implicitLambdaParameter.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"

@@ -18,7 +18,6 @@ KaBackingFieldSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
-  typeParameters: []
   getContainingFileSymbol: KaFileSymbol(accessorField.kt)
   getContainingJvmClassName: AccessorFieldKt
   getContainingModule: KaSourceModule "Sources of main"

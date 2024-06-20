@@ -108,7 +108,6 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/Any?
-            typeParameters: []
         ]
         visibility: Public
       KaNamedFunctionSymbol:
@@ -288,7 +287,6 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/Any?
-            typeParameters: []
         ]
         visibility: Public
       KaNamedFunctionSymbol:
@@ -397,7 +395,6 @@ scopes:
           annotations: []
           typeArguments: []
           type: kotlin/Int
-        typeParameters: []
     constructors: 0
 
   LocalScope, index = 7
@@ -424,7 +421,6 @@ scopes:
           annotations: []
           typeArguments: []
           type: kotlin/String
-        typeParameters: []
     constructors: 0
 
   LocalScope, index = 8
@@ -445,7 +441,6 @@ scopes:
           annotations: []
           typeArguments: []
           type: kotlin/Int
-        typeParameters: []
       KaNamedFunctionSymbol:
         annotations: []
         callableId: null
@@ -502,7 +497,6 @@ scopes:
           annotations: []
           typeArguments: []
           type: kotlin/String?
-        typeParameters: []
     constructors: 0
 
   TypeParameterScope, index = 10
@@ -514,7 +508,6 @@ scopes:
         location: LOCAL
         name: T
         origin: SOURCE
-        typeParameters: []
         upperBounds: []
         variance: INVARIANT
     callables: 0
@@ -625,7 +618,6 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/String?
-            typeParameters: []
         ]
         visibility: Public
       KaNamedFunctionSymbol:
@@ -677,7 +669,6 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/Any?
-            typeParameters: []
         ]
         visibility: Public
       KaNamedFunctionSymbol:
@@ -1016,7 +1007,6 @@ scopes:
                   type: kotlin/Unit
               ]
               type: @ExtensionFunctionType kotlin/Function1<A, kotlin/Unit>
-            typeParameters: []
         ]
         visibility: Public
       KaNamedFunctionSymbol:
@@ -1077,7 +1067,6 @@ scopes:
                   type: kotlin/Unit
               ]
               type: @ExtensionFunctionType kotlin/Function1<B, kotlin/Unit>
-            typeParameters: []
         ]
         visibility: Public
       KaNamedFunctionSymbol:
@@ -1138,7 +1127,6 @@ scopes:
                   type: kotlin/Unit
               ]
               type: @ExtensionFunctionType kotlin/Function1<JavaClass, kotlin/Unit>
-            typeParameters: []
         ]
         visibility: Public
       KaNamedFunctionSymbol:

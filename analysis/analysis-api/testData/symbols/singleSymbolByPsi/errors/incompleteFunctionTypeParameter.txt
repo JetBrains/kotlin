@@ -4,7 +4,6 @@ KaTypeParameterSymbol:
   location: LOCAL
   name: TYPE
   origin: SOURCE
-  typeParameters: []
   upperBounds: []
   variance: INVARIANT
   getContainingFileSymbol: KaFileSymbol(incompleteFunctionTypeParameter.kt)

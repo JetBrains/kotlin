@@ -39,7 +39,6 @@ KaNamedFunctionSymbol:
                         annotations: []
                         typeArguments: []
                         type: kotlin/Any?
-                      typeParameters: []
                       getContainingFileSymbol: KaFileSymbol(twoContracts.kt)
                       getContainingJvmClassName: TwoContractsKt
                       getContainingModule: KaSourceModule "Sources of main"
@@ -70,7 +69,6 @@ KaNamedFunctionSymbol:
                         annotations: []
                         typeArguments: []
                         type: kotlin/Any?
-                      typeParameters: []
                       getContainingFileSymbol: KaFileSymbol(twoContracts.kt)
                       getContainingJvmClassName: TwoContractsKt
                       getContainingModule: KaSourceModule "Sources of main"
@@ -106,7 +104,6 @@ KaNamedFunctionSymbol:
                     type: kotlin/Unit
                 ]
                 type: kotlin/Function0<kotlin/Unit>
-              typeParameters: []
               getContainingFileSymbol: KaFileSymbol(twoContracts.kt)
               getContainingJvmClassName: TwoContractsKt
               getContainingModule: KaSourceModule "Sources of main"
@@ -157,7 +154,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Any?
-      typeParameters: []
       getContainingFileSymbol: KaFileSymbol(twoContracts.kt)
       getContainingJvmClassName: TwoContractsKt
       getContainingModule: KaSourceModule "Sources of main"
@@ -182,7 +178,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Any?
-      typeParameters: []
       getContainingFileSymbol: KaFileSymbol(twoContracts.kt)
       getContainingJvmClassName: TwoContractsKt
       getContainingModule: KaSourceModule "Sources of main"
@@ -212,7 +207,6 @@ KaNamedFunctionSymbol:
             type: kotlin/Unit
         ]
         type: kotlin/Function0<kotlin/Unit>
-      typeParameters: []
       getContainingFileSymbol: KaFileSymbol(twoContracts.kt)
       getContainingJvmClassName: TwoContractsKt
       getContainingModule: KaSourceModule "Sources of main"

@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KaClass
 import org.jetbrains.kotlin.analysis.api.renderer.types.KaExpandedTypeRenderingMode
 import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KaFunctionalTypeRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithTypeParameters
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
@@ -400,7 +399,7 @@ private fun KaSymbol?.withImplicitSymbols(): Sequence<KaSymbol> {
     return sequence {
         yield(ktSymbol)
 
-        if (ktSymbol is KaSymbolWithTypeParameters) {
+        if (ktSymbol is KaDeclarationSymbol) {
             for (parameter in ktSymbol.typeParameters) {
                 yieldAll(parameter.withImplicitSymbols())
             }

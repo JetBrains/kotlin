@@ -15,7 +15,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    typeParameters: []
     getContainingFileSymbol: KaFileSymbol(classInitializer.kt)
     getContainingJvmClassName: A
     getContainingModule: KaSourceModule "Sources of main"
@@ -40,7 +39,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    typeParameters: []
     valueParameters: []
     visibility: Public
     getDispatchReceiver(): KaUsualClassType:
@@ -94,7 +92,6 @@ KaClassInitializerSymbol:
   annotations: []
   location: CLASS
   origin: SOURCE
-  typeParameters: []
   getContainingFileSymbol: KaFileSymbol(classInitializer.kt)
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

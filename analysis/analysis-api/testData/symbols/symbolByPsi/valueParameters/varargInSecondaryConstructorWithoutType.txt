@@ -36,7 +36,6 @@ KaConstructorSymbol:
       returnType: KaErrorType:
         annotations: []
         type: ERROR_TYPE
-      typeParameters: []
       getContainingFileSymbol: KaFileSymbol(varargInSecondaryConstructorWithoutType.kt)
       getContainingJvmClassName: Foo
       getContainingModule: KaSourceModule "Sources of main"

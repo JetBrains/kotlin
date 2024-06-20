@@ -9,15 +9,15 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithTypeParameters
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.fir.analysis.checkers.typeParameterSymbols
 import org.jetbrains.kotlin.name.Name
 
 internal class KaFirTypeParameterSymbolPointer(
-    private val ownerPointer: KaSymbolPointer<KaSymbolWithTypeParameters>,
+    private val ownerPointer: KaSymbolPointer<KaDeclarationSymbol>,
     private val name: Name,
     private val index: Int,
 ) : KaSymbolPointer<KaTypeParameterSymbol>() {

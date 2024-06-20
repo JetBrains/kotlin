@@ -36,7 +36,6 @@ KaConstructorSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: JavaClass!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: JavaClass.InnerClass
       getContainingModule: KaSourceModule "Sources of main"

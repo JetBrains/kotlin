@@ -13,7 +13,6 @@ KaJavaFieldSymbol:
   returnType: KaFlexibleType:
     annotations: []
     type: kotlin/Int!
-  typeParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
     annotations: []

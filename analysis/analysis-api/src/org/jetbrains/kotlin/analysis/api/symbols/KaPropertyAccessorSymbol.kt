@@ -18,9 +18,6 @@ public sealed class KaPropertyAccessorSymbol : KaFunctionSymbol(),
 
     final override val isExtension: Boolean get() = withValidityAssertion { false }
 
-    final override val typeParameters: List<KaTypeParameterSymbol>
-        get() = withValidityAssertion { emptyList() }
-
     final override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
 
     public abstract val isDefault: Boolean

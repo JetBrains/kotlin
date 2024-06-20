@@ -4,7 +4,6 @@ KaTypeParameterSymbol:
   location: LOCAL
   name: X
   origin: SOURCE
-  typeParameters: []
   upperBounds: []
   variance: INVARIANT
   getContainingFileSymbol: KaFileSymbol(functionWithTypeParams.kt)
@@ -61,7 +60,6 @@ KaNamedFunctionSymbol:
       returnType: KaTypeParameterType:
         annotations: []
         type: X
-      typeParameters: []
       getContainingFileSymbol: KaFileSymbol(functionWithTypeParams.kt)
       getContainingJvmClassName: FunctionWithTypeParamsKt
       getContainingModule: KaSourceModule "Sources of main"

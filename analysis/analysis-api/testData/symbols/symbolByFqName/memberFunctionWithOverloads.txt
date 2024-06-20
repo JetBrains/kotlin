@@ -98,7 +98,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.List
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"

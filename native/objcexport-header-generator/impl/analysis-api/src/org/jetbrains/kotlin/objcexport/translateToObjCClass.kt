@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.objcexport
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithModality
@@ -55,6 +56,7 @@ fun KaClassSymbol.translateToObjCClass(): ObjCClass? {
 
     val categoryName: String? = null
 
+    @OptIn(KaExperimentalApi::class)
     val generics: List<ObjCGenericTypeDeclaration> = typeParameters.map { typeParameter ->
         ObjCGenericTypeParameterDeclaration(
             typeParameter.nameOrAnonymous.asString().toValidObjCSwiftIdentifier(),

@@ -46,7 +46,6 @@ KaNamedFunctionSymbol:
       returnType: KaErrorType:
         annotations: []
         type: ERROR_TYPE
-      typeParameters: []
       getContainingFileSymbol: KaFileSymbol(varargWithoutType.kt)
       getContainingJvmClassName: VarargWithoutTypeKt
       getContainingModule: KaSourceModule "Sources of main"

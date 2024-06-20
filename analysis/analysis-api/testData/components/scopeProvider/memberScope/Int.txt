@@ -50,7 +50,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -118,7 +117,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Byte
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -186,7 +184,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Double
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -254,7 +251,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Float
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -322,7 +318,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -390,7 +385,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Long
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -458,7 +452,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Short
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -565,7 +558,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Byte
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -633,7 +625,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Double
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -701,7 +692,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Float
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -769,7 +759,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -837,7 +826,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Long
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -905,7 +893,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Short
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -973,7 +960,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Any?
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -1122,7 +1108,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Byte
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -1190,7 +1175,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Double
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -1258,7 +1242,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Float
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -1326,7 +1309,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -1394,7 +1376,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Long
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -1462,7 +1443,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Short
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -1530,7 +1510,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -1598,7 +1577,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Byte
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -1666,7 +1644,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Double
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -1734,7 +1711,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Float
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -1802,7 +1778,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -1870,7 +1845,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Long
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -1938,7 +1912,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Short
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -2003,7 +1976,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Byte
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -2068,7 +2040,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -2133,7 +2104,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Long
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -2198,7 +2168,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Short
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -2268,7 +2237,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Byte
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -2338,7 +2306,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -2408,7 +2375,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Long
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -2478,7 +2444,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Short
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -2548,7 +2513,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Byte
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -2618,7 +2582,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Double
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -2688,7 +2651,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Float
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -2758,7 +2720,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -2828,7 +2789,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Long
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -2898,7 +2858,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Short
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -2966,7 +2925,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -3034,7 +2992,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -3102,7 +3059,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Byte
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -3170,7 +3126,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Double
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -3238,7 +3193,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Float
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -3306,7 +3260,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -3374,7 +3327,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Long
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -3442,7 +3394,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Short
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -3930,7 +3881,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
@@ -3998,7 +3948,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"

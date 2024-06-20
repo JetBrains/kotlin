@@ -52,7 +52,6 @@ KaNamedFunctionSymbol:
             type: kotlin/Int
         ]
         type: kotlin/Function0<kotlin/Int>
-      typeParameters: []
       getContainingFileSymbol: KaFileSymbol(scriptWithClassDeclaration.kts)
       getContainingJvmClassName: null
       getContainingModule: KaScriptModule "Script scriptWithClassDeclaration.kts"
@@ -87,7 +86,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Unit
-    typeParameters: []
     valueParameters: []
     visibility: Public
     getContainingFileSymbol: KaFileSymbol(scriptWithClassDeclaration.kts)

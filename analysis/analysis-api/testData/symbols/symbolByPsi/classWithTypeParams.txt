@@ -7,7 +7,6 @@ KaTypeParameterSymbol:
   location: CLASS
   name: T
   origin: SOURCE
-  typeParameters: []
   upperBounds: []
   variance: INVARIANT
   getContainingFileSymbol: KaFileSymbol(classWithTypeParams.kt)
@@ -20,7 +19,6 @@ KaTypeParameterSymbol:
   location: CLASS
   name: R
   origin: SOURCE
-  typeParameters: []
   upperBounds: []
   variance: INVARIANT
   getContainingFileSymbol: KaFileSymbol(classWithTypeParams.kt)

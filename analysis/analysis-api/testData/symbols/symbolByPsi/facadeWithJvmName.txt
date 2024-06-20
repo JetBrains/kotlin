@@ -96,7 +96,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    typeParameters: []
     getContainingFileSymbol: KaFileSymbol(facadeWithJvmName.kt)
     getContainingJvmClassName: DifferentFacadeName
     getContainingModule: KaSourceModule "Sources of main"
@@ -121,7 +120,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    typeParameters: []
     valueParameters: []
     visibility: Public
     getContainingFileSymbol: KaFileSymbol(facadeWithJvmName.kt)
@@ -180,7 +178,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    typeParameters: []
     getContainingFileSymbol: KaFileSymbol(facadeWithJvmName.kt)
     getContainingJvmClassName: DifferentFacadeName
     getContainingModule: KaSourceModule "Sources of main"
@@ -216,7 +213,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    typeParameters: []
     valueParameters: []
     visibility: Public
     getContainingFileSymbol: KaFileSymbol(facadeWithJvmName.kt)

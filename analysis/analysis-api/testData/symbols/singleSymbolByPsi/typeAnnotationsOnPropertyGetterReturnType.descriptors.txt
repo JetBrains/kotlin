@@ -23,7 +23,6 @@ KaPropertyGetterSymbol:
     ]
     typeArguments: []
     type: @R|Anno3|() @R|Anno2|() @R|Anno1|()  @R|Anno3|()  SecondTypeAlias
-  typeParameters: []
   valueParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnPropertyGetterReturnType.kt)

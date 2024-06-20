@@ -13,7 +13,6 @@ KaAnonymousObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  typeParameters: []
   getContainingFileSymbol: KaFileSymbol(objectWithTypeArgsAsExpression.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null

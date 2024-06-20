@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassInitializerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
-import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
@@ -32,6 +31,5 @@ internal class KaFirClassInitializerSymbol(
 
     override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.CLASS }
 
-    override val typeParameters: List<KaTypeParameterSymbol> get() = withValidityAssertion { emptyList() }
     override val annotations: KaAnnotationList get() = withValidityAssertion { KaEmptyAnnotationList(token) }
 }

@@ -15,7 +15,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Boolean
-    typeParameters: []
     getContainingFileSymbol: KaFileSymbol(propertyWithReceiverAnnotation.kt)
     getContainingJvmClassName: PropertyWithReceiverAnnotationKt
     getContainingModule: KaSourceModule "Sources of main"
@@ -57,7 +56,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Boolean
-    typeParameters: []
     valueParameters: []
     visibility: Public
     getContainingFileSymbol: KaFileSymbol(propertyWithReceiverAnnotation.kt)

@@ -87,7 +87,6 @@ KaJavaFieldSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
-  typeParameters: []
   visibility: Public
   getContainingFileSymbol: null
   getContainingJvmClassName: JavaClass

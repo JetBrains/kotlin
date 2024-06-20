@@ -13,7 +13,6 @@ KaJavaFieldSymbol:
   returnType: KaFlexibleType:
     annotations: []
     type: kotlin/CharArray!
-  typeParameters: []
   visibility: Private
   getDispatchReceiver(): KaUsualClassType:
     annotations: []
@@ -40,7 +39,6 @@ KaJavaFieldSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
-  typeParameters: []
   visibility: Private
   getDispatchReceiver(): KaUsualClassType:
     annotations: []
@@ -106,7 +104,6 @@ KaJavaFieldSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
-  typeParameters: []
   visibility: Private
   getDispatchReceiver(): KaUsualClassType:
     annotations: []
@@ -140,7 +137,6 @@ KaSyntheticJavaPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    typeParameters: []
     valueParameters: []
     visibility: Public
     getDispatchReceiver(): KaUsualClassType:
@@ -276,7 +272,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -341,7 +336,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -406,7 +400,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -431,7 +424,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -496,7 +488,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -521,7 +512,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -585,7 +575,6 @@ KaNamedFunctionSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/CharArray!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -610,7 +599,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -675,7 +663,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -700,7 +687,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -724,7 +710,6 @@ KaNamedFunctionSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/CharArray!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -749,7 +734,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -817,7 +801,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -842,7 +825,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -866,7 +848,6 @@ KaNamedFunctionSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/ByteArray!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -891,7 +872,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -954,7 +934,6 @@ KaNamedFunctionSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -1017,7 +996,6 @@ KaNamedFunctionSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: java/nio/charset/Charset!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -1120,7 +1098,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: @EnhancedNullability kotlin/Any?
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -1184,7 +1161,6 @@ KaNamedFunctionSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: java/lang/StringBuffer!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -1248,7 +1224,6 @@ KaNamedFunctionSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/CharSequence!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -1312,7 +1287,6 @@ KaNamedFunctionSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -1376,7 +1350,6 @@ KaNamedFunctionSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -1440,7 +1413,6 @@ KaNamedFunctionSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -1505,7 +1477,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -1529,7 +1500,6 @@ KaNamedFunctionSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -1554,7 +1524,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -1579,7 +1548,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -1644,7 +1612,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Boolean
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -1669,7 +1636,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -1693,7 +1659,6 @@ KaNamedFunctionSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -1718,7 +1683,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -1743,7 +1707,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -1807,7 +1770,6 @@ KaNamedFunctionSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -1832,7 +1794,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -1896,7 +1857,6 @@ KaNamedFunctionSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -1960,7 +1920,6 @@ KaNamedFunctionSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -2064,7 +2023,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -2129,7 +2087,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -2154,7 +2111,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -2218,7 +2174,6 @@ KaNamedFunctionSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -2282,7 +2237,6 @@ KaNamedFunctionSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -2307,7 +2261,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -2372,7 +2325,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -2397,7 +2349,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -2462,7 +2413,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -2527,7 +2477,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -2552,7 +2501,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -2616,7 +2564,6 @@ KaNamedFunctionSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -2680,7 +2627,6 @@ KaNamedFunctionSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -2705,7 +2651,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -2770,7 +2715,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -2795,7 +2739,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -2859,7 +2802,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -2923,7 +2865,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -2948,7 +2889,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -3013,7 +2953,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -3038,7 +2977,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -3101,7 +3039,6 @@ KaNamedFunctionSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -3165,7 +3102,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Char
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -3190,7 +3126,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Char
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -3253,7 +3188,6 @@ KaNamedFunctionSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/CharSequence!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -3277,7 +3211,6 @@ KaNamedFunctionSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/CharSequence!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -3341,7 +3274,6 @@ KaNamedFunctionSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -3405,7 +3337,6 @@ KaNamedFunctionSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/CharSequence!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -3468,7 +3399,6 @@ KaNamedFunctionSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -3492,7 +3422,6 @@ KaNamedFunctionSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -3555,7 +3484,6 @@ KaNamedFunctionSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -3579,7 +3507,6 @@ KaNamedFunctionSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -3642,7 +3569,6 @@ KaNamedFunctionSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -3667,7 +3593,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -3730,7 +3655,6 @@ KaNamedFunctionSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -3793,7 +3717,6 @@ KaNamedFunctionSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: java/util/Locale!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -3894,7 +3817,6 @@ KaNamedFunctionSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: java/util/Locale!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -4150,7 +4072,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -4271,7 +4192,6 @@ KaConstructorSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -4321,7 +4241,6 @@ KaConstructorSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/CharArray!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -4371,7 +4290,6 @@ KaConstructorSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/CharArray!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -4396,7 +4314,6 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -4421,7 +4338,6 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -4471,7 +4387,6 @@ KaConstructorSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/IntArray!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -4496,7 +4411,6 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -4521,7 +4435,6 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -4574,7 +4487,6 @@ KaConstructorSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/ByteArray!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -4599,7 +4511,6 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -4624,7 +4535,6 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -4649,7 +4559,6 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -4702,7 +4611,6 @@ KaConstructorSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/ByteArray!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -4727,7 +4635,6 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -4777,7 +4684,6 @@ KaConstructorSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/ByteArray!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -4802,7 +4708,6 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -4827,7 +4732,6 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -4851,7 +4755,6 @@ KaConstructorSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -4901,7 +4804,6 @@ KaConstructorSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/ByteArray!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -4926,7 +4828,6 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -4951,7 +4852,6 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -4975,7 +4875,6 @@ KaConstructorSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: java/nio/charset/Charset!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -5025,7 +4924,6 @@ KaConstructorSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/ByteArray!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -5049,7 +4947,6 @@ KaConstructorSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -5099,7 +4996,6 @@ KaConstructorSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/ByteArray!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -5123,7 +5019,6 @@ KaConstructorSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: java/nio/charset/Charset!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -5173,7 +5068,6 @@ KaConstructorSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/ByteArray!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -5198,7 +5092,6 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -5223,7 +5116,6 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -5273,7 +5165,6 @@ KaConstructorSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/ByteArray!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -5323,7 +5214,6 @@ KaConstructorSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: java/lang/StringBuffer!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -5373,7 +5263,6 @@ KaConstructorSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: java/lang/StringBuilder!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -5423,7 +5312,6 @@ KaConstructorSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/CharArray!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -5448,7 +5336,6 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Boolean
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -5502,7 +5389,6 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -5527,7 +5413,6 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
@@ -5551,7 +5436,6 @@ KaConstructorSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/CharArray!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"

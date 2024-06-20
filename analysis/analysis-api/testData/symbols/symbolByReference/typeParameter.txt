@@ -7,7 +7,6 @@ KaTypeParameterSymbol:
   location: LOCAL
   name: T
   origin: SOURCE
-  typeParameters: []
   upperBounds: []
   variance: INVARIANT
   getContainingFileSymbol: KaFileSymbol(typeParameter.kt)

@@ -32,7 +32,6 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Int
-          typeParameters: []
         callableId: test/MyClass.property
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
@@ -53,7 +52,6 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Int
-          typeParameters: []
           valueParameters: []
           visibility: Public
         hasBackingField: true
@@ -161,7 +159,6 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/Any?
-            typeParameters: []
         ]
         visibility: Public
       KaNamedFunctionSymbol:
@@ -270,7 +267,6 @@ scopes:
               annotations: []
               typeArguments: []
               type: test/Param1
-            typeParameters: []
           KaValueParameterSymbol:
             annotations: []
             callableId: null
@@ -291,7 +287,6 @@ scopes:
               annotations: []
               typeArguments: []
               type: test/Param2
-            typeParameters: []
         ]
         visibility: Public
 
@@ -304,7 +299,6 @@ scopes:
         location: CLASS
         name: TypeParam
         origin: SOURCE
-        typeParameters: []
         upperBounds: []
         variance: INVARIANT
     callables: 0

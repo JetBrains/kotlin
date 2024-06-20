@@ -34,7 +34,6 @@ KaNamedFunctionSymbol:
                     annotations: []
                     typeArguments: []
                     type: kotlin/Any
-                  typeParameters: []
                   getContainingFileSymbol: KaFileSymbol(isInstancePredicateContract.kt)
                   getContainingJvmClassName: IsInstancePredicateContractKt
                   getContainingModule: KaSourceModule "Sources of main"
@@ -90,7 +89,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Any
-      typeParameters: []
       getContainingFileSymbol: KaFileSymbol(isInstancePredicateContract.kt)
       getContainingJvmClassName: IsInstancePredicateContractKt
       getContainingModule: KaSourceModule "Sources of main"

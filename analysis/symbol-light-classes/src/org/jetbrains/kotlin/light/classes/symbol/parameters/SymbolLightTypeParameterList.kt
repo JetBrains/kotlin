@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,9 +8,10 @@ package org.jetbrains.kotlin.light.classes.symbol.parameters
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightElement
 import com.intellij.psi.scope.PsiScopeProcessor
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithTypeParameters
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.typeParameters
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.light.classes.symbol.*
@@ -23,7 +24,7 @@ import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
 
 internal class SymbolLightTypeParameterList(
     internal val owner: PsiTypeParameterListOwner,
-    private val symbolWithTypeParameterPointer: KaSymbolPointer<KaSymbolWithTypeParameters>,
+    private val symbolWithTypeParameterPointer: KaSymbolPointer<KaDeclarationSymbol>,
     internal val ktModule: KaModule,
     private val ktDeclaration: KtTypeParameterListOwner?,
 ) : LightElement(owner.manager, KotlinLanguage.INSTANCE), PsiTypeParameterList {

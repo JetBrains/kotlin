@@ -46,7 +46,6 @@ KaNamedFunctionSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: JavaClass
       getContainingModule: KaSourceModule "Sources of main"
@@ -110,7 +109,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: JavaClass
       getContainingModule: KaSourceModule "Sources of main"

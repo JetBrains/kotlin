@@ -14,7 +14,6 @@ KaJavaFieldSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
-  typeParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
     annotations: []
@@ -40,7 +39,6 @@ KaJavaFieldSymbol:
   returnType: KaFlexibleType:
     annotations: []
     type: kotlin/String!
-  typeParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
     annotations: []
@@ -100,7 +98,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Any?
-      typeParameters: []
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Any
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"

@@ -4,7 +4,6 @@ KaTypeParameterSymbol:
   location: CLASS
   name: T
   origin: SOURCE
-  typeParameters: []
   upperBounds: []
   variance: INVARIANT
   getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
@@ -17,7 +16,6 @@ KaTypeParameterSymbol:
   location: CLASS
   name: T1
   origin: SOURCE
-  typeParameters: []
   upperBounds: []
   variance: INVARIANT
   getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
@@ -62,7 +60,6 @@ KaTypeParameterSymbol:
   location: CLASS
   name: T2
   origin: SOURCE
-  typeParameters: []
   upperBounds: []
   variance: INVARIANT
   getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
@@ -107,7 +104,6 @@ KaTypeParameterSymbol:
   location: LOCAL
   name: T3
   origin: SOURCE
-  typeParameters: []
   upperBounds: []
   variance: INVARIANT
   getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
@@ -120,7 +116,6 @@ KaTypeParameterSymbol:
   location: CLASS
   name: T4
   origin: SOURCE
-  typeParameters: []
   upperBounds: []
   variance: INVARIANT
   getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
@@ -133,7 +128,6 @@ KaTypeParameterSymbol:
   location: CLASS
   name: T5
   origin: SOURCE
-  typeParameters: []
   upperBounds: []
   variance: INVARIANT
   getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
@@ -178,7 +172,6 @@ KaTypeParameterSymbol:
   location: CLASS
   name: T6
   origin: SOURCE
-  typeParameters: []
   upperBounds: []
   variance: INVARIANT
   getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
@@ -223,7 +216,6 @@ KaTypeParameterSymbol:
   location: CLASS
   name: T
   origin: SOURCE
-  typeParameters: []
   upperBounds: []
   variance: INVARIANT
   getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
@@ -236,7 +228,6 @@ KaTypeParameterSymbol:
   location: CLASS
   name: T1
   origin: SOURCE
-  typeParameters: []
   upperBounds: []
   variance: INVARIANT
   getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
@@ -281,7 +272,6 @@ KaTypeParameterSymbol:
   location: CLASS
   name: T2
   origin: SOURCE
-  typeParameters: []
   upperBounds: []
   variance: INVARIANT
   getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
@@ -326,7 +316,6 @@ KaTypeParameterSymbol:
   location: LOCAL
   name: T3
   origin: SOURCE
-  typeParameters: []
   upperBounds: []
   variance: INVARIANT
   getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
@@ -339,7 +328,6 @@ KaTypeParameterSymbol:
   location: CLASS
   name: T4
   origin: SOURCE
-  typeParameters: []
   upperBounds: []
   variance: INVARIANT
   getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
@@ -352,7 +340,6 @@ KaTypeParameterSymbol:
   location: CLASS
   name: T5
   origin: SOURCE
-  typeParameters: []
   upperBounds: []
   variance: INVARIANT
   getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)
@@ -397,7 +384,6 @@ KaTypeParameterSymbol:
   location: CLASS
   name: T6
   origin: SOURCE
-  typeParameters: []
   upperBounds: []
   variance: INVARIANT
   getContainingFileSymbol: KaFileSymbol(outerAndInnerClasses.kt)

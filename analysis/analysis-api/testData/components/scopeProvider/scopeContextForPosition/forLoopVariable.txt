@@ -30,7 +30,6 @@ scopes:
               type: kotlin/Int
           ]
           type: kotlin/collections/Iterator<kotlin/Int>
-        typeParameters: []
     constructors: 0
 
   LocalScope, index = 2
@@ -68,7 +67,6 @@ scopes:
               type: kotlin/Int
           ]
           type: kotlin/collections/List<kotlin/Int>
-        typeParameters: []
     constructors: 0
 
   ExplicitSimpleImportingScope, index = 4
@@ -135,7 +133,6 @@ scopes:
                   type: kotlin/Int
               ]
               type: kotlin/collections/List<kotlin/Int>
-            typeParameters: []
         ]
         visibility: Public
     constructors: 0

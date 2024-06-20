@@ -36,7 +36,6 @@ scopes:
           annotations: []
           typeArguments: []
           type: kotlin/String
-        typeParameters: []
     constructors: 0
 
   TypeScope, index = 2

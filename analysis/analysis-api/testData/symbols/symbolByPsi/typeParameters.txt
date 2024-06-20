@@ -4,7 +4,6 @@ KaTypeParameterSymbol:
   location: LOCAL
   name: T
   origin: SOURCE
-  typeParameters: []
   upperBounds: [
     KaClassErrorType:
       annotations: []
@@ -29,7 +28,6 @@ KaLocalVariableSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
-  typeParameters: []
   getContainingFileSymbol: KaFileSymbol(typeParameters.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"

@@ -39,7 +39,6 @@ KaSamConstructorSymbol:
             type: kotlin/Unit
         ]
         type: kotlin/Function0<kotlin/Unit>
-      typeParameters: []
       getContainingFileSymbol: KaFileSymbol(samConstructorForTypeAlias.kt)
       getContainingJvmClassName: SamConstructorForTypeAliasKt
       getContainingModule: KaSourceModule "Sources of main"

@@ -50,7 +50,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    typeParameters: []
     getContainingFileSymbol: KaFileSymbol(simpleFileScope.kt)
     getContainingJvmClassName: SimpleFileScopeKt
     getContainingModule: KaSourceModule "Sources of main"
@@ -75,7 +74,6 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    typeParameters: []
     valueParameters: []
     visibility: Public
     getContainingFileSymbol: KaFileSymbol(simpleFileScope.kt)

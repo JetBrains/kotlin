@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiversOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
@@ -25,9 +26,6 @@ public val KaClassifierSymbol.nameOrAnonymous: Name
 
 public abstract class KaTypeParameterSymbol : KaClassifierSymbol(), KaNamedSymbol {
     abstract override fun createPointer(): KaSymbolPointer<KaTypeParameterSymbol>
-
-    final override val typeParameters: List<KaTypeParameterSymbol>
-        get() = withValidityAssertion { emptyList() }
 
     public abstract val upperBounds: List<KaType>
     public abstract val variance: Variance
@@ -53,9 +51,12 @@ public sealed class KaClassLikeSymbol : KaClassifierSymbol(), @Suppress("DEPRECA
 @Deprecated("Use 'KaClassLikeSymbol' instead", ReplaceWith("KaClassLikeSymbol"))
 public typealias KtClassLikeSymbol = KaClassLikeSymbol
 
+@OptIn(KaImplementationDetail::class)
 public abstract class KaTypeAliasSymbol : KaClassLikeSymbol(),
     KaSymbolWithVisibility,
-    KaNamedSymbol {
+    KaNamedSymbol,
+    KaSymbolWithTypeParameters
+{
 
     /**
      * Returns type from right-hand site of type alias
@@ -91,18 +92,17 @@ public abstract class KaAnonymousObjectSymbol : KaClassSymbol() {
     final override val isActual: Boolean get() = withValidityAssertion { false }
     final override val isExpect: Boolean get() = withValidityAssertion { false }
 
-    final override val typeParameters: List<KaTypeParameterSymbol>
-        get() = withValidityAssertion { emptyList() }
-
     abstract override fun createPointer(): KaSymbolPointer<KaAnonymousObjectSymbol>
 }
 
 @Deprecated("Use 'KaAnonymousObjectSymbol' instead", ReplaceWith("KaAnonymousObjectSymbol"))
 public typealias KtAnonymousObjectSymbol = KaAnonymousObjectSymbol
 
+@OptIn(KaImplementationDetail::class)
 public abstract class KaNamedClassSymbol : KaClassSymbol(),
     KaSymbolWithModality,
     KaSymbolWithVisibility,
+    KaSymbolWithTypeParameters,
     KaNamedSymbol,
     KaContextReceiversOwner {
 

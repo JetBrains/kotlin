@@ -21,7 +21,6 @@ KaPropertyGetterSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
-  typeParameters: []
   valueParameters: []
   visibility: Public
   getContainingFileSymbol: KaFileSymbol(getterWithAnnotations.kt)

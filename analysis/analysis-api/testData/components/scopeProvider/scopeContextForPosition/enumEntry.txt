@@ -71,7 +71,6 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/String
-          typeParameters: []
         callableId: null
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
@@ -92,7 +91,6 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/String
-          typeParameters: []
           valueParameters: []
           visibility: Public
         hasBackingField: true
@@ -230,7 +228,6 @@ scopes:
               annotations: []
               typeArguments: []
               type: E
-            typeParameters: []
         ]
         visibility: Public
       KaNamedFunctionSymbol:
@@ -282,7 +279,6 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/Any?
-            typeParameters: []
         ]
         visibility: Public
       KaNamedFunctionSymbol:
@@ -365,7 +361,6 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/String
-          typeParameters: []
         callableId: kotlin/Enum.name
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
@@ -386,7 +381,6 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/String
-          typeParameters: []
           valueParameters: []
           visibility: Public
         hasBackingField: true
@@ -432,7 +426,6 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Int
-          typeParameters: []
         callableId: kotlin/Enum.ordinal
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
@@ -453,7 +446,6 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Int
-          typeParameters: []
           valueParameters: []
           visibility: Public
         hasBackingField: true
@@ -582,7 +574,6 @@ scopes:
           annotations: []
           typeArguments: []
           type: E
-        typeParameters: []
       KaNamedFunctionSymbol:
         annotations: []
         callableId: /E.values
@@ -667,7 +658,6 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/String
-            typeParameters: []
         ]
         visibility: Public
       KaKotlinPropertySymbol:
@@ -698,7 +688,6 @@ scopes:
                 type: E
             ]
             type: kotlin/enums/EnumEntries<E>
-          typeParameters: []
           valueParameters: []
           visibility: Public
         hasBackingField: false
@@ -818,7 +807,6 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/Any?
-            typeParameters: []
         ]
         visibility: Public
       KaNamedFunctionSymbol:

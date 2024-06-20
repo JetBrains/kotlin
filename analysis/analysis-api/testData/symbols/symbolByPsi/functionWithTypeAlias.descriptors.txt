@@ -95,7 +95,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: TypeAlias
-      typeParameters: []
       getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)
       getContainingJvmClassName: FunctionWithTypeAliasKt
       getContainingModule: KaSourceModule "Sources of main"
@@ -156,7 +155,6 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: A
-      typeParameters: []
       getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)
       getContainingJvmClassName: FunctionWithTypeAliasKt
       getContainingModule: KaSourceModule "Sources of main"
