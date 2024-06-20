@@ -643,6 +643,12 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("implicitReceiver.kt")
+    public void testImplicitReceiver() {
+      runTest("plugins/power-assert/testData/codegen/parameters/implicitReceiver.kt");
+    }
+
+    @Test
     @TestMetadata("VarargParameter.kt")
     public void testVarargParameter() {
       runTest("plugins/power-assert/testData/codegen/parameters/VarargParameter.kt");

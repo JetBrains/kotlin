@@ -84,6 +84,27 @@ fun buildTree(expression: IrExpression): Node? {
     val tree = RootNode()
     expression.accept(
         object : IrElementVisitor<Unit, Node> {
+            private var currentCall: IrCall? = null
+
+            private fun IrExpression.isImplicitReceiverOf(irCall: IrCall): Boolean {
+                val otherReceiver = when (this) {
+                    irCall.dispatchReceiver -> irCall.extensionReceiver
+                    irCall.extensionReceiver -> irCall.dispatchReceiver
+                    else -> return false // Not a receiver of the call
+                }
+
+                // In K1, an implicit receiver will either have a zero-width offset,
+                // or have the same start and end offsets as the call.
+                //
+                // In K2, the end offsets of the implicit receiver and the call will match,
+                // but the implicit receiver may start at the beginning of an explicit receiver,
+                // while the call starts at a later offset.
+                //
+                // The following is a generalization all of these conditions into a single check.
+                return startOffset == endOffset ||
+                        endOffset == irCall.endOffset && (startOffset == irCall.startOffset || otherReceiver?.startOffset == startOffset)
+            }
+
             override fun visitElement(element: IrElement, data: Node) {
                 element.acceptChildren(this, data)
             }
@@ -91,9 +112,15 @@ fun buildTree(expression: IrExpression): Node? {
             override fun visitExpression(expression: IrExpression, data: Node) {
                 if (expression is IrFunctionExpression) return // Do not transform lambda expressions, especially their body
 
-                val chainNode = data as? ChainNode ?: ChainNode().also { data.addChild(it) }
-                expression.acceptChildren(this, chainNode)
-                chainNode.addChild(ExpressionNode(expression))
+                val call = currentCall
+                if (call != null && expression.isImplicitReceiverOf(call)) {
+                    val chainNode = data as? ChainNode ?: ChainNode().also { data.addChild(it) }
+                    chainNode.addChild(ConstantNode(expression)) // Do not diagram implicit receivers
+                } else {
+                    val chainNode = data as? ChainNode ?: ChainNode().also { data.addChild(it) }
+                    expression.acceptChildren(this, chainNode)
+                    chainNode.addChild(ExpressionNode(expression))
+                }
             }
 
             override fun visitContainerExpression(expression: IrContainerExpression, data: Node) {
@@ -176,7 +203,10 @@ fun buildTree(expression: IrExpression): Node? {
                     expression.dispatchReceiver!!.acceptChildren(this, chainNode)
                     chainNode.addChild(ExpressionNode(expression))
                 } else {
+                    val previousCall = currentCall
+                    currentCall = expression
                     super.visitCall(expression, data)
+                    currentCall = previousCall
                 }
             }
 
