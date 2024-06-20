@@ -11,9 +11,10 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.constructedClassType
-import org.jetbrains.kotlin.ir.util.isAssignable
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.types.Variance
 
 fun IrBlockImpl(
     startOffset: Int,
@@ -716,13 +717,16 @@ fun IrVarargImpl(
     endOffset: Int,
     type: IrType,
     varargElementType: IrType,
-) = IrVarargImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    type = type,
-    varargElementType = varargElementType,
-)
+): IrVarargImpl {
+    checkVarargTypesSanity(type, varargElementType)
+    return IrVarargImpl(
+        constructorIndicator = null,
+        startOffset = startOffset,
+        endOffset = endOffset,
+        type = type,
+        varargElementType = varargElementType,
+    )
+}
 
 fun IrVarargImpl(
     startOffset: Int,
@@ -730,15 +734,81 @@ fun IrVarargImpl(
     type: IrType,
     varargElementType: IrType,
     elements: List<IrVarargElement>,
-) = IrVarargImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    type = type,
-    varargElementType = varargElementType,
-).apply {
-    this.elements.addAll(elements)
+): IrVarargImpl {
+    if (elements.isNotEmpty())
+        checkVarargTypesSanity(type, varargElementType)
+    return IrVarargImpl(
+        constructorIndicator = null,
+        startOffset = startOffset,
+        endOffset = endOffset,
+        type = type,
+        varargElementType = varargElementType,
+    ).apply {
+        this.elements.addAll(elements)
+    }
 }
+
+private fun checkVarargTypesSanity(varargType: IrType, varargElementType: IrType) {
+    if (varargElementType is IrDynamicType) {
+        val arrayElementType = (varargType as IrSimpleType).arguments.single().unwrapVarargElementType()
+        require(varargElementType == arrayElementType) {
+            typeInsanityErrorMessage(varargElementType, varargType)
+        }
+        return
+    }
+    val varargClassifier = varargType.classifierOrFail
+    if (varargClassifier.signature == null && !varargClassifier.isBound) return
+    val varargElementClassifier = varargElementType.classifierOrFail
+    if (varargElementClassifier.signature == null && !varargElementClassifier.isBound) return
+
+    val isArrayWithTypeArguments = varargType.classifierOrFail.signature?.let {
+        it == IdSignatureValues.array
+    } ?: (varargType.render().contains("kotlin.Array<"))
+    if (isArrayWithTypeArguments) {
+        // try match `type=kotlin.Array<out TYPE>` with `varargElementType=TYPE.`
+        require((varargType as IrSimpleType).arguments.size == 1) {
+            "Array must have exactly one type argument: ${varargType.render()}"
+        }
+        val arrayElementType = varargType.arguments.single().unwrapVarargElementType()
+        require(
+            arrayElementType.classifierOrFail == varargElementClassifier
+                    || varargElementClassifier.signature == IdSignatureValues.any                     // generic usecase, unbound type
+                    || varargElementClassifier.isClassWithFqName(FqNameUnsafe("kotlin.Any"))  // generic usecase, bound type
+        ) {
+            typeInsanityErrorMessage(varargElementType, varargType)
+        }
+    } else {
+        // match `type=kotlin.IntArray` with `varargElementType=kotlin.Int`, etc...
+        varargElementClassifier.signature?.let {
+            // in case of unbound type
+            val elementTypeSignature = it.toString()
+            val sigPrefix = elementTypeSignature.substringBefore('|')
+            val sigSuffix = elementTypeSignature.substringAfter('|')
+            val expectedTypeSignature = "${sigPrefix}Array|$sigSuffix"
+            require(varargType.classifierOrFail.signature.toString() == expectedTypeSignature) {
+                typeInsanityErrorMessage(varargElementType, varargType)
+            }
+        } ?: require(varargElementType.render() == varargClassifier.renderClassifierFqn(DumpIrTreeOptions()).substringBefore("Array")) {
+            typeInsanityErrorMessage(varargElementType, varargType)
+        }
+    }
+}
+
+private fun typeInsanityErrorMessage(varargElementType: IrType, varargType: IrType) =
+    "Internal error: vararg types mismatch: ${varargElementType.render()} should be an element of ${varargType.render()}"
+
+fun IrTypeArgument.unwrapVarargElementType(): IrType =
+    when (this) {
+        is IrDynamicType -> type
+        is IrSimpleType -> this
+        is IrTypeProjection -> {
+            require(variance == Variance.OUT_VARIANCE) {
+                "Internal error: ${variance.name} projection of vararg element type must be an OUT_VARIANCE: ${render()}"
+            }
+            type
+        }
+        else -> error ("Unsupported vararg element type: $this")
+    }
 
 fun IrWhenImpl(
     startOffset: Int,
