@@ -25697,6 +25697,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("SupertypesWithInaccessibleTypeArguments.kt")
+      public void testSupertypesWithInaccessibleTypeArguments() {
+        runTest("compiler/testData/diagnostics/tests/multimodule/SupertypesWithInaccessibleTypeArguments.kt");
+      }
+
+      @Test
       @TestMetadata("varargConflict.kt")
       public void testVarargConflict() {
         runTest("compiler/testData/diagnostics/tests/multimodule/varargConflict.kt");
