@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.isCommon
 
 class BinaryModuleData(
     val regular: FirModuleData,
@@ -17,6 +18,7 @@ class BinaryModuleData(
         fun createDependencyModuleData(
             name: Name,
             platform: TargetPlatform,
+            isCommon: Boolean,
             capabilities: FirModuleCapabilities = FirModuleCapabilities.Empty
         ): FirModuleData {
             return FirModuleDataImpl(
@@ -25,7 +27,8 @@ class BinaryModuleData(
                 dependsOnDependencies = emptyList(),
                 friendDependencies = emptyList(),
                 platform,
-                capabilities
+                capabilities,
+                isCommon = isCommon
             )
         }
 
@@ -34,7 +37,7 @@ class BinaryModuleData(
             platform: TargetPlatform,
         ): BinaryModuleData {
             fun createData(name: String): FirModuleData =
-                createDependencyModuleData(Name.special(name), platform)
+                createDependencyModuleData(Name.special(name), platform, platform.isCommon())
 
             return BinaryModuleData(
                 createData("<regular dependencies of $mainModuleName>"),

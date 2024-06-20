@@ -156,6 +156,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             dependencyList.dependsOnDependencies,
             dependencyList.friendsDependencies,
             CommonPlatforms.defaultCommonPlatform,
+            isCommon = true
         )
 
         val platformModuleData = FirModuleDataImpl(
@@ -164,6 +165,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             dependencyList.dependsOnDependencies + commonModuleData,
             dependencyList.friendsDependencies,
             JvmPlatforms.jvm8,
+            isCommon = false
         )
 
         val commonSession = createSourceSession(

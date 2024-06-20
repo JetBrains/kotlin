@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsF
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
+import org.jetbrains.kotlin.platform.isCommon
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.extension
@@ -97,7 +98,7 @@ class LLBinaryOriginLibrarySymbolProviderFactory(private val project: Project) :
     ): List<FirSymbolProvider> {
         val forwardDeclarationsModuleData = BinaryModuleData.createDependencyModuleData(
             FORWARD_DECLARATIONS_MODULE_NAME,
-            moduleDataProvider.platform,
+            moduleDataProvider.platform, moduleDataProvider.platform.isCommon()
         ).apply {
             bindSession(session)
         }

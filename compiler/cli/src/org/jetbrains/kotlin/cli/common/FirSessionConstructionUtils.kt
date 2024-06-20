@@ -70,7 +70,8 @@ fun <F> prepareJvmSessions(
 
     return prepareSessions(
         files, configuration, rootModuleName, JvmPlatforms.unspecifiedJvmPlatform,
-        metadataCompilationMode = false, libraryList, isCommonSource, isScript, fileBelongsToModule,
+        metadataCompilationMode = false, libraryList, false, isCommonSource, isScript,
+        fileBelongsToModule,
         createLibrarySession = { sessionProvider ->
             FirJvmSessionFactory.createLibrarySession(
                 rootModuleName,
@@ -141,7 +142,8 @@ fun <F> prepareJsSessions(
 ): List<SessionWithSources<F>> {
     return prepareSessions(
         files, configuration, rootModuleName, JsPlatforms.defaultJsPlatform,
-        metadataCompilationMode = false, libraryList, isCommonSource, isScript = { false },
+        metadataCompilationMode = false, libraryList, false, isCommonSource,
+        isScript = { false },
         fileBelongsToModule,
         createLibrarySession = { sessionProvider ->
             FirJsSessionFactory.createLibrarySession(
@@ -189,8 +191,8 @@ fun <F> prepareNativeSessions(
 ): List<SessionWithSources<F>> {
     return prepareSessions(
         files, configuration, rootModuleName, NativePlatforms.unspecifiedNativePlatform,
-        metadataCompilationMode, libraryList, isCommonSource, isScript = { false },
-        fileBelongsToModule, createLibrarySession = { sessionProvider ->
+        metadataCompilationMode, libraryList, false, isCommonSource,
+        isScript = { false }, fileBelongsToModule, createLibrarySession = { sessionProvider ->
             FirNativeSessionFactory.createLibrarySession(
                 rootModuleName,
                 resolvedLibraries,
@@ -238,7 +240,8 @@ fun <F> prepareWasmSessions(
     }
     return prepareSessions(
         files, configuration, rootModuleName, platform,
-        metadataCompilationMode = false, libraryList, isCommonSource, isScript = { false },
+        metadataCompilationMode = false, libraryList, false, isCommonSource,
+        isScript = { false },
         fileBelongsToModule,
         createLibrarySession = { sessionProvider ->
             FirWasmSessionFactory.createLibrarySession(
@@ -286,7 +289,8 @@ fun <F> prepareCommonSessions(
 ): List<SessionWithSources<F>> {
     return prepareSessions(
         files, configuration, rootModuleName, CommonPlatforms.defaultCommonPlatform,
-        metadataCompilationMode = true, libraryList, isCommonSource, isScript = { false }, fileBelongsToModule,
+        metadataCompilationMode = true, libraryList, true, isCommonSource, isScript = { false },
+        fileBelongsToModule,
         createLibrarySession = { sessionProvider ->
             FirCommonSessionFactory.createLibrarySession(
                 rootModuleName,
@@ -329,6 +333,7 @@ private inline fun <F> prepareSessions(
     targetPlatform: TargetPlatform,
     metadataCompilationMode: Boolean,
     libraryList: DependencyListForCliModule,
+    isAllCommon: Boolean,
     isCommonSource: (F) -> Boolean,
     isScript: (F) -> Boolean,
     fileBelongsToModule: (F, String) -> Boolean,
@@ -354,7 +359,7 @@ private inline fun <F> prepareSessions(
         metadataCompilationMode || !isMppEnabled -> {
             listOf(
                 createSingleSession(
-                    nonScriptFiles, rootModuleName, libraryList, targetPlatform,
+                    nonScriptFiles, rootModuleName, libraryList, targetPlatform, isAllCommon,
                     sessionProvider, sessionConfigurator, createSourceSession
                 )
             )
@@ -397,7 +402,7 @@ private inline fun <F> createScriptsSession(
             libraryList.friendsDependencies,
             libraryList.moduleDataProvider
         ),
-        targetPlatform,
+        targetPlatform, false,
         sessionProvider, sessionConfigurator, createSourceSession
     )
 
@@ -406,6 +411,7 @@ private inline fun <F> createSingleSession(
     rootModuleName: Name,
     libraryList: DependencyListForCliModule,
     targetPlatform: TargetPlatform,
+    isCommon: Boolean,
     sessionProvider: FirProjectSessionProvider,
     noinline sessionConfigurator: FirSessionConfigurator.() -> Unit,
     createFirSession: FirSessionProducer<F>,
@@ -416,6 +422,7 @@ private inline fun <F> createSingleSession(
         libraryList.dependsOnDependencies,
         libraryList.friendsDependencies,
         targetPlatform,
+        isCommon = isCommon
     )
 
     val session = createFirSession(files, platformModuleData, sessionProvider) {

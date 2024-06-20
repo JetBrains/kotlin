@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper.registerDefaultC
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerServices
 
 object FirNativeSessionFactory : FirAbstractSessionFactory() {
@@ -53,6 +54,7 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
                 val forwardDeclarationsModuleData = BinaryModuleData.createDependencyModuleData(
                     FORWARD_DECLARATIONS_MODULE_NAME,
                     moduleDataProvider.platform,
+                    moduleDataProvider.platform.isCommon()
                 ).apply {
                     bindSession(session)
                 }

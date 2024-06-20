@@ -44,10 +44,7 @@ import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.singleValue
-import org.jetbrains.kotlin.test.model.FrontendFacade
-import org.jetbrains.kotlin.test.model.FrontendKinds
-import org.jetbrains.kotlin.test.model.TestFile
-import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.lightTreeSyntaxDiagnosticsReporterHolder
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
@@ -146,6 +143,9 @@ open class FirFrontendFacade(
         val moduleInfoProvider = testServices.firModuleInfoProvider
         val moduleDataMap = mutableMapOf<TestModule, FirModuleData>()
 
+        // assuming names are unique
+        val commonModuleNames = modules.flatMapTo(HashSet()) { it.dependsOnDependencies.map(DependencyDescription::moduleName) }
+
         for (module in modules) {
             val regularModules = libraryList.regularDependencies + moduleInfoProvider.getRegularDependentSourceModules(module)
             val friendModules = libraryList.friendsDependencies + moduleInfoProvider.getDependentFriendSourceModules(module)
@@ -157,7 +157,7 @@ open class FirFrontendFacade(
                 dependsOnModules,
                 friendModules,
                 mainModule.targetPlatform,
-                isCommon = module.targetPlatform.isCommon(),
+                isCommon = commonModuleNames.contains(module.name),
             )
 
             moduleInfoProvider.registerModuleData(module, moduleData)

@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ImportTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.isCommon
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
 abstract class FirAbstractSessionFactory {
@@ -57,7 +58,7 @@ abstract class FirAbstractSessionFactory {
 
             val builtinsModuleData = BinaryModuleData.createDependencyModuleData(
                 Name.special("<builtins of ${mainModuleName.asString()}"),
-                moduleDataProvider.platform,
+                moduleDataProvider.platform, moduleDataProvider.platform.isCommon(),
             )
             builtinsModuleData.bindSession(this)
 
@@ -155,7 +156,7 @@ abstract class FirAbstractSessionFactory {
             moduleDataImpl.updateDependsOn(
                 moduleDataImpl.dependsOnDependencies.map {
                     val session = sessionProvider?.getSession(it) ?: return@map it
-                    if (it.isCommon && session.kind == FirSession.Kind.Source) {
+                    if (it.isCommon && session.kind == FirSession.Kind.Source && !it.isFromCommonArtefact) { // too much
                         getOrCreateCommonArtefactModuleDataWithSession(it, session, registerExtraComponents, createKotlinScopeProvider)
                     } else it
                 }

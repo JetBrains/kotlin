@@ -82,7 +82,7 @@ class FirModuleDataImpl(
     override val friendDependencies: List<FirModuleData>,
     override val platform: TargetPlatform,
     override val capabilities: FirModuleCapabilities = FirModuleCapabilities.Empty,
-    override val isCommon: Boolean = platform.isCommon(),
+    override val isCommon: Boolean = platform.isCommon(), // TODO: remove default, it is incorrect
     override val isFromCommonArtefact: Boolean = false,
 ) : FirModuleData() {
     override val session: FirSession

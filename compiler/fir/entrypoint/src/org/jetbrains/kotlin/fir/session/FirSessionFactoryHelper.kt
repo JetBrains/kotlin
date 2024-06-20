@@ -98,6 +98,7 @@ object FirSessionFactoryHelper {
                 dependsOnDependencies = emptyList(),
                 friendDependencies = emptyList(),
                 platform = JvmPlatforms.unspecifiedJvmPlatform,
+                isCommon = false
             )
             registerModuleData(moduleData)
             moduleData.bindSession(this)
