@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.codegen.defaultConstructor.ir.AbstractIrDefaultArgum
 import org.jetbrains.kotlin.codegen.fir.*
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
 import org.jetbrains.kotlin.codegen.ir.*
-import org.jetbrains.kotlin.codegen.ir.AbstractIrWriteSignatureTest
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderLazyBodiesByAstTest
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderLazyBodiesByStubTest
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderSourceElementMappingTestCase
@@ -34,10 +33,10 @@ import org.jetbrains.kotlin.integration.AbstractAntTaskTest
 import org.jetbrains.kotlin.jvm.compiler.*
 import org.jetbrains.kotlin.jvm.compiler.fir.AbstractFirLightTreeCompileJavaAgainstKotlinTest
 import org.jetbrains.kotlin.jvm.compiler.fir.AbstractFirPsiCompileJavaAgainstKotlinTest
-import org.jetbrains.kotlin.jvm.compiler.ir.*
+import org.jetbrains.kotlin.jvm.compiler.ir.AbstractIrCompileJavaAgainstKotlinTest
+import org.jetbrains.kotlin.jvm.compiler.ir.AbstractIrCompileKotlinAgainstJavaTest
+import org.jetbrains.kotlin.jvm.compiler.ir.AbstractIrLoadJavaTest
 import org.jetbrains.kotlin.jvm.compiler.javac.AbstractLoadJavaUsingJavacTest
-import org.jetbrains.kotlin.klib.AbstractKlibIrTextTestCase
-import org.jetbrains.kotlin.klib.AbstractKlibJsIrTextTestCase
 import org.jetbrains.kotlin.lexer.kdoc.AbstractKDocLexerTest
 import org.jetbrains.kotlin.lexer.kotlin.AbstractKotlinLexerTest
 import org.jetbrains.kotlin.modules.xml.AbstractModuleXmlParserTest
@@ -440,21 +439,6 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
 
             testClass<AbstractIrScriptCodegenTest> {
                 model("codegen/script", extension = "kts", targetBackend = TargetBackend.JVM_IR, excludedPattern = excludedCustomTestdataPattern)
-            }
-        }
-
-        testGroup(
-            testsRoot = "compiler/tests-gen",
-            testDataRoot = "compiler/testData",
-            testRunnerMethodName = "runTestWithCustomIgnoreDirective", // FIXME: This is a temporary hack to smooth the transition to the new test infrastructure
-            additionalRunnerArguments = listOf("\"// IGNORE_BACKEND_KLIB: \"")
-        ) {
-            testClass<AbstractKlibJsIrTextTestCase> {
-                model("ir/irText/js", pattern = "^(.+)\\.kt\$", targetBackend = TargetBackend.JS_IR)
-            }
-
-            testClass<AbstractKlibIrTextTestCase> {
-                model("ir/irText", pattern = "^(.+)\\.kt\$", targetBackend = TargetBackend.JS_IR)
             }
         }
 
