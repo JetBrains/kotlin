@@ -26449,6 +26449,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("valueClassWithPrivateConstructor.kt")
+      public void testValueClassWithPrivateConstructor() {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/valueClassWithPrivateConstructor.kt");
+      }
+
+      @Test
       @TestMetadata("varSetterVisibility.kt")
       public void testVarSetterVisibility() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/varSetterVisibility.kt");
