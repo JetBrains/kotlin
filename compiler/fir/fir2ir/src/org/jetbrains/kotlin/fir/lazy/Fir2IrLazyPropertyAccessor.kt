@@ -41,6 +41,7 @@ class Fir2IrLazyPropertyAccessor(
     override var correspondingPropertySymbol: IrPropertySymbol?
 ) : AbstractFir2IrLazyFunction<FirCallableDeclaration>(c, startOffset, endOffset, origin, symbol, parent, isFakeOverride) {
     init {
+        created()
         symbol.bind(this)
     }
 

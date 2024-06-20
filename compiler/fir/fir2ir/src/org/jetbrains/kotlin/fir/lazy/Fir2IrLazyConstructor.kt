@@ -42,6 +42,7 @@ class Fir2IrLazyConstructor(
 ) : IrConstructor(), AbstractFir2IrLazyDeclaration<FirConstructor>, Fir2IrTypeParametersContainer,
     Fir2IrComponents by c {
     init {
+        created()
         this.parent = parent
         symbol.bind(this)
         classifierStorage.preCacheTypeParameters(fir)

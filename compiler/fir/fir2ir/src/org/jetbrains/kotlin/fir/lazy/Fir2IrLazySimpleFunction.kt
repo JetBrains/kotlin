@@ -36,6 +36,7 @@ class Fir2IrLazySimpleFunction(
     isFakeOverride: Boolean
 ) : AbstractFir2IrLazyFunction<FirSimpleFunction>(c, startOffset, endOffset, origin, symbol, parent, isFakeOverride) {
     init {
+        created()
         symbol.bind(this)
         classifierStorage.preCacheTypeParameters(fir)
     }

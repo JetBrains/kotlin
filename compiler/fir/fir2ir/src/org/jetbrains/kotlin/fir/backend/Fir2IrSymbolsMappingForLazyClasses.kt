@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.builtins.StandardNames.FqNames.map
 import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.SymbolRemapper
+import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -60,8 +62,9 @@ internal class MappedLazyVar<T>(
     initializer: () -> T,
     val map: Fir2IrSymbolsMappingForLazyClasses,
     val mapperFun: Fir2IrSymbolsMappingForLazyClasses.(T) -> T
-) : ReadWriteProperty<Any?, T> {
-    private val lazy = lazyVar(lock, initializer)
+) : ReadWriteProperty<Any?, T>, PropertyDelegateProvider<Any, ReadWriteProperty<Any?, T>> {
+    @Suppress("UNCHECKED_CAST")
+    private val lazy = lazyVar(lock, initializer) as ReadWriteProperty<Any?, T>
 
     @Volatile
     private var lastSeenGeneration: Int = -1
@@ -85,26 +88,32 @@ internal class MappedLazyVar<T>(
             lastSeenGeneration = map.generation
         }
     }
+
+    override fun provideDelegate(thisRef: Any, property: KProperty<*>): ReadWriteProperty<Any?, T> {
+        @Suppress("UNCHECKED_CAST")
+        (lazy as PropertyDelegateProvider<Any, *>).provideDelegate(thisRef, property)
+        return this
+    }
 }
 
 fun <T> Fir2IrSymbolsMappingForLazyClasses.lazyMappedVar(
     lock: IrLock,
     initializer: () -> T,
     mapFunction: Fir2IrSymbolsMappingForLazyClasses.(T) -> T
-): ReadWriteProperty<Any?, T> {
+): PropertyDelegateProvider<Any, ReadWriteProperty<Any?, T>> {
     return MappedLazyVar(lock, initializer, this, mapFunction)
 }
 
 fun Fir2IrSymbolsMappingForLazyClasses.lazyMappedFunctionListVar(
     lock: IrLock,
     initializer: () -> List<IrSimpleFunctionSymbol>
-): ReadWriteProperty<Any?, List<IrSimpleFunctionSymbol>> = lazyMappedVar(lock, initializer) { list ->
+): PropertyDelegateProvider<Any, ReadWriteProperty<Any?, List<IrSimpleFunctionSymbol>>> = lazyMappedVar(lock, initializer) { list ->
     list.map { remapFunctionSymbol(it) }
 }
 
 fun Fir2IrSymbolsMappingForLazyClasses.lazyMappedPropertyListVar(
     lock: IrLock,
     initializer: () -> List<IrPropertySymbol>
-): ReadWriteProperty<Any?, List<IrPropertySymbol>> = lazyMappedVar(lock, initializer) { list ->
+): PropertyDelegateProvider<Any, ReadWriteProperty<Any?, List<IrPropertySymbol>>> = lazyMappedVar(lock, initializer) { list ->
     list.map { remapPropertySymbol(it) }
 }

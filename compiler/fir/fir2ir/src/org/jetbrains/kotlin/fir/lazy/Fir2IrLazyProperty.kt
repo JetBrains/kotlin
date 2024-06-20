@@ -56,6 +56,7 @@ class Fir2IrLazyProperty(
         set(_) = shouldNotBeCalled()
 
     init {
+        created()
         this.parent = parent
         symbol.bind(this)
         classifierStorage.preCacheTypeParameters(fir)

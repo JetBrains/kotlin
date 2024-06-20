@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.types.KotlinType
+import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadWriteProperty
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -45,7 +46,7 @@ interface IrLazyDeclarationBase : IrDeclaration {
             isHidden = false,
         )
 
-    fun createLazyAnnotations(): ReadWriteProperty<Any?, List<IrConstructorCall>> = lazyVar(stubGenerator.lock) {
+    fun createLazyAnnotations(): PropertyDelegateProvider<Any, ReadWriteProperty<Any?, List<IrConstructorCall>>> = lazyVar(stubGenerator.lock) {
         descriptor.annotations.mapNotNull(typeTranslator.constantValueGenerator::generateAnnotationConstructorCall).toMutableList()
     }
 }

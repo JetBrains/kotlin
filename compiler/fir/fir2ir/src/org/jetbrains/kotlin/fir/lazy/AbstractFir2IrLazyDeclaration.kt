@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
+import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadWriteProperty
 
 interface AbstractFir2IrLazyDeclaration<F> :
@@ -25,7 +26,7 @@ interface AbstractFir2IrLazyDeclaration<F> :
     override val factory: IrFactory
         get() = irFactory
 
-    override fun createLazyAnnotations(): ReadWriteProperty<Any?, List<IrConstructorCall>> = lazyVar(lock) {
+    override fun createLazyAnnotations(): PropertyDelegateProvider<Any, ReadWriteProperty<Any?, List<IrConstructorCall>>> = lazyVar(lock) {
         fir.annotations.mapNotNull {
             callGenerator.convertToIrConstructorCall(it) as? IrConstructorCall
         }
@@ -35,6 +36,10 @@ interface AbstractFir2IrLazyDeclaration<F> :
         get() = shouldNotBeCalled()
     override val typeTranslator: TypeTranslator
         get() = shouldNotBeCalled()
+
+    fun created() {
+        println("!!! created ${this.javaClass.simpleName}")
+    }
 }
 
 internal fun mutationNotSupported(): Nothing =

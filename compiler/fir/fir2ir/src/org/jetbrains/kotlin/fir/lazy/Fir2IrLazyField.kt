@@ -43,6 +43,7 @@ class Fir2IrLazyField(
     correspondingPropertySymbol: IrPropertySymbol?
 ) : IrField(), AbstractFir2IrLazyDeclaration<FirField>, Fir2IrComponents by c {
     init {
+        created()
         symbol.bind(this)
     }
 

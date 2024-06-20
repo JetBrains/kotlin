@@ -33,6 +33,7 @@ class Fir2IrLazyTypeAlias(
     parent: IrDeclarationParent,
 ) : IrTypeAlias(), AbstractFir2IrLazyDeclaration<FirTypeAlias>, Fir2IrTypeParametersContainer, Fir2IrComponents by c {
     init {
+        created()
         this.parent = parent
         symbol.bind(this)
         classifierStorage.preCacheTypeParameters(fir)

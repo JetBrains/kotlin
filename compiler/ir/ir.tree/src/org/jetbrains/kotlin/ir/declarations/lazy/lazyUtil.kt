@@ -6,12 +6,15 @@
 package org.jetbrains.kotlin.ir.declarations.lazy
 
 import org.jetbrains.kotlin.ir.IrLock
+import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-fun <T> lazyVar(lock: IrLock, initializer: () -> T): ReadWriteProperty<Any?, T> = SynchronizedLazyVar(lock, initializer)
+fun <T> lazyVar(lock: IrLock, initializer: () -> T): PropertyDelegateProvider<Any, ReadWriteProperty<Any?, T>> =
+    SynchronizedLazyVar(lock, initializer)
 
-private class SynchronizedLazyVar<T>(val lock: IrLock, initializer: () -> T) : ReadWriteProperty<Any?, T> {
+private class SynchronizedLazyVar<T>(val lock: IrLock, initializer: () -> T) :
+    ReadWriteProperty<Any?, T>, PropertyDelegateProvider<Any?, SynchronizedLazyVar<T>> {
     @Volatile
     private var isInitialized = false
 
@@ -26,6 +29,8 @@ private class SynchronizedLazyVar<T>(val lock: IrLock, initializer: () -> T) : R
             if (isInitialized) return _value as T
             synchronized(lock) {
                 if (!isInitialized) {
+                    println("!!! initialized $name")
+
                     _value = initializer!!()
                     isInitialized = true
                     initializer = null
@@ -41,8 +46,20 @@ private class SynchronizedLazyVar<T>(val lock: IrLock, initializer: () -> T) : R
 
     override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
         synchronized(lock) {
+            if (!isInitialized) {
+                println("!!! set $name")
+            }
+
             this._value = value
             isInitialized = true
         }
+    }
+
+
+    private lateinit var name: String
+
+    override fun provideDelegate(thisRef: Any?, property: KProperty<*>): SynchronizedLazyVar<T> {
+        name = thisRef!!.javaClass.simpleName + "." + property.name
+        return this
     }
 }

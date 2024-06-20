@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isFacadeClass
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
+import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadWriteProperty
 
 abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
@@ -123,7 +124,7 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
     override val factory: IrFactory
         get() = super<AbstractFir2IrLazyDeclaration>.factory
 
-    override fun createLazyAnnotations(): ReadWriteProperty<Any?, List<IrConstructorCall>> {
+    override fun createLazyAnnotations(): PropertyDelegateProvider<Any, ReadWriteProperty<Any?, List<IrConstructorCall>>> {
         return super<AbstractFir2IrLazyDeclaration>.createLazyAnnotations()
     }
 
