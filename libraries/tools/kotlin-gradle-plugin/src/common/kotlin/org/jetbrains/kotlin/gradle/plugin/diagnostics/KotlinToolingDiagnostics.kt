@@ -970,6 +970,15 @@ object KotlinToolingDiagnostics {
                         "to enable it. Learn more about this at https://kotl.in/compose-plugin"
             )
     }
+
+    object DeprecatedKotlinAbiSnapshotDiagnostic : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(): ToolingDiagnostic =
+            build(
+                "'${PropertiesProvider.PropertyNames.KOTLIN_ABI_SNAPSHOT}' property is deprecated and will be removed soon.\n" +
+                        "By default this type of incremental compilation will not be supported.\n" +
+                        "Please remove '${PropertiesProvider.PropertyNames.KOTLIN_ABI_SNAPSHOT}' usages from 'gradle.properties' file.\n"
+            )
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {
