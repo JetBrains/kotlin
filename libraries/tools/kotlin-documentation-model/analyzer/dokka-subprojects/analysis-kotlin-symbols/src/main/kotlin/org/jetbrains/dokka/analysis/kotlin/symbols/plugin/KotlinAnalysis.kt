@@ -68,7 +68,6 @@ internal fun createAnalysisSession(
 
     val analysisSession = buildStandaloneAnalysisAPISession(
         projectDisposable = projectDisposable,
-        withPsiDeclarationFromBinaryModuleProvider = false
     ) {
         val sortedSourceSets = topologicalSortByDependantSourceSets(sourceSets, logger)
 

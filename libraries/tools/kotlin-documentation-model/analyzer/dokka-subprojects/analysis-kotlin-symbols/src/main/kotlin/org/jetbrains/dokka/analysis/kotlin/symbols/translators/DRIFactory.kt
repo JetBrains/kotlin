@@ -8,8 +8,6 @@ import org.jetbrains.dokka.links.*
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithKind
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithTypeParameters
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.name.CallableId
@@ -108,7 +106,6 @@ private fun KaSession.getDRIFromReceiverType(type: KaType): DRI {
 
         is KaCapturedType -> throw IllegalStateException("Unexpected non-denotable type while creating DRI $type")
         is KaFlexibleType -> throw IllegalStateException("Unexpected non-denotable type while creating DRI $type")
-        is KaIntegerLiteralType -> throw IllegalStateException("Unexpected non-denotable type while creating DRI $type")
         is KaIntersectionType -> throw IllegalStateException("Unexpected non-denotable type while creating DRI $type")
     }
 }
@@ -128,7 +125,7 @@ internal fun KaSession.getDRIFromSymbol(symbol: KaSymbol): DRI =
     }
 
 private fun KaSession.getDRIFromNonCallablePossibleLocalSymbol(symbol: KaSymbol): DRI {
-    if ((symbol as? KaSymbolWithKind)?.symbolKind == KaSymbolKind.LOCAL) {
+    if (symbol.location == KaSymbolLocation.LOCAL) {
         return symbol.getContainingSymbol()?.let { getDRIFromNonCallablePossibleLocalSymbol(it) }
             ?: throw IllegalStateException("Can't get containing symbol for local symbol")
     }

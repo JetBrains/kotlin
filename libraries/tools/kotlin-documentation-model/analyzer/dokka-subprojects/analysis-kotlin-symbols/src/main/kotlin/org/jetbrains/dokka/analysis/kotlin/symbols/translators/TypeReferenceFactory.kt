@@ -6,9 +6,6 @@ package org.jetbrains.dokka.analysis.kotlin.symbols.translators
 
 import org.jetbrains.dokka.links.*
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.KaStarTypeProjection
-import org.jetbrains.kotlin.analysis.api.KaTypeArgumentWithVariance
-import org.jetbrains.kotlin.analysis.api.KaTypeProjection
 import org.jetbrains.kotlin.analysis.api.types.*
 
 internal fun KaSession.getTypeReferenceFrom(type: KaType): TypeReference =
@@ -30,7 +27,7 @@ private fun KaSession.getTypeReferenceFromPossiblyRecursive(
     return when (type) {
         is KaNonErrorClassType -> TypeConstructor(
             type.classId.asFqNameString(),
-            type.ownTypeArguments.map {
+            type.typeArguments.map {
                 getTypeReferenceFromTypeProjection(
                     it,
                     paramTrace
@@ -40,7 +37,7 @@ private fun KaSession.getTypeReferenceFromPossiblyRecursive(
 
         is KaTypeParameterType -> {
             val upperBoundsOrNullableAny =
-                type.symbol.upperBounds.takeIf { it.isNotEmpty() } ?: listOf(this.builtinTypes.NULLABLE_ANY)
+                type.symbol.upperBounds.takeIf { it.isNotEmpty() } ?: listOf(this.builtinTypes.nullableAny)
 
             TypeParam(bounds = upperBoundsOrNullableAny.map {
                 getTypeReferenceFromPossiblyRecursive(
@@ -71,7 +68,6 @@ private fun KaSession.getTypeReferenceFromPossiblyRecursive(
             paramTrace
         )
         is KaCapturedType -> throw NotImplementedError()
-        is KaIntegerLiteralType -> throw NotImplementedError()
         is KaIntersectionType -> throw NotImplementedError()
     }.let {
         if (type.isMarkedNullable) Nullable(it) else it

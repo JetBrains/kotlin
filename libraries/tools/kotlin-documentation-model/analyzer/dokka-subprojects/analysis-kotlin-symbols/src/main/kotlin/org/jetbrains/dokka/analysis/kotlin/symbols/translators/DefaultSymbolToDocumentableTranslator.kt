@@ -129,8 +129,8 @@ internal class DokkaSymbolVisitor(
     ): DPackage {
         val dri = getDRIFromPackage(packageSymbol)
         val scope = packageSymbol.getPackageScope()
-        val callables = scope.getCallableSymbols().toList().filterSymbolsInSourceSet(moduleFiles)
-        val classifiers = scope.getClassifierSymbols().toList().filterSymbolsInSourceSet(moduleFiles)
+        val callables = scope.callables.toList().filterSymbolsInSourceSet(moduleFiles)
+        val classifiers = scope.classifiers.toList().filterSymbolsInSourceSet(moduleFiles)
 
         val functions = callables.filterIsInstance<KaFunctionSymbol>().map { visitFunctionSymbol(it, dri) }
         val properties = callables.filterIsInstance<KaPropertySymbol>().map { visitPropertySymbol(it, dri) }
@@ -389,6 +389,7 @@ internal class DokkaSymbolVisitor(
      * @param includeStaticScope a flag to add static members, e.g. `valueOf`, `values` and `entries` members for Enum.
      * See [org.jetbrains.kotlin.analysis.api.components.KaScopeProvider.getStaticDeclaredMemberScope] for what a static scope is.
      */
+    @OptIn(KaExperimentalApi::class) // due to getSyntheticJavaPropertiesScope
     private fun KaSession.getDokkaScopeFrom(
         namedClassOrObjectSymbol: KaNamedClassOrObjectSymbol,
         dri: DRI,
@@ -397,13 +398,13 @@ internal class DokkaSymbolVisitor(
         // getCombinedMemberScope additionally includes a static scope, see [getCombinedMemberScope]
         // e.g. getStaticMemberScope contains `valueOf`, `values` and `entries` members for Enum
         val scope = if(includeStaticScope) namedClassOrObjectSymbol.getCombinedMemberScope() else namedClassOrObjectSymbol.getMemberScope()
-        val constructors = scope.getConstructors().map { visitConstructorSymbol(it) }.toList()
+        val constructors = scope.constructors.map { visitConstructorSymbol(it) }.toList()
 
-        val callables = scope.getCallableSymbols().toList()
+        val callables = scope.callables.toList()
 
         // Dokka K1 does not show inherited nested and inner classes,
         // so it should show only classifiers (classes and objects) explicitly declared
-        val classifiers = if(includeStaticScope) namedClassOrObjectSymbol.getStaticMemberScope().getClassifierSymbols() else emptySequence()
+        val classifiers = if(includeStaticScope) namedClassOrObjectSymbol.getStaticMemberScope().classifiers else emptySequence()
 
         val syntheticJavaProperties =
             namedClassOrObjectSymbol.buildSelfClassType().getSyntheticJavaPropertiesScope()?.getCallableSignatures()
@@ -419,7 +420,7 @@ internal class DokkaSymbolVisitor(
             .filterOutSyntheticJavaPropBackingField()
 
         fun List<KaFunctionSymbol>.filterOutSyntheticJavaPropAccessors() = filterNot { fn ->
-            if (fn.origin == KaSymbolOrigin.JAVA && fn.callableId != null)
+            if ((fn.origin == KaSymbolOrigin.JAVA_SOURCE || fn.origin == KaSymbolOrigin.JAVA_LIBRARY) && fn.callableId != null)
                 syntheticJavaProperties.any { fn.callableId == it.javaGetterSymbol.callableId || fn.callableId == it.javaSetterSymbol?.callableId }
             else false
         }
@@ -784,7 +785,7 @@ internal class DokkaSymbolVisitor(
         dri: DRI
     ): DTypeParameter {
         val upperBoundsOrNullableAny =
-            typeParameterSymbol.upperBounds.takeIf { it.isNotEmpty() } ?: listOf(this.builtinTypes.NULLABLE_ANY)
+            typeParameterSymbol.upperBounds.takeIf { it.isNotEmpty() } ?: listOf(this.builtinTypes.nullableAny)
         return DTypeParameter(
             variantTypeParameter = TypeParameter(
                 dri = dri.copy(target = PointingToGenericParameters(index)),

@@ -27,9 +27,7 @@ import org.jetbrains.dokka.plugability.query
 import org.jetbrains.dokka.plugability.querySingle
 import org.jetbrains.dokka.utilities.DokkaLogger
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -98,29 +96,6 @@ private class SymbolSampleAnalysisEnvironment(
         return SampleSnippet(imports, body)
     }
 
-    // TODO: remove after KT-53669 and use [org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe] from Analysis API
-    private inline fun <reified PSI : PsiElement> KtSymbol.kotlinAndJavaSourcePsiSafe(): PSI? {
-        // TODO: support Java sources after KT-53669
-        val sourcePsi = when (origin) {
-            KaSymbolOrigin.SOURCE -> this.psi
-            KaSymbolOrigin.JAVA -> this.psi
-
-            KaSymbolOrigin.SOURCE_MEMBER_GENERATED -> null
-            KaSymbolOrigin.LIBRARY -> null
-            KaSymbolOrigin.SAM_CONSTRUCTOR -> null
-            KaSymbolOrigin.INTERSECTION_OVERRIDE -> null
-            KaSymbolOrigin.SUBSTITUTION_OVERRIDE -> null
-            KaSymbolOrigin.DELEGATED -> null
-            KaSymbolOrigin.JAVA_SYNTHETIC_PROPERTY -> null
-            KaSymbolOrigin.PROPERTY_BACKING_FIELD -> null
-            KaSymbolOrigin.PLUGIN -> null
-            KaSymbolOrigin.JS_DYNAMIC -> null
-            KaSymbolOrigin.NATIVE_FORWARD_DECLARATION -> null
-        }
-
-        return sourcePsi as? PSI
-    }
-
     private fun findPsiElement(sourceSet: DokkaSourceSet, fqLink: String): PsiElement? {
         // fallback to default roots of the source set even if sample roots are assigned,
         // because `@sample` tag can contain links to functions from project sources
@@ -132,7 +107,7 @@ private class SymbolSampleAnalysisEnvironment(
         val ktSourceModule = this.getModuleOrNull(sourceSet) ?: return null
         return analyze(ktSourceModule) {
             resolveKDocTextLinkToSymbol(fqLink)
-                ?.kotlinAndJavaSourcePsiSafe()
+                ?.sourcePsiSafe()
         }
     }
 

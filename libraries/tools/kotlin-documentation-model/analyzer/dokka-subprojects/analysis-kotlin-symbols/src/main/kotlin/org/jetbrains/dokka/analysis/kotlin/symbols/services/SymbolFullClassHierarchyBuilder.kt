@@ -44,7 +44,7 @@ internal class SymbolFullClassHierarchyBuilder(context: DokkaContext) : FullClas
         if (supersMap[dri] == null) {
             val supertypes = kotlinType.getDirectSuperTypes(shouldApproximate = true).filterNot { it.isAny }
             val supertypesDriWithKType = supertypes.mapNotNull { supertype ->
-                supertype.expandedClassSymbol?.let {
+                supertype.expandedSymbol?.let {
                     getDRIFromClassLike(it) to supertype
                 }
             }

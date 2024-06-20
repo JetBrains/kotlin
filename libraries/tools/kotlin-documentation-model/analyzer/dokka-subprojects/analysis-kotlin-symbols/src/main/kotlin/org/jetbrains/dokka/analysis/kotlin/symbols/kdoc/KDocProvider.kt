@@ -27,14 +27,14 @@ internal fun KaSession.getJavaDocDocumentationFrom(
     symbol: KaSymbol,
     javadocParser: JavadocParser
 ): DocumentationNode? {
-    if (symbol.origin == KaSymbolOrigin.JAVA) {
+    if (symbol.origin == KaSymbolOrigin.JAVA_SOURCE) {
         return (symbol.psi as? PsiNamedElement)?.let {
             javadocParser.parseDocumentation(it)
         }
     } else if (symbol.origin == KaSymbolOrigin.SOURCE && symbol is KaCallableSymbol) {
         // Note: javadocParser searches in overridden JAVA declarations for JAVA method, not Kotlin
         symbol.getAllOverriddenSymbols().forEach { overrider ->
-            if (overrider.origin == KaSymbolOrigin.JAVA)
+            if (overrider.origin == KaSymbolOrigin.JAVA_SOURCE)
                 return@getJavaDocDocumentationFrom (overrider.psi as? PsiNamedElement)?.let {
                     javadocParser.parseDocumentation(it)
                 }
