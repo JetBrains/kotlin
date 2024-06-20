@@ -7,6 +7,7 @@ KaKotlinPropertySymbol:
     isExtension: false
     isVal: true
     location: PROPERTY
+    modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/Abc.firstProperty)
@@ -97,6 +98,7 @@ KaKotlinPropertySymbol:
     isExtension: false
     isVal: true
     location: PROPERTY
+    modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/Abc.secondProperty)
@@ -187,6 +189,7 @@ KaKotlinPropertySymbol:
     isExtension: false
     isVal: true
     location: PROPERTY
+    modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/Abc.thirdProperty)
@@ -316,6 +319,7 @@ KaKotlinPropertySymbol:
     isExtension: false
     isVal: true
     location: PROPERTY
+    modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/Abc.bodyProperty)
@@ -574,6 +578,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: firstProperty
       origin: SOURCE_MEMBER_GENERATED
       receiverParameter: null
@@ -598,6 +603,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: secondProperty
       origin: SOURCE_MEMBER_GENERATED
       receiverParameter: null
@@ -622,6 +628,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: thirdProperty
       origin: SOURCE_MEMBER_GENERATED
       receiverParameter: null
@@ -686,6 +693,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: other
       origin: SOURCE_MEMBER_GENERATED
       receiverParameter: null
@@ -797,6 +805,7 @@ KaConstructorSymbol:
   isExtension: false
   isPrimary: true
   location: CLASS
+  modality: FINAL
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -818,6 +827,7 @@ KaConstructorSymbol:
           isExtension: false
           isVal: true
           location: PROPERTY
+          modality: FINAL
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(/Abc.firstProperty)
@@ -906,6 +916,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: firstProperty
       origin: SOURCE
       receiverParameter: null
@@ -930,6 +941,7 @@ KaConstructorSymbol:
           isExtension: false
           isVal: true
           location: PROPERTY
+          modality: FINAL
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(/Abc.secondProperty)
@@ -1018,6 +1030,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: secondProperty
       origin: SOURCE
       receiverParameter: null
@@ -1042,6 +1055,7 @@ KaConstructorSymbol:
           isExtension: false
           isVal: true
           location: PROPERTY
+          modality: FINAL
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(/Abc.thirdProperty)
@@ -1130,6 +1144,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: thirdProperty
       origin: SOURCE
       receiverParameter: null

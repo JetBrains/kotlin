@@ -18,6 +18,7 @@ scopes:
         isExtension: false
         isVal: true
         location: LOCAL
+        modality: FINAL
         name: localInX
         origin: SOURCE
         receiverParameter: null
@@ -46,6 +47,7 @@ scopes:
           isExtension: false
           isVal: true
           location: PROPERTY
+          modality: FINAL
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(<local>/propertyInY)
@@ -174,6 +176,7 @@ scopes:
             isVal: true
             isVararg: false
             location: LOCAL
+            modality: FINAL
             name: other
             origin: LIBRARY
             receiverParameter: null
@@ -255,6 +258,7 @@ scopes:
         isExtension: false
         isPrimary: true
         location: CLASS
+        modality: FINAL
         origin: SOURCE_MEMBER_GENERATED
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -301,6 +305,7 @@ scopes:
         isExtension: false
         isVal: true
         location: LOCAL
+        modality: FINAL
         name: localInZ
         origin: SOURCE
         receiverParameter: null

@@ -2,6 +2,7 @@ KaTypeParameterSymbol:
   annotations: []
   isReified: false
   location: LOCAL
+  modality: FINAL
   name: T
   origin: SOURCE
   upperBounds: [
@@ -21,6 +22,7 @@ KaLocalVariableSymbol:
   isExtension: false
   isVal: true
   location: LOCAL
+  modality: FINAL
   name: x
   origin: SOURCE
   receiverParameter: null

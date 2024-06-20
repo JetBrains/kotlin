@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointe
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.FieldDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 
 internal class KaFe10DescDefaultBackingFieldSymbol(
@@ -38,6 +39,8 @@ internal class KaFe10DescDefaultBackingFieldSymbol(
 
     override val token: KaLifetimeToken
         get() = owningProperty.token
+
+    override val modality: Modality get() = withValidityAssertion { Modality.FINAL }
 
     override val annotations: KaAnnotationList
         get() = withValidityAssertion {

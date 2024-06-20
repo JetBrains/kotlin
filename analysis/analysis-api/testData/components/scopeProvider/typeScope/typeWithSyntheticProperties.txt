@@ -113,6 +113,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: other
       origin: LIBRARY
       receiverParameter: null

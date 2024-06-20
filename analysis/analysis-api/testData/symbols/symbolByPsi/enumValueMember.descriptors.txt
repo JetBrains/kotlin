@@ -9,6 +9,7 @@ KaConstructorSymbol:
   isExtension: false
   isPrimary: true
   location: CLASS
+  modality: FINAL
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -30,6 +31,7 @@ KaConstructorSymbol:
           isExtension: false
           isVal: true
           location: PROPERTY
+          modality: FINAL
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(/Style.value)
@@ -118,6 +120,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: value
       origin: SOURCE
       receiverParameter: null
@@ -145,6 +148,7 @@ KaKotlinPropertySymbol:
     isExtension: false
     isVal: true
     location: PROPERTY
+    modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(<local>/exitAnimation)
@@ -234,6 +238,7 @@ KaEnumEntrySymbol:
   isExtension: false
   isVal: true
   location: CLASS
+  modality: FINAL
   name: SHEET
   origin: SOURCE
   receiverParameter: null
@@ -255,6 +260,7 @@ KaKotlinPropertySymbol:
     isExtension: false
     isVal: true
     location: PROPERTY
+    modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/Style.exitAnimation)

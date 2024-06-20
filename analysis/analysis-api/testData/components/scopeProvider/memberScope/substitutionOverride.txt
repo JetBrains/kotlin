@@ -126,6 +126,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: t
       origin: SUBSTITUTION_OVERRIDE
       receiverParameter: null
@@ -190,6 +191,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: t
       origin: SUBSTITUTION_OVERRIDE
       receiverParameter: null
@@ -256,6 +258,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: tt
       origin: SOURCE
       receiverParameter: null
@@ -325,6 +328,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: tt
       origin: SOURCE
       receiverParameter: null
@@ -394,6 +398,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: t
       origin: SUBSTITUTION_OVERRIDE
       receiverParameter: null
@@ -418,6 +423,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: tt
       origin: SUBSTITUTION_OVERRIDE
       receiverParameter: null
@@ -483,6 +489,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: t
       origin: SUBSTITUTION_OVERRIDE
       receiverParameter: null
@@ -507,6 +514,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: tt
       origin: SUBSTITUTION_OVERRIDE
       receiverParameter: null
@@ -570,6 +578,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: other
       origin: LIBRARY
       receiverParameter: null
@@ -681,6 +690,7 @@ KaConstructorSymbol:
   isExtension: false
   isPrimary: true
   location: CLASS
+  modality: FINAL
   origin: SOURCE_MEMBER_GENERATED
   receiverParameter: null
   returnType: KaUsualClassType:

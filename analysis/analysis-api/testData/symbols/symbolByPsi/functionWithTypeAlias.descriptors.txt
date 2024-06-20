@@ -38,6 +38,7 @@ KaTypeAliasSymbol:
   isActual: false
   isExpect: false
   location: TOP_LEVEL
+  modality: FINAL
   name: TypeAlias
   origin: SOURCE
   typeParameters: []
@@ -88,6 +89,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: t
       origin: SOURCE
       receiverParameter: null
@@ -148,6 +150,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: t
       origin: SOURCE
       receiverParameter: null

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -30,6 +31,8 @@ public abstract class KaTypeParameterSymbol : KaClassifierSymbol(), KaNamedSymbo
     public abstract val upperBounds: List<KaType>
     public abstract val variance: Variance
     public abstract val isReified: Boolean
+
+    final override val modality: Modality get() = withValidityAssertion { Modality.FINAL }
 }
 
 @Deprecated("Use 'KaTypeParameterSymbol' instead", ReplaceWith("KaTypeParameterSymbol"))
@@ -100,7 +103,6 @@ public typealias KtAnonymousObjectSymbol = KaAnonymousObjectSymbol
 
 @OptIn(KaImplementationDetail::class)
 public abstract class KaNamedClassSymbol : KaClassSymbol(),
-    KaSymbolWithModality,
     KaSymbolWithVisibility,
     KaTypeParameterOwnerSymbol,
     KaNamedSymbol,

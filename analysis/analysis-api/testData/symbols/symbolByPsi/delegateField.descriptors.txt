@@ -9,6 +9,7 @@ KaConstructorSymbol:
   isExtension: false
   isPrimary: true
   location: CLASS
+  modality: FINAL
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -30,6 +31,7 @@ KaConstructorSymbol:
           isExtension: false
           isVal: true
           location: PROPERTY
+          modality: FINAL
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(/MyColor.x)
@@ -118,6 +120,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: x
       origin: SOURCE
       receiverParameter: null
@@ -142,6 +145,7 @@ KaConstructorSymbol:
           isExtension: false
           isVal: true
           location: PROPERTY
+          modality: FINAL
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(/MyColor.y)
@@ -230,6 +234,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: y
       origin: SOURCE
       receiverParameter: null
@@ -254,6 +259,7 @@ KaConstructorSymbol:
           isExtension: false
           isVal: true
           location: PROPERTY
+          modality: FINAL
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(/MyColor.z)
@@ -342,6 +348,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: z
       origin: SOURCE
       receiverParameter: null
@@ -397,6 +404,7 @@ KaAnonymousFunctionSymbol:
   hasStableParameterNames: true
   isExtension: false
   location: LOCAL
+  modality: FINAL
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -418,6 +426,7 @@ KaKotlinPropertySymbol:
     isExtension: false
     isVal: true
     location: PROPERTY
+    modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/Some.delegate)
@@ -506,6 +515,7 @@ KaAnonymousFunctionSymbol:
   hasStableParameterNames: true
   isExtension: false
   location: LOCAL
+  modality: FINAL
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -527,6 +537,7 @@ KaKotlinPropertySymbol:
     isExtension: false
     isVal: true
     location: PROPERTY
+    modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/Some.lambda)
@@ -632,6 +643,7 @@ KaKotlinPropertySymbol:
     isExtension: false
     isVal: true
     location: PROPERTY
+    modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/Some.nonLazy)

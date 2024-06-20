@@ -9,6 +9,7 @@ KaConstructorSymbol:
   isExtension: false
   isPrimary: true
   location: CLASS
+  modality: FINAL
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -30,6 +31,7 @@ KaConstructorSymbol:
           isExtension: false
           isVal: true
           location: PROPERTY
+          modality: FINAL
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(/P.x)
@@ -118,6 +120,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: x
       origin: SOURCE
       receiverParameter: null
@@ -142,6 +145,7 @@ KaConstructorSymbol:
           isExtension: false
           isVal: true
           location: PROPERTY
+          modality: FINAL
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(/P.y)
@@ -230,6 +234,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: y
       origin: SOURCE
       receiverParameter: null
@@ -285,6 +290,7 @@ KaLocalVariableSymbol:
   isExtension: false
   isVal: true
   location: LOCAL
+  modality: FINAL
   name: l
   origin: SOURCE
   receiverParameter: null
@@ -304,6 +310,7 @@ KaLocalVariableSymbol:
   isExtension: false
   isVal: true
   location: LOCAL
+  modality: FINAL
   name: r
   origin: SOURCE
   receiverParameter: null

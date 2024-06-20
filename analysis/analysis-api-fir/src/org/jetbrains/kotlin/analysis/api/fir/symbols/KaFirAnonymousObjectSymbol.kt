@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 
 internal open class KaFirAnonymousObjectSymbol(
@@ -29,6 +31,7 @@ internal open class KaFirAnonymousObjectSymbol(
     }
 
     override val superTypes: List<KaType> by cached { firSymbol.superTypesList(builder) }
+    override val modality: Modality get() = withValidityAssertion { firSymbol.modality }
 
     override fun createPointer(): KaSymbolPointer<KaAnonymousObjectSymbol> = withValidityAssertion {
         KaPsiBasedSymbolPointer.createForSymbolFromSource<KaAnonymousObjectSymbol>(this)?.let { return it }

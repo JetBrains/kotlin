@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.contracts.description.ContractProviderKey
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
@@ -50,6 +51,9 @@ internal class KaFe10DescNamedFunctionSymbol private constructor(
 
     override val location: KaSymbolLocation
         get() = withValidityAssertion { descriptor.kaSymbolLocation }
+
+    override val modality: Modality
+        get() = withValidityAssertion { descriptor.kaModality }
 
     override val isSuspend: Boolean
         get() = withValidityAssertion { descriptor.isSuspend }

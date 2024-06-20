@@ -93,6 +93,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: index
       origin: SOURCE
       receiverParameter: null

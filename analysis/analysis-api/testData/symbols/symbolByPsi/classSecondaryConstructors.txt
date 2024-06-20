@@ -9,6 +9,7 @@ KaConstructorSymbol:
   isExtension: false
   isPrimary: true
   location: CLASS
+  modality: FINAL
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -34,6 +35,7 @@ KaConstructorSymbol:
   isExtension: false
   isPrimary: false
   location: CLASS
+  modality: FINAL
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -55,6 +57,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: x
       origin: SOURCE
       receiverParameter: null
@@ -84,6 +87,7 @@ KaConstructorSymbol:
   isExtension: false
   isPrimary: false
   location: CLASS
+  modality: FINAL
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -105,6 +109,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: y
       origin: SOURCE
       receiverParameter: null
@@ -129,6 +134,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: z
       origin: SOURCE
       receiverParameter: null

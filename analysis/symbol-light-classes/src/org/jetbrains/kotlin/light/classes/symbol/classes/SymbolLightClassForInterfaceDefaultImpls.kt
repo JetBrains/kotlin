@@ -10,7 +10,6 @@ import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithModality
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
@@ -71,7 +70,7 @@ internal class SymbolLightClassForInterfaceDefaultImpls(private val containingCl
     context(KaSession)
     @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     override fun acceptCallableSymbol(symbol: KaCallableSymbol): Boolean {
-        return super.acceptCallableSymbol(symbol) && (symbol as? KaSymbolWithModality)?.modality != Modality.ABSTRACT
+        return super.acceptCallableSymbol(symbol) && symbol.modality != Modality.ABSTRACT
     }
 
     override fun getOwnFields(): List<KtLightField> = emptyList()

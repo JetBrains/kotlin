@@ -6,18 +6,13 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base
 
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithModality
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 
 internal interface KaFe10DescMemberSymbol<T : MemberDescriptor> :
-    KaFe10DescSymbol<T>, KaSymbolWithVisibility, KaSymbolWithModality,
+    KaFe10DescSymbol<T>, KaSymbolWithVisibility,
     @Suppress("DEPRECATION") org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithKind {
-    override val modality: Modality
-        get() = withValidityAssertion { descriptor.ktModality }
-
     override val visibility: Visibility
         get() = withValidityAssertion { descriptor.ktVisibility }
 }

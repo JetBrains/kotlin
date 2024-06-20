@@ -205,6 +205,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: element
       origin: LIBRARY
       receiverParameter: null
@@ -255,6 +256,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: elements
       origin: LIBRARY
       receiverParameter: null
@@ -309,6 +311,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: index
       origin: LIBRARY
       receiverParameter: null
@@ -360,6 +363,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: element
       origin: LIBRARY
       receiverParameter: null
@@ -474,6 +478,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: element
       origin: LIBRARY
       receiverParameter: null
@@ -562,6 +567,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: index
       origin: LIBRARY
       receiverParameter: null
@@ -617,6 +623,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: fromIndex
       origin: LIBRARY
       receiverParameter: null
@@ -637,6 +644,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: toIndex
       origin: LIBRARY
       receiverParameter: null
@@ -655,6 +663,7 @@ KaKotlinPropertySymbol:
     isExtension: false
     isVal: true
     location: PROPERTY
+    modality: ABSTRACT
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(kotlin/collections/List.size)
@@ -753,6 +762,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: other
       origin: LIBRARY
       receiverParameter: null

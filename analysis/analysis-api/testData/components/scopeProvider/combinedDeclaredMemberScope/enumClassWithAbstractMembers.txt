@@ -6,6 +6,7 @@ KaEnumEntrySymbol:
   isExtension: false
   isVal: true
   location: CLASS
+  modality: FINAL
   name: A
   origin: SOURCE
   receiverParameter: null
@@ -26,6 +27,7 @@ KaEnumEntrySymbol:
   isExtension: false
   isVal: true
   location: CLASS
+  modality: FINAL
   name: B
   origin: SOURCE
   receiverParameter: null
@@ -47,6 +49,7 @@ KaKotlinPropertySymbol:
     isExtension: false
     isVal: true
     location: PROPERTY
+    modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(test/E.foo)
@@ -249,6 +252,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: value
       origin: SOURCE_MEMBER_GENERATED
       receiverParameter: null
@@ -352,6 +356,7 @@ KaConstructorSymbol:
   isExtension: false
   isPrimary: true
   location: CLASS
+  modality: FINAL
   origin: SOURCE_MEMBER_GENERATED
   receiverParameter: null
   returnType: KaUsualClassType:

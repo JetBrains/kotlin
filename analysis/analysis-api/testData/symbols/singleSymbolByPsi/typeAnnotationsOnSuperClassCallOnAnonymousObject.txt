@@ -5,6 +5,7 @@ KaAnonymousObjectSymbol:
   isActual: false
   isExpect: false
   location: LOCAL
+  modality: FINAL
   name: null
   origin: SOURCE
   superTypes: [

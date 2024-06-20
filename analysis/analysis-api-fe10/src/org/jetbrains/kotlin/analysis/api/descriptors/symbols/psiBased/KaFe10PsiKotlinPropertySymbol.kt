@@ -143,7 +143,7 @@ internal class KaFe10PsiKotlinPropertySymbol(
         }
 
     override val modality: Modality
-        get() = withValidityAssertion { psi.ktModality ?: descriptor?.ktModality ?: Modality.FINAL }
+        get() = withValidityAssertion { psi.ktModality ?: descriptor?.kaModality ?: Modality.FINAL }
 
     override val visibility: Visibility
         get() = withValidityAssertion { psi.ktVisibility ?: descriptor?.ktVisibility ?: Visibilities.Public }

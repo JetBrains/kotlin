@@ -11,6 +11,7 @@ KaValueParameterSymbol:
   isVal: true
   isVararg: false
   location: LOCAL
+  modality: FINAL
   name: name
   origin: JAVA_SOURCE
   receiverParameter: null

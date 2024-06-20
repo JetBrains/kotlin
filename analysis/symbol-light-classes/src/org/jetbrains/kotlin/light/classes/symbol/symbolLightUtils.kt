@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
 import org.jetbrains.kotlin.analysis.api.platform.modification.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithModality
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.*
@@ -60,7 +59,7 @@ internal fun KaSession.mapType(
     return psiType as? PsiClassType
 }
 
-internal fun KaSymbolWithModality.computeSimpleModality(): String? = when (modality) {
+internal fun KaDeclarationSymbol.computeSimpleModality(): String? = when (modality) {
     Modality.SEALED -> PsiModifier.ABSTRACT
     Modality.FINAL -> PsiModifier.FINAL
     Modality.ABSTRACT -> PsiModifier.ABSTRACT
@@ -70,7 +69,7 @@ internal fun KaSymbolWithModality.computeSimpleModality(): String? = when (modal
 context(KaSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaClassSymbol.enumClassModality(): String? {
-    if (memberScope.callables.any { (it as? KaSymbolWithModality)?.modality == Modality.ABSTRACT }) {
+    if (memberScope.callables.any { it.modality == Modality.ABSTRACT }) {
         return PsiModifier.ABSTRACT
     }
 

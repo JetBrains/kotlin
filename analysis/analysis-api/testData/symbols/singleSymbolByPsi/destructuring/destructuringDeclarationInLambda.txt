@@ -5,6 +5,7 @@ KaDestructuringDeclarationSymbol:
     KaLocalVariableSymbol(<local>/b)
   ]
   location: LOCAL
+  modality: FINAL
   origin: SOURCE
   getContainingFileSymbol: KaFileSymbol(destructuringDeclarationInLambda.kt)
   getContainingModule: KaSourceModule "Sources of main"

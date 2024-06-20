@@ -32,6 +32,7 @@ KaTypeParameterSymbol:
   annotations: []
   isReified: false
   location: LOCAL
+  modality: FINAL
   name: J
   origin: SOURCE
   upperBounds: [
@@ -88,6 +89,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: j
       origin: SOURCE
       receiverParameter: null
@@ -109,6 +111,7 @@ KaTypeParameterSymbol:
   annotations: []
   isReified: false
   location: LOCAL
+  modality: FINAL
   name: T
   origin: SOURCE
   upperBounds: []
@@ -160,6 +163,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: j
       origin: SOURCE
       receiverParameter: null

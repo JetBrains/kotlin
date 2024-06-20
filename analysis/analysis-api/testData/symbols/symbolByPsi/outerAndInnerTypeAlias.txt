@@ -2,6 +2,7 @@ KaTypeParameterSymbol:
   annotations: []
   isReified: false
   location: CLASS
+  modality: FINAL
   name: T
   origin: SOURCE
   upperBounds: []
@@ -57,6 +58,7 @@ KaTypeAliasSymbol:
   isActual: false
   isExpect: false
   location: TOP_LEVEL
+  modality: FINAL
   name: TopLevelAlias
   origin: SOURCE
   typeParameters: []
@@ -80,6 +82,7 @@ KaTypeAliasSymbol:
   isActual: false
   isExpect: false
   location: CLASS
+  modality: FINAL
   name: NestedLevelAlias
   origin: SOURCE
   typeParameters: []
@@ -103,6 +106,7 @@ KaTypeAliasSymbol:
   isActual: false
   isExpect: false
   location: LOCAL
+  modality: FINAL
   name: LocalTypeAlias
   origin: SOURCE
   typeParameters: []
@@ -126,6 +130,7 @@ KaTypeAliasSymbol:
   isActual: false
   isExpect: false
   location: CLASS
+  modality: FINAL
   name: NestedLevelAliasInLocalClass
   origin: SOURCE
   typeParameters: []
@@ -149,6 +154,7 @@ KaTypeAliasSymbol:
   isActual: false
   isExpect: false
   location: LOCAL
+  modality: FINAL
   name: LocalTypeAlias
   origin: SOURCE
   typeParameters: []
@@ -172,6 +178,7 @@ KaTypeAliasSymbol:
   isActual: false
   isExpect: false
   location: CLASS
+  modality: FINAL
   name: NestedLevelAliasInLocalClass
   origin: SOURCE
   typeParameters: []

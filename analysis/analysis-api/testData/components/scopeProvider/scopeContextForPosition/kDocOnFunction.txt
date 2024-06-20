@@ -53,6 +53,7 @@ scopes:
             isVal: true
             isVararg: false
             location: LOCAL
+            modality: FINAL
             name: other
             origin: LIBRARY
             receiverParameter: null
@@ -134,6 +135,7 @@ scopes:
         isExtension: false
         isPrimary: true
         location: CLASS
+        modality: FINAL
         origin: SOURCE_MEMBER_GENERATED
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -161,6 +163,7 @@ scopes:
         isVal: true
         isVararg: false
         location: LOCAL
+        modality: FINAL
         name: param1
         origin: SOURCE
         receiverParameter: null
@@ -181,6 +184,7 @@ scopes:
         isVal: true
         isVararg: false
         location: LOCAL
+        modality: FINAL
         name: param2
         origin: SOURCE
         receiverParameter: null
@@ -197,6 +201,7 @@ scopes:
         annotations: []
         isReified: false
         location: LOCAL
+        modality: FINAL
         name: TypeParam
         origin: SOURCE
         upperBounds: []
@@ -340,6 +345,7 @@ scopes:
             isVal: true
             isVararg: false
             location: LOCAL
+            modality: FINAL
             name: param1
             origin: SOURCE
             receiverParameter: null
@@ -360,6 +366,7 @@ scopes:
             isVal: true
             isVararg: false
             location: LOCAL
+            modality: FINAL
             name: param2
             origin: SOURCE
             receiverParameter: null

@@ -136,7 +136,6 @@ public typealias KtVariableSymbol = KaVariableSymbol
 
 public abstract class KaJavaFieldSymbol :
     KaVariableSymbol(),
-    KaSymbolWithModality,
     KaSymbolWithVisibility,
     @Suppress("DEPRECATION") KaSymbolWithKind {
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.CLASS }
@@ -155,7 +154,6 @@ public typealias KtJavaFieldSymbol = KaJavaFieldSymbol
 @OptIn(KaImplementationDetail::class)
 public sealed class KaPropertySymbol : KaVariableSymbol(),
     KaPossibleMemberSymbol,
-    KaSymbolWithModality,
     KaSymbolWithVisibility,
     KaTypeParameterOwnerSymbol,
     @Suppress("DEPRECATION") KaSymbolWithKind {
@@ -228,9 +226,7 @@ public abstract class KaLocalVariableSymbol : KaVariableSymbol(),
     final override val isExtension: Boolean get() = withValidityAssertion { false }
     final override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { null }
     final override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
-
-    final override val location: KaSymbolLocation
-        get() = withValidityAssertion { KaSymbolLocation.LOCAL }
+    final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.LOCAL }
 
     abstract override fun createPointer(): KaSymbolPointer<KaLocalVariableSymbol>
 }

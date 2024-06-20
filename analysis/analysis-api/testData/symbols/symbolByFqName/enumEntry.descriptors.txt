@@ -6,6 +6,7 @@ KaEnumEntrySymbol:
   isExtension: false
   isVal: true
   location: CLASS
+  modality: FINAL
   name: SYNCHRONIZED
   origin: LIBRARY
   receiverParameter: null

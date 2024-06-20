@@ -9,6 +9,7 @@ KaConstructorSymbol:
   isExtension: false
   isPrimary: false
   location: CLASS
+  modality: FINAL
   origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -36,6 +37,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null

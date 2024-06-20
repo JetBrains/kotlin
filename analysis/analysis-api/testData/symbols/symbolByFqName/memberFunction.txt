@@ -39,6 +39,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: index
       origin: LIBRARY
       receiverParameter: null

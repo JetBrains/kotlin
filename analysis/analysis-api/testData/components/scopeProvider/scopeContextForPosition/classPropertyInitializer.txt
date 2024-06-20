@@ -24,6 +24,7 @@ scopes:
         isVal: true
         isVararg: false
         location: LOCAL
+        modality: FINAL
         name: constructorParam
         origin: SOURCE
         receiverParameter: null
@@ -46,6 +47,7 @@ scopes:
           isExtension: false
           isVal: true
           location: PROPERTY
+          modality: FINAL
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(test/Child.constructorProp)
@@ -141,6 +143,7 @@ scopes:
           isExtension: false
           isVal: true
           location: PROPERTY
+          modality: FINAL
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(test/Child.childProp)
@@ -206,6 +209,7 @@ scopes:
           isExtension: false
           isVal: true
           location: PROPERTY
+          modality: FINAL
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(test/Base.value)
@@ -301,6 +305,7 @@ scopes:
           isExtension: false
           isVal: true
           location: PROPERTY
+          modality: FINAL
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(test/Base.baseProp)
@@ -399,6 +404,7 @@ scopes:
             isVal: true
             isVararg: false
             location: LOCAL
+            modality: FINAL
             name: other
             origin: LIBRARY
             receiverParameter: null
@@ -480,6 +486,7 @@ scopes:
         isExtension: false
         isPrimary: true
         location: CLASS
+        modality: FINAL
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -501,6 +508,7 @@ scopes:
                 isExtension: false
                 isVal: true
                 location: PROPERTY
+                modality: FINAL
                 name: field
                 origin: PROPERTY_BACKING_FIELD
                 owningProperty: KaKotlinPropertySymbol(test/Child.constructorProp)
@@ -565,6 +573,7 @@ scopes:
             isVal: true
             isVararg: false
             location: LOCAL
+            modality: FINAL
             name: constructorProp
             origin: SOURCE
             receiverParameter: null
@@ -585,6 +594,7 @@ scopes:
             isVal: true
             isVararg: false
             location: LOCAL
+            modality: FINAL
             name: constructorParam
             origin: SOURCE
             receiverParameter: null

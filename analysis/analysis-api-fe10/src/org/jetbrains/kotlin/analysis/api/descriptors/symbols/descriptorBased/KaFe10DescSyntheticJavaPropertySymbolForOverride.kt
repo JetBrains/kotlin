@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointe
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.load.java.descriptors.JavaForKotlinOverridePropertyDescriptor
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
@@ -40,6 +41,9 @@ internal class KaFe10DescSyntheticJavaPropertySymbolForOverride(
 
     override val isStatic: Boolean
         get() = withValidityAssertion { DescriptorUtils.isStaticDeclaration(descriptor) }
+
+    override val modality: Modality
+        get() = withValidityAssertion { descriptor.kaModality }
 
     override val isVal: Boolean
         get() = withValidityAssertion { !descriptor.isVar }

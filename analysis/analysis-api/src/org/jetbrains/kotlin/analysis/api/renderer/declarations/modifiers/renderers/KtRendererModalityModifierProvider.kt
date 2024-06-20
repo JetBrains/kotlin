@@ -8,28 +8,27 @@ package org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.render
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithModality
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 
 @KaExperimentalApi
 public interface KaRendererModalityModifierProvider {
-    public fun getModalityModifier(analysisSession: KaSession, symbol: KaSymbolWithModality): KtModifierKeywordToken?
+    public fun getModalityModifier(analysisSession: KaSession, symbol: KaDeclarationSymbol): KtModifierKeywordToken?
 
     public fun onlyIf(
-        condition: KaSession.(symbol: KaSymbolWithModality) -> Boolean
+        condition: KaSession.(symbol: KaDeclarationSymbol) -> Boolean
     ): KaRendererModalityModifierProvider {
         val self = this
         return object : KaRendererModalityModifierProvider {
-            override fun getModalityModifier(analysisSession: KaSession, symbol: KaSymbolWithModality): KtModifierKeywordToken? =
+            override fun getModalityModifier(analysisSession: KaSession, symbol: KaDeclarationSymbol): KtModifierKeywordToken? =
                 if (condition(analysisSession, symbol)) self.getModalityModifier(analysisSession, symbol)
                 else null
         }
     }
 
     public object WITH_IMPLICIT_MODALITY : KaRendererModalityModifierProvider {
-        override fun getModalityModifier(analysisSession: KaSession, symbol: KaSymbolWithModality): KtModifierKeywordToken? {
+        override fun getModalityModifier(analysisSession: KaSession, symbol: KaDeclarationSymbol): KtModifierKeywordToken? {
             if (symbol is KaPropertyAccessorSymbol) return null
             return when (symbol.modality) {
                 Modality.SEALED -> KtTokens.SEALED_KEYWORD
@@ -41,14 +40,18 @@ public interface KaRendererModalityModifierProvider {
     }
 
     public object WITHOUT_IMPLICIT_MODALITY : KaRendererModalityModifierProvider {
-        override fun getModalityModifier(analysisSession: KaSession, symbol: KaSymbolWithModality): KtModifierKeywordToken? {
+        override fun getModalityModifier(analysisSession: KaSession, symbol: KaDeclarationSymbol): KtModifierKeywordToken? {
             with(analysisSession) {
                 when (symbol) {
                     is KaNamedFunctionSymbol -> if (symbol.isOverride && symbol.modality != Modality.FINAL) return null
                     is KaPropertySymbol -> if (symbol.isOverride && symbol.modality != Modality.FINAL) return null
+                    is KaClassSymbol -> if (symbol.classKind == KaClassKind.INTERFACE) return null
+                    else -> {}
                 }
-                if ((symbol as? KaClassSymbol)?.classKind == KaClassKind.INTERFACE) return null
-                if ((symbol.containingSymbol as? KaClassSymbol)?.classKind == KaClassKind.INTERFACE) return null
+
+                if (symbol.location == KaSymbolLocation.CLASS) {
+                    if ((symbol.containingSymbol as? KaClassSymbol)?.classKind == KaClassKind.INTERFACE) return null
+                }
 
                 return when (symbol.modality) {
                     Modality.FINAL -> null

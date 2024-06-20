@@ -101,6 +101,7 @@ scopes:
             isVal: true
             isVararg: false
             location: LOCAL
+            modality: FINAL
             name: other
             origin: LIBRARY
             receiverParameter: null
@@ -182,6 +183,7 @@ scopes:
         isExtension: false
         isPrimary: true
         location: CLASS
+        modality: FINAL
         origin: SOURCE_MEMBER_GENERATED
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -280,6 +282,7 @@ scopes:
             isVal: true
             isVararg: false
             location: LOCAL
+            modality: FINAL
             name: other
             origin: LIBRARY
             receiverParameter: null
@@ -361,6 +364,7 @@ scopes:
         isExtension: false
         isPrimary: true
         location: CLASS
+        modality: FINAL
         origin: SOURCE_MEMBER_GENERATED
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -388,6 +392,7 @@ scopes:
         isExtension: false
         isVal: true
         location: LOCAL
+        modality: FINAL
         name: localVarA
         origin: SOURCE
         receiverParameter: null
@@ -414,6 +419,7 @@ scopes:
         isVal: true
         isVararg: false
         location: LOCAL
+        modality: FINAL
         name: lambdaArg
         origin: SOURCE
         receiverParameter: null
@@ -434,6 +440,7 @@ scopes:
         isExtension: false
         isVal: true
         location: LOCAL
+        modality: FINAL
         name: localVarB
         origin: SOURCE
         receiverParameter: null
@@ -490,6 +497,7 @@ scopes:
         isVal: true
         isVararg: false
         location: LOCAL
+        modality: FINAL
         name: param
         origin: SOURCE
         receiverParameter: null
@@ -506,6 +514,7 @@ scopes:
         annotations: []
         isReified: false
         location: LOCAL
+        modality: FINAL
         name: T
         origin: SOURCE
         upperBounds: []
@@ -611,6 +620,7 @@ scopes:
             isVal: true
             isVararg: false
             location: LOCAL
+            modality: FINAL
             name: param
             origin: SOURCE
             receiverParameter: null
@@ -662,6 +672,7 @@ scopes:
             isVal: true
             isVararg: false
             location: LOCAL
+            modality: FINAL
             name: other
             origin: LIBRARY
             receiverParameter: null
@@ -743,6 +754,7 @@ scopes:
         isExtension: false
         isPrimary: true
         location: CLASS
+        modality: FINAL
         origin: SOURCE_MEMBER_GENERATED
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -991,6 +1003,7 @@ scopes:
             isVal: true
             isVararg: false
             location: LOCAL
+            modality: FINAL
             name: f
             origin: SOURCE
             receiverParameter: null
@@ -1051,6 +1064,7 @@ scopes:
             isVal: true
             isVararg: false
             location: LOCAL
+            modality: FINAL
             name: f
             origin: SOURCE
             receiverParameter: null
@@ -1111,6 +1125,7 @@ scopes:
             isVal: true
             isVararg: false
             location: LOCAL
+            modality: FINAL
             name: f
             origin: SOURCE
             receiverParameter: null

@@ -394,8 +394,10 @@ internal val DeclarationDescriptorWithVisibility.ktVisibility: Visibility
         else -> Visibilities.Unknown
     }
 
-internal val MemberDescriptor.ktModality: Modality
+internal val DeclarationDescriptor.kaModality: Modality
     get() {
+        if (this !is MemberDescriptor) return Modality.FINAL
+
         val selfModality = this.modality
 
         if (selfModality == Modality.OPEN) {

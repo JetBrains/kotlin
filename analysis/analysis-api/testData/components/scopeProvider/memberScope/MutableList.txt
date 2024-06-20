@@ -40,6 +40,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: element
       origin: LIBRARY
       receiverParameter: null
@@ -107,6 +108,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: index
       origin: LIBRARY
       receiverParameter: null
@@ -131,6 +133,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: element
       origin: LIBRARY
       receiverParameter: null
@@ -198,6 +201,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: index
       origin: LIBRARY
       receiverParameter: null
@@ -222,6 +226,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: elements
       origin: LIBRARY
       receiverParameter: null
@@ -294,6 +299,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: elements
       origin: LIBRARY
       receiverParameter: null
@@ -460,6 +466,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: index
       origin: LIBRARY
       receiverParameter: null
@@ -528,6 +535,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: element
       origin: LIBRARY
       receiverParameter: null
@@ -595,6 +603,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: elements
       origin: LIBRARY
       receiverParameter: null
@@ -666,6 +675,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: index
       origin: LIBRARY
       receiverParameter: null
@@ -734,6 +744,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: elements
       origin: LIBRARY
       receiverParameter: null
@@ -805,6 +816,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: index
       origin: LIBRARY
       receiverParameter: null
@@ -829,6 +841,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: element
       origin: LIBRARY
       receiverParameter: null
@@ -900,6 +913,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: fromIndex
       origin: LIBRARY
       receiverParameter: null
@@ -924,6 +938,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: toIndex
       origin: LIBRARY
       receiverParameter: null
@@ -1084,6 +1099,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: element
       origin: INTERSECTION_OVERRIDE
       receiverParameter: null
@@ -1198,6 +1214,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: elements
       origin: INTERSECTION_OVERRIDE
       receiverParameter: null
@@ -1269,6 +1286,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: index
       origin: SUBSTITUTION_OVERRIDE
       receiverParameter: null
@@ -1337,6 +1355,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: element
       origin: SUBSTITUTION_OVERRIDE
       receiverParameter: null
@@ -1404,6 +1423,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: element
       origin: SUBSTITUTION_OVERRIDE
       receiverParameter: null
@@ -1471,6 +1491,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: other
       origin: LIBRARY
       receiverParameter: null

@@ -39,6 +39,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: true
       location: LOCAL
+      modality: FINAL
       name: args
       origin: JS_DYNAMIC
       receiverParameter: null

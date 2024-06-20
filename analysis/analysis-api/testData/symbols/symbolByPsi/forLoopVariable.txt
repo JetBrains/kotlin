@@ -5,6 +5,7 @@ KaLocalVariableSymbol:
   isExtension: false
   isVal: true
   location: LOCAL
+  modality: FINAL
   name: loopVariable
   origin: SOURCE
   receiverParameter: null

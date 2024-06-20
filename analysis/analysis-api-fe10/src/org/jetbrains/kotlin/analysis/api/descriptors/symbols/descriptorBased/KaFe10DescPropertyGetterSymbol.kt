@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
 import org.jetbrains.kotlin.descriptors.hasBody
 import org.jetbrains.kotlin.name.CallableId
@@ -37,6 +38,9 @@ internal class KaFe10DescPropertyGetterSymbol(
 
     override val hasBody: Boolean
         get() = withValidityAssertion { descriptor.hasBody() }
+
+    override val modality: Modality
+        get() = withValidityAssertion { descriptor.kaModality }
 
     override val valueParameters: List<KaValueParameterSymbol>
         get() = withValidityAssertion { descriptor.valueParameters.map { KaFe10DescValueParameterSymbol(it, analysisContext) } }

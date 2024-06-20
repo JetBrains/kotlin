@@ -29,6 +29,7 @@ scopes:
         isVal: true
         isVararg: false
         location: LOCAL
+        modality: FINAL
         name: param
         origin: SOURCE
         receiverParameter: null

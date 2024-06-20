@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.name.ClassId
@@ -37,6 +38,9 @@ internal class KaFe10DescTypeAliasSymbol(
 
     override val expandedType: KaType
         get() = withValidityAssertion { descriptor.expandedType.toKtType(analysisContext) }
+
+    override val modality: Modality
+        get() = withValidityAssertion { descriptor.kaModality }
 
     override val location: KaSymbolLocation
         get() = withValidityAssertion { descriptor.kaSymbolLocation }

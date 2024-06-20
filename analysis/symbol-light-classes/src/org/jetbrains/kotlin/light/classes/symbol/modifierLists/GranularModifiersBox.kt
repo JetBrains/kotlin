@@ -11,7 +11,7 @@ import kotlinx.collections.immutable.toPersistentHashMap
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithModality
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.light.classes.symbol.*
@@ -89,7 +89,7 @@ internal class GranularModifiersBox(
 
         internal fun computeSimpleModality(
             ktModule: KaModule,
-            declarationPointer: KaSymbolPointer<KaSymbolWithModality>,
+            declarationPointer: KaSymbolPointer<KaDeclarationSymbol>,
         ): PersistentMap<String, Boolean> {
             val modality = declarationPointer.withSymbol(ktModule) {
                 if ((it as? KaClassSymbol)?.classKind == KaClassKind.ENUM_CLASS) {

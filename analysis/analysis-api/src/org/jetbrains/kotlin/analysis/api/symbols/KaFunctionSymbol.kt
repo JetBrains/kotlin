@@ -60,7 +60,6 @@ public abstract class KaNamedFunctionSymbol : KaFunctionSymbol(),
     KaPossibleMemberSymbol,
     KaPossibleMultiplatformSymbol,
     KaTypeParameterOwnerSymbol,
-    KaSymbolWithModality,
     KaSymbolWithVisibility {
 
     public abstract val isSuspend: Boolean

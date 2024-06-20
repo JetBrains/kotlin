@@ -34,6 +34,7 @@ KaPropertySetterSymbol:
     isVal: true
     isVararg: false
     location: LOCAL
+    modality: FINAL
     name: value
     origin: SOURCE
     receiverParameter: null
@@ -69,6 +70,7 @@ KaPropertySetterSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: value
       origin: SOURCE
       receiverParameter: null

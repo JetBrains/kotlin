@@ -2,6 +2,7 @@ KaTypeParameterSymbol:
   annotations: []
   isReified: false
   location: LOCAL
+  modality: FINAL
   name: TYPE
   origin: SOURCE
   upperBounds: []

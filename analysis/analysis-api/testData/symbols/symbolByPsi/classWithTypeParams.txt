@@ -5,6 +5,7 @@ KaTypeParameterSymbol:
   ]
   isReified: false
   location: CLASS
+  modality: FINAL
   name: T
   origin: SOURCE
   upperBounds: []
@@ -17,6 +18,7 @@ KaTypeParameterSymbol:
   annotations: []
   isReified: false
   location: CLASS
+  modality: FINAL
   name: R
   origin: SOURCE
   upperBounds: []

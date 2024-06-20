@@ -24,6 +24,7 @@ KaTypeAliasSymbol:
   isActual: false
   isExpect: false
   location: TOP_LEVEL
+  modality: FINAL
   name: DeepRecursiveFunctionBlock
   origin: LIBRARY
   typeParameters: []

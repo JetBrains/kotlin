@@ -265,6 +265,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -329,6 +330,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -393,6 +395,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -417,6 +420,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -481,6 +485,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -505,6 +510,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -569,6 +575,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -592,6 +599,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -656,6 +664,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -680,6 +689,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -704,6 +714,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p2
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -727,6 +738,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p3
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -794,6 +806,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -818,6 +831,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -842,6 +856,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p2
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -865,6 +880,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p3
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -928,6 +944,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -990,6 +1007,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -1091,6 +1109,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -1155,6 +1174,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -1218,6 +1238,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -1281,6 +1302,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -1344,6 +1366,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -1407,6 +1430,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -1470,6 +1494,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -1494,6 +1519,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -1517,6 +1543,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p2
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -1541,6 +1568,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p3
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -1605,6 +1633,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -1629,6 +1658,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -1653,6 +1683,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p2
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -1676,6 +1707,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p3
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -1700,6 +1732,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p4
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -1764,6 +1797,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -1787,6 +1821,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -1851,6 +1886,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -1914,6 +1950,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -2016,6 +2053,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -2080,6 +2118,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -2104,6 +2143,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -2168,6 +2208,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -2231,6 +2272,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -2254,6 +2296,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -2318,6 +2361,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -2342,6 +2386,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -2406,6 +2451,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -2470,6 +2516,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -2494,6 +2541,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -2558,6 +2606,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -2621,6 +2670,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -2644,6 +2694,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -2708,6 +2759,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -2732,6 +2784,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -2795,6 +2848,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -2858,6 +2912,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -2882,6 +2937,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -2946,6 +3002,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -2970,6 +3027,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -3033,6 +3091,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -3095,6 +3154,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -3119,6 +3179,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -3182,6 +3243,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -3205,6 +3267,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -3268,6 +3331,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -3331,6 +3395,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -3393,6 +3458,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -3416,6 +3482,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -3478,6 +3545,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -3501,6 +3569,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -3563,6 +3632,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -3586,6 +3656,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -3649,6 +3720,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -3711,6 +3783,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -3811,6 +3884,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -4065,6 +4139,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -4140,6 +4215,7 @@ KaConstructorSymbol:
   isExtension: false
   isPrimary: false
   location: CLASS
+  modality: FINAL
   origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -4165,6 +4241,7 @@ KaConstructorSymbol:
   isExtension: false
   isPrimary: false
   location: CLASS
+  modality: FINAL
   origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -4186,6 +4263,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -4214,6 +4292,7 @@ KaConstructorSymbol:
   isExtension: false
   isPrimary: false
   location: CLASS
+  modality: FINAL
   origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -4235,6 +4314,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -4263,6 +4343,7 @@ KaConstructorSymbol:
   isExtension: false
   isPrimary: false
   location: CLASS
+  modality: FINAL
   origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -4284,6 +4365,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -4307,6 +4389,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -4331,6 +4414,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p2
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -4360,6 +4444,7 @@ KaConstructorSymbol:
   isExtension: false
   isPrimary: false
   location: CLASS
+  modality: FINAL
   origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -4381,6 +4466,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -4404,6 +4490,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -4428,6 +4515,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p2
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -4460,6 +4548,7 @@ KaConstructorSymbol:
   isExtension: false
   isPrimary: false
   location: CLASS
+  modality: FINAL
   origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -4481,6 +4570,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -4504,6 +4594,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -4528,6 +4619,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p2
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -4552,6 +4644,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p3
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -4584,6 +4677,7 @@ KaConstructorSymbol:
   isExtension: false
   isPrimary: false
   location: CLASS
+  modality: FINAL
   origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -4605,6 +4699,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -4628,6 +4723,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -4657,6 +4753,7 @@ KaConstructorSymbol:
   isExtension: false
   isPrimary: false
   location: CLASS
+  modality: FINAL
   origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -4678,6 +4775,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -4701,6 +4799,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -4725,6 +4824,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p2
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -4749,6 +4849,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p3
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -4777,6 +4878,7 @@ KaConstructorSymbol:
   isExtension: false
   isPrimary: false
   location: CLASS
+  modality: FINAL
   origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -4798,6 +4900,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -4821,6 +4924,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -4845,6 +4949,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p2
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -4869,6 +4974,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p3
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -4897,6 +5003,7 @@ KaConstructorSymbol:
   isExtension: false
   isPrimary: false
   location: CLASS
+  modality: FINAL
   origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -4918,6 +5025,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -4941,6 +5049,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -4969,6 +5078,7 @@ KaConstructorSymbol:
   isExtension: false
   isPrimary: false
   location: CLASS
+  modality: FINAL
   origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -4990,6 +5100,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -5013,6 +5124,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -5041,6 +5153,7 @@ KaConstructorSymbol:
   isExtension: false
   isPrimary: false
   location: CLASS
+  modality: FINAL
   origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -5062,6 +5175,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -5085,6 +5199,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -5109,6 +5224,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p2
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -5138,6 +5254,7 @@ KaConstructorSymbol:
   isExtension: false
   isPrimary: false
   location: CLASS
+  modality: FINAL
   origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -5159,6 +5276,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -5187,6 +5305,7 @@ KaConstructorSymbol:
   isExtension: false
   isPrimary: false
   location: CLASS
+  modality: FINAL
   origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -5208,6 +5327,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -5236,6 +5356,7 @@ KaConstructorSymbol:
   isExtension: false
   isPrimary: false
   location: CLASS
+  modality: FINAL
   origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -5257,6 +5378,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -5285,6 +5407,7 @@ KaConstructorSymbol:
   isExtension: false
   isPrimary: false
   location: CLASS
+  modality: FINAL
   origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -5306,6 +5429,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -5329,6 +5453,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -5361,6 +5486,7 @@ KaConstructorSymbol:
   isExtension: false
   isPrimary: false
   location: CLASS
+  modality: FINAL
   origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -5382,6 +5508,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p0
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -5406,6 +5533,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p1
       origin: JAVA_LIBRARY
       receiverParameter: null
@@ -5430,6 +5558,7 @@ KaConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: p2
       origin: JAVA_LIBRARY
       receiverParameter: null

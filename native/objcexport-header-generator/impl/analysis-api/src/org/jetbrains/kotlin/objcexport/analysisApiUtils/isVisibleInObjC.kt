@@ -79,7 +79,7 @@ context(KaSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaSymbol.isSealedClassConstructor(): Boolean {
     if (this !is KaConstructorSymbol) return false
-    val containingSymbol = this.containingSymbol as? KaSymbolWithModality ?: return false
+    val containingSymbol = this.containingSymbol ?: return false
     return containingSymbol.modality == Modality.SEALED
 }
 

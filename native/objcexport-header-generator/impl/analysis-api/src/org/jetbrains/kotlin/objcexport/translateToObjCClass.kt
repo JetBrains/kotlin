@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.objcexport
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithModality
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.descriptors.Modality
@@ -22,7 +21,7 @@ fun KaClassSymbol.translateToObjCClass(): ObjCClass? {
     if (!isVisibleInObjC()) return null
 
     val enumKind = this.classKind == KaClassKind.ENUM_CLASS
-    val final = if (this is KaSymbolWithModality) this.modality == Modality.FINAL else false
+    val final = this.modality == Modality.FINAL
 
     val name = getObjCClassOrProtocolName()
     val attributes = (if (enumKind || final) listOf(OBJC_SUBCLASSING_RESTRICTED) else emptyList()) + name.toNameAttributes()

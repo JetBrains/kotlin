@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KaFe10Symbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.kaModality
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.createDynamicType
 
@@ -31,6 +33,9 @@ internal class KaFe10DynamicFunctionDescValueParameterSymbol(
 
     override val token: KaLifetimeToken
         get() = owner.token
+
+    override val modality: Modality
+        get() = withValidityAssertion { Modality.FINAL }
 
     override val origin: KaSymbolOrigin
         get() = withValidityAssertion { KaSymbolOrigin.JS_DYNAMIC }

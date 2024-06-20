@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.symbols
 
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.descriptors.Modality
 
 /**
  *  A [KaSymbol] created from a [destructuring declaration][org.jetbrains.kotlin.psi.KtDestructuringDeclaration] (possibly from a lambda parameter).
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 public abstract class KaDestructuringDeclarationSymbol : KaDeclarationSymbol,
     @Suppress("DEPRECATION") org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithKind {
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.LOCAL }
+    final override val modality: Modality get() = withValidityAssertion { Modality.FINAL }
 
     /**
      * A list of [KaVariableSymbol]s which were created from this destructuring declaration.

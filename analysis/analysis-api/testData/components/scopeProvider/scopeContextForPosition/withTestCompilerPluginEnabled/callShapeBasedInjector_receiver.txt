@@ -20,6 +20,7 @@ scopes:
           isExtension: false
           isVal: true
           location: PROPERTY
+          modality: FINAL
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(<local>/column)
@@ -144,6 +145,7 @@ scopes:
             isVal: true
             isVararg: false
             location: LOCAL
+            modality: FINAL
             name: other
             origin: LIBRARY
             receiverParameter: null
@@ -225,6 +227,7 @@ scopes:
         isExtension: false
         isPrimary: true
         location: CLASS
+        modality: FINAL
         origin: PLUGIN
         receiverParameter: null
         returnType: KaUsualClassType:
@@ -258,6 +261,7 @@ scopes:
         isVal: true
         isVararg: false
         location: LOCAL
+        modality: FINAL
         name: df
         origin: SOURCE
         receiverParameter: null
@@ -420,6 +424,7 @@ scopes:
             isVal: true
             isVararg: false
             location: LOCAL
+            modality: FINAL
             name: columnName
             origin: SOURCE
             receiverParameter: null
@@ -440,6 +445,7 @@ scopes:
             isVal: true
             isVararg: false
             location: LOCAL
+            modality: FINAL
             name: expression
             origin: SOURCE
             receiverParameter: null
@@ -495,6 +501,7 @@ scopes:
             isVal: true
             isVararg: false
             location: LOCAL
+            modality: FINAL
             name: df
             origin: SOURCE
             receiverParameter: null

@@ -100,6 +100,7 @@ KaSyntheticJavaPropertySymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: value
       origin: SOURCE
       receiverParameter: null
@@ -144,6 +145,7 @@ KaSyntheticJavaPropertySymbol:
         isVal: true
         isVararg: false
         location: LOCAL
+        modality: FINAL
         name: value
         origin: SOURCE
         receiverParameter: null

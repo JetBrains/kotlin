@@ -23,6 +23,7 @@ KaNamedFunctionSymbol:
               isVal: true
               isVararg: false
               location: LOCAL
+              modality: FINAL
               name: block
               origin: SOURCE
               receiverParameter: null
@@ -78,6 +79,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: block
       origin: SOURCE
       receiverParameter: null

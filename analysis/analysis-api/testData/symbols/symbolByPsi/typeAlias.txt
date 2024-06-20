@@ -2,6 +2,7 @@ KaTypeParameterSymbol:
   annotations: []
   isReified: false
   location: CLASS
+  modality: FINAL
   name: T
   origin: SOURCE
   upperBounds: []
@@ -46,6 +47,7 @@ KaTypeParameterSymbol:
   annotations: []
   isReified: false
   location: LOCAL
+  modality: FINAL
   name: Z
   origin: SOURCE
   upperBounds: []
@@ -68,6 +70,7 @@ KaTypeAliasSymbol:
   isActual: false
   isExpect: false
   location: TOP_LEVEL
+  modality: FINAL
   name: Y
   origin: SOURCE
   typeParameters: [

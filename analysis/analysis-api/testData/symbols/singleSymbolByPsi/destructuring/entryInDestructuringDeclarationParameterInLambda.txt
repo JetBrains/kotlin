@@ -5,6 +5,7 @@ KaLocalVariableSymbol:
   isExtension: false
   isVal: true
   location: LOCAL
+  modality: FINAL
   name: a
   origin: SOURCE
   receiverParameter: null

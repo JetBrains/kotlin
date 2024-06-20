@@ -105,6 +105,7 @@ callables: 5
         isVal: true
         isVararg: false
         location: LOCAL
+        modality: FINAL
         name: foo
         origin: SOURCE
         receiverParameter: null
@@ -169,6 +170,7 @@ callables: 5
       isExtension: false
       isVal: true
       location: PROPERTY
+      modality: FINAL
       name: field
       origin: PROPERTY_BACKING_FIELD
       owningProperty: KaKotlinPropertySymbol(generated/genTopLevelVal1)
@@ -238,6 +240,7 @@ callables: 5
       isExtension: false
       isVal: true
       location: PROPERTY
+      modality: FINAL
       name: field
       origin: PROPERTY_BACKING_FIELD
       owningProperty: KaKotlinPropertySymbol(generated/genTopLevelVar1)
@@ -317,6 +320,7 @@ callables: 5
         isVal: true
         isVararg: false
         location: LOCAL
+        modality: FINAL
         name: value
         origin: SOURCE
         receiverParameter: null
@@ -343,6 +347,7 @@ callables: 5
           isVal: true
           isVararg: false
           location: LOCAL
+          modality: FINAL
           name: value
           origin: SOURCE
           receiverParameter: null
@@ -367,6 +372,7 @@ callables: 5
       isExtension: false
       isVal: true
       location: PROPERTY
+      modality: FINAL
       name: field
       origin: PROPERTY_BACKING_FIELD
       owningProperty: KaKotlinPropertySymbol(generated/genExtensionVal1)

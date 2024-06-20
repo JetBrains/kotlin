@@ -5,6 +5,7 @@ KaLocalVariableSymbol:
   isExtension: false
   isVal: true
   location: LOCAL
+  modality: FINAL
   name: b
   origin: SOURCE
   receiverParameter: null
@@ -24,6 +25,7 @@ KaAnonymousFunctionSymbol:
   hasStableParameterNames: true
   isExtension: false
   location: LOCAL
+  modality: FINAL
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -44,6 +46,7 @@ KaAnonymousFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: a
       origin: SOURCE
       receiverParameter: null
@@ -68,6 +71,7 @@ KaLocalVariableSymbol:
   isExtension: false
   isVal: true
   location: LOCAL
+  modality: FINAL
   name: lam1
   origin: SOURCE
   receiverParameter: null
@@ -96,6 +100,7 @@ KaLocalVariableSymbol:
   isExtension: false
   isVal: true
   location: LOCAL
+  modality: FINAL
   name: c
   origin: SOURCE
   receiverParameter: null
@@ -115,6 +120,7 @@ KaAnonymousFunctionSymbol:
   hasStableParameterNames: true
   isExtension: false
   location: LOCAL
+  modality: FINAL
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -135,6 +141,7 @@ KaAnonymousFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: a
       origin: SOURCE
       receiverParameter: null
@@ -159,6 +166,7 @@ KaLocalVariableSymbol:
   isExtension: false
   isVal: true
   location: LOCAL
+  modality: FINAL
   name: lam2
   origin: SOURCE
   receiverParameter: null
@@ -187,6 +195,7 @@ KaLocalVariableSymbol:
   isExtension: false
   isVal: true
   location: LOCAL
+  modality: FINAL
   name: b
   origin: SOURCE
   receiverParameter: null
@@ -206,6 +215,7 @@ KaAnonymousFunctionSymbol:
   hasStableParameterNames: true
   isExtension: false
   location: LOCAL
+  modality: FINAL
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -226,6 +236,7 @@ KaAnonymousFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: it
       origin: SOURCE_MEMBER_GENERATED
       receiverParameter: null
@@ -320,6 +331,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: lmbd
       origin: SOURCE
       receiverParameter: null

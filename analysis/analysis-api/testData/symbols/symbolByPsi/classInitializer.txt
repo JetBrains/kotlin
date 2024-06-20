@@ -7,6 +7,7 @@ KaKotlinPropertySymbol:
     isExtension: false
     isVal: true
     location: PROPERTY
+    modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/A.i)
@@ -91,6 +92,7 @@ KaKotlinPropertySymbol:
 KaClassInitializerSymbol:
   annotations: []
   location: CLASS
+  modality: FINAL
   origin: SOURCE
   getContainingFileSymbol: KaFileSymbol(classInitializer.kt)
   getContainingModule: KaSourceModule "Sources of main"

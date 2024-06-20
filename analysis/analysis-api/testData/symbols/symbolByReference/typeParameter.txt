@@ -5,6 +5,7 @@ KaTypeParameterSymbol:
   ]
   isReified: false
   location: LOCAL
+  modality: FINAL
   name: T
   origin: SOURCE
   upperBounds: []

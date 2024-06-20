@@ -40,6 +40,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: true
       location: LOCAL
+      modality: FINAL
       name: a
       origin: SOURCE
       receiverParameter: null
@@ -100,6 +101,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: true
       location: LOCAL
+      modality: FINAL
       name: b
       origin: SOURCE
       receiverParameter: null
@@ -160,6 +162,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: true
       location: LOCAL
+      modality: FINAL
       name: c
       origin: SOURCE
       receiverParameter: null
@@ -220,6 +223,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: true
       location: LOCAL
+      modality: FINAL
       name: d
       origin: SOURCE
       receiverParameter: null

@@ -6,6 +6,7 @@ KaEnumEntrySymbol:
   isExtension: false
   isVal: true
   location: CLASS
+  modality: FINAL
   name: Y
   origin: SOURCE
   receiverParameter: null
@@ -26,6 +27,7 @@ KaEnumEntrySymbol:
   isExtension: false
   isVal: true
   location: CLASS
+  modality: FINAL
   name: Z
   origin: SOURCE
   receiverParameter: null

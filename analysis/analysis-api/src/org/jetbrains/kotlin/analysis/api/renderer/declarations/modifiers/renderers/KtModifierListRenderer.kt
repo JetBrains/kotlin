@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.KaDeclarationModifiersRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithModality
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
@@ -48,9 +47,7 @@ public interface KaModifierListRenderer {
                     declarationModifiersRenderer.visibilityProvider.getVisibilityModifier(analysisSession, symbol)?.let(::add)
                 }
 
-                if (symbol is KaSymbolWithModality) {
-                    declarationModifiersRenderer.modalityProvider.getModalityModifier(analysisSession, symbol)?.let(::add)
-                }
+                declarationModifiersRenderer.modalityProvider.getModalityModifier(analysisSession, symbol)?.let(::add)
 
                 addAll(declarationModifiersRenderer.otherModifiersProvider.getOtherModifiers(analysisSession, symbol))
             }

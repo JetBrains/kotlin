@@ -40,6 +40,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: true
       location: LOCAL
+      modality: FINAL
       name: ints
       origin: SOURCE
       receiverParameter: null

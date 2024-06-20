@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 
 public sealed class KaPropertyAccessorSymbol : KaFunctionSymbol(),
     KaPossibleMemberSymbol,
-    KaSymbolWithModality,
     KaSymbolWithVisibility,
     @Suppress("DEPRECATION") KaSymbolWithKind {
 

@@ -27,6 +27,7 @@ KaNamedFunctionSymbol:
                   isVal: true
                   isVararg: false
                   location: LOCAL
+                  modality: FINAL
                   name: foo
                   origin: SOURCE
                   receiverParameter: null
@@ -77,6 +78,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: foo
       origin: SOURCE
       receiverParameter: null

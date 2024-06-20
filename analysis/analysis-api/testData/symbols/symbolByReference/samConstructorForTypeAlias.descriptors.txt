@@ -5,6 +5,7 @@ KaSamConstructorSymbol:
   hasStableParameterNames: true
   isExtension: false
   location: TOP_LEVEL
+  modality: FINAL
   name: MyInterface
   origin: SAM_CONSTRUCTOR
   receiverParameter: null
@@ -27,6 +28,7 @@ KaSamConstructorSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: function
       origin: SOURCE
       receiverParameter: null

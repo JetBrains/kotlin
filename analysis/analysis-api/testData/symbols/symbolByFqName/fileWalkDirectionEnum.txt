@@ -46,6 +46,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: false
       location: LOCAL
+      modality: FINAL
       name: element
       origin: LIBRARY
       receiverParameter: null
@@ -155,6 +156,7 @@ KaNamedFunctionSymbol:
       isVal: true
       isVararg: true
       location: LOCAL
+      modality: FINAL
       name: elements
       origin: LIBRARY
       receiverParameter: null
