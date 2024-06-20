@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleState
 import org.jetbrains.kotlin.analysis.api.platform.modification.isGlobalLevel
 import org.jetbrains.kotlin.analysis.api.platform.modification.isModuleLevel
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleStructure
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleStructure
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
 

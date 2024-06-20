@@ -11,7 +11,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiEnumConstant
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalModificationService
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.AssertionsService

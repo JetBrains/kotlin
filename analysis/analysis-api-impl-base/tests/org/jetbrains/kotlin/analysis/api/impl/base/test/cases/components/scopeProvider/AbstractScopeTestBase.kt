@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSy
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolsData
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices

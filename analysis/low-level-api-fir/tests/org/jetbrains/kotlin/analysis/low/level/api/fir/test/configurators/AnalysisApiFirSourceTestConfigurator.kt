@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiLibraryBaseTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtSourceTestModuleFactory
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleFactory
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtSourceTestModuleFactory
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.DependencyKindModuleStructureTransformer
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.configureLibraryCompilationSupport
 import org.jetbrains.kotlin.test.TestInfrastructureInternals

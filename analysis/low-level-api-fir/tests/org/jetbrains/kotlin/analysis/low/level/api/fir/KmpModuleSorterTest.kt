@@ -9,7 +9,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.KmpModuleSorter
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.test.framework.TestWithMockProject
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KaSourceModuleImpl
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KaSourceModuleImpl
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.junit.jupiter.api.Test

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaNotUnderContentRootModule
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.KotlinStaticProjectStructureProvider
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleStructure
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleStructure
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.psi.psiUtil.contains
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol

@@ -14,11 +14,11 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.Analys
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.FirStandaloneServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependenciesOfType
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KaScriptModuleByCompilerConfiguration
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KaSourceModuleByCompilerConfiguration
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleStructure
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KaScriptModuleByCompilerConfiguration
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KaSourceModuleByCompilerConfiguration
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleStructure
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.TestModuleStructureFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiBinaryLibraryIndexingMode
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiIndexingConfiguration
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator

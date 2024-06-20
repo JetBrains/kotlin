@@ -20,12 +20,12 @@ import org.jetbrains.kotlin.test.model.TestModule
  */
 enum class TestModuleKind(val suffix: String) {
     /**
-     * @see org.jetbrains.kotlin.analysis.test.framework.project.structure.KtSourceTestModuleFactory
+     * @see org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtSourceTestModuleFactory
      */
     Source("Source"),
 
     /**
-     * @see org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibraryBinaryTestModuleFactory
+     * @see org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtLibraryBinaryTestModuleFactory
      */
     LibraryBinary("LibraryBinary"),
 
@@ -37,22 +37,22 @@ enum class TestModuleKind(val suffix: String) {
      * module. See [AbstractAnalysisApiBasedTest][org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest] for an
      * overview of "main module" and "main file".
      *
-     * @see org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibraryBinaryDecompiledTestModuleFactory
+     * @see org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtLibraryBinaryDecompiledTestModuleFactory
      */
     LibraryBinaryDecompiled("LibraryBinaryDecompiled"),
 
     /**
-     * @see org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibrarySourceTestModuleFactory
+     * @see org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtLibrarySourceTestModuleFactory
      */
     LibrarySource("LibrarySource"),
 
     /**
-     * @see org.jetbrains.kotlin.analysis.test.framework.project.structure.KtScriptTestModuleFactory
+     * @see org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtScriptTestModuleFactory
      */
     ScriptSource("ScriptSource"),
 
     /**
-     * @see org.jetbrains.kotlin.analysis.test.framework.project.structure.KtCodeFragmentTestModuleFactory
+     * @see org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtCodeFragmentTestModuleFactory
      */
     CodeFragment("CodeFragment"),
 

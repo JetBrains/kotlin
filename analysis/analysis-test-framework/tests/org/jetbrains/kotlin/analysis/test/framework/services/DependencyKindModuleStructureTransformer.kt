@@ -18,10 +18,10 @@ import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.impl.TestModuleStructureImpl
 
 /**
- * This transformer is required for correct work of [getKtModuleFactoryForTestModule][org.jetbrains.kotlin.analysis.test.framework.project.structure.getKtModuleFactoryForTestModule]
+ * This transformer is required for correct work of [getKtModuleFactoryForTestModule][org.jetbrains.kotlin.analysis.test.framework.projectStructure.getKtModuleFactoryForTestModule]
  * to provide correct [DependencyKind] for dependencies
  *
- * @see org.jetbrains.kotlin.analysis.test.framework.project.structure.getKtModuleFactoryForTestModule
+ * @see org.jetbrains.kotlin.analysis.test.framework.projectStructure.getKtModuleFactoryForTestModule
  */
 @OptIn(TestInfrastructureInternals::class)
 object DependencyKindModuleStructureTransformer : ModuleStructureTransformer() {

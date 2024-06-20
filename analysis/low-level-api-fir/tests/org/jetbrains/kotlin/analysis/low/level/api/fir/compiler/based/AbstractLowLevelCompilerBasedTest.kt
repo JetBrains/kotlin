@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.FirLowLevelComp
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.test.framework.AbstractCompilerBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.base.registerAnalysisApiBaseTestServices
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleByCompilerConfiguration
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructure
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtModuleByCompilerConfiguration
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
