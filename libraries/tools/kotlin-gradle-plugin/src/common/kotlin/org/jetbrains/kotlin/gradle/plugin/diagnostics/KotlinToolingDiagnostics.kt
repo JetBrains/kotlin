@@ -979,6 +979,15 @@ object KotlinToolingDiagnostics {
                         "Please remove '${PropertiesProvider.PropertyNames.KOTLIN_ABI_SNAPSHOT}' usages from 'gradle.properties' file.\n"
             )
     }
+
+    object DeprecatedJvmHistoryBasedIncrementalCompilationDiagnostic : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(): ToolingDiagnostic =
+            build(
+                "History based incremental compilation approach for JVM platform is deprecated and will be removed" +
+                        " soon in favor of approach based on ABI snapshots.\n" +
+                        "Please remove '${PropertiesProvider.PropertyNames.KOTLIN_INCREMENTAL_USE_CLASSPATH_SNAPSHOT}=false' from 'gradle.properties' file."
+            )
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {

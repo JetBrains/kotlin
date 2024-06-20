@@ -158,7 +158,14 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty("kotlin.incremental.usePreciseJavaTracking")
 
     val useClasspathSnapshot: Boolean
-        get() = booleanProperty(KOTLIN_INCREMENTAL_USE_CLASSPATH_SNAPSHOT) ?: true
+        get() {
+            val propValue = booleanProperty(KOTLIN_INCREMENTAL_USE_CLASSPATH_SNAPSHOT)
+            if (propValue != null) project.reportDiagnosticOncePerBuild(
+                KotlinToolingDiagnostics.DeprecatedJvmHistoryBasedIncrementalCompilationDiagnostic()
+            )
+
+            return propValue ?: true
+        }
 
     /**
      * Enable exposing secondary 'classes' variant for JVM compilations.
