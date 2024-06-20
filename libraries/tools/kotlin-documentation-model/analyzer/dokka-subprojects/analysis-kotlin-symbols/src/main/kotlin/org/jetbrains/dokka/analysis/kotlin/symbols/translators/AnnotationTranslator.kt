@@ -59,7 +59,7 @@ internal class AnnotationTranslator {
     private fun KaSession.mustBeDocumented(annotationApplication: KaAnnotationApplication): Boolean {
         if (annotationApplication.isNoExistedInSource()) return false
         val annotationClass = getClassOrObjectSymbolByClassId(annotationApplication.classId ?: return false)
-        return annotationClass?.hasAnnotation(mustBeDocumentedAnnotation)
+        return annotationClass?.let { mustBeDocumentedAnnotation in it.annotations }
             ?: false
     }
 
@@ -67,11 +67,11 @@ internal class AnnotationTranslator {
         Annotations.Annotation(
             dri = annotationApplication.classId?.createDRI()
                 ?: DRI(packageName = "", classNames = ERROR_CLASS_NAME), // classId might be null on a non-existing annotation call,
-            params = if (annotationApplication is KaAnnotationApplicationWithArgumentsInfo) annotationApplication.arguments.associate {
+            params = annotationApplication.arguments.associate {
                 it.name.asString() to toDokkaAnnotationValue(
                     it.expression
                 )
-            } else emptyMap(),
+            },
             mustBeDocumented = mustBeDocumented(annotationApplication),
             scope = annotationApplication.useSiteTarget?.toDokkaAnnotationScope() ?: Annotations.AnnotationScope.DIRECT
         )
@@ -112,7 +112,7 @@ internal class AnnotationTranslator {
                     type.classId.createDRI()
                 )
                 else -> ClassValue(
-                    type.asStringForDebugging(),
+                    type.toString(),
                     DRI(packageName = "", classNames = ERROR_CLASS_NAME)
                 )
             }
@@ -140,7 +140,7 @@ internal class AnnotationTranslator {
          * @see ParameterName
          */
         internal fun KaAnnotated.getPresentableName(): String? =
-            this.annotationsByClassId(parameterNameAnnotation)
+            this.annotations[parameterNameAnnotation]
                 .firstOrNull()?.arguments?.firstOrNull { it.name == Name.identifier("name") }?.expression?.let { it as? KaConstantAnnotationValue }
                 ?.let { it.constantValue.value.toString() }
     }
