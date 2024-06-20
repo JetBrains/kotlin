@@ -20,12 +20,12 @@ Tower Data Context:
             Classifiers:
                 FirRegularClassSymbol public final? class ScriptClass : R|kotlin/Any|
             Functions
-                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public? final? fun foo(i: Int, action: ( (Int) -> Unit )): R|kotlin/Unit|
                 FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
                 FirNamedFunctionSymbol public? final? fun unusedScriptFunction(p: String): <implicit>
             Properties:
-                FirPropertySymbol public final val $$result: R|kotlin/Unit|
-                    public get(): R|kotlin/Unit|
+                FirPropertySymbol public final val $$result: <implicit>
+                    public get(): <implicit>
     Element 9
         Scope: FirLocalScope
     Element 10
@@ -38,9 +38,9 @@ Tower Data Context:
                 public final fun scriptFunction(): R|kotlin/Int|
                 public? final? fun unusedScriptFunction(p: String): <implicit>
                 init
-                public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
-                public final val $$result: R|kotlin/Unit|
-                    public get(): R|kotlin/Unit|
+                public? final? fun foo(i: Int, action: ( (Int) -> Unit )): R|kotlin/Unit|
+                public final val $$result: <implicit>
+                    public get(): <implicit>
                 Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
     Element 11
         Scope: FirLocalScope
