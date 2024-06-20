@@ -29,16 +29,8 @@ class ResolvableMetadataConfigurationTest : SourceSetDependenciesResolution() {
     @Test
     fun `test - resolves consistent in project`() {
         val project = buildProject {
-            enableDefaultStdlibDependency(true)
-            enableDependencyVerification(false)
+            configureRepositoriesForTests()
             applyMultiplatformPlugin()
-
-            repositories.mavenLocal { repo ->
-                repo.mavenContent { content ->
-                    content.includeGroupByRegex(".*jetbrains.*")
-                }
-            }
-            repositories.mavenCentralCacheRedirector()
         }
 
         val kotlin = project.multiplatformExtension
