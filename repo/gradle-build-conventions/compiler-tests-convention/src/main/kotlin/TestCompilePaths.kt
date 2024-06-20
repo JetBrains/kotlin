@@ -13,7 +13,7 @@ object TestCompilePaths {
     const val KOTLIN_COMMON_STDLIB_PATH: String = "kotlin.common.stdlib.path"
     const val KOTLIN_ANNOTATIONS_PATH: String = "kotlin.annotations.path"
     const val KOTLIN_JS_STDLIB_KLIB_PATH: String = "kotlin.js.stdlib.klib.path"
-    const val KOTLIN_JS_REDUCED_STDLIB_PATH: String = "kotlin.js.reduced.stdlib.path"
+//    const val KOTLIN_JS_REDUCED_STDLIB_PATH: String = "kotlin.js.reduced.stdlib.path"
     const val KOTLIN_JS_KOTLIN_TEST_KLIB_PATH: String = "kotlin.js.kotlin.test.klib.path"
     const val KOTLIN_SCRIPTING_PLUGIN_CLASSPATH = "kotlin.scriptingPlugin.classpath"
 }

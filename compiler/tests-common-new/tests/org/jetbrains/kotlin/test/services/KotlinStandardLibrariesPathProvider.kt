@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.cli.jvm.configureStandardLibs
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_FULL_STDLIB_PATH
 import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_JS_KOTLIN_TEST_KLIB_PATH
-import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_JS_REDUCED_STDLIB_PATH
+//import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_JS_REDUCED_STDLIB_PATH
 import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_JS_STDLIB_KLIB_PATH
 import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_MINIMAL_STDLIB_PATH
 import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_REFLECT_JAR_PATH
@@ -87,10 +87,10 @@ abstract class KotlinStandardLibrariesPathProvider : TestService {
      */
     abstract fun fullJsStdlib(): File
 
-    /**
-     * Jar with minimal version of kotlin stdlib JS (may be same as fullJsStdlib)
-     */
-    abstract fun defaultJsStdlib(): File
+//    /**
+//     * Jar with minimal version of kotlin stdlib JS (may be same as fullJsStdlib)
+//     */
+//    abstract fun defaultJsStdlib(): File
 
     /**
      * kotlin-test-js.jar
@@ -154,7 +154,7 @@ object StandardLibrariesPathProviderForKotlinProject : KotlinStandardLibrariesPa
         }
 
     override fun fullJsStdlib(): File = extractFromPropertyFirst(KOTLIN_JS_STDLIB_KLIB_PATH) { "kotlin-stdlib-js.klib".dist() }
-    override fun defaultJsStdlib(): File = extractFromPropertyFirst(KOTLIN_JS_REDUCED_STDLIB_PATH) { "kotlin-stdlib-js.klib".dist() }
+//    override fun defaultJsStdlib(): File = extractFromPropertyFirst(KOTLIN_JS_REDUCED_STDLIB_PATH) { "kotlin-stdlib-js.klib".dist() }
     override fun kotlinTestJsKLib(): File = extractFromPropertyFirst(KOTLIN_JS_KOTLIN_TEST_KLIB_PATH) { "kotlin-test-js.klib".dist() }
     override fun scriptingPluginFilesForTests(): Collection<File> =
         extractFromPropertyFirstFiles(KOTLIN_SCRIPTING_PLUGIN_CLASSPATH) {
@@ -229,7 +229,7 @@ object EnvironmentBasedStandardLibrariesPathProvider : KotlinStandardLibrariesPa
     override fun jvmAnnotationsForTests(): File = getFile(KOTLIN_ANNOTATIONS_JVM_PROP)
     override fun getAnnotationsJar(): File = getFile(KOTLIN_ANNOTATIONS_JVM_PROP)
     override fun fullJsStdlib(): File = getFile(KOTLIN_STDLIB_JS_PROP)
-    override fun defaultJsStdlib(): File = getFile(KOTLIN_STDLIB_JS_PROP)
+//    override fun defaultJsStdlib(): File = getFile(KOTLIN_STDLIB_JS_PROP)
     override fun kotlinTestJsKLib(): File = getFile(KOTLIN_TEST_JS_PROP)
     override fun scriptingPluginFilesForTests(): Collection<File> {
         TODO("KT-67573")

@@ -7,7 +7,7 @@ import TestCompilePaths.KOTLIN_ANNOTATIONS_PATH
 import TestCompilePaths.KOTLIN_COMMON_STDLIB_PATH
 import TestCompilePaths.KOTLIN_FULL_STDLIB_PATH
 import TestCompilePaths.KOTLIN_JS_KOTLIN_TEST_KLIB_PATH
-import TestCompilePaths.KOTLIN_JS_REDUCED_STDLIB_PATH
+//import TestCompilePaths.KOTLIN_JS_REDUCED_STDLIB_PATH
 import TestCompilePaths.KOTLIN_JS_STDLIB_KLIB_PATH
 import TestCompilePaths.KOTLIN_MINIMAL_STDLIB_PATH
 import TestCompilePaths.KOTLIN_REFLECT_JAR_PATH
@@ -77,7 +77,7 @@ abstract class TestCompilerRuntimeArgumentProvider : CommandLineArgumentProvider
             ifNotEmpty(KOTLIN_ANNOTATIONS_PATH, kotlinAnnotationsForTests),
             ifNotEmpty(KOTLIN_SCRIPTING_PLUGIN_CLASSPATH, scriptingPluginForTests),
             ifNotEmpty(KOTLIN_JS_STDLIB_KLIB_PATH, stdlibJsRuntimeForTests),
-            ifNotEmpty(KOTLIN_JS_REDUCED_STDLIB_PATH, stdlibJsRuntimeForTests),
+//            ifNotEmpty(KOTLIN_JS_REDUCED_STDLIB_PATH, stdlibJsRuntimeForTests),
             ifNotEmpty(KOTLIN_JS_KOTLIN_TEST_KLIB_PATH, testJsRuntimeForTests),
         )
     }

@@ -23,7 +23,8 @@ fun Test.useJsIrBoxTests(
 
     systemProperty("kotlin.js.test.root.out.dir", "${buildDir.get().asFile}/")
     systemProperty("kotlin.js.full.stdlib.path", fullStdLib)
-    systemProperty("kotlin.js.reduced.stdlib.path", reducedStdlibPath)
+//    systemProperty("kotlin.js.reduced.stdlib.path", reducedStdlibPath)
+    logger.debug(reducedStdlibPath)
     systemProperty("kotlin.js.stdlib.klib.path", "libraries/stdlib/build/libs/kotlin-stdlib-js-$version.klib")
     systemProperty("kotlin.js.kotlin.test.klib.path", "libraries/kotlin.test/build/libs/kotlin-test-js-$version.klib")
     systemProperty("kotlin.js.dom.api.compat", domApiCompatPath)
