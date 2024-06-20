@@ -15,7 +15,6 @@
   */
 
 #include <cstdlib>
-#include <string.h>
 
 #include "Memory.h"
 #include "Natives.h"
@@ -34,7 +33,7 @@ OBJ_GETTER(setupArgs, int argc, const char** argv) {
   if (argc > 0 && argv[0][0] != '\0') {
     // Don't set the programName to an empty string (by checking argv[0][0] != '\0') to make all platforms behave the same:
     // Linux would set argv[0] to "" in case no programName is passed, whereas Windows & macOS would set argc to 0.
-    kotlin::programName = strndup(argv[0], 4096);
+    kotlin::programName = argv[0];
   }
 
   // The count is one less, because we skip argv[0] which is the binary name.
@@ -64,6 +63,8 @@ extern "C" RUNTIME_USED int Init_and_run_start(int argc, const char** argv, int 
   if (memoryDeInit) {
       Kotlin_shutdownRuntime();
   }
+
+  kotlin::programName = nullptr; // argv[0] might not be valid after this point
 
   return exitStatus;
 }
