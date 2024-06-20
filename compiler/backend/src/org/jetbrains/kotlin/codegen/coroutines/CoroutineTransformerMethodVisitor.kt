@@ -664,10 +664,11 @@ class CoroutineTransformerMethodVisitor(
             // 1 - parameter
             // ...
             // k - continuation
-            // k + 1 - data
-            // k + 2 - exception
+            // k + 1 - result
             for (slot in 0 until localsCount) {
                 if (slot == continuationIndex || slot == dataIndex) continue
+                // Do not spill $completion
+                if (isForNamedFunction && slot == getLastParameterIndex(methodNode.desc, methodNode.access)) continue
                 val value = frame.getLocal(slot)
                 if (value.type == null) continue
                 if (!livenessFrame.isAlive(slot)) {
