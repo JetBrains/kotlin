@@ -1,11 +1,12 @@
 // TARGET_BACKEND: JVM
-
 // WITH_STDLIB
 // FULL_JDK
 
+class Monitor
+
 fun box(): String {
-    var obj0 = "0" as java.lang.Object
-    var obj1 = "1" as java.lang.Object
+    var obj0 = Monitor() as java.lang.Object
+    var obj1 = Monitor() as java.lang.Object
 
     var v = obj0
     synchronized (v) {

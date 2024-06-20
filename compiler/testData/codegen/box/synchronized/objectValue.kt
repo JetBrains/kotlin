@@ -1,9 +1,10 @@
 // TARGET_BACKEND: JVM
-
 // WITH_STDLIB
 
+class Monitor
+
 fun box(): String {
-    var obj = "0" as java.lang.Object
+    var obj = Monitor() as java.lang.Object
     val result = synchronized (obj) {
         "239"
     }
