@@ -16,6 +16,7 @@
 # OWNER_LIST: "Kotlin Language Evolution"
 # OWNER_LIST: "Kotlin in Fleet"
 # OWNER_LIST: Compose
+# OWNER_LIST: Parcelize
 # OWNER_LIST: Mikhail.Glukhikh Dmitriy.Novozhilov Kirill.Rakhman
 # OWNER_LIST: Yan.Zhulanow
 # OWNER_LIST: Dmitry.Gridin
@@ -396,7 +397,7 @@
 /libraries/tools/js-plain-objects Artem.Kobzar
 /plugins/lombok/ "Kotlin Compiler Core"
 /plugins/noarg/ "Kotlin Compiler Core"
-/plugins/parcelize/ "Kotlin Compiler Core"
+/plugins/parcelize/ Parcelize
 /plugins/pill/ Yan.Zhulanow "Kotlin Build Infrastructure"
 /plugins/power-assert/ Brian.Norman "Kotlin Common Backend"
 /plugins/sam-with-receiver/ "Kotlin Compiler Core"
