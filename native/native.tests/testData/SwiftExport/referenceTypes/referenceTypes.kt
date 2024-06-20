@@ -68,3 +68,27 @@ fun getGlobalPermanent(): Permanent {
     check(Permanent.isPermanent())
     return Permanent
 }
+
+// FILE: Any.kt
+annotation class Class() // intentially unsupported
+
+val instance = Class()
+
+object Object {
+    val instance: Any
+        get() = Object
+
+    fun isInstance(obj: Any) = obj == Object
+}
+
+class SomeFoo(var storage: Any)
+class SomeBar
+class SomeBaz
+
+fun isMainObject(obj: Any): Boolean = obj == instance
+
+val mainObject: Any get() = instance
+
+fun isMainPermanentObject(obj: Any): Boolean = obj == Object
+
+fun getMainPermanentObject(): Any = Object

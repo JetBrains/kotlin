@@ -37,48 +37,50 @@ public class SirTypeProviderImpl(
     private fun buildSirNominalType(ktType: KaType, ktAnalysisSession: KaSession): SirType {
         fun buildPrimitiveType(ktType: KaType): SirType? = with(ktAnalysisSession) {
             when {
-                ktType.isUnitType -> SirSwiftModule.void
+                ktType.isCharType -> SirUnsupportedType()
+                ktType.isUnitType -> SirNominalType(SirSwiftModule.void)
 
-                ktType.isByteType -> SirSwiftModule.int8
-                ktType.isShortType -> SirSwiftModule.int16
-                ktType.isIntType -> SirSwiftModule.int32
-                ktType.isLongType -> SirSwiftModule.int64
+                ktType.isByteType -> SirNominalType(SirSwiftModule.int8)
+                ktType.isShortType -> SirNominalType(SirSwiftModule.int16)
+                ktType.isIntType -> SirNominalType(SirSwiftModule.int32)
+                ktType.isLongType -> SirNominalType(SirSwiftModule.int64)
 
-                ktType.isUByteType -> SirSwiftModule.uint8
-                ktType.isUShortType -> SirSwiftModule.uint16
-                ktType.isUIntType -> SirSwiftModule.uint32
-                ktType.isULongType -> SirSwiftModule.uint64
+                ktType.isUByteType -> SirNominalType(SirSwiftModule.uint8)
+                ktType.isUShortType -> SirNominalType(SirSwiftModule.uint16)
+                ktType.isUIntType -> SirNominalType(SirSwiftModule.uint32)
+                ktType.isULongType -> SirNominalType(SirSwiftModule.uint64)
 
-                ktType.isBooleanType -> SirSwiftModule.bool
+                ktType.isBooleanType -> SirNominalType(SirSwiftModule.bool)
 
-                ktType.isDoubleType -> SirSwiftModule.double
-                ktType.isFloatType -> SirSwiftModule.float
-                ktType.isNothingType -> SirSwiftModule.never
+                ktType.isDoubleType -> SirNominalType(SirSwiftModule.double)
+                ktType.isFloatType -> SirNominalType(SirSwiftModule.float)
+                ktType.isNothingType -> SirNominalType(SirSwiftModule.never)
                 else -> null
-            }?.let { primitiveType ->
-                SirNominalType(primitiveType)
             }
         }
 
-        fun buildRegularType(ktType: KaType): SirType = when (ktType) {
-            is KaUsualClassType -> with(sirSession) {
-                when (val classSymbol = ktType.symbol) {
-                    is KaSymbolWithVisibility -> {
-                        if (classSymbol.sirVisibility(ktAnalysisSession) == SirVisibility.PUBLIC) {
-                            SirNominalType(classSymbol.sirDeclaration() as SirNamedDeclaration)
-                        } else {
-                            // Mapping all unexported types to KotlinBase
-                            SirNominalType(KotlinRuntimeModule.kotlinBase)
+        fun buildRegularType(ktType: KaType): SirType = with (ktAnalysisSession) {
+            when (ktType) {
+                is KaUsualClassType -> with(sirSession) {
+                    if (ktType.isAnyType && !ktType.isMarkedNullable) {
+                        SirNominalType(KotlinRuntimeModule.kotlinBase)
+                    } else when (val classSymbol = ktType.symbol) {
+                        is KaSymbolWithVisibility -> {
+                            if (classSymbol.sirVisibility(ktAnalysisSession) == SirVisibility.PUBLIC) {
+                                SirNominalType(classSymbol.sirDeclaration() as SirNamedDeclaration)
+                            } else {
+                                SirUnsupportedType()
+                            }
                         }
+                        else -> SirUnsupportedType()
                     }
-                    else -> SirUnsupportedType()
                 }
+                is KaFunctionType,
+                is KaTypeParameterType,
+                -> SirUnsupportedType()
+                is KaErrorType -> SirErrorType(ktType.errorMessage)
+                else -> SirErrorType("Unexpected type ${ktType}")
             }
-            is KaFunctionType,
-            is KaTypeParameterType,
-            -> SirUnsupportedType()
-            is KaErrorType -> SirErrorType(ktType.errorMessage)
-            else -> SirErrorType("Unexpected type $ktType")
         }
 
         return ktType.abbreviatedType?.let { buildRegularType(it) }

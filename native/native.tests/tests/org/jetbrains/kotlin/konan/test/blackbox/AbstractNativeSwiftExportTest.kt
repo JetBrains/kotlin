@@ -49,6 +49,7 @@ abstract class AbstractNativeSwiftExportTest {
         testCase: TestCase,
         swiftExportOutput: SwiftExportModule,
         swiftModules: Set<TestCompilationArtifact.Swift.Module>,
+        kotlinBinaryLibrary: TestCompilationArtifact.BinaryLibrary,
     )
 
     protected abstract fun constructSwiftExportConfig(
@@ -75,7 +76,12 @@ abstract class AbstractNativeSwiftExportTest {
             .apply { swiftExportOutput.collectKotlinBridgeFilesRecursively(into = this) }
 
         val kotlinFiles = originalTestCase.modules.first().files.map { it.location }
-        val resultingTestCase = generateSwiftExportTestCase(testPathFull, kotlinFiles + additionalKtFiles.map { it.toFile() })
+
+
+        val kotlinBinaryLibraryName = testPathFull.name + "Kotlin"
+
+        val resultingTestCase = generateSwiftExportTestCase(testPathFull, kotlinBinaryLibraryName, kotlinFiles + additionalKtFiles.map { it.toFile() })
+
         val kotlinBinaryLibrary = testCompilationFactory.testCaseToBinaryLibrary(
             resultingTestCase, testRunSettings,
             kind = BinaryLibraryKind.DYNAMIC,
@@ -93,7 +99,8 @@ abstract class AbstractNativeSwiftExportTest {
             testPathFull,
             resultingTestCase,
             swiftExportOutput,
-            swiftModules
+            swiftModules,
+            kotlinBinaryLibrary
         )
     }
 
@@ -207,8 +214,7 @@ abstract class AbstractNativeSwiftExportTest {
         ).result.assertSuccess().resultingArtifact
     }
 
-    private fun generateSwiftExportTestCase(testPathFull: File, sources: List<File>): TestCase {
-        val testName = testPathFull.name
+    private fun generateSwiftExportTestCase(testPathFull: File, testName: String = testPathFull.name, sources: List<File>): TestCase {
         val module = TestModule.Exclusive(DEFAULT_MODULE_NAME, emptySet(), emptySet(), emptySet())
         sources.forEach { module.files += TestFile.createCommitted(it, module) }
 

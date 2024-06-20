@@ -26,6 +26,7 @@ abstract class AbstractKlibBasedSwiftRunnerTest : AbstractNativeSwiftExportTest(
         testCase: TestCase,
         swiftExportOutput: SwiftExportModule,
         swiftModules: Set<TestCompilationArtifact.Swift.Module>,
+        kotlinBinaryLibrary: TestCompilationArtifact.BinaryLibrary,
     ) {
         val flattenModules = setOfNotNull(swiftExportOutput, swiftExportOutput.dependencies.firstOrNull())
 
@@ -54,7 +55,8 @@ abstract class AbstractKlibBasedSwiftRunnerTest : AbstractNativeSwiftExportTest(
     }
 
     override fun constructSwiftExportConfig(module: TestModule.Exclusive): SwiftExportConfig {
-        val unsupportedTypeStrategy = ErrorTypeStrategy.Fail
+        // TODO: KT-69285: add tests for ErrorTypeStrategy.Fail
+        val unsupportedTypeStrategy = ErrorTypeStrategy.SpecialType
         val errorTypeStrategy = ErrorTypeStrategy.Fail
 
         val defaultConfig: Map<String, String> = mapOf(

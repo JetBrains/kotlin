@@ -24,7 +24,7 @@ public var BYTE_CONST: Swift.Int8 {
         return __root___BYTE_CONST_get()
     }
 }
-public var CHAR_CONST: KotlinRuntime.KotlinBase {
+public var CHAR_CONST: Swift.Never {
     get {
         fatalError()
     }
@@ -54,7 +54,7 @@ public var SHORT_CONST: Swift.Int16 {
         return __root___SHORT_CONST_get()
     }
 }
-public var STRING_CONST: KotlinRuntime.KotlinBase {
+public var STRING_CONST: Swift.Never {
     get {
         fatalError()
     }

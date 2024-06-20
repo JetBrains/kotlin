@@ -53,7 +53,7 @@ val SirType.swiftName
         is SirExistentialType -> "Any"
         is SirNominalType -> type.swiftFqName
         is SirErrorType -> "ERROR_TYPE"
-        is SirUnsupportedType -> "UNSUPPORTED_TYPE"
+        is SirUnsupportedType -> "Swift.Never"
     }
 
 private val SirDeclaration.swiftParentNamePrefix: String?

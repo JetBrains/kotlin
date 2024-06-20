@@ -379,59 +379,67 @@ public extension ExportedKotlinPackages.namespace.deeper {
     }
 }
 public extension ExportedKotlinPackages.ignored {
-    public static func produce_ABSTRACT_CLASS() -> KotlinRuntime.KotlinBase {
+    public static func produce_ABSTRACT_CLASS() -> Swift.Never {
         fatalError()
     }
-    public static func produce_DATA_CLASS() -> KotlinRuntime.KotlinBase {
+    public static func produce_DATA_CLASS() -> Swift.Never {
         fatalError()
     }
-    public static func produce_DATA_OBJECT() -> KotlinRuntime.KotlinBase {
+    public static func produce_DATA_OBJECT() -> Swift.Never {
         fatalError()
     }
-    public static func produce_ENUM() -> KotlinRuntime.KotlinBase {
+    public static func produce_ENUM() -> Swift.Never {
         fatalError()
     }
-    public static func produce_INTERFACE() -> KotlinRuntime.KotlinBase {
+    public static func produce_INTERFACE() -> Swift.Never {
         fatalError()
     }
-    public static func produce_OPEN_CLASS() -> KotlinRuntime.KotlinBase {
+    public static func produce_NULLABlE() -> Swift.Never {
         fatalError()
     }
-    public static func produce_VALUE_CLASS() -> KotlinRuntime.KotlinBase {
+    public static func produce_OPEN_CLASS() -> Swift.Never {
+        fatalError()
+    }
+    public static func produce_VALUE_CLASS() -> Swift.Never {
+        fatalError()
+    }
+    public static func receive_NULLABLE(
+        x: Swift.Never
+    ) -> Swift.Void {
         fatalError()
     }
     public static func recieve_ABSTRACT_CLASS(
-        x: KotlinRuntime.KotlinBase
+        x: Swift.Never
     ) -> Swift.Void {
         fatalError()
     }
     public static func recieve_DATA_CLASS(
-        x: KotlinRuntime.KotlinBase
+        x: Swift.Never
     ) -> Swift.Void {
         fatalError()
     }
     public static func recieve_DATA_OBJECT(
-        x: KotlinRuntime.KotlinBase
+        x: Swift.Never
     ) -> Swift.Void {
         fatalError()
     }
     public static func recieve_ENUM(
-        x: KotlinRuntime.KotlinBase
+        x: Swift.Never
     ) -> Swift.Void {
         fatalError()
     }
     public static func recieve_INTERFACE(
-        x: KotlinRuntime.KotlinBase
+        x: Swift.Never
     ) -> Swift.Void {
         fatalError()
     }
     public static func recieve_OPEN_CLASS(
-        x: KotlinRuntime.KotlinBase
+        x: Swift.Never
     ) -> Swift.Void {
         fatalError()
     }
     public static func recieve_VALUE_CLASS(
-        x: KotlinRuntime.KotlinBase
+        x: Swift.Never
     ) -> Swift.Void {
         fatalError()
     }

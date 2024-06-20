@@ -101,6 +101,9 @@ enum class ENUM {
     A,
 }
 
+fun receive_NULLABLE(x: Any?): Unit = TODO()
+fun produce_NULLABlE(): Any? = TODO()
+
 fun recieve_DATA_CLASS(x: DATA_CLASS): Unit = TODO()
 fun produce_DATA_CLASS(): DATA_CLASS = TODO()
 
