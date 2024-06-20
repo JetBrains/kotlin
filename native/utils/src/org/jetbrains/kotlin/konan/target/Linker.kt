@@ -59,7 +59,35 @@ private fun staticGnuArCommands(ar: String, executable: ExecutableFile,
         else -> TODO("Unsupported host ${HostManager.host}")
     }
 
-// Use "clang -v -save-temps" to write linkCommand() method 
+class LinkerArguments(
+    val objectFiles: List<ObjectFile>,
+    val executable: ExecutableFile,
+    val libraries: List<String>,
+    val linkerArgs: List<String>,
+    val optimize: Boolean,
+    val debug: Boolean,
+    val kind: LinkerOutputKind,
+    val outputDsymBundle: String,
+    val mimallocEnabled: Boolean,
+    val sanitizer: SanitizerKind? = null,
+)
+
+// TODO: This is for compatibility with CompileToExecutable.kt. Remove after advancing the bootstrap.
+@Suppress("unused")
+fun LinkerFlags.finalLinkCommands(
+    objectFiles: List<ObjectFile>, executable: ExecutableFile,
+    libraries: List<String>, linkerArgs: List<String>,
+    optimize: Boolean, debug: Boolean,
+    kind: LinkerOutputKind, outputDsymBundle: String,
+    mimallocEnabled: Boolean,
+    sanitizer: SanitizerKind? = null,
+): List<Command> = with(this) {
+    LinkerArguments(
+        objectFiles, executable, libraries, linkerArgs, optimize, debug, kind, outputDsymBundle, mimallocEnabled, sanitizer
+    ).finalLinkCommands()
+}
+
+// Use "clang -v -save-temps" to write linkCommand() method
 // for another implementation of this class.
 abstract class LinkerFlags(val configurables: Configurables) {
 
@@ -70,13 +98,7 @@ abstract class LinkerFlags(val configurables: Configurables) {
     /**
      * Returns list of commands that produces final linker output.
      */
-    // TODO: Number of arguments is quite big. Better to pass args via object.
-    abstract fun finalLinkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
-                                   libraries: List<String>, linkerArgs: List<String>,
-                                   optimize: Boolean, debug: Boolean,
-                                   kind: LinkerOutputKind, outputDsymBundle: String,
-                                   mimallocEnabled: Boolean,
-                                   sanitizer: SanitizerKind? = null): List<Command>
+    abstract fun LinkerArguments.finalLinkCommands(): List<Command>
 
     /**
      * Returns list of commands that link object files into a single one.
@@ -114,12 +136,7 @@ class AndroidLinker(targetProperties: AndroidConfigurables)
 
     override fun filterStaticLibraries(binaries: List<String>) = binaries.filter { it.isUnixStaticLib }
 
-    override fun finalLinkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
-                                   libraries: List<String>, linkerArgs: List<String>,
-                                   optimize: Boolean, debug: Boolean,
-                                   kind: LinkerOutputKind, outputDsymBundle: String,
-                                   mimallocEnabled: Boolean,
-                                   sanitizer: SanitizerKind?): List<Command> {
+    override fun LinkerArguments.finalLinkCommands(): List<Command> {
         require(sanitizer == null) {
             "Sanitizers are unsupported"
         }
@@ -370,12 +387,7 @@ class GccBasedLinker(targetProperties: GccConfigurables)
 
     override fun filterStaticLibraries(binaries: List<String>) = binaries.filter { it.isUnixStaticLib }
 
-    override fun finalLinkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
-                                   libraries: List<String>, linkerArgs: List<String>,
-                                   optimize: Boolean, debug: Boolean,
-                                   kind: LinkerOutputKind, outputDsymBundle: String,
-                                   mimallocEnabled: Boolean,
-                                   sanitizer: SanitizerKind?): List<Command> {
+    override fun LinkerArguments.finalLinkCommands(): List<Command> {
         if (kind == LinkerOutputKind.STATIC_LIBRARY) {
             require(sanitizer == null) {
                 "Sanitizers are unsupported"
@@ -460,12 +472,7 @@ class MingwLinker(targetProperties: MingwConfigurables)
         return if (dir != null) "$dir/lib/windows/libclang_rt.$libraryName-$targetSuffix.a" else null
     }
 
-    override fun finalLinkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
-                                   libraries: List<String>, linkerArgs: List<String>,
-                                   optimize: Boolean, debug: Boolean,
-                                   kind: LinkerOutputKind, outputDsymBundle: String,
-                                   mimallocEnabled: Boolean,
-                                   sanitizer: SanitizerKind?): List<Command> {
+    override fun LinkerArguments.finalLinkCommands(): List<Command> {
         require(sanitizer == null) {
             "Sanitizers are unsupported"
         }
@@ -512,12 +519,7 @@ class WasmLinker(targetProperties: WasmConfigurables)
 
     override fun filterStaticLibraries(binaries: List<String>) = binaries.filter { it.isJavaScript }
 
-    override fun finalLinkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
-                                   libraries: List<String>, linkerArgs: List<String>,
-                                   optimize: Boolean, debug: Boolean,
-                                   kind: LinkerOutputKind, outputDsymBundle: String,
-                                   mimallocEnabled: Boolean,
-                                   sanitizer: SanitizerKind?): List<Command> {
+    override fun LinkerArguments.finalLinkCommands(): List<Command> {
         if (kind != LinkerOutputKind.EXECUTABLE) throw Error("Unsupported linker output kind")
         require(sanitizer == null) {
             "Sanitizers are unsupported"
@@ -568,12 +570,7 @@ open class ZephyrLinker(targetProperties: ZephyrConfigurables)
 
     override fun filterStaticLibraries(binaries: List<String>) = emptyList<String>()
 
-    override fun finalLinkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
-                                   libraries: List<String>, linkerArgs: List<String>,
-                                   optimize: Boolean, debug: Boolean,
-                                   kind: LinkerOutputKind, outputDsymBundle: String,
-                                   mimallocEnabled: Boolean,
-                                   sanitizer: SanitizerKind?): List<Command> {
+    override fun LinkerArguments.finalLinkCommands(): List<Command> {
         if (kind != LinkerOutputKind.EXECUTABLE) throw Error("Unsupported linker output kind: $kind")
         require(sanitizer == null) {
             "Sanitizers are unsupported"

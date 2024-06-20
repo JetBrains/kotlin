@@ -5,10 +5,7 @@ import org.jetbrains.kotlin.konan.KonanExternalToolFailure
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.target.Family
-import org.jetbrains.kotlin.konan.target.LinkerOutputKind
-import org.jetbrains.kotlin.konan.target.presetName
+import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.uniqueName
 
@@ -136,18 +133,20 @@ internal class Linker(
                 caches.dynamic +
                 libraryProvidedLinkerFlags + additionalLinkerArgs
 
-        return linker.finalLinkCommands(
-                objectFiles = objectFiles,
-                executable = executable,
-                libraries = linker.linkStaticLibraries(includedBinaries) + caches.static,
-                linkerArgs = linkerArgs,
-                optimize = optimize,
-                debug = debug,
-                kind = linkerOutput,
-                outputDsymBundle = outputFiles.symbolicInfoFile,
-                mimallocEnabled = config.allocationMode == AllocationMode.MIMALLOC,
-                sanitizer = config.sanitizer
-        )
+        return with(linker) {
+            LinkerArguments(
+                    objectFiles = objectFiles,
+                    executable = executable,
+                    libraries = linker.linkStaticLibraries(includedBinaries) + caches.static,
+                    linkerArgs = linkerArgs,
+                    optimize = optimize,
+                    debug = debug,
+                    kind = linkerOutput,
+                    outputDsymBundle = outputFiles.symbolicInfoFile,
+                    mimallocEnabled = config.allocationMode == AllocationMode.MIMALLOC,
+                    sanitizer = config.sanitizer,
+            ).finalLinkCommands()
+        }
     }
 }
 
