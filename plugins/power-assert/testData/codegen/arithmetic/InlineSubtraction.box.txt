@@ -1,5 +1,6 @@
-Assertion failed
+---
 assert(3 - 1 == 4)
          |   |
          |   false
          2
+---

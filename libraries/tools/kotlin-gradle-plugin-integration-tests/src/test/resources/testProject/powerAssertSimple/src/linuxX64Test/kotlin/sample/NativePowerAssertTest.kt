@@ -39,6 +39,7 @@ class NativePowerAssertTest {
                        |      |       2
                        |      [Person(firstName=John, lastName=Doe), Person(firstName=Jane, lastName=Doe)]
                        Person.Companion
+                
             """.trimIndent(),
         )
     }

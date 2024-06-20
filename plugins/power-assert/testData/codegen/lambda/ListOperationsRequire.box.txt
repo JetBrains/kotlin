@@ -1,4 +1,4 @@
-Assertion failed
+---
 require(
     value = list
             |
@@ -10,3 +10,4 @@ require(
          |
          false
 )
+---

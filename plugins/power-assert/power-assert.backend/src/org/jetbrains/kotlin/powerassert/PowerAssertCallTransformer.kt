@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.irCall
-import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.builders.parent
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -133,7 +132,7 @@ class PowerAssertCallTransformer(
             variables: List<IrTemporaryVariable>,
         ): IrExpression {
             if (index >= roots.size) {
-                val prefix = buildMessagePrefix(messageArgument, delegate.messageParameter, roots, call)
+                val prefix = buildMessagePrefix(messageArgument, delegate.messageParameter)
                     ?.deepCopyWithSymbols(parent)
                 val diagram = irDiagramString(sourceFile, prefix, call, variables)
                 return delegate.buildCall(this, call, dispatch, extension, arguments, diagram)
@@ -161,13 +160,11 @@ class PowerAssertCallTransformer(
     private fun DeclarationIrBuilder.buildMessagePrefix(
         messageArgument: IrExpression?,
         messageParameter: IrValueParameter,
-        roots: List<Node?>,
-        original: IrCall,
     ): IrExpression? {
-        return when {
-            messageArgument is IrConst<*> -> messageArgument
-            messageArgument is IrStringConcatenation -> messageArgument
-            messageArgument is IrGetValue -> {
+        return when (messageArgument) {
+            is IrConst<*> -> messageArgument
+            is IrStringConcatenation -> messageArgument
+            is IrGetValue -> {
                 if (messageArgument.type.isAssignableTo(context.irBuiltIns.stringType)) {
                     return messageArgument
                 } else {
@@ -178,14 +175,12 @@ class PowerAssertCallTransformer(
                 }
             }
             // Kotlin Lambda or SAMs conversion lambda
-            messageArgument is IrFunctionExpression || messageArgument is IrTypeOperatorCall -> {
+            is IrFunctionExpression, is IrTypeOperatorCall -> {
                 val invoke = messageParameter.type.classOrNull!!.functions
                     .filter { !it.owner.isFakeOverride } // TODO best way to find single access method?
                     .single()
                 irCall(invoke).apply { dispatchReceiver = messageArgument }
             }
-            // TODO what should the default message be?
-            roots.size == 1 && original.getValueArgument(0)!!.type.isBoolean() -> irString("Assertion failed")
             else -> null
         }
     }

@@ -1,5 +1,5 @@
 fun box(): String {
-  return test1(str = "TEST", default = 0).plus(other = "\n\n").plus(other = test1(str = null, default = 0)).plus(other = "\n\n").plus(other = test2(str = "TEST", fallback = null, default = 0)).plus(other = "\n\n").plus(other = test2(str = null, fallback = "test", default = 0)).plus(other = "\n\n").plus(other = test2(str = null, fallback = null, default = 0))
+  return test1(str = "TEST", default = 0).plus(other = test1(str = null, default = 0)).plus(other = test2(str = "TEST", fallback = null, default = 0)).plus(other = test2(str = null, fallback = "test", default = 0)).plus(other = test2(str = null, fallback = null, default = 0))
 }
 
 fun test1(str: String?, default: Int): String {
@@ -25,14 +25,14 @@ fun test1(str: String?, default: Int): String {
           val tmp_5: Int = default
           val tmp_6: Boolean = EQEQ(arg0 = tmp_5, arg1 = 5)
           assert(value = tmp_6, lazyMessage = local fun <anonymous>(): String {
-            return "Assertion failed" + "\nassert((str?.lowercase()?.length ?: default) == 5)\n        |    |            |         |        |" + "\n        |    |            |         |        " + tmp_6 + "\n        |    |            |         " + tmp_5 + "\n        |    |            " + tmp_3 + "\n        |    " + tmp_1 + "\n        " + tmp_0
+            return "\nassert((str?.lowercase()?.length ?: default) == 5)\n        |    |            |         |        |" + "\n        |    |            |         |        " + tmp_6 + "\n        |    |            |         " + tmp_5 + "\n        |    |            " + tmp_3 + "\n        |    " + tmp_1 + "\n        " + tmp_0 + "\n"
           }
 )
         }
         else -> { // BLOCK
           val tmp_7: Boolean = EQEQ(arg0 = tmp_3, arg1 = 5)
           assert(value = tmp_7, lazyMessage = local fun <anonymous>(): String {
-            return "Assertion failed" + "\nassert((str?.lowercase()?.length ?: default) == 5)\n        |    |            |                  |" + "\n        |    |            |                  " + tmp_7 + "\n        |    |            " + tmp_3 + "\n        |    " + tmp_1 + "\n        " + tmp_0
+            return "\nassert((str?.lowercase()?.length ?: default) == 5)\n        |    |            |                  |" + "\n        |    |            |                  " + tmp_7 + "\n        |    |            " + tmp_3 + "\n        |    " + tmp_1 + "\n        " + tmp_0 + "\n"
           }
 )
         }
@@ -68,14 +68,14 @@ fun test2(str: String?, fallback: String?, default: Int): String {
               val tmp_14: Int = default
               val tmp_15: Boolean = EQEQ(arg0 = tmp_14, arg1 = 5)
               assert(value = tmp_15, lazyMessage = local fun <anonymous>(): String {
-                return "Assertion failed" + "\nassert(((str?.lowercase() ?: fallback)?.length ?: default) == 5)\n         |    |              |          |         |        |" + "\n         |    |              |          |         |        " + tmp_15 + "\n         |    |              |          |         " + tmp_14 + "\n         |    |              |          " + tmp_12 + "\n         |    |              " + tmp_11 + "\n         |    " + tmp_9 + "\n         " + tmp_8
+                return "\nassert(((str?.lowercase() ?: fallback)?.length ?: default) == 5)\n         |    |              |          |         |        |" + "\n         |    |              |          |         |        " + tmp_15 + "\n         |    |              |          |         " + tmp_14 + "\n         |    |              |          " + tmp_12 + "\n         |    |              " + tmp_11 + "\n         |    " + tmp_9 + "\n         " + tmp_8 + "\n"
               }
 )
             }
             else -> { // BLOCK
               val tmp_16: Boolean = EQEQ(arg0 = tmp_12, arg1 = 5)
               assert(value = tmp_16, lazyMessage = local fun <anonymous>(): String {
-                return "Assertion failed" + "\nassert(((str?.lowercase() ?: fallback)?.length ?: default) == 5)\n         |    |              |          |                  |" + "\n         |    |              |          |                  " + tmp_16 + "\n         |    |              |          " + tmp_12 + "\n         |    |              " + tmp_11 + "\n         |    " + tmp_9 + "\n         " + tmp_8
+                return "\nassert(((str?.lowercase() ?: fallback)?.length ?: default) == 5)\n         |    |              |          |                  |" + "\n         |    |              |          |                  " + tmp_16 + "\n         |    |              |          " + tmp_12 + "\n         |    |              " + tmp_11 + "\n         |    " + tmp_9 + "\n         " + tmp_8 + "\n"
               }
 )
             }
@@ -94,14 +94,14 @@ fun test2(str: String?, fallback: String?, default: Int): String {
               val tmp_19: Int = default
               val tmp_20: Boolean = EQEQ(arg0 = tmp_19, arg1 = 5)
               assert(value = tmp_20, lazyMessage = local fun <anonymous>(): String {
-                return "Assertion failed" + "\nassert(((str?.lowercase() ?: fallback)?.length ?: default) == 5)\n         |    |                         |         |        |" + "\n         |    |                         |         |        " + tmp_20 + "\n         |    |                         |         " + tmp_19 + "\n         |    |                         " + tmp_17 + "\n         |    " + tmp_9 + "\n         " + tmp_8
+                return "\nassert(((str?.lowercase() ?: fallback)?.length ?: default) == 5)\n         |    |                         |         |        |" + "\n         |    |                         |         |        " + tmp_20 + "\n         |    |                         |         " + tmp_19 + "\n         |    |                         " + tmp_17 + "\n         |    " + tmp_9 + "\n         " + tmp_8 + "\n"
               }
 )
             }
             else -> { // BLOCK
               val tmp_21: Boolean = EQEQ(arg0 = tmp_17, arg1 = 5)
               assert(value = tmp_21, lazyMessage = local fun <anonymous>(): String {
-                return "Assertion failed" + "\nassert(((str?.lowercase() ?: fallback)?.length ?: default) == 5)\n         |    |                         |                  |" + "\n         |    |                         |                  " + tmp_21 + "\n         |    |                         " + tmp_17 + "\n         |    " + tmp_9 + "\n         " + tmp_8
+                return "\nassert(((str?.lowercase() ?: fallback)?.length ?: default) == 5)\n         |    |                         |                  |" + "\n         |    |                         |                  " + tmp_21 + "\n         |    |                         " + tmp_17 + "\n         |    " + tmp_9 + "\n         " + tmp_8 + "\n"
               }
 )
             }

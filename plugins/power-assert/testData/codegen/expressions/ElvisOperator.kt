@@ -1,10 +1,10 @@
 // DUMP_KT_IR
 
 fun box(): String {
-    return test1("TEST", 0) + "\n\n" +
-            test1(null, 0) + "\n\n" +
-            test2("TEST", null, 0) + "\n\n" +
-            test2(null, "test", 0) + "\n\n" +
+    return test1("TEST", 0) +
+            test1(null, 0) +
+            test2("TEST", null, 0) +
+            test2(null, "test", 0) +
             test2(null, null, 0)
 }
 

@@ -1,4 +1,4 @@
-Assertion failed
+---
 assert(hello.length == "World".substring(1, 4).length)
        |     |      |          |               |
        |     |      |          |               3
@@ -6,3 +6,4 @@ assert(hello.length == "World".substring(1, 4).length)
        |     |      false
        |     5
        Hello
+---

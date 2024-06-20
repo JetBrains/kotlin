@@ -1,4 +1,4 @@
-Assertion failed
+---
 assert((text.length == 5 && text.toLowerCase() == text) || text.length == 1)
         |    |      |       |    |             |  |        |    |      |
         |    |      |       |    |             |  |        |    |      false
@@ -11,3 +11,4 @@ assert((text.length == 5 && text.toLowerCase() == text) || text.length == 1)
         |    |      true
         |    5
         Hello
+---

@@ -1,5 +1,5 @@
 fun box(): String {
-  return test1(a = 2, b = 1).plus(other = "\n\n").plus(other = test1(a = 1, b = 2)).plus(other = "\n\n").plus(other = test1(a = 1, b = 1)).plus(other = "\n\n").plus(other = test2(a = 1, b = 2)).plus(other = "\n\n").plus(other = test2(a = 2, b = 1)).plus(other = "\n\n").plus(other = test3(a = 2, b = 1)).plus(other = "\n\n").plus(other = test3(a = 1, b = 2)).plus(other = "\n\n").plus(other = test3(a = 1, b = 1)).plus(other = "\n\n").plus(other = test4(initial = true, a = 2, b = 1)).plus(other = "\n\n").plus(other = test4(initial = true, a = 1, b = 2)).plus(other = "\n\n").plus(other = test4(initial = true, a = 1, b = 1)).plus(other = "\n\n").plus(other = test4(initial = false, a = 1, b = 1))
+  return test1(a = 2, b = 1).plus(other = test1(a = 1, b = 2)).plus(other = test1(a = 1, b = 1)).plus(other = test2(a = 1, b = 2)).plus(other = test2(a = 2, b = 1)).plus(other = test3(a = 2, b = 1)).plus(other = test3(a = 1, b = 2)).plus(other = test3(a = 1, b = 1)).plus(other = test4(initial = true, a = 2, b = 1)).plus(other = test4(initial = true, a = 1, b = 2)).plus(other = test4(initial = true, a = 1, b = 1)).plus(other = test4(initial = false, a = 1, b = 1))
 }
 
 fun test1(a: Int, b: Int): String {
@@ -14,7 +14,7 @@ fun test1(a: Int, b: Int): String {
           val tmp_4: Int = b
           val tmp_5: Boolean = EQEQ(arg0 = tmp_3, arg1 = tmp_4)
           assert(value = tmp_5, lazyMessage = local fun <anonymous>(): String {
-            return "Assertion failed" + "\nassert(if (a < b) a == b else if (b < a) b == a else false)\n           | | |  | |  |" + "\n           | | |  | |  " + tmp_4 + "\n           | | |  | " + tmp_5 + "\n           | | |  " + tmp_3 + "\n           | | " + tmp_1 + "\n           | " + tmp_2 + "\n           " + tmp_0
+            return "\nassert(if (a < b) a == b else if (b < a) b == a else false)\n           | | |  | |  |" + "\n           | | |  | |  " + tmp_4 + "\n           | | |  | " + tmp_5 + "\n           | | |  " + tmp_3 + "\n           | | " + tmp_1 + "\n           | " + tmp_2 + "\n           " + tmp_0 + "\n"
           }
 )
         }
@@ -28,13 +28,13 @@ fun test1(a: Int, b: Int): String {
               val tmp_10: Int = a
               val tmp_11: Boolean = EQEQ(arg0 = tmp_9, arg1 = tmp_10)
               assert(value = tmp_11, lazyMessage = local fun <anonymous>(): String {
-                return "Assertion failed" + "\nassert(if (a < b) a == b else if (b < a) b == a else false)\n           | | |                  | | |  | |  |" + "\n           | | |                  | | |  | |  " + tmp_10 + "\n           | | |                  | | |  | " + tmp_11 + "\n           | | |                  | | |  " + tmp_9 + "\n           | | |                  | | " + tmp_7 + "\n           | | |                  | " + tmp_8 + "\n           | | |                  " + tmp_6 + "\n           | | " + tmp_1 + "\n           | " + tmp_2 + "\n           " + tmp_0
+                return "\nassert(if (a < b) a == b else if (b < a) b == a else false)\n           | | |                  | | |  | |  |" + "\n           | | |                  | | |  | |  " + tmp_10 + "\n           | | |                  | | |  | " + tmp_11 + "\n           | | |                  | | |  " + tmp_9 + "\n           | | |                  | | " + tmp_7 + "\n           | | |                  | " + tmp_8 + "\n           | | |                  " + tmp_6 + "\n           | | " + tmp_1 + "\n           | " + tmp_2 + "\n           " + tmp_0 + "\n"
               }
 )
             }
             else -> { // BLOCK
               assert(value = false, lazyMessage = local fun <anonymous>(): String {
-                return "Assertion failed" + "\nassert(if (a < b) a == b else if (b < a) b == a else false)\n           | | |                  | | |" + "\n           | | |                  | | " + tmp_7 + "\n           | | |                  | " + tmp_8 + "\n           | | |                  " + tmp_6 + "\n           | | " + tmp_1 + "\n           | " + tmp_2 + "\n           " + tmp_0
+                return "\nassert(if (a < b) a == b else if (b < a) b == a else false)\n           | | |                  | | |" + "\n           | | |                  | | " + tmp_7 + "\n           | | |                  | " + tmp_8 + "\n           | | |                  " + tmp_6 + "\n           | | " + tmp_1 + "\n           | " + tmp_2 + "\n           " + tmp_0 + "\n"
               }
 )
             }
@@ -62,7 +62,7 @@ fun test2(a: Int, b: Int): String {
           val tmp_20: Int = a
           val tmp_21: Boolean = EQEQ(arg0 = tmp_19, arg1 = tmp_20)
           assert(value = tmp_21, lazyMessage = local fun <anonymous>(): String {
-            return "Assertion failed" + "\nassert(a + (if (a < b) a else b) + b == a)\n       | |      | | |  |         | | |  |" + "\n       | |      | | |  |         | | |  " + tmp_20 + "\n       | |      | | |  |         | | " + tmp_21 + "\n       | |      | | |  |         | " + tmp_18 + "\n       | |      | | |  |         " + tmp_19 + "\n       | |      | | |  " + tmp_16 + "\n       | |      | | " + tmp_14 + "\n       | |      | " + tmp_15 + "\n       | |      " + tmp_13 + "\n       | " + tmp_17 + "\n       " + tmp_12
+            return "\nassert(a + (if (a < b) a else b) + b == a)\n       | |      | | |  |         | | |  |" + "\n       | |      | | |  |         | | |  " + tmp_20 + "\n       | |      | | |  |         | | " + tmp_21 + "\n       | |      | | |  |         | " + tmp_18 + "\n       | |      | | |  |         " + tmp_19 + "\n       | |      | | |  " + tmp_16 + "\n       | |      | | " + tmp_14 + "\n       | |      | " + tmp_15 + "\n       | |      " + tmp_13 + "\n       | " + tmp_17 + "\n       " + tmp_12 + "\n"
           }
 )
         }
@@ -74,7 +74,7 @@ fun test2(a: Int, b: Int): String {
           val tmp_26: Int = a
           val tmp_27: Boolean = EQEQ(arg0 = tmp_25, arg1 = tmp_26)
           assert(value = tmp_27, lazyMessage = local fun <anonymous>(): String {
-            return "Assertion failed" + "\nassert(a + (if (a < b) a else b) + b == a)\n       | |      | | |         |  | | |  |" + "\n       | |      | | |         |  | | |  " + tmp_26 + "\n       | |      | | |         |  | | " + tmp_27 + "\n       | |      | | |         |  | " + tmp_24 + "\n       | |      | | |         |  " + tmp_25 + "\n       | |      | | |         " + tmp_22 + "\n       | |      | | " + tmp_14 + "\n       | |      | " + tmp_15 + "\n       | |      " + tmp_13 + "\n       | " + tmp_23 + "\n       " + tmp_12
+            return "\nassert(a + (if (a < b) a else b) + b == a)\n       | |      | | |         |  | | |  |" + "\n       | |      | | |         |  | | |  " + tmp_26 + "\n       | |      | | |         |  | | " + tmp_27 + "\n       | |      | | |         |  | " + tmp_24 + "\n       | |      | | |         |  " + tmp_25 + "\n       | |      | | |         " + tmp_22 + "\n       | |      | | " + tmp_14 + "\n       | |      | " + tmp_15 + "\n       | |      " + tmp_13 + "\n       | " + tmp_23 + "\n       " + tmp_12 + "\n"
           }
 )
         }
@@ -96,7 +96,7 @@ fun test3(a: Int, b: Int): String {
           val tmp_32: Int = b
           val tmp_33: Boolean = EQEQ(arg0 = tmp_31, arg1 = tmp_32)
           assert(value = tmp_33, lazyMessage = local fun <anonymous>(): String {
-            return "Assertion failed" + "\nassert(" + "\n    when {" + "\n        a < b -> a == b\n        | | |    | |  |" + "\n        | | |    | |  " + tmp_32 + "\n        | | |    | " + tmp_33 + "\n        | | |    " + tmp_31 + "\n        | | " + tmp_29 + "\n        | " + tmp_30 + "\n        " + tmp_28 + "\n        b < a -> b == a" + "\n        else -> false" + "\n    }" + "\n)"
+            return "\nassert(" + "\n    when {" + "\n        a < b -> a == b\n        | | |    | |  |" + "\n        | | |    | |  " + tmp_32 + "\n        | | |    | " + tmp_33 + "\n        | | |    " + tmp_31 + "\n        | | " + tmp_29 + "\n        | " + tmp_30 + "\n        " + tmp_28 + "\n        b < a -> b == a" + "\n        else -> false" + "\n    }" + "\n)" + "\n"
           }
 )
         }
@@ -110,13 +110,13 @@ fun test3(a: Int, b: Int): String {
               val tmp_38: Int = a
               val tmp_39: Boolean = EQEQ(arg0 = tmp_37, arg1 = tmp_38)
               assert(value = tmp_39, lazyMessage = local fun <anonymous>(): String {
-                return "Assertion failed" + "\nassert(" + "\n    when {" + "\n        a < b -> a == b\n        | | |" + "\n        | | " + tmp_29 + "\n        | " + tmp_30 + "\n        " + tmp_28 + "\n        b < a -> b == a\n        | | |    | |  |" + "\n        | | |    | |  " + tmp_38 + "\n        | | |    | " + tmp_39 + "\n        | | |    " + tmp_37 + "\n        | | " + tmp_35 + "\n        | " + tmp_36 + "\n        " + tmp_34 + "\n        else -> false" + "\n    }" + "\n)"
+                return "\nassert(" + "\n    when {" + "\n        a < b -> a == b\n        | | |" + "\n        | | " + tmp_29 + "\n        | " + tmp_30 + "\n        " + tmp_28 + "\n        b < a -> b == a\n        | | |    | |  |" + "\n        | | |    | |  " + tmp_38 + "\n        | | |    | " + tmp_39 + "\n        | | |    " + tmp_37 + "\n        | | " + tmp_35 + "\n        | " + tmp_36 + "\n        " + tmp_34 + "\n        else -> false" + "\n    }" + "\n)" + "\n"
               }
 )
             }
             else -> { // BLOCK
               assert(value = false, lazyMessage = local fun <anonymous>(): String {
-                return "Assertion failed" + "\nassert(" + "\n    when {" + "\n        a < b -> a == b\n        | | |" + "\n        | | " + tmp_29 + "\n        | " + tmp_30 + "\n        " + tmp_28 + "\n        b < a -> b == a\n        | | |" + "\n        | | " + tmp_35 + "\n        | " + tmp_36 + "\n        " + tmp_34 + "\n        else -> false" + "\n    }" + "\n)"
+                return "\nassert(" + "\n    when {" + "\n        a < b -> a == b\n        | | |" + "\n        | | " + tmp_29 + "\n        | " + tmp_30 + "\n        " + tmp_28 + "\n        b < a -> b == a\n        | | |" + "\n        | | " + tmp_35 + "\n        | " + tmp_36 + "\n        " + tmp_34 + "\n        else -> false" + "\n    }" + "\n)" + "\n"
               }
 )
             }
@@ -143,7 +143,7 @@ fun test4(initial: Boolean, a: Int, b: Int): String {
               val tmp_45: Int = b
               val tmp_46: Boolean = EQEQ(arg0 = tmp_44, arg1 = tmp_45)
               assert(value = tmp_46, lazyMessage = local fun <anonymous>(): String {
-                return "Assertion failed" + "\nassert(" + "\n    initial && when {\n    |" + "\n    " + tmp_40 + "\n        a < b -> a == b\n        | | |    | |  |" + "\n        | | |    | |  " + tmp_45 + "\n        | | |    | " + tmp_46 + "\n        | | |    " + tmp_44 + "\n        | | " + tmp_42 + "\n        | " + tmp_43 + "\n        " + tmp_41 + "\n        b < a -> b == a" + "\n        else -> false" + "\n    }" + "\n)"
+                return "\nassert(" + "\n    initial && when {\n    |" + "\n    " + tmp_40 + "\n        a < b -> a == b\n        | | |    | |  |" + "\n        | | |    | |  " + tmp_45 + "\n        | | |    | " + tmp_46 + "\n        | | |    " + tmp_44 + "\n        | | " + tmp_42 + "\n        | " + tmp_43 + "\n        " + tmp_41 + "\n        b < a -> b == a" + "\n        else -> false" + "\n    }" + "\n)" + "\n"
               }
 )
             }
@@ -157,13 +157,13 @@ fun test4(initial: Boolean, a: Int, b: Int): String {
                   val tmp_51: Int = a
                   val tmp_52: Boolean = EQEQ(arg0 = tmp_50, arg1 = tmp_51)
                   assert(value = tmp_52, lazyMessage = local fun <anonymous>(): String {
-                    return "Assertion failed" + "\nassert(" + "\n    initial && when {\n    |" + "\n    " + tmp_40 + "\n        a < b -> a == b\n        | | |" + "\n        | | " + tmp_42 + "\n        | " + tmp_43 + "\n        " + tmp_41 + "\n        b < a -> b == a\n        | | |    | |  |" + "\n        | | |    | |  " + tmp_51 + "\n        | | |    | " + tmp_52 + "\n        | | |    " + tmp_50 + "\n        | | " + tmp_48 + "\n        | " + tmp_49 + "\n        " + tmp_47 + "\n        else -> false" + "\n    }" + "\n)"
+                    return "\nassert(" + "\n    initial && when {\n    |" + "\n    " + tmp_40 + "\n        a < b -> a == b\n        | | |" + "\n        | | " + tmp_42 + "\n        | " + tmp_43 + "\n        " + tmp_41 + "\n        b < a -> b == a\n        | | |    | |  |" + "\n        | | |    | |  " + tmp_51 + "\n        | | |    | " + tmp_52 + "\n        | | |    " + tmp_50 + "\n        | | " + tmp_48 + "\n        | " + tmp_49 + "\n        " + tmp_47 + "\n        else -> false" + "\n    }" + "\n)" + "\n"
                   }
 )
                 }
                 else -> { // BLOCK
                   assert(value = false, lazyMessage = local fun <anonymous>(): String {
-                    return "Assertion failed" + "\nassert(" + "\n    initial && when {\n    |" + "\n    " + tmp_40 + "\n        a < b -> a == b\n        | | |" + "\n        | | " + tmp_42 + "\n        | " + tmp_43 + "\n        " + tmp_41 + "\n        b < a -> b == a\n        | | |" + "\n        | | " + tmp_48 + "\n        | " + tmp_49 + "\n        " + tmp_47 + "\n        else -> false" + "\n    }" + "\n)"
+                    return "\nassert(" + "\n    initial && when {\n    |" + "\n    " + tmp_40 + "\n        a < b -> a == b\n        | | |" + "\n        | | " + tmp_42 + "\n        | " + tmp_43 + "\n        " + tmp_41 + "\n        b < a -> b == a\n        | | |" + "\n        | | " + tmp_48 + "\n        | " + tmp_49 + "\n        " + tmp_47 + "\n        else -> false" + "\n    }" + "\n)" + "\n"
                   }
 )
                 }
@@ -173,7 +173,7 @@ fun test4(initial: Boolean, a: Int, b: Int): String {
         }
         else -> { // BLOCK
           assert(value = false, lazyMessage = local fun <anonymous>(): String {
-            return "Assertion failed" + "\nassert(" + "\n    initial && when {\n    |" + "\n    " + tmp_40 + "\n        a < b -> a == b" + "\n        b < a -> b == a" + "\n        else -> false" + "\n    }" + "\n)"
+            return "\nassert(" + "\n    initial && when {\n    |" + "\n    " + tmp_40 + "\n        a < b -> a == b" + "\n        b < a -> b == a" + "\n        else -> false" + "\n    }" + "\n)" + "\n"
           }
 )
         }

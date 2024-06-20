@@ -38,13 +38,14 @@ class PowerAssertTest {
         assertEquals(
             actual = error.message,
             expected = """
-                Assertion failed
+                
                 assertTrue(Person.UNKNOWN.size == 1)
                            |      |       |    |
                            |      |       |    false
                            |      |       2
                            |      [Person(firstName=John, lastName=Doe), Person(firstName=Jane, lastName=Doe)]
                            Person.Companion
+                
             """.trimIndent()
         )
     }
@@ -55,13 +56,14 @@ class PowerAssertTest {
         assertEquals(
             actual = error.message,
             expected = """
-                Assertion failed
+                
                 require(Person.UNKNOWN.size == 1)
                         |      |       |    |
                         |      |       |    false
                         |      |       2
                         |      [Person(firstName=John, lastName=Doe), Person(firstName=Jane, lastName=Doe)]
                         Person.Companion
+                
             """.trimIndent()
         )
     }
@@ -106,12 +108,13 @@ class PowerAssertTest {
         assertEquals(
             actual = error.suppressedExceptions[0].message,
             expected = """
-                Assertion failed
+                
                 assert(jane.firstName == "Jane")
                        |    |         |
                        |    |         false
                        |    John
                        Person(firstName=John, lastName=Doe)
+                
             """.trimIndent(),
         )
         assertEquals(
@@ -126,6 +129,7 @@ class PowerAssertTest {
                        |    |        true
                        |    Doe
                        Person(firstName=Jane, lastName=Doe)
+                
             """.trimIndent(),
         )
     }

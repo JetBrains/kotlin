@@ -1,9 +1,9 @@
 fun box() = expectThrowableMessage {
     assert(1 != 1)
-} + "\n\n" + expectThrowableMessage {
+} + expectThrowableMessage {
     // Test that we don't just search for `!=` in the expression.
     assert(" != " != " != ")
-} + "\n\n" + expectThrowableMessage {
+} + expectThrowableMessage {
     // Test multiline case
     assert(
         " != "
@@ -12,10 +12,10 @@ fun box() = expectThrowableMessage {
 
                 " != "
     )
-} + "\n\n" + expectThrowableMessage {
+} + expectThrowableMessage {
     // Test that we don't assume whitespaces around the infix operator
     assert(1/*!=*/!=/*!=*/1)
-} + "\n\n" + expectThrowableMessage {
+} + expectThrowableMessage {
     // Test nested `!=`
     assert((1 != 1) != false)
 }

@@ -1,17 +1,17 @@
 // DUMP_KT_IR
 
 fun box(): String {
-    return test1(2, 1) + "\n\n" +
-            test1(1, 2) + "\n\n" +
-            test1(1, 1) + "\n\n" +
-            test2(1, 2) + "\n\n" +
-            test2(2, 1) + "\n\n" +
-            test3(2, 1) + "\n\n" +
-            test3(1, 2) + "\n\n" +
-            test3(1, 1) + "\n\n" +
-            test4(true, 2, 1) + "\n\n" +
-            test4(true, 1, 2) + "\n\n" +
-            test4(true, 1, 1) + "\n\n" +
+    return test1(2, 1) +
+            test1(1, 2) +
+            test1(1, 1) +
+            test2(1, 2) +
+            test2(2, 1) +
+            test3(2, 1) +
+            test3(1, 2) +
+            test3(1, 1) +
+            test4(true, 2, 1) +
+            test4(true, 1, 2) +
+            test4(true, 1, 1) +
             test4(false, 1, 1)
 }
 

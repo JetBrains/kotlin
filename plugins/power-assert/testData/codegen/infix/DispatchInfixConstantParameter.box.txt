@@ -1,4 +1,6 @@
+---
 Wrapper(1 + 1) mustEqual 6
 |         |
 |         2
 Wrapper
+---

@@ -1,12 +1,12 @@
-Assertion failed
+---
 assert((str?.lowercase()?.length ?: default) == 5)
         |    |            |                  |
         |    |            |                  false
         |    |            4
         |    test
         TEST
-
-Assertion failed
+---
+---
 assert((str?.lowercase()?.length ?: default) == 5)
         |    |            |         |        |
         |    |            |         |        false
@@ -14,16 +14,16 @@ assert((str?.lowercase()?.length ?: default) == 5)
         |    |            null
         |    null
         null
-
-Assertion failed
+---
+---
 assert(((str?.lowercase() ?: fallback)?.length ?: default) == 5)
          |    |                         |                  |
          |    |                         |                  false
          |    |                         4
          |    test
          TEST
-
-Assertion failed
+---
+---
 assert(((str?.lowercase() ?: fallback)?.length ?: default) == 5)
          |    |              |          |                  |
          |    |              |          |                  false
@@ -31,8 +31,8 @@ assert(((str?.lowercase() ?: fallback)?.length ?: default) == 5)
          |    |              test
          |    null
          null
-
-Assertion failed
+---
+---
 assert(((str?.lowercase() ?: fallback)?.length ?: default) == 5)
          |    |              |          |         |        |
          |    |              |          |         |        false
@@ -41,3 +41,4 @@ assert(((str?.lowercase() ?: fallback)?.length ?: default) == 5)
          |    |              null
          |    null
          null
+---

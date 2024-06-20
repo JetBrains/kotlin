@@ -1,4 +1,5 @@
-false=true
+---false=true
+
 dbg(
     key = greeting != null && greeting.length == 5,
           |        |
@@ -9,3 +10,4 @@ dbg(
             |    true
             null
 )
+---

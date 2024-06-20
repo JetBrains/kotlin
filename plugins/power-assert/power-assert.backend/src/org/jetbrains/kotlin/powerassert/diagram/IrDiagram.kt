@@ -56,7 +56,7 @@ fun IrBuilderWithScope.irDiagramString(
 
             addArgument(
                 irString {
-                    if (row != 0 || prefix != null) appendLine()
+                    appendLine()
                     append(rowSource)
                     if (indentations.isNotEmpty()) {
                         appendLine()
@@ -85,6 +85,12 @@ fun IrBuilderWithScope.irDiagramString(
                 addArgument(irGet(tmp.value))
             }
         }
+
+        addArgument(
+            irString {
+                appendLine()
+            }
+        )
     }
 }
 

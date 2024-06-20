@@ -1,16 +1,16 @@
-Assertion failed
+---
 assert("Name" in listOf("Hello", "World"))
               |  |
               |  [Hello, World]
               false
-
-Assertion failed
+---
+---
 assert(" in " in listOf("Hello", "World"))
               |  |
               |  [Hello, World]
               false
-
-Assertion failed
+---
+---
 assert(
     " in "
 
@@ -22,17 +22,18 @@ assert(
                |
                [Hello, World]
 )
-
-Assertion failed
+---
+---
 assert("Name"/*in*/in/*in*/listOf("Hello", "World"))
                    |       |
                    |       [Hello, World]
                    false
-
-Assertion failed
+---
+---
 assert(("Name" in listOf("Hello", "World")) in listOf(true))
                |  |                         |  |
                |  |                         |  [true]
                |  |                         false
                |  [Hello, World]
                false
+---

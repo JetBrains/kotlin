@@ -1,5 +1,6 @@
-Assertion failed
+---
 assert(1 * 2 == 4)
          |   |
          |   false
          2
+---

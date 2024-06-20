@@ -1,15 +1,15 @@
-Assertion failed
+---
 assert(null is String)
             |
             false
-
-Assertion failed
+---
+---
 assert(!(" is " is String))
        |        |
        |        true
        false
-
-Assertion failed
+---
+---
 assert(!(
        |
        false
@@ -21,15 +21,16 @@ assert(!(
 
             String
 ))
-
-Assertion failed
+---
+---
 assert(null/*is*/is/*is*/String)
                  |
                  false
-
-Assertion failed
+---
+---
 assert(!((null is String) is Boolean))
        |       |          |
        |       |          true
        |       false
        false
+---
