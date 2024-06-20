@@ -30,7 +30,7 @@ fun buildResolvedArgumentList(
 
 fun buildArgumentListForErrorCall(
     original: FirArgumentList,
-    mapping: LinkedHashMap<FirExpression, out FirValueParameter>,
+    mapping: LinkedHashMap<FirExpression, FirValueParameter?>,
 ): FirArgumentList {
     return FirResolvedArgumentListForErrorCall(original, mapping)
 }

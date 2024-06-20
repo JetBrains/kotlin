@@ -95,6 +95,6 @@ internal object NoTypeArguments : ResolutionStage() {
 
 internal object InitializeCallableReferenceArguments : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
-        candidate.updateArgumentMapping(LinkedHashMap())
+        candidate.initializeArgumentMapping(LinkedHashMap())
     }
 }

@@ -258,6 +258,7 @@ class FirCallCompletionResultsWriterTransformer(
         val oldArgumentMapping = argumentMapping
         val oldValueParametersToNewMap = oldSymbol.valueParameterSymbols.zip(updatedSymbol.valueParameterSymbols).toMap()
 
+        @OptIn(Candidate.UpdatingSymbol::class)
         updateArgumentMapping(oldArgumentMapping.mapValuesTo(linkedMapOf()) { oldValueParametersToNewMap[it.value.symbol]!!.fir })
     }
 
@@ -359,31 +360,28 @@ class FirCallCompletionResultsWriterTransformer(
             subCandidate,
             substitutor = subCandidate.prepareCustomReturnTypeSubstitutorForFunctionCall() ?: finalSubstitutor
         )
-        val allArgs =
-            if (calleeReference.isError) originalArgumentList.arguments else subCandidate.argumentMapping.keys.toList()
-        val allArgsMapping = subCandidate.handleVarargsAndReturnAllArgsMapping(allArgs)
+        val allArgs = calleeReference.computeAllArguments(originalArgumentList)
+        val (regularMapping, allArgsMapping) = subCandidate.handleVarargsAndReturnResultingArgumentsMapping(allArgs)
         if (calleeReference.isError) {
             result.replaceArgumentList(buildArgumentListForErrorCall(originalArgumentList, allArgsMapping))
         } else {
-            subCandidate.argumentMapping.let {
-                val newArgumentList = buildResolvedArgumentList(originalArgumentList, it)
-                val symbol = subCandidate.symbol
-                val functionIsInline =
-                    (symbol as? FirNamedFunctionSymbol)?.fir?.isInline == true || symbol.isArrayConstructorWithLambda
-                for ((argument, parameter) in newArgumentList.mapping) {
-                    val lambda = (argument.unwrapArgument() as? FirAnonymousFunctionExpression)?.anonymousFunction ?: continue
-                    val parameterIsSomeFunction = parameter.returnTypeRef.coneType.isSomeFunctionType(session)
-                    val inlineStatus = when {
-                        !parameterIsSomeFunction -> InlineStatus.NoInline
-                        parameter.isCrossinline && functionIsInline -> InlineStatus.CrossInline
-                        parameter.isNoinline -> InlineStatus.NoInline
-                        functionIsInline -> InlineStatus.Inline
-                        else -> InlineStatus.NoInline
-                    }
-                    lambda.replaceInlineStatus(inlineStatus)
+            val newArgumentList = buildResolvedArgumentList(originalArgumentList, regularMapping)
+            val symbol = subCandidate.symbol
+            val functionIsInline =
+                (symbol as? FirNamedFunctionSymbol)?.fir?.isInline == true || symbol.isArrayConstructorWithLambda
+            for ((argument, parameter) in newArgumentList.mapping) {
+                val lambda = (argument.unwrapArgument() as? FirAnonymousFunctionExpression)?.anonymousFunction ?: continue
+                val parameterIsSomeFunction = parameter.returnTypeRef.coneType.isSomeFunctionType(session)
+                val inlineStatus = when {
+                    !parameterIsSomeFunction -> InlineStatus.NoInline
+                    parameter.isCrossinline && functionIsInline -> InlineStatus.CrossInline
+                    parameter.isNoinline -> InlineStatus.NoInline
+                    functionIsInline -> InlineStatus.Inline
+                    else -> InlineStatus.NoInline
                 }
-                result.replaceArgumentList(newArgumentList)
+                lambda.replaceInlineStatus(inlineStatus)
             }
+            result.replaceArgumentList(newArgumentList)
         }
         val expectedArgumentsTypeMapping = runIf(!calleeReference.isError) { subCandidate.createArgumentsMapping() }
 
@@ -398,6 +396,17 @@ class FirCallCompletionResultsWriterTransformer(
 
         result.addNonFatalDiagnostics(calleeReference)
         return result
+    }
+
+    private fun FirNamedReferenceWithCandidate.computeAllArguments(
+        originalArgumentList: FirArgumentList,
+        predefinedMapping: LinkedHashMap<FirExpression, FirValueParameter>? = null
+    ): List<FirExpression> {
+        return when {
+            this.isError -> originalArgumentList.arguments
+            predefinedMapping != null -> predefinedMapping.keys.toList()
+            else -> candidate.argumentMapping.keys.toList()
+        }
     }
 
 
@@ -543,26 +552,26 @@ class FirCallCompletionResultsWriterTransformer(
         annotationCall.replaceCalleeReference(calleeReference.toResolvedReference())
         val subCandidate = calleeReference.candidate
         val expectedArgumentsTypeMapping = runIf(!calleeReference.isError) { subCandidate.createArgumentsMapping() }
-        withFirArrayOfCallTransformer {
+        val argumentMappingWithArrayOfCalls = withFirArrayOfCallTransformer {
             annotationCall.argumentList.transformArguments(this, expectedArgumentsTypeMapping)
             var index = 0
-            val newMapping = subCandidate.argumentMapping.let {
+            subCandidate.argumentMapping.let {
                 LinkedHashMap<FirExpression, FirValueParameter>(it.size).let { newMapping ->
                     subCandidate.argumentMapping.mapKeysTo(newMapping) { (_, _) ->
                         annotationCall.argumentList.arguments[index++]
                     }
                 }
             }
-
-            subCandidate.updateArgumentMapping(newMapping)
         }
-        val allArgs =
-            if (calleeReference.isError) annotationCall.argumentList.arguments else subCandidate.argumentMapping.keys.toList()
-        val allArgsMapping = subCandidate.handleVarargsAndReturnAllArgsMapping(allArgs)
+        val allArgs = calleeReference.computeAllArguments(annotationCall.argumentList, argumentMappingWithArrayOfCalls)
+        val (regularMapping, allArgsMapping) = subCandidate.handleVarargsAndReturnResultingArgumentsMapping(
+            allArgs,
+            precomputedArgumentMapping = argumentMappingWithArrayOfCalls
+        )
         if (calleeReference.isError) {
             annotationCall.replaceArgumentList(buildArgumentListForErrorCall(annotationCall.argumentList, allArgsMapping))
         } else {
-            subCandidate.argumentMapping.let {
+            regularMapping.let {
                 annotationCall.replaceArgumentList(buildResolvedArgumentList(annotationCall.argumentList, it))
             }
         }
@@ -575,6 +584,11 @@ class FirCallCompletionResultsWriterTransformer(
         return transformAnnotationCall(errorAnnotationCall, data)
     }
 
+    private data class ResultingArgumentsMapping(
+        val regularMapping: LinkedHashMap<FirExpression, FirValueParameter>,
+        val allArgsMapping: LinkedHashMap<FirExpression, FirValueParameter?>
+    )
+
     /**
      * The function does two things:
      * 1. Changes [Candidate.argumentMapping] if at least one vararg is presented.
@@ -583,8 +597,11 @@ class FirCallCompletionResultsWriterTransformer(
      *    the returned collection may contain `null`s. Generally speaking, it should only happen only in some cases when
      *    `calleeReference.isError` is `true` (see function usages)
      */
-    private fun Candidate.handleVarargsAndReturnAllArgsMapping(argumentList: List<FirExpression>): LinkedHashMap<FirExpression, out FirValueParameter?> {
-        val argumentMapping = this.argumentMapping
+    private fun Candidate.handleVarargsAndReturnResultingArgumentsMapping(
+        argumentList: List<FirExpression>,
+        precomputedArgumentMapping: LinkedHashMap<FirExpression, FirValueParameter>? = null
+    ): ResultingArgumentsMapping {
+        val argumentMapping = precomputedArgumentMapping ?: this.argumentMapping
         val varargParameter = argumentMapping.values.firstOrNull { it.isVararg }
         return if (varargParameter != null) {
             // Create a FirVarargArgumentExpression for the vararg arguments
@@ -592,10 +609,15 @@ class FirCallCompletionResultsWriterTransformer(
             val resolvedArrayType = varargParameterTypeRef.substitute(this)
             val argumentMappingWithAllArgs =
                 remapArgumentsWithVararg(varargParameter, resolvedArrayType, argumentMapping, argumentList)
-            updateArgumentMapping(argumentMappingWithAllArgs.filterValuesNotNull())
-            argumentMappingWithAllArgs
+            ResultingArgumentsMapping(
+                argumentMappingWithAllArgs.filterValuesNotNull(),
+                argumentMappingWithAllArgs
+            )
         } else {
-            argumentList.associateWithTo(LinkedHashMap()) { argumentMapping[it] }
+            ResultingArgumentsMapping(
+                argumentMapping,
+                argumentList.associateWithTo(LinkedHashMap()) { argumentMapping[it] }
+            )
         }
     }
 
@@ -786,13 +808,12 @@ class FirCallCompletionResultsWriterTransformer(
         val subCandidate = calleeReference.candidate
 
         val originalArgumentList = delegatedConstructorCall.argumentList
-        val allArgs =
-            if (calleeReference.isError) originalArgumentList.arguments else subCandidate.argumentMapping.keys.toList()
-        val allArgsMapping = subCandidate.handleVarargsAndReturnAllArgsMapping(allArgs)
+        val allArgs = calleeReference.computeAllArguments(originalArgumentList)
+        val (regularMapping, allArgsMapping) = subCandidate.handleVarargsAndReturnResultingArgumentsMapping(allArgs)
         if (calleeReference.isError) {
             delegatedConstructorCall.replaceArgumentList(buildArgumentListForErrorCall(originalArgumentList, allArgsMapping))
         } else {
-            subCandidate.argumentMapping.let {
+            regularMapping.let {
                 delegatedConstructorCall.replaceArgumentList(buildResolvedArgumentList(originalArgumentList, it))
             }
         }

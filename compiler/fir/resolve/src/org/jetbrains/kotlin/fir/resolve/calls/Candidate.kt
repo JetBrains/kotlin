@@ -120,6 +120,12 @@ class Candidate(
     override val argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>
         get() = _argumentMapping ?: error("Argument mapping is not initialized yet")
 
+    fun initializeArgumentMapping(argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>) {
+        require(_argumentMapping == null) { "Argument mapping already initialized" }
+        _argumentMapping = argumentMapping
+    }
+
+    @UpdatingSymbol
     fun updateArgumentMapping(argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>) {
         _argumentMapping = argumentMapping
     }

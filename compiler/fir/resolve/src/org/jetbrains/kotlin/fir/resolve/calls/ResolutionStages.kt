@@ -503,7 +503,7 @@ internal object MapArguments : ResolutionStage() {
             candidate.originScope,
             callSiteIsOperatorCall = (callInfo.callSite as? FirFunctionCall)?.origin == FirFunctionCallOrigin.Operator
         )
-        candidate.updateArgumentMapping(mapping.toArgumentToParameterMapping())
+        candidate.initializeArgumentMapping(mapping.toArgumentToParameterMapping())
         candidate.numDefaults = mapping.numDefaults()
 
         mapping.diagnostics.forEach(sink::reportDiagnostic)
