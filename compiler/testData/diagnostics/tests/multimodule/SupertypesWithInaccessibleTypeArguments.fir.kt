@@ -17,6 +17,6 @@ interface BoxedGenericType : Box<InaccessibleGenericSuperType<Nothing>>
 // MODULE: end(middle)
 // FILE: end.kt
 
-interface BoxedConcreteTypeImplementation : BoxedConcreteType
+<!MISSING_DEPENDENCY_SUPERCLASS_IN_TYPE_ARGUMENT!>interface BoxedConcreteTypeImplementation<!> : BoxedConcreteType
 
-interface BoxedGenericTypeImplementation : BoxedGenericType
+<!MISSING_DEPENDENCY_SUPERCLASS_IN_TYPE_ARGUMENT!>interface BoxedGenericTypeImplementation<!> : BoxedGenericType

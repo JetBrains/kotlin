@@ -1117,6 +1117,16 @@ object PositioningStrategies {
                 // Look for reference in LHS of variable assignment.
                 element.left?.let { return mark(it) }
             }
+            if (element is KtClassOrObject) {
+                val nameIdentifier = (element as? KtNamedDeclaration)?.nameIdentifier
+                if (nameIdentifier != null) {
+                    val startElement =
+                        element.getModifierList()?.getModifier(KtTokens.ENUM_KEYWORD)
+                            ?: element.node.findChildByType(TokenSet.create(KtTokens.CLASS_KEYWORD, KtTokens.OBJECT_KEYWORD))?.psi
+                            ?: element
+                    return markRange(startElement, nameIdentifier)
+                }
+            }
             var result: PsiElement = when (element) {
                 is KtQualifiedExpression -> {
                     when (val selectorExpression = element.selectorExpression) {

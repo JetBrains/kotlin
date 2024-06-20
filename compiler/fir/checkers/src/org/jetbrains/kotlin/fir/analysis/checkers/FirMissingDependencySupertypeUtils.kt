@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -30,10 +31,16 @@ fun checkMissingDependencySuperTypes(
     if (declaration !is FirClassSymbol<*>) return false
 
     val missingSuperTypes = context.session.missingDependencyStorage.getMissingSuperTypes(declaration)
-    for (superType in missingSuperTypes) {
+    for ((superType, origin) in missingSuperTypes) {
+        val diagnostic =
+            if (origin == FirMissingDependencyStorage.SupertypeOrigin.TYPE_ARGUMENT && !context.languageVersionSettings.supportsFeature(
+                    LanguageFeature.ForbidUsingSupertypesWithInaccessibleContentInTypeArguments
+                )
+            ) FirErrors.MISSING_DEPENDENCY_SUPERCLASS_IN_TYPE_ARGUMENT else FirErrors.MISSING_DEPENDENCY_SUPERCLASS
+
         reporter.reportOn(
             source,
-            FirErrors.MISSING_DEPENDENCY_SUPERCLASS,
+            diagnostic,
             superType.withArguments(emptyArray()).withNullability(ConeNullability.NOT_NULL, context.session.typeContext),
             declaration.constructType(emptyArray(), false),
             context
