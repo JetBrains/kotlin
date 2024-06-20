@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.mpp
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
 import kotlin.io.path.deleteRecursively
 import kotlin.io.path.exists
@@ -97,15 +98,17 @@ class MppDslAppAndLibJsIT : KGPBaseTest() {
             // Delete the lib local repo, to ensure that Gradle uses the subproject
             localRepoDir.deleteRecursively()
 
-            val buildScript = if (buildGradle.exists()) buildGradle else buildGradleKts
-            buildScript.modify {
-                it.replace(""""com.example:sample-lib:1.0"""", """project(":${libSubprojectName}")""")
-            }
+            val buildGradle = listOf(buildGradle, buildGradleKts).first { it.exists() }
+            buildGradle.replaceText(
+                """"com.example:sample-lib:1.0"""",
+                """project(":${libSubprojectName}")"""
+            )
+            buildGradle.replaceText(
+                "kotlinCompileCacheBuster = 0",
+                "kotlinCompileCacheBuster = System.currentTimeMillis()",
+            )
 
-            build(
-                "assemble",
-                "--rerun-tasks",
-            ) {
+            build("assemble") {
                 assertTasksExecuted(":${libSubprojectName}:assemble")
                 assertTasksExecuted(":compileKotlinNodeJs")
             }

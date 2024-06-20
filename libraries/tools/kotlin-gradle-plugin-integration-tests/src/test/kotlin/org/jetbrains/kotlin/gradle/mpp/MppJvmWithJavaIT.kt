@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.mpp
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.DeprecatedJvmWithJavaPresetDiagnostic
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Disabled
@@ -46,17 +47,15 @@ class MppJvmWithJavaIT : KGPBaseTest() {
             )
             val subproject = subProject("sample-lib-gradle-kotlin-dsl")
 
-            buildGradle.modify {
-                it.replace("val shouldBeJs = true", "val shouldBeJs = false")
-            }
+            buildGradle.replaceText(
+                "shouldBeJs = true",
+                "shouldBeJs = false",
+            )
 
-            subproject.buildGradleKts.modify {
-                it
-                    .replace("val shouldBeJs = true", "val shouldBeJs = false")
-                    // TODO KT-65528 remove pluginMarkerVersion here and from the actual build.gradle
-                    //      when all KGP tests have been updated to use the new test DSL
-                    .replace(".version(\"<pluginMarkerVersion>\")", "")
-            }
+            subproject.buildGradleKts.replaceText(
+                "shouldBeJs = true",
+                "shouldBeJs = false",
+            )
 
             val classesWithoutJava: Set<String> = buildSet {
                 build("assemble") {
@@ -64,16 +63,22 @@ class MppJvmWithJavaIT : KGPBaseTest() {
                 }
             }
 
+            buildGradle.replaceText(
+                """//id("io.github.goooler.shadow")""",
+                """id("io.github.goooler.shadow") version "${TestVersions.ThirdPartyDependencies.SHADOW_PLUGIN_VERSION}"""",
+            )
+            buildGradle.replaceText(
+                """//id("application")""",
+                """id("application")""",
+            )
+            // Check that Kapt works, generates and compiles sources
+            buildGradle.replaceText(
+                """//id("org.jetbrains.kotlin.kapt")""",
+                """id("org.jetbrains.kotlin.kapt")""",
+            )
+
             buildGradle.modify { script ->
                 buildString {
-                    appendLine(
-                        """
-                        |apply plugin: 'io.github.goooler.shadow'
-                        |apply plugin: 'application'
-                        |apply plugin: 'kotlin-kapt' // Check that Kapt works, generates and compiles sources
-                        """.trimMargin()
-                    )
-
                     if (testJavaSupportInJvmTargets) {
                         appendLine(script)
                         appendLine(
@@ -94,15 +99,6 @@ class MppJvmWithJavaIT : KGPBaseTest() {
 
                     appendLine(
                         """
-                        |buildscript {
-                        |    repositories {
-                        |        maven { url 'https://plugins.gradle.org/m2/' }
-                        |    }
-                        |    dependencies {
-                        |        classpath 'io.github.goooler.shadow:shadow-gradle-plugin:${TestVersions.ThirdPartyDependencies.SHADOW_PLUGIN_VERSION}'
-                        |    }
-                        |}
-                        |
                         |application {
                         |    mainClass = 'com.example.lib.CommonKt'
                         |}

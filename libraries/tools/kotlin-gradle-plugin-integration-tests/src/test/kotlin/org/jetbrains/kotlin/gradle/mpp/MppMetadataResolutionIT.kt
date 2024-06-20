@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.utils.addToStdlib.countOccurrencesOf
-import kotlin.io.path.invariantSeparatorsPathString
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -28,32 +27,23 @@ class MppMetadataResolutionIT : KGPBaseTest() {
     @GradleTest
     @TestMetadata(value = "new-mpp-lib-and-app")
     fun testResolveMppLibDependencyToMetadata(gradleVersion: GradleVersion) {
-        val localRepoDir = defaultLocalRepo(gradleVersion)
-
         project(
             projectName = "new-mpp-lib-and-app/sample-lib",
             gradleVersion = gradleVersion,
+            localRepoDir = defaultLocalRepo(gradleVersion),
         ) {
-
-            // TODO KT-65528 move publishing config into the actual build.gradle
-            buildGradle.append(
-                """
-                |publishing {
-                |  repositories {
-                |    maven { url = "${localRepoDir.invariantSeparatorsPathString}" }
-                |  }
-                |}
-                """.trimMargin()
-            )
-
             build("publish")
         }
 
         project(
             projectName = "new-mpp-lib-and-app/sample-app",
             gradleVersion = gradleVersion,
-            localRepoDir = localRepoDir,
+            localRepoDir = defaultLocalRepo(gradleVersion),
         ) {
+            buildGradle.replaceText(
+                "shouldBeJs = true",
+                "shouldBeJs = false",
+            )
             buildGradle.append(
                 """
                 |kotlin.sourceSets {
@@ -93,7 +83,7 @@ class MppMetadataResolutionIT : KGPBaseTest() {
             )
 
             buildGradle.replaceText(
-                """'com.example:sample-lib:1.0'""",
+                """"com.example:sample-lib:1.0"""",
                 """project(":sample-lib")""",
             )
 
@@ -137,4 +127,3 @@ class MppMetadataResolutionIT : KGPBaseTest() {
         }
     }
 }
-

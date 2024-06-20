@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.gradle.mpp
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
-import kotlin.io.path.appendText
-import kotlin.io.path.invariantSeparatorsPathString
 
 @MppGradlePluginTests
 class MppConsumeFromNonKotlinIT : KGPBaseTest() {
@@ -17,34 +15,18 @@ class MppConsumeFromNonKotlinIT : KGPBaseTest() {
     @TestMetadata(value = "new-mpp-lib-and-app")
     fun testConsumeMppLibraryFromNonKotlinProject(gradleVersion: GradleVersion) {
 
-        val localRepoDir = defaultLocalRepo(gradleVersion)
-
         nativeProject(
             projectName = "new-mpp-lib-and-app/sample-lib",
             gradleVersion = gradleVersion,
-            localRepoDir = localRepoDir,
+            localRepoDir = defaultLocalRepo(gradleVersion),
         ) {
-            // TODO KT-67566 once all MppDslPublishedMetadataIT test are updated to new test DSL, update the projects to use `<localRepo>`
-            buildGradle.appendText(
-                """
-                publishing {
-                  repositories {
-                    maven {
-                      name = "LocalRepo"
-                      url = uri("${localRepoDir.invariantSeparatorsPathString}")
-                    }
-                  }
-                }
-                """.trimIndent()
-            )
-
             build("publish")
         }
 
         project(
             projectName = "new-mpp-lib-and-app/sample-app-without-kotlin",
             gradleVersion = gradleVersion,
-            localRepoDir = localRepoDir,
+            localRepoDir = defaultLocalRepo(gradleVersion),
         ) {
             build("assemble") {
                 assertTasksExecuted(":compileJava")

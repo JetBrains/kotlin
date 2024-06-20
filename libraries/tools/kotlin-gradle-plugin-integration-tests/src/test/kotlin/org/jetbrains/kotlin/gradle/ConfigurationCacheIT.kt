@@ -10,13 +10,11 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
-import kotlin.io.path.appendText
-import kotlin.io.path.readText
-import kotlin.io.path.writeText
 
 @DisplayName("Configuration cache")
 class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
@@ -68,16 +66,16 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @MppGradlePluginTests
     @DisplayName("works with MPP publishing")
     @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_7_4,
-        additionalVersions = [TestVersions.Gradle.G_7_6],
+        minVersion = TestVersions.Gradle.G_7_6,
     )
     @GradleTest
     fun testMppWithMavenPublish(gradleVersion: GradleVersion) {
         project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
             val publishedTargets = listOf("kotlinMultiplatform", "jvm6", "nodeJs", "linux64", "mingw64")
             testConfigurationCacheOf(
-                *(publishedTargets.map { ":publish${it.replaceFirstChar { it.uppercaseChar() }}PublicationToMavenRepository" }
-                    .toTypedArray()),
+                taskNames = publishedTargets
+                    .map { ":publish${it.replaceFirstChar(Char::uppercaseChar)}PublicationToLocalRepoRepository" }
+                    .toTypedArray(),
                 checkUpToDateOnRebuild = false
             )
         }
@@ -86,10 +84,12 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @MppGradlePluginTests
     @DisplayName("KT-63363: all metadata jar works well with configuration cache")
     @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_7_4,
-        additionalVersions = [TestVersions.Gradle.G_7_6],
+        // Min Gradle version is 7.6 because the project `new-mpp-lib-and-app/sample-lib` has a dependency on `kotlin("test")`,
+        // and this requires setting dependency resolution results as task inputs, which is only supported in Gradle 7.6+.
+        minVersion = TestVersions.Gradle.G_7_6,
     )
     @GradleTest
+    @TestMetadata("new-mpp-lib-and-app/sample-lib")
     fun testAllMetadataJarWithConfigurationCache(gradleVersion: GradleVersion) {
         project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
             testConfigurationCacheOf(":allMetadataJar")

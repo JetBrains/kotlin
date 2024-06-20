@@ -248,7 +248,7 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
                 otherProjectName = "sample-lib",
                 pathPrefix = "new-mpp-lib-and-app"
             )
-            buildGradle.replaceText("'com.example:sample-lib:1.0'", "project(':sample-lib')")
+            buildGradle.replaceText("\"com.example:sample-lib:1.0\"", "project(':sample-lib')")
 
             val isAtLeastGradle75 = gradleVersion >= GradleVersion.version("7.5")
 

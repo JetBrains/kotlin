@@ -395,7 +395,7 @@ fun CommandLineArguments.assertCommandLineArgumentsContainSequentially(
     expectedArgs.forEach {
         assert(expectedArgs.isNotEmpty() && Collections.indexOfSubList(args, expectedArgs.toList()) != -1) {
             this.buildResult.printBuildOutput()
-            "There is no sequential arguments ${it} in actual command line arguments are: ${args}"
+            "There is no sequential arguments $it in actual command line arguments are: $args"
         }
     }
 }
@@ -452,4 +452,3 @@ private fun BuildResult.extractNativeCustomEnvironment(taskPath: String, toolNam
         val (key, value) = it.split("=")
         key.trim() to value.trim()
     }.toMap()
-

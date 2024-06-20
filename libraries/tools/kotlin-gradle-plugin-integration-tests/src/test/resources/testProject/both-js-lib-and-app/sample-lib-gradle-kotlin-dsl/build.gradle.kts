@@ -7,21 +7,26 @@ group = "com.example"
 version = "1.0"
 
 kotlin {
-    val js = js("nodeJs")
+    js("nodeJs")
 
-    targets.all {
-        mavenPublication(Action<MavenPublication> {
-            pom.withXml(Action<XmlProvider> {
-                asNode().appendNode("name", "Sample MPP library")
-            })
-        })
+    targets {
+        all {
+            mavenPublication {
+                pom.withXml {
+                    asNode().appendNode("name", "Sample MPP library")
+                }
+            }
+        }
     }
 }
 
+kotlin.sourceSets.forEach { println(it.kotlin.srcDirs) }
+
 publishing {
     repositories {
-        maven("<localRepo>") {
+        maven {
             name = "LocalRepo"
+            url = uri("<localRepo>")
         }
     }
 }

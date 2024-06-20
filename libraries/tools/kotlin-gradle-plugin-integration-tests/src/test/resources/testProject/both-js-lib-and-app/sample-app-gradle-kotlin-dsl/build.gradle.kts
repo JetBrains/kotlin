@@ -1,3 +1,6 @@
+import org.gradle.api.logging.LogLevel
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id("org.jetbrains.kotlin.multiplatform")
     id("maven-publish")
@@ -15,4 +18,10 @@ kotlin {
             }
         }
     }
+}
+
+tasks.withType<KotlinCompile>().configureEach {
+    /** Add a changing input, to enforce re-running KotlinCompile tasks in specific tests, without needing to re-run _all_ tasks. */
+    val kotlinCompileCacheBuster = 0
+    inputs.property("kotlinCompileCacheBuster", kotlinCompileCacheBuster)
 }

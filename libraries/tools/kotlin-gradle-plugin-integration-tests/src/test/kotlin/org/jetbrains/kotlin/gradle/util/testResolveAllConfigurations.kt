@@ -15,35 +15,6 @@ private const val RESOLVE_ALL_CONFIGURATIONS_TASK_NAME = "resolveAllConfiguratio
 private const val UNRESOLVED_MARKER = "<<!>>UNRESOLVED:"
 private val unresolvedConfigurationRegex = "${Regex.escape(UNRESOLVED_MARKER)}(.*)".toRegex()
 
-// TODO KT-65528 delete once all NewMultiplatformIT tests are converted to new test DSL
-fun BaseGradleIT.Project.testResolveAllConfigurations(
-    subproject: String? = null,
-    skipSetup: Boolean = false,
-    excludeConfigurations: List<String> = listOf(),
-    options: BaseGradleIT.BuildOptions = testCase.defaultBuildOptions(),
-    withUnresolvedConfigurationNames: BaseGradleIT.CompiledProject.(List<String>) -> Unit = { assertTrue("Unresolved configurations: $it") { it.isEmpty() } },
-) = with(testCase) {
-
-    if (!skipSetup) {
-        setupWorkingDir()
-        gradleBuildScript(subproject).run {
-            val taskCode = when (extension) {
-                "gradle" -> generateResolveAllConfigurationsTask(excludeConfigurations)
-                "kts" -> generateResolveAllConfigurationsTaskKts(excludeConfigurations)
-                else -> error("Unexpected build script extension $extension")
-            }
-            appendText("\n" + taskCode)
-        }
-    }
-
-    build(RESOLVE_ALL_CONFIGURATIONS_TASK_NAME, options = options) {
-        assertSuccessful()
-        assertTasksExecuted(":${subproject?.let { "$it:" }.orEmpty()}$RESOLVE_ALL_CONFIGURATIONS_TASK_NAME")
-        val unresolvedConfigurations = unresolvedConfigurationRegex.findAll(output).map { it.groupValues[1] }.toList()
-        withUnresolvedConfigurationNames(unresolvedConfigurations)
-    }
-}
-
 fun TestProject.testResolveAllConfigurations(
     subproject: String? = null,
     skipSetup: Boolean = false,
