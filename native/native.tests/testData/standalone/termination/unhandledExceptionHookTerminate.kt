@@ -5,10 +5,10 @@
 import kotlin.test.*
 
 fun main() {
-    setUnhandledExceptionHook {
+    setUnhandledExceptionHook(ReportUnhandledExceptionHook {
         println("Hook")
         terminateWithUnhandledException(it)
-    }
+    })
 
     throw Error("an error")
 }

@@ -8,9 +8,9 @@ import kotlin.test.*
 
 fun main() {
     val x = 42
-    setUnhandledExceptionHook { throwable: Throwable ->
+    setUnhandledExceptionHook(ReportUnhandledExceptionHook { throwable: Throwable ->
         println("value $x: ${throwable::class.simpleName}. Runnable state: ${Debugging.isThreadStateRunnable}")
-    }
+    })
 
     throw Error("an error")
 }

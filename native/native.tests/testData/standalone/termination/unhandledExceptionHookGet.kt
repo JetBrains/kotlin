@@ -4,7 +4,7 @@
 import kotlin.test.*
 
 fun main() {
-    val exceptionHook = { _: Throwable -> Unit }
+    val exceptionHook = ReportUnhandledExceptionHook { _: Throwable -> Unit }
 
     val oldHook = setUnhandledExceptionHook(exceptionHook)
     assertNull(oldHook)

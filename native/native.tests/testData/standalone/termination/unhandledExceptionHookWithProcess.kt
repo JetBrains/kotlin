@@ -8,10 +8,10 @@ import kotlin.test.*
 fun main() {
     val exception = Error("an error")
     val called = AtomicInt(0)
-    setUnhandledExceptionHook {
+    setUnhandledExceptionHook(ReportUnhandledExceptionHook {
         assertSame(exception, it)
         called.value = 1
-    }
+    })
 
     processUnhandledException(exception)
     assertEquals(1, called.value)

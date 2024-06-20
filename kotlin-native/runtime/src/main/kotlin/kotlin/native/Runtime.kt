@@ -26,12 +26,13 @@ public class IncorrectDereferenceException : RuntimeException {
     public constructor(message: String) : super(message)
 }
 
-
 /**
- * Typealias describing custom exception reporting hook.
+ * Custom exception reporting hook.
  */
 @ExperimentalNativeApi
-public typealias ReportUnhandledExceptionHook = Function1<Throwable, Unit>
+public fun interface ReportUnhandledExceptionHook {
+    public fun invoke(t: Throwable)
+}
 
 /**
  * Installs an unhandled exception hook and returns an old hook, or `null` if no user-defined hooks were previously set.

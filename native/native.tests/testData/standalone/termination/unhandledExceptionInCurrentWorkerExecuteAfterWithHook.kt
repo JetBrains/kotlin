@@ -8,9 +8,9 @@ import kotlin.native.concurrent.*
 @OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 @Test
 fun testExecuteAfterStartQuiet() {
-    setUnhandledExceptionHook {
+    setUnhandledExceptionHook(ReportUnhandledExceptionHook {
         println("hook called")
-    }
+    })
     Worker.current.executeAfter(0L, {
         throw Error("an error")
     })

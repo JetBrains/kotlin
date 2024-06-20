@@ -12,7 +12,7 @@ fun customExceptionHook(throwable: Throwable) {
 
 fun main() {
     val x = 42
-    setUnhandledExceptionHook(::customExceptionHook)
+    setUnhandledExceptionHook(ReportUnhandledExceptionHook(::customExceptionHook))
 
     throw Error("an error")
 }

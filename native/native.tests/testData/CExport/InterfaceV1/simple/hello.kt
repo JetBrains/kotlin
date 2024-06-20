@@ -121,7 +121,7 @@ fun testNullableWithNulls(arg1: Int?, arg2: Unit?) {
 }
 
 fun setCErrorHandler(callback: CPointer<CFunction<(CPointer<ByteVar>) -> Unit>>?) {
-    setUnhandledExceptionHook({
+    setUnhandledExceptionHook(ReportUnhandledExceptionHook {
         throwable: Throwable ->
         memScoped {
             callback!!(throwable.toString().cstr.ptr)

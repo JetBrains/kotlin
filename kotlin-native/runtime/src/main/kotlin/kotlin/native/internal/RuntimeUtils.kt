@@ -172,7 +172,7 @@ internal fun OnUnhandledException(throwable: Throwable) {
         return
     }
     try {
-        handler(throwable)
+        handler.invoke(throwable)
     } catch (t: Throwable) {
         ReportUnhandledException(t)
     }
@@ -182,7 +182,7 @@ internal fun OnUnhandledException(throwable: Throwable) {
 @OptIn(FreezingIsDeprecated::class, ExperimentalNativeApi::class)
 internal fun runUnhandledExceptionHook(throwable: Throwable) {
     val handler = UnhandledExceptionHookHolder.hook.value ?: throw throwable
-    handler(throwable)
+    handler.invoke(throwable)
 }
 
 @ExportForCppRuntime

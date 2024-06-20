@@ -5,9 +5,9 @@
 @file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 
 fun setHookAndThrow() {
-    setUnhandledExceptionHook {
+    setUnhandledExceptionHook(ReportUnhandledExceptionHook {
         println("hook")
-    }
+    })
 
     throw Exception("Error")
 }
