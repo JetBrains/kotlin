@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.symbols
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithTypeParameters
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaTypeParameterOwnerSymbol
 
 /**
  * Represents a symbol of declaration which can be directly expressed in source code.
@@ -19,7 +19,7 @@ public sealed interface KaDeclarationSymbol : KaSymbol, KaAnnotatedSymbol
 @KaExperimentalApi
 public val KaDeclarationSymbol.typeParameters: List<KaTypeParameterSymbol>
     @OptIn(KaImplementationDetail::class)
-    get() = if (this is KaSymbolWithTypeParameters) typeParameters else emptyList()
+    get() = if (this is KaTypeParameterOwnerSymbol) typeParameters else emptyList()
 
 
 @Deprecated("Use 'KaDeclarationSymbol' instead", ReplaceWith("KaDeclarationSymbol"))

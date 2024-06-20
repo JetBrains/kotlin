@@ -55,7 +55,7 @@ public typealias KtClassLikeSymbol = KaClassLikeSymbol
 public abstract class KaTypeAliasSymbol : KaClassLikeSymbol(),
     KaSymbolWithVisibility,
     KaNamedSymbol,
-    KaSymbolWithTypeParameters
+    KaTypeParameterOwnerSymbol
 {
 
     /**
@@ -102,7 +102,7 @@ public typealias KtAnonymousObjectSymbol = KaAnonymousObjectSymbol
 public abstract class KaNamedClassSymbol : KaClassSymbol(),
     KaSymbolWithModality,
     KaSymbolWithVisibility,
-    KaSymbolWithTypeParameters,
+    KaTypeParameterOwnerSymbol,
     KaNamedSymbol,
     KaContextReceiversOwner {
 

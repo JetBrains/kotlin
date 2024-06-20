@@ -31,13 +31,17 @@ public typealias KtNamedSymbol = KaNamedSymbol
  * @see org.jetbrains.kotlin.analysis.api.symbols.typeParameters
  */
 @KaImplementationDetail
-public interface KaSymbolWithTypeParameters : KaSymbol {
+public interface KaTypeParameterOwnerSymbol : KaSymbol {
     public val typeParameters: List<KaTypeParameterSymbol>
 }
 
-@Deprecated("Use 'KaSymbolWithTypeParameters' instead", ReplaceWith("KaSymbolWithTypeParameters"))
+@Deprecated("Use 'KaTypeParameterOwnerSymbol' instead", ReplaceWith("KaTypeParameterOwnerSymbol"))
 @KaImplementationDetail
-public typealias KtSymbolWithTypeParameters = KaSymbolWithTypeParameters
+public typealias KaSymbolWithTypeParameters = KaTypeParameterOwnerSymbol
+
+@Deprecated("Use 'KaTypeParameterOwnerSymbol' instead", ReplaceWith("KaTypeParameterOwnerSymbol"))
+@KaImplementationDetail
+public typealias KtSymbolWithTypeParameters = KaTypeParameterOwnerSymbol
 
 /**
  * A marker interface for symbols which could potentially be `expect` or `actual`. For more details about `expect` and `actual`

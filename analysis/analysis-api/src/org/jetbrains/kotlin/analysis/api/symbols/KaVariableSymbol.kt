@@ -157,7 +157,7 @@ public sealed class KaPropertySymbol : KaVariableSymbol(),
     KaPossibleMemberSymbol,
     KaSymbolWithModality,
     KaSymbolWithVisibility,
-    KaSymbolWithTypeParameters,
+    KaTypeParameterOwnerSymbol,
     @Suppress("DEPRECATION") KaSymbolWithKind {
 
     public abstract val hasGetter: Boolean

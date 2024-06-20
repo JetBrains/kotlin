@@ -45,7 +45,7 @@ public abstract class KaAnonymousFunctionSymbol : KaFunctionSymbol() {
 public typealias KtAnonymousFunctionSymbol = KaAnonymousFunctionSymbol
 
 @OptIn(KaImplementationDetail::class)
-public abstract class KaSamConstructorSymbol : KaFunctionSymbol(), KaNamedSymbol, KaSymbolWithTypeParameters {
+public abstract class KaSamConstructorSymbol : KaFunctionSymbol(), KaNamedSymbol, KaTypeParameterOwnerSymbol {
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.TOP_LEVEL }
 
     abstract override fun createPointer(): KaSymbolPointer<KaSamConstructorSymbol>
@@ -59,7 +59,7 @@ public abstract class KaNamedFunctionSymbol : KaFunctionSymbol(),
     KaNamedSymbol,
     KaPossibleMemberSymbol,
     KaPossibleMultiplatformSymbol,
-    KaSymbolWithTypeParameters,
+    KaTypeParameterOwnerSymbol,
     KaSymbolWithModality,
     KaSymbolWithVisibility {
 
@@ -97,7 +97,7 @@ public abstract class KaConstructorSymbol : KaFunctionSymbol(),
     KaPossibleMemberSymbol,
     KaPossibleMultiplatformSymbol,
     KaSymbolWithVisibility,
-    KaSymbolWithTypeParameters
+    KaTypeParameterOwnerSymbol
 {
 
     public abstract val isPrimary: Boolean
