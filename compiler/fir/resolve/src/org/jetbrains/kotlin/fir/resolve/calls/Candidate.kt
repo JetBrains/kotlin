@@ -57,15 +57,7 @@ class Candidate(
     override var symbol: FirBasedSymbol<*> = symbol
         private set
 
-    /**
-     * Please avoid updating symbol in the candidate whenever it's possible.
-     * The only case when currently it seems to be unavoidable is at
-     * [org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer.refineSubstitutedMemberIfReceiverContainsTypeVariable]
-     */
-    @RequiresOptIn
-    annotation class UpdatingSymbol
-
-    @UpdatingSymbol
+    @UpdatingCandidateInvariants
     fun updateSymbol(symbol: FirBasedSymbol<*>) {
         this.symbol = symbol
     }
@@ -100,27 +92,56 @@ class Candidate(
      * Substitutor from declared type parameters to type variables created for that candidate
      */
     lateinit var substitutor: ConeSubstitutor
+        private set
     lateinit var freshVariables: List<ConeTypeVariable>
+        private set
+
+    fun initializeSubstitutorAndVariables(substitutor: ConeSubstitutor, freshVariables: List<ConeTypeVariable>) {
+        this.substitutor = substitutor
+        this.freshVariables = freshVariables
+    }
+
+    @UpdatingCandidateInvariants
+    fun updateSubstitutor(substitutor: ConeSubstitutor) {
+        this.substitutor = substitutor
+    }
 
     // ---------------------------------------- Conversions ----------------------------------------
 
     var resultingTypeForCallableReference: ConeKotlinType? = null
+        private set
     var outerConstraintBuilderEffect: (ConstraintSystemOperation.() -> Unit)? = null
+        private set
 
     val usesSamConversion: Boolean get() = functionTypesOfSamConversions != null
     val usesSamConversionOrSamConstructor: Boolean get() = usesSamConversion || symbol.origin == FirDeclarationOrigin.SamConstructor
 
     internal var callableReferenceAdaptation: CallableReferenceAdaptation? = null
-        set(value) {
-            field = value
-            usesFunctionConversion = value?.suspendConversionStrategy is CallableReferenceConversionStrategy.CustomConversion
-            if (value != null) {
-                numDefaults = value.defaults
-            }
+        private set
+
+    internal fun initializeCallableReferenceAdaptation(
+        callableReferenceAdaptation: CallableReferenceAdaptation?,
+        resultingTypeForCallableReference: ConeKotlinType,
+        outerConstraintBuilderEffect: ConstraintSystemOperation.() -> Unit
+    ) {
+        require(this.callableReferenceAdaptation == null) { "callableReferenceAdaptation already initialized" }
+        this.callableReferenceAdaptation = callableReferenceAdaptation
+        this.resultingTypeForCallableReference = resultingTypeForCallableReference
+        this.outerConstraintBuilderEffect = outerConstraintBuilderEffect
+        usesFunctionConversion = callableReferenceAdaptation?.suspendConversionStrategy is CallableReferenceConversionStrategy.CustomConversion
+        if (callableReferenceAdaptation != null) {
+            numDefaults = callableReferenceAdaptation.defaults
         }
+    }
 
     var usesFunctionConversion: Boolean = false
     var functionTypesOfSamConversions: HashMap<FirExpression, FirSamResolver.SamConversionInfo>? = null
+        private set
+
+    fun initializeFunctionTypesOfSamConversions(types: HashMap<FirExpression, FirSamResolver.SamConversionInfo>) {
+        require(functionTypesOfSamConversions == null) { "functionTypesOfSamConversions already initialized" }
+        functionTypesOfSamConversions = types
+    }
 
     // ---------------------------------------- Argument mapping ----------------------------------------
 
@@ -135,7 +156,7 @@ class Candidate(
         _argumentMapping = argumentMapping
     }
 
-    @UpdatingSymbol
+    @UpdatingCandidateInvariants
     fun updateArgumentMapping(argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>) {
         _argumentMapping = argumentMapping
     }
@@ -258,6 +279,15 @@ class Candidate(
     }
 
     var passedStages: Int = 0
+
+
+    /**
+     * Please avoid updating symbol in the candidate whenever it's possible.
+     * The only case when currently it seems to be unavoidable is at
+     * [org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer.refineSubstitutedMemberIfReceiverContainsTypeVariable]
+     */
+    @RequiresOptIn
+    annotation class UpdatingCandidateInvariants
 
     // ---------------------------------------- hashcode/equals/toString ----------------------------------------
 

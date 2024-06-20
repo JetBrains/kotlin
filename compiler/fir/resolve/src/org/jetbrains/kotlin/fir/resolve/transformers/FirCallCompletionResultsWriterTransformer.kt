@@ -240,16 +240,19 @@ class FirCallCompletionResultsWriterTransformer(
         val updatedSymbol = symbol.updateSubstitutedMemberIfReceiverContainsTypeVariable(usedOuterCs) ?: return
         val oldSymbol = symbol
 
-        @OptIn(Candidate.UpdatingSymbol::class)
+        @OptIn(Candidate.UpdatingCandidateInvariants::class)
         updateSymbol(updatedSymbol)
 
         check(updatedSymbol is FirCallableSymbol<*>)
 
-        substitutor = substitutorByMap(
-            updatedSymbol.typeParameterSymbols.zip(freshVariables).associate { (typeParameter, typeVariable) ->
-                typeParameter to typeVariable.defaultType
-            },
-            session,
+        @OptIn(Candidate.UpdatingCandidateInvariants::class)
+        updateSubstitutor(
+            substitutorByMap(
+                updatedSymbol.typeParameterSymbols.zip(freshVariables).associate { (typeParameter, typeVariable) ->
+                    typeParameter to typeVariable.defaultType
+                },
+                session,
+            )
         )
 
         if (updatedSymbol !is FirFunctionSymbol) return
@@ -258,7 +261,7 @@ class FirCallCompletionResultsWriterTransformer(
         val oldArgumentMapping = argumentMapping
         val oldValueParametersToNewMap = oldSymbol.valueParameterSymbols.zip(updatedSymbol.valueParameterSymbols).toMap()
 
-        @OptIn(Candidate.UpdatingSymbol::class)
+        @OptIn(Candidate.UpdatingCandidateInvariants::class)
         updateArgumentMapping(oldArgumentMapping.mapValuesTo(linkedMapOf()) { oldValueParametersToNewMap[it.value.symbol]!!.fir })
     }
 

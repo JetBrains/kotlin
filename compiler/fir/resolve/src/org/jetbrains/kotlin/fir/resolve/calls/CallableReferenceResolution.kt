@@ -74,9 +74,10 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
             }
         }
 
-        candidate.resultingTypeForCallableReference = resultingType
-        candidate.callableReferenceAdaptation = callableReferenceAdaptation
-        candidate.outerConstraintBuilderEffect = fun ConstraintSystemOperation.() {
+        candidate.initializeCallableReferenceAdaptation(
+            callableReferenceAdaptation,
+            resultingType,
+        ) {
             addOtherSystem(candidate.system.currentStorage())
 
             // Callable references are either arguments to a call or are wrapped in a synthetic call for resolution.

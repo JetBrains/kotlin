@@ -29,15 +29,13 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
         val declaration = candidate.symbol.fir
         candidate.symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
         if (declaration !is FirTypeParameterRefsOwner || declaration.typeParameters.isEmpty()) {
-            candidate.substitutor = ConeSubstitutor.Empty
-            candidate.freshVariables = emptyList()
+            candidate.initializeSubstitutorAndVariables(ConeSubstitutor.Empty, emptyList())
             return
         }
         val csBuilder = candidate.system.getBuilder()
         val (substitutor, freshVariables) =
             createToFreshVariableSubstitutorAndAddInitialConstraints(declaration, csBuilder, context.session)
-        candidate.substitutor = substitutor
-        candidate.freshVariables = freshVariables
+        candidate.initializeSubstitutorAndVariables(substitutor, freshVariables)
 
         // bad function -- error on declaration side
         if (csBuilder.hasContradiction) {
