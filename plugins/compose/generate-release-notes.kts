@@ -19,15 +19,26 @@ fun getCommits(fromRevision: String, toRevision: String, path: String?): List<Co
 
     val commits = process.inputStream.bufferedReader().readText().split("\n\ncommit ")
     return commits.mapNotNull { commit ->
-        val commitId = matchCommit.find(commit)?.groupValues?.let { it[1] } ?: return@mapNotNull null
-        val changeId = matchChangeId.find(commit)?.groupValues?.let { it[1] }
-        val relnote = matchRelnote.find(commit)?.groupValues?.let { it[1] }
-        val issues = matchIssue.findAll(commit).mapNotNull { it.groups[1]?.value }.toList()
-        return@mapNotNull Commit(commitId, changeId, relnote, issues)
+        val sanitizedCommit = commit.removePrefix("commit ").padEnd(2, '\n')
+        val commitGroups = parseCommit.find(sanitizedCommit)?.groupValues ?: return@mapNotNull null
+        if (commitGroups?.size != 4) {
+            // group 1: commit hash
+            // group 2: commit message
+            // group 3: title
+            return@mapNotNull null
+        }
+        val commitId = commitGroups[1]
+        val title = commitGroups[3]
+        val commitMessage = commitGroups[2]
+        val changeId = matchChangeId.find(commitMessage)?.groupValues?.let { it[1] }
+        val relnote = matchRelnote.find(commitMessage)?.groupValues?.let { it[1] }
+        val issues = matchIssue.findAll(commitMessage).mapNotNull { it.groups[1]?.value }.toList()
+        return@mapNotNull Commit(commitId, title, changeId, relnote?.trim('\"'), issues)
     }
 }
 
-val matchCommit = Regex("^([0-9a-f]+)\n", RegexOption.IGNORE_CASE)
+val parseCommit =
+    Regex("^([0-9a-f]+)\\nAuthor:.*?\\nDate:.*?\\n[\\s]+((.*?)\\n[\\s\\S]+)", RegexOption.MULTILINE)
 val matchRelnote =
     Regex(
         "^\\s*Relnote:\\s+(\"{3}.+\"{3}|\".+\"|[^\\n]+)$",
@@ -38,6 +49,7 @@ val matchIssue = Regex("(?:Bug|Fixes):\\s+(\\d+)", RegexOption.IGNORE_CASE)
 
 data class Commit(
     val commit: String,
+    val title: String,
     val changeId: String?,
     val relnote: String?,
     val issues: List<String>,
@@ -50,7 +62,7 @@ fun issueToBuganizerUrl(issue: String): String = "https://issuetracker.google.co
 fun Commit.asReleaseNote(): String {
     val commitLink = "[${commit.substring(0, 7)}](${commitToGitHubUrl(commit)})"
     val issueLinks = issues.map { issue -> "[b/$issue](${issueToBuganizerUrl(issue)})" }.joinToString(", ")
-    return "$commitLink $relnote $issueLinks"
+    return "$commitLink ${relnote ?: title} $issueLinks"
 }
 
 if (args.isEmpty()) {
@@ -72,6 +84,9 @@ val toRevision = args[1]
 val path = args.getOrNull(2)
 
 getCommits(fromRevision, toRevision, path)
-    .filterNot { it.relnote == null || ignoreRelnotes.contains(it.relnote.toLowerCase()) }
+    .filter {
+        (it.relnote != null && !ignoreRelnotes.contains(it.relnote.toLowerCase())) ||
+                it.issues.isNotEmpty()
+    }
     .map { it.asReleaseNote() }
     .forEach { println(it) }
