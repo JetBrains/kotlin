@@ -932,7 +932,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         }
 
         private fun computeContainingClass(parent: IrDeclarationParent?): IrClass? {
-            return if (parent is IrClass && parent !is Fir2IrDeclarationStorage.NonCachedSourceFileFacadeClass) {
+            return if (parent is IrClass && !parent.isNonCachedSourceFileFacade) {
                 parent
             } else {
                 null
