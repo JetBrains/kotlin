@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.inference.*
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParameterConstraintPosition
@@ -47,8 +48,6 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 abstract class ResolutionStage {
     abstract suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext)
 }
-
-abstract class CheckerStage : ResolutionStage()
 
 internal object CheckExplicitReceiverConsistency : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
@@ -547,7 +546,7 @@ private fun Candidate.isJavaApplicableCandidate(): Boolean {
     return result
 }
 
-internal object EagerResolveOfCallableReferences : CheckerStage() {
+internal object EagerResolveOfCallableReferences : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         if (candidate.postponedAtoms.isEmpty()) return
         for (atom in candidate.postponedAtoms) {
@@ -575,7 +574,7 @@ internal object EagerResolveOfCallableReferences : CheckerStage() {
     }
 }
 
-internal object DiscriminateSyntheticProperties : CheckerStage() {
+internal object DiscriminateSyntheticProperties : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         if (candidate.symbol is FirSimpleSyntheticPropertySymbol) {
             sink.reportDiagnostic(ResolvedWithSynthetic)
@@ -583,7 +582,7 @@ internal object DiscriminateSyntheticProperties : CheckerStage() {
     }
 }
 
-internal object CheckVisibility : CheckerStage() {
+internal object CheckVisibility : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         val visibilityChecker = callInfo.session.visibilityChecker
         val symbol = candidate.symbol
@@ -623,7 +622,7 @@ internal object CheckVisibility : CheckerStage() {
     }
 }
 
-internal object CheckLowPriorityInOverloadResolution : CheckerStage() {
+internal object CheckLowPriorityInOverloadResolution : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         val annotations = when (val fir = candidate.symbol.fir) {
             is FirSimpleFunction -> fir.annotations
@@ -672,7 +671,7 @@ internal object CheckIncompatibleTypeVariableUpperBounds : ResolutionStage() {
         }
 }
 
-internal object CheckCallModifiers : CheckerStage() {
+internal object CheckCallModifiers : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         if (callInfo.callSite is FirFunctionCall) {
             when (val functionSymbol = candidate.symbol) {

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.typeConstructor
 
-internal object CheckArguments : CheckerStage() {
+internal object CheckArguments : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         candidate.symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
         val argumentMapping = candidate.argumentMapping
