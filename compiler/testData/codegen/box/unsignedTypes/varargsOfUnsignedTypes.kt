@@ -9,6 +9,30 @@ fun nullableUInt(vararg us: UInt?): UIntArray {
 
 inline fun inlinedUInt(vararg us: UInt): UIntArray = us
 
+annotation class AnnoUByte(vararg val args: UByte)
+@AnnoUByte()
+val ubyte0 = 0
+@AnnoUByte(0U)
+val ubyte1 = 1
+
+annotation class AnnoUShort(vararg val args: UShort)
+@AnnoUShort()
+val ushort0 = 0
+@AnnoUShort(0U)
+val ushort1 = 1
+
+annotation class AnnoUInt(vararg val args: UInt)
+@AnnoUInt()
+val uint0 = 0
+@AnnoUInt(0U)
+val uint1 = 1
+
+annotation class AnnoULong(vararg val args: ULong)
+@AnnoULong()
+val ulong0 = 0
+@AnnoULong(0U)
+val ulong1 = 1
+
 fun box(): String {
     val uints = uint(1u, 2u, 3u)
     if (sum(*uints) != 6u) return "Fail 1"
