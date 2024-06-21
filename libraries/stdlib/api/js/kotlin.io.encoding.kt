@@ -17,10 +17,24 @@ public open class Base64 {
 
     public final fun encodeToByteArray(source: kotlin.ByteArray, startIndex: kotlin.Int = ..., endIndex: kotlin.Int = ...): kotlin.ByteArray
 
+    @kotlin.SinceKotlin(version = "2.0")
+    public final fun withPadding(option: kotlin.io.encoding.Base64.PaddingOption): kotlin.io.encoding.Base64
+
     public companion object of Base64 Default : kotlin.io.encoding.Base64 {
         public final val Mime: kotlin.io.encoding.Base64 { get; }
 
         public final val UrlSafe: kotlin.io.encoding.Base64 { get; }
+    }
+
+    @kotlin.SinceKotlin(version = "2.0")
+    public final enum class PaddingOption : kotlin.Enum<kotlin.io.encoding.Base64.PaddingOption> {
+        enum entry PRESENT
+
+        enum entry ABSENT
+
+        enum entry PRESENT_OPTIONAL
+
+        enum entry ABSENT_OPTIONAL
     }
 }
 

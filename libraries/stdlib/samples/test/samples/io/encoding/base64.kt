@@ -48,6 +48,58 @@ class Base64Samples {
     }
 
     @Sample
+    fun paddingOptionSample() {
+        val format = HexFormat {
+            upperCase = true
+            bytes.byteSeparator = " "
+        }
+
+        val bytes = byteArrayOf(0xDE.toByte(), 0x2D, 0x02, 0xC0.toByte())
+
+        // The Base64.Default instance is configured with PaddingOption.PRESENT
+        assertPrints(Base64.Default.encode(bytes), "3i0CwA==")
+        assertPrints(Base64.Default.decode("3i0CwA==").toHexString(format), "DE 2D 02 C0")
+        // PaddingOption.PRESENT requires the decode input to be properly padded
+        assertFailsWith<IllegalArgumentException> {
+            Base64.Default.decode("3i0CwA")
+        }
+
+        // Create a new instance with PaddingOption.ABSENT that uses the Base64.Default alphabet
+        val base64AbsentPadding = Base64.Default.withPadding(Base64.PaddingOption.ABSENT)
+
+        assertPrints(base64AbsentPadding.encode(bytes), "3i0CwA")
+        assertPrints(base64AbsentPadding.decode("3i0CwA").toHexString(format), "DE 2D 02 C0")
+        // PaddingOption.ABSENT requires the decode input not to be padded
+        assertFailsWith<IllegalArgumentException> {
+            base64AbsentPadding.decode("3i0CwA==")
+        }
+
+        // Create a new instance with PaddingOption.PRESENT_OPTIONAL that uses the Base64.Default alphabet
+        val base64PresentOptionalPadding = Base64.Default.withPadding(Base64.PaddingOption.PRESENT_OPTIONAL)
+
+        assertPrints(base64PresentOptionalPadding.encode(bytes), "3i0CwA==")
+        // PaddingOption.PRESENT_OPTIONAL allows both padded and unpadded decode inputs
+        assertPrints(base64PresentOptionalPadding.decode("3i0CwA==").toHexString(format), "DE 2D 02 C0")
+        assertPrints(base64PresentOptionalPadding.decode("3i0CwA").toHexString(format), "DE 2D 02 C0")
+        // However, partially padded input is prohibited
+        assertFailsWith<IllegalArgumentException> {
+            base64PresentOptionalPadding.decode("3i0CwA=")
+        }
+
+        // Create a new instance with PaddingOption.ABSENT_OPTIONAL that uses the Base64.Default alphabet
+        val base64AbsentOptionalPadding = Base64.Default.withPadding(Base64.PaddingOption.ABSENT_OPTIONAL)
+
+        assertPrints(base64AbsentOptionalPadding.encode(bytes), "3i0CwA")
+        // PaddingOption.ABSENT_OPTIONAL allows both padded and unpadded decode inputs
+        assertPrints(base64AbsentOptionalPadding.decode("3i0CwA").toHexString(format), "DE 2D 02 C0")
+        assertPrints(base64AbsentOptionalPadding.decode("3i0CwA==").toHexString(format), "DE 2D 02 C0")
+        // However, partially padded input is prohibited
+        assertFailsWith<IllegalArgumentException> {
+            base64AbsentOptionalPadding.decode("3i0CwA=")
+        }
+    }
+
+    @Sample
     fun defaultEncodingSample() {
         val encoded = Base64.Default.encode("Hello? :> ".encodeToByteArray())
         assertPrints(encoded, "SGVsbG8/IDo+IA==")

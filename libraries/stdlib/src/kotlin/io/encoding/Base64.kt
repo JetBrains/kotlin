@@ -38,12 +38,15 @@ package kotlin.io.encoding
  * If the number of bytes constituting input data is not a multiple of three (for instance, input consists of only five bytes),
  * the data will be padded by zero bits first and only then transformed into Base64-alphabet characters.
  * If padding takes place, the resulting string is augmented by `'='`. The padding could consist of zero, two or
- * four bytes, thus encoded data will contain zero, one or two padding characters (`'='`), respectively.
+ * four bits, thus encoded data will contain zero, one or two padding characters (`'='`), respectively.
+ * The inclusion of padding characters in the resulting string depends on the [PaddingOption] set for the Base64 instance.
  *
- * This class is not supposed to be instantiated or inherited.
+ * This class is not supposed to be inherited or instantiated by calling its constructor.
  * However, predefined instances of this class are available for use.
  * The companion object [Base64.Default] is the default instance of [Base64].
  * There are also [Base64.UrlSafe] and [Base64.Mime] instances.
+ * The padding option for all predefined instances is set to [PaddingOption.PRESENT].
+ * New instances with different padding options can be created using the [withPadding] function.
  *
  * @sample samples.io.encoding.Base64Samples.encodeAndDecode
  * @sample samples.io.encoding.Base64Samples.encodingDifferences
@@ -53,18 +56,92 @@ package kotlin.io.encoding
 @ExperimentalEncodingApi
 public open class Base64 private constructor(
     internal val isUrlSafe: Boolean,
-    internal val isMimeScheme: Boolean
+    internal val isMimeScheme: Boolean,
+    internal val paddingOption: PaddingOption
 ) {
     init {
         require(!isUrlSafe || !isMimeScheme)
     }
 
     /**
+     * An enumeration of the possible padding options for Base64 encoding and decoding.
+     *
+     * Constants of this enum class can be passed to the [withPadding] function to create a new Base64 instance
+     * with the specified padding option.
+     *
+     * @sample samples.io.encoding.Base64Samples.paddingOptionSample
+     */
+    @SinceKotlin("2.0")
+    public enum class PaddingOption {
+        /**
+         * Pad on encode, require padding on decode.
+         *
+         * When encoding, the result is padded with '=' to reach an integral multiple of 4 symbols.
+         * When decoding, correctly padded input is required. The padding character '=' marks the end
+         * of the encoded data, and subsequent symbols are prohibited.
+         *
+         * This represents the canonical form of Base64 encoding.
+         *
+         * @sample samples.io.encoding.Base64Samples.paddingOptionSample
+         */
+        PRESENT,
+
+        /**
+         * Do not pad on encode, prohibit padding on decode.
+         *
+         * When encoding, the result is not padded.
+         * When decoding, the input must not contain any padding character.
+         *
+         * @sample samples.io.encoding.Base64Samples.paddingOptionSample
+         */
+        ABSENT,
+
+        /**
+         * Pad on encode, allow optional padding on decode.
+         *
+         * When encoding, the result is padded with '=' to reach an integral multiple of 4 symbols.
+         * When decoding, the input may be either padded or unpadded. If the input contains a padding character,
+         * the correct amount of padding character(s) must be present. The padding character '='
+         * marks the end of the encoded data, and subsequent symbols are prohibited.
+         *
+         * @sample samples.io.encoding.Base64Samples.paddingOptionSample
+         */
+        PRESENT_OPTIONAL,
+
+        /**
+         * Do not pad on encode, allow optional padding on decode.
+         *
+         * When encoding, the result is not padded.
+         * When decoding, the input may be either padded or unpadded. If the input contains a padding character,
+         * the correct amount of padding character(s) must be present. The padding character '='
+         * marks the end of the encoded data, and subsequent symbols are prohibited.
+         *
+         * @sample samples.io.encoding.Base64Samples.paddingOptionSample
+         */
+        ABSENT_OPTIONAL
+    }
+
+    /**
+     * Returns a new [Base64] instance that is equivalent to this instance
+     * but configured with the specified padding [option].
+     *
+     * This method does not modify this instance. If the specified [option] is the same as the current
+     * padding option of this instance, this instance itself is returned. Otherwise, a new instance is created
+     * using the same alphabet but configured with the new padding option.
+     *
+     * @sample samples.io.encoding.Base64Samples.paddingOptionSample
+     */
+    @SinceKotlin("2.0")
+    public fun withPadding(option: PaddingOption): Base64 {
+        return if (paddingOption == option) this
+        else Base64(isUrlSafe, isMimeScheme, option)
+    }
+
+    /**
      * Encodes bytes from the specified [source] array or its subrange.
      * Returns a [ByteArray] containing the resulting symbols.
      *
-     * If the size of the [source] array or its subrange is not an integral multiple of 3,
-     * the result is padded with `'='` to an integral multiple of 4 symbols.
+     * Whether the encoding result is padded with `'='` depends on the [PaddingOption] set for this [Base64] instance.
      *
      * Each resulting symbol occupies one byte in the returned byte array.
      *
@@ -89,8 +166,7 @@ public open class Base64 private constructor(
      * Encodes bytes from the specified [source] array or its subrange and writes resulting symbols into the [destination] array.
      * Returns the number of symbols written.
      *
-     * If the size of the [source] array or its subrange is not an integral multiple of 3,
-     * the result is padded with `'='` to an integral multiple of 4 symbols.
+     * Whether the encoding result is padded with `'='` depends on the [PaddingOption] set for this [Base64] instance.
      *
      * @param source the array to encode bytes from.
      * @param destination the array to write symbols into.
@@ -121,8 +197,7 @@ public open class Base64 private constructor(
      * Encodes bytes from the specified [source] array or its subrange.
      * Returns a string with the resulting symbols.
      *
-     * If the size of the [source] array or its subrange is not an integral multiple of 3,
-     * the result is padded with `'='` to an integral multiple of 4 symbols.
+     * Whether the encoding result is padded with `'='` depends on the [PaddingOption] set for this [Base64] instance.
      *
      * Use [encodeToByteArray] to get the output in [ByteArray] form.
      *
@@ -145,8 +220,7 @@ public open class Base64 private constructor(
      * Encodes bytes from the specified [source] array or its subrange and appends resulting symbols to the [destination] appendable.
      * Returns the destination appendable.
      *
-     * If the size of the [source] array or its subrange is not an integral multiple of 3,
-     * the result is padded with `'='` to an integral multiple of 4 symbols.
+     * Whether the encoding result is padded with `'='` depends on the [PaddingOption] set for this [Base64] instance.
      *
      * @param source the array to encode bytes from.
      * @param destination the appendable to append symbols to.
@@ -175,9 +249,8 @@ public open class Base64 private constructor(
      * Decodes symbols from the specified [source] array or its subrange.
      * Returns a [ByteArray] containing the resulting bytes.
      *
-     * The symbols for decoding are not required to be padded.
-     * However, if there is a padding character present, the correct amount of padding character(s) must be present.
-     * The padding character `'='` is interpreted as the end of the encoded byte data. Subsequent symbols are prohibited.
+     * The requirement, prohibition, or optionality of padding in the input symbols
+     * is determined by the [PaddingOption] set for this [Base64] instance.
      *
      * @param source the array to decode symbols from.
      * @param startIndex the beginning (inclusive) of the subrange to decode, 0 by default.
@@ -185,7 +258,8 @@ public open class Base64 private constructor(
      *
      * @throws IndexOutOfBoundsException when [startIndex] or [endIndex] is out of range of [source] array indices.
      * @throws IllegalArgumentException when `startIndex > endIndex`.
-     * @throws IllegalArgumentException when the symbols for decoding are padded incorrectly or there are extra symbols after the padding.
+     * @throws IllegalArgumentException when the symbols for decoding are not padded as required by the [PaddingOption]
+     *   set for this [Base64] instance, or when there are extra symbols after the padding.
      *
      * @return a [ByteArray] with the resulting bytes.
      *
@@ -208,9 +282,8 @@ public open class Base64 private constructor(
      * Decodes symbols from the specified [source] array or its subrange and writes resulting bytes into the [destination] array.
      * Returns the number of bytes written.
      *
-     * The symbols for decoding are not required to be padded.
-     * However, if there is a padding character present, the correct amount of padding character(s) must be present.
-     * The padding character `'='` is interpreted as the end of the encoded byte data. Subsequent symbols are prohibited.
+     * The requirement, prohibition, or optionality of padding in the input symbols
+     * is determined by the [PaddingOption] set for this [Base64] instance.
      *
      * @param source the array to decode symbols from.
      * @param destination the array to write bytes into.
@@ -222,7 +295,8 @@ public open class Base64 private constructor(
      * @throws IllegalArgumentException when `startIndex > endIndex`.
      * @throws IndexOutOfBoundsException when the resulting bytes don't fit into the [destination] array starting at the specified [destinationOffset],
      * or when that index is out of the [destination] array indices range.
-     * @throws IllegalArgumentException when the symbols for decoding are padded incorrectly or there are extra symbols after the padding.
+     * @throws IllegalArgumentException when the symbols for decoding are not padded as required by the [PaddingOption]
+     *   set for this [Base64] instance, or when there are extra symbols after the padding.
      *
      * @return the number of bytes written into [destination] array.
      *
@@ -245,9 +319,8 @@ public open class Base64 private constructor(
      * Decodes symbols from the specified [source] char sequence or its substring.
      * Returns a [ByteArray] containing the resulting bytes.
      *
-     * The symbols for decoding are not required to be padded.
-     * However, if there is a padding character present, the correct amount of padding character(s) must be present.
-     * The padding character `'='` is interpreted as the end of the encoded byte data. Subsequent symbols are prohibited.
+     * The requirement, prohibition, or optionality of padding in the input symbols
+     * is determined by the [PaddingOption] set for this [Base64] instance.
      *
      * @param source the char sequence to decode symbols from.
      * @param startIndex the beginning (inclusive) of the substring to decode, 0 by default.
@@ -255,7 +328,8 @@ public open class Base64 private constructor(
      *
      * @throws IndexOutOfBoundsException when [startIndex] or [endIndex] is out of range of [source] indices.
      * @throws IllegalArgumentException when `startIndex > endIndex`.
-     * @throws IllegalArgumentException when the symbols for decoding are padded incorrectly or there are extra symbols after the padding.
+     * @throws IllegalArgumentException when the symbols for decoding are not padded as required by the [PaddingOption]
+     *   set for this [Base64] instance, or when there are extra symbols after the padding.
      *
      * @return a [ByteArray] with the resulting bytes.
      *
@@ -270,9 +344,8 @@ public open class Base64 private constructor(
      * Decodes symbols from the specified [source] char sequence or its substring and writes resulting bytes into the [destination] array.
      * Returns the number of bytes written.
      *
-     * The symbols for decoding are not required to be padded.
-     * However, if there is a padding character present, the correct amount of padding character(s) must be present.
-     * The padding character `'='` is interpreted as the end of the encoded byte data. Subsequent symbols are prohibited.
+     * The requirement, prohibition, or optionality of padding in the input symbols
+     * is determined by the [PaddingOption] set for this [Base64] instance.
      *
      * @param source the char sequence to decode symbols from.
      * @param destination the array to write bytes into.
@@ -284,7 +357,8 @@ public open class Base64 private constructor(
      * @throws IllegalArgumentException when `startIndex > endIndex`.
      * @throws IndexOutOfBoundsException when the resulting bytes don't fit into the [destination] array starting at the specified [destinationOffset],
      * or when that index is out of the [destination] array indices range.
-     * @throws IllegalArgumentException when the symbols for decoding are padded incorrectly or there are extra symbols after the padding.
+     * @throws IllegalArgumentException when the symbols for decoding are not padded as required by the [PaddingOption]
+     *   set for this [Base64] instance, or when there are extra symbols after the padding.
      *
      * @return the number of bytes written into [destination] array.
      *
@@ -351,8 +425,10 @@ public open class Base64 private constructor(
                 val bits = byte1 shl 4
                 destination[destinationIndex++] = encodeMap[bits ushr 6]
                 destination[destinationIndex++] = encodeMap[bits and 0x3F]
-                destination[destinationIndex++] = padSymbol
-                destination[destinationIndex++] = padSymbol
+                if (shouldPadOnEncode()) {
+                    destination[destinationIndex++] = padSymbol
+                    destination[destinationIndex++] = padSymbol
+                }
             }
             2 -> {
                 val byte1 = source[sourceIndex++].toInt() and 0xFF
@@ -361,7 +437,9 @@ public open class Base64 private constructor(
                 destination[destinationIndex++] = encodeMap[bits ushr 12]
                 destination[destinationIndex++] = encodeMap[(bits ushr 6) and 0x3F]
                 destination[destinationIndex++] = encodeMap[bits and 0x3F]
-                destination[destinationIndex++] = padSymbol
+                if (shouldPadOnEncode()) {
+                    destination[destinationIndex++] = padSymbol
+                }
             }
         }
 
@@ -370,16 +448,26 @@ public open class Base64 private constructor(
         return destinationIndex - destinationOffset
     }
 
-    private fun encodeSize(sourceSize: Int): Int {
-        // includes padding chars
-        val groups = (sourceSize + bytesPerGroup - 1) / bytesPerGroup
-        val lineSeparators = if (isMimeScheme) (groups - 1) / mimeGroupsPerLine else 0
-        val size = groups * symbolsPerGroup + lineSeparators * 2
+    // internal for testing
+    internal fun encodeSize(sourceSize: Int): Int {
+        // includes padding chars if shouldPadOnEncode
+        val groups = sourceSize / bytesPerGroup
+        val trailingBytes = sourceSize % bytesPerGroup
+        var size = groups * symbolsPerGroup
+        if (trailingBytes != 0) { // trailing symbols
+            size += if (shouldPadOnEncode()) symbolsPerGroup else trailingBytes + 1
+        }
+        if (isMimeScheme) { // line separators
+            size += ((size - 1) / mimeLineLength) * 2
+        }
         if (size < 0) { // Int overflow
             throw IllegalArgumentException("Input is too big")
         }
         return size
     }
+
+    private fun shouldPadOnEncode(): Boolean =
+        paddingOption == PaddingOption.PRESENT || paddingOption == PaddingOption.PRESENT_OPTIONAL
 
     private fun decodeImpl(
         source: ByteArray,
@@ -444,11 +532,11 @@ public open class Base64 private constructor(
         if (byteStart == -bitsPerByte + bitsPerSymbol) { // dangling single symbol, incorrectly encoded
             throw IllegalArgumentException("The last unit of input does not have enough bits")
         }
-        if (byteStart != -bitsPerByte && !hasPadding) {
-            throw IllegalArgumentException("The input should be padded")
+        if (byteStart != -bitsPerByte && !hasPadding && paddingOption == PaddingOption.PRESENT) {
+            throw IllegalArgumentException("The padding option is set to PRESENT, but the input is not properly padded")
         }
         if (payload != 0) { // the pad bits are non-zero
-            throw IllegalArgumentException("The pad bits should be zeros")
+            throw IllegalArgumentException("The pad bits must be zeros")
         }
 
         sourceIndex = skipIllegalSymbolsIfMime(source, sourceIndex, endIndex)
@@ -460,13 +548,14 @@ public open class Base64 private constructor(
         return destinationIndex - destinationOffset
     }
 
-    private fun decodeSize(source: ByteArray, startIndex: Int, endIndex: Int): Int {
+    // internal for testing
+    internal fun decodeSize(source: ByteArray, startIndex: Int, endIndex: Int): Int {
         var symbols = endIndex - startIndex
         if (symbols == 0) {
             return 0
         }
         if (symbols == 1) {
-            throw IllegalArgumentException("Input should have at list 2 symbols for Base64 decoding, startIndex: $startIndex, endIndex: $endIndex")
+            throw IllegalArgumentException("Input should have at least 2 symbols for Base64 decoding, startIndex: $startIndex, endIndex: $endIndex")
         }
         if (isMimeScheme) {
             for (index in startIndex until endIndex) {
@@ -522,16 +611,27 @@ public open class Base64 private constructor(
             -bitsPerByte + bitsPerSymbol -> // x=, dangling single symbol
                 padIndex + 1
             -bitsPerByte + 2 * bitsPerSymbol - bitsPerByte -> { // xx=
+                checkPaddingIsAllowed(padIndex)
                 val secondPadIndex = skipIllegalSymbolsIfMime(source, padIndex + 1, endIndex)
                 if (secondPadIndex == endIndex || source[secondPadIndex] != padSymbol) {
                     throw IllegalArgumentException("Missing one pad character at index $secondPadIndex")
                 }
                 secondPadIndex + 1
             }
-            -bitsPerByte + 3 * bitsPerSymbol - 2 * bitsPerByte -> // xxx=
+            -bitsPerByte + 3 * bitsPerSymbol - 2 * bitsPerByte -> { // xxx=
+                checkPaddingIsAllowed(padIndex)
                 padIndex + 1
+            }
             else ->
                 error("Unreachable")
+        }
+    }
+
+    private fun checkPaddingIsAllowed(padIndex: Int) {
+        if (paddingOption == PaddingOption.ABSENT) {
+            throw IllegalArgumentException(
+                "The padding option is set to ABSENT, but the input has a pad character at index $padIndex"
+            )
         }
     }
 
@@ -577,14 +677,15 @@ public open class Base64 private constructor(
      * Uses "The Base 64 Alphabet" as specified in Table 1 of RFC 4648 for encoding and decoding, consisting of
      * `'A'..'Z'`, `'a'..'z'`, `'+'` and `'/'` characters.
      *
-     * The character `'='` is used for padding.
+     * This instance is configured with the padding option set to [PaddingOption.PRESENT].
+     * Use the [withPadding] function to create a new instance with a different padding option if necessary.
      *
      * Encode operation does not add any line separator character.
      * Decode operation throws if it encounters a character outside the base64 alphabet.
      *
      * @sample samples.io.encoding.Base64Samples.defaultEncodingSample
      */
-    public companion object Default : Base64(isUrlSafe = false, isMimeScheme = false) {
+    public companion object Default : Base64(isUrlSafe = false, isMimeScheme = false, PaddingOption.PRESENT) {
 
         private const val bitsPerByte: Int = 8
         private const val bitsPerSymbol: Int = 6
@@ -605,14 +706,15 @@ public open class Base64 private constructor(
          * Uses "The URL and Filename safe Base 64 Alphabet" as specified in Table 2 of RFC 4648 for encoding and decoding,
          * consisting of `'A'..'Z'`, `'a'..'z'`, `'-'` and `'_'` characters.
          *
-         * The character `'='` is used for padding.
+         * This instance is configured with the padding option set to [PaddingOption.PRESENT].
+         * Use the [withPadding] function to create a new instance with a different padding option if necessary.
          *
          * Encode operation does not add any line separator character.
          * Decode operation throws if it encounters a character outside the base64url alphabet.
          *
          * @sample samples.io.encoding.Base64Samples.urlSafeEncodingSample
          */
-        public val UrlSafe: Base64 = Base64(isUrlSafe = true, isMimeScheme = false)
+        public val UrlSafe: Base64 = Base64(isUrlSafe = true, isMimeScheme = false, PaddingOption.PRESENT)
 
         /**
          * The encoding specified by [`RFC 2045 section 6.8`](https://www.rfc-editor.org/rfc/rfc2045#section-6.8),
@@ -621,14 +723,15 @@ public open class Base64 private constructor(
          * Uses "The Base64 Alphabet" as specified in Table 1 of RFC 2045 for encoding and decoding,
          * consisting of `'A'..'Z'`, `'a'..'z'`, `'+'` and `'/'` characters.
          *
-         * The character `'='` is used for padding.
+         * This instance is configured with the padding option set to [PaddingOption.PRESENT].
+         * Use the [withPadding] function to create a new instance with a different padding option if necessary.
          *
          * Encode operation adds CRLF every 76 symbols. No line separator is added to the end of the encoded output.
          * Decode operation ignores all line separators and other characters outside the base64 alphabet.
          *
          * @sample samples.io.encoding.Base64Samples.mimeEncodingSample
          */
-        public val Mime: Base64 = Base64(isUrlSafe = false, isMimeScheme = true)
+        public val Mime: Base64 = Base64(isUrlSafe = false, isMimeScheme = true, PaddingOption.PRESENT)
     }
 }
 

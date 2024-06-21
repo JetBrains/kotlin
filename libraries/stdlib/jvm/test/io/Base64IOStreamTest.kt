@@ -308,20 +308,30 @@ class Base64IOStreamTest {
     @Test
     fun withoutPadding() {
         for (base64 in listOf(Base64, Base64.Mime)) {
-            val inputStream = "Zm9vYg".byteInputStream()
-            val wrapper = inputStream.decodingWith(base64)
+            for (paddingOption in Base64.PaddingOption.entries) {
+                val configuredBase64 = base64.withPadding(paddingOption)
 
-            wrapper.use {
-                assertEquals('f'.code, it.read())
-                assertEquals('o'.code, it.read())
-                assertEquals('o'.code, it.read())
+                val inputStream = "Zm9vYg".byteInputStream()
+                val wrapper = inputStream.decodingWith(configuredBase64)
 
-                assertFailsWith<IllegalArgumentException> { it.read() }
-            }
+                wrapper.use {
+                    assertEquals('f'.code, it.read())
+                    assertEquals('o'.code, it.read())
+                    assertEquals('o'.code, it.read())
 
-            // closed
-            assertFailsWith<IOException> {
-                wrapper.read()
+                    if (paddingOption == Base64.PaddingOption.PRESENT) {
+                        assertFailsWith<IllegalArgumentException> { it.read() }
+                    } else {
+                        assertEquals('b'.code, it.read())
+                        assertEquals(-1, it.read())
+                        assertEquals(-1, it.read())
+                    }
+                }
+
+                // closed
+                assertFailsWith<IOException> {
+                    wrapper.read()
+                }
             }
         }
     }

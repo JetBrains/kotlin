@@ -3279,7 +3279,7 @@ public final class kotlin/io/TextStreamsKt {
 
 public class kotlin/io/encoding/Base64 {
 	public static final field Default Lkotlin/io/encoding/Base64$Default;
-	public synthetic fun <init> (ZZLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (ZZLkotlin/io/encoding/Base64$PaddingOption;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun decode (Ljava/lang/CharSequence;II)[B
 	public final fun decode ([BII)[B
 	public static synthetic fun decode$default (Lkotlin/io/encoding/Base64;Ljava/lang/CharSequence;IIILjava/lang/Object;)[B
@@ -3296,11 +3296,22 @@ public class kotlin/io/encoding/Base64 {
 	public static synthetic fun encodeToAppendable$default (Lkotlin/io/encoding/Base64;[BLjava/lang/Appendable;IIILjava/lang/Object;)Ljava/lang/Appendable;
 	public final fun encodeToByteArray ([BII)[B
 	public static synthetic fun encodeToByteArray$default (Lkotlin/io/encoding/Base64;[BIIILjava/lang/Object;)[B
+	public final fun withPadding (Lkotlin/io/encoding/Base64$PaddingOption;)Lkotlin/io/encoding/Base64;
 }
 
 public final class kotlin/io/encoding/Base64$Default : kotlin/io/encoding/Base64 {
 	public final fun getMime ()Lkotlin/io/encoding/Base64;
 	public final fun getUrlSafe ()Lkotlin/io/encoding/Base64;
+}
+
+public final class kotlin/io/encoding/Base64$PaddingOption : java/lang/Enum {
+	public static final field ABSENT Lkotlin/io/encoding/Base64$PaddingOption;
+	public static final field ABSENT_OPTIONAL Lkotlin/io/encoding/Base64$PaddingOption;
+	public static final field PRESENT Lkotlin/io/encoding/Base64$PaddingOption;
+	public static final field PRESENT_OPTIONAL Lkotlin/io/encoding/Base64$PaddingOption;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lkotlin/io/encoding/Base64$PaddingOption;
+	public static fun values ()[Lkotlin/io/encoding/Base64$PaddingOption;
 }
 
 public abstract interface annotation class kotlin/io/encoding/ExperimentalEncodingApi : java/lang/annotation/Annotation {
