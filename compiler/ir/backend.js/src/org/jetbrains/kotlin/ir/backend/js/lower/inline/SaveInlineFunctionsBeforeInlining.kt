@@ -25,7 +25,9 @@ internal class SaveInlineFunctionsBeforeInlining(context: JsIrBackendContext) : 
     }
 }
 
-internal class JsInlineFunctionResolver(context: JsIrBackendContext) : InlineFunctionResolverReplacingCoroutineIntrinsics(context) {
+internal class JsInlineFunctionResolver(
+    context: JsIrBackendContext
+) : InlineFunctionResolverReplacingCoroutineIntrinsics<JsIrBackendContext>(context) {
     private val enumEntriesIntrinsic = context.intrinsics.enumEntriesIntrinsic
     private val inlineFunctionsBeforeInlining = context.mapping.inlineFunctionsBeforeInlining
 
