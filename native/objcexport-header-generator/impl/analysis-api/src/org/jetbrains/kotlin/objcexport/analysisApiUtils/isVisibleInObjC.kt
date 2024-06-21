@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.DataClassResolver
@@ -80,7 +79,7 @@ context(KaSession)
 private fun KaSymbol.isSealedClassConstructor(): Boolean {
     if (this !is KaConstructorSymbol) return false
     val containingSymbol = this.containingSymbol ?: return false
-    return containingSymbol.modality == Modality.SEALED
+    return containingSymbol.modality == KaSymbolModality.SEALED
 }
 
 context(KaSession)

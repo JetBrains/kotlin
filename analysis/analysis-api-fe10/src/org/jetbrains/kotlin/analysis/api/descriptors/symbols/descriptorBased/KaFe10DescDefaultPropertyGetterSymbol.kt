@@ -17,11 +17,11 @@ import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotation
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertyGetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.name.CallableId
@@ -63,8 +63,8 @@ class KaFe10DescDefaultPropertyGetterSymbol(
     override val receiverParameter: KaReceiverParameterSymbol?
         get() = withValidityAssertion { propertyDescriptor.extensionReceiverParameter?.toKtReceiverParameterSymbol(analysisContext) }
 
-    override val modality: Modality
-        get() = withValidityAssertion { propertyDescriptor.kaModality }
+    override val modality: KaSymbolModality
+        get() = withValidityAssertion { propertyDescriptor.kaSymbolModality }
 
     override val visibility: Visibility
         get() = withValidityAssertion { propertyDescriptor.ktVisibility }

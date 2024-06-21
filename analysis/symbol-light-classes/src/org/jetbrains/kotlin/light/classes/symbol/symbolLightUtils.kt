@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.kotlin.asJava.elements.psiType
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
@@ -60,16 +59,16 @@ internal fun KaSession.mapType(
 }
 
 internal fun KaDeclarationSymbol.computeSimpleModality(): String? = when (modality) {
-    Modality.SEALED -> PsiModifier.ABSTRACT
-    Modality.FINAL -> PsiModifier.FINAL
-    Modality.ABSTRACT -> PsiModifier.ABSTRACT
-    Modality.OPEN -> null
+    KaSymbolModality.SEALED -> PsiModifier.ABSTRACT
+    KaSymbolModality.FINAL -> PsiModifier.FINAL
+    KaSymbolModality.ABSTRACT -> PsiModifier.ABSTRACT
+    KaSymbolModality.OPEN -> null
 }
 
 context(KaSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaClassSymbol.enumClassModality(): String? {
-    if (memberScope.callables.any { it.modality == Modality.ABSTRACT }) {
+    if (memberScope.callables.any { it.modality == KaSymbolModality.ABSTRACT }) {
         return PsiModifier.ABSTRACT
     }
 

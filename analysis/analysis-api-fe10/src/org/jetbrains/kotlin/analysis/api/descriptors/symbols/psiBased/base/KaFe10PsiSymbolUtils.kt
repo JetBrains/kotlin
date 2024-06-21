@@ -9,11 +9,11 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KaFe10Symbol
 import org.jetbrains.kotlin.analysis.api.descriptors.types.KaFe10ClassErrorType
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.cfg.getElementParentDeclaration
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -38,21 +38,22 @@ internal val KtDeclaration.ktVisibility: Visibility?
         else -> null
     }
 
-internal val KtDeclaration.ktModality: Modality?
+internal val KtDeclaration.kaSymbolModality: KaSymbolModality?
     get() = when {
-        hasModifier(KtTokens.ABSTRACT_KEYWORD) -> Modality.ABSTRACT
-        hasModifier(KtTokens.FINAL_KEYWORD) -> Modality.FINAL
-        hasModifier(KtTokens.SEALED_KEYWORD) -> Modality.SEALED
+        hasModifier(KtTokens.ABSTRACT_KEYWORD) -> KaSymbolModality.ABSTRACT
+        hasModifier(KtTokens.FINAL_KEYWORD) -> KaSymbolModality.FINAL
+        hasModifier(KtTokens.SEALED_KEYWORD) -> KaSymbolModality.SEALED
         hasModifier(KtTokens.OPEN_KEYWORD) -> {
             if (this is KtCallableDeclaration && !hasBody()) {
                 val parentDeclaration = this.getElementParentDeclaration()
                 if (parentDeclaration is KtClass && parentDeclaration.isInterface()) {
-                    Modality.ABSTRACT
+                    KaSymbolModality.ABSTRACT
                 } else {
-                    Modality.OPEN
+                    KaSymbolModality.OPEN
                 }
             }
-            Modality.OPEN
+
+            KaSymbolModality.OPEN
         }
         else -> null
     }

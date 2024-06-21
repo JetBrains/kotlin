@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.render
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 
@@ -31,10 +30,10 @@ public interface KaRendererModalityModifierProvider {
         override fun getModalityModifier(analysisSession: KaSession, symbol: KaDeclarationSymbol): KtModifierKeywordToken? {
             if (symbol is KaPropertyAccessorSymbol) return null
             return when (symbol.modality) {
-                Modality.SEALED -> KtTokens.SEALED_KEYWORD
-                Modality.OPEN -> KtTokens.OPEN_KEYWORD
-                Modality.ABSTRACT -> KtTokens.ABSTRACT_KEYWORD
-                Modality.FINAL -> KtTokens.FINAL_KEYWORD
+                KaSymbolModality.FINAL -> KtTokens.FINAL_KEYWORD
+                KaSymbolModality.SEALED -> KtTokens.SEALED_KEYWORD
+                KaSymbolModality.OPEN -> KtTokens.OPEN_KEYWORD
+                KaSymbolModality.ABSTRACT -> KtTokens.ABSTRACT_KEYWORD
             }
         }
     }
@@ -43,8 +42,8 @@ public interface KaRendererModalityModifierProvider {
         override fun getModalityModifier(analysisSession: KaSession, symbol: KaDeclarationSymbol): KtModifierKeywordToken? {
             with(analysisSession) {
                 when (symbol) {
-                    is KaNamedFunctionSymbol -> if (symbol.isOverride && symbol.modality != Modality.FINAL) return null
-                    is KaPropertySymbol -> if (symbol.isOverride && symbol.modality != Modality.FINAL) return null
+                    is KaNamedFunctionSymbol -> if (symbol.isOverride && symbol.modality != KaSymbolModality.FINAL) return null
+                    is KaPropertySymbol -> if (symbol.isOverride && symbol.modality != KaSymbolModality.FINAL) return null
                     is KaClassSymbol -> if (symbol.classKind == KaClassKind.INTERFACE) return null
                     else -> {}
                 }
@@ -54,7 +53,7 @@ public interface KaRendererModalityModifierProvider {
                 }
 
                 return when (symbol.modality) {
-                    Modality.FINAL -> null
+                    KaSymbolModality.FINAL -> null
                     else -> WITH_IMPLICIT_MODALITY.getModalityModifier(analysisSession, symbol)
                 }
             }

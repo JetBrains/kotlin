@@ -18,11 +18,11 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.FieldDescriptor
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.psi.KtProperty
@@ -44,7 +44,7 @@ internal class KaFe10PsiDefaultBackingFieldSymbol(
             ?: KaFe10NeverRestoringSymbolPointer()
     }
 
-    override val modality: Modality get() = withValidityAssertion { Modality.FINAL }
+    override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
 
     override val returnType: KaType
         get() = withValidityAssertion { owningProperty.returnType }

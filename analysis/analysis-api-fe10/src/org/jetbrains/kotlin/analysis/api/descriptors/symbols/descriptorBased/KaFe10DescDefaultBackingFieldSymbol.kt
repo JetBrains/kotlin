@@ -16,11 +16,11 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.FieldDescriptor
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 
 internal class KaFe10DescDefaultBackingFieldSymbol(
@@ -40,7 +40,7 @@ internal class KaFe10DescDefaultBackingFieldSymbol(
     override val token: KaLifetimeToken
         get() = owningProperty.token
 
-    override val modality: Modality get() = withValidityAssertion { Modality.FINAL }
+    override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
 
     override val annotations: KaAnnotationList
         get() = withValidityAssertion {

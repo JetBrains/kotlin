@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -142,8 +141,8 @@ internal class KaFe10PsiKotlinPropertySymbol(
             psi.typeParameters.map { KaFe10PsiTypeParameterSymbol(it, analysisContext) }
         }
 
-    override val modality: Modality
-        get() = withValidityAssertion { psi.ktModality ?: descriptor?.kaModality ?: Modality.FINAL }
+    override val modality: KaSymbolModality
+        get() = withValidityAssertion { psi.kaSymbolModality ?: descriptor?.kaSymbolModality ?: KaSymbolModality.FINAL }
 
     override val visibility: Visibility
         get() = withValidityAssertion { psi.ktVisibility ?: descriptor?.ktVisibility ?: Visibilities.Public }

@@ -6,12 +6,11 @@
 package org.jetbrains.kotlin.analysis.api.symbols
 
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.descriptors.Modality
 
 
 public abstract class KaClassInitializerSymbol : KaDeclarationSymbol,
     @Suppress("DEPRECATION") org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithKind {
-    final override val modality: Modality get() = withValidityAssertion { Modality.FINAL }
+    final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
 }
 
 @Deprecated("Use 'KaClassInitializerSymbol'", ReplaceWith("KaClassInitializerSymbol"))

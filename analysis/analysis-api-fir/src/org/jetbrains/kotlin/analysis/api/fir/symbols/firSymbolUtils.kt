@@ -14,10 +14,14 @@ import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.utils.asKaInitializerValue
 import org.jetbrains.kotlin.analysis.api.impl.base.KaContextReceiverImpl
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolModality
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -127,3 +131,10 @@ internal fun FirVariableSymbol<*>.getKtConstantInitializer(builder: KaSymbolByFi
 
     return firInitializer.asKaInitializerValue(builder, parentIsAnnotation)
 }
+
+internal val FirBasedSymbol<*>.kaSymbolModality: KaSymbolModality
+    get() = when (this) {
+        is FirCallableSymbol<*> -> modality
+        is FirClassLikeSymbol<*> -> modality
+        else -> Modality.FINAL
+    }.asKaSymbolModality

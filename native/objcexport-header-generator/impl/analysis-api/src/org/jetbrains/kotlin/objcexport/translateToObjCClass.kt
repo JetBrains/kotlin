@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.backend.konan.objcexport.*
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isThrowable
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 
@@ -21,7 +20,7 @@ fun KaClassSymbol.translateToObjCClass(): ObjCClass? {
     if (!isVisibleInObjC()) return null
 
     val enumKind = this.classKind == KaClassKind.ENUM_CLASS
-    val final = this.modality == Modality.FINAL
+    val final = this.modality == KaSymbolModality.FINAL
 
     val name = getObjCClassOrProtocolName()
     val attributes = (if (enumKind || final) listOf(OBJC_SUBCLASSING_RESTRICTED) else emptyList()) + name.toNameAttributes()

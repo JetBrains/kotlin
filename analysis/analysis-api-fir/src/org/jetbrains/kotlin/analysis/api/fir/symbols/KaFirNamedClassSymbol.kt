@@ -12,12 +12,13 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolModality
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.toKtClassKind
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
-import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
@@ -40,12 +41,12 @@ internal class KaFirNamedClassSymbol(
     override val classId: ClassId?
         get() = withValidityAssertion { firSymbol.getClassId() }
 
-    override val modality: Modality
+    override val modality: KaSymbolModality
         get() = withValidityAssertion {
-            firSymbol.optionallyResolvedStatus.modality
+            firSymbol.optionallyResolvedStatus.modality?.asKaSymbolModality
                 ?: when (classKind) { // default modality
-                    KaClassKind.INTERFACE -> Modality.ABSTRACT
-                    else -> Modality.FINAL
+                    KaClassKind.INTERFACE -> KaSymbolModality.ABSTRACT
+                    else -> KaSymbolModality.FINAL
                 }
         }
 

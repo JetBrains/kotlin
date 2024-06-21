@@ -16,10 +16,10 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.creat
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaLocalVariableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtParameter
@@ -34,7 +34,7 @@ internal class KaFe10PsiLoopParameterLocalVariableSymbol(
         bindingContext[BindingContext.VALUE_PARAMETER, psi]
     }
 
-    override val modality: Modality get() = withValidityAssertion { Modality.FINAL }
+    override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
 
     override val name: Name
         get() = withValidityAssertion { psi.nameAsSafeName }

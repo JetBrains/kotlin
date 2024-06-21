@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.returnTypeOrNothing
@@ -43,8 +42,8 @@ internal class KaFe10DescSamConstructorSymbol(
     override val callableId: CallableId?
         get() = withValidityAssertion { expandedDescriptor.callableIdIfNotLocal }
 
-    override val modality: Modality
-        get() = withValidityAssertion { descriptor.kaModality }
+    override val modality: KaSymbolModality
+        get() = withValidityAssertion { descriptor.kaSymbolModality }
 
     override val returnType: KaType
         get() = withValidityAssertion { descriptor.returnTypeOrNothing.toKtType(analysisContext) }

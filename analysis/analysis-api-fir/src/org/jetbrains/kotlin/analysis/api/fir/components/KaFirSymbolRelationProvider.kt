@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.getImplementationStatus
@@ -386,7 +385,7 @@ internal class KaFirSymbolRelationProvider(
 
     override val KaNamedClassSymbol.sealedClassInheritors: List<KaNamedClassSymbol>
         get() = withValidityAssertion {
-            require(modality == Modality.SEALED)
+            require(modality == KaSymbolModality.SEALED)
             require(this is KaFirNamedClassSymbol)
 
             val inheritorClassIds = firSymbol.fir.getSealedClassInheritors(analysisSession.firSession)

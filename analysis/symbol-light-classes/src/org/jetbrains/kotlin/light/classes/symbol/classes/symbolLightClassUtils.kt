@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.asJava.hasInterfaceDefaultImpls
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.JvmDefaultMode
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
@@ -455,7 +454,7 @@ private fun hasBackingField(property: KaPropertySymbol): Boolean {
 
     val fieldUseSite = AnnotationUseSiteTarget.FIELD
     if (property.isExpect ||
-        property.modality == Modality.ABSTRACT ||
+        property.modality == KaSymbolModality.ABSTRACT ||
         property.hasJvmSyntheticAnnotation(fieldUseSite.toOptionalFilter())
     ) return false
 

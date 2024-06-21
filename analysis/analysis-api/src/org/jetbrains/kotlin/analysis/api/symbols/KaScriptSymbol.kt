@@ -10,13 +10,12 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.descriptors.Modality
 
 public abstract class KaScriptSymbol : KaDeclarationSymbol, KaAnnotatedSymbol, KaNamedSymbol, KaDeclarationContainerSymbol {
     abstract override fun createPointer(): KaSymbolPointer<KaScriptSymbol>
 
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.TOP_LEVEL }
-    final override val modality: Modality get() = withValidityAssertion { Modality.FINAL }
+    final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
 }
 
 @Deprecated("Use 'KaScriptSymbol' instead", ReplaceWith("KaScriptSymbol"))

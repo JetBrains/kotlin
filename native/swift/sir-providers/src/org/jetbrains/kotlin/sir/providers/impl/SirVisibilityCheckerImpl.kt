@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.providers.SirVisibilityChecker
 import org.jetbrains.kotlin.sir.providers.utils.UnsupportedDeclarationReporter
@@ -90,7 +89,7 @@ public class SirVisibilityCheckerImpl(
                 unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "inline classes are not supported yet.")
                 return@with false
             }
-            if (modality != Modality.FINAL) {
+            if (modality != KaSymbolModality.FINAL) {
                 unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "non-final classes are not supported yet.")
                 return@with false
             }
