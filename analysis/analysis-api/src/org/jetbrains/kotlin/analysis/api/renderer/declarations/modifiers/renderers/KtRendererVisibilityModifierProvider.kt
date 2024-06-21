@@ -56,15 +56,25 @@ public interface KaRendererVisibilityModifierProvider {
         override fun getVisibilityModifier(
             analysisSession: KaSession,
             symbol: KaDeclarationSymbol,
-        ): KtModifierKeywordToken? = when (symbol.visibility) {
-            KaSymbolVisibility.PRIVATE -> KtTokens.PRIVATE_KEYWORD
-            KaSymbolVisibility.PROTECTED -> KtTokens.PROTECTED_KEYWORD
-            KaSymbolVisibility.INTERNAL -> KtTokens.INTERNAL_KEYWORD
-            KaSymbolVisibility.PUBLIC -> KtTokens.PUBLIC_KEYWORD
-            KaSymbolVisibility.LOCAL -> null
-            KaSymbolVisibility.PACKAGE_PRIVATE -> KtTokens.PUBLIC_KEYWORD
-            KaSymbolVisibility.PACKAGE_PROTECTED -> KtTokens.PROTECTED_KEYWORD
-            else -> null
+        ): KtModifierKeywordToken? = when (symbol) {
+            is KaClassInitializerSymbol,
+            is KaTypeParameterSymbol,
+            is KaScriptSymbol,
+            is KaValueParameterSymbol,
+            is KaAnonymousFunctionSymbol,
+            is KaAnonymousObjectSymbol,
+                -> null
+
+            else -> when (symbol.visibility) {
+                KaSymbolVisibility.PRIVATE -> KtTokens.PRIVATE_KEYWORD
+                KaSymbolVisibility.PROTECTED -> KtTokens.PROTECTED_KEYWORD
+                KaSymbolVisibility.INTERNAL -> KtTokens.INTERNAL_KEYWORD
+                KaSymbolVisibility.PUBLIC -> KtTokens.PUBLIC_KEYWORD
+                KaSymbolVisibility.LOCAL -> null
+                KaSymbolVisibility.PACKAGE_PRIVATE -> KtTokens.PUBLIC_KEYWORD
+                KaSymbolVisibility.PACKAGE_PROTECTED -> KtTokens.PROTECTED_KEYWORD
+                else -> null
+            }
         }
     }
 }
