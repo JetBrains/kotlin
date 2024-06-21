@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.hasRecursiveTypeParametersWi
 import org.jetbrains.kotlin.resolve.calls.inference.isRecursiveTypeParameter
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.*
 
 class VariableFixationFinder(
@@ -70,6 +71,7 @@ class VariableFixationFinder(
 
     class TypeVariableFixationReadiness(
         val main: TypeVariableFixationReadinessFactor,
+        val additional: List<TypeVariableFixationReadinessFactor>? = null,
     ) : Comparable<TypeVariableFixationReadiness> {
 
         companion object Singletons {
@@ -82,14 +84,6 @@ class VariableFixationFinder(
 
             val READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES =
                 TypeVariableFixationReadiness(TypeVariableFixationReadinessFactor.READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES)
-            val WITH_COMPLEX_DEPENDENCY =
-                TypeVariableFixationReadiness(TypeVariableFixationReadinessFactor.WITH_COMPLEX_DEPENDENCY)
-            val ALL_CONSTRAINTS_TRIVIAL_OR_NON_PROPER =
-                TypeVariableFixationReadiness(TypeVariableFixationReadinessFactor.ALL_CONSTRAINTS_TRIVIAL_OR_NON_PROPER)
-            val RELATED_TO_ANY_OUTPUT_TYPE =
-                TypeVariableFixationReadiness(TypeVariableFixationReadinessFactor.RELATED_TO_ANY_OUTPUT_TYPE)
-            val FROM_INCORPORATION_OF_DECLARED_UPPER_BOUND =
-                TypeVariableFixationReadiness(TypeVariableFixationReadinessFactor.FROM_INCORPORATION_OF_DECLARED_UPPER_BOUND)
 
             val READY_FOR_FIXATION_UPPER =
                 TypeVariableFixationReadiness(TypeVariableFixationReadinessFactor.READY_FOR_FIXATION_UPPER)
@@ -102,7 +96,27 @@ class VariableFixationFinder(
         }
 
         override fun compareTo(other: TypeVariableFixationReadiness): Int {
-            return main.compareTo(other.main)
+            if (main != other.main) return main.compareTo(other.main)
+            if (additional == null && other.additional == null) return 0
+
+            val thisAdditional = additional.orEmpty()
+            val otherAdditional = other.additional.orEmpty()
+
+            var i = 0
+            while (true) {
+                // this has shorter additional list => this has greater readiness => returning positive
+                if (i == thisAdditional.size) return otherAdditional.size - i
+                // i < thisAdditional.size => this has some more additional factors => other has greater readiness => return -1
+                if (i == otherAdditional.size) return -1
+
+                val aV = thisAdditional[i]
+                val bV = otherAdditional[i]
+                if (aV != bV) {
+                    return aV.compareTo(bV)
+                }
+
+                i++
+            }
         }
     }
 
@@ -110,11 +124,18 @@ class VariableFixationFinder(
         FORBIDDEN,
         WITHOUT_PROPER_ARGUMENT_CONSTRAINT, // proper constraint from arguments -- not from upper bound for type parameters
         OUTER_TYPE_VARIABLE_DEPENDENCY,
+
+        // Starting from here, there's at least some proper constraint, and the type variable is not related to any outer one.
+        // Thus, it means that this variable is not forbidden to fix.
+        // In resulting readiness, there might be more than one of those factors.
         READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES,
         WITH_COMPLEX_DEPENDENCY, // if type variable T has constraint with non fixed type variable inside (non-top-level): T <: Foo<S>
         ALL_CONSTRAINTS_TRIVIAL_OR_NON_PROPER, // proper trivial constraint from arguments, Nothing <: T
         RELATED_TO_ANY_OUTPUT_TYPE,
         FROM_INCORPORATION_OF_DECLARED_UPPER_BOUND,
+
+        // The variable is totally ready to be fixed (has proper non-trivial constraints non-relevant to output types or upper bounds)
+        // Only one of the factors below is assumed to be used at once.
         READY_FOR_FIXATION_UPPER,
         READY_FOR_FIXATION_LOWER,
         READY_FOR_FIXATION,
@@ -130,28 +151,58 @@ class VariableFixationFinder(
     private fun Context.getTypeVariableReadiness(
         variable: TypeConstructorMarker,
         dependencyProvider: TypeVariableDependencyInformationProvider,
-    ): TypeVariableFixationReadiness = when {
-        !notFixedTypeVariables.contains(variable) || dependencyProvider.isVariableRelatedToTopLevelType(variable) ||
-                variableHasUnprocessedConstraintsInForks(variable) ->
-            TypeVariableFixationReadiness.FORBIDDEN
-        isTypeInferenceForSelfTypesSupported && areAllProperConstraintsSelfTypeBased(variable) ->
-            TypeVariableFixationReadiness.READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES
-        !variableHasProperArgumentConstraints(variable) -> TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT
-        dependencyProvider.isRelatedToOuterTypeVariable(variable) -> TypeVariableFixationReadiness.OUTER_TYPE_VARIABLE_DEPENDENCY
-        hasDependencyToOtherTypeVariables(variable) -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY
-        // TODO: Consider removing this kind of readiness, see KT-63032
-        allConstraintsTrivialOrNonProper(variable) -> TypeVariableFixationReadiness.ALL_CONSTRAINTS_TRIVIAL_OR_NON_PROPER
-        dependencyProvider.isVariableRelatedToAnyOutputType(variable) -> TypeVariableFixationReadiness.RELATED_TO_ANY_OUTPUT_TYPE
-        variableHasOnlyIncorporatedConstraintsFromDeclaredUpperBound(variable) ->
-            TypeVariableFixationReadiness.FROM_INCORPORATION_OF_DECLARED_UPPER_BOUND
-        isReified(variable) -> TypeVariableFixationReadiness.READY_FOR_FIXATION_REIFIED
-        inferenceCompatibilityModeEnabled -> {
-            when {
-                variableHasLowerNonNothingProperConstraint(variable) -> TypeVariableFixationReadiness.READY_FOR_FIXATION_LOWER
-                else -> TypeVariableFixationReadiness.READY_FOR_FIXATION_UPPER
-            }
+    ): TypeVariableFixationReadiness {
+
+        val resultingSetOfFactors = mutableListOf<TypeVariableFixationReadinessFactor>()
+
+        when {
+            !notFixedTypeVariables.contains(variable) || dependencyProvider.isVariableRelatedToTopLevelType(variable) ||
+                    variableHasUnprocessedConstraintsInForks(variable) ->
+                return TypeVariableFixationReadiness.FORBIDDEN
+            isTypeInferenceForSelfTypesSupported && areAllProperConstraintsSelfTypeBased(variable) ->
+                resultingSetOfFactors.add(TypeVariableFixationReadinessFactor.READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES)
+            !variableHasProperArgumentConstraints(variable) -> return TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT
+            dependencyProvider.isRelatedToOuterTypeVariable(variable) -> return TypeVariableFixationReadiness.OUTER_TYPE_VARIABLE_DEPENDENCY
         }
-        else -> TypeVariableFixationReadiness.READY_FOR_FIXATION
+
+        if (!isK2 && resultingSetOfFactors.isNotEmpty()) return TypeVariableFixationReadiness.READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES
+
+        if (hasDependencyToOtherTypeVariables(variable)) {
+            resultingSetOfFactors.add(TypeVariableFixationReadinessFactor.WITH_COMPLEX_DEPENDENCY)
+        }
+
+        if (allConstraintsTrivialOrNonProper(variable)) {
+            resultingSetOfFactors.add(TypeVariableFixationReadinessFactor.ALL_CONSTRAINTS_TRIVIAL_OR_NON_PROPER)
+        }
+
+        if (dependencyProvider.isVariableRelatedToAnyOutputType(variable)) {
+            resultingSetOfFactors.add(TypeVariableFixationReadinessFactor.RELATED_TO_ANY_OUTPUT_TYPE)
+        }
+
+        if (variableHasOnlyIncorporatedConstraintsFromDeclaredUpperBound(variable)) {
+            resultingSetOfFactors.add(TypeVariableFixationReadinessFactor.FROM_INCORPORATION_OF_DECLARED_UPPER_BOUND)
+        }
+
+        if (resultingSetOfFactors.isNotEmpty()) {
+            if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
+                check(resultingSetOfFactors.sorted() == resultingSetOfFactors)
+            }
+
+            if (!isK2) return TypeVariableFixationReadiness(resultingSetOfFactors.first())
+
+            return TypeVariableFixationReadiness(resultingSetOfFactors.first(), resultingSetOfFactors.drop(1))
+        }
+
+        return when {
+            isReified(variable) -> TypeVariableFixationReadiness.READY_FOR_FIXATION_REIFIED
+            inferenceCompatibilityModeEnabled -> {
+                when {
+                    variableHasLowerNonNothingProperConstraint(variable) -> TypeVariableFixationReadiness.READY_FOR_FIXATION_LOWER
+                    else -> TypeVariableFixationReadiness.READY_FOR_FIXATION_UPPER
+                }
+            }
+            else -> TypeVariableFixationReadiness.READY_FOR_FIXATION
+        }
     }
 
     private fun Context.variableHasUnprocessedConstraintsInForks(variableConstructor: TypeConstructorMarker): Boolean {
