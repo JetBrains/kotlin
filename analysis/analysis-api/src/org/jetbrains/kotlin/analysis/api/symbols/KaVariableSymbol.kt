@@ -17,8 +17,10 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 
-public sealed class KaVariableSymbol : KaCallableSymbol(), KaNamedSymbol, @Suppress("DEPRECATION") KaSymbolWithKind,
-    KaPossibleMemberSymbol {
+public sealed class KaVariableSymbol :
+    KaCallableSymbol(),
+    KaNamedSymbol,
+    @Suppress("DEPRECATION") KaSymbolWithKind {
     public abstract val isVal: Boolean
 
     abstract override fun createPointer(): KaSymbolPointer<KaVariableSymbol>
@@ -157,8 +159,8 @@ public abstract class KaJavaFieldSymbol :
 public typealias KtJavaFieldSymbol = KaJavaFieldSymbol
 
 @OptIn(KaImplementationDetail::class)
-public sealed class KaPropertySymbol : KaVariableSymbol(),
-    KaPossibleMemberSymbol,
+public sealed class KaPropertySymbol :
+    KaVariableSymbol(),
     KaTypeParameterOwnerSymbol,
     @Suppress("DEPRECATION") KaSymbolWithKind {
 

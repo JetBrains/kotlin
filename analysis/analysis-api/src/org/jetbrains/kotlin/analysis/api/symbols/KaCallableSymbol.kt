@@ -9,15 +9,16 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiversOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaPossibleMemberSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.CallableId
 
 
 @OptIn(KaExperimentalApi::class)
-public sealed class KaCallableSymbol : @Suppress("DEPRECATION") org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithKind,
-    KaPossibleMemberSymbol, KaDeclarationSymbol, KaContextReceiversOwner {
+public sealed class KaCallableSymbol :
+    @Suppress("DEPRECATION") org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithKind,
+    KaDeclarationSymbol,
+    KaContextReceiversOwner {
     /**
      * The callable's [CallableId] if it exists, or `null` otherwise (e.g. when the callable is local).
      */

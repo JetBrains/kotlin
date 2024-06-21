@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 
-public sealed class KaPropertyAccessorSymbol : KaFunctionSymbol(),
-    KaPossibleMemberSymbol,
+public sealed class KaPropertyAccessorSymbol :
+    KaFunctionSymbol(),
     @Suppress("DEPRECATION") KaSymbolWithKind {
 
     final override val isExtension: Boolean get() = withValidityAssertion { false }

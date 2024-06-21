@@ -43,7 +43,9 @@ public abstract class KaTypeParameterSymbol : KaClassifierSymbol(), KaNamedSymbo
 @Deprecated("Use 'KaTypeParameterSymbol' instead", ReplaceWith("KaTypeParameterSymbol"))
 public typealias KtTypeParameterSymbol = KaTypeParameterSymbol
 
-public sealed class KaClassLikeSymbol : KaClassifierSymbol(), @Suppress("DEPRECATION") KaSymbolWithKind, KaPossibleMemberSymbol,
+public sealed class KaClassLikeSymbol :
+    KaClassifierSymbol(),
+    @Suppress("DEPRECATION") KaSymbolWithKind,
     KaPossibleMultiplatformSymbol {
     /**
      * The [ClassId] of this class, or `null` if this class is local.

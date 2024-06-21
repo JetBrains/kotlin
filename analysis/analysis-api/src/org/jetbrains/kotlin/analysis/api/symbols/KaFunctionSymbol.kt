@@ -55,9 +55,9 @@ public abstract class KaSamConstructorSymbol : KaFunctionSymbol(), KaNamedSymbol
 public typealias KtSamConstructorSymbol = KaSamConstructorSymbol
 
 @OptIn(KaImplementationDetail::class)
-public abstract class KaNamedFunctionSymbol : KaFunctionSymbol(),
+public abstract class KaNamedFunctionSymbol :
+    KaFunctionSymbol(),
     KaNamedSymbol,
-    KaPossibleMemberSymbol,
     KaPossibleMultiplatformSymbol,
     KaTypeParameterOwnerSymbol {
 
@@ -91,11 +91,10 @@ public abstract class KaNamedFunctionSymbol : KaFunctionSymbol(),
 public typealias KtFunctionSymbol = KaNamedFunctionSymbol
 
 @OptIn(KaImplementationDetail::class)
-public abstract class KaConstructorSymbol : KaFunctionSymbol(),
-    KaPossibleMemberSymbol,
+public abstract class KaConstructorSymbol :
+    KaFunctionSymbol(),
     KaPossibleMultiplatformSymbol,
-    KaTypeParameterOwnerSymbol
-{
+    KaTypeParameterOwnerSymbol {
 
     public abstract val isPrimary: Boolean
 
