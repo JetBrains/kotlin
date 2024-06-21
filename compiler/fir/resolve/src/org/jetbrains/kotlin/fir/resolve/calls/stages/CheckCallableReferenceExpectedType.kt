@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.resolve.calls
+package org.jetbrains.kotlin.fir.resolve.calls.stages
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
@@ -15,7 +15,9 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildNamedArgumentExpression
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.calls.stages.mapArguments
+import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.calls.CallableReferenceAdaptation
+import org.jetbrains.kotlin.fir.resolve.calls.extractInputOutputTypesFromCallableReferenceExpectedType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupportedCallableReferenceTarget
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
@@ -27,7 +29,6 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.runTransaction
-import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
@@ -192,27 +193,6 @@ private fun buildResultingTypeAndAdaptation(
     }
 }
 
-internal class CallableReferenceAdaptation(
-    val argumentTypes: Array<ConeKotlinType>,
-    val coercionStrategy: CoercionStrategy,
-    val defaults: Int,
-    val mappedArguments: CallableReferenceMappedArguments,
-    val suspendConversionStrategy: CallableReferenceConversionStrategy,
-) {
-    init {
-        if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
-            require(
-                defaults != 0 ||
-                        suspendConversionStrategy != CallableReferenceConversionStrategy.NoConversion ||
-                        coercionStrategy != CoercionStrategy.NO_COERCION ||
-                        mappedArguments.values.any { it is ResolvedCallArgument.VarargArgument }
-            ) {
-                "Adaptation must be non-trivial."
-            }
-        }
-    }
-}
-
 private fun BodyResolveComponents.getCallableReferenceAdaptation(
     session: FirSession,
     function: FirFunction,
@@ -342,19 +322,6 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
     )
 }
 
-
-
-sealed class CallableReferenceConversionStrategy {
-    abstract val kind: FunctionTypeKind?
-
-    object NoConversion : CallableReferenceConversionStrategy() {
-        override val kind: FunctionTypeKind?
-            get() = null
-    }
-
-    class CustomConversion(override val kind: FunctionTypeKind) : CallableReferenceConversionStrategy()
-}
-
 private fun varargParameterTypeByExpectedParameter(
     expectedParameterType: ConeKotlinType,
     substitutedParameter: FirValueParameter,
@@ -386,20 +353,11 @@ private fun varargParameterTypeByExpectedParameter(
     }
 }
 
-
 private enum class VarargMappingState {
     UNMAPPED, MAPPED_WITH_PLAIN_ARGS, MAPPED_WITH_ARRAY
 }
 
 private fun FirFunction.indexOf(valueParameter: FirValueParameter): Int = valueParameters.indexOf(valueParameter)
-
-val ConeKotlinType.isUnitOrFlexibleUnit: Boolean
-    get() {
-        val type = this.lowerBoundIfFlexible()
-        if (type.isNullable) return false
-        val classId = type.classId ?: return false
-        return classId == StandardClassIds.Unit
-    }
 
 private val ConeKotlinType.isBaseTypeForNumberedReferenceTypes: Boolean
     get() {
@@ -488,10 +446,6 @@ class FirFakeArgumentForCallableReference(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         shouldNotBeCalled()
     }
-}
-
-fun ConeKotlinType.isKCallableType(): Boolean {
-    return this.classId == StandardClassIds.KCallable
 }
 
 private fun FirVariable.canBeMutableReference(candidate: Candidate): Boolean {
