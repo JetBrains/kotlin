@@ -1,10 +1,10 @@
 compiler/testData/cli/jvm/readingConfigFromEnvironment/simple.kt:2:15: error: [NONE_APPLICABLE] None of the following candidates is applicable:
-@IntrinsicConstEvaluation() fun plus(other: Int): Int
-@IntrinsicConstEvaluation() fun plus(other: Byte): Int
-@IntrinsicConstEvaluation() fun plus(other: Double): Double
-@IntrinsicConstEvaluation() fun plus(other: Float): Float
-@IntrinsicConstEvaluation() fun plus(other: Long): Long
-@IntrinsicConstEvaluation() fun plus(other: Short): Int
+fun plus(other: Int): Int
+fun plus(other: Byte): Int
+fun plus(other: Double): Double
+fun plus(other: Float): Float
+fun plus(other: Long): Long
+fun plus(other: Short): Int
     val x = 1 + ""
               ^
 COMPILATION_ERROR
