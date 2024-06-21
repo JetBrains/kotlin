@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 
-import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.thisLogger
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDeclaration
-import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContextForProvider
@@ -119,25 +119,23 @@ internal open class LLFirDiagnosticVisitor(
             }
         }
     }
-}
 
-private val logger: Logger = Logger.getInstance(LLFirDiagnosticVisitor::class.java)
+    /**
+     * We don't want to throw exceptions right away to not interrupt other checkers there possible.
+     * It is better to report as much as possible and not crash the entire visitor.
+     *
+     * By default, a logger throws exceptions, but it is up to the user code to provide
+     * an alternative handler.
+     *
+     * For instance, the IntelliJ plugin reports such exceptions and doesn't interrupt the execution flow.
+     */
+    private inline fun suppressAndLogExceptions(block: () -> Unit) {
+        try {
+            block()
+        } catch (e: Throwable) {
+            rethrowIntellijPlatformExceptionIfNeeded(e)
 
-/**
- * We don't want to throw exceptions right away to not interrupt other checkers there possible.
- * It is better to report as much as possible and not crash the entire visitor.
- *
- * By default [logger] throws exceptions, but it is up to the user code to provide
- * alternative handler.
- *
- * For instance, the IntelliJ plugin reports such exceptions and doesn't interrupt the execution flow.
- */
-private inline fun suppressAndLogExceptions(block: () -> Unit) {
-    try {
-        block()
-    } catch (e: Throwable) {
-        rethrowIntellijPlatformExceptionIfNeeded(e)
-
-        logger.error(e)
+            thisLogger().error("The diagnostic collector has been interrupted by an exception. The result may be incomplete", e)
+        }
     }
 }
