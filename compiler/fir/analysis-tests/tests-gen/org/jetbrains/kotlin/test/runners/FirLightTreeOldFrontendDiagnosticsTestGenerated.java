@@ -34823,6 +34823,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("qualifiedObjectAfterSmartCast.kt")
+      public void testQualifiedObjectAfterSmartCast() {
+        runTest("compiler/testData/diagnostics/tests/smartCasts/qualifiedObjectAfterSmartCast.kt");
+      }
+
+      @Test
       @TestMetadata("safeAs.kt")
       public void testSafeAs() {
         runTest("compiler/testData/diagnostics/tests/smartCasts/safeAs.kt");
