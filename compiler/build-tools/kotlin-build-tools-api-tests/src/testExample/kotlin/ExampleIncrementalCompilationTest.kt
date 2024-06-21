@@ -37,8 +37,8 @@ class ExampleIncrementalCompilationTest : BaseCompilationTest() {
 
             module1.compileIncrementally(
                 SourcesChanges.Known(modifiedFiles = listOf(fooKt.toFile()), removedFiles = emptyList()),
-            ) {
-                assertCompiledSources("foo.kt", "bar.kt")
+            ) { module ->
+                assertCompiledSources(module, "foo.kt", "bar.kt")
                 assertLogContainsPatterns(LogLevel.DEBUG, ".*Incremental compilation completed".toRegex())
             }
         }
@@ -70,8 +70,8 @@ class ExampleIncrementalCompilationTest : BaseCompilationTest() {
 
             module2.compileIncrementally(
                 SourcesChanges.Known(modifiedFiles = emptyList(), removedFiles = emptyList())
-            ) {
-                assertCompiledSources("b.kt")
+            ) { module ->
+                assertCompiledSources(module, "b.kt")
             }
         }
     }

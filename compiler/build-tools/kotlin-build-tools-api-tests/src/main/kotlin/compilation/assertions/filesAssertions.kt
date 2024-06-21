@@ -49,7 +49,7 @@ fun CompilationOutcome.assertOutputs(module: Module, expectedOutputs: Set<String
     val filesLeft = expectedOutputs.map { module.outputDirectory.resolve(it).relativeTo(module.outputDirectory) }
         .toMutableSet()
         .apply {
-            add(module.outputDirectory.resolve("META-INF/$module.moduleName.kotlin_module").relativeTo(module.outputDirectory))
+            add(module.outputDirectory.resolve("META-INF/${module.moduleName}.kotlin_module").relativeTo(module.outputDirectory))
         }
     val notDeclaredFiles = hashSetOf<Path>()
     for (file in module.outputDirectory.walk()) {
