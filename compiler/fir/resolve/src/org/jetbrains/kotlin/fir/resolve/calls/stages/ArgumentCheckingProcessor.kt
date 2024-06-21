@@ -49,6 +49,10 @@ internal object ArgumentCheckingProcessor {
     ) {
         val session: FirSession
             get() = context.session
+
+        fun reportDiagnostic(diagnostic: ResolutionDiagnostic) {
+            sink?.reportDiagnostic(diagnostic)
+        }
     }
 
     // -------------------------------------------- Public API --------------------------------------------
@@ -248,12 +252,12 @@ internal object ArgumentCheckingProcessor {
         when {
             isReceiver && isDispatch -> {
                 if (!expectedType.isNullable && argumentType.isMarkedNullable) {
-                    sink.reportDiagnostic(InapplicableWrongReceiver(expectedType, argumentType))
+                    reportDiagnostic(InapplicableWrongReceiver(expectedType, argumentType))
                 }
             }
 
             isReceiver && expectedType is ConeDynamicType && argumentType !is ConeDynamicType -> {
-                sink.reportDiagnostic(DynamicReceiverExpectedButWasNonDynamic(argumentType))
+                reportDiagnostic(DynamicReceiverExpectedButWasNonDynamic(argumentType))
             }
 
             else -> {
@@ -263,7 +267,7 @@ internal object ArgumentCheckingProcessor {
                 if (smartcastExpression != null && !smartcastExpression.isStable) {
                     val unstableType = smartcastExpression.smartcastType.coneType
                     if (csBuilder.addSubtypeConstraintIfCompatible(unstableType, expectedType, position)) {
-                        sink.reportDiagnostic(
+                        reportDiagnostic(
                             UnstableSmartCast(
                                 smartcastExpression,
                                 expectedType,
@@ -276,17 +280,17 @@ internal object ArgumentCheckingProcessor {
                 }
 
                 if (!isReceiver) {
-                    sink.reportDiagnostic(subtypeError(expectedType))
+                    reportDiagnostic(subtypeError(expectedType))
                     return
                 }
 
                 val nullableExpectedType = expectedType.withNullability(ConeNullability.NULLABLE, session.typeContext)
 
                 if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, nullableExpectedType, position)) {
-                    sink.reportDiagnostic(UnsafeCall(argumentType))
+                    reportDiagnostic(UnsafeCall(argumentType))
                 } else {
                     csBuilder.addSubtypeConstraint(argumentType, expectedType, position)
-                    sink.reportDiagnostic(InapplicableWrongReceiver(expectedType, argumentType))
+                    reportDiagnostic(InapplicableWrongReceiver(expectedType, argumentType))
                 }
             }
         }
@@ -357,7 +361,7 @@ internal object ArgumentCheckingProcessor {
                 csBuilder.addSubtypeConstraint(lambdaType, expectedType, position)
             } else {
                 if (!csBuilder.addSubtypeConstraintIfCompatible(lambdaType, expectedType, position)) {
-                    sink.reportDiagnostic(
+                    reportDiagnostic(
                         ArgumentTypeMismatch(
                             expectedType, lambdaType, argument,
                             context.session.typeContext.isTypeMismatchDueToNullability(lambdaType, expectedType)
@@ -418,34 +422,30 @@ internal object ArgumentCheckingProcessor {
             candidate.addPostponedAtom(it)
         }
     }
-}
 
-private fun ConeInferenceContext.argumentTypeWithCustomConversion(
-    session: FirSession,
-    expectedType: ConeKotlinType,
-    argumentType: ConeKotlinType,
-): ConeKotlinType? {
-    // Expect the expected type to be a not regular functional type (e.g. suspend or custom)
-    val expectedTypeKind = expectedType.functionTypeKind(session) ?: return null
-    if (expectedTypeKind.isBasicFunctionOrKFunction) return null
+    private fun ConeInferenceContext.argumentTypeWithCustomConversion(
+        session: FirSession,
+        expectedType: ConeKotlinType,
+        argumentType: ConeKotlinType,
+    ): ConeKotlinType? {
+        // Expect the expected type to be a not regular functional type (e.g. suspend or custom)
+        val expectedTypeKind = expectedType.functionTypeKind(session) ?: return null
+        if (expectedTypeKind.isBasicFunctionOrKFunction) return null
 
-    // We want to check the argument type against non-suspend functional type.
-    val expectedFunctionType = expectedType.customFunctionTypeToSimpleFunctionType(session)
+        // We want to check the argument type against non-suspend functional type.
+        val expectedFunctionType = expectedType.customFunctionTypeToSimpleFunctionType(session)
 
-    val argumentTypeWithInvoke = argumentType.findSubtypeOfBasicFunctionType(session, expectedFunctionType) ?: return null
-    val functionType = argumentTypeWithInvoke.unwrapLowerBound()
-        .fastCorrespondingSupertypes(expectedFunctionType.typeConstructor())
-        ?.firstOrNull() as? ConeKotlinType ?: return null
+        val argumentTypeWithInvoke = argumentType.findSubtypeOfBasicFunctionType(session, expectedFunctionType) ?: return null
+        val functionType = argumentTypeWithInvoke.unwrapLowerBound()
+            .fastCorrespondingSupertypes(expectedFunctionType.typeConstructor())
+            ?.firstOrNull() as? ConeKotlinType ?: return null
 
-    val typeArguments = functionType.typeArguments.map { it.type ?: session.builtinTypes.nullableAnyType.type }.ifEmpty { return null }
-    return createFunctionType(
-        kind = expectedTypeKind,
-        parameters = typeArguments.subList(0, typeArguments.lastIndex),
-        receiverType = null,
-        rawReturnType = typeArguments.last(),
-    )
-}
-
-private fun CheckerSink?.reportDiagnostic(diagnostic: ResolutionDiagnostic) {
-    this?.reportDiagnostic(diagnostic)
+        val typeArguments = functionType.typeArguments.map { it.type ?: session.builtinTypes.nullableAnyType.type }.ifEmpty { return null }
+        return createFunctionType(
+            kind = expectedTypeKind,
+            parameters = typeArguments.subList(0, typeArguments.lastIndex),
+            receiverType = null,
+            rawReturnType = typeArguments.last(),
+        )
+    }
 }
