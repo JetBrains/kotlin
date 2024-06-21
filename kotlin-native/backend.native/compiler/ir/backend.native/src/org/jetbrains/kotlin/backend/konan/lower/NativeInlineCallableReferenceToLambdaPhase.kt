@@ -11,5 +11,5 @@ import org.jetbrains.kotlin.ir.inline.CommonInlineCallableReferenceToLambdaPhase
 internal class NativeInlineCallableReferenceToLambdaPhase(
         context: NativeGenerationState
 ) : CommonInlineCallableReferenceToLambdaPhase(
-        context.context, NativeInlineFunctionResolver(context)
+        context.context, NativeInlineFunctionResolver(context, inlineOnlyPrivateFunctions = false)
 )

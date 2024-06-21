@@ -372,7 +372,7 @@ private val inlinePhase = createFileLoweringPhase(
 
                     FunctionInlining(
                             context.context,
-                            NativeInlineFunctionResolver(context),
+                            NativeInlineFunctionResolver(context, inlineOnlyPrivateFunctions = false),
                             insertAdditionalImplicitCasts = true,
                     ).lower(irFile)
                 }
