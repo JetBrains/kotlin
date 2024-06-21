@@ -68,7 +68,45 @@ class VariableFixationFinder(
     ): VariableForFixation? =
         c.findTypeVariableForFixation(allTypeVariables, postponedKtPrimitives, completionMode, topLevelType)
 
-    enum class TypeVariableFixationReadiness {
+    class TypeVariableFixationReadiness(
+        val main: TypeVariableFixationReadinessFactor,
+    ) : Comparable<TypeVariableFixationReadiness> {
+
+        companion object Singletons {
+            val FORBIDDEN =
+                TypeVariableFixationReadiness(TypeVariableFixationReadinessFactor.FORBIDDEN)
+            val WITHOUT_PROPER_ARGUMENT_CONSTRAINT =
+                TypeVariableFixationReadiness(TypeVariableFixationReadinessFactor.WITHOUT_PROPER_ARGUMENT_CONSTRAINT)
+            val OUTER_TYPE_VARIABLE_DEPENDENCY =
+                TypeVariableFixationReadiness(TypeVariableFixationReadinessFactor.OUTER_TYPE_VARIABLE_DEPENDENCY)
+
+            val READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES =
+                TypeVariableFixationReadiness(TypeVariableFixationReadinessFactor.READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES)
+            val WITH_COMPLEX_DEPENDENCY =
+                TypeVariableFixationReadiness(TypeVariableFixationReadinessFactor.WITH_COMPLEX_DEPENDENCY)
+            val ALL_CONSTRAINTS_TRIVIAL_OR_NON_PROPER =
+                TypeVariableFixationReadiness(TypeVariableFixationReadinessFactor.ALL_CONSTRAINTS_TRIVIAL_OR_NON_PROPER)
+            val RELATED_TO_ANY_OUTPUT_TYPE =
+                TypeVariableFixationReadiness(TypeVariableFixationReadinessFactor.RELATED_TO_ANY_OUTPUT_TYPE)
+            val FROM_INCORPORATION_OF_DECLARED_UPPER_BOUND =
+                TypeVariableFixationReadiness(TypeVariableFixationReadinessFactor.FROM_INCORPORATION_OF_DECLARED_UPPER_BOUND)
+
+            val READY_FOR_FIXATION_UPPER =
+                TypeVariableFixationReadiness(TypeVariableFixationReadinessFactor.READY_FOR_FIXATION_UPPER)
+            val READY_FOR_FIXATION_LOWER =
+                TypeVariableFixationReadiness(TypeVariableFixationReadinessFactor.READY_FOR_FIXATION_LOWER)
+            val READY_FOR_FIXATION =
+                TypeVariableFixationReadiness(TypeVariableFixationReadinessFactor.READY_FOR_FIXATION)
+            val READY_FOR_FIXATION_REIFIED =
+                TypeVariableFixationReadiness(TypeVariableFixationReadinessFactor.READY_FOR_FIXATION_REIFIED)
+        }
+
+        override fun compareTo(other: TypeVariableFixationReadiness): Int {
+            return main.compareTo(other.main)
+        }
+    }
+
+    enum class TypeVariableFixationReadinessFactor {
         FORBIDDEN,
         WITHOUT_PROPER_ARGUMENT_CONSTRAINT, // proper constraint from arguments -- not from upper bound for type parameters
         OUTER_TYPE_VARIABLE_DEPENDENCY,
