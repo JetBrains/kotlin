@@ -97,9 +97,7 @@ internal class NativeInlineFunctionResolver(
         ArrayConstructorLowering(context).lower(body, function)
         WrapInlineDeclarationsWithReifiedTypeParametersLowering(context).lower(body, function)
 
-        if (context.config.configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING)) {
-            NativeIrInliner(generationState, inlineOnlyPrivateFunctions = true).lower(body, function)
-        }
+        NativeIrInliner(generationState, inlineOnlyPrivateFunctions = true).lower(body, function)
 
         // TODO KT-69174: the placeholder for synthetic accessors lowering - it should generate accessors only for
         //  private declarations references from the lowered non-private inline function; the rest of IR file

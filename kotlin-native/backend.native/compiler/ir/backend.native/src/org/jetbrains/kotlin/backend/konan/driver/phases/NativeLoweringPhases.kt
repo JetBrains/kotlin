@@ -605,7 +605,7 @@ internal fun PhaseEngine<NativeGenerationState>.getLoweringsUpToAndIncludingSynt
         inlineCallableReferenceToLambdaPhase,
         arrayConstructorPhase,
         wrapInlineDeclarationsWithReifiedTypeParametersLowering,
-        inlineOnlyPrivateFunctionsPhase.takeIf { context.config.configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING) },
+        inlineOnlyPrivateFunctionsPhase,
         // TODO KT-69174: the placeholder for synthetic accessors lowering
 )
 
