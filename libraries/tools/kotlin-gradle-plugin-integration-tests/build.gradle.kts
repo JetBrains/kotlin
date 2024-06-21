@@ -226,7 +226,7 @@ fun Test.includeTestsWithPattern(include: Boolean, patterns: (MutableSet<String>
 }
 
 fun Test.advanceGradleVersion() {
-    val gradleVersionForTests = "8.8"
+    val gradleVersionForTests = "8.9"
     systemProperty("kotlin.gradle.version.for.tests", gradleVersionForTests)
 }
 
@@ -295,6 +295,7 @@ val gradleVersions = listOf(
     "8.6",
     "8.7",
     "8.8",
+    "8.9",
 )
 
 if (project.kotlinBuildProperties.isTeamcityBuild) {
