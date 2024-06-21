@@ -404,7 +404,7 @@ internal constructor(
 
                 name = frameworkName
                 export = "*"
-                umbrella = "frameworkName.h"
+                umbrella = "$frameworkName.h"
                 module = "* { export * }"
             }
         )
