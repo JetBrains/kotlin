@@ -25,7 +25,7 @@ internal fun prepareCapturedType(argumentType: ConeKotlinType, context: Resoluti
 
 fun FirExpression.getExpectedType(
     session: FirSession,
-    parameter: FirValueParameter/*, languageVersionSettings: LanguageVersionSettings*/
+    parameter: FirValueParameter
 ): ConeKotlinType {
     val shouldUnwrapVarargType = when (this) {
         is FirSpreadArgumentExpression, is FirNamedArgumentExpression -> false
