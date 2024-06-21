@@ -143,15 +143,15 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
 
         fun getRuntimePathsForModule(module: TestModule, testServices: TestServices): List<String> {
             val result = mutableListOf<String>()
-//            val needsFullIrRuntime = JsEnvironmentConfigurationDirectives.KJS_WITH_FULL_RUNTIME in module.directives ||
-//                    ConfigurationDirectives.WITH_STDLIB in module.directives
+            val needsFullIrRuntime = JsEnvironmentConfigurationDirectives.KJS_WITH_FULL_RUNTIME in module.directives ||
+                    ConfigurationDirectives.WITH_STDLIB in module.directives
 
             val pathProvider = testServices.standardLibrariesPathProvider
-            if (true) {
+            if (needsFullIrRuntime) {
                 result += pathProvider.fullJsStdlib().absolutePath
                 result += pathProvider.kotlinTestJsKLib().absolutePath
             } else {
-//                result += pathProvider.defaultJsStdlib().absolutePath
+                result += pathProvider.fullJsStdlib().absolutePath
             }
             val runtimeClasspaths = testServices.runtimeClasspathProviders.flatMap { it.runtimeClassPaths(module) }
             runtimeClasspaths.mapTo(result) { it.absolutePath }
