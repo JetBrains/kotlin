@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunctionCopy
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.plugin.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -175,7 +176,12 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
             }
 
             if (serializableClass == null) return emptyList()
-            val serializableGetterInCompanion = generateSerializerGetterInCompanion(owner, serializableClass, callableId)
+            val serializableGetterInCompanion = generateSerializerGetterInCompanion(
+                owner,
+                serializableClass,
+                callableId,
+                callableId.callableName == SerialEntityNames.SERIALIZER_PROVIDER_NAME
+            )
             val serializableGetterFromFactory =
                 runIf(serializableClass.companionNeedsSerializerFactory(session) && callableId.callableName == SerialEntityNames.SERIALIZER_PROVIDER_NAME) {
                     val original = getFromSupertype(callableId, owner) { it.getFunctions(callableId.callableName) }.fir
@@ -218,7 +224,8 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
     private fun generateSerializerGetterInCompanion(
         owner: FirClassSymbol<*>,
         serializableClassSymbol: FirClassSymbol<*>,
-        callableId: CallableId
+        callableId: CallableId,
+        isPublic: Boolean
     ): FirNamedFunctionSymbol {
         val function = createMemberFunction(
             owner,
@@ -241,6 +248,8 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
                     }
                 )
             }
+
+            visibility = if (isPublic) Visibilities.Public else Visibilities.Internal
         }
 
         function.excludeFromJsExport(session)

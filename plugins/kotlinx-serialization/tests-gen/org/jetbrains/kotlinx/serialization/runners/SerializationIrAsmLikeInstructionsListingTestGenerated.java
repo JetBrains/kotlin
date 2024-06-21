@@ -49,6 +49,12 @@ public class SerializationIrAsmLikeInstructionsListingTestGenerated extends Abst
   }
 
   @Test
+  @TestMetadata("KeepGeneratedSerializer.kt")
+  public void testKeepGeneratedSerializer() {
+    runTest("plugins/kotlinx-serialization/testData/codegen/KeepGeneratedSerializer.kt");
+  }
+
+  @Test
   @TestMetadata("Sealed.kt")
   public void testSealed() {
     runTest("plugins/kotlinx-serialization/testData/codegen/Sealed.kt");
