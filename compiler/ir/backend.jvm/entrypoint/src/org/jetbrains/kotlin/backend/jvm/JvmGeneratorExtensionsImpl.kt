@@ -86,7 +86,7 @@ open class JvmGeneratorExtensionsImpl(
     ): IrClass? {
         if (!generateFacades || deserializedSource !is FacadeClassSource) return null
         val facadeName = deserializedSource.facadeClassName ?: deserializedSource.className
-        return JvmFileFacadeClass(
+        return createJvmFileFacadeClass(
             if (deserializedSource.facadeClassName != null) IrDeclarationOrigin.JVM_MULTIFILE_CLASS else IrDeclarationOrigin.FILE_CLASS,
             facadeName.fqNameForTopLevelClassMaybeWithDollars.shortName(),
             deserializedSource,

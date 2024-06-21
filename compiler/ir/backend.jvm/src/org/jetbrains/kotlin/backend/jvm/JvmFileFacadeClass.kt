@@ -13,16 +13,15 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
-import org.jetbrains.kotlin.ir.util.DeserializableClass
+import org.jetbrains.kotlin.ir.util.deserializedIr
 import org.jetbrains.kotlin.name.Name
 
-@OptIn(IrImplementationDetail::class)
-class JvmFileFacadeClass(
+fun createJvmFileFacadeClass(
     origin: IrDeclarationOrigin,
     name: Name,
     source: SourceElement,
-    private val deserializeIr: (IrClass) -> Boolean,
-) : IrClassImpl(
+    deserializeIr: (IrClass) -> Boolean,
+) = IrFactoryImpl.createClass(
     startOffset = UNDEFINED_OFFSET,
     endOffset = UNDEFINED_OFFSET,
     origin = origin,
@@ -32,12 +31,6 @@ class JvmFileFacadeClass(
     visibility = DescriptorVisibilities.PUBLIC,
     modality = Modality.FINAL,
     source = source,
-    factory = IrFactoryImpl
-), DeserializableClass {
-
-    private var irLoaded: Boolean? = null
-
-    override fun loadIr(): Boolean {
-        return irLoaded ?: deserializeIr(this).also { irLoaded = it }
-    }
+).apply {
+    this.deserializedIr = lazy { deserializeIr(this) }
 }
