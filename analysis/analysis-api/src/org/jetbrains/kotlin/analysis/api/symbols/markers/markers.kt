@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.symbols.markers
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.name.Name
@@ -47,28 +48,8 @@ public typealias KaSymbolWithTypeParameters = KaTypeParameterOwnerSymbol
 @KaImplementationDetail
 public typealias KtSymbolWithTypeParameters = KaTypeParameterOwnerSymbol
 
-/**
- * A marker interface for symbols which could potentially be `expect` or `actual`. For more details about `expect` and `actual`
- * declarations, see [documentation](https://kotlinlang.org/docs/multiplatform-connect-to-apis.html).
- */
-public interface KaPossibleMultiplatformSymbol : KaSymbol {
-    /**
-     * Returns true if the declaration is a platform-specific implementation in a multiplatform project.
-     */
-    public val isActual: Boolean
+@Deprecated("Use 'KaDeclarationSymbol' directly", ReplaceWith("KaDeclarationSymbol"))
+public typealias KaPossibleMultiplatformSymbol = KaDeclarationSymbol
 
-    /**
-     * Returns true if the declaration is platform-specific declaration in a multiplatform project. An implementation
-     * in platform modules is expected. Note, that in the following example:
-     * ```
-     * expect class A {
-     *     class Nested
-     * }
-     * ```
-     * `isExpect` returns `true` for both `A` and `A.Nested`.
-     */
-    public val isExpect: Boolean
-}
-
-@Deprecated("Use 'KaPossibleMultiplatformSymbol' instead", ReplaceWith("KaPossibleMultiplatformSymbol"))
-public typealias KtPossibleMultiplatformSymbol = KaPossibleMultiplatformSymbol
+@Deprecated("Use 'KaDeclarationSymbol' directly", ReplaceWith("KaDeclarationSymbol"))
+public typealias KtPossibleMultiplatformSymbol = KaDeclarationSymbol

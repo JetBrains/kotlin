@@ -196,7 +196,7 @@ public sealed class KaPropertySymbol :
 @Deprecated("Use 'KaPropertySymbol' instead", ReplaceWith("KaPropertySymbol"))
 public typealias KtPropertySymbol = KaPropertySymbol
 
-public abstract class KaKotlinPropertySymbol : KaPropertySymbol(), KaPossibleMultiplatformSymbol {
+public abstract class KaKotlinPropertySymbol : KaPropertySymbol() {
     public abstract val isLateInit: Boolean
 
     public abstract val isConst: Boolean

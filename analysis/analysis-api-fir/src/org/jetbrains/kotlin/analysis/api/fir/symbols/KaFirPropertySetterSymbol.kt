@@ -45,6 +45,9 @@ internal class KaFirPropertySetterSymbol(
 
     override val isDefault: Boolean get() = withValidityAssertion { firSymbol.fir is FirDefaultPropertyAccessor }
     override val isInline: Boolean get() = withValidityAssertion { firSymbol.isInline }
+    override val isActual: Boolean get() = withValidityAssertion { firSymbol.isActual }
+    override val isExpect: Boolean get() = withValidityAssertion { firSymbol.isExpect }
+
     override val isOverride: Boolean
         get() = withValidityAssertion {
             if (firSymbol.isOverride) return true

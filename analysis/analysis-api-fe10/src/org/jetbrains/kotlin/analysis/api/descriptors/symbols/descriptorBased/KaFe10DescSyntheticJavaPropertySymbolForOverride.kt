@@ -48,6 +48,12 @@ internal class KaFe10DescSyntheticJavaPropertySymbolForOverride(
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { descriptor.ktVisibility }
 
+    override val isActual: Boolean
+        get() = withValidityAssertion { descriptor.isActual }
+
+    override val isExpect: Boolean
+        get() = withValidityAssertion { descriptor.isExpect }
+
     override val isVal: Boolean
         get() = withValidityAssertion { !descriptor.isVar }
 

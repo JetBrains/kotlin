@@ -10,7 +10,9 @@ KaPropertySetterSymbol:
   contextReceivers: []
   hasBody: true
   hasStableParameterNames: true
+  isActual: false
   isDefault: false
+  isExpect: false
   isExtension: false
   isInline: false
   isOverride: false
@@ -29,7 +31,9 @@ KaPropertySetterSymbol:
     contextReceivers: []
     generatedPrimaryConstructorProperty: null
     hasDefaultValue: false
+    isActual: false
     isCrossinline: false
+    isExpect: false
     isExtension: false
     isImplicitLambdaParameter: false
     isNoinline: false
@@ -67,7 +71,9 @@ KaPropertySetterSymbol:
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false

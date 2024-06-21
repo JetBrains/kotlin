@@ -3,6 +3,8 @@ KaJavaFieldSymbol:
   callableId: /JavaClass.field
   compilerVisibility: Public
   contextReceivers: []
+  isActual: false
+  isExpect: false
   isExtension: false
   isStatic: false
   isVal: false
@@ -30,6 +32,8 @@ KaJavaFieldSymbol:
   callableId: /JavaClass.field
   compilerVisibility: Public
   contextReceivers: []
+  isActual: false
+  isExpect: false
   isExtension: false
   isStatic: false
   isVal: false
@@ -88,7 +92,9 @@ KaNamedFunctionSymbol:
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false

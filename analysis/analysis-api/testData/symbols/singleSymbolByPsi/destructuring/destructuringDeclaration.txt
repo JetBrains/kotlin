@@ -8,6 +8,8 @@ KaDestructuringDeclarationSymbol:
     KaLocalVariableSymbol(<local>/a)
     KaLocalVariableSymbol(<local>/b)
   ]
+  isActual: false
+  isExpect: false
   location: LOCAL
   modality: FINAL
   origin: SOURCE

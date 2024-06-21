@@ -167,6 +167,8 @@ KaConstructorSymbol:
           callableId: null
           compilerVisibility: Public
           contextReceivers: []
+          isActual: false
+          isExpect: false
           isExtension: false
           isVal: true
           location: PROPERTY
@@ -194,7 +196,9 @@ KaConstructorSymbol:
           contextReceivers: []
           hasBody: false
           hasStableParameterNames: true
+          isActual: false
           isDefault: true
+          isExpect: false
           isExtension: false
           isInline: false
           isOverride: false
@@ -255,7 +259,9 @@ KaConstructorSymbol:
         javaSetterName: null
         setterDeprecationStatus: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
@@ -387,7 +393,9 @@ KaNamedFunctionSymbol:
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
@@ -428,6 +436,8 @@ KaKotlinPropertySymbol:
     callableId: null
     compilerVisibility: Private
     contextReceivers: []
+    isActual: false
+    isExpect: false
     isExtension: false
     isVal: true
     location: PROPERTY
@@ -458,7 +468,9 @@ KaKotlinPropertySymbol:
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
+    isActual: false
     isDefault: true
+    isExpect: false
     isExtension: false
     isInline: false
     isOverride: false
@@ -562,6 +574,8 @@ KaNamedClassSymbol:
 KaTypeParameterSymbol:
   annotations: []
   compilerVisibility: Local
+  isActual: false
+  isExpect: false
   isReified: false
   location: LOCAL
   modality: FINAL
@@ -632,6 +646,8 @@ KaNamedFunctionSymbol:
 KaTypeParameterSymbol:
   annotations: []
   compilerVisibility: Local
+  isActual: false
+  isExpect: false
   isReified: false
   location: LOCAL
   modality: FINAL

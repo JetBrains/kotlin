@@ -35,6 +35,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
+import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 
@@ -91,6 +93,13 @@ internal class KaFe10PsiDefaultPropertyGetterSymbol(
 
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { propertyPsi.ktVisibility ?: descriptor?.ktVisibility ?: Visibilities.Public }
+
+
+    override val isActual: Boolean
+        get() = withValidityAssertion { descriptor?.isActual == true }
+
+    override val isExpect: Boolean
+        get() = withValidityAssertion { descriptor?.isExpect == true }
 
     override val annotations: KaAnnotationList
         get() = withValidityAssertion {

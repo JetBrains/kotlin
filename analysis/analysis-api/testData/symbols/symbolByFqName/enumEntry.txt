@@ -4,6 +4,8 @@ KaEnumEntrySymbol:
   compilerVisibility: Public
   contextReceivers: []
   enumEntryInitializer: null
+  isActual: false
+  isExpect: false
   isExtension: false
   isVal: true
   location: CLASS

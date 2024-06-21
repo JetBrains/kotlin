@@ -48,6 +48,12 @@ internal class KaFe10DescSyntheticJavaPropertySymbol(
     override val isStatic: Boolean
         get() = withValidityAssertion { DescriptorUtils.isStaticDeclaration(descriptor) }
 
+    override val isActual: Boolean
+        get() = withValidityAssertion { descriptor.isActual }
+
+    override val isExpect: Boolean
+        get() = withValidityAssertion { descriptor.isExpect }
+
     override val isVal: Boolean
         get() = withValidityAssertion { !descriptor.isVar }
 

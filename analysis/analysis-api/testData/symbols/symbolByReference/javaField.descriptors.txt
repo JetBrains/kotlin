@@ -3,6 +3,8 @@ KaJavaFieldSymbol:
   callableId: /JavaClass.field
   compilerVisibility: Public
   contextReceivers: []
+  isActual: false
+  isExpect: false
   isExtension: false
   isStatic: false
   isVal: false

@@ -3,6 +3,8 @@ KaBackingFieldSymbol:
   callableId: null
   compilerVisibility: Local
   contextReceivers: []
+  isActual: false
+  isExpect: false
   isExtension: false
   isVal: true
   location: PROPERTY

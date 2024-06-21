@@ -5,7 +5,9 @@ KaValueParameterSymbol:
   contextReceivers: []
   generatedPrimaryConstructorProperty: null
   hasDefaultValue: false
+  isActual: false
   isCrossinline: false
+  isExpect: false
   isExtension: false
   isImplicitLambdaParameter: true
   isNoinline: false

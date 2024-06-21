@@ -4,6 +4,8 @@ KaTypeParameterSymbol:
       psi: KtAnnotationEntry
   ]
   compilerVisibility: Local
+  isActual: false
+  isExpect: false
   isReified: false
   location: LOCAL
   modality: FINAL

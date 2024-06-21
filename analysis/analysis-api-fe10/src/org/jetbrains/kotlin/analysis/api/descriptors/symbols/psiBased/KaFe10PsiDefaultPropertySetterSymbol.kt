@@ -37,6 +37,8 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
+import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 
@@ -100,6 +102,12 @@ internal class KaFe10PsiDefaultPropertySetterSymbol(
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { propertyPsi.ktVisibility ?: descriptor?.ktVisibility ?: Visibilities.Public }
 
+    override val isActual: Boolean
+        get() = withValidityAssertion { descriptor?.isActual ?: propertyPsi.hasActualModifier() }
+
+    override val isExpect: Boolean
+        get() = withValidityAssertion { descriptor?.isExpect ?: propertyPsi.hasExpectModifier() }
+
     override val annotations: KaAnnotationList
         get() = withValidityAssertion {
             descriptor?.let { KaFe10AnnotationList.create(it.annotations, analysisContext) } ?: KaEmptyAnnotationList(token)
@@ -139,6 +147,12 @@ internal class KaFe10PsiDefaultPropertySetterSymbol(
 
         override val compilerVisibility: Visibility
             get() = withValidityAssertion { descriptor?.ktVisibility ?: Visibilities.Public }
+
+        override val isActual: Boolean
+            get() = withValidityAssertion { false }
+
+        override val isExpect: Boolean
+            get() = withValidityAssertion { false }
 
         override val name: Name
             get() = withValidityAssertion { Name.identifier("value") }

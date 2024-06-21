@@ -102,7 +102,9 @@ callables: 5
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDefaultValue: false
+        isActual: false
         isCrossinline: false
+        isExpect: false
         isExtension: false
         isImplicitLambdaParameter: false
         isNoinline: false
@@ -174,6 +176,8 @@ callables: 5
       callableId: null
       compilerVisibility: Private
       contextReceivers: []
+      isActual: false
+      isExpect: false
       isExtension: false
       isVal: true
       location: PROPERTY
@@ -197,7 +201,9 @@ callables: 5
       contextReceivers: []
       hasBody: false
       hasStableParameterNames: true
+      isActual: false
       isDefault: true
+      isExpect: false
       isExtension: false
       isInline: false
       isOverride: false
@@ -248,6 +254,8 @@ callables: 5
       callableId: null
       compilerVisibility: Private
       contextReceivers: []
+      isActual: false
+      isExpect: false
       isExtension: false
       isVal: true
       location: PROPERTY
@@ -271,7 +279,9 @@ callables: 5
       contextReceivers: []
       hasBody: false
       hasStableParameterNames: true
+      isActual: false
       isDefault: true
+      isExpect: false
       isExtension: false
       isInline: false
       isOverride: false
@@ -315,7 +325,9 @@ callables: 5
       contextReceivers: []
       hasBody: false
       hasStableParameterNames: true
+      isActual: false
       isDefault: true
+      isExpect: false
       isExtension: false
       isInline: false
       isOverride: false
@@ -329,7 +341,9 @@ callables: 5
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDefaultValue: false
+        isActual: false
         isCrossinline: false
+        isExpect: false
         isExtension: false
         isImplicitLambdaParameter: false
         isNoinline: false
@@ -358,7 +372,9 @@ callables: 5
           contextReceivers: []
           generatedPrimaryConstructorProperty: null
           hasDefaultValue: false
+          isActual: false
           isCrossinline: false
+          isExpect: false
           isExtension: false
           isImplicitLambdaParameter: false
           isNoinline: false
@@ -389,6 +405,8 @@ callables: 5
       callableId: null
       compilerVisibility: Private
       contextReceivers: []
+      isActual: false
+      isExpect: false
       isExtension: false
       isVal: true
       location: PROPERTY
@@ -412,7 +430,9 @@ callables: 5
       contextReceivers: []
       hasBody: true
       hasStableParameterNames: true
+      isActual: false
       isDefault: false
+      isExpect: false
       isExtension: false
       isInline: false
       isOverride: false

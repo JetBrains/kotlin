@@ -3,6 +3,8 @@ KaLocalVariableSymbol:
   callableId: null
   compilerVisibility: Local
   contextReceivers: []
+  isActual: false
+  isExpect: false
   isExtension: false
   isVal: true
   location: LOCAL
@@ -26,6 +28,8 @@ KaAnonymousFunctionSymbol:
   compilerVisibility: Public
   contextReceivers: []
   hasStableParameterNames: true
+  isActual: false
+  isExpect: false
   isExtension: false
   location: LOCAL
   modality: FINAL
@@ -43,7 +47,9 @@ KaAnonymousFunctionSymbol:
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
@@ -75,6 +81,8 @@ KaLocalVariableSymbol:
   callableId: null
   compilerVisibility: Local
   contextReceivers: []
+  isActual: false
+  isExpect: false
   isExtension: false
   isVal: true
   location: LOCAL
@@ -106,6 +114,8 @@ KaLocalVariableSymbol:
   callableId: null
   compilerVisibility: Local
   contextReceivers: []
+  isActual: false
+  isExpect: false
   isExtension: false
   isVal: true
   location: LOCAL
@@ -129,6 +139,8 @@ KaAnonymousFunctionSymbol:
   compilerVisibility: Public
   contextReceivers: []
   hasStableParameterNames: true
+  isActual: false
+  isExpect: false
   isExtension: false
   location: LOCAL
   modality: FINAL
@@ -146,7 +158,9 @@ KaAnonymousFunctionSymbol:
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
@@ -178,6 +192,8 @@ KaLocalVariableSymbol:
   callableId: null
   compilerVisibility: Local
   contextReceivers: []
+  isActual: false
+  isExpect: false
   isExtension: false
   isVal: true
   location: LOCAL
@@ -209,6 +225,8 @@ KaLocalVariableSymbol:
   callableId: null
   compilerVisibility: Local
   contextReceivers: []
+  isActual: false
+  isExpect: false
   isExtension: false
   isVal: true
   location: LOCAL
@@ -232,6 +250,8 @@ KaAnonymousFunctionSymbol:
   compilerVisibility: Public
   contextReceivers: []
   hasStableParameterNames: true
+  isActual: false
+  isExpect: false
   isExtension: false
   location: LOCAL
   modality: FINAL
@@ -249,7 +269,9 @@ KaAnonymousFunctionSymbol:
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: true
       isNoinline: false
@@ -349,7 +371,9 @@ KaNamedFunctionSymbol:
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false

@@ -47,6 +47,12 @@ internal class KaFe10DescEnumEntrySymbol(
     override val modality: KaSymbolModality
         get() = withValidityAssertion { descriptor.kaSymbolModality }
 
+    override val isActual: Boolean
+        get() = withValidityAssertion { descriptor.isActual }
+
+    override val isExpect: Boolean
+        get() = withValidityAssertion { descriptor.isExpect }
+
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { descriptor.ktVisibility }
 

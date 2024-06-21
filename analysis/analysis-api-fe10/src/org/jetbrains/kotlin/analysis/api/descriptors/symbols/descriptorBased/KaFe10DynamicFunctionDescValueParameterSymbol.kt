@@ -50,6 +50,12 @@ internal class KaFe10DynamicFunctionDescValueParameterSymbol(
     override val annotations: KaAnnotationList
         get() = withValidityAssertion { KaEmptyAnnotationList(token) }
 
+    override val isActual: Boolean
+        get() = withValidityAssertion { false }
+
+    override val isExpect: Boolean
+        get() = withValidityAssertion { false }
+
     override val name: Name
         get() = withValidityAssertion { Name.identifier("args") }
 

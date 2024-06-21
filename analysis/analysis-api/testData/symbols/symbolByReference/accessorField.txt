@@ -8,6 +8,8 @@ KaBackingFieldSymbol:
   callableId: null
   compilerVisibility: Private
   contextReceivers: []
+  isActual: false
+  isExpect: false
   isExtension: false
   isVal: true
   location: PROPERTY

@@ -40,6 +40,12 @@ internal class KaFe10DescPropertyGetterSymbol(
     override val hasBody: Boolean
         get() = withValidityAssertion { descriptor.hasBody() }
 
+    override val isActual: Boolean
+        get() = withValidityAssertion { descriptor.isActual }
+
+    override val isExpect: Boolean
+        get() = withValidityAssertion { descriptor.isExpect }
+
     override val modality: KaSymbolModality
         get() = withValidityAssertion { descriptor.kaSymbolModality }
 

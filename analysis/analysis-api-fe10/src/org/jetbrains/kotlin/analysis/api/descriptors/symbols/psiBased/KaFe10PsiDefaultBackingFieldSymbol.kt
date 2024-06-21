@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
+import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.resolve.BindingContext
 
 internal class KaFe10PsiDefaultBackingFieldSymbol(
@@ -49,6 +51,12 @@ internal class KaFe10PsiDefaultBackingFieldSymbol(
     override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
 
     override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Private }
+
+    override val isActual: Boolean
+        get() = withValidityAssertion { false }
+
+    override val isExpect: Boolean
+        get() = withValidityAssertion { false }
 
     override val returnType: KaType
         get() = withValidityAssertion { owningProperty.returnType }

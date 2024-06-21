@@ -61,6 +61,12 @@ internal class KaFe10DescValueParameterSymbol(
     override val isNoinline: Boolean
         get() = withValidityAssertion { descriptor.isNoinline }
 
+    override val isActual: Boolean
+        get() = withValidityAssertion { false }
+
+    override val isExpect: Boolean
+        get() = withValidityAssertion { false }
+
     override val isImplicitLambdaParameter: Boolean
         get() = withValidityAssertion {
             descriptor.containingDeclaration is AnonymousFunctionDescriptor &&

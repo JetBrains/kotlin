@@ -26,6 +26,9 @@ public abstract class KaDestructuringDeclarationSymbol : KaDeclarationSymbol,
     final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Local }
     final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
 
+    final override val isActual: Boolean get() = withValidityAssertion { false }
+    final override val isExpect: Boolean get() = withValidityAssertion { false }
+
     /**
      * A list of [KaVariableSymbol]s which were created from this destructuring declaration.
      *

@@ -44,6 +44,8 @@ KaEnumEntrySymbol:
   compilerVisibility: Public
   contextReceivers: []
   enumEntryInitializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
+  isActual: false
+  isExpect: false
   isExtension: false
   isVal: true
   location: CLASS
@@ -67,6 +69,8 @@ KaEnumEntrySymbol:
   compilerVisibility: Public
   contextReceivers: []
   enumEntryInitializer: null
+  isActual: false
+  isExpect: false
   isExtension: false
   isVal: true
   location: CLASS
@@ -161,7 +165,9 @@ KaNamedFunctionSymbol:
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
@@ -198,6 +204,8 @@ KaEnumEntrySymbol:
   compilerVisibility: Public
   contextReceivers: []
   enumEntryInitializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
+  isActual: false
+  isExpect: false
   isExtension: false
   isVal: true
   location: CLASS

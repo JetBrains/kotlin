@@ -35,6 +35,8 @@ public abstract class KaTypeParameterSymbol : KaClassifierSymbol(), KaNamedSymbo
     public abstract val isReified: Boolean
 
     final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
+    final override val isActual: Boolean get() = withValidityAssertion { false }
+    final override val isExpect: Boolean get() = withValidityAssertion { false }
 
     @KaExperimentalApi
     final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Local }
@@ -45,8 +47,7 @@ public typealias KtTypeParameterSymbol = KaTypeParameterSymbol
 
 public sealed class KaClassLikeSymbol :
     KaClassifierSymbol(),
-    @Suppress("DEPRECATION") KaSymbolWithKind,
-    KaPossibleMultiplatformSymbol {
+    @Suppress("DEPRECATION") KaSymbolWithKind {
     /**
      * The [ClassId] of this class, or `null` if this class is local.
      */
@@ -99,8 +100,6 @@ public abstract class KaAnonymousObjectSymbol : KaClassSymbol() {
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.LOCAL }
 
     final override val name: Name? get() = withValidityAssertion { null }
-    final override val isActual: Boolean get() = withValidityAssertion { false }
-    final override val isExpect: Boolean get() = withValidityAssertion { false }
 
     abstract override fun createPointer(): KaSymbolPointer<KaAnonymousObjectSymbol>
 }

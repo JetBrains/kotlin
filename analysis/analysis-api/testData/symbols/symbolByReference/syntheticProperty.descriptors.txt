@@ -11,7 +11,9 @@ KaSyntheticJavaPropertySymbol:
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
+    isActual: false
     isDefault: false
+    isExpect: false
     isExtension: false
     isInline: false
     isOverride: false
@@ -47,7 +49,9 @@ KaSyntheticJavaPropertySymbol:
   hasGetter: true
   hasSetter: true
   initializer: null
+  isActual: false
   isDelegatedProperty: false
+  isExpect: false
   isExtension: true
   isFromPrimaryConstructor: false
   isOverride: false
@@ -83,7 +87,9 @@ KaSyntheticJavaPropertySymbol:
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
+    isActual: false
     isDefault: false
+    isExpect: false
     isExtension: false
     isInline: false
     isOverride: false
@@ -97,7 +103,9 @@ KaSyntheticJavaPropertySymbol:
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
@@ -144,7 +152,9 @@ KaSyntheticJavaPropertySymbol:
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDefaultValue: false
+        isActual: false
         isCrossinline: false
+        isExpect: false
         isExtension: false
         isImplicitLambdaParameter: false
         isNoinline: false

@@ -58,7 +58,6 @@ public typealias KtSamConstructorSymbol = KaSamConstructorSymbol
 public abstract class KaNamedFunctionSymbol :
     KaFunctionSymbol(),
     KaNamedSymbol,
-    KaPossibleMultiplatformSymbol,
     KaTypeParameterOwnerSymbol {
 
     public abstract val isSuspend: Boolean
@@ -93,7 +92,6 @@ public typealias KtFunctionSymbol = KaNamedFunctionSymbol
 @OptIn(KaImplementationDetail::class)
 public abstract class KaConstructorSymbol :
     KaFunctionSymbol(),
-    KaPossibleMultiplatformSymbol,
     KaTypeParameterOwnerSymbol {
 
     public abstract val isPrimary: Boolean

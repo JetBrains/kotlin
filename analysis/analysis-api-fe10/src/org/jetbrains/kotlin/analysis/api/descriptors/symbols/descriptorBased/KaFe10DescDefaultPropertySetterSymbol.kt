@@ -50,6 +50,12 @@ internal class KaFe10DescDefaultPropertySetterSymbol(
     override val hasBody: Boolean
         get() = withValidityAssertion { false }
 
+    override val isActual: Boolean
+        get() = withValidityAssertion { propertyDescriptor.isActual }
+
+    override val isExpect: Boolean
+        get() = withValidityAssertion { propertyDescriptor.isExpect }
+
     override val valueParameters: List<KaValueParameterSymbol>
         get() = withValidityAssertion { listOf(parameter) }
 
@@ -105,6 +111,12 @@ internal class KaFe10DescDefaultPropertySetterSymbol(
 
         override val isNoinline: Boolean
             get() = withValidityAssertion { false }
+
+        override val isActual: Boolean
+            get() = withValidityAssertion { propertyDescriptor.isActual }
+
+        override val isExpect: Boolean
+            get() = withValidityAssertion { propertyDescriptor.isExpect }
 
         override val name: Name
             get() = withValidityAssertion { Name.identifier("value") }

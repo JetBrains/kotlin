@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaPossibleMultiplatformSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -91,7 +90,7 @@ internal class SymbolLightClassForFacade(
 
                         // We shouldn't materialize expect declarations
                         @Suppress("USELESS_IS_CHECK") // K2 warning suppression, TODO: KT-62472
-                        if (callableSymbol is KaPossibleMultiplatformSymbol && callableSymbol.isExpect) continue
+                        if (callableSymbol is KaDeclarationSymbol && callableSymbol.isExpect) continue
                         if ((callableSymbol as? KaAnnotatedSymbol)?.hasInlineOnlyAnnotation() == true) continue
                         if (multiFileClass && callableSymbol.toPsiVisibilityForMember() == PsiModifier.PRIVATE) continue
                         if (callableSymbol.hasTypeForValueClassInSignature(ignoreReturnType = true)) continue

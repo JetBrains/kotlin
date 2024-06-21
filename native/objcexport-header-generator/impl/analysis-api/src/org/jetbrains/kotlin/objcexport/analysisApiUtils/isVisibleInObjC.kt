@@ -32,7 +32,7 @@ context(KaSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaCallableSymbol.isVisibleInObjC(): Boolean {
     if (!this.isPublic) return false
-    if (this is KaPossibleMultiplatformSymbol && isExpect) return false
+    if (isExpect) return false
 
     if (this.isHiddenFromObjCByDeprecation()) return false
     if (this.isHiddenFromObjCByAnnotation()) return false

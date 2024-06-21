@@ -38,6 +38,8 @@ KaJavaFieldSymbol:
   callableId: /SuperClass.superFoo
   compilerVisibility: Public
   contextReceivers: []
+  isActual: false
+  isExpect: false
   isExtension: false
   isStatic: true
   isVal: false
@@ -96,6 +98,8 @@ KaJavaFieldSymbol:
   callableId: /JavaClass.foo
   compilerVisibility: Public
   contextReceivers: []
+  isActual: false
+  isExpect: false
   isExtension: false
   isStatic: true
   isVal: false

@@ -24,6 +24,28 @@ public sealed interface KaDeclarationSymbol : KaSymbol, KaAnnotatedSymbol {
 
     @KaExperimentalApi
     public val compilerVisibility: Visibility
+
+    /**
+     * Returns true if the declaration is a platform-specific implementation in a multiplatform project.
+     *
+     * See [the official Kotlin documentation](https://kotlinlang.org/docs/multiplatform-connect-to-apis.html) for more details.
+     */
+    public val isActual: Boolean
+
+    /**
+     * Returns true if the declaration is a platform-specific declaration in a multiplatform project.
+     * An implementation in platform modules is expected.
+     * Note, that in the following example:
+     * ```kotlin
+     * expect class A {
+     *     class Nested
+     * }
+     * ```
+     * `isExpect` returns `true` for both `A` and `A.Nested`.
+     *
+     * See [the official Kotlin documentation](https://kotlinlang.org/docs/multiplatform-connect-to-apis.html) for more details.
+     */
+    public val isExpect: Boolean
 }
 
 @KaExperimentalApi

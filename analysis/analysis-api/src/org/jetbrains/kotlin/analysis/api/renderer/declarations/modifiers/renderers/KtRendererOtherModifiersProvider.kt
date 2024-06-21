@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.render
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaPossibleMultiplatformSymbol
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.types.Variance
@@ -44,10 +43,8 @@ public interface KaRendererOtherModifiersProvider {
     public object ALL : KaRendererOtherModifiersProvider {
         override fun getOtherModifiers(analysisSession: KaSession, symbol: KaDeclarationSymbol): List<KtModifierKeywordToken> {
             return buildList {
-                if (symbol is KaPossibleMultiplatformSymbol) {
-                    if (symbol.isActual) add(KtTokens.ACTUAL_KEYWORD)
-                    if (symbol.isExpect) add(KtTokens.EXPECT_KEYWORD)
-                }
+                if (symbol.isActual) add(KtTokens.ACTUAL_KEYWORD)
+                if (symbol.isExpect) add(KtTokens.EXPECT_KEYWORD)
 
                 if (symbol is KaNamedFunctionSymbol) {
                     if (symbol.isExternal) add(KtTokens.EXTERNAL_KEYWORD)
