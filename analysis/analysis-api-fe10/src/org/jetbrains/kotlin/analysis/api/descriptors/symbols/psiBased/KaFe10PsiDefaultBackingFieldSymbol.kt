@@ -48,7 +48,7 @@ internal class KaFe10PsiDefaultBackingFieldSymbol(
 
     override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
 
-    override val visibility: Visibility get() = withValidityAssertion { Visibilities.Private }
+    override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Private }
 
     override val returnType: KaType
         get() = withValidityAssertion { owningProperty.returnType }

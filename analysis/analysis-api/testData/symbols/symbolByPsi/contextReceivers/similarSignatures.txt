@@ -3,6 +3,7 @@ KaNamedClassSymbol:
   classId: A
   classKind: CLASS
   companionObject: null
+  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -33,6 +34,7 @@ KaNamedClassSymbol:
   classId: B
   classKind: CLASS
   companionObject: null
+  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -61,6 +63,7 @@ KaNamedClassSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /tooo
+  compilerVisibility: Public
   contextReceivers: [
     KtContextReceiver:
       label: null
@@ -103,6 +106,7 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /tooo
+  compilerVisibility: Public
   contextReceivers: [
     KtContextReceiver:
       label: null
@@ -145,6 +149,7 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /tooo
+  compilerVisibility: Public
   contextReceivers: [
     KtContextReceiver:
       label: null
@@ -193,6 +198,7 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /tooo
+  compilerVisibility: Public
   contextReceivers: [
     KtContextReceiver:
       label: null

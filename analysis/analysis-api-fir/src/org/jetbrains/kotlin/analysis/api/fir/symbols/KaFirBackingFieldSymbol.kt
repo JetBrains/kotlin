@@ -33,7 +33,7 @@ internal class KaFirBackingFieldSymbol(
 
     override val returnType: KaType get() = withValidityAssertion { firSymbol.returnType(builder) }
     override val modality: KaSymbolModality get() = withValidityAssertion { firSymbol.kaSymbolModality }
-    override val visibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
+    override val compilerVisibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
 
     override val owningProperty: KaKotlinPropertySymbol
         get() = withValidityAssertion {

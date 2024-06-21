@@ -3,6 +3,7 @@ KaDestructuringDeclarationSymbol:
     AAA(value = "y")
       psi: KtAnnotationEntry
   ]
+  compilerVisibility: Local
   entries: [
     KaLocalVariableSymbol(<local>/a)
     KaLocalVariableSymbol(<local>/b)

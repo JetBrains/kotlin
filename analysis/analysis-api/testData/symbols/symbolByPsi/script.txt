@@ -1,6 +1,7 @@
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /foo
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -38,6 +39,7 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: KaBackingFieldSymbol:
     annotations: []
     callableId: null
+    compilerVisibility: Private
     contextReceivers: []
     isExtension: false
     isVal: true
@@ -57,10 +59,12 @@ KaKotlinPropertySymbol:
     getContainingModule: KaScriptModule "Script script.kts"
     deprecationStatus: null
   callableId: /b
+  compilerVisibility: Public
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
+    compilerVisibility: Public
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -120,6 +124,7 @@ KaKotlinPropertySymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /C.member
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -161,6 +166,7 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: KaBackingFieldSymbol:
     annotations: []
     callableId: null
+    compilerVisibility: Private
     contextReceivers: []
     isExtension: false
     isVal: true
@@ -180,10 +186,12 @@ KaKotlinPropertySymbol:
     getContainingModule: KaScriptModule "Script script.kts"
     deprecationStatus: null
   callableId: /C.prop
+  compilerVisibility: Public
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
+    compilerVisibility: Public
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -253,6 +261,7 @@ KaNamedClassSymbol:
   classId: C
   classKind: CLASS
   companionObject: null
+  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -280,6 +289,7 @@ KaNamedClassSymbol:
 
 KaScriptSymbol:
   annotations: []
+  compilerVisibility: Local
   location: TOP_LEVEL
   modality: FINAL
   name: <script-script.kts>

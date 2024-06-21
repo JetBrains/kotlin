@@ -53,12 +53,14 @@ internal class KaFirNamedClassSymbol(
 
     override val visibility: Visibility
         get() = withValidityAssertion {
-            // TODO: We should use resolvedStatus, because it can be altered by status-transforming compiler plugins. See KT-58572
             when (val possiblyRawVisibility = firSymbol.fir.visibility) {
                 Visibilities.Unknown -> if (firSymbol.fir.isLocal) Visibilities.Local else Visibilities.Public
                 else -> possiblyRawVisibility
             }
         }
+
+    override val compilerVisibility: Visibility
+        get() = withValidityAssertion { firSymbol.visibility }
 
     override val annotations by cached {
         KaFirAnnotationListForDeclaration.create(firSymbol, builder)

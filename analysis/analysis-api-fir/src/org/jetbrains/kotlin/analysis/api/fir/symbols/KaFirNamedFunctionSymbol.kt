@@ -98,7 +98,7 @@ internal class KaFirNamedFunctionSymbol(
         }
 
     override val modality: KaSymbolModality get() = withValidityAssertion { firSymbol.kaSymbolModality }
-    override val visibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
+    override val compilerVisibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
 
     override fun createPointer(): KaSymbolPointer<KaNamedFunctionSymbol> = withValidityAssertion {
         KaPsiBasedSymbolPointer.createForSymbolFromSource<KaNamedFunctionSymbol>(this)?.let { return it }

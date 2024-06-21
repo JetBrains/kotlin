@@ -6,6 +6,7 @@ KaPropertySetterSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: null
+  compilerVisibility: Public
   contextReceivers: []
   hasBody: true
   hasStableParameterNames: true
@@ -24,6 +25,7 @@ KaPropertySetterSymbol:
         psi: KtAnnotationEntry
     ]
     callableId: null
+    compilerVisibility: Public
     contextReceivers: []
     generatedPrimaryConstructorProperty: null
     hasDefaultValue: false
@@ -61,6 +63,7 @@ KaPropertySetterSymbol:
           psi: KtAnnotationEntry
       ]
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false

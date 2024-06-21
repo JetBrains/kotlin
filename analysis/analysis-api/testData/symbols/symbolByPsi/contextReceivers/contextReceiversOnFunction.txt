@@ -1,6 +1,7 @@
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /y
+  compilerVisibility: Public
   contextReceivers: [
     KtContextReceiver:
       label: null

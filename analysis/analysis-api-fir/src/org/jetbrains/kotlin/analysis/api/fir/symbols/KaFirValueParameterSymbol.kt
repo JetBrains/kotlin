@@ -48,7 +48,8 @@ internal class KaFirValueParameterSymbol(
 
     override val isCrossinline: Boolean get() = withValidityAssertion { firSymbol.isCrossinline }
     override val modality: KaSymbolModality get() = withValidityAssertion { firSymbol.kaSymbolModality }
-    override val visibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
+    override val compilerVisibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
+
     override val isNoinline: Boolean get() = withValidityAssertion { firSymbol.isNoinline }
 
     override val returnType by cached {

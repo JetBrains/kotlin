@@ -4,6 +4,7 @@ KaNamedFunctionSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: /twoContracts
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: [
     KaContractConditionalContractEffectDeclaration:
@@ -22,6 +23,7 @@ KaNamedFunctionSymbol:
                     KaValueParameterSymbol:
                       annotations: []
                       callableId: null
+                      compilerVisibility: Public
                       contextReceivers: []
                       generatedPrimaryConstructorProperty: null
                       hasDefaultValue: false
@@ -54,6 +56,7 @@ KaNamedFunctionSymbol:
                     KaValueParameterSymbol:
                       annotations: []
                       callableId: null
+                      compilerVisibility: Public
                       contextReceivers: []
                       generatedPrimaryConstructorProperty: null
                       hasDefaultValue: false
@@ -86,6 +89,7 @@ KaNamedFunctionSymbol:
             KaValueParameterSymbol:
               annotations: []
               callableId: null
+              compilerVisibility: Public
               contextReceivers: []
               generatedPrimaryConstructorProperty: null
               hasDefaultValue: false
@@ -143,6 +147,7 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -169,6 +174,7 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -195,6 +201,7 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false

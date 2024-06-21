@@ -39,7 +39,7 @@ internal class KaFe10DescConstructorSymbol(
     override val modality: KaSymbolModality
         get() = withValidityAssertion { descriptor.kaSymbolModality }
 
-    override val visibility: Visibility
+    override val compilerVisibility: Visibility
         get() = withValidityAssertion { descriptor.ktVisibility }
 
     override val hasStableParameterNames: Boolean

@@ -3,6 +3,7 @@ KaTypeParameterSymbol:
     A()
       psi: KtAnnotationEntry
   ]
+  compilerVisibility: Local
   isReified: false
   location: LOCAL
   modality: FINAL

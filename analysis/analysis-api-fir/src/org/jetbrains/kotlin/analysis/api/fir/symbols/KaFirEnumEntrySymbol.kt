@@ -40,7 +40,7 @@ internal class KaFirEnumEntrySymbol(
         }
 
     override val modality: KaSymbolModality get() = withValidityAssertion { firSymbol.kaSymbolModality }
-    override val visibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
+    override val compilerVisibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
 
     override val name: Name get() = withValidityAssertion { firSymbol.name }
     override val returnType: KaType get() = withValidityAssertion { firSymbol.returnType(builder) }

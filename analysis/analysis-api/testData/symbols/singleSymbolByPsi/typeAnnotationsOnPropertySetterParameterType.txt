@@ -1,6 +1,7 @@
 KaPropertySetterSymbol:
   annotations: []
   callableId: null
+  compilerVisibility: Public
   contextReceivers: []
   hasBody: true
   hasStableParameterNames: true
@@ -14,6 +15,7 @@ KaPropertySetterSymbol:
   parameter: KaValueParameterSymbol:
     annotations: []
     callableId: null
+    compilerVisibility: Public
     contextReceivers: []
     generatedPrimaryConstructorProperty: null
     hasDefaultValue: false
@@ -53,6 +55,7 @@ KaPropertySetterSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false

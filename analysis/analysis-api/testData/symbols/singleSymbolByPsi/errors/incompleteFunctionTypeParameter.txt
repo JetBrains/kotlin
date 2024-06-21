@@ -1,5 +1,6 @@
 KaTypeParameterSymbol:
   annotations: []
+  compilerVisibility: Local
   isReified: false
   location: LOCAL
   modality: FINAL

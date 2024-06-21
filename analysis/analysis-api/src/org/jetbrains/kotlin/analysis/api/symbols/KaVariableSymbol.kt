@@ -251,6 +251,7 @@ public typealias KtParameterSymbol = KaParameterSymbol
 public abstract class KaValueParameterSymbol : KaVariableSymbol(), KaParameterSymbol,
     @Suppress("DEPRECATION") KaSymbolWithKind, KaAnnotatedSymbol {
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.LOCAL }
+
     final override val callableId: CallableId? get() = withValidityAssertion { null }
     final override val isExtension: Boolean get() = withValidityAssertion { false }
     final override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { null }

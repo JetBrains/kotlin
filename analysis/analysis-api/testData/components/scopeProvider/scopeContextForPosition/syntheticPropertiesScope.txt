@@ -20,6 +20,7 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: /JavaClass.getValue
+        compilerVisibility: Public
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: false
@@ -49,6 +50,7 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.equals
+        compilerVisibility: Public
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -78,6 +80,7 @@ scopes:
           KaValueParameterSymbol:
             annotations: []
             callableId: null
+            compilerVisibility: Public
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
             hasDefaultValue: false
@@ -102,6 +105,7 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.hashCode
+        compilerVisibility: Public
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -132,6 +136,7 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.toString
+        compilerVisibility: Public
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -163,10 +168,12 @@ scopes:
         annotations: []
         backingFieldSymbol: null
         callableId: /JavaClass.value
+        compilerVisibility: Public
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
           callableId: /JavaClass.getValue
+          compilerVisibility: Public
           contextReceivers: []
           hasBody: false
           hasStableParameterNames: true
@@ -210,6 +217,7 @@ scopes:
       KaConstructorSymbol:
         annotations: []
         callableId: null
+        compilerVisibility: Public
         containingClassId: JavaClass
         contextReceivers: []
         hasStableParameterNames: false
@@ -272,6 +280,7 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: /test
+        compilerVisibility: Public
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true

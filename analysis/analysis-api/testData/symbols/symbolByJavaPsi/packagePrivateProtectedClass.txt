@@ -3,6 +3,7 @@ KaNamedClassSymbol:
   classId: JavaClass.InnerClass
   classKind: CLASS
   companionObject: null
+  compilerVisibility: ProtectedAndPackage
   contextReceivers: []
   isActual: false
   isData: false

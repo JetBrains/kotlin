@@ -38,7 +38,7 @@ internal class KaFe10DynamicFunctionDescValueParameterSymbol(
     override val modality: KaSymbolModality
         get() = withValidityAssertion { KaSymbolModality.FINAL }
 
-    override val visibility: Visibility
+    override val compilerVisibility: Visibility
         get() = withValidityAssertion { Visibilities.Public }
 
     override val origin: KaSymbolOrigin

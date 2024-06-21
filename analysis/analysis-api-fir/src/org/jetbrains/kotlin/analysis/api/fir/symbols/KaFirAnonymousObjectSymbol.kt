@@ -33,7 +33,7 @@ internal open class KaFirAnonymousObjectSymbol(
 
     override val superTypes: List<KaType> by cached { firSymbol.superTypesList(builder) }
     override val modality: KaSymbolModality get() = withValidityAssertion { firSymbol.kaSymbolModality }
-    override val visibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
+    override val compilerVisibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
 
     override fun createPointer(): KaSymbolPointer<KaAnonymousObjectSymbol> = withValidityAssertion {
         KaPsiBasedSymbolPointer.createForSymbolFromSource<KaAnonymousObjectSymbol>(this)?.let { return it }

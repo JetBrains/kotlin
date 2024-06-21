@@ -17,7 +17,13 @@ import org.jetbrains.kotlin.descriptors.Visibility
  */
 public sealed interface KaDeclarationSymbol : KaSymbol, KaAnnotatedSymbol {
     public val modality: KaSymbolModality
+
     public val visibility: Visibility
+        @OptIn(KaExperimentalApi::class)
+        get() = compilerVisibility
+
+    @KaExperimentalApi
+    public val compilerVisibility: Visibility
 }
 
 @KaExperimentalApi

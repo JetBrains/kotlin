@@ -44,7 +44,7 @@ internal class KaFe10DescAnonymousFunctionSymbol(
     override val modality: KaSymbolModality
         get() = withValidityAssertion { descriptor.kaSymbolModality }
 
-    override val visibility: Visibility
+    override val compilerVisibility: Visibility
         get() = withValidityAssertion { descriptor.ktVisibility }
 
     override val receiverParameter: KaReceiverParameterSymbol?

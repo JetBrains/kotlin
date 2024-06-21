@@ -3,6 +3,7 @@ KaNamedClassSymbol:
   classId: test/C
   classKind: CLASS
   companionObject: null
+  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -33,6 +34,7 @@ KaNamedClassSymbol:
   classId: test/I
   classKind: INTERFACE
   companionObject: null
+  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -63,6 +65,7 @@ KaNamedClassSymbol:
   classId: test/O
   classKind: OBJECT
   companionObject: null
+  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false

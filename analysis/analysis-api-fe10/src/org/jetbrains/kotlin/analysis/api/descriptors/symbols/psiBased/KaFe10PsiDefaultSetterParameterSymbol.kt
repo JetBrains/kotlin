@@ -68,7 +68,7 @@ internal class KaFe10PsiDefaultSetterParameterSymbol(
     override val modality: KaSymbolModality
         get() = withValidityAssertion { KaSymbolModality.FINAL }
 
-    override val visibility: Visibility
+    override val compilerVisibility: Visibility
         get() = withValidityAssertion { accessorPsi.ktVisibility ?: descriptor?.ktVisibility ?: Visibilities.Public }
 
     override val psi: PsiElement?

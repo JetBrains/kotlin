@@ -2,6 +2,7 @@ KaKotlinPropertySymbol:
   annotations: []
   backingFieldSymbol: null
   callableId: /A.zoo
+  compilerVisibility: Public
   contextReceivers: []
   getter: null
   hasBackingField: false
@@ -57,6 +58,7 @@ KaKotlinPropertySymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /A.foo
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -97,6 +99,7 @@ KaKotlinPropertySymbol:
   annotations: []
   backingFieldSymbol: null
   callableId: /A.foo
+  compilerVisibility: Public
   contextReceivers: []
   getter: null
   hasBackingField: false
@@ -141,6 +144,7 @@ KaKotlinPropertySymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /A.smth
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -192,6 +196,7 @@ KaKotlinPropertySymbol:
   annotations: []
   backingFieldSymbol: null
   callableId: /A.bar
+  compilerVisibility: Public
   contextReceivers: []
   getter: null
   hasBackingField: false
@@ -237,6 +242,7 @@ KaKotlinPropertySymbol:
   annotations: []
   backingFieldSymbol: null
   callableId: /A.doo
+  compilerVisibility: Public
   contextReceivers: []
   getter: null
   hasBackingField: false

@@ -77,7 +77,7 @@ internal class KaFirPsiJavaClassSymbol(
     override val modality: KaSymbolModality
         get() = withValidityAssertion { javaClass.modality.asKaSymbolModality }
 
-    override val visibility: Visibility
+    override val compilerVisibility: Visibility
         get() = withValidityAssertion { javaClass.visibility }
 
     override val isInner: Boolean

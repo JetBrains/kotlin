@@ -33,7 +33,7 @@ internal class KaFe10DescTypeAliasSymbol(
     override val typeParameters: List<KaTypeParameterSymbol>
         get() = withValidityAssertion { descriptor.declaredTypeParameters.map { KaFe10DescTypeParameterSymbol(it, analysisContext) } }
 
-    override val visibility: Visibility
+    override val compilerVisibility: Visibility
         get() = withValidityAssertion { descriptor.ktVisibility }
 
     override val expandedType: KaType

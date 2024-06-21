@@ -3,6 +3,7 @@ KaTypeParameterSymbol:
     org/jetbrains/annotations/NotNull()
       psi: KtAnnotationEntry
   ]
+  compilerVisibility: Local
   isReified: false
   location: CLASS
   modality: FINAL
@@ -17,6 +18,7 @@ KaTypeParameterSymbol:
 
 KaTypeParameterSymbol:
   annotations: []
+  compilerVisibility: Local
   isReified: false
   location: CLASS
   modality: FINAL
@@ -34,6 +36,7 @@ KaNamedClassSymbol:
   classId: A
   classKind: CLASS
   companionObject: null
+  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false

@@ -33,6 +33,7 @@ scopes:
         classId: kotlin/Enum.Companion
         classKind: COMPANION_OBJECT
         companionObject: null
+        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isData: false
@@ -59,6 +60,7 @@ scopes:
         backingFieldSymbol: KaBackingFieldSymbol:
           annotations: []
           callableId: null
+          compilerVisibility: Private
           contextReceivers: []
           isExtension: false
           isVal: true
@@ -74,10 +76,12 @@ scopes:
             type: kotlin/String
           visibility: Private
         callableId: null
+        compilerVisibility: Public
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
           callableId: null
+          compilerVisibility: Public
           contextReceivers: []
           hasBody: false
           hasStableParameterNames: true
@@ -124,6 +128,7 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: null
+        compilerVisibility: Public
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -154,6 +159,7 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Enum.clone
+        compilerVisibility: Protected
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -184,6 +190,7 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: /E.compareTo
+        compilerVisibility: Public
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -213,6 +220,7 @@ scopes:
           KaValueParameterSymbol:
             annotations: []
             callableId: null
+            compilerVisibility: Public
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
             hasDefaultValue: false
@@ -237,6 +245,7 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Enum.equals
+        compilerVisibility: Public
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -266,6 +275,7 @@ scopes:
           KaValueParameterSymbol:
             annotations: []
             callableId: null
+            compilerVisibility: Public
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
             hasDefaultValue: false
@@ -290,6 +300,7 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Enum.hashCode
+        compilerVisibility: Public
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -320,6 +331,7 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Enum.toString
+        compilerVisibility: Public
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -355,6 +367,7 @@ scopes:
         backingFieldSymbol: KaBackingFieldSymbol:
           annotations: []
           callableId: null
+          compilerVisibility: Public
           contextReceivers: []
           isExtension: false
           isVal: true
@@ -370,10 +383,12 @@ scopes:
             type: kotlin/String
           visibility: Public
         callableId: kotlin/Enum.name
+        compilerVisibility: Public
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
           callableId: null
+          compilerVisibility: Public
           contextReceivers: []
           hasBody: false
           hasStableParameterNames: true
@@ -422,6 +437,7 @@ scopes:
         backingFieldSymbol: KaBackingFieldSymbol:
           annotations: []
           callableId: null
+          compilerVisibility: Public
           contextReceivers: []
           isExtension: false
           isVal: true
@@ -437,10 +453,12 @@ scopes:
             type: kotlin/Int
           visibility: Public
         callableId: kotlin/Enum.ordinal
+        compilerVisibility: Public
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
           callableId: null
+          compilerVisibility: Public
           contextReceivers: []
           hasBody: false
           hasStableParameterNames: true
@@ -487,6 +505,7 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: /E.getDeclaringClass
+        compilerVisibility: Public
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: false
@@ -516,6 +535,7 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Enum.finalize
+        compilerVisibility: ProtectedAndPackage
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: false
@@ -547,6 +567,7 @@ scopes:
       KaConstructorSymbol:
         annotations: []
         callableId: null
+        compilerVisibility: Private
         containingClassId: null
         contextReceivers: []
         hasStableParameterNames: true
@@ -573,6 +594,7 @@ scopes:
       KaEnumEntrySymbol:
         annotations: []
         callableId: /E.A
+        compilerVisibility: Public
         contextReceivers: []
         enumEntryInitializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
         isExtension: false
@@ -590,6 +612,7 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: /E.values
+        compilerVisibility: Public
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -625,6 +648,7 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: /E.valueOf
+        compilerVisibility: Public
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -654,6 +678,7 @@ scopes:
           KaValueParameterSymbol:
             annotations: []
             callableId: null
+            compilerVisibility: Public
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
             hasDefaultValue: false
@@ -679,10 +704,12 @@ scopes:
         annotations: []
         backingFieldSymbol: null
         callableId: /E.entries
+        compilerVisibility: Public
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
           callableId: null
+          compilerVisibility: Public
           contextReceivers: []
           hasBody: false
           hasStableParameterNames: true
@@ -746,6 +773,7 @@ scopes:
         classId: kotlin/Enum.Companion
         classKind: COMPANION_OBJECT
         companionObject: null
+        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isData: false
@@ -776,6 +804,7 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.equals
+        compilerVisibility: Public
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -805,6 +834,7 @@ scopes:
           KaValueParameterSymbol:
             annotations: []
             callableId: null
+            compilerVisibility: Public
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
             hasDefaultValue: false
@@ -829,6 +859,7 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.hashCode
+        compilerVisibility: Public
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -859,6 +890,7 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.toString
+        compilerVisibility: Public
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -926,6 +958,7 @@ scopes:
         classId: E
         classKind: ENUM_CLASS
         companionObject: null
+        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isData: false

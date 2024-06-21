@@ -3,6 +3,7 @@ KaNamedClassSymbol:
   classId: JavaClass.NestedClass
   classKind: CLASS
   companionObject: null
+  compilerVisibility: ProtectedStaticVisibility
   contextReceivers: []
   isActual: false
   isData: false

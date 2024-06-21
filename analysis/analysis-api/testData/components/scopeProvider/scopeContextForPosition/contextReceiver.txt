@@ -20,6 +20,7 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: /Context.memberInContext
+        compilerVisibility: Public
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -50,6 +51,7 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.equals
+        compilerVisibility: Public
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -79,6 +81,7 @@ scopes:
           KaValueParameterSymbol:
             annotations: []
             callableId: null
+            compilerVisibility: Public
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
             hasDefaultValue: false
@@ -103,6 +106,7 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.hashCode
+        compilerVisibility: Public
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -133,6 +137,7 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.toString
+        compilerVisibility: Public
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -164,6 +169,7 @@ scopes:
       KaConstructorSymbol:
         annotations: []
         callableId: null
+        compilerVisibility: Public
         containingClassId: Context
         contextReceivers: []
         hasStableParameterNames: true
@@ -227,6 +233,7 @@ scopes:
         classId: Context
         classKind: CLASS
         companionObject: null
+        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isData: false
@@ -251,6 +258,7 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: /test
+        compilerVisibility: Public
         contextReceivers: [
           KtContextReceiver:
             label: null

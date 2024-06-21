@@ -1,5 +1,6 @@
 KaTypeParameterSymbol:
   annotations: []
+  compilerVisibility: Local
   isReified: false
   location: LOCAL
   modality: FINAL
@@ -15,6 +16,7 @@ KaTypeParameterSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /foo
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -46,6 +48,7 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false

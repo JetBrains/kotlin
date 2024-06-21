@@ -3,6 +3,7 @@ KaNamedClassSymbol:
   classId: kotlin/reflect/KClass
   classKind: INTERFACE
   companionObject: null
+  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false

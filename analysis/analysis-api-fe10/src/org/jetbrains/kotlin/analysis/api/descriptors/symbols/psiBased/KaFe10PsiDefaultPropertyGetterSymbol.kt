@@ -89,7 +89,7 @@ internal class KaFe10PsiDefaultPropertyGetterSymbol(
     override val modality: KaSymbolModality
         get() = withValidityAssertion { propertyPsi.kaSymbolModality ?: descriptor?.kaSymbolModality ?: KaSymbolModality.FINAL }
 
-    override val visibility: Visibility
+    override val compilerVisibility: Visibility
         get() = withValidityAssertion { propertyPsi.ktVisibility ?: descriptor?.ktVisibility ?: Visibilities.Public }
 
     override val annotations: KaAnnotationList

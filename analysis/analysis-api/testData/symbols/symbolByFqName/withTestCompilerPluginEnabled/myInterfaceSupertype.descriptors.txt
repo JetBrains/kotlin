@@ -6,6 +6,7 @@ KaNamedClassSymbol:
   classId: foo/MyClass
   classKind: CLASS
   companionObject: null
+  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false

@@ -13,6 +13,7 @@ classifiers: 2
     classId: rex1/RexClass1
     classKind: INTERFACE
     companionObject: null
+    compilerVisibility: Public
     contextReceivers: []
     isActual: false
     isData: false
@@ -42,6 +43,7 @@ classifiers: 2
     classId: rex2/RexClass2
     classKind: INTERFACE
     companionObject: null
+    compilerVisibility: Public
     contextReceivers: []
     isActual: false
     isData: false
@@ -70,6 +72,7 @@ callables: 2
   KaNamedFunctionSymbol:
     annotations: []
     callableId: rex1/rexCallable1
+    compilerVisibility: Public
     contextReceivers: []
     contractEffects: []
     hasStableParameterNames: true
@@ -104,6 +107,7 @@ callables: 2
   KaNamedFunctionSymbol:
     annotations: []
     callableId: rex2/rexCallable2
+    compilerVisibility: Public
     contextReceivers: []
     contractEffects: []
     hasStableParameterNames: true

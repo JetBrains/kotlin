@@ -62,7 +62,7 @@ internal class KaFe10PsiConstructorSymbol(
             descriptor?.returnType?.toKtType(analysisContext) ?: createErrorType()
         }
 
-    override val visibility: Visibility
+    override val compilerVisibility: Visibility
         get() = withValidityAssertion { psi.ktVisibility ?: descriptor?.ktVisibility ?: Visibilities.Public }
 
     override val isActual: Boolean

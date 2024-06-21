@@ -1,5 +1,6 @@
 KaTypeParameterSymbol:
   annotations: []
+  compilerVisibility: Local
   isReified: false
   location: CLASS
   modality: FINAL
@@ -17,6 +18,7 @@ KaNamedClassSymbol:
   classId: X
   classKind: CLASS
   companionObject: null
+  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -46,6 +48,7 @@ KaNamedClassSymbol:
 
 KaTypeParameterSymbol:
   annotations: []
+  compilerVisibility: Local
   isReified: false
   location: LOCAL
   modality: FINAL
@@ -61,6 +64,7 @@ KaTypeParameterSymbol:
 KaTypeAliasSymbol:
   annotations: []
   classId: Y
+  compilerVisibility: Private
   expandedType: KaUsualClassType:
     annotations: []
     typeArguments: [

@@ -6,6 +6,7 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: KaBackingFieldSymbol:
     annotations: []
     callableId: null
+    compilerVisibility: Public
     contextReceivers: []
     isExtension: false
     isVal: true
@@ -25,6 +26,7 @@ KaKotlinPropertySymbol:
     getContainingModule: KaLibraryModule "Library lib"
     deprecationStatus: null
   callableId: one/topLevelPropertyWithAnnotations
+  compilerVisibility: Public
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: [
@@ -32,6 +34,7 @@ KaKotlinPropertySymbol:
         psi: null
     ]
     callableId: null
+    compilerVisibility: Public
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true

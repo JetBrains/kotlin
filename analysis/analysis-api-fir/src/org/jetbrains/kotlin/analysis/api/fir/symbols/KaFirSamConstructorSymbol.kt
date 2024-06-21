@@ -51,7 +51,7 @@ internal class KaFirSamConstructorSymbol(
     @KaExperimentalApi
     override val contextReceivers: List<KaContextReceiver> by cached { firSymbol.createContextReceivers(builder) }
     override val modality: KaSymbolModality get() = withValidityAssertion { firSymbol.kaSymbolModality }
-    override val visibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
+    override val compilerVisibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
 
     override val valueParameters: List<KaValueParameterSymbol>
         get() = withValidityAssertion {

@@ -1,6 +1,7 @@
 KaSamConstructorSymbol:
   annotations: []
   callableId: one/MyInterface
+  compilerVisibility: Public
   contextReceivers: []
   hasStableParameterNames: true
   isExtension: false
@@ -18,6 +19,7 @@ KaSamConstructorSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false

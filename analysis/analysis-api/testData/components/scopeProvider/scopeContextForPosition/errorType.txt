@@ -73,6 +73,7 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: /test
+        compilerVisibility: Public
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true

@@ -1,5 +1,6 @@
 KaDestructuringDeclarationSymbol:
   annotations: []
+  compilerVisibility: Local
   entries: [
     KaLocalVariableSymbol(<local>/a)
     KaLocalVariableSymbol(<local>/b)

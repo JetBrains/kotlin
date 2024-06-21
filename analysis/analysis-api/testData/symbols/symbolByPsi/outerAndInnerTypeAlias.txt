@@ -1,5 +1,6 @@
 KaTypeParameterSymbol:
   annotations: []
+  compilerVisibility: Local
   isReified: false
   location: CLASS
   modality: FINAL
@@ -17,6 +18,7 @@ KaNamedClassSymbol:
   classId: X
   classKind: CLASS
   companionObject: null
+  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -47,6 +49,7 @@ KaNamedClassSymbol:
 KaTypeAliasSymbol:
   annotations: []
   classId: TopLevelAlias
+  compilerVisibility: Public
   expandedType: KaUsualClassType:
     annotations: []
     typeArguments: [
@@ -71,6 +74,7 @@ KaTypeAliasSymbol:
 KaTypeAliasSymbol:
   annotations: []
   classId: A.NestedLevelAlias
+  compilerVisibility: Public
   expandedType: KaUsualClassType:
     annotations: []
     typeArguments: [
@@ -95,6 +99,7 @@ KaTypeAliasSymbol:
 KaTypeAliasSymbol:
   annotations: []
   classId: null
+  compilerVisibility: Local
   expandedType: KaUsualClassType:
     annotations: []
     typeArguments: [
@@ -119,6 +124,7 @@ KaTypeAliasSymbol:
 KaTypeAliasSymbol:
   annotations: []
   classId: null
+  compilerVisibility: Local
   expandedType: KaUsualClassType:
     annotations: []
     typeArguments: [
@@ -143,6 +149,7 @@ KaTypeAliasSymbol:
 KaTypeAliasSymbol:
   annotations: []
   classId: null
+  compilerVisibility: Local
   expandedType: KaUsualClassType:
     annotations: []
     typeArguments: [
@@ -167,6 +174,7 @@ KaTypeAliasSymbol:
 KaTypeAliasSymbol:
   annotations: []
   classId: null
+  compilerVisibility: Local
   expandedType: KaUsualClassType:
     annotations: []
     typeArguments: [
@@ -191,6 +199,7 @@ KaTypeAliasSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: null
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -232,6 +241,7 @@ KaNamedClassSymbol:
   classId: null
   classKind: CLASS
   companionObject: null
+  compilerVisibility: Local
   contextReceivers: []
   isActual: false
   isData: false
@@ -260,6 +270,7 @@ KaNamedClassSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: null
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -301,6 +312,7 @@ KaNamedClassSymbol:
   classId: null
   classKind: CLASS
   companionObject: null
+  compilerVisibility: Local
   contextReceivers: []
   isActual: false
   isData: false
@@ -329,6 +341,7 @@ KaNamedClassSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /A.check
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -370,6 +383,7 @@ KaNamedClassSymbol:
   classId: A
   classKind: CLASS
   companionObject: null
+  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false

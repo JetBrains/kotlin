@@ -50,7 +50,7 @@ internal class KaFe10DescSyntheticFieldSymbol(
     override val modality: KaSymbolModality
         get() = withValidityAssertion { descriptor.kaSymbolModality }
 
-    override val visibility: Visibility
+    override val compilerVisibility: Visibility
         get() = withValidityAssertion { descriptor.ktVisibility }
 
     override fun createPointer(): KaSymbolPointer<KaBackingFieldSymbol> = withValidityAssertion {

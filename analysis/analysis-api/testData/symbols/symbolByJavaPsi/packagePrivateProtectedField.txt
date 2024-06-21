@@ -1,6 +1,7 @@
 KaJavaFieldSymbol:
   annotations: []
   callableId: /JavaClass.count
+  compilerVisibility: ProtectedAndPackage
   contextReceivers: []
   isExtension: false
   isStatic: false

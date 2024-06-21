@@ -51,7 +51,7 @@ internal class KaFirPropertyGetterSymbol(
     override val hasBody: Boolean get() = withValidityAssertion { firSymbol.fir.hasBody }
 
     override val modality: KaSymbolModality get() = withValidityAssertion { firSymbol.kaSymbolModality }
-    override val visibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
+    override val compilerVisibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
 
 
     override val returnType: KaType get() = withValidityAssertion { firSymbol.returnType(builder) }

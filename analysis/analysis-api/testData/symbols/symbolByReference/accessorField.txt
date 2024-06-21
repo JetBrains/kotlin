@@ -6,6 +6,7 @@ KaBackingFieldSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: null
+  compilerVisibility: Private
   contextReceivers: []
   isExtension: false
   isVal: true

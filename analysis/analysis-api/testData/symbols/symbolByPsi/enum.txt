@@ -1,6 +1,7 @@
 KaEnumEntrySymbol:
   annotations: []
   callableId: /X.Y
+  compilerVisibility: Public
   contextReceivers: []
   enumEntryInitializer: null
   isExtension: false
@@ -23,6 +24,7 @@ KaEnumEntrySymbol:
 KaEnumEntrySymbol:
   annotations: []
   callableId: /X.Z
+  compilerVisibility: Public
   contextReceivers: []
   enumEntryInitializer: null
   isExtension: false
@@ -47,6 +49,7 @@ KaNamedClassSymbol:
   classId: X
   classKind: ENUM_CLASS
   companionObject: null
+  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false

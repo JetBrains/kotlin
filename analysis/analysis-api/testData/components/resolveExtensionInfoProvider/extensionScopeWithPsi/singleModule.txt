@@ -9,6 +9,7 @@ classifiers: 2
     classId: generated/GenClass1
     classKind: CLASS
     companionObject: null
+    compilerVisibility: Public
     contextReceivers: []
     isActual: false
     isData: false
@@ -38,6 +39,7 @@ classifiers: 2
     classId: generated/GenClass2
     classKind: CLASS
     companionObject: null
+    compilerVisibility: Public
     contextReceivers: []
     isActual: false
     isData: false
@@ -66,6 +68,7 @@ callables: 5
   KaNamedFunctionSymbol:
     annotations: []
     callableId: generated/genTopLevelFun1
+    compilerVisibility: Public
     contextReceivers: []
     contractEffects: []
     hasStableParameterNames: true
@@ -95,6 +98,7 @@ callables: 5
       KaValueParameterSymbol:
         annotations: []
         callableId: null
+        compilerVisibility: Public
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDefaultValue: false
@@ -123,6 +127,7 @@ callables: 5
   KaNamedFunctionSymbol:
     annotations: []
     callableId: generated/genTopLevelExtension1
+    compilerVisibility: Public
     contextReceivers: []
     contractEffects: []
     hasStableParameterNames: true
@@ -167,6 +172,7 @@ callables: 5
     backingFieldSymbol: KaBackingFieldSymbol:
       annotations: []
       callableId: null
+      compilerVisibility: Private
       contextReceivers: []
       isExtension: false
       isVal: true
@@ -182,10 +188,12 @@ callables: 5
         type: kotlin/String
       visibility: Private
     callableId: generated/genTopLevelVal1
+    compilerVisibility: Public
     contextReceivers: []
     getter: KaPropertyGetterSymbol:
       annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       hasBody: false
       hasStableParameterNames: true
@@ -238,6 +246,7 @@ callables: 5
     backingFieldSymbol: KaBackingFieldSymbol:
       annotations: []
       callableId: null
+      compilerVisibility: Private
       contextReceivers: []
       isExtension: false
       isVal: true
@@ -253,10 +262,12 @@ callables: 5
         type: kotlin/String
       visibility: Private
     callableId: generated/genTopLevelVar1
+    compilerVisibility: Public
     contextReceivers: []
     getter: KaPropertyGetterSymbol:
       annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       hasBody: false
       hasStableParameterNames: true
@@ -300,6 +311,7 @@ callables: 5
     setter: KaPropertySetterSymbol:
       annotations: []
       callableId: null
+      compilerVisibility: Internal
       contextReceivers: []
       hasBody: false
       hasStableParameterNames: true
@@ -313,6 +325,7 @@ callables: 5
       parameter: KaValueParameterSymbol:
         annotations: []
         callableId: null
+        compilerVisibility: Public
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDefaultValue: false
@@ -341,6 +354,7 @@ callables: 5
         KaValueParameterSymbol:
           annotations: []
           callableId: null
+          compilerVisibility: Public
           contextReceivers: []
           generatedPrimaryConstructorProperty: null
           hasDefaultValue: false
@@ -373,6 +387,7 @@ callables: 5
     backingFieldSymbol: KaBackingFieldSymbol:
       annotations: []
       callableId: null
+      compilerVisibility: Private
       contextReceivers: []
       isExtension: false
       isVal: true
@@ -388,10 +403,12 @@ callables: 5
         type: kotlin/Int
       visibility: Private
     callableId: generated/genExtensionVal1
+    compilerVisibility: Public
     contextReceivers: []
     getter: KaPropertyGetterSymbol:
       annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       hasBody: true
       hasStableParameterNames: true
