@@ -18,9 +18,11 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeDeclaredUpperBoundConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParameterConstraintPosition
+import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
+import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorSubstitutor
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
@@ -178,7 +180,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
 private fun createToFreshVariableSubstitutorAndAddInitialConstraints(
     declaration: FirTypeParameterRefsOwner,
     csBuilder: ConstraintSystemOperation,
-    session: FirSession
+    session: FirSession,
 ): Pair<ConeSubstitutor, List<ConeTypeVariable>> {
 
     val typeParameters = declaration.typeParameters
@@ -186,6 +188,14 @@ private fun createToFreshVariableSubstitutorAndAddInitialConstraints(
     val freshTypeVariables = typeParameters.map { ConeTypeParameterBasedTypeVariable(it.symbol) }
 
     val toFreshVariables = substitutorByMap(freshTypeVariables.associate { it.typeParameterSymbol to it.defaultType }, session)
+        .let {
+            val typeAliasConstructorSubstitutor = (declaration as? FirConstructor)?.typeAliasConstructorSubstitutor
+            if (typeAliasConstructorSubstitutor != null) {
+                ChainedSubstitutor(typeAliasConstructorSubstitutor, it)
+            } else {
+                it
+            }
+        }
 
     for (freshVariable in freshTypeVariables) {
         csBuilder.registerVariable(freshVariable)

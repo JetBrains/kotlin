@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructorCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
@@ -29,6 +30,10 @@ private object TypeAliasForConstructorKey : FirDeclarationDataKey()
 var FirConstructor.typeAliasForConstructor: FirTypeAliasSymbol? by FirDeclarationDataRegistry.data(TypeAliasForConstructorKey)
 val FirConstructorSymbol.typeAliasForConstructor: FirTypeAliasSymbol?
     get() = fir.typeAliasForConstructor
+
+private object TypeAliasConstructorSubstitutorKey : FirDeclarationDataKey()
+
+var FirConstructor.typeAliasConstructorSubstitutor: ConeSubstitutor? by FirDeclarationDataRegistry.data(TypeAliasConstructorSubstitutorKey)
 
 class TypeAliasConstructorsSubstitutingScope(
     private val typeAliasSymbol: FirTypeAliasSymbol,
@@ -76,6 +81,9 @@ class TypeAliasConstructorsSubstitutingScope(
                 }.apply {
                     originalConstructorIfTypeAlias = originalConstructorSymbol.fir
                     typeAliasForConstructor = typeAliasSymbol
+                    if (delegatingScope is FirClassSubstitutionScope) {
+                        typeAliasConstructorSubstitutor = delegatingScope.substitutor
+                    }
                 }.symbol
             )
         }

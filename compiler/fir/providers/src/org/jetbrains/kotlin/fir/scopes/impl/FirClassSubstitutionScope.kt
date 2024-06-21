@@ -34,7 +34,7 @@ class FirClassSubstitutionScope(
     private val session: FirSession,
     private val useSiteMemberScope: FirTypeScope,
     key: ScopeSessionKey<*, *>,
-    private val substitutor: ConeSubstitutor,
+    val substitutor: ConeSubstitutor,
     private val dispatchReceiverTypeForSubstitutedMembers: ConeClassLikeType,
     private val skipPrivateMembers: Boolean,
     private val makeExpect: Boolean = false,
