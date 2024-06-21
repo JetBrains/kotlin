@@ -543,6 +543,11 @@ class MyByteReader(val ins: java.io.InputStream) : ByteReader() {
         error("Not implemented")
     }
 
+    fun skip(amount: Int) {
+        offset += amount
+        ins.skip(amount.toLong())
+    }
+
     @OptIn(ExperimentalStdlibApi::class)
     inline fun limitSize(size: Int, reason: String, block: () -> Unit) {
         val maxSize = offset + size
@@ -562,15 +567,33 @@ class MyByteReader(val ins: java.io.InputStream) : ByteReader() {
             error("UnexpectedEnd")
 
         offset++
+        checkOffset()
+        return b.toByte()
+    }
+
+    private fun checkOffset() {
         if (offset > currentMaxSize) {
             error("Reading bytes past limit $currentMaxSize Reason: ${sizeLimits.last().reason}")
         }
-        return b.toByte()
+    }
+
+    override fun readToArray(array: ByteArray) {
+        var readed = 0
+        val amount = array.size
+        while (readed < amount) {
+            val res = ins.read(array, readed, amount - readed)
+            if (res == -1) error("UnexpectedEnd")
+            readed += res
+        }
+        offset += amount
+        checkOffset()
     }
 
     override fun readBytes(amount: Int?): ByteArray {
         require(amount != null)
-        return ByteArray(amount) { readByte() }
+        return ByteArray(amount).also {
+            readToArray(it)
+        }
     }
 }
 
@@ -586,29 +609,39 @@ abstract class ByteReader {
     abstract fun read(amount: Int): ByteReader
     abstract fun readByte(): Byte
     abstract fun readBytes(amount: Int? = null): ByteArray
+    protected abstract fun readToArray(array: ByteArray)
 
     fun readUByte(): UByte =
         readByte().toUByte()
 
-    fun readUInt16(): UShort =
-        (readUByte().toUInt() or
-                (readUByte().toUInt() shl 8)).toUShort()
+    private val bytes2 = ByteArray(2)
+    fun readUInt16(): UShort {
+        readToArray(bytes2)
+        return (bytes2[0].toUByte().toUInt() or
+                (bytes2[1].toUByte().toUInt() shl 8)).toUShort()
+    }
 
-    fun readUInt32(): UInt =
-        readUByte().toUInt() or
-                (readUByte().toUInt() shl 8) or
-                (readUByte().toUInt() shl 16) or
-                (readUByte().toUInt() shl 24)
+    private val bytes4 = ByteArray(4)
+    fun readUInt32(): UInt {
+        readToArray(bytes4)
+        return bytes4[0].toUByte().toUInt() or
+                (bytes4[1].toUByte().toUInt() shl 8) or
+                (bytes4[2].toUByte().toUInt() shl 16) or
+                (bytes4[3].toUByte().toUInt() shl 24)
+    }
 
-    fun readUInt64(): ULong =
-        readUByte().toULong() or
-                (readUByte().toULong() shl 8) or
-                (readUByte().toULong() shl 16) or
-                (readUByte().toULong() shl 24) or
-                (readUByte().toULong() shl 32) or
-                (readUByte().toULong() shl 40) or
-                (readUByte().toULong() shl 48) or
-                (readUByte().toULong() shl 56)
+    private val bytes8 = ByteArray(8)
+    fun readUInt64(): ULong {
+        readToArray(bytes8)
+        return bytes8[0].toUByte().toULong() or
+                (bytes8[1].toUByte().toULong() shl 8) or
+                (bytes8[2].toUByte().toULong() shl 16) or
+                (bytes8[3].toUByte().toULong() shl 24) or
+                (bytes8[4].toUByte().toULong() shl 32) or
+                (bytes8[5].toUByte().toULong() shl 40) or
+                (bytes8[6].toUByte().toULong() shl 48) or
+                (bytes8[7].toUByte().toULong() shl 56)
+    }
 
 
     fun readVarInt7() = readSignedLeb128().let {

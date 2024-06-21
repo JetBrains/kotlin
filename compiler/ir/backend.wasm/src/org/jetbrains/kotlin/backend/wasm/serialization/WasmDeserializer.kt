@@ -29,7 +29,7 @@ import kotlin.collections.LinkedHashSet
  *  use [deserializeReference]
  */
 
-class WasmDeserializer(inputStream: InputStream) {
+class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boolean = false, private val skipSourceLocations: Boolean) {
 
     private val input: MyByteReader = MyByteReader(inputStream)
 
@@ -182,7 +182,13 @@ class WasmDeserializer(inputStream: InputStream) {
 
     private fun deserializeLocal(): WasmLocal {
         val id = deserializeInt()
-        val name = deserializeString()
+        val name: String
+        if (skipLocalNames) {
+            skipString()
+            name = ""
+        } else {
+            name = deserializeString()
+        }
         val type = deserializeType()
         val isParameter = b.readUByte().toBoolean()
         return WasmLocal(id, name, type, isParameter)
@@ -367,13 +373,20 @@ class WasmDeserializer(inputStream: InputStream) {
             when (id) {
                 0 -> SourceLocation.NoLocation
                 else -> {
-                    val file = deserializeString()
-                    val line = deserializeInt()
-                    val column = deserializeInt()
-                    when (id) {
-                        1 -> SourceLocation.Location(file, line, column)
-                        2 -> SourceLocation.IgnoredLocation(file, line, column)
-                        else -> idError()
+                    if (skipSourceLocations) {
+                        skipString()
+                        skipInt()
+                        skipInt()
+                        SourceLocation.NoLocation
+                    } else {
+                        val file = deserializeString()
+                        val line = deserializeInt()
+                        val column = deserializeInt()
+                        when (id) {
+                            1 -> SourceLocation.Location(file, line, column)
+                            2 -> SourceLocation.IgnoredLocation(file, line, column)
+                            else -> idError()
+                        }
                     }
                 }
             }
@@ -523,7 +536,16 @@ class WasmDeserializer(inputStream: InputStream) {
         return String(bytes)
     }
 
+    private fun skipString() {
+        val length = b.readUInt32().toInt()
+        b.skip(length)
+    }
+
     private fun deserializeInt() = b.readUInt32().toInt()
+
+    private fun skipInt() {
+        b.skip(4)
+    }
 
     private fun deserializeLong() = b.readUInt64().toLong()
 

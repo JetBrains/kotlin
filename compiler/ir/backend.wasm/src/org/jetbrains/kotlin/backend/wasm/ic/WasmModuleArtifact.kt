@@ -16,13 +16,15 @@ class WasmSrcFileArtifact(
     val srcFilePath: String,
     private val fragments: WasmIrProgramFragments?,
     private val astArtifact: File? = null,
+    private val skipLocalNames: Boolean = false,
+    private val skipSourceLocations: Boolean
 ) : SrcFileArtifact() {
     override fun loadIrFragments(): WasmIrProgramFragments? {
         if (fragments != null) {
             return fragments
         }
         return astArtifact?.ifExists { readBytes() }
-            ?.let { WasmIrProgramFragments(WasmDeserializer(it.inputStream()).deserialize()) }
+            ?.let { WasmIrProgramFragments(WasmDeserializer(it.inputStream(), skipLocalNames, skipSourceLocations).deserialize()) }
     }
 
     override fun isModified() = fragments != null
