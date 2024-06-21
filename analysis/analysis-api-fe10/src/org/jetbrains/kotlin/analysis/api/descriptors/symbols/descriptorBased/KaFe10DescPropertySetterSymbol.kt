@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.name.CallableId
 internal class KaFe10DescPropertySetterSymbol(
     override val descriptor: PropertySetterDescriptor,
     override val analysisContext: Fe10AnalysisContext
-) : KaPropertySetterSymbol(), KaFe10DescMemberSymbol<PropertySetterDescriptor> {
+) : KaPropertySetterSymbol(), KaFe10DescSymbol<PropertySetterDescriptor> {
     override val returnType: KaType
         get() = withValidityAssertion { analysisContext.builtIns.unitType.toKtType(analysisContext) }
 

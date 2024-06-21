@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 internal class KaFe10DescNamedFunctionSymbol private constructor(
     override val descriptor: FunctionDescriptor,
     override val analysisContext: Fe10AnalysisContext,
-) : KaNamedFunctionSymbol(), KaFe10DescMemberSymbol<FunctionDescriptor> {
+) : KaNamedFunctionSymbol(), KaFe10DescSymbol<FunctionDescriptor> {
     override val name: Name
         get() = withValidityAssertion { descriptor.name }
 

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.KaFe10DescMemberSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.KaFe10DescSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.classId
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.kaSymbolModality
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktVisibility
@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.name.Name
 internal class KaFe10DescEnumEntrySymbol(
     override val descriptor: ClassDescriptor,
     override val analysisContext: Fe10AnalysisContext
-) : KaEnumEntrySymbol(), KaEnumEntryInitializerSymbol, KaFe10DescMemberSymbol<ClassDescriptor> {
+) : KaEnumEntrySymbol(), KaEnumEntryInitializerSymbol, KaFe10DescSymbol<ClassDescriptor> {
     private val enumDescriptor: ClassDescriptor
         get() = descriptor.containingDeclaration as ClassDescriptor
 

@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 internal class KaFe10DescKotlinPropertySymbol(
     override val descriptor: PropertyDescriptorImpl,
     override val analysisContext: Fe10AnalysisContext
-) : KaKotlinPropertySymbol(), KaFe10DescMemberSymbol<PropertyDescriptorImpl> {
+) : KaKotlinPropertySymbol(), KaFe10DescSymbol<PropertyDescriptorImpl> {
     override val name: Name
         get() = withValidityAssertion { descriptor.name }
 

@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 internal class KaFe10DescNamedClassSymbol(
     override val descriptor: ClassDescriptor,
     override val analysisContext: Fe10AnalysisContext
-) : KaNamedClassSymbol(), KaFe10DescMemberSymbol<ClassDescriptor> {
+) : KaNamedClassSymbol(), KaFe10DescSymbol<ClassDescriptor> {
     override val name: Name
         get() = withValidityAssertion { descriptor.name }
 

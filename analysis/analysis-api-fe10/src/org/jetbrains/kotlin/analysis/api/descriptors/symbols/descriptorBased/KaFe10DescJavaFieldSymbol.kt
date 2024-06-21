@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.KaFe10DescMemberSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.KaFe10DescSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.callableIdIfNotLocal
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.kaSymbolModality
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktVisibility
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 internal class KaFe10DescJavaFieldSymbol(
     override val descriptor: JavaPropertyDescriptor,
     override val analysisContext: Fe10AnalysisContext
-) : KaJavaFieldSymbol(), KaFe10DescMemberSymbol<JavaPropertyDescriptor> {
+) : KaJavaFieldSymbol(), KaFe10DescSymbol<JavaPropertyDescriptor> {
     override val name: Name
         get() = withValidityAssertion { descriptor.name }
 

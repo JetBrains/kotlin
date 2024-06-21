@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.KaFe10DescMemberSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.KaFe10DescSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.kaSymbolModality
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktVisibility
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 internal class KaFe10DescAnonymousObjectSymbol(
     override val descriptor: ClassDescriptor,
     override val analysisContext: Fe10AnalysisContext
-) : KaAnonymousObjectSymbol(), KaFe10DescMemberSymbol<ClassDescriptor> {
+) : KaAnonymousObjectSymbol(), KaFe10DescSymbol<ClassDescriptor> {
     override val superTypes: List<KaType>
         get() = withValidityAssertion { descriptor.typeConstructor.supertypes.map { it.toKtType(analysisContext) } }
 

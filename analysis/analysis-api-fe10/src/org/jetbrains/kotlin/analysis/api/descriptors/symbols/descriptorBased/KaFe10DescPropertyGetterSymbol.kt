@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.returnTypeOrNothing
 internal class KaFe10DescPropertyGetterSymbol(
     override val descriptor: PropertyGetterDescriptor,
     override val analysisContext: Fe10AnalysisContext
-) : KaPropertyGetterSymbol(), KaFe10DescMemberSymbol<PropertyGetterDescriptor> {
+) : KaPropertyGetterSymbol(), KaFe10DescSymbol<PropertyGetterDescriptor> {
     override val isDefault: Boolean
         get() = withValidityAssertion { descriptor.isDefault }
 

@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 internal class KaFe10DescSyntheticJavaPropertySymbolForOverride(
     override val descriptor: JavaForKotlinOverridePropertyDescriptor,
     override val analysisContext: Fe10AnalysisContext
-) : KaSyntheticJavaPropertySymbol(), KaFe10DescMemberSymbol<JavaForKotlinOverridePropertyDescriptor> {
+) : KaSyntheticJavaPropertySymbol(), KaFe10DescSymbol<JavaForKotlinOverridePropertyDescriptor> {
     override val name: Name
         get() = withValidityAssertion { descriptor.name }
 

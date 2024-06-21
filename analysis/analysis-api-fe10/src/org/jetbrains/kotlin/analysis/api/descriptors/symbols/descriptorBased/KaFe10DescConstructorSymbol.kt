@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.name.ClassId
 internal class KaFe10DescConstructorSymbol(
     override val descriptor: ConstructorDescriptor,
     override val analysisContext: Fe10AnalysisContext
-) : KaConstructorSymbol(), KaFe10DescMemberSymbol<ConstructorDescriptor> {
+) : KaConstructorSymbol(), KaFe10DescSymbol<ConstructorDescriptor> {
     override val isPrimary: Boolean
         get() = withValidityAssertion { descriptor.isPrimary }
 

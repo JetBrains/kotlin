@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 internal class KaFe10DescAnonymousFunctionSymbol(
     override val descriptor: FunctionDescriptor,
     override val analysisContext: Fe10AnalysisContext
-) : KaAnonymousFunctionSymbol(), KaFe10DescMemberSymbol<FunctionDescriptor> {
+) : KaAnonymousFunctionSymbol(), KaFe10DescSymbol<FunctionDescriptor> {
     override val isExtension: Boolean
         get() = withValidityAssertion { descriptor.isExtension }
 
