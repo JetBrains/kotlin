@@ -39295,6 +39295,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("kt69227.kt")
+      public void testKt69227() {
+        runTest("compiler/testData/diagnostics/tests/typealias/kt69227.kt");
+      }
+
+      @Test
       @TestMetadata("localTypeAlias.kt")
       public void testLocalTypeAlias() {
         runTest("compiler/testData/diagnostics/tests/typealias/localTypeAlias.kt");
