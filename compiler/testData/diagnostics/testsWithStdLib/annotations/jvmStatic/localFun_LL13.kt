@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // LANGUAGE: +JvmStaticInInterface
 // DIAGNOSTICS: -UNUSED_VARIABLE
 fun main() {
