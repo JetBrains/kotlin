@@ -1,12 +1,13 @@
 // ISSUE: KT-68830
+// MUTE_LL_FIR: LL tests don't run IR actualizer to report NO_ACTUAL_FOR_EXPECT
 // MODULE: m1-common
 // FILE: common.kt
 
-open expect class A() {
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>open expect class A() {
     open fun foo(): String
-}
+}<!>
 
-expect class B() : A
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect class B() : A<!>
 
 fun test() = B().foo()
 
