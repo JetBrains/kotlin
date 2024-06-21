@@ -19,7 +19,7 @@ enum class LoopLabelType { BREAK, CONTINUE }
 enum class SyntheticLocalType { IS_INTERFACE_PARAMETER, TABLE_SWITCH_SELECTOR }
 
 class WasmFunctionCodegenContext(
-    val irFunction: IrFunction,
+    val irFunction: IrFunction?,
     private val wasmFunction: WasmFunction.Defined,
     private val backendContext: WasmBackendContext,
     private val wasmFileCodegenContext: WasmFileCodegenContext,
@@ -99,7 +99,7 @@ class WasmFunctionCodegenContext(
         return loopLevels.getValue(Pair(irLoop, labelType))
     }
 
-    val currentFunction: IrFunction
+    val currentFunction: IrFunction?
         get() = inlinedFunctionStack.firstOrNull() ?: irFunction
 
     fun stepIntoInlinedFunction(inlineFunction: IrFunction) {

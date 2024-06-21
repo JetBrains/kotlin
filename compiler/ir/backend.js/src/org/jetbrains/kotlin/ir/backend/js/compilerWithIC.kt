@@ -9,16 +9,45 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.PhaserState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.backend.js.ic.JsIrCompilerICInterface
+import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.lower.collectNativeImplementations
 import org.jetbrains.kotlin.ir.backend.js.lower.generateJsTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
+import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
+import java.io.File
+
+class JsICContext(
+    private val mainArguments: List<String>?,
+    private val granularity: JsGenerationGranularity,
+    private val phaseConfig: PhaseConfig,
+    private val exportedDeclarations: Set<FqName> = emptySet(),
+) : PlatformDependentICContext {
+
+    override fun createIrFactory(): IrFactory =
+        IrFactoryImplForJsIC(WholeWorldStageController())
+
+    override fun createCompiler(mainModule: IrModuleFragment, configuration: CompilerConfiguration): IrCompilerICInterface =
+        JsIrCompilerWithIC(mainModule, mainArguments, configuration, granularity, phaseConfig, exportedDeclarations)
+
+    override fun createSrcFileArtifact(srcFilePath: String, fragments: IrProgramFragments?, astArtifact: File?): SrcFileArtifact =
+        JsSrcFileArtifact(srcFilePath, fragments as? JsIrProgramFragments, astArtifact)
+
+    override fun createModuleArtifact(
+        moduleName: String,
+        fileArtifacts: List<SrcFileArtifact>,
+        artifactsDir: File?,
+        forceRebuildJs: Boolean,
+        externalModuleName: String?,
+    ): ModuleArtifact =
+        JsModuleArtifact(moduleName, fileArtifacts.map { it as JsSrcFileArtifact }, artifactsDir, forceRebuildJs, externalModuleName)
+}
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class JsIrCompilerWithIC(
@@ -28,7 +57,7 @@ class JsIrCompilerWithIC(
     granularity: JsGenerationGranularity,
     private val phaseConfig: PhaseConfig,
     exportedDeclarations: Set<FqName> = emptySet(),
-) : JsIrCompilerICInterface {
+) : IrCompilerICInterface {
     private val context: JsIrBackendContext
 
     init {
@@ -48,7 +77,7 @@ class JsIrCompilerWithIC(
         )
     }
 
-    override fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> JsIrProgramFragments> {
+    override fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> IrProgramFragments> {
         val shouldGeneratePolyfills = context.configuration.getBoolean(JSConfigurationKeys.GENERATE_POLYFILLS)
 
         allModules.forEach {

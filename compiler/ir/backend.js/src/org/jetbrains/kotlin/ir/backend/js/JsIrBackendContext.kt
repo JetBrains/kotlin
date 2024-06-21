@@ -111,11 +111,11 @@ class JsIrBackendContext(
     override val es6mode = configuration[JSConfigurationKeys.USE_ES6_CLASSES] ?: false
     val platformArgumentsProviderJsExpression = configuration[JSConfigurationKeys.DEFINE_PLATFORM_MAIN_FUNCTION_ARGUMENTS]
 
-    val externalPackageFragment = mutableMapOf<IrFileSymbol, IrFile>()
+    override val externalPackageFragment = mutableMapOf<IrFileSymbol, IrFile>()
 
-    val additionalExportedDeclarations = hashSetOf<IrDeclaration>()
+    override val additionalExportedDeclarations = hashSetOf<IrDeclaration>()
 
-    val bodilessBuiltInsPackageFragment: IrPackageFragment = IrExternalPackageFragmentImpl(
+    override val bodilessBuiltInsPackageFragment: IrPackageFragment = IrExternalPackageFragmentImpl(
         DescriptorlessExternalPackageFragmentSymbol(),
         FqName("kotlin")
     )
@@ -123,22 +123,7 @@ class JsIrBackendContext(
     val packageLevelJsModules = hashSetOf<IrFile>()
     val declarationLevelJsModules = mutableListOf<IrDeclarationWithName>()
 
-    val testFunsPerFile = hashMapOf<IrFile, IrSimpleFunction>()
-
-    override fun createTestContainerFun(container: IrDeclaration): IrSimpleFunction {
-        val irFile = container.file
-        return irFactory.stageController.restrictTo(container) {
-            testFunsPerFile.getOrPut(irFile) {
-                irFactory.addFunction(irFile) {
-                    name = Name.identifier("test fun")
-                    returnType = irBuiltIns.unitType
-                    origin = JsIrBuilder.SYNTHESIZED_DECLARATION
-                }.apply {
-                    body = irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, emptyList())
-                }
-            }
-        }
-    }
+    override val testFunsPerFile = hashMapOf<IrFile, IrSimpleFunction>()
 
     override val inlineClassesUtils = JsInlineClassesUtils(this)
 

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExternalType
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.toJsStringLiteral
 import org.jetbrains.kotlin.backend.wasm.utils.getJsFunAnnotation
 import org.jetbrains.kotlin.backend.wasm.utils.getWasmImportDescriptor
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArgumentsFromEnvironment
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.backend.js.utils.isJsExport
@@ -48,6 +49,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
 
     val additionalDeclarations = mutableListOf<IrDeclaration>()
     lateinit var currentParent: IrDeclarationParent
+    lateinit var currentFile: IrFile
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (!context.isWasmJsTarget) return null
@@ -66,10 +68,14 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
 
         additionalDeclarations.clear()
         currentParent = declaration.parent
-        val newDeclarations = if (isExternal)
-            transformExternalFunction(declaration)
-        else
-            transformExportFunction(declaration)
+        currentFile = declaration.file
+
+        val newDeclarations = context.irFactory.stageController.restrictTo(declaration) {
+            if (isExternal)
+                transformExternalFunction(declaration)
+            else
+                transformExportFunction(declaration)
+        }
 
         return (newDeclarations ?: listOf(declaration)) + additionalDeclarations
     }
@@ -310,7 +316,8 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             //          )
             //     }
             //
-            context.closureCallExports.getOrPut(functionTypeInfo.signatureString) {
+
+            context.getFileContext(currentFile).closureCallExports.getOrPut(functionTypeInfo.signatureString) {
                 createKotlinClosureCaller(functionTypeInfo)
             }
 
@@ -322,9 +329,10 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             //     }""")
             //     external fun __convertKotlinClosureToJsClosure_<signatureString>(f: structref): ExternalRef
             //
-            val kotlinToJsClosureConvertor = context.kotlinClosureToJsConverters.getOrPut(functionTypeInfo.signatureString) {
-                createKotlinToJsClosureConvertor(functionTypeInfo)
-            }
+            val kotlinToJsClosureConvertor =
+                context.getFileContext(currentFile).kotlinClosureToJsConverters.getOrPut(functionTypeInfo.signatureString) {
+                    createKotlinToJsClosureConvertor(functionTypeInfo)
+                }
             return FunctionBasedAdapter(kotlinToJsClosureConvertor)
         }
 
@@ -442,7 +450,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             //     @JsFun("(f, p0, p1, ...) => f(p0, p1, ...)")
             //     external fun __callJsClosure_<signatureString>(f: ExternalRef, p0: JsType1, p1: JsType2, ...): JsResType
             //
-            val jsClosureCaller = context.jsClosureCallers.getOrPut(functionTypeInfo.signatureString) {
+            val jsClosureCaller = context.getFileContext(currentFile).jsClosureCallers.getOrPut(functionTypeInfo.signatureString) {
                 createJsClosureCaller(functionTypeInfo)
             }
 
@@ -454,7 +462,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             //          adapt(__callJsClosure_<signatureString>(f, adapt(p0), adapt(p1), ..))
             //       }
             //
-            val jsToKotlinClosure = context.jsToKotlinClosures.getOrPut(functionTypeInfo.signatureString) {
+            val jsToKotlinClosure = context.getFileContext(currentFile).jsToKotlinClosures.getOrPut(functionTypeInfo.signatureString) {
                 createJsToKotlinClosureConverter(functionTypeInfo, jsClosureCaller)
             }
             return FunctionBasedAdapter(jsToKotlinClosure)

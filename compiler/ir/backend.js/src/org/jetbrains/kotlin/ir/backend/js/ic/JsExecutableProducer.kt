@@ -11,13 +11,13 @@ import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 /**
  * This class is responsible for incrementally producing the final JavaScript code based on the provided cache artifacts.
- * @param caches - Cache artifacts, which are instances of [ModuleArtifact], can be obtained using [CacheUpdater.actualizeCaches].
+ * @param caches - Cache artifacts, which are instances of [JsModuleArtifact], can be obtained using [CacheUpdater.actualizeCaches].
  */
 class JsExecutableProducer(
     private val mainModuleName: String,
     private val moduleKind: ModuleKind,
     private val sourceMapsInfo: SourceMapsInfo?,
-    private val caches: List<ModuleArtifact>,
+    private val caches: List<JsModuleArtifact>,
     private val relativeRequirePath: Boolean
 ) {
     data class BuildResult(val compilationOut: CompilationOutputs, val buildModules: List<String>)

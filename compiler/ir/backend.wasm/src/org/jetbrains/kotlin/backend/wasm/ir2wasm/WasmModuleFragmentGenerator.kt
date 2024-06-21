@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
@@ -19,22 +20,55 @@ class WasmModuleFragmentGenerator(
     fun generateModule(irModuleFragment: IrModuleFragment): List<WasmCompiledFileFragment> {
         val wasmCompiledModuleFragments = mutableListOf<WasmCompiledFileFragment>()
         for (irFile in irModuleFragment.files) {
-            val wasmFileFragment = WasmCompiledFileFragment()
-            val wasmFileCodegenContext = WasmFileCodegenContext(wasmFileFragment, idSignatureRetriever)
-            val wasmModuleTypeTransformer = WasmModuleTypeTransformer(backendContext, wasmFileCodegenContext)
-
-            val generator = DeclarationGenerator(
+            val wasmFileFragment = compileIrFile(
+                irFile,
                 backendContext,
-                wasmFileCodegenContext,
-                wasmModuleTypeTransformer,
+                idSignatureRetriever,
                 wasmModuleMetadataCache,
-                allowIncompleteImplementations,
+                allowIncompleteImplementations
             )
-            for (irDeclaration in irFile.declarations) {
-                irDeclaration.acceptVoid(generator)
-            }
             wasmCompiledModuleFragments.add(wasmFileFragment)
         }
         return wasmCompiledModuleFragments
     }
+}
+
+internal fun compileIrFile(
+    irFile: IrFile,
+    backendContext: WasmBackendContext,
+    idSignatureRetriever: IdSignatureRetriever,
+    wasmModuleMetadataCache: WasmModuleMetadataCache,
+    allowIncompleteImplementations: Boolean
+): WasmCompiledFileFragment {
+    val wasmFileFragment = WasmCompiledFileFragment()
+    val wasmFileCodegenContext = WasmFileCodegenContext(wasmFileFragment, idSignatureRetriever)
+    val wasmModuleTypeTransformer = WasmModuleTypeTransformer(backendContext, wasmFileCodegenContext)
+
+    val generator = DeclarationGenerator(
+        backendContext,
+        wasmFileCodegenContext,
+        wasmModuleTypeTransformer,
+        wasmModuleMetadataCache,
+        allowIncompleteImplementations,
+    )
+    for (irDeclaration in irFile.declarations) {
+        irDeclaration.acceptVoid(generator)
+    }
+
+    val testFun = backendContext.testFunsPerFile[irFile]
+    if (testFun != null) {
+        wasmFileCodegenContext.defineTestFun(testFun.symbol)
+    }
+
+    backendContext.fileContexts.values.forEach { fileContext ->
+        val mainFunctionWrapper = fileContext.mainFunctionWrapper
+        if (mainFunctionWrapper != null) {
+            wasmFileCodegenContext.addMainFunctionWrapper(mainFunctionWrapper.symbol)
+        }
+        fileContext.closureCallExports.forEach { (exportSignature, function) ->
+            wasmFileCodegenContext.addClosureCallExport(exportSignature, function.symbol)
+        }
+    }
+
+    return wasmFileFragment
 }

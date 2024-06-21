@@ -23,8 +23,8 @@ internal class WasmUsefulDeclarationProcessor(
 ) : UsefulDeclarationProcessor(printReachabilityInfo, removeUnusedAssociatedObjects = false, dumpReachabilityInfoToFile) {
 
     // The mapping from function for wrapping a kotlin closure/lambda with JS closure to function used to call a kotlin closure from JS side.
-    private val kotlinClosureToJsClosureConvertFunToKotlinClosureCallFun =
-        context.kotlinClosureToJsConverters.entries.associate { (k, v) -> v to context.closureCallExports[k] }
+//    private val kotlinClosureToJsClosureConvertFunToKotlinClosureCallFun =
+//        context.kotlinClosureToJsConverters.entries.associate { (k, v) -> v to context.closureCallExports[k] }
 
     override val bodyVisitor: BodyVisitorBase = object : BodyVisitorBase() {
         override fun visitConst(expression: IrConst, data: IrDeclaration) = when (expression.kind) {
@@ -189,11 +189,11 @@ internal class WasmUsefulDeclarationProcessor(
         irFunction.getEffectiveValueParameters().forEach { it.enqueueValueParameterType(irFunction) }
         irFunction.returnType.enqueueType(irFunction, "function return type")
 
-        kotlinClosureToJsClosureConvertFunToKotlinClosureCallFun[irFunction]?.enqueue(
-            irFunction,
-            "kotlin closure to JS closure conversion",
-            false
-        )
+//        kotlinClosureToJsClosureConvertFunToKotlinClosureCallFun[irFunction]?.enqueue(
+//            irFunction,
+//            "kotlin closure to JS closure conversion",
+//            false
+//        )
     }
 
     override fun processSimpleFunction(irFunction: IrSimpleFunction) {

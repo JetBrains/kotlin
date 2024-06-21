@@ -33,40 +33,40 @@ class FieldInitializersLowering(val context: WasmBackendContext) : FileLoweringP
     private val stringPoolFqName = context.kotlinWasmInternalPackageFqn.child(Name.identifier("stringPool"))
 
     override fun lower(irFile: IrFile) {
-        val builder = context.createIrBuilder(context.fieldInitFunction.symbol)
-        val startFunctionBody = context.fieldInitFunction.body as IrBlockBody
-
-        irFile.acceptChildrenVoid(object : IrElementVisitorVoid {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-            }
-
-            override fun visitField(declaration: IrField) {
-                super.visitField(declaration)
-
-                // External properties can be "initialized" with `= defineExternally`. Ignoring it.
-                if (declaration.isExternal) return
-
-                if (!declaration.isStatic) return
-                val initValue: IrExpression = declaration.initializer?.expression ?: return
-                // Constant primitive initializers without implicit casting can be processed by native wasm initializers
-                if (initValue is IrConst) {
-                    if (initValue.kind is IrConstKind.Null) return
-                    if (initValue.type == declaration.type && initValue.kind !is IrConstKind.String) return
-                }
-
-                val initializerStatement = builder.at(initValue).irSetField(null, declaration, initValue)
-                val statements = startFunctionBody.statements
-
-                when {
-                    declaration.fqNameWhenAvailable == stringPoolFqName -> statements.add(0, initializerStatement)
-                    declaration.isObjectInstanceField() -> statements.add(if (statements.size >= 1) 1 else 0, initializerStatement)
-                    else -> startFunctionBody.statements.add(initializerStatement)
-                }
-
-                // Replace initializer with default one
-                declaration.initializer = null
-            }
-        })
+//        val builder = context.createIrBuilder(context.fieldInitFunction.symbol)
+//        val startFunctionBody = context.fieldInitFunction.body as IrBlockBody
+//
+//        irFile.acceptChildrenVoid(object : IrElementVisitorVoid {
+//            override fun visitElement(element: IrElement) {
+//                element.acceptChildrenVoid(this)
+//            }
+//
+//            override fun visitField(declaration: IrField) {
+//                super.visitField(declaration)
+//
+//                // External properties can be "initialized" with `= defineExternally`. Ignoring it.
+//                if (declaration.isExternal) return
+//
+//                if (!declaration.isStatic) return
+//                val initValue: IrExpression = declaration.initializer?.expression ?: return
+//                // Constant primitive initializers without implicit casting can be processed by native wasm initializers
+//                if (initValue is IrConst) {
+//                    if (initValue.kind is IrConstKind.Null) return
+//                    if (initValue.type == declaration.type && initValue.kind !is IrConstKind.String) return
+//                }
+//
+//                val initializerStatement = builder.at(initValue).irSetField(null, declaration, initValue)
+//                val statements = startFunctionBody.statements
+//
+//                when {
+//                    declaration.fqNameWhenAvailable == stringPoolFqName -> statements.add(0, initializerStatement)
+//                    declaration.isObjectInstanceField() -> statements.add(if (statements.size >= 1) 1 else 0, initializerStatement)
+//                    else -> startFunctionBody.statements.add(initializerStatement)
+//                }
+//
+//                // Replace initializer with default one
+//                declaration.initializer = null
+//            }
+//        })
     }
 }

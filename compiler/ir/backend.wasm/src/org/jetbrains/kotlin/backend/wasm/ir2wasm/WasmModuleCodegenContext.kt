@@ -37,10 +37,6 @@ class WasmFileCodegenContext(
         wasmFileFragment.typeInfo[irClass.getReferenceKey()] = typeInfo
     }
 
-    fun registerInitFunction(wasmFunction: WasmFunction, priority: String) {
-        wasmFileFragment.initFunctions += WasmCompiledModuleFragment.FunWithPriority(wasmFunction, priority)
-    }
-
     fun addExport(wasmExport: WasmExport<*>) {
         wasmFileFragment.exports += wasmExport
     }
@@ -98,9 +94,6 @@ class WasmFileCodegenContext(
     fun referenceVTableGcType(irClass: IrClassSymbol): WasmSymbol<WasmTypeDeclaration> =
         wasmFileFragment.vTableGcTypes.reference(irClass.getReferenceKey())
 
-    fun referenceVTableGcType(iface: IdSignature): WasmSymbol<WasmTypeDeclaration> =
-        wasmFileFragment.vTableGcTypes.reference(iface)
-
     fun referenceClassITableGcType(irClass: IrClassSymbol): WasmSymbol<WasmTypeDeclaration> =
         wasmFileFragment.classITableGcType.reference(irClass.getSignature())
 
@@ -110,32 +103,12 @@ class WasmFileCodegenContext(
     fun referenceClassITableInterfaceHasImplementors(irInterface: IrClassSymbol): WasmSymbol<Int> =
         wasmFileFragment.classITableInterfaceHasImplementors.reference(irInterface.getSignature())
 
-    fun defineClassITableGcType(iface: IdSignature, wasmType: WasmTypeDeclaration) {
-        wasmFileFragment.classITableGcType.define(iface, wasmType)
-    }
-
     fun referenceClassITableInterfaceSlot(irClass: IrClassSymbol): WasmSymbol<Int> {
         val type = irClass.defaultType
         require(!type.isNothing()) {
             "Can't reference Nothing type"
         }
         return wasmFileFragment.classITableInterfaceSlot.reference(irClass.getSignature())
-    }
-
-    fun defineClassITableInterfaceSlot(iface: IdSignature, slot: Int) {
-        wasmFileFragment.classITableInterfaceSlot.define(iface, slot)
-    }
-
-    fun defineClassITableInterfaceTableSize(iface: IdSignature, size: Int) {
-        wasmFileFragment.classITableInterfaceTableSize.define(iface, size)
-    }
-
-    fun defineClassITableInterfaceHasImplementors(iface: IdSignature, hasImplementors: Int) {
-        wasmFileFragment.classITableInterfaceHasImplementors.define(iface, hasImplementors)
-    }
-
-    fun defineDeclaredInterface(iface: IrClassSymbol) {
-        wasmFileFragment.declaredInterfaces.add(iface.getReferenceKey())
     }
 
     fun referenceFunctionType(irFunction: IrFunctionSymbol): WasmSymbol<WasmFunctionType> =
@@ -171,6 +144,22 @@ class WasmFileCodegenContext(
 
     val jsExceptionTagIndex: WasmSymbol<Int>
         get() = wasmFileFragment.jsExceptionTagIndex
+
+    fun addFieldInitializer(irField: IrFieldSymbol, instructions: List<WasmInstr>) {
+        wasmFileFragment.fieldInitializers.add(irField.getReferenceKey() to instructions)
+    }
+
+    fun addMainFunctionWrapper(mainFunctionWrapper: IrFunctionSymbol) {
+        wasmFileFragment.mainFunctionWrappers.add(mainFunctionWrapper.getReferenceKey())
+    }
+
+    fun defineTestFun(testFun: IrFunctionSymbol) {
+        wasmFileFragment.testFun = testFun.getReferenceKey()
+    }
+
+    fun addClosureCallExport(exportSignature: String, exportFunction: IrFunctionSymbol) {
+        wasmFileFragment.closureCallExports.add(exportSignature to exportFunction.getReferenceKey())
+    }
 }
 
 class WasmModuleMetadataCache(private val backendContext: WasmBackendContext) {

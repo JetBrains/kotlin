@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irCatch
 import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExported
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.utils.isJsExport
 import org.jetbrains.kotlin.ir.builders.*
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBody
+import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.name.Name
@@ -57,7 +59,9 @@ internal class UnhandledExceptionLowering(val context: WasmBackendContext) : Fil
     private fun processExportFunction(irFunction: IrFunction) {
         val body = irFunction.body ?: return
         if (body is IrBlockBody && body.statements.isEmpty()) return
-        if (irFunction in context.closureCallExports.values) return
+        context.applyIfDefined(irFunction.file) {
+            if (irFunction in it.closureCallExports.values) return
+        }
 
         val bodyType = when (body) {
             is IrExpressionBody -> body.expression.type

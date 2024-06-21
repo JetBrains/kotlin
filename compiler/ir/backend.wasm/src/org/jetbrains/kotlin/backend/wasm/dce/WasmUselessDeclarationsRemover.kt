@@ -33,9 +33,10 @@ class WasmUselessDeclarationsRemover(
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-        if (declaration == context.fieldInitFunction) {
-            declaration.removeUnusedObjectsInitializers()
-        }
+//TODO Restore this
+//        if (declaration == context.fieldInitFunction) {
+//            declaration.removeUnusedObjectsInitializers()
+//        }
 
         super.visitSimpleFunction(declaration)
     }

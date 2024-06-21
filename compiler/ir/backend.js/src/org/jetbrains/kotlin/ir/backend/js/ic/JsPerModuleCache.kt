@@ -14,7 +14,7 @@ import java.io.File
  */
 class JsPerModuleCache(
     private val moduleKind: ModuleKind,
-    private val moduleArtifacts: List<ModuleArtifact>
+    private val moduleArtifacts: List<JsModuleArtifact>
 ) : JsMultiArtifactCache<JsPerModuleCache.CachedModuleInfo>() {
     companion object {
         private const val JS_MODULE_HEADER = "js.module.header.bin"
@@ -24,14 +24,14 @@ class JsPerModuleCache(
     }
 
     class CachedModuleInfo(
-        val artifact: ModuleArtifact,
+        val artifact: JsModuleArtifact,
         override val jsIrHeader: JsIrModuleHeader,
         var crossModuleReferencesHash: ICHash = ICHash()
     ) : CacheInfo
 
     private val headerToCachedInfo = hashMapOf<JsIrModuleHeader, CachedModuleInfo>()
 
-    private fun ModuleArtifact.fetchModuleInfo() = File(artifactsDir, JS_MODULE_HEADER).useCodedInputIfExists {
+    private fun JsModuleArtifact.fetchModuleInfo() = File(artifactsDir, JS_MODULE_HEADER).useCodedInputIfExists {
         val crossModuleReferencesHash = ICHash.fromProtoStream(this)
         val reexportedInModuleWithName = ifTrue { readString() }
         val importedWithEffectInModuleWithName = ifTrue { readString() }
