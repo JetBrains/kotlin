@@ -51,8 +51,37 @@ class ClassTask(
         }
 
         val kotlinp = JvmKotlinp(Settings(isVerbose = false, sortDeclarations = true))
-        val metadata1 = class1.getMetadata()
-        val metadata2 = class2.getMetadata()
+
+        fun renderMetadataReadingException(clazz: ClassNode, exception: Exception) =
+            "ERROR: Failed to load metadata for class ${clazz.name}: ${exception.message}"
+
+        val metadata1 = try {
+            class1.getMetadata()
+        } catch (exceptionClass1: Exception) {
+            val class2MetadataRendered = try {
+                class2.getMetadata()?.run { kotlinp.printClassFile(this) }
+            } catch (exceptionClass2: Exception) {
+                renderMetadataReadingException(class2, exceptionClass2)
+            }
+            report.addMetadataDiff(
+                ListEntryDiff(
+                    renderMetadataReadingException(class1, exceptionClass1),
+                    class2MetadataRendered
+                )
+            )
+            return
+        }
+        val metadata2 = try {
+            class2.getMetadata()
+        } catch (e: Exception) {
+            report.addMetadataDiff(
+                ListEntryDiff(
+                    metadata1?.run { kotlinp.printClassFile(this) },
+                    renderMetadataReadingException(class2, e)
+                )
+            )
+            return
+        }
 
         if (metadata1 == null && metadata2 == null) return
 
