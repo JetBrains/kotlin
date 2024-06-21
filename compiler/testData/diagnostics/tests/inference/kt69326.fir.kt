@@ -10,9 +10,9 @@ fun <T : Comparable<T>, S : T> MyExpression<in S>.min2(): MyExpression<T?> = TOD
 fun <K : Any> checkNotNull(k: K?): K = TODO()
 
 fun foo(x: MyExpression<String>) {
-    getElement(x.min1())!!.<!UNRESOLVED_REFERENCE!>length<!>
+    getElement(x.min1())!!.length
     checkNotNull(getElement(x.min1())).<!UNRESOLVED_REFERENCE!>length<!>
 
-    getElement(x.min2())!!.<!UNRESOLVED_REFERENCE!>length<!>
+    getElement(x.min2())!!.length
     checkNotNull(getElement(x.min2())).<!UNRESOLVED_REFERENCE!>length<!>
 }
