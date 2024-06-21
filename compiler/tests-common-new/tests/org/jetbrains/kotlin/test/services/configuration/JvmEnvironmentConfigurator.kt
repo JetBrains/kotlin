@@ -68,8 +68,8 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         val TEST_CONFIGURATION_KIND_KEY = CompilerConfigurationKey.create<ConfigurationKind>("ConfigurationKind")
 
         private val DEFAULT_JVM_TARGET_FROM_PROPERTY: String? = System.getProperty("kotlin.test.default.jvm.target")
-        private const val DEFAULT_JVM_VERSION_PROPERTY: String = "kotlin.test.default.jvm.version"
-        private val DEFAULT_JVM_VERSION_FROM_PROPERTY: String? = System.getProperty(DEFAULT_JVM_VERSION_PROPERTY)
+        const val DEFAULT_JVM_VERSION_PROPERTY: String = "kotlin.test.default.jvm.version"
+        val DEFAULT_JVM_VERSION_FROM_PROPERTY: String? = System.getProperty(DEFAULT_JVM_VERSION_PROPERTY)
 
         private const val JAVA_BINARIES_JAR_NAME = "java-binaries"
 
@@ -136,15 +136,21 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
             TestJdkKind.FULL_JDK_11 -> KtTestUtil.getJdk11Home()
             TestJdkKind.FULL_JDK_17 -> KtTestUtil.getJdk17Home()
             TestJdkKind.FULL_JDK_21 -> KtTestUtil.getJdk21Home()
-            TestJdkKind.FULL_JDK -> when (val version = DEFAULT_JVM_VERSION_FROM_PROPERTY) {
+            TestJdkKind.FULL_JDK -> getJdkHomeFromProperty {
+                runIf(JavaVersion.current() >= JavaVersion.compose(9)) { File(System.getProperty("java.home")) }
+            }
+            TestJdkKind.ANDROID_API -> null
+        }
+
+        inline fun getJdkHomeFromProperty(onNull: () -> File?): File? {
+            return when (val version = DEFAULT_JVM_VERSION_FROM_PROPERTY) {
                 "1.8" -> KtTestUtil.getJdk8Home()
                 "11" -> KtTestUtil.getJdk11Home()
                 "17" -> KtTestUtil.getJdk17Home()
                 "21" -> KtTestUtil.getJdk21Home()
-                null -> runIf(JavaVersion.current() >= JavaVersion.compose(9)) { File(System.getProperty("java.home")) }
+                null -> onNull()
                 else -> error("Unknown JDK version: \"$DEFAULT_JVM_VERSION_PROPERTY=$version\". Only following versions are allowed: [1.8, 11, 17, 21]")
             }
-            TestJdkKind.ANDROID_API -> null
         }
 
         fun getJdkClasspathRoot(jdkKind: TestJdkKind): File? = when (jdkKind) {
