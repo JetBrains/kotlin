@@ -17,6 +17,8 @@ import java.util.*
 
 open class WasmICContext(
     protected val allowIncompleteImplementations: Boolean,
+    protected val skipLocalNames: Boolean = false,
+    protected val skipSourceLocations: Boolean = false,
 ) : PlatformDependentICContext {
     override fun createIrFactory(): IrFactory =
         IrFactoryImplForWasmIC(WholeWorldStageController())
@@ -25,7 +27,7 @@ open class WasmICContext(
         WasmCompilerWithIC(mainModule, configuration, allowIncompleteImplementations)
 
     override fun createSrcFileArtifact(srcFilePath: String, fragments: IrProgramFragments?, astArtifact: File?): SrcFileArtifact =
-        WasmSrcFileArtifact(srcFilePath, fragments as? WasmIrProgramFragments, astArtifact)
+        WasmSrcFileArtifact(srcFilePath, fragments as? WasmIrProgramFragments, astArtifact, skipLocalNames, skipSourceLocations)
 
     override fun createModuleArtifact(
         moduleName: String,
