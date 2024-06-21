@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.backend.konan.ir.FunctionsWithoutBoundCheckGenerator
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.InitializersLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.NativeForLoopsLowering
+import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -353,6 +354,15 @@ private val builtinOperatorPhase = createFileLoweringPhase(
         prerequisite = setOf(defaultParameterExtentPhase, singleAbstractMethodPhase, enumWhenPhase)
 )
 
+private val inlineOnlyPrivateFunctionsPhase = createFileLoweringPhase(
+        lowering = { context: NativeGenerationState ->
+            NativeIrInliner(context, inlineOnlyPrivateFunctions = true)
+        },
+        name = "InlineOnlyPrivateFunctions",
+        description = "The first phase of inlining (inline only private functions)",
+        prerequisite = setOf(lowerBeforeInlinePhase, arrayConstructorPhase, extractLocalClassesFromInlineBodies)
+)
+
 private val inlinePhase = createFileLoweringPhase(
         lowering = { context: NativeGenerationState ->
             NativeIrInliner(context, inlineOnlyPrivateFunctions = false)
@@ -550,6 +560,8 @@ internal fun PhaseEngine<NativeGenerationState>.getLoweringsUpToAndIncludingInli
         inlineCallableReferenceToLambdaPhase,
         arrayConstructorPhase,
         wrapInlineDeclarationsWithReifiedTypeParametersLowering,
+        inlineOnlyPrivateFunctionsPhase.takeIf { context.config.configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING) },
+        // TODO KT-69174: the placeholder for synthetic accessors lowering
         inlinePhase,
 )
 

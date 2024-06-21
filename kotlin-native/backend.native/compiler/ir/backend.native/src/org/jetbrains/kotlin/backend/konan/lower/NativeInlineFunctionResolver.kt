@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.inline.*
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.inline.InlineFunctionResolverReplacingCoroutineIntrinsics
@@ -95,6 +96,14 @@ internal class NativeInlineFunctionResolver(
         NativeInlineCallableReferenceToLambdaPhase(generationState).lower(function)
         ArrayConstructorLowering(context).lower(body, function)
         WrapInlineDeclarationsWithReifiedTypeParametersLowering(context).lower(body, function)
+
+        if (context.config.configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING)) {
+            NativeIrInliner(generationState, inlineOnlyPrivateFunctions = true).lower(body, function)
+        }
+
+        // TODO KT-69174: the placeholder for synthetic accessors lowering - it should generate accessors only for
+        //  private declarations references from the lowered non-private inline function; the rest of IR file
+        //  should not be lowered at this stage
     }
 
     private fun DeclarationTransformer.lowerWithLocalDeclarations(function: IrFunction) {
