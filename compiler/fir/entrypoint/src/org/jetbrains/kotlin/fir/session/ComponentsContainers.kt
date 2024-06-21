@@ -37,8 +37,8 @@ import org.jetbrains.kotlin.fir.java.enhancement.JavaCompilerRequiredAnnotationE
 import org.jetbrains.kotlin.fir.java.scopes.JavaOverridabilityRules
 import org.jetbrains.kotlin.fir.modules.FirJavaModuleResolverProvider
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
-import org.jetbrains.kotlin.fir.resolve.calls.FirDeclarationOverloadabilityHelperImpl
+import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeCallConflictResolverFactory
+import org.jetbrains.kotlin.fir.resolve.calls.overloads.FirDeclarationOverloadabilityHelperImpl
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticNamesProvider
 import org.jetbrains.kotlin.fir.resolve.calls.jvm.JvmCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents

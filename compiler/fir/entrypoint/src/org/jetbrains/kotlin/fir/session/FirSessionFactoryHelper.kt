@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.FirOverridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionService
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
+import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.scopes.FirDefaultImportProviderHolder
 import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
 import org.jetbrains.kotlin.fir.scopes.impl.FirDelegatedMembersFilter

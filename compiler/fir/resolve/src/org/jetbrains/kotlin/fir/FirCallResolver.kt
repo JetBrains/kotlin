@@ -27,6 +27,9 @@ import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerGroup
 import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerResolveManager
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.calls.ConeResolvedCallableReferenceAtom
+import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeCallConflictResolver
+import org.jetbrains.kotlin.fir.resolve.calls.overloads.FirOverloadByLambdaReturnTypeResolver
+import org.jetbrains.kotlin.fir.resolve.calls.overloads.callConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ResolutionStageRunner
 import org.jetbrains.kotlin.fir.resolve.calls.stages.mapArguments
 import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
