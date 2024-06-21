@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.utils.addToStdlib.countOccurrencesOf
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.test.assertEquals
@@ -481,6 +482,30 @@ class MppCompositeBuildIT : KGPBaseTest() {
                     hostSpecificMetadataJar.assertZipFileContains(listOf("appleMain/toot-toot.txt"))
                     assertTasksExecuted(":consumerA:compileAppleMainKotlinMetadata")
                 }
+            }
+        }
+    }
+
+    @GradleTest
+    fun `KT-66568 duplicate cinterop libraries in composite build`(gradleVersion: GradleVersion) {
+        val localRepoDir = defaultLocalRepo(gradleVersion)
+        val lib = project(
+            "mpp-composite-build/kt66568_duplicate_cinterop_libraries/lib",
+            gradleVersion,
+            localRepoDir = localRepoDir
+        )
+
+        project("mpp-composite-build/kt66568_duplicate_cinterop_libraries/app", gradleVersion, localRepoDir = localRepoDir) {
+            settingsGradleKts.toFile().replaceText("<lib_path>", lib.projectPath.toUri().path)
+            build(":lib:publish")
+            build(":app:compileLinuxMainKotlinMetadata") {
+                assertOutputDoesNotContain("""KLIB resolver.*The same 'unique_name=.*' found in more than one library""".toRegex())
+                val arguments = extractNativeCompilerTaskArguments(":app:compileLinuxMainKotlinMetadata")
+                assertEquals(
+                    1,
+                    arguments.countOccurrencesOf("test_lib-cinterop-foo"),
+                    "Unexpected number of test_lib-cinterop-foo"
+                )
             }
         }
     }
