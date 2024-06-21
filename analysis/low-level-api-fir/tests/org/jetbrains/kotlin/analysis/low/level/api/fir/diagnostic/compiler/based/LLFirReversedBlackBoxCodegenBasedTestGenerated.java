@@ -39162,6 +39162,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
       }
 
       @Test
+      @TestMetadata("regularAndDeprecatedOverloads.kt")
+      public void testRegularAndDeprecatedOverloads() {
+        runTest("compiler/testData/codegen/box/multiplatform/k2/regularAndDeprecatedOverloads.kt");
+      }
+
+      @Test
       @TestMetadata("staticjavaFieldInCommonCode.kt")
       public void testStaticjavaFieldInCommonCode() {
         runTest("compiler/testData/codegen/box/multiplatform/k2/staticjavaFieldInCommonCode.kt");

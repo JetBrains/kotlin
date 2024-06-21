@@ -27996,6 +27996,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
         runTest("compiler/testData/codegen/box/multiplatform/k2/privateConstructorWithDefaults.kt");
       }
 
+      @Test
+      @TestMetadata("regularAndDeprecatedOverloads.kt")
+      public void testRegularAndDeprecatedOverloads() {
+        runTest("compiler/testData/codegen/box/multiplatform/k2/regularAndDeprecatedOverloads.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/annotations")
       @TestDataPath("$PROJECT_ROOT")
