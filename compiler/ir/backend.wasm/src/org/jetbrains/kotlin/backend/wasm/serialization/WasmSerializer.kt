@@ -413,6 +413,14 @@ class WasmSerializer(outputStream: OutputStream) {
             }
         }
 
+    private fun <T> serializeNullable(value: T?, serializeFunc: (T) -> Unit) {
+        if (value != null) {
+            withId(1U) { serializeFunc(value) }
+        } else {
+            withId(0U) { }
+        }
+    }
+
     private fun serialize(idSignature: IdSignature) =
         when (idSignature) {
             is IdSignature.AccessorSignature -> withId(0U) { serialize(idSignature) }
@@ -543,11 +551,6 @@ class WasmSerializer(outputStream: OutputStream) {
         serialize(jsCodeSnippet.jsCode)
     }
 
-    private fun serialize(funWithPriority: WasmCompiledModuleFragment.FunWithPriority) {
-        serialize(funWithPriority.function)
-        serialize(funWithPriority.priority)
-    }
-
     private fun serialize(str: String) {
         val bytes = str.toByteArray()
         b.writeUInt32(bytes.size.toUInt())
@@ -606,15 +609,23 @@ class WasmSerializer(outputStream: OutputStream) {
             serialize(stringLiteralPoolId, ::serialize, ::serialize)
             serialize(constantArrayDataSegmentId, { serialize(it, { serialize(it, ::serialize) }, ::serialize)}, ::serialize)
             serialize(interfaceUnions) { serialize(it, ::serialize) }
-            serialize(declaredInterfaces, ::serialize)
-            serialize(initFunctions, ::serialize)
             serialize(uniqueJsFunNames, ::serialize, ::serialize)
             serialize(jsFuns, ::serialize)
             serialize(jsModuleImports, ::serialize)
             serialize(exports, ::serialize)
             serialize(scratchMemAddr, ::serialize)
             serialize(stringPoolSize, ::serialize)
+            serialize(fieldInitializers) { serialize(it, ::serialize) { serialize(it, ::serialize) } }
+            serialize(mainFunctionWrappers, ::serialize)
+            serializeNullable(testFun, ::serialize)
+            serialize(closureCallExports) { serialize(it, ::serialize, ::serialize) }
+            serialize(jsModuleAndQualifierReferences, ::serialize)
         }
+
+    private fun serialize(obj: JsModuleAndQualifierReference) {
+        serializeNullable(obj.module, ::serialize)
+        serializeNullable(obj.qualifier, ::serialize)
+    }
 
     private fun serializeNamedModuleField(obj: WasmNamedModuleField, flags: List<Boolean> = listOf(), serializeFunc: () -> Unit) =
         serializeAsReference(obj) {

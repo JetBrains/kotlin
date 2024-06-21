@@ -7,19 +7,29 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.serialization.cityHash64String
 import org.jetbrains.kotlin.ir.backend.js.export.TypeScriptFragment
+import org.jetbrains.kotlin.ir.backend.js.ic.IrModule
+import org.jetbrains.kotlin.ir.backend.js.ic.IrProgramFragment
+import org.jetbrains.kotlin.ir.backend.js.ic.IrProgramFragments
+import org.jetbrains.kotlin.ir.backend.js.utils.serialization.serializeTo
 import org.jetbrains.kotlin.ir.backend.js.utils.toJsIdentifier
 import org.jetbrains.kotlin.js.backend.ast.*
 import java.io.File
 import org.jetbrains.kotlin.serialization.js.ModuleKind
+import java.io.OutputStream
 
-class JsIrProgramFragments(val mainFragment: JsIrProgramFragment, val exportFragment: JsIrProgramFragment? = null)
+class JsIrProgramFragments(override val mainFragment: JsIrProgramFragment, override val exportFragment: JsIrProgramFragment? = null) :
+    IrProgramFragments() {
+    override fun serialize(stream: OutputStream) {
+        serializeTo(stream)
+    }
+}
 
 data class JsIrProgramTestEnvironment(
     val testFunctionTag: String,
     val suiteFunctionTag: String
 )
 
-class JsIrProgramFragment(val name: String, val packageFqn: String) {
+class JsIrProgramFragment(val name: String, val packageFqn: String) : IrProgramFragment() {
     val nameBindings = mutableMapOf<String, JsName>()
     val optionalCrossModuleImports = hashSetOf<String>()
     val declarations = JsCompositeBlock()
@@ -37,12 +47,12 @@ class JsIrProgramFragment(val name: String, val packageFqn: String) {
 }
 
 class JsIrModule(
-    val moduleName: String,
+    override val moduleName: String,
     val externalModuleName: String,
-    val fragments: List<JsIrProgramFragment>,
+    override val fragments: List<JsIrProgramFragment>,
     val reexportedInModuleWithName: String? = null,
     val importedWithEffectInModuleWithName: String? = null,
-) {
+) : IrModule() {
     fun makeModuleHeader(): JsIrModuleHeader {
         val nameBindings = mutableMapOf<String, String>()
         val definitions = mutableSetOf<String>()
