@@ -10,13 +10,12 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightEmptyImplementsList
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaPossibleMultiplatformSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
@@ -89,8 +88,6 @@ internal class SymbolLightClassForFacade(
                 for (fileSymbol in fileSymbols) {
                     for (callableSymbol in fileSymbol.fileScope.callables) {
                         if (callableSymbol !is KaNamedFunctionSymbol && callableSymbol !is KaKotlinPropertySymbol) continue
-                        @Suppress("USELESS_IS_CHECK") // K2 warning suppression, TODO: KT-62472
-                        if (callableSymbol !is KaSymbolWithVisibility) continue
 
                         // We shouldn't materialize expect declarations
                         @Suppress("USELESS_IS_CHECK") // K2 warning suppression, TODO: KT-62472

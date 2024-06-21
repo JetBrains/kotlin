@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -33,6 +35,7 @@ public abstract class KaTypeParameterSymbol : KaClassifierSymbol(), KaNamedSymbo
     public abstract val isReified: Boolean
 
     final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
+    final override val visibility: Visibility get() = withValidityAssertion { Visibilities.Local }
 }
 
 @Deprecated("Use 'KaTypeParameterSymbol' instead", ReplaceWith("KaTypeParameterSymbol"))
@@ -56,7 +59,6 @@ public typealias KtClassLikeSymbol = KaClassLikeSymbol
 
 @OptIn(KaImplementationDetail::class)
 public abstract class KaTypeAliasSymbol : KaClassLikeSymbol(),
-    KaSymbolWithVisibility,
     KaNamedSymbol,
     KaTypeParameterOwnerSymbol
 {
@@ -103,7 +105,6 @@ public typealias KtAnonymousObjectSymbol = KaAnonymousObjectSymbol
 
 @OptIn(KaImplementationDetail::class, KaExperimentalApi::class)
 public abstract class KaNamedClassSymbol : KaClassSymbol(),
-    KaSymbolWithVisibility,
     KaTypeParameterOwnerSymbol,
     KaNamedSymbol,
     KaContextReceiversOwner {

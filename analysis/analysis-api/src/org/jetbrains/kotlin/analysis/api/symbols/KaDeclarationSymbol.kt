@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaTypeParameterOwnerSymbol
+import org.jetbrains.kotlin.descriptors.Visibility
 
 /**
  * Represents a symbol of declaration which can be directly expressed in source code.
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KaTypeParameterOwnerSym
  */
 public sealed interface KaDeclarationSymbol : KaSymbol, KaAnnotatedSymbol {
     public val modality: KaSymbolModality
+    public val visibility: Visibility
 }
 
 @KaExperimentalApi

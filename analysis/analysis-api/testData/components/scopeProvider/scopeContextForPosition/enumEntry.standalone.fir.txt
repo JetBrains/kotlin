@@ -72,6 +72,7 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/String
+          visibility: Private
         callableId: null
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
@@ -230,6 +231,7 @@ scopes:
               annotations: []
               typeArguments: []
               type: E
+            visibility: Public
         ]
         visibility: Public
       KaNamedFunctionSymbol:
@@ -282,6 +284,7 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/Any?
+            visibility: Public
         ]
         visibility: Public
       KaNamedFunctionSymbol:
@@ -365,6 +368,7 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/String
+          visibility: Public
         callableId: kotlin/Enum.name
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
@@ -431,6 +435,7 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Int
+          visibility: Public
         callableId: kotlin/Enum.ordinal
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
@@ -581,6 +586,7 @@ scopes:
           annotations: []
           typeArguments: []
           type: E
+        visibility: Public
       KaNamedFunctionSymbol:
         annotations: []
         callableId: /E.values
@@ -666,6 +672,7 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/String
+            visibility: Public
         ]
         visibility: Public
       KaKotlinPropertySymbol:
@@ -816,6 +823,7 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/Any?
+            visibility: Public
         ]
         visibility: Public
       KaNamedFunctionSymbol:

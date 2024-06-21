@@ -59,8 +59,7 @@ public abstract class KaNamedFunctionSymbol : KaFunctionSymbol(),
     KaNamedSymbol,
     KaPossibleMemberSymbol,
     KaPossibleMultiplatformSymbol,
-    KaTypeParameterOwnerSymbol,
-    KaSymbolWithVisibility {
+    KaTypeParameterOwnerSymbol {
 
     public abstract val isSuspend: Boolean
     public abstract val isOperator: Boolean
@@ -95,7 +94,6 @@ public typealias KtFunctionSymbol = KaNamedFunctionSymbol
 public abstract class KaConstructorSymbol : KaFunctionSymbol(),
     KaPossibleMemberSymbol,
     KaPossibleMultiplatformSymbol,
-    KaSymbolWithVisibility,
     KaTypeParameterOwnerSymbol
 {
 

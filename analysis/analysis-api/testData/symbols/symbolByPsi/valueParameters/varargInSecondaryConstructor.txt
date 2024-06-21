@@ -39,6 +39,7 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      visibility: Public
       getContainingFileSymbol: KaFileSymbol(varargInSecondaryConstructor.kt)
       getContainingJvmClassName: Foo
       getContainingModule: KaSourceModule "Sources of main"

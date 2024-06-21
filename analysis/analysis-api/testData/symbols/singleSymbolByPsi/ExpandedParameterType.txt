@@ -48,6 +48,7 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: {SecondAlias=} Base
+      visibility: Public
       getContainingFileSymbol: KaFileSymbol(ExpandedParameterType.kt)
       getContainingJvmClassName: ExpandedParameterTypeKt
       getContainingModule: KaSourceModule "Sources of main"

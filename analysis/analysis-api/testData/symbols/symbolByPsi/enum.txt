@@ -14,6 +14,7 @@ KaEnumEntrySymbol:
     annotations: []
     typeArguments: []
     type: X
+  visibility: Public
   getContainingFileSymbol: KaFileSymbol(enum.kt)
   getContainingJvmClassName: X
   getContainingModule: KaSourceModule "Sources of main"
@@ -35,6 +36,7 @@ KaEnumEntrySymbol:
     annotations: []
     typeArguments: []
     type: X
+  visibility: Public
   getContainingFileSymbol: KaFileSymbol(enum.kt)
   getContainingJvmClassName: X
   getContainingModule: KaSourceModule "Sources of main"

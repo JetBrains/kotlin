@@ -1,0 +1,186 @@
+KaNamedClassSymbol:
+  annotations: []
+  classId: A
+  classKind: CLASS
+  companionObject: null
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  location: TOP_LEVEL
+  modality: OPEN
+  name: A
+  origin: SOURCE
+  superTypes: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Any
+  ]
+  typeParameters: []
+  visibility: Public
+  getContainingFileSymbol: KaFileSymbol(similarGenericSignature.kt)
+  getContainingModule: KaSourceModule "Sources of main"
+  annotationApplicableTargets: null
+  deprecationStatus: null
+
+KaTypeParameterSymbol:
+  annotations: []
+  isReified: false
+  location: LOCAL
+  modality: FINAL
+  name: J
+  origin: SOURCE
+  upperBounds: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: A
+  ]
+  variance: INVARIANT
+  visibility: Local
+  getContainingFileSymbol: KaFileSymbol(similarGenericSignature.kt)
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: /foo
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: foo
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KaTypeParameterType:
+    annotations: []
+    type: J
+  typeParameters: [
+    KaTypeParameterSymbol(J)
+  ]
+  valueParameters: [
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: j
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaTypeParameterType:
+        annotations: []
+        type: J
+      visibility: Local
+      getContainingFileSymbol: KaFileSymbol(similarGenericSignature.kt)
+      getContainingJvmClassName: SimilarGenericSignatureKt
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+  ]
+  visibility: Public
+  getContainingFileSymbol: KaFileSymbol(similarGenericSignature.kt)
+  getContainingJvmClassName: SimilarGenericSignatureKt
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+
+KaTypeParameterSymbol:
+  annotations: []
+  isReified: false
+  location: LOCAL
+  modality: FINAL
+  name: T
+  origin: SOURCE
+  upperBounds: []
+  variance: INVARIANT
+  visibility: Local
+  getContainingFileSymbol: KaFileSymbol(similarGenericSignature.kt)
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: /foo
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: foo
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KaTypeParameterType:
+    annotations: []
+    type: T
+  typeParameters: [
+    KaTypeParameterSymbol(T)
+  ]
+  valueParameters: [
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: j
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaTypeParameterType:
+        annotations: []
+        type: T
+      visibility: Local
+      getContainingFileSymbol: KaFileSymbol(similarGenericSignature.kt)
+      getContainingJvmClassName: SimilarGenericSignatureKt
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+  ]
+  visibility: Public
+  getContainingFileSymbol: KaFileSymbol(similarGenericSignature.kt)
+  getContainingJvmClassName: SimilarGenericSignatureKt
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null

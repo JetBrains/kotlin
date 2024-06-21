@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
 import org.jetbrains.kotlin.analysis.api.platform.modification.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
@@ -86,9 +85,9 @@ private fun KaEnumEntrySymbol.requiresSubClass(): Boolean {
     return initializer.combinedDeclaredMemberScope.declarations.any { it !is KaConstructorSymbol }
 }
 
-internal fun KaSymbolWithVisibility.toPsiVisibilityForMember(): String = visibility.toPsiVisibilityForMember()
+internal fun KaDeclarationSymbol.toPsiVisibilityForMember(): String = visibility.toPsiVisibilityForMember()
 
-internal fun KaSymbolWithVisibility.toPsiVisibilityForClass(isNested: Boolean): String = visibility.toPsiVisibilityForClass(isNested)
+internal fun KaDeclarationSymbol.toPsiVisibilityForClass(isNested: Boolean): String = visibility.toPsiVisibilityForClass(isNested)
 
 private fun Visibility.toPsiVisibilityForMember(): String = when (this) {
     Visibilities.Private, Visibilities.PrivateToThis -> PsiModifier.PRIVATE

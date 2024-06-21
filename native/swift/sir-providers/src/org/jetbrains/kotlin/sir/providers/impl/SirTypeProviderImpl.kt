@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.sir.providers.impl
 
 import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
@@ -64,15 +63,13 @@ public class SirTypeProviderImpl(
                 is KaUsualClassType -> with(sirSession) {
                     if (ktType.isAnyType && !ktType.isMarkedNullable) {
                         SirNominalType(KotlinRuntimeModule.kotlinBase)
-                    } else when (val classSymbol = ktType.symbol) {
-                        is KaSymbolWithVisibility -> {
-                            if (classSymbol.sirVisibility(ktAnalysisSession) == SirVisibility.PUBLIC) {
-                                SirNominalType(classSymbol.sirDeclaration() as SirNamedDeclaration)
-                            } else {
-                                SirUnsupportedType()
-                            }
+                    } else {
+                        val classSymbol = ktType.symbol
+                        if (classSymbol.sirVisibility(ktAnalysisSession) == SirVisibility.PUBLIC) {
+                            SirNominalType(classSymbol.sirDeclaration() as SirNamedDeclaration)
+                        } else {
+                            SirUnsupportedType()
                         }
-                        else -> SirUnsupportedType()
                     }
                 }
                 is KaFunctionType,

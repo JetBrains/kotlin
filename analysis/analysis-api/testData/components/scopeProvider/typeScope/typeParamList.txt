@@ -212,6 +212,7 @@ KaNamedFunctionSymbol:
       returnType: KaTypeParameterType:
         annotations: []
         type: E
+      visibility: Public
   ]
   visibility: Public
 KaNamedFunctionSymbol:
@@ -268,6 +269,7 @@ KaNamedFunctionSymbol:
             type: E
         ]
         type: kotlin/collections/Collection<E>
+      visibility: Public
   ]
   visibility: Public
 KaNamedFunctionSymbol:
@@ -319,6 +321,7 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      visibility: Public
   ]
   visibility: Public
 KaNamedFunctionSymbol:
@@ -370,6 +373,7 @@ KaNamedFunctionSymbol:
       returnType: KaTypeParameterType:
         annotations: []
         type: E
+      visibility: Public
   ]
   visibility: Public
 KaNamedFunctionSymbol:
@@ -485,6 +489,7 @@ KaNamedFunctionSymbol:
       returnType: KaTypeParameterType:
         annotations: []
         type: E
+      visibility: Public
   ]
   visibility: Public
 KaNamedFunctionSymbol:
@@ -575,6 +580,7 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      visibility: Public
   ]
   visibility: Public
 KaNamedFunctionSymbol:
@@ -631,6 +637,7 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      visibility: Public
     KaValueParameterSymbol:
       annotations: []
       callableId: null
@@ -652,6 +659,7 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      visibility: Public
   ]
   visibility: Public
 KaKotlinPropertySymbol:
@@ -672,6 +680,7 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
+    visibility: Public
   callableId: kotlin/collections/List.size
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
@@ -770,6 +779,7 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Any?
+      visibility: Public
   ]
   visibility: Public
 KaNamedFunctionSymbol:

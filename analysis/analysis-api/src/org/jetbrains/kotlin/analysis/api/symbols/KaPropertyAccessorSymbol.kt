@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 
 public sealed class KaPropertyAccessorSymbol : KaFunctionSymbol(),
     KaPossibleMemberSymbol,
-    KaSymbolWithVisibility,
     @Suppress("DEPRECATION") KaSymbolWithKind {
 
     final override val isExtension: Boolean get() = withValidityAssertion { false }

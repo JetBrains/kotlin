@@ -44,6 +44,7 @@ KaConstructorSymbol:
                 type: ERROR_TYPE
             ]
             type: kotlin/Array<out ERROR_TYPE>
+          visibility: Private
           getContainingFileSymbol: KaFileSymbol(varargInPrimaryConstructorAsPropertyWithoutType.kt)
           getContainingJvmClassName: Foo
           getContainingModule: KaSourceModule "Sources of main"
@@ -139,6 +140,7 @@ KaConstructorSymbol:
       returnType: KaErrorType:
         annotations: []
         type: ERROR_TYPE
+      visibility: Local
       getContainingFileSymbol: KaFileSymbol(varargInPrimaryConstructorAsPropertyWithoutType.kt)
       getContainingJvmClassName: Foo
       getContainingModule: KaSourceModule "Sources of main"

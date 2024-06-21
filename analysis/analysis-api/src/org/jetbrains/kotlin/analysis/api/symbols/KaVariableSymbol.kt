@@ -140,7 +140,6 @@ public typealias KtVariableSymbol = KaVariableSymbol
 
 public abstract class KaJavaFieldSymbol :
     KaVariableSymbol(),
-    KaSymbolWithVisibility,
     @Suppress("DEPRECATION") KaSymbolWithKind {
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.CLASS }
     final override val isExtension: Boolean get() = withValidityAssertion { false }
@@ -160,7 +159,6 @@ public typealias KtJavaFieldSymbol = KaJavaFieldSymbol
 @OptIn(KaImplementationDetail::class)
 public sealed class KaPropertySymbol : KaVariableSymbol(),
     KaPossibleMemberSymbol,
-    KaSymbolWithVisibility,
     KaTypeParameterOwnerSymbol,
     @Suppress("DEPRECATION") KaSymbolWithKind {
 

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.computeSimpleModality
@@ -66,7 +65,7 @@ internal class GranularModifiersBox(
 
         internal fun computeVisibilityForMember(
             ktModule: KaModule,
-            declarationPointer: KaSymbolPointer<KaSymbolWithVisibility>,
+            declarationPointer: KaSymbolPointer<KaDeclarationSymbol>,
         ): PersistentMap<String, Boolean> {
             val visibility = declarationPointer.withSymbol(ktModule) {
                 it.toPsiVisibilityForMember()
@@ -77,7 +76,7 @@ internal class GranularModifiersBox(
 
         internal fun computeVisibilityForClass(
             ktModule: KaModule,
-            declarationPointer: KaSymbolPointer<KaSymbolWithVisibility>,
+            declarationPointer: KaSymbolPointer<KaDeclarationSymbol>,
             isTopLevel: Boolean,
         ): PersistentMap<String, Boolean> {
             val visibility = declarationPointer.withSymbol(ktModule) {

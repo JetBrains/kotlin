@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointe
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
@@ -41,6 +42,9 @@ internal class KaFe10DescKotlinPropertySymbol(
 
     override val modality: KaSymbolModality
         get() = withValidityAssertion { descriptor.kaSymbolModality }
+
+    override val visibility: Visibility
+        get() = withValidityAssertion { descriptor.ktVisibility }
 
     override val isLateInit: Boolean
         get() = withValidityAssertion { descriptor.isLateInit }

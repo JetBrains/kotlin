@@ -1,0 +1,76 @@
+KaTypeParameterSymbol:
+  annotations: []
+  isReified: false
+  location: LOCAL
+  modality: FINAL
+  name: X
+  origin: SOURCE
+  upperBounds: []
+  variance: INVARIANT
+  visibility: Local
+  getContainingFileSymbol: KaFileSymbol(functionWithTypeParams.kt)
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: /foo
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: foo
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Unit
+  typeParameters: [
+    KaTypeParameterSymbol(X)
+  ]
+  valueParameters: [
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: x
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaTypeParameterType:
+        annotations: []
+        type: X
+      visibility: Local
+      getContainingFileSymbol: KaFileSymbol(functionWithTypeParams.kt)
+      getContainingJvmClassName: FunctionWithTypeParamsKt
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+  ]
+  visibility: Public
+  getContainingFileSymbol: KaFileSymbol(functionWithTypeParams.kt)
+  getContainingJvmClassName: FunctionWithTypeParamsKt
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null

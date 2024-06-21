@@ -41,11 +41,13 @@ KaSamConstructorSymbol:
             type: kotlin/Unit
         ]
         type: kotlin/Function0<kotlin/Unit>
+      visibility: Local
       getContainingFileSymbol: KaFileSymbol(samConstructorFromInterface.kt)
       getContainingJvmClassName: one.SamConstructorFromInterfaceKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
+  visibility: Public
   getContainingFileSymbol: KaFileSymbol(samConstructorFromInterface.kt)
   getContainingJvmClassName: one.SamConstructorFromInterfaceKt
   getContainingModule: KaSourceModule "Sources of main"

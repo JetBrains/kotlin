@@ -135,7 +135,10 @@ internal class KaFe10PsiDefaultPropertySetterSymbol(
             get() = withValidityAssertion { false }
 
         override val modality: KaSymbolModality
-            get() = withValidityAssertion { KaSymbolModality.FINAL }
+            get() = withValidityAssertion { descriptor?.kaSymbolModality ?: KaSymbolModality.FINAL }
+
+        override val visibility: Visibility
+            get() = withValidityAssertion { descriptor?.ktVisibility ?: Visibilities.Public }
 
         override val name: Name
             get() = withValidityAssertion { Name.identifier("value") }

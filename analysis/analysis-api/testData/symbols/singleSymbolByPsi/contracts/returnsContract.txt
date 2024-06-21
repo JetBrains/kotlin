@@ -33,6 +33,7 @@ KaNamedFunctionSymbol:
                 annotations: []
                 typeArguments: []
                 type: kotlin/Boolean
+              visibility: Public
               getContainingFileSymbol: KaFileSymbol(returnsContract.kt)
               getContainingJvmClassName: ReturnsContractKt
               getContainingModule: KaSourceModule "Sources of main"
@@ -83,6 +84,7 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Boolean
+      visibility: Public
       getContainingFileSymbol: KaFileSymbol(returnsContract.kt)
       getContainingJvmClassName: ReturnsContractKt
       getContainingModule: KaSourceModule "Sources of main"

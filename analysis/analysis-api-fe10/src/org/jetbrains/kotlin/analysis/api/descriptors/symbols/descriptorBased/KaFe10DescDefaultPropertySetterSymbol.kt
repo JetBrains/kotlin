@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
@@ -109,7 +110,10 @@ internal class KaFe10DescDefaultPropertySetterSymbol(
             get() = withValidityAssertion { Name.identifier("value") }
 
         override val modality: KaSymbolModality
-            get() = withValidityAssertion { KaSymbolModality.FINAL }
+            get() = withValidityAssertion { descriptor?.kaSymbolModality ?: KaSymbolModality.FINAL }
+
+        override val visibility: Visibility
+            get() = withValidityAssertion { descriptor?.ktVisibility ?: Visibilities.Public }
 
         override val returnType: KaType
             get() = withValidityAssertion { propertyDescriptor.type.toKtType(analysisContext) }

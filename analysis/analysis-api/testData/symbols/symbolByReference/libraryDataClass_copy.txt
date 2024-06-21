@@ -48,6 +48,7 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/String
+      visibility: Public
       getContainingFileSymbol: null
       getContainingJvmClassName: one.DataClass
       getContainingModule: KaLibraryModule "Library lib"

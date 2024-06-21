@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 
 internal class KaFirBackingFieldSymbol(
@@ -31,6 +33,7 @@ internal class KaFirBackingFieldSymbol(
 
     override val returnType: KaType get() = withValidityAssertion { firSymbol.returnType(builder) }
     override val modality: KaSymbolModality get() = withValidityAssertion { firSymbol.kaSymbolModality }
+    override val visibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
 
     override val owningProperty: KaKotlinPropertySymbol
         get() = withValidityAssertion {

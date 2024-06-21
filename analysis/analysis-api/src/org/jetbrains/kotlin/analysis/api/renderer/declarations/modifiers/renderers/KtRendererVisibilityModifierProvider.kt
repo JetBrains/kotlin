@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.render
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
@@ -16,14 +15,14 @@ import org.jetbrains.kotlin.lexer.KtTokens
 
 @KaExperimentalApi
 public interface KaRendererVisibilityModifierProvider {
-    public fun getVisibilityModifier(analysisSession: KaSession, symbol: KaSymbolWithVisibility): KtModifierKeywordToken?
+    public fun getVisibilityModifier(analysisSession: KaSession, symbol: KaDeclarationSymbol): KtModifierKeywordToken?
 
     public fun onlyIf(
-        condition: KaSession.(symbol: KaSymbolWithVisibility) -> Boolean
+        condition: KaSession.(symbol: KaDeclarationSymbol) -> Boolean
     ): KaRendererVisibilityModifierProvider {
         val self = this
         return object : KaRendererVisibilityModifierProvider {
-            override fun getVisibilityModifier(analysisSession: KaSession, symbol: KaSymbolWithVisibility): KtModifierKeywordToken? =
+            override fun getVisibilityModifier(analysisSession: KaSession, symbol: KaDeclarationSymbol): KtModifierKeywordToken? =
                 if (condition(analysisSession, symbol)) self.getVisibilityModifier(analysisSession, symbol) else null
         }
     }
@@ -31,7 +30,7 @@ public interface KaRendererVisibilityModifierProvider {
     public object NO_IMPLICIT_VISIBILITY : KaRendererVisibilityModifierProvider {
         override fun getVisibilityModifier(
             analysisSession: KaSession,
-            symbol: KaSymbolWithVisibility,
+            symbol: KaDeclarationSymbol,
         ): KtModifierKeywordToken? {
             with(analysisSession) {
                 when (symbol) {
@@ -40,6 +39,7 @@ public interface KaRendererVisibilityModifierProvider {
                     is KaConstructorSymbol -> {
                         if ((symbol.containingSymbol as? KaClassSymbol)?.classKind == KaClassKind.ENUM_CLASS) return null
                     }
+                    else -> {}
                 }
 
                 return when (symbol.visibility) {
@@ -55,7 +55,7 @@ public interface KaRendererVisibilityModifierProvider {
     public object WITH_IMPLICIT_VISIBILITY : KaRendererVisibilityModifierProvider {
         override fun getVisibilityModifier(
             analysisSession: KaSession,
-            symbol: KaSymbolWithVisibility,
+            symbol: KaDeclarationSymbol,
         ): KtModifierKeywordToken? {
             return when (symbol.visibility) {
                 Visibilities.Private, Visibilities.PrivateToThis -> KtTokens.PRIVATE_KEYWORD

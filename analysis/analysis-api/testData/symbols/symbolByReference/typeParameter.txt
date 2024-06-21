@@ -10,6 +10,7 @@ KaTypeParameterSymbol:
   origin: SOURCE
   upperBounds: []
   variance: INVARIANT
+  visibility: Local
   getContainingFileSymbol: KaFileSymbol(typeParameter.kt)
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

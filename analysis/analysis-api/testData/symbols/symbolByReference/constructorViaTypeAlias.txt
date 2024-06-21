@@ -44,6 +44,7 @@ KaConstructorSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: ft<kotlin/collections/MutableCollection<out E!>, kotlin/collections/Collection<out E!>?>
+      visibility: Public
       getContainingFileSymbol: null
       getContainingJvmClassName: java.util.ArrayList
       getContainingModule: KaLibraryModule "SDK jdk"

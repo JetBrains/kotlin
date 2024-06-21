@@ -40,6 +40,7 @@ KaConstructorSymbol:
             annotations: []
             typeArguments: []
             type: kotlin/IntArray
+          visibility: Public
           getContainingFileSymbol: KaFileSymbol(varargInPrimaryConstructorAsProperty.kt)
           getContainingJvmClassName: Foo
           getContainingModule: KaSourceModule "Sources of main"
@@ -128,6 +129,7 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      visibility: Public
       getContainingFileSymbol: KaFileSymbol(varargInPrimaryConstructorAsProperty.kt)
       getContainingJvmClassName: Foo
       getContainingModule: KaSourceModule "Sources of main"

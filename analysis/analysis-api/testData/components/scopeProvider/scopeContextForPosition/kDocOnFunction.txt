@@ -61,6 +61,7 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/Any?
+            visibility: Public
         ]
         visibility: Public
       KaNamedFunctionSymbol:
@@ -171,6 +172,7 @@ scopes:
           annotations: []
           typeArguments: []
           type: test/Param1
+        visibility: Public
       KaValueParameterSymbol:
         annotations: []
         callableId: null
@@ -192,6 +194,7 @@ scopes:
           annotations: []
           typeArguments: []
           type: test/Param2
+        visibility: Public
     constructors: 0
 
   TypeParameterScope, index = 2
@@ -206,6 +209,7 @@ scopes:
         origin: SOURCE
         upperBounds: []
         variance: INVARIANT
+        visibility: Local
     callables: 0
     constructors: 0
 
@@ -353,6 +357,7 @@ scopes:
               annotations: []
               typeArguments: []
               type: test/Param1
+            visibility: Public
           KaValueParameterSymbol:
             annotations: []
             callableId: null
@@ -374,6 +379,7 @@ scopes:
               annotations: []
               typeArguments: []
               type: test/Param2
+            visibility: Public
         ]
         visibility: Public
     constructors: 0

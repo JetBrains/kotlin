@@ -19,6 +19,7 @@ KaValueParameterSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/String
+  visibility: Public
   getContainingFileSymbol: null
   getContainingJvmClassName: JavaAnnotation
   getContainingModule: KaLibraryModule "Library dependency"

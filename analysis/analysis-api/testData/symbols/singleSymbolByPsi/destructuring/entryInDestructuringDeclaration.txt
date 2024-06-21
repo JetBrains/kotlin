@@ -13,6 +13,7 @@ KaLocalVariableSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
+  visibility: Local
   getContainingFileSymbol: KaFileSymbol(entryInDestructuringDeclaration.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"

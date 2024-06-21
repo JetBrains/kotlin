@@ -32,7 +32,7 @@ internal fun KaSymbol.isVisibleInObjC(): Boolean = when (this) {
 context(KaSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaCallableSymbol.isVisibleInObjC(): Boolean {
-    if (this is KaSymbolWithVisibility && !this.isPublic) return false
+    if (!this.isPublic) return false
     if (this is KaPossibleMultiplatformSymbol && isExpect) return false
 
     if (this.isHiddenFromObjCByDeprecation()) return false
@@ -48,7 +48,7 @@ internal fun KaClassSymbol.isVisibleInObjC(): Boolean {
     // TODO if(specialMapped()) return false
     // TODO if(!defaultType.isObjCObjectType()) return false
 
-    if (this is KaSymbolWithVisibility && !isPublicApi(this)) return false
+    if (!isPublicApi(this)) return false
     if (this.isHiddenFromObjCByDeprecation()) return false
     if (this.isHiddenFromObjCByAnnotation()) return false
     if (!this.classKind.isVisibleInObjC()) return false

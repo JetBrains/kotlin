@@ -1,0 +1,231 @@
+KaNamedFunctionSymbol:
+  annotations: [
+    kotlin/OptIn(markerClass = [kotlin.contracts.ExperimentalContracts::class])
+      psi: KtAnnotationEntry
+  ]
+  callableId: /twoContracts
+  contextReceivers: []
+  contractEffects: [
+    KaContractConditionalContractEffectDeclaration:
+      effect:
+        KaContractReturnsSpecificValueEffectDeclaration:
+          value:
+            KaContractConstantValue:
+              constantType: TRUE
+      condition:
+        KaContractBinaryLogicExpression:
+          left:
+            KaContractIsNullPredicateExpression:
+              argument:
+                KaContractParameterValue:
+                  parameterSymbol:
+                    KaValueParameterSymbol:
+                      annotations: []
+                      callableId: null
+                      contextReceivers: []
+                      generatedPrimaryConstructorProperty: null
+                      hasDefaultValue: false
+                      isCrossinline: false
+                      isExtension: false
+                      isImplicitLambdaParameter: false
+                      isNoinline: false
+                      isVal: true
+                      isVararg: false
+                      location: LOCAL
+                      modality: FINAL
+                      name: foo
+                      origin: SOURCE
+                      receiverParameter: null
+                      returnType: KaUsualClassType:
+                        annotations: []
+                        typeArguments: []
+                        type: kotlin/Any?
+                      visibility: Local
+                      getContainingFileSymbol: KaFileSymbol(twoContracts.kt)
+                      getContainingJvmClassName: TwoContractsKt
+                      getContainingModule: KaSourceModule "Sources of main"
+                      deprecationStatus: null
+              isNegated: false
+          right:
+            KaContractIsNullPredicateExpression:
+              argument:
+                KaContractParameterValue:
+                  parameterSymbol:
+                    KaValueParameterSymbol:
+                      annotations: []
+                      callableId: null
+                      contextReceivers: []
+                      generatedPrimaryConstructorProperty: null
+                      hasDefaultValue: false
+                      isCrossinline: false
+                      isExtension: false
+                      isImplicitLambdaParameter: false
+                      isNoinline: false
+                      isVal: true
+                      isVararg: false
+                      location: LOCAL
+                      modality: FINAL
+                      name: bar
+                      origin: SOURCE
+                      receiverParameter: null
+                      returnType: KaUsualClassType:
+                        annotations: []
+                        typeArguments: []
+                        type: kotlin/Any?
+                      visibility: Local
+                      getContainingFileSymbol: KaFileSymbol(twoContracts.kt)
+                      getContainingJvmClassName: TwoContractsKt
+                      getContainingModule: KaSourceModule "Sources of main"
+                      deprecationStatus: null
+              isNegated: true
+          operation: AND
+    KaContractCallsInPlaceContractEffectDeclaration:
+      valueParameterReference:
+        KaContractParameterValue:
+          parameterSymbol:
+            KaValueParameterSymbol:
+              annotations: []
+              callableId: null
+              contextReceivers: []
+              generatedPrimaryConstructorProperty: null
+              hasDefaultValue: false
+              isCrossinline: false
+              isExtension: false
+              isImplicitLambdaParameter: false
+              isNoinline: false
+              isVal: true
+              isVararg: false
+              location: LOCAL
+              modality: FINAL
+              name: block
+              origin: SOURCE
+              receiverParameter: null
+              returnType: KaFunctionType:
+                annotations: []
+                typeArguments: [
+                  KaUsualClassType:
+                    annotations: []
+                    typeArguments: []
+                    type: kotlin/Unit
+                ]
+                type: kotlin/Function0<kotlin/Unit>
+              visibility: Local
+              getContainingFileSymbol: KaFileSymbol(twoContracts.kt)
+              getContainingJvmClassName: TwoContractsKt
+              getContainingModule: KaSourceModule "Sources of main"
+              deprecationStatus: null
+      occurrencesRange: EXACTLY_ONCE
+  ]
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: twoContracts
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Boolean
+  typeParameters: []
+  valueParameters: [
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: foo
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/Any?
+      visibility: Local
+      getContainingFileSymbol: KaFileSymbol(twoContracts.kt)
+      getContainingJvmClassName: TwoContractsKt
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: bar
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/Any?
+      visibility: Local
+      getContainingFileSymbol: KaFileSymbol(twoContracts.kt)
+      getContainingJvmClassName: TwoContractsKt
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: block
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaFunctionType:
+        annotations: []
+        typeArguments: [
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Unit
+        ]
+        type: kotlin/Function0<kotlin/Unit>
+      visibility: Local
+      getContainingFileSymbol: KaFileSymbol(twoContracts.kt)
+      getContainingJvmClassName: TwoContractsKt
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+  ]
+  visibility: Public
+  getContainingFileSymbol: KaFileSymbol(twoContracts.kt)
+  getContainingJvmClassName: TwoContractsKt
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null

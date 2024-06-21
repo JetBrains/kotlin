@@ -113,6 +113,7 @@ callables: 5
           annotations: []
           typeArguments: []
           type: generated/GenClass2
+        visibility: Public
     ]
     visibility: Public
     PSI: KtNamedFunction genTopLevelFun1 [from extension1.kt]
@@ -179,6 +180,7 @@ callables: 5
         annotations: []
         typeArguments: []
         type: kotlin/String
+      visibility: Private
     callableId: generated/genTopLevelVal1
     contextReceivers: []
     getter: KaPropertyGetterSymbol:
@@ -249,6 +251,7 @@ callables: 5
         annotations: []
         typeArguments: []
         type: kotlin/String
+      visibility: Private
     callableId: generated/genTopLevelVar1
     contextReceivers: []
     getter: KaPropertyGetterSymbol:
@@ -328,6 +331,7 @@ callables: 5
           annotations: []
           typeArguments: []
           type: kotlin/String
+        visibility: Public
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -355,6 +359,7 @@ callables: 5
             annotations: []
             typeArguments: []
             type: kotlin/String
+          visibility: Public
       ]
       visibility: Internal
     typeParameters: []
@@ -381,6 +386,7 @@ callables: 5
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      visibility: Private
     callableId: generated/genExtensionVal1
     contextReceivers: []
     getter: KaPropertyGetterSymbol:

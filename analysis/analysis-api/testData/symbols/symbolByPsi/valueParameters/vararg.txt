@@ -48,6 +48,7 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      visibility: Public
       getContainingFileSymbol: KaFileSymbol(vararg.kt)
       getContainingJvmClassName: VarargKt
       getContainingModule: KaSourceModule "Sources of main"

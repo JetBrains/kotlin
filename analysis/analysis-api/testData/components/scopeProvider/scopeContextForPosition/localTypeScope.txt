@@ -26,6 +26,7 @@ scopes:
           annotations: []
           typeArguments: []
           type: kotlin/Int
+        visibility: Local
     constructors: 0
 
   LocalScope, index = 1
@@ -56,6 +57,7 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Int
+          visibility: Private
         callableId: null
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
@@ -184,6 +186,7 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/Any?
+            visibility: Public
         ]
         visibility: Public
       KaNamedFunctionSymbol:
@@ -313,6 +316,7 @@ scopes:
           annotations: []
           typeArguments: []
           type: kotlin/Int
+        visibility: Local
     constructors: 0
 
   LocalScope, index = 4

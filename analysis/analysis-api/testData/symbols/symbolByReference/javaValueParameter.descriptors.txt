@@ -1,0 +1,26 @@
+KaValueParameterSymbol:
+  annotations: []
+  callableId: null
+  contextReceivers: []
+  generatedPrimaryConstructorProperty: null
+  hasDefaultValue: false
+  isCrossinline: false
+  isExtension: false
+  isImplicitLambdaParameter: false
+  isNoinline: false
+  isVal: true
+  isVararg: false
+  location: LOCAL
+  modality: FINAL
+  name: name
+  origin: JAVA_SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/String
+  visibility: Local
+  getContainingFileSymbol: null
+  getContainingJvmClassName: JavaAnnotation
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null

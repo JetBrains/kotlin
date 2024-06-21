@@ -14,6 +14,7 @@ KaEnumEntrySymbol:
     annotations: []
     typeArguments: []
     type: test/E
+  visibility: Public
   getContainingFileSymbol: KaFileSymbol(enumClass.kt)
   getContainingJvmClassName: test.E
   getContainingModule: KaSourceModule "Sources of main"
@@ -35,6 +36,7 @@ KaEnumEntrySymbol:
     annotations: []
     typeArguments: []
     type: test/E
+  visibility: Public
   getContainingFileSymbol: KaFileSymbol(enumClass.kt)
   getContainingJvmClassName: test.E
   getContainingModule: KaSourceModule "Sources of main"
@@ -130,6 +132,7 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/String
+      visibility: Public
       getContainingFileSymbol: KaFileSymbol(enumClass.kt)
       getContainingJvmClassName: test.E
       getContainingModule: KaSourceModule "Sources of main"

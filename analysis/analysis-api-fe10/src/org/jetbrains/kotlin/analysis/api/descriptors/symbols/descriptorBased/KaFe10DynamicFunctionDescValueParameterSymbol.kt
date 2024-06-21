@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.createDynamicType
 
@@ -35,6 +37,9 @@ internal class KaFe10DynamicFunctionDescValueParameterSymbol(
 
     override val modality: KaSymbolModality
         get() = withValidityAssertion { KaSymbolModality.FINAL }
+
+    override val visibility: Visibility
+        get() = withValidityAssertion { Visibilities.Public }
 
     override val origin: KaSymbolOrigin
         get() = withValidityAssertion { KaSymbolOrigin.JS_DYNAMIC }

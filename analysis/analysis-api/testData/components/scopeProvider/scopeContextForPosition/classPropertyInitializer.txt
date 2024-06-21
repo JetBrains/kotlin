@@ -32,6 +32,7 @@ scopes:
           annotations: []
           typeArguments: []
           type: kotlin/Int
+        visibility: Public
     constructors: 0
 
   TypeScope, index = 1
@@ -56,6 +57,7 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Int
+          visibility: Public
         callableId: test/Child.constructorProp
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
@@ -152,6 +154,7 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Int
+          visibility: Private
         callableId: test/Child.childProp
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
@@ -218,6 +221,7 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Int
+          visibility: Public
         callableId: test/Base.value
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
@@ -314,6 +318,7 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Int
+          visibility: Private
         callableId: test/Base.baseProp
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
@@ -412,6 +417,7 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/Any?
+            visibility: Public
         ]
         visibility: Public
       KaNamedFunctionSymbol:
@@ -517,6 +523,7 @@ scopes:
                   annotations: []
                   typeArguments: []
                   type: kotlin/Int
+                visibility: Public
               callableId: test/Child.constructorProp
               contextReceivers: []
               getter: KaPropertyGetterSymbol:
@@ -581,6 +588,7 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/Int
+            visibility: Public
           KaValueParameterSymbol:
             annotations: []
             callableId: null
@@ -602,6 +610,7 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/Int
+            visibility: Public
         ]
         visibility: Public
 

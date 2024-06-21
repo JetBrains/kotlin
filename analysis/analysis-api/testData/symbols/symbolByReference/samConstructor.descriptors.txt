@@ -41,6 +41,7 @@ KaSamConstructorSymbol:
             type: kotlin/Unit
         ]
         type: kotlin/Function0<kotlin/Unit>
+      visibility: Local
       getContainingFileSymbol: null
       getContainingJvmClassName: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescValueParameterSymbol
 
@@ -48,6 +49,7 @@ KaSamConstructorSymbol:
 
       deprecationStatus: null
   ]
+  visibility: Public
   getContainingFileSymbol: null
   getContainingJvmClassName: null
   getContainingModule: KaLibraryModule "SDK jdk"

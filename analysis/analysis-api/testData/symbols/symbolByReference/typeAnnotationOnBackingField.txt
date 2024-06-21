@@ -21,6 +21,7 @@ KaBackingFieldSymbol:
     ]
     typeArguments: []
     type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  {@R|Anno3|()  SecondTypeAlias=} BaseInterface
+  visibility: Private
   getContainingFileSymbol: KaFileSymbol(typeAnnotationOnBackingField.kt)
   getContainingJvmClassName: TypeAnnotationOnBackingFieldKt
   getContainingModule: KaSourceModule "Sources of main"

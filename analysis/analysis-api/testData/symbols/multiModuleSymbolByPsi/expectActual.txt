@@ -93,6 +93,7 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/String
+      visibility: Public
   ]
   visibility: Public
 
@@ -137,6 +138,7 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      visibility: Public
   ]
   visibility: Public
 
@@ -215,6 +217,7 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
+    visibility: Private
   callableId: sample/B.n
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
@@ -365,6 +368,7 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
+    visibility: Private
   callableId: sample/m
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
@@ -444,6 +448,7 @@ KaKotlinPropertySymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      visibility: Public
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -471,6 +476,7 @@ KaKotlinPropertySymbol:
           annotations: []
           typeArguments: []
           type: kotlin/Int
+        visibility: Public
     ]
     visibility: Public
   typeParameters: []
@@ -571,6 +577,7 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/String
+      visibility: Public
   ]
   visibility: Public
 
@@ -615,6 +622,7 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      visibility: Public
   ]
   visibility: Public
 
@@ -693,6 +701,7 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
+    visibility: Private
   callableId: sample/B.n
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
@@ -859,6 +868,7 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
+    visibility: Private
   callableId: sample/m
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
@@ -938,6 +948,7 @@ KaKotlinPropertySymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      visibility: Public
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -965,6 +976,7 @@ KaKotlinPropertySymbol:
           annotations: []
           typeArguments: []
           type: kotlin/Int
+        visibility: Public
     ]
     visibility: Public
   typeParameters: []

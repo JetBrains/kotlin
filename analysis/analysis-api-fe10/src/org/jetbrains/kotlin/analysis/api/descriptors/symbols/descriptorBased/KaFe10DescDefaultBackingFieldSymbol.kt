@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointe
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.FieldDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 
 internal class KaFe10DescDefaultBackingFieldSymbol(
@@ -41,6 +43,7 @@ internal class KaFe10DescDefaultBackingFieldSymbol(
         get() = owningProperty.token
 
     override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
+    override val visibility: Visibility get() = withValidityAssertion { Visibilities.Private }
 
     override val annotations: KaAnnotationList
         get() = withValidityAssertion {

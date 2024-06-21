@@ -88,6 +88,7 @@ KaNamedFunctionSymbol:
       returnType: KaFlexibleType:
         annotations: []
         type: ft<java/lang/Class<out T!>, java/lang/Class<out T!>?>
+      visibility: Public
       getContainingFileSymbol: null
       getContainingJvmClassName: JavaClass
       getContainingModule: KaSourceModule "Sources of main"
@@ -195,6 +196,7 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Any?
+      visibility: Public
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Any
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"

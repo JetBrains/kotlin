@@ -21,6 +21,7 @@ KaAnonymousObjectSymbol:
       typeArguments: []
       type: @R|Anno3|() @R|Anno2|() @R|Anno1|()  @R|Anno3|()  SecondTypeAlias
   ]
+  visibility: Local
   getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnSuperClassCallOnAnonymousObject.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null

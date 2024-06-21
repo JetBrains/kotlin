@@ -121,6 +121,7 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Any?
+      visibility: Public
   ]
   visibility: Public
 KaNamedFunctionSymbol:

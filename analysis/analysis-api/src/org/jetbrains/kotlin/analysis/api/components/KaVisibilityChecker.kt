@@ -9,14 +9,14 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 import org.jetbrains.kotlin.psi.KtExpression
 
 public interface KaVisibilityChecker {
     @KaExperimentalApi
     public fun isVisible(
-        candidateSymbol: KaSymbolWithVisibility,
+        candidateSymbol: KaDeclarationSymbol,
         useSiteFile: KaFileSymbol,
         receiverExpression: KtExpression? = null,
         position: PsiElement
@@ -31,5 +31,5 @@ public interface KaVisibilityChecker {
      * In 'Explicit API' mode explicit visibility modifier and explicit return types are required for such symbols.
      * See FirExplicitApiDeclarationChecker.kt
      */
-    public fun isPublicApi(symbol: KaSymbolWithVisibility): Boolean
+    public fun isPublicApi(symbol: KaDeclarationSymbol): Boolean
 }

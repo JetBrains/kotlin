@@ -38,6 +38,7 @@ KaNamedFunctionSymbol:
                     annotations: []
                     typeArguments: []
                     type: kotlin/Any?
+                  visibility: Public
                   getContainingFileSymbol: KaFileSymbol(returnsNullContract.kt)
                   getContainingJvmClassName: ReturnsNullContractKt
                   getContainingModule: KaSourceModule "Sources of main"
@@ -89,6 +90,7 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Any?
+      visibility: Public
       getContainingFileSymbol: KaFileSymbol(returnsNullContract.kt)
       getContainingJvmClassName: ReturnsNullContractKt
       getContainingModule: KaSourceModule "Sources of main"

@@ -6,11 +6,10 @@
 package org.jetbrains.kotlin.sir.providers
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.*
 
@@ -70,7 +69,7 @@ public interface SirSession :
     ): SirType =
         with(typeProvider) { this@translateType.translateType(ktAnalysisSession, reportErrorType, reportUnsupportedType, processTypeImports) }
 
-    override fun KaSymbolWithVisibility.sirVisibility(ktAnalysisSession: KaSession): SirVisibility? =
+    override fun KaDeclarationSymbol.sirVisibility(ktAnalysisSession: KaSession): SirVisibility? =
         with(visibilityChecker) { this@sirVisibility.sirVisibility(ktAnalysisSession) }
 
     override fun KaScope.extractDeclarations(ktAnalysisSession: KaSession): Sequence<SirDeclaration> =
@@ -156,8 +155,8 @@ public interface SirTypeProvider {
 
 public interface SirVisibilityChecker {
     /**
-     * Determines visibility of the given [KaSymbolWithVisibility].
+     * Determines visibility of the given [KaDeclarationSymbol].
      * @return null if symbol should not be exposed to SIR completely.
      */
-    public fun KaSymbolWithVisibility.sirVisibility(ktAnalysisSession: KaSession): SirVisibility?
+    public fun KaDeclarationSymbol.sirVisibility(ktAnalysisSession: KaSession): SirVisibility?
 }
