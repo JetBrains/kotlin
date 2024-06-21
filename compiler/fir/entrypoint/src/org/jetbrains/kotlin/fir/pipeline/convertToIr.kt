@@ -213,6 +213,14 @@ private class Fir2IrPipeline(
 
         val expectActualMap = irActualizer?.actualizeCallablesAndMergeModules() ?: IrExpectActualMap()
 
+        val pluginContext = Fir2IrPluginContext(componentsStorage, irBuiltIns, componentsStorage.moduleDescriptor, symbolTable)
+        if (fir2IrConfiguration.diagnosticReporter.hasErrors) {
+            irActualizer?.runChecksAndFinalize(expectActualMap)
+            return Fir2IrActualizedResult(
+                mainIrFragment, componentsStorage, pluginContext, irActualizedResult = null, irBuiltIns, symbolTable
+            )
+        }
+
         val fakeOverrideResolver = SpecialFakeOverrideSymbolsResolver(expectActualMap)
         resolveFakeOverrideSymbols(fakeOverrideResolver)
         delegatedMembersGenerationStrategy.updateMetadataSources(
@@ -232,7 +240,6 @@ private class Fir2IrPipeline(
 
         removeGeneratedBuiltinsDeclarationsIfNeeded()
 
-        val pluginContext = Fir2IrPluginContext(componentsStorage, irBuiltIns, componentsStorage.moduleDescriptor, symbolTable)
         pluginContext.applyIrGenerationExtensions(mainIrFragment, irGeneratorExtensions)
 
         return Fir2IrActualizedResult(mainIrFragment, componentsStorage, pluginContext, actualizationResult, irBuiltIns, symbolTable)
