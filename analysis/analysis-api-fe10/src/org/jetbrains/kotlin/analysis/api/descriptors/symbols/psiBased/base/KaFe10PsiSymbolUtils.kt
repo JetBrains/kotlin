@@ -43,8 +43,8 @@ internal val KtDeclaration.kaSymbolModality: KaSymbolModality?
         hasModifier(KtTokens.ABSTRACT_KEYWORD) -> KaSymbolModality.ABSTRACT
         hasModifier(KtTokens.FINAL_KEYWORD) -> KaSymbolModality.FINAL
         hasModifier(KtTokens.SEALED_KEYWORD) -> KaSymbolModality.SEALED
-        hasModifier(KtTokens.OPEN_KEYWORD) -> {
-            if (this is KtCallableDeclaration && !hasBody()) {
+        hasModifier(KtTokens.OPEN_KEYWORD) -> when {
+            this is KtCallableDeclaration && !hasBody() -> {
                 val parentDeclaration = this.getElementParentDeclaration()
                 if (parentDeclaration is KtClass && parentDeclaration.isInterface()) {
                     KaSymbolModality.ABSTRACT
@@ -53,8 +53,9 @@ internal val KtDeclaration.kaSymbolModality: KaSymbolModality?
                 }
             }
 
-            KaSymbolModality.OPEN
+            else -> KaSymbolModality.OPEN
         }
+
         else -> null
     }
 
