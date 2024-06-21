@@ -285,7 +285,7 @@ class FirCallResolver(
         // just to try to resolve to package/class and then report meaningful error at FirStandaloneQualifierChecker
         @OptIn(ApplicabilityDetail::class)
         if (isUsedAsReceiver || !basicResult.applicability.isSuccess) {
-            (qualifiedAccess.explicitReceiver as? FirResolvedQualifier)
+            (qualifiedAccess.explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier)
                 ?.continueQualifier(
                     callee,
                     qualifiedAccess,
