@@ -71,9 +71,16 @@ class ConstraintIncorporator(
 
         // \alpha <: constraint.type
         if (constraint.kind != ConstraintKind.LOWER) {
+            val isFromDeclaredUpperBound = isK2 && isFromDeclaredUpperBound(constraint)
             forEachConstraint(typeVariable) {
                 if (it.kind != ConstraintKind.UPPER) {
-                    addNewIncorporatedConstraint(it.type, constraint.type, shouldBeTypeVariableFlexible, it.isNullabilityConstraint)
+                    addNewIncorporatedConstraint(
+                        it.type,
+                        constraint.type,
+                        shouldBeTypeVariableFlexible,
+                        it.isNullabilityConstraint,
+                        isFromDeclaredUpperBound
+                    )
                 }
             }
         }
@@ -82,18 +89,25 @@ class ConstraintIncorporator(
         if (constraint.kind != ConstraintKind.UPPER) {
             forEachConstraint(typeVariable) {
                 if (it.kind != ConstraintKind.LOWER) {
-                    val isFromDeclaredUpperBound =
-                        it.position.from is DeclaredUpperBoundConstraintPosition<*> && !it.type.typeConstructor().isTypeVariable()
-
                     addNewIncorporatedConstraint(
                         constraint.type,
                         it.type,
                         shouldBeTypeVariableFlexible,
-                        isFromDeclaredUpperBound = isFromDeclaredUpperBound
+                        isFromDeclaredUpperBound = isFromDeclaredUpperBound(it)
                     )
                 }
             }
         }
+    }
+
+    private fun Context.isFromDeclaredUpperBound(it: Constraint): Boolean {
+        if (it.type.typeConstructor().isTypeVariable()) return false
+
+        if (it.position.from is DeclaredUpperBoundConstraintPosition<*>) return true
+
+        if (isK2 && it.position.isFromDeclaredUpperBound) return true
+
+        return false
     }
 
     private inline fun Context.forEachConstraint(typeVariable: TypeVariableMarker, action: (Constraint) -> Unit) {
