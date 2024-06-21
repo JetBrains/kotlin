@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
 import org.gradle.api.artifacts.*
 import org.gradle.api.artifacts.component.*
+import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
@@ -23,7 +24,6 @@ import org.jetbrains.kotlin.gradle.plugin.ide.*
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver.Companion.gradleArtifact
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeBinaryDependencyResolver.ArtifactResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationConfigurationsContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
@@ -113,6 +113,7 @@ class IdeBinaryDependencyResolver @JvmOverloads constructor(
             override val componentFilter: ((ComponentIdentifier) -> Boolean)? = null,
             internal val dependencySubstitution: ((DependencySubstitutions) -> Unit)? = null,
             override val dependencyFilter: ((Dependency) -> Boolean)? = null,
+            internal val withDependencies: (DependencySet.(DependencyHandler) -> Unit)? = null
         ) : ArtifactResolutionStrategy()
     }
 
@@ -253,6 +254,12 @@ class IdeBinaryDependencyResolver @JvmOverloads constructor(
         val platformLikeCompileDependenciesConfiguration = project.configurations.detachedResolvable()
         platformLikeCompileDependenciesConfiguration.attributes.setupPlatformResolutionAttributes(sourceSet)
         platformLikeCompileDependenciesConfiguration.dependencies.addAll(sourceSet.resolvableMetadataConfiguration.allDependencies)
+
+        if (withDependencies != null) {
+            platformLikeCompileDependenciesConfiguration.withDependencies { deps ->
+                withDependencies.invoke(deps, project.dependencies)
+            }
+        }
 
         if (dependencySubstitution != null) {
             platformLikeCompileDependenciesConfiguration.resolutionStrategy.dependencySubstitution(dependencySubstitution)

@@ -58,7 +58,9 @@ class IdeJvmAndAndroidDependencyResolutionTest {
     }
 
     private fun Project.assertBinaryDependencies(sourceSetName: String, notation: Any) {
-        project.kotlinIdeMultiplatformImport.resolveDependencies(sourceSetName).filterIsInstance<IdeaKotlinResolvedBinaryDependency>()
+        project.kotlinIdeMultiplatformImport
+            .resolveDependencies(sourceSetName)
+            .filterIsInstance<IdeaKotlinResolvedBinaryDependency>()
             .assertMatches(notation)
     }
 
@@ -267,5 +269,28 @@ class IdeJvmAndAndroidDependencyResolutionTest {
         project.assertBinaryDependencies("jvmAndAndroidMain", jvmAndAndroidDependencies)
         project.assertBinaryDependencies("commonTest", jvmAndAndroidDependencies)
         project.assertBinaryDependencies("jvmAndAndroidTest", jvmAndAndroidDependencies)
+    }
+
+    @Test
+    fun `test existence of kotlin-test dependencies for commonTest source set with only JVM+Android target`() {
+        val project = buildProject { configureAndroidAndMultiplatform(true) }
+
+        project.multiplatformExtension.sourceSets.getByName("commonTest").dependencies {
+            implementation(kotlin("test"))
+        }
+
+        project.evaluate()
+
+        val stdlibVersion = project.getKotlinPluginVersion()
+        val stdlibDependencies = listOf(
+            binaryCoordinates(Regex(".*kotlin-stdlib.*")),
+            binaryCoordinates(Regex("org\\.jetbrains:annotations:.*")),
+            binaryCoordinates("org.jetbrains.kotlin:kotlin-test-junit:${stdlibVersion}"),
+            binaryCoordinates("org.jetbrains.kotlin:kotlin-test:${stdlibVersion}"),
+            binaryCoordinates("junit:junit:4.13.2"),
+            binaryCoordinates("org.hamcrest:hamcrest-core:1.3"),
+        )
+
+        project.assertBinaryDependencies("commonTest", stdlibDependencies)
     }
 }

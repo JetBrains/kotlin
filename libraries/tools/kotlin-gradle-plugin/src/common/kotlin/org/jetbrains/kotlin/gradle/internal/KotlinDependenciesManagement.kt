@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.internal
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
+import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
@@ -111,3 +112,4 @@ internal fun DependencyHandler.kotlinDependency(moduleName: String, versionOrNul
     create("$KOTLIN_MODULE_GROUP:$moduleName${versionOrNull?.prependIndent(":").orEmpty()}")
 
 internal fun Configuration.allNonProjectDependencies() = allDependencies.matching { it !is ProjectDependency }
+internal fun DependencySet.allNonProjectDependencies() = matching { it !is ProjectDependency }
