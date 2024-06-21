@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SyntheticCallableId.ACCEPT_SPECIFIC_TYPE
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -511,45 +510,7 @@ internal object MapArguments : ResolutionStage() {
     }
 }
 
-internal object CheckArguments : CheckerStage() {
-    override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
-        candidate.symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
-        val argumentMapping = candidate.argumentMapping
-        val isInvokeFromExtensionFunctionType = candidate.isInvokeFromExtensionFunctionType
-
-        for ((index, argument) in callInfo.arguments.withIndex()) {
-            candidate.resolveArgument(
-                callInfo,
-                argument,
-                argumentMapping[argument],
-                isReceiver = index == 0 && isInvokeFromExtensionFunctionType,
-                sink = sink,
-                context = context
-            )
-        }
-
-        when {
-            candidate.system.hasContradiction && callInfo.arguments.isNotEmpty() -> {
-                sink.yieldDiagnostic(InapplicableCandidate)
-            }
-
-            // Logic description: only candidates from Kotlin, but using Java SAM types, are discriminated
-            candidate.shouldHaveLowPriorityDueToSAM(context.bodyResolveComponents) -> {
-                if (argumentMapping.values.any {
-                        val coneType = it.returnTypeRef.coneType
-                        context.bodyResolveComponents.samResolver.isSamType(coneType) &&
-                                // Candidate is not from Java, so no flexible types are possible here
-                                coneType.toRegularClassSymbol(context.session)?.isJavaOrEnhancement == true
-                    }
-                ) {
-                    sink.markCandidateForCompatibilityResolve(context)
-                }
-            }
-        }
-    }
-}
-
-private val Candidate.isInvokeFromExtensionFunctionType: Boolean
+internal val Candidate.isInvokeFromExtensionFunctionType: Boolean
     get() = explicitReceiverKind == DISPATCH_RECEIVER
             && dispatchReceiver?.resolvedType?.fullyExpandedType(this.callInfo.session)?.isExtensionFunctionType == true
             && (symbol as? FirNamedFunctionSymbol)?.name == OperatorNameConventions.INVOKE
@@ -584,11 +545,6 @@ private fun Candidate.isJavaApplicableCandidate(): Boolean {
     }
 
     return result
-}
-
-private fun CheckerSink.markCandidateForCompatibilityResolve(context: ResolutionContext) {
-    if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.DisableCompatibilityModeForNewInference)) return
-    reportDiagnostic(LowerPriorityToPreserveCompatibilityDiagnostic)
 }
 
 internal object EagerResolveOfCallableReferences : CheckerStage() {
