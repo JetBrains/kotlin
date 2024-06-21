@@ -473,23 +473,20 @@ class FirSyntheticCallGenerator(
         // Synthetic function signature:
         //   fun <K : Any> checkNotNull(arg: K?): K
         val functionSymbol = FirSyntheticFunctionSymbol(SyntheticCallableId.CHECK_NOT_NULL)
-        val (typeParameter, returnType) = generateSyntheticSelectTypeParameter(functionSymbol, isNullableBound = false)
-
-        val argumentType = buildResolvedTypeRef {
-            type = returnType.type.withNullability(ConeNullability.NULLABLE, session.typeContext)
-        }
-        val typeArgument = buildTypeProjectionWithVariance {
-            typeRef = returnType
-            variance = Variance.INVARIANT
-        }
+        val (typeParameter, typeParameterTypeRef) = generateSyntheticSelectTypeParameter(functionSymbol, isNullableBound = false)
 
         return generateMemberFunction(
             functionSymbol,
             SyntheticCallableId.CHECK_NOT_NULL.callableName,
-            typeArgument.typeRef
+            typeParameterTypeRef,
         ).apply {
             typeParameters += typeParameter
-            valueParameters += argumentType.toValueParameter("arg", functionSymbol)
+
+            val valueParameterTypeRef = buildResolvedTypeRef {
+                type = typeParameterTypeRef.type.withNullability(ConeNullability.NULLABLE, session.typeContext)
+            }
+
+            valueParameters += valueParameterTypeRef.toValueParameter("arg", functionSymbol)
         }.build()
     }
 
