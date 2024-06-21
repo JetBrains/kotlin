@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -101,6 +102,8 @@ class KlibSyntheticAccessorTestSupport : BeforeEachCallback {
             // Don't run LLVM, stop after the last IR lowering.
             TestDirectives.FREE_COMPILER_ARGS with listOf("-Xdisable-phases=LinkBitcodeDependencies,WriteBitcodeFile,ObjectFiles,Linker")
         }
+
+        Assumptions.assumeTrue(settings.get<CacheMode>() == CacheMode.WithoutCache)
 
         // Inject the required properties to test instance.
         with(settings.get<NativeTestInstances<AbstractNativeKlibSyntheticAccessorTest>>().enclosingTestInstance) {
