@@ -54,7 +54,9 @@ abstract class InlineFunctionResolver {
     }
 }
 
-open class InlineFunctionResolverReplacingCoroutineIntrinsics(open val context: CommonBackendContext) : InlineFunctionResolver() {
+abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : CommonBackendContext>(
+    protected val context: Ctx
+) : InlineFunctionResolver() {
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         val function = super.getFunctionDeclaration(symbol) ?: return null
         // TODO: Remove these hacks when coroutine intrinsics are fixed.
