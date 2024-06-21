@@ -64,7 +64,7 @@ object FirTailrecFunctionChecker : FirSimpleFunctionChecker(MppCheckerKind.Commo
                 finallyScopeCount--
             }
 
-            override fun visitFunctionCallNode(node: FunctionCallNode) {
+            override fun visitFunctionCallExitNode(node: FunctionCallExitNode) {
                 val functionCall = node.fir
                 val resolvedSymbol = functionCall.calleeReference.toResolvedCallableSymbol() as? FirNamedFunctionSymbol ?: return
                 if (resolvedSymbol != declaration.symbol) return

@@ -42,67 +42,70 @@ digraph smartCastInInit_kt {
                 10 [label="Function call arguments enter"];
                 11 [label="Function call arguments exit"];
             }
-            12 [label="Function call: R|kotlin/TODO|()" style="filled" fillcolor=yellow];
-            13 [label="Stub" style="filled" fillcolor=gray];
-            14 [label="Jump: ^s R|kotlin/TODO|()" style="filled" fillcolor=gray];
-            15 [label="Stub" style="filled" fillcolor=gray];
-            16 [label="Exit block" style="filled" fillcolor=gray];
+            12 [label="Function call enter: R|kotlin/TODO|()"];
+            13 [label="Function call exit: R|kotlin/TODO|()" style="filled" fillcolor=yellow];
+            14 [label="Stub" style="filled" fillcolor=gray];
+            15 [label="Jump: ^s R|kotlin/TODO|()" style="filled" fillcolor=gray];
+            16 [label="Stub" style="filled" fillcolor=gray];
+            17 [label="Exit block" style="filled" fillcolor=gray];
         }
-        17 [label="Exit function s" style="filled" fillcolor=gray];
+        18 [label="Exit function s" style="filled" fillcolor=gray];
     }
     8 -> {9};
     9 -> {10};
     10 -> {11};
     11 -> {12};
-    12 -> {13} [style=dotted];
+    12 -> {13};
     13 -> {14} [style=dotted];
-    14 -> {15 17} [style=dotted];
-    15 -> {16} [style=dotted];
+    14 -> {15} [style=dotted];
+    15 -> {16 18} [style=dotted];
     16 -> {17} [style=dotted];
+    17 -> {18} [style=dotted];
 
     subgraph cluster_7 {
         color=red
-        18 [label="Enter class Main" style="filled" fillcolor=red];
+        19 [label="Enter class Main" style="filled" fillcolor=red];
         subgraph cluster_8 {
             color=blue
-            19 [label="Enter function <init>" style="filled" fillcolor=red];
-            20 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
-            21 [label="Exit function <init>" style="filled" fillcolor=red];
+            20 [label="Enter function <init>" style="filled" fillcolor=red];
+            21 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+            22 [label="Exit function <init>" style="filled" fillcolor=red];
         }
         subgraph cluster_9 {
             color=blue
-            22 [label="Enter init block" style="filled" fillcolor=red];
+            23 [label="Enter init block" style="filled" fillcolor=red];
             subgraph cluster_10 {
                 color=blue
-                23 [label="Enter block"];
+                24 [label="Enter block"];
                 subgraph cluster_11 {
                     color=blue
-                    24 [label="Function call arguments enter"];
-                    25 [label="Function call arguments exit"];
+                    25 [label="Function call arguments enter"];
+                    26 [label="Function call arguments exit"];
                 }
-                26 [label="Function call: R|/s|()" style="filled" fillcolor=yellow];
-                27 [label="Assignment: R|/Main.x|"];
+                27 [label="Function call enter: R|/s|()"];
+                28 [label="Function call exit: R|/s|()" style="filled" fillcolor=yellow];
+                29 [label="Assignment: R|/Main.x|"];
                 subgraph cluster_12 {
                     color=blue
-                    28 [label="Function call arguments enter"];
-                    29 [label="Access variable R|/Main.x|"];
-                    30 [label="Smart cast: this@R|/Main|.R|/Main.x|"];
-                    31 [label="Function call arguments exit"];
+                    30 [label="Function call arguments enter"];
+                    31 [label="Access variable R|/Main.x|"];
+                    32 [label="Smart cast: this@R|/Main|.R|/Main.x|"];
+                    33 [label="Function call arguments exit"];
                 }
-                32 [label="Function call: this@R|/Main|.R|/Main.x|.R|/S.foo|()" style="filled" fillcolor=yellow];
-                33 [label="Exit block"];
+                34 [label="Function call enter: this@R|/Main|.R|/Main.x|.R|/S.foo|()"];
+                35 [label="Function call exit: this@R|/Main|.R|/Main.x|.R|/S.foo|()" style="filled" fillcolor=yellow];
+                36 [label="Exit block"];
             }
-            34 [label="Exit init block" style="filled" fillcolor=red];
+            37 [label="Exit init block" style="filled" fillcolor=red];
         }
-        35 [label="Exit class Main" style="filled" fillcolor=red];
+        38 [label="Exit class Main" style="filled" fillcolor=red];
     }
-    18 -> {19} [color=green];
-    18 -> {35} [style=dotted];
-    18 -> {19 22} [style=dashed];
-    19 -> {20};
+    19 -> {20} [color=green];
+    19 -> {38} [style=dotted];
+    19 -> {20 23} [style=dashed];
     20 -> {21};
-    21 -> {22} [color=green];
-    22 -> {23};
+    21 -> {22};
+    22 -> {23} [color=green];
     23 -> {24};
     24 -> {25};
     25 -> {26};
@@ -114,6 +117,9 @@ digraph smartCastInInit_kt {
     31 -> {32};
     32 -> {33};
     33 -> {34};
-    34 -> {35} [color=green];
+    34 -> {35};
+    35 -> {36};
+    36 -> {37};
+    37 -> {38} [color=green];
 
 }

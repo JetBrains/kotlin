@@ -931,11 +931,16 @@ abstract class FirDataFlowAnalyzer(
         graphBuilder.exitCallExplicitReceiver()
     }
 
+    fun enterFunctionCall(functionCall: FirFunctionCall) {
+        val enterNode = graphBuilder.enterFunctionCall(functionCall)
+        enterNode.mergeIncomingFlow()
+    }
+
     fun exitFunctionCall(functionCall: FirFunctionCall, callCompleted: Boolean) {
         context.variableAssignmentAnalyzer.exitFunctionCall(callCompleted)
         val node = graphBuilder.exitFunctionCall(functionCall, callCompleted)
         node.mergeIncomingFlow { _, flow ->
-            val callArgsExit = node.previousNodes.singleOrNull { it is FunctionCallArgumentsExitNode }
+            val callArgsExit = node.previousNodes.singleOrNull { it is FunctionCallEnterNode }
             processConditionalContract(flow, functionCall, callArgsExit?.flow)
         }
     }

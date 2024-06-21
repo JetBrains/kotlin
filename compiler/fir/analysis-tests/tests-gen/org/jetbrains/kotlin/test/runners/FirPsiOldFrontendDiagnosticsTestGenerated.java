@@ -8864,6 +8864,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("nonLocalJump.kt")
+        public void testNonLocalJump() {
+          runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/nonLocalJump.kt");
+        }
+
+        @Test
         @TestMetadata("reassignementInUnreachableCode.kt")
         public void testReassignementInUnreachableCode() {
           runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/reassignementInUnreachableCode.kt");

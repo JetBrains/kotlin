@@ -127,8 +127,11 @@ fun ControlFlowGraphBuilder.createFunctionCallArgumentsExitNode(
 ): FunctionCallArgumentsExitNode =
     FunctionCallArgumentsExitNode(currentGraph, fir, explicitReceiverExitNode, levelCounter)
 
-fun ControlFlowGraphBuilder.createFunctionCallNode(fir: FirFunctionCall): FunctionCallNode =
-    FunctionCallNode(currentGraph, fir, levelCounter)
+fun ControlFlowGraphBuilder.createFunctionCallEnterNode(fir: FirFunctionCall): FunctionCallEnterNode =
+    FunctionCallEnterNode(currentGraph, fir, levelCounter)
+
+fun ControlFlowGraphBuilder.createFunctionCallExitNode(fir: FirFunctionCall): FunctionCallExitNode =
+    FunctionCallExitNode(currentGraph, fir, levelCounter)
 
 fun ControlFlowGraphBuilder.createCallableReferenceNode(fir: FirCallableReferenceAccess): CallableReferenceNode =
     CallableReferenceNode(currentGraph, fir, levelCounter)

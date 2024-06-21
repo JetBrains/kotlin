@@ -502,6 +502,9 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
             val resultExpression = callResolver.resolveCallAndSelectCandidate(withTransformedArguments, data)
 
+            if (!choosingOptionForAugmentedAssignment) {
+                dataFlowAnalyzer.enterFunctionCall(functionCall)
+            }
             val completeInference = callCompleter.completeCall(
                 resultExpression, data,
                 skipEvenPartialCompletion = choosingOptionForAugmentedAssignment,
@@ -683,12 +686,14 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         val lhsIsVar = lhsVariable?.isVar == true
 
         fun chooseAssign(): FirStatement {
+            dataFlowAnalyzer.enterFunctionCall(resolvedAssignCall)
             callCompleter.completeCall(resolvedAssignCall, ResolutionMode.ContextIndependent)
             dataFlowAnalyzer.exitFunctionCall(resolvedAssignCall, callCompleted = true)
             return resolvedAssignCall
         }
 
         fun chooseOperator(): FirStatement {
+            dataFlowAnalyzer.enterFunctionCall(resolvedOperatorCall)
             callCompleter.completeCall(
                 resolvedOperatorCall,
                 (lhsVariable?.returnTypeRef as? FirResolvedTypeRef)?.let {
@@ -1495,6 +1500,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         val assignIsSuccessful = assignCallReference?.isError == false
 
         fun chooseAssign(): FirFunctionCall {
+            dataFlowAnalyzer.enterFunctionCall(resolvedAssignCall)
             callCompleter.completeCall(resolvedAssignCall, ResolutionMode.ContextIndependent)
             dataFlowAnalyzer.exitFunctionCall(resolvedAssignCall, callCompleted = true)
             return resolvedAssignCall
@@ -1524,6 +1530,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         val setIsSuccessful = setCallReference?.isError == false
 
         fun chooseSetOperator(): FirStatement {
+            dataFlowAnalyzer.enterFunctionCall(resolvedSetCall)
             callCompleter.completeCall(resolvedSetCall, ResolutionMode.ContextIndependent)
             dataFlowAnalyzer.exitFunctionCall(resolvedSetCall, callCompleted = true)
             return info.toBlock()

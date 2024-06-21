@@ -84,7 +84,7 @@ class ControlFlowGraphBuilder {
     private val elvisRhsEnterNodes: Stack<ElvisRhsEnterNode> = stackOf()
     private val equalityOperatorCallLhsExitNodes: Stack<CFGNode<*>> = stackOf()
 
-    private val notCompletedFunctionCalls: Stack<MutableList<FunctionCallNode>> = stackOf()
+    private val notCompletedFunctionCalls: Stack<MutableList<FunctionCallExitNode>> = stackOf()
 
     // ----------------------------------- Public API -----------------------------------
 
@@ -1221,7 +1221,7 @@ class ControlFlowGraphBuilder {
      * this happens when completing the last call in try/catch blocks
      * @returns `true` if node actually returned Nothing
      */
-    private fun completeFunctionCall(node: FunctionCallNode): Boolean {
+    private fun completeFunctionCall(node: FunctionCallExitNode): Boolean {
         if (!node.fir.hasNothingType) return false
         val stub = StubNode(node.owner, node.level)
         val edges = node.followingNodes.map { it to node.edgeTo(it) }
@@ -1308,9 +1308,13 @@ class ControlFlowGraphBuilder {
         exitNode?.explicitReceiverExitNode = lastNode
     }
 
-    fun exitFunctionCall(functionCall: FirFunctionCall, callCompleted: Boolean): FunctionCallNode {
+    fun enterFunctionCall(functionCall: FirFunctionCall): FunctionCallEnterNode {
+        return createFunctionCallEnterNode(functionCall).also { addNewSimpleNode(it) }
+    }
+
+    fun exitFunctionCall(functionCall: FirFunctionCall, callCompleted: Boolean): FunctionCallExitNode {
         val returnsNothing = functionCall.hasNothingType
-        val node = createFunctionCallNode(functionCall)
+        val node = createFunctionCallExitNode(functionCall)
         unifyDataFlowFromPostponedLambdas(node, callCompleted)
         if (returnsNothing) {
             addNonSuccessfullyTerminatingNode(node)

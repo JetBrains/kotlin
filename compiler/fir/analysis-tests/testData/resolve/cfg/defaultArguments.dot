@@ -62,30 +62,33 @@ digraph defaultArguments_kt {
                             22 [label="Function call arguments enter"];
                             23 [label="Function call arguments exit"];
                         }
-                        24 [label="Function call: R|/foo|()" style="filled" fillcolor=yellow];
-                        25 [label="Exit block"];
+                        24 [label="Function call enter: R|/foo|()"];
+                        25 [label="Function call exit: R|/foo|()" style="filled" fillcolor=yellow];
+                        26 [label="Exit block"];
                     }
-                    26 [label="Exit function <anonymous>" style="filled" fillcolor=red];
+                    27 [label="Exit function <anonymous>" style="filled" fillcolor=red];
                 }
-                27 [label="Function call arguments exit"];
+                28 [label="Function call arguments exit"];
             }
-            28 [label="Postponed exit from lambda"];
-            29 [label="Function call: R|kotlin/run|<R|kotlin/Int|>(...)" style="filled" fillcolor=yellow];
-            30 [label="Exit default value of z" style="filled" fillcolor=red];
+            29 [label="Function call enter: R|kotlin/run|<R|kotlin/Int|>(...)"];
+            30 [label="Postponed exit from lambda"];
+            31 [label="Function call exit: R|kotlin/run|<R|kotlin/Int|>(...)" style="filled" fillcolor=yellow];
+            32 [label="Exit default value of z" style="filled" fillcolor=red];
         }
-        31 [label="Exit default value of z"];
+        33 [label="Exit default value of z"];
         subgraph cluster_10 {
             color=blue
-            32 [label="Enter block"];
+            34 [label="Enter block"];
             subgraph cluster_11 {
                 color=blue
-                33 [label="Function call arguments enter"];
-                34 [label="Function call arguments exit"];
+                35 [label="Function call arguments enter"];
+                36 [label="Function call arguments exit"];
             }
-            35 [label="Function call: R|/foo|()" style="filled" fillcolor=yellow];
-            36 [label="Exit block"];
+            37 [label="Function call enter: R|/foo|()"];
+            38 [label="Function call exit: R|/foo|()" style="filled" fillcolor=yellow];
+            39 [label="Exit block"];
         }
-        37 [label="Exit function test" style="filled" fillcolor=red];
+        40 [label="Exit function test" style="filled" fillcolor=red];
     }
     9 -> {10};
     10 -> {11 15};
@@ -95,12 +98,12 @@ digraph defaultArguments_kt {
     13 -> {14};
     14 -> {15};
     15 -> {16};
-    16 -> {17 31};
+    16 -> {17 33};
     16 -> {17} [style=dashed];
     17 -> {18};
     18 -> {19};
-    19 -> {20 27};
-    19 -> {28} [style=dotted];
+    19 -> {20 28};
+    19 -> {30} [style=dotted];
     19 -> {20} [style=dashed];
     20 -> {21};
     21 -> {22};
@@ -108,16 +111,19 @@ digraph defaultArguments_kt {
     23 -> {24};
     24 -> {25};
     25 -> {26};
-    26 -> {28};
-    27 -> {29};
-    28 -> {29} [label="Postponed"];
-    29 -> {30};
-    30 -> {31};
+    26 -> {27};
+    27 -> {30};
+    28 -> {29};
+    29 -> {31};
+    30 -> {31} [label="Postponed"];
     31 -> {32};
     32 -> {33};
     33 -> {34};
     34 -> {35};
     35 -> {36};
     36 -> {37};
+    37 -> {38};
+    38 -> {39};
+    39 -> {40};
 
 }

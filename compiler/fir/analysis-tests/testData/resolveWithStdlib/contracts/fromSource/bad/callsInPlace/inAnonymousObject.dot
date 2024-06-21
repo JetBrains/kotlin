@@ -59,32 +59,35 @@ digraph inAnonymousObject_kt {
                 24 [label="Access variable R|<local>/obj|"];
                 25 [label="Function call arguments exit"];
             }
-            26 [label="Function call: R|<local>/obj|.R|/<anonymous>.run|()" style="filled" fillcolor=yellow];
+            26 [label="Function call enter: R|<local>/obj|.R|/<anonymous>.run|()"];
+            27 [label="Function call exit: R|<local>/obj|.R|/<anonymous>.run|()" style="filled" fillcolor=yellow];
             subgraph cluster_10 {
                 color=blue
-                27 [label="Function call arguments enter"];
-                28 [label="Function call arguments exit"];
+                28 [label="Function call arguments enter"];
+                29 [label="Function call arguments exit"];
             }
-            29 [label="Function call: R|<local>/d|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
-            30 [label="Exit block"];
+            30 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+            31 [label="Function call exit: R|<local>/d|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
+            32 [label="Exit block"];
         }
-        31 [label="Exit function foo" style="filled" fillcolor=red];
+        33 [label="Exit function foo" style="filled" fillcolor=red];
     }
     subgraph cluster_11 {
         color=blue
-        32 [label="Enter function run" style="filled" fillcolor=red];
+        34 [label="Enter function run" style="filled" fillcolor=red];
         subgraph cluster_12 {
             color=blue
-            33 [label="Enter block"];
+            35 [label="Enter block"];
             subgraph cluster_13 {
                 color=blue
-                34 [label="Function call arguments enter"];
-                35 [label="Function call arguments exit"];
+                36 [label="Function call arguments enter"];
+                37 [label="Function call arguments exit"];
             }
-            36 [label="Function call: R|<local>/c|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
-            37 [label="Exit block"];
+            38 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+            39 [label="Function call exit: R|<local>/c|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
+            40 [label="Exit block"];
         }
-        38 [label="Exit function run" style="filled" fillcolor=red];
+        41 [label="Exit function run" style="filled" fillcolor=red];
     }
     2 -> {3};
     3 -> {4};
@@ -94,7 +97,7 @@ digraph inAnonymousObject_kt {
     6 -> {21} [style=dotted];
     6 -> {7} [style=dashed];
     7 -> {8};
-    7 -> {11 14 32} [color=red];
+    7 -> {11 14 34} [color=red];
     7 -> {20} [style=dotted];
     7 -> {8 11 14} [style=dashed];
     8 -> {9};
@@ -112,8 +115,8 @@ digraph inAnonymousObject_kt {
     18 -> {19};
     19 -> {20};
     20 -> {21};
-    20 -> {32} [color=green];
-    20 -> {32} [style=dashed];
+    20 -> {34} [color=green];
+    20 -> {34} [style=dashed];
     21 -> {22};
     22 -> {23};
     23 -> {24};
@@ -124,11 +127,14 @@ digraph inAnonymousObject_kt {
     28 -> {29};
     29 -> {30};
     30 -> {31};
+    31 -> {32};
     32 -> {33};
-    33 -> {34};
     34 -> {35};
     35 -> {36};
     36 -> {37};
     37 -> {38};
+    38 -> {39};
+    39 -> {40};
+    40 -> {41};
 
 }

@@ -68,19 +68,20 @@ digraph initBlock_kt {
                     21 [label="Function call arguments enter"];
                     22 [label="Function call arguments exit"];
                 }
-                23 [label="Function call: R|java/lang/Exception.Exception|()" style="filled" fillcolor=yellow];
-                24 [label="Throw: throw R|java/lang/Exception.Exception|()"];
-                25 [label="Stub" style="filled" fillcolor=gray];
-                26 [label="Const: Int(2)" style="filled" fillcolor=gray];
-                27 [label="Variable declaration: lval y: R|kotlin/Int|" style="filled" fillcolor=gray];
-                28 [label="Exit block" style="filled" fillcolor=gray];
+                23 [label="Function call enter: R|java/lang/Exception.Exception|()"];
+                24 [label="Function call exit: R|java/lang/Exception.Exception|()" style="filled" fillcolor=yellow];
+                25 [label="Throw: throw R|java/lang/Exception.Exception|()"];
+                26 [label="Stub" style="filled" fillcolor=gray];
+                27 [label="Const: Int(2)" style="filled" fillcolor=gray];
+                28 [label="Variable declaration: lval y: R|kotlin/Int|" style="filled" fillcolor=gray];
+                29 [label="Exit block" style="filled" fillcolor=gray];
             }
-            29 [label="Exit init block" style="filled" fillcolor=gray];
+            30 [label="Exit init block" style="filled" fillcolor=gray];
         }
-        30 [label="Exit class Bar" style="filled" fillcolor=gray];
+        31 [label="Exit class Bar" style="filled" fillcolor=gray];
     }
     13 -> {14} [color=green];
-    13 -> {30} [style=dotted];
+    13 -> {31} [style=dotted];
     13 -> {14 17} [style=dashed];
     14 -> {15};
     15 -> {16};
@@ -92,11 +93,12 @@ digraph initBlock_kt {
     21 -> {22};
     22 -> {23};
     23 -> {24};
-    24 -> {25} [style=dotted];
+    24 -> {25};
     25 -> {26} [style=dotted];
     26 -> {27} [style=dotted];
     27 -> {28} [style=dotted];
     28 -> {29} [style=dotted];
     29 -> {30} [style=dotted];
+    30 -> {31} [style=dotted];
 
 }

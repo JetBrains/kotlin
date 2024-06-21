@@ -68,16 +68,18 @@ digraph coercedInvocationKind_kt {
                 18 [label="Function call arguments enter"];
                 19 [label="Function call arguments exit"];
             }
-            20 [label="Function call: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
+            20 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+            21 [label="Function call exit: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
             subgraph cluster_11 {
                 color=blue
-                21 [label="Function call arguments enter"];
-                22 [label="Function call arguments exit"];
+                22 [label="Function call arguments enter"];
+                23 [label="Function call arguments exit"];
             }
-            23 [label="Function call: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
-            24 [label="Exit block"];
+            24 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+            25 [label="Function call exit: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
+            26 [label="Exit block"];
         }
-        25 [label="Exit function multiple" style="filled" fillcolor=red];
+        27 [label="Exit function multiple" style="filled" fillcolor=red];
     }
     14 -> {15};
     15 -> {16};
@@ -90,36 +92,38 @@ digraph coercedInvocationKind_kt {
     22 -> {23};
     23 -> {24};
     24 -> {25};
+    25 -> {26};
+    26 -> {27};
 
     subgraph cluster_12 {
         color=red
-        26 [label="Enter function multiple2" style="filled" fillcolor=red];
+        28 [label="Enter function multiple2" style="filled" fillcolor=red];
         subgraph cluster_13 {
             color=blue
-            27 [label="Enter block"];
+            29 [label="Enter block"];
             subgraph cluster_14 {
                 color=blue
-                28 [label="Enter block"];
-                29 [label="Exit block"];
+                30 [label="Enter block"];
+                31 [label="Exit block"];
             }
             subgraph cluster_15 {
                 color=blue
-                30 [label="Function call arguments enter"];
-                31 [label="Function call arguments exit"];
+                32 [label="Function call arguments enter"];
+                33 [label="Function call arguments exit"];
             }
-            32 [label="Function call: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
+            34 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+            35 [label="Function call exit: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
             subgraph cluster_16 {
                 color=blue
-                33 [label="Function call arguments enter"];
-                34 [label="Function call arguments exit"];
+                36 [label="Function call arguments enter"];
+                37 [label="Function call arguments exit"];
             }
-            35 [label="Function call: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
-            36 [label="Exit block"];
+            38 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+            39 [label="Function call exit: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
+            40 [label="Exit block"];
         }
-        37 [label="Exit function multiple2" style="filled" fillcolor=red];
+        41 [label="Exit function multiple2" style="filled" fillcolor=red];
     }
-    26 -> {27};
-    27 -> {28};
     28 -> {29};
     29 -> {30};
     30 -> {31};
@@ -129,5 +133,9 @@ digraph coercedInvocationKind_kt {
     34 -> {35};
     35 -> {36};
     36 -> {37};
+    37 -> {38};
+    38 -> {39};
+    39 -> {40};
+    40 -> {41};
 
 }

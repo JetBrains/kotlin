@@ -247,7 +247,11 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
         visitNode(node)
     }
 
-    open fun visitFunctionCallNode(node: FunctionCallNode) {
+    open fun visitFunctionCallEnterNode(node: FunctionCallEnterNode) {
+        visitNode(node)
+    }
+
+    open fun visitFunctionCallExitNode(node: FunctionCallExitNode) {
         visitNode(node)
     }
 
@@ -528,8 +532,12 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
         visitFunctionCallArgumentsExitNode(node)
     }
 
-    final override fun visitFunctionCallNode(node: FunctionCallNode, data: Nothing?) {
-        visitFunctionCallNode(node)
+    final override fun visitFunctionCallEnterNode(node: FunctionCallEnterNode, data: Nothing?) {
+        visitFunctionCallEnterNode(node)
+    }
+
+    final override fun visitFunctionCallExitNode(node: FunctionCallExitNode, data: Nothing?) {
+        visitFunctionCallExitNode(node)
     }
 
     final override fun visitDelegatedConstructorCallNode(node: DelegatedConstructorCallNode, data: Nothing?) {
