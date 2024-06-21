@@ -209,7 +209,9 @@ constructor(
         addSubTarget(KotlinBrowserJsIr::class.java) {
             configureSubTarget()
             subTargetConfigurators.add(LibraryConfigurator(this))
-            subTargetConfigurators.add(WebpackConfigurator(this))
+            if (propertiesProvider.jsBrowserWebpack) {
+                subTargetConfigurators.add(WebpackConfigurator(this))
+            }
         }
     }
 

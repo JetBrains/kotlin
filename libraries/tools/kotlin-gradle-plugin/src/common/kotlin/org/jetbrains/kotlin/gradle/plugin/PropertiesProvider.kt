@@ -402,6 +402,12 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val publishJsCompilerAttribute: Boolean
         get() = this.booleanProperty("$jsCompilerProperty.publish.attribute") ?: true
 
+    /**
+     * Use Webpack for browser by default
+     */
+    val jsBrowserWebpack: Boolean
+        get() = this.booleanProperty("kotlin.js.browser.webpack") ?: true
+
     val stdlibDefaultDependency: Boolean
         get() = booleanProperty(KOTLIN_STDLIB_DEFAULT_DEPENDENCY) ?: true
 

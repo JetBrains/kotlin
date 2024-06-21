@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDceDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
@@ -21,6 +22,8 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     KotlinJsBrowserDsl {
 
     private val nodeJs = project.rootProject.kotlinNodeJsExtension
+
+    private val propertiesProvider = PropertiesProvider(project)
 
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
@@ -83,7 +86,9 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     }
 
     override fun useWebpack() {
-        subTargetConfigurators.add(WebpackConfigurator(this))
+        if (!propertiesProvider.jsBrowserWebpack) {
+            subTargetConfigurators.add(WebpackConfigurator(this))
+        }
     }
 
     companion object {
