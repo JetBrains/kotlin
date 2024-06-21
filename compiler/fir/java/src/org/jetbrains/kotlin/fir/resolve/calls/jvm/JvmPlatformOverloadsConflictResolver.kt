@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.resolve.calls.Candidate
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeCallConflictResolver
 import org.jetbrains.kotlin.fir.resolve.isSubclassOf
 import org.jetbrains.kotlin.fir.resolve.toSymbol

@@ -21,8 +21,11 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedErrorReference
-import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.types.isUnitOrFlexibleUnit
+import org.jetbrains.kotlin.fir.resolve.calls.TypeParameterAsExpression
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirPropertyWithExplicitBackingFieldResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolve.calls.isVisible
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FirAnonymousFunctionReturnExpressionInfo
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider

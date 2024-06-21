@@ -1,27 +1,11 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.resolve.calls
+package org.jetbrains.kotlin.fir.resolve.calls.candidate
 
 import org.jetbrains.kotlin.fir.resolve.calls.stages.*
-import org.jetbrains.kotlin.fir.resolve.calls.stages.CheckArguments
-import org.jetbrains.kotlin.fir.resolve.calls.stages.CheckCallModifiers
-import org.jetbrains.kotlin.fir.resolve.calls.stages.CheckExplicitReceiverConsistency
-import org.jetbrains.kotlin.fir.resolve.calls.stages.CheckHiddenDeclaration
-import org.jetbrains.kotlin.fir.resolve.calls.stages.CheckIncompatibleTypeVariableUpperBounds
-import org.jetbrains.kotlin.fir.resolve.calls.stages.CheckLambdaAgainstTypeVariableContradiction
-import org.jetbrains.kotlin.fir.resolve.calls.stages.CheckLowPriorityInOverloadResolution
-import org.jetbrains.kotlin.fir.resolve.calls.stages.CheckVisibility
-import org.jetbrains.kotlin.fir.resolve.calls.stages.ConstraintSystemForks
-import org.jetbrains.kotlin.fir.resolve.calls.stages.CreateFreshTypeVariableSubstitutorStage
-import org.jetbrains.kotlin.fir.resolve.calls.stages.DiscriminateSyntheticProperties
-import org.jetbrains.kotlin.fir.resolve.calls.stages.EagerResolveOfCallableReferences
-import org.jetbrains.kotlin.fir.resolve.calls.stages.LowerPriorityIfDynamic
-import org.jetbrains.kotlin.fir.resolve.calls.stages.MapArguments
-import org.jetbrains.kotlin.fir.resolve.calls.stages.ProcessDynamicExtensionAnnotation
-import org.jetbrains.kotlin.fir.resolve.calls.stages.TypeParameterAsCallable
 
 sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
     object VariableAccess : CallKind(

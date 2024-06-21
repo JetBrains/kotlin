@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.resolve.calls
+package org.jetbrains.kotlin.fir.resolve.calls.candidate
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -17,8 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.extensions.*
-import org.jetbrains.kotlin.fir.extensions.OriginalCallData
-import org.jetbrains.kotlin.fir.extensions.originalCallDataForPluginRefinedCall
+import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.isIntegerLiteralOrOperatorCall
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -213,7 +212,8 @@ class CandidateFactory private constructor(
             is CallKind.VariableAccess -> createErrorPropertySymbol(diagnostic)
             is CallKind.Function,
             is CallKind.DelegatingConstructorCall,
-            is CallKind.CallableReference -> createErrorFunctionSymbol(diagnostic)
+            is CallKind.CallableReference
+            -> createErrorFunctionSymbol(diagnostic)
             is CallKind.SyntheticSelect -> throw IllegalStateException()
             is CallKind.SyntheticIdForCallableReferencesResolution -> throw IllegalStateException()
             is CallKind.CustomForIde -> throw IllegalStateException()

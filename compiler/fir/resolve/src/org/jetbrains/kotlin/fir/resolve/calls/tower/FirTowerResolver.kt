@@ -9,7 +9,12 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.calls.InapplicableCandidate
+import org.jetbrains.kotlin.fir.resolve.calls.MissingInnerClassConstructorReceiver
+import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CandidateCollector
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CandidateFactory
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ResolutionStageRunner
 import org.jetbrains.kotlin.fir.resolve.delegatingConstructorScope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
