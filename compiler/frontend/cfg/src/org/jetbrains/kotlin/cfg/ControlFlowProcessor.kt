@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.getFakeDescriptorForObject
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
+import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -935,7 +936,7 @@ class ControlFlowProcessor(
                     // Local class secondary constructors are handled differently
                     // They are the only local class element NOT included in owner pseudocode
                     // See generateInitializersForClassOrObject && generateDeclarationForLocalClassOrObjectIfNeeded
-                    labelExprEnclosingFunc is ConstructorDescriptor && !labelExprEnclosingFunc.isPrimary
+                    labelExprEnclosingFunc?.parentsWithSelf?.any { it is ConstructorDescriptor && !it.isPrimary } == true
                 ) {
                     val dependsOnInlineLambdas =
                         getEnclosingFunctionDescriptor(bindingContext, jumpExpression, skipInlineFunctionLiterals = true) ==

@@ -83,10 +83,10 @@ fun test5() {
             constructor(tag: Int) : this("") {
                 when(tag) {
                     0 -> <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!>
-                    1 -> foo { break }
-                    2 -> foo(@SomeAnnotation { break })
-                    3 -> foo(fun () { break })
-                    4 -> foo(@SomeAnnotation fun () { break })
+                    1 -> foo { <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!> }
+                    2 -> foo(@SomeAnnotation { <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!> })
+                    3 -> foo(fun () { <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!> })
+                    4 -> foo(@SomeAnnotation fun () { <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!> })
                 }
             }
         }
@@ -151,10 +151,10 @@ fun test8() {
             constructor(tag: Int, <!UNUSED_PARAMETER!>unused<!>: Boolean) : this(
                 when(tag) {
                     0 -> <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!>
-                    1 -> foo { break }
-                    2 -> foo(@SomeAnnotation { break })
-                    3 -> foo(fun (): Int { break <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>)
-                    4 -> foo(@SomeAnnotation fun (): Int { break <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>)
+                    1 -> foo { <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!> }
+                    2 -> foo(@SomeAnnotation { <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!> })
+                    3 -> foo(fun (): Int { <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!> <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>)
+                    4 -> foo(@SomeAnnotation fun (): Int { <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!> <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>)
                     else -> 1
                 }
             )
