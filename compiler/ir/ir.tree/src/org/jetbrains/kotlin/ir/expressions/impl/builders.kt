@@ -750,6 +750,7 @@ fun IrVarargImpl(
 
 private fun checkVarargTypesSanity(varargType: IrType, varargElementType: IrType) {
     if (varargElementType is IrDynamicType) {
+        // try match `type=kotlin.Array<out dynamic>` with `varargElementType=dynamic`
         val arrayElementType = (varargType as IrSimpleType).arguments.single().unwrapVarargElementType()
         require(varargElementType == arrayElementType) {
             typeInsanityErrorMessage(varargElementType, varargType)
@@ -765,22 +766,24 @@ private fun checkVarargTypesSanity(varargType: IrType, varargElementType: IrType
         it == IdSignatureValues.array
     } ?: (varargType.render().contains("kotlin.Array<"))
     if (isArrayWithTypeArguments) {
-        // try match `type=kotlin.Array<out TYPE>` with `varargElementType=TYPE.`
+        // try match `type=kotlin.Array<out TYPE>` with `varargElementType=TYPE`
         require((varargType as IrSimpleType).arguments.size == 1) {
             "Array must have exactly one type argument: ${varargType.render()}"
         }
         val arrayElementType = varargType.arguments.single().unwrapVarargElementType()
         require(
             arrayElementType.classifierOrFail == varargElementClassifier
-                    || varargElementClassifier.signature == IdSignatureValues.any                     // generic usecase, unbound type
-                    || varargElementClassifier.isClassWithFqName(FqNameUnsafe("kotlin.Any"))  // generic usecase, bound type
+                    || varargElementClassifier.signature == IdSignatureValues.any
+                    || varargElementClassifier.isClassWithFqName(FqNameUnsafe("kotlin.Any"))
+                    // TODO Remove next line after fix of KT-69335
+                    || arrayElementType.classifierOrFail.isSubtypeOfClass(varargElementClassifier as IrClassSymbol)
         ) {
             typeInsanityErrorMessage(varargElementType, varargType)
         }
     } else {
         // match `type=kotlin.IntArray` with `varargElementType=kotlin.Int`, etc...
         varargElementClassifier.signature?.let {
-            // in case of unbound type
+            // signatures example: `kotlin/IntArray|null[0]` and `kotlin/Int|null[0]`
             val elementTypeSignature = it.toString()
             val sigPrefix = elementTypeSignature.substringBefore('|')
             val sigSuffix = elementTypeSignature.substringAfter('|')
@@ -788,9 +791,11 @@ private fun checkVarargTypesSanity(varargType: IrType, varargElementType: IrType
             require(varargType.classifierOrFail.signature.toString() == expectedTypeSignature) {
                 typeInsanityErrorMessage(varargElementType, varargType)
             }
-        } ?: require(varargElementType.render() == varargClassifier.renderClassifierFqn(DumpIrTreeOptions()).substringBefore("Array")) {
-            typeInsanityErrorMessage(varargElementType, varargType)
         }
+        // renders example: `kotlin.IntArray` and `kotlin.Int`
+            ?: require(varargElementType.render() == varargClassifier.renderClassifierFqn(DumpIrTreeOptions()).substringBefore("Array")) {
+                typeInsanityErrorMessage(varargElementType, varargType)
+            }
     }
 }
 

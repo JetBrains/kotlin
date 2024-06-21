@@ -1789,6 +1789,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
       runTest("compiler/testData/ir/irText/expressions/vararg.kt");
     }
 
+    @TestMetadata("varargListOfJsStatement.kt")
+    public void testVarargListOfJsStatement() {
+      runTest("compiler/testData/ir/irText/expressions/varargListOfJsStatement.kt");
+    }
+
     @TestMetadata("varargWithImplicitCast.kt")
     public void testVarargWithImplicitCast() {
       runTest("compiler/testData/ir/irText/expressions/varargWithImplicitCast.kt");

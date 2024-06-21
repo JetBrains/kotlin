@@ -1,0 +1,124 @@
+class Bar : SourceInfoAwareJsNode, SomeOtherInterface {
+  constructor() /* primary */ {
+    super/*SourceInfoAwareJsNode*/()
+    /* <init>() */
+
+  }
+
+}
+
+class Child1 : Parent {
+  constructor() /* primary */ {
+    super/*Parent*/()
+    /* <init>() */
+
+  }
+
+}
+
+class Child2 : Parent {
+  constructor() /* primary */ {
+    super/*Parent*/()
+    /* <init>() */
+
+  }
+
+}
+
+class Foo : SourceInfoAwareJsNode, SomeOtherInterface {
+  constructor() /* primary */ {
+    super/*SourceInfoAwareJsNode*/()
+    /* <init>() */
+
+  }
+
+}
+
+open class Granny {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class JsExport : SourceInfoAwareJsNode, JsStatement {
+  constructor() /* primary */ {
+    super/*SourceInfoAwareJsNode*/()
+    /* <init>() */
+
+  }
+
+}
+
+class JsNonJsNode : NonJsNode, JsStatement {
+  constructor() /* primary */ {
+    super/*NonJsNode*/()
+    /* <init>() */
+
+  }
+
+}
+
+class JsVars : SourceInfoAwareJsNode, JsStatement {
+  constructor() /* primary */ {
+    super/*SourceInfoAwareJsNode*/()
+    /* <init>() */
+
+  }
+
+}
+
+abstract class NonJsNode {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+open class Parent : Granny {
+  constructor() /* primary */ {
+    super/*Granny*/()
+    /* <init>() */
+
+  }
+
+}
+
+abstract class SourceInfoAwareJsNode : JsNode {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+interface JsNode {
+}
+
+interface JsStatement : JsNode {
+}
+
+interface SomeOtherInterface {
+}
+
+fun listOfChild1Child2(): List<Granny> {
+  return listOf<Parent>(elements = [Child1(), Child2()])
+}
+
+fun listOfFooBar(): List<SomeOtherInterface> {
+  return listOf<Any>(elements = [Foo(), Bar()])
+}
+
+fun listOfVarsExport(): List<JsStatement> {
+  return listOf<JsNode>(elements = [JsVars(), JsExport()])
+}
+
+fun listOfVarsNonJsNode(): List<JsStatement> {
+  return listOf<JsStatement>(elements = [JsVars(), JsNonJsNode()])
+}
+
