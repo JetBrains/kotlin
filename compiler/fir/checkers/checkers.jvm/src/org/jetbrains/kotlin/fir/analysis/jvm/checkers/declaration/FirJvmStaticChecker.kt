@@ -44,20 +44,13 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
             return
         }
 
-        val declarationAnnotation = declaration.findAnnotation(JvmStandardClassIds.Annotations.JvmStatic, context.session)
-
-        if (declarationAnnotation != null) {
-            checkAnnotated(declaration, context, reporter, declaration.source)
-        }
-
         fun checkIfAnnotated(it: FirDeclaration) {
-            if (!it.hasAnnotation(JvmStandardClassIds.Annotations.JvmStatic, context.session)) {
-                return
-            }
-            val targetSource = it.source ?: declaration.source
+            val annotation = it.findAnnotation(JvmStandardClassIds.Annotations.JvmStatic, context.session) ?: return
+            val targetSource = annotation.source ?: it.source ?: declaration.source
             checkAnnotated(it, context, reporter, targetSource, declaration as? FirProperty)
         }
 
+        checkIfAnnotated(declaration)
         if (declaration is FirProperty) {
             declaration.getter?.let { checkIfAnnotated(it) }
             declaration.setter?.let { checkIfAnnotated(it) }
