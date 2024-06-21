@@ -444,7 +444,7 @@ class BodyGenerator(
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) {
-        val klass = functionContext.irFunction.parentAsClass
+        val klass = functionContext.irFunction!!.parentAsClass
 
         // Don't delegate constructors of Any to Any.
         if (klass.defaultType.isAny()) {
@@ -486,13 +486,13 @@ class BodyGenerator(
         }
 
         // Some intrinsics are a special case because we want to remove them completely, including their arguments.
-        if (!backendContext.configuration.getNotNull(WasmConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS)) {
+        if (backendContext.configuration.get(WasmConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS) != true) {
             if (call.symbol == wasmSymbols.rangeCheck) {
                 body.buildGetUnit()
                 return
             }
         }
-        if (!backendContext.configuration.getNotNull(WasmConfigurationKeys.WASM_ENABLE_ASSERTS)) {
+        if (backendContext.configuration.get(WasmConfigurationKeys.WASM_ENABLE_ASSERTS) != true) {
             if (call.symbol in wasmSymbols.assertFuncs) {
                 body.buildGetUnit()
                 return
@@ -1183,6 +1183,6 @@ class BodyGenerator(
         return false
     }
 
-    private fun IrElement.getSourceLocation() = getSourceLocation(functionContext.currentFunction.fileOrNull)
-    private fun IrElement.getSourceEndLocation() = getSourceLocation(functionContext.currentFunction.fileOrNull, type = LocationType.END)
+    private fun IrElement.getSourceLocation() = getSourceLocation(functionContext.currentFunction?.fileOrNull)
+    private fun IrElement.getSourceEndLocation() = getSourceLocation(functionContext.currentFunction?.fileOrNull, type = LocationType.END)
 }

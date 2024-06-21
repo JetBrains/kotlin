@@ -15,10 +15,16 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.isDispatchReceiver
+import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
@@ -49,8 +55,26 @@ interface JsCommonBackendContext : CommonBackendContext {
     val enumEntries: IrClassSymbol
     val createEnumEntries: IrSimpleFunctionSymbol
 
-    fun createTestContainerFun(container: IrDeclaration): IrSimpleFunction
+    val testFunsPerFile: HashMap<IrFile, IrSimpleFunction>
 
+    fun createTestContainerFun(container: IrDeclaration): IrSimpleFunction {
+        val irFile = container.file
+        return irFactory.stageController.restrictTo(container) {
+            testFunsPerFile.getOrPut(irFile) {
+                irFactory.addFunction(irFile) {
+                    name = Name.identifier("test fun")
+                    returnType = irBuiltIns.unitType
+                    origin = JsIrBuilder.SYNTHESIZED_DECLARATION
+                }.apply {
+                    body = irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, emptyList())
+                }
+            }
+        }
+    }
+
+    val externalPackageFragment: MutableMap<IrFileSymbol, IrFile>
+    val additionalExportedDeclarations: Set<IrDeclaration>
+    val bodilessBuiltInsPackageFragment: IrPackageFragment
 }
 
 // TODO: investigate if it could be removed

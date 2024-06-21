@@ -166,14 +166,6 @@ class DeclarationGenerator(
 
         wasmFileCodegenContext.defineFunction(declaration.symbol, function)
 
-        val initPriority = when (declaration) {
-            backendContext.fieldInitFunction -> "0"
-            backendContext.mainCallsWrapperFunction -> "1"
-            else -> null
-        }
-        if (initPriority != null)
-            wasmFileCodegenContext.registerInitFunction(function, initPriority)
-
         val nameIfExported = when {
             declaration.isJsExport() -> declaration.getJsNameOrKotlinName().identifier
             else -> declaration.getWasmExportNameIfWasmExport()
@@ -332,7 +324,6 @@ class DeclarationGenerator(
         val nameStr = declaration.fqNameWhenAvailable.toString()
 
         if (declaration.isInterface) {
-            wasmFileCodegenContext.defineDeclaredInterface(declaration.symbol)
             val vtableStruct = createVirtualTableStruct(
                 methods = wasmModuleMetadataCache.getInterfaceMetadata(symbol).methods,
                 name = "$nameStr.itable",
@@ -437,16 +428,34 @@ class DeclarationGenerator(
 
         val initValue: IrExpression? = declaration.initializer?.expression
         if (initValue != null) {
-            check(initValue is IrConst<*> && initValue.kind !is IrConstKind.String) {
-                "Static field initializer should be string or const"
+            if (initValue is IrConst<*> && initValue.kind !is IrConstKind.String) {
+                generateConstExpression(
+                    initValue,
+                    wasmExpressionGenerator,
+                    wasmFileCodegenContext,
+                    backendContext,
+                    declaration.getSourceLocation(declaration.fileOrNull)
+                )
+            } else {
+                val stubFunction = WasmFunction.Defined("static_fun_stub", WasmSymbol())
+                val functionCodegenContext = WasmFunctionCodegenContext(
+                    null,
+                    stubFunction,
+                    backendContext,
+                    wasmFileCodegenContext,
+                    wasmModuleTypeTransformer
+                )
+                val bodyGenerator = BodyGenerator(
+                    backendContext,
+                    wasmFileCodegenContext,
+                    functionCodegenContext,
+                    wasmModuleMetadataCache,
+                    wasmModuleTypeTransformer,
+                )
+                bodyGenerator.generateExpression(initValue)
+                wasmFileCodegenContext.addFieldInitializer(declaration.symbol, stubFunction.instructions)
+                generateDefaultInitializerForType(wasmType, wasmExpressionGenerator)
             }
-            generateConstExpression(
-                initValue,
-                wasmExpressionGenerator,
-                wasmFileCodegenContext,
-                backendContext,
-                declaration.getSourceLocation(declaration.fileOrNull)
-            )
         } else {
             generateDefaultInitializerForType(wasmType, wasmExpressionGenerator)
         }

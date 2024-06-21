@@ -353,10 +353,10 @@ private val addContinuationToFunctionCallsLoweringPhase = makeIrModulePhase(
     )
 )
 
-private val addMainFunctionCallsLowering = makeIrModulePhase(
-    ::GenerateMainFunctionCalls,
-    name = "GenerateMainFunctionCalls",
-    description = "Generate main function calls into start function",
+private val generateMainFunctionWrappersPhase = makeIrModulePhase(
+    ::GenerateMainFunctionWrappers,
+    name = "GenerateMainFunctionWrappers",
+    description = "Find main functions and generate main function wrappers",
 )
 
 private val defaultArgumentStubGeneratorPhase = makeIrModulePhase<WasmBackendContext>(
@@ -699,7 +699,7 @@ val loweringList = listOf(
 
     wasmStringSwitchOptimizerLowering,
 
-    associatedObjectsLowering,
+//    associatedObjectsLowering,
 
     complexExternalDeclarationsToTopLevelFunctionsLowering,
     complexExternalDeclarationsUsagesLowering,
@@ -716,7 +716,7 @@ val loweringList = listOf(
 
     addContinuationToNonLocalSuspendFunctionsLoweringPhase,
     addContinuationToFunctionCallsLoweringPhase,
-    addMainFunctionCallsLowering,
+    generateMainFunctionWrappersPhase,
 
     invokeOnExportedFunctionExitLowering,
 
@@ -758,7 +758,7 @@ val loweringList = listOf(
 
     objectUsageLoweringPhase,
     purifyObjectInstanceGettersLoweringPhase,
-    fieldInitializersLoweringPhase,
+//    fieldInitializersLoweringPhase,
 
     explicitlyCastExternalTypesPhase,
     typeOperatorLoweringPhase,

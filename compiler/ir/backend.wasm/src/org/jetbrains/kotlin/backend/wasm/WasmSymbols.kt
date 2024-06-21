@@ -167,7 +167,7 @@ class WasmSymbols(
     fun findClosureBoxClass(type: IrType): IrClassSymbol =
         closureBoxClasses[type] ?: closureBoxAnyClass
 
-    val equalityFunctions by lazy {
+    val equalityFunctions =
         mapOf(
             context.irBuiltIns.booleanType to getInternalFunction("wasm_i32_eq"),
             context.irBuiltIns.byteType to getInternalFunction("wasm_i32_eq"),
@@ -180,7 +180,6 @@ class WasmSymbols(
             context.irBuiltIns.longType to getInternalFunction("wasm_i64_eq"),
             uLongType to getInternalFunction("wasm_i64_eq")
         )
-    }
 
     val floatEqualityFunctions = mapOf(
         context.irBuiltIns.floatType to getInternalFunction("wasm_f32_eq"),

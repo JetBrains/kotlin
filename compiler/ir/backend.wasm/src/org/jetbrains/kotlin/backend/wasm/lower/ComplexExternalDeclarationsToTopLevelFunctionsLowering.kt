@@ -425,7 +425,7 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
             return name!!
 
         val qualifieReference = JsModuleAndQualifierReference(module, qualifier)
-        context.jsModuleAndQualifierReferences += qualifieReference
+        context.getFileContext(currentFile).jsModuleAndQualifierReferences += qualifieReference
         return qualifieReference.jsVariableName + name?.let { ".$it" }.orEmpty()
     }
 }

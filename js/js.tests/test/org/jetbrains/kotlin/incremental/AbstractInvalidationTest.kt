@@ -23,13 +23,11 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.ir.backend.js.JsIrCompilerWithIC
+import org.jetbrains.kotlin.ir.backend.js.JsICContext
 import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
-import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.jsPhases
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.test.converters.ClassicJsBackendFacade
 import org.jetbrains.kotlin.js.test.utils.MODULE_EMULATION_FILE
@@ -400,28 +398,26 @@ abstract class AbstractInvalidationTest(
                     else -> projStep.dirtyJsModules
                 }
 
+                val icContext = JsICContext(
+                    mainArguments,
+                    granularity,
+                    getPhaseConfig(projStep.id),
+                    setOf(FqName(BOX_FUNCTION_NAME)),
+                )
+
+
                 val cacheUpdater = CacheUpdater(
                     mainModule = mainModuleInfo.modulePath,
                     allModules = testInfo.mapTo(mutableListOf(STDLIB_KLIB, KOTLIN_TEST_KLIB)) { it.modulePath },
                     mainModuleFriends = mainModuleInfo.friends,
                     cacheDir = buildDir.resolve("incremental-cache").absolutePath,
                     compilerConfiguration = configuration,
-                    irFactory = { IrFactoryImplForJsIC(WholeWorldStageController()) },
-                    compilerInterfaceFactory = { mainModule, cfg ->
-                        JsIrCompilerWithIC(
-                            mainModule,
-                            mainArguments,
-                            cfg,
-                            granularity,
-                            getPhaseConfig(projStep.id),
-                            setOf(FqName(BOX_FUNCTION_NAME)),
-                        )
-                    }
+                    icContext = icContext
                 )
 
                 val removedModulesInfo = (projectInfo.modules - projStep.order.toSet()).map { setupTestStep(projStep, it) }
 
-                val icCaches = cacheUpdater.actualizeCaches()
+                val icCaches = cacheUpdater.actualizeCaches().map { it as JsModuleArtifact }
                 verifyCacheUpdateStats(projStep.id, cacheUpdater.getDirtyFileLastStats(), testInfo + removedModulesInfo)
 
                 val mainModuleName = icCaches.last().moduleExternalName

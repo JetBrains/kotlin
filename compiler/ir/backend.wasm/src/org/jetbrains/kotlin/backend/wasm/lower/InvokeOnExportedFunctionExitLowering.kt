@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.name.Name
 
@@ -50,7 +51,9 @@ internal class InvokeOnExportedFunctionExitLowering(val context: WasmBackendCont
     private fun processExportFunction(irFunction: IrFunction) {
         val body = irFunction.body ?: return
         if (body is IrBlockBody && body.statements.isEmpty()) return
-        if (irFunction in context.closureCallExports.values) return
+        context.applyIfDefined(irFunction.file) {
+            if (irFunction in it.closureCallExports.values) return
+        }
 
         val bodyType = when (body) {
             is IrExpressionBody -> body.expression.type
@@ -122,7 +125,7 @@ internal class InvokeOnExportedFunctionExitLowering(val context: WasmBackendCont
     override fun lower(irFile: IrFile) {
         if (context.isWasmJsTarget) return
         for (declaration in irFile.declarations) {
-            if (declaration is IrFunction && (declaration.isExported() || context.mainCallsWrapperFunction == declaration)) {
+            if (declaration is IrFunction && (declaration.isExported() /*|| context.mainCallsWrapperFunction == declaration*/)) {
                 processExportFunction(declaration)
             }
         }
