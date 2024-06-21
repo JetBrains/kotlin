@@ -29,27 +29,27 @@ fun withBoxedGenericReceiver(arg: Box<Generic<*>>.() -> Unit) {}
 // FILE: c.kt
 
 fun test() {
-    produceBoxedConcrete()
+    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>produceBoxedConcrete<!>()
     <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>produceBoxedGeneric<!>()
 
-    consumeBoxedConcrete(produceBoxedConcrete())
-    consumeBoxedGeneric(<!ARGUMENT_TYPE_MISMATCH!><!MISSING_DEPENDENCY_CLASS!>produceBoxedGeneric<!>()<!>)
+    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>consumeBoxedConcrete<!>(<!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>produceBoxedConcrete<!>())
+    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>consumeBoxedGeneric<!>(<!ARGUMENT_TYPE_MISMATCH!><!MISSING_DEPENDENCY_CLASS!>produceBoxedGeneric<!>()<!>)
 
-    produceBoxedConcrete().useBoxedConcreteAsExtensionReceiver()
+    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>produceBoxedConcrete<!>().<!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>useBoxedConcreteAsExtensionReceiver<!>()
     <!MISSING_DEPENDENCY_CLASS!>produceBoxedGeneric<!>().<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>useBoxedGenericAsExtensionReceiver<!>()
 
-    withBoxedConcreteParameter { arg -> }
-    withBoxedGenericParameter { arg -> }
+    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>withBoxedConcreteParameter<!> { arg -> }
+    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>withBoxedGenericParameter<!> { arg -> }
 
-    withBoxedConcreteParameter(fun(arg) {})
-    withBoxedGenericParameter(fun(arg) {})
+    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>withBoxedConcreteParameter<!>(fun(arg) {})
+    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>withBoxedGenericParameter<!>(fun(arg) {})
 
-    withBoxedConcreteReceiver {}
-    withBoxedGenericReceiver {}
+    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>withBoxedConcreteReceiver<!> {}
+    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>withBoxedGenericReceiver<!> {}
 
-    ::produceBoxedConcrete
-    ::produceBoxedGeneric
+    ::<!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>produceBoxedConcrete<!>
+    ::<!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>produceBoxedGeneric<!>
 
-    ::consumeBoxedConcrete
-    ::consumeBoxedGeneric
+    ::<!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>consumeBoxedConcrete<!>
+    ::<!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>consumeBoxedGeneric<!>
 }

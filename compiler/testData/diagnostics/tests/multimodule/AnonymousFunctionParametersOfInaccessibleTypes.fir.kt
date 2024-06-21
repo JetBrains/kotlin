@@ -14,9 +14,9 @@ fun withGenericParameter(arg: (InaccessibleGenericType<*>) -> Unit) {}
 // FILE: end.kt
 
 fun test() {
-    withConcreteParameter(fun(<!MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER!>arg<!>) {})
-    withGenericParameter(fun(<!MISSING_DEPENDENCY_CLASS!>arg<!>) {})
+    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>withConcreteParameter<!>(fun(<!MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER!>arg<!>) {})
+    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>withGenericParameter<!>(fun(<!MISSING_DEPENDENCY_CLASS!>arg<!>) {})
 
-    withConcreteParameter(fun(arg: <!UNRESOLVED_REFERENCE!>InaccessibleConcreteType<!>) {})
-    withGenericParameter(fun(arg: <!UNRESOLVED_REFERENCE!>InaccessibleGenericType<!><*>) {})
+    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>withConcreteParameter<!>(fun(arg: <!UNRESOLVED_REFERENCE!>InaccessibleConcreteType<!>) {})
+    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>withGenericParameter<!>(fun(arg: <!UNRESOLVED_REFERENCE!>InaccessibleGenericType<!><*>) {})
 }
