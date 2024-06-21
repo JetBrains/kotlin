@@ -180,7 +180,12 @@ public fun runSwiftExport(
     listOf(buildResult.mainModule, buildResult.moduleForPackageEnums).forEach {
         val bridgeRequests = buildBridgeRequests(bridgeGenerator, it)
         if (bridgeRequests.isNotEmpty()) {
-            it.updateImports(listOf(SirImport(moduleName = bridgesModuleName)))
+            it.updateImport(
+                SirImport(
+                    moduleName = bridgesModuleName,
+                    isImplementationOnly = true,
+                )
+            )
         }
         it.dumpResultToFiles(
             output = it.createOutputFiles(config.outputPath),
