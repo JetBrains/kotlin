@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedReifiedParameterReference
-import org.jetbrains.kotlin.fir.extractNestedClassAccessDiagnostic
-import org.jetbrains.kotlin.fir.extractNonFatalDiagnostics
+import org.jetbrains.kotlin.fir.resolve.extractNestedClassAccessDiagnostic
+import org.jetbrains.kotlin.fir.resolve.extractNonFatalDiagnostics
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildBackingFieldReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
