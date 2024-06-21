@@ -1,0 +1,24 @@
+KaJavaFieldSymbol:
+  annotations: []
+  callableId: /JavaClass.count
+  contextReceivers: []
+  isExtension: false
+  isStatic: false
+  isVal: false
+  location: CLASS
+  modality: OPEN
+  name: count
+  origin: JAVA_SOURCE
+  receiverParameter: null
+  returnType: KaFlexibleType:
+    annotations: []
+    type: kotlin/Int!
+  visibility: ProtectedAndPackage
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: JavaClass
+  getContainingFileSymbol: null
+  getContainingJvmClassName: JavaClass
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
