@@ -249,6 +249,41 @@ class KlibAbiMergingTest {
     }
 
     @Test
+    fun explicitWasmTargets() {
+        val klib = KlibAbiDumpMerger()
+        klib.merge(file("/merge/explicitWasmTargets/wasmWasi.abi"))
+        klib.merge(file("/merge/explicitWasmTargets/wasmJs.abi"))
+
+        val merged = dumpToFile(klib)
+
+        assertContentEquals(
+            lines("/merge/explicitWasmTargets/merged.abi"),
+            Files.readAllLines(merged.toPath()).asSequence()
+        )
+    }
+
+    @Test
+    fun renameWasmTargetHavingNameInManifest() {
+        val klib = KlibAbiDumpMerger()
+        klib.merge(file("/merge/explicitWasmTargets/wasmWasi.abi"), "wasm")
+        assertEquals(setOf(KlibTarget.parse("wasmWasi.wasm")), klib.targets)
+    }
+
+    @Test
+    fun wasmDumpWithMultipleTargets() {
+        val klib = KlibAbiDumpMerger()
+        assertFailsWith<IllegalArgumentException>{
+            klib.merge(file("/merge/explicitWasmTargets/wasmMulti.abi"), "wasm")
+        }
+
+        klib.merge(file("/merge/explicitWasmTargets/wasmMulti.abi"))
+        assertContentEquals(
+            lines("/merge/explicitWasmTargets/merged.abi"),
+            Files.readAllLines(dumpToFile(klib).toPath()).asSequence()
+        )
+    }
+
+    @Test
     fun unqualifiedWasmTarget() {
         // currently, there's no way to distinguish wasmWasi from wasmJs
         assertFailsWith<IllegalStateException> {

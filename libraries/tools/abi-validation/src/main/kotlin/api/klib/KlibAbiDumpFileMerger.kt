@@ -49,6 +49,7 @@ private const val INDENT_WIDTH = 4
 private const val ALIAS_PREFIX = "// Alias: "
 private const val PLATFORM_PREFIX = "// Platform: "
 private const val NATIVE_TARGETS_PREFIX = "// Native targets: "
+private const val WASM_TARGETS_PREFIX = "// WASM targets: "
 private const val LIBRARY_NAME_PREFIX = "// Library unique name:"
 
 private fun String.depth(): Int {
@@ -265,7 +266,8 @@ internal class KlibAbiDumpMerger {
                     platform = next.split(": ")[1].trim()
                 }
 
-                next.startsWith(NATIVE_TARGETS_PREFIX) -> {
+                next.startsWith(NATIVE_TARGETS_PREFIX) || next.startsWith(WASM_TARGETS_PREFIX) -> {
+                    check(targets == null) { "Targets list was already parsed" }
                     targets = next.split(": ")[1].trim()
                 }
             }
@@ -287,12 +289,12 @@ internal class KlibAbiDumpMerger {
             "The dump does not contain platform name. Please make sure that the manifest was included in the dump"
         }
 
-        if (platformString == "WASM") {
-            // Currently, there's no way to distinguish Wasm targets without explicitly specifying a target name
+        if (platformString == "WASM" && targetsString == null) {
+            // For older dumps, there's no way to distinguish Wasm targets without explicitly specifying a target name
             check(configurableTargetName != null) { "targetName has to be specified for a Wasm target" }
             return setOf(KlibTarget(configurableTargetName))
         }
-        if (platformString != "NATIVE") {
+        if (platformString != "NATIVE" && platformString != "WASM") {
             val platformStringLc = platformString.toLowerCase(Locale.ROOT)
             return if (configurableTargetName == null) {
                 setOf(KlibTarget(platformStringLc))
