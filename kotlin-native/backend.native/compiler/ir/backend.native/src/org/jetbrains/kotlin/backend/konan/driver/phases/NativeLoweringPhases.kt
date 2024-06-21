@@ -363,12 +363,12 @@ private val inlineOnlyPrivateFunctionsPhase = createFileLoweringPhase(
         prerequisite = setOf(lowerBeforeInlinePhase, arrayConstructorPhase, extractLocalClassesFromInlineBodies)
 )
 
-private val inlinePhase = createFileLoweringPhase(
+internal val inlineAllFunctionsPhase = createFileLoweringPhase(
         lowering = { context: NativeGenerationState ->
             NativeIrInliner(context, inlineOnlyPrivateFunctions = false)
         },
-        name = "Inline",
-        description = "Functions inlining",
+        name = "InlineAllFunctions",
+        description = "The second phase of inlining (inline all functions)",
         prerequisite = setOf(lowerBeforeInlinePhase, arrayConstructorPhase, extractLocalClassesFromInlineBodies)
 )
 
@@ -376,7 +376,7 @@ private val interopPhase = createFileLoweringPhase(
         lowering = ::InteropLowering,
         name = "Interop",
         description = "Interop lowering",
-        prerequisite = setOf(inlinePhase, localFunctionsPhase, functionReferencePhase)
+        prerequisite = setOf(inlineAllFunctionsPhase, localFunctionsPhase, functionReferencePhase)
 )
 
 private val varargPhase = createFileLoweringPhase(
@@ -548,10 +548,10 @@ private val constEvaluationPhase = createFileLoweringPhase(
         },
         name = "ConstEvaluationLowering",
         description = "Evaluate functions that are marked as `IntrinsicConstEvaluation`",
-        prerequisite = setOf(inlinePhase)
+        prerequisite = setOf(inlineAllFunctionsPhase)
 )
 
-internal fun PhaseEngine<NativeGenerationState>.getLoweringsUpToAndIncludingInlining(): LoweringList = listOfNotNull(
+internal fun PhaseEngine<NativeGenerationState>.getLoweringsUpToAndIncludingSyntheticAccessors(): LoweringList = listOfNotNull(
         lowerBeforeInlinePhase,
         lateinitPhase,
         sharedVariablesPhase,
@@ -562,7 +562,6 @@ internal fun PhaseEngine<NativeGenerationState>.getLoweringsUpToAndIncludingInli
         wrapInlineDeclarationsWithReifiedTypeParametersLowering,
         inlineOnlyPrivateFunctionsPhase.takeIf { context.config.configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING) },
         // TODO KT-69174: the placeholder for synthetic accessors lowering
-        inlinePhase,
 )
 
 internal fun PhaseEngine<NativeGenerationState>.getLoweringsAfterInlining(): LoweringList = listOfNotNull(
