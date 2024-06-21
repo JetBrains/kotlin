@@ -23688,6 +23688,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("overrideAnClashWithJvmSignatureInMPP.kt")
+        public void testOverrideAnClashWithJvmSignatureInMPP() {
+          runTest("compiler/testData/diagnostics/tests/j+k/collectionOverrides/overrideAnClashWithJvmSignatureInMPP.kt");
+        }
+
+        @Test
         @TestMetadata("removeAt.kt")
         public void testRemoveAt() {
           runTest("compiler/testData/diagnostics/tests/j+k/collectionOverrides/removeAt.kt");

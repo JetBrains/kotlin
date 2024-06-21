@@ -422,6 +422,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
   }
 
   @Test
+  @TestMetadata("noOverrideClashWithSignatureInMppCommon.kt")
+  public void testNoOverrideClashWithSignatureInMppCommon() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/noOverrideClashWithSignatureInMppCommon.kt");
+  }
+
+  @Test
   @TestMetadata("optionalExpectationDiagnostics.kt")
   public void testOptionalExpectationDiagnostics() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/optionalExpectationDiagnostics.kt");

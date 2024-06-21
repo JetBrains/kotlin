@@ -23688,6 +23688,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("overrideAnClashWithJvmSignatureInMPP.kt")
+        public void testOverrideAnClashWithJvmSignatureInMPP() {
+          runTest("compiler/testData/diagnostics/tests/j+k/collectionOverrides/overrideAnClashWithJvmSignatureInMPP.kt");
+        }
+
+        @Test
         @TestMetadata("removeAt.kt")
         public void testRemoveAt() {
           runTest("compiler/testData/diagnostics/tests/j+k/collectionOverrides/removeAt.kt");
@@ -26464,6 +26470,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       @TestMetadata("nestedClassViaActualTypealiasWithTypeParam.kt")
       public void testNestedClassViaActualTypealiasWithTypeParam() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/nestedClassViaActualTypealiasWithTypeParam.kt");
+      }
+
+      @Test
+      @TestMetadata("noOverrideClashWithSignatureInMppCommon.kt")
+      public void testNoOverrideClashWithSignatureInMppCommon() {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/noOverrideClashWithSignatureInMppCommon.kt");
       }
 
       @Test
