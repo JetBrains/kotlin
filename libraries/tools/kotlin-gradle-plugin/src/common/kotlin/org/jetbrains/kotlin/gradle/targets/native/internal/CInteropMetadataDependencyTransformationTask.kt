@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
@@ -189,7 +190,8 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
 
     private fun Iterable<MetadataDependencyResolution>.resolutionsToTransform(): List<ChooseVisibleSourceSets> {
         return filterIsInstance<ChooseVisibleSourceSets>()
-            .filterNot { it.dependency in currentBuild }
+            // filter all Project dependencies, this includes both from composite builds and the current build
+            .filterNot { it.dependency.id is ProjectComponentIdentifier }
     }
 }
 
