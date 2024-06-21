@@ -122,8 +122,8 @@ object CheckExtensionReceiver : ResolutionStage() {
         context: ResolutionContext
     ) {
         val receiver = receivers.single()
-        candidate.resolvePlainArgumentType(
-            candidate.csBuilder,
+        ArgumentCheckingProcessor.resolvePlainArgumentType(
+            candidate,
             receiver.expression,
             argumentType = receiver.type,
             expectedType = expectedType,

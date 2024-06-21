@@ -70,8 +70,8 @@ internal object CheckArguments : CheckerStage() {
         argument.coneTypeOrNull.ensureResolvedTypeDeclaration(context.session)
         val expectedType =
             prepareExpectedType(context.session, context.bodyResolveComponents.scopeSession, callInfo, argument, parameter, context)
-        resolveArgumentExpression(
-            this.system.getBuilder(),
+        ArgumentCheckingProcessor.resolveArgumentExpression(
+            this,
             argument,
             expectedType,
             sink,

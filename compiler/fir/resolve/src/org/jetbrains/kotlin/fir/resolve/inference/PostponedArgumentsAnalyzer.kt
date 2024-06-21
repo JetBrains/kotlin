@@ -222,8 +222,8 @@ class PostponedArgumentsAnalyzer(
 
             hasExpressionInReturnArguments = true
             if (!builder.hasContradiction) {
-                candidate.resolveArgumentExpression(
-                    builder,
+                ArgumentCheckingProcessor.resolveArgumentExpression(
+                    candidate,
                     it,
                     substituteAlreadyFixedVariables(lambda.returnType),
                     checkerSink,
