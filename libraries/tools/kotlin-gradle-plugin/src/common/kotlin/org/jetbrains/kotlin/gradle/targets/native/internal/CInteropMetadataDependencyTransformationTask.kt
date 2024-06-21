@@ -137,12 +137,12 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
     @get:OutputFile
     protected val outputLibrariesFileIndex: RegularFileProperty = objectFactory
         .fileProperty()
-        .apply { set(outputDirectory.resolve("${project.path.replace(":", ".")}-${sourceSet.name}.cinteropLibraries")) }
+        .apply { set(outputDirectory.resolve("${project.path.replace(":", ".")}-${sourceSet.name}.cinteropLibraries.json")) }
 
     @get:Internal
     internal val outputLibraryFiles: FileCollection = project.filesProvider {
         outputLibrariesFileIndex.map { file ->
-            KotlinMetadataLibrariesIndexFile(file.asFile).read()
+            KotlinMetadataLibrariesIndexFile(file.asFile).readFiles()
         }
     }
 
@@ -157,13 +157,21 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
          */
         val transformation = GranularMetadataTransformation(parameters, ParentSourceSetVisibilityProvider.Empty)
         val chooseVisibleSourceSets = transformation.metadataDependencyResolutions.resolutionsToTransform()
-        val transformedLibraries = chooseVisibleSourceSets.flatMap(::materializeMetadata)
+        val transformedLibraries = chooseVisibleSourceSets.flatMap { resolution ->
+            materializeMetadata(resolution).map { (sourceSetName, cinteropFile) ->
+                TransformedMetadataLibraryRecord(
+                    moduleId = resolution.dependency.id.toString(),
+                    file = cinteropFile.toString(),
+                    sourceSetName = sourceSetName
+                )
+            }
+        }
         KotlinMetadataLibrariesIndexFile(outputLibrariesFileIndex.get().asFile).write(transformedLibraries)
     }
 
     private fun materializeMetadata(
         chooseVisibleSourceSets: ChooseVisibleSourceSets,
-    ): Iterable<File> {
+    ): Iterable<Pair<String /* sourceSetName */, File>> {
         return when (val metadataProvider = chooseVisibleSourceSets.metadataProvider) {
             /* Project to Project commonized cinterops are shared using configurations */
             is ProjectMetadataProvider -> emptyList()
@@ -174,7 +182,7 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
                 val sourceSetContent = artifactContent.findSourceSet(visibleSourceSetName) ?: return emptyList()
                 sourceSetContent.cinteropMetadataBinaries
                     .onEach { cInteropMetadataBinary -> cInteropMetadataBinary.copyIntoDirectory(outputDirectory) }
-                    .map { cInteropMetadataBinary -> outputDirectory.resolve(cInteropMetadataBinary.relativeFile) }
+                    .map { cInteropMetadataBinary -> visibleSourceSetName to outputDirectory.resolve(cInteropMetadataBinary.relativeFile) }
             }
         }
     }
