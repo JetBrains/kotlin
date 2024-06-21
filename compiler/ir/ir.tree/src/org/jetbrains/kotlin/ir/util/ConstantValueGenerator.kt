@@ -94,7 +94,7 @@ abstract class ConstantValueGenerator(
                 val arrayElementType = expectedArrayElementType ?: constantValueType.getArrayElementType()
                 IrVarargImpl(
                     startOffset, endOffset,
-                    constantType,
+                    constantValueType.toIrType(),
                     arrayElementType.toIrType(),
                     constantValue.value.memoryOptimizedMapNotNull {
                         // For annotation arguments, the type of every subexpression can be inferred from the type of the parameter;
