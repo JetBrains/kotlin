@@ -355,10 +355,14 @@ class ConeOverloadConflictResolver(
         return result
     }
 
+    /**
+     * call1.expect
+     */
     private fun checkExpectAndNotLessSpecificShape(
         call1: FlatSignature<Candidate>,
         call2: FlatSignature<Candidate>
     ): Boolean {
+        // !false && false
         if (!call1.isExpect && call2.isExpect) return true
         if (call1.isExpect && !call2.isExpect) return false
         val hasVarargs1 = call1.hasVarargs

@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.types.model.typeConstructor
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 internal object ArgumentCheckingProcessor {
@@ -77,17 +78,19 @@ internal object ArgumentCheckingProcessor {
         argumentContext.resolvePlainArgumentType(argument, argumentType, sourceForReceiver = sourceForReceiver)
     }
 
-    fun preprocessLambdaArgument(
+    fun createResolvedLambdaAtomDuringCompletion(
         candidate: Candidate,
         csBuilder: ConstraintSystemBuilder,
         argument: FirAnonymousFunctionExpression,
         expectedType: ConeKotlinType?,
         context: ResolutionContext,
-        duringCompletion: Boolean,
-        returnTypeVariable: ConeTypeVariableForLambdaReturnType? = null
-    ): ConePostponedResolvedAtom {
-        val argumentContext = ArgumentContext(candidate, csBuilder, expectedType, sink = null, context, isReceiver = false, isDispatch = false)
-        return argumentContext.preprocessLambdaArgument(argument, duringCompletion, returnTypeVariable)
+        returnTypeVariable: ConeTypeVariableForLambdaReturnType?
+    ): ConeResolvedLambdaAtom {
+        val argumentContext = ArgumentContext(
+            candidate, csBuilder, expectedType, sink = null,
+            context, isReceiver = false, isDispatch = false
+        )
+        return argumentContext.createResolvedLambdaAtom(argument, duringCompletion = true, returnTypeVariable)
     }
 
     // -------------------------------------------- Real implementation --------------------------------------------
@@ -100,21 +103,17 @@ internal object ArgumentCheckingProcessor {
             // we obtain argument type (and argument's constraint system) from "$not-null-receiver$.bar()" (argument.regularQualifiedAccess)
             // and then add constraint: typeOf(`$not-null-receiver$.bar()`).makeNullable() <: EXPECTED_TYPE
             // NB: argument.regularQualifiedAccess is either a call or a qualified access
-            is FirSafeCallExpression -> {
-                val nestedQualifier = (argument.selector as? FirExpression)?.unwrapSmartcastExpression()
-                if (nestedQualifier is FirQualifiedAccessExpression) {
-                    resolvePlainExpressionArgument(
-                        nestedQualifier,
-                        useNullableArgumentType = true
-                    )
-                } else {
-                    // Assignment
-                    checkApplicabilityForArgumentType(
-                        argument,
-                        StandardClassIds.Unit.constructClassLikeType(emptyArray(), isNullable = false),
-                        SimpleConstraintSystemConstraintPosition,
-                    )
-                }
+            is FirSafeCallExpression -> when (val nestedQualifier = (argument.selector as? FirExpression)?.unwrapSmartcastExpression()) {
+                is FirQualifiedAccessExpression -> resolvePlainExpressionArgument(
+                    nestedQualifier,
+                    useNullableArgumentType = true
+                )
+                // Assignment
+                else -> checkApplicabilityForArgumentType(
+                    argument,
+                    StandardClassIds.Unit.constructClassLikeType(emptyArray(), isNullable = false),
+                    SimpleConstraintSystemConstraintPosition,
+                )
             }
             is FirCallableReferenceAccess -> when (argument.calleeReference) {
                 is FirResolvedNamedReference -> resolvePlainExpressionArgument(argument)
@@ -124,13 +123,9 @@ internal object ArgumentCheckingProcessor {
             is FirAnonymousFunctionExpression -> preprocessLambdaArgument(argument)
             is FirWrappedArgumentExpression -> resolveArgumentExpression(argument.expression)
             is FirBlock -> resolveBlockArgument(argument)
-            is FirErrorExpression -> {
-                val wrappedExpression = argument.expression
-                if (wrappedExpression != null) {
-                    resolveArgumentExpression(wrappedExpression)
-                } else {
-                    resolvePlainExpressionArgument(argument)
-                }
+            is FirErrorExpression -> when (val wrappedExpression = argument.expression) {
+                null -> resolvePlainExpressionArgument(argument)
+                else -> resolveArgumentExpression(wrappedExpression)
             }
             else -> resolvePlainExpressionArgument(argument)
         }
@@ -178,11 +173,9 @@ internal object ArgumentCheckingProcessor {
 
         val capturedType = prepareCapturedType(argumentType, context)
 
-        var argumentTypeForApplicabilityCheck =
-            if (useNullableArgumentType)
-                capturedType.withNullability(ConeNullability.NULLABLE, session.typeContext)
-            else
-                capturedType
+        var argumentTypeForApplicabilityCheck = capturedType.applyIf(useNullableArgumentType) {
+            withNullability(ConeNullability.NULLABLE, session.typeContext)
+        }
 
         // If the argument is of functional type and the expected type is a suspend function type, we need to do "suspend conversion."
         if (expectedType != null) {
@@ -225,8 +218,9 @@ internal object ArgumentCheckingProcessor {
                     }
 
                     val originalTypeParameter = lookupTag.originalTypeParameter as? ConeTypeParameterLookupTag
-                    if (originalTypeParameter != null)
+                    if (originalTypeParameter != null) {
                         return ConeTypeParameterTypeImpl(originalTypeParameter, type.isNullable, type.attributes)
+                    }
                 } else if (type is ConeIntegerLiteralType) {
                     return type.possibleTypes.firstOrNull() ?: type
                 }
@@ -248,50 +242,49 @@ internal object ArgumentCheckingProcessor {
             )
         }
 
-        if (isReceiver && isDispatch) {
-            if (!expectedType.isNullable && argumentType.isMarkedNullable) {
-                sink.reportDiagnostic(InapplicableWrongReceiver(expectedType, argumentType))
-            }
-            return
-        }
-
-        if (isReceiver && expectedType is ConeDynamicType && argumentType !is ConeDynamicType) {
-            sink.reportDiagnostic(DynamicReceiverExpectedButWasNonDynamic(argumentType))
-            return
-        }
-
-        if (!csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedType, position)) {
-            val smartcastExpression = argument as? FirSmartCastExpression
-            if (smartcastExpression != null && !smartcastExpression.isStable) {
-                val unstableType = smartcastExpression.smartcastType.coneType
-                if (csBuilder.addSubtypeConstraintIfCompatible(unstableType, expectedType, position)) {
-                    sink.reportDiagnostic(
-                        UnstableSmartCast(
-                            smartcastExpression,
-                            expectedType,
-                            session.typeContext.isTypeMismatchDueToNullability(
-                                argumentType,
-                                expectedType
-                            ),
-                            isImplicitInvokeReceiver = false,
-                        )
-                    )
-                    return
+        when {
+            isReceiver && isDispatch -> {
+                if (!expectedType.isNullable && argumentType.isMarkedNullable) {
+                    sink.reportDiagnostic(InapplicableWrongReceiver(expectedType, argumentType))
                 }
             }
 
-            if (!isReceiver) {
-                sink.reportDiagnostic(subtypeError(expectedType))
-                return
+            isReceiver && expectedType is ConeDynamicType && argumentType !is ConeDynamicType -> {
+                sink.reportDiagnostic(DynamicReceiverExpectedButWasNonDynamic(argumentType))
             }
 
-            val nullableExpectedType = expectedType.withNullability(ConeNullability.NULLABLE, session.typeContext)
+            else -> {
+                if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedType, position)) return // no errors
 
-            if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, nullableExpectedType, position)) {
-                sink.reportDiagnostic(UnsafeCall(argumentType))
-            } else {
-                csBuilder.addSubtypeConstraint(argumentType, expectedType, position)
-                sink.reportDiagnostic(InapplicableWrongReceiver(expectedType, argumentType))
+                val smartcastExpression = argument as? FirSmartCastExpression
+                if (smartcastExpression != null && !smartcastExpression.isStable) {
+                    val unstableType = smartcastExpression.smartcastType.coneType
+                    if (csBuilder.addSubtypeConstraintIfCompatible(unstableType, expectedType, position)) {
+                        sink.reportDiagnostic(
+                            UnstableSmartCast(
+                                smartcastExpression,
+                                expectedType,
+                                isCastToNotNull = session.typeContext.isTypeMismatchDueToNullability(argumentType, expectedType),
+                                isImplicitInvokeReceiver = false,
+                            )
+                        )
+                        return
+                    }
+                }
+
+                if (!isReceiver) {
+                    sink.reportDiagnostic(subtypeError(expectedType))
+                    return
+                }
+
+                val nullableExpectedType = expectedType.withNullability(ConeNullability.NULLABLE, session.typeContext)
+
+                if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, nullableExpectedType, position)) {
+                    sink.reportDiagnostic(UnsafeCall(argumentType))
+                } else {
+                    csBuilder.addSubtypeConstraint(argumentType, expectedType, position)
+                    sink.reportDiagnostic(InapplicableWrongReceiver(expectedType, argumentType))
+                }
             }
         }
     }
@@ -301,28 +294,35 @@ internal object ArgumentCheckingProcessor {
         candidate.addPostponedAtom(ConeResolvedCallableReferenceAtom(argument, expectedType, lhs, context.session))
     }
 
-    private fun ArgumentContext.preprocessLambdaArgument(
-        argument: FirAnonymousFunctionExpression,
-        duringCompletion: Boolean = false,
-        returnTypeVariable: ConeTypeVariableForLambdaReturnType? = null
-    ): ConePostponedResolvedAtom {
-        if (expectedType != null && !duringCompletion && csBuilder.isTypeVariable(expectedType)) {
-            val expectedTypeVariableWithConstraints =
-                csBuilder.currentStorage().notFixedTypeVariables[expectedType.typeConstructor(context.typeContext)]
+    private fun ArgumentContext.preprocessLambdaArgument(argument: FirAnonymousFunctionExpression): ConePostponedResolvedAtom {
+        createLambdaWithTypeVariableAsExpectedTypeAtomIfNeeded(argument)?.let { return it }
+        return createResolvedLambdaAtom(argument, duringCompletion = false, returnTypeVariable = null)
+    }
 
-            if (expectedTypeVariableWithConstraints != null) {
-                val explicitTypeArgument = expectedTypeVariableWithConstraints.constraints.find {
-                    it.kind == ConstraintKind.EQUALITY && it.position.from is ConeExplicitTypeParameterConstraintPosition
-                }?.type as ConeKotlinType?
+    private fun ArgumentContext.createLambdaWithTypeVariableAsExpectedTypeAtomIfNeeded(
+        argument: FirAnonymousFunctionExpression
+    ): ConeLambdaWithTypeVariableAsExpectedTypeAtom? {
+        if (expectedType == null || !csBuilder.isTypeVariable(expectedType)) return null
+        val expectedTypeVariableWithConstraints = csBuilder.currentStorage()
+            .notFixedTypeVariables[expectedType.typeConstructor(context.typeContext)]
+            ?: return null
 
-                if (explicitTypeArgument == null || explicitTypeArgument.typeArguments.isNotEmpty()) {
-                    return ConeLambdaWithTypeVariableAsExpectedTypeAtom(argument, expectedType, candidate).also {
-                        candidate.addPostponedAtom(it)
-                    }
-                }
+        val explicitTypeArgument = expectedTypeVariableWithConstraints.constraints.find {
+            it.kind == ConstraintKind.EQUALITY && it.position.from is ConeExplicitTypeParameterConstraintPosition
+        }?.type as ConeKotlinType?
+
+        return runIf(explicitTypeArgument == null || explicitTypeArgument.typeArguments.isNotEmpty()) {
+            ConeLambdaWithTypeVariableAsExpectedTypeAtom(argument, expectedType, candidate).also {
+                candidate.addPostponedAtom(it)
             }
         }
+    }
 
+    private fun ArgumentContext.createResolvedLambdaAtom(
+        argument: FirAnonymousFunctionExpression,
+        duringCompletion: Boolean,
+        returnTypeVariable: ConeTypeVariableForLambdaReturnType?
+    ): ConeResolvedLambdaAtom {
         val anonymousFunction = argument.anonymousFunction
 
         val resolvedArgument = extractLambdaInfoFromFunctionType(
@@ -332,7 +332,7 @@ internal object ArgumentCheckingProcessor {
             returnTypeVariable,
             context.bodyResolveComponents,
             candidate,
-            duringCompletion || sink == null,
+            allowCoercionToExtensionReceiver = duringCompletion,
             sourceForFunctionExpression = argument.source,
         ) ?: extractLambdaInfo(argument, sourceForFunctionExpression = argument.source)
 
@@ -350,15 +350,13 @@ internal object ArgumentCheckingProcessor {
             )
 
             val position = ConeArgumentConstraintPosition(resolvedArgument.fir)
-            if (duringCompletion || sink == null) {
+            if (duringCompletion) {
                 csBuilder.addSubtypeConstraint(lambdaType, expectedType, position)
             } else {
                 if (!csBuilder.addSubtypeConstraintIfCompatible(lambdaType, expectedType, position)) {
                     sink.reportDiagnostic(
                         ArgumentTypeMismatch(
-                            expectedType,
-                            lambdaType,
-                            argument,
+                            expectedType, lambdaType, argument,
                             context.session.typeContext.isTypeMismatchDueToNullability(lambdaType, expectedType)
                         )
                     )
@@ -380,9 +378,7 @@ internal object ArgumentCheckingProcessor {
         val typeVariable = ConeTypeVariableForLambdaReturnType(lambda, "_L")
 
         val receiverType = lambda.receiverType
-        val returnType =
-            lambda.returnType
-                ?: typeVariable.defaultType
+        val returnType = lambda.returnType ?: typeVariable.defaultType
 
         val defaultType = runIf(candidate.symbol.origin == FirDeclarationOrigin.DynamicScope) { ConeDynamicType.create(session) }
 
@@ -399,7 +395,9 @@ internal object ArgumentCheckingProcessor {
         }
 
         val newTypeVariableUsed = returnType == typeVariable.defaultType
-        if (newTypeVariableUsed) csBuilder.registerVariable(typeVariable)
+        if (newTypeVariableUsed) {
+            csBuilder.registerVariable(typeVariable)
+        }
 
         return ConeResolvedLambdaAtom(
             lambda,

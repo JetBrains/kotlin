@@ -302,15 +302,10 @@ fun ConeLambdaWithTypeVariableAsExpectedTypeAtom.transformToResolvedLambda(
 ): ConeResolvedLambdaAtom {
     val fixedExpectedType = (csBuilder.buildCurrentSubstitutor() as ConeSubstitutor)
         .substituteOrSelf(expectedType ?: this.expectedType)
-    val resolvedAtom = ArgumentCheckingProcessor.preprocessLambdaArgument(
-        candidateOfOuterCall,
-        csBuilder,
-        expression,
-        fixedExpectedType,
-        context,
-        duringCompletion = true,
-        returnTypeVariable = returnTypeVariable
-    ) as ConeResolvedLambdaAtom
+    val resolvedAtom = ArgumentCheckingProcessor.createResolvedLambdaAtomDuringCompletion(
+        candidateOfOuterCall, csBuilder, expression, fixedExpectedType,
+        context, returnTypeVariable = returnTypeVariable
+    )
     analyzed = true
     return resolvedAtom
 }
