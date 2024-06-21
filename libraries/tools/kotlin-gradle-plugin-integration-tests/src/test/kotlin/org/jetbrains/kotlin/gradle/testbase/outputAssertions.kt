@@ -312,6 +312,14 @@ fun BuildResult.extractTaskCompilerArguments(
     }.substringAfter("Kotlin compiler args:")
 }
 
+fun BuildResult.extractNativeCompilerTaskArguments(
+    taskPath: String
+): String {
+    val taskOutput = getOutputForTask(taskPath, LogLevel.INFO)
+    return taskOutput.substringAfter("Arguments = [\n").substringBefore("]\n")
+}
+
+
 fun BuildResult.assertNoCompilerArgument(
     taskPath: String,
     notExpectedArgument: String,

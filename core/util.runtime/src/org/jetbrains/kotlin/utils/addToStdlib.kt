@@ -379,3 +379,13 @@ fun <T, A : Appendable> Iterable<T>.joinToWithBuffer(
     return buffer
 }
 
+fun String.countOccurrencesOf(substring: String): Int {
+    var result = 0
+    var lastIndex = 0
+    while (true) {
+        lastIndex = indexOf(substring, lastIndex) + 1
+        if (lastIndex == 0) break
+        result++
+    }
+    return result
+}

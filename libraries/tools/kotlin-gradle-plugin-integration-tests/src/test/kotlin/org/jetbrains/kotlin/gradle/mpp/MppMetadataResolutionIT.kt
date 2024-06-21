@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.utils.addToStdlib.countOccurrencesOf
 import kotlin.io.path.invariantSeparatorsPathString
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @MppGradlePluginTests
@@ -105,4 +107,34 @@ class MppMetadataResolutionIT : KGPBaseTest() {
             }
         }
     }
+
+    @GradleTest
+    @TestMetadata(value = "kt-69310-duplicateMetadataLibrariesInClasspath")
+    fun testNoDuplicateLibrariesInDiamondStructures(gradleVersion: GradleVersion) {
+        project(
+            projectName = "kt-69310-duplicateMetadataLibrariesInClasspath",
+            gradleVersion = gradleVersion
+        ) {
+            build(":compileLinuxMainKotlinMetadata") {
+                assertOutputDoesNotContain("""KLIB resolver.*The same 'unique_name=.*' found in more than one library""".toRegex())
+                val arguments = extractNativeCompilerTaskArguments(":compileLinuxMainKotlinMetadata")
+                assertEquals(
+                    1,
+                    arguments.countOccurrencesOf("kotlinx-kotlinx-coroutines-core-1.8.1-commonMain"),
+                    "Unexpected number of kotlinx-kotlinx-coroutines-core-1.8.1-commonMain"
+                )
+                assertEquals(
+                    1,
+                    arguments.countOccurrencesOf("kotlinx-kotlinx-coroutines-core-1.8.1-concurrentMain"),
+                    "Unexpected number of kotlinx-kotlinx-coroutines-core-1.8.1-concurrentMain"
+                )
+                assertEquals(
+                    1,
+                    arguments.countOccurrencesOf("kotlinx-kotlinx-coroutines-core-1.8.1-nativeMain"),
+                    "Unexpected number of kotlinx-kotlinx-coroutines-core-1.8.1-concurrentMain"
+                )
+            }
+        }
+    }
 }
+
