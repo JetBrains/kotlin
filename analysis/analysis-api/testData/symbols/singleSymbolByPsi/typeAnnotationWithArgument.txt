@@ -36,7 +36,7 @@ KaNamedFunctionSymbol:
     type: kotlin/collections/List<@R|Anno5|(s = String(1))  kotlin/Int>?
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(typeAnnotationWithArgument.kt)
   getContainingJvmClassName: TypeAnnotationWithArgumentKt
   getContainingModule: KaSourceModule "Sources of main"

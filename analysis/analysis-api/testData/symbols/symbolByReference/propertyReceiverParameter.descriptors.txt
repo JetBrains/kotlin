@@ -17,7 +17,7 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Boolean
-    visibility: Private
+    visibility: PRIVATE
     getContainingFileSymbol: KaFileSymbol(propertyReceiverParameter.kt)
     getContainingJvmClassName: PropertyReceiverParameterKt
     getContainingModule: KaSourceModule "Sources of main"
@@ -62,7 +62,7 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Boolean
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(propertyReceiverParameter.kt)
     getContainingJvmClassName: PropertyReceiverParameterKt
     getContainingModule: KaSourceModule "Sources of main"
@@ -109,7 +109,7 @@ KaKotlinPropertySymbol:
     type: kotlin/Boolean
   setter: null
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(propertyReceiverParameter.kt)
   getContainingJvmClassName: PropertyReceiverParameterKt
   getContainingModule: KaSourceModule "Sources of main"

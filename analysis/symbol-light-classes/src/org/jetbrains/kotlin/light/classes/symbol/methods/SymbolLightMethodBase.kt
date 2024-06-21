@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.checkIsMangled
 import org.jetbrains.kotlin.asJava.classes.KotlinLightReferenceListBuilder
@@ -24,8 +25,6 @@ import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.mangleInternalName
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.SymbolLightMemberBase
 import org.jetbrains.kotlin.light.classes.symbol.annotations.getJvmNameFromAnnotation
@@ -122,11 +121,11 @@ internal abstract class SymbolLightMethodBase(
         defaultName: String,
         containingClass: SymbolLightClassBase,
         annotationUseSiteTarget: AnnotationUseSiteTarget? = null,
-        visibility: Visibility = this.visibility,
+        visibility: KaSymbolVisibility = this.visibility,
     ): String {
         getJvmNameFromAnnotation(annotationUseSiteTarget.toOptionalFilter())?.let { return it }
 
-        if (visibility != Visibilities.Internal) return defaultName
+        if (visibility != KaSymbolVisibility.INTERNAL) return defaultName
         if (containingClass is KtLightClassForFacade) return defaultName
         if (hasPublishedApiAnnotation(annotationUseSiteTarget.toFilter())) return defaultName
 

@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.analysis.api.platform.modification.createProjectWide
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThis
 import org.jetbrains.kotlin.analysis.api.types.KaClassErrorType
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -156,7 +156,7 @@ internal fun SymbolLightClassBase.createConstructors(
     val primaryConstructor = constructors.singleOrNull { it.isPrimary }
     if (primaryConstructor != null && shouldGenerateNoArgOverload(primaryConstructor, constructors)) {
         result.add(
-            noArgConstructor(primaryConstructor.visibility.externalDisplayName, METHOD_INDEX_FOR_NO_ARG_OVERLOAD_CTOR)
+            noArgConstructor(primaryConstructor.compilerVisibility.externalDisplayName, METHOD_INDEX_FOR_NO_ARG_OVERLOAD_CTOR)
         )
     }
 }
@@ -168,7 +168,7 @@ private fun SymbolLightClassBase.shouldGenerateNoArgOverload(
     constructors: Iterable<KaConstructorSymbol>,
 ): Boolean {
     val classOrObject = kotlinOrigin ?: return false
-    return !primaryConstructor.visibility.isPrivateOrPrivateToThis() &&
+    return primaryConstructor.visibility != KaSymbolVisibility.PRIVATE &&
             !classOrObject.hasModifier(INNER_KEYWORD) && !isEnum &&
             !classOrObject.hasModifier(SEALED_KEYWORD) &&
             primaryConstructor.valueParameters.isNotEmpty() &&
@@ -329,7 +329,7 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
     }
 
     if (declaration is KaKotlinPropertySymbol && declaration.isConst) return
-    if (declaration.getter?.hasBody != true && declaration.setter?.hasBody != true && declaration.visibility.isPrivateOrPrivateToThis()) return
+    if (declaration.getter?.hasBody != true && declaration.setter?.hasBody != true && declaration.visibility == KaSymbolVisibility.PRIVATE) return
 
     if (declaration.isJvmField) return
     val propertyTypeIsValueClass = declaration.hasTypeForValueClassInSignature(suppressJvmNameCheck = true)
@@ -367,7 +367,7 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
         ) return false
 
         if (declaration.hasReifiedParameters) return false
-        if (!hasBody && visibility.isPrivateOrPrivateToThis()) return false
+        if (!hasBody && visibility == KaSymbolVisibility.PRIVATE) return false
         if (declaration.isHiddenOrSynthetic(siteTarget)) return false
         return !isHiddenOrSynthetic(siteTarget, useSiteTargetFilterForPropertyAccessor)
     }

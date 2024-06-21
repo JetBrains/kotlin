@@ -52,7 +52,7 @@ KaNamedFunctionSymbol:
     KaTypeParameterSymbol(T)
   ]
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(nestedTypeAnnotationWithTypeAliasAsAnnotation.kt)
   getContainingJvmClassName: NestedTypeAnnotationWithTypeAliasAsAnnotationKt
   getContainingModule: KaSourceModule "Sources of main"

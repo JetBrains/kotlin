@@ -115,7 +115,7 @@ KaNamedFunctionSymbol:
       returnType: KaTypeParameterType:
         annotations: []
         type: X
-      visibility: Public
+      visibility: PUBLIC
     KaValueParameterSymbol:
       annotations: []
       callableId: null
@@ -137,9 +137,9 @@ KaNamedFunctionSymbol:
       returnType: KaTypeParameterType:
         annotations: []
         type: Y
-      visibility: Public
+      visibility: PUBLIC
   ]
-  visibility: Public
+  visibility: PUBLIC
 KaKotlinPropertySymbol:
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
@@ -167,7 +167,7 @@ KaKotlinPropertySymbol:
           type: kotlin/String
       ]
       type: kotlin/collections/Map<X, kotlin/String>
-    visibility: Private
+    visibility: PRIVATE
   callableId: /A.map
   compilerVisibility: Public
   contextReceivers: []
@@ -199,7 +199,7 @@ KaKotlinPropertySymbol:
       ]
       type: kotlin/collections/Map<X, kotlin/String>
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -233,7 +233,7 @@ KaKotlinPropertySymbol:
     type: kotlin/collections/Map<X, kotlin/String>
   setter: null
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Any.equals
@@ -286,9 +286,9 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Any?
-      visibility: Public
+      visibility: PUBLIC
   ]
-  visibility: Public
+  visibility: PUBLIC
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Any.hashCode
@@ -319,7 +319,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Any.toString
@@ -350,5 +350,5 @@ KaNamedFunctionSymbol:
     type: kotlin/String
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
 

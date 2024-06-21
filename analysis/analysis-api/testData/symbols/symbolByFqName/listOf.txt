@@ -28,7 +28,7 @@ KaNamedClassSymbol:
       type: kotlin/Enum<kotlin/io/FileWalkDirection>
   ]
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   annotationApplicableTargets: null

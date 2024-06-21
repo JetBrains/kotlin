@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThis
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
@@ -69,7 +69,7 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
     context(KaSession)
     @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     protected open fun acceptCallableSymbol(symbol: KaCallableSymbol): Boolean =
-        !(symbol is KaNamedFunctionSymbol && symbol.visibility.isPrivateOrPrivateToThis() || symbol.hasTypeForValueClassInSignature())
+        !(symbol is KaNamedFunctionSymbol && symbol.visibility == KaSymbolVisibility.PRIVATE || symbol.hasTypeForValueClassInSignature())
 
     override fun copy(): SymbolLightClassForInterface =
         SymbolLightClassForInterface(classOrObjectDeclaration, classSymbolPointer, ktModule, manager)

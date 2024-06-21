@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.render
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 
@@ -43,9 +41,11 @@ public interface KaRendererVisibilityModifierProvider {
                 }
 
                 return when (symbol.visibility) {
-                    Visibilities.Public -> null
-                    JavaVisibilities.PackageVisibility -> null
-                    JavaVisibilities.ProtectedStaticVisibility, JavaVisibilities.ProtectedAndPackage -> null
+                    KaSymbolVisibility.PUBLIC,
+                    KaSymbolVisibility.PACKAGE_PRIVATE,
+                    KaSymbolVisibility.PACKAGE_PROTECTED,
+                        -> null
+
                     else -> WITH_IMPLICIT_VISIBILITY.getVisibilityModifier(analysisSession, symbol)
                 }
             }
@@ -56,17 +56,15 @@ public interface KaRendererVisibilityModifierProvider {
         override fun getVisibilityModifier(
             analysisSession: KaSession,
             symbol: KaDeclarationSymbol,
-        ): KtModifierKeywordToken? {
-            return when (symbol.visibility) {
-                Visibilities.Private, Visibilities.PrivateToThis -> KtTokens.PRIVATE_KEYWORD
-                Visibilities.Protected -> KtTokens.PROTECTED_KEYWORD
-                Visibilities.Internal -> KtTokens.INTERNAL_KEYWORD
-                Visibilities.Public -> KtTokens.PUBLIC_KEYWORD
-                Visibilities.Local -> null
-                JavaVisibilities.PackageVisibility -> KtTokens.PUBLIC_KEYWORD
-                JavaVisibilities.ProtectedStaticVisibility, JavaVisibilities.ProtectedAndPackage -> KtTokens.PROTECTED_KEYWORD
-                else -> null
-            }
+        ): KtModifierKeywordToken? = when (symbol.visibility) {
+            KaSymbolVisibility.PRIVATE -> KtTokens.PRIVATE_KEYWORD
+            KaSymbolVisibility.PROTECTED -> KtTokens.PROTECTED_KEYWORD
+            KaSymbolVisibility.INTERNAL -> KtTokens.INTERNAL_KEYWORD
+            KaSymbolVisibility.PUBLIC -> KtTokens.PUBLIC_KEYWORD
+            KaSymbolVisibility.LOCAL -> null
+            KaSymbolVisibility.PACKAGE_PRIVATE -> KtTokens.PUBLIC_KEYWORD
+            KaSymbolVisibility.PACKAGE_PROTECTED -> KtTokens.PROTECTED_KEYWORD
+            else -> null
         }
     }
 }

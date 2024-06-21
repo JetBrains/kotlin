@@ -30,7 +30,7 @@ KaNamedClassSymbol:
       type: foo/MyInterface
   ]
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(myInterfaceSupertype.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null

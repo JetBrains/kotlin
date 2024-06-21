@@ -22,7 +22,7 @@ KaAnonymousObjectSymbol:
       typeArguments: []
       type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  {@R|Anno3|()  SecondTypeAlias=} BaseClass
   ]
-  visibility: Local
+  visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnSuperClassCallOnAnonymousObject.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null

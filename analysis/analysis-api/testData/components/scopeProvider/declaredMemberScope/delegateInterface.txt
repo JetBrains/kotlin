@@ -17,7 +17,7 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: A
-    visibility: Private
+    visibility: PRIVATE
     getContainingFileSymbol: KaFileSymbol(A.kt)
     getContainingJvmClassName: I
     getContainingModule: KaSourceModule "Sources of main"
@@ -45,7 +45,7 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: A
     valueParameters: []
-    visibility: Private
+    visibility: PRIVATE
     getDispatchReceiver(): KaUsualClassType:
       annotations: []
       typeArguments: []
@@ -79,7 +79,7 @@ KaKotlinPropertySymbol:
     type: A
   setter: null
   typeParameters: []
-  visibility: Private
+  visibility: PRIVATE
   getDispatchReceiver(): KaUsualClassType:
     annotations: []
     typeArguments: []
@@ -138,7 +138,7 @@ KaConstructorSymbol:
             annotations: []
             typeArguments: []
             type: A
-          visibility: Private
+          visibility: PRIVATE
           getContainingFileSymbol: KaFileSymbol(A.kt)
           getContainingJvmClassName: I
           getContainingModule: KaSourceModule "Sources of main"
@@ -166,7 +166,7 @@ KaConstructorSymbol:
             typeArguments: []
             type: A
           valueParameters: []
-          visibility: Private
+          visibility: PRIVATE
           getDispatchReceiver(): KaUsualClassType:
             annotations: []
             typeArguments: []
@@ -200,7 +200,7 @@ KaConstructorSymbol:
           type: A
         setter: null
         typeParameters: []
-        visibility: Private
+        visibility: PRIVATE
         getDispatchReceiver(): KaUsualClassType:
           annotations: []
           typeArguments: []
@@ -229,13 +229,13 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: A
-      visibility: Public
+      visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(A.kt)
       getContainingJvmClassName: I
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(A.kt)
   getContainingJvmClassName: I
   getContainingModule: KaSourceModule "Sources of main"

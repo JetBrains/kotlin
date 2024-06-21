@@ -40,7 +40,7 @@ KaNamedFunctionSymbol:
     type: @R|Anno3|() @R|Anno2|() @R|Anno1|()  @R|Anno3|()  SecondTypeAlias
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnFunctionalTypeWithTypeAlias.kt)
   getContainingJvmClassName: TypeAnnotationsOnFunctionalTypeWithTypeAliasKt
   getContainingModule: KaSourceModule "Sources of main"

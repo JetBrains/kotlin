@@ -33,7 +33,7 @@ scopes:
           annotations: []
           typeArguments: []
           type: kotlin/Int
-        visibility: Public
+        visibility: PUBLIC
     constructors: 0
 
   TypeScope, index = 1
@@ -59,7 +59,7 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Int
-          visibility: Public
+          visibility: PUBLIC
         callableId: test/Child.constructorProp
         compilerVisibility: Public
         contextReceivers: []
@@ -83,7 +83,7 @@ scopes:
             typeArguments: []
             type: kotlin/Int
           valueParameters: []
-          visibility: Public
+          visibility: PUBLIC
         hasBackingField: true
         hasGetter: true
         hasSetter: false
@@ -109,7 +109,7 @@ scopes:
           type: kotlin/Int
         setter: null
         typeParameters: []
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: test/Child.childMember
@@ -140,7 +140,7 @@ scopes:
           type: kotlin/Int
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
       KaKotlinPropertySymbol:
         annotations: []
         backingFieldSymbol: KaBackingFieldSymbol:
@@ -160,7 +160,7 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Int
-          visibility: Private
+          visibility: PRIVATE
         callableId: test/Child.childProp
         compilerVisibility: Public
         contextReceivers: []
@@ -184,7 +184,7 @@ scopes:
             typeArguments: []
             type: kotlin/Int
           valueParameters: []
-          visibility: Public
+          visibility: PUBLIC
         hasBackingField: false
         hasGetter: true
         hasSetter: false
@@ -210,7 +210,7 @@ scopes:
           type: kotlin/Int
         setter: null
         typeParameters: []
-        visibility: Public
+        visibility: PUBLIC
       KaKotlinPropertySymbol:
         annotations: []
         backingFieldSymbol: KaBackingFieldSymbol:
@@ -230,7 +230,7 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Int
-          visibility: Public
+          visibility: PUBLIC
         callableId: test/Base.value
         compilerVisibility: Public
         contextReceivers: []
@@ -254,7 +254,7 @@ scopes:
             typeArguments: []
             type: kotlin/Int
           valueParameters: []
-          visibility: Public
+          visibility: PUBLIC
         hasBackingField: true
         hasGetter: true
         hasSetter: false
@@ -280,7 +280,7 @@ scopes:
           type: kotlin/Int
         setter: null
         typeParameters: []
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: test/Base.baseMember
@@ -311,7 +311,7 @@ scopes:
           type: kotlin/Int
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
       KaKotlinPropertySymbol:
         annotations: []
         backingFieldSymbol: KaBackingFieldSymbol:
@@ -331,7 +331,7 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Int
-          visibility: Private
+          visibility: PRIVATE
         callableId: test/Base.baseProp
         compilerVisibility: Public
         contextReceivers: []
@@ -355,7 +355,7 @@ scopes:
             typeArguments: []
             type: kotlin/Int
           valueParameters: []
-          visibility: Public
+          visibility: PUBLIC
         hasBackingField: true
         hasGetter: true
         hasSetter: false
@@ -381,7 +381,7 @@ scopes:
           type: kotlin/Int
         setter: null
         typeParameters: []
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.equals
@@ -434,9 +434,9 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/Any?
-            visibility: Public
+            visibility: PUBLIC
         ]
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.hashCode
@@ -467,7 +467,7 @@ scopes:
           type: kotlin/Int
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.toString
@@ -498,7 +498,7 @@ scopes:
           type: kotlin/String
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
     constructors: 1
       KaConstructorSymbol:
         annotations: []
@@ -545,7 +545,7 @@ scopes:
                   annotations: []
                   typeArguments: []
                   type: kotlin/Int
-                visibility: Public
+                visibility: PUBLIC
               callableId: test/Child.constructorProp
               compilerVisibility: Public
               contextReceivers: []
@@ -569,7 +569,7 @@ scopes:
                   typeArguments: []
                   type: kotlin/Int
                 valueParameters: []
-                visibility: Public
+                visibility: PUBLIC
               hasBackingField: true
               hasGetter: true
               hasSetter: false
@@ -595,7 +595,7 @@ scopes:
                 type: kotlin/Int
               setter: null
               typeParameters: []
-              visibility: Public
+              visibility: PUBLIC
             hasDefaultValue: false
             isCrossinline: false
             isExtension: false
@@ -612,7 +612,7 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/Int
-            visibility: Public
+            visibility: PUBLIC
           KaValueParameterSymbol:
             annotations: []
             callableId: null
@@ -635,9 +635,9 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/Int
-            visibility: Public
+            visibility: PUBLIC
         ]
-        visibility: Public
+        visibility: PUBLIC
 
   ExplicitSimpleImportingScope, index = 2
     packages: 0
@@ -673,7 +673,7 @@ scopes:
             type: kotlin/Any
         ]
         typeParameters: []
-        visibility: Public
+        visibility: PUBLIC
       KaNamedClassSymbol:
         annotations: []
         classId: test/Child
@@ -699,7 +699,7 @@ scopes:
             type: test/Base
         ]
         typeParameters: []
-        visibility: Public
+        visibility: PUBLIC
     callables: 0
     constructors: 0
 

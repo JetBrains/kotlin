@@ -48,13 +48,13 @@ KaNamedFunctionSymbol:
       returnType: KaDynamicType:
         annotations: []
         type: dynamic
-      visibility: Public
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaDynamicType:
     annotations: []
     type: dynamic

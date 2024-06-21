@@ -50,13 +50,13 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: {SecondAlias=} Base
-      visibility: Public
+      visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(ExpandedParameterType.kt)
       getContainingJvmClassName: ExpandedParameterTypeKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(ExpandedParameterType.kt)
   getContainingJvmClassName: ExpandedParameterTypeKt
   getContainingModule: KaSourceModule "Sources of main"

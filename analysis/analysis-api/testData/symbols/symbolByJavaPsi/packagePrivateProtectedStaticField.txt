@@ -14,7 +14,7 @@ KaJavaFieldSymbol:
   returnType: KaFlexibleType:
     annotations: []
     type: kotlin/Int!
-  visibility: ProtectedStaticVisibility
+  visibility: PACKAGE_PROTECTED
   getContainingFileSymbol: null
   getContainingJvmClassName: JavaClass
   getContainingModule: KaSourceModule "Sources of main"

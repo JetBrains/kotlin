@@ -53,7 +53,7 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Any
-      visibility: Local
+      visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(invalidContractParameterPassedToReturns.kt)
       getContainingJvmClassName: InvalidContractParameterPassedToReturnsKt
       getContainingModule: KaSourceModule "Sources of main"
@@ -80,13 +80,13 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Boolean
-      visibility: Local
+      visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(invalidContractParameterPassedToReturns.kt)
       getContainingJvmClassName: InvalidContractParameterPassedToReturnsKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(invalidContractParameterPassedToReturns.kt)
   getContainingJvmClassName: InvalidContractParameterPassedToReturnsKt
   getContainingModule: KaSourceModule "Sources of main"

@@ -24,7 +24,7 @@ KaKotlinPropertySymbol:
       ]
       typeArguments: []
       type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  {@R|Anno3|()  SecondTypeAlias=} BaseInterface
-    visibility: Private
+    visibility: PRIVATE
     getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnPropertyReturnType.kt)
     getContainingJvmClassName: TypeAnnotationsOnPropertyReturnTypeKt
     getContainingModule: KaSourceModule "Sources of main"
@@ -59,7 +59,7 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  {@R|Anno3|()  SecondTypeAlias=} BaseInterface
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnPropertyReturnType.kt)
     getContainingJvmClassName: TypeAnnotationsOnPropertyReturnTypeKt
     getContainingModule: KaSourceModule "Sources of main"
@@ -96,7 +96,7 @@ KaKotlinPropertySymbol:
     type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  {@R|Anno3|()  SecondTypeAlias=} BaseInterface
   setter: null
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnPropertyReturnType.kt)
   getContainingJvmClassName: TypeAnnotationsOnPropertyReturnTypeKt
   getContainingModule: KaSourceModule "Sources of main"

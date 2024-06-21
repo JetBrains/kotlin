@@ -59,7 +59,7 @@ scopes:
           type: kotlin/Unit
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.equals
@@ -112,9 +112,9 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/Any?
-            visibility: Public
+            visibility: PUBLIC
         ]
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.hashCode
@@ -145,7 +145,7 @@ scopes:
           type: kotlin/Int
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.toString
@@ -176,7 +176,7 @@ scopes:
           type: kotlin/String
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
     constructors: 1
       KaConstructorSymbol:
         annotations: []
@@ -199,7 +199,7 @@ scopes:
           type: A
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
 
   LocalScope, index = 2
     packages: 0
@@ -247,7 +247,7 @@ scopes:
           type: kotlin/Unit
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.equals
@@ -300,9 +300,9 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/Any?
-            visibility: Public
+            visibility: PUBLIC
         ]
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.hashCode
@@ -333,7 +333,7 @@ scopes:
           type: kotlin/Int
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.toString
@@ -364,7 +364,7 @@ scopes:
           type: kotlin/String
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
     constructors: 1
       KaConstructorSymbol:
         annotations: []
@@ -387,7 +387,7 @@ scopes:
           type: B
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
 
   LocalScope, index = 5
     packages: 0
@@ -415,7 +415,7 @@ scopes:
           annotations: []
           typeArguments: []
           type: kotlin/Int
-        visibility: Local
+        visibility: LOCAL
     constructors: 0
 
   LocalScope, index = 7
@@ -444,7 +444,7 @@ scopes:
           annotations: []
           typeArguments: []
           type: kotlin/String
-        visibility: Public
+        visibility: PUBLIC
     constructors: 0
 
   LocalScope, index = 8
@@ -467,7 +467,7 @@ scopes:
           annotations: []
           typeArguments: []
           type: kotlin/Int
-        visibility: Local
+        visibility: LOCAL
       KaNamedFunctionSymbol:
         annotations: []
         callableId: null
@@ -498,7 +498,7 @@ scopes:
           type: kotlin/Unit
         typeParameters: []
         valueParameters: []
-        visibility: Local
+        visibility: LOCAL
     constructors: 0
 
   LocalScope, index = 9
@@ -527,7 +527,7 @@ scopes:
           annotations: []
           typeArguments: []
           type: kotlin/String?
-        visibility: Public
+        visibility: PUBLIC
     constructors: 0
 
   TypeParameterScope, index = 10
@@ -543,7 +543,7 @@ scopes:
         origin: SOURCE
         upperBounds: []
         variance: INVARIANT
-        visibility: Local
+        visibility: LOCAL
     callables: 0
     constructors: 0
 
@@ -575,7 +575,7 @@ scopes:
             type: kotlin/Any
         ]
         typeParameters: []
-        visibility: Public
+        visibility: PUBLIC
       KaNamedClassSymbol:
         annotations: []
         classId: JavaClass.NestedInJavaClass
@@ -601,7 +601,7 @@ scopes:
             type: kotlin/Any
         ]
         typeParameters: []
-        visibility: PackageVisibility
+        visibility: PACKAGE_PRIVATE
     callables: 4
       KaNamedFunctionSymbol:
         annotations: []
@@ -657,9 +657,9 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/String?
-            visibility: Public
+            visibility: PUBLIC
         ]
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.equals
@@ -712,9 +712,9 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/Any?
-            visibility: Public
+            visibility: PUBLIC
         ]
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.hashCode
@@ -745,7 +745,7 @@ scopes:
           type: kotlin/Int
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.toString
@@ -776,7 +776,7 @@ scopes:
           type: kotlin/String
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
     constructors: 1
       KaConstructorSymbol:
         annotations: []
@@ -799,7 +799,7 @@ scopes:
           type: C
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
 
   StaticMemberScope, index = 12
     packages: 0
@@ -829,7 +829,7 @@ scopes:
             type: kotlin/Any
         ]
         typeParameters: []
-        visibility: Public
+        visibility: PUBLIC
     callables: 0
     constructors: 0
 
@@ -861,7 +861,7 @@ scopes:
             type: kotlin/Any
         ]
         typeParameters: []
-        visibility: PackageVisibility
+        visibility: PACKAGE_PRIVATE
     callables: 0
     constructors: 0
 
@@ -923,7 +923,7 @@ scopes:
             type: kotlin/Any
         ]
         typeParameters: []
-        visibility: Public
+        visibility: PUBLIC
       KaNamedClassSymbol:
         annotations: []
         classId: B
@@ -949,7 +949,7 @@ scopes:
             type: kotlin/Any
         ]
         typeParameters: []
-        visibility: Public
+        visibility: PUBLIC
       KaNamedClassSymbol:
         annotations: []
         classId: C
@@ -975,7 +975,7 @@ scopes:
             type: JavaClass
         ]
         typeParameters: []
-        visibility: Public
+        visibility: PUBLIC
       KaNamedClassSymbol:
         annotations: []
         classId: JavaClass
@@ -1001,7 +1001,7 @@ scopes:
             type: kotlin/Any
         ]
         typeParameters: []
-        visibility: Public
+        visibility: PUBLIC
     callables: 4
       KaNamedFunctionSymbol:
         annotations: []
@@ -1064,9 +1064,9 @@ scopes:
                   type: kotlin/Unit
               ]
               type: @ExtensionFunctionType kotlin/Function1<A, kotlin/Unit>
-            visibility: Public
+            visibility: PUBLIC
         ]
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: /withB
@@ -1128,9 +1128,9 @@ scopes:
                   type: kotlin/Unit
               ]
               type: @ExtensionFunctionType kotlin/Function1<B, kotlin/Unit>
-            visibility: Public
+            visibility: PUBLIC
         ]
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: /withJavaClass
@@ -1192,9 +1192,9 @@ scopes:
                   type: kotlin/Unit
               ]
               type: @ExtensionFunctionType kotlin/Function1<JavaClass, kotlin/Unit>
-            visibility: Public
+            visibility: PUBLIC
         ]
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: /topLevel
@@ -1225,7 +1225,7 @@ scopes:
           type: kotlin/Int
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
     constructors: 0
 
   DefaultSimpleImportingScope, index = 16

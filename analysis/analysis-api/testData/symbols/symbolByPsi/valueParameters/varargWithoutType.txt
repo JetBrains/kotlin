@@ -49,13 +49,13 @@ KaNamedFunctionSymbol:
       returnType: KaErrorType:
         annotations: []
         type: ERROR_TYPE
-      visibility: Public
+      visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(varargWithoutType.kt)
       getContainingJvmClassName: VarargWithoutTypeKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(varargWithoutType.kt)
   getContainingJvmClassName: VarargWithoutTypeKt
   getContainingModule: KaSourceModule "Sources of main"

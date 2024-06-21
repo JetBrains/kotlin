@@ -63,9 +63,9 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/Any?
-            visibility: Public
+            visibility: PUBLIC
         ]
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.hashCode
@@ -96,7 +96,7 @@ scopes:
           type: kotlin/Int
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.toString
@@ -127,7 +127,7 @@ scopes:
           type: kotlin/String
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
     constructors: 1
       KaConstructorSymbol:
         annotations: []
@@ -150,7 +150,7 @@ scopes:
           type: test/Receiver
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
 
   LocalScope, index = 1
     packages: 0
@@ -178,7 +178,7 @@ scopes:
           annotations: []
           typeArguments: []
           type: test/Param1
-        visibility: Public
+        visibility: PUBLIC
       KaValueParameterSymbol:
         annotations: []
         callableId: null
@@ -201,7 +201,7 @@ scopes:
           annotations: []
           typeArguments: []
           type: test/Param2
-        visibility: Public
+        visibility: PUBLIC
     constructors: 0
 
   TypeParameterScope, index = 2
@@ -217,7 +217,7 @@ scopes:
         origin: SOURCE
         upperBounds: []
         variance: INVARIANT
-        visibility: Local
+        visibility: LOCAL
     callables: 0
     constructors: 0
 
@@ -255,7 +255,7 @@ scopes:
             type: kotlin/Any
         ]
         typeParameters: []
-        visibility: Public
+        visibility: PUBLIC
       KaNamedClassSymbol:
         annotations: []
         classId: test/Param1
@@ -281,7 +281,7 @@ scopes:
             type: kotlin/Any
         ]
         typeParameters: []
-        visibility: Public
+        visibility: PUBLIC
       KaNamedClassSymbol:
         annotations: []
         classId: test/Param2
@@ -307,7 +307,7 @@ scopes:
             type: kotlin/Any
         ]
         typeParameters: []
-        visibility: Public
+        visibility: PUBLIC
     callables: 1
       KaNamedFunctionSymbol:
         annotations: []
@@ -370,7 +370,7 @@ scopes:
               annotations: []
               typeArguments: []
               type: test/Param1
-            visibility: Public
+            visibility: PUBLIC
           KaValueParameterSymbol:
             annotations: []
             callableId: null
@@ -393,9 +393,9 @@ scopes:
               annotations: []
               typeArguments: []
               type: test/Param2
-            visibility: Public
+            visibility: PUBLIC
         ]
-        visibility: Public
+        visibility: PUBLIC
     constructors: 0
 
   DefaultSimpleImportingScope, index = 5

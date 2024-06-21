@@ -50,13 +50,13 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/String
-      visibility: Local
+      visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(enumValueOf.kt)
       getContainingJvmClassName: MyKotlinEnum
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(enumValueOf.kt)
   getContainingJvmClassName: MyKotlinEnum
   getContainingModule: KaSourceModule "Sources of main"

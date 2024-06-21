@@ -35,7 +35,7 @@ KaNamedFunctionSymbol:
                 annotations: []
                 typeArguments: []
                 type: kotlin/Boolean
-              visibility: Public
+              visibility: PUBLIC
               getContainingFileSymbol: KaFileSymbol(returnsContract.kt)
               getContainingJvmClassName: ReturnsContractKt
               getContainingModule: KaSourceModule "Sources of main"
@@ -87,13 +87,13 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Boolean
-      visibility: Public
+      visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(returnsContract.kt)
       getContainingJvmClassName: ReturnsContractKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(returnsContract.kt)
   getContainingJvmClassName: ReturnsContractKt
   getContainingModule: KaSourceModule "Sources of main"

@@ -41,13 +41,13 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      visibility: Local
+      visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(contextReceiversOnClass.kt)
       getContainingJvmClassName: A
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(contextReceiversOnClass.kt)
   getContainingJvmClassName: A
   getContainingModule: KaSourceModule "Sources of main"
@@ -91,7 +91,7 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(contextReceiversOnClass.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null

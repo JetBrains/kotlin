@@ -40,13 +40,13 @@ KaConstructorSymbol:
       returnType: KaErrorType:
         annotations: []
         type: ERROR_TYPE
-      visibility: Local
+      visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(varargInSecondaryConstructorWithoutType.kt)
       getContainingJvmClassName: Foo
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(varargInSecondaryConstructorWithoutType.kt)
   getContainingJvmClassName: Foo
   getContainingModule: KaSourceModule "Sources of main"
@@ -77,7 +77,7 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(varargInSecondaryConstructorWithoutType.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null

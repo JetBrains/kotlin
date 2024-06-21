@@ -20,7 +20,7 @@ KaJavaFieldSymbol:
         psi: null
     ]
     type: @R|Anno1|()  @R|Anno1|()  kotlin/String!
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
     annotations: []
     typeArguments: []

@@ -214,9 +214,9 @@ KaNamedFunctionSymbol:
       returnType: KaTypeParameterType:
         annotations: []
         type: E
-      visibility: Public
+      visibility: PUBLIC
   ]
-  visibility: Public
+  visibility: PUBLIC
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/List.containsAll
@@ -273,9 +273,9 @@ KaNamedFunctionSymbol:
             type: E
         ]
         type: kotlin/collections/Collection<E>
-      visibility: Public
+      visibility: PUBLIC
   ]
-  visibility: Public
+  visibility: PUBLIC
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/List.get
@@ -327,9 +327,9 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      visibility: Public
+      visibility: PUBLIC
   ]
-  visibility: Public
+  visibility: PUBLIC
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/List.indexOf
@@ -381,9 +381,9 @@ KaNamedFunctionSymbol:
       returnType: KaTypeParameterType:
         annotations: []
         type: E
-      visibility: Public
+      visibility: PUBLIC
   ]
-  visibility: Public
+  visibility: PUBLIC
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/List.isEmpty
@@ -414,7 +414,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Boolean
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/List.iterator
@@ -449,7 +449,7 @@ KaNamedFunctionSymbol:
     type: kotlin/collections/Iterator<E>
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/List.lastIndexOf
@@ -501,9 +501,9 @@ KaNamedFunctionSymbol:
       returnType: KaTypeParameterType:
         annotations: []
         type: E
-      visibility: Public
+      visibility: PUBLIC
   ]
-  visibility: Public
+  visibility: PUBLIC
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/List.listIterator
@@ -538,7 +538,7 @@ KaNamedFunctionSymbol:
     type: kotlin/collections/ListIterator<E>
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/List.listIterator
@@ -595,9 +595,9 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      visibility: Public
+      visibility: PUBLIC
   ]
-  visibility: Public
+  visibility: PUBLIC
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/List.subList
@@ -654,7 +654,7 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      visibility: Public
+      visibility: PUBLIC
     KaValueParameterSymbol:
       annotations: []
       callableId: null
@@ -677,9 +677,9 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      visibility: Public
+      visibility: PUBLIC
   ]
-  visibility: Public
+  visibility: PUBLIC
 KaKotlinPropertySymbol:
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
@@ -699,7 +699,7 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    visibility: Public
+    visibility: PUBLIC
   callableId: kotlin/collections/List.size
   compilerVisibility: Public
   contextReceivers: []
@@ -723,7 +723,7 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -749,7 +749,7 @@ KaKotlinPropertySymbol:
     type: kotlin/Int
   setter: null
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Any.equals
@@ -802,9 +802,9 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Any?
-      visibility: Public
+      visibility: PUBLIC
   ]
-  visibility: Public
+  visibility: PUBLIC
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Any.hashCode
@@ -835,7 +835,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Any.toString
@@ -866,7 +866,7 @@ KaNamedFunctionSymbol:
     type: kotlin/String
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/List.getFirst
@@ -896,7 +896,7 @@ KaNamedFunctionSymbol:
     type: E
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/List.getLast
@@ -926,5 +926,5 @@ KaNamedFunctionSymbol:
     type: E
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
 

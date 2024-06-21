@@ -29,7 +29,7 @@ KaTypeAliasSymbol:
   name: DeepRecursiveFunctionBlock
   origin: LIBRARY
   typeParameters: []
-  visibility: Private
+  visibility: PRIVATE
   getContainingFileSymbol: null
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null

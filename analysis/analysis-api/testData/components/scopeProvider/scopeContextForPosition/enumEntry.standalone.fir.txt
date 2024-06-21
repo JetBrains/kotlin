@@ -53,7 +53,7 @@ scopes:
             type: kotlin/Any
         ]
         typeParameters: []
-        visibility: Public
+        visibility: PUBLIC
     callables: 11
       KaKotlinPropertySymbol:
         annotations: []
@@ -74,7 +74,7 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/String
-          visibility: Private
+          visibility: PRIVATE
         callableId: null
         compilerVisibility: Public
         contextReceivers: []
@@ -98,7 +98,7 @@ scopes:
             typeArguments: []
             type: kotlin/String
           valueParameters: []
-          visibility: Public
+          visibility: PUBLIC
         hasBackingField: true
         hasGetter: true
         hasSetter: false
@@ -124,7 +124,7 @@ scopes:
           type: kotlin/String
         setter: null
         typeParameters: []
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: null
@@ -155,7 +155,7 @@ scopes:
           type: kotlin/Unit
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Enum.clone
@@ -186,7 +186,7 @@ scopes:
           type: kotlin/Any
         typeParameters: []
         valueParameters: []
-        visibility: Protected
+        visibility: PROTECTED
       KaNamedFunctionSymbol:
         annotations: []
         callableId: /E.compareTo
@@ -239,9 +239,9 @@ scopes:
               annotations: []
               typeArguments: []
               type: E
-            visibility: Public
+            visibility: PUBLIC
         ]
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Enum.equals
@@ -294,9 +294,9 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/Any?
-            visibility: Public
+            visibility: PUBLIC
         ]
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Enum.hashCode
@@ -327,7 +327,7 @@ scopes:
           type: kotlin/Int
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Enum.toString
@@ -358,7 +358,7 @@ scopes:
           type: kotlin/String
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
       KaKotlinPropertySymbol:
         annotations: [
           kotlin/internal/IntrinsicConstEvaluation()
@@ -381,7 +381,7 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/String
-          visibility: Public
+          visibility: PUBLIC
         callableId: kotlin/Enum.name
         compilerVisibility: Public
         contextReceivers: []
@@ -405,7 +405,7 @@ scopes:
             typeArguments: []
             type: kotlin/String
           valueParameters: []
-          visibility: Public
+          visibility: PUBLIC
         hasBackingField: true
         hasGetter: true
         hasSetter: false
@@ -431,7 +431,7 @@ scopes:
           type: kotlin/String
         setter: null
         typeParameters: []
-        visibility: Public
+        visibility: PUBLIC
       KaKotlinPropertySymbol:
         annotations: []
         backingFieldSymbol: KaBackingFieldSymbol:
@@ -451,7 +451,7 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Int
-          visibility: Public
+          visibility: PUBLIC
         callableId: kotlin/Enum.ordinal
         compilerVisibility: Public
         contextReceivers: []
@@ -475,7 +475,7 @@ scopes:
             typeArguments: []
             type: kotlin/Int
           valueParameters: []
-          visibility: Public
+          visibility: PUBLIC
         hasBackingField: true
         hasGetter: true
         hasSetter: false
@@ -501,7 +501,7 @@ scopes:
           type: kotlin/Int
         setter: null
         typeParameters: []
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: /E.getDeclaringClass
@@ -531,7 +531,7 @@ scopes:
           type: ft<java/lang/Class<E!>, java/lang/Class<E!>?>
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Enum.finalize
@@ -562,7 +562,7 @@ scopes:
           type: kotlin/Unit
         typeParameters: []
         valueParameters: []
-        visibility: ProtectedAndPackage
+        visibility: PACKAGE_PROTECTED
     constructors: 1
       KaConstructorSymbol:
         annotations: []
@@ -585,7 +585,7 @@ scopes:
           type: <anonymous>
         typeParameters: []
         valueParameters: []
-        visibility: Private
+        visibility: PRIVATE
 
   StaticMemberScope, index = 3
     packages: 0
@@ -608,7 +608,7 @@ scopes:
           annotations: []
           typeArguments: []
           type: E
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: /E.values
@@ -644,7 +644,7 @@ scopes:
           type: kotlin/Array<E>
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: /E.valueOf
@@ -697,9 +697,9 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/String
-            visibility: Public
+            visibility: PUBLIC
         ]
-        visibility: Public
+        visibility: PUBLIC
       KaKotlinPropertySymbol:
         annotations: []
         backingFieldSymbol: null
@@ -731,7 +731,7 @@ scopes:
             ]
             type: kotlin/enums/EnumEntries<E>
           valueParameters: []
-          visibility: Public
+          visibility: PUBLIC
         hasBackingField: false
         hasGetter: true
         hasSetter: false
@@ -762,7 +762,7 @@ scopes:
           type: kotlin/enums/EnumEntries<E>
         setter: null
         typeParameters: []
-        visibility: Public
+        visibility: PUBLIC
     constructors: 0
 
   StaticMemberScope, index = 4
@@ -793,7 +793,7 @@ scopes:
             type: kotlin/Any
         ]
         typeParameters: []
-        visibility: Public
+        visibility: PUBLIC
     callables: 0
     constructors: 0
 
@@ -853,9 +853,9 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/Any?
-            visibility: Public
+            visibility: PUBLIC
         ]
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.hashCode
@@ -886,7 +886,7 @@ scopes:
           type: kotlin/Int
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.toString
@@ -917,7 +917,7 @@ scopes:
           type: kotlin/String
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
     constructors: 1
       KaConstructorSymbol:
         annotations: []
@@ -940,7 +940,7 @@ scopes:
           type: kotlin/Enum.Companion
         typeParameters: []
         valueParameters: []
-        visibility: Private
+        visibility: PRIVATE
 
   ExplicitSimpleImportingScope, index = 6
     packages: 0
@@ -1005,7 +1005,7 @@ scopes:
             type: kotlin/Enum<E>
         ]
         typeParameters: []
-        visibility: Public
+        visibility: PUBLIC
     callables: 0
     constructors: 0
 

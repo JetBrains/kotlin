@@ -13,12 +13,12 @@ import org.jetbrains.kotlin.analysis.api.annotations.renderAsSourceCode
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.MethodBridge
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCComment
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCParameter
 import org.jetbrains.kotlin.backend.konan.objcexport.plus
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.effectiveThrows
@@ -113,9 +113,7 @@ private fun KaNamedAnnotationValue.render(): String {
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.visibilityComments]
  */
-private fun KaSymbol.buildObjCVisibilityComment(kind: String): ObjCComment? {
-    return when ((this as? KaDeclarationSymbol)?.visibility ?: return null) {
-        Visibilities.Protected -> ObjCComment("@note This $kind has protected visibility in Kotlin source and is intended only for use by subclasses.")
-        else -> null
-    }
+private fun KaSymbol.buildObjCVisibilityComment(kind: String): ObjCComment? = when ((this as? KaDeclarationSymbol)?.visibility) {
+    KaSymbolVisibility.PROTECTED -> ObjCComment("@note This $kind has protected visibility in Kotlin source and is intended only for use by subclasses.")
+    else -> null
 }

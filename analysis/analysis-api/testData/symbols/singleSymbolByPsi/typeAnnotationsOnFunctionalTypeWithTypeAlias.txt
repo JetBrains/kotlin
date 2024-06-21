@@ -40,7 +40,7 @@ KaNamedFunctionSymbol:
     type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  {@R|Anno3|()  SecondTypeAlias=} kotlin/Function0<kotlin/Unit>
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnFunctionalTypeWithTypeAlias.kt)
   getContainingJvmClassName: TypeAnnotationsOnFunctionalTypeWithTypeAliasKt
   getContainingModule: KaSourceModule "Sources of main"

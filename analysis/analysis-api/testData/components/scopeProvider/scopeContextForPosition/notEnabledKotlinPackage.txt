@@ -38,7 +38,7 @@ scopes:
           annotations: []
           typeArguments: []
           type: kotlin/String
-        visibility: Public
+        visibility: PUBLIC
     constructors: 0
 
   TypeScope, index = 2

@@ -33,7 +33,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Array<MyKotlinEnum>
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(enumValues.kt)
   getContainingJvmClassName: MyKotlinEnum
   getContainingModule: KaSourceModule "Sources of main"

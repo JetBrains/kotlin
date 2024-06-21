@@ -41,7 +41,7 @@ KaPropertySetterSymbol:
       ]
       typeArguments: []
       type: @R|Anno4|() @R|Anno2|() @R|Anno1|()  @R|Anno4|()  SecondTypeAlias
-    visibility: Local
+    visibility: LOCAL
     getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnPropertySetterParameterTypeWithAnotherAnnotation.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
@@ -81,13 +81,13 @@ KaPropertySetterSymbol:
         ]
         typeArguments: []
         type: @R|Anno4|() @R|Anno2|() @R|Anno1|()  @R|Anno4|()  SecondTypeAlias
-      visibility: Local
+      visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnPropertySetterParameterTypeWithAnotherAnnotation.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnPropertySetterParameterTypeWithAnotherAnnotation.kt)
   getContainingJvmClassName: TypeAnnotationsOnPropertySetterParameterTypeWithAnotherAnnotationKt
   getContainingModule: KaSourceModule "Sources of main"

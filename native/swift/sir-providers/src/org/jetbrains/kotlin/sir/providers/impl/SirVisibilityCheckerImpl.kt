@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.sir.providers.impl
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -99,7 +100,8 @@ public class SirVisibilityCheckerImpl(
         (expandedSymbol as? KaDeclarationSymbol)?.sirVisibility(ktAnalysisSession) == SirVisibility.PUBLIC
     }
 
-    private fun KaDeclarationSymbol.isPublic(): Boolean = visibility.isPublicAPI
+    @OptIn(KaExperimentalApi::class)
+    private fun KaDeclarationSymbol.isPublic(): Boolean = compilerVisibility.isPublicAPI
 }
 
 private val SUPPORTED_SYMBOL_ORIGINS = setOf(KaSymbolOrigin.SOURCE, KaSymbolOrigin.LIBRARY)

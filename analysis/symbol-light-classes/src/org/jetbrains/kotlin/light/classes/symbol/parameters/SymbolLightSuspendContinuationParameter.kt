@@ -10,7 +10,7 @@ import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThis
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -62,7 +62,7 @@ internal class SymbolLightSuspendContinuationParameter(
             annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = EmptyAnnotationsProvider,
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider {
-                    if (withFunctionSymbol { it.visibility.isPrivateOrPrivateToThis() })
+                    if (withFunctionSymbol { it.visibility == KaSymbolVisibility.PRIVATE })
                         KaTypeNullability.UNKNOWN
                     else
                         KaTypeNullability.NON_NULLABLE

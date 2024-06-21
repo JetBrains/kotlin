@@ -45,7 +45,7 @@ KaNamedFunctionSymbol:
     type: kotlin/collections/List<kotlin/collections/List<@R|Anno1|(s = String(s))  @R|Anno2|()  @R|Anno3|()  {@R|Anno3|()  SecondTypeAlias=} BaseAnnotation>>?
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(nestedTypeAnnotationWithTypeAlias.kt)
   getContainingJvmClassName: NestedTypeAnnotationWithTypeAliasKt
   getContainingModule: KaSourceModule "Sources of main"

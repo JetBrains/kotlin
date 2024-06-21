@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
@@ -71,7 +70,7 @@ private val KaCallableSymbol.isPublic: Boolean
          *
          * See details at [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapperKt.shouldBeExposed]
          */
-        return (this as KaSymbolWithVisibility).visibility != Visibilities.Internal && isPublicApi(this)
+        return visibility != KaSymbolVisibility.INTERNAL && isPublicApi(this)
     }
 
 context(KaSession)

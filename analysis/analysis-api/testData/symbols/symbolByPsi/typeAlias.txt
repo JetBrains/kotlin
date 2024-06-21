@@ -8,7 +8,7 @@ KaTypeParameterSymbol:
   origin: SOURCE
   upperBounds: []
   variance: INVARIANT
-  visibility: Local
+  visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(typeAlias.kt)
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
@@ -40,7 +40,7 @@ KaNamedClassSymbol:
   typeParameters: [
     KaTypeParameterSymbol(T)
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(typeAlias.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
@@ -56,7 +56,7 @@ KaTypeParameterSymbol:
   origin: SOURCE
   upperBounds: []
   variance: INVARIANT
-  visibility: Local
+  visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(typeAlias.kt)
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
@@ -82,7 +82,7 @@ KaTypeAliasSymbol:
   typeParameters: [
     KaTypeParameterSymbol(Z)
   ]
-  visibility: Private
+  visibility: PRIVATE
   getContainingFileSymbol: KaFileSymbol(typeAlias.kt)
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

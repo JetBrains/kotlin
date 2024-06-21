@@ -23,7 +23,7 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(similarGenericSignature.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
@@ -44,7 +44,7 @@ KaTypeParameterSymbol:
       type: A
   ]
   variance: INVARIANT
-  visibility: Local
+  visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(similarGenericSignature.kt)
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
@@ -101,13 +101,13 @@ KaNamedFunctionSymbol:
       returnType: KaTypeParameterType:
         annotations: []
         type: J
-      visibility: Public
+      visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(similarGenericSignature.kt)
       getContainingJvmClassName: SimilarGenericSignatureKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(similarGenericSignature.kt)
   getContainingJvmClassName: SimilarGenericSignatureKt
   getContainingModule: KaSourceModule "Sources of main"
@@ -123,7 +123,7 @@ KaTypeParameterSymbol:
   origin: SOURCE
   upperBounds: []
   variance: INVARIANT
-  visibility: Local
+  visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(similarGenericSignature.kt)
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
@@ -180,13 +180,13 @@ KaNamedFunctionSymbol:
       returnType: KaTypeParameterType:
         annotations: []
         type: T
-      visibility: Public
+      visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(similarGenericSignature.kt)
       getContainingJvmClassName: SimilarGenericSignatureKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(similarGenericSignature.kt)
   getContainingJvmClassName: SimilarGenericSignatureKt
   getContainingModule: KaSourceModule "Sources of main"

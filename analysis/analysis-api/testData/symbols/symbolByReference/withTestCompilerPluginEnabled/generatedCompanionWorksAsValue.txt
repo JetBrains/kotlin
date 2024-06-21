@@ -23,7 +23,7 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(generatedCompanionWorksAsValue.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null

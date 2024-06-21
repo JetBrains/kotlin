@@ -50,13 +50,13 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      visibility: Local
+      visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(vararg.kt)
       getContainingJvmClassName: VarargKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(vararg.kt)
   getContainingJvmClassName: VarargKt
   getContainingModule: KaSourceModule "Sources of main"

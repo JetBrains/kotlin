@@ -16,7 +16,7 @@ KaKotlinPropertySymbol:
     returnType: KaDynamicType:
       annotations: []
       type: dynamic
-    visibility: Private
+    visibility: PRIVATE
     getContainingFileSymbol: KaFileSymbol(dynamic.kt)
     getContainingJvmClassName: Foo
     getContainingModule: KaSourceModule "Sources of main"
@@ -43,7 +43,7 @@ KaKotlinPropertySymbol:
       annotations: []
       type: dynamic
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
       annotations: []
       typeArguments: []
@@ -76,7 +76,7 @@ KaKotlinPropertySymbol:
     type: dynamic
   setter: null
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
     annotations: []
     typeArguments: []
@@ -105,7 +105,7 @@ KaAnonymousFunctionSymbol:
     annotations: []
     type: dynamic
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(dynamic.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
@@ -161,13 +161,13 @@ KaNamedFunctionSymbol:
       returnType: KaDynamicType:
         annotations: []
         type: dynamic
-      visibility: Public
+      visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(dynamic.kt)
       getContainingJvmClassName: Foo
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
     annotations: []
     typeArguments: []
@@ -202,7 +202,7 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(dynamic.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null

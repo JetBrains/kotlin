@@ -15,7 +15,7 @@ KaAnonymousObjectSymbol:
       typeArguments: []
       type: kotlin/Any
   ]
-  visibility: Local
+  visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(objectWithTypeArgsAsExpression.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null

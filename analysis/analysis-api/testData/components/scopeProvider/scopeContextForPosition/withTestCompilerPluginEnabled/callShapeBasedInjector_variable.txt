@@ -30,7 +30,7 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Int
-          visibility: Local
+          visibility: LOCAL
         callableId: null
         compilerVisibility: Local
         contextReceivers: []
@@ -67,7 +67,7 @@ scopes:
             typeArguments: []
             type: kotlin/Int
           valueParameters: []
-          visibility: Local
+          visibility: LOCAL
         hasBackingField: true
         hasGetter: true
         hasSetter: false
@@ -106,7 +106,7 @@ scopes:
           type: kotlin/Int
         setter: null
         typeParameters: []
-        visibility: Local
+        visibility: LOCAL
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.equals
@@ -159,9 +159,9 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/Any?
-            visibility: Public
+            visibility: PUBLIC
         ]
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.hashCode
@@ -192,7 +192,7 @@ scopes:
           type: kotlin/Int
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.toString
@@ -223,7 +223,7 @@ scopes:
           type: kotlin/String
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
     constructors: 1
       KaConstructorSymbol:
         annotations: []
@@ -246,7 +246,7 @@ scopes:
           type: <local>/Scope1
         typeParameters: []
         valueParameters: []
-        visibility: Local
+        visibility: LOCAL
 
   LocalScope, index = 1
     packages: 0
@@ -273,7 +273,7 @@ scopes:
               type: <local>/DataFrameType
           ]
           type: DataFrame<<local>/DataFrameType>
-        visibility: Local
+        visibility: LOCAL
     constructors: 0
 
   LocalScope, index = 2
@@ -304,7 +304,7 @@ scopes:
             *
           ]
           type: DataFrame<*>
-        visibility: Public
+        visibility: PUBLIC
     constructors: 0
 
   ExplicitSimpleImportingScope, index = 3
@@ -367,7 +367,7 @@ scopes:
         typeParameters: [
           KaTypeParameterSymbol(T)
         ]
-        visibility: Public
+        visibility: PUBLIC
       KaNamedClassSymbol:
         annotations: []
         classId: Refine
@@ -393,7 +393,7 @@ scopes:
             type: kotlin/Annotation
         ]
         typeParameters: []
-        visibility: Public
+        visibility: PUBLIC
     callables: 2
       KaNamedFunctionSymbol:
         annotations: [
@@ -470,7 +470,7 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/String
-            visibility: Public
+            visibility: PUBLIC
           KaValueParameterSymbol:
             annotations: []
             callableId: null
@@ -497,9 +497,9 @@ scopes:
                   type: R
               ]
               type: kotlin/Function0<R>
-            visibility: Public
+            visibility: PUBLIC
         ]
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: /test_1
@@ -554,9 +554,9 @@ scopes:
                 *
               ]
               type: DataFrame<*>
-            visibility: Public
+            visibility: PUBLIC
         ]
-        visibility: Public
+        visibility: PUBLIC
     constructors: 0
 
   DefaultSimpleImportingScope, index = 5

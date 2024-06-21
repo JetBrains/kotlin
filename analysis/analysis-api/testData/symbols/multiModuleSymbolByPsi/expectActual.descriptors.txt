@@ -25,7 +25,7 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
 
 KaNamedClassSymbol:
   annotations: []
@@ -52,7 +52,7 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
 
 KaConstructorSymbol:
   annotations: []
@@ -97,9 +97,9 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/String
-      visibility: Local
+      visibility: LOCAL
   ]
-  visibility: Public
+  visibility: PUBLIC
 
 KaConstructorSymbol:
   annotations: []
@@ -144,9 +144,9 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      visibility: Local
+      visibility: LOCAL
   ]
-  visibility: Public
+  visibility: PUBLIC
 
 KaNamedClassSymbol:
   annotations: []
@@ -173,7 +173,7 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -205,7 +205,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Unit
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -226,7 +226,7 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    visibility: Private
+    visibility: PRIVATE
   callableId: sample/B.n
   compilerVisibility: Public
   contextReceivers: []
@@ -250,7 +250,7 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -276,7 +276,7 @@ KaKotlinPropertySymbol:
     type: kotlin/Int
   setter: null
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
 
 KaNamedClassSymbol:
   annotations: []
@@ -303,7 +303,7 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
 
 KaNamedClassSymbol:
   annotations: []
@@ -330,7 +330,7 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -362,7 +362,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Unit
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -383,7 +383,7 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    visibility: Private
+    visibility: PRIVATE
   callableId: sample/m
   compilerVisibility: Public
   contextReceivers: []
@@ -407,7 +407,7 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
   hasBackingField: true
   hasGetter: true
   hasSetter: true
@@ -467,7 +467,7 @@ KaKotlinPropertySymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      visibility: Local
+      visibility: LOCAL
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -496,11 +496,11 @@ KaKotlinPropertySymbol:
           annotations: []
           typeArguments: []
           type: kotlin/Int
-        visibility: Local
+        visibility: LOCAL
     ]
-    visibility: Public
+    visibility: PUBLIC
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
 
 // FILE: JvmAndroid.kt
 
@@ -529,7 +529,7 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
 
 KaNamedClassSymbol:
   annotations: []
@@ -556,7 +556,7 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
 
 KaConstructorSymbol:
   annotations: []
@@ -601,9 +601,9 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/String
-      visibility: Local
+      visibility: LOCAL
   ]
-  visibility: Public
+  visibility: PUBLIC
 
 KaConstructorSymbol:
   annotations: []
@@ -648,9 +648,9 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      visibility: Local
+      visibility: LOCAL
   ]
-  visibility: Public
+  visibility: PUBLIC
 
 KaNamedClassSymbol:
   annotations: []
@@ -677,7 +677,7 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -709,7 +709,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Unit
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -730,7 +730,7 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    visibility: Private
+    visibility: PRIVATE
   callableId: sample/B.n
   compilerVisibility: Public
   contextReceivers: []
@@ -754,7 +754,7 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -780,7 +780,7 @@ KaKotlinPropertySymbol:
     type: kotlin/Int
   setter: null
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
 
 KaTypeAliasSymbol:
   annotations: []
@@ -797,7 +797,7 @@ KaTypeAliasSymbol:
   name: C
   origin: SOURCE
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
 
 KaNamedClassSymbol:
   annotations: []
@@ -824,7 +824,7 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
 
 KaNamedClassSymbol:
   annotations: []
@@ -851,7 +851,7 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -883,7 +883,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Unit
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -904,7 +904,7 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    visibility: Private
+    visibility: PRIVATE
   callableId: sample/m
   compilerVisibility: Public
   contextReceivers: []
@@ -928,7 +928,7 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
   hasBackingField: true
   hasGetter: true
   hasSetter: true
@@ -988,7 +988,7 @@ KaKotlinPropertySymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      visibility: Local
+      visibility: LOCAL
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -1017,9 +1017,9 @@ KaKotlinPropertySymbol:
           annotations: []
           typeArguments: []
           type: kotlin/Int
-        visibility: Local
+        visibility: LOCAL
     ]
-    visibility: Public
+    visibility: PUBLIC
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
 

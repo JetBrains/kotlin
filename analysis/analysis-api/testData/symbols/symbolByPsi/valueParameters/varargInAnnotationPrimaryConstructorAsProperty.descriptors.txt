@@ -43,7 +43,7 @@ KaConstructorSymbol:
             annotations: []
             typeArguments: []
             type: kotlin/IntArray
-          visibility: Private
+          visibility: PRIVATE
           getContainingFileSymbol: KaFileSymbol(varargInAnnotationPrimaryConstructorAsProperty.kt)
           getContainingJvmClassName: Foo
           getContainingModule: KaSourceModule "Sources of main"
@@ -71,7 +71,7 @@ KaConstructorSymbol:
             typeArguments: []
             type: kotlin/IntArray
           valueParameters: []
-          visibility: Public
+          visibility: PUBLIC
           getDispatchReceiver(): KaUsualClassType:
             annotations: []
             typeArguments: []
@@ -105,7 +105,7 @@ KaConstructorSymbol:
           type: kotlin/IntArray
         setter: null
         typeParameters: []
-        visibility: Public
+        visibility: PUBLIC
         getDispatchReceiver(): KaUsualClassType:
           annotations: []
           typeArguments: []
@@ -134,13 +134,13 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      visibility: Local
+      visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(varargInAnnotationPrimaryConstructorAsProperty.kt)
       getContainingJvmClassName: Foo
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(varargInAnnotationPrimaryConstructorAsProperty.kt)
   getContainingJvmClassName: Foo
   getContainingModule: KaSourceModule "Sources of main"
@@ -171,7 +171,7 @@ KaNamedClassSymbol:
       type: kotlin/Annotation
   ]
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(varargInAnnotationPrimaryConstructorAsProperty.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: [CLASS, ANNOTATION_CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, BACKING_FIELD]

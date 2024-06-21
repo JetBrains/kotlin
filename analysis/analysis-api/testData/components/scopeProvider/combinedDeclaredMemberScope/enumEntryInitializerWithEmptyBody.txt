@@ -19,7 +19,7 @@ KaConstructorSymbol:
     type: test/<anonymous>
   typeParameters: []
   valueParameters: []
-  visibility: Private
+  visibility: PRIVATE
   getContainingFileSymbol: KaFileSymbol(enumEntryInitializerWithEmptyBody.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"

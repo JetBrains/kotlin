@@ -28,7 +28,7 @@ KaNamedFunctionSymbol:
     type: kotlin/String
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingJvmClassName: dependency.api.ExtensionKt
   getContainingModule: KaSourceModule "Sources of main"
@@ -64,7 +64,7 @@ KaNamedFunctionSymbol:
     type: kotlin/String
   typeParameters: []
   valueParameters: []
-  visibility: Internal
+  visibility: INTERNAL
   getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingJvmClassName: dependency.api.ExtensionKt
   getContainingModule: KaSourceModule "Sources of main"
@@ -100,7 +100,7 @@ KaNamedFunctionSymbol:
     type: kotlin/String
   typeParameters: []
   valueParameters: []
-  visibility: Private
+  visibility: PRIVATE
   getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingJvmClassName: dependency.api.ExtensionKt
   getContainingModule: KaSourceModule "Sources of main"
@@ -147,7 +147,7 @@ KaNamedFunctionSymbol:
     type: dependency/api/I
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingJvmClassName: dependency.api.ExtensionKt
   getContainingModule: KaSourceModule "Sources of main"
@@ -194,7 +194,7 @@ KaNamedFunctionSymbol:
     type: dependency/api/I
   typeParameters: []
   valueParameters: []
-  visibility: Internal
+  visibility: INTERNAL
   getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingJvmClassName: dependency.api.ExtensionKt
   getContainingModule: KaSourceModule "Sources of main"
@@ -241,7 +241,7 @@ KaNamedFunctionSymbol:
     type: dependency/api/I
   typeParameters: []
   valueParameters: []
-  visibility: Private
+  visibility: PRIVATE
   getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingJvmClassName: dependency.api.ExtensionKt
   getContainingModule: KaSourceModule "Sources of main"
@@ -277,7 +277,7 @@ KaNamedFunctionSymbol:
     type: kotlin/String
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(I.kt)
   getContainingJvmClassName: dependency.api.IKt
   getContainingModule: KaSourceModule "Sources of dependency"
@@ -313,7 +313,7 @@ KaNamedFunctionSymbol:
     type: kotlin/String
   typeParameters: []
   valueParameters: []
-  visibility: Internal
+  visibility: INTERNAL
   getContainingFileSymbol: KaFileSymbol(I.kt)
   getContainingJvmClassName: dependency.api.IKt
   getContainingModule: KaSourceModule "Sources of dependency"
@@ -349,7 +349,7 @@ KaNamedFunctionSymbol:
     type: kotlin/String
   typeParameters: []
   valueParameters: []
-  visibility: Private
+  visibility: PRIVATE
   getContainingFileSymbol: KaFileSymbol(I.kt)
   getContainingJvmClassName: dependency.api.IKt
   getContainingModule: KaSourceModule "Sources of dependency"
@@ -396,7 +396,7 @@ KaNamedFunctionSymbol:
     type: dependency/api/I
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(I.kt)
   getContainingJvmClassName: dependency.api.IKt
   getContainingModule: KaSourceModule "Sources of dependency"
@@ -443,7 +443,7 @@ KaNamedFunctionSymbol:
     type: dependency/api/InternalI
   typeParameters: []
   valueParameters: []
-  visibility: Internal
+  visibility: INTERNAL
   getContainingFileSymbol: KaFileSymbol(I.kt)
   getContainingJvmClassName: dependency.api.IKt
   getContainingModule: KaSourceModule "Sources of dependency"
@@ -490,7 +490,7 @@ KaNamedFunctionSymbol:
     type: dependency/api/PrivateI
   typeParameters: []
   valueParameters: []
-  visibility: Private
+  visibility: PRIVATE
   getContainingFileSymbol: KaFileSymbol(I.kt)
   getContainingJvmClassName: dependency.api.IKt
   getContainingModule: KaSourceModule "Sources of dependency"
@@ -526,7 +526,7 @@ KaNamedFunctionSymbol:
     type: kotlin/String
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(C1.kt)
   getContainingJvmClassName: dependency.api.C1Kt
   getContainingModule: KaSourceModule "Sources of dependency"
@@ -562,7 +562,7 @@ KaNamedFunctionSymbol:
     type: kotlin/String
   typeParameters: []
   valueParameters: []
-  visibility: Internal
+  visibility: INTERNAL
   getContainingFileSymbol: KaFileSymbol(C1.kt)
   getContainingJvmClassName: dependency.api.C1Kt
   getContainingModule: KaSourceModule "Sources of dependency"
@@ -598,7 +598,7 @@ KaNamedFunctionSymbol:
     type: kotlin/String
   typeParameters: []
   valueParameters: []
-  visibility: Private
+  visibility: PRIVATE
   getContainingFileSymbol: KaFileSymbol(C1.kt)
   getContainingJvmClassName: dependency.api.C1Kt
   getContainingModule: KaSourceModule "Sources of dependency"
@@ -645,7 +645,7 @@ KaNamedFunctionSymbol:
     type: dependency/api/I
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(C1.kt)
   getContainingJvmClassName: dependency.api.C1Kt
   getContainingModule: KaSourceModule "Sources of dependency"
@@ -692,7 +692,7 @@ KaNamedFunctionSymbol:
     type: dependency/api/InternalI
   typeParameters: []
   valueParameters: []
-  visibility: Internal
+  visibility: INTERNAL
   getContainingFileSymbol: KaFileSymbol(C1.kt)
   getContainingJvmClassName: dependency.api.C1Kt
   getContainingModule: KaSourceModule "Sources of dependency"
@@ -739,7 +739,7 @@ KaNamedFunctionSymbol:
     type: dependency/api/I
   typeParameters: []
   valueParameters: []
-  visibility: Private
+  visibility: PRIVATE
   getContainingFileSymbol: KaFileSymbol(C1.kt)
   getContainingJvmClassName: dependency.api.C1Kt
   getContainingModule: KaSourceModule "Sources of dependency"
@@ -770,7 +770,7 @@ KaNamedClassSymbol:
       type: dependency/api/I
   ]
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
@@ -801,7 +801,7 @@ KaNamedClassSymbol:
       type: dependency/api/I
   ]
   typeParameters: []
-  visibility: Internal
+  visibility: INTERNAL
   getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
@@ -832,7 +832,7 @@ KaNamedClassSymbol:
       type: dependency/api/I
   ]
   typeParameters: []
-  visibility: Private
+  visibility: PRIVATE
   getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
@@ -863,7 +863,7 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(I.kt)
   getContainingModule: KaSourceModule "Sources of dependency"
   annotationApplicableTargets: null
@@ -894,7 +894,7 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: []
-  visibility: Internal
+  visibility: INTERNAL
   getContainingFileSymbol: KaFileSymbol(I.kt)
   getContainingModule: KaSourceModule "Sources of dependency"
   annotationApplicableTargets: null
@@ -925,7 +925,7 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: []
-  visibility: Private
+  visibility: PRIVATE
   getContainingFileSymbol: KaFileSymbol(I.kt)
   getContainingModule: KaSourceModule "Sources of dependency"
   annotationApplicableTargets: null
@@ -956,7 +956,7 @@ KaNamedClassSymbol:
       type: dependency/api/I
   ]
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(C1.kt)
   getContainingModule: KaSourceModule "Sources of dependency"
   annotationApplicableTargets: null
@@ -987,7 +987,7 @@ KaNamedClassSymbol:
       type: dependency/api/InternalI
   ]
   typeParameters: []
-  visibility: Internal
+  visibility: INTERNAL
   getContainingFileSymbol: KaFileSymbol(C1.kt)
   getContainingModule: KaSourceModule "Sources of dependency"
   annotationApplicableTargets: null
@@ -1018,7 +1018,7 @@ KaNamedClassSymbol:
       type: dependency/api/I
   ]
   typeParameters: []
-  visibility: Private
+  visibility: PRIVATE
   getContainingFileSymbol: KaFileSymbol(C1.kt)
   getContainingModule: KaSourceModule "Sources of dependency"
   annotationApplicableTargets: null

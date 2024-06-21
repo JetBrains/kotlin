@@ -14,7 +14,7 @@ KaJavaFieldSymbol:
   returnType: KaFlexibleType:
     annotations: []
     type: kotlin/Int!
-  visibility: ProtectedAndPackage
+  visibility: PACKAGE_PROTECTED
   getDispatchReceiver(): KaUsualClassType:
     annotations: []
     typeArguments: []

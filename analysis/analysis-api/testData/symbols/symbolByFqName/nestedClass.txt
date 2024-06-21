@@ -33,7 +33,7 @@ KaNamedClassSymbol:
     KaTypeParameterSymbol(K)
     KaTypeParameterSymbol(V)
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   annotationApplicableTargets: null

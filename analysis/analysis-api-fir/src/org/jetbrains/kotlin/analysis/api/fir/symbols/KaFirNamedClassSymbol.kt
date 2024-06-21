@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
+import org.jetbrains.kotlin.analysis.api.symbols.asKaSymbolVisibility
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
@@ -51,11 +53,11 @@ internal class KaFirNamedClassSymbol(
                 }
         }
 
-    override val visibility: Visibility
+    override val visibility: KaSymbolVisibility
         get() = withValidityAssertion {
             when (val possiblyRawVisibility = firSymbol.fir.visibility) {
-                Visibilities.Unknown -> if (firSymbol.fir.isLocal) Visibilities.Local else Visibilities.Public
-                else -> possiblyRawVisibility
+                Visibilities.Unknown -> if (firSymbol.fir.isLocal) KaSymbolVisibility.LOCAL else KaSymbolVisibility.PUBLIC
+                else -> possiblyRawVisibility.asKaSymbolVisibility
             }
         }
 

@@ -50,13 +50,13 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      visibility: Public
+      visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(tailrecFunction.kt)
       getContainingJvmClassName: TailrecFunctionKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(tailrecFunction.kt)
   getContainingJvmClassName: TailrecFunctionKt
   getContainingModule: KaSourceModule "Sources of main"

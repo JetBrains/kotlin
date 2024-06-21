@@ -129,7 +129,7 @@ KaNamedFunctionSymbol:
       returnType: KaTypeParameterType:
         annotations: []
         type: X
-      visibility: Public
+      visibility: PUBLIC
     KaValueParameterSymbol:
       annotations: []
       callableId: null
@@ -151,9 +151,9 @@ KaNamedFunctionSymbol:
       returnType: KaTypeParameterType:
         annotations: []
         type: Y
-      visibility: Public
+      visibility: PUBLIC
   ]
-  visibility: Public
+  visibility: PUBLIC
 KaKotlinPropertySymbol:
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
@@ -180,7 +180,7 @@ KaKotlinPropertySymbol:
           type: O
       ]
       type: kotlin/collections/Map<X, O>
-    visibility: Private
+    visibility: PRIVATE
   callableId: /Outer.A.map
   compilerVisibility: Public
   contextReceivers: []
@@ -211,7 +211,7 @@ KaKotlinPropertySymbol:
       ]
       type: kotlin/collections/Map<X, O>
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -244,7 +244,7 @@ KaKotlinPropertySymbol:
     type: kotlin/collections/Map<X, O>
   setter: null
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /Outer.A.fromSuper
@@ -274,7 +274,7 @@ KaNamedFunctionSymbol:
     type: O
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Any.equals
@@ -327,9 +327,9 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Any?
-      visibility: Public
+      visibility: PUBLIC
   ]
-  visibility: Public
+  visibility: PUBLIC
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Any.hashCode
@@ -360,7 +360,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Any.toString
@@ -391,5 +391,5 @@ KaNamedFunctionSymbol:
     type: kotlin/String
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
 

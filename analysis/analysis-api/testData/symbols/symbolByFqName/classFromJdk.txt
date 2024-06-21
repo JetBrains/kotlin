@@ -39,7 +39,7 @@ KaNamedClassSymbol:
       type: kotlin/CharSequence
   ]
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingModule: KaLibraryModule "SDK jdk"
   annotationApplicableTargets: null

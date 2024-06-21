@@ -47,7 +47,7 @@ KaConstructorSymbol:
                 type: ERROR_TYPE
             ]
             type: kotlin/Array<out ERROR_TYPE>
-          visibility: Private
+          visibility: PRIVATE
           getContainingFileSymbol: KaFileSymbol(varargInAnnotationPrimaryConstructorAsPropertyWithoutType.kt)
           getContainingJvmClassName: Foo
           getContainingModule: KaSourceModule "Sources of main"
@@ -79,7 +79,7 @@ KaConstructorSymbol:
             ]
             type: kotlin/Array<out ERROR_TYPE>
           valueParameters: []
-          visibility: Public
+          visibility: PUBLIC
           getDispatchReceiver(): KaUsualClassType:
             annotations: []
             typeArguments: []
@@ -117,7 +117,7 @@ KaConstructorSymbol:
           type: kotlin/Array<out ERROR_TYPE>
         setter: null
         typeParameters: []
-        visibility: Public
+        visibility: PUBLIC
         getDispatchReceiver(): KaUsualClassType:
           annotations: []
           typeArguments: []
@@ -145,13 +145,13 @@ KaConstructorSymbol:
       returnType: KaErrorType:
         annotations: []
         type: ERROR_TYPE
-      visibility: Local
+      visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(varargInAnnotationPrimaryConstructorAsPropertyWithoutType.kt)
       getContainingJvmClassName: Foo
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(varargInAnnotationPrimaryConstructorAsPropertyWithoutType.kt)
   getContainingJvmClassName: Foo
   getContainingModule: KaSourceModule "Sources of main"
@@ -182,7 +182,7 @@ KaNamedClassSymbol:
       type: kotlin/Annotation
   ]
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(varargInAnnotationPrimaryConstructorAsPropertyWithoutType.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: [CLASS, ANNOTATION_CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, BACKING_FIELD]

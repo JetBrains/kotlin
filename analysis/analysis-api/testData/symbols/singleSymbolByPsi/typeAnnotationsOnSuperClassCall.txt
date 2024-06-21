@@ -30,7 +30,7 @@ KaNamedClassSymbol:
       type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  {@R|Anno3|()  SecondTypeAlias=} BaseClass
   ]
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnSuperClassCall.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null

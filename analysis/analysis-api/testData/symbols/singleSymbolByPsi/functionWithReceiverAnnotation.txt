@@ -45,7 +45,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Unit
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(functionWithReceiverAnnotation.kt)
   getContainingJvmClassName: FunctionWithReceiverAnnotationKt
   getContainingModule: KaSourceModule "Sources of main"

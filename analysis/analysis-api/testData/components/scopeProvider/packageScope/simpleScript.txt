@@ -23,7 +23,7 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(simpleScript.kts)
   getContainingModule: KaScriptModule "Script simpleScript.kts"
   annotationApplicableTargets: null
@@ -54,7 +54,7 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(simpleScript.kts)
   getContainingModule: KaScriptModule "Script simpleScript.kts"
   annotationApplicableTargets: null
@@ -85,7 +85,7 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(simpleScript.kts)
   getContainingModule: KaScriptModule "Script simpleScript.kts"
   annotationApplicableTargets: null

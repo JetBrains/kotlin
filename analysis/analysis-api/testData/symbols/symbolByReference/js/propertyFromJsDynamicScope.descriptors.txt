@@ -29,7 +29,7 @@ KaKotlinPropertySymbol:
     type: dynamic
   setter: null
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaDynamicType:
     annotations: []
     type: dynamic

@@ -71,7 +71,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int!
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Any.equals
@@ -124,9 +124,9 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Any?
-      visibility: Public
+      visibility: PUBLIC
   ]
-  visibility: Public
+  visibility: PUBLIC
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Any.hashCode
@@ -157,7 +157,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Any.toString
@@ -188,7 +188,7 @@ KaNamedFunctionSymbol:
     type: kotlin/String
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
 KaSyntheticJavaPropertySymbol:
   annotations: []
   backingFieldSymbol: null
@@ -214,7 +214,7 @@ KaSyntheticJavaPropertySymbol:
       annotations: []
       type: kotlin/Int!
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -237,5 +237,5 @@ KaSyntheticJavaPropertySymbol:
     type: kotlin/Int!
   setter: null
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
 

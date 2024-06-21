@@ -20,7 +20,7 @@ KaValueParameterSymbol:
     annotations: []
     typeArguments: []
     type: X
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(destructuringDeclarationParameterInLambda.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"

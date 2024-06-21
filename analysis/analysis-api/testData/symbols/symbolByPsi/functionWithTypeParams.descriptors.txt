@@ -8,7 +8,7 @@ KaTypeParameterSymbol:
   origin: SOURCE
   upperBounds: []
   variance: INVARIANT
-  visibility: Local
+  visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(functionWithTypeParams.kt)
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
@@ -66,13 +66,13 @@ KaNamedFunctionSymbol:
       returnType: KaTypeParameterType:
         annotations: []
         type: X
-      visibility: Local
+      visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(functionWithTypeParams.kt)
       getContainingJvmClassName: FunctionWithTypeParamsKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(functionWithTypeParams.kt)
   getContainingJvmClassName: FunctionWithTypeParamsKt
   getContainingModule: KaSourceModule "Sources of main"

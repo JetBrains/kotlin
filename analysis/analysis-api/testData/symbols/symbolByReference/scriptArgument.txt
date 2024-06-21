@@ -22,7 +22,7 @@ KaKotlinPropertySymbol:
           type: kotlin/String
       ]
       type: kotlin/Array<kotlin/String>
-    visibility: Public
+    visibility: PUBLIC
     getContainingFileSymbol: null
     getContainingJvmClassName: kotlin.script.templates.standard.ScriptTemplateWithArgs
     getContainingModule: KaLibraryModule "Library kotlin-script-runtime"
@@ -55,7 +55,7 @@ KaKotlinPropertySymbol:
       ]
       type: kotlin/Array<kotlin/String>
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
       annotations: []
       typeArguments: []
@@ -94,7 +94,7 @@ KaKotlinPropertySymbol:
     type: kotlin/Array<kotlin/String>
   setter: null
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
     annotations: []
     typeArguments: []

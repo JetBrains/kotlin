@@ -102,7 +102,7 @@ KaNamedFunctionSymbol:
     type: A
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Pair.component2
@@ -132,7 +132,7 @@ KaNamedFunctionSymbol:
     type: B
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Pair.copy
@@ -191,7 +191,7 @@ KaNamedFunctionSymbol:
       returnType: KaTypeParameterType:
         annotations: []
         type: A
-      visibility: Public
+      visibility: PUBLIC
     KaValueParameterSymbol:
       annotations: []
       callableId: null
@@ -213,9 +213,9 @@ KaNamedFunctionSymbol:
       returnType: KaTypeParameterType:
         annotations: []
         type: B
-      visibility: Public
+      visibility: PUBLIC
   ]
-  visibility: Public
+  visibility: PUBLIC
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Pair.equals
@@ -268,9 +268,9 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Any?
-      visibility: Public
+      visibility: PUBLIC
   ]
-  visibility: Public
+  visibility: PUBLIC
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Pair.hashCode
@@ -301,7 +301,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Pair.toString
@@ -332,7 +332,7 @@ KaNamedFunctionSymbol:
     type: kotlin/String
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
 KaKotlinPropertySymbol:
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
@@ -351,7 +351,7 @@ KaKotlinPropertySymbol:
     returnType: KaTypeParameterType:
       annotations: []
       type: A
-    visibility: Public
+    visibility: PUBLIC
   callableId: kotlin/Pair.first
   compilerVisibility: Public
   contextReceivers: []
@@ -374,7 +374,7 @@ KaKotlinPropertySymbol:
       annotations: []
       type: A
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -399,7 +399,7 @@ KaKotlinPropertySymbol:
     type: A
   setter: null
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
 KaKotlinPropertySymbol:
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
@@ -418,7 +418,7 @@ KaKotlinPropertySymbol:
     returnType: KaTypeParameterType:
       annotations: []
       type: B
-    visibility: Public
+    visibility: PUBLIC
   callableId: kotlin/Pair.second
   compilerVisibility: Public
   contextReceivers: []
@@ -441,7 +441,7 @@ KaKotlinPropertySymbol:
       annotations: []
       type: B
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -466,5 +466,5 @@ KaKotlinPropertySymbol:
     type: B
   setter: null
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
 

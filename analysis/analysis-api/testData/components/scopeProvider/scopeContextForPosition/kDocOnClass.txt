@@ -34,7 +34,7 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Int
-          visibility: Private
+          visibility: PRIVATE
         callableId: test/MyClass.property
         compilerVisibility: Public
         contextReceivers: []
@@ -58,7 +58,7 @@ scopes:
             typeArguments: []
             type: kotlin/Int
           valueParameters: []
-          visibility: Public
+          visibility: PUBLIC
         hasBackingField: true
         hasGetter: true
         hasSetter: false
@@ -84,7 +84,7 @@ scopes:
           type: kotlin/Int
         setter: null
         typeParameters: []
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: test/MyClass.member
@@ -115,7 +115,7 @@ scopes:
           type: kotlin/Int
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.equals
@@ -168,9 +168,9 @@ scopes:
               annotations: []
               typeArguments: []
               type: kotlin/Any?
-            visibility: Public
+            visibility: PUBLIC
         ]
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.hashCode
@@ -201,7 +201,7 @@ scopes:
           type: kotlin/Int
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.toString
@@ -232,7 +232,7 @@ scopes:
           type: kotlin/String
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
     constructors: 1
       KaConstructorSymbol:
         annotations: []
@@ -283,7 +283,7 @@ scopes:
               annotations: []
               typeArguments: []
               type: test/Param1
-            visibility: Public
+            visibility: PUBLIC
           KaValueParameterSymbol:
             annotations: []
             callableId: null
@@ -306,9 +306,9 @@ scopes:
               annotations: []
               typeArguments: []
               type: test/Param2
-            visibility: Public
+            visibility: PUBLIC
         ]
-        visibility: Public
+        visibility: PUBLIC
 
   TypeParameterScope, index = 1
     packages: 0
@@ -323,7 +323,7 @@ scopes:
         origin: SOURCE
         upperBounds: []
         variance: INVARIANT
-        visibility: Local
+        visibility: LOCAL
     callables: 0
     constructors: 0
 
@@ -361,7 +361,7 @@ scopes:
             type: kotlin/Any
         ]
         typeParameters: []
-        visibility: Public
+        visibility: PUBLIC
       KaNamedClassSymbol:
         annotations: []
         classId: test/Param2
@@ -387,7 +387,7 @@ scopes:
             type: kotlin/Any
         ]
         typeParameters: []
-        visibility: Public
+        visibility: PUBLIC
       KaNamedClassSymbol:
         annotations: []
         classId: test/MyClass
@@ -415,7 +415,7 @@ scopes:
         typeParameters: [
           KaTypeParameterSymbol(TypeParam)
         ]
-        visibility: Public
+        visibility: PUBLIC
     callables: 0
     constructors: 0
 

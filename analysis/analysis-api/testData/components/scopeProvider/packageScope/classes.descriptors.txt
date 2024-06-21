@@ -27,7 +27,7 @@ KaNamedClassSymbol:
       type: test/api/I
   ]
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(A.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
@@ -62,7 +62,7 @@ KaNamedClassSymbol:
       type: test/api/InternalI
   ]
   typeParameters: []
-  visibility: Internal
+  visibility: INTERNAL
   getContainingFileSymbol: KaFileSymbol(A.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
@@ -97,7 +97,7 @@ KaNamedClassSymbol:
       type: test/api/I
   ]
   typeParameters: []
-  visibility: Private
+  visibility: PRIVATE
   getContainingFileSymbol: KaFileSymbol(A.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
@@ -128,7 +128,7 @@ KaNamedClassSymbol:
       type: test/A
   ]
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(B.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
@@ -159,7 +159,7 @@ KaNamedClassSymbol:
       type: test/InternalA
   ]
   typeParameters: []
-  visibility: Internal
+  visibility: INTERNAL
   getContainingFileSymbol: KaFileSymbol(B.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
@@ -190,7 +190,7 @@ KaNamedClassSymbol:
       type: test/A
   ]
   typeParameters: []
-  visibility: Private
+  visibility: PRIVATE
   getContainingFileSymbol: KaFileSymbol(B.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null

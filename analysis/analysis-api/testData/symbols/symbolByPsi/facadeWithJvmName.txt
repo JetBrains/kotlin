@@ -28,7 +28,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Unit
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(facadeWithJvmName.kt)
   getContainingJvmClassName: DifferentFacadeName
   getContainingModule: KaSourceModule "Sources of main"
@@ -75,7 +75,7 @@ KaNamedFunctionSymbol:
     type: kotlin/Int
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(facadeWithJvmName.kt)
   getContainingJvmClassName: DifferentFacadeName
   getContainingModule: KaSourceModule "Sources of main"
@@ -100,7 +100,7 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    visibility: Private
+    visibility: PRIVATE
     getContainingFileSymbol: KaFileSymbol(facadeWithJvmName.kt)
     getContainingJvmClassName: DifferentFacadeName
     getContainingModule: KaSourceModule "Sources of main"
@@ -128,7 +128,7 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(facadeWithJvmName.kt)
     getContainingJvmClassName: DifferentFacadeName
     getContainingModule: KaSourceModule "Sources of main"
@@ -158,7 +158,7 @@ KaKotlinPropertySymbol:
     type: kotlin/Int
   setter: null
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(facadeWithJvmName.kt)
   getContainingJvmClassName: DifferentFacadeName
   getContainingModule: KaSourceModule "Sources of main"
@@ -187,7 +187,7 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    visibility: Private
+    visibility: PRIVATE
     getContainingFileSymbol: KaFileSymbol(facadeWithJvmName.kt)
     getContainingJvmClassName: DifferentFacadeName
     getContainingModule: KaSourceModule "Sources of main"
@@ -226,7 +226,7 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(facadeWithJvmName.kt)
     getContainingJvmClassName: DifferentFacadeName
     getContainingModule: KaSourceModule "Sources of main"
@@ -267,7 +267,7 @@ KaKotlinPropertySymbol:
     type: kotlin/Int
   setter: null
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(facadeWithJvmName.kt)
   getContainingJvmClassName: DifferentFacadeName
   getContainingModule: KaSourceModule "Sources of main"

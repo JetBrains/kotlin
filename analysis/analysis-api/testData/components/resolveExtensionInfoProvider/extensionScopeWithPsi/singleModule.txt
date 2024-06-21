@@ -29,7 +29,7 @@ classifiers: 2
         type: kotlin/Any
     ]
     typeParameters: []
-    visibility: Public
+    visibility: PUBLIC
     PSI: KtClass GenClass1 [from extension1.kt]
       From resolve extension: true
       Resolve extension navigation targets: 1
@@ -59,7 +59,7 @@ classifiers: 2
         type: kotlin/Any
     ]
     typeParameters: []
-    visibility: Public
+    visibility: PUBLIC
     PSI: KtClass GenClass2 [from extension2.kt]
       From resolve extension: true
       Resolve extension navigation targets: 1
@@ -117,9 +117,9 @@ callables: 5
           annotations: []
           typeArguments: []
           type: generated/GenClass2
-        visibility: Public
+        visibility: PUBLIC
     ]
-    visibility: Public
+    visibility: PUBLIC
     PSI: KtNamedFunction genTopLevelFun1 [from extension1.kt]
       From resolve extension: true
       Resolve extension navigation targets: 1
@@ -162,7 +162,7 @@ callables: 5
       type: kotlin/Int
     typeParameters: []
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
     PSI: KtNamedFunction genTopLevelExtension1 [from extension1.kt]
       From resolve extension: true
       Resolve extension navigation targets: 1
@@ -186,7 +186,7 @@ callables: 5
         annotations: []
         typeArguments: []
         type: kotlin/String
-      visibility: Private
+      visibility: PRIVATE
     callableId: generated/genTopLevelVal1
     compilerVisibility: Public
     contextReceivers: []
@@ -210,7 +210,7 @@ callables: 5
         typeArguments: []
         type: kotlin/String
       valueParameters: []
-      visibility: Public
+      visibility: PUBLIC
     hasBackingField: true
     hasGetter: true
     hasSetter: false
@@ -236,7 +236,7 @@ callables: 5
       type: kotlin/String
     setter: null
     typeParameters: []
-    visibility: Public
+    visibility: PUBLIC
     PSI: KtProperty genTopLevelVal1 [from extension1.kt]
       From resolve extension: true
       Resolve extension navigation targets: 1
@@ -260,7 +260,7 @@ callables: 5
         annotations: []
         typeArguments: []
         type: kotlin/String
-      visibility: Private
+      visibility: PRIVATE
     callableId: generated/genTopLevelVar1
     compilerVisibility: Public
     contextReceivers: []
@@ -284,7 +284,7 @@ callables: 5
         typeArguments: []
         type: kotlin/String
       valueParameters: []
-      visibility: Public
+      visibility: PUBLIC
     hasBackingField: true
     hasGetter: true
     hasSetter: true
@@ -344,7 +344,7 @@ callables: 5
           annotations: []
           typeArguments: []
           type: kotlin/String
-        visibility: Public
+        visibility: PUBLIC
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -373,11 +373,11 @@ callables: 5
             annotations: []
             typeArguments: []
             type: kotlin/String
-          visibility: Public
+          visibility: PUBLIC
       ]
-      visibility: Internal
+      visibility: INTERNAL
     typeParameters: []
-    visibility: Public
+    visibility: PUBLIC
     PSI: KtProperty genTopLevelVar1 [from extension1.kt]
       From resolve extension: true
       Resolve extension navigation targets: 1
@@ -401,7 +401,7 @@ callables: 5
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      visibility: Private
+      visibility: PRIVATE
     callableId: generated/genExtensionVal1
     compilerVisibility: Public
     contextReceivers: []
@@ -433,7 +433,7 @@ callables: 5
         typeArguments: []
         type: kotlin/Int
       valueParameters: []
-      visibility: Public
+      visibility: PUBLIC
     hasBackingField: false
     hasGetter: true
     hasSetter: false
@@ -467,7 +467,7 @@ callables: 5
       type: kotlin/Int
     setter: null
     typeParameters: []
-    visibility: Public
+    visibility: PUBLIC
     PSI: KtProperty genExtensionVal1 [from extension1.kt]
       From resolve extension: true
       Resolve extension navigation targets: 1

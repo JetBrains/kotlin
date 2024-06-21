@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.symbols.markers
 
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 
 @Deprecated("Use `KaDeclarationSymbol` directly", ReplaceWith("KaDeclarationSymbol"))
 public typealias KaSymbolWithVisibility = KaDeclarationSymbol
@@ -15,5 +14,11 @@ public typealias KaSymbolWithVisibility = KaDeclarationSymbol
 @Deprecated("Use 'KaDeclarationSymbol' directly", ReplaceWith("KaDeclarationSymbol"))
 public typealias KtSymbolWithVisibility = KaDeclarationSymbol
 
-public fun Visibility.isPrivateOrPrivateToThis(): Boolean =
-    this == Visibilities.Private || this == Visibilities.PrivateToThis
+@Deprecated(
+    "Use `KaSymbolVisibility.PRIVATE` directly",
+    ReplaceWith(
+        "this == KaSymbolVisibility.PRIVATE",
+        imports = ["org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility"],
+    ),
+)
+public fun KaSymbolVisibility.isPrivateOrPrivateToThis(): Boolean = this == KaSymbolVisibility.PRIVATE

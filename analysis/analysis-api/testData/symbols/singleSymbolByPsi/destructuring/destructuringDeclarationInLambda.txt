@@ -8,7 +8,7 @@ KaDestructuringDeclarationSymbol:
   location: LOCAL
   modality: FINAL
   origin: SOURCE
-  visibility: Local
+  visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(destructuringDeclarationInLambda.kt)
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

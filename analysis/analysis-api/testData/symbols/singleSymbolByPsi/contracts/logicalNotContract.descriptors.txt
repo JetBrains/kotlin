@@ -37,7 +37,7 @@ KaNamedFunctionSymbol:
                     annotations: []
                     typeArguments: []
                     type: kotlin/Boolean
-                  visibility: Local
+                  visibility: LOCAL
                   getContainingFileSymbol: KaFileSymbol(logicalNotContract.kt)
                   getContainingJvmClassName: LogicalNotContractKt
                   getContainingModule: KaSourceModule "Sources of main"
@@ -89,13 +89,13 @@ KaNamedFunctionSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Boolean
-      visibility: Local
+      visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(logicalNotContract.kt)
       getContainingJvmClassName: LogicalNotContractKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(logicalNotContract.kt)
   getContainingJvmClassName: LogicalNotContractKt
   getContainingModule: KaSourceModule "Sources of main"
