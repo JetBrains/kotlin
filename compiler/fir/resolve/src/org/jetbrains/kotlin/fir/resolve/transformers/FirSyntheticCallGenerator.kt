@@ -471,14 +471,21 @@ class FirSyntheticCallGenerator(
 
     private fun generateSyntheticCheckNotNullFunction(): FirSimpleFunction {
         // Synthetic function signature:
-        //   fun <K : Any> checkNotNull(arg: K?): K
+        //   fun <K> checkNotNull(arg: K?): K & Any
         val functionSymbol = FirSyntheticFunctionSymbol(SyntheticCallableId.CHECK_NOT_NULL)
-        val (typeParameter, typeParameterTypeRef) = generateSyntheticSelectTypeParameter(functionSymbol, isNullableBound = false)
+        val (typeParameter, typeParameterTypeRef) = generateSyntheticSelectTypeParameter(functionSymbol, isNullableBound = true)
 
         return generateMemberFunction(
             functionSymbol,
             SyntheticCallableId.CHECK_NOT_NULL.callableName,
-            typeParameterTypeRef,
+            returnType = typeParameterTypeRef.withReplacedConeType(
+                typeParameterTypeRef.type.makeConeTypeDefinitelyNotNullOrNotNull(
+                    session.typeContext,
+                    // No checks are necessary because we're sure that the type parameter has default (nullable) upper bound.
+                    // At the same time, not having `avoidComprehensiveCheck = true` might lead to plugin initialization issues.
+                    avoidComprehensiveCheck = true,
+                )
+            ),
         ).apply {
             typeParameters += typeParameter
 

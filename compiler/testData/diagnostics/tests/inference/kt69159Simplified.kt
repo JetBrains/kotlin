@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-69159
 
 interface MyExpression<F>
