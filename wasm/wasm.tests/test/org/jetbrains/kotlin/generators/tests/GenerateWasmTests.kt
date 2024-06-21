@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
+import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationPerFileTest
 import org.jetbrains.kotlin.wasm.test.AbstractWasmPartialLinkageWithICTestCase
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.wasm.test.*
@@ -47,6 +48,33 @@ fun main(args: Array<String>) {
         testGroup("wasm/wasm.tests/tests-gen", "compiler/testData") {
             testClass<AbstractFirWasmPartialLinkageNoICTestCase> {
                 model("klib/partial-linkage/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.WASM, recursive = false)
+            }
+        }
+
+        testGroup("wasm/wasm.tests/tests-gen", "js/js.translator/testData") {
+            testClass<AbstractFirWasmInvalidationPerFileTest> {
+                val jsTargetedInvalidationTests = listOf(
+                    "abstractClassWithJsExport",
+                    "classWithJsExport",
+                    "inlineFunctionAnnotations",
+                    "interfaceWithJsExport",
+                    "jsExportWithMultipleFiles",
+                    "typeScriptExportsPerFile",
+                    "typeScriptExportsPerModule",
+                    "fileNameClash",
+                    "jsCode",
+                    "jsCodeWithConstString",
+                    "jsModuleAnnotation",
+                    "jsModuleAnnotationOnObjectWithUsage",
+                    "jsName",
+                )
+                model(
+                    "incremental/invalidation/",
+                    pattern = "^([^_](.+))$",
+                    targetBackend = TargetBackend.WASM,
+                    recursive = false,
+                    excludedPattern = jsTargetedInvalidationTests.joinToString("|")
+                )
             }
         }
     }
