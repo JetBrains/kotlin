@@ -27,9 +27,24 @@ public interface KaRendererModalityModifierProvider {
     }
 
     public object WITH_IMPLICIT_MODALITY : KaRendererModalityModifierProvider {
-        override fun getModalityModifier(analysisSession: KaSession, symbol: KaDeclarationSymbol): KtModifierKeywordToken? {
-            if (symbol is KaPropertyAccessorSymbol) return null
-            return when (symbol.modality) {
+        override fun getModalityModifier(analysisSession: KaSession, symbol: KaDeclarationSymbol): KtModifierKeywordToken? = when (symbol) {
+            is KaPropertyAccessorSymbol,
+            is KaValueParameterSymbol,
+            is KaBackingFieldSymbol,
+            is KaScriptSymbol,
+            is KaClassInitializerSymbol,
+            is KaTypeParameterSymbol,
+            is KaDestructuringDeclarationSymbol,
+            is KaConstructorSymbol,
+            is KaEnumEntrySymbol,
+            is KaTypeAliasSymbol,
+            is KaAnonymousFunctionSymbol,
+            is KaAnonymousObjectSymbol,
+            is KaSamConstructorSymbol,
+            is KaLocalVariableSymbol,
+                -> null
+
+            else -> when (symbol.modality) {
                 KaSymbolModality.FINAL -> KtTokens.FINAL_KEYWORD
                 KaSymbolModality.SEALED -> KtTokens.SEALED_KEYWORD
                 KaSymbolModality.OPEN -> KtTokens.OPEN_KEYWORD
