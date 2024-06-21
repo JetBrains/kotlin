@@ -134,5 +134,7 @@ internal val konanTargetNameMapping = mapOf(
     "ios_arm32" to "iosArm32",
     "watchos_x86" to "watchosX86",
     "linux_arm32_hfp" to "linuxArm32Hfp",
-    "mingw_x86" to "mingwX86"
+    "mingw_x86" to "mingwX86",
+    "wasm-wasi" to "wasmWasi",
+    "wasm-js" to "wasmJs"
 )
