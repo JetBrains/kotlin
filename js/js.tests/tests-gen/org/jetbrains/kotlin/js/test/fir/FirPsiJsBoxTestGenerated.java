@@ -690,6 +690,12 @@ public class FirPsiJsBoxTestGenerated extends AbstractFirPsiJsBoxTest {
       }
 
       @Test
+      @TestMetadata("keywordEscaping.kt")
+      public void testKeywordEscaping() {
+        runTest("js/js.translator/testData/box/closure/inlineAnonymousFunctions/keywordEscaping.kt");
+      }
+
+      @Test
       @TestMetadata("lambdaChain.kt")
       public void testLambdaChain() {
         runTest("js/js.translator/testData/box/closure/inlineAnonymousFunctions/lambdaChain.kt");
