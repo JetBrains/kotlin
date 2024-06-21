@@ -8,11 +8,15 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.impl.base.test.SymbolByFqName.getSymbolDataFromFile
+import org.jetbrains.kotlin.analysis.api.impl.base.test.SymbolData.TypeParameterData
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.typeParameters
+import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -143,6 +147,17 @@ sealed class SymbolData {
         }
     }
 
+    data class TypeParameterData(val name: Name, val ownerData: SymbolData): SymbolData() {
+        override fun KaSession.toSymbols(ktFile: KtFile): List<KaSymbol> {
+            val owner = with(ownerData) { toSymbols(ktFile) }.singleOrNull() ?: error("No owner found")
+            requireIsInstance<KaDeclarationSymbol>(owner)
+            val parameterSymbol = owner.typeParameters.find { it.name == name }
+                ?: error("Type parameter with '$name' name is not found in $ownerData")
+
+            return listOf(parameterSymbol)
+        }
+    }
+
     companion object {
         val identifiers = arrayOf(
             "package:",
@@ -151,7 +166,8 @@ sealed class SymbolData {
             "typealias:",
             "enum_entry_initializer:",
             "script",
-            "sam_constructor:"
+            "sam_constructor:",
+            "type_parameter:",
         )
 
         fun create(data: String): SymbolData {
@@ -165,10 +181,18 @@ sealed class SymbolData {
                 "callable" -> CallableData(extractCallableId(value))
                 "enum_entry_initializer" -> EnumEntryInitializerData(extractCallableId(value))
                 "sam_constructor" -> SamConstructorData(ClassId.fromString(value))
+                "type_parameter" -> extractTypeParameterData(value)
                 else -> error("Invalid symbol kind, expected one of: $identifiers")
             }
         }
     }
+}
+
+private fun extractTypeParameterData(data: String): TypeParameterData {
+    val typeParameterName = data.substringBefore(":")
+    val owner = data.substringAfter(":").trim()
+    val ownerData = SymbolData.create(owner)
+    return TypeParameterData(Name.identifier(typeParameterName), ownerData)
 }
 
 private fun extractPackageFqName(data: String): FqName = FqName.fromSegments(data.split('.'))

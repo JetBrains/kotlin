@@ -46,6 +46,12 @@ public class FirIdeNormalAnalysisSourceModuleVisibilityCheckerTestGenerated exte
   }
 
   @Test
+  @TestMetadata("classTypeParameter.kt")
+  public void testClassTypeParameter() {
+    runTest("analysis/analysis-api/testData/components/visibilityChecker/visibility/classTypeParameter.kt");
+  }
+
+  @Test
   @TestMetadata("internalClassInBinaryLibrary.kt")
   public void testInternalClassInBinaryLibrary() {
     runTest("analysis/analysis-api/testData/components/visibilityChecker/visibility/internalClassInBinaryLibrary.kt");

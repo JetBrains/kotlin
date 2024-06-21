@@ -48,6 +48,7 @@ internal class KaFirVisibilityChecker(
         require(candidateSymbol is KaFirSymbol<*>)
         require(useSiteFile is KaFirFileSymbol)
 
+        val candidateDeclaration = candidateSymbol.firSymbol.fir as? FirMemberDeclaration ?: return true
         if (candidateSymbol is KaFirPsiJavaClassSymbol) {
             candidateSymbol.isVisibleByPsi(useSiteFile)?.let { return it }
         }
@@ -56,8 +57,6 @@ internal class KaFirVisibilityChecker(
         val explicitDispatchReceiver = runIf(dispatchReceiverCanBeExplicit) {
             receiverExpression?.getOrBuildFirSafe<FirExpression>(analysisSession.firResolveSession)
         }
-
-        val candidateDeclaration = candidateSymbol.firSymbol.fir as FirMemberDeclaration
 
         val positionModule = firResolveSession.moduleProvider.getModule(position)
         val candidateModule = candidateDeclaration.llFirModuleData.ktModule
