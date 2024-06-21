@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.inline
 
-
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
@@ -20,6 +19,7 @@ import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins.INLINED
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.contracts.parsing.ContractsDslNames
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -57,6 +57,9 @@ abstract class InlineFunctionResolver {
 abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : CommonBackendContext>(
     protected val context: Ctx
 ) : InlineFunctionResolver() {
+    protected open val inlineOnlyPrivateFunctions: Boolean
+        get() = false
+
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         val function = super.getFunctionDeclaration(symbol) ?: return null
         // TODO: Remove these hacks when coroutine intrinsics are fixed.
@@ -69,6 +72,11 @@ abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : CommonBa
 
             else -> function
         }
+    }
+
+    override fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol): Boolean {
+        return super.shouldExcludeFunctionFromInlining(symbol) ||
+                (inlineOnlyPrivateFunctions && !DescriptorVisibilities.isPrivate(symbol.owner.visibility))
     }
 }
 
