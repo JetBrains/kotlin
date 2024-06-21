@@ -9,36 +9,29 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.collectUpperBounds
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.createFunctionType
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.inference.*
+import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeVariableForLambdaParameterType
+import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeVariableForLambdaReturnType
+import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
+import org.jetbrains.kotlin.fir.resolve.inference.extractLambdaInfoFromFunctionType
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParameterConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPosition
-import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.returnExpressions
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
-import org.jetbrains.kotlin.types.model.TypeSystemCommonSuperTypesContext
 import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-
-val SAM_LOOKUP_NAME: Name = Name.special("<SAM-CONSTRUCTOR>")
 
 internal object ArgumentCheckingProcessor {
     private data class ArgumentContext(
@@ -308,32 +301,6 @@ internal object ArgumentCheckingProcessor {
         candidate.addPostponedAtom(ConeResolvedCallableReferenceAtom(argument, expectedType, lhs, context.session))
     }
 
-    private fun ConeInferenceContext.argumentTypeWithCustomConversion(
-        session: FirSession,
-        expectedType: ConeKotlinType,
-        argumentType: ConeKotlinType,
-    ): ConeKotlinType? {
-        // Expect the expected type to be a not regular functional type (e.g. suspend or custom)
-        val expectedTypeKind = expectedType.functionTypeKind(session) ?: return null
-        if (expectedTypeKind.isBasicFunctionOrKFunction) return null
-
-        // We want to check the argument type against non-suspend functional type.
-        val expectedFunctionType = expectedType.customFunctionTypeToSimpleFunctionType(session)
-
-        val argumentTypeWithInvoke = argumentType.findSubtypeOfBasicFunctionType(session, expectedFunctionType) ?: return null
-        val functionType = argumentTypeWithInvoke.unwrapLowerBound()
-            .fastCorrespondingSupertypes(expectedFunctionType.typeConstructor())
-            ?.firstOrNull() as? ConeKotlinType ?: return null
-
-        val typeArguments = functionType.typeArguments.map { it.type ?: session.builtinTypes.nullableAnyType.type }.ifEmpty { return null }
-        return createFunctionType(
-            kind = expectedTypeKind,
-            parameters = typeArguments.subList(0, typeArguments.lastIndex),
-            receiverType = null,
-            rawReturnType = typeArguments.last(),
-        )
-    }
-
     private fun ArgumentContext.preprocessLambdaArgument(
         argument: FirAnonymousFunctionExpression,
         duringCompletion: Boolean = false,
@@ -450,100 +417,34 @@ internal object ArgumentCheckingProcessor {
             candidate.addPostponedAtom(it)
         }
     }
-
-    private fun CheckerSink?.reportDiagnostic(diagnostic: ResolutionDiagnostic) {
-        this?.reportDiagnostic(diagnostic)
-    }
 }
 
-internal fun prepareCapturedType(argumentType: ConeKotlinType, context: ResolutionContext): ConeKotlinType {
-    if (argumentType.isRaw()) return argumentType
-    return context.typeContext.captureFromExpression(argumentType.fullyExpandedType(context.session)) ?: argumentType
-}
-
-fun FirExpression.getExpectedType(
+private fun ConeInferenceContext.argumentTypeWithCustomConversion(
     session: FirSession,
-    parameter: FirValueParameter/*, languageVersionSettings: LanguageVersionSettings*/
-): ConeKotlinType {
-    val shouldUnwrapVarargType = when (this) {
-        is FirSpreadArgumentExpression, is FirNamedArgumentExpression -> false
-        else -> parameter.isVararg
-    }
-
-    val expectedType = if (shouldUnwrapVarargType) {
-        parameter.returnTypeRef.coneType.varargElementType()
-    } else {
-        parameter.returnTypeRef.coneType
-    }
-    if (!session.functionTypeService.hasExtensionKinds()) return expectedType
-    return FunctionTypeKindSubstitutor(session).substituteOrSelf(expectedType)
-}
-
-/**
- * This class creates a type by recursively substituting function types of a given type if the function types have special function
- * type kinds.
- */
-private class FunctionTypeKindSubstitutor(private val session: FirSession) : AbstractConeSubstitutor(session.typeContext) {
-    /**
-     * Returns a new type that applies the special function type kind to [type] if [type] has a special function type kind.
-     */
-    override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
-        if (type !is ConeClassLikeType) return null
-        val classId = type.classId ?: return null
-        return session.functionTypeService.extractSingleExtensionKindForDeserializedConeType(classId, type.customAnnotations)
-            ?.let { functionTypeKind ->
-                type.createFunctionTypeWithNewKind(session, functionTypeKind) {
-                    // When `substituteType()` returns a non-null value, it does not recursively substitute type arguments,
-                    // which is problematic for a nested function type kind like `@Composable () -> (@Composable -> Unit)`.
-                    // To fix this issue, we manually substitute type arguments here.
-                    this.mapIndexed { index, coneTypeProjection -> substituteArgument(coneTypeProjection, index) ?: coneTypeProjection }
-                        .toTypedArray()
-                }
-            }
-    }
-}
-
-/**
- * interface Inv<T>
- * fun <Y> bar(l: Inv<Y>): Y = ...
- *
- * fun <X : Inv<out Int>> foo(x: X) {
- *      val xr = bar(x)
- * }
- * Here we try to capture from upper bound from type parameter.
- * We replace type of `x` to `Inv<out Int>`(we chose supertype which contains supertype with expectedTypeConstructor) and capture from this type.
- * It is correct, because it is like this code:
- * fun <X : Inv<out Int>> foo(x: X) {
- *      val inv: Inv<out Int> = x
- *      val xr = bar(inv)
- * }
- *
- */
-internal fun captureFromTypeParameterUpperBoundIfNeeded(
-    argumentType: ConeKotlinType,
     expectedType: ConeKotlinType,
-    session: FirSession
-): ConeKotlinType {
-    val expectedTypeClassId = expectedType.upperBoundIfFlexible().classId ?: return argumentType
-    val simplifiedArgumentType = argumentType.lowerBoundIfFlexible() as? ConeTypeParameterType ?: return argumentType
-    val context = session.typeContext
+    argumentType: ConeKotlinType,
+): ConeKotlinType? {
+    // Expect the expected type to be a not regular functional type (e.g. suspend or custom)
+    val expectedTypeKind = expectedType.functionTypeKind(session) ?: return null
+    if (expectedTypeKind.isBasicFunctionOrKFunction) return null
 
-    val chosenSupertype = simplifiedArgumentType.collectUpperBounds()
-        .singleOrNull { it.hasSupertypeWithGivenClassId(expectedTypeClassId, context) } ?: return argumentType
+    // We want to check the argument type against non-suspend functional type.
+    val expectedFunctionType = expectedType.customFunctionTypeToSimpleFunctionType(session)
 
-    val capturedType = context.captureFromExpression(chosenSupertype) ?: return argumentType
-    return if (argumentType is ConeDefinitelyNotNullType) {
-        ConeDefinitelyNotNullType.create(capturedType, session.typeContext) ?: capturedType
-    } else {
-        capturedType
-    }
+    val argumentTypeWithInvoke = argumentType.findSubtypeOfBasicFunctionType(session, expectedFunctionType) ?: return null
+    val functionType = argumentTypeWithInvoke.unwrapLowerBound()
+        .fastCorrespondingSupertypes(expectedFunctionType.typeConstructor())
+        ?.firstOrNull() as? ConeKotlinType ?: return null
+
+    val typeArguments = functionType.typeArguments.map { it.type ?: session.builtinTypes.nullableAnyType.type }.ifEmpty { return null }
+    return createFunctionType(
+        kind = expectedTypeKind,
+        parameters = typeArguments.subList(0, typeArguments.lastIndex),
+        receiverType = null,
+        rawReturnType = typeArguments.last(),
+    )
 }
 
-private fun ConeKotlinType.hasSupertypeWithGivenClassId(classId: ClassId, context: TypeSystemCommonSuperTypesContext): Boolean {
-    return with(context) {
-        anySuperTypeConstructor {
-            val typeConstructor = it.typeConstructor()
-            typeConstructor is ConeClassLikeLookupTag && typeConstructor.classId == classId
-        }
-    }
+private fun CheckerSink?.reportDiagnostic(diagnostic: ResolutionDiagnostic) {
+    this?.reportDiagnostic(diagnostic)
 }
