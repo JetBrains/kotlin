@@ -78,3 +78,20 @@ open class WasmCompilerWithIC(
         return dirtyFiles.map { { compileIrFile(it) } }
     }
 }
+
+class WasmCompilerWithICForTesting(
+    mainModule: IrModuleFragment,
+    configuration: CompilerConfiguration,
+    allowIncompleteImplementations: Boolean,
+) : WasmCompilerWithIC(mainModule, configuration, allowIncompleteImplementations) {
+    override fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> IrProgramFragments> {
+        val testFile = dirtyFiles.firstOrNull { file ->
+            file.declarations.any { declaration -> declaration is IrFunction && declaration.name.asString() == "box" }
+        } ?: return super.compile(allModules, dirtyFiles)
+
+        val packageFqName = testFile.packageFqName.asString().takeIf { it.isNotEmpty() }
+        markExportedDeclarations(context, testFile, setOf(FqName.fromSegments(listOfNotNull(packageFqName, "box"))))
+
+        return super.compile(allModules, dirtyFiles)
+    }
+}
