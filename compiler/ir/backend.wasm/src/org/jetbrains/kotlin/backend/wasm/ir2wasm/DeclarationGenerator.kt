@@ -86,7 +86,7 @@ class DeclarationGenerator(
                 // check(declaration.isExternal) { "Non-external fun with @JsFun ${declaration.fqNameWhenAvailable}"}
                 val jsCodeName = jsCodeName(declaration)
                 context.addJsFun(jsCodeName, jsCode)
-                WasmImportDescriptor("js_code", jsCodeName)
+                WasmImportDescriptor("js_code", WasmSymbol(jsCodeName))
             }
             else -> {
                 null

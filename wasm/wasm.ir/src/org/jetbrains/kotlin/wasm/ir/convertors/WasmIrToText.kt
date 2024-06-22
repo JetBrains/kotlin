@@ -78,6 +78,60 @@ class WasmIrToText(
             appendElement("align=$alignEffective")
     }
 
+    private fun appendInstrList(instr: List<WasmInstr>) {
+        var skip = false
+        var skipOnElse = false
+
+        var currentTable: Array<List<WasmInstr>?>? = null
+        var currentTableRow: MutableList<WasmInstr>? = null
+
+        for (instruction in instr) {
+            when (instruction.operator) {
+                WasmOp.MACRO_IF -> {
+                    check(!skip && !skipOnElse)
+                    val ifParam = (instruction.immediates[0] as WasmImmediate.SymbolI32).value.owner
+                    skip = ifParam == 0
+                    skipOnElse = !skip
+                }
+                WasmOp.MACRO_ELSE -> {
+                    skip = skipOnElse
+                }
+                WasmOp.MACRO_END_IF -> {
+                    skip = false
+                    skipOnElse = false
+                }
+                WasmOp.MACRO_TABLE -> {
+                    check(currentTable == null && currentTableRow == null)
+                    val tableSize = (instruction.immediates[0] as WasmImmediate.SymbolI32).value.owner
+                    currentTable = arrayOfNulls(tableSize)
+                }
+                WasmOp.MACRO_TABLE_INDEX -> {
+                    val indexParam = (instruction.immediates[0] as WasmImmediate.SymbolI32).value.owner
+                    currentTableRow = mutableListOf()
+                    currentTable!![indexParam] = currentTableRow
+                }
+                WasmOp.MACRO_TABLE_END -> {
+                    currentTable!!.forEach { instructions ->
+                        if (instructions == null) {
+                            appendInstr(WasmInstrWithoutLocation(WasmOp.REF_NULL, listOf(WasmImmediate.HeapType(WasmRefNullrefType))))
+                        } else {
+                            instructions.forEach(::appendInstr)
+                        }
+                    }
+                    currentTableRow = null
+                    currentTable = null
+                }
+                else -> {
+                    when {
+                        skip -> {}
+                        currentTableRow != null -> currentTableRow.add(instruction)
+                        else -> appendInstr(instruction)
+                    }
+                }
+            }
+        }
+    }
+
     private fun appendInstr(wasmInstr: WasmInstr) {
         wasmInstr.location?.let {
             debugInformationGenerator?.addSourceLocation(
@@ -371,7 +425,7 @@ class WasmIrToText(
     private fun WasmImportDescriptor.appendImportPair() {
         sameLineList("import") {
             toWatString(moduleName)
-            toWatString(declarationName)
+            toWatString(declarationName.owner)
         }
     }
 
@@ -386,7 +440,7 @@ class WasmIrToText(
                 }
             }
             function.locals.forEach { if (!it.isParameter) appendLocal(it) }
-            function.instructions.forEach { appendInstr(it) }
+            appendInstrList(function.instructions)
         }
     }
 
@@ -423,7 +477,7 @@ class WasmIrToText(
             else
                 appendType(global.type)
 
-            global.init.forEach { appendInstr(it) }
+            appendInstrList(global.init)
         }
     }
 
