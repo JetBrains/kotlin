@@ -22,6 +22,9 @@ publish {
     }
 }
 
+base {
+    archivesName = "compose-compiler"
+}
 runtimeJarWithRelocation {
     configurations = listOf(project.configurations.compileClasspath.get())
     relocate("com.intellij", "org.jetbrains.kotlin.com.intellij")
