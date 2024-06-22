@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.wasm.ir.WasmImportDescriptor
+import org.jetbrains.kotlin.wasm.ir.WasmSymbol
 
 fun IrAnnotationContainer.hasExcludedFromCodegenAnnotation(): Boolean =
     hasAnnotation(FqName("kotlin.wasm.internal.ExcludedFromCodegen"))
@@ -29,7 +30,7 @@ fun IrFunction.getWasmImportDescriptor(): WasmImportDescriptor? {
     val declarationName = (annotation.getValueArgument(1) as? IrConst)?.value as? String
     return WasmImportDescriptor(
         moduleName,
-        declarationName ?: this.name.asString()
+        WasmSymbol(declarationName ?: this.name.asString())
     )
 }
 

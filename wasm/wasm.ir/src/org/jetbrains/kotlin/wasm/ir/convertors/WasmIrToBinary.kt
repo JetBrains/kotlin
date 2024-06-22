@@ -418,7 +418,7 @@ class WasmIrToBinary(
 
     private fun appendImportedFunction(function: WasmFunction.Imported) {
         b.writeString(function.importPair.moduleName)
-        b.writeString(function.importPair.declarationName)
+        b.writeString(function.importPair.declarationName.owner)
         b.writeByte(0)  // Function external kind.
         b.writeVarUInt32(function.type.owner.index)
     }
@@ -430,7 +430,7 @@ class WasmIrToBinary(
     private fun appendTable(table: WasmTable) {
         if (table.importPair != null) {
             b.writeString(table.importPair.moduleName)
-            b.writeString(table.importPair.declarationName)
+            b.writeString(table.importPair.declarationName.owner)
             b.writeByte(1)
         }
 
@@ -441,7 +441,7 @@ class WasmIrToBinary(
     private fun appendMemory(memory: WasmMemory) {
         if (memory.importPair != null) {
             b.writeString(memory.importPair.moduleName)
-            b.writeString(memory.importPair.declarationName)
+            b.writeString(memory.importPair.declarationName.owner)
             b.writeByte(2)
         }
         appendLimits(memory.limits)
@@ -450,7 +450,7 @@ class WasmIrToBinary(
     private fun appendGlobal(c: WasmGlobal) {
         if (c.importPair != null) {
             b.writeString(c.importPair.moduleName)
-            b.writeString(c.importPair.declarationName)
+            b.writeString(c.importPair.declarationName.owner)
             b.writeByte(3)
             appendType(c.type)
             b.writeVarUInt1(c.isMutable)
@@ -464,7 +464,7 @@ class WasmIrToBinary(
     private fun appendTag(t: WasmTag) {
         if (t.importPair != null) {
             b.writeString(t.importPair.moduleName)
-            b.writeString(t.importPair.declarationName)
+            b.writeString(t.importPair.declarationName.owner)
             b.writeByte(4)
         }
         b.writeByte(0) // attribute
@@ -473,7 +473,58 @@ class WasmIrToBinary(
     }
 
     private fun appendExpr(expr: Iterable<WasmInstr>) {
-        expr.forEach { appendInstr(it) }
+        var skip = false
+        var skipOnElse = false
+
+        var currentTable: Array<List<WasmInstr>?>? = null
+        var currentTableRow: MutableList<WasmInstr>? = null
+
+        for (instruction in expr) {
+            when (instruction.operator) {
+                WasmOp.MACRO_IF -> {
+                    check(!skip && !skipOnElse)
+                    val ifParam = (instruction.immediates[0] as WasmImmediate.SymbolI32).value.owner
+                    skip = ifParam == 0
+                    skipOnElse = !skip
+                }
+                WasmOp.MACRO_ELSE -> {
+                    skip = skipOnElse
+                }
+                WasmOp.MACRO_END_IF -> {
+                    skip = false
+                    skipOnElse = false
+                }
+                WasmOp.MACRO_TABLE -> {
+                    check(currentTable == null && currentTableRow == null)
+                    val tableSize = (instruction.immediates[0] as WasmImmediate.SymbolI32).value.owner
+                    currentTable = arrayOfNulls(tableSize)
+                }
+                WasmOp.MACRO_TABLE_INDEX -> {
+                    val indexParam = (instruction.immediates[0] as WasmImmediate.SymbolI32).value.owner
+                    currentTableRow = mutableListOf()
+                    currentTable!![indexParam] = currentTableRow
+                }
+                WasmOp.MACRO_TABLE_END -> {
+                    currentTable!!.forEach { instructions ->
+                        if (instructions == null) {
+                            appendInstr(WasmInstrWithoutLocation(WasmOp.REF_NULL, listOf(WasmImmediate.HeapType(WasmRefNullrefType))))
+                        } else {
+                            instructions.forEach(::appendInstr)
+                        }
+                    }
+                    currentTableRow = null
+                    currentTable = null
+                }
+                else -> {
+                    when {
+                        skip -> {}
+                        currentTableRow != null -> currentTableRow.add(instruction)
+                        else -> appendInstr(instruction)
+                    }
+                }
+            }
+        }
+
         appendInstr(WasmInstrWithLocation(WasmOp.END, SourceLocation.NoLocation("End of instruction list")))
     }
 
@@ -605,7 +656,8 @@ class WasmIrToBinary(
     }
 
     fun appendModuleFieldReference(field: WasmNamedModuleField) {
-        val id = field.id ?: error("${field::class} ${field.name} ID is unlinked")
+        val id = field.id
+            ?: error("${field::class} ${field.name} ID is unlinked")
         b.writeVarUInt32(id)
     }
 

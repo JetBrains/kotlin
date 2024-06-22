@@ -62,7 +62,7 @@ class WasmCompiledModuleFragment(
 
     val tags = listOfNotNull(
         runIf(!generateTrapsInsteadOfExceptions && itsPossibleToCatchJsErrorSeparately) {
-            WasmTag(jsExceptionTagFuncType, WasmImportDescriptor("intrinsics", "js_error_tag"))
+            WasmTag(jsExceptionTagFuncType, WasmImportDescriptor("intrinsics", WasmSymbol("js_error_tag")))
         },
         runIf(!generateTrapsInsteadOfExceptions) { WasmTag(throwableTagFuncType) }
     )
