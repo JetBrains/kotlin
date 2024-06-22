@@ -699,17 +699,24 @@ internal object CheckHiddenDeclaration : ResolutionStage() {
         val symbol = candidate.symbol as? FirCallableSymbol<*> ?: return
         /** Actual declarations are checked by [FirDeprecationChecker] */
         if (symbol.isActual) return
-        if (symbol.isDeprecatedHidden(context, callInfo) ||
-            (symbol is FirConstructorSymbol && symbol.typeAliasForConstructor?.isDeprecatedHidden(context, callInfo) == true) ||
-            isHiddenForThisCallSite(symbol, callInfo, candidate, context.session, sink)
-        ) {
-            sink.yieldDiagnostic(HiddenCandidate)
+        val deprecation = symbol.getDeprecation(context.session, callInfo.callSite)
+        val typeAliasForConstructorDeprecation by lazy(LazyThreadSafetyMode.NONE) {
+            (symbol as? FirConstructorSymbol)?.typeAliasForConstructor?.getDeprecation(context.session, callInfo.callSite)
         }
-    }
 
-    private fun FirBasedSymbol<*>.isDeprecatedHidden(context: ResolutionContext, callInfo: CallInfo): Boolean {
-        val deprecation = getDeprecation(context.session, callInfo.callSite)
-        return deprecation?.deprecationLevel == DeprecationLevelValue.HIDDEN
+        val resolutionDiagnostic = when {
+            deprecation?.deprecationLevel == DeprecationLevelValue.HIDDEN -> {
+                DeprecationHiddenCandidate(deprecation)
+            }
+            typeAliasForConstructorDeprecation?.deprecationLevel == DeprecationLevelValue.HIDDEN -> {
+                DeprecationHiddenCandidate(typeAliasForConstructorDeprecation!!)
+            }
+            isHiddenForThisCallSite(symbol, callInfo, candidate, context.session, sink) ->{
+                HiddenCandidate
+            }
+            else -> null
+        }
+        resolutionDiagnostic?.let { sink.reportDiagnostic(it) }
     }
 
     private fun isHiddenForThisCallSite(

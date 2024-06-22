@@ -34,15 +34,15 @@ val v7: String
     get() = ""
 
 fun test() {
-    <!UNRESOLVED_REFERENCE!>v1<!>
-    <!UNRESOLVED_REFERENCE!>v2<!>
-    <!UNRESOLVED_REFERENCE!>v3<!>
+    <!API_NOT_AVAILABLE!>v1<!>
+    <!API_NOT_AVAILABLE!>v2<!>
+    <!API_NOT_AVAILABLE!>v3<!>
     v3 = ""
     v4
-    <!UNRESOLVED_REFERENCE!>v4<!> = ""
-    <!UNRESOLVED_REFERENCE!>v5<!>
-    <!UNRESOLVED_REFERENCE!>v5<!> = ""
-    <!UNRESOLVED_REFERENCE!>v6<!>
-    <!UNRESOLVED_REFERENCE!>v6<!> = ""
-    <!UNRESOLVED_REFERENCE!>v7<!>
+    <!API_NOT_AVAILABLE!>v4<!> = ""
+    <!API_NOT_AVAILABLE!>v5<!>
+    <!API_NOT_AVAILABLE!>v5<!> = ""
+    <!API_NOT_AVAILABLE!>v6<!>
+    <!API_NOT_AVAILABLE!>v6<!> = ""
+    <!API_NOT_AVAILABLE!>v7<!>
 }

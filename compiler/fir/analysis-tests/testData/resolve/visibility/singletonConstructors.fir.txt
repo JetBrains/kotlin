@@ -12,7 +12,7 @@ FILE: singletonConstructors.kt
         }
 
         public final fun foo(): R|kotlin/Unit| {
-            <HIDDEN: /A.Comp.Comp is deprecated with DeprecationLevel.HIDDEN>#()
+            <HIDDEN: /A.Comp.Comp is disallowed here>#()
         }
 
     }
@@ -21,8 +21,8 @@ FILE: singletonConstructors.kt
             super<R|kotlin/Any|>()
         }
 
-        private final val x: <ERROR TYPE REF: HIDDEN: /B.B is deprecated with DeprecationLevel.HIDDEN> = <HIDDEN: /B.B is deprecated with DeprecationLevel.HIDDEN>#()
-            private get(): <ERROR TYPE REF: HIDDEN: /B.B is deprecated with DeprecationLevel.HIDDEN>
+        private final val x: <ERROR TYPE REF: HIDDEN: /B.B is disallowed here> = <HIDDEN: /B.B is disallowed here>#()
+            private get(): <ERROR TYPE REF: HIDDEN: /B.B is disallowed here>
 
     }
     public final class D : R|kotlin/Any| {

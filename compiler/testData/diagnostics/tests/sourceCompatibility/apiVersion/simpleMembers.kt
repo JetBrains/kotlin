@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // API_VERSION: 1.0
 
 @SinceKotlin("1.1")

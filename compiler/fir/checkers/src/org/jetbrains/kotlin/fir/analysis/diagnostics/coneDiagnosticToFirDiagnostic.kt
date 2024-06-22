@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
+import org.jetbrains.kotlin.fir.declarations.FutureApiDeprecationInfo
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
@@ -49,6 +51,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.EmptyIntersectionTypeKind
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
@@ -94,13 +97,19 @@ private fun ConeDiagnostic.toKtDiagnostic(
         else -> FirErrors.RESOLUTION_TO_CLASSIFIER.createOn(source, this.candidateSymbol)
     }
     is ConeHiddenCandidateError -> {
-        // Usages of callables with @Deprecated(DeprecationLevel.HIDDEN) should look like unresolved references.
-        // See: https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-deprecated/
         FirErrors.UNRESOLVED_REFERENCE.createOn(
             source,
             ((this.candidateSymbol as? FirCallableSymbol)?.name ?: SpecialNames.NO_NAME_PROVIDED).asString(),
             null,
         )
+    }
+    is ConeDeprecationHiddenCandidateError -> {
+        val deprecationInfo = this.candidate.diagnostics.firstIsInstance<DeprecationHiddenCandidate>().deprecationInfo
+        if (deprecationInfo is FutureApiDeprecationInfo) {
+            FirErrors.API_NOT_AVAILABLE.createOn(source, deprecationInfo.sinceVersion, session.languageVersionSettings.apiVersion)
+        } else {
+            FirErrors.DEPRECATION_ERROR.createOn(source, this.candidateSymbol, deprecationInfo.getMessage(session) ?: this.reason)
+        }
     }
 
     is ConeTypeVisibilityError -> symbol.toInvisibleReferenceDiagnostic(smallestUnresolvablePrefix.last().source)

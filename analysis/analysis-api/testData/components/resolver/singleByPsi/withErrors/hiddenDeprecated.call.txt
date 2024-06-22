@@ -1,4 +1,4 @@
 KtCallExpression(76,79): 'a()'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'a'.>
+    diagnostic = ERROR<DEPRECATION_ERROR: '@Deprecated(...) fun a(): Unit' is deprecated.>

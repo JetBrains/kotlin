@@ -18,14 +18,14 @@ interface I11 {
 }
 
 fun f1(x: I10) = x.foo()
-fun f2(x: I11) = x.<!UNRESOLVED_REFERENCE!>foo<!>()
+fun f2(x: I11) = x.<!API_NOT_AVAILABLE!>foo<!>()
 fun f3(x: J) = x.foo()
 
 interface BothI1 : I10, I11
 fun f4(x: BothI1) = x.foo()
 
 interface BothI2 : I11, I10
-fun f5(x: BothI2) = x.<!UNRESOLVED_REFERENCE!>foo<!>()
+fun f5(x: BothI2) = x.<!API_NOT_AVAILABLE!>foo<!>()
 
 interface JAndI10 : J, I10
 fun f6(x: JAndI10) = x.foo()

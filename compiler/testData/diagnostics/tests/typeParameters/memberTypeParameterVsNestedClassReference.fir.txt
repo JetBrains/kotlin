@@ -14,14 +14,14 @@ FILE: memberTypeParameterVsNestedClassReference.fir.kt
 
         }
 
-        public final val k: <ERROR TYPE REF: HIDDEN: /OuterClassWithObject.OuterParam.OuterParam is deprecated with DeprecationLevel.HIDDEN> = ::<HIDDEN: /OuterClassWithObject.OuterParam.OuterParam is deprecated with DeprecationLevel.HIDDEN>#
-            public get(): <ERROR TYPE REF: HIDDEN: /OuterClassWithObject.OuterParam.OuterParam is deprecated with DeprecationLevel.HIDDEN>
+        public final val k: <ERROR TYPE REF: HIDDEN: /OuterClassWithObject.OuterParam.OuterParam is disallowed here> = ::<HIDDEN: /OuterClassWithObject.OuterParam.OuterParam is disallowed here>#
+            public get(): <ERROR TYPE REF: HIDDEN: /OuterClassWithObject.OuterParam.OuterParam is disallowed here>
 
         public final val l: R|kotlin/reflect/KFunction0<kotlin/Unit>| = Q|OuterClassWithObject.OuterParam|::R|/OuterClassWithObject.OuterParam.foo|
             public get(): R|kotlin/reflect/KFunction0<kotlin/Unit>|
 
         public final fun foo(): R|kotlin/Unit| {
-            lval k: <ERROR TYPE REF: HIDDEN: /OuterClassWithObject.OuterParam.OuterParam is deprecated with DeprecationLevel.HIDDEN> = ::<HIDDEN: /OuterClassWithObject.OuterParam.OuterParam is deprecated with DeprecationLevel.HIDDEN>#
+            lval k: <ERROR TYPE REF: HIDDEN: /OuterClassWithObject.OuterParam.OuterParam is disallowed here> = ::<HIDDEN: /OuterClassWithObject.OuterParam.OuterParam is disallowed here>#
             lval l: R|kotlin/reflect/KFunction0<kotlin/Unit>| = Q|OuterClassWithObject.OuterParam|::R|/OuterClassWithObject.OuterParam.foo|
         }
 
@@ -30,14 +30,14 @@ FILE: memberTypeParameterVsNestedClassReference.fir.kt
                 super<R|kotlin/Any|>()
             }
 
-            public final val k: <ERROR TYPE REF: HIDDEN: /OuterClassWithObject.OuterParam.OuterParam is deprecated with DeprecationLevel.HIDDEN> = ::<HIDDEN: /OuterClassWithObject.OuterParam.OuterParam is deprecated with DeprecationLevel.HIDDEN>#
-                public get(): <ERROR TYPE REF: HIDDEN: /OuterClassWithObject.OuterParam.OuterParam is deprecated with DeprecationLevel.HIDDEN>
+            public final val k: <ERROR TYPE REF: HIDDEN: /OuterClassWithObject.OuterParam.OuterParam is disallowed here> = ::<HIDDEN: /OuterClassWithObject.OuterParam.OuterParam is disallowed here>#
+                public get(): <ERROR TYPE REF: HIDDEN: /OuterClassWithObject.OuterParam.OuterParam is disallowed here>
 
             public final val l: R|kotlin/reflect/KFunction0<kotlin/Unit>| = Q|OuterClassWithObject.OuterParam|::R|/OuterClassWithObject.OuterParam.foo|
                 public get(): R|kotlin/reflect/KFunction0<kotlin/Unit>|
 
             init {
-                lval k: <ERROR TYPE REF: HIDDEN: /OuterClassWithObject.OuterParam.OuterParam is deprecated with DeprecationLevel.HIDDEN> = ::<HIDDEN: /OuterClassWithObject.OuterParam.OuterParam is deprecated with DeprecationLevel.HIDDEN>#
+                lval k: <ERROR TYPE REF: HIDDEN: /OuterClassWithObject.OuterParam.OuterParam is disallowed here> = ::<HIDDEN: /OuterClassWithObject.OuterParam.OuterParam is disallowed here>#
                 lval l: R|kotlin/reflect/KFunction0<kotlin/Unit>| = Q|OuterClassWithObject.OuterParam|::R|/OuterClassWithObject.OuterParam.foo|
             }
 

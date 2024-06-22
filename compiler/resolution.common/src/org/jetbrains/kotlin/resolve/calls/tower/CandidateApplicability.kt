@@ -13,12 +13,17 @@ enum class CandidateApplicability {
     K1_RESOLVED_TO_SAM_WITH_VARARG,
 
     /**
-     * Candidate is removed from resolve due to SinceKotlin with later version or Deprecation with hidden level.
-     * Note that SinceKotlin does not filter out classifier symbols and property accessors. Those
-     * should lead to API_NOT_AVAILABLE.
-     * Provokes UNRESOLVED_REFERENCE.
+     * Default value with the lowest priority. Typically, it provokes `UNRESOLVED_REFERENCE`.
      */
     HIDDEN,
+
+    /**
+     * Candidate is removed from resolve due to SinceKotlin with a later version or Deprecation with hidden level.
+     * Note that SinceKotlin does not filter out classifier symbols and property accessors. Those
+     * should lead to `API_NOT_AVAILABLE`.
+     * Provokes `DEPRECATION_ERROR` or `API_NOT_AVAILABLE`.
+     */
+    DEPRECATION_HIDDEN,
 
     /**
      * Candidate could be successful but requires an unsupported feature.

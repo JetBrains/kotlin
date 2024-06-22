@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
@@ -704,6 +705,7 @@ fun createConeDiagnosticForCandidateWithError(
     val symbol = candidate.symbol
     return when (applicability) {
         CandidateApplicability.HIDDEN -> ConeHiddenCandidateError(candidate)
+        CandidateApplicability.DEPRECATION_HIDDEN -> ConeDeprecationHiddenCandidateError(candidate)
         CandidateApplicability.K2_VISIBILITY_ERROR -> {
             val session = candidate.callInfo.session
 

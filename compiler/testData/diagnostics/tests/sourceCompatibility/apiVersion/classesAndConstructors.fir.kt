@@ -16,8 +16,8 @@ fun t1(): <!API_NOT_AVAILABLE!>Foo<!> = <!API_NOT_AVAILABLE!>Foo<!>()
 // TODO: do not report API_NOT_AVAILABLE twice
 fun t2() = object : <!API_NOT_AVAILABLE!>Foo<!>() {}
 
-fun t3(): Bar? = <!UNRESOLVED_REFERENCE!>Bar<!>()
+fun t3(): Bar? = <!API_NOT_AVAILABLE!>Bar<!>()
 
-fun t4(): Baz = <!UNRESOLVED_REFERENCE!>Baz<!>()
+fun t4(): Baz = <!API_NOT_AVAILABLE!>Baz<!>()
 
 fun t5(): <!API_NOT_AVAILABLE!>Quux<!> = <!API_NOT_AVAILABLE!>Quux<!>()

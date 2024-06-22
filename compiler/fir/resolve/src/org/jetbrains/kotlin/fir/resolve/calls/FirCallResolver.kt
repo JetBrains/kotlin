@@ -925,7 +925,11 @@ class FirCallResolver(
     ): FirNamedReference {
         if (candidate == null) return buildReferenceWithErrorCandidate(callInfo, diagnostic, source)
         return when (diagnostic) {
-            is ConeUnresolvedError, is ConeHiddenCandidateError -> buildReferenceWithErrorCandidate(callInfo, diagnostic, source)
+            is ConeUnresolvedError,
+            is ConeHiddenCandidateError,
+            is ConeDeprecationHiddenCandidateError -> {
+                buildReferenceWithErrorCandidate(callInfo, diagnostic, source)
+            }
             else -> createErrorReferenceWithExistingCandidate(
                 candidate,
                 diagnostic,

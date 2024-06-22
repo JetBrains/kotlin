@@ -31,7 +31,7 @@ fun use1(
     c1: <!OPT_IN_USAGE_ERROR!>NewClassExperimentalInThePast<!>,
     t1: <!OPT_IN_USAGE_ERROR!>TypeAliasToNewClass<!>
 ) {
-    <!UNRESOLVED_REFERENCE!>newPublishedFun<!>()
+    <!API_NOT_AVAILABLE!>newPublishedFun<!>()
     <!OPT_IN_USAGE_ERROR!>newFunExperimentalInThePast<!>()
     <!OPT_IN_USAGE_ERROR!>newValExperimentalInThePast<!>
     <!OPT_IN_USAGE_ERROR!>NewClassExperimentalInThePast<!>()
@@ -42,7 +42,7 @@ fun use2(
     c2: NewClassExperimentalInThePast,
     t2: TypeAliasToNewClass
 ) {
-    <!UNRESOLVED_REFERENCE!>newPublishedFun<!>()
+    <!API_NOT_AVAILABLE!>newPublishedFun<!>()
     newFunExperimentalInThePast()
     newValExperimentalInThePast
     NewClassExperimentalInThePast()
@@ -53,7 +53,7 @@ fun use3(
     c3: NewClassExperimentalInThePast,
     t3: TypeAliasToNewClass
 ) {
-    <!UNRESOLVED_REFERENCE!>newPublishedFun<!>()
+    <!API_NOT_AVAILABLE!>newPublishedFun<!>()
     newFunExperimentalInThePast()
     newValExperimentalInThePast
     NewClassExperimentalInThePast()

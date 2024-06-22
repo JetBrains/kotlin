@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithCandidates
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithSymbol
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDeprecationHiddenCandidateError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeHiddenCandidateError
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
@@ -67,10 +68,8 @@ internal fun FirNamedReference.getCandidateSymbols(): Collection<FirBasedSymbol<
 
 internal fun ConeDiagnostic.getCandidateSymbols(): Collection<FirBasedSymbol<*>> =
     when (this) {
-        is ConeHiddenCandidateError -> {
-            // Candidate with @Deprecated(DeprecationLevel.HIDDEN)
-            emptyList()
-        }
+        is ConeHiddenCandidateError,
+        is ConeDeprecationHiddenCandidateError -> emptyList() // Candidate with the lowest priority or with @Deprecated(DeprecationLevel.HIDDEN)
         is ConeDiagnosticWithCandidates -> candidateSymbols
         is ConeDiagnosticWithSymbol<*> -> listOf(symbol)
         is ConeUnreportedDuplicateDiagnostic -> original.getCandidateSymbols()

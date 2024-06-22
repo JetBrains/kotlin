@@ -4,5 +4,5 @@ class SimpleKlass {
 }
 
 fun test(simpleKlass: SimpleKlass) {
-    val (s1) = <!COMPONENT_FUNCTION_MISSING!>simpleKlass<!>
+    val (<!DEPRECATION_ERROR!>s1<!>) = simpleKlass
 }

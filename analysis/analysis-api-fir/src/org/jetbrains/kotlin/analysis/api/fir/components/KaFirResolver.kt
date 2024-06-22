@@ -51,8 +51,7 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.createConeDiagnosticForCandidateWithError
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithCandidates
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeHiddenCandidateError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
@@ -75,7 +74,6 @@ import org.jetbrains.kotlin.toKtPsiSourceElement
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
-import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
@@ -245,16 +243,17 @@ internal class KaFirResolver(
             val diagnostic = calleeReference.diagnostic
             val ktDiagnostic = calleeReference.createKtDiagnostic(psi)
 
-            if (diagnostic is ConeHiddenCandidateError)
-                return KaErrorCallInfo(emptyList(), ktDiagnostic, token)
-
-            val candidateCalls = mutableListOf<KaCall>()
-            if (diagnostic is ConeDiagnosticWithCandidates) {
-                diagnostic.candidates.mapNotNullTo(candidateCalls) {
-                    createKtCall(psi, call, calleeReference, it, resolveFragmentOfCall)
+            val candidateCalls = when (diagnostic) {
+                is ConeHiddenCandidateError,
+                is ConeDeprecationHiddenCandidateError -> {
+                    emptyList()
                 }
-            } else {
-                candidateCalls.addIfNotNull(createKtCall(psi, call, calleeReference, null, resolveFragmentOfCall))
+                is ConeDiagnosticWithCandidates -> {
+                    diagnostic.candidates.mapNotNull { createKtCall(psi, call, calleeReference, it, resolveFragmentOfCall) }
+                }
+                else -> {
+                    listOfNotNull(createKtCall(psi, call, calleeReference, null, resolveFragmentOfCall))
+                }
             }
             return KaErrorCallInfo(candidateCalls, ktDiagnostic, token)
         }
@@ -1181,7 +1180,7 @@ internal class KaFirResolver(
         }
 
         val diagnostic = createConeDiagnosticForCandidateWithError(candidate.lowestApplicability, candidate)
-        if (diagnostic is ConeHiddenCandidateError) return null
+        if (diagnostic is ConeHiddenCandidateError || diagnostic is ConeDeprecationHiddenCandidateError) return null
         val ktDiagnostic =
             resolvable.source?.let { diagnostic.asKtDiagnostic(it, element.toKtPsiSourceElement()) }
                 ?: KaNonBoundToPsiErrorDiagnostic(factoryName = FirErrors.OTHER_ERROR.name, diagnostic.reason, token)

@@ -38,23 +38,23 @@ open class A {
     val String.memberExtensionProperty: Int get() = 1
 
     fun foo() {
-        <!UNRESOLVED_REFERENCE!>topLevelFun<!>()
-        <!UNRESOLVED_REFERENCE!>topLevelFun<!>(1)
-        <!UNRESOLVED_REFERENCE!>topLevelProperty<!><!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>++<!>
-        "".<!UNRESOLVED_REFERENCE!>topLevelExtensionFun<!>()
-        1.<!UNRESOLVED_REFERENCE!>topLevelExtensionFun<!>()
-        "".<!UNRESOLVED_REFERENCE!>topLevelExtensionProperty<!>
-        1.<!UNRESOLVED_REFERENCE!>topLevelExtensionProperty<!>
+        <!DEPRECATION_ERROR!>topLevelFun<!>()
+        <!DEPRECATION_ERROR!>topLevelFun<!>(1)
+        <!DEPRECATION_ERROR!>topLevelProperty<!><!DEPRECATION_ERROR, UNRESOLVED_REFERENCE!>++<!>
+        "".<!DEPRECATION_ERROR!>topLevelExtensionFun<!>()
+        1.<!DEPRECATION_ERROR!>topLevelExtensionFun<!>()
+        "".<!DEPRECATION_ERROR!>topLevelExtensionProperty<!>
+        1.<!DEPRECATION_ERROR!>topLevelExtensionProperty<!>
 
-        <!UNRESOLVED_REFERENCE!>memberFun<!>()
-        <!UNRESOLVED_REFERENCE!>memberFun<!>(1)
-        <!UNRESOLVED_REFERENCE!>privateFun<!>()
-        <!UNRESOLVED_REFERENCE!>privateFun<!>(1)
-        <!UNRESOLVED_REFERENCE!>memberProperty<!>
-        "".<!UNRESOLVED_REFERENCE!>memberExtensionFun<!>()
-        1.<!UNRESOLVED_REFERENCE!>memberExtensionFun<!>()
-        "".<!UNRESOLVED_REFERENCE!>memberExtensionProperty<!>
-        1.<!UNRESOLVED_REFERENCE!>memberExtensionProperty<!>
+        <!DEPRECATION_ERROR!>memberFun<!>()
+        <!DEPRECATION_ERROR!>memberFun<!>(1)
+        <!DEPRECATION_ERROR!>privateFun<!>()
+        <!DEPRECATION_ERROR!>privateFun<!>(1)
+        <!DEPRECATION_ERROR!>memberProperty<!>
+        "".<!DEPRECATION_ERROR!>memberExtensionFun<!>()
+        1.<!DEPRECATION_ERROR!>memberExtensionFun<!>()
+        "".<!DEPRECATION_ERROR!>memberExtensionProperty<!>
+        1.<!DEPRECATION_ERROR!>memberExtensionProperty<!>
 
         A(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
     }
@@ -76,9 +76,9 @@ interface I {
 class B : A(<!ARGUMENT_TYPE_MISMATCH!>""<!>) {
     // still can override it
     override fun <!OVERRIDE_DEPRECATION!>memberFun<!>() {
-        super.<!UNRESOLVED_REFERENCE!>memberFun<!>() // but cannot call super :)
-        <!UNRESOLVED_REFERENCE!>privateFun<!>()
-        <!UNRESOLVED_REFERENCE!>privateFun<!>(1)
+        super.<!DEPRECATION_ERROR!>memberFun<!>() // but cannot call super :)
+        <!DEPRECATION_ERROR!>privateFun<!>()
+        <!DEPRECATION_ERROR!>privateFun<!>(1)
     }
 }
 

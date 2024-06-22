@@ -32,10 +32,10 @@ public class J {
 
 // FILE:test.kt
 fun test(j: J) {
-    j.<!UNRESOLVED_REFERENCE!>javaDeprecatedKotlinHidden<!>()
+    j.<!DEPRECATION_ERROR!>javaDeprecatedKotlinHidden<!>()
     j.<!DEPRECATION!>javaDeprecatedKotlinWarning<!>()
     j.<!DEPRECATION_ERROR!>javaDeprecatedKotlinError<!>()
-    j.<!UNRESOLVED_REFERENCE!>kotlinHidden<!>()
+    j.<!DEPRECATION_ERROR!>kotlinHidden<!>()
     j.<!DEPRECATION!>kotlinWarning<!>()
     j.<!DEPRECATION_ERROR!>kotlinError<!>()
 }

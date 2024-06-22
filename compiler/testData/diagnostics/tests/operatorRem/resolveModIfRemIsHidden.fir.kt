@@ -9,7 +9,7 @@ object A {
 }
 
 fun test() {
-    takeString(A <!UNRESOLVED_REFERENCE!>%<!> 123)
+    takeString(A <!DEPRECATION_ERROR!>%<!> 123)
 }
 
 fun takeString(s: String) {}

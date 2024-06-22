@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
@@ -86,6 +83,8 @@ object UnsuccessfulCallableReferenceAtom : ResolutionDiagnostic(INAPPLICABLE)
 object ErrorTypeInArguments : ResolutionDiagnostic(INAPPLICABLE)
 
 object HiddenCandidate : ResolutionDiagnostic(HIDDEN)
+
+class DeprecationHiddenCandidate(val deprecationInfo: FirDeprecationInfo) : ResolutionDiagnostic(DEPRECATION_HIDDEN)
 
 object VisibilityError : ResolutionDiagnostic(K2_VISIBILITY_ERROR)
 
