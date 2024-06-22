@@ -21,8 +21,9 @@ enum class SyntheticLocalType { IS_INTERFACE_PARAMETER, TABLE_SWITCH_SELECTOR }
 class WasmFunctionCodegenContext(
     val irFunction: IrFunction,
     private val wasmFunction: WasmFunction.Defined,
-    val backendContext: WasmBackendContext,
-    val context: WasmModuleCodegenContext,
+    private val backendContext: WasmBackendContext,
+    private val wasmFileCodegenContext: WasmFileCodegenContext,
+    private val wasmModuleTypeTransformer: WasmModuleTypeTransformer,
 ) {
     val bodyGen: WasmExpressionBuilder =
         WasmIrExpressionBuilder(wasmFunction.instructions)
@@ -43,7 +44,7 @@ class WasmFunctionCodegenContext(
         val wasmLocal = WasmLocal(
             wasmFunction.locals.size,
             owner.name.asString(),
-            if (owner is IrValueParameter) context.transformValueParameterType(owner) else context.transformType(owner.type),
+            if (owner is IrValueParameter) wasmModuleTypeTransformer.transformValueParameterType(owner) else wasmModuleTypeTransformer.transformType(owner.type),
             isParameter = irValueDeclaration is IrValueParameterSymbol
         )
 
@@ -62,7 +63,7 @@ class WasmFunctionCodegenContext(
     private val SyntheticLocalType.wasmType
         get() = when (this) {
             SyntheticLocalType.IS_INTERFACE_PARAMETER ->
-                WasmRefNullType(WasmHeapType.Type(context.referenceGcType(backendContext.irBuiltIns.anyClass)))
+                WasmRefNullType(WasmHeapType.Type(wasmFileCodegenContext.referenceGcType(backendContext.irBuiltIns.anyClass)))
             SyntheticLocalType.TABLE_SWITCH_SELECTOR -> WasmI32
         }
 

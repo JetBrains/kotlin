@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.wasm.test.converters
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
+import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
@@ -15,8 +16,6 @@ import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.loadIr
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogLevel
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageMode
@@ -76,12 +75,12 @@ class WasmDeserializerFacade(
 
         val moduleInfo = loadIr(
             depsDescriptors = moduleStructure,
-            irFactory = IrFactoryImpl,
+            irFactory = IrFactoryImplForWasmIC(WholeWorldStageController()),
             verifySignatures = false,
             loadFunctionInterfacesIntoStdlib = true,
         )
 
-        val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImplForJsIC(WholeWorldStageController()))
+        val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImplForWasmIC(WholeWorldStageController()))
         val moduleDescriptor = testServices.moduleDescriptorProvider.getModuleDescriptor(module)
         val pluginContext = IrPluginContextImpl(
             module = moduleDescriptor,
