@@ -5,11 +5,15 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.candidate
 
+import org.jetbrains.kotlin.fir.declarations.getSingleMatchedExpectForActualOrNull
+import org.jetbrains.kotlin.fir.declarations.utils.isActual
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionResultOverridesOtherToPreserveCompatibility
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ResolutionStageRunner
 import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerGroup
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability.INAPPLICABLE_ARGUMENTS_MAPPING_ERROR
@@ -24,6 +28,9 @@ open class CandidateCollector(
     private val groupNumbers = mutableListOf<TowerGroup>()
     private val candidates = mutableListOf<Candidate>()
 
+    // All matched expects should be preserved to make it possible to filter out them later when corresponding actuals are encountered
+    private val ignoringExpectCallables = mutableListOf<FirCallableSymbol<*>>()
+
     var currentApplicability: CandidateApplicability = CandidateApplicability.HIDDEN
         private set
 
@@ -32,12 +39,29 @@ open class CandidateCollector(
     fun newDataSet() {
         groupNumbers.clear()
         candidates.clear()
+        ignoringExpectCallables.clear()
         currentApplicability = CandidateApplicability.HIDDEN
         bestGroup = TowerGroup.Last
     }
 
     open fun consumeCandidate(group: TowerGroup, candidate: Candidate, context: ResolutionContext): CandidateApplicability {
         val applicability = resolutionStageRunner.processCandidate(candidate, context)
+
+        val callableSymbol = candidate.symbol as? FirCallableSymbol<*>
+        if (callableSymbol != null) {
+            if (callableSymbol.isActual) {
+                val matchedExpectSymbol = callableSymbol.getSingleMatchedExpectForActualOrNull()
+                if (matchedExpectSymbol != null) {
+                    candidates.removeAll { it.symbol === matchedExpectSymbol } // Filter out matched expects candidates
+                    ignoringExpectCallables.add(matchedExpectSymbol as FirCallableSymbol<*>)
+                }
+            } else if (callableSymbol.isExpect) {
+                if (ignoringExpectCallables.any { it === callableSymbol }) {
+                    // Skip the found expect because there is already a matched actual
+                    return CandidateApplicability.RESOLVED_LOW_PRIORITY
+                }
+            }
+        }
 
         if (applicability > currentApplicability || (applicability == currentApplicability && group < bestGroup)) {
             // Only throw away previous candidates if the new one is successful. If we don't find a successful candidate, we keep all
