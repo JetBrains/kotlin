@@ -19,8 +19,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 internal class WasmUsefulDeclarationProcessor(
     override val context: WasmBackendContext,
     printReachabilityInfo: Boolean,
-    dumpReachabilityInfoToFile: String?
-) : UsefulDeclarationProcessor(printReachabilityInfo, removeUnusedAssociatedObjects = false, dumpReachabilityInfoToFile) {
+    dumpReachabilityInfoToFile: String?,
+    removeUnusedAssociatedObjects: Boolean = true,
+) : UsefulDeclarationProcessor(printReachabilityInfo, removeUnusedAssociatedObjects, dumpReachabilityInfoToFile) {
 
     // The mapping from function for wrapping a kotlin closure/lambda with JS closure to function used to call a kotlin closure from JS side.
     private val kotlinClosureToJsClosureConvertFunToKotlinClosureCallFun = context.fileContexts.mapValues { (_, fileContext) ->
@@ -115,6 +116,21 @@ internal class WasmUsefulDeclarationProcessor(
                     klass.enqueue(data, "receiver class")
                 }
                 function.enqueue(data, "method call")
+            }
+        }
+    }
+
+    override fun handleAssociatedObjects() {
+        for (klass in classesWithObjectAssociations) {
+            if (removeUnusedAssociatedObjects && !klass.isReachable()) continue
+
+            for (annotation in klass.annotations) {
+                val annotationClass = annotation.symbol.owner.constructedClass
+                if (removeUnusedAssociatedObjects && !annotationClass.isReachable()) continue
+
+                annotation.associatedObject()?.let { obj ->
+                    context.mapping.objectToGetInstanceFunction[obj]?.enqueue(klass, "associated object factory")
+                }
             }
         }
     }
