@@ -160,6 +160,20 @@ class WasmFileCodegenContext(
     fun addClosureCallExport(exportSignature: String, exportFunction: IrFunctionSymbol) {
         wasmFileFragment.closureCallExports.add(exportSignature to exportFunction.getReferenceKey())
     }
+
+    fun addClassAssociatedObjects(klass: IrClassSymbol, associatedObjectsGetters: List<Pair<IrClassSymbol, IrFunctionSymbol>>) {
+        val classAssociatedObjects = ClassAssociatedObjects(
+            klass.getReferenceKey(),
+            associatedObjectsGetters.map { (obj, getter) ->
+                AssociatedObject(obj.getReferenceKey(), getter.getReferenceKey())
+            }
+        )
+        wasmFileFragment.classAssociatedObjectsInstanceGetters.add(classAssociatedObjects)
+    }
+
+    fun defineTryGetAssociatedObjectFun(func: IrFunctionSymbol) {
+        wasmFileFragment.tryGetAssociatedObjectFun = func.getReferenceKey()
+    }
 }
 
 class WasmModuleMetadataCache(private val backendContext: WasmBackendContext) {

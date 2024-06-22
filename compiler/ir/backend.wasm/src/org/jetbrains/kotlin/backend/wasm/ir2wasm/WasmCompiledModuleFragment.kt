@@ -50,7 +50,9 @@ class WasmCompiledFileFragment(
     val mainFunctionWrappers: MutableList<IdSignature> = mutableListOf(),
     var testFun: IdSignature? = null,
     val closureCallExports: MutableList<Pair<String, IdSignature>> = mutableListOf(),
-    val jsModuleAndQualifierReferences: Set<JsModuleAndQualifierReference> = mutableSetOf()
+    val jsModuleAndQualifierReferences: Set<JsModuleAndQualifierReference> = mutableSetOf(),
+    val classAssociatedObjectsInstanceGetters: MutableList<ClassAssociatedObjects> = mutableListOf(),
+    var tryGetAssociatedObjectFun: IdSignature? = null,
 ) : IrProgramFragment()
 
 class WasmCompiledModuleFragment(
@@ -58,6 +60,7 @@ class WasmCompiledModuleFragment(
     private val generateTrapsInsteadOfExceptions: Boolean,
     private val itsPossibleToCatchJsErrorSeparately: Boolean
 ) {
+
     // Used during linking
     private val serviceCodeLocation = SourceLocation.NoLocation("Generated service code")
     private val parameterlessNoReturnFunctionType = WasmFunctionType(emptyList(), emptyList())
@@ -70,6 +73,12 @@ class WasmCompiledModuleFragment(
     private val startUnitTestsFunction = WasmFunction.Defined("kotlin.test.startUnitTests", WasmSymbol(parameterlessNoReturnFunctionType))
     private var memory: WasmMemory = WasmMemory(WasmLimits(0U, 0U), null)
     private var currentDataSectionAddress = 0
+    private val tryGetAssociatedObjectFunction = run {
+        // If null, then removed by DCE
+        val fragment = wasmCompiledFileFragments.firstOrNull { it.tryGetAssociatedObjectFun != null }
+        fragment?.functions?.defined?.get(fragment.tryGetAssociatedObjectFun)
+    } as? WasmFunction.Defined
+
 
     class JsCodeSnippet(val importName: WasmSymbolReadOnly<String>, val jsCode: String)
 
@@ -177,6 +186,7 @@ class WasmCompiledModuleFragment(
         bindUnboundSymbols()
         addCompileTimePerClassData()
         handleExports()
+        createTryGetAssociatedObjectFunction()
 
         val (recGroupTypes, nonRecursiveFunctionTypes, importedFunctions, importsInOrder, definedTags) = getTypes()
 
@@ -344,6 +354,43 @@ class WasmCompiledModuleFragment(
                     buildCall(WasmSymbol(wrapperFunction), serviceCodeLocation)
                 }
             }
+            buildInstr(WasmOp.RETURN, serviceCodeLocation)
+        }
+    }
+
+    private fun createTryGetAssociatedObjectFunction() {
+        if (tryGetAssociatedObjectFunction == null) {
+            // Removed by DCE
+            return
+        }
+        val location = serviceCodeLocation
+
+        val allDefinedFunctions = mutableMapOf<IdSignature, WasmFunction>()
+        wasmCompiledFileFragments.forEach { allDefinedFunctions.putAll(it.functions.defined) }
+
+        tryGetAssociatedObjectFunction.instructions.clear()
+        with(WasmIrExpressionBuilder(tryGetAssociatedObjectFunction.instructions)) {
+            wasmCompiledFileFragments.forEach { fragment ->
+                for ((klass, associatedObjectsInstanceGetters) in fragment.classAssociatedObjectsInstanceGetters) {
+                    val klassId = classIds[klass]!!
+                    buildGetLocal(WasmLocal(0, "classId", WasmI32, true), location)
+                    buildConstI32(klassId, location)
+                    buildInstr(WasmOp.I32_EQ, location)
+                    buildIf("Class matches")
+                    associatedObjectsInstanceGetters.forEach { (obj, getter) ->
+                        val keyId = classIds[obj]!!
+                        buildGetLocal(WasmLocal(1, "keyId", WasmI32, true), location)
+                        buildConstI32(keyId, location)
+                        buildInstr(WasmOp.I32_EQ, location)
+                        buildIf("Object matches")
+                        buildCall(WasmSymbol(allDefinedFunctions[getter]!!), location)
+                        buildInstr(WasmOp.RETURN, location)
+                        buildEnd()
+                    }
+                    buildEnd()
+                }
+            }
+            buildRefNull(WasmHeapType.Simple.None, location)
             buildInstr(WasmOp.RETURN, serviceCodeLocation)
         }
     }
@@ -614,3 +661,13 @@ fun alignUp(x: Int, alignment: Int): Int {
     assert(alignment and (alignment - 1) == 0) { "power of 2 expected" }
     return (x + alignment - 1) and (alignment - 1).inv()
 }
+
+data class ClassAssociatedObjects(
+    val klass: IdSignature,
+    val objects: List<AssociatedObject>
+)
+
+data class AssociatedObject(
+    val obj: IdSignature,
+    val getterFunc: IdSignature,
+)

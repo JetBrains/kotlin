@@ -620,7 +620,19 @@ class WasmSerializer(outputStream: OutputStream) {
             serializeNullable(testFun, ::serialize)
             serialize(closureCallExports) { serialize(it, ::serialize, ::serialize) }
             serialize(jsModuleAndQualifierReferences, ::serialize)
+            serialize(classAssociatedObjectsInstanceGetters, ::serialize)
+            serializeNullable(tryGetAssociatedObjectFun, ::serialize)
         }
+
+    private fun serialize(classAssociatedObjects: ClassAssociatedObjects) {
+        serialize(classAssociatedObjects.klass)
+        serialize(classAssociatedObjects.objects, ::serialize)
+    }
+
+    private fun serialize(associatedObject: AssociatedObject) {
+        serialize(associatedObject.obj)
+        serialize(associatedObject.getterFunc)
+    }
 
     private fun serialize(obj: JsModuleAndQualifierReference) {
         serializeNullable(obj.module, ::serialize)
