@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 class WasmModuleFragmentGenerator(
@@ -66,6 +68,21 @@ internal fun compileIrFile(
     }
     fileContext.closureCallExports.forEach { (exportSignature, function) ->
         wasmFileCodegenContext.addClosureCallExport(exportSignature, function.symbol)
+    }
+
+    fun IrDeclaration.getReferenceKey() = idSignatureRetriever.declarationSignature(this)!!
+
+    fileContext.classAssociatedObjects.forEach { (klass, associatedObjects) ->
+        val classSignature = klass.getReferenceKey()
+        val associatedObjectsInstanceGettersSignatures = associatedObjects.map { (key, obj) ->
+            key.getReferenceKey() to backendContext.mapping.objectToGetInstanceFunction[obj]!!.getReferenceKey()
+        }
+        wasmFileCodegenContext.addClassAssociatedObjects(classSignature, associatedObjectsInstanceGettersSignatures)
+    }
+
+    val tryGetAssociatedObjectFunction = backendContext.wasmSymbols.tryGetAssociatedObject
+    if (irFile == tryGetAssociatedObjectFunction.owner.fileOrNull) {
+        wasmFileCodegenContext.defineTryGetAssociatedObjectFun(tryGetAssociatedObjectFunction)
     }
 
     return wasmFileFragment

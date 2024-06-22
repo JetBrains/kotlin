@@ -75,6 +75,9 @@ class WasmBackendContext(
         val jsClosureCallers = mutableMapOf<String, IrSimpleFunction>()
         val jsToKotlinClosures = mutableMapOf<String, IrSimpleFunction>()
         val jsModuleAndQualifierReferences = mutableSetOf<JsModuleAndQualifierReference>()
+
+        // Map<Class, List<Pair<AnnotationClass, AnnotationObject>>>
+        val classAssociatedObjects: MutableMap<IrClass, MutableList<Pair<IrClass, IrClass>>> = mutableMapOf()
     }
 
     val fileContexts = mutableMapOf<IrFile, CrossFileContext>()

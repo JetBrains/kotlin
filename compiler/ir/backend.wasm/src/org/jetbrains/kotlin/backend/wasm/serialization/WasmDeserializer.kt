@@ -604,6 +604,8 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         testFun = deserializeTestFun(),
         closureCallExports = deserializeClosureCallExports(),
         jsModuleAndQualifierReferences = deserializeJsModuleAndQualifierReferences(),
+        classAssociatedObjectsInstanceGetters = deserializeClassAssociatedObjectInstanceGetters(),
+        tryGetAssociatedObjectFun = deserializeTryGetAssociatedObject()
     )
 
     private fun deserializeFunctions() = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeFunction)
@@ -635,6 +637,12 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     private fun deserializeTestFun() = deserializeNullable(::deserializeIdSignature)
     private fun deserializeClosureCallExports() = deserializeList { deserializePair(::deserializeString, ::deserializeIdSignature) }
     private fun deserializeJsModuleAndQualifierReferences() = deserializeSet(::deserializeJsModuleAndQualifierReference)
+    private fun deserializeClassAssociatedObjectInstanceGetters(): MutableMap<IdSignature, List<Pair<IdSignature, IdSignature>>> =
+        deserializeMap(
+            ::deserializeIdSignature,
+            { deserializeList { deserializePair(::deserializeIdSignature, ::deserializeIdSignature) } }
+        )
+    private fun deserializeTryGetAssociatedObject() = deserializeNullable(::deserializeIdSignature)
 
     private fun deserializeJsModuleAndQualifierReference(): JsModuleAndQualifierReference = JsModuleAndQualifierReference(
         module = deserializeNullable(::deserializeString),

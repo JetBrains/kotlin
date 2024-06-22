@@ -17,7 +17,7 @@ internal fun tryGetAssociatedObject(
     @Suppress("UNUSED_PARAMETER") klassId: Int,
     @Suppress("UNUSED_PARAMETER") keyId: Int,
 ): Any? {
-    // Init implicitly with AssociatedObjectsLowering:
+    // Init implicitly with AssociatedObjectsLowering and WasmCompiledModuleFragment::createTryGetAssociatedObjectFunction:
     // if (C1.klassId == klassId) if (Key1.klassId == keyId) return OBJ1
     // if (C2.klassId == klassId) if (Key2.klassId == keyId) return OBJ2
     // ...

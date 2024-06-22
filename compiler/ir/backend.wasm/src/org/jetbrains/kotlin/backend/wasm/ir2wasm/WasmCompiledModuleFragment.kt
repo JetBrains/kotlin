@@ -46,14 +46,16 @@ class WasmCompiledFileFragment(
     val mainFunctionWrappers: MutableList<IdSignature> = mutableListOf(),
     var testFun: IdSignature? = null,
     val closureCallExports: MutableList<Pair<String, IdSignature>> = mutableListOf(),
-    val jsModuleAndQualifierReferences: Set<JsModuleAndQualifierReference> = mutableSetOf()
-
+    val jsModuleAndQualifierReferences: Set<JsModuleAndQualifierReference> = mutableSetOf(),
+    val classAssociatedObjectsInstanceGetters: MutableMap<IdSignature, List<Pair<IdSignature, IdSignature>>> = mutableMapOf(),  // Map<Class, List<Pair<Object, Getter>>>
+    var tryGetAssociatedObjectFun: IdSignature? = null,  // TODO remove this
 ) : IrProgramFragment()
 
 class WasmCompiledModuleFragment(
     private val wasmCompiledFileFragments: List<WasmCompiledFileFragment>,
     private val generateTrapsInsteadOfExceptions: Boolean,
 ) {
+
     // Used during linking
     private val serviceCodeLocation = SourceLocation.NoLocation("Generated service code")
     private val parameterlessNoReturnFunctionType = WasmFunctionType(emptyList(), emptyList())
@@ -67,6 +69,11 @@ class WasmCompiledModuleFragment(
     private val startUnitTestsFunction = WasmFunction.Defined("kotlin.test.startUnitTests", WasmSymbol(parameterlessNoReturnFunctionType))
     private var memory: WasmMemory = WasmMemory(WasmLimits(0U, 0U), null)
     private var currentDataSectionAddress = 0
+    private val tryGetAssociatedObjectFunction = run {
+        val fragment = wasmCompiledFileFragments.first { it.tryGetAssociatedObjectFun != null }
+        fragment.functions.defined[fragment.tryGetAssociatedObjectFun]!!
+    } as WasmFunction.Defined
+
 
     class JsCodeSnippet(val importName: WasmSymbolReadOnly<String>, val jsCode: String)
 
@@ -174,6 +181,7 @@ class WasmCompiledModuleFragment(
         bindUnboundSymbols()
         addCompileTimePerClassData()
         handleExports()
+        createTryGetAssociatedObjectFunction()
 
         val (recGroupTypes, nonRecursiveFunctionTypes, tags) = getTypes()
         val importedFunctions = getImportedFunctions()
@@ -196,9 +204,10 @@ class WasmCompiledModuleFragment(
         ).apply { calculateIds() }
     }
 
-    private fun getDefinedFunctions() = wasmCompiledFileFragments.flatMap {
-        it.functions.elements.filterIsInstance<WasmFunction.Defined>()
-    } + fieldInitializerFunction + masterInitFunction + startUnitTestsFunction
+    private fun getDefinedFunctions(): List<WasmFunction.Defined> =
+        wasmCompiledFileFragments.flatMap {
+            it.functions.elements.filterIsInstance<WasmFunction.Defined>()
+        } + fieldInitializerFunction + masterInitFunction + startUnitTestsFunction + tryGetAssociatedObjectFunction
 
     private fun getImportedFunctions() = wasmCompiledFileFragments.flatMap {
         it.functions.elements.filterIsInstance<WasmFunction.Imported>()
@@ -317,6 +326,36 @@ class WasmCompiledModuleFragment(
                     buildCall(WasmSymbol(wrapperFunction), serviceCodeLocation)
                 }
             }
+            buildInstr(WasmOp.RETURN, serviceCodeLocation)
+        }
+    }
+
+    private fun createTryGetAssociatedObjectFunction() {
+        val location = serviceCodeLocation
+
+        tryGetAssociatedObjectFunction.instructions.clear()
+        with(WasmIrExpressionBuilder(tryGetAssociatedObjectFunction.instructions)) {
+            wasmCompiledFileFragments.forEach { fragment ->
+                for ((klass, associatedObjectsInstanceGetters) in fragment.classAssociatedObjectsInstanceGetters) {
+                    val klassId = classIds[klass]!!
+                    buildGetLocal(WasmLocal(0, "classId", WasmI32, true), location)
+                    buildConstI32(klassId, location)
+                    buildInstr(WasmOp.I32_EQ, location)
+                    buildIf("Class matches")
+                    associatedObjectsInstanceGetters.forEach { (obj, getter) ->
+                        val keyId = classIds[obj]!!
+                        buildGetLocal(WasmLocal(1, "keyId", WasmI32, true), location)
+                        buildConstI32(keyId, location)
+                        buildInstr(WasmOp.I32_EQ, location)
+                        buildIf("Object matches")
+                        buildCall(WasmSymbol(fragment.functions.defined[getter]!!), location)
+                        buildInstr(WasmOp.RETURN, location)
+                        buildEnd()
+                    }
+                    buildEnd()
+                }
+            }
+            buildRefNull(WasmHeapType.Simple.None, location)
             buildInstr(WasmOp.RETURN, serviceCodeLocation)
         }
     }

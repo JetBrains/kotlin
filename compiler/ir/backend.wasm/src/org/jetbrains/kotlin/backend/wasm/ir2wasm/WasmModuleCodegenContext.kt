@@ -154,6 +154,14 @@ class WasmFileCodegenContext(
     fun addClosureCallExport(exportSignature: String, exportFunction: IrFunctionSymbol) {
         wasmFileFragment.closureCallExports.add(exportSignature to exportFunction.getReferenceKey())
     }
+
+    fun addClassAssociatedObjects(klass: IdSignature, associatedObjectsGetters: List<Pair<IdSignature, IdSignature>>) {
+        wasmFileFragment.classAssociatedObjectsInstanceGetters[klass] = associatedObjectsGetters
+    }
+
+    fun defineTryGetAssociatedObjectFun(func: IrFunctionSymbol) {
+        wasmFileFragment.tryGetAssociatedObjectFun = func.getReferenceKey()
+    }
 }
 
 class WasmModuleMetadataCache(private val backendContext: WasmBackendContext) {

@@ -63,6 +63,12 @@ private fun buildRoots(modules: List<IrModuleFragment>, context: WasmBackendCont
     add(context.findUnitInstanceField())
     add(context.irBuiltIns.unitClass.owner.primaryConstructor!!)
 
+    val annotations = context.fileContexts.values.flatMap { it.classAssociatedObjects.values.flatten() }.distinct()
+    val annotationGetters = annotations.map { context.mapping.objectToGetInstanceFunction[it.second]!! }
+    addAll(annotations.map { it.first })
+    addAll(annotations.map { it.second })
+    addAll(annotationGetters)
+
     addAll(context.testFunsPerFile.values)
     context.fileContexts.values.forEach {
         val mainFunctionWrapper = it.mainFunctionWrapper

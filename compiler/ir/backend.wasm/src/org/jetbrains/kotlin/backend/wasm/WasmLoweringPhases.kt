@@ -684,7 +684,7 @@ val loweringList = listOf(
 
     wasmStringSwitchOptimizerLowering,
 
-//    associatedObjectsLowering,
+    associatedObjectsLowering,
 
     complexExternalDeclarationsToTopLevelFunctionsLowering,
     complexExternalDeclarationsUsagesLowering,
