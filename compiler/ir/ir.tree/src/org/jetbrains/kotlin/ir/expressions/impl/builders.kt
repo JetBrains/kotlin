@@ -735,8 +735,7 @@ fun IrVarargImpl(
     varargElementType: IrType,
     elements: List<IrVarargElement>,
 ): IrVarargImpl {
-    if (elements.isNotEmpty())
-        checkVarargTypesSanity(type, varargElementType)
+    checkVarargTypesSanity(type, varargElementType)
     return IrVarargImpl(
         constructorIndicator = null,
         startOffset = startOffset,
