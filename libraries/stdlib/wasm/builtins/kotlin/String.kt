@@ -14,7 +14,7 @@ import kotlin.math.min
  */
 public class String internal @WasmPrimitiveConstructor constructor(
     private var leftIfInSum: String?,
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override val length: Int,
     private var _chars: WasmCharArray,
 ) : Comparable<String>, CharSequence {
@@ -23,7 +23,7 @@ public class String internal @WasmPrimitiveConstructor constructor(
     /**
      * Returns a string obtained by concatenating this string with the string representation of the given [other] object.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public operator fun plus(other: Any?): String {
         val right = other.toString()
         return String(this, this.length + right.length, right.chars)
@@ -35,7 +35,7 @@ public class String internal @WasmPrimitiveConstructor constructor(
      * If the [index] is out of bounds of this string, throws an [IndexOutOfBoundsException] except in Kotlin/JS
      * where the behavior is unspecified.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun get(index: Int): Char {
         rangeCheck(index, this.length)
         return chars.get(index)
@@ -76,7 +76,7 @@ public class String internal @WasmPrimitiveConstructor constructor(
         return newChars.createString()
     }
 
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun compareTo(other: String): Int {
         if (this === other) return 0
         val thisChars = this.chars
@@ -93,7 +93,7 @@ public class String internal @WasmPrimitiveConstructor constructor(
         return thisLength - otherLength
     }
 
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun equals(other: Any?): Boolean {
         if (other == null) return false
         if (other === this) return true
@@ -115,7 +115,7 @@ public class String internal @WasmPrimitiveConstructor constructor(
         return true
     }
 
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun toString(): String = this
 
     public override fun hashCode(): Int {

@@ -19,7 +19,7 @@ public class Boolean private constructor(private val value: Boolean) : Comparabl
     public companion object {}
 
     /** Returns the inverse of this boolean. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     @WasmOp(WasmOp.I32_EQZ)
     public operator fun not(): Boolean =
         implementedAsIntrinsic
@@ -28,7 +28,7 @@ public class Boolean private constructor(private val value: Boolean) : Comparabl
      * Performs a logical `and` operation between this Boolean and the [other] one. Unlike the `&&` operator,
      * this function does not perform short-circuit evaluation. Both `this` and [other] will always be evaluated.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     @WasmOp(WasmOp.I32_AND)
     public infix fun and(other: Boolean): Boolean =
         implementedAsIntrinsic
@@ -37,26 +37,26 @@ public class Boolean private constructor(private val value: Boolean) : Comparabl
      * Performs a logical `or` operation between this Boolean and the [other] one. Unlike the `||` operator,
      * this function does not perform short-circuit evaluation. Both `this` and [other] will always be evaluated.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     @WasmOp(WasmOp.I32_OR)
     public infix fun or(other: Boolean): Boolean =
         implementedAsIntrinsic
 
     /** Performs a logical `xor` operation between this Boolean and the [other] one. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     @WasmOp(WasmOp.I32_XOR)
     public infix fun xor(other: Boolean): Boolean =
         implementedAsIntrinsic
 
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun compareTo(other: Boolean): Int =
         wasm_i32_compareTo(this.toInt(), other.toInt())
 
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun toString(): String =
         if (this) "true" else "false"
 
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun equals(other: Any?): Boolean {
         return if (other !is Boolean) {
             false

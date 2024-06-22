@@ -20,22 +20,22 @@ public class Char private constructor(private val value: Char) : Comparable<Char
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun compareTo(other: Char): Int =
         wasm_i32_compareTo(this.code, other.code)
 
     /** Adds the other Int value to this value resulting a Char. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun plus(other: Int): Char =
         (this.code + other).toChar()
 
     /** Subtracts the other Char value from this value resulting an Int. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun minus(other: Char): Int =
         (this.code - other.code)
 
     /** Subtracts the other Int value from this value resulting a Char. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline operator fun minus(other: Int): Char =
         (this.code - other).toChar()
 
@@ -72,26 +72,26 @@ public class Char private constructor(private val value: Char) : Comparable<Char
     /** Returns the value of this character as a `Byte`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toByte()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline fun toByte(): Byte =
         this.code.toByte()
 
     /** Returns the value of this character as a `Char`. */
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline fun toChar(): Char =
         this
 
     /** Returns the value of this character as a `Short`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toShort()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline fun toShort(): Short =
         this.code.toShort()
 
     /** Returns the value of this character as a `Int`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     @WasmNoOpCast
     public fun toInt(): Int =
         implementedAsIntrinsic
@@ -99,32 +99,32 @@ public class Char private constructor(private val value: Char) : Comparable<Char
     /** Returns the value of this character as a `Long`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toLong()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline fun toLong(): Long =
         this.code.toLong()
 
     /** Returns the value of this character as a `Float`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toFloat()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline fun toFloat(): Float =
         this.code.toFloat()
 
     /** Returns the value of this character as a `Double`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toDouble()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public inline fun toDouble(): Double =
         this.code.toDouble()
 
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun toString(): String {
         val array = WasmCharArray(1)
         array.set(0, this)
         return array.createString()
     }
 
-    @kotlin.internal.IntrinsicConstEvaluation
+    
     public override fun equals(other: Any?): Boolean {
         if (other is Char)
             return wasm_i32_eq(this.code, other.code)
