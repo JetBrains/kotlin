@@ -200,6 +200,10 @@ void RUNTIME_NORETURN ThrowIllegalStateException() {
     throw std::runtime_error("Not implemented for tests");
 }
 
+void RUNTIME_NORETURN ThrowIllegalStateExceptionWithMessage(KConstRef message) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
 void RUNTIME_NORETURN ThrowInvalidMutabilityException(KConstRef where) {
     throw std::runtime_error("Not implemented for tests");
 }
