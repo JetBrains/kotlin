@@ -202,5 +202,5 @@ data class WasmLimits(
 
 data class WasmImportDescriptor(
     val moduleName: String,
-    val declarationName: String
+    val declarationName: WasmSymbolReadOnly<String>
 )

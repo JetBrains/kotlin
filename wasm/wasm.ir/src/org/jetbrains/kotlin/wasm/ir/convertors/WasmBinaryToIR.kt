@@ -91,7 +91,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
                     // Import section
                     2 -> {
                         forEachVectorElement {
-                            val importPair = WasmImportDescriptor(readString(), readString())
+                            val importPair = WasmImportDescriptor(readString(), WasmSymbol(readString()))
                             when (val kind = b.readByte().toInt()) {
                                 0 -> {
                                     val type = functionTypes[b.readVarUInt32AsInt()]

@@ -52,7 +52,20 @@ class WasmIrExpressionBuilder(
         return eatLevel
     }
 
+    private var isUnderMacroIf = false
+
     override fun buildInstr(op: WasmOp, location: SourceLocation, vararg immediates: WasmImmediate) {
+        if (op == WasmOp.MACRO_IF) {
+            isUnderMacroIf = true
+        }
+        if (op == WasmOp.MACRO_END_IF) {
+            isUnderMacroIf = false
+        }
+        if (isUnderMacroIf) {
+            addInstruction(op, location, immediates)
+            return
+        }
+
         val currentEatUntil = getCurrentEatLevel(op)
         if (currentEatUntil != null) {
             if (currentEatUntil <= numberOfNestedBlocks) return
