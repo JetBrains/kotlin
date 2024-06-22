@@ -20,7 +20,12 @@ private class ExtractedWhenBranch(val conditions: List<ExtractedWhenCondition>, 
 
 private class ExtractedWhenBranchWithIntConditions(val intConditions: List<Int>, val expression: IrExpression)
 
-internal fun BodyGenerator.tryGenerateOptimisedWhen(expression: IrWhen, symbols: WasmSymbols): Boolean {
+internal fun BodyGenerator.tryGenerateOptimisedWhen(
+    expression: IrWhen,
+    symbols: WasmSymbols,
+    functionContext: WasmFunctionCodegenContext,
+    wasmModuleTypeTransformer: WasmModuleTypeTransformer
+): Boolean {
     if (expression.branches.size <= 2) return false
 
     var elseExpression: IrExpression? = null
@@ -80,7 +85,7 @@ internal fun BodyGenerator.tryGenerateOptimisedWhen(expression: IrWhen, symbols:
     val noLocation = SourceLocation.NoLocation("When's binary search infra")
     body.buildSetLocal(selectorLocal, noLocation)
 
-    val resultType = context.transformBlockResultType(expression.type)
+    val resultType = wasmModuleTypeTransformer.transformBlockResultType(expression.type)
     //int overflow or load is too small then make table switch
     val tableSize = maxValue - minValue
     if (tableSize <= 0 || tableSize > seenConditions.size * 2) {

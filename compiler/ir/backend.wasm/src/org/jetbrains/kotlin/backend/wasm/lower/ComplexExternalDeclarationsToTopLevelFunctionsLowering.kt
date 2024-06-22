@@ -46,9 +46,6 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
     val externalFunToTopLevelMapping =
         context.mapping.wasmNestedExternalToNewTopLevelFunction
 
-    val externalObjectToGetInstanceFunction =
-        context.mapping.wasmExternalObjectToGetInstanceFunction
-
     override fun lower(irFile: IrFile) {
         currentFile = irFile
         for (declaration in irFile.declarations) {
@@ -74,19 +71,27 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
 
             override fun visitClass(declaration: IrClass) {
                 declaration.acceptChildrenVoid(this)
-                lowerExternalClass(declaration)
+                declaration.factory.stageController.restrictTo(declaration) {
+                    lowerExternalClass(declaration)
+                }
             }
 
             override fun visitProperty(declaration: IrProperty) {
-                processExternalProperty(declaration)
+                declaration.factory.stageController.restrictTo(declaration) {
+                    processExternalProperty(declaration)
+                }
             }
 
             override fun visitConstructor(declaration: IrConstructor) {
-                processExternalConstructor(declaration)
+                declaration.factory.stageController.restrictTo(declaration) {
+                    processExternalConstructor(declaration)
+                }
             }
 
             override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-                processExternalSimpleFunction(declaration)
+                declaration.factory.stageController.restrictTo(declaration) {
+                    processExternalSimpleFunction(declaration)
+                }
             }
         })
     }

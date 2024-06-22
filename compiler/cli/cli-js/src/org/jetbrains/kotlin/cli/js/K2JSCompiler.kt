@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.wasm.compileToLoweredIr
 import org.jetbrains.kotlin.backend.wasm.compileWasm
 import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
+import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.backend.wasm.wasmPhases
 import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.cli.common.*
@@ -416,9 +417,11 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
             val generateSourceMaps = configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP)
             val useDebuggerCustomFormatters = configuration.getBoolean(JSConfigurationKeys.USE_DEBUGGER_CUSTOM_FORMATTERS)
 
+            val irFactory = IrFactoryImplForWasmIC(WholeWorldStageController())
+
             val irModuleInfo = loadIr(
                 depsDescriptors = module,
-                irFactory = IrFactoryImpl,
+                irFactory = irFactory,
                 verifySignatures = false,
                 loadFunctionInterfacesIntoStdlib = true,
             )
@@ -447,9 +450,10 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
                 backendContext = backendContext,
                 typeScriptFragment = typeScriptFragment,
                 baseFileName = outputName,
+                idSignatureRetriever = irFactory,
                 emitNameSection = arguments.wasmDebug,
                 allowIncompleteImplementations = arguments.irDce,
-                    generateWat = configuration.get(WasmConfigurationKeys.WASM_GENERATE_WAT, false),
+                generateWat = configuration.get(WasmConfigurationKeys.WASM_GENERATE_WAT, false),
                 generateSourceMaps = generateSourceMaps,
                 useDebuggerCustomFormatters = useDebuggerCustomFormatters
             )

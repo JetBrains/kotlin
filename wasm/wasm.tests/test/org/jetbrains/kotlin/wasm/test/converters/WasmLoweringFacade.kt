@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.backend.wasm.compileToLoweredIr
 import org.jetbrains.kotlin.backend.wasm.compileWasm
 import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
+import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.backend.wasm.wasmPhases
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.ir.backend.js.MainModule
@@ -84,6 +85,7 @@ class WasmLoweringFacade(
             backendContext = backendContext,
             typeScriptFragment = typeScriptFragment,
             baseFileName = baseFileName,
+            idSignatureRetriever = moduleInfo.symbolTable.irFactory as IrFactoryImplForWasmIC,
             emitNameSection = true,
             allowIncompleteImplementations = false,
             generateWat = generateWat,
@@ -100,6 +102,7 @@ class WasmLoweringFacade(
             backendContext = backendContext,
             typeScriptFragment = typeScriptFragment,
             baseFileName = baseFileName,
+            idSignatureRetriever = moduleInfo.symbolTable.irFactory as IrFactoryImplForWasmIC,
             emitNameSection = true,
             allowIncompleteImplementations = true,
             generateWat = generateWat,

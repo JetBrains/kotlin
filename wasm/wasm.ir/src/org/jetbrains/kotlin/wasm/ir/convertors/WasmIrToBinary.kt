@@ -294,7 +294,7 @@ class WasmIrToBinary(
             is WasmImmediate.DataIdx -> b.writeVarUInt32(x.value.owner)
             is WasmImmediate.TableIdx -> b.writeVarUInt32(x.value.owner)
             is WasmImmediate.LabelIdx -> b.writeVarUInt32(x.value)
-            is WasmImmediate.TagIdx -> b.writeVarUInt32(x.value)
+            is WasmImmediate.TagIdx -> b.writeVarUInt32(x.value.owner)
             is WasmImmediate.LabelIdxVector -> {
                 b.writeVarUInt32(x.value.size)
                 for (target in x.value) {

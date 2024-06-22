@@ -124,7 +124,7 @@ abstract class WasmExpressionBuilder {
         buildBrInstr(WasmOp.BR, absoluteBlockLevel, location)
     }
 
-    fun buildThrow(tagIdx: Int, location: SourceLocation) {
+    fun buildThrow(tagIdx: WasmSymbol<Int>, location: SourceLocation) {
         buildInstr(WasmOp.THROW, location, WasmImmediate.TagIdx(tagIdx))
     }
 
@@ -153,7 +153,7 @@ abstract class WasmExpressionBuilder {
         )
     }
 
-    fun createNewCatch(tagIdx: Int, absoluteBlockLevel: Int) =
+    fun createNewCatch(tagIdx: WasmSymbol<Int>, absoluteBlockLevel: Int) =
         createNewCatchImmediate(WasmImmediate.Catch.CatchType.CATCH, absoluteBlockLevel, tagIdx)
 
     fun createNewCatchAll(absoluteBlockLevel: Int) =
@@ -165,7 +165,7 @@ abstract class WasmExpressionBuilder {
     private fun createNewCatchImmediate(
         catchType: WasmImmediate.Catch.CatchType,
         absoluteBlockLevel: Int,
-        tagIdx: Int? = null
+        tagIdx: WasmSymbol<Int>? = null
     ): WasmImmediate.Catch {
         val relativeLevel = numberOfNestedBlocks - absoluteBlockLevel
         assert(relativeLevel >= 0) { "Negative relative block index" }
@@ -179,7 +179,7 @@ abstract class WasmExpressionBuilder {
         )
     }
 
-    fun buildCatch(tagIdx: Int) {
+    fun buildCatch(tagIdx: WasmSymbol<Int>) {
         buildInstrWithNoLocation(WasmOp.CATCH, WasmImmediate.TagIdx(tagIdx))
     }
 
