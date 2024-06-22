@@ -6,64 +6,35 @@
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
-import org.jetbrains.kotlin.backend.wasm.utils.DisjointUnions
-import org.jetbrains.kotlin.backend.wasm.utils.getWasmArrayAnnotation
-import org.jetbrains.kotlin.backend.wasm.utils.isAbstractOrSealed
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.util.isInterface
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 class WasmModuleFragmentGenerator(
-    backendContext: WasmBackendContext,
-    wasmModuleFragment: WasmCompiledModuleFragment,
-    allowIncompleteImplementations: Boolean,
+    private val backendContext: WasmBackendContext,
+    private val wasmModuleMetadataCache: WasmModuleMetadataCache,
+    private val idSignatureRetriever: IdSignatureRetriever,
+    private val allowIncompleteImplementations: Boolean,
 ) {
-    private val hierarchyDisjointUnions = DisjointUnions<IrClassSymbol>()
-
-    private val declarationGenerator =
-        DeclarationGenerator(
-            WasmModuleCodegenContext(
-                backendContext,
-                wasmModuleFragment,
-            ),
-            allowIncompleteImplementations,
-            hierarchyDisjointUnions,
-        )
-
-    private val interfaceCollector = object : IrElementVisitorVoid {
-        override fun visitElement(element: IrElement) { }
-
-        override fun visitClass(declaration: IrClass) {
-            if (declaration.isExternal) return
-            if (declaration.getWasmArrayAnnotation() != null) return
-            if (declaration.isInterface) return
-            if (declaration.isAbstractOrSealed) return
-
-            val classMetadata = declarationGenerator.context.getClassMetadata(declaration.symbol)
-            if (classMetadata.interfaces.isNotEmpty()) {
-                hierarchyDisjointUnions.addUnion(classMetadata.interfaces.map { it.symbol })
-            }
-        }
-    }
-
-    fun collectInterfaceTables(irModuleFragment: IrModuleFragment) {
-        acceptVisitor(irModuleFragment, interfaceCollector)
-        hierarchyDisjointUnions.compress()
-    }
-
-    fun generateModule(irModuleFragment: IrModuleFragment) {
-        acceptVisitor(irModuleFragment, declarationGenerator)
-    }
-
-    private fun acceptVisitor(irModuleFragment: IrModuleFragment, visitor: IrElementVisitorVoid) {
+    fun generateModule(irModuleFragment: IrModuleFragment): List<WasmCompiledFileFragment> {
+        val wasmCompiledModuleFragments = mutableListOf<WasmCompiledFileFragment>()
         for (irFile in irModuleFragment.files) {
+            val wasmFileFragment = WasmCompiledFileFragment()
+            val wasmFileCodegenContext = WasmFileCodegenContext(wasmFileFragment, idSignatureRetriever)
+            val wasmModuleTypeTransformer = WasmModuleTypeTransformer(backendContext, wasmFileCodegenContext)
+
+            val generator = DeclarationGenerator(
+                backendContext,
+                wasmFileCodegenContext,
+                wasmModuleTypeTransformer,
+                wasmModuleMetadataCache,
+                allowIncompleteImplementations,
+            )
             for (irDeclaration in irFile.declarations) {
-                irDeclaration.acceptVoid(visitor)
+                irDeclaration.acceptVoid(generator)
             }
+            wasmCompiledModuleFragments.add(wasmFileFragment)
         }
+        return wasmCompiledModuleFragments
     }
 }

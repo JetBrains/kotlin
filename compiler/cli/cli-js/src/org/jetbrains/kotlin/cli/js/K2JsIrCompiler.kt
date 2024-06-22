@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.wasm.compileToLoweredIr
 import org.jetbrains.kotlin.backend.wasm.compileWasm
 import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
+import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.backend.wasm.wasmPhases
 import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.cli.common.*
@@ -430,6 +431,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 backendContext = backendContext,
                 typeScriptFragment = typeScriptFragment,
                 baseFileName = outputName,
+                idSignatureRetriever = irFactory,
                 emitNameSection = arguments.wasmDebug,
                 allowIncompleteImplementations = arguments.irDce,
                     generateWat = configuration.get(WasmConfigurationKeys.WASM_GENERATE_WAT, false),
