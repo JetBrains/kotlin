@@ -26,6 +26,7 @@
 #include "ThreadRegistry.hpp"
 #include "ThreadState.hpp"
 #include "Utils.hpp"
+#include "ObjectTraversal.hpp"
 
 using namespace kotlin;
 
@@ -152,7 +153,7 @@ extern "C" RUNTIME_NOTHROW void InitAndRegisterGlobal(ObjHeader** location, cons
     mm::GlobalsRegistry::Instance().RegisterStorageForGlobal(threadData, location);
     // Null `initialValue` means that the appropriate value was already set by static initialization.
     if (initialValue != nullptr) {
-        UpdateHeapRef(location, const_cast<ObjHeader*>(initialValue));
+        UpdateHeapRef(location, const_cast<ObjHeader*>(initialValue), 1, nullptr);
     }
 }
 
@@ -177,11 +178,11 @@ extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void UpdateStackRef(ObjHeader** locatio
     mm::StackRefAccessor{location} = const_cast<ObjHeader*>(object);
 }
 
-extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void UpdateHeapRef(ObjHeader** location, const ObjHeader* object) {
+extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void UpdateHeapRef(ObjHeader** location, const ObjHeader* object, int32_t isGlobal, ObjHeader* receiver) {
     mm::RefAccessor<false>{location} = const_cast<ObjHeader*>(object);
 }
 
-extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void UpdateVolatileHeapRef(ObjHeader** location, const ObjHeader* object) {
+extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void UpdateVolatileHeapRef(ObjHeader** location, const ObjHeader* object, int32_t isGlobal, ObjHeader* receiver) {
     mm::RefAccessor<false>{location}.storeAtomic(const_cast<ObjHeader*>(object), std::memory_order_seq_cst);
 }
 

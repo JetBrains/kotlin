@@ -238,9 +238,9 @@ void GCHandle::finished() {
                     stats->sweptCount, stats->keptCount);
         }
         if (auto stats = stat->sweepStats.heap) {
-            GCLogInfo(
-                    epoch_, "Sweep: swept %" PRIu64 " objects, kept %" PRIu64 " objects", stats->sweptCount,
-                    stats->keptCount);
+            GCLogInfo(epoch_,
+                        "Sweep: swept %" PRIu64 " objects (%" PRIu64 " RCed %" PRIu64 " with rc=0), kept %" PRIu64 " objects (%" PRIu64 " RCed)",
+                        stats->sweptCount, stats->sweptRCed, stats->sweptRCedDead, stats->keptCount, stats->keptRCed);
         }
         if (stat->memoryUsageBefore.heap && stat->memoryUsageAfter.heap) {
             GCLogInfo(
@@ -405,6 +405,9 @@ void GCHandle::swept(gc::SweepStats stats, uint64_t markedCount) noexcept {
         }
         heap->keptCount += stats.keptCount;
         heap->sweptCount += stats.sweptCount;
+        heap->sweptRCed += stats.sweptRCed;
+        heap->sweptRCedDead += stats.sweptRCedDead;
+        heap->keptRCed += stats.keptRCed;
         heap->keptSizeBytes += stats.keptSizeBytes;
         RuntimeAssert(static_cast<bool>(stat->markStats), "Mark must have already happened");
         stat->markStats->markedCount += markedCount;

@@ -44,6 +44,11 @@ public:
 
     private:
         void Init() noexcept;
+        //
+        // FrameOverlay(prev: 64, params: 32, count: 32)
+        // slot[params]
+        // -> begin()
+        // slot[count-params-2]
 
         // TODO: This copies the approach in the old MM. Do we need to also traverse function parameters in the new MM?
         ObjHeader** begin() noexcept { return frame_ ? reinterpret_cast<ObjHeader**>(frame_ + 1) + frame_->parameters : nullptr; }

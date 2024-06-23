@@ -101,13 +101,33 @@ ALWAYS_INLINE bool gc::tryResetMark(GC::ObjectData& objectData) noexcept {
     return objectData.tryResetMark();
 }
 
-ALWAYS_INLINE void gc::incCounter(ObjHeader* obj, const char* reason) noexcept {}
-ALWAYS_INLINE void gc::decCounter(ObjHeader* obj, const char* reason) noexcept {}
-ALWAYS_INLINE void gc::globalise(ObjHeader* obj) noexcept {}
-ALWAYS_INLINE bool gc::tryRecycle(GC::ObjectData& obj) noexcept { return false; }
-ALWAYS_INLINE void gc::initToRC(GC::ObjectData& obj) noexcept {}
-ALWAYS_INLINE bool gc::isRCed(GC::ObjectData& obj) noexcept { return false; }
-ALWAYS_INLINE int gc::refCount(GC::ObjectData& obj) noexcept { return 0; }
+ALWAYS_INLINE void gc::incCounter(ObjHeader* obj, const char* reason) noexcept {
+    RuntimeAssert(obj->heap(), "");
+    alloc::objectDataForObject(obj).incRefCounter(*mm::ThreadRegistry::Instance().CurrentThreadData(), reason);
+}
+ALWAYS_INLINE void gc::decCounter(ObjHeader* obj, const char* reason) noexcept {
+    RuntimeAssert(obj->heap(), "");
+    alloc::objectDataForObject(obj).decRefCounter(*mm::ThreadRegistry::Instance().CurrentThreadData(), reason);
+}
+ALWAYS_INLINE void gc::globalise(ObjHeader* obj) noexcept {
+    RuntimeAssert(obj->heap(), "");
+    alloc::objectDataForObject(obj).globalise();
+}
+ALWAYS_INLINE bool gc::tryRecycle(GC::ObjectData& obj) noexcept {
+    //return false;
+    return obj.tryRecycle();
+}
+ALWAYS_INLINE void gc::initToRC(GC::ObjectData& obj) noexcept {
+    obj.initToRC(*mm::ThreadRegistry::Instance().CurrentThreadData());
+}
+ALWAYS_INLINE bool gc::isRCed(GC::ObjectData& obj) noexcept {
+    //return false;
+    return obj.isRCed();
+}
+ALWAYS_INLINE int gc::refCount(GC::ObjectData& obj) noexcept {
+    //return 0;
+    return obj.refCount();
+}
 
 // static
 ALWAYS_INLINE uint64_t type_layout::descriptor<gc::GC::ObjectData>::type::size() noexcept {

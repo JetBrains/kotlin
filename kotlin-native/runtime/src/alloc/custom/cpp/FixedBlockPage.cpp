@@ -13,13 +13,14 @@
 #include "CustomLogging.hpp"
 #include "CustomAllocConstants.hpp"
 #include "GCApi.hpp"
+#include "KString.h"
 
 namespace kotlin::alloc {
 
 FixedBlockPage* FixedBlockPage::Create(uint32_t blockSize) noexcept {
     CustomAllocInfo("FixedBlockPage::Create(%u)", blockSize);
     RuntimeAssert(blockSize <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE, "blockSize too large for FixedBlockPage");
-    return new (SafeAlloc(FIXED_BLOCK_PAGE_SIZE)) FixedBlockPage(blockSize);
+    return new (SafeAlloc(FIXED_BLOCK_PAGE_SIZE, FIXED_BLOCK_PAGE_SIZE)) FixedBlockPage(blockSize);
 }
 
 void FixedBlockPage::Destroy() noexcept {
@@ -28,6 +29,7 @@ void FixedBlockPage::Destroy() noexcept {
 
 FixedBlockPage::FixedBlockPage(uint32_t blockSize) noexcept : blockSize_(blockSize) {
     CustomAllocInfo("FixedBlockPage(%p)::FixedBlockPage(%u)", this, blockSize);
+    RuntimeAssert(reinterpret_cast<size_t>(this) % FIXED_BLOCK_PAGE_SIZE == 0, "");
     nextFree_.first = 0;
     nextFree_.last = FIXED_BLOCK_PAGE_CELL_COUNT / blockSize * blockSize;
     end_ = FIXED_BLOCK_PAGE_CELL_COUNT / blockSize * blockSize;
@@ -90,8 +92,65 @@ bool FixedBlockPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQ
 
     allocatedSizeTracker_.afterSweep(aliveBlocksCount * blockSize_ * sizeof(FixedBlockCell));
 
+    escapedCount_ = aliveBlocksCount;
+    diedCount_ = 0;
+
     // The page is alive iff a range stored in the page header covers the entire page.
     return nextFree_.first > 0 || nextFree_.last < end_;
+}
+
+void FixedBlockPage::Recycle() noexcept {
+    CustomAllocInfo("FixedBlockPage(%p)::Recycle() escaped: %u, dead: %u, capacity: %u", this, escapedCount_, diedCount_, capacity());
+    FixedCellRange nextFree = nextFree_; // Accessing the previous free list structure.
+    FixedCellRange* prevRange = &nextFree_; // Creating the new free list structure.
+    uint32_t prevLive = -blockSize_;
+    std::size_t aliveBlocksCount = 0;
+    for (uint32_t cell = 0 ; cell < end_ ; cell += blockSize_) {
+        // Go through the occupied cells.
+        for (; cell < nextFree.first ; cell += blockSize_) {
+            if (TryRecycleObject(cells_[cell].data)) {
+                // We should null this cell out, but we will do so in batch later.
+                continue;
+            }
+
+//            auto& objData = reinterpret_cast<HeapObjHeader*>(cells_[cell].data)->objectData();
+//            ObjHeader* obj = objectForObjectData(objData);
+//            int rc = -1;
+//            if (gc::isRCed(objData)) rc = gc::refCount(objData);
+//            auto pkg = std::unique_ptr<char>{CreateCStringFromString(obj->type_info()->packageName_)};
+//            auto name = std::unique_ptr<char>{CreateCStringFromString(obj->type_info()->relativeName_)};
+//            CustomAllocDebug("TryRecycleObject(%p): not recyclable of type %s.%s RC=%d", obj, pkg.get(), name.get(), rc);
+
+            ++aliveBlocksCount;
+            if (prevLive + blockSize_ < cell) {
+                // We found an alive cell that ended a run of swept cells or a known unoccupied range.
+                uint32_t prevCell = cell - blockSize_;
+                // Nulling in batch.
+                memset(&cells_[prevLive + blockSize_], 0, (prevCell - prevLive) * sizeof(FixedBlockCell));
+                // Updating the free list structure.
+                prevRange->first = prevLive + blockSize_;
+                prevRange->last = prevCell;
+                // And the next unoccupied range will be stored in the last unoccupied cell.
+                prevRange = &cells_[prevCell].nextFree;
+            }
+            prevLive = cell;
+        }
+        // `cell` now points to a known unoccupied range.
+        if (nextFree.last < end_) {
+            cell = nextFree.last;
+            nextFree = cells_[cell].nextFree;
+            continue;
+        }
+        prevRange->first = prevLive + blockSize_;
+        memset(&cells_[prevLive + blockSize_], 0, (cell - prevLive - blockSize_) * sizeof(FixedBlockCell));
+        prevRange->last = end_;
+        // And we're done.
+        break;
+    }
+
+    allocatedSizeTracker_.afterSweep(aliveBlocksCount * blockSize_ * sizeof(FixedBlockCell));
+
+    diedCount_ = 0;
 }
 
 std::vector<uint8_t*> FixedBlockPage::GetAllocatedBlocks() noexcept {
@@ -109,6 +168,12 @@ std::vector<uint8_t*> FixedBlockPage::GetAllocatedBlocks() noexcept {
         nextFree = cells_[cell].nextFree;
     }
     return allocated;
+}
+
+FixedBlockPage& FixedBlockPage::containing(ObjHeader* obj) noexcept {
+    auto& page = *reinterpret_cast<FixedBlockPage*>(reinterpret_cast<size_t>(obj) & ~(FIXED_BLOCK_PAGE_SIZE - 1));
+    RuntimeAssert(page.magic_ == MAGIC, "");
+    return page;
 }
 
 } // namespace kotlin::alloc

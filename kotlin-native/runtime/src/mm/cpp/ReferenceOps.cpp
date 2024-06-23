@@ -9,8 +9,21 @@
 
 using namespace kotlin;
 
+ALWAYS_INLINE void mm::internal::incCounter(ObjHeader* obj, const char* reason) noexcept {
+    if (obj && obj->heap()) {
+        gc::incCounter(obj, reason);
+    }
+}
+
+ALWAYS_INLINE void mm::internal::decCounter(ObjHeader* obj, const char* reason) noexcept {
+    if (obj && obj->heap()) {
+        gc::decCounter(obj, reason);
+    }
+}
+
 // on stack
-template<> ALWAYS_INLINE void mm::RefAccessor<true>::beforeStore(ObjHeader*) noexcept {}
+template<> ALWAYS_INLINE void mm::RefAccessor<true>::beforeStore(ObjHeader* value) noexcept {
+}
 template<> ALWAYS_INLINE void mm::RefAccessor<true>::afterStore(ObjHeader*) noexcept {}
 template<> ALWAYS_INLINE void mm::RefAccessor<true>::beforeLoad() noexcept {}
 template<> ALWAYS_INLINE void mm::RefAccessor<true>::afterLoad() noexcept {}

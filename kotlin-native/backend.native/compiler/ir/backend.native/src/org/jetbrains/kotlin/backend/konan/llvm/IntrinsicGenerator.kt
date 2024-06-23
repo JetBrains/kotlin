@@ -414,7 +414,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
         require(args.size == 3) { "The call to ${callSite.symbol.owner.name.asString()} expects 3 value arguments." }
         val address = arrayGetElementAddress(callSite, args[0], args[1])
         val isObjectType = callSite.symbol.owner.valueParameters.last().type.binaryTypeIsReference()
-        storeAny(args[2], address, isObjectRef = isObjectType, onStack = false, isVolatile = true)
+        storeAny(args[2], address, isObjectRef = isObjectType, onStack = false, isVolatile = true, isGlobal = false, receiverPtr = args[0])
         return theUnitInstanceRef.llvm
     }
 

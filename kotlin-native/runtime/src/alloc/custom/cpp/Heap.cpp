@@ -33,6 +33,18 @@ void Heap::PrepareForGC() noexcept {
     extraObjectPages_.PrepareForGC();
 }
 
+void Heap::RecycleAll() noexcept {
+    CustomAllocDebug("Heap::RecycleAll()");
+    for (int blockSize = 0; blockSize <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++blockSize) {
+        for (auto* page: fixedBlockPages_[blockSize].used_.GetElements()) {
+            page->Recycle();
+        }
+        for (auto* page: fixedBlockPages_[blockSize].ready_.GetElements()) {
+            page->Recycle();
+        }
+    }
+}
+
 FinalizerQueue Heap::Sweep(gc::GCHandle gcHandle) noexcept {
     FinalizerQueue finalizerQueue;
     CustomAllocDebug("Heap: before sweep FinalizerQueue size == %zu", finalizerQueue.size());

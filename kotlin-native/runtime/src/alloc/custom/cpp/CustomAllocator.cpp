@@ -41,6 +41,12 @@ ObjHeader* CustomAllocator::CreateObject(const TypeInfo* typeInfo) noexcept {
     RuntimeAssert(!typeInfo->IsArray(), "Must not be an array");
     auto descriptor = HeapObject::make_descriptor(typeInfo);
     auto& heapObject = *descriptor.construct(Allocate(descriptor.size()));
+
+    uint64_t cellCount = (descriptor.size() + sizeof(Cell) - 1) / sizeof(Cell);
+    if (cellCount <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE) {
+        gc::initToRC(heapObject.header(descriptor).objectData());
+    }
+
     ObjHeader* object = heapObject.header(descriptor).object();
     if (typeInfo->flags_ & TF_HAS_FINALIZER) {
         auto* extraObject = CreateExtraObject();
@@ -58,6 +64,12 @@ ArrayHeader* CustomAllocator::CreateArray(const TypeInfo* typeInfo, uint32_t cou
     RuntimeAssert(typeInfo->IsArray(), "Must be an array");
     auto descriptor = HeapArray::make_descriptor(typeInfo, count);
     auto& heapArray = *descriptor.construct(Allocate(descriptor.size()));
+
+    uint64_t cellCount = (descriptor.size() + sizeof(Cell) - 1) / sizeof(Cell);
+    if (cellCount <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE) {
+        gc::initToRC(heapArray.header(descriptor).objectData());
+    }
+
     ArrayHeader* array = heapArray.header(descriptor).array();
     array->typeInfoOrMeta_ = const_cast<TypeInfo*>(typeInfo);
     array->count_ = count;
@@ -101,6 +113,9 @@ void CustomAllocator::PrepareForGC() noexcept {
     nextFitPage_ = nullptr;
     memset(fixedBlockPages_, 0, sizeof(fixedBlockPages_));
     extraObjectPage_ = nullptr;
+    for (auto& list: fullFixedBlockPages_) {
+        list.clear();
+    }
 }
 
 // static
@@ -153,7 +168,39 @@ uint8_t* CustomAllocator::AllocateInFixedBlockPage(uint32_t cellCount) noexcept 
     if (page) {
         uint8_t* block = page->TryAllocate();
         if (block) return block;
+        if (page->escapedCount() <= page->capacity() - 2048) { // ?????
+            fullFixedBlockPages_[cellCount].push_front(page);
+        }
     }
+    CustomAllocDebug("Failed to allocate in current FixedBlockPage(%p)", page);
+    if (compiler::gcRcYoung()) {
+        //    std::optional<decltype(fullFixedBlockPages_[cellCount].begin())> leastOccupied = std::nullopt;
+        //    for (auto it = fullFixedBlockPages_[cellCount].begin(); it != fullFixedBlockPages_[cellCount].end(); ++it) {
+        //        if ((*it)->diedCount() >= ((*it)->capacity() / 2)) {
+        //            leastOccupied = it;
+        //            break;
+        //        }
+        //        if ((*it)->diedCount() > 0 && (!leastOccupied || (*it)->diedCount() > (**leastOccupied)->diedCount())) {
+        //            leastOccupied = it;
+        //        }
+        //        if ((*it)->escapedCount() >= (*it)->capacity() - 2048) {
+        //            fullFixedBlockPages_[cellCount].erase(it);
+        //        }
+        //    }
+        //    if (leastOccupied) {
+        //        CustomAllocDebug("Found least occupied FixedBlockPage %p", **leastOccupied);
+        //        page = **leastOccupied;
+        //        page->Recycle();
+        //        fullFixedBlockPages_[cellCount].erase(*leastOccupied);
+        //
+        //        uint8_t* block = page->TryAllocate();
+        //        if (block) {
+        //            fixedBlockPages_[cellCount] = page;
+        //            return block;
+        //        }
+        //    }
+    }
+
     CustomAllocDebug("Failed to allocate in current FixedBlockPage");
     while ((page = heap_.GetFixedBlockPage(cellCount, finalizerQueue_))) {
         uint8_t* block = page->TryAllocate();

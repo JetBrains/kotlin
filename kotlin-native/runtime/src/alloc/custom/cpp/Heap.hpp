@@ -27,6 +27,8 @@ public:
     // Called once by the GC thread after all mutators have been suspended
     void PrepareForGC() noexcept;
 
+    void RecycleAll() noexcept;
+
     // Sweep through all remaining pages, freeing those blocks where CanReclaim
     // returns true. If multiple sweepers are active, each page will only be
     // seen by one sweeper.

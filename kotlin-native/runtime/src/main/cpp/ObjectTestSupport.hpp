@@ -376,7 +376,7 @@ public:
     OBJ_GETTER0(get) noexcept { RETURN_RESULT_OF(Konan_RegularWeakReferenceImpl_get, header()); }
 
     ObjHeader* get() noexcept {
-        ObjHeader* result;
+        ObjHeader* result = nullptr;
         return get(&result);
     }
 };

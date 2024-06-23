@@ -391,7 +391,7 @@ internal class CodeGeneratorVisitor(
     private fun FunctionGenerationContext.initThreadLocalField(irField: IrField) {
         val initializer = irField.initializer ?: return
         val address = staticFieldPtr(irField, this)
-        storeAny(evaluateExpression(initializer.expression), address, irField.type.binaryTypeIsReference(), false)
+        storeAny(evaluateExpression(initializer.expression), address, irField.type.binaryTypeIsReference(), false, isGlobal = false, receiverPtr = null)
     }
 
     private fun FunctionGenerationContext.initGlobalField(irField: IrField) {
@@ -405,7 +405,7 @@ internal class CodeGeneratorVisitor(
             call(llvm.initAndRegisterGlobalFunction, listOf(address, initialValue
                     ?: kNullObjHeaderPtr))
         } else if (initialValue != null) {
-            storeAny(initialValue, address, irField.type.binaryTypeIsReference(), false)
+            storeAny(initialValue, address, irField.type.binaryTypeIsReference(), false, isGlobal = true, receiverPtr = null)
         }
     }
 
@@ -554,11 +554,11 @@ internal class CodeGeneratorVisitor(
                             .forEach { irField ->
                                 if (irField.type.binaryTypeIsReference() && irField.storageKind(context) != FieldStorageKind.THREAD_LOCAL) {
                                     val address = staticFieldPtr(irField, functionGenerationContext)
-                                    storeHeapRef(codegen.kNullObjHeaderPtr, address)
+                                    storeHeapRef(codegen.kNullObjHeaderPtr, address, isGlobal = true)
                                 }
                             }
                     state.globalSharedObjects.forEach { address ->
-                        storeHeapRef(codegen.kNullObjHeaderPtr, address)
+                        storeHeapRef(codegen.kNullObjHeaderPtr, address, isGlobal = true)
                     }
                     state.globalInitState?.let {
                         store(llvm.int32(FILE_NOT_INITIALIZED), it)
@@ -1847,6 +1847,7 @@ internal class CodeGeneratorVisitor(
                 valueToAssign, address, value.symbol.owner.type.binaryTypeIsReference(), false,
                 isVolatile = value.symbol.owner.hasAnnotation(KonanFqNames.volatile),
                 alignment = alignment,
+                isGlobal = thisPtr == null, receiverPtr = thisPtr
         )
 
         assert (value.type.isUnit())
@@ -3021,6 +3022,7 @@ internal fun NativeGenerationState.generateRuntimeConstantsModule() : LLVMModule
     setRuntimeConstGlobal("Kotlin_freezingChecksEnabled", llvm.constInt32(if (config.freezing.enableFreezeChecks) 1 else 0))
     setRuntimeConstGlobal("Kotlin_concurrentWeakSweep", llvm.constInt32(if (context.config.concurrentWeakSweep) 1 else 0))
     setRuntimeConstGlobal("Kotlin_gcMarkSingleThreaded", llvm.constInt32(if (config.gcMarkSingleThreaded) 1 else 0))
+    setRuntimeConstGlobal("Kotlin_gcRcYoung", llvm.constInt32(if (config.gc == GC.RC_YOUNG) 1 else 0))
 
     return llvmModule
 }

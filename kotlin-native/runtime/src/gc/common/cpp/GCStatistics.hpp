@@ -27,6 +27,9 @@ class GCHandle;
 struct SweepStats {
     uint64_t sweptCount = 0;
     uint64_t keptCount = 0;
+    uint64_t sweptRCed = 0;
+    uint64_t sweptRCedDead = 0;
+    uint64_t keptRCed = 0;
     size_t keptSizeBytes = 0;
 };
 
@@ -136,14 +139,23 @@ public:
     }
     ~GCSweepScope();
 
-    void addSweptObject() noexcept {
+    void addSweptObject(bool RCed, bool RCedDead) noexcept {
         requireValid();
         stats_.sweptCount += 1;
+        if (RCed) {
+            stats_.sweptRCed += 1;
+            if (RCedDead) {
+                stats_.sweptRCedDead += 1;
+            }
+        }
     }
-    void addKeptObject(size_t sizeBytes) noexcept {
+    void addKeptObject(size_t sizeBytes, bool RCed) noexcept {
         requireValid();
         stats_.keptCount += 1;
         stats_.keptSizeBytes += sizeBytes;
+        if (RCed) {
+            stats_.keptRCed += 1;
+        }
     }
     // Custom allocator only. To be finalized objects are kept alive.
     void addMarkedObject() noexcept {

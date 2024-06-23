@@ -44,16 +44,31 @@ public:
     uint8_t* TryAllocate() noexcept;
 
     bool Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept;
+    void Recycle() noexcept;
 
     // Testing method
     std::vector<uint8_t*> GetAllocatedBlocks() noexcept;
+
+    static FixedBlockPage& containing(ObjHeader*) noexcept;
+
+    auto escapedCount() const noexcept { return escapedCount_; }
+    auto diedCount() const noexcept { return diedCount_; }
+    auto capacity() const noexcept { return end_ / blockSize_; }
+
+    void contEscaped() noexcept { ++escapedCount_; }
+    void countDied() noexcept { ++diedCount_; }
 
 private:
     explicit FixedBlockPage(uint32_t blockSize) noexcept;
 
     FixedCellRange nextFree_;
+
     uint32_t blockSize_;
     uint32_t end_;
+
+    uint32_t escapedCount_ = 0;
+    uint32_t diedCount_ = 0;
+
     FixedBlockCell cells_[];
 };
 

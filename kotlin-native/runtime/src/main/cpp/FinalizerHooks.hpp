@@ -16,6 +16,7 @@ namespace kotlin {
 bool HasFinalizers(ObjHeader* object) noexcept;
 bool HasFinalizersDataInObject(ObjHeader* object) noexcept;
 void RunFinalizers(ObjHeader* object) noexcept;
+void RunFinalizersSoft(ObjHeader* object) noexcept;
 
 void SetFinalizerHookForTesting(void (*hook)(ObjHeader*)) noexcept;
 

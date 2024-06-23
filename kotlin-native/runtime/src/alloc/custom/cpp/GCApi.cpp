@@ -6,6 +6,7 @@
 #include "GCApi.hpp"
 
 #include <atomic>
+#include <memory>
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
@@ -25,6 +26,7 @@
 #include "GCStatistics.hpp"
 #include "KAssert.h"
 #include "Memory.h"
+#include "KString.h"
 
 namespace {
 
@@ -37,9 +39,11 @@ namespace kotlin::alloc {
 bool SweepObject(uint8_t* object, FinalizerQueue& finalizerQueue, gc::GCHandle::GCSweepScope& gcHandle) noexcept {
     auto* heapObjHeader = reinterpret_cast<HeapObjHeader*>(object);
     auto size = CustomAllocator::GetAllocatedHeapSize(heapObjHeader->object());
+    bool refCounted = gc::isRCed(heapObjHeader->objectData());
+    bool refCountedDead = !refCounted || gc::refCount(heapObjHeader->objectData()) == 0;
     if (gc::tryResetMark(heapObjHeader->objectData())) {
         CustomAllocDebug("SweepObject(%p): still alive", heapObjHeader);
-        gcHandle.addKeptObject(size);
+        gcHandle.addKeptObject(size, refCounted);
         return true;
     }
     auto* extraObject = mm::ExtraObjectData::Get(heapObjHeader->object());
@@ -58,27 +62,56 @@ bool SweepObject(uint8_t* object, FinalizerQueue& finalizerQueue, gc::GCHandle::
             if (HasFinalizersDataInObject(heapObjHeader->object())) {
                 // The object must survive until the finalizers for it are finished.
                 gcHandle.addMarkedObject();
-                gcHandle.addKeptObject(size);
+                gcHandle.addKeptObject(size, refCounted);
                 return true;
             }
             // The object has a finalizer, but all the data for it resides in `ExtraObjectData`. So, detach the object from it, and free it.
             extraObject->UnlinkFromBaseObject();
             CustomAllocDebug("SweepObject(%p): can be reclaimed", heapObjHeader);
-            gcHandle.addSweptObject();
+            gcHandle.addSweptObject(refCounted, refCountedDead);
             return false;
         }
         if (!extraObject->getFlag(mm::ExtraObjectData::FLAGS_FINALIZED)) {
             CustomAllocDebug("SweepObject(%p): already waiting to be finalized", heapObjHeader);
             gcHandle.addMarkedObject();
-            gcHandle.addKeptObject(size);
+            gcHandle.addKeptObject(size, refCounted);
             return true;
         }
         extraObject->UnlinkFromBaseObject();
         extraObject->setFlag(mm::ExtraObjectData::FLAGS_SWEEPABLE);
     }
     CustomAllocDebug("SweepObject(%p): can be reclaimed", heapObjHeader);
-    gcHandle.addSweptObject();
+    gcHandle.addSweptObject(refCounted, refCountedDead);
     return false;
+}
+
+bool TryRecycleObject(uint8_t* object) noexcept {
+    auto* heapObjHeader = reinterpret_cast<HeapObjHeader*>(object);
+    if (!gc::tryRecycle(heapObjHeader->objectData())) {
+        CustomAllocDebug("TryRecycleObject(%p): not recyclable", heapObjHeader);
+        return false;
+    }
+    auto* extraObject = mm::ExtraObjectData::Get(heapObjHeader->object());
+    if (extraObject) {
+        CustomAllocDebug("TryRecycleObject(%p): has extra object", heapObjHeader);
+        if (!extraObject->getFlag(mm::ExtraObjectData::FLAGS_IN_FINALIZER_QUEUE)) {
+//            CustomAllocDebug("TryRecycleObject(%p): needs to be finalized, extraObject at %p", heapObjHeader, extraObject);
+//            extraObject->setFlag(mm::ExtraObjectData::FLAGS_IN_FINALIZER_QUEUE);
+//            extraObject->ClearRegularWeakReferenceImpl();
+//            CustomAllocDebug("TryRecycleObject: fromExtraObject(%p) = %p", extraObject, ExtraObjectCell::fromExtraObject(extraObject));
+//            RunFinalizersSoft(heapObjHeader->object());
+//            // The object has a finalizer, but all the data for it resides in `ExtraObjectData`. So, detach the object from it, and free it.
+//            extraObject->UnlinkFromBaseObject();
+            //CustomAllocDebug("TryRecycleObject(%p): recycled", heapObjHeader);
+            return false;
+        }
+        if (!extraObject->getFlag(mm::ExtraObjectData::FLAGS_FINALIZED)) {
+            CustomAllocDebug("TryRecycleObject(%p): already waiting to be finalized", heapObjHeader);
+            return false;
+        }
+    }
+    CustomAllocDebug("TryRecycleObject(%p): recycled", heapObjHeader);
+    return true;
 }
 
 bool SweepExtraObject(mm::ExtraObjectData* extraObject, gc::GCHandle::GCSweepExtraObjectsScope& gcHandle) noexcept {
@@ -92,14 +125,20 @@ bool SweepExtraObject(mm::ExtraObjectData* extraObject, gc::GCHandle::GCSweepExt
     return true;
 }
 
-void* SafeAlloc(uint64_t size) noexcept {
+void* SafeAlloc(uint64_t size, int alignment) noexcept {
     if (size > std::numeric_limits<size_t>::max()) {
         konan::consoleErrorf("Out of memory trying to allocate %" PRIu64 "bytes. Aborting.\n", size);
         std::abort();
     }
     void* memory;
     bool error;
-    if (compiler::disableMmap()) {
+    if (compiler::gcRcYoung()) {
+        int errorCode = posix_memalign(&memory, alignment, size);
+        error = (errorCode != 0);
+        if (!error) {
+            memset(memory, 0, size);
+        }
+    } else if (compiler::disableMmap()) {
         memory = calloc(size, 1);
         error = memory == nullptr;
     } else {
@@ -124,7 +163,7 @@ void* SafeAlloc(uint64_t size) noexcept {
 
 void Free(void* ptr, size_t size) noexcept {
     CustomAllocDebug("Free(%p, %zu)", ptr, size);
-    if (compiler::disableMmap()) {
+    if (compiler::gcRcYoung() || compiler::disableMmap()) {
         free(ptr);
     } else {
 #if KONAN_WINDOWS

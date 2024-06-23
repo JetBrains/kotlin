@@ -53,6 +53,9 @@ internal class ConstArray(elementType: LLVMTypeRef?, val elements: List<ConstVal
     override val llvm = LLVMConstArray(elementType, elements.map { it.llvm }.toCValues(), elements.size)!!
 }
 
+private fun prettyType(type: LLVMTypeRef?) =
+        (0..<LLVMCountStructElementTypes(type)).joinToString { LLVMPrintTypeToString(LLVMStructGetTypeAtIndex(type, it))!!.toKString() }
+
 internal open class Struct(val type: LLVMTypeRef?, val elements: List<ConstValue?>) : ConstValue {
 
     constructor(type: LLVMTypeRef?, vararg elements: ConstValue?) : this(type, elements.toList())
@@ -65,14 +68,16 @@ internal open class Struct(val type: LLVMTypeRef?, val elements: List<ConstValue
             element.llvm.also {
                 assert(it.type == expectedType) {
                     "Unexpected type at $index: expected ${LLVMPrintTypeToString(expectedType)!!.toKString()} " +
-                            "got ${LLVMPrintTypeToString(it.type)!!.toKString()}"
+                            "got ${LLVMPrintTypeToString(it.type)!!.toKString()} (expected ${prettyType(type)}, found $elements)"
                 }
             }
         }
     }.toCValues(), elements.size)!!
 
     init {
-        assert(elements.size == LLVMCountStructElementTypes(type))
+        assert(elements.size == LLVMCountStructElementTypes(type)) {
+            "Expected ${prettyType(type)} found $elements"
+        }
     }
 }
 

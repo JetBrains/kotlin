@@ -20,6 +20,9 @@ constexpr auto kPageAlignment = 8;
 
 template<typename Page>
 class alignas(kPageAlignment) AnyPage : Pinned {
+public:
+    static constexpr size_t MAGIC = 0xF18ED9A6E;
+    size_t magic_ = 0xF18ED9A6E;
 private:
     friend class AtomicStack<Page>;
     // Used for linking pages together in `pages` queue or in `unswept` queue.

@@ -74,7 +74,7 @@ OBJ_GETTER(Kotlin_getStackTraceStrings, KConstRef stackTrace) {
     for (size_t index = 0; index < stackTraceStrings.size(); ++index) {
         ObjHolder holder;
         CreateStringFromCString(stackTraceStrings[index].c_str(), holder.slot());
-        UpdateHeapRef(ArrayAddressOfElementAt(strings->array(), index), holder.obj());
+        UpdateHeapRef(ArrayAddressOfElementAt(strings->array(), index), holder.obj(), 0, strings);
     }
 
     RETURN_OBJ(strings);

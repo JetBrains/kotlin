@@ -6,6 +6,7 @@
 #include "ObjectOps.hpp"
 
 #include "Common.h"
+#include "Porting.h"
 #include "ThreadData.hpp"
 #include "ThreadState.hpp"
 

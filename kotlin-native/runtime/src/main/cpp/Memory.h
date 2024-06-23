@@ -305,9 +305,9 @@ void ZeroStackRef(ObjHeader** location) RUNTIME_NOTHROW;
 // Updates stack location.
 void UpdateStackRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
 // Updates heap/static data location.
-void UpdateHeapRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
+void UpdateHeapRef(ObjHeader** location, const ObjHeader* object, int32_t isGlobal, ObjHeader* receiver) RUNTIME_NOTHROW;
 // Updates volatile heap/static data location.
-void UpdateVolatileHeapRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
+void UpdateVolatileHeapRef(ObjHeader** location, const ObjHeader* object, int32_t isGlobal, ObjHeader* receiver) RUNTIME_NOTHROW;
 OBJ_GETTER(CompareAndSwapVolatileHeapRef, ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) RUNTIME_NOTHROW;
 bool CompareAndSetVolatileHeapRef(ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) RUNTIME_NOTHROW;
 OBJ_GETTER(GetAndSetVolatileHeapRef, ObjHeader** location, ObjHeader* newValue) RUNTIME_NOTHROW;

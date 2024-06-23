@@ -519,7 +519,8 @@ internal class StackLocalsManagerImpl(
                 if (fieldSymbol.owner.type.binaryTypeIsReference()) {
                     val fieldPtr = structGep(type, stackLocal.stackAllocationPtr, fieldIndex, "")
                     if (refsOnly)
-                        storeHeapRef(kNullObjHeaderPtr, fieldPtr)
+                        // TODO receiverPtr??
+                        storeHeapRef(kNullObjHeaderPtr, fieldPtr, isGlobal = false)
                     else
                         call(llvm.zeroHeapRefFunction, listOf(fieldPtr))
                 }
@@ -751,17 +752,17 @@ internal abstract class FunctionGenerationContext(
         alignment?.let { LLVMSetAlignment(store, it) }
     }
 
-    fun storeHeapRef(value: LLVMValueRef, ptr: LLVMValueRef) {
-        updateRef(value, ptr, onStack = false)
+    fun storeHeapRef(value: LLVMValueRef, ptr: LLVMValueRef, isGlobal: Boolean) {
+        updateRef(value, ptr, onStack = false, isGlobal = isGlobal)
     }
 
     fun storeStackRef(value: LLVMValueRef, ptr: LLVMValueRef) {
-        updateRef(value, ptr, onStack = true)
+        updateRef(value, ptr, onStack = true, isGlobal = false)
     }
 
-    fun storeAny(value: LLVMValueRef, ptr: LLVMValueRef, isObjectRef: Boolean, onStack: Boolean, isVolatile: Boolean = false, alignment: Int? = null) {
+    fun storeAny(value: LLVMValueRef, ptr: LLVMValueRef, isObjectRef: Boolean, onStack: Boolean, isVolatile: Boolean = false, alignment: Int? = null, isGlobal: Boolean, receiverPtr: LLVMValueRef?) {
         when {
-            isObjectRef -> updateRef(value, ptr, onStack, isVolatile, alignment)
+            isObjectRef -> updateRef(value, ptr, onStack, isVolatile, alignment, isGlobal = isGlobal, receiverPtr = receiverPtr)
             else -> store(value, ptr, if (isVolatile) LLVMAtomicOrdering.LLVMAtomicOrderingSequentiallyConsistent else null, alignment)
         }
     }
@@ -779,7 +780,7 @@ internal abstract class FunctionGenerationContext(
     }
 
     private fun updateRef(value: LLVMValueRef, address: LLVMValueRef, onStack: Boolean,
-                          isVolatile: Boolean = false, alignment: Int? = null) {
+                          isVolatile: Boolean = false, alignment: Int? = null, isGlobal: Boolean = false, receiverPtr: LLVMValueRef? = null) {
         require(alignment == null || alignment % runtime.pointerAlignment == 0)
         if (onStack) {
             require(!isVolatile) { "Stack ref update can't be volatile"}
@@ -789,9 +790,9 @@ internal abstract class FunctionGenerationContext(
                 call(llvm.updateStackRefFunction, listOf(address, value))
         } else {
             if (isVolatile && context.memoryModel == MemoryModel.EXPERIMENTAL) {
-                call(llvm.UpdateVolatileHeapRef, listOf(address, value))
+                call(llvm.UpdateVolatileHeapRef, listOf(address, value, llvm.constInt32(if (isGlobal) 1 else 0).llvm, receiverPtr ?: llvm.kNullObjHeaderPtr))
             } else {
-                call(llvm.updateHeapRefFunction, listOf(address, value))
+                call(llvm.updateHeapRefFunction, listOf(address, value, llvm.constInt32(if (isGlobal) 1 else 0).llvm, receiverPtr ?: llvm.kNullObjHeaderPtr))
             }
         }
     }

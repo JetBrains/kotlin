@@ -89,11 +89,13 @@ private:
 
 // Returns `true` if the `object` must be kept alive still.
 bool SweepObject(uint8_t* object, FinalizerQueue& finalizerQueue, gc::GCHandle::GCSweepScope& sweepScope) noexcept;
+// returns `true` if the object was recycled
+bool TryRecycleObject(uint8_t* object) noexcept;
 
 // Returns `true` if the `extraObject` must be kept alive still
 bool SweepExtraObject(mm::ExtraObjectData* extraObject, gc::GCHandle::GCSweepExtraObjectsScope& sweepScope) noexcept;
 
-void* SafeAlloc(uint64_t size) noexcept;
+void* SafeAlloc(uint64_t size, int alignment = 8) noexcept;
 
 void Free(void* ptr, size_t size) noexcept;
 

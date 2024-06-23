@@ -54,6 +54,8 @@ private:
     FixedBlockPage* fixedBlockPages_[FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE + 1];
     ExtraObjectPage* extraObjectPage_;
     FinalizerQueue finalizerQueue_;
+
+    std::list<FixedBlockPage*> fullFixedBlockPages_[FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE + 1];
 };
 
 } // namespace kotlin::alloc

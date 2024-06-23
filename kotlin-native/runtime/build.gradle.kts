@@ -380,6 +380,17 @@ bitcode {
             testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc")
         }
 
+        module("rc_young_gc_custom") {
+            srcRoot.set(layout.projectDirectory.dir("src/gc/rc_young"))
+            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp", "src/alloc/custom/cpp"))
+            sourceSets {
+                main {}
+                test {}
+            }
+
+            compilerArgs.add("-DCUSTOM_ALLOCATOR")
+        }
+
         module("concurrent_ms_gc") {
             srcRoot.set(layout.projectDirectory.dir("src/gc/cms"))
             headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp", "src/alloc/legacy/cpp"))

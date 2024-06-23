@@ -27,7 +27,7 @@ internal class VariableManager(val functionGenerationContext: FunctionGeneration
     inner class SlotRecord(val address: LLVMValueRef, val type: LLVMTypeRef, val isVar: Boolean, val isObjectType: Boolean) : Record {
         override fun load(resultSlot: LLVMValueRef?) : LLVMValueRef = functionGenerationContext.loadSlot(type, isObjectType, address, isVar, resultSlot)
         override fun store(value: LLVMValueRef) {
-            functionGenerationContext.storeAny(value, address, isObjectType, true)
+            functionGenerationContext.storeAny(value, address, isObjectType, true, isGlobal = false, receiverPtr = null)
         }
         override fun address() : LLVMValueRef = this.address
         override fun toString() = (if (isObjectType) "refslot" else "slot") + " for ${address}"
@@ -80,7 +80,7 @@ internal class VariableManager(val functionGenerationContext: FunctionGeneration
         val isObjectType = valueDeclaration.type.binaryTypeIsReference()
         val slot = functionGenerationContext.alloca(type, isObjectType, valueDeclaration.name.asString(), variableLocation)
         if (value != null)
-            functionGenerationContext.storeAny(value, slot, isObjectType, true)
+            functionGenerationContext.storeAny(value, slot, isObjectType, true, isGlobal = false, receiverPtr = null)
         variables.add(SlotRecord(slot, type, isVar, isObjectType))
         contextVariablesToIndex[valueDeclaration] = index
         return index
@@ -116,7 +116,7 @@ internal class VariableManager(val functionGenerationContext: FunctionGeneration
         val index = variables.size
         val slot = functionGenerationContext.alloca(type, isObjectType, variableLocation = null)
         if (value != null)
-            functionGenerationContext.storeAny(value, slot, isObjectType, true)
+            functionGenerationContext.storeAny(value, slot, isObjectType, true, isGlobal = false, receiverPtr = null) // FIXME what is this?
         variables.add(SlotRecord(slot, type, true, isObjectType))
         return index
     }

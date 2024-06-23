@@ -68,3 +68,7 @@ void alloc::destroyExtraObjectData(mm::ExtraObjectData& extraObject) noexcept {
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     threadData->allocator().impl().extraObjectDataFactoryThreadQueue().DestroyExtraObjectData(extraObject);
 }
+
+void alloc::Allocator::ThreadData::freeReferenceCounted(gc::GC::ObjectData& object) noexcept { }
+
+void alloc::Allocator::recycleAll() noexcept { }

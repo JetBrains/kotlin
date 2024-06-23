@@ -81,7 +81,7 @@ TEST_F(BarriersTest, Deletion) {
             gc::barriers::enableBarriers(gcHandle.getEpoch());
         }
 
-        UpdateHeapRef(&ref, newObj.header());
+        UpdateHeapRef(&ref, newObj.header(), false, nullptr);
 
         EXPECT_THAT(gc::isMarked(prevObj.header()), true);
         EXPECT_THAT(gc::isMarked(newObj.header()), false);
@@ -114,7 +114,7 @@ TEST_F(BarriersTest, ConcurrentDeletion) {
 
     RunInNewThread([&](mm::ThreadData& threadData) {
         auto& obj = AllocateObject(threadData);
-        UpdateHeapRef(&ref, obj.header());
+        UpdateHeapRef(&ref, obj.header(), true, nullptr);
         threadData.allocator().prepareForGC();
     });
 
@@ -138,7 +138,7 @@ TEST_F(BarriersTest, ConcurrentDeletion) {
                 auto& obj = AllocateObject(threadData);
                 // auto&& accessor = mm::RefFieldAccessor(&ref);
                 // accessor.storeAtomic(obj.header(), std::memory_order_release);
-                UpdateHeapRef(&ref, obj.header());
+                UpdateHeapRef(&ref, obj.header(), true, nullptr);
             }
 
             finished += 1;

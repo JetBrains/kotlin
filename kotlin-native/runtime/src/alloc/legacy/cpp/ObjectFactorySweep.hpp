@@ -53,10 +53,10 @@ SegregatedFinalizerQueue<typename Traits::ObjectFactory::FinalizerQueue> Sweep(
         auto* objHeader = it->GetObjHeader();
         if (Traits::TryResetMark(*it)) {
             ++it;
-            sweepHandle.addKeptObject(Traits::ObjectFactory::GetAllocatedHeapSize(objHeader));
+            sweepHandle.addKeptObject(Traits::ObjectFactory::GetAllocatedHeapSize(objHeader), false); // TODO RC
             continue;
         }
-        sweepHandle.addSweptObject();
+        sweepHandle.addSweptObject(false, false); // TODO RC
         if (HasFinalizers(objHeader)) {
             auto* extraObject = mm::ExtraObjectData::Get(objHeader);
             if (compiler::objcDisposeOnMain() && extraObject && extraObject->getFlag(mm::ExtraObjectData::FLAGS_RELEASE_ON_MAIN_QUEUE)) {

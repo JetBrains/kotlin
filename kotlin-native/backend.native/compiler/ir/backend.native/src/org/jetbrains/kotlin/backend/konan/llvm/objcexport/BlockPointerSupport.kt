@@ -116,7 +116,7 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
                     retainedBlockPtr,
                     Lifetime.ARGUMENT
             )
-            storeHeapRef(holder, structGep(bodyType, bodyPtr, 1))
+            storeHeapRef(holder, structGep(bodyType, bodyPtr, 1), isGlobal = true) // TODO global?
             result
         } else {
             allocInstanceWithAssociatedObject(typeInfo, retainedBlockPtr, Lifetime.RETURN_VALUE)

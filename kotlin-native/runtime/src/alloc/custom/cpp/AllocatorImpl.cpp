@@ -7,6 +7,8 @@
 
 #include "GCApi.hpp"
 #include "Heap.hpp"
+#include "Allocator.hpp"
+
 
 using namespace kotlin;
 
@@ -82,4 +84,17 @@ void alloc::destroyExtraObjectData(mm::ExtraObjectData& extraObject) noexcept {
         // GC sweep will just collect this extra object.
         extraObject.setFlag(mm::ExtraObjectData::FLAGS_SWEEPABLE);
     }
+}
+
+void alloc::Allocator::ThreadData::freeReferenceCounted(gc::GC::ObjectData& objData) noexcept {
+    ObjHeader* object = objectForObjectData(objData);
+    auto size = CustomAllocator::GetAllocatedHeapSize(object);
+    uint64_t cellCount = (size + sizeof(Cell) - 1) / sizeof(Cell);
+    RuntimeAssert(cellCount <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE, "");
+    auto& page = FixedBlockPage::containing(object);
+    page.countDied();
+}
+
+void alloc::Allocator::recycleAll() noexcept {
+    impl_->heap().RecycleAll();
 }

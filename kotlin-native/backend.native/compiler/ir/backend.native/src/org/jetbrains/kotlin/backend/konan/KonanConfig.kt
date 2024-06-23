@@ -195,14 +195,14 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         } ?: arg
     }
 
-    private val defaultGcMarkSingleThreaded get() = target.family == Family.MINGW && gc == GC.PARALLEL_MARK_CONCURRENT_SWEEP
+    private val defaultGcMarkSingleThreaded get() = target.family == Family.MINGW && gc == GC.PARALLEL_MARK_CONCURRENT_SWEEP || gc == GC.RC_YOUNG
 
     val gcMarkSingleThreaded: Boolean by lazy {
         configuration.get(BinaryOptions.gcMarkSingleThreaded) ?: defaultGcMarkSingleThreaded
     }
 
     val concurrentWeakSweep: Boolean
-        get() = configuration.get(BinaryOptions.concurrentWeakSweep) ?: true
+        get() = configuration.get(BinaryOptions.concurrentWeakSweep) ?: (gc != GC.RC_YOUNG)
 
     val concurrentMarkMaxIterations: UInt
         get() = configuration.get(BinaryOptions.concurrentMarkMaxIterations) ?: 100U
@@ -219,6 +219,12 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             if (mutatorsCooperate == true) {
                 configuration.report(CompilerMessageSeverity.STRONG_WARNING,
                         "Mutators cooperation is not yet supported in CMS GC")
+            }
+            false
+        } else if (gc == GC.RC_YOUNG) {
+            if (mutatorsCooperate == true) {
+                configuration.report(CompilerMessageSeverity.STRONG_WARNING,
+                        "Mutators cooperation is not yet supported in RC-YOUNG GC")
             }
             false
         } else {
@@ -405,6 +411,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                 GC.NOOP -> add("noop_gc_custom.bc")
                 GC.PARALLEL_MARK_CONCURRENT_SWEEP -> add("pmcs_gc_custom.bc")
                 GC.CONCURRENT_MARK_AND_SWEEP -> add("concurrent_ms_gc_custom.bc")
+                GC.RC_YOUNG -> add("rc_young_gc_custom.bc")
             }
         } else {
             when (gc) {
@@ -412,6 +419,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                 GC.NOOP -> add("noop_gc.bc")
                 GC.PARALLEL_MARK_CONCURRENT_SWEEP -> add("pmcs_gc.bc")
                 GC.CONCURRENT_MARK_AND_SWEEP -> add("concurrent_ms_gc.bc")
+                GC.RC_YOUNG -> kotlin.error("Should not reach here")
             }
         }
         if (target.supportsCoreSymbolication()) {

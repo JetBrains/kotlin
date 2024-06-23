@@ -53,6 +53,14 @@ ALWAYS_INLINE void kotlin::RunFinalizers(ObjHeader* object) noexcept {
     }
 }
 
+ALWAYS_INLINE void kotlin::RunFinalizersSoft(ObjHeader* object) noexcept {
+    auto* type = object->type_info();
+    if ((type->flags_ & TF_HAS_FINALIZER) != 0) {
+        // This is a cold path.
+        RunFinalizerHooksImpl(object, type);
+    }
+}
+
 void kotlin::SetFinalizerHookForTesting(void (*hook)(ObjHeader*)) noexcept {
     g_hookOverrideForTesting = hook;
 }

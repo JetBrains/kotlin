@@ -32,6 +32,8 @@ public:
         mm::ExtraObjectData& allocateExtraObjectData(ObjHeader* object, const TypeInfo* typeInfo) noexcept;
         void destroyUnattachedExtraObjectData(mm::ExtraObjectData& extraObject) noexcept;
 
+        void freeReferenceCounted(gc::GC::ObjectData& object) noexcept;
+
         void prepareForGC() noexcept;
 
         // TODO: Move into AllocatorTestSupport.hpp
@@ -47,6 +49,7 @@ public:
     Impl& impl() noexcept { return *impl_; }
 
     void prepareForGC() noexcept;
+    void recycleAll() noexcept;
 
     // TODO: Move into AllocatorTestSupport.hpp
     void clearForTests() noexcept;

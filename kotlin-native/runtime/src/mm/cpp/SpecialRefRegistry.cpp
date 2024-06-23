@@ -16,14 +16,17 @@
 using namespace kotlin;
 
 mm::StableRef mm::SpecialRefRegistry::ThreadQueue::createStableRef(ObjHeader* object) noexcept {
+    //if (object->heap()) gc::globalise(object);
     return mm::StableRef(registerNode(object, 1, true).asRaw());
 }
 
 mm::WeakRef mm::SpecialRefRegistry::ThreadQueue::createWeakRef(ObjHeader* object) noexcept {
+    if (object->heap()) gc::globalise(object);
     return mm::WeakRef(registerNode(object, 0, false).asRaw());
 }
 
 mm::ObjCBackRef mm::SpecialRefRegistry::ThreadQueue::createObjCBackRef(ObjHeader* object) noexcept {
+    //if (object->heap()) gc::globalise(object); // FIXME??
     return mm::ObjCBackRef(registerNode(object, 1, false).asRaw());
 }
 

@@ -31,7 +31,7 @@ struct GCSchedulerConfig {
     // The rate at which `targetHeapBytes` changes when `autoTune = true`. Concretely: if after the collection
     // `N` object bytes remain in the heap, the next `targetHeapBytes` will be `N / targetHeapUtilization` capped
     // between `minHeapBytes` and `maxHeapBytes`.
-    std::atomic<double> targetHeapUtilization = 0.5;
+    std::atomic<double> targetHeapUtilization = 0.2;
     // The minimum value of `targetHeapBytes` for `autoTune = true`
     std::atomic<int64_t> minHeapBytes = 5 * 1024 * 1024; // In `custom` allocator pages are 256KiB. 5MiB here is 20 pages.
     // The maximum value of `targetHeapBytes` for `autoTune = true`
