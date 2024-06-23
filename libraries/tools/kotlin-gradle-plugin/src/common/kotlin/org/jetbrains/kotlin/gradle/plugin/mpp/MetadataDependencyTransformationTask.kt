@@ -11,10 +11,12 @@ import org.gradle.api.Task
 import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
-import org.gradle.api.file.FileCollection
 import org.gradle.api.file.ProjectLayout
+import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Provider
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -92,30 +94,10 @@ open class MetadataDependencyTransformationTask
 
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputFiles
-    protected val parentLibrariesIndexFiles: FileCollection = project.filesProvider {
-        parentTransformationTasks.map { taskProvider ->
-            taskProvider.map { it.transformedLibrariesIndexFile }
+    protected val parentLibrariesIndexFiles: SetProperty<RegularFile> = objectFactory.setProperty<RegularFile>().apply {
+        parentTransformationTasks.forEach { taskProvider ->
+            add(taskProvider.flatMap { it.transformedLibrariesIndexFile })
         }
-    }
-
-    private fun parentLibrariesRecords(): List<List<TransformedMetadataLibraryRecord>> =
-        parentLibrariesIndexFiles.map { librariesIndexFile ->
-            KotlinMetadataLibrariesIndexFile(librariesIndexFile).read()
-        }
-
-    // It is possible that two parents already transformed the same artifacts with the same visible source sets
-    private fun uniqueParentTransformedLibraries(): List<File> {
-        val uniqueParentLibraries = mutableMapOf<Pair<String, String?>, List<File>>()
-
-        parentLibrariesRecords().forEach { libraryRecords ->
-            val groupedLibraries = libraryRecords.groupBy(
-                keySelector = { it.moduleId to it.sourceSetName },
-                valueTransform = { File(it.file) }
-            )
-            uniqueParentLibraries.putAll(groupedLibraries)
-        }
-
-        return uniqueParentLibraries.values.flatten()
     }
 
     //endregion Task Configuration State & Inputs
@@ -155,11 +137,11 @@ open class MetadataDependencyTransformationTask
 
     @TaskAction
     fun transformMetadata() {
-        val parentLibrariesRecords: List<List<TransformedMetadataLibraryRecord>> = parentLibrariesIndexFiles.map { librariesIndexFile ->
-            KotlinMetadataLibrariesIndexFile(librariesIndexFile).read()
-        }
+        val parentLibrariesRecords: List<List<TransformedMetadataLibraryRecord>> = parentLibrariesIndexFiles
+            .get()
+            .map { librariesIndexFile -> librariesIndexFile.records() }
 
-        val parentLibrariesRecordsByModule = parentLibrariesRecords
+        val visibleParentSourceSetsByModuleId = parentLibrariesRecords
             .flatten()
             .groupBy(keySelector = { it.moduleId }, valueTransform = { it.sourceSetName })
 
@@ -167,7 +149,7 @@ open class MetadataDependencyTransformationTask
             params = transformationParameters,
             parentSourceSetVisibilityProvider = ParentSourceSetVisibilityProvider { identifier: ComponentIdentifier ->
                 val serializableKey = identifier.serializableUniqueKey
-                parentLibrariesRecordsByModule[serializableKey].orEmpty().filterNotNull().toSet()
+                visibleParentSourceSetsByModuleId[serializableKey].orEmpty().filterNotNull().toSet()
             }
         )
 
@@ -181,18 +163,19 @@ open class MetadataDependencyTransformationTask
         KotlinMetadataLibrariesIndexFile(transformedLibrariesIndexFile.get().asFile).write(transformedLibrariesRecords)
     }
 
-    @get:Internal // Warning! ownTransformedLibraries is available only after Task Execution
-    internal val ownTransformedLibraries: FileCollection = project.filesProvider {
-        transformedLibrariesIndexFile.map { regularFile ->
-            KotlinMetadataLibrariesIndexFile(regularFile.asFile).readFiles()
+    internal fun allTransformedLibraries(): Provider<List<File>> {
+        val ownRecords = transformedLibrariesIndexFile.map { it.records() }
+
+        return parentLibrariesIndexFiles.zip(ownRecords) { parent, own ->
+            val allRecords = own + parent.flatMap { it.records() }
+            allRecords.distinctBy { it.moduleId to it.sourceSetName }.map { File(it.file) }
         }
     }
 
-    @get:Internal // Warning! allTransformedLibraries is available only after Task Execution
-    val allTransformedLibraries: FileCollection get() = objectFactory.fileCollection().from(
-            ownTransformedLibraries,
-            uniqueParentTransformedLibraries()
-        )
+    companion object {
+        @JvmStatic
+        private fun RegularFile.records() = KotlinMetadataLibrariesIndexFile(asFile).read()
+    }
 }
 
 

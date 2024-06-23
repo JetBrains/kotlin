@@ -253,7 +253,7 @@ class KotlinMetadataTargetConfigurator :
         compilation.compileDependencyFiles += project.files(artifacts.map { it.filterNot { it.isMpp }.map { it.file } })
 
         // Transformed Multiplatform Libraries based on source set visibility
-        compilation.compileDependencyFiles += project.files(transformationTask.map { it.allTransformedLibraries })
+        compilation.compileDependencyFiles += project.files(transformationTask.map { it.allTransformedLibraries() })
 
         if (sourceSet is DefaultKotlinSourceSet && sourceSet.sharedCommonizerTarget.await() is SharedCommonizerTarget) {
             compilation.compileDependencyFiles += project.createCInteropMetadataDependencyClasspath(sourceSet)
