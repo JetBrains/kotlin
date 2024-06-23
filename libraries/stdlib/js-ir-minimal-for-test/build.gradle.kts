@@ -143,27 +143,26 @@ kotlin {
         named("commonMain") {
             kotlin.srcDir(files(commonMainSources.map { it.destinationDir }))
             kotlin.srcDir(files(commonMainCollectionSources.map { it.destinationDir }))
+            kotlin.srcDir("common-src")
         }
         named("jsMain") {
             kotlin.srcDir(files(jsMainSources.map { it.destinationDir }))
-            kotlin.srcDir("src")
+            kotlin.srcDir("js-src")
         }
     }
 }
 
 @Suppress("DEPRECATION")
 tasks.withType<KotlinCompile<*>>().configureEach {
-    kotlinOptions.languageVersion = "1.9"
+    kotlinOptions.languageVersion = "2.0"
     kotlinOptions.apiVersion = "2.0"
     kotlinOptions.freeCompilerArgs += listOf(
         "-Xallow-kotlin-package",
         "-Xexpect-actual-classes",
+        "-Xstdlib-compilation",
+        "-Xdont-warn-on-error-suppression",
         "-opt-in=kotlin.ExperimentalMultiplatform",
         "-opt-in=kotlin.contracts.ExperimentalContracts",
-        "-opt-in=kotlin.RequiresOptIn",
-        "-opt-in=kotlin.ExperimentalUnsignedTypes",
-        "-opt-in=kotlin.ExperimentalStdlibApi",
-        "-Xsuppress-api-version-greater-than-language-version-error",
     )
 }
 
