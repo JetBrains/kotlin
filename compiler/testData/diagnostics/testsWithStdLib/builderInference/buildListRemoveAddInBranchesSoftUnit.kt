@@ -1,4 +1,4 @@
-// LANGUAGE: -ExpectedUnitAsSoftConstraint
+// LANGUAGE: +ExpectedUnitAsSoftConstraint
 // ISSUE: KT-55168
 fun foo(arg: Boolean) = buildList {
     if (arg) <!TYPE_MISMATCH!>{

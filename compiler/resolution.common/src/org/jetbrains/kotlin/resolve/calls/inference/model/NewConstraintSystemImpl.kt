@@ -242,6 +242,7 @@ class NewConstraintSystemImpl(
         private val beforeTypeVariablesTransactionSize: Int,
         private val beforeMissedConstraintsCount: Int,
         private val beforeConstraintCountByVariables: Map<TypeConstructorMarker, Int>,
+        private val beforeSoftConstraintsByVariables: Map<TypeConstructorMarker, Constraint?>,
         private val beforeConstraintsFromAllForks: Int,
     ) : ConstraintSystemTransaction() {
         override fun closeTransaction() {
@@ -271,6 +272,9 @@ class NewConstraintSystemImpl(
                 if (sinceIndexToRemoveConstraints != null) {
                     variableWithConstraint.removeLastConstraints(sinceIndexToRemoveConstraints)
                 }
+                val softConstraint =
+                    beforeSoftConstraintsByVariables[variableWithConstraint.typeVariable.freshTypeConstructor()]
+                variableWithConstraint.restoreSoftConstraint(softConstraint)
             }
 
             addedInitialConstraints.clear() // remove constraint from storage.initialConstraints
@@ -288,6 +292,7 @@ class NewConstraintSystemImpl(
             beforeTypeVariablesTransactionSize = typeVariablesTransaction.size,
             beforeMissedConstraintsCount = storage.missedConstraints.size,
             beforeConstraintCountByVariables = storage.notFixedTypeVariables.mapValues { it.value.rawConstraintsCount },
+            beforeSoftConstraintsByVariables = storage.notFixedTypeVariables.mapValues { it.value.softConstraint },
             beforeConstraintsFromAllForks = storage.constraintsFromAllForkPoints.size,
         ).also {
             state = State.TRANSACTION

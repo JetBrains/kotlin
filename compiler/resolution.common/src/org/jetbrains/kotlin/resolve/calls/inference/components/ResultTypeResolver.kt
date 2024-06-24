@@ -94,6 +94,15 @@ class ResultTypeResolver(
         variableWithConstraints: VariableWithConstraints,
         direction: ResolveDirection,
     ): KotlinTypeMarker? = with(c) {
+        // If we have no proper hard constraints and a soft constraint that doesn't lead to a contradiction, use it.
+        variableWithConstraints.softConstraint?.let { softConstraint ->
+            if (variableWithConstraints.constraints.none { c -> c.isProperArgumentConstraint { isProperTypeForFixation(it) } } &&
+                !createsContradiction(softConstraint.type, variableWithConstraints)
+            ) {
+                return softConstraint.type
+            }
+        }
+
         val resultTypeFromEqualConstraint = findResultIfThereIsEqualsConstraint(c, variableWithConstraints)
         if (resultTypeFromEqualConstraint != null) {
             if (!isK2 || !resultTypeFromEqualConstraint.contains { type ->
@@ -130,7 +139,11 @@ class ResultTypeResolver(
             resultTypeFromEqualConstraint == null -> resultTypeFromDirection
             resultTypeFromDirection == null -> resultTypeFromEqualConstraint
             !resultTypeFromDirection.typeConstructor().isNothingConstructor() &&
-                    AbstractTypeChecker.isSubtypeOf(c, resultTypeFromDirection, resultTypeFromEqualConstraint) -> resultTypeFromDirection
+                    AbstractTypeChecker.isSubtypeOf(
+                        c,
+                        resultTypeFromDirection,
+                        resultTypeFromEqualConstraint
+                    ) -> resultTypeFromDirection
             else -> resultTypeFromEqualConstraint
         }
     }
@@ -195,11 +208,15 @@ class ResultTypeResolver(
         // compiler/testData/diagnostics/tests/unsignedTypes/conversions/inferenceForSignedAndUnsignedTypes.kt
         if (resultType.typeConstructor(c).isIntegerLiteralTypeConstructor(c)) return false
 
+        return c.createsContradiction(approximatedResultType, variableWithConstraints)
+    }
+
+    private fun Context.createsContradiction(resultType: KotlinTypeMarker, variableWithConstraints: VariableWithConstraints): Boolean {
         var createsContradiction = false
-        c.runTransaction {
+        runTransaction {
             addEqualityConstraint(
-                approximatedResultType,
-                variableWithConstraints.typeVariable.defaultType(c),
+                resultType,
+                variableWithConstraints.typeVariable.defaultType(this@createsContradiction),
                 SimpleConstraintSystemConstraintPosition
             )
             createsContradiction = hasContradiction

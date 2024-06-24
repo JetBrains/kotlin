@@ -37,6 +37,8 @@ object ConeExpectedTypeConstraintPosition : ExpectedTypeConstraintPosition<Nothi
     override fun toString(): String = "ExpectedType for some call"
 }
 
+object ConeLastStatementInBlockWithExpectedUnitType : LastStatementInBlockWithExpectedUnitType()
+
 class ConeExplicitTypeParameterConstraintPosition(
     typeArgument: FirTypeProjection,
 ) : ExplicitTypeParameterConstraintPosition<FirTypeProjection>(typeArgument) {

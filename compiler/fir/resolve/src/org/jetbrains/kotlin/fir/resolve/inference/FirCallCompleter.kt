@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.stages.TypeArgumentMapping
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstraintPosition
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLastStatementInBlockWithExpectedUnitType
 import org.jetbrains.kotlin.fir.resolve.initialTypeOfCandidate
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
@@ -202,7 +204,12 @@ class FirCallCompleter(
             }
             system.notFixedTypeVariables.isEmpty() -> return
             expectedType.isUnit -> {
-                system.addEqualityConstraintIfCompatible(initialType, expectedType, ConeExpectedTypeConstraintPosition)
+                // Last statement of block with expected type Unit
+                if (session.languageVersionSettings.supportsFeature(LanguageFeature.ExpectedUnitAsSoftConstraint)) {
+                    system.addSubtypeConstraintIfCompatible(initialType, expectedType, ConeLastStatementInBlockWithExpectedUnitType)
+                } else {
+                    system.addEqualityConstraintIfCompatible(initialType, expectedType, ConeExpectedTypeConstraintPosition)
+                }
             }
             else -> {
                 system.addSubtypeConstraintIfCompatible(initialType, expectedType, ConeExpectedTypeConstraintPosition)

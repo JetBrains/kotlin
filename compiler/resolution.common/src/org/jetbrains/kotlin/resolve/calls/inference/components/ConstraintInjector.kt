@@ -229,6 +229,7 @@ class ConstraintInjector(
             val (addedOrNonRedundantExistedConstraint, wasAdded) = constraints.addConstraint(constraint)
             val positionFrom = constraint.position.from
             val constraintToIncorporate = when {
+                constraint.isSoft -> null
                 wasAdded && !constraint.isNullabilityConstraint -> addedOrNonRedundantExistedConstraint
                 positionFrom is FixVariableConstraintPosition<*> && positionFrom.variable == typeVariable && constraint.kind == EQUALITY ->
                     addedOrNonRedundantExistedConstraint

@@ -1,4 +1,4 @@
-// LANGUAGE: -ExpectedUnitAsSoftConstraint
+// LANGUAGE: +ExpectedUnitAsSoftConstraint
 fun <T : Number> materializeNumber(): T = TODO()
 
 fun a(): Unit = run {

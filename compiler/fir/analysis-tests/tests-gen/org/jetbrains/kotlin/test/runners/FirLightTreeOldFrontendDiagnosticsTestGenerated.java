@@ -18850,6 +18850,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("coercionWithExpectedTypeAndBoundAfter.kt")
+        public void testCoercionWithExpectedTypeAndBoundAfter() {
+          runTest("compiler/testData/diagnostics/tests/inference/coercionToUnit/coercionWithExpectedTypeAndBoundAfter.kt");
+        }
+
+        @Test
         @TestMetadata("coercionWithExplicitTypeArgument.kt")
         public void testCoercionWithExplicitTypeArgument() {
           runTest("compiler/testData/diagnostics/tests/inference/coercionToUnit/coercionWithExplicitTypeArgument.kt");
@@ -18913,6 +18919,24 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         @TestMetadata("nonPropagationOfCoercionToUnitInsideNestedLambda.kt")
         public void testNonPropagationOfCoercionToUnitInsideNestedLambda() {
           runTest("compiler/testData/diagnostics/tests/inference/coercionToUnit/nonPropagationOfCoercionToUnitInsideNestedLambda.kt");
+        }
+
+        @Test
+        @TestMetadata("softUnitNestedLambdaAfter.kt")
+        public void testSoftUnitNestedLambdaAfter() {
+          runTest("compiler/testData/diagnostics/tests/inference/coercionToUnit/softUnitNestedLambdaAfter.kt");
+        }
+
+        @Test
+        @TestMetadata("softUnitNestedLambdaBefore.kt")
+        public void testSoftUnitNestedLambdaBefore() {
+          runTest("compiler/testData/diagnostics/tests/inference/coercionToUnit/softUnitNestedLambdaBefore.kt");
+        }
+
+        @Test
+        @TestMetadata("softUnitRegression.kt")
+        public void testSoftUnitRegression() {
+          runTest("compiler/testData/diagnostics/tests/inference/coercionToUnit/softUnitRegression.kt");
         }
       }
 
@@ -42538,6 +42562,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       @TestMetadata("buildListRemoveAddInBranches.kt")
       public void testBuildListRemoveAddInBranches() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/buildListRemoveAddInBranches.kt");
+      }
+
+      @Test
+      @TestMetadata("buildListRemoveAddInBranchesSoftUnit.kt")
+      public void testBuildListRemoveAddInBranchesSoftUnit() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/buildListRemoveAddInBranchesSoftUnit.kt");
       }
 
       @Test

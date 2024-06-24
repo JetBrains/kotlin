@@ -75,6 +75,7 @@ class VariableFixationFinder(
         FORBIDDEN,
         WITHOUT_PROPER_ARGUMENT_CONSTRAINT, // proper constraint from arguments -- not from upper bound for type parameters
         OUTER_TYPE_VARIABLE_DEPENDENCY,
+        READY_FOR_FIXATION_ONLY_SOFT,
         READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES,
         WITH_COMPLEX_DEPENDENCY, // if type variable T has constraint with non fixed type variable inside (non-top-level): T <: Foo<S>
         ALL_CONSTRAINTS_TRIVIAL_OR_NON_PROPER, // proper trivial constraint from arguments, Nothing <: T
@@ -103,6 +104,7 @@ class VariableFixationFinder(
             TypeVariableFixationReadiness.READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES
         !variableHasProperArgumentConstraints(variable) -> TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT
         dependencyProvider.isRelatedToOuterTypeVariable(variable) -> TypeVariableFixationReadiness.OUTER_TYPE_VARIABLE_DEPENDENCY
+        variableHasOnlySoftConstraints(variable) -> TypeVariableFixationReadiness.READY_FOR_FIXATION_ONLY_SOFT
         hasDependencyToOtherTypeVariables(variable) -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY
         // TODO: Consider removing this kind of readiness, see KT-63032
         allConstraintsTrivialOrNonProper(variable) -> TypeVariableFixationReadiness.ALL_CONSTRAINTS_TRIVIAL_OR_NON_PROPER
@@ -204,10 +206,14 @@ class VariableFixationFinder(
         return constraints.any { isProperArgumentConstraint(it) } && !areThereConstraintsWithUninferredTypeParameter
     }
 
-    private fun Context.isProperArgumentConstraint(c: Constraint) =
-        isProperType(c.type)
-                && c.position.initialConstraint.position !is DeclaredUpperBoundConstraintPosition<*>
-                && !c.isNullabilityConstraint
+    private fun Context.variableHasOnlySoftConstraints(variable: TypeConstructorMarker): Boolean {
+        val variableWithConstraints = notFixedTypeVariables[variable] ?: return false
+        return variableWithConstraints.constraints.none { isProperArgumentConstraint(it) } && variableWithConstraints.softConstraint != null
+    }
+
+    private fun Context.isProperArgumentConstraint(c: Constraint): Boolean {
+        return c.isProperArgumentConstraint { isProperType(it) }
+    }
 
     private fun Context.isProperType(type: KotlinTypeMarker): Boolean =
         isProperTypeForFixation(type, notFixedTypeVariables.keys) { t -> !t.contains { isNotFixedRelevantVariable(it) } }
@@ -254,6 +260,12 @@ class VariableFixationFinder(
 
         return hasSelfTypeConstraint && !hasOtherProperConstraint
     }
+}
+
+inline fun Constraint.isProperArgumentConstraint(isProperType: (KotlinTypeMarker) -> Boolean): Boolean {
+    return isProperType(type)
+            && position.initialConstraint.position !is DeclaredUpperBoundConstraintPosition<*>
+            && !isNullabilityConstraint
 }
 
 /**

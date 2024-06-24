@@ -34,6 +34,8 @@ class MutableVariableWithConstraints private constructor(
             return simplifiedConstraints!!
         }
 
+    override var softConstraint: Constraint? = null
+
     // see @OnlyInputTypes annotation
     fun getProjectedInputCallTypes(utilContext: ConstraintSystemUtilContext): Collection<Pair<KotlinTypeMarker, ConstraintKind>> {
         return with(utilContext) {
@@ -110,6 +112,12 @@ class MutableVariableWithConstraints private constructor(
     // return new actual constraint, if this constraint is new, otherwise return already existed not redundant constraint
     // the second element of pair is a flag whether a constraint was added in fact
     fun addConstraint(constraint: Constraint): Pair<Constraint, Boolean> {
+        if (constraint.isSoft) {
+            check(softConstraint == null) { "Soft constraint already exists: $softConstraint" }
+            softConstraint = constraint
+            return constraint to true
+        }
+
         val isLowerAndFlexibleTypeWithDefNotNullLowerBound = constraint.isLowerAndFlexibleTypeWithDefNotNullLowerBound()
 
         for (previousConstraint in getConstraintsWithSameTypeHashCode(constraint)) {
@@ -171,7 +179,6 @@ class MutableVariableWithConstraints private constructor(
     }
 
     // This method should be used only for transaction in constraint system
-    // shouldRemove should give true only for tail elements
     internal fun removeLastConstraints(sinceIndex: Int) {
         mutableConstraints.trimToSize(sinceIndex)
         if (simplifiedConstraints !== mutableConstraints) {
@@ -179,6 +186,11 @@ class MutableVariableWithConstraints private constructor(
         }
 
         clearGroupedConstraintCaches()
+    }
+
+    // This method should be used only for transaction in constraint system
+    internal fun restoreSoftConstraint(softConstraint: Constraint?) {
+        this.softConstraint = softConstraint
     }
 
     // This method should be used only when constraint system has state COMPLETION

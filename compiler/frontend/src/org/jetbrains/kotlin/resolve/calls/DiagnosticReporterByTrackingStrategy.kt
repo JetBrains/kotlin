@@ -618,6 +618,7 @@ class DiagnosticReporterByTrackingStrategy(
                     )
                 }
             }
+            is LastStatementInBlockWithExpectedUnitType -> shouldNotBeCalled("Not implemented in K1")
         }
     }
 

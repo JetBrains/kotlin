@@ -127,8 +127,10 @@ class Constraint(
     // The main idea behind that parameter is that we don't consider such constraints as proper (signifying that variable is ready for completion).
     // And also, there is additional logic in K1 that doesn't allow to fix variable into `Nothing?` if we had only that kind of lower constraints
     val isNullabilityConstraint: Boolean,
-    val inputTypePositionBeforeIncorporation: OnlyInputTypeConstraintPosition? = null
+    val inputTypePositionBeforeIncorporation: OnlyInputTypeConstraintPosition? = null,
 ) {
+    val isSoft: Boolean get() = position.initialConstraint.position is LastStatementInBlockWithExpectedUnitType
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other?.javaClass != javaClass) return false
@@ -151,6 +153,7 @@ class Constraint(
 interface VariableWithConstraints {
     val typeVariable: TypeVariableMarker
     val constraints: List<Constraint>
+    val softConstraint: Constraint?
 
     /**
      * Only necessary for incorporation optimization

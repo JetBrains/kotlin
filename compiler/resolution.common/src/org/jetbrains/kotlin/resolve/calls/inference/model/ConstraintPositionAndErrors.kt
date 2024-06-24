@@ -34,6 +34,10 @@ abstract class BuilderInferenceSubstitutionConstraintPosition<L>(
             "into $builderInferenceLambda call"
 }
 
+abstract class LastStatementInBlockWithExpectedUnitType() : ConstraintPosition(), OnlyInputTypeConstraintPosition {
+    override fun toString(): String = "Last statement in block with expected unit type"
+}
+
 abstract class ExpectedTypeConstraintPosition<T>(val topLevelCall: T) : ConstraintPosition(), OnlyInputTypeConstraintPosition {
     override fun toString(): String = "ExpectedType for call $topLevelCall"
 }

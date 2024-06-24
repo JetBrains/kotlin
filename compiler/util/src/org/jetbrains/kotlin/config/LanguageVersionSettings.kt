@@ -332,6 +332,7 @@ enum class LanguageFeature(
     ImprovedCapturedTypeApproximationInInference(KOTLIN_2_1, kind = OTHER), // KT-64515
     ImprovedVarianceInCst(KOTLIN_2_1, kind = OTHER), // KT-68970
     InferMoreImplicationsFromBooleanExpressions(KOTLIN_2_1, kind = OTHER), // KT-64193
+    ExpectedUnitAsSoftConstraint(KOTLIN_2_1, kind = OTHER), // KT-63678
 
     // 2.2
 
