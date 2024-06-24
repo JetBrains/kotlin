@@ -93,6 +93,18 @@ internal val SetupCInteropApiElementsConfigurationSideEffect = KotlinTargetSideE
     target.project.locateOrCreateCInteropApiElementsConfiguration(target)
 }
 
+// Workaround for https://github.com/gradle/gradle/issues/29630
+internal val MaybeAddWorkaroundForSecondaryVariantsBug = KotlinTargetSideEffect<KotlinNativeTarget> { target ->
+    // at this moment, there's no version with fix of the bug, so "maybe" refers to the future
+    target.project.artifacts.add(
+        cInteropApiElementsConfigurationName(target),
+        target.project.file("non-existing-file-workaround-for-gradle-29630.txt")
+    ) { fakeArtifact ->
+        fakeArtifact.extension = "txt"
+        fakeArtifact.type = "workaround-for-gradle-29630"
+    }
+}
+
 internal fun Project.locateOrCreateCInteropApiElementsConfiguration(target: KotlinTarget): Configuration {
     val configurationName = cInteropApiElementsConfigurationName(target)
     configurations.findConsumable(configurationName)?.let { return it }

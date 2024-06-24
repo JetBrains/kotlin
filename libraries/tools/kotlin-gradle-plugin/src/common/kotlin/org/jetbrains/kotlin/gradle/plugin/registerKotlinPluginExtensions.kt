@@ -102,6 +102,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, ConfigureFrameworkExportSideEffect)
         register(project, SetupCInteropApiElementsConfigurationSideEffect)
         register(project, SetupEmbedAndSignAppleFrameworkTaskSideEffect)
+        register(project, MaybeAddWorkaroundForSecondaryVariantsBug)
     }
 
     KotlinCompilationSideEffect.extensionPoint.apply {
