@@ -34,16 +34,15 @@ class MppKlibIT : KGPBaseTest() {
                     ":compileKotlinLinux",
                 )
 
-                val interopManifest = subProject("foo").kotlinClassesDir(targetName = "linux").resolve("cinterop/foo-cinterop-bar.klib")
-                    .useAsZipFile { zipFile ->
-                        zipFile.readKLibManifest()
-                    }
+                val interopManifest =
+                    subProject("foo").kotlinClassesDir(targetName = "linux").resolve("cinterop/foo-cinterop-bar/default/manifest")
+                        .inputStream()
+                        .useToLoadProperties()
                 assertEquals("org.sample.one:foo-cinterop-bar", interopManifest[KLIB_PROPERTY_UNIQUE_NAME])
 
-                val nativeManifest = projectPath.resolve("foo/build/classes/kotlin/linux/main/klib/foo.klib")
-                    .useAsZipFile { zipFile ->
-                        zipFile.readKLibManifest()
-                    }
+                val nativeManifest = projectPath.resolve("foo/build/classes/kotlin/linux/main/klib/foo/default/manifest")
+                    .inputStream()
+                    .useToLoadProperties()
                 assertEquals("org.sample.one:foo", nativeManifest[KLIB_PROPERTY_UNIQUE_NAME])
 
                 // Check the short name that is used as a prefix in generated ObjC headers.

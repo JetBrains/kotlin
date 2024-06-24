@@ -48,7 +48,7 @@ class MppDslAssociateCompilationsIT : KGPBaseTest() {
                 assertFileInProjectExists("build/classes/kotlin/js/integrationTest/default/manifest")
 
                 // Native:
-                assertFileInProjectExists("build/classes/kotlin/linux64/integrationTest/klib/new-mpp-associate-compilations_integrationTest.klib")
+                assertFileInProjectExists("build/classes/kotlin/linux64/integrationTest/klib/new-mpp-associate-compilations_integrationTest/default/manifest")
             }
         }
     }

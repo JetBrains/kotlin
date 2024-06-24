@@ -58,8 +58,8 @@ class KotlinNativeLinkTest {
 
         assertEquals(
             hashSetOf(
-                apiInCommon.layout.buildDirectory.file("classes/kotlin/linuxArm64/main/klib/apiInCommon.klib").get().asFile,
-                apiInLinux.layout.buildDirectory.file("classes/kotlin/linuxArm64/main/klib/apiInLinux.klib").get().asFile,
+                apiInCommon.layout.buildDirectory.file("classes/kotlin/linuxArm64/main/klib/apiInCommon").get().asFile,
+                apiInLinux.layout.buildDirectory.file("classes/kotlin/linuxArm64/main/klib/apiInLinux").get().asFile,
             ),
             apiFiles.files,
         )

@@ -162,7 +162,7 @@ class KotlinTargetVariantResourcesResolutionTests {
             expectedResult = { _, middle, producer ->
                 setOf(
                     producer.buildFile("kotlin-multiplatform-resources/zip-for-publication/linuxX64/producer.kotlin_resources.zip"),
-                    middle.buildFile("classes/kotlin/linuxX64/main/klib/middle.klib"),
+                    middle.buildFile("classes/kotlin/linuxX64/main/klib/middle"),
                 )
             }
         )

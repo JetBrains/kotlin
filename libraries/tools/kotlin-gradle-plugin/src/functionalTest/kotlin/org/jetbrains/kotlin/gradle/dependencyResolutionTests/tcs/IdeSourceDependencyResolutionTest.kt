@@ -101,7 +101,7 @@ class IdeSourceDependencyResolutionTest {
             dependsOnDependency(":consumer/commonMain"),
             dependsOnDependency(":consumer/nativeMain"),
             dependsOnDependency(":consumer/linuxMain"),
-            projectArtifactDependency(Regular, ":producer", FilePathRegex(".*/linuxX64/main/klib/producer.klib"))
+            projectArtifactDependency(Regular, ":producer", FilePathRegex(".*/linuxX64/main/klib/producer"))
         )
 
         consumer.resolveDependencies("linuxX64Test").assertMatches(
@@ -112,14 +112,14 @@ class IdeSourceDependencyResolutionTest {
             dependsOnDependency(":consumer/commonTest"),
             dependsOnDependency(":consumer/nativeTest"),
             dependsOnDependency(":consumer/linuxTest"),
-            projectArtifactDependency(Regular, ":producer", FilePathRegex(".*/linuxX64/main/klib/producer.klib"))
+            projectArtifactDependency(Regular, ":producer", FilePathRegex(".*/linuxX64/main/klib/producer"))
         )
 
         consumer.resolveDependencies("linuxArm64Main").assertMatches(
             dependsOnDependency(":consumer/commonMain"),
             dependsOnDependency(":consumer/nativeMain"),
             dependsOnDependency(":consumer/linuxMain"),
-            projectArtifactDependency(Regular, ":producer", FilePathRegex(".*/linuxArm64/main/klib/producer.klib"))
+            projectArtifactDependency(Regular, ":producer", FilePathRegex(".*/linuxArm64/main/klib/producer"))
         )
 
         consumer.resolveDependencies("linuxArm64Test").assertMatches(
@@ -130,7 +130,7 @@ class IdeSourceDependencyResolutionTest {
             dependsOnDependency(":consumer/commonTest"),
             dependsOnDependency(":consumer/nativeTest"),
             dependsOnDependency(":consumer/linuxTest"),
-            projectArtifactDependency(Regular, ":producer", FilePathRegex(".*/linuxArm64/main/klib/producer.klib"))
+            projectArtifactDependency(Regular, ":producer", FilePathRegex(".*/linuxArm64/main/klib/producer"))
         )
     }
 
