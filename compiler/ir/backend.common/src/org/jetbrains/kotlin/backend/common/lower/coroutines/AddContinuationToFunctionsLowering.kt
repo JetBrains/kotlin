@@ -98,7 +98,7 @@ private fun transformSuspendFunction(context: CommonBackendContext, function: Ir
 fun IrSimpleFunction.getOrCreateFunctionWithContinuationStub(context: CommonBackendContext): IrSimpleFunction {
     return this.functionWithContinuations ?: createSuspendFunctionStub(context).also {
         functionWithContinuations = it
-        context.mapping.functionWithContinuationsToSuspendFunctions[it] = this@getOrCreateFunctionWithContinuationStub
+        it.suspendFunction = this
     }
 }
 
