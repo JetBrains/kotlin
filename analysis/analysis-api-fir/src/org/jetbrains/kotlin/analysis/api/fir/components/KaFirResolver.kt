@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.processEqualsFunctions
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAbstractResolver
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSimpleVariableReadAccess
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSimpleVariableWriteAccess
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaCompoundVariableAccessCallImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -578,7 +580,7 @@ internal class KaFirResolver(
                 KaSimpleVariableAccessCall(
                     partiallyAppliedSymbol as KaPartiallyAppliedVariableSymbol<KaVariableSymbol>,
                     fir.unwrapLValue()?.toTypeArgumentsMapping(partiallyAppliedSymbol) ?: emptyMap(),
-                    KaSimpleVariableAccess.Write(rhs)
+                    KaBaseSimpleVariableWriteAccess(rhs),
                 )
             }
             is FirPropertyAccessExpression, is FirCallableReferenceAccess -> {
@@ -590,7 +592,7 @@ internal class KaFirResolver(
                         KaSimpleVariableAccessCall(
                             partiallyAppliedSymbol as KaPartiallyAppliedVariableSymbol<KaVariableSymbol>,
                             fir.toTypeArgumentsMapping(partiallyAppliedSymbol),
-                            KaSimpleVariableAccess.Read
+                            KaBaseSimpleVariableReadAccess,
                         )
                     }
                     // if errorsness call without ()
@@ -684,7 +686,7 @@ internal class KaFirResolver(
                     KaSimpleVariableAccessCall(
                         variablePartiallyAppliedSymbol,
                         fir.unwrapLValue()?.toTypeArgumentsMapping(variablePartiallyAppliedSymbol) ?: emptyMap(),
-                        KaSimpleVariableAccess.Read
+                        KaBaseSimpleVariableReadAccess,
                     )
                 } else {
                     KaCompoundVariableAccessCallImpl(
@@ -737,7 +739,7 @@ internal class KaFirResolver(
                     KaSimpleVariableAccessCall(
                         variablePartiallyAppliedSymbol,
                         fir.unwrapLValue()?.toTypeArgumentsMapping(variablePartiallyAppliedSymbol) ?: emptyMap(),
-                        KaSimpleVariableAccess.Read
+                        KaBaseSimpleVariableReadAccess,
                     )
                 } else {
                     KaCompoundVariableAccessCallImpl(
