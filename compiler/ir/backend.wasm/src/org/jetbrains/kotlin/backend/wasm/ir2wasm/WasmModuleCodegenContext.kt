@@ -139,8 +139,8 @@ class WasmFileCodegenContext(
     val stringPoolSize: WasmSymbol<Int>
         get() = wasmFileFragment.stringPoolSize
 
-    fun addFieldInitializer(irField: IrFieldSymbol, instructions: List<WasmInstr>) {
-        wasmFileFragment.fieldInitializers.add(irField.getReferenceKey() to instructions)
+    fun addFieldInitializer(irField: IrFieldSymbol, instructions: List<WasmInstr>, isObjectInstanceField: Boolean) {
+        wasmFileFragment.fieldInitializers.add(FieldInitializer(irField.getReferenceKey(), instructions, isObjectInstanceField))
     }
 
     fun addMainFunctionWrapper(mainFunctionWrapper: IrFunctionSymbol) {
