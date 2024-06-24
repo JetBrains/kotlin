@@ -551,24 +551,6 @@ class PostponedArgumentInputTypesResolver(
         )
     }
 
-    @K2Only
-    fun findNextVariableForReportingNotInferredInputType(
-        c: Context,
-        argument: PostponedResolvedAtomMarker,
-        postponedArguments: List<PostponedResolvedAtomMarker>,
-        topLevelType: KotlinTypeMarker,
-        dependencyProvider: TypeVariableDependencyInformationProvider,
-    ): VariableFixationFinder.VariableForFixation? {
-        val expectedType = argument.expectedFunctionType(c) ?: return null
-
-        return c.findNextVariableForParameterType(
-            expectedType,
-            dependencyProvider,
-            postponedArguments,
-            topLevelType,
-        )
-    }
-
     private fun PostponedResolvedAtomMarker.expectedFunctionType(c: Context): KotlinTypeMarker? = with(c) {
         val expectedType = (this@expectedFunctionType as? PostponedAtomWithRevisableExpectedType)?.revisedExpectedType ?: expectedType
         expectedType?.takeIf { it.isFunctionOrKFunctionWithAnySuspendability() }

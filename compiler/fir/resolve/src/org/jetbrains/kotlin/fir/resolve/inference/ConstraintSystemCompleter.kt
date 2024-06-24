@@ -168,9 +168,6 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
                         analyzer.analyze(it, withPCLASession = false)
                     }
                 ) continue
-                reportNotEnoughInformationForTypeVariablesRequiredForInputTypesOfLambdas(
-                    postponedArguments, topLevelType, dependencyProvider, topLevelAtoms
-                )
             } else if (completionMode != ConstraintSystemCompletionMode.PARTIAL) {
                 // Stage 8: report "not enough information" for uninferred type variables
                 reportNotEnoughTypeInformation(
@@ -187,30 +184,6 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
             }
 
             break
-        }
-    }
-
-    private fun ConstraintSystemCompletionContext.reportNotEnoughInformationForTypeVariablesRequiredForInputTypesOfLambdas(
-        postponedArguments: List<ConePostponedResolvedAtom>,
-        topLevelType: ConeKotlinType,
-        dependencyProvider: TypeVariableDependencyInformationProvider,
-        topLevelAtoms: List<ConeResolutionAtom>,
-    ) {
-        for (argument in postponedArguments) {
-            val variableForFixation = postponedArgumentsInputTypesResolver.findNextVariableForReportingNotInferredInputType(
-                this,
-                argument,
-                postponedArguments,
-                topLevelType,
-                dependencyProvider,
-            ) ?: continue
-
-            assert(!variableForFixation.isReady) {
-                "At this stage there should be no remaining variables with proper constraints from input types"
-            }
-
-            val variableWithConstraints = notFixedTypeVariables.getValue(variableForFixation.variable)
-            processVariableWhenNotEnoughInformation(variableWithConstraints, topLevelAtoms)
         }
     }
 
