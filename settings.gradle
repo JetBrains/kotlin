@@ -437,7 +437,9 @@ if (!buildProperties.inJpsBuildIdeaSync) {
             ":prepare:ide-plugin-dependencies:kotlin-compiler-ir-for-ide",
             ":prepare:ide-plugin-dependencies:kotlin-compiler-common-for-ide",
             ":prepare:ide-plugin-dependencies:kotlin-compiler-fe10-for-ide",
-            ":prepare:ide-plugin-dependencies:kotlin-compiler-fir-for-ide"
+            ":prepare:ide-plugin-dependencies:kotlin-compiler-fir-for-ide",
+            ":prepare:ide-plugin-dependencies:compose-compiler-plugin-for-ide"
+
 }
 
 include ":compiler:build-tools:kotlin-build-tools-api",

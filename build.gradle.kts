@@ -298,6 +298,7 @@ val projectsUsedInIntelliJKotlinPlugin =
                 ":plugins:parcelize:parcelize-compiler:parcelize.k1",
                 ":plugins:parcelize:parcelize-compiler:parcelize.k2",
                 ":plugins:parcelize:parcelize-runtime",
+                ":plugins:compose-compiler-plugin:compiler-hosted",
 
                 ":kotlin-sam-with-receiver-compiler-plugin.cli",
                 ":kotlin-sam-with-receiver-compiler-plugin.common",
@@ -441,6 +442,7 @@ extra["compilerArtifactsForIde"] = listOfNotNull(
     ":prepare:ide-plugin-dependencies:kotlin-compiler-common-for-ide",
     ":prepare:ide-plugin-dependencies:kotlin-compiler-fe10-for-ide",
     ":prepare:ide-plugin-dependencies:kotlin-compiler-fir-for-ide",
+    ":prepare:ide-plugin-dependencies:compose-compiler-plugin-for-ide",
     ":prepare:kotlin-jps-plugin",
     ":kotlin-script-runtime",
     ":kotlin-scripting-common",
