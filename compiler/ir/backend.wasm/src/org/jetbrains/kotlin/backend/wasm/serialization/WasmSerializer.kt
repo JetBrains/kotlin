@@ -429,7 +429,7 @@ class WasmSerializer(outputStream: OutputStream) {
             is IdSignature.LoweredDeclarationSignature -> withTag(5U) { serialize(idSignature) }
             is IdSignature.ScopeLocalDeclaration -> withTag(6U) { serialize(idSignature) }
             is IdSignature.SpecialFakeOverrideSignature -> withTag(7U) { serialize(idSignature) }
-            is IdSignature.FileSignature -> withTag(8U) { }
+            is IdSignature.FileSignature -> withTag(8U) { serialize(idSignature.fileName) }
         }
 
     private fun serialize(accessor: IdSignature.AccessorSignature) {

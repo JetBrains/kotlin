@@ -413,7 +413,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 5 -> deserializeLoweredDeclarationSignature()
                 6 -> deserializeScopeLocalDeclaration()
                 7 -> deserializeSpecialFakeOverrideSignature()
-                8 -> IdSignature.FileSignature(0, FqName(""), "")
+                8 -> IdSignature.FileSignature(deserializeString(), FqName(""), "")
                 else -> tagError()
             }
         }
