@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.lower.coroutines
 
-import org.jetbrains.kotlin.backend.common.BodyLoweringPass
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.DeclarationTransformer
-import org.jetbrains.kotlin.backend.common.getOrPut
+import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -21,7 +18,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrReturn
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.types.typeWith
@@ -100,10 +96,9 @@ private fun transformSuspendFunction(context: CommonBackendContext, function: Ir
 
 
 fun IrSimpleFunction.getOrCreateFunctionWithContinuationStub(context: CommonBackendContext): IrSimpleFunction {
-    return context.mapping.suspendFunctionsToFunctionWithContinuations.getOrPut(this) {
-        createSuspendFunctionStub(context).also {
-            context.mapping.functionWithContinuationsToSuspendFunctions[it] = this
-        }
+    return this.functionWithContinuations ?: createSuspendFunctionStub(context).also {
+        functionWithContinuations = it
+        context.mapping.functionWithContinuationsToSuspendFunctions[it] = this@getOrCreateFunctionWithContinuationStub
     }
 }
 

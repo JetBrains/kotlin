@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.kotlin.backend.common.Mapping.*
 import org.jetbrains.kotlin.ir.IrAttribute
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.get
@@ -21,11 +20,12 @@ var IrClass.capturedFields: Collection<IrField>? by irAttribute(followAttributeO
 
 var IrClass.reflectedNameAccessor: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
 
+var IrSimpleFunction.functionWithContinuations: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+
 open class Mapping {
     val defaultArgumentsOriginalFunction: MapBasedMapping<IrFunction, IrFunction> = MapBasedMapping()
     val lateInitFieldToNullableField: DeclarationMapping<IrField, IrField> by AttributeBasedMappingDelegate()
     val capturedConstructors: MapBasedMapping<IrConstructor, IrConstructor> = MapBasedMapping()
-    val suspendFunctionsToFunctionWithContinuations: DeclarationMapping<IrSimpleFunction, IrSimpleFunction> by AttributeBasedMappingDelegate()
     val functionWithContinuationsToSuspendFunctions: DeclarationMapping<IrSimpleFunction, IrSimpleFunction> by AttributeBasedMappingDelegate()
 
     abstract class DeclarationMapping<K : IrDeclaration, V> {
