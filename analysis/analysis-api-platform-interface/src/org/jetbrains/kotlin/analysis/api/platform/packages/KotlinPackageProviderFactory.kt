@@ -11,8 +11,8 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.KotlinComposableProviderMerger
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
 
-public abstract class KotlinPackageProviderFactory : KotlinPlatformComponent {
-    public abstract fun createPackageProvider(searchScope: GlobalSearchScope): KotlinPackageProvider
+public interface KotlinPackageProviderFactory : KotlinPlatformComponent {
+    public fun createPackageProvider(searchScope: GlobalSearchScope): KotlinPackageProvider
 
     public companion object {
         public fun getInstance(project: Project): KotlinPackageProviderFactory = project.service()
@@ -25,7 +25,7 @@ public abstract class KotlinPackageProviderFactory : KotlinPlatformComponent {
  * Package providers should not be naively merged by combining scopes and calling [createPackageProvider], because there may be additional
  * package providers which do not operate based on scopes (e.g. resolve extension package providers).
  */
-public abstract class KotlinPackageProviderMerger : KotlinComposableProviderMerger<KotlinPackageProvider>, KotlinPlatformComponent {
+public interface KotlinPackageProviderMerger : KotlinComposableProviderMerger<KotlinPackageProvider>, KotlinPlatformComponent {
     public companion object {
         public fun getInstance(project: Project): KotlinPackageProviderMerger = project.service()
     }

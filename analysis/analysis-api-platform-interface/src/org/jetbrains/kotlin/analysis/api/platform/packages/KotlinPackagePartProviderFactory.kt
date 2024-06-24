@@ -11,11 +11,11 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 
-public abstract class KotlinPackagePartProviderFactory : KotlinPlatformComponent {
+public interface KotlinPackagePartProviderFactory : KotlinPlatformComponent {
     /**
      * Create a [PackagePartProvider] for a given scope. [PackagePartProvider] is responsible for searching sub packages in a library.
      */
-    public abstract fun createPackagePartProvider(scope: GlobalSearchScope): PackagePartProvider
+    public fun createPackagePartProvider(scope: GlobalSearchScope): PackagePartProvider
 
     public companion object {
         public fun getInstance(project: Project): KotlinPackagePartProviderFactory = project.service()

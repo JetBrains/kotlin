@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 /**
  * @see KotlinDeclarationProvider
  */
-public abstract class KotlinDeclarationProviderFactory : KotlinPlatformComponent {
-    public abstract fun createDeclarationProvider(scope: GlobalSearchScope, contextualModule: KaModule?): KotlinDeclarationProvider
+public interface KotlinDeclarationProviderFactory : KotlinPlatformComponent {
+    public fun createDeclarationProvider(scope: GlobalSearchScope, contextualModule: KaModule?): KotlinDeclarationProvider
 
     public companion object {
         public fun getInstance(project: Project): KotlinDeclarationProviderFactory = project.service()
@@ -33,7 +33,7 @@ public abstract class KotlinDeclarationProviderFactory : KotlinPlatformComponent
  * [createDeclarationProvider]. [KotlinDeclarationProviderMerger] should implement proper merging logic that takes these concerns into
  * account.
  */
-public abstract class KotlinDeclarationProviderMerger : KotlinComposableProviderMerger<KotlinDeclarationProvider>, KotlinPlatformComponent {
+public interface KotlinDeclarationProviderMerger : KotlinComposableProviderMerger<KotlinDeclarationProvider>, KotlinPlatformComponent {
     public companion object {
         public fun getInstance(project: Project): KotlinDeclarationProviderMerger = project.service()
     }

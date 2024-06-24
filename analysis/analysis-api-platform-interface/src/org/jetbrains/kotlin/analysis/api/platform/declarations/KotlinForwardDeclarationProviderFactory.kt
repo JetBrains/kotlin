@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
  * Implementations should be consistent with their corresponding [KotlinForwardDeclarationsPackageProviderFactory][org.jetbrains.kotlin.analysis.api.platform.packages.KotlinForwardDeclarationsPackageProviderFactory]
  * implementation.
  */
-public abstract class KotlinForwardDeclarationProviderFactory : KotlinOptionalPlatformComponent {
+public interface KotlinForwardDeclarationProviderFactory : KotlinOptionalPlatformComponent {
     /**
      * Create a Kotlin/Native declaration provider for [module].
      *
@@ -30,7 +30,7 @@ public abstract class KotlinForwardDeclarationProviderFactory : KotlinOptionalPl
      *
      * @return a declaration provider for [module] or `null` if the module cannot contain forward declarations
      */
-    public abstract fun createDeclarationProvider(module: KaModule): KotlinDeclarationProvider?
+    public fun createDeclarationProvider(module: KaModule): KotlinDeclarationProvider?
 
     public companion object {
         public fun getInstance(project: Project): KotlinForwardDeclarationProviderFactory? = project.serviceOrNull()

@@ -10,7 +10,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
 
-public abstract class KotlinGlobalModificationServiceBase(private val project: Project) : KotlinGlobalModificationService() {
+public abstract class KotlinGlobalModificationServiceBase(private val project: Project) : KotlinGlobalModificationService {
     @TestOnly
     protected abstract fun incrementModificationTrackers(includeBinaryTrackers: Boolean)
 

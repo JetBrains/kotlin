@@ -9,8 +9,8 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
 
-public abstract class KotlinLifetimeTokenProvider : KotlinPlatformComponent {
-    public abstract fun getLifetimeTokenFactory(): KaLifetimeTokenFactory
+public interface KotlinLifetimeTokenProvider : KotlinPlatformComponent {
+    public fun getLifetimeTokenFactory(): KaLifetimeTokenFactory
 
     public companion object {
         public fun getInstance(project: Project): KotlinLifetimeTokenProvider = project.service()

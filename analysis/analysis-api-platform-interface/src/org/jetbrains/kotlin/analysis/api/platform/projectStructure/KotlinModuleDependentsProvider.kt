@@ -26,22 +26,22 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
  * Implementations of this provider should ensure that results are provided in reasonable time, for example by caching results, as its
  * functions may be called frequently.
  */
-public abstract class KotlinModuleDependentsProvider : KotlinPlatformComponent {
+public interface KotlinModuleDependentsProvider : KotlinPlatformComponent {
     /**
      * Returns all direct dependents of [module], excluding [module] if it depends on itself.
      */
-    public abstract fun getDirectDependents(module: KaModule): Set<KaModule>
+    public fun getDirectDependents(module: KaModule): Set<KaModule>
 
     /**
      * Returns all direct and indirect dependents of [module], excluding [module] if it depends on itself.
      */
-    public abstract fun getTransitiveDependents(module: KaModule): Set<KaModule>
+    public fun getTransitiveDependents(module: KaModule): Set<KaModule>
 
     /**
      * Returns all refinement/depends-on dependents of [module], excluding [module] itself. The result is transitive because refinement
      * dependencies are implicitly transitive.
      */
-    public abstract fun getRefinementDependents(module: KaModule): Set<KaModule>
+    public fun getRefinementDependents(module: KaModule): Set<KaModule>
 
     public companion object {
         public fun getInstance(project: Project): KotlinModuleDependentsProvider = project.service()

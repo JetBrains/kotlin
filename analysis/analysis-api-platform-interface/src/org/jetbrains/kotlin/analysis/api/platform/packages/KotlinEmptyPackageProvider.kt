@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 
-public object KotlinEmptyPackageProvider : KotlinPackageProvider() {
+public object KotlinEmptyPackageProvider : KotlinPackageProvider {
     override fun doesPackageExist(packageFqName: FqName, platform: TargetPlatform): Boolean = false
 
     override fun doesKotlinOnlyPackageExist(packageFqName: FqName): Boolean = false

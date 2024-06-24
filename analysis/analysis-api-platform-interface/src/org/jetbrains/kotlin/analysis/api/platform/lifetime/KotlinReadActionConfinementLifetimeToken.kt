@@ -70,7 +70,7 @@ public object KotlinReadActionConfinementLifetimeTokenFactory : KaLifetimeTokenF
         KotlinReadActionConfinementLifetimeToken(project, modificationTracker)
 }
 
-public class KotlinReadActionConfinementLifetimeTokenProvider : KotlinLifetimeTokenProvider() {
+public class KotlinReadActionConfinementLifetimeTokenProvider : KotlinLifetimeTokenProvider {
     override fun getLifetimeTokenFactory(): KaLifetimeTokenFactory {
         return KotlinReadActionConfinementLifetimeTokenFactory
     }
