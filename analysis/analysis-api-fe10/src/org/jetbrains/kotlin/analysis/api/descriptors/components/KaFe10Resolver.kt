@@ -20,8 +20,10 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KaFe10PsiSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.getResolutionScope
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAbstractResolver
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseImplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSimpleVariableReadAccess
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSimpleVariableWriteAccess
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSmartCastedReceiverValue
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaCompoundVariableAccessCallImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -489,9 +491,9 @@ internal class KaFe10Resolver(
         if (this !is ImportedFromObjectCallableDescriptor<*>) return null
 
         val symbol = containingObject.toKaClassSymbol(analysisContext)
-        return KaImplicitReceiverValue(
-            symbol,
-            containingObject.defaultType.toKtType(analysisContext),
+        return KaBaseImplicitReceiverValue(
+            backingSymbol = symbol,
+            type = containingObject.defaultType.toKtType(analysisContext),
         )
     }
 
@@ -505,11 +507,11 @@ internal class KaFe10Resolver(
             is ExpressionReceiver -> expression.toExplicitReceiverValue(ktType)
             is ExtensionReceiver -> {
                 val extensionReceiverParameter = this.declarationDescriptor.extensionReceiverParameter ?: return null
-                KaImplicitReceiverValue(KaFe10ReceiverParameterSymbol(extensionReceiverParameter, analysisContext), ktType)
+                KaBaseImplicitReceiverValue(KaFe10ReceiverParameterSymbol(extensionReceiverParameter, analysisContext), ktType)
             }
             is ImplicitReceiver -> {
                 val symbol = this.declarationDescriptor.toKtSymbol(analysisContext) ?: return null
-                KaImplicitReceiverValue(symbol, ktType)
+                KaBaseImplicitReceiverValue(symbol, ktType)
             }
             else -> null
         }
@@ -526,8 +528,9 @@ internal class KaFe10Resolver(
                 else -> {}
             }
         }
+
         return if (smartCastTypeToUse != null && result != null) {
-            KaSmartCastedReceiverValue(result, smartCastTypeToUse.toKtType(analysisContext))
+            KaBaseSmartCastedReceiverValue(result, smartCastTypeToUse.toKtType(analysisContext))
         } else {
             result
         }

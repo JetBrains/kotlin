@@ -18,8 +18,11 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.processEqualsFunctions
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAbstractResolver
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseExplicitReceiverValue
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseImplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSimpleVariableReadAccess
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSimpleVariableWriteAccess
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSmartCastedReceiverValue
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaCompoundVariableAccessCallImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -470,8 +473,13 @@ internal class KaFirResolver(
                         extensionReceiver?.let { withFirEntry("extensionReceiver", it) }
                         withFirSymbolEntry("target", targetSymbol)
                     }
-                    dispatchReceiverValue =
-                        KaExplicitReceiverValue(explicitReceiverPsi, dispatchReceiver.resolvedType.asKtType(), false, token)
+
+                    dispatchReceiverValue = KaBaseExplicitReceiverValue(
+                        expression = explicitReceiverPsi,
+                        backingType = dispatchReceiver.resolvedType.asKtType(),
+                        isSafeNavigation = false,
+                    )
+
                     extensionReceiverValue = if (firstArgIsExtensionReceiver) {
                         when (fir) {
                             is FirFunctionCall -> fir.arguments.firstOrNull()?.toKtReceiverValue()
@@ -494,8 +502,11 @@ internal class KaFirResolver(
                     }
 
                     dispatchReceiverValue = dispatchReceiver?.toKtReceiverValue()
-                    extensionReceiverValue =
-                        KaExplicitReceiverValue(explicitReceiverPsi, extensionReceiver.resolvedType.asKtType(), false, token)
+                    extensionReceiverValue = KaBaseExplicitReceiverValue(
+                        expression = explicitReceiverPsi,
+                        backingType = extensionReceiver.resolvedType.asKtType(),
+                        isSafeNavigation = false,
+                    )
                 }
 
                 else -> {
@@ -895,7 +906,7 @@ internal class KaFirResolver(
             this is FirSmartCastExpression -> {
                 val result = originalExpression.toKtReceiverValue()
                 if (result != null && isStable) {
-                    KaSmartCastedReceiverValue(result, smartcastType.coneType.asKtType())
+                    KaBaseSmartCastedReceiverValue(result, smartcastType.coneType.asKtType())
                 } else {
                     result
                 }
@@ -907,11 +918,12 @@ internal class KaFirResolver(
                         ?: return null
                     else -> return null
                 }
-                KaImplicitReceiverValue(implicitPartiallyAppliedSymbol, resolvedType.asKtType())
+
+                KaBaseImplicitReceiverValue(implicitPartiallyAppliedSymbol, resolvedType.asKtType())
             }
             this is FirResolvedQualifier && this.source?.kind is KtFakeSourceElementKind.ImplicitReceiver -> {
                 val symbol = this.symbol ?: return null
-                KaImplicitReceiverValue(symbol.toKaSymbol(), resolvedType.asKtType())
+                KaBaseImplicitReceiverValue(symbol.toKaSymbol(), resolvedType.asKtType())
             }
             else -> {
                 val psi = psi
@@ -1290,7 +1302,11 @@ internal class KaFirResolver(
                     KaSimpleFunctionCall(
                         KaPartiallyAppliedSymbol(
                             kaSignature,
-                            KaExplicitReceiverValue(leftPsi, leftOperand.resolvedType.asKtType(), false, token),
+                            KaBaseExplicitReceiverValue(
+                                expression = leftPsi,
+                                backingType = leftOperand.resolvedType.asKtType(),
+                                isSafeNavigation = false,
+                            ),
                             null
                         ),
                         LinkedHashMap<KtExpression, KaVariableSignature<KaValueParameterSymbol>>().apply {
