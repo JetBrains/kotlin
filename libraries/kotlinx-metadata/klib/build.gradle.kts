@@ -1,5 +1,3 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
 description = "Kotlin Library (KLIB) metadata manipulation library"
 
 plugins {
@@ -26,7 +24,6 @@ dependencies {
     api(kotlinStdlib())
     embedded(project(":kotlin-metadata"))
     embedded(project(":core:compiler.common"))
-    embedded(project(":core:metadata"))
     embedded(project(":core:deserialization"))
     embedded(project(":core:deserialization.common"))
     embedded(project(":compiler:serialization"))
