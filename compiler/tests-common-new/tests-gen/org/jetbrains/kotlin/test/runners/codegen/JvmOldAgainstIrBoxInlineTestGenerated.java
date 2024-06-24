@@ -3115,6 +3115,12 @@ public class JvmOldAgainstIrBoxInlineTestGenerated extends AbstractJvmOldAgainst
     public void testLocalFunInLambdaCapturesAnotherFun() {
       runTest("compiler/testData/codegen/boxInline/localFunInLambda/localFunInLambdaCapturesAnotherFun.kt");
     }
+
+    @Test
+    @TestMetadata("localFunInLambdaCapturesOuterVariable.kt")
+    public void testLocalFunInLambdaCapturesOuterVariable() {
+      runTest("compiler/testData/codegen/boxInline/localFunInLambda/localFunInLambdaCapturesOuterVariable.kt");
+    }
   }
 
   @Nested
