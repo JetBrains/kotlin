@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Success
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.executor
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.testProcessExecutor
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.DumpedTestListing
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.GTestListing
 import org.jetbrains.kotlin.native.executors.runProcess
@@ -83,7 +83,7 @@ class InfrastructureDumpedTestListingTest : AbstractNativeSimpleTest() {
         // parse test listing obtained from executable file with the help of --ktest_list_tests flag:
         val testExecutable = TestExecutable.fromCompilationResult(executableTestCase, executableCompilationSuccess)
         val extractedTestListing = with (testRunSettings) {
-            val listing = executor.runProcess(testExecutable.executable.executableFile.absolutePath, "--ktest_list_tests") {
+            val listing = testProcessExecutor.runProcess(testExecutable.executable.executableFile.absolutePath, "--ktest_list_tests") {
                 timeout = get<Timeouts>().executionTimeout
             }.stdout
             GTestListing.parse(listing).toSet()

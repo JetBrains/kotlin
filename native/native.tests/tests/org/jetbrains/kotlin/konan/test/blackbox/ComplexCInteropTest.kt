@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.konan.target.Architecture
-import org.jetbrains.kotlin.konan.target.ClangArgs
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.isSimulator
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
@@ -355,7 +354,7 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
             ),
             extras = extras,
         )
-        return testRunSettings.executor.runProcess(success.resultingArtifact.executableFile.absolutePath)
+        return testRunSettings.testProcessExecutor.runProcess(success.resultingArtifact.executableFile.absolutePath)
     }
 
     @Test

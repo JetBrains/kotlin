@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Binaries
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.GCScheduler
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.executor
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.testProcessExecutor
 import org.jetbrains.kotlin.konan.test.blackbox.targets
 import org.jetbrains.kotlin.native.executors.RunProcessResult
 import org.jetbrains.kotlin.native.executors.runProcess
@@ -87,7 +87,7 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
         val compilationResult = runProcess(konanc.absolutePath, source.absolutePath, *args.toTypedArray<String>()) {
             timeout = konancTimeout
         }
-        testRunSettings.executor.runProcess(kexe.absolutePath) // run generated executable just to check its sanity
+        testRunSettings.testProcessExecutor.runProcess(kexe.absolutePath) // run generated executable just to check its sanity
         return compilationResult
     }
 
@@ -112,7 +112,7 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
             timeout = konancTimeout
         }
         val runResult: RunProcessResult = with(testRunSettings) {
-            executor.runProcess(kexe.absolutePath) {
+            testProcessExecutor.runProcess(kexe.absolutePath) {
                 timeout = Duration.parse("1m")
             }
         }
@@ -178,7 +178,7 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
             "Compiler's stderr must contain string: $expected\n" +
                     "STDOUT:\n${compilationResult.stdout}\nSTDERR:${compilationResult.stderr}"
         )
-        testRunSettings.executor.runProcess(kexe.absolutePath)
+        testRunSettings.testProcessExecutor.runProcess(kexe.absolutePath)
     }
 
     @Disabled("The test is not working on Windows Server 2019-based TeamCity agents for the unknown reason." +
@@ -214,7 +214,7 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
         runProcess(konanc.absolutePath, source.absolutePath, *compilation.getCompilerArgs()) {
             timeout = Duration.parse("5m")
         }
-        testRunSettings.executor.runProcess(kexe.absolutePath)
+        testRunSettings.testProcessExecutor.runProcess(kexe.absolutePath)
     }
 
     @Test
@@ -259,7 +259,7 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
             "-Xread-dependencies-from=${depsFile.absolutePath}",
             "-Xcompile-from-bitcode=${tmpFilesDir.absolutePath}/out.bc"
         )
-        val output = testRunSettings.executor.runProcess(kexe.absolutePath).output
+        val output = testRunSettings.testProcessExecutor.runProcess(kexe.absolutePath).output
         KotlinTestUtils.assertEqualsToFile(rootDir.resolve("override_main.out"), output)
     }
 }

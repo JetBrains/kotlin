@@ -16,7 +16,16 @@ import java.util.concurrent.ConcurrentHashMap
 
 private val executorCache: ConcurrentHashMap<KonanTarget, Executor> = ConcurrentHashMap()
 
-val Settings.executor: Executor
+/**
+ * Provides the executor used for executing tools on the current host.
+ */
+val toolsExecutor: Executor
+    get() = HostExecutor()
+
+/**
+ * Provides an appropriate executor based on different properties [ClassLevelProperty] and configurations including test target.
+ */
+val Settings.testProcessExecutor: Executor
     get() = with(get<KotlinNativeTargets>()) {
         executorCache.computeIfAbsent(testTarget) {
             val configurables = configurables
