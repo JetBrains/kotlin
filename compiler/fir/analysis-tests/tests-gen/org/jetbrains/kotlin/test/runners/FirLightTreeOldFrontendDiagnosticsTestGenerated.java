@@ -10811,6 +10811,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("memberPropertyInitialized.kt")
+      public void testMemberPropertyInitialized() {
+        runTest("compiler/testData/diagnostics/tests/declarationChecks/memberPropertyInitialized.kt");
+      }
+
+      @Test
       @TestMetadata("mulitpleVarargParameters.kt")
       public void testMulitpleVarargParameters() {
         runTest("compiler/testData/diagnostics/tests/declarationChecks/mulitpleVarargParameters.kt");
