@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseImplicitRece
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseScopeContext
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseCompositeScope
-import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaCompositeTypeScope
+import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseCompositeTypeScope
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaEmptyScope
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
@@ -254,7 +254,7 @@ internal class KaFirScopeProvider(
         get() = withValidityAssertion {
             return when (this) {
                 is KaFirDelegatingTypeScope -> KaFirDelegatingNamesAwareScope(firScope, analysisSession.firSymbolBuilder)
-                is KaCompositeTypeScope -> KaBaseCompositeScope.create(subScopes.map { it.declarationScope }, token)
+                is KaBaseCompositeTypeScope -> KaBaseCompositeScope.create(subScopes.map { it.declarationScope }, token)
                 else -> unexpectedElementError<KaTypeScope>(this)
             }
         }
