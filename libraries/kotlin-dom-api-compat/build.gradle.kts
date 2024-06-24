@@ -1,4 +1,3 @@
-import org.gradle.api.internal.file.archive.ZipFileTree
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
@@ -20,6 +19,8 @@ val kotlinStdlibJs by configurations.creating {
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
         attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
+        // the workaround below for KT-65266 expects a packed artifact
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named("packed-klib"))
     }
 }
 
