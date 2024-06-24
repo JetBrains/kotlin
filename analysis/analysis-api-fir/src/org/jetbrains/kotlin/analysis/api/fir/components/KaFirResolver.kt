@@ -18,13 +18,13 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.processEqualsFunctions
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAbstractResolver
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCompoundVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseExplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseImplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBasePartiallyAppliedSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSimpleVariableReadAccess
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSimpleVariableWriteAccess
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSmartCastedReceiverValue
-import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaCompoundVariableAccessCallImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.*
@@ -701,7 +701,7 @@ internal class KaFirResolver(
                         KaBaseSimpleVariableReadAccess,
                     )
                 } else {
-                    KaCompoundVariableAccessCallImpl(
+                    KaBaseCompoundVariableAccessCall(
                         variablePartiallyAppliedSymbol,
                         KaCompoundAccess.CompoundAssign(operationPartiallyAppliedSymbol, compoundAssignKind, rightOperandPsi),
                     )
@@ -754,7 +754,7 @@ internal class KaFirResolver(
                         KaBaseSimpleVariableReadAccess,
                     )
                 } else {
-                    KaCompoundVariableAccessCallImpl(
+                    KaBaseCompoundVariableAccessCall(
                         variablePartiallyAppliedSymbol,
                         KaCompoundAccess.IncOrDecOperation(operationPartiallyAppliedSymbol, incOrDecOperationKind, incDecPrecedence),
                     )
