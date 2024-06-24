@@ -4,7 +4,6 @@ import kotlinx.validation.build.mavenRepositoryPublishing
 import kotlinx.validation.build.signPublicationIfKeyPresent
 import org.gradle.api.attributes.TestSuiteType.FUNCTIONAL_TEST
 import org.jetbrains.dokka.gradle.DokkaTask
-import org.jetbrains.dokka.gradle.DokkaTaskPartial
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import java.net.URL
@@ -101,9 +100,10 @@ tasks.compileKotlin {
 java {
     withJavadocJar()
     withSourcesJar()
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(8))
-    }
+}
+
+kotlin {
+    jvmToolchain(8)
 }
 
 tasks.compileTestKotlin {
