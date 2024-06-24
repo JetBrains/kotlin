@@ -615,7 +615,7 @@ class WasmSerializer(outputStream: OutputStream) {
             serialize(stringPoolSize, ::serialize)
             serialize(throwableTagIndex, ::serialize)
             serialize(jsExceptionTagIndex, ::serialize)
-            serialize(fieldInitializers) { serialize(it, ::serialize) { serialize(it, ::serialize) } }
+            serialize(fieldInitializers, ::serialize)
             serialize(mainFunctionWrappers, ::serialize)
             serializeNullable(testFun, ::serialize)
             serialize(closureCallExports) { serialize(it, ::serialize, ::serialize) }
@@ -623,6 +623,13 @@ class WasmSerializer(outputStream: OutputStream) {
             serialize(classAssociatedObjectsInstanceGetters, ::serialize)
             serializeNullable(tryGetAssociatedObjectFun, ::serialize)
         }
+
+    private fun serialize(fieldInitializer: FieldInitializer) {
+        withFlags(fieldInitializer.isObjectInstanceField) {
+            serialize(fieldInitializer.field)
+            serialize(fieldInitializer.instructions, ::serialize)
+        }
+    }
 
     private fun serialize(classAssociatedObjects: ClassAssociatedObjects) {
         serialize(classAssociatedObjects.klass)

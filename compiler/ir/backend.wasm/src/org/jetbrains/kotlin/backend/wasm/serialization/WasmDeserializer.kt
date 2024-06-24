@@ -641,13 +641,20 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     private fun deserializeStringPoolSize() = deserializeSymbol(::deserializeInt)
     private fun deserializeThrowableTagIndex() = deserializeSymbol(::deserializeInt)
     private fun deserializeJsExceptionTagIndex() = deserializeSymbol(::deserializeInt)
-    private fun deserializeFieldInitializers(): MutableList<Pair<IdSignature, List<WasmInstr>>> = deserializeList { deserializePair(::deserializeIdSignature, { deserializeList(::deserializeInstr) }) }
+    private fun deserializeFieldInitializers(): MutableList<FieldInitializer> = deserializeList(::deserializeFieldInitializer)
     private fun deserializeMainFunctionWrappers() = deserializeList(::deserializeIdSignature)
     private fun deserializeTestFun() = deserializeNullable(::deserializeIdSignature)
     private fun deserializeClosureCallExports() = deserializeList { deserializePair(::deserializeString, ::deserializeIdSignature) }
     private fun deserializeJsModuleAndQualifierReferences() = deserializeSet(::deserializeJsModuleAndQualifierReference)
     private fun deserializeClassAssociatedObjectInstanceGetters() = deserializeList(::deserializeClassAssociatedObjects)
     private fun deserializeTryGetAssociatedObject() = deserializeNullable(::deserializeIdSignature)
+
+    private fun deserializeFieldInitializer(): FieldInitializer = withFlags {
+        val field = deserializeIdSignature()
+        val initializer = deserializeList(::deserializeInstr)
+        val isObjectInstanceField = it.consume()
+        FieldInitializer(field, initializer, isObjectInstanceField)
+    }
 
     private fun deserializeAssociatedObject(): AssociatedObject {
         val obj = deserializeIdSignature()

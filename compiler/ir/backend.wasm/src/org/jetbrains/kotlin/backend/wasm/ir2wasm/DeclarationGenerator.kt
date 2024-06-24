@@ -464,7 +464,11 @@ class DeclarationGenerator(
                     wasmModuleTypeTransformer,
                 )
                 bodyGenerator.generateExpression(initValue)
-                wasmFileCodegenContext.addFieldInitializer(declaration.symbol, stubFunction.instructions)
+                wasmFileCodegenContext.addFieldInitializer(
+                    declaration.symbol,
+                    stubFunction.instructions,
+                    declaration.isObjectInstanceField()
+                )
                 generateDefaultInitializerForType(wasmType, wasmExpressionGenerator)
             }
         } else {
