@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.modification
 
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
@@ -41,7 +42,6 @@ public abstract class KotlinGlobalModificationService : KotlinPlatformComponent 
     public abstract fun publishGlobalSourceOutOfBlockModification()
 
     public companion object {
-        public fun getInstance(project: Project): KotlinGlobalModificationService =
-            project.getService(KotlinGlobalModificationService::class.java)
+        public fun getInstance(project: Project): KotlinGlobalModificationService = project.service()
     }
 }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -43,7 +44,6 @@ public abstract class KotlinModuleDependentsProvider : KotlinPlatformComponent {
     public abstract fun getRefinementDependents(module: KaModule): Set<KaModule>
 
     public companion object {
-        public fun getInstance(project: Project): KotlinModuleDependentsProvider =
-            project.getService(KotlinModuleDependentsProvider::class.java)
+        public fun getInstance(project: Project): KotlinModuleDependentsProvider = project.service()
     }
 }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.modification
 
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
@@ -66,8 +67,7 @@ public abstract class KotlinModificationTrackerFactory : KotlinPlatformComponent
     public abstract fun createLibrariesWideModificationTracker(): ModificationTracker
 
     public companion object {
-        public fun getInstance(project: Project): KotlinModificationTrackerFactory =
-            project.getService(KotlinModificationTrackerFactory::class.java)
+        public fun getInstance(project: Project): KotlinModificationTrackerFactory = project.service()
     }
 }
 

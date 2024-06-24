@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.packages
 
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
@@ -17,8 +18,7 @@ public abstract class KotlinPackagePartProviderFactory : KotlinPlatformComponent
     public abstract fun createPackagePartProvider(scope: GlobalSearchScope): PackagePartProvider
 
     public companion object {
-        public fun getInstance(project: Project): KotlinPackagePartProviderFactory =
-            project.getService(KotlinPackagePartProviderFactory::class.java)
+        public fun getInstance(project: Project): KotlinPackagePartProviderFactory = project.service()
     }
 }
 

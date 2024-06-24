@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.platform.declarations
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.serviceOrNull
 import org.jetbrains.kotlin.analysis.api.platform.KotlinOptionalPlatformComponent
 import org.jetbrains.kotlin.psi.KtCodeFragment
 
@@ -13,8 +14,6 @@ public interface KotlinForeignValueProviderService : KotlinOptionalPlatformCompo
     public fun getForeignValues(codeFragment: KtCodeFragment): Map<String, String>
 
     public companion object {
-        public fun getInstance(): KotlinForeignValueProviderService? {
-            return ApplicationManager.getApplication().getService(KotlinForeignValueProviderService::class.java)
-        }
+        public fun getInstance(): KotlinForeignValueProviderService? = ApplicationManager.getApplication().serviceOrNull()
     }
 }

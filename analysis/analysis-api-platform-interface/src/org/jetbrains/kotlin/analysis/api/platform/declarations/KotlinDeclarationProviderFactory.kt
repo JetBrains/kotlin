@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.declarations
 
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.KotlinComposableProviderMerger
@@ -18,8 +19,7 @@ public abstract class KotlinDeclarationProviderFactory : KotlinPlatformComponent
     public abstract fun createDeclarationProvider(scope: GlobalSearchScope, contextualModule: KaModule?): KotlinDeclarationProvider
 
     public companion object {
-        public fun getInstance(project: Project): KotlinDeclarationProviderFactory =
-            project.getService(KotlinDeclarationProviderFactory::class.java)
+        public fun getInstance(project: Project): KotlinDeclarationProviderFactory = project.service()
     }
 }
 
@@ -35,8 +35,7 @@ public abstract class KotlinDeclarationProviderFactory : KotlinPlatformComponent
  */
 public abstract class KotlinDeclarationProviderMerger : KotlinComposableProviderMerger<KotlinDeclarationProvider>, KotlinPlatformComponent {
     public companion object {
-        public fun getInstance(project: Project): KotlinDeclarationProviderMerger =
-            project.getService(KotlinDeclarationProviderMerger::class.java)
+        public fun getInstance(project: Project): KotlinDeclarationProviderMerger = project.service()
     }
 }
 

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.packages
 
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.KotlinComposableProviderMerger
@@ -12,6 +13,10 @@ import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
 
 public abstract class KotlinPackageProviderFactory : KotlinPlatformComponent {
     public abstract fun createPackageProvider(searchScope: GlobalSearchScope): KotlinPackageProvider
+
+    public companion object {
+        public fun getInstance(project: Project): KotlinPackageProviderFactory = project.service()
+    }
 }
 
 /**
@@ -22,13 +27,12 @@ public abstract class KotlinPackageProviderFactory : KotlinPlatformComponent {
  */
 public abstract class KotlinPackageProviderMerger : KotlinComposableProviderMerger<KotlinPackageProvider>, KotlinPlatformComponent {
     public companion object {
-        public fun getInstance(project: Project): KotlinPackageProviderMerger = project.getService(KotlinPackageProviderMerger::class.java)
+        public fun getInstance(project: Project): KotlinPackageProviderMerger = project.service()
     }
 }
 
 public fun Project.createPackageProvider(searchScope: GlobalSearchScope): KotlinPackageProvider =
-    this.getService(KotlinPackageProviderFactory::class.java)
-        .createPackageProvider(searchScope)
+    KotlinPackageProviderFactory.getInstance(this).createPackageProvider(searchScope)
 
 public fun Project.mergePackageProviders(packageProviders: List<KotlinPackageProvider>): KotlinPackageProvider =
     KotlinPackageProviderMerger.getInstance(this).merge(packageProviders)
