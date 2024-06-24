@@ -80,15 +80,16 @@ sealed class ExpectActualCheckingCompatibility<out D> : ExpectActualCompatibilit
     object PropertySetterVisibility : Incompatible<Nothing>("setter visibility is different")
 
     // Classifiers
-    object ClassKind : Incompatible<Nothing>("class kinds are different (class, interface, object, enum, annotation)")
-    object ClassModifiers : Incompatible<Nothing>("modifiers are different (companion, inner, inline, value)")
-    object FunInterfaceModifier : Incompatible<Nothing>("actual declaration for fun expect interface is not a functional interface")
-    object Supertypes : Incompatible<Nothing>("some supertypes are missing in the actual declaration")
+    sealed class ClassifiersIncompatible<D>(reason: String) : Incompatible<D>(reason)
+    object ClassKind : ClassifiersIncompatible<Nothing>("class kinds are different (class, interface, object, enum, annotation)")
+    object ClassModifiers : ClassifiersIncompatible<Nothing>("modifiers are different (companion, inner, inline, value)")
+    object FunInterfaceModifier : ClassifiersIncompatible<Nothing>("actual declaration for fun expect interface is not a functional interface")
+    object Supertypes : ClassifiersIncompatible<Nothing>("some supertypes are missing in the actual declaration")
+    object EnumEntries : ClassifiersIncompatible<Nothing>("some entries from expected enum are missing in the actual enum")
     class ClassScopes<D>(
         val mismatchedMembers: List<Pair</* expect */ D, Map<Mismatch, /* actuals */ Collection<D>>>>,
         val incompatibleMembers: List<Pair</* expect */ D, Map<Incompatible<D>, /* actuals */ Collection<D>>>>,
-    ) : Incompatible<D>("some expected members have no actual ones")
-    object EnumEntries : Incompatible<Nothing>("some entries from expected enum are missing in the actual enum")
+    ) : ClassifiersIncompatible<D>("some expected members have no actual ones")
 
     // Common
     object Modality : Incompatible<Nothing>("modality is different")
