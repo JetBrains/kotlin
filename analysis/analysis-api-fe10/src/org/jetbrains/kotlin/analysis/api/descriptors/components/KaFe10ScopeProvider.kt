@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.components.*
+import org.jetbrains.kotlin.analysis.api.components.KaScopeKinds
+import org.jetbrains.kotlin.analysis.api.components.KaScopeWithKindImpl
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.scopes.KaFe10FileScope
@@ -26,10 +28,8 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.getRe
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseImplicitReceiver
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseScopeContext
-import org.jetbrains.kotlin.analysis.api.components.KaScopeKinds
-import org.jetbrains.kotlin.analysis.api.components.KaScopeWithKindImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
-import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaCompositeScope
+import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseCompositeScope
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaEmptyScope
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
@@ -210,7 +210,7 @@ internal class KaFe10ScopeProvider(
         }
 
     override fun List<KaScope>.asCompositeScope(): KaScope = withValidityAssertion {
-        return KaCompositeScope.create(this, token)
+        return KaBaseCompositeScope.create(this, token)
     }
 
     @KaExperimentalApi
@@ -240,7 +240,7 @@ internal class KaFe10ScopeProvider(
         val scopeKind = KaScopeKinds.LocalScope(0) // TODO
         val lexicalScope = position.getResolutionScope(bindingContext)
         if (lexicalScope != null) {
-            val compositeScope = KaCompositeScope.create(listOf(KaFe10ScopeLexical(lexicalScope, analysisContext)), token)
+            val compositeScope = KaBaseCompositeScope.create(listOf(KaFe10ScopeLexical(lexicalScope, analysisContext)), token)
             return KaBaseScopeContext(
                 listOf(KaScopeWithKindImpl(compositeScope, scopeKind)),
                 collectImplicitReceivers(lexicalScope),
@@ -249,7 +249,7 @@ internal class KaFe10ScopeProvider(
         }
 
         val fileScope = analysisContext.resolveSession.fileScopeProvider.getFileResolutionScope(this)
-        val compositeScope = KaCompositeScope.create(listOf(KaFe10ScopeLexical(fileScope, analysisContext)), token)
+        val compositeScope = KaBaseCompositeScope.create(listOf(KaFe10ScopeLexical(fileScope, analysisContext)), token)
         return KaBaseScopeContext(
             listOf(KaScopeWithKindImpl(compositeScope, scopeKind)),
             collectImplicitReceivers(fileScope),
